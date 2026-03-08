@@ -4,6 +4,66 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.31.0] - 2026-03-07
+
+### Added
+
+- **PKCS#11 inspector module** (`src/wasm/inspect/`): New `constants.ts`, `decoders.ts`, and `types.ts` providing structured PKCS#11 call inspection — decodes mechanism IDs, attribute types, CKR return codes, and parameter structures into human-readable form for the PKCS#11 call log. [view:/playground]
+
+- **New test infrastructure** (`src/test/utils.tsx`): Shared test utility wrappers (router context, store providers) used across unit tests; reduces boilerplate in component tests. [view:/playground]
+
+- **E2E assessment spec** (`e2e/assess.spec.ts`): Playwright end-to-end test covering the 14-step assessment wizard — navigation, field completion, report generation, and print layout. [view:/assess]
+
+- **E2E fixtures** (`e2e/fixtures/`): Shared Playwright fixtures for common setup patterns (version-store seeding, tour bypass). [view:/]
+
+- **Quiz data loader unit tests** (`src/data/quizDataLoader.test.ts`): Vitest unit tests covering CSV parsing, category filtering, revision suffix ordering, and smart-sampling logic. [view:/learn/quiz]
+
+- **Assessment store unit tests** (`src/store/useAssessmentStore.test.ts`): Vitest unit tests covering wizard state transitions, field validation, scoring integration, and localStorage migration guards. [view:/assess]
+
+### Changed
+
+- **SoftHSM WASM — Phase 6 singleton loader** (`src/wasm/softhsm.ts`): Replaced barrel re-exports with a full PKCS#11 integration layer. New `getSoftHSMModule()` singleton loads the Emscripten CJS output via `<script>` injection and `locateFile` WASM routing; `clearSoftHSMCache()` resets on PlaygroundProvider cleanup; `createLoggingProxy()` provides transparent PKCS#11 call logging; high-level `hsm_*` helper functions wrap common PKCS#11 sequences. Modular `src/wasm/softhsm/` sub-modules (constants, crypto, logging, memory, module, session) retained. [view:/playground]
+
+- **Playground SoftHSM tab refactored** (`src/components/Playground/tabs/softhsm/`): Monolithic SoftHSM tab extracted into five focused demo components — `SoftHsmUI.tsx` (orchestration shell), `TokenSetupDemo.tsx` (slot/token/session lifecycle), `MLKemDemo.tsx` (ML-KEM encapsulate/decapsulate), `MLDsaDemo.tsx` (ML-DSA sign/verify + pre-hash), `SlhDsaDemo.tsx` (SLH-DSA with all 12 param sets). [view:/playground]
+
+- **Playground HSM symmetric panel refactored** (`src/components/Playground/hsm/symmetric/`): Symmetric HSM panel split into six focused panels — `AesPanel.tsx` (AES-CBC/GCM), `AesCmacPanel.tsx`, `AesCtrPanel.tsx`, `HmacPanel.tsx`, `KeyWrapPanel.tsx`, `RngPanel.tsx`. [view:/playground]
+
+- **5G service refactored** (`src/components/PKILearning/modules/FiveG/services/ops/`): Monolithic `FiveGService.ts` (1 600+ lines) decomposed into six domain-specific ops modules — `AuthOps.ts` (5G-AKA), `EphemeralOps.ts` (ephemeral key pairs), `NetworkOps.ts` (network slice management), `ProvisionOps.ts` (SIM provisioning), `SucOps.ts` (SUCI concealment/deconcealment), `UtilsOps.ts` (shared utilities). [view:/learn/5g-security]
+
+- **Report sections extracted** (`src/components/Report/sections/`): `ReportContent.tsx` split into four focused section components — `AlgorithmMigrationSection.tsx`, `AssessmentProfileSection.tsx`, `CategoryBreakdownSection.tsx`, `RiskScoreSection.tsx`. [view:/assess]
+
+- **Shared CSV loader utility** (`src/data/csvUtils.ts`): New `loadLatestCSV()` generic function centralises date-stamped and revision-sorted CSV discovery for all data loaders. Replaces duplicated per-file glob + sort logic across `libraryData.ts`, `quizDataLoader.ts`, and other loaders. [view:/library]
+
+- **Accessibility overhaul — WCAG 2.1 AA** (app-wide): Comprehensive round of accessibility improvements across all major UI areas:
+  - **Playground tab bar**: `role="tablist"` with `aria-label`, each tab gets `role="tab"`, `id`, `aria-selected`, `aria-controls`; full keyboard navigation (ArrowLeft/Right/Home/End) via `onKeyDown` handler. Error state uses `useRef` + `focus()` for screen reader announcement. [view:/playground]
+  - **Tables**: `scope="col"` on all `<th>`, `aria-sort` (ascending/descending/none) on sortable columns, `<caption class="sr-only">` on Compliance, Timeline Gantt, and Report algorithm migration tables. [view:/compliance] [view:/timeline]
+  - **Modals/Dialogs**: `role="dialog"`, `aria-modal="true"`, `aria-labelledby` added to landing page ScoringModal and info modals; focus trap and `prevFocusRef` restore focus to trigger element on close. [view:/]
+  - **Decorative icons**: `aria-hidden="true"` applied throughout Playground tabs, KEM Ops, Sign/Verify, and Key Generation. [view:/playground]
+  - **Clickable `<div>` → `<button>`**: Landing page backup/restore cards converted from `<motion.div>` to `<motion.button type="button">` with `aria-label`. [view:/]
+  - **Listbox keyboard navigation**: Dashboard module filter gets `ArrowDown/Up/Home/End/Escape` keyboard handling via `onKeyDown`. [view:/learn]
+
+- **`<Button>` component rollout**: Raw `<button>` elements replaced across Compliance table (tooltip triggers, filter, clear buttons), MigrateView (back/share buttons), SoftwareTable, About (tab triggers, external link), Library, Leaders, OpenSSL Studio configs, Dashboard, HsmMigrationPlanner, PQCBusinessCase (BreachScenarioSimulator), PQCRiskManagement (RiskHeatmapGenerator, RiskRegisterBuilder), and SecretsManagement (RotationPolicyDesigner). [view:/compliance] [view:/migrate] [view:/about] [view:/library] [view:/leaders] [view:/openssl] [view:/learn] [view:/playground]
+
+- **`<FilterDropdown>` rollout**: Native `<select>` replaced in Playground — hybrid KEM method selector, primary key selector, algorithm selectors in KEM Ops and Sign/Verify tabs, and key type/size selector in Key Generation section. [view:/playground]
+
+- **`<ErrorAlert>` / `<EmptyState>` adoption**: MigrateView error state replaced from inline markup to `<ErrorAlert>`; empty-filter state uses `<EmptyState>`. [view:/migrate]
+
+- **Loading skeleton** added to `AlgorithmsView`: `<Skeleton>` placeholders display during parallel `loadPQCAlgorithmsData()` + `loadAlgorithmsData()` Promise.all; tabs hidden until both loaders complete. [view:/algorithms]
+
+- **Semantic token fixes**: `amber-500` hardcoded colors replaced with `text-status-warning`, `bg-status-warning/10`, `border-status-warning/30` in About view disclaimer and privacy notice panels. [view:/about]
+
+- **Zustand version-gated migration** (`src/store/useVersionStore.ts`): `migrate()` now receives the `version` parameter and applies `lastSeenVersion` coercion only for stores at `version < 1`, preventing unnecessary re-migration on future upgrades.
+
+- **Report table accessibility** (`src/components/Report/ReportContent.tsx`): All `<th>` elements in the algorithm migration table receive `scope="col"`; CTA raw `<button>` replaced with `<Button>` component.
+
+- **Quiz CSV updated** (`src/data/pqcquiz_03072026_r3.csv`): Latest revision with updated coverage — corrects any remaining `true-false` answer key issues and aligns with current module set.
+
+- **E2E specs updated** (multiple): All E2E spec files updated to reflect accessibility changes — tab buttons queried via `role="tab"`, tables use column header selectors, aria-label updates throughout.
+
+### Removed
+
+- **`src/utils/csvParser.ts`** (112 lines): Standalone timeline CSV parser removed — functionality superseded by `src/data/csvUtils.ts` generic loader and direct PapaParse usage in data files.
+
 ## [2.30.0] - 2026-03-07
 
 ### Added

@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { ExportableArtifact } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface RiskEntry {
   id: string
@@ -207,66 +208,50 @@ function TreatmentSelector({
       {/* Residual risk overrides for "mitigate" */}
       {decision?.strategy === 'mitigate' && (
         <div className="grid grid-cols-2 gap-3 p-3 bg-muted/30 rounded-lg border border-border">
-          <label className="block">
+          <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
               Post-mitigation Likelihood
             </span>
-            <select
-              className="w-full px-2 py-1.5 rounded border border-input bg-background text-foreground text-xs"
-              value={residualOverride?.likelihood ?? entry.likelihood}
-              onChange={(e) =>
+            <FilterDropdown
+              noContainer
+              selectedId={String(residualOverride?.likelihood ?? entry.likelihood)}
+              onSelect={(id) =>
                 onResidualChange(entry.id, {
-                  likelihood: Number(e.target.value),
+                  likelihood: Number(id),
                   impact: residualOverride?.impact ?? entry.impact,
                 })
               }
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n} &mdash;{' '}
-                  {n === 1
-                    ? 'Rare'
-                    : n === 2
-                      ? 'Unlikely'
-                      : n === 3
-                        ? 'Possible'
-                        : n === 4
-                          ? 'Likely'
-                          : 'Almost Certain'}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
+              items={[
+                { id: '1', label: '1 \u2014 Rare' },
+                { id: '2', label: '2 \u2014 Unlikely' },
+                { id: '3', label: '3 \u2014 Possible' },
+                { id: '4', label: '4 \u2014 Likely' },
+                { id: '5', label: '5 \u2014 Almost Certain' },
+              ]}
+            />
+          </div>
+          <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
               Post-mitigation Impact
             </span>
-            <select
-              className="w-full px-2 py-1.5 rounded border border-input bg-background text-foreground text-xs"
-              value={residualOverride?.impact ?? entry.impact}
-              onChange={(e) =>
+            <FilterDropdown
+              noContainer
+              selectedId={String(residualOverride?.impact ?? entry.impact)}
+              onSelect={(id) =>
                 onResidualChange(entry.id, {
                   likelihood: residualOverride?.likelihood ?? entry.likelihood,
-                  impact: Number(e.target.value),
+                  impact: Number(id),
                 })
               }
-            >
-              {[1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n} &mdash;{' '}
-                  {n === 1
-                    ? 'Negligible'
-                    : n === 2
-                      ? 'Minor'
-                      : n === 3
-                        ? 'Moderate'
-                        : n === 4
-                          ? 'Major'
-                          : 'Catastrophic'}
-                </option>
-              ))}
-            </select>
-          </label>
+              items={[
+                { id: '1', label: '1 \u2014 Negligible' },
+                { id: '2', label: '2 \u2014 Minor' },
+                { id: '3', label: '3 \u2014 Moderate' },
+                { id: '4', label: '4 \u2014 Major' },
+                { id: '5', label: '5 \u2014 Catastrophic' },
+              ]}
+            />
+          </div>
         </div>
       )}
     </div>

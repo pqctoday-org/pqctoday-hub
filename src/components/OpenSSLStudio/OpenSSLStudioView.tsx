@@ -10,6 +10,8 @@ import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { LogsTab } from './LogsTab'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { SourcesButton } from '../ui/SourcesButton'
+import { Button } from '../ui/button'
 
 import { useOpenSSLStore } from './store'
 
@@ -86,6 +88,7 @@ export const OpenSSLStudioView = () => {
           Interactive OpenSSL v3.6.0 environment running entirely in your browser via WebAssembly.
         </p>
         <div className="hidden md:flex items-center gap-2 mt-2">
+          <SourcesButton viewType="Library" />
           <ShareButton
             title="OpenSSL Studio — Interactive OpenSSL v3.6.0 in Your Browser"
             text="Run real OpenSSL 3.6.0 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
@@ -134,13 +137,15 @@ export const OpenSSLStudioView = () => {
                     </>
                   )}
                 </h3>
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setShowTerminal(!showTerminal)}
-                  className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
                   title={showTerminal ? 'Hide Panel' : 'Show Panel'}
+                  aria-label={showTerminal ? 'Hide Panel' : 'Show Panel'}
                 >
                   {showTerminal ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
-                </button>
+                </Button>
               </div>
               {showTerminal && (
                 <div className="flex-1 overflow-hidden">

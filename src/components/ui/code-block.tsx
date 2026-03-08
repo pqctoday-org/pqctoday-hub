@@ -8,11 +8,11 @@ interface CodeBlockProps extends React.HTMLAttributes<HTMLPreElement> {
 }
 
 const CodeBlock = React.forwardRef<HTMLPreElement, CodeBlockProps>(
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   ({ className, code, language, ...props }, ref) => {
     return (
       <pre
         ref={ref}
+        aria-label={language ? `${language} code block` : 'Code block'}
         className={cn(
           'mb-4 mt-6 max-h-[650px] overflow-x-auto rounded-lg border bg-muted py-4',
           className

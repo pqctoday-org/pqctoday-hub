@@ -381,6 +381,7 @@ export function buildAssessmentProfile(
     credentialLifetimeUnknown: !!input.credentialLifetimeUnknown,
     infrastructure: input.infrastructure,
     infrastructureUnknown: !!input.infrastructureUnknown,
+    infrastructureSubCategories: input.infrastructureSubCategories,
     cryptoAgility: input.cryptoAgility,
     vendorDependency: input.vendorDependency,
     vendorUnknown: !!input.vendorUnknown,

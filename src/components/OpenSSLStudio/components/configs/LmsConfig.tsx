@@ -3,6 +3,7 @@
 import React, { useEffect } from 'react'
 import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 // --- ASN.1 / PEM Helpers ---
 
@@ -427,42 +428,28 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           {/* Custom Parameters */}
           <div className="grid grid-cols-2 gap-2">
             <div>
-              <label
-                htmlFor="lms-height-select"
-                className="text-xs text-muted-foreground block mb-1"
-              >
+              <span className="text-xs text-muted-foreground block mb-1">
                 LMS Algorithm (Height)
-              </label>
-              <select
-                value={lmsType}
-                onChange={(e) => setLmsType(Number(e.target.value))}
-                className="w-full bg-background border border-input rounded text-xs px-2 py-1"
-              >
-                {LMS_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+              </span>
+              <FilterDropdown
+                selectedId={String(lmsType)}
+                onSelect={(id) => setLmsType(Number(id))}
+                items={LMS_TYPES.map((t) => ({ id: String(t.value), label: t.name }))}
+                defaultLabel="Select LMS Type"
+                noContainer
+              />
             </div>
             <div>
-              <label
-                htmlFor="lms-width-select"
-                className="text-xs text-muted-foreground block mb-1"
-              >
+              <span className="text-xs text-muted-foreground block mb-1">
                 LM-OTS Algorithm (Width)
-              </label>
-              <select
-                value={lmotsType}
-                onChange={(e) => setLmotsType(Number(e.target.value))}
-                className="w-full bg-background border border-input rounded text-xs px-2 py-1"
-              >
-                {LMOTS_TYPES.map((t) => (
-                  <option key={t.value} value={t.value}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
+              </span>
+              <FilterDropdown
+                selectedId={String(lmotsType)}
+                onSelect={(id) => setLmotsType(Number(id))}
+                items={LMOTS_TYPES.map((t) => ({ id: String(t.value), label: t.name }))}
+                defaultLabel="Select LMOTS Type"
+                noContainer
+              />
             </div>
           </div>
 
@@ -538,24 +525,19 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
           {/* Private Key Selection */}
           <div className="space-y-3">
-            <label htmlFor="lms-priv-select" className="text-xs text-muted-foreground block">
-              Signing Key (Private Key)
-            </label>
-            <select
-              id="lms-priv-select"
-              value={lmsKeyFile}
-              onChange={(e) => setLmsKeyFile(e.target.value)}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="">Select a private key...</option>
-              {files
+            <span className="text-xs text-muted-foreground block">Signing Key (Private Key)</span>
+            <FilterDropdown
+              selectedId={lmsKeyFile}
+              onSelect={(id) => setLmsKeyFile(id)}
+              items={files
                 .filter((f: { name: string }) => f.name.endsWith('.key'))
-                .map((f: { name: string; size: number }) => (
-                  <option key={f.name} value={f.name}>
-                    {f.name} ({f.size} bytes)
-                  </option>
-                ))}
-            </select>
+                .map((f: { name: string; size: number }) => ({
+                  id: f.name,
+                  label: `${f.name} (${f.size} bytes)`,
+                }))}
+              defaultLabel="Select a private key..."
+              noContainer
+            />
             {!lmsKeyFile && (
               <div className="text-[10px] text-status-warning">
                 Please generate or select a private key.
@@ -713,27 +695,22 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
       {/* Public Key Selection (Only in Verify Mode) */}
       {mode === 'verify' && (
         <div className="space-y-3">
-          <label htmlFor="lms-key-select" className="text-xs text-muted-foreground block">
-            Public Key File (.pem, .pub)
-          </label>
-          <select
-            id="lms-key-select"
-            value={lmsKeyFile}
-            onChange={(e) => setLmsKeyFile(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select a public key file...</option>
-            {files
+          <span className="text-xs text-muted-foreground block">Public Key File (.pem, .pub)</span>
+          <FilterDropdown
+            selectedId={lmsKeyFile}
+            onSelect={(id) => setLmsKeyFile(id)}
+            items={files
               .filter(
                 (f: { name: string; size: number }) =>
                   f.name.endsWith('.pem') || f.name.endsWith('.pub')
               )
-              .map((f: { name: string; size: number }) => (
-                <option key={f.name} value={f.name}>
-                  {f.name} ({f.size} bytes)
-                </option>
-              ))}
-          </select>
+              .map((f: { name: string; size: number }) => ({
+                id: f.name,
+                label: `${f.name} (${f.size} bytes)`,
+              }))}
+            defaultLabel="Select a public key file..."
+            noContainer
+          />
           {files.length === 0 && (
             <div className="text-[10px] text-status-warning">
               No files available. Use "Files" tab to import or create files.
@@ -745,43 +722,34 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
       {/* Signature File Selection (Only in Verify Mode) */}
       {mode === 'verify' && (
         <div className="space-y-3">
-          <label htmlFor="lms-sig-select" className="text-xs text-muted-foreground block">
-            Signature File (.sig, .bin)
-          </label>
-          <select
-            id="lms-sig-select"
-            value={lmsSigFile}
-            onChange={(e) => setLmsSigFile(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select a signature file...</option>
-            {files
+          <span className="text-xs text-muted-foreground block">Signature File (.sig, .bin)</span>
+          <FilterDropdown
+            selectedId={lmsSigFile}
+            onSelect={(id) => setLmsSigFile(id)}
+            items={files
               .filter(
                 (f: { name: string; size: number }) =>
                   f.name.endsWith('.sig') || f.name.endsWith('.bin')
               )
-              .map((f: { name: string; size: number }) => (
-                <option key={f.name} value={f.name}>
-                  {f.name} ({f.size} bytes)
-                </option>
-              ))}
-          </select>
+              .map((f: { name: string; size: number }) => ({
+                id: f.name,
+                label: `${f.name} (${f.size} bytes)`,
+              }))}
+            defaultLabel="Select a signature file..."
+            noContainer
+          />
         </div>
       )}
 
       {/* Data File Selection */}
       <div className="space-y-3">
-        <label htmlFor="lms-data-select" className="text-xs text-muted-foreground block">
+        <label className="text-xs text-muted-foreground block">
           Data File to {mode === 'sign' ? 'Sign' : 'Verify'}
         </label>
-        <select
-          id="lms-data-select"
-          value={lmsDataFile}
-          onChange={(e) => setLmsDataFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select a data file...</option>
-          {files
+        <FilterDropdown
+          selectedId={lmsDataFile}
+          onSelect={(id) => setLmsDataFile(id)}
+          items={files
             .filter((f: { name: string; size: number }) => {
               const n = f.name.toLowerCase()
               // Exclude common crypto artifacts from being selected as "data"
@@ -795,12 +763,13 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
                 !n.endsWith('.p12')
               )
             })
-            .map((f: { name: string; size: number }) => (
-              <option key={f.name} value={f.name}>
-                {f.name} ({f.size} bytes)
-              </option>
-            ))}
-        </select>
+            .map((f: { name: string; size: number }) => ({
+              id: f.name,
+              label: `${f.name} (${f.size} bytes)`,
+            }))}
+          defaultLabel="Select a data file..."
+          noContainer
+        />
       </div>
     </div>
   )

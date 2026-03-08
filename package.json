@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.30.0",
+  "version": "2.31.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -12,7 +12,8 @@
       "eslint --fix",
       "prettier --write"
     ],
-    "**/*.{json,md,css,html}": "prettier --write"
+    "**/*.{json,md,css,html}": "prettier --write",
+    "**/*.csv": "perl -pi -e 's/\\r$//'"
   },
   "scripts": {
     "predev": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/ || true)",
@@ -91,6 +92,7 @@
     "@playwright/test": "^1.57.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/jsdom": "^27.0.0",
     "@types/lodash": "^4.17.23",
     "@types/node": "^25.0.9",

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable security/detect-object-injection */
+import { loadLatestCSV, parseBoolYesNo } from './csvUtils'
+
 export interface AuthoritativeSource {
   sourceName: string
   sourceType: 'Government' | 'Academic' | 'Industry Workgroup'
@@ -25,124 +26,51 @@ export type ViewType =
   | 'Compliance'
   | 'Migrate'
 
-// Helper to parse date and revision from filename (format: ...reference_MMDDYYYY.csv or ...reference_MMDDYYYY_rN.csv)
-function getDateFromFilename(path: string): { date: Date; revision: number } | null {
-  const match = path.match(/pqc_authoritative_sources_reference_(\d{8})(?:_r(\d+))?\.csv/)
-  if (!match) return null
-
-  const dateStr = match[1]
-  const month = parseInt(dateStr.substring(0, 2), 10)
-  const day = parseInt(dateStr.substring(2, 4), 10)
-  const year = parseInt(dateStr.substring(4, 8), 10)
-
-  return { date: new Date(year, month - 1, day), revision: match[2] ? parseInt(match[2], 10) : 0 }
+interface RawSourceRow {
+  Source_Name: string
+  Source_Type: string
+  Region: string
+  Primary_URL: string
+  Description: string
+  Leaders_CSV: string
+  Library_CSV: string
+  Algorithm_CSV: string
+  Threats_CSV: string
+  Timeline_CSV: string
+  Compliance_CSV: string
+  Migrate_CSV: string
+  Last_Verified_Date: string
 }
 
-// Helper to find the latest authoritative sources file
-function getLatestSourcesFile(): {
-  content: string
-  filename: string
-  date: Date
-} | null {
-  const modules = import.meta.glob('./pqc_authoritative_sources_reference_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
+const modules = import.meta.glob('./pqc_authoritative_sources_reference_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+const { data, metadata } = loadLatestCSV<RawSourceRow, AuthoritativeSource>(
+  modules,
+  /pqc_authoritative_sources_reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  (row) => ({
+    sourceName: row.Source_Name,
+    sourceType: row.Source_Type as AuthoritativeSource['sourceType'],
+    region: row.Region as AuthoritativeSource['region'],
+    primaryUrl: row.Primary_URL,
+    description: row.Description,
+    leadersCsv: parseBoolYesNo(row.Leaders_CSV),
+    libraryCsv: parseBoolYesNo(row.Library_CSV),
+    algorithmCsv: parseBoolYesNo(row.Algorithm_CSV),
+    threatsCsv: parseBoolYesNo(row.Threats_CSV),
+    timelineCsv: parseBoolYesNo(row.Timeline_CSV),
+    complianceCsv: parseBoolYesNo(row.Compliance_CSV),
+    migrateCsv: parseBoolYesNo(row.Migrate_CSV),
+    lastVerifiedDate: row.Last_Verified_Date,
   })
+)
 
-  const files = Object.keys(modules)
-    .map((path) => {
-      const parsed = getDateFromFilename(path)
-      if (!parsed) return null
+export const authoritativeSources: AuthoritativeSource[] = data
 
-      return {
-        path,
-        content: modules[path] as string,
-        date: parsed.date,
-        revision: parsed.revision,
-      }
-    })
-    .filter((f): f is { path: string; content: string; date: Date; revision: number } => f !== null)
-
-  if (files.length === 0) return null
-
-  // Sort by date descending, then revision descending (newest first)
-  files.sort((a, b) => {
-    const timeDiff = b.date.getTime() - a.date.getTime()
-    if (timeDiff !== 0) return timeDiff
-    return b.revision - a.revision
-  })
-
-  console.log(`Loading latest authoritative sources from: ${files[0].path}`)
-
-  return {
-    content: files[0].content,
-    filename: files[0].path.split('/').pop() || files[0].path,
-    date: files[0].date,
-  }
-}
-
-// Parse CSV content
-function parseSourcesCSV(content: string): AuthoritativeSource[] {
-  const lines = content.trim().split('\n')
-  const sources: AuthoritativeSource[] = []
-
-  // Helper to parse CSV line respecting quotes
-  const parseLine = (line: string): string[] => {
-    const result = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i]
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  }
-
-  // Skip header row
-  for (let i = 1; i < lines.length; i++) {
-    const values = parseLine(lines[i])
-
-    if (values.length >= 13) {
-      sources.push({
-        sourceName: values[0],
-        sourceType: values[1] as AuthoritativeSource['sourceType'],
-        region: values[2] as AuthoritativeSource['region'],
-        primaryUrl: values[3],
-        description: values[4],
-        leadersCsv: values[5] === 'Yes',
-        libraryCsv: values[6] === 'Yes',
-        algorithmCsv: values[7] === 'Yes',
-        threatsCsv: values[8] === 'Yes',
-        timelineCsv: values[9] === 'Yes',
-        complianceCsv: values[10] === 'Yes',
-        migrateCsv: values[11] === 'Yes',
-        lastVerifiedDate: values[12],
-      })
-    }
-  }
-
-  return sources
-}
-
-// Load and parse the latest sources file
-const latestFile = getLatestSourcesFile()
-export const authoritativeSources: AuthoritativeSource[] = latestFile
-  ? parseSourcesCSV(latestFile.content)
-  : []
-
-export const sourcesMetadata = latestFile
-  ? { filename: latestFile.filename, lastUpdate: latestFile.date }
-  : null
+export const sourcesMetadata = metadata
 
 // Filter sources by view type
 export function getSourcesForView(viewType: ViewType): AuthoritativeSource[] {

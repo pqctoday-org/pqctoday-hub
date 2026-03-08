@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { AlertTriangle, Info, TrendingUp, Shield } from 'lucide-react'
 import { BreachCostModel } from '@/components/PKILearning/common/executive'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 const AVAILABLE_INDUSTRIES = [
   'Finance & Banking',
@@ -69,24 +70,13 @@ export const BreachScenarioSimulator: React.FC = () => {
       {/* Industry selector */}
       <div className="glass-panel p-4">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-          <label
-            htmlFor="breach-industry-select"
-            className="text-sm font-medium text-foreground shrink-0"
-          >
-            Industry Sector:
-          </label>
-          <select
-            id="breach-industry-select"
-            value={selectedIndustry}
-            onChange={(e) => setSelectedIndustry(e.target.value)}
-            className="w-full sm:w-auto px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          >
-            {AVAILABLE_INDUSTRIES.map((ind) => (
-              <option key={ind} value={ind}>
-                {ind}
-              </option>
-            ))}
-          </select>
+          <span className="text-sm font-medium text-foreground shrink-0">Industry Sector:</span>
+          <FilterDropdown
+            noContainer
+            selectedId={selectedIndustry}
+            onSelect={(id) => setSelectedIndustry(id)}
+            items={AVAILABLE_INDUSTRIES.map((ind) => ({ id: ind, label: ind }))}
+          />
           {data.isAssessmentComplete && data.industry && (
             <span className="flex items-center gap-1 text-xs text-muted-foreground">
               <Info size={12} />

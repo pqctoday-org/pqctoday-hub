@@ -324,7 +324,12 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
       />
 
       {/* Navigation */}
-      <div className="flex justify-between items-center mt-6">
+      {!canProceed() && !isGenerating && (
+        <p role="alert" className="text-xs text-status-warning text-center mt-4">
+          Please complete the required selection to continue.
+        </p>
+      )}
+      <div className="flex justify-between items-center mt-2">
         <Button
           variant="outline"
           onClick={() => setStep(Math.max(0, currentStep - 1))}

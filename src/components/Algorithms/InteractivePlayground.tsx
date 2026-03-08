@@ -13,6 +13,7 @@ import * as MLKEM from '../../wasm/liboqs_kem'
 import * as MLDSA from '../../wasm/liboqs_dsa'
 import clsx from 'clsx'
 import { bytesToHex } from '../../utils/dataInputUtils'
+import { FilterDropdown } from '../common/FilterDropdown'
 
 interface Key {
   id: string
@@ -275,32 +276,28 @@ export const InteractivePlayground = () => {
               )}
             </div>
             <div className="space-y-3">
-              <label
-                htmlFor="key-size-select"
-                className="text-xs text-muted-foreground uppercase tracking-wider block"
-              >
+              <span className="text-xs text-muted-foreground uppercase tracking-wider block">
                 Key Size / Security Level
-              </label>
-              <select
-                id="key-size-select"
-                value={keySize}
-                onChange={(e) => setKeySize(e.target.value)}
-                className="w-full bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
-              >
-                {algorithm === 'ML-KEM' ? (
-                  <>
-                    <option value="512">ML-KEM-512 (NIST Level 1)</option>
-                    <option value="768">ML-KEM-768 (NIST Level 3)</option>
-                    <option value="1024">ML-KEM-1024 (NIST Level 5)</option>
-                  </>
-                ) : (
-                  <>
-                    <option value="44">ML-DSA-44 (NIST Level 2)</option>
-                    <option value="65">ML-DSA-65 (NIST Level 3)</option>
-                    <option value="87">ML-DSA-87 (NIST Level 5)</option>
-                  </>
-                )}
-              </select>
+              </span>
+              <FilterDropdown
+                selectedId={keySize}
+                onSelect={(id) => setKeySize(id)}
+                items={
+                  algorithm === 'ML-KEM'
+                    ? [
+                        { id: '512', label: 'ML-KEM-512 (NIST Level 1)' },
+                        { id: '768', label: 'ML-KEM-768 (NIST Level 3)' },
+                        { id: '1024', label: 'ML-KEM-1024 (NIST Level 5)' },
+                      ]
+                    : [
+                        { id: '44', label: 'ML-DSA-44 (NIST Level 2)' },
+                        { id: '65', label: 'ML-DSA-65 (NIST Level 3)' },
+                        { id: '87', label: 'ML-DSA-87 (NIST Level 5)' },
+                      ]
+                }
+                defaultLabel="Select Size..."
+                noContainer
+              />
             </div>
             <button
               onClick={generateKeys}
@@ -342,19 +339,15 @@ export const InteractivePlayground = () => {
                   <div className="text-xs text-primary/80 mb-2 font-bold uppercase tracking-wider">
                     Encapsulate (Public Key)
                   </div>
-                  <select
-                    value={selectedEncKeyId}
-                    onChange={(e) => setSelectedEncKeyId(e.target.value)}
-                    aria-label="Select Public Key for Encapsulation"
-                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-primary appearance-none"
-                  >
-                    <option value="">Select Public Key...</option>
-                    {publicKeys.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="mb-3">
+                    <FilterDropdown
+                      selectedId={selectedEncKeyId || 'All'}
+                      onSelect={(id) => setSelectedEncKeyId(id === 'All' ? '' : id)}
+                      items={publicKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Public Key..."
+                      noContainer
+                    />
+                  </div>
                   <button
                     onClick={() => runOperation('encapsulate')}
                     disabled={!selectedEncKeyId || loading}
@@ -369,19 +362,15 @@ export const InteractivePlayground = () => {
                   <div className="text-xs text-secondary/80 mb-2 font-bold uppercase tracking-wider">
                     Decapsulate (Private Key)
                   </div>
-                  <select
-                    value={selectedDecKeyId}
-                    onChange={(e) => setSelectedDecKeyId(e.target.value)}
-                    aria-label="Select Private Key for Decapsulation"
-                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-secondary appearance-none"
-                  >
-                    <option value="">Select Private Key...</option>
-                    {privateKeys.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="mb-3">
+                    <FilterDropdown
+                      selectedId={selectedDecKeyId || 'All'}
+                      onSelect={(id) => setSelectedDecKeyId(id === 'All' ? '' : id)}
+                      items={privateKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Private Key..."
+                      noContainer
+                    />
+                  </div>
                   <button
                     onClick={() => runOperation('decapsulate')}
                     disabled={!selectedDecKeyId || loading}
@@ -454,19 +443,15 @@ export const InteractivePlayground = () => {
                   <div className="text-xs text-accent/80 mb-2 font-bold uppercase tracking-wider">
                     Sign (Private Key)
                   </div>
-                  <select
-                    value={selectedSignKeyId}
-                    onChange={(e) => setSelectedSignKeyId(e.target.value)}
-                    aria-label="Select Private Key for Signing"
-                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
-                  >
-                    <option value="">Select Private Key...</option>
-                    {privateKeys.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="mb-3">
+                    <FilterDropdown
+                      selectedId={selectedSignKeyId || 'All'}
+                      onSelect={(id) => setSelectedSignKeyId(id === 'All' ? '' : id)}
+                      items={privateKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Private Key..."
+                      noContainer
+                    />
+                  </div>
                   <button
                     onClick={() => runOperation('sign')}
                     disabled={!selectedSignKeyId || loading}
@@ -478,22 +463,18 @@ export const InteractivePlayground = () => {
 
                 {/* Verify */}
                 <div className="p-4 bg-muted/30 rounded-lg border border-border">
-                  <div className="text-xs text-amber-200 mb-2 font-bold uppercase tracking-wider">
+                  <div className="text-xs text-status-warning mb-2 font-bold uppercase tracking-wider">
                     Verify (Public Key)
                   </div>
-                  <select
-                    value={selectedVerifyKeyId}
-                    onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
-                    aria-label="Select Public Key for Verification"
-                    className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent appearance-none"
-                  >
-                    <option value="">Select Public Key...</option>
-                    {publicKeys.map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="mb-3">
+                    <FilterDropdown
+                      selectedId={selectedVerifyKeyId || 'All'}
+                      onSelect={(id) => setSelectedVerifyKeyId(id === 'All' ? '' : id)}
+                      items={publicKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Public Key..."
+                      noContainer
+                    />
+                  </div>
                   <label
                     htmlFor="signature-verify-input"
                     className="text-xs text-muted-foreground block mb-2"
@@ -511,7 +492,7 @@ export const InteractivePlayground = () => {
                   <button
                     onClick={() => runOperation('verify')}
                     disabled={!selectedVerifyKeyId || loading}
-                    className="w-full py-2.5 rounded-lg bg-amber-500/20 text-amber-300 border border-amber-500/30 hover:bg-amber-500/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
+                    className="w-full py-2.5 rounded-lg bg-status-warning/20 text-status-warning border border-status-warning/30 hover:bg-status-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <FileSignature size={16} /> Verify Signature
                   </button>

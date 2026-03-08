@@ -86,24 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">48 learning modules</strong> &mdash; 7 new
-                    modules: Secrets Management, Network Security, Database Encryption, IAM, Secure
-                    Boot, OS Crypto, and Platform Engineering
+                    <strong className="text-foreground">Accessibility overhaul</strong> &mdash; WCAG
+                    2.1 AA: keyboard navigation, ARIA roles, focus management, and screen reader
+                    support across all major UI areas
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Business Center</strong> &mdash; GRC command
-                    center with live risk scores, compliance tracking, vendor posture, and
-                    prioritized next steps
+                    <strong className="text-foreground">SoftHSM WASM refactor</strong> &mdash; Phase
+                    6 singleton loader, modular SoftHSM tab (ML-KEM, ML-DSA, SLH-DSA demos), and
+                    split HSM symmetric panels
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">770 quiz questions</strong> &mdash; expanded
-                    coverage across all 48 modules with new categories for every added topic
+                    <strong className="text-foreground">Code quality</strong> &mdash; 5G service and
+                    Report sections decomposed; shared CSV loader; Button and FilterDropdown
+                    components rolled out across all views
                   </span>
                 </li>
               </ul>

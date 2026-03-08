@@ -276,6 +276,10 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
         </div>
         <div className="overflow-x-auto">
           <table id="library-table" className="w-full text-left border-collapse">
+            <caption className="sr-only">
+              Library of standards and specifications organized hierarchically by reference ID.
+              Sortable columns: Title, Status, Last Update.
+            </caption>
             <thead>
               <tr className="border-b border-border bg-muted/20">
                 {headers.map((header) => (

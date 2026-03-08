@@ -8,6 +8,7 @@ import {
   type AuthoritativeSource,
 } from '../../data/authoritativeSourcesData'
 import { CategoryBadge } from './category-badge'
+import { Button } from './button'
 
 interface SourcesModalProps {
   isOpen: boolean
@@ -76,23 +77,24 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="glass-panel p-6 max-w-4xl w-full max-h-[85dvh] overflow-y-auto"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="sources-modal-title"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-2xl font-bold">Authoritative Sources</h2>
+                  <h2 id="sources-modal-title" className="text-2xl font-bold">
+                    Authoritative Sources
+                  </h2>
                   <p className="text-sm text-muted-foreground mt-1">
                     Sources referenced for {viewType} data
                   </p>
                 </div>
-                <button
-                  onClick={onClose}
-                  className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Close modal"
-                >
+                <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close modal">
                   <X size={20} />
-                </button>
+                </Button>
               </div>
 
               {/* Sources grouped by type */}
@@ -118,8 +120,10 @@ export const SourcesModal = ({ isOpen, onClose, viewType }: SourcesModalProps) =
                                   className="text-foreground hover:text-primary font-medium inline-flex items-center gap-2 group"
                                 >
                                   {source.sourceName}
+                                  <span className="sr-only"> (opens in new tab)</span>
                                   <ExternalLink
                                     size={14}
+                                    aria-hidden="true"
                                     className="opacity-0 group-hover:opacity-100 transition-opacity"
                                   />
                                 </a>

@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, Brain, BookOpen, Zap, Clock } from 'lucide-react'
 import { BELT_RANKS } from '@/hooks/useAwarenessScore'
+import { Button } from '@/components/ui/button'
 
 interface ScoringModalProps {
   isOpen: boolean
@@ -82,13 +83,9 @@ export function ScoringModal({ isOpen, onClose, totalSteps, totalQuestions }: Sc
                 <h2 id="scoring-modal-title" className="text-lg font-bold text-foreground">
                   How Your Score Works
                 </h2>
-                <button
-                  onClick={onClose}
-                  className="p-2 rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors"
-                  aria-label="Close"
-                >
+                <Button variant="ghost" size="icon" onClick={onClose} aria-label="Close">
                   <X size={18} />
-                </button>
+                </Button>
               </div>
 
               {/* Dimensions */}

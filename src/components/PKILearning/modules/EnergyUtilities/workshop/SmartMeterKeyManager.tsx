@@ -17,6 +17,7 @@ import type {
   HSMCapacity,
   SecuritySuite,
 } from '../data/energyConstants'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface SmartMeterKeyManagerProps {
   config: SmartMeterFleetConfig
@@ -64,7 +65,6 @@ function formatHours(hours: number): string {
   return `${hours.toFixed(1)}h`
 }
 
-const selectClasses = 'rounded-lg bg-muted border border-border text-foreground px-3 py-2 text-sm'
 const rangeClasses = 'w-full accent-primary'
 
 export const SmartMeterKeyManager: React.FC<SmartMeterKeyManagerProps> = ({
@@ -155,103 +155,84 @@ export const SmartMeterKeyManager: React.FC<SmartMeterKeyManagerProps> = ({
           </label>
 
           {/* Communication Technology */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               Communication Technology
             </span>
-            <select
-              value={config.commTechnology}
-              onChange={(e) => update({ commTechnology: e.target.value as CommTechnology })}
-              className={selectClasses}
-            >
-              {COMM_TECHNOLOGIES.map((tech) => (
-                <option key={tech.id} value={tech.id}>
-                  {tech.name} ({tech.bandwidthKbps} kbps)
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              noContainer
+              selectedId={config.commTechnology}
+              onSelect={(id) => update({ commTechnology: id as CommTechnology })}
+              items={COMM_TECHNOLOGIES.map((tech) => ({
+                id: tech.id,
+                label: `${tech.name} (${tech.bandwidthKbps} kbps)`,
+              }))}
+            />
             {selectedComm && (
               <p className="text-[10px] text-muted-foreground mt-1">{selectedComm.notes}</p>
             )}
-          </label>
+          </div>
 
           {/* DLMS/COSEM Security Suite */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               DLMS/COSEM Security Suite
             </span>
-            <select
-              value={config.securitySuite}
-              onChange={(e) => update({ securitySuite: e.target.value as SecuritySuite })}
-              className={selectClasses}
-            >
-              {SUITE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={config.securitySuite}
+              onSelect={(id) => update({ securitySuite: id as SecuritySuite })}
+              items={SUITE_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
 
           {/* Key Rotation Frequency */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               Key Rotation Frequency
             </span>
-            <select
-              value={config.rotationFrequency}
-              onChange={(e) => update({ rotationFrequency: e.target.value as RotationFrequency })}
-              className={selectClasses}
-            >
-              {ROTATION_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={config.rotationFrequency}
+              onSelect={(id) => update({ rotationFrequency: id as RotationFrequency })}
+              items={ROTATION_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
 
           {/* PQC Algorithm */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               PQC KEM Algorithm
             </span>
-            <select
-              value={config.pqcAlgorithm}
-              onChange={(e) => update({ pqcAlgorithm: e.target.value as PQCAlgorithm })}
-              className={selectClasses}
-            >
-              {PQC_KEM_SPECS.map((kem) => (
-                <option key={kem.id} value={kem.id}>
-                  {kem.name} (NIST Level {kem.nistLevel})
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              noContainer
+              selectedId={config.pqcAlgorithm}
+              onSelect={(id) => update({ pqcAlgorithm: id as PQCAlgorithm })}
+              items={PQC_KEM_SPECS.map((kem) => ({
+                id: kem.id,
+                label: `${kem.name} (NIST Level ${kem.nistLevel})`,
+              }))}
+            />
             {selectedKem && (
               <p className="text-[10px] text-muted-foreground mt-1">
                 Ciphertext: {selectedKem.ciphertextBytes}B | Public key:{' '}
                 {selectedKem.publicKeyBytes}B
               </p>
             )}
-          </label>
+          </div>
 
           {/* HSM Capacity */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               HSM Capacity
             </span>
-            <select
-              value={config.hsmCapacity}
-              onChange={(e) => update({ hsmCapacity: e.target.value as HSMCapacity })}
-              className={selectClasses}
-            >
-              {HSM_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={config.hsmCapacity}
+              onSelect={(id) => update({ hsmCapacity: id as HSMCapacity })}
+              items={HSM_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
         </div>
       </div>
 

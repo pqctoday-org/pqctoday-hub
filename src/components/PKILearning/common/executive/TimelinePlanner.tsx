@@ -3,6 +3,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { Plus, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from './ExportableArtifact'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export interface Milestone {
   id: string
@@ -298,44 +299,22 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
             />
           </div>
           <div className="w-24">
-            <label
-              htmlFor="timeline-year"
-              className="block text-xs font-medium text-muted-foreground mb-1"
-            >
-              Year
-            </label>
-            <select
-              id="timeline-year"
-              className="w-full px-2 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
-              value={newYear}
-              onChange={(e) => setNewYear(parseInt(e.target.value))}
-            >
-              {years.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+            <span className="block text-xs font-medium text-muted-foreground mb-1">Year</span>
+            <FilterDropdown
+              noContainer
+              selectedId={String(newYear)}
+              onSelect={(id) => setNewYear(parseInt(id))}
+              items={years.map((y) => ({ id: String(y), label: String(y) }))}
+            />
           </div>
           <div className="w-32">
-            <label
-              htmlFor="timeline-phase"
-              className="block text-xs font-medium text-muted-foreground mb-1"
-            >
-              Phase
-            </label>
-            <select
-              id="timeline-phase"
-              className="w-full px-2 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            >
-              {categories.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <span className="block text-xs font-medium text-muted-foreground mb-1">Phase</span>
+            <FilterDropdown
+              noContainer
+              selectedId={newCategory}
+              onSelect={(id) => setNewCategory(id)}
+              items={categories.map((c) => ({ id: c, label: c }))}
+            />
           </div>
           <Button variant="gradient" size="sm" onClick={addMilestone} disabled={!newLabel.trim()}>
             <Plus size={14} />

@@ -27,6 +27,8 @@ export default defineConfig({
     baseURL: 'http://localhost:5175',
     trace: 'on-first-retry',
     ignoreHTTPSErrors: true,
+    // Suppress the WhatsNew toast for all E2E tests by pre-seeding a high version
+    storageState: 'e2e/fixtures/suppress-whats-new.json',
   },
   // Default timeout for expect assertions - increased for WASM operations
   expect: {

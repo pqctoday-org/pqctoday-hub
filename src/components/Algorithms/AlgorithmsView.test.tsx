@@ -16,6 +16,17 @@ vi.mock('./AlgorithmDetailedComparison', () => ({
   ),
 }))
 
+// Mock async data loaders so the component resolves immediately in tests
+vi.mock('../../data/pqcAlgorithmsData', () => ({
+  loadPQCAlgorithmsData: vi.fn().mockResolvedValue([]),
+  loadedFileMetadata: { filename: 'pqc_complete_algorithm_reference.csv', date: null },
+}))
+
+vi.mock('../../data/algorithmsData', () => ({
+  loadAlgorithmsData: vi.fn().mockResolvedValue([]),
+  loadedTransitionMetadata: { filename: 'algorithms_transitions.csv', date: null },
+}))
+
 describe('AlgorithmsView', () => {
   beforeEach(() => {
     vi.clearAllMocks()
@@ -54,44 +65,44 @@ describe('AlgorithmsView', () => {
       expect(screen.getByText(/Data Sources:/i)).toBeInTheDocument()
     })
 
-    it('renders view tabs', () => {
+    it('renders view tabs', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText('Transition Guide')).toBeInTheDocument()
-      expect(screen.getByText('Detailed Comparison')).toBeInTheDocument()
+      expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
+      expect(await screen.findByText('Detailed Comparison')).toBeInTheDocument()
     })
 
-    it('shows transition view by default', () => {
+    it('shows transition view by default', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByTestId('algorithm-comparison')).toBeInTheDocument()
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
 
-    it('switches to detailed view when tab is clicked', () => {
+    it('switches to detailed view when tab is clicked', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      const detailedTab = screen.getByText('Detailed Comparison')
+      const detailedTab = await screen.findByText('Detailed Comparison')
       fireEvent.click(detailedTab)
-      expect(screen.getByTestId('algorithm-detailed')).toBeInTheDocument()
+      expect(await screen.findByTestId('algorithm-detailed')).toBeInTheDocument()
     })
 
-    it('highlights active tab', () => {
+    it('highlights active tab', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
       // eslint-disable-next-line testing-library/no-node-access
-      const transitionTab = screen.getByText('Transition Guide').closest('button')
+      const transitionTab = (await screen.findByText('Transition Guide')).closest('button')
       expect(transitionTab).toHaveAttribute('data-state', 'active')
     })
   })
@@ -111,27 +122,27 @@ describe('AlgorithmsView', () => {
       expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
     })
 
-    it('renders tabs on mobile', () => {
+    it('renders tabs on mobile', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText('Transition Guide')).toBeInTheDocument()
+      expect(await screen.findByText('Transition Guide')).toBeInTheDocument()
     })
 
-    it('shows default view on mobile', () => {
+    it('shows default view on mobile', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByTestId('algorithm-comparison')).toBeInTheDocument()
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
   })
 
   describe('Tab switching', () => {
-    it('switches between views correctly', () => {
+    it('switches between views correctly', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
@@ -139,15 +150,15 @@ describe('AlgorithmsView', () => {
       )
 
       // Start with transition view
-      expect(screen.getByTestId('algorithm-comparison')).toBeInTheDocument()
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
 
       // Switch to detailed
-      fireEvent.click(screen.getByText('Detailed Comparison'))
-      expect(screen.getByTestId('algorithm-detailed')).toBeInTheDocument()
+      fireEvent.click(await screen.findByText('Detailed Comparison'))
+      expect(await screen.findByTestId('algorithm-detailed')).toBeInTheDocument()
 
       // Switch back to transition
-      fireEvent.click(screen.getByText('Transition Guide'))
-      expect(screen.getByTestId('algorithm-comparison')).toBeInTheDocument()
+      fireEvent.click(await screen.findByText('Transition Guide'))
+      expect(await screen.findByTestId('algorithm-comparison')).toBeInTheDocument()
     })
   })
 

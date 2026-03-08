@@ -159,13 +159,17 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
               <p className="text-xs font-mono uppercase tracking-widest text-primary">
                 Learning Journey
               </p>
-              <button
-                onClick={() => setShowScoring(true)}
-                className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
-                aria-label="How scoring works"
-              >
-                <Info size={13} />
-              </button>
+              <span className="-m-2 p-2 block">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowScoring(true)}
+                  aria-label="How scoring works"
+                  className="h-5 w-5"
+                >
+                  <Info size={13} />
+                </Button>
+              </span>
             </div>
             <h2 id="scorecard-heading" className="text-lg font-bold mb-1.5">
               Earn your first belt
@@ -223,13 +227,17 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
               <span className="text-sm font-semibold text-foreground" id="scorecard-heading">
                 {belt.name}
               </span>
-              <button
-                onClick={() => setShowScoring(true)}
-                className="p-0.5 rounded text-muted-foreground hover:text-primary transition-colors"
-                aria-label="How scoring works"
-              >
-                <Info size={14} />
-              </button>
+              <span className="-m-2 p-2 block">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowScoring(true)}
+                  aria-label="How scoring works"
+                  className="h-5 w-5"
+                >
+                  <Info size={14} />
+                </Button>
+              </span>
               <StreakBadge streak={streak.current} />
             </div>
             <p className="text-xs text-muted-foreground mt-0.5 italic">{belt.tagline}</p>

@@ -5,14 +5,21 @@ test.describe('TLS 1.3 Basics Module', () => {
   test.setTimeout(90000)
 
   test.beforeEach(async ({ page }) => {
+    // Suppress "What's New" toast (main.tsx always sets pqc-tour-completed=true on load)
+    await page.addInitScript(() => {
+      const _orig = Storage.prototype.setItem
+      Storage.prototype.setItem = function (key: string, value: string) {
+        if (key === 'pqc-tour-completed') return
+        _orig.call(this, key, value)
+      }
+    })
     // Debug: Log browser console to terminal
     page.on('console', (msg) => console.log(`[Browser] ${msg.type()}: ${msg.text()}`))
     // Navigate directly to the module
     await page.goto('/learn/tls-basics')
-    // Wait for page to load
+    // TLSBasicsModule is a single-page component (no Learn/Workshop tabs) —
+    // the simulation UI renders directly. Wait for the page heading and the action button.
     await expect(page.getByRole('heading', { name: 'TLS 1.3 Basics' })).toBeVisible()
-    // Module defaults to the "Learn" (intro) tab; navigate to Workshop where the simulation UI lives
-    await page.getByRole('button', { name: 'Workshop', exact: true }).first().click()
     await expect(page.getByRole('button', { name: 'Start Full Interaction' })).toBeVisible()
   })
 
@@ -94,8 +101,8 @@ test.describe('TLS 1.3 Basics Module', () => {
     await expect(serverChaCha).toBeVisible()
     // await expect(serverChaCha).toHaveClass(/bg-primary\/10/)
 
-    // Give React time to propagate state to parent
-    await page.waitForTimeout(500)
+    // Ensure button is enabled before running — confirms React state propagated
+    await expect(page.getByRole('button', { name: 'Start Full Interaction' })).toBeEnabled()
 
     // Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -109,8 +116,14 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.getByLabel('Require Client Certificate (mTLS)').check()
 
     // 2. Set Client Identity to "None"
-    const clientCertSelect = page.locator('select').first() // Client Panel is first
-    await clientCertSelect.selectOption('none')
+    // Cert selection uses FilterDropdown (not native <select>). Scroll trigger first to
+    // avoid window.scroll closing the portal; use evaluate() to click option without scroll.
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'None', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
 
     // 3. Run Handshake -> Should Fail
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -121,9 +134,13 @@ test.describe('TLS 1.3 Basics Module', () => {
     // 1. Enable mTLS on Server
     await page.getByLabel('Require Client Certificate (mTLS)').check()
 
-    // 2. Set Client Identity to "Default" (RSA)
-    const clientCertSelect = page.locator('select').first()
-    await clientCertSelect.selectOption('default')
+    // 2. Set Client Identity to "Default" (RSA 2048)
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'Default (RSA 2048)', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
 
     // 3. Run Handshake -> Should Succeed
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -150,43 +167,50 @@ test.describe('TLS 1.3 Basics Module', () => {
   })
 
   test('performs successful handshake with ML-DSA identity', async ({ page }) => {
+    // Cert selection uses FilterDropdown (not native <select>).
+    // nth(0) = Client Identity, nth(1) = Server Identity (only 2 cert dropdowns on page).
+    // Scroll trigger first; use evaluate() to click option without triggering scroll-close.
     // 1. Select ML-DSA for Client
-    // Client is the first select (index 0 usually, or by label if accessible).
-    // The panel structure uses selects. Let's rely on label if possible or order.
-    // Client Panel is left (first). Server Panel is right (last or second).
-    const selects = page.locator('select')
-    await selects.first().selectOption('mldsa44') // Value for "Default (ML-DSA-44)"
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
 
     // 2. Select ML-DSA for Server
-    await selects.nth(1).selectOption('mldsa44')
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
 
     // 4. Verify Success
     await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 30000 })
-
-    // 5. Debug Banner Content
-    const banner = page.locator('.flex.gap-2.text-sm').first()
-    console.log('Banner Content:', await banner.textContent())
-
-    // Check if Sig is present distinct from specific value first
-    // await expect(page.getByText(/Sig:/)).toBeVisible()
-    if ((await page.getByText(/Sig:/).count()) > 0) {
-      console.log('Sig label found')
-    } else {
-      console.log('Sig label NOT found')
-    }
   })
 
   test('performs successful ML-DSA mTLS handshake', async ({ page }) => {
     // 1. Enable mTLS on Server
     await page.getByLabel('Require Client Certificate (mTLS)').check()
 
-    // 2. Select ML-DSA for Client and Server
-    const selects = page.locator('select')
-    await selects.first().selectOption('mldsa44') // Client
-    await selects.nth(1).selectOption('mldsa44') // Server
+    // 2. Select ML-DSA for Client and Server via FilterDropdown
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
+
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
+      .evaluate((el: HTMLElement) => el.click())
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -195,9 +219,6 @@ test.describe('TLS 1.3 Basics Module', () => {
     await expect(page.getByText('Negotiation Successful')).toBeVisible({ timeout: 30000 })
 
     // 5. Verify ML-DSA CA in Comparison Table
-    // We expect both Client CA and Server CA columns to show ML-DSA-44
-    // Just verifying that "ML-DSA-44" appears in the table cells is sufficient proof
-    // that the CA type logic and cert chaining is working.
     await expect(page.getByRole('cell', { name: 'ML-DSA-44' }).first()).toBeVisible()
   })
   test('verifies certificate inspection', async ({ page }) => {
@@ -227,8 +248,8 @@ test.describe('TLS 1.3 Basics Module', () => {
     const chachaBtn = page.getByRole('button', { name: 'TLS_CHACHA20_POLY1305_SHA256' }).first()
     await chachaBtn.click()
 
-    // 2. Switch to Config File tab
-    await page.getByRole('button', { name: 'Config File' }).first().click()
+    // 2. Switch to Config File tab (uses role="tab" not role="button")
+    await page.getByRole('tab', { name: 'Config File' }).first().click()
 
     // 3. Verify the raw config does NOT contain the disabled cipher
     const textarea = page.locator('#client-raw-config')
@@ -240,8 +261,8 @@ test.describe('TLS 1.3 Basics Module', () => {
   })
 
   test('syncs raw config edits back to UI', async ({ page }) => {
-    // 1. Switch to Config File tab
-    await page.getByRole('button', { name: 'Config File' }).first().click()
+    // 1. Switch to Config File tab (uses role="tab" not role="button")
+    await page.getByRole('tab', { name: 'Config File' }).first().click()
 
     // 2. Edit the raw config to remove P-384 from Groups
     const textarea = page.locator('#client-raw-config')
@@ -250,7 +271,7 @@ test.describe('TLS 1.3 Basics Module', () => {
     await textarea.fill(newValue)
 
     // 3. Switch back to UI mode
-    await page.getByRole('button', { name: 'UI' }).first().click()
+    await page.getByRole('tab', { name: 'UI' }).first().click()
 
     // 4. Verify P-384 is now unchecked (has bg-muted class, not active)
     const p384Btn = page.getByRole('button', { name: 'P-384', exact: true }).first()
@@ -265,8 +286,8 @@ test.describe('TLS 1.3 Basics Module', () => {
     // Grant clipboard permissions
     await context.grantPermissions(['clipboard-read', 'clipboard-write'])
 
-    // 1. Switch to Config File tab
-    await page.getByRole('button', { name: 'Config File' }).first().click()
+    // 1. Switch to Config File tab (uses role="tab" not role="button")
+    await page.getByRole('tab', { name: 'Config File' }).first().click()
 
     // 2. Click Copy button
     await page.getByRole('button', { name: 'Copy' }).first().click()

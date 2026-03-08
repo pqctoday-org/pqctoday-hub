@@ -15,6 +15,7 @@ import {
   hsm_verify,
   type MLDSASignOptions,
 } from '../../../wasm/softhsm'
+import { FilterDropdown } from '../../common/FilterDropdown'
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -62,7 +63,9 @@ const EditableDataDisplay: React.FC<{
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
         <button
+          type="button"
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
+          aria-label={`Switch to ${viewMode === 'hex' ? 'ASCII' : 'HEX'} view`}
           className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'ASCII'}
@@ -266,35 +269,32 @@ const HsmSignPanel: React.FC = () => {
         {/* Options */}
         <div className="flex flex-wrap gap-3 text-xs">
           <div className="flex items-center gap-1.5">
-            <label htmlFor="hsm-dsa-hedging" className="text-muted-foreground">
-              Hedging:
-            </label>
-            <select
-              id="hsm-dsa-hedging"
-              value={hedging}
-              onChange={(e) => setHedging(e.target.value as typeof hedging)}
-              className="bg-muted/40 border border-border rounded px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-primary"
-            >
-              <option value="preferred">Preferred</option>
-              <option value="required">Required</option>
-              <option value="deterministic">Deterministic</option>
-            </select>
+            <span className="text-muted-foreground">Hedging:</span>
+            <FilterDropdown
+              selectedId={hedging}
+              onSelect={(id) => setHedging(id as typeof hedging)}
+              items={[
+                { id: 'preferred', label: 'Preferred' },
+                { id: 'required', label: 'Required' },
+                { id: 'deterministic', label: 'Deterministic' },
+              ]}
+              defaultLabel="Preferred"
+              noContainer
+            />
           </div>
           <div className="flex items-center gap-1.5">
-            <label htmlFor="hsm-dsa-prehash" className="text-muted-foreground">
-              Pre-hash:
-            </label>
-            <select
-              id="hsm-dsa-prehash"
-              value={preHash}
-              onChange={(e) => setPreHash(e.target.value as typeof preHash)}
-              className="bg-muted/40 border border-border rounded px-1.5 py-0.5 text-xs text-foreground outline-none focus:border-primary"
-            >
-              <option value="">None (pure ML-DSA)</option>
-              <option value="sha256">SHA-256</option>
-              <option value="sha512">SHA-512</option>
-              <option value="sha3-256">SHA3-256</option>
-            </select>
+            <span className="text-muted-foreground">Pre-hash:</span>
+            <FilterDropdown
+              selectedId={preHash || 'All'}
+              onSelect={(id) => setPreHash(id === 'All' ? '' : (id as typeof preHash))}
+              items={[
+                { id: 'sha256', label: 'SHA-256' },
+                { id: 'sha512', label: 'SHA-512' },
+                { id: 'sha3-256', label: 'SHA3-256' },
+              ]}
+              defaultLabel="None (pure ML-DSA)"
+              noContainer
+            />
           </div>
           <div className="flex items-center gap-1.5">
             <label htmlFor="hsm-dsa-context" className="text-muted-foreground">
@@ -346,6 +346,9 @@ const HsmSignPanel: React.FC = () => {
           )}
           {verifyResult !== null && (
             <div
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
               className={`flex items-center gap-2 rounded px-2 py-1 ${verifyResult ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
             >
               {verifyResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
@@ -426,18 +429,15 @@ const SignVerifyTabSoftware: React.FC = () => {
               <FileSignature size={16} /> Sign Message
             </div>
 
-            <select
-              value={selectedSignKeyId}
-              onChange={(e) => setSelectedSignKeyId(e.target.value)}
-              className="w-full mb-4 bg-background border border-input rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-success"
-            >
-              <option value="">Select Private Key...</option>
-              {signPrivateKeys.map((k) => (
-                <option key={k.id} value={k.id}>
-                  {k.name}
-                </option>
-              ))}
-            </select>
+            <div className="mb-4">
+              <FilterDropdown
+                selectedId={selectedSignKeyId || 'All'}
+                onSelect={(id) => setSelectedSignKeyId(id === 'All' ? '' : id)}
+                items={signPrivateKeys.map((k) => ({ id: k.id, label: k.name }))}
+                defaultLabel="Select Private Key..."
+                noContainer
+              />
+            </div>
 
             {selectedSignKeyId &&
               (() => {
@@ -514,6 +514,7 @@ const SignVerifyTabSoftware: React.FC = () => {
 
             <div className="mt-auto pt-4">
               <button
+                type="button"
                 onClick={() => {
                   runOperation('sign')
                   logEvent('Playground', 'Sign Message')
@@ -532,18 +533,15 @@ const SignVerifyTabSoftware: React.FC = () => {
               <FileSignature size={16} /> Verify Signature
             </div>
 
-            <select
-              value={selectedVerifyKeyId}
-              onChange={(e) => setSelectedVerifyKeyId(e.target.value)}
-              className="w-full mb-4 bg-background border border-input rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-warning"
-            >
-              <option value="">Select Public Key...</option>
-              {signPublicKeys.map((k) => (
-                <option key={k.id} value={k.id}>
-                  {k.name}
-                </option>
-              ))}
-            </select>
+            <div className="mb-4">
+              <FilterDropdown
+                selectedId={selectedVerifyKeyId || 'All'}
+                onSelect={(id) => setSelectedVerifyKeyId(id === 'All' ? '' : id)}
+                items={signPublicKeys.map((k) => ({ id: k.id, label: k.name }))}
+                defaultLabel="Select Public Key..."
+                noContainer
+              />
+            </div>
 
             {selectedVerifyKeyId &&
               (() => {
@@ -643,6 +641,7 @@ const SignVerifyTabSoftware: React.FC = () => {
 
             <div className="mt-auto pt-4">
               <button
+                type="button"
                 onClick={() => {
                   runOperation('verify')
                   logEvent('Playground', 'Verify Signature')

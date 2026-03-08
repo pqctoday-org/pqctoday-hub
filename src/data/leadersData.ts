@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+import { loadLatestCSV, splitSemicolon } from './csvUtils'
+
 export interface Leader {
   id: string
   name: string
@@ -15,121 +18,53 @@ export interface Leader {
   status?: 'New' | 'Updated'
 }
 
-import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
-
-// Helper to find the latest two leaders CSV files
-function getLatestLeadersFiles(): {
-  current: { content: string; filename: string; date: Date } | null
-  previous: { content: string; filename: string; date: Date } | null
-} {
-  // Use import.meta.glob to find all leaders CSV files
-  const modules = import.meta.glob('./leaders_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
-
-  // Extract filenames and parse dates
-  const files = Object.keys(modules)
-    .map((path) => {
-      // Path format: ./leaders_MMDDYYYY.csv or ./leaders_MMDDYYYY_rN.csv
-      // eslint-disable-next-line security/detect-unsafe-regex
-      const match = path.match(/leaders_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
-      if (match) {
-        const [, month, day, year, rev] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        const revision = rev ? parseInt(rev) : 0
-        // eslint-disable-next-line security/detect-object-injection
-        return { path, date, revision, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
-
-  if (files.length === 0) {
-    console.warn('No dated leaders CSV files found.')
-    return { current: null, previous: null }
-  }
-
-  // Sort by date descending, then by revision descending (latest revision wins on same date)
-  files.sort((a, b) => {
-    const dateDiff = b.date.getTime() - a.date.getTime()
-    return dateDiff !== 0 ? dateDiff : b.revision - a.revision
-  })
-
-  console.log(`Loading latest leaders data from: ${files[0].path}`)
-  if (files.length > 1) {
-    console.log(`Comparison data loaded from: ${files[1].path}`)
-  }
-
-  return {
-    current: {
-      content: files[0].content,
-      filename: files[0].path.split('/').pop() || files[0].path,
-      date: files[0].date,
-    },
-    previous:
-      files.length > 1
-        ? {
-            content: files[1].content,
-            filename: files[1].path.split('/').pop() || files[1].path,
-            date: files[1].date,
-          }
-        : null,
-  }
+interface RawLeaderRow {
+  Name: string
+  Country: string
+  Role: string
+  Organization: string
+  Type: string
+  Category: string
+  Contribution: string
+  ImageUrl: string
+  WebsiteUrl: string
+  LinkedinUrl: string
+  KeyResourceUrl: string
 }
 
-function parseLeadersCSV(csvContent: string): Omit<Leader, 'id' | 'status'>[] {
-  const lines = csvContent.trim().split('\n')
-  // New Headers: Name,Country,Role,Organization,Type,Category,Contribution,ImageUrl,WebsiteUrl,LinkedinUrl,KeyResourceUrl
+const modules = import.meta.glob('./leaders_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
 
-  const parseLine = (line: string): string[] => {
-    const result = []
-    let current = ''
-    let inQuotes = false
+type LeaderCore = Omit<Leader, 'id' | 'status'>
 
-    for (let i = 0; i < line.length; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      const char = line[i]
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  }
-
-  return lines.slice(1).map((line) => {
-    const values = parseLine(line)
-
-    return {
-      name: values[0],
-      country: values[1],
-      title: values[2], // Role
-      organizations: values[3].split(';').map((o) => o.trim()),
-      type: values[4] as 'Public' | 'Private' | 'Academic',
-      category: values[5],
-      bio: values[6].replace(/^"|"$/g, ''), // Contribution -> Bio
-      imageUrl: values[7],
-      websiteUrl: values[8],
-      linkedinUrl: values[9],
-      keyResourceUrl: values[10],
-    }
-  })
-}
-
-const { current, previous } = getLatestLeadersFiles()
-
-const currentItems = current ? parseLeadersCSV(current.content) : []
-const previousItems = previous ? parseLeadersCSV(previous.content) : []
+const {
+  data: currentItems,
+  previousData: previousItems,
+  metadata,
+} = loadLatestCSV<RawLeaderRow, LeaderCore>(
+  modules,
+  /leaders_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  (row) => ({
+    name: row.Name,
+    country: row.Country,
+    title: row.Role,
+    organizations: splitSemicolon(row.Organization),
+    type: row.Type as Leader['type'],
+    category: row.Category,
+    bio: row.Contribution,
+    imageUrl: row.ImageUrl,
+    websiteUrl: row.WebsiteUrl,
+    linkedinUrl: row.LinkedinUrl,
+    keyResourceUrl: row.KeyResourceUrl,
+  }),
+  true // withPrevious for status badges
+)
 
 // Compute status map if previous data exists
-const statusMap = previous
+const statusMap = previousItems
   ? compareDatasets(currentItems, previousItems, 'name')
   : new Map<string, ItemStatus>()
 
@@ -140,6 +75,4 @@ export const leadersData: Leader[] = currentItems.map((item, index) => ({
   status: statusMap.get(item.name),
 }))
 
-export const leadersMetadata = current
-  ? { filename: current.filename, lastUpdate: current.date }
-  : null
+export const leadersMetadata = metadata

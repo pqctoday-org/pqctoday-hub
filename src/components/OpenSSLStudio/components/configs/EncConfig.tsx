@@ -4,6 +4,7 @@ import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { InlineTooltip } from '../../../PKILearning/modules/DigitalAssets/components/InfoTooltip'
 import { CRYPTO_TOOLTIPS } from '../../../PKILearning/modules/DigitalAssets/utils/cryptoConstants'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface EncConfigProps {
   encAction: 'encrypt' | 'decrypt'
@@ -93,41 +94,32 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-cipher-select" className="text-xs text-muted-foreground block">
-          Cipher
-        </label>
-        <select
-          id="enc-cipher-select"
-          value={encCipher}
-          onChange={(e) => setEncCipher(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="aes-128-cbc">AES-128-CBC</option>
-          <option value="aes-192-cbc">AES-192-CBC</option>
-          <option value="aes-256-cbc">AES-256-CBC</option>
-          <option value="aes-128-ctr">AES-128-CTR</option>
-          <option value="aes-192-ctr">AES-192-CTR</option>
-          <option value="aes-256-ctr">AES-256-CTR</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">Cipher</span>
+        <FilterDropdown
+          selectedId={encCipher}
+          onSelect={(id) => setEncCipher(id)}
+          items={[
+            { id: 'aes-128-cbc', label: 'AES-128-CBC' },
+            { id: 'aes-192-cbc', label: 'AES-192-CBC' },
+            { id: 'aes-256-cbc', label: 'AES-256-CBC' },
+            { id: 'aes-128-ctr', label: 'AES-128-CTR' },
+            { id: 'aes-192-ctr', label: 'AES-192-CTR' },
+            { id: 'aes-256-ctr', label: 'AES-256-CTR' },
+          ]}
+          defaultLabel="Select Cipher"
+          noContainer
+        />
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="enc-infile-select" className="text-xs text-muted-foreground block">
-          Input File
-        </label>
-        <select
-          id="enc-infile-select"
-          value={encInFile}
-          onChange={(e) => setEncInFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select a file...</option>
-          {files.map((f) => (
-            <option key={f.name} value={f.name}>
-              {f.name}
-            </option>
-          ))}
-        </select>
+        <span className="text-xs text-muted-foreground block">Input File</span>
+        <FilterDropdown
+          selectedId={encInFile}
+          onSelect={(id) => setEncInFile(id)}
+          items={files.map((f) => ({ id: f.name, label: f.name }))}
+          defaultLabel="Select a file..."
+          noContainer
+        />
       </div>
 
       <div className="space-y-3">

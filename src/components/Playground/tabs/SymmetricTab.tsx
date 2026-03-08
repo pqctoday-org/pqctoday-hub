@@ -6,6 +6,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { HsmSymmetricPanel } from '../hsm/HsmSymmetricPanel'
+import { FilterDropdown } from '../../common/FilterDropdown'
 
 export const SymmetricTab: React.FC = () => {
   const { loading, hsmMode } = useSettingsContext()
@@ -25,20 +26,15 @@ export const SymmetricTab: React.FC = () => {
         <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <KeyIcon size={14} /> Select Symmetric Key
         </h5>
-        <select
-          value={selectedSymKeyId}
-          onChange={(e) => setSelectedSymKeyId(e.target.value)}
-          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
-        >
-          <option value="">Select AES Key...</option>
-          {keyStore
+        <FilterDropdown
+          selectedId={selectedSymKeyId || 'All'}
+          onSelect={(id) => setSelectedSymKeyId(id === 'All' ? '' : id)}
+          items={keyStore
             .filter((k) => k.type === 'symmetric')
-            .map((k) => (
-              <option key={k.id} value={k.id}>
-                {k.name}
-              </option>
-            ))}
-        </select>
+            .map((k) => ({ id: k.id, label: k.name }))}
+          defaultLabel="Select AES Key..."
+          noContainer
+        />
 
         {selectedSymKeyId &&
           (() => {

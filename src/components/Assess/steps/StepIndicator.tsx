@@ -30,7 +30,14 @@ function StepIndicator({
         <span className="text-sm font-bold text-primary">
           Step {current + 1} of {total}
         </span>
-        <div className="flex-1 max-w-48 h-2 rounded-full bg-border overflow-hidden">
+        <div
+          className="flex-1 max-w-48 h-2 rounded-full bg-border overflow-hidden"
+          role="progressbar"
+          aria-label="Assessment progress"
+          aria-valuenow={current + 1}
+          aria-valuemin={1}
+          aria-valuemax={total}
+        >
           <div
             className="h-full bg-primary rounded-full transition-all duration-300"
             style={{ width: `${((current + 1) / total) * 100}%` }}

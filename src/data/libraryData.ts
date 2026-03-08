@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+import { loadLatestCSV, splitSemicolon } from './csvUtils'
+
 export interface LibraryItem {
   referenceId: string
   documentTitle: string
@@ -25,9 +29,6 @@ export interface LibraryItem {
   categories: string[] // Multi-category support
   status?: 'New' | 'Updated'
 }
-
-import { MOCK_LIBRARY_CSV_CONTENT } from './mockTimelineData'
-import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 
 // C-001: Single source of truth for categories
 export const LIBRARY_CATEGORIES = [
@@ -107,201 +108,102 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
 }
 
 // R-002: Export error state for UI consumption
-export let libraryError: string | null = null
+export const libraryError: string | null = null
 
-// Helper to find the latest library CSV files (Current and Previous)
-function getLatestLibraryFiles(): {
-  current: { content: string; filename: string; date: Date } | null
-  previous: { content: string; filename: string; date: Date } | null
-} {
-  // Check for mock data environment variable
-  if (import.meta.env.VITE_MOCK_DATA === 'true') {
-    console.log('Using mock library data for testing')
-    return {
-      current: {
-        content: MOCK_LIBRARY_CSV_CONTENT,
-        filename: 'MOCK_LIBRARY_DATA',
-        date: new Date(),
-      },
-      previous: null,
-    }
-  }
-
-  // Use import.meta.glob to find all library CSV files
-  const modules = import.meta.glob('./library_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
-
-  // Extract filenames and parse dates
-  const files = Object.keys(modules)
-    .map((path) => {
-      // Path format: ./library_MMDDYYYY.csv or ./library_MMDDYYYY_suffix.csv
-      // eslint-disable-next-line security/detect-unsafe-regex
-      const match = path.match(/library_(\d{2})(\d{2})(\d{4})(?:_[^.]*)?\.csv$/)
-      if (match) {
-        const [, month, day, year] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        // eslint-disable-next-line security/detect-object-injection
-        return { path, date, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
-
-  if (files.length === 0) {
-    console.warn('No dated library CSV files found.')
-    libraryError = 'No library data files found. Please check data directory.'
-    return { current: null, previous: null }
-  }
-
-  // Sort by date descending (latest first); on same date, sort by path descending so _r1 > _r0 > base.
-  // Use codepoint comparison (not localeCompare) because localeCompare on macOS treats '_' < '.'
-  // which would incorrectly rank _r1 files below the base file.
-  files.sort((a, b) => {
-    const dateDiff = b.date.getTime() - a.date.getTime()
-    if (dateDiff !== 0) return dateDiff
-    return b.path < a.path ? -1 : b.path > a.path ? 1 : 0
-  })
-
-  console.log(`Loading latest library data from: ${files[0].path}`)
-  if (files.length > 1) {
-    console.log(`Comparison data loaded from: ${files[1].path}`)
-  }
-
-  return {
-    current: {
-      content: files[0].content,
-      filename: files[0].path.split('/').pop() || files[0].path,
-      date: files[0].date,
-    },
-    previous:
-      files.length > 1
-        ? {
-            content: files[1].content,
-            filename: files[1].path.split('/').pop() || files[1].path,
-            date: files[1].date,
-          }
-        : null,
-  }
+interface RawLibraryRow {
+  reference_id: string
+  document_title: string
+  download_url: string
+  initial_publication_date: string
+  last_update_date: string
+  document_status: string
+  short_description: string
+  document_type: string
+  applicable_industries: string
+  authors_or_organization: string
+  dependencies: string
+  region_scope: string
+  AlgorithmFamily: string
+  SecurityLevels: string
+  ProtocolOrToolImpact: string
+  ToolchainSupport: string
+  MigrationUrgency: string
+  change_status: string
+  manual_category: string
+  downloadable: string
+  local_file: string
+  module_ids: string
+  misc_info: string
 }
 
-const { current, previous } = getLatestLibraryFiles()
+function transformLibraryRow(row: RawLibraryRow): LibraryItem {
+  const moduleIds =
+    row.module_ids && row.module_ids.trim() ? splitSemicolon(row.module_ids) : undefined
 
-// Parse current and previous data
-const currentItems = current ? parseLibraryCSV(current.content) : []
-const previousItems = previous ? parseLibraryCSV(previous.content) : []
-
-// Compute status map if previous data exists
-const statusMap = previous
-  ? compareDatasets(currentItems, previousItems, 'referenceId')
-  : new Map<string, ItemStatus>()
-
-// Inject status into current items and export
-export const libraryData: LibraryItem[] = currentItems.map((item) => ({
-  ...item,
-  status: statusMap.get(item.referenceId),
-}))
-
-export const libraryMetadata = current
-  ? { filename: current.filename, lastUpdate: current.date }
-  : null
-
-function parseLibraryCSV(csvContent: string): LibraryItem[] {
-  const lines = csvContent.trim().split('\n')
-
-  const parseLine = (line: string): string[] => {
-    const result = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      // eslint-disable-next-line security/detect-object-injection
-      const char = line[i]
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
+  const item: LibraryItem = {
+    referenceId: row.reference_id,
+    documentTitle: row.document_title,
+    downloadUrl: row.download_url,
+    initialPublicationDate: row.initial_publication_date,
+    lastUpdateDate: row.last_update_date,
+    documentStatus: row.document_status,
+    shortDescription: row.short_description,
+    documentType: row.document_type,
+    applicableIndustries: splitSemicolon(row.applicable_industries),
+    authorsOrOrganization: row.authors_or_organization,
+    dependencies: row.dependencies,
+    regionScope: row.region_scope,
+    algorithmFamily: row.AlgorithmFamily,
+    securityLevels: row.SecurityLevels,
+    protocolOrToolImpact: row.ProtocolOrToolImpact,
+    toolchainSupport: row.ToolchainSupport,
+    migrationUrgency: row.MigrationUrgency,
+    localFile: row.local_file || undefined,
+    manualCategory: row.manual_category || undefined,
+    moduleIds,
+    miscInfo: row.misc_info?.trim() || undefined,
+    children: [],
+    categories: [], // Will be populated below
   }
 
-  // Parse all items first
-  const items: LibraryItem[] = lines.slice(1).map((line) => {
-    const values = parseLine(line)
+  // Multi-category Logic: Combine manual_category WITH auto-detected categories
+  const autoCategories = detectCategories(item.documentTitle, item.documentType)
 
-    const item: LibraryItem = {
-      referenceId: values[0],
-      documentTitle: values[1],
-      downloadUrl: values[2],
-      initialPublicationDate: values[3],
-      lastUpdateDate: values[4],
-      documentStatus: values[5],
-      shortDescription: values[6].replace(/^"|"$/g, ''),
-      documentType: values[7],
-      applicableIndustries: values[8].split(';').map((s) => s.trim()),
-      authorsOrOrganization: values[9],
-      dependencies: values[10],
-      regionScope: values[11],
-      algorithmFamily: values[12],
-      securityLevels: values[13].replace(/^"|"$/g, ''),
-      protocolOrToolImpact: values[14].replace(/^"|"$/g, ''),
-      toolchainSupport: values[15],
-      migrationUrgency: values[16],
-      localFile: values[20] || undefined,
-      manualCategory: values[18] || undefined,
-      moduleIds:
-        values[21] && values[21].trim()
-          ? values[21]
-              .trim()
-              .split(';')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : undefined,
-      miscInfo: values[22]?.trim() || undefined,
-      children: [],
-      categories: [], // Will be populated below
-    }
-
-    // Multi-category Logic: Combine manual_category WITH auto-detected categories
-    const autoCategories = detectCategories(item.documentTitle, item.documentType)
-
-    if (item.manualCategory) {
-      // Manual category from CSV - map through aliases
-      const mappedCategory = CATEGORY_ALIASES[item.manualCategory] ?? item.manualCategory
-      // Check if it's a valid category
-      if (LIBRARY_CATEGORIES.includes(mappedCategory as LibraryCategory)) {
-        // Start with manual category, then add any auto-detected ones that aren't already included
-        const allCategories = new Set<string>([mappedCategory])
-        autoCategories.forEach((cat) => allCategories.add(cat))
-        // Remove 'General Recommendations' if we have other specific categories
-        if (allCategories.size > 1 && allCategories.has('General Recommendations')) {
-          allCategories.delete('General Recommendations')
-        }
-        item.categories = Array.from(allCategories)
-      } else {
-        item.categories = autoCategories
+  if (item.manualCategory) {
+    const mappedCategory = CATEGORY_ALIASES[item.manualCategory] ?? item.manualCategory
+    if (LIBRARY_CATEGORIES.includes(mappedCategory as LibraryCategory)) {
+      const allCategories = new Set<string>([mappedCategory])
+      autoCategories.forEach((cat) => allCategories.add(cat))
+      if (allCategories.size > 1 && allCategories.has('General Recommendations')) {
+        allCategories.delete('General Recommendations')
       }
+      item.categories = Array.from(allCategories)
     } else {
-      // Auto-detect multiple categories based on title and type
       item.categories = autoCategories
     }
+  } else {
+    item.categories = autoCategories
+  }
 
-    return item
-  })
+  return item
+}
 
-  // Build Tree Structure
+function parseLibraryCSV(csvContent: string): LibraryItem[] {
+  const modules = { __mock__: csvContent }
+  const { data: items } = loadLatestCSV<RawLibraryRow, LibraryItem>(
+    modules,
+    /__mock__$/,
+    transformLibraryRow
+  )
+
+  return buildTree(items)
+}
+
+function buildTree(items: LibraryItem[]): LibraryItem[] {
   const itemMap = new Map<string, LibraryItem>()
   items.forEach((item) => itemMap.set(item.referenceId, item))
 
   items.forEach((item) => {
-    // Parse dependencies
     const deps = item.dependencies
       .split(';')
       .map((d) => d.trim())
@@ -311,7 +213,6 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
       if (depId === item.referenceId) return // skip self-reference
       const parent = itemMap.get(depId)
       if (parent) {
-        // Prevent mutual cycle: don't add as child if parent is already item's child
         if (item.children?.some((c) => c.referenceId === depId)) return
         parent.children = parent.children || []
         if (!parent.children.includes(item)) {
@@ -321,9 +222,50 @@ function parseLibraryCSV(csvContent: string): LibraryItem[] {
     })
   })
 
-  // Return ALL items, not just roots, so we can group them by category
   return items
 }
+
+// ── Load and parse ──────────────────────────────────────────────────────
+
+let currentItems: LibraryItem[] = []
+let previousItems: LibraryItem[] = []
+let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
+
+if (import.meta.env.VITE_MOCK_DATA === 'true') {
+  currentItems = parseLibraryCSV(MOCK_LIBRARY_CSV_CONTENT)
+  parsedMetadata = { filename: 'MOCK_LIBRARY_DATA', lastUpdate: new Date() }
+} else {
+  const modules = import.meta.glob('./library_*.csv', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  })
+
+  const result = loadLatestCSV<RawLibraryRow, LibraryItem>(
+    modules,
+    /library_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    transformLibraryRow,
+    true // withPrevious for status badges
+  )
+
+  currentItems = buildTree(result.data)
+  previousItems = result.previousData ? buildTree(result.previousData) : []
+  parsedMetadata = result.metadata
+}
+
+// Compute status map if previous data exists
+const statusMap =
+  previousItems.length > 0
+    ? compareDatasets(currentItems, previousItems, 'referenceId')
+    : new Map<string, ItemStatus>()
+
+// Inject status into current items and export
+export const libraryData: LibraryItem[] = currentItems.map((item) => ({
+  ...item,
+  status: statusMap.get(item.referenceId),
+}))
+
+export const libraryMetadata = parsedMetadata
 
 // Returns library items tagged for a given learn module ID
 export function getLibraryItemsForModule(moduleId: string): LibraryItem[] {

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface GenPkeyConfigProps {
   keyAlgo: string
@@ -33,102 +34,90 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="algo-select" className="text-xs text-muted-foreground block">
-          Algorithm
-        </label>
-        <select
-          id="algo-select"
-          value={keyAlgo}
-          onChange={(e) => setKeyAlgo(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <optgroup label="Classic">
-            <option value="rsa">RSA</option>
-            <option value="ec">Elliptic Curve (EC)</option>
-            <option value="ed25519">Ed25519</option>
-            <option value="ed448">Ed448</option>
-            <option value="x25519">X25519</option>
-            <option value="x448">X448</option>
-          </optgroup>
-          <optgroup label="Post-Quantum (ML-KEM)">
-            <option value="mlkem512">ML-KEM-512</option>
-            <option value="mlkem768">ML-KEM-768</option>
-            <option value="mlkem1024">ML-KEM-1024</option>
-          </optgroup>
-          <optgroup label="Post-Quantum (ML-DSA)">
-            <option value="mldsa44">ML-DSA-44</option>
-            <option value="mldsa65">ML-DSA-65</option>
-            <option value="mldsa87">ML-DSA-87</option>
-          </optgroup>
-          <optgroup label="Post-Quantum (SLH-DSA)">
-            <option value="slhdsa128s">SLH-DSA-SHA2-128s</option>
-            <option value="slhdsa128f">SLH-DSA-SHA2-128f</option>
-            <option value="slhdsa192s">SLH-DSA-SHA2-192s</option>
-            <option value="slhdsa192f">SLH-DSA-SHA2-192f</option>
-            <option value="slhdsa256s">SLH-DSA-SHA2-256s</option>
-            <option value="slhdsa256f">SLH-DSA-SHA2-256f</option>
-            <option value="slhdsashake128s">SLH-DSA-SHAKE-128s</option>
-            <option value="slhdsashake128f">SLH-DSA-SHAKE-128f</option>
-            <option value="slhdsashake192s">SLH-DSA-SHAKE-192s</option>
-            <option value="slhdsashake192f">SLH-DSA-SHAKE-192f</option>
-            <option value="slhdsashake256s">SLH-DSA-SHAKE-256s</option>
-            <option value="slhdsashake256f">SLH-DSA-SHAKE-256f</option>
-          </optgroup>
-        </select>
+        <span className="text-xs text-muted-foreground block">Algorithm</span>
+        <FilterDropdown
+          selectedId={keyAlgo}
+          onSelect={(id) => setKeyAlgo(id)}
+          items={[
+            { id: 'rsa', label: 'RSA' },
+            { id: 'ec', label: 'Elliptic Curve (EC)' },
+            { id: 'ed25519', label: 'Ed25519' },
+            { id: 'ed448', label: 'Ed448' },
+            { id: 'x25519', label: 'X25519' },
+            { id: 'x448', label: 'X448' },
+            { id: 'mlkem512', label: 'ML-KEM-512' },
+            { id: 'mlkem768', label: 'ML-KEM-768' },
+            { id: 'mlkem1024', label: 'ML-KEM-1024' },
+            { id: 'mldsa44', label: 'ML-DSA-44' },
+            { id: 'mldsa65', label: 'ML-DSA-65' },
+            { id: 'mldsa87', label: 'ML-DSA-87' },
+            { id: 'slhdsa128s', label: 'SLH-DSA-SHA2-128s' },
+            { id: 'slhdsa128f', label: 'SLH-DSA-SHA2-128f' },
+            { id: 'slhdsa192s', label: 'SLH-DSA-SHA2-192s' },
+            { id: 'slhdsa192f', label: 'SLH-DSA-SHA2-192f' },
+            { id: 'slhdsa256s', label: 'SLH-DSA-SHA2-256s' },
+            { id: 'slhdsa256f', label: 'SLH-DSA-SHA2-256f' },
+            { id: 'slhdsashake128s', label: 'SLH-DSA-SHAKE-128s' },
+            { id: 'slhdsashake128f', label: 'SLH-DSA-SHAKE-128f' },
+            { id: 'slhdsashake192s', label: 'SLH-DSA-SHAKE-192s' },
+            { id: 'slhdsashake192f', label: 'SLH-DSA-SHAKE-192f' },
+            { id: 'slhdsashake256s', label: 'SLH-DSA-SHAKE-256s' },
+            { id: 'slhdsashake256f', label: 'SLH-DSA-SHAKE-256f' },
+          ]}
+          defaultLabel="Select Algorithm"
+          noContainer
+        />
       </div>
 
       {keyAlgo === 'rsa' && (
         <div className="space-y-3">
-          <label htmlFor="bits-select" className="text-xs text-muted-foreground block">
-            Key Size (Bits)
-          </label>
-          <select
-            id="bits-select"
-            value={keyBits}
-            onChange={(e) => setKeyBits(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="2048">2048</option>
-            <option value="3072">3072</option>
-            <option value="4096">4096</option>
-          </select>
+          <span className="text-xs text-muted-foreground block">Key Size (Bits)</span>
+          <FilterDropdown
+            selectedId={keyBits}
+            onSelect={(id) => setKeyBits(id)}
+            items={[
+              { id: '2048', label: '2048' },
+              { id: '3072', label: '3072' },
+              { id: '4096', label: '4096' },
+            ]}
+            defaultLabel="Select Key Size"
+            noContainer
+          />
         </div>
       )}
 
       {keyAlgo === 'ec' && (
         <div className="space-y-3">
-          <label htmlFor="curve-select" className="text-xs text-muted-foreground block">
-            Curve
-          </label>
-          <select
-            id="curve-select"
-            value={curve}
-            onChange={(e) => setCurve(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="P-256">P-256</option>
-            <option value="P-384">P-384</option>
-            <option value="P-521">P-521</option>
-            <option value="secp256k1">secp256k1</option>
-          </select>
+          <span className="text-xs text-muted-foreground block">Curve</span>
+          <FilterDropdown
+            selectedId={curve}
+            onSelect={(id) => setCurve(id)}
+            items={[
+              { id: 'P-256', label: 'P-256' },
+              { id: 'P-384', label: 'P-384' },
+              { id: 'P-521', label: 'P-521' },
+              { id: 'secp256k1', label: 'secp256k1' },
+            ]}
+            defaultLabel="Select Curve"
+            noContainer
+          />
         </div>
       )}
 
       <div className="space-y-3">
-        <label htmlFor="cipher-select" className="text-xs text-muted-foreground block">
-          Encryption (Optional)
-        </label>
-        <select
-          id="cipher-select"
-          value={cipher}
-          onChange={(e) => setCipher(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="none">None (Unencrypted)</option>
-          <option value="aes-128-cbc">AES-128-CBC</option>
-          <option value="aes-256-cbc">AES-256-CBC</option>
-          <option value="des3">Triple DES</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">Encryption (Optional)</span>
+        <FilterDropdown
+          selectedId={cipher}
+          onSelect={(id) => setCipher(id)}
+          items={[
+            { id: 'none', label: 'None (Unencrypted)' },
+            { id: 'aes-128-cbc', label: 'AES-128-CBC' },
+            { id: 'aes-256-cbc', label: 'AES-256-CBC' },
+            { id: 'des3', label: 'Triple DES' },
+          ]}
+          defaultLabel="Select Encryption"
+          noContainer
+        />
       </div>
 
       {cipher !== 'none' && (

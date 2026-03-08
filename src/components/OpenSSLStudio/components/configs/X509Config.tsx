@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface X509ConfigProps {
   selectedCsrKeyFile: string
@@ -40,24 +41,16 @@ export const X509Config: React.FC<X509ConfigProps> = ({
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="x509-key-select" className="text-xs text-muted-foreground block">
-          Private Key
-        </label>
-        <select
-          id="x509-key-select"
-          value={selectedCsrKeyFile}
-          onChange={(e) => setSelectedCsrKeyFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select Private Key...</option>
-          {files
+        <span className="text-xs text-muted-foreground block">Private Key</span>
+        <FilterDropdown
+          selectedId={selectedCsrKeyFile}
+          onSelect={(id) => setSelectedCsrKeyFile(id)}
+          items={files
             .filter((f) => f.name.endsWith('.key') || f.name.endsWith('.pem'))
-            .map((f) => (
-              <option key={f.name} value={f.name}>
-                {f.name}
-              </option>
-            ))}
-        </select>
+            .map((f) => ({ id: f.name, label: f.name }))}
+          defaultLabel="Select Private Key..."
+          noContainer
+        />
       </div>
 
       <div className="space-y-3">
@@ -75,19 +68,18 @@ export const X509Config: React.FC<X509ConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="x509-digest-select" className="text-xs text-muted-foreground block">
-          Digest Algorithm
-        </label>
-        <select
-          id="x509-digest-select"
-          value={digestAlgo}
-          onChange={(e) => setDigestAlgo(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="sha256">SHA-256</option>
-          <option value="sha384">SHA-384</option>
-          <option value="sha512">SHA-512</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">Digest Algorithm</span>
+        <FilterDropdown
+          selectedId={digestAlgo}
+          onSelect={(id) => setDigestAlgo(id)}
+          items={[
+            { id: 'sha256', label: 'SHA-256' },
+            { id: 'sha384', label: 'SHA-384' },
+            { id: 'sha512', label: 'SHA-512' },
+          ]}
+          defaultLabel="Select Digest Algorithm"
+          noContainer
+        />
       </div>
 
       <div className="space-y-3">

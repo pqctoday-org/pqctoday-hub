@@ -40,8 +40,8 @@ test.describe('Compliance Data View', () => {
     // Switch to FIPS (Index 1)
     await page.getByRole('button', { name: 'FIPS 140-3' }).first().click({ force: true })
 
-    // Verify pagination (50 items per page max)
-    await page.waitForTimeout(1000)
+    // Wait for table to reflect the FIPS filter before counting rows
+    await expect(page.locator('tbody tr').first()).toBeVisible()
     const fipsCount = await page.locator('tbody tr').count()
 
     // If >50 records exist, we should see exactly 50 rows
@@ -52,13 +52,13 @@ test.describe('Compliance Data View', () => {
       expect(fipsCount).toBeGreaterThan(0)
     }
 
-    // Switch to ACVP
+    // Switch to ACVP and wait for the tab content to stabilise
     await page.getByRole('button', { name: 'ACVP' }).first().click({ force: true })
-    await page.waitForTimeout(500) // Ensure switch
+    await expect(page.locator('tbody tr').first()).toBeVisible()
 
-    // Switch to Common Criteria
+    // Switch to Common Criteria and wait for the tab content to stabilise
     await page.getByRole('button', { name: 'Common Criteria' }).first().click({ force: true })
-    await page.waitForTimeout(500) // Ensure switch
+    await expect(page.locator('tbody tr').first()).toBeVisible()
   })
 
   test('should search and filter results including pagination feedback', async ({ page }) => {

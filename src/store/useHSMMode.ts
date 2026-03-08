@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface HsmModeState {
   liveHsmEnabled: boolean
@@ -18,11 +18,13 @@ export const useHSMMode = create<HsmModeState>()(
     {
       name: 'pqc-hsm-mode-storage',
       version: 1,
-      migrate: (persistedState) => {
-        const s = persistedState as Partial<HsmModeState>
-        return {
-          liveHsmEnabled: s?.liveHsmEnabled ?? false,
+      storage: createJSONStorage(() => localStorage),
+      migrate: (persistedState: unknown, version: number) => {
+        const s = (persistedState ?? {}) as Partial<HsmModeState>
+        if (version < 1) {
+          return { liveHsmEnabled: s?.liveHsmEnabled ?? false }
         }
+        return s as { liveHsmEnabled: boolean }
       },
       onRehydrateStorage: () => (_state, error) => {
         if (error) console.error('[useHSMMode] rehydrate error:', error)

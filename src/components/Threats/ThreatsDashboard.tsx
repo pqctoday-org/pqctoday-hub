@@ -12,6 +12,7 @@ import {
   Radio,
   Stethoscope,
   Shield,
+  ShieldAlert,
   Car,
   AlertOctagon,
   AlertCircle,
@@ -32,6 +33,8 @@ import { StatusBadge } from '../common/StatusBadge'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { Button } from '../ui/button'
+import { EmptyState } from '../ui/empty-state'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
@@ -231,7 +234,8 @@ export const ThreatsDashboard: React.FC = () => {
   return (
     <div>
       <div className="text-center mb-2 md:mb-12">
-        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-3">
+          <ShieldAlert className="text-primary shrink-0" size={32} />
           Quantum Threats
         </h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
@@ -448,13 +452,15 @@ export const ThreatsDashboard: React.FC = () => {
                     </td>
                     {/* Info Button Column */}
                     <td className="p-4 text-center">
-                      <button
+                      <Button
+                        variant="ghost"
+                        size="icon"
                         onClick={() => setSelectedThreat(item)}
-                        className="p-1.5 bg-primary/10 text-primary rounded-full hover:bg-primary/20 transition-colors"
+                        className="bg-primary/10 text-primary rounded-full hover:bg-primary/20"
                         aria-label="View Details"
                       >
                         <Info size={16} />
-                      </button>
+                      </Button>
                     </td>
                   </motion.tr>
                 ))}
@@ -463,9 +469,11 @@ export const ThreatsDashboard: React.FC = () => {
           </table>
         </div>
         {filteredAndSortedData.length === 0 && (
-          <div className="p-8 text-center text-muted-foreground">
-            No threats found matching your filters.
-          </div>
+          <EmptyState
+            icon={<ShieldAlert size={32} />}
+            title="No threats found"
+            description="No threats match your current filters. Try adjusting the industry or search query."
+          />
         )}
       </div>
       {/* End desktop wrapper */}

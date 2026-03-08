@@ -9,6 +9,7 @@ import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
+import { FilterDropdown } from '../../common/FilterDropdown'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_encapsulate,
@@ -320,21 +321,19 @@ const KemOpsTabSoftware: React.FC = () => {
 
           {/* Key Derivation Method Selector - Always visible */}
           <div className="flex items-center gap-2">
-            <label
-              htmlFor="hybrid-kombiner-select"
-              className="text-xs font-semibold text-muted-foreground whitespace-nowrap"
-            >
+            <span className="text-xs font-semibold text-muted-foreground whitespace-nowrap">
               Key Derivation:
-            </label>
-            <select
-              id="hybrid-kombiner-select"
-              value={hybridMethod}
-              onChange={(e) => setHybridMethod(e.target.value as 'concat-hkdf' | 'concat')}
-              className="bg-muted/40 border border-border rounded px-2 py-1 text-xs text-foreground outline-none focus:border-primary"
-            >
-              <option value="concat-hkdf">HKDF-Extract (Normalized)</option>
-              <option value="concat">Raw (No Normalization)</option>
-            </select>
+            </span>
+            <FilterDropdown
+              selectedId={hybridMethod}
+              onSelect={(id) => setHybridMethod(id as 'concat-hkdf' | 'concat')}
+              items={[
+                { id: 'concat-hkdf', label: 'HKDF-Extract (Normalized)' },
+                { id: 'concat', label: 'Raw (No Normalization)' },
+              ]}
+              defaultLabel="HKDF-Extract (Normalized)"
+              noContainer
+            />
           </div>
         </div>
 
@@ -377,48 +376,33 @@ const KemOpsTabSoftware: React.FC = () => {
 
               <div className="space-y-3">
                 <div>
-                  <label
-                    htmlFor="enc-primary-key-select"
-                    className="text-xs text-muted-foreground mb-1 block"
-                  >
+                  <span className="text-xs text-muted-foreground mb-1 block">
                     {isHybridMode ? 'Primary Public Key (PQC)' : 'Public Key'}
-                  </label>
-                  <select
-                    id="enc-primary-key-select"
-                    value={selectedEncKeyId}
-                    onChange={(e) => setSelectedEncKeyId(e.target.value)}
-                    className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-                  >
-                    <option value="">Select Key...</option>
-                    {(isHybridMode ? pqcPublicKeys : kemPublicKeys).map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  </span>
+                  <FilterDropdown
+                    selectedId={selectedEncKeyId || 'All'}
+                    onSelect={(id) => setSelectedEncKeyId(id === 'All' ? '' : id)}
+                    items={(isHybridMode ? pqcPublicKeys : kemPublicKeys).map((k) => ({
+                      id: k.id,
+                      label: k.name,
+                    }))}
+                    defaultLabel="Select Key..."
+                    noContainer
+                  />
                 </div>
 
                 {isHybridMode && (
                   <div>
-                    <label
-                      htmlFor="enc-secondary-key-select"
-                      className="text-xs text-muted-foreground mb-1 block"
-                    >
+                    <span className="text-xs text-muted-foreground mb-1 block">
                       Secondary Public Key (Classical)
-                    </label>
-                    <select
-                      id="enc-secondary-key-select"
-                      value={secondaryEncKeyId}
-                      onChange={(e) => setSecondaryEncKeyId(e.target.value)}
-                      className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-                    >
-                      <option value="">Select Key...</option>
-                      {classicalPublicKeys.map((k) => (
-                        <option key={k.id} value={k.id}>
-                          {k.name}
-                        </option>
-                      ))}
-                    </select>
+                    </span>
+                    <FilterDropdown
+                      selectedId={secondaryEncKeyId || 'All'}
+                      onSelect={(id) => setSecondaryEncKeyId(id === 'All' ? '' : id)}
+                      items={classicalPublicKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Key..."
+                      noContainer
+                    />
                   </div>
                 )}
               </div>
@@ -430,6 +414,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 Step 2: Run Operation
               </div>
               <button
+                type="button"
                 onClick={() => {
                   runOperation('encapsulate')
                   logEvent('Playground', 'KEM Encapsulate')
@@ -633,48 +618,33 @@ const KemOpsTabSoftware: React.FC = () => {
 
               <div className="space-y-3">
                 <div>
-                  <label
-                    htmlFor="dec-primary-key-select"
-                    className="text-xs text-muted-foreground mb-1 block"
-                  >
+                  <span className="text-xs text-muted-foreground mb-1 block">
                     {isHybridMode ? 'Primary Private Key (PQC)' : 'Private Key'}
-                  </label>
-                  <select
-                    id="dec-primary-key-select"
-                    value={selectedDecKeyId}
-                    onChange={(e) => setSelectedDecKeyId(e.target.value)}
-                    className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
-                  >
-                    <option value="">Select Key...</option>
-                    {(isHybridMode ? pqcPrivateKeys : kemPrivateKeys).map((k) => (
-                      <option key={k.id} value={k.id}>
-                        {k.name}
-                      </option>
-                    ))}
-                  </select>
+                  </span>
+                  <FilterDropdown
+                    selectedId={selectedDecKeyId || 'All'}
+                    onSelect={(id) => setSelectedDecKeyId(id === 'All' ? '' : id)}
+                    items={(isHybridMode ? pqcPrivateKeys : kemPrivateKeys).map((k) => ({
+                      id: k.id,
+                      label: k.name,
+                    }))}
+                    defaultLabel="Select Key..."
+                    noContainer
+                  />
                 </div>
 
                 {isHybridMode && (
                   <div>
-                    <label
-                      htmlFor="dec-secondary-key-select"
-                      className="text-xs text-muted-foreground mb-1 block"
-                    >
+                    <span className="text-xs text-muted-foreground mb-1 block">
                       Secondary Private Key (Classical)
-                    </label>
-                    <select
-                      id="dec-secondary-key-select"
-                      value={secondaryDecKeyId}
-                      onChange={(e) => setSecondaryDecKeyId(e.target.value)}
-                      className="w-full bg-muted/40 border border-border rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-accent"
-                    >
-                      <option value="">Select Key...</option>
-                      {classicalPrivateKeys.map((k) => (
-                        <option key={k.id} value={k.id}>
-                          {k.name}
-                        </option>
-                      ))}
-                    </select>
+                    </span>
+                    <FilterDropdown
+                      selectedId={secondaryDecKeyId || 'All'}
+                      onSelect={(id) => setSecondaryDecKeyId(id === 'All' ? '' : id)}
+                      items={classicalPrivateKeys.map((k) => ({ id: k.id, label: k.name }))}
+                      defaultLabel="Select Key..."
+                      noContainer
+                    />
                   </div>
                 )}
               </div>
@@ -686,6 +656,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 Step 2: Run Operation
               </div>
               <button
+                type="button"
                 onClick={() => {
                   runOperation('decapsulate')
                   logEvent('Playground', 'KEM Decapsulate')
@@ -853,13 +824,20 @@ const KemOpsTabSoftware: React.FC = () => {
               {/* Validation Result */}
               {kemDecapsulationResult !== null && (
                 <div
+                  role="status"
+                  aria-live="polite"
+                  aria-atomic="true"
                   className={`p-3 rounded-lg border flex items-center gap-3 ${
                     kemDecapsulationResult
-                      ? 'bg-success/10 border-success/30 text-success'
-                      : 'bg-destructive/10 border-destructive/30 text-destructive'
+                      ? 'bg-status-success/10 border-status-success/30 text-status-success'
+                      : 'bg-status-error/10 border-status-error/30 text-status-error'
                   }`}
                 >
-                  {kemDecapsulationResult ? <CheckCircle size={20} /> : <XCircle size={20} />}
+                  {kemDecapsulationResult ? (
+                    <CheckCircle size={20} aria-hidden="true" />
+                  ) : (
+                    <XCircle size={20} aria-hidden="true" />
+                  )}
                   <div className="font-bold text-sm">
                     {kemDecapsulationResult ? '✓ MATCH' : '✗ MISMATCH'}
                   </div>
@@ -912,6 +890,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 )}
               </div>
               <button
+                type="button"
                 onClick={() => {
                   runOperation('encrypt')
                   logEvent('Playground', 'Hybrid Encrypt')
@@ -963,6 +942,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 )}
               </div>
               <button
+                type="button"
                 onClick={() => {
                   runOperation('decrypt')
                   logEvent('Playground', 'Hybrid Decrypt')

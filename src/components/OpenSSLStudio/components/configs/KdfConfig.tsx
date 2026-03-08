@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Key } from 'lucide-react'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface KdfConfigProps {
   kdfAlgo: string
@@ -77,20 +78,19 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
 
       {/* Algorithm Selection */}
       <div className="space-y-3">
-        <label htmlFor="kdf-algo" className="text-xs text-muted-foreground block">
-          KDF Algorithm
-        </label>
-        <select
-          id="kdf-algo"
-          value={kdfAlgo}
-          onChange={(e) => setKdfAlgo(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="HKDF">HKDF</option>
-          <option value="PBKDF2">PBKDF2</option>
-          <option value="SCRYPT">SCRYPT</option>
-          <option value="SSKDF">SSKDF</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">KDF Algorithm</span>
+        <FilterDropdown
+          selectedId={kdfAlgo}
+          onSelect={(id) => setKdfAlgo(id)}
+          items={[
+            { id: 'HKDF', label: 'HKDF' },
+            { id: 'PBKDF2', label: 'PBKDF2' },
+            { id: 'SCRYPT', label: 'SCRYPT' },
+            { id: 'SSKDF', label: 'SSKDF' },
+          ]}
+          defaultLabel="Select KDF Algorithm"
+          noContainer
+        />
       </div>
 
       {/* Common Options */}
@@ -147,20 +147,19 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
         {/* Digest (HKDF, PBKDF2, SSKDF) */}
         {['HKDF', 'PBKDF2', 'SSKDF'].includes(kdfAlgo) && (
           <div className="space-y-3 mb-4">
-            <label htmlFor="kdf-digest" className="text-xs text-muted-foreground block">
-              Digest Algorithm
-            </label>
-            <select
-              id="kdf-digest"
-              value={kdfDigest}
-              onChange={(e) => setKdfDigest(e.target.value)}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="SHA256">SHA256</option>
-              <option value="SHA384">SHA384</option>
-              <option value="SHA512">SHA512</option>
-              <option value="SHA3-256">SHA3-256</option>
-            </select>
+            <span className="text-xs text-muted-foreground block">Digest Algorithm</span>
+            <FilterDropdown
+              selectedId={kdfDigest}
+              onSelect={(id) => setKdfDigest(id)}
+              items={[
+                { id: 'SHA256', label: 'SHA256' },
+                { id: 'SHA384', label: 'SHA384' },
+                { id: 'SHA512', label: 'SHA512' },
+                { id: 'SHA3-256', label: 'SHA3-256' },
+              ]}
+              defaultLabel="Select Digest"
+              noContainer
+            />
           </div>
         )}
 

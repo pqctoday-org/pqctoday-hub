@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { ArrowLeftRight, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CKD_SHA256_KDF,
   CKD_SHA384_KDF,
@@ -198,22 +199,17 @@ export const HsmKeyAgreementPanel = () => {
           {/* KDF */}
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">KDF</p>
-            <select
-              value={kdf}
-              onChange={(e) => {
-                setKdf(Number(e.target.value))
+            <FilterDropdown
+              items={KDF_OPTIONS.map((o) => ({ id: String(o.value), label: o.label }))}
+              selectedId={String(kdf)}
+              onSelect={(id) => {
+                setKdf(parseInt(id, 10))
                 setAliceSecret(null)
                 setBobSecret(null)
                 setSecretsMatch(null)
               }}
-              className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-            >
-              {KDF_OPTIONS.map((o) => (
-                <option key={o.value} value={o.value}>
-                  {o.label}
-                </option>
-              ))}
-            </select>
+              noContainer
+            />
           </div>
 
           {/* Cofactor toggle */}

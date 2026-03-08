@@ -18,7 +18,7 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, AlertTriangle } from 'lucide-react'
+import { Search, FileSearch } from 'lucide-react'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -29,6 +29,8 @@ import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
+import { ErrorAlert } from '../ui/error-alert'
+import { EmptyState } from '../ui/empty-state'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -427,13 +429,7 @@ export const LibraryView: React.FC = () => {
   const categoryTabs = ['All', ...LIBRARY_CATEGORIES]
 
   if (libraryError) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
-        <h2 className="text-xl font-semibold text-foreground mb-2">Unable to Load Library</h2>
-        <p className="text-muted-foreground max-w-md">{libraryError}</p>
-      </div>
-    )
+    return <ErrorAlert message={libraryError} />
   }
 
   // Table content: render by category sections or single category
@@ -454,9 +450,11 @@ export const LibraryView: React.FC = () => {
                 defaultExpandAll={false}
               />
             ) : (
-              <p className="text-sm text-muted-foreground italic">
-                No documents found in this section.
-              </p>
+              <EmptyState
+                icon={<FileSearch size={32} />}
+                title="No documents found"
+                description="Try adjusting your search or filter criteria."
+              />
             )}
           </div>
         ))}

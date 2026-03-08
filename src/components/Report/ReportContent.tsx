@@ -997,26 +997,43 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                           <table className="w-full text-sm">
                             <thead>
                               <tr className="border-b border-border text-left">
-                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                <th
+                                  scope="col"
+                                  className="py-2 pr-3 text-muted-foreground font-medium"
+                                >
                                   Current
                                 </th>
-                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                <th
+                                  scope="col"
+                                  className="py-2 pr-3 text-muted-foreground font-medium"
+                                >
                                   Vulnerable?
                                 </th>
-                                <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                <th
+                                  scope="col"
+                                  className="py-2 pr-3 text-muted-foreground font-medium"
+                                >
                                   PQC Replacement
                                 </th>
                                 {result.migrationEffort && (
                                   <>
-                                    <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                    <th
+                                      scope="col"
+                                      className="py-2 pr-3 text-muted-foreground font-medium"
+                                    >
                                       Effort
                                     </th>
-                                    <th className="py-2 pr-3 text-muted-foreground font-medium">
+                                    <th
+                                      scope="col"
+                                      className="py-2 pr-3 text-muted-foreground font-medium"
+                                    >
                                       Scope
                                     </th>
                                   </>
                                 )}
-                                <th className="py-2 text-muted-foreground font-medium">Notes</th>
+                                <th scope="col" className="py-2 text-muted-foreground font-medium">
+                                  Notes
+                                </th>
                               </tr>
                             </thead>
                             <tbody>
@@ -1435,14 +1452,15 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                           const Icon = CTA_ICONS[cta.icon] ?? BookOpen
                           if (cta.isShareAction) {
                             return (
-                              <button
+                              <Button
                                 key={cta.label}
+                                variant="outline"
                                 onClick={handleShare}
-                                className="flex items-center gap-2 px-3 py-2.5 rounded-lg border border-border text-sm font-medium text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
+                                className="flex items-center gap-2"
                               >
                                 <Icon size={16} className="shrink-0" />
                                 {cta.label}
-                              </button>
+                              </Button>
                             )
                           }
                           return (

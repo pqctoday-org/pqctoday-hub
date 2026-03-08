@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useRef, useEffect } from 'react'
 import {
   Play,
   Database,
@@ -50,6 +51,10 @@ const PlaygroundContent = () => {
   const { activeTab, setActiveTab, error, lastLogEntry, hsmMode, toggleHsmMode } =
     useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
+  const errorRef = useRef<HTMLDivElement>(null)
+  useEffect(() => {
+    if (error) errorRef.current?.focus()
+  }, [error])
 
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab)
@@ -133,8 +138,31 @@ const PlaygroundContent = () => {
       )}
 
       {/* Tab Navigation */}
-      <div className="flex space-x-1 mb-6 bg-muted p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1">
+      <div
+        role="tablist"
+        aria-label="Playground operations"
+        tabIndex={-1}
+        className="flex space-x-1 mb-6 bg-muted p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1"
+        onKeyDown={(e) => {
+          const tabs = Array.from(e.currentTarget.querySelectorAll('[role="tab"]')) as HTMLElement[]
+          const idx = tabs.findIndex((t) => t === document.activeElement)
+          if (idx === -1) return
+          let next = idx
+          if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length
+          else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length
+          else if (e.key === 'Home') next = 0
+          else if (e.key === 'End') next = tabs.length - 1
+          else return
+          e.preventDefault()
+          tabs[next].focus()
+          tabs[next].click()
+        }}
+      >
         <Button
+          role="tab"
+          id="tab-keystore"
+          aria-selected={activeTab === 'keystore'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('keystore')}
           variant="ghost"
           size="sm"
@@ -145,10 +173,14 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <KeyIcon size={16} className="mr-2" />
+          <KeyIcon size={16} className="mr-2" aria-hidden="true" />
           {hsmMode ? 'HSM Keys' : `Key Store (${keyStore.length})`}
         </Button>
         <Button
+          role="tab"
+          id="tab-data"
+          aria-selected={activeTab === 'data'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('data')}
           variant="ghost"
           size="sm"
@@ -159,9 +191,13 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Database size={16} className="mr-2" /> Data
+          <Database size={16} className="mr-2" aria-hidden="true" /> Data
         </Button>
         <Button
+          role="tab"
+          id="tab-kem_ops"
+          aria-selected={activeTab === 'kem_ops'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('kem_ops')}
           variant="ghost"
           size="sm"
@@ -172,10 +208,14 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Activity size={16} className="mr-2" /> KEM &amp; Encrypt
+          <Activity size={16} className="mr-2" aria-hidden="true" /> KEM &amp; Encrypt
         </Button>
 
         <Button
+          role="tab"
+          id="tab-symmetric"
+          aria-selected={activeTab === 'symmetric'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('symmetric')}
           variant="ghost"
           size="sm"
@@ -186,9 +226,13 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Lock size={16} className="mr-2" /> Sym Encrypt
+          <Lock size={16} className="mr-2" aria-hidden="true" /> Sym Encrypt
         </Button>
         <Button
+          role="tab"
+          id="tab-hashing"
+          aria-selected={activeTab === 'hashing'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('hashing')}
           variant="ghost"
           size="sm"
@@ -199,10 +243,14 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Hash size={16} className="mr-2" /> Hashing
+          <Hash size={16} className="mr-2" aria-hidden="true" /> Hashing
         </Button>
 
         <Button
+          role="tab"
+          id="tab-sign_verify"
+          aria-selected={activeTab === 'sign_verify'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('sign_verify')}
           variant="ghost"
           size="sm"
@@ -213,12 +261,16 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <FileSignature size={16} className="mr-2" /> Sign &amp; Verify
+          <FileSignature size={16} className="mr-2" aria-hidden="true" /> Sign &amp; Verify
         </Button>
 
         {hsmMode && (
           <>
             <Button
+              role="tab"
+              id="tab-key_agree"
+              aria-selected={activeTab === 'key_agree'}
+              aria-controls="playground-tabpanel"
               onClick={() => handleTabChange('key_agree')}
               variant="ghost"
               size="sm"
@@ -229,9 +281,13 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <ArrowLeftRight size={16} className="mr-2" /> Key Agree
+              <ArrowLeftRight size={16} className="mr-2" aria-hidden="true" /> Key Agree
             </Button>
             <Button
+              role="tab"
+              id="tab-key_derive"
+              aria-selected={activeTab === 'key_derive'}
+              aria-controls="playground-tabpanel"
               onClick={() => handleTabChange('key_derive')}
               variant="ghost"
               size="sm"
@@ -242,9 +298,13 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <Filter size={16} className="mr-2" /> KDF
+              <Filter size={16} className="mr-2" aria-hidden="true" /> KDF
             </Button>
             <Button
+              role="tab"
+              id="tab-classical_sign"
+              aria-selected={activeTab === 'classical_sign'}
+              aria-controls="playground-tabpanel"
               onClick={() => handleTabChange('classical_sign')}
               variant="ghost"
               size="sm"
@@ -255,9 +315,13 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <PenLine size={16} className="mr-2" /> Classical
+              <PenLine size={16} className="mr-2" aria-hidden="true" /> Classical
             </Button>
             <Button
+              role="tab"
+              id="tab-mechanisms"
+              aria-selected={activeTab === 'mechanisms'}
+              aria-controls="playground-tabpanel"
               onClick={() => handleTabChange('mechanisms')}
               variant="ghost"
               size="sm"
@@ -268,13 +332,17 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <Layers size={16} className="mr-2" /> Mechanisms
+              <Layers size={16} className="mr-2" aria-hidden="true" /> Mechanisms
             </Button>
           </>
         )}
 
         {!hsmMode && (
           <Button
+            role="tab"
+            id="tab-acvp"
+            aria-selected={activeTab === 'acvp'}
+            aria-controls="playground-tabpanel"
             onClick={() => handleTabChange('acvp')}
             variant="ghost"
             size="sm"
@@ -285,11 +353,15 @@ const PlaygroundContent = () => {
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
-            <ShieldCheck size={16} className="mr-2" /> ACVP
+            <ShieldCheck size={16} className="mr-2" aria-hidden="true" /> ACVP
           </Button>
         )}
 
         <Button
+          role="tab"
+          id="tab-logs"
+          aria-selected={activeTab === 'logs'}
+          aria-controls="playground-tabpanel"
           onClick={() => handleTabChange('logs')}
           variant="ghost"
           size="sm"
@@ -302,18 +374,23 @@ const PlaygroundContent = () => {
         >
           {hsmMode ? (
             <>
-              <Cpu size={16} className="mr-2" /> PKCS#11 Log
+              <Cpu size={16} className="mr-2" aria-hidden="true" /> PKCS#11 Log
             </>
           ) : (
             <>
-              <FileText size={16} className="mr-2" /> Logs
+              <FileText size={16} className="mr-2" aria-hidden="true" /> Logs
             </>
           )}
         </Button>
       </div>
 
       {/* Content Area */}
-      <div className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-6 relative">
+      <div
+        role="tabpanel"
+        id="playground-tabpanel"
+        aria-labelledby={`tab-${activeTab}`}
+        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-6 relative"
+      >
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
         {activeTab === 'symmetric' && (hsmMode ? <HsmSymmetricPanel /> : <SymmetricTab />)}
@@ -334,8 +411,10 @@ const PlaygroundContent = () => {
 
       {error && (
         <div
+          ref={errorRef}
           id="playground-error"
           role="alert"
+          tabIndex={-1}
           className="mt-6 p-4 bg-status-error border border-status-error rounded-xl flex items-center gap-3 text-status-error text-sm shrink-0"
         >
           <AlertCircle size={20} aria-hidden="true" />

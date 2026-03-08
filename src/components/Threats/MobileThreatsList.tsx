@@ -40,59 +40,62 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
 
   return (
     <div className="space-y-3">
-      {items.map((item) => {
-        const config =
-          criticalityConfig[item.criticality as CriticalityKey] ?? criticalityConfig.Medium
-        const Icon = config.icon
+      <ul className="space-y-3">
+        {items.map((item) => {
+          const config =
+            criticalityConfig[item.criticality as CriticalityKey] ?? criticalityConfig.Medium
+          const Icon = config.icon
 
-        return (
-          <button
-            key={item.threatId}
-            type="button"
-            onClick={() => setSelectedThreat(item)}
-            className="w-full text-left glass-panel p-4 hover:border-primary/30 transition-colors active:scale-[0.99]"
-          >
-            {/* Header: criticality + industry + status */}
-            <div className="flex items-center justify-between gap-2 mb-2">
-              <span
-                className={clsx(
-                  'inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs font-bold',
-                  config.classes
-                )}
+          return (
+            <li key={item.threatId}>
+              <button
+                type="button"
+                onClick={() => setSelectedThreat(item)}
+                className="w-full text-left glass-panel p-4 hover:border-primary/30 transition-colors active:scale-[0.99]"
               >
-                <Icon size={11} />
-                {item.criticality}
-              </span>
-              <span className="text-xs text-muted-foreground truncate">{item.industry}</span>
-            </div>
+                {/* Header: criticality + industry + status */}
+                <div className="flex items-center justify-between gap-2 mb-2">
+                  <span
+                    className={clsx(
+                      'inline-flex items-center gap-1 px-2 py-0.5 rounded border text-xs font-bold',
+                      config.classes
+                    )}
+                  >
+                    <Icon size={11} aria-hidden="true" />
+                    {item.criticality}
+                  </span>
+                  <span className="text-xs text-muted-foreground truncate">{item.industry}</span>
+                </div>
 
-            {/* Description */}
-            <p className="text-sm text-foreground leading-snug mb-2 line-clamp-3">
-              {item.description}
-            </p>
+                {/* Description */}
+                <p className="text-sm text-foreground leading-snug mb-2 line-clamp-3">
+                  {item.description}
+                </p>
 
-            {/* Crypto at risk + PQC replacement */}
-            <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 pt-2 border-t border-border">
-              <div>
-                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-                  At Risk
-                </p>
-                <p className="text-xs font-mono text-muted-foreground leading-snug">
-                  {item.cryptoAtRisk}
-                </p>
-              </div>
-              <div>
-                <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
-                  PQC Replacement
-                </p>
-                <p className="text-xs font-mono text-foreground leading-snug">
-                  {item.pqcReplacement}
-                </p>
-              </div>
-            </div>
-          </button>
-        )
-      })}
+                {/* Crypto at risk + PQC replacement */}
+                <div className="grid grid-cols-1 min-[360px]:grid-cols-2 gap-2 pt-2 border-t border-border">
+                  <div>
+                    <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+                      At Risk
+                    </p>
+                    <p className="text-xs font-mono text-muted-foreground leading-snug">
+                      {item.cryptoAtRisk}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-1">
+                      PQC Replacement
+                    </p>
+                    <p className="text-xs font-mono text-foreground leading-snug">
+                      {item.pqcReplacement}
+                    </p>
+                  </div>
+                </div>
+              </button>
+            </li>
+          )
+        })}
+      </ul>
 
       {items.length === 0 && (
         <div className="py-12 text-center text-muted-foreground text-sm">

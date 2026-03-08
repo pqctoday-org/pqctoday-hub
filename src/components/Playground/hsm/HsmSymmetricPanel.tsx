@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Lock, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
+import { FilterDropdown } from '../../common/FilterDropdown'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
   CKM_SHA256_HMAC,
@@ -522,7 +523,6 @@ const AesCtrPanel = () => {
   const [error, setError] = useState<string | null>(null)
 
   const anyLoading = loadingOp !== null
-  const zeroIv = new Uint8Array(16) // all-zero counter block
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -563,7 +563,14 @@ const AesCtrPanel = () => {
     withLoading('enc', async () => {
       const M = moduleRef.current!
       const data = new TextEncoder().encode(plaintext)
-      const ct = hsm_aesCtrEncrypt(M, hSessionRef.current, keyHandle!, zeroIv, 128, data)
+      const ct = hsm_aesCtrEncrypt(
+        M,
+        hSessionRef.current,
+        keyHandle!,
+        new Uint8Array(16),
+        128,
+        data
+      )
       setCiphertext(ct)
       setDecrypted(null)
     })
@@ -571,7 +578,14 @@ const AesCtrPanel = () => {
   const doDecrypt = () =>
     withLoading('dec', async () => {
       const M = moduleRef.current!
-      const plain = hsm_aesCtrDecrypt(M, hSessionRef.current, keyHandle!, zeroIv, 128, ciphertext!)
+      const plain = hsm_aesCtrDecrypt(
+        M,
+        hSessionRef.current,
+        keyHandle!,
+        new Uint8Array(16),
+        128,
+        ciphertext!
+      )
       setDecrypted(new TextDecoder().decode(plain))
     })
 
@@ -1075,11 +1089,11 @@ const KeyWrapPanel = () => {
       const M = moduleRef.current!
       const wrappedBytes = new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
       const template: AttrDef[] = [
-        { type: CKA_CLASS, value: CKO_SECRET_KEY },
-        { type: CKA_KEY_TYPE, value: CKK_AES },
-        { type: CKA_TOKEN, value: false },
-        { type: CKA_EXTRACTABLE, value: true },
-        { type: CKA_VALUE_LEN, value: 32 },
+        { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+        { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+        { type: CKA_TOKEN, boolVal: false },
+        { type: CKA_EXTRACTABLE, boolVal: true },
+        { type: CKA_VALUE_LEN, ulongVal: 32 },
       ]
       const newHandle = hsm_unwrapKey(
         M,
@@ -1119,43 +1133,38 @@ const KeyWrapPanel = () => {
           <div className="space-y-3">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-muted-foreground w-24">Wrapping key:</span>
-              <select
-                value={wrapKeyHandle ?? ''}
-                onChange={(e) => {
-                  setWrapKeyHandle(Number(e.target.value) || null)
+              <FilterDropdown
+                selectedId={wrapKeyHandle != null ? String(wrapKeyHandle) : 'All'}
+                onSelect={(id) => {
+                  setWrapKeyHandle(id === 'All' ? null : Number(id))
                   setWrappedHex(null)
                   setUnwrappedHandle(null)
                 }}
-                className="text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground flex-1"
-              >
-                <option value="">Select…</option>
-                {aesKeys.map((k) => (
-                  <option key={k.handle} value={k.handle}>
-                    h={k.handle} — {k.label}
-                  </option>
-                ))}
-              </select>
+                items={[
+                  ...aesKeys.map((k) => ({
+                    id: String(k.handle),
+                    label: `h=${k.handle} — ${k.label}`,
+                  })),
+                ]}
+                defaultLabel="Select…"
+                noContainer
+              />
             </div>
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs text-muted-foreground w-24">Key to wrap:</span>
-              <select
-                value={targetKeyHandle ?? ''}
-                onChange={(e) => {
-                  setTargetKeyHandle(Number(e.target.value) || null)
+              <FilterDropdown
+                selectedId={targetKeyHandle != null ? String(targetKeyHandle) : 'All'}
+                onSelect={(id) => {
+                  setTargetKeyHandle(id === 'All' ? null : Number(id))
                   setWrappedHex(null)
                   setUnwrappedHandle(null)
                 }}
-                className="text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground flex-1"
-              >
-                <option value="">Select…</option>
-                {aesKeys
+                items={aesKeys
                   .filter((k) => k.handle !== wrapKeyHandle)
-                  .map((k) => (
-                    <option key={k.handle} value={k.handle}>
-                      h={k.handle} — {k.label}
-                    </option>
-                  ))}
-              </select>
+                  .map((k) => ({ id: String(k.handle), label: `h=${k.handle} — ${k.label}` }))}
+                defaultLabel="Select…"
+                noContainer
+              />
             </div>
           </div>
         )}

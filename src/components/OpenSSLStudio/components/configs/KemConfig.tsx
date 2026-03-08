@@ -2,6 +2,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface KemConfigProps {
   kemAction: 'encap' | 'decap'
@@ -84,31 +85,25 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="kem-key-select" className="text-xs text-muted-foreground block">
+        <label className="text-xs text-muted-foreground block">
           {kemAction === 'encap' ? 'Public Key' : 'Private Key'}
         </label>
-        <select
-          id="kem-key-select"
-          value={kemKeyFile}
-          onChange={(e) => setKemKeyFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">
-            {kemAction === 'encap' ? 'Select Public Key (.pub)...' : 'Select Private Key (.key)...'}
-          </option>
-          {files
+        <FilterDropdown
+          selectedId={kemKeyFile}
+          onSelect={(id) => setKemKeyFile(id)}
+          items={files
             .filter((f) => {
               if (kemAction === 'encap') {
                 return f.name.endsWith('.pub') || f.name.endsWith('.pem')
               }
               return f.name.endsWith('.key') || f.name.endsWith('.pem')
             })
-            .map((f) => (
-              <option key={f.name} value={f.name}>
-                {f.name}
-              </option>
-            ))}
-        </select>
+            .map((f) => ({ id: f.name, label: f.name }))}
+          defaultLabel={
+            kemAction === 'encap' ? 'Select Public Key (.pub)...' : 'Select Private Key (.key)...'
+          }
+          noContainer
+        />
       </div>
 
       {kemAction === 'encap' && (
@@ -146,24 +141,16 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       {kemAction === 'decap' && (
         <>
           <div className="space-y-3">
-            <label htmlFor="kem-infile-select" className="text-xs text-muted-foreground block">
-              Ciphertext Input
-            </label>
-            <select
-              id="kem-infile-select"
-              value={kemInFile}
-              onChange={(e) => setKemInFile(e.target.value)}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="">Select Ciphertext (from encapsulation)...</option>
-              {files
+            <span className="text-xs text-muted-foreground block">Ciphertext Input</span>
+            <FilterDropdown
+              selectedId={kemInFile}
+              onSelect={(id) => setKemInFile(id)}
+              items={files
                 .filter((f) => !f.name.endsWith('.key') && !f.name.endsWith('.pub'))
-                .map((f) => (
-                  <option key={f.name} value={f.name}>
-                    {f.name}
-                  </option>
-                ))}
-            </select>
+                .map((f) => ({ id: f.name, label: f.name }))}
+              defaultLabel="Select Ciphertext (from encapsulation)..."
+              noContainer
+            />
           </div>
 
           <div className="space-y-3">

@@ -12,6 +12,7 @@ import {
   type AlgorithmDetail,
 } from '../../data/pqcAlgorithmsData'
 import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
+import { Skeleton } from '../ui/skeleton'
 import { SourcesButton } from '../ui/SourcesButton'
 import { ShareButton } from '../ui/ShareButton'
 import { GlossaryButton } from '../ui/GlossaryButton'
@@ -41,14 +42,19 @@ export function AlgorithmsView() {
   } | null>(null)
   const [algorithmData, setAlgorithmData] = useState<AlgorithmDetail[]>([])
   const [infoOpen, setInfoOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    loadPQCAlgorithmsData().then((data) => {
-      setMetadata(loadedFileMetadata)
-      setAlgorithmData(data)
-    })
-    loadAlgorithmsData().then(() => {
-      setTransitionMetadata(loadedTransitionMetadata)
+    Promise.all([
+      loadPQCAlgorithmsData().then((data) => {
+        setMetadata(loadedFileMetadata)
+        setAlgorithmData(data)
+      }),
+      loadAlgorithmsData().then(() => {
+        setTransitionMetadata(loadedTransitionMetadata)
+      }),
+    ]).finally(() => {
+      setIsLoading(false)
     })
   }, [])
 
@@ -98,39 +104,51 @@ export function AlgorithmsView() {
         </div>
       </motion.div>
 
+      {/* Loading skeleton */}
+      {isLoading && (
+        <div className="space-y-4">
+          <Skeleton className="h-32 w-full rounded-lg" />
+          <Skeleton className="h-32 w-full rounded-lg" />
+          <Skeleton className="h-32 w-full rounded-lg" />
+          <Skeleton className="h-32 w-full rounded-lg" />
+        </div>
+      )}
+
       {/* View Tabs */}
-      <Tabs defaultValue={highlightAlgorithms ? 'detailed' : 'transition'}>
-        <TabsList className="mb-6 bg-muted/50 border border-border">
-          <TabsTrigger value="transition" className="flex items-center gap-2">
-            <ArrowRight size={18} />
-            Transition Guide
-          </TabsTrigger>
-          <TabsTrigger value="detailed" className="flex items-center gap-2">
-            <BarChart3 size={18} />
-            Detailed Comparison
-          </TabsTrigger>
-        </TabsList>
+      {!isLoading && (
+        <Tabs defaultValue={highlightAlgorithms ? 'detailed' : 'transition'}>
+          <TabsList className="mb-6 bg-muted/50 border border-border">
+            <TabsTrigger value="transition" className="flex items-center gap-2">
+              <ArrowRight size={18} />
+              Transition Guide
+            </TabsTrigger>
+            <TabsTrigger value="detailed" className="flex items-center gap-2">
+              <BarChart3 size={18} />
+              Detailed Comparison
+            </TabsTrigger>
+          </TabsList>
 
-        <TabsContent value="transition">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <AlgorithmComparison highlightAlgorithms={highlightAlgorithms} />
-          </motion.div>
-        </TabsContent>
+          <TabsContent value="transition">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <AlgorithmComparison highlightAlgorithms={highlightAlgorithms} />
+            </motion.div>
+          </TabsContent>
 
-        <TabsContent value="detailed">
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <AlgorithmDetailedComparison highlightAlgorithms={highlightAlgorithms} />
-          </motion.div>
-        </TabsContent>
-      </Tabs>
+          <TabsContent value="detailed">
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <AlgorithmDetailedComparison highlightAlgorithms={highlightAlgorithms} />
+            </motion.div>
+          </TabsContent>
+        </Tabs>
+      )}
 
       <AlgorithmInfoModal isOpen={infoOpen} onClose={() => setInfoOpen(false)} />
     </div>

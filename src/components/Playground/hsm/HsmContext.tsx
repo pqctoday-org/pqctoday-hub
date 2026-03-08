@@ -1,11 +1,21 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import type { Pkcs11LogEntry } from '../../../wasm/softhsm'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
 export type HsmPhase = 'idle' | 'initialized' | 'session_open'
+
+export interface HsmLogEntry {
+  id: string
+  timestamp: string
+  fnSymbol: string
+  args: unknown[]
+  rv: number
+  rvName: string
+  durationMs: number
+  inspect: { hasArgs: boolean }
+}
 
 export type HsmFamily =
   | 'ml-kem'
@@ -69,8 +79,8 @@ export interface HsmContextValue {
   keysForFamily: (family: HsmFamily, role: HsmKeyRole) => HsmKey[]
 
   // ── PKCS#11 call log ─────────────────────────────────────────────────────
-  hsmLog: Pkcs11LogEntry[]
-  addHsmLog: (e: Pkcs11LogEntry) => void
+  hsmLog: HsmLogEntry[]
+  addHsmLog: (e: HsmLogEntry) => void
   clearHsmLog: () => void
 
   // ── Inspect mode ──────────────────────────────────────────────────────────
@@ -99,7 +109,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [phase, setPhase] = useState<HsmPhase>('idle')
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])
-  const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
+  const [hsmLog, setHsmLog] = useState<HsmLogEntry[]>([])
   const [inspectMode, setInspectMode] = useState(false)
 
   const isReady = phase === 'session_open'
@@ -129,7 +139,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     [hsmKeys]
   )
 
-  const addHsmLog = useCallback((e: Pkcs11LogEntry) => {
+  const addHsmLog = useCallback((e: HsmLogEntry) => {
     setHsmLog((prev) => {
       const next = [e, ...prev]
       return next.length > 500 ? next.slice(0, 500) : next

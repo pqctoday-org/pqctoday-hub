@@ -118,7 +118,9 @@ const ComplianceRow = ({
       <td className="px-4 py-3 relative group">
         {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
           <div className="flex items-center">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               type="button"
               onClick={() => setShowPqcTooltip((v) => !v)}
               className={clsx(
@@ -128,15 +130,18 @@ const ComplianceRow = ({
                   : 'bg-tertiary/10 text-tertiary hover:bg-tertiary/20'
               )}
               aria-label="View PQC mechanisms"
+              aria-describedby={`pqc-tooltip-${index}`}
             >
               {record.pqcCoverage === 'Pending Check...' ? (
                 <RefreshCw size={16} className="animate-spin" />
               ) : (
                 <ShieldCheck size={18} />
               )}
-            </button>
+            </Button>
 
             <div
+              id={`pqc-tooltip-${index}`}
+              role="tooltip"
               className={clsx(
                 'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
@@ -185,15 +190,20 @@ const ComplianceRow = ({
       <td className="px-4 py-3 relative group">
         {record.classicalAlgorithms ? (
           <div className="flex items-center justify-center">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               type="button"
               onClick={() => setShowClassicalTooltip((v) => !v)}
               className="cursor-help p-1 rounded-full bg-muted text-muted-foreground hover:bg-muted/80 transition-colors"
               aria-label="View classical algorithms"
+              aria-describedby={`classical-tooltip-${index}`}
             >
               <LockKeyhole size={14} />
-            </button>
+            </Button>
             <div
+              id={`classical-tooltip-${index}`}
+              role="tooltip"
               className={clsx(
                 'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
@@ -219,13 +229,14 @@ const ComplianceRow = ({
 
       {/* Details Column */}
       <td className="px-4 py-3">
-        <button
+        <Button
+          variant="ghost"
+          size="icon"
           onClick={() => setShowDetailsPopup(true)}
-          className="text-muted-foreground hover:text-foreground transition-colors p-1"
-          title="View Details"
+          aria-label="View details"
         >
           <Info size={16} />
-        </button>
+        </Button>
         <ComplianceDetailPopover
           isOpen={showDetailsPopup}
           onClose={() => setShowDetailsPopup(false)}
@@ -506,14 +517,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         )}
         <div className="overflow-x-auto">
           <table className="w-full text-sm text-left table-fixed">
+            <caption className="sr-only">
+              Compliance certifications table with PQC coverage and classical algorithm details
+            </caption>
             <thead className="text-xs uppercase bg-muted/50 text-muted-foreground">
               <tr>
                 {/* Source Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-24 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 text-xs font-medium"
                       onClick={() => handleSort('source')}
                     >
                       <span>Source</span>
@@ -521,9 +535,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         size={12}
                         className={clsx(sortColumn === 'source' ? 'text-primary' : 'opacity-30')}
                       />
-                    </button>
+                    </Button>
                     <div className="relative">
                       <button
+                        type="button"
+                        aria-expanded={showSourceMenu}
+                        aria-label="Filter by source"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShowSourceMenu(!showSourceMenu)
@@ -579,13 +596,14 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               </button>
                             ))}
                             {sourceFilters.length > 0 && (
-                              <button
-                                type="button"
+                              <Button
+                                variant="link"
+                                size="sm"
                                 onClick={() => setSourceFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                               >
                                 Clear
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </>
@@ -627,9 +645,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 {/* Product Name Column with Category Filter */}
                 <th scope="col" className="px-4 py-3 w-80 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 text-xs font-medium"
                       onClick={() => handleSort('productName')}
                     >
                       <span>Product Name</span>
@@ -639,9 +657,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           sortColumn === 'productName' ? 'text-primary' : 'opacity-30'
                         )}
                       />
-                    </button>
+                    </Button>
                     <div className="relative">
                       <button
+                        type="button"
+                        aria-expanded={showCategoryMenu}
+                        aria-label="Filter by product category"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShowCategoryMenu(!showCategoryMenu)
@@ -650,7 +671,6 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                           'p-0.5 rounded hover:bg-muted',
                           categoryFilters.length > 0 && 'text-primary'
                         )}
-                        title="Filter by Product Category"
                       >
                         <Filter size={12} />
                         {categoryFilters.length > 0 && (
@@ -698,13 +718,14 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               </button>
                             ))}
                             {categoryFilters.length > 0 && (
-                              <button
-                                type="button"
+                              <Button
+                                variant="link"
+                                size="sm"
                                 onClick={() => setCategoryFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                               >
                                 Clear
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </>
@@ -716,9 +737,9 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 {/* Vendor Column with Filter */}
                 <th scope="col" className="px-4 py-3 w-48 relative">
                   <div className="flex items-center justify-between gap-1">
-                    <button
-                      type="button"
-                      className="flex items-center gap-1 cursor-pointer hover:text-foreground"
+                    <Button
+                      variant="ghost"
+                      className="flex items-center gap-1 text-xs font-medium"
                       onClick={() => handleSort('vendor')}
                     >
                       <span>Vendor</span>
@@ -726,9 +747,12 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         size={12}
                         className={clsx(sortColumn === 'vendor' ? 'text-primary' : 'opacity-30')}
                       />
-                    </button>
+                    </Button>
                     <div className="relative">
                       <button
+                        type="button"
+                        aria-expanded={showVendorMenu}
+                        aria-label="Filter by vendor"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShowVendorMenu(!showVendorMenu)
@@ -798,16 +822,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               )}
                             </div>
                             {vendorFilters.length > 0 && (
-                              <button
-                                type="button"
+                              <Button
+                                variant="link"
+                                size="sm"
                                 onClick={() => {
                                   setVendorFilters([])
                                   setVendorSearch('')
                                 }}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                               >
                                 Clear
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </>
@@ -877,13 +902,14 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               </button>
                             ))}
                             {pqcFilters.length > 0 && (
-                              <button
-                                type="button"
+                              <Button
+                                variant="link"
+                                size="sm"
                                 onClick={() => setPqcFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 cursor-pointer border-t border-border mt-1 pt-2"
+                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
                               >
                                 Clear
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </>
@@ -926,7 +952,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
       </div>
       {/* Pagination Controls */}
       {filteredAndSortedData.length > 0 && (
-        <div className="flex items-center justify-between px-2">
+        <nav aria-label="Table pagination" className="flex items-center justify-between px-2">
           <div className="text-xs text-muted-foreground">
             Showing {(currentPage - 1) * ITEMS_PER_PAGE + 1} to{' '}
             {Math.min(currentPage * ITEMS_PER_PAGE, filteredAndSortedData.length)} of{' '}
@@ -958,7 +984,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               Next
             </Button>
           </div>
-        </div>
+        </nav>
       )}
     </div>
   )

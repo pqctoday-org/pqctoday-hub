@@ -29,13 +29,19 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **HSM Key Store**: session-scoped table of all PKCS#11-generated keys with handle, algorithm,
     role, variant, and timestamp; software Key Store with sortable/resizable columns
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
-    timing, and optional "Show Params" inspect mode
+    timing, and optional "Show Params" inspect mode (powered by `src/wasm/inspect/` — decodes
+    mechanism IDs, attribute types, and CKR return codes into human-readable form)
+  - **SoftHSM tab**: modular demo components — Token Setup, ML-KEM encapsulate/decapsulate,
+    ML-DSA sign/verify (+ pre-hash), SLH-DSA (all 12 param sets); HSM symmetric panel split into
+    AES-CBC/GCM, AES-CMAC, AES-CTR, HMAC, Key Wrap, and RNG panels
   - **Mechanism Discovery**: live PKCS#11 mechanism browser in HSM mode — queries `C_GetMechanismList`
     and `C_GetMechanismInfo` for all slot mechanisms; resolves results against a 100+ entry MECH_TABLE
     (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
   - ACVP Testing against NIST test vectors (software mode)
+  - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
+    `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
@@ -550,7 +556,7 @@ python scripts/update_csv.py
 The application is structured into several key components:
 
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
-- **`src/wasm`**: Contains TypeScript wrappers for the underlying WebAssembly cryptographic libraries (`liboqs`).
+- **`src/wasm`**: TypeScript wrappers for WebAssembly cryptographic libraries (`liboqs`, ML-KEM, ML-DSA, LMS). `softhsm/` provides the Phase 6 PKCS#11 singleton loader and modular sub-modules; `inspect/` decodes PKCS#11 call parameters for the call log.
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
 - **`src/components/PKILearning`**: Educational platform with 48 modules across 8 tracks — foundations, strategy, protocols, infrastructure, applications, industries, role guides, and executive.
 - **`src/components/Assess`**: 14-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
@@ -559,7 +565,7 @@ The application is structured into several key components:
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
 - **`src/services/crypto/OpenSSLService.ts`**: Primary cryptographic service wrapping OpenSSL WASM operations.
 - **`src/store`**: Zustand state stores for theme, learning progress, assessment wizard, TLS simulation, and version tracking (all persisted to localStorage).
-- **`src/data`**: Static data layer — TypeScript data files, versioned CSV files (timelines, leaders, library, software references), X.509 certificate profiles, and ACVP test vectors.
+- **`src/data`**: Static data layer — TypeScript data files, versioned CSV files (timelines, leaders, library, software references), X.509 certificate profiles, and ACVP test vectors. `csvUtils.ts` provides a shared date-stamped / revision-sorted CSV loader used by all data modules.
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
 ## Project Structure
@@ -637,7 +643,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: February 28, 2026
+Last audited: March 7, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |

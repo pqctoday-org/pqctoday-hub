@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useId, useState } from 'react'
 import { ChevronDown } from 'lucide-react'
 import { Button } from './button'
 import clsx from 'clsx'
@@ -22,13 +22,16 @@ export function CollapsibleSection({
   headerExtra?: React.ReactNode
 }) {
   const [open, setOpen] = useState(defaultOpen)
+  const contentId = useId()
   return (
-    <div className={clsx('glass-panel p-6 print:border print:border-gray-300', className)}>
+    <div className={clsx('glass-panel p-6 print:border print:border-border', className)}>
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
         className="flex w-full h-auto items-center justify-between print:hidden"
         aria-expanded={open}
+        aria-controls={contentId}
+        aria-label={title}
       >
         <div className="flex items-center gap-2 font-semibold text-foreground">
           {icon}
@@ -51,7 +54,9 @@ export function CollapsibleSection({
         {icon}
         {title}
       </div>
-      <div className={clsx('mt-4', !open && 'hidden print:block')}>{children}</div>
+      <div id={contentId} className={clsx('mt-4', !open && 'hidden print:block')}>
+        {children}
+      </div>
     </div>
   )
 }

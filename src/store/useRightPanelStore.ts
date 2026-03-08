@@ -45,14 +45,16 @@ export const useRightPanelStore = create<RightPanelState>()(
       partialize: (state) => ({
         activeTab: state.activeTab,
       }),
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
-        if (
-          state.activeTab !== 'chat' &&
-          state.activeTab !== 'history' &&
-          state.activeTab !== 'graph'
-        ) {
-          state.activeTab = 'chat'
+        if (version < 1) {
+          if (
+            state.activeTab !== 'chat' &&
+            state.activeTab !== 'history' &&
+            state.activeTab !== 'graph'
+          ) {
+            state.activeTab = 'chat'
+          }
         }
         return state
       },

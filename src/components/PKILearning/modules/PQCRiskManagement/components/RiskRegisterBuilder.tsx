@@ -3,6 +3,7 @@ import React, { useCallback, useMemo } from 'react'
 import { Plus, Trash2, Download, Copy, Check } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface RiskEntry {
   id: string
@@ -259,107 +260,65 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
 
                 {/* Current Algorithm */}
                 <div>
-                  <label
-                    htmlFor={`algorithm-${entry.id}`}
-                    className="block text-xs font-medium text-muted-foreground mb-1"
-                  >
+                  <span className="block text-xs font-medium text-muted-foreground mb-1">
                     Current Algorithm
-                  </label>
-                  <select
-                    id={`algorithm-${entry.id}`}
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                    value={entry.currentAlgorithm}
-                    onChange={(e) => updateEntry(entry.id, 'currentAlgorithm', e.target.value)}
-                  >
-                    {ALGORITHM_OPTIONS.map((algo) => (
-                      <option key={algo} value={algo}>
-                        {algo}
-                      </option>
-                    ))}
-                  </select>
+                  </span>
+                  <FilterDropdown
+                    noContainer
+                    selectedId={entry.currentAlgorithm}
+                    onSelect={(id) => updateEntry(entry.id, 'currentAlgorithm', id)}
+                    items={ALGORITHM_OPTIONS.map((algo) => ({ id: algo, label: algo }))}
+                  />
                 </div>
 
                 {/* Threat Vector */}
                 <div>
-                  <label
-                    htmlFor={`threat-${entry.id}`}
-                    className="block text-xs font-medium text-muted-foreground mb-1"
-                  >
+                  <span className="block text-xs font-medium text-muted-foreground mb-1">
                     Threat Vector
-                  </label>
-                  <select
-                    id={`threat-${entry.id}`}
-                    className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                    value={entry.threatVector}
-                    onChange={(e) => updateEntry(entry.id, 'threatVector', e.target.value)}
-                  >
-                    {THREAT_VECTORS.map((tv) => (
-                      <option key={tv.value} value={tv.value}>
-                        {tv.label}
-                      </option>
-                    ))}
-                  </select>
+                  </span>
+                  <FilterDropdown
+                    noContainer
+                    selectedId={entry.threatVector}
+                    onSelect={(id) => updateEntry(entry.id, 'threatVector', id)}
+                    items={THREAT_VECTORS.map((tv) => ({ id: tv.value, label: tv.label }))}
+                  />
                 </div>
 
                 {/* Likelihood & Impact */}
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label
-                      htmlFor={`likelihood-${entry.id}`}
-                      className="block text-xs font-medium text-muted-foreground mb-1"
-                    >
+                    <span className="block text-xs font-medium text-muted-foreground mb-1">
                       Likelihood (1-5)
-                    </label>
-                    <select
-                      id={`likelihood-${entry.id}`}
-                      className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                      value={entry.likelihood}
-                      onChange={(e) => updateEntry(entry.id, 'likelihood', Number(e.target.value))}
-                    >
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>
-                          {n} &mdash;{' '}
-                          {n === 1
-                            ? 'Rare'
-                            : n === 2
-                              ? 'Unlikely'
-                              : n === 3
-                                ? 'Possible'
-                                : n === 4
-                                  ? 'Likely'
-                                  : 'Almost Certain'}
-                        </option>
-                      ))}
-                    </select>
+                    </span>
+                    <FilterDropdown
+                      noContainer
+                      selectedId={String(entry.likelihood)}
+                      onSelect={(id) => updateEntry(entry.id, 'likelihood', Number(id))}
+                      items={[
+                        { id: '1', label: '1 \u2014 Rare' },
+                        { id: '2', label: '2 \u2014 Unlikely' },
+                        { id: '3', label: '3 \u2014 Possible' },
+                        { id: '4', label: '4 \u2014 Likely' },
+                        { id: '5', label: '5 \u2014 Almost Certain' },
+                      ]}
+                    />
                   </div>
                   <div>
-                    <label
-                      htmlFor={`impact-${entry.id}`}
-                      className="block text-xs font-medium text-muted-foreground mb-1"
-                    >
+                    <span className="block text-xs font-medium text-muted-foreground mb-1">
                       Impact (1-5)
-                    </label>
-                    <select
-                      id={`impact-${entry.id}`}
-                      className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
-                      value={entry.impact}
-                      onChange={(e) => updateEntry(entry.id, 'impact', Number(e.target.value))}
-                    >
-                      {[1, 2, 3, 4, 5].map((n) => (
-                        <option key={n} value={n}>
-                          {n} &mdash;{' '}
-                          {n === 1
-                            ? 'Negligible'
-                            : n === 2
-                              ? 'Minor'
-                              : n === 3
-                                ? 'Moderate'
-                                : n === 4
-                                  ? 'Major'
-                                  : 'Catastrophic'}
-                        </option>
-                      ))}
-                    </select>
+                    </span>
+                    <FilterDropdown
+                      noContainer
+                      selectedId={String(entry.impact)}
+                      onSelect={(id) => updateEntry(entry.id, 'impact', Number(id))}
+                      items={[
+                        { id: '1', label: '1 \u2014 Negligible' },
+                        { id: '2', label: '2 \u2014 Minor' },
+                        { id: '3', label: '3 \u2014 Moderate' },
+                        { id: '4', label: '4 \u2014 Major' },
+                        { id: '5', label: '5 \u2014 Catastrophic' },
+                      ]}
+                    />
                   </div>
                 </div>
               </div>

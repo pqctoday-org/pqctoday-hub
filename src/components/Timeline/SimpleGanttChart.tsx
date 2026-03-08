@@ -527,9 +527,20 @@ export const SimpleGanttChart = ({
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card" ref={tableRef}>
         <table className="w-full min-w-[1000px] border-collapse table-fixed">
+          <caption className="sr-only">
+            Post-quantum cryptography migration timeline by country and phase
+          </caption>
           <thead>
             <tr>
               <th
+                scope="col"
+                aria-sort={
+                  sortField === 'country'
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                }
                 className="sticky left-0 z-30 bg-background p-4 text-left w-[180px] cursor-pointer hover:bg-muted/50 transition-colors border-b border-r border-border"
                 onClick={() => handleSort('country')}
                 style={{ willChange: 'transform' }}
@@ -548,6 +559,14 @@ export const SimpleGanttChart = ({
                 </div>
               </th>
               <th
+                scope="col"
+                aria-sort={
+                  sortField === 'organization'
+                    ? sortDirection === 'asc'
+                      ? 'ascending'
+                      : 'descending'
+                    : 'none'
+                }
                 className="sticky left-[180px] z-30 bg-background p-4 text-left w-[200px] cursor-pointer hover:bg-muted/50 transition-colors border-b border-r border-border"
                 onClick={() => handleSort('organization')}
                 style={{ willChange: 'transform' }}
@@ -568,6 +587,7 @@ export const SimpleGanttChart = ({
               {YEARS.map((year) => (
                 <th
                   key={year}
+                  scope="col"
                   className="p-2 text-center min-w-[80px] bg-background/80 border-b border-r border-border"
                 >
                   <span

@@ -17,37 +17,29 @@ test.describe('EUDI Digital Identity Wallet Module', () => {
   })
 
   test('Completes PID Issuance and Relying Party Flows', async ({ page }) => {
-    // 1. Navigation to Digital ID Module
-    await page.goto('/')
-    await page.getByRole('button', { name: 'Learn' }).first().click()
+    // Suppress "What's New" toast (main.tsx always sets pqc-tour-completed=true on load)
+    await page.addInitScript(() => {
+      const _orig = Storage.prototype.setItem
+      Storage.prototype.setItem = function (key: string, value: string) {
+        if (key === 'pqc-tour-completed') return
+        _orig.call(this, key, value)
+      }
+    })
 
-    // Wait for modules to load - avoiding networkidle as it causes hangs in CI
-    const digitalIdCard = page.getByRole('heading', { name: 'Digital ID', exact: true })
-    await expect(digitalIdCard).toBeVisible({ timeout: 30000 })
-    await digitalIdCard.click()
+    // 1. Navigate directly to module (track groups are collapsed on dashboard in v2.29+)
+    await page.goto('/learn/digital-id')
 
-    // Verify Dashboard
+    // Verify module page loaded
     await expect(page.getByRole('heading', { name: 'EUDI Digital Identity Wallet' })).toBeVisible()
     await expect(page.getByText('Explore the European Digital Identity ecosystem')).toBeVisible()
 
     // Enter Workshop Mode
     await page.getByRole('button', { name: /Start the Simulation/i }).click()
 
-    // Dismiss "What's New" overlay if present
-    const dismissBtn = page.getByRole('button', { name: 'Dismiss', exact: true })
-    try {
-      await dismissBtn.waitFor({ state: 'visible', timeout: 3000 })
-      await dismissBtn.click()
-    } catch {
-      // ignore
-    }
-
     // -------------------------------------------------------------
     // Flow 1: PID Issuance
     // -------------------------------------------------------------
     await test.step('PID Issuance Flow', async () => {
-      // Wait for animation
-      await page.waitForTimeout(1000)
       // Navigate to Step 2: PID Issuer
       const pidIssuerBtn = page.getByRole('button', { name: /Step 2/i }).first()
       await expect(pidIssuerBtn).toBeVisible({ timeout: 10000 })

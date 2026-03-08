@@ -53,7 +53,11 @@ function ReturnBanner() {
   const label = RETURN_LABELS[returnTo] ?? 'previous page' // eslint-disable-line security/detect-object-injection
 
   return (
-    <div className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20 text-sm">
+    <div
+      role="status"
+      aria-live="polite"
+      className="flex items-center gap-2 mb-4 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20 text-sm"
+    >
       <Button
         variant="ghost"
         size="sm"
@@ -69,13 +73,14 @@ function ReturnBanner() {
       <Button
         variant="ghost"
         size="sm"
-        className="h-6 w-6 p-0"
+        aria-label="Dismiss return banner"
+        className="min-h-[44px] min-w-[44px] p-0"
         onClick={() => {
           sessionStorage.removeItem('pqc-return-to')
           setReturnTo(null)
         }}
       >
-        <X size={14} />
+        <X size={14} aria-hidden="true" />
       </Button>
     </div>
   )

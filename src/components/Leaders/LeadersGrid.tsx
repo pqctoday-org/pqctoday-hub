@@ -2,11 +2,12 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Briefcase, Building2, School, AlertCircle } from 'lucide-react'
+import { Search, Briefcase, Building2, School, AlertCircle, Trophy, Users } from 'lucide-react'
 
 import { leadersData, leadersMetadata } from '../../data/leadersData'
 import { logEvent } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { EmptyState } from '../ui/empty-state'
 import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
 import { SourcesButton } from '../ui/SourcesButton'
@@ -239,7 +240,8 @@ export const LeadersGrid = () => {
   return (
     <div className="space-y-6">
       <div className="text-center mb-2 md:mb-8">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
+        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-3">
+          <Trophy className="text-primary shrink-0" size={28} />
           Transformation Leaders
         </h2>
         <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
@@ -316,13 +318,20 @@ export const LeadersGrid = () => {
             </div>
           </div>
 
-          <span className="hidden md:inline text-muted-foreground px-2">Search:</span>
+          <span className="hidden md:inline text-muted-foreground px-2" aria-hidden="true">
+            Search:
+          </span>
           <div className="relative flex-1 min-w-[200px] w-full">
             <Search
               size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              aria-hidden="true"
             />
+            <label htmlFor="leader-search" className="sr-only">
+              Search leaders by name or title
+            </label>
             <input
+              id="leader-search"
               type="text"
               placeholder="Search leaders..."
               value={searchQuery}
@@ -352,6 +361,13 @@ export const LeadersGrid = () => {
         )}
       </AnimatePresence>
 
+      {filteredLeaders.length === 0 && (
+        <EmptyState
+          icon={<Users size={32} />}
+          title="No leaders found"
+          description="Try adjusting the region, country, sector, or search query."
+        />
+      )}
       <div
         ref={gridRef}
         className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"

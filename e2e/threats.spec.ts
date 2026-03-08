@@ -60,9 +60,6 @@ test.describe('Threats Dashboard', () => {
     if (await searchInput.isVisible()) {
       await searchInput.fill('quantum')
 
-      // Wait for results to filter
-      await page.waitForTimeout(300)
-
       // Table should still be visible with filtered results
       await expect(page.locator('table')).toBeVisible()
     }
@@ -73,7 +70,6 @@ test.describe('Threats Dashboard', () => {
     if (await searchInput.isVisible()) {
       // Search for a specific new threat ID
       await searchInput.fill('CROSS-001')
-      await page.waitForTimeout(300)
 
       // Verify correct threat is displayed
       await expect(page.locator('table')).toContainText('Quantum-safe readiness gap')
@@ -87,11 +83,8 @@ test.describe('Threats Dashboard', () => {
       // Search for nonexistent term
       await searchInput.fill('xyznonexistent12345')
 
-      // Wait for filter
-      await page.waitForTimeout(300)
-
-      // Verify empty state message
-      await expect(page.locator('text=No threats found matching your filters').last()).toBeVisible()
+      // Verify empty state — use exact title match to avoid matching the mobile list's longer text
+      await expect(page.getByText('No threats found', { exact: true }).first()).toBeVisible()
     }
   })
 

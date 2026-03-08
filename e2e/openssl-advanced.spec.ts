@@ -3,6 +3,13 @@ import { test, expect } from '@playwright/test'
 
 test.describe('OpenSSL Studio - Advanced Features', () => {
   test.beforeEach(async ({ page }) => {
+    // Suppress WhatsNew toast so it doesn't intercept clicks
+    await page.addInitScript(() => {
+      localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+    })
     // Capture browser logs
     page.on('console', (msg) => console.log(`BROWSER LOG: ${msg.text()}`))
 
@@ -20,22 +27,18 @@ test.describe('OpenSSL Studio - Advanced Features', () => {
     // 2. Go to CSR Tab
     await page.getByRole('button', { name: 'CSR' }).click()
 
-    // 3. Select the generated key
-    // Wait for the select to be populated with the new key
-    await page.waitForTimeout(1000)
-    const keyOption = await page
-      .locator('#csr-key-select option')
-      .filter({ hasText: /rsa-2048-/ })
+    // 3. Select the generated key from the FilterDropdown
+    // Note: FilterDropdown closes on scroll; force:true skips Playwright's scroll-into-view
+    await page.getByRole('button', { name: 'Select Private Key...' }).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: /rsa-2048-/ })
       .first()
-    const keyValue = await keyOption.getAttribute('value')
-    if (keyValue) {
-      await page.selectOption('#csr-key-select', keyValue)
-    }
+      .click({ force: true })
 
     // 4. Run CSR Command
     await page.getByRole('button', { name: 'Run Command' }).click()
 
-    // 5. Verify Success
     // 5. Verify Success
     await expect(page.getByText(/File created: .*rsa-csr-/)).toBeVisible({ timeout: 30000 })
     await expect(page.getByText(/Can't open .*openssl.cnf/)).not.toBeVisible()
@@ -50,16 +53,14 @@ test.describe('OpenSSL Studio - Advanced Features', () => {
     // 2. Go to Certificate Tab
     await page.getByRole('button', { name: 'Certificate' }).click()
 
-    // 3. Ensure Key is Selected (wait for populate)
-    await page.waitForTimeout(1000)
-    const keyOption = await page
-      .locator('#csr-key-select option')
-      .filter({ hasText: /rsa-2048-/ })
+    // 3. Ensure Key is Selected via FilterDropdown
+    // Note: FilterDropdown closes on scroll; force:true skips Playwright's scroll-into-view
+    await page.getByRole('button', { name: 'Select Private Key...' }).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .getByRole('option', { name: /rsa-2048-/ })
       .first()
-    const keyValue = await keyOption.getAttribute('value')
-    if (keyValue) {
-      await page.selectOption('#csr-key-select', keyValue)
-    }
+      .click({ force: true })
 
     // 4. Run Command (req -x509)
     await page.getByRole('button', { name: 'Run Command' }).click()

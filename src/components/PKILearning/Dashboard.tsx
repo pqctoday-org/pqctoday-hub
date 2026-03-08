@@ -112,11 +112,31 @@ const LearnSortControl = ({
         <div
           role="listbox"
           aria-label="Sort by"
+          tabIndex={0}
           className="absolute top-full right-0 mt-1 w-52 bg-popover border border-border rounded-lg shadow-xl overflow-hidden z-50"
+          onKeyDown={(e) => {
+            const options = Array.from(
+              e.currentTarget.querySelectorAll('[role="option"]')
+            ) as HTMLElement[]
+            const idx = options.findIndex((o) => o === document.activeElement)
+            if (idx === -1) return
+            let next = idx
+            if (e.key === 'ArrowDown') next = (idx + 1) % options.length
+            else if (e.key === 'ArrowUp') next = (idx - 1 + options.length) % options.length
+            else if (e.key === 'Home') next = 0
+            else if (e.key === 'End') next = options.length - 1
+            else if (e.key === 'Escape') {
+              setIsOpen(false)
+              return
+            } else return
+            e.preventDefault()
+            options[next].focus()
+          }}
         >
           {SORT_OPTIONS.map((option) => (
             <button
               key={option.id}
+              type="button"
               role="option"
               aria-selected={value === option.id}
               onClick={() => {
@@ -191,6 +211,7 @@ export const Dashboard: React.FC = () => {
                   className="h-full bg-primary rounded-full transition-all"
                   style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
                   role="progressbar"
+                  aria-label="Module completion progress"
                   aria-valuenow={getProgressPercentage(resumeModule.id)}
                   aria-valuemin={0}
                   aria-valuemax={100}
@@ -556,13 +577,14 @@ const ModuleTracksGrid = ({
               )}
             </span>
           )}
-          <button
+          <Button
+            variant="link"
             onClick={clearFilters}
-            className="flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-medium"
+            className="p-0 h-auto flex items-center gap-1 font-medium"
           >
             <X size={12} aria-hidden="true" />
             Clear filters
-          </button>
+          </Button>
         </div>
       )}
 

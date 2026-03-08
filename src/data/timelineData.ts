@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { parseTimelineCSV } from '../utils/csvParser'
+import Papa from 'papaparse'
 import type {
   CountryData,
   Phase,
@@ -78,7 +78,97 @@ export const phaseColors: Record<Phase, { start: string; end: string; glow: stri
 import { MOCK_CSV_CONTENT } from './mockTimelineData'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 
-// Helper to find the latest two timeline CSV files
+// ─── PapaParse-based CSV parser ─────────────────────────────────────────────
+
+interface RawTimelineRow {
+  Country: string
+  FlagCode: string
+  OrgName: string
+  OrgFullName: string
+  OrgLogoUrl: string
+  Type: string
+  Category: string
+  StartYear: string
+  EndYear: string
+  Title: string
+  Description: string
+  SourceUrl: string
+  SourceDate: string
+  Status: string
+}
+
+export function parseTimelineCSV(csvContent: string): CountryData[] {
+  const { data: rows } = Papa.parse<RawTimelineRow>(csvContent.trim(), {
+    header: true,
+    skipEmptyLines: true,
+  })
+
+  const countriesMap = new Map<string, CountryData>()
+
+  for (const row of rows) {
+    if (!row.Country) continue
+
+    const countryName = row.Country
+    const flagCode = row.FlagCode || ''
+    const orgName = row.OrgName || ''
+
+    // Special handling for CNSA (NSA) to create a separate lane
+    let effectiveCountryName = countryName
+    if (countryName === 'United States' && orgName === 'NSA') {
+      effectiveCountryName = 'United States (CNSA)'
+    }
+
+    // Ensure country exists
+    if (!countriesMap.has(effectiveCountryName)) {
+      countriesMap.set(effectiveCountryName, {
+        countryName: effectiveCountryName,
+        flagCode,
+        bodies: [],
+      })
+    }
+
+    const country = countriesMap.get(effectiveCountryName)!
+
+    // Ensure body exists
+    let body = country.bodies.find((b) => b.name === orgName)
+    if (!body) {
+      body = {
+        name: orgName,
+        fullName: row.OrgFullName || '',
+        logoUrl: row.OrgLogoUrl || '',
+        countryCode: flagCode,
+        events: [],
+      }
+      country.bodies.push(body)
+    }
+
+    // Create event — PapaParse auto-strips quotes
+    const event: TimelineEvent = {
+      startYear: parseInt(row.StartYear, 10),
+      endYear: parseInt(row.EndYear, 10),
+      phase: row.Category as Phase,
+      type: (row.Type as EventType) || 'Phase',
+      title: row.Title || '',
+      description: row.Description || '',
+      sourceUrl: row.SourceUrl || '',
+      sourceDate: row.SourceDate || '',
+      status: row.Status?.trim(),
+      // Populate denormalized fields
+      orgName,
+      orgFullName: row.OrgFullName || '',
+      orgLogoUrl: row.OrgLogoUrl || '',
+      countryName: effectiveCountryName,
+      flagCode,
+    }
+
+    body.events.push(event)
+  }
+
+  return Array.from(countriesMap.values())
+}
+
+// ─── File discovery and loading ─────────────────────────────────────────────
+
 function getLatestTimelineFiles(): {
   current: { content: string; filename: string; date: Date } | null
   previous: { content: string; filename: string; date: Date } | null

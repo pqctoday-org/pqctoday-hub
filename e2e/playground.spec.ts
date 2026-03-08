@@ -81,12 +81,9 @@ test.describe('Playground', () => {
 
     await privKeySelect.selectOption({ index: 1 })
 
-    // Wait for button to be enabled
+    // Wait for button to be enabled (ciphertext must be populated first)
     const decapsulateButton = page.getByRole('button', { name: 'Run Decapsulate' })
     await expect(decapsulateButton).toBeEnabled({ timeout: 10000 })
-
-    // Small stability delay
-    await page.waitForTimeout(1000)
 
     await decapsulateButton.click()
 
@@ -189,9 +186,6 @@ test.describe('Playground', () => {
 
       const decapsulateButton = page.getByRole('button', { name: 'Run Decapsulate' })
       await expect(decapsulateButton).toBeEnabled()
-
-      // Small delay for state stability
-      await page.waitForTimeout(500)
 
       await decapsulateButton.click()
 

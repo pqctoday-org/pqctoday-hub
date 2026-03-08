@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { AlertTriangle, CheckCircle, Download } from 'lucide-react'
 import { ROTATION_POLICIES } from '../data/secretsConstants'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface PolicyRow {
   id: string
@@ -154,17 +155,13 @@ export const RotationPolicyDesigner: React.FC = () => {
                 >
                   <td className="py-3 px-2 font-medium text-foreground">{row.secretType}</td>
                   <td className="py-3 px-2">
-                    <select
-                      value={row.currentTtl}
-                      onChange={(e) => updateTtl(row.id, e.target.value)}
-                      className="bg-muted border border-border rounded px-2 py-1 text-xs text-foreground w-full max-w-[120px] focus:outline-none focus:ring-1 focus:ring-primary"
-                    >
-                      {TTL_OPTIONS.map((opt) => (
-                        <option key={opt} value={opt}>
-                          {opt}
-                        </option>
-                      ))}
-                    </select>
+                    <FilterDropdown
+                      noContainer
+                      selectedId={row.currentTtl}
+                      onSelect={(id) => updateTtl(row.id, id)}
+                      items={TTL_OPTIONS.map((opt) => ({ id: opt, label: opt }))}
+                      className="max-w-[120px]"
+                    />
                   </td>
                   <td className="py-3 px-2 text-muted-foreground hidden sm:table-cell">
                     {origPolicy?.maxTTL ?? '—'}

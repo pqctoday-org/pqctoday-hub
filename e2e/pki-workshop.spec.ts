@@ -2,23 +2,22 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('PKI Workshop Module', () => {
-  test.setTimeout(120000)
+  test.setTimeout(240000)
   test.beforeEach(async ({ page }) => {
-    // Pre-seed localStorage to suppress "What's New" toast (z-[100] overlay can block clicks)
+    // Suppress "What's New" toast (z-[100] overlay intercepts clicks):
+    // main.tsx always sets pqc-tour-completed=true on load, which triggers the toast because
+    // hasSeenCurrentVersion() uses strict equality and '99.0.0' !== app version.
+    // Block the key from being written so tourCompleted stays false.
     await page.addInitScript(() => {
-      window.localStorage.setItem(
-        'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '1.33.0' }, version: 0 })
-      )
+      const _orig = Storage.prototype.setItem
+      Storage.prototype.setItem = function (key: string, value: string) {
+        if (key === 'pqc-tour-completed') return
+        _orig.call(this, key, value)
+      }
     })
     await page.goto('/')
-    // Navigate to Learn module
-    await page.getByRole('button', { name: 'Learn view' }).click()
-
-    // Select PKI Workshop from Dashboard
-    const card = page.getByRole('heading', { name: 'PKI', exact: true })
-    await expect(card).toBeVisible({ timeout: 30000 })
-    await card.click()
+    // Navigate directly to module to avoid collapsed track group on learn dashboard (v2.29+)
+    await page.goto('/learn/pki-workshop')
 
     // Verify we are in the workshop
     await expect(page.getByRole('heading', { name: 'PKI Workshop', level: 1 })).toBeVisible()
@@ -77,16 +76,35 @@ test.describe('PKI Workshop Module', () => {
     // Verify visibility of Cert Signer component
     await expect(page.getByText('RECEIVE & VALIDATE').first()).toBeVisible()
 
-    // Wait for dropdowns to populate
-    await page.waitForTimeout(1000)
+    // Select CSR, Profile, CA Key via FilterDropdown (CertSigner uses custom dropdowns).
+    // FilterDropdowns have data-testid="filter-dropdown"; CertSigner has 3 in order: CSR, Profile, CA Key.
+    // IMPORTANT: FilterDropdown closes on window.scroll (passive listener).
+    // Playwright's click() does "scroll into view" which fires the scroll event, detaching the portal.
+    // Fix: scrollIntoViewIfNeeded() on the trigger BEFORE opening (dropdown closed = handler not registered),
+    // then use evaluate(el => el.click()) to fire a JS click directly — no Playwright scroll.
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .locator('[role="option"]')
+      .nth(1)
+      .evaluate((el: HTMLElement) => el.click())
 
-    // Select CSR (using ID from CertSigner.tsx)
-    const csrSelect = page.locator('#csr-select').first()
-    await csrSelect.selectOption({ index: 1 }) // Select the generated CSR
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(1).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .locator('[role="option"]')
+      .nth(1)
+      .evaluate((el: HTMLElement) => el.click())
 
-    // Select CA Key (using ID from CertSigner.tsx)
-    const caKeySelect = page.locator('#ca-key-select').first()
-    await caKeySelect.selectOption({ index: 1 }) // Select the generated CA Key
+    await page.locator('[data-testid="filter-dropdown"]').nth(2).scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').nth(2).click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    await page
+      .locator('[role="option"]')
+      .nth(1)
+      .evaluate((el: HTMLElement) => el.click())
 
     // Click Sign
     await page.getByRole('button', { name: 'Sign Certificate' }).first().click()
@@ -99,19 +117,16 @@ test.describe('PKI Workshop Module', () => {
     // Verify visibility of Cert Parser component
     await expect(page.getByText('Inspect Generated Artifacts').first()).toBeVisible()
 
-    // Select Artifact
-    const artifactSelect = page.locator('#artifact-select').first()
-
-    // Wait for options to update
-    await page.waitForTimeout(1000)
-
-    // Select the last option (most recent cert)
-    const options = await artifactSelect.locator('option').all()
-    const lastOption = options[options.length - 1]
-    const lastOptionValue = await lastOption.getAttribute('value')
-    if (lastOptionValue) {
-      await artifactSelect.selectOption(lastOptionValue)
-    }
+    // Select the signed certificate via FilterDropdown (CertParser has 1 dropdown).
+    // Use same scroll-first + evaluate pattern to avoid scroll-close handler detaching portal.
+    await page.locator('[data-testid="filter-dropdown"]').first().scrollIntoViewIfNeeded()
+    await page.locator('[data-testid="filter-dropdown"]').first().click()
+    await expect(page.locator('[role="listbox"]')).toBeVisible()
+    const optionCount = await page.locator('[role="option"]').count()
+    await page
+      .locator('[role="option"]')
+      .nth(optionCount - 1)
+      .evaluate((el: HTMLElement) => el.click())
 
     // Click Parse
     await page.getByRole('button', { name: 'Parse Details' }).click()

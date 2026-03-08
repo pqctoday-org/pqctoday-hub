@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { FIRMWARE_UPGRADE_PATHS, type FirmwareUpgradePath } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 const PHASES = [
   {
@@ -247,24 +248,18 @@ export const HsmMigrationPlanner: React.FC = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label
-                htmlFor="vendor-select"
-                className="text-xs font-medium text-muted-foreground mb-1 block"
-              >
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
                 Select Current Vendor / Firmware
-              </label>
-              <select
-                id="vendor-select"
-                value={selectedVendorId}
-                onChange={(e) => setSelectedVendorId(e.target.value)}
-                className="w-full rounded-lg bg-muted/50 border border-border p-2 text-sm text-foreground focus:outline-none focus:border-primary/50"
-              >
-                {FIRMWARE_UPGRADE_PATHS.map((path) => (
-                  <option key={path.vendorId} value={path.vendorId}>
-                    {path.vendorName} ({path.currentFirmware})
-                  </option>
-                ))}
-              </select>
+              </span>
+              <FilterDropdown
+                noContainer
+                selectedId={selectedVendorId}
+                onSelect={(id) => setSelectedVendorId(id)}
+                items={FIRMWARE_UPGRADE_PATHS.map((path) => ({
+                  id: path.vendorId,
+                  label: `${path.vendorName} (${path.currentFirmware})`,
+                }))}
+              />
             </div>
 
             <div>

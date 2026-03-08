@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { PenLine, CheckCircle, XCircle, Loader2, Plus, X } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CKM_SHA256_RSA_PKCS,
   CKM_SHA384_RSA_PKCS,
@@ -223,21 +224,16 @@ const RsaPanel = () => {
                 Multi-part
               </button>
             </div>
-            <select
-              value={signMech}
-              onChange={(e) => {
-                setSignMech(Number(e.target.value))
+            <FilterDropdown
+              items={RSA_SIGN_MECHS.map((m) => ({ id: String(m.value), label: m.label }))}
+              selectedId={String(signMech)}
+              onSelect={(id) => {
+                setSignMech(parseInt(id, 10))
                 setSig(null)
                 setVerifyResult(null)
               }}
-              className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-            >
-              {RSA_SIGN_MECHS.map((m) => (
-                <option key={m.value} value={m.value}>
-                  {m.label}
-                </option>
-              ))}
-            </select>
+              noContainer
+            />
             {multiPartSign ? (
               <div className="space-y-1.5">
                 {chunks.map((chunk, idx) => (
@@ -526,21 +522,16 @@ const EcdsaPanel = () => {
               Multi-part
             </button>
           </div>
-          <select
-            value={mech}
-            onChange={(e) => {
-              setMech(Number(e.target.value))
+          <FilterDropdown
+            items={ECDSA_MECHS.map((m2) => ({ id: String(m2.value), label: m2.label }))}
+            selectedId={String(mech)}
+            onSelect={(id) => {
+              setMech(parseInt(id, 10))
               setSig(null)
               setVerifyResult(null)
             }}
-            className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-          >
-            {ECDSA_MECHS.map((m2) => (
-              <option key={m2.value} value={m2.value}>
-                {m2.label}
-              </option>
-            ))}
-          </select>
+            noContainer
+          />
           {multiPartSign ? (
             <div className="space-y-1.5">
               {chunks.map((chunk, idx) => (

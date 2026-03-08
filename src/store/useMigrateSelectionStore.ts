@@ -73,20 +73,26 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
       version: 4,
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
-        // v1 → v2: add layer filter fields
-        state.hiddenProducts = Array.isArray(state.hiddenProducts) ? state.hiddenProducts : []
-        if (!state.activeLayer) state.activeLayer = 'All'
-        if (!state.activeSubCategory) state.activeSubCategory = 'All'
-        // v2 → v3: add myProducts
-        state.myProducts = Array.isArray(state.myProducts) ? state.myProducts : []
-        // v3 → v4: add viewMode + workflowCollapsed
-        if (!state.viewMode || !['stack', 'cards', 'table'].includes(state.viewMode)) {
-          state.viewMode = 'stack'
+        if (version < 2) {
+          // v0/v1 → v2: add layer filter fields
+          state.hiddenProducts = Array.isArray(state.hiddenProducts) ? state.hiddenProducts : []
+          if (!state.activeLayer) state.activeLayer = 'All'
+          if (!state.activeSubCategory) state.activeSubCategory = 'All'
         }
-        state.workflowCollapsed = state.workflowCollapsed ?? false
+        if (version < 3) {
+          // v2 → v3: add myProducts
+          state.myProducts = Array.isArray(state.myProducts) ? state.myProducts : []
+        }
+        if (version < 4) {
+          // v3 → v4: add viewMode + workflowCollapsed
+          if (!state.viewMode || !['stack', 'cards', 'table'].includes(state.viewMode)) {
+            state.viewMode = 'stack'
+          }
+          state.workflowCollapsed = state.workflowCollapsed ?? false
+        }
         return state
       },
       onRehydrateStorage: () => (_state, error) => {

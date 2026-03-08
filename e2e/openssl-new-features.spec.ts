@@ -44,8 +44,10 @@ test.describe.skip('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
 
     // 3. Decrypt
     await page.getByRole('button', { name: 'Decrypt' }).click()
-    // Input File: data.enc (might need to select it)
-    await page.waitForTimeout(500)
+    // Wait for the infile select to populate after mode switch
+    await expect(
+      page.locator('#enc-infile-select option').filter({ hasText: 'data.txt.enc' }).first()
+    ).toBeAttached()
     await page.selectOption('#enc-infile-select', 'data.txt.enc')
     await page.fill('#enc-pass-input', 'test')
     await page.getByRole('button', { name: 'Run Command' }).click()
@@ -77,12 +79,12 @@ test.describe.skip('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
     const privKeyVal = await privKeyOption.getAttribute('value')
     if (privKeyVal) await page.selectOption('#kem-key-select', privKeyVal)
 
-    // Select Ciphertext
-    await page.waitForTimeout(500)
+    // Wait for the ciphertext option to appear in the select, then choose it
     const ctOption = page
       .locator('#kem-infile-select option')
       .filter({ hasText: 'ciphertext.bin' })
       .first()
+    await expect(ctOption).toBeAttached()
     const ctVal = await ctOption.getAttribute('value')
     if (ctVal) await page.selectOption('#kem-infile-select', ctVal)
 
@@ -99,13 +101,13 @@ test.describe.skip('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
     await page.getByRole('button', { name: 'Run Command' }).click()
     await expect(page.getByText(/File created: rsa-2048-/)).toBeVisible()
 
-    // 2. Generate Cert
+    // 2. Generate Cert — wait for key select to populate after tab switch
     await page.getByRole('button', { name: 'Certificate' }).click()
-    await page.waitForTimeout(500)
     const keyOption = page
       .locator('#csr-key-select option')
       .filter({ hasText: 'rsa-2048-' })
       .first()
+    await expect(keyOption).toBeAttached()
     const keyVal = await keyOption.getAttribute('value')
     if (keyVal) await page.selectOption('#csr-key-select', keyVal)
     await page.getByRole('button', { name: 'Run Command' }).click()
@@ -115,12 +117,12 @@ test.describe.skip('OpenSSL Studio - New Features (Enc, KEM, PKCS12)', () => {
     await page.getByRole('button', { name: 'PKCS#12' }).click()
     await page.getByRole('button', { name: 'Export' }).click()
 
-    // Select Cert
-    await page.waitForTimeout(500)
+    // Wait for the cert option to populate after switching to Export mode
     const certOption = page
       .locator('#p12-cert-select option')
       .filter({ hasText: 'rsa-cert-' })
       .first()
+    await expect(certOption).toBeAttached()
     const certVal = await certOption.getAttribute('value')
     if (certVal) await page.selectOption('#p12-cert-select', certVal)
 

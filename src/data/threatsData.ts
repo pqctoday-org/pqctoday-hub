@@ -1,4 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import Papa from 'papaparse'
+import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+import { loadLatestCSV, splitPipe, parseIntSafe } from './csvUtils'
+
 export interface ThreatData {
   industry: string
   threatId: string
@@ -15,169 +19,71 @@ export interface ThreatData {
 
 export type ThreatItem = ThreatData
 
-import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
+interface RawThreatRow {
+  industry: string
+  threat_id: string
+  threat_description: string
+  criticality: string
+  crypto_at_risk: string
+  pqc_replacement: string
+  main_source: string
+  source_url: string
+  accuracy_pct: string
+  related_modules: string
+}
 
-// Helper to find the latest two threats CSV files
-function getLatestThreatsFiles(): {
-  current: { content: string; filename: string; date: Date } | null
-  previous: { content: string; filename: string; date: Date } | null
-} {
-  // Use import.meta.glob to find all threats CSV files
-  const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
+const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
 
-  // Extract filenames and parse dates
-  const files = Object.keys(modules)
-    .map((path) => {
-      // Path format: ./quantum_threats_hsm_industries_MMDDYYYY.csv or ..._MMDDYYYY_rN.csv
-      // eslint-disable-next-line security/detect-unsafe-regex
-      const match = path.match(
-        /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/
-      )
-      if (match) {
-        const [, month, day, year, rev] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        const revision = rev ? parseInt(rev) : 0
-        // eslint-disable-next-line security/detect-object-injection
-        return { path, date, revision, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
-
-  if (files.length === 0) {
-    console.warn('No dated threats CSV files found.')
-    return { current: null, previous: null }
-  }
-
-  // Sort by date descending, then by revision descending (latest revision wins on same date)
-  files.sort((a, b) => {
-    const dateDiff = b.date.getTime() - a.date.getTime()
-    return dateDiff !== 0 ? dateDiff : b.revision - a.revision
-  })
-
-  console.log(`Loading latest threats data from: ${files[0].path}`)
-  if (files.length > 1) {
-    console.log(`Comparison data loaded from: ${files[1].path}`)
-  }
-
+function transformThreat(row: RawThreatRow): ThreatData {
+  const pct = parseIntSafe(row.accuracy_pct)
   return {
-    current: {
-      content: files[0].content,
-      filename: files[0].path.split('/').pop() || files[0].path,
-      date: files[0].date,
-    },
-    previous:
-      files.length > 1
-        ? {
-            content: files[1].content,
-            filename: files[1].path.split('/').pop() || files[1].path,
-            date: files[1].date,
-          }
-        : null,
+    industry: row.industry || '',
+    threatId: row.threat_id || '',
+    description: row.threat_description || '',
+    criticality: (row.criticality as ThreatData['criticality']) || 'Medium',
+    cryptoAtRisk: row.crypto_at_risk || '',
+    pqcReplacement: row.pqc_replacement || '',
+    mainSource: row.main_source || '',
+    sourceUrl: row.source_url || '',
+    accuracyPct: pct || undefined,
+    relatedModules: splitPipe(row.related_modules),
   }
 }
 
-export function parseThreatsCSV(csvContent: string): ThreatData[] {
-  try {
-    const lines = csvContent.trim().split('\n')
-    // Skip header
-    const dataLines = lines.slice(1)
+const {
+  data: currentItems,
+  previousData: previousItems,
+  metadata,
+} = loadLatestCSV<RawThreatRow, ThreatData>(
+  modules,
+  /quantum_threats_hsm_industries_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  transformThreat,
+  true // withPrevious for status badges
+)
 
-    // Helper to parse CSV line respecting quotes
-    const parseLine = (line: string): string[] => {
-      const result = []
-      let current = ''
-      let inQuotes = false
+// Compute status map
+const statusMap = previousItems
+  ? compareDatasets(currentItems, previousItems, 'threatId')
+  : new Map<string, ItemStatus>()
 
-      for (let i = 0; i < line.length; i++) {
-        // eslint-disable-next-line security/detect-object-injection
-        const char = line[i]
-        if (char === '"') {
-          inQuotes = !inQuotes
-        } else if (char === ',' && !inQuotes) {
-          result.push(current.trim())
-          current = ''
-        } else {
-          current += char
-        }
-      }
-      result.push(current.trim())
-      return result
-    }
+// Inject status
+export const threatsData: ThreatData[] = currentItems.map((item) => ({
+  ...item,
+  status: statusMap.get(item.threatId),
+}))
 
-    return dataLines.map((line) => {
-      // Columns: industry,threat_id,threat_description,criticality,crypto_at_risk,
-      //          pqc_replacement,main_source,source_url,accuracy_pct,related_modules
-      const [
-        industry,
-        threatId,
-        description,
-        criticality,
-        cryptoAtRisk,
-        pqcReplacement,
-        mainSource,
-        sourceUrl,
-        accuracyPct,
-        relatedModulesRaw,
-      ] = parseLine(line)
-
-      return {
-        industry: industry?.replace(/^"|"$/g, '') || '',
-        threatId: threatId?.replace(/^"|"$/g, '') || '',
-        description: description?.replace(/^"|"$/g, '') || '',
-        criticality: (criticality?.replace(/^"|"$/g, '') as ThreatData['criticality']) || 'Medium',
-        cryptoAtRisk: cryptoAtRisk?.replace(/^"|"$/g, '') || '',
-        pqcReplacement: pqcReplacement?.replace(/^"|"$/g, '') || '',
-        mainSource: mainSource?.replace(/^"|"$/g, '') || '',
-        sourceUrl: sourceUrl?.replace(/^"|"$/g, '') || '',
-        accuracyPct: accuracyPct ? parseInt(accuracyPct.replace(/^"|"$/g, '')) : undefined,
-        relatedModules: relatedModulesRaw
-          ? relatedModulesRaw
-              .replace(/^"|"$/g, '')
-              .split('|')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : [],
-      }
-    })
-  } catch (error) {
-    console.error('Failed to parse threats CSV:', error)
-    return []
-  }
-}
-
-// Load current and previous data
-let parsedData: ThreatData[] = []
-let metadata: { filename: string; lastUpdate: Date } | null = null
-
-try {
-  const { current, previous } = getLatestThreatsFiles()
-
-  if (current) {
-    const currentItems = parseThreatsCSV(current.content)
-    const previousItems = previous ? parseThreatsCSV(previous.content) : []
-
-    // Compute status
-    const statusMap = previous
-      ? compareDatasets(currentItems, previousItems, 'threatId')
-      : new Map<string, ItemStatus>()
-
-    // Inject status
-    parsedData = currentItems.map((item) => ({
-      ...item,
-      status: statusMap.get(item.threatId),
-    }))
-
-    metadata = { filename: current.filename, lastUpdate: current.date }
-  }
-} catch (error) {
-  console.error('Failed to load threats data:', error)
-  parsedData = []
-}
-
-export const threatsData: ThreatData[] = parsedData
 export const threatsMetadata = metadata
+
+// Standalone CSV parser for use by tests and RAG corpus generator
+export function parseThreatsCSV(csvContent: string): ThreatData[] {
+  if (!csvContent.trim()) return []
+  const { data } = Papa.parse(csvContent.trim(), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  return (data as RawThreatRow[]).map(transformThreat)
+}

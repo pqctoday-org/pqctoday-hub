@@ -102,7 +102,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
             </div>
 
             {/* Content Area */}
-            <div className="relative flex-1 bg-black/40 overflow-hidden flex items-center justify-center">
+            <div className="relative flex-1 bg-muted/40 overflow-hidden flex items-center justify-center">
               <AnimatePresence mode="wait">
                 <motion.div
                   key={currentIndex}
@@ -111,7 +111,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
                   exit={{ opacity: 0, x: -20 }}
                   className="w-full h-full flex flex-col items-center justify-center p-4 md:p-6 lg:p-8"
                 >
-                  <div className="relative w-full max-w-lg aspect-square mb-4 md:mb-6 overflow-hidden rounded-lg shadow-2xl border border-white/10 bg-muted/20">
+                  <div className="relative w-full max-w-lg aspect-square mb-4 md:mb-6 overflow-hidden rounded-lg shadow-2xl border border-border bg-muted/20">
                     <img
                       src={PANELS[currentIndex].src}
                       alt={PANELS[currentIndex].title}
@@ -133,14 +133,14 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
               {/* Navigation Controls */}
               <button
                 onClick={prev}
-                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-black/80 text-white rounded-full transition-all border border-white/10"
+                className="absolute left-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Previous panel"
               >
                 <ChevronLeft size={20} className="md:w-6 md:h-6" />
               </button>
               <button
                 onClick={next}
-                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-black/50 hover:bg-black/80 text-white rounded-full transition-all border border-white/10"
+                className="absolute right-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Next panel"
               >
                 <ChevronRight size={20} className="md:w-6 md:h-6" />

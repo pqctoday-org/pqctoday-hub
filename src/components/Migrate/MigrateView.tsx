@@ -12,12 +12,12 @@ import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl
 import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Search,
-  AlertTriangle,
   X,
   ArrowRightLeft,
   CheckSquare,
   ChevronDown,
   ChevronUp,
+  PackageSearch,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -33,6 +33,9 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useHistoryStore } from '@/store/useHistoryStore'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
+import { Button } from '../ui/button'
+import { ErrorAlert } from '../ui/error-alert'
+import { EmptyState } from '../ui/empty-state'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -416,13 +419,7 @@ export const MigrateView: React.FC = () => {
   )
 
   if (!softwareData || softwareData.length === 0) {
-    return (
-      <div className="flex flex-col items-center justify-center py-16 text-center">
-        <AlertTriangle className="w-12 h-12 text-destructive mb-4" />
-        <h2 className="text-xl font-semibold text-foreground mb-2">Unable to Load Software Data</h2>
-        <p className="text-muted-foreground max-w-md">No reference data found.</p>
-      </div>
-    )
+    return <ErrorAlert message="Unable to Load Software Data: No reference data found." />
   }
 
   return (
@@ -471,15 +468,16 @@ export const MigrateView: React.FC = () => {
 
       {/* Migration Workflow Hero — collapsible */}
       <div>
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setWorkflowCollapsed(!workflowCollapsed)}
-          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-2"
+          className="flex items-center gap-2 text-sm text-muted-foreground mb-2"
           aria-expanded={!workflowCollapsed}
           aria-controls="migration-workflow-hero"
         >
           {workflowCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
           {workflowCollapsed ? 'Show Migration Framework' : 'Hide Migration Framework'}
-        </button>
+        </Button>
         {!workflowCollapsed && (
           <div id="migration-workflow-hero">
             <MigrationWorkflow onViewSoftware={handleViewSoftware} />
@@ -493,14 +491,15 @@ export const MigrateView: React.FC = () => {
           <span>
             Showing products relevant to <strong>{industryFilter}</strong>
           </span>
-          <button
+          <Button
+            variant="link"
             onClick={() => setIndustryFilter(null)}
-            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto flex items-center gap-1"
             aria-label="Clear industry filter"
           >
             <X size={12} />
             Clear
-          </button>
+          </Button>
         </div>
       )}
 
@@ -514,14 +513,15 @@ export const MigrateView: React.FC = () => {
             </strong>{' '}
             — select a layer below to view matching products
           </span>
-          <button
+          <Button
+            variant="link"
             onClick={() => setStepFilter(null)}
-            className="ml-auto flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            className="ml-auto flex items-center gap-1"
             aria-label="Clear step filter"
           >
             <X size={12} />
             Clear
-          </button>
+          </Button>
         </div>
       )}
 
@@ -620,9 +620,10 @@ export const MigrateView: React.FC = () => {
                     onToggleProduct={toggleMyProduct}
                   />
                 ) : (
-                  <div className="text-center py-8 text-muted-foreground italic text-sm">
-                    No products match the current filters.
-                  </div>
+                  <EmptyState
+                    icon={<PackageSearch size={32} />}
+                    title="No products match the current filters."
+                  />
                 )
               ) : undefined
             }
@@ -651,9 +652,10 @@ export const MigrateView: React.FC = () => {
               onToggleProduct={toggleMyProduct}
             />
           ) : (
-            <div className="text-center py-8 text-muted-foreground italic text-sm">
-              No products match the current filters.
-            </div>
+            <EmptyState
+              icon={<PackageSearch size={32} />}
+              title="No products match the current filters."
+            />
           ))}
       </div>
     </div>

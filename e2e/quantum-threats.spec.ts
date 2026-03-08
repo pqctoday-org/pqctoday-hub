@@ -37,15 +37,12 @@ test.describe('Quantum Threat Mechanics Module', () => {
 
     // Adjust migration time slider to 10
     await migrationTimeSlider.fill('10')
-    // Wait a brief moment for React state update
-    await page.waitForTimeout(500)
 
     // Formula check: 2035 - 25 - 10 = 2000
     await expect(page.getByText('2035 − 25 − 10 = 2000')).toBeVisible()
 
     // Adjust data lifetime slider to 50
     await dataLifetimeSlider.fill('50')
-    await page.waitForTimeout(500)
 
     // Formula check: 2035 - 50 - 10 = 1975
     await expect(page.getByText('2035 − 50 − 10 = 1975')).toBeVisible()

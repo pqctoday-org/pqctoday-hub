@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { CodeBlock } from '@/components/ui/code-block'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { cn } from '@/lib/utils'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export interface ConfigSelection {
   id: string
@@ -76,24 +77,13 @@ export const OpsConfigGenerator: React.FC<OpsConfigGeneratorProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
         {selections.map((sel) => (
           <div key={sel.id}>
-            <label
-              htmlFor={`config-${sel.id}`}
-              className="block text-sm font-medium text-foreground mb-1"
-            >
-              {sel.label}
-            </label>
-            <select
-              id={`config-${sel.id}`}
-              value={values[sel.id]}
-              onChange={(e) => handleChange(sel.id, e.target.value)}
-              className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-            >
-              {sel.options.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <span className="block text-sm font-medium text-foreground mb-1">{sel.label}</span>
+            <FilterDropdown
+              noContainer
+              selectedId={values[sel.id] ?? ''}
+              onSelect={(id) => handleChange(sel.id, id)}
+              items={sel.options.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
           </div>
         ))}
       </div>

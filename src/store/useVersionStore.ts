@@ -40,13 +40,15 @@ export const useVersionStore = create<VersionState>()(
       storage: createJSONStorage(() => localStorage),
       // Only persist lastSeenVersion, not the current version
       partialize: (state) => ({ lastSeenVersion: state.lastSeenVersion }),
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         const state =
           typeof persistedState === 'object' && persistedState !== null
             ? (persistedState as Record<string, unknown>)
             : {}
-        state.lastSeenVersion =
-          typeof state.lastSeenVersion === 'string' ? state.lastSeenVersion : null
+        if (version < 1) {
+          state.lastSeenVersion =
+            typeof state.lastSeenVersion === 'string' ? state.lastSeenVersion : null
+        }
         return state as { lastSeenVersion: string | null }
       },
       onRehydrateStorage: () => (_state, error) => {

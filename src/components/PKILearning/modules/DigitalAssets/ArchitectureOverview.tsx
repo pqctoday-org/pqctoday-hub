@@ -29,7 +29,7 @@ export const ArchitectureOverview: React.FC = () => {
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-white/20">
+              <tr className="border-b border-border">
                 <th className="p-2">Operation</th>
                 <th className="p-2">Bitcoin</th>
                 <th className="p-2">Ethereum</th>
@@ -39,7 +39,7 @@ export const ArchitectureOverview: React.FC = () => {
               </tr>
             </thead>
             <tbody>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">secp256k1 keygen</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">✅</td>
@@ -49,7 +49,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">Ed25519 keygen</td>
                 <td className="p-2">-</td>
                 <td className="p-2">-</td>
@@ -59,7 +59,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">ECDSA signing</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">✅</td>
@@ -69,7 +69,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">EdDSA signing</td>
                 <td className="p-2">-</td>
                 <td className="p-2">-</td>
@@ -79,7 +79,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">SHA-256</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">✅</td>
@@ -89,7 +89,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">SHA-512</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">-</td>
@@ -99,7 +99,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">RIPEMD-160</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">-</td>
@@ -109,7 +109,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">HMAC-SHA512</td>
                 <td className="p-2">✅</td>
                 <td className="p-2">✅</td>
@@ -119,7 +119,7 @@ export const ArchitectureOverview: React.FC = () => {
                 </td>
                 <td className="p-2">-</td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>Keccak-256</strong>
                 </td>
@@ -133,7 +133,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>@noble/hashes</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>Base58</strong>
                 </td>
@@ -147,7 +147,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>@scure/base</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>Base58Check</strong>
                 </td>
@@ -161,7 +161,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>@scure/base</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>BIP32 HD</strong>
                 </td>
@@ -175,7 +175,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>@scure/bip32</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>BIP39 Mnemonic</strong>
                 </td>
@@ -189,7 +189,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>@scure/bip39</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>SLIP-0010 HD</strong>
                 </td>
@@ -203,7 +203,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>ed25519-hd-key</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>RLP Encoding</strong>
                 </td>
@@ -217,7 +217,7 @@ export const ArchitectureOverview: React.FC = () => {
                   <code>micro-eth-signer</code>
                 </td>
               </tr>
-              <tr className="border-b border-white/10">
+              <tr className="border-b border-border">
                 <td className="p-2">
                   <strong>Recovery Param (v)</strong>
                 </td>

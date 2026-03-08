@@ -13,6 +13,7 @@ import {
 import { StatusBadge } from '../common/StatusBadge'
 import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
+import { EmptyState } from '../ui/empty-state'
 import { TimelineDocumentCard } from './TimelineDocumentCard'
 import {
   TimelineDocumentDetailPopover,
@@ -59,7 +60,14 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
     }))
   )
 
-  if (rows.length === 0) return null
+  if (rows.length === 0)
+    return (
+      <EmptyState
+        icon={<Flag size={32} />}
+        title="No documents"
+        description="No migration documents found for this country."
+      />
+    )
 
   const handleSort = (key: SortKey) => {
     setSortConfig((prev) => ({
@@ -116,6 +124,9 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
         <div className="glass-panel overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
+              <caption className="sr-only">
+                Policy documents with sortable columns for phase, type, organization, and period
+              </caption>
               <thead>
                 <tr className="border-b border-border bg-muted/20">
                   {SORT_HEADERS.map((header) => (
@@ -132,6 +143,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                       className="p-4 font-semibold text-sm"
                     >
                       <button
+                        type="button"
                         className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1"
                         onClick={() => handleSort(header.key)}
                       >
@@ -153,7 +165,9 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                     </th>
                   ))}
                   {/* Actions column */}
-                  <th scope="col" className="p-4 font-semibold text-sm" />
+                  <th className="p-4 font-semibold text-sm">
+                    <span className="sr-only">Document details</span>
+                  </th>
                 </tr>
               </thead>
               <tbody>

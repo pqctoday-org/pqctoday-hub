@@ -2,6 +2,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface DgstConfigProps {
   signAction: 'sign' | 'verify'
@@ -111,23 +112,22 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="hash-select" className="text-xs text-muted-foreground block">
-          Hash Algorithm
-        </label>
-        <select
-          id="hash-select"
-          value={sigHashAlgo}
-          onChange={(e) => setSigHashAlgo(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="sha256">SHA-256</option>
-          <option value="sha384">SHA-384</option>
-          <option value="sha512">SHA-512</option>
-          <option value="sha3-256">SHA3-256</option>
-          <option value="sha3-384">SHA3-384</option>
-          <option value="sha3-512">SHA3-512</option>
-          <option value="raw">RAW (Pre-hashed Input)</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">Hash Algorithm</span>
+        <FilterDropdown
+          selectedId={sigHashAlgo}
+          onSelect={(id) => setSigHashAlgo(id)}
+          items={[
+            { id: 'sha256', label: 'SHA-256' },
+            { id: 'sha384', label: 'SHA-384' },
+            { id: 'sha512', label: 'SHA-512' },
+            { id: 'sha3-256', label: 'SHA3-256' },
+            { id: 'sha3-384', label: 'SHA3-384' },
+            { id: 'sha3-512', label: 'SHA3-512' },
+            { id: 'raw', label: 'RAW (Pre-hashed Input)' },
+          ]}
+          defaultLabel="Select Hash Algorithm"
+          noContainer
+        />
       </div>
 
       {sigHashAlgo === 'raw' && (
@@ -184,48 +184,32 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
       )}
 
       <div className="space-y-3">
-        <label htmlFor="key-select" className="text-xs text-muted-foreground block">
-          Key File
-        </label>
-        <select
-          id="key-select"
-          value={selectedKeyFile}
-          onChange={(e) => setSelectedKeyFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">
-            {signAction === 'sign' ? 'Select Private Key...' : 'Select Public/Private Key...'}
-          </option>
-          {files
+        <span className="text-xs text-muted-foreground block">Key File</span>
+        <FilterDropdown
+          selectedId={selectedKeyFile}
+          onSelect={(id) => setSelectedKeyFile(id)}
+          items={files
             .filter(
               (f) => f.name.endsWith('.key') || f.name.endsWith('.pem') || f.name.endsWith('.pub')
             )
-            .map((f) => (
-              <option key={f.name} value={f.name}>
-                {f.name}
-              </option>
-            ))}
-        </select>
+            .map((f) => ({ id: f.name, label: f.name }))}
+          defaultLabel={
+            signAction === 'sign' ? 'Select Private Key...' : 'Select Public/Private Key...'
+          }
+          noContainer
+        />
       </div>
 
       {sigHashAlgo !== 'raw' && (
         <div className="space-y-3">
-          <label htmlFor="data-select" className="text-xs text-muted-foreground block">
-            Data File (to sign/verify)
-          </label>
-          <select
-            id="data-select"
-            value={selectedDataFile}
-            onChange={(e) => setSelectedDataFile(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select Data File...</option>
-            {files.map((f) => (
-              <option key={f.name} value={f.name}>
-                {f.name}
-              </option>
-            ))}
-          </select>
+          <span className="text-xs text-muted-foreground block">Data File (to sign/verify)</span>
+          <FilterDropdown
+            selectedId={selectedDataFile}
+            onSelect={(id) => setSelectedDataFile(id)}
+            items={files.map((f) => ({ id: f.name, label: f.name }))}
+            defaultLabel="Select Data File..."
+            noContainer
+          />
         </div>
       )}
 
@@ -243,21 +227,15 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             placeholder="signature.sig"
           />
         ) : (
-          <select
-            id="sig-file-input"
-            value={selectedSigFile}
-            onChange={(e) => setSelectedSigFile(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select Signature File...</option>
-            {files
+          <FilterDropdown
+            selectedId={selectedSigFile}
+            onSelect={(id) => setSelectedSigFile(id)}
+            items={files
               .filter((f) => f.name.endsWith('.sig'))
-              .map((f) => (
-                <option key={f.name} value={f.name}>
-                  {f.name}
-                </option>
-              ))}
-          </select>
+              .map((f) => ({ id: f.name, label: f.name }))}
+            defaultLabel="Select Signature File..."
+            noContainer
+          />
         )}
       </div>
     </div>

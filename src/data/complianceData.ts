@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { IndustryComplianceConfig } from './industryAssessConfig'
+import { loadLatestCSV, splitSemicolon, parseBoolYesNo } from './csvUtils'
 
 // ── Types ────────────────────────────────────────────────────────────────
 
@@ -27,150 +28,61 @@ export interface ComplianceFramework {
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
 
-function getLatestComplianceFile(): { content: string; filename: string; date: Date } | null {
-  const modules = import.meta.glob('./compliance_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
+interface RawComplianceRow {
+  id: string
+  label: string
+  description: string
+  industries: string
+  countries: string
+  requires_pqc: string
+  deadline: string
+  notes: string
+  enforcement_body: string
+  library_refs: string
+  timeline_refs: string
+  body_type: string
+  website: string
+}
 
-  const files = Object.keys(modules)
-    .map((path) => {
-      const match = path.match(/compliance_(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/)
-      if (match) {
-        const [, month, day, year, , rev] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        const revision = rev ? parseInt(rev, 10) : 0
-        // eslint-disable-next-line security/detect-object-injection
-        return { path, date, revision, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
+const modules = import.meta.glob('./compliance_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
 
-  if (files.length === 0) {
-    console.warn('No dated compliance CSV files found.')
-    return null
-  }
+const validBodyTypes: BodyType[] = [
+  'standardization_body',
+  'technical_standard',
+  'certification_body',
+  'compliance_framework',
+]
 
-  files.sort((a, b) => {
-    const timeDiff = b.date.getTime() - a.date.getTime()
-    if (timeDiff !== 0) return timeDiff
-    return b.revision - a.revision
-  })
+const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
+  RawComplianceRow,
+  ComplianceFramework
+>(modules, /compliance_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/, (row) => {
+  if (!row.id || !row.label) return null
+
+  const bodyType: BodyType = validBodyTypes.includes(row.body_type as BodyType)
+    ? (row.body_type as BodyType)
+    : 'compliance_framework'
 
   return {
-    content: files[0].content,
-    filename: files[0].path.split('/').pop() || files[0].path,
-    date: files[0].date,
+    id: row.id,
+    label: row.label,
+    description: row.description || '',
+    industries: splitSemicolon(row.industries),
+    countries: splitSemicolon(row.countries),
+    requiresPQC: parseBoolYesNo(row.requires_pqc),
+    deadline: row.deadline || 'Ongoing',
+    notes: row.notes || '',
+    enforcementBody: row.enforcement_body || '',
+    libraryRefs: splitSemicolon(row.library_refs),
+    timelineRefs: splitSemicolon(row.timeline_refs),
+    bodyType,
+    website: row.website?.trim() || undefined,
   }
-}
-
-// ── Quote-aware CSV parser ──────────────────────────────────────────────
-
-function parseLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
-    const char = line[i]
-    if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim())
-      current = ''
-    } else {
-      current += char
-    }
-  }
-  result.push(current.trim())
-  return result
-}
-
-function parseSemicolonList(raw: string | undefined): string[] {
-  if (!raw) return []
-  return raw
-    .split(';')
-    .map((s) => s.trim())
-    .filter(Boolean)
-}
-
-function parseComplianceCSV(csvContent: string): ComplianceFramework[] {
-  try {
-    const lines = csvContent.trim().split('\n')
-    const dataLines = lines.slice(1) // skip header
-
-    return dataLines
-      .map((line): ComplianceFramework | null => {
-        if (!line.trim()) return null
-        const fields = parseLine(line)
-        const [
-          id,
-          label,
-          description,
-          industriesRaw,
-          countriesRaw,
-          requiresPqcRaw,
-          deadline,
-          notes,
-          enforcementBody,
-          libraryRefsRaw,
-          timelineRefsRaw,
-          bodyTypeRaw,
-          website,
-        ] = fields
-
-        if (!id || !label) return null
-
-        const validBodyTypes: BodyType[] = [
-          'standardization_body',
-          'technical_standard',
-          'certification_body',
-          'compliance_framework',
-        ]
-        const bodyType: BodyType = validBodyTypes.includes(bodyTypeRaw as BodyType)
-          ? (bodyTypeRaw as BodyType)
-          : 'compliance_framework'
-
-        return {
-          id,
-          label,
-          description: description || '',
-          industries: parseSemicolonList(industriesRaw),
-          countries: parseSemicolonList(countriesRaw),
-          requiresPQC: requiresPqcRaw?.toLowerCase() === 'yes',
-          deadline: deadline || 'Ongoing',
-          notes: notes || '',
-          enforcementBody: enforcementBody || '',
-          libraryRefs: parseSemicolonList(libraryRefsRaw),
-          timelineRefs: parseSemicolonList(timelineRefsRaw),
-          bodyType,
-          website: website?.trim() || undefined,
-        }
-      })
-      .filter((row): row is ComplianceFramework => row !== null)
-  } catch (error) {
-    console.error('Failed to parse compliance CSV:', error)
-    return []
-  }
-}
-
-// ── Load and parse ──────────────────────────────────────────────────────
-
-let frameworks: ComplianceFramework[] = []
-let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
-
-try {
-  const file = getLatestComplianceFile()
-  if (file) {
-    frameworks = parseComplianceCSV(file.content)
-    parsedMetadata = { filename: file.filename, lastUpdate: file.date }
-  }
-} catch (error) {
-  console.error('Failed to load compliance data:', error)
-}
+})
 
 /** All compliance frameworks from the latest compliance CSV. */
 export const complianceFrameworks: ComplianceFramework[] = frameworks

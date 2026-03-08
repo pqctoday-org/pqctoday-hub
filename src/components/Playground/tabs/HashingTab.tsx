@@ -6,6 +6,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { HASH_METHODS } from '../hooks/useHashingOperations'
 import { HsmHashingPanel } from '../hsm/HsmHashingPanel'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export const HashingTab: React.FC = () => {
   const { loading, hsmMode } = useSettingsContext()
@@ -34,17 +35,16 @@ export const HashingTab: React.FC = () => {
         <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2 mb-4">
           <Hash size={14} /> Select Hash Algorithm
         </h5>
-        <select
-          value={selectedHashMethod}
-          onChange={(e) => setSelectedHashMethod(e.target.value)}
-          className="w-full bg-background border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent"
-        >
-          {HASH_METHODS.map((method) => (
-            <option key={method.id} value={method.id}>
-              {method.name} - {method.description}
-            </option>
-          ))}
-        </select>
+        <FilterDropdown
+          items={HASH_METHODS.map((method) => ({
+            id: method.id,
+            label: `${method.name} - ${method.description}`,
+          }))}
+          selectedId={selectedHashMethod}
+          onSelect={(id) => setSelectedHashMethod(id)}
+          defaultLabel="Select algorithm…"
+          noContainer
+        />
 
         {selectedMethod && (
           <div className="mt-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in">

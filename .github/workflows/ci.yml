@@ -49,6 +49,10 @@ jobs:
       - name: Test
         run: npm run test
 
+      - name: Test Coverage
+        if: matrix.shard == 1
+        run: npm run coverage
+
       - name: Run E2E Tests (Sharded)
         run: npx playwright test --project=chromium --shard=${{ matrix.shard }}/${{ strategy.job-total }}
 

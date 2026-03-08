@@ -27,6 +27,7 @@ import {
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
+import { Button } from '../ui/button'
 import { MobileAboutView } from './MobileAboutView'
 import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
@@ -140,15 +141,16 @@ export function AboutView() {
                 </a>
               </p>
               <span className="hidden sm:inline text-muted-foreground/30">•</span>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setIsJourneyModalOpen(true)}
-                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 transition-colors group"
+                className="inline-flex items-center gap-2 text-accent hover:text-accent/80 group"
               >
                 <Sparkles size={18} className="group-hover:animate-pulse" />
                 <span className="font-semibold underline decoration-2 underline-offset-4">
                   View My Career Journey
                 </span>
-              </button>
+              </Button>
             </div>
             <p className="text-muted-foreground mt-4">
               See the latest updates:{' '}
@@ -497,10 +499,10 @@ export function AboutView() {
             </div>
 
             {/* Dev-only findings */}
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-              <ShieldAlert className="text-amber-500 mt-0.5 shrink-0" size={18} />
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
+              <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={18} />
               <div>
-                <p className="text-sm font-semibold text-amber-500">
+                <p className="text-sm font-semibold text-status-warning">
                   13 dev-only findings (12 high, 1 moderate)
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
@@ -531,7 +533,7 @@ export function AboutView() {
                       GHSA-3ppc-4f35-3m26
                     </td>
                     <td className="py-2 pr-3">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-amber-500/10 text-amber-500">
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning/10 text-status-warning">
                         HIGH
                       </span>
                     </td>
@@ -766,8 +768,8 @@ export function AboutView() {
               server other than Google&apos;s Gemini API. You can obtain a free API key from Google
               AI Studio in seconds.
             </p>
-            <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-amber-500/5 border border-amber-500/20">
-              <ShieldAlert className="text-amber-500 mt-0.5 shrink-0" size={16} />
+            <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
+              <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={16} />
               <p className="text-xs text-muted-foreground">
                 <strong className="text-foreground">Data routing notice:</strong> When you submit a
                 question, your query text and the retrieved context chunks are sent to{' '}
@@ -871,11 +873,13 @@ export function AboutView() {
           </p>
           <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg border border-border">
             {(['light', 'dark'] as const).map((t) => (
-              <button
+              <Button
                 key={t}
+                variant="ghost"
+                size="icon"
                 onClick={() => setTheme(t)}
                 className={clsx(
-                  'px-4 py-2 min-h-[44px] rounded-md text-sm font-medium transition-colors capitalize flex items-center gap-2',
+                  'px-4 py-2 min-h-[44px] rounded-md text-sm font-medium capitalize flex items-center gap-2',
                   theme === t
                     ? 'bg-primary/20 text-primary border border-primary/20'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/10'
@@ -884,7 +888,7 @@ export function AboutView() {
                 {t === 'light' && '☀️'}
                 {t === 'dark' && '🌙'}
                 {t}
-              </button>
+              </Button>
             ))}
           </div>
         </motion.div>

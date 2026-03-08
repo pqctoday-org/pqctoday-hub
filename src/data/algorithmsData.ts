@@ -1,4 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { loadLatestCSVAsync } from './csvUtils'
+import { getDateFromFilename, getRevisionFromFilename } from './pqcAlgorithmsData'
+
 export interface AlgorithmTransition {
   classical: string
   keySize?: string
@@ -8,9 +11,16 @@ export interface AlgorithmTransition {
   standardizationDate: string
 }
 
-import { getDateFromFilename, getRevisionFromFilename } from './pqcAlgorithmsData'
+interface RawTransitionRow {
+  'Classical Algorithm': string
+  'Key Size': string
+  'PQC Replacement': string
+  Function: string
+  'Deprecation Date': string
+  'Standardization Date': string
+}
 
-// Import CSV data dynamically
+// Import CSV data dynamically (lazy glob)
 const csvModule = import.meta.glob('./algorithms_transitions_*.csv', {
   query: '?raw',
   import: 'default',
@@ -22,86 +32,30 @@ export let loadedTransitionMetadata: { filename: string; date: Date | null } | n
 export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
   if (cachedData) return cachedData
 
-  const paths = Object.keys(csvModule)
-  if (paths.length === 0) {
-    throw new Error('Algorithms CSV file not found')
-  }
+  const { data, metadata } = await loadLatestCSVAsync<RawTransitionRow, AlgorithmTransition>(
+    csvModule,
+    /algorithms_transitions_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+    (row) => ({
+      classical: row['Classical Algorithm'],
+      keySize: row['Key Size'],
+      pqc: row['PQC Replacement'],
+      function: row['Function'] as AlgorithmTransition['function'],
+      deprecationDate: row['Deprecation Date'],
+      standardizationDate: row['Standardization Date'],
+    })
+  )
 
-  // Sort paths by date descending, then revision descending (newest first)
-  const sortedPaths = paths.sort((a, b) => {
-    const dateA = getDateFromFilename(a)
-    const dateB = getDateFromFilename(b)
-
-    // If we can't parse a date, treat it as very old so valid dates come first
-    if (!dateA) return 1
-    if (!dateB) return -1
-
-    const timeDiff = dateB.getTime() - dateA.getTime()
-    if (timeDiff !== 0) return timeDiff
-    return getRevisionFromFilename(b) - getRevisionFromFilename(a)
-  })
-
-  // Pick the most recent file
-  const csvPath = sortedPaths[0]
-  console.log(`Loading Transition algorithms from: ${csvPath}`)
-
-  const date = getDateFromFilename(csvPath)
-  loadedTransitionMetadata = {
-    filename: csvPath.split('/').pop() || csvPath,
-    date: date,
-  }
-
-  // eslint-disable-next-line security/detect-object-injection
-  const loadCsv = csvModule[csvPath] as () => Promise<string>
-  const csvContent = await loadCsv()
-
-  const lines = csvContent.split('\n').filter((line) => line.trim() !== '')
-  const data: AlgorithmTransition[] = []
-
-  // Skip header row
-  for (let i = 1; i < lines.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
-    const line = lines[i]
-    const values = parseCSVLine(line)
-
-    if (values.length >= 6) {
-      data.push({
-        classical: values[0],
-        keySize: values[1],
-        pqc: values[2],
-        function: values[3] as 'Encryption/KEM' | 'Signature' | 'Hybrid KEM' | 'Hash' | 'Symmetric',
-        deprecationDate: values[4],
-        standardizationDate: values[5],
-      })
-    }
-  }
+  loadedTransitionMetadata = metadata
+    ? { filename: metadata.filename, date: metadata.lastUpdate }
+    : null
 
   cachedData = data
   return data
 }
 
-function parseCSVLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
-    const char = line[i]
-
-    if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim())
-      current = ''
-    } else {
-      current += char
-    }
-  }
-  result.push(current.trim())
-  return result
-}
-
 // For backward compatibility, export the data synchronously
 // This will be populated after the first load
 export const algorithmsData: AlgorithmTransition[] = []
+
+// Re-export for consumers that use these helpers
+export { getDateFromFilename, getRevisionFromFilename }

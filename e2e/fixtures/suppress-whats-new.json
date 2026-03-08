@@ -1,0 +1,14 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://localhost:5175",
+      "localStorage": [
+        {
+          "name": "pqc-version-storage",
+          "value": "{\"state\":{\"lastSeenVersion\":\"99.0.0\"},\"version\":0}"
+        }
+      ]
+    }
+  ]
+}

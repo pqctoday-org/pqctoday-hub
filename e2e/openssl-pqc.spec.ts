@@ -22,11 +22,6 @@ test.describe('OpenSSL Studio - PQC Algorithms', () => {
     // 2. Sign Data
     await page.getByRole('button', { name: 'Sign / Verify' }).click()
 
-    // Ensure the key is selected (wait for populate)
-    await page.waitForTimeout(1000)
-    // Ensure the key is selected (wait for populate)
-    await page.waitForTimeout(1000)
-
     // Wait for the key option to populate in the dropdown
     // The dropdown has ID 'key-select'
     const keyWithAttribute = page

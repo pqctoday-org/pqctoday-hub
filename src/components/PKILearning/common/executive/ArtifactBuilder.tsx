@@ -3,6 +3,7 @@ import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ExportableArtifact } from './ExportableArtifact'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export interface ArtifactField {
   id: string
@@ -175,18 +176,16 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                       />
                     )}
                     {field.type === 'select' && (
-                      <select
-                        className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-                        value={(formData[section.id]?.[field.id] as string) || ''}
-                        onChange={(e) => updateField(section.id, field.id, e.target.value)}
-                      >
-                        <option value="">{field.placeholder || 'Select...'}</option>
-                        {field.options?.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
+                      <FilterDropdown
+                        noContainer
+                        selectedId={(formData[section.id]?.[field.id] as string) || 'All'}
+                        onSelect={(id) => updateField(section.id, field.id, id === 'All' ? '' : id)}
+                        defaultLabel={field.placeholder || 'Select...'}
+                        items={(field.options ?? []).map((opt) => ({
+                          id: opt.value,
+                          label: opt.label,
+                        }))}
+                      />
                     )}
                     {field.type === 'checklist' && (
                       <div className="space-y-2 mt-1">

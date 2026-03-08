@@ -108,18 +108,30 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
     <div className="glass-panel overflow-hidden">
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
+          <caption className="sr-only">
+            Software products with PQC support, FIPS validation status, and migration details.
+            Expandable rows show capabilities and certifications.
+          </caption>
           <thead>
             <tr className="border-b border-border bg-muted/20">
               {hasSelection && (
-                <th className="p-2 w-8 text-center text-xs text-muted-foreground font-medium">
+                <th
+                  scope="col"
+                  className="p-2 w-8 text-center text-xs text-muted-foreground font-medium"
+                >
                   My
                 </th>
               )}
-              <th className="p-4 w-8"></th> {/* Hide toggle */}
-              <th className="p-4 w-10"></th> {/* Expand toggle */}
+              <th scope="col" className="p-4 w-8">
+                <span className="sr-only">Hide</span>
+              </th>
+              <th scope="col" className="p-4 w-10">
+                <span className="sr-only">Expand</span>
+              </th>
               {headers.map((header) => (
                 <th
                   key={header.key}
+                  scope="col"
                   className={`p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors${header.mobileHidden ? ' hidden md:table-cell' : ''}`}
                   onClick={() => handleSort(header.key)}
                   aria-sort={
@@ -199,11 +211,22 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                       )}
                     </td>
                     <td className="p-4">
-                      {isExpanded ? (
-                        <ChevronDown size={16} className="text-muted-foreground" />
-                      ) : (
-                        <ChevronRight size={16} className="text-muted-foreground" />
-                      )}
+                      <button
+                        type="button"
+                        aria-expanded={isExpanded}
+                        aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.softwareName}`}
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleExpand(key)
+                        }}
+                        className="p-1 rounded text-muted-foreground hover:text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+                      >
+                        {isExpanded ? (
+                          <ChevronDown size={16} aria-hidden="true" />
+                        ) : (
+                          <ChevronRight size={16} aria-hidden="true" />
+                        )}
+                      </button>
                     </td>
                     <td className="p-4 font-medium text-foreground">
                       <div className="flex items-center gap-3">
@@ -215,11 +238,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                           return (
                             <div
                               className={`p-1.5 rounded-md bg-muted/20 border ${layer.borderColor} ${layer.iconColor}`}
-                              title={layerIds
+                              aria-label={layerIds
                                 .map((id) => LAYERS.find((l) => l.id === id)?.label ?? id)
                                 .join(', ')}
                             >
-                              <Icon size={16} />
+                              <Icon size={16} aria-hidden="true" />
                             </div>
                           )
                         })()}

@@ -13,7 +13,6 @@ test.describe('Compliance Table Sorting', () => {
 
     // Click "Product Name" header to sort ASC
     await page.getByRole('button', { name: 'Product Name' }).click()
-    await page.waitForTimeout(500)
     // Get all product names
     const namesAsc = await page
       .locator('tbody tr td:nth-child(4) > div:first-child')

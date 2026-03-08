@@ -10,6 +10,7 @@ import {
   Copy,
   Check,
 } from 'lucide-react'
+import { FilterDropdown } from '../../common/FilterDropdown'
 
 // Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
 function getCodeSnippets(
@@ -228,17 +229,12 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Algorithm & Key Size Selection */}
           <div className="space-y-2">
-            <label
-              htmlFor="keystore-key-size"
-              className="text-xs font-medium text-muted-foreground block"
-            >
+            <span className="text-xs font-medium text-muted-foreground block">
               Algorithm & Security Level
-            </label>
-            <select
-              id="keystore-key-size"
-              value={keySize}
-              onChange={(e) => {
-                const val = e.target.value
+            </span>
+            <FilterDropdown
+              selectedId={keySize}
+              onSelect={(val) => {
                 if (['512', '768', '1024'].includes(val)) {
                   // ML-KEM
                   if (onUnifiedChange) {
@@ -272,64 +268,45 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                   }
                 }
               }}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary appearance-none transition-colors"
-            >
-              <optgroup label="ML-KEM (Key Encapsulation)">
-                <option value="512">ML-KEM-512 (NIST Level 1)</option>
-                <option value="768">ML-KEM-768 (NIST Level 3)</option>
-                <option value="1024">ML-KEM-1024 (NIST Level 5)</option>
-              </optgroup>
-              <optgroup label="HQC (Code-Based KEM)">
-                <option value="HQC-128">HQC-128 (NIST Level 1)</option>
-                <option value="HQC-192">HQC-192 (NIST Level 3)</option>
-                <option value="HQC-256">HQC-256 (NIST Level 5)</option>
-              </optgroup>
-              <optgroup label="FrodoKEM (Lattice-Based KEM)">
-                <option value="FrodoKEM-640-AES">FrodoKEM-640-AES (Level 1)</option>
-                <option value="FrodoKEM-976-AES">FrodoKEM-976-AES (Level 3)</option>
-                <option value="FrodoKEM-1344-AES">FrodoKEM-1344-AES (Level 5)</option>
-              </optgroup>
-              <optgroup label="Classic McEliece (Code-Based KEM)">
-                <option value="Classic-McEliece-348864">Classic McEliece 348864</option>
-                <option value="Classic-McEliece-460896">Classic McEliece 460896</option>
-                <option value="Classic-McEliece-6688128">Classic McEliece 6688128</option>
-                <option value="Classic-McEliece-6960119">Classic McEliece 6960119</option>
-                <option value="Classic-McEliece-8192128">Classic McEliece 8192128</option>
-              </optgroup>
-              <optgroup label="ML-DSA (Digital Signatures)">
-                <option value="44">ML-DSA-44 (NIST Level 2)</option>
-                <option value="65">ML-DSA-65 (NIST Level 3)</option>
-                <option value="87">ML-DSA-87 (NIST Level 5)</option>
-              </optgroup>
-              <optgroup label="SLH-DSA (Hash-Based Signatures)">
-                <option value="SLH-DSA-SHA2-128f">SLH-DSA-SHA2-128f (Level 1, Fast)</option>
-                <option value="SLH-DSA-SHA2-128s">SLH-DSA-SHA2-128s (Level 1, Small)</option>
-                <option value="SLH-DSA-SHA2-192f">SLH-DSA-SHA2-192f (Level 3, Fast)</option>
-                <option value="SLH-DSA-SHA2-192s">SLH-DSA-SHA2-192s (Level 3, Small)</option>
-                <option value="SLH-DSA-SHA2-256f">SLH-DSA-SHA2-256f (Level 5, Fast)</option>
-                <option value="SLH-DSA-SHA2-256s">SLH-DSA-SHA2-256s (Level 5, Small)</option>
-                <option value="SLH-DSA-SHAKE-128f">SLH-DSA-SHAKE-128f (Level 1, Fast)</option>
-                <option value="SLH-DSA-SHAKE-128s">SLH-DSA-SHAKE-128s (Level 1, Small)</option>
-                <option value="SLH-DSA-SHAKE-192f">SLH-DSA-SHAKE-192f (Level 3, Fast)</option>
-                <option value="SLH-DSA-SHAKE-192s">SLH-DSA-SHAKE-192s (Level 3, Small)</option>
-                <option value="SLH-DSA-SHAKE-256f">SLH-DSA-SHAKE-256f (Level 5, Fast)</option>
-                <option value="SLH-DSA-SHAKE-256s">SLH-DSA-SHAKE-256s (Level 5, Small)</option>
-              </optgroup>
-              <optgroup label="FN-DSA / Falcon (Signatures)">
-                <option value="FN-DSA-512">FN-DSA-512 / Falcon-512 (Level 1)</option>
-                <option value="FN-DSA-1024">FN-DSA-1024 / Falcon-1024 (Level 5)</option>
-              </optgroup>
-              <optgroup label="LMS/HSS (Stateful Hash-Based Signatures)">
-                <option value="LMS-SHA256-H10">LMS SHA-256 H=10 (1,024 sigs)</option>
-                <option value="LMS-SHA256-H15">LMS SHA-256 H=15 (32,768 sigs)</option>
-                <option value="LMS-SHA256-H20">LMS SHA-256 H=20 (1,048,576 sigs)</option>
-              </optgroup>
-              <optgroup label="XMSS (Learn Only)">
-                <option value="" disabled>
-                  XMSS — see Stateful Signatures module (no browser WASM)
-                </option>
-              </optgroup>
-            </select>
+              items={[
+                { id: '512', label: 'ML-KEM-512 (NIST Level 1)' },
+                { id: '768', label: 'ML-KEM-768 (NIST Level 3)' },
+                { id: '1024', label: 'ML-KEM-1024 (NIST Level 5)' },
+                { id: 'HQC-128', label: 'HQC-128 (NIST Level 1)' },
+                { id: 'HQC-192', label: 'HQC-192 (NIST Level 3)' },
+                { id: 'HQC-256', label: 'HQC-256 (NIST Level 5)' },
+                { id: 'FrodoKEM-640-AES', label: 'FrodoKEM-640-AES (Level 1)' },
+                { id: 'FrodoKEM-976-AES', label: 'FrodoKEM-976-AES (Level 3)' },
+                { id: 'FrodoKEM-1344-AES', label: 'FrodoKEM-1344-AES (Level 5)' },
+                { id: 'Classic-McEliece-348864', label: 'Classic McEliece 348864' },
+                { id: 'Classic-McEliece-460896', label: 'Classic McEliece 460896' },
+                { id: 'Classic-McEliece-6688128', label: 'Classic McEliece 6688128' },
+                { id: 'Classic-McEliece-6960119', label: 'Classic McEliece 6960119' },
+                { id: 'Classic-McEliece-8192128', label: 'Classic McEliece 8192128' },
+                { id: '44', label: 'ML-DSA-44 (NIST Level 2)' },
+                { id: '65', label: 'ML-DSA-65 (NIST Level 3)' },
+                { id: '87', label: 'ML-DSA-87 (NIST Level 5)' },
+                { id: 'SLH-DSA-SHA2-128f', label: 'SLH-DSA-SHA2-128f (Level 1, Fast)' },
+                { id: 'SLH-DSA-SHA2-128s', label: 'SLH-DSA-SHA2-128s (Level 1, Small)' },
+                { id: 'SLH-DSA-SHA2-192f', label: 'SLH-DSA-SHA2-192f (Level 3, Fast)' },
+                { id: 'SLH-DSA-SHA2-192s', label: 'SLH-DSA-SHA2-192s (Level 3, Small)' },
+                { id: 'SLH-DSA-SHA2-256f', label: 'SLH-DSA-SHA2-256f (Level 5, Fast)' },
+                { id: 'SLH-DSA-SHA2-256s', label: 'SLH-DSA-SHA2-256s (Level 5, Small)' },
+                { id: 'SLH-DSA-SHAKE-128f', label: 'SLH-DSA-SHAKE-128f (Level 1, Fast)' },
+                { id: 'SLH-DSA-SHAKE-128s', label: 'SLH-DSA-SHAKE-128s (Level 1, Small)' },
+                { id: 'SLH-DSA-SHAKE-192f', label: 'SLH-DSA-SHAKE-192f (Level 3, Fast)' },
+                { id: 'SLH-DSA-SHAKE-192s', label: 'SLH-DSA-SHAKE-192s (Level 3, Small)' },
+                { id: 'SLH-DSA-SHAKE-256f', label: 'SLH-DSA-SHAKE-256f (Level 5, Fast)' },
+                { id: 'SLH-DSA-SHAKE-256s', label: 'SLH-DSA-SHAKE-256s (Level 5, Small)' },
+                { id: 'FN-DSA-512', label: 'FN-DSA-512 / Falcon-512 (Level 1)' },
+                { id: 'FN-DSA-1024', label: 'FN-DSA-1024 / Falcon-1024 (Level 5)' },
+                { id: 'LMS-SHA256-H10', label: 'LMS SHA-256 H=10 (1,024 sigs)' },
+                { id: 'LMS-SHA256-H15', label: 'LMS SHA-256 H=15 (32,768 sigs)' },
+                { id: 'LMS-SHA256-H20', label: 'LMS SHA-256 H=20 (1,048,576 sigs)' },
+              ]}
+              defaultLabel="Select Algorithm..."
+              noContainer
+            />
           </div>
 
           {/* Generate Button */}
@@ -365,43 +342,35 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {/* Algorithm Selection */}
           <div className="space-y-2">
-            <label
-              htmlFor="classical-algo-select"
-              className="text-xs font-medium text-muted-foreground block"
-            >
+            <span className="text-xs font-medium text-muted-foreground block">
               Classical Algorithm
-            </label>
-            <select
-              id="classical-algo-select"
-              value={classicalAlgorithm}
-              onChange={(e) => onClassicalAlgorithmChange(e.target.value)}
-              className="w-full px-3 py-2 bg-background border border-input rounded-lg text-foreground text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 transition-all"
-            >
-              <optgroup label="Signature Algorithms">
-                <option value="RSA-2048">RSA-2048 (2048 bits)</option>
-                <option value="RSA-3072">RSA-3072 (3072 bits)</option>
-                <option value="RSA-4096">RSA-4096 (4096 bits)</option>
-                <option value="ECDSA-P256">ECDSA P-256 (NIST)</option>
-                <option value="ECDSA-P384">ECDSA P-384 (NIST)</option>
-                <option value="ECDSA-P521">ECDSA P-521 (NIST)</option>
-                <option value="Ed25519">Ed25519 (Curve25519)</option>
-                <option value="Ed448">Ed448 (Curve448)</option>
-                <option value="secp256k1">secp256k1 (Bitcoin/Ethereum)</option>
-              </optgroup>
-              <optgroup label="Key Exchange">
-                <option value="X25519">X25519 (Curve25519)</option>
-                <option value="X448">X448 (Curve448)</option>
-                <option value="P-256">P-256 ECDH (NIST)</option>
-                <option value="P-384">P-384 ECDH (NIST)</option>
-                <option value="P-521">P-521 ECDH (NIST)</option>
-                <option value="DH-2048">DH-2048 (Deprecated)</option>
-              </optgroup>
-              <optgroup label="Symmetric Encryption">
-                <option value="AES-128">AES-128-GCM</option>
-                <option value="AES-192">AES-192-GCM</option>
-                <option value="AES-256">AES-256-GCM</option>
-              </optgroup>
-            </select>
+            </span>
+            <FilterDropdown
+              selectedId={classicalAlgorithm}
+              onSelect={(id) => onClassicalAlgorithmChange(id)}
+              items={[
+                { id: 'RSA-2048', label: 'RSA-2048 (2048 bits)' },
+                { id: 'RSA-3072', label: 'RSA-3072 (3072 bits)' },
+                { id: 'RSA-4096', label: 'RSA-4096 (4096 bits)' },
+                { id: 'ECDSA-P256', label: 'ECDSA P-256 (NIST)' },
+                { id: 'ECDSA-P384', label: 'ECDSA P-384 (NIST)' },
+                { id: 'ECDSA-P521', label: 'ECDSA P-521 (NIST)' },
+                { id: 'Ed25519', label: 'Ed25519 (Curve25519)' },
+                { id: 'Ed448', label: 'Ed448 (Curve448)' },
+                { id: 'secp256k1', label: 'secp256k1 (Bitcoin/Ethereum)' },
+                { id: 'X25519', label: 'X25519 (Curve25519)' },
+                { id: 'X448', label: 'X448 (Curve448)' },
+                { id: 'P-256', label: 'P-256 ECDH (NIST)' },
+                { id: 'P-384', label: 'P-384 ECDH (NIST)' },
+                { id: 'P-521', label: 'P-521 ECDH (NIST)' },
+                { id: 'DH-2048', label: 'DH-2048 (Deprecated)' },
+                { id: 'AES-128', label: 'AES-128-GCM' },
+                { id: 'AES-192', label: 'AES-192-GCM' },
+                { id: 'AES-256', label: 'AES-256-GCM' },
+              ]}
+              defaultLabel="Select Algorithm..."
+              noContainer
+            />
           </div>
 
           {/* Generate Button */}

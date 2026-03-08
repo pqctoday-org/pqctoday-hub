@@ -705,12 +705,14 @@ export const LandingView = () => {
           Backup &amp; Restore
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <motion.div
+          <motion.button
+            type="button"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors cursor-pointer"
+            aria-label="Export backup — download all progress and settings"
+            className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full"
             onClick={() => {
               try {
                 UnifiedStorageService.downloadSnapshot()
@@ -721,7 +723,7 @@ export const LandingView = () => {
             }}
           >
             <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
-              <Save size={18} />
+              <Save size={18} aria-hidden="true" />
             </div>
             <div className="min-w-0">
               <h4 className="text-sm font-semibold text-foreground">Export Backup</h4>
@@ -730,14 +732,16 @@ export const LandingView = () => {
                 artifacts, and settings.
               </p>
             </div>
-          </motion.div>
+          </motion.button>
 
-          <motion.div
+          <motion.button
+            type="button"
             variants={fadeUp}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true }}
-            className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors cursor-pointer"
+            aria-label="Import backup — restore from a previously exported backup file"
+            className="glass-panel p-3 flex items-center gap-3 hover:border-secondary/50 transition-colors text-left w-full"
             onClick={() => {
               const input = document.createElement('input')
               input.type = 'file'
@@ -761,7 +765,7 @@ export const LandingView = () => {
             }}
           >
             <div className="p-2 rounded-lg bg-secondary/10 text-secondary shrink-0">
-              <Upload size={18} />
+              <Upload size={18} aria-hidden="true" />
             </div>
             <div className="min-w-0">
               <h4 className="text-sm font-semibold text-foreground">Import Backup</h4>
@@ -769,7 +773,7 @@ export const LandingView = () => {
                 Restore from a previously exported backup file to resume all progress and settings.
               </p>
             </div>
-          </motion.div>
+          </motion.button>
         </div>
       </section>
     </div>

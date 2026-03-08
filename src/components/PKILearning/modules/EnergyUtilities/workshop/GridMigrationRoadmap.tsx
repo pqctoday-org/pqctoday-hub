@@ -24,6 +24,7 @@ import type {
   SmartMeterFleetConfig,
   SafetyRiskResult,
 } from '../data/energyConstants'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 // ---------------------------------------------------------------------------
 // Props
@@ -130,17 +131,12 @@ function SelectField<T extends string>({
   return (
     <div>
       <label className="block text-xs text-muted-foreground mb-1">{label}</label>
-      <select
-        className="rounded-lg bg-muted border border-border text-foreground px-3 py-2 text-sm w-full"
-        value={value}
-        onChange={(e) => onChange(e.target.value as T)}
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>
-            {o.label}
-          </option>
-        ))}
-      </select>
+      <FilterDropdown
+        noContainer
+        selectedId={value}
+        onSelect={(id) => onChange(id as T)}
+        items={options.map((o) => ({ id: o.value, label: o.label }))}
+      />
     </div>
   )
 }

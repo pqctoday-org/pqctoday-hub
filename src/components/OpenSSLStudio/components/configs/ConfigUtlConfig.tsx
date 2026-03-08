@@ -2,6 +2,7 @@
 import React from 'react'
 import { FileSearch } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface ConfigUtlConfigProps {
   configUtlInFile: string
@@ -37,24 +38,19 @@ export const ConfigUtlConfig: React.FC<ConfigUtlConfigProps> = ({
 
       {/* Input File Selection */}
       <div className="space-y-3">
-        <label htmlFor="configutl-input-select" className="text-xs text-muted-foreground block">
-          Configuration File (.cnf)
-        </label>
-        <select
-          id="configutl-input-select"
-          value={configUtlInFile}
-          onChange={(e) => setConfigUtlInFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select a config file (default: openssl.cnf)...</option>
-          {files
+        <span className="text-xs text-muted-foreground block">Configuration File (.cnf)</span>
+        <FilterDropdown
+          selectedId={configUtlInFile}
+          onSelect={(id) => setConfigUtlInFile(id)}
+          items={files
             .filter((f: { name: string }) => f.name.endsWith('.cnf') || f.name === 'openssl.cnf')
-            .map((f: { name: string; size: number }) => (
-              <option key={f.name} value={f.name}>
-                {f.name} ({f.size} bytes)
-              </option>
-            ))}
-        </select>
+            .map((f: { name: string; size: number }) => ({
+              id: f.name,
+              label: `${f.name} (${f.size} bytes)`,
+            }))}
+          defaultLabel="Select a config file (default: openssl.cnf)..."
+          noContainer
+        />
       </div>
 
       {/* Output Filename */}

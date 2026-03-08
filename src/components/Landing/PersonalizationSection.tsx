@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import type { LucideIcon } from 'lucide-react'
 import {
@@ -384,12 +384,23 @@ const InfoModal = ({
   onClose: () => void
   children: React.ReactNode
 }) => {
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const prevFocusRef = useRef<HTMLElement | null>(null)
+
   useEffect(() => {
+    // Save trigger element and focus close button on open
+    prevFocusRef.current = document.activeElement as HTMLElement
+    closeRef.current?.focus()
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
     document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      // Restore focus to trigger on close
+      prevFocusRef.current?.focus()
+    }
   }, [onClose])
 
   return (
@@ -403,6 +414,9 @@ const InfoModal = ({
       />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         <motion.div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="info-modal-title"
           initial={{ opacity: 0, scale: 0.95, y: 16 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 16 }}
@@ -411,13 +425,16 @@ const InfoModal = ({
         >
           <div className="flex items-start justify-between gap-4 mb-5">
             <div>
-              <h2 className="text-xl font-bold">{title}</h2>
+              <h2 id="info-modal-title" className="text-xl font-bold">
+                {title}
+              </h2>
               <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
             </div>
             <button
+              ref={closeRef}
               onClick={onClose}
               className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors shrink-0"
-              aria-label="Close"
+              aria-label="Close dialog"
             >
               <X size={18} />
             </button>

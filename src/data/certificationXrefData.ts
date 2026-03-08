@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-/* eslint-disable security/detect-object-injection */
 import type { CertificationXref } from '../types/MigrateTypes'
-import Papa from 'papaparse'
+import { loadLatestCSV } from './csvUtils'
 
 // Glob import to find all matching xref CSV files
 const modules = import.meta.glob('./migrate_certification_xref_*.csv', {
@@ -9,38 +8,6 @@ const modules = import.meta.glob('./migrate_certification_xref_*.csv', {
   import: 'default',
   eager: true,
 })
-
-function getLatestXrefFile(): { content: string; filename: string; date: Date } | null {
-  const files = Object.keys(modules)
-    .map((path) => {
-      const match = path.match(/xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
-      if (match) {
-        const [, month, day, year, rev] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        const revision = rev ? parseInt(rev, 10) : 0
-        return { path, date, revision, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; revision: number; content: string } => f !== null)
-
-  if (files.length === 0) {
-    console.warn('No certification xref CSV files found.')
-    return null
-  }
-
-  files.sort((a, b) => {
-    const timeDiff = b.date.getTime() - a.date.getTime()
-    if (timeDiff !== 0) return timeDiff
-    return b.revision - a.revision
-  })
-
-  return {
-    content: files[0].content,
-    filename: files[0].path.split('/').pop() || files[0].path,
-    date: files[0].date,
-  }
-}
 
 interface RawXrefRow {
   software_name: string
@@ -55,13 +22,10 @@ interface RawXrefRow {
   cert_link: string
 }
 
-function parseXrefCSV(csvContent: string): CertificationXref[] {
-  const { data } = Papa.parse(csvContent.trim(), {
-    header: true,
-    skipEmptyLines: true,
-  })
-
-  return (data as RawXrefRow[]).map((row) => ({
+const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref>(
+  modules,
+  /xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  (row) => ({
     softwareName: row.software_name,
     certType: row.cert_type as CertificationXref['certType'],
     certId: row.cert_id,
@@ -72,12 +36,8 @@ function parseXrefCSV(csvContent: string): CertificationXref[] {
     status: row.status,
     certDate: row.cert_date,
     certLink: row.cert_link,
-  }))
-}
-
-// Load and parse
-const file = getLatestXrefFile()
-const allXrefs = file ? parseXrefCSV(file.content) : []
+  })
+)
 
 /** All certification cross-references. */
 export const certificationXrefs: CertificationXref[] = allXrefs
@@ -91,4 +51,4 @@ export const certsByProduct: Map<string, CertificationXref[]> = allXrefs.reduce(
 }, new Map<string, CertificationXref[]>())
 
 /** CSV file metadata. */
-export const xrefMetadata = file ? { filename: file.filename, lastUpdate: file.date } : null
+export const xrefMetadata = metadata

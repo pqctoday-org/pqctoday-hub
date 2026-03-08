@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   CKP_PKCS5_PBKD2_HMAC_SHA256,
   CKP_PKCS5_PBKD2_HMAC_SHA384,
@@ -174,17 +175,12 @@ const Pbkdf2Panel = () => {
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
-            <select
-              value={prf}
-              onChange={(e) => setPrf(Number(e.target.value))}
-              className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-            >
-              {PBKDF2_PRFS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              items={PBKDF2_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              selectedId={String(prf)}
+              onSelect={(id) => setPrf(parseInt(id, 10))}
+              noContainer
+            />
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Output (bytes)</p>
@@ -359,17 +355,12 @@ const HkdfPanel = () => {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF Hash</p>
-            <select
-              value={prf}
-              onChange={(e) => setPrf(Number(e.target.value))}
-              className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-            >
-              {HKDF_PRFS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              items={HKDF_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              selectedId={String(prf)}
+              onSelect={(id) => setPrf(parseInt(id, 10))}
+              noContainer
+            />
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Output (bytes)</p>
@@ -581,17 +572,12 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
-            <select
-              value={prf}
-              onChange={(e) => setPrf(Number(e.target.value))}
-              className="w-full text-xs rounded-lg px-2 py-1.5 bg-muted border border-border text-foreground"
-            >
-              {KBKDF_PRFS.map((p) => (
-                <option key={p.value} value={p.value}>
-                  {p.label}
-                </option>
-              ))}
-            </select>
+            <FilterDropdown
+              items={KBKDF_PRFS.map((p) => ({ id: String(p.value), label: p.label }))}
+              selectedId={String(prf)}
+              onSelect={(id) => setPrf(parseInt(id, 10))}
+              noContainer
+            />
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Output (bytes)</p>

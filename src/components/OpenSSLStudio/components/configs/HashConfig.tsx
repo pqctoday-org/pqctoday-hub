@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface HashConfigProps {
   hashAlgo: string
@@ -32,21 +33,20 @@ export const HashConfig: React.FC<HashConfigProps> = ({
       </span>
 
       <div className="space-y-3">
-        <label htmlFor="hash-algo-select" className="text-xs text-muted-foreground block">
-          Hash Algorithm
-        </label>
-        <select
-          id="hash-algo-select"
-          value={hashAlgo}
-          onChange={(e) => setHashAlgo(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="sha256">SHA-256</option>
-          <option value="sha384">SHA-384</option>
-          <option value="sha512">SHA-512</option>
-          <option value="sha3-256">SHA3-256</option>
-          <option value="ripemd160">RIPEMD-160</option>
-        </select>
+        <span className="text-xs text-muted-foreground block">Hash Algorithm</span>
+        <FilterDropdown
+          selectedId={hashAlgo}
+          onSelect={(id) => setHashAlgo(id)}
+          items={[
+            { id: 'sha256', label: 'SHA-256' },
+            { id: 'sha384', label: 'SHA-384' },
+            { id: 'sha512', label: 'SHA-512' },
+            { id: 'sha3-256', label: 'SHA3-256' },
+            { id: 'ripemd160', label: 'RIPEMD-160' },
+          ]}
+          defaultLabel="Select Hash Algorithm"
+          noContainer
+        />
         <div className="text-[10px] text-muted-foreground pl-1">
           {hashAlgo === 'sha256' && '32 bytes (256 bits) - Bitcoin, Ethereum, General Purpose'}
           {hashAlgo === 'sha384' && '48 bytes (384 bits) - High Security Applications'}
@@ -57,22 +57,14 @@ export const HashConfig: React.FC<HashConfigProps> = ({
       </div>
 
       <div className="space-y-3">
-        <label htmlFor="hash-infile-select" className="text-xs text-muted-foreground block">
-          Input File
-        </label>
-        <select
-          id="hash-infile-select"
-          value={hashInFile}
-          onChange={(e) => setHashInFile(e.target.value)}
-          className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-        >
-          <option value="">Select a file...</option>
-          {files.map((f) => (
-            <option key={f.name} value={f.name}>
-              {f.name}
-            </option>
-          ))}
-        </select>
+        <span className="text-xs text-muted-foreground block">Input File</span>
+        <FilterDropdown
+          selectedId={hashInFile}
+          onSelect={(id) => setHashInFile(id)}
+          items={files.map((f) => ({ id: f.name, label: f.name }))}
+          defaultLabel="Select a file..."
+          noContainer
+        />
       </div>
 
       <div className="space-y-3">

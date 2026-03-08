@@ -1,142 +1,107 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
+import Papa from 'papaparse'
 import type {
   QuizQuestion,
   QuizCategory,
   QuestionType,
   QuizCategoryMeta,
 } from '@/components/PKILearning/modules/Quiz/types'
+import { loadLatestCSV, splitPipe } from './csvUtils'
 
-// ─── CSV file discovery (pick most recent by date stamp) ───
+// ─── Raw CSV row shape ───
 
-function getLatestQuizFile(): { content: string; filename: string; date: Date } | null {
-  const modules = import.meta.glob('./pqcquiz_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
-
-  const files = Object.keys(modules)
-    .map((path) => {
-      // eslint-disable-next-line security/detect-unsafe-regex
-      const match = path.match(/pqcquiz_(\d{2})(\d{2})(\d{4})(?:_[^.]*)?\.csv$/)
-      if (match) {
-        const [, month, day, year] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-
-        return { path, date, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
-
-  if (files.length === 0) {
-    console.warn('No dated pqcquiz CSV files found.')
-    return null
-  }
-
-  // Sort by date descending; on same date, sort by path descending so _r1 > _r0 > base.
-  // Use codepoint comparison (not localeCompare) — macOS localeCompare treats '_' < '.'
-  files.sort((a, b) => {
-    const dateDiff = b.date.getTime() - a.date.getTime()
-    if (dateDiff !== 0) return dateDiff
-    return b.path < a.path ? -1 : b.path > a.path ? 1 : 0
-  })
-  console.log(`Loading quiz data from: ${files[0].path}`)
-
-  return {
-    content: files[0].content,
-    filename: files[0].path.split('/').pop() || files[0].path,
-    date: files[0].date,
-  }
+interface RawQuizRow {
+  id: string
+  category: string
+  type: string
+  difficulty: string
+  quiz_mode: string
+  question: string
+  option_a: string
+  option_b: string
+  option_c: string
+  option_d: string
+  correct_answer: string
+  explanation: string
+  learn_more_path: string
+  personas: string
+  industries: string
 }
 
-// ─── Quote-aware CSV line parser ───
+// ─── Transform function ───
 
-function parseLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
+function transformQuizRow(row: RawQuizRow): QuizQuestion | null {
+  if (!row.id || !row.question) return null
 
-  for (let i = 0; i < line.length; i++) {
-    const char = line[i]
+  const type = row.type as QuestionType
+  const quizMode = row.quiz_mode as 'quick' | 'full' | 'both'
 
-    if (char === '"' && line[i + 1] === '"') {
-      current += '"'
-      i++
-    } else if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim())
-      current = ''
-    } else {
-      current += char
+  // Build options array with correct IDs
+  const options: { id: string; text: string }[] = []
+  if (type === 'true-false') {
+    if (row.option_a) options.push({ id: 'true', text: row.option_a })
+    if (row.option_b) options.push({ id: 'false', text: row.option_b })
+  } else {
+    const ids = ['a', 'b', 'c', 'd']
+    const optionTexts = [row.option_a, row.option_b, row.option_c, row.option_d]
+    for (let i = 0; i < 4; i++) {
+      if (optionTexts[i]) options.push({ id: ids[i], text: optionTexts[i] })
     }
   }
-  result.push(current.trim())
-  return result
-}
 
-// ─── CSV → QuizQuestion[] parser ───
+  // Skip rows with no options (e.g. truncated CSV rows)
+  if (options.length === 0) return null
 
-function parseQuizCSV(csvContent: string): QuizQuestion[] {
-  const lines = csvContent.trim().split('\n')
-  // Header: id,category,type,difficulty,quiz_mode,question,option_a,option_b,option_c,option_d,correct_answer,explanation,learn_more_path
-  const results: QuizQuestion[] = []
+  // Parse correctAnswer — pipe-delimited for multi-select
+  const correctAnswer: string | string[] =
+    type === 'multi-select' ? row.correct_answer.split('|') : row.correct_answer
 
-  for (const line of lines.slice(1)) {
-    const v = parseLine(line)
-    if (v.length < 13) continue
-
-    const type = v[2] as QuestionType
-    const quizMode = v[4] as 'quick' | 'full' | 'both'
-
-    // Build options array with correct IDs
-    const options: { id: string; text: string }[] = []
-    if (type === 'true-false') {
-      if (v[6]) options.push({ id: 'true', text: v[6] })
-      if (v[7]) options.push({ id: 'false', text: v[7] })
-    } else {
-      const ids = ['a', 'b', 'c', 'd']
-      for (let i = 0; i < 4; i++) {
-        const text = v[6 + i]
-        if (text) options.push({ id: ids[i], text })
-      }
-    }
-
-    // Parse correctAnswer — pipe-delimited for multi-select
-    const rawAnswer = v[10]
-    const correctAnswer: string | string[] =
-      type === 'multi-select' ? rawAnswer.split('|') : rawAnswer
-
-    const q: QuizQuestion = {
-      id: v[0],
-      category: v[1] as QuizCategory,
-      type,
-      difficulty: v[3] as 'beginner' | 'intermediate' | 'advanced',
-      quizMode,
-      question: v[5],
-      options,
-      correctAnswer,
-      explanation: v[11],
-      personas: v[13] ? v[13].split('|') : [],
-      industries: v[14] ? v[14].split('|') : [],
-    }
-    if (v[12]) q.learnMorePath = v[12]
-    results.push(q)
+  const q: QuizQuestion = {
+    id: row.id,
+    category: row.category as QuizCategory,
+    type,
+    difficulty: row.difficulty as 'beginner' | 'intermediate' | 'advanced',
+    quizMode,
+    question: row.question,
+    options,
+    correctAnswer,
+    explanation: row.explanation,
+    personas: splitPipe(row.personas),
+    industries: splitPipe(row.industries),
   }
-
-  return results
+  if (row.learn_more_path) q.learnMorePath = row.learn_more_path
+  return q
 }
 
 // ─── Load and export ───
 
-const file = getLatestQuizFile()
-const questions = file ? parseQuizCSV(file.content) : []
+const modules = import.meta.glob('./pqcquiz_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
+
+const { data: questions, metadata } = loadLatestCSV<RawQuizRow, QuizQuestion>(
+  modules,
+  /pqcquiz_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  transformQuizRow
+)
 
 export const quizQuestions: QuizQuestion[] = questions
 
-export const quizMetadata = file ? { filename: file.filename, lastUpdate: file.date } : null
+export const quizMetadata = metadata
+
+// ─── Standalone CSV parser for tests ───
+
+export function parseQuizCSV(csvContent: string): QuizQuestion[] {
+  if (!csvContent.trim()) return []
+  const { data } = Papa.parse(csvContent.trim(), {
+    header: true,
+    skipEmptyLines: true,
+  })
+  return (data as RawQuizRow[]).map(transformQuizRow).filter((q): q is QuizQuestion => q !== null)
+}
 
 // ─── Dynamic category metadata ───
 

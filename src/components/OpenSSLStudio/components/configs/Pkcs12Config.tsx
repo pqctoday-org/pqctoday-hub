@@ -2,6 +2,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
+import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface Pkcs12ConfigProps {
   p12Action: 'export' | 'import'
@@ -85,45 +86,29 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
       {p12Action === 'export' ? (
         <>
           <div className="space-y-3">
-            <label htmlFor="p12-cert-select" className="text-xs text-muted-foreground block">
-              Certificate File
-            </label>
-            <select
-              id="p12-cert-select"
-              value={p12CertFile}
-              onChange={(e) => setP12CertFile(e.target.value)}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="">Select Certificate...</option>
-              {files
+            <span className="text-xs text-muted-foreground block">Certificate File</span>
+            <FilterDropdown
+              selectedId={p12CertFile}
+              onSelect={(id) => setP12CertFile(id)}
+              items={files
                 .filter((f) => f.name.endsWith('.crt') || f.name.endsWith('.cert'))
-                .map((f) => (
-                  <option key={f.name} value={f.name}>
-                    {f.name}
-                  </option>
-                ))}
-            </select>
+                .map((f) => ({ id: f.name, label: f.name }))}
+              defaultLabel="Select Certificate..."
+              noContainer
+            />
           </div>
 
           <div className="space-y-3">
-            <label htmlFor="p12-key-select" className="text-xs text-muted-foreground block">
-              Private Key File
-            </label>
-            <select
-              id="p12-key-select"
-              value={p12KeyFile}
-              onChange={(e) => setP12KeyFile(e.target.value)}
-              className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-            >
-              <option value="">Select Private Key...</option>
-              {files
+            <span className="text-xs text-muted-foreground block">Private Key File</span>
+            <FilterDropdown
+              selectedId={p12KeyFile}
+              onSelect={(id) => setP12KeyFile(id)}
+              items={files
                 .filter((f) => f.name.endsWith('.key') || f.name.endsWith('.pem'))
-                .map((f) => (
-                  <option key={f.name} value={f.name}>
-                    {f.name}
-                  </option>
-                ))}
-            </select>
+                .map((f) => ({ id: f.name, label: f.name }))}
+              defaultLabel="Select Private Key..."
+              noContainer
+            />
           </div>
 
           <div className="space-y-3">
@@ -142,24 +127,16 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
         </>
       ) : (
         <div className="space-y-3">
-          <label htmlFor="p12-infile-select" className="text-xs text-muted-foreground block">
-            PKCS#12 File
-          </label>
-          <select
-            id="p12-infile-select"
-            value={p12File}
-            onChange={(e) => setP12File(e.target.value)}
-            className="w-full bg-background border border-input rounded-lg px-3 py-2 text-sm text-foreground outline-none focus:border-primary"
-          >
-            <option value="">Select .p12 or .pfx file...</option>
-            {files
+          <span className="text-xs text-muted-foreground block">PKCS#12 File</span>
+          <FilterDropdown
+            selectedId={p12File}
+            onSelect={(id) => setP12File(id)}
+            items={files
               .filter((f) => f.name.endsWith('.p12') || f.name.endsWith('.pfx'))
-              .map((f) => (
-                <option key={f.name} value={f.name}>
-                  {f.name}
-                </option>
-              ))}
-          </select>
+              .map((f) => ({ id: f.name, label: f.name }))}
+            defaultLabel="Select .p12 or .pfx file..."
+            noContainer
+          />
         </div>
       )}
 

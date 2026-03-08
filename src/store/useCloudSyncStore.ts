@@ -47,13 +47,24 @@ export const useCloudSyncStore = create<CloudSyncState>()(
       name: 'pqc-cloud-sync',
       storage: createJSONStorage(() => localStorage),
       version: 1,
-      migrate: (persistedState: unknown) => {
+      migrate: (persistedState: unknown, version: number) => {
         const state = (persistedState ?? {}) as Record<string, unknown>
-        return {
-          enabled: (state.enabled as boolean) ?? false,
-          lastSyncedAt: (state.lastSyncedAt as string) ?? null,
-          lastSyncDirection: (state.lastSyncDirection as 'upload' | 'download') ?? null,
-          provider: (state.provider as CloudProvider) ?? null,
+        if (version < 1) {
+          return {
+            enabled: typeof state.enabled === 'boolean' ? state.enabled : false,
+            lastSyncedAt: typeof state.lastSyncedAt === 'string' ? state.lastSyncedAt : null,
+            lastSyncDirection:
+              state.lastSyncDirection === 'upload' || state.lastSyncDirection === 'download'
+                ? (state.lastSyncDirection as 'upload' | 'download')
+                : null,
+            provider: state.provider === 'google-drive' ? (state.provider as CloudProvider) : null,
+          }
+        }
+        return state as {
+          enabled: boolean
+          lastSyncedAt: string | null
+          lastSyncDirection: 'upload' | 'download' | null
+          provider: CloudProvider | null
         }
       },
       onRehydrateStorage: () => (_state, error) => {

@@ -10,6 +10,7 @@ import type {
   IEC62351Level,
   NERCCIPImpact,
 } from '../data/energyConstants'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 interface SubstationMigrationPlannerProps {
   profile: SubstationProfile
@@ -63,7 +64,6 @@ function priorityBarColor(score: number): string {
   return 'bg-primary'
 }
 
-const selectClasses = 'rounded-lg bg-muted border border-border text-foreground px-3 py-2 text-sm'
 const rangeClasses = 'w-full accent-primary'
 
 export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProps> = ({
@@ -113,22 +113,17 @@ export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProp
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {/* Substation Type */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               Substation Type
             </span>
-            <select
-              value={profile.type}
-              onChange={(e) => update({ type: e.target.value as SubstationType })}
-              className={selectClasses}
-            >
-              {SUBSTATION_TYPE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={profile.type}
+              onSelect={(id) => update({ type: id as SubstationType })}
+              items={SUBSTATION_TYPE_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
 
           {/* IED Count */}
           <label className="block">
@@ -191,58 +186,43 @@ export const SubstationMigrationPlanner: React.FC<SubstationMigrationPlannerProp
           </label>
 
           {/* Connectivity */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               Connectivity
             </span>
-            <select
-              value={profile.connectivity}
-              onChange={(e) => update({ connectivity: e.target.value as Connectivity })}
-              className={selectClasses}
-            >
-              {CONNECTIVITY_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={profile.connectivity}
+              onSelect={(id) => update({ connectivity: id as Connectivity })}
+              items={CONNECTIVITY_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
 
           {/* IEC 62351 Level */}
-          <label className="block">
+          <div>
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               IEC 62351 Level
             </span>
-            <select
-              value={profile.iec62351Level}
-              onChange={(e) => update({ iec62351Level: e.target.value as IEC62351Level })}
-              className={selectClasses}
-            >
-              {IEC62351_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={profile.iec62351Level}
+              onSelect={(id) => update({ iec62351Level: id as IEC62351Level })}
+              items={IEC62351_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
 
           {/* NERC CIP Impact */}
-          <label className="block sm:col-span-2 lg:col-span-1">
+          <div className="sm:col-span-2 lg:col-span-1">
             <span className="text-xs font-medium text-muted-foreground block mb-1">
               NERC CIP Impact Rating
             </span>
-            <select
-              value={profile.nercCipImpact}
-              onChange={(e) => update({ nercCipImpact: e.target.value as NERCCIPImpact })}
-              className={selectClasses}
-            >
-              {NERC_CIP_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </label>
+            <FilterDropdown
+              noContainer
+              selectedId={profile.nercCipImpact}
+              onSelect={(id) => update({ nercCipImpact: id as NERCCIPImpact })}
+              items={NERC_CIP_OPTIONS.map((opt) => ({ id: opt.value, label: opt.label }))}
+            />
+          </div>
         </div>
       </div>
 

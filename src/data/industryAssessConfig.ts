@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { loadLatestCSV, splitSemicolon, parseIntSafe } from './csvUtils'
+
 export interface IndustryComplianceConfig {
   category: 'compliance'
   id: string
@@ -44,169 +46,83 @@ export type IndustryConfigRow =
   | IndustryRetentionConfig
   | IndustrySensitivityConfig
 
-// Helper to find the latest pqcassessment CSV file
-function getLatestAssessFile(): { content: string; filename: string; date: Date } | null {
-  const modules = import.meta.glob('./pqcassessment_*.csv', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  })
+interface RawAssessRow {
+  category: string
+  id: string
+  label: string
+  description: string
+  industries: string
+  hndl_relevance: string
+  migration_priority: string
+  retention_years: string
+  compliance_deadline: string
+  compliance_notes: string
+  countries: string
+}
 
-  const files = Object.keys(modules)
-    .map((path) => {
-      const match = path.match(/pqcassessment_(\d{2})(\d{2})(\d{4})\.csv$/)
-      if (match) {
-        const [, month, day, year] = match
-        const date = new Date(parseInt(year), parseInt(month) - 1, parseInt(day))
-        // eslint-disable-next-line security/detect-object-injection
-        return { path, date, content: modules[path] as string }
-      }
-      return null
-    })
-    .filter((f): f is { path: string; date: Date; content: string } => f !== null)
+const modules = import.meta.glob('./pqcassessment_*.csv', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+})
 
-  if (files.length === 0) {
-    console.warn('No dated pqcassessment CSV files found.')
+const { data: allRows, metadata: parsedMetadata } = loadLatestCSV<RawAssessRow, IndustryConfigRow>(
+  modules,
+  /pqcassessment_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  (row) => {
+    const industries = splitSemicolon(row.industries)
+    const countries = splitSemicolon(row.countries)
+
+    if (row.category === 'compliance') {
+      return {
+        category: 'compliance',
+        id: row.id || '',
+        label: row.label || '',
+        description: row.description || '',
+        industries,
+        countries,
+        complianceDeadline: row.compliance_deadline || '',
+        complianceNotes: row.compliance_notes || '',
+      } satisfies IndustryComplianceConfig
+    }
+
+    if (row.category === 'use_case') {
+      return {
+        category: 'use_case',
+        id: row.id || '',
+        label: row.label || '',
+        description: row.description || '',
+        industries,
+        hndlRelevance: row.hndl_relevance ? parseIntSafe(row.hndl_relevance) : 5,
+        migrationPriority: row.migration_priority ? parseIntSafe(row.migration_priority) : 5,
+      } satisfies IndustryUseCaseConfig
+    }
+
+    if (row.category === 'retention') {
+      return {
+        category: 'retention',
+        id: row.id || '',
+        label: row.label || '',
+        description: row.description || '',
+        industries,
+        retentionYears: row.retention_years ? parseIntSafe(row.retention_years) : 0,
+      } satisfies IndustryRetentionConfig
+    }
+
+    if (row.category === 'sensitivity') {
+      return {
+        category: 'sensitivity',
+        id: row.id || '',
+        label: row.label || '',
+        description: row.description || '',
+        industries,
+        sensitivityScore: row.hndl_relevance ? parseIntSafe(row.hndl_relevance) : 5,
+      } satisfies IndustrySensitivityConfig
+    }
+
     return null
   }
-
-  files.sort((a, b) => b.date.getTime() - a.date.getTime())
-
-  return {
-    content: files[0].content,
-    filename: files[0].path.split('/').pop() || files[0].path,
-    date: files[0].date,
-  }
-}
-
-// Quote-aware CSV line parser (same pattern as libraryData.ts / threatsData.ts)
-function parseLine(line: string): string[] {
-  const result: string[] = []
-  let current = ''
-  let inQuotes = false
-
-  for (let i = 0; i < line.length; i++) {
-    // eslint-disable-next-line security/detect-object-injection
-    const char = line[i]
-    if (char === '"') {
-      inQuotes = !inQuotes
-    } else if (char === ',' && !inQuotes) {
-      result.push(current.trim())
-      current = ''
-    } else {
-      current += char
-    }
-  }
-  result.push(current.trim())
-  return result
-}
-
-function parseAssessCSV(csvContent: string): IndustryConfigRow[] {
-  try {
-    const lines = csvContent.trim().split('\n')
-    // Skip header row
-    const dataLines = lines.slice(1)
-
-    return dataLines
-      .map((line): IndustryConfigRow | null => {
-        if (!line.trim()) return null
-        const [
-          category,
-          id,
-          label,
-          description,
-          industriesRaw,
-          hndlRelevanceRaw,
-          migrationPriorityRaw,
-          retentionYearsRaw,
-          complianceDeadline,
-          complianceNotes,
-          countriesRaw,
-        ] = parseLine(line)
-
-        const industries = industriesRaw
-          ? industriesRaw
-              .split(';')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : []
-
-        const countries = countriesRaw
-          ? countriesRaw
-              .split(';')
-              .map((s) => s.trim())
-              .filter(Boolean)
-          : []
-
-        if (category === 'compliance') {
-          return {
-            category: 'compliance',
-            id: id || '',
-            label: label || '',
-            description: description || '',
-            industries,
-            countries,
-            complianceDeadline: complianceDeadline || '',
-            complianceNotes: complianceNotes || '',
-          } satisfies IndustryComplianceConfig
-        }
-
-        if (category === 'use_case') {
-          return {
-            category: 'use_case',
-            id: id || '',
-            label: label || '',
-            description: description || '',
-            industries,
-            hndlRelevance: hndlRelevanceRaw ? parseInt(hndlRelevanceRaw, 10) : 5,
-            migrationPriority: migrationPriorityRaw ? parseInt(migrationPriorityRaw, 10) : 5,
-          } satisfies IndustryUseCaseConfig
-        }
-
-        if (category === 'retention') {
-          return {
-            category: 'retention',
-            id: id || '',
-            label: label || '',
-            description: description || '',
-            industries,
-            retentionYears: retentionYearsRaw ? parseInt(retentionYearsRaw, 10) : 0,
-          } satisfies IndustryRetentionConfig
-        }
-
-        if (category === 'sensitivity') {
-          return {
-            category: 'sensitivity',
-            id: id || '',
-            label: label || '',
-            description: description || '',
-            industries,
-            sensitivityScore: hndlRelevanceRaw ? parseInt(hndlRelevanceRaw, 10) : 5,
-          } satisfies IndustrySensitivityConfig
-        }
-
-        return null
-      })
-      .filter((row): row is IndustryConfigRow => row !== null)
-  } catch (error) {
-    console.error('Failed to parse pqcassessment CSV:', error)
-    return []
-  }
-}
-
-// Load and parse
-let allRows: IndustryConfigRow[] = []
-let parsedMetadata: { filename: string; lastUpdate: Date } | null = null
-
-try {
-  const file = getLatestAssessFile()
-  if (file) {
-    allRows = parseAssessCSV(file.content)
-    parsedMetadata = { filename: file.filename, lastUpdate: file.date }
-  }
-} catch (error) {
-  console.error('Failed to load industry assess config:', error)
-}
+)
 
 // Compliance configs now come from the dedicated compliance CSV
 // (single source of truth: compliance_*.csv → complianceData.ts)

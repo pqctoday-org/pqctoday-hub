@@ -23,6 +23,7 @@ import { ExportableArtifact } from '../../../common/executive/ExportableArtifact
 import { ComplianceGantt } from './ComplianceGantt'
 import type { ComplianceGanttRow, UserMilestone, ComplianceDeadline } from './ComplianceGantt'
 import type { TimelinePhase, TimelineEvent, EventType } from '@/types/timeline'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 // ---------------------------------------------------------------------------
 // Data helpers
@@ -607,44 +608,22 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
             />
           </div>
           <div className="w-24">
-            <label
-              htmlFor="compliance-year"
-              className="block text-xs font-medium text-muted-foreground mb-1"
-            >
-              Year
-            </label>
-            <select
-              id="compliance-year"
-              className="w-full px-2 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
-              value={newYear}
-              onChange={(e) => setNewYear(parseInt(e.target.value))}
-            >
-              {yearOptions.map((y) => (
-                <option key={y} value={y}>
-                  {y}
-                </option>
-              ))}
-            </select>
+            <span className="block text-xs font-medium text-muted-foreground mb-1">Year</span>
+            <FilterDropdown
+              noContainer
+              selectedId={String(newYear)}
+              onSelect={(id) => setNewYear(parseInt(id))}
+              items={yearOptions.map((y) => ({ id: String(y), label: String(y) }))}
+            />
           </div>
           <div className="w-36">
-            <label
-              htmlFor="compliance-phase"
-              className="block text-xs font-medium text-muted-foreground mb-1"
-            >
-              Category
-            </label>
-            <select
-              id="compliance-phase"
-              className="w-full px-2 py-2 rounded-lg border border-input bg-background text-foreground text-sm"
-              value={newCategory}
-              onChange={(e) => setNewCategory(e.target.value)}
-            >
-              {MILESTONE_CATEGORIES.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
+            <span className="block text-xs font-medium text-muted-foreground mb-1">Category</span>
+            <FilterDropdown
+              noContainer
+              selectedId={newCategory}
+              onSelect={(id) => setNewCategory(id)}
+              items={MILESTONE_CATEGORIES.map((c) => ({ id: c, label: c }))}
+            />
           </div>
           <Button variant="gradient" size="sm" onClick={addMilestone} disabled={!newLabel.trim()}>
             <Plus size={14} />
