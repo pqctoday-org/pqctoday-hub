@@ -9,6 +9,7 @@ import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import {
   getSoftHSMCppModule,
+  getSoftHSMRustModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -35,8 +36,10 @@ const StepBadge = ({ done, label }: { done: boolean; label: string }) => (
 export const TokenSetupPanel = () => {
   const {
     moduleRef,
+    crossCheckModuleRef,
     hSessionRef,
     slotRef,
+    engineMode,
     phase,
     setPhase,
     tokenCreated,
@@ -63,14 +66,36 @@ export const TokenSetupPanel = () => {
     withLoading('initialize', async () => {
       setTokenError(null)
       try {
-        const M = await getSoftHSMCppModule()
-        const proxy = createLoggingProxy(M, addHsmLog, 'cpp')
+        let M = null
+        let checkM = null
+
+        if (engineMode === 'cpp') {
+          M = await getSoftHSMCppModule()
+        } else if (engineMode === 'rust') {
+          M = await getSoftHSMRustModule()
+        } else if (engineMode === 'dual') {
+          M = await getSoftHSMCppModule()
+          checkM = await getSoftHSMRustModule()
+        } else {
+          throw new Error('No cryptographic execution engine selected.')
+        }
+
+        const engineLabel = engineMode === 'rust' ? 'rust' : 'cpp'
+        const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
         moduleRef.current = proxy
         hsm_initialize(proxy)
+
+        if (checkM) {
+          const checkProxy = createLoggingProxy(checkM, addHsmLog, 'rust')
+          crossCheckModuleRef.current = checkProxy
+          hsm_initialize(checkProxy)
+        }
+
         setPhase('initialized')
       } catch (e) {
         setTokenError(String(e))
         moduleRef.current = null
+        crossCheckModuleRef.current = null
       }
     })
 
