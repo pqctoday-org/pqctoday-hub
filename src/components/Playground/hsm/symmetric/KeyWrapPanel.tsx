@@ -56,11 +56,11 @@ export const KeyWrapPanel = () => {
       const M = moduleRef.current!
       const wrappedBytes = new Uint8Array(wrappedHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
       const template: AttrDef[] = [
-        { type: CKA_CLASS, value: CKO_SECRET_KEY },
-        { type: CKA_KEY_TYPE, value: CKK_AES },
-        { type: CKA_TOKEN, value: false },
-        { type: CKA_EXTRACTABLE, value: true },
-        { type: CKA_VALUE_LEN, value: 32 },
+        { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+        { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+        { type: CKA_TOKEN, boolVal: false },
+        { type: CKA_EXTRACTABLE, boolVal: true },
+        { type: CKA_VALUE_LEN, ulongVal: 32 },
       ]
       const newHandle = hsm_unwrapKey(
         M,
