@@ -246,6 +246,18 @@ export const MainLayout = () => {
       {/* Footer */}
       <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
         <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
+        <p className="mt-1 text-xs opacity-70">
+          Content may be inaccurate. Please verify information independently. Report inaccuracies in{' '}
+          <a
+            href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="underline hover:text-foreground transition-colors"
+          >
+            GitHub Discussions
+          </a>
+          .
+        </p>
       </footer>
 
       {/* Page accuracy feedback widget */}

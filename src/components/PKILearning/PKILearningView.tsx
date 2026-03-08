@@ -334,6 +334,21 @@ export const PKILearningView: React.FC = () => {
               <Route path="os-pqc" element={<OSPQCModule />} />
             </Routes>
           </Suspense>
+          {showSidebar && (
+            <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
+              Learning module content can be inaccurate. Please double-check its information. Report
+              inaccuracies in{' '}
+              <a
+                href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline hover:text-foreground transition-colors"
+              >
+                PQC Today GitHub Discussions
+              </a>
+              .
+            </p>
+          )}
         </div>
       </div>
     </div>
