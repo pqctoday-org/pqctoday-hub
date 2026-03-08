@@ -52,6 +52,7 @@
     "notebooklm": "npx tsx scripts/generate-notebooklm.ts"
   },
   "dependencies": {
+    "@mlc-ai/web-llm": "^0.2.81",
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
     "@oqs/liboqs-js": "^0.15.1",

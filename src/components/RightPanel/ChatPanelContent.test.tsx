@@ -27,9 +27,20 @@ vi.mock('../Chat/ChatMessage', () => ({
   ),
 }))
 
-// Mock ApiKeySetup
-vi.mock('../Chat/ApiKeySetup', () => ({
-  ApiKeySetup: () => <div data-testid="api-key-setup">Enter your Gemini API key</div>,
+// Mock ProviderSetup (replaces old ApiKeySetup)
+vi.mock('../Chat/ProviderSetup', () => ({
+  ProviderSetup: () => <div data-testid="provider-setup">Choose Your AI Assistant</div>,
+}))
+
+// Mock ModelDownloadBanner
+vi.mock('../Chat/ModelDownloadBanner', () => ({
+  ModelDownloadBanner: () => null,
+}))
+
+// Mock WebLLMService
+vi.mock('@/services/chat/WebLLMService', () => ({
+  initializeEngine: vi.fn().mockResolvedValue(undefined),
+  isEngineReady: vi.fn().mockReturnValue(false),
 }))
 
 // Mock SampleQuestionsModal
@@ -65,6 +76,10 @@ vi.mock('@/store/useRightPanelStore', () => ({
 const defaultChatState = {
   apiKey: 'test-api-key',
   setApiKey: vi.fn(),
+  provider: 'gemini' as string | null,
+  setProvider: vi.fn(),
+  localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
+  setLocalModel: vi.fn(),
   messages: [] as Array<{
     id: string
     role: string
@@ -83,6 +98,12 @@ const defaultChatState = {
   setPendingQuestion: vi.fn(),
   conversations: [],
   activeConversationId: null as string | null,
+  webllmStatus: 'idle' as string,
+  webllmProgress: null,
+  webllmError: null as string | null,
+  setWebLLMStatus: vi.fn(),
+  setWebLLMProgress: vi.fn(),
+  setWebLLMError: vi.fn(),
 }
 
 let mockChatState = { ...defaultChatState }
@@ -128,7 +149,11 @@ function resetMocks() {
   mockChatState = {
     ...defaultChatState,
     setApiKey: vi.fn(),
+    setProvider: vi.fn(),
     clearMessages: vi.fn(),
+    setWebLLMStatus: vi.fn(),
+    setWebLLMProgress: vi.fn(),
+    setWebLLMError: vi.fn(),
     messages: [],
     error: null,
   }
@@ -155,15 +180,15 @@ describe('ChatPanelContent', () => {
     expect(screen.getByText(/Timeline/)).toBeInTheDocument()
   })
 
-  it('shows ApiKeySetup when apiKey is null', () => {
-    mockChatState = { ...mockChatState, apiKey: null as unknown as string }
+  it('shows ProviderSetup when provider is null', () => {
+    mockChatState = { ...mockChatState, provider: null }
     render(<ChatPanelContent />)
 
-    expect(screen.getByTestId('api-key-setup')).toBeInTheDocument()
+    expect(screen.getByTestId('provider-setup')).toBeInTheDocument()
     expect(screen.queryByLabelText('Message input')).not.toBeInTheDocument()
   })
 
-  it('shows chat interface when apiKey is set', () => {
+  it('shows chat interface when provider is set', () => {
     render(<ChatPanelContent />)
     expect(screen.getByLabelText('Message input')).toBeInTheDocument()
     expect(screen.getByLabelText('Send message')).toBeInTheDocument()

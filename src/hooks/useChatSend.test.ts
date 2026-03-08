@@ -18,6 +18,8 @@ const mockSetApiKey = vi.fn()
 
 const defaultStoreState = {
   apiKey: 'test-api-key',
+  provider: 'gemini' as string | null,
+  localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
   messages: [] as ChatMessage[],
   isLoading: false,
   isStreaming: false,
@@ -29,6 +31,11 @@ const defaultStoreState = {
   appendStreamingContent: mockAppendStreamingContent,
   setError: mockSetError,
   setApiKey: mockSetApiKey,
+  deleteMessagesFrom: vi.fn(),
+  webllmStatus: 'idle' as string,
+  setWebLLMStatus: vi.fn(),
+  setWebLLMProgress: vi.fn(),
+  setWebLLMError: vi.fn(),
 }
 
 let chatStoreOverrides: Partial<typeof defaultStoreState> = {}
@@ -88,6 +95,12 @@ const mockStreamResponse = vi.fn()
 
 vi.mock('@/services/chat/GeminiService', () => ({
   streamResponse: (...args: unknown[]) => mockStreamResponse(...args),
+}))
+
+vi.mock('@/services/chat/WebLLMService', () => ({
+  streamResponse: vi.fn(),
+  initializeEngine: vi.fn().mockResolvedValue(undefined),
+  isEngineReady: vi.fn().mockReturnValue(false),
 }))
 
 vi.mock('@/services/chat/responseCache', () => ({
@@ -301,8 +314,11 @@ describe('useChatSend', () => {
       expect(mockInitialize).not.toHaveBeenCalled()
     })
 
-    it('does not send when apiKey is null', async () => {
-      chatStoreOverrides = { apiKey: null as unknown as string }
+    it('does not send when apiKey is null (Gemini provider)', async () => {
+      chatStoreOverrides = {
+        apiKey: null as unknown as string,
+        provider: 'gemini' as string | null,
+      }
       const { useChatSend } = await import('./useChatSend')
       const { result } = renderHook(() => useChatSend())
 

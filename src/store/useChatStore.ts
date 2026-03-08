@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
-import type { ChatMessage, Conversation } from '../types/ChatTypes'
+import type { ChatMessage, ChatProvider, Conversation } from '../types/ChatTypes'
+import type { WebLLMStatus, WebLLMProgress } from '../services/chat/WebLLMService'
 
 interface ChatState {
   // Persisted
   apiKey: string | null
+  provider: ChatProvider | null
+  localModel: string
   conversations: Conversation[]
   activeConversationId: string | null
   model: string
@@ -19,9 +22,14 @@ interface ChatState {
   error: string | null
   streamingContent: string
   pendingQuestion: string | null
+  webllmStatus: WebLLMStatus
+  webllmProgress: WebLLMProgress | null
+  webllmError: string | null
 
   // Actions
   setApiKey: (key: string | null) => void
+  setProvider: (provider: ChatProvider | null) => void
+  setLocalModel: (model: string) => void
   addMessage: (message: ChatMessage) => void
   setLoading: (loading: boolean) => void
   setStreaming: (streaming: boolean) => void
@@ -33,6 +41,9 @@ interface ChatState {
   setMessageFeedback: (id: string, feedback: 'helpful' | 'unhelpful' | undefined) => void
   deleteMessagesFrom: (id: string) => void
   setPendingQuestion: (question: string | null) => void
+  setWebLLMStatus: (status: WebLLMStatus) => void
+  setWebLLMProgress: (progress: WebLLMProgress | null) => void
+  setWebLLMError: (error: string | null) => void
 
   // Conversation actions
   createConversation: () => string
@@ -64,6 +75,8 @@ export const useChatStore = create<ChatState>()(
   persist(
     (set, get) => ({
       apiKey: null,
+      provider: null,
+      localModel: 'Phi-3.5-mini-instruct-q4f16_1-MLC',
       conversations: [],
       activeConversationId: null,
       messages: [],
@@ -73,8 +86,15 @@ export const useChatStore = create<ChatState>()(
       error: null,
       streamingContent: '',
       pendingQuestion: null,
+      webllmStatus: 'idle',
+      webllmProgress: null,
+      webllmError: null,
 
       setApiKey: (key) => set({ apiKey: key, error: null }),
+
+      setProvider: (provider) => set({ provider, error: null, webllmError: null }),
+
+      setLocalModel: (localModel) => set({ localModel }),
 
       addMessage: (message) =>
         set((state) => {
@@ -159,6 +179,10 @@ export const useChatStore = create<ChatState>()(
 
       setPendingQuestion: (question) => set({ pendingQuestion: question }),
 
+      setWebLLMStatus: (webllmStatus) => set({ webllmStatus }),
+      setWebLLMProgress: (webllmProgress) => set({ webllmProgress }),
+      setWebLLMError: (webllmError) => set({ webllmError }),
+
       deleteMessagesFrom: (id) =>
         set((state) => {
           if (!state.activeConversationId) return state
@@ -232,10 +256,12 @@ export const useChatStore = create<ChatState>()(
     }),
     {
       name: 'pqc-chat-storage',
-      version: 4,
+      version: 5,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         apiKey: state.apiKey,
+        provider: state.provider,
+        localModel: state.localModel,
         conversations: state.conversations.map((c) => ({
           ...c,
           messages: c.messages.slice(-MAX_MESSAGES_PER_CONVERSATION),
@@ -294,10 +320,31 @@ export const useChatStore = create<ChatState>()(
           delete state.messages
         }
 
+        // v4 → v5: add provider and localModel fields
+        if (version < 5) {
+          // Seamless upgrade: if user already has a valid Gemini API key,
+          // auto-set provider to 'gemini' so they skip the ProviderSetup screen
+          if (typeof state.apiKey === 'string' && state.apiKey.length > 0) {
+            state.provider = 'gemini'
+          } else {
+            state.provider = null
+          }
+          state.localModel = 'Phi-3.5-mini-instruct-q4f16_1-MLC'
+        }
+
         // Ensure conversations and activeConversationId exist
         state.conversations = Array.isArray(state.conversations) ? state.conversations : []
         state.activeConversationId =
           typeof state.activeConversationId === 'string' ? state.activeConversationId : null
+
+        // Safety defaults for provider and localModel
+        if (state.provider !== 'gemini' && state.provider !== 'local' && state.provider !== null) {
+          state.provider = null
+        }
+        state.localModel =
+          typeof state.localModel === 'string'
+            ? state.localModel
+            : 'Phi-3.5-mini-instruct-q4f16_1-MLC'
 
         return state
       },

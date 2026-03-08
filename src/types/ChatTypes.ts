@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+export type ChatProvider = 'gemini' | 'local'
+
 export interface RAGChunk {
   id: string
   source: string

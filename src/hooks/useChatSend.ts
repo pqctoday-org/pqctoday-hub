@@ -3,7 +3,12 @@ import { useRef, useCallback } from 'react'
 import { useChatStore } from '@/store/useChatStore'
 import { usePageContext } from '@/hooks/usePageContext'
 import { retrievalService } from '@/services/chat/RetrievalService'
-import { streamResponse } from '@/services/chat/GeminiService'
+import { streamResponse as geminiStreamResponse } from '@/services/chat/GeminiService'
+import {
+  streamResponse as localStreamResponse,
+  initializeEngine,
+  isEngineReady,
+} from '@/services/chat/WebLLMService'
 import { parseFollowUps } from '@/services/chat/parseFollowUps'
 import { checkGrounding } from '@/services/chat/groundingCheck'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
@@ -11,16 +16,20 @@ import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '
 import { getCached, setCache } from '@/services/chat/responseCache'
 
 const STREAM_TIMEOUT_MS = 60_000
+const LOCAL_STREAM_TIMEOUT_MS = 120_000 // Local models may be slower
 const MAX_INPUT_LENGTH = 1_000
 
 /**
- * Shared hook encapsulating RAG retrieval → Gemini streaming → follow-up parsing.
- * Used by ChatPanelContent (right panel).
+ * Shared hook encapsulating RAG retrieval → LLM streaming → follow-up parsing.
+ * Dispatches to Gemini (cloud) or WebLLM (local) based on the provider field
+ * in the chat store.
  */
 export function useChatSend() {
   const {
     apiKey,
     setApiKey,
+    provider,
+    localModel,
     messages,
     addMessage,
     isLoading,
@@ -32,6 +41,10 @@ export function useChatSend() {
     setError,
     model,
     deleteMessagesFrom,
+    webllmStatus,
+    setWebLLMStatus,
+    setWebLLMProgress,
+    setWebLLMError,
   } = useChatStore()
 
   const pageContext = usePageContext()
@@ -40,7 +53,11 @@ export function useChatSend() {
   const sendQuery = useCallback(
     async (queryText: string, onInputRestore?: (text: string) => void) => {
       const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
-      if (!trimmed || !apiKey || isLoading || isStreaming) return
+      if (!trimmed || isLoading || isStreaming) return
+      // Provider-specific guards
+      if (provider === 'gemini' && !apiKey) return
+      if (provider === 'local' && webllmStatus === 'unsupported') return
+      if (!provider) return
 
       logChatQuery(pageContext.page)
 
@@ -78,8 +95,30 @@ export function useChatSend() {
       let fullContent = ''
       let sourceIds: string[] = []
       const sourceRefs: ChatSourceRef[] = []
+      const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
 
       try {
+        // For local provider: ensure engine is loaded (lazy initialization)
+        if (provider === 'local' && !isEngineReady()) {
+          setWebLLMStatus('downloading')
+          setWebLLMError(null)
+          try {
+            await initializeEngine(localModel, (progress) => {
+              setWebLLMProgress(progress)
+              setWebLLMStatus(progress.status)
+            })
+            setWebLLMStatus('ready')
+          } catch (err) {
+            const msg = err instanceof Error ? err.message : 'Failed to load local model.'
+            setWebLLMError(msg)
+            setWebLLMStatus('error')
+            setError(msg)
+            setLoading(false)
+            onInputRestore?.(trimmed)
+            return
+          }
+        }
+
         // Retrieve relevant context with page awareness + conversation history
         await retrievalService.initialize()
         const recentQueries = messages
@@ -103,7 +142,7 @@ export function useChatSend() {
         timeoutId = setTimeout(() => {
           timedOut = true
           controller.abort()
-        }, STREAM_TIMEOUT_MS)
+        }, timeoutMs)
 
         setStreaming(true)
         setStreamingContent('')
@@ -117,8 +156,6 @@ export function useChatSend() {
         )
 
         // Build deduplicated source references for attribution
-        // When multiple chunks share a title, keep the deep link from the
-        // highest-priority chunk (most specific — step-level over page-level)
         const seenTitles = new Map<string, number>()
         for (const c of chunks) {
           const existingIdx = seenTitles.get(c.title)
@@ -154,14 +191,20 @@ export function useChatSend() {
           })
         }
 
-        for await (const chunk of streamResponse(
-          apiKey,
-          allMessages,
-          chunks,
-          model,
-          controller.signal,
-          pageContext
-        )) {
+        // Dispatch to the correct provider
+        const streamGen =
+          provider === 'local'
+            ? localStreamResponse(allMessages, chunks, controller.signal, pageContext)
+            : geminiStreamResponse(
+                apiKey!,
+                allMessages,
+                chunks,
+                model,
+                controller.signal,
+                pageContext
+              )
+
+        for await (const chunk of streamGen) {
           fullContent += chunk
           appendStreamingContent(chunk)
         }
@@ -245,7 +288,7 @@ export function useChatSend() {
         onInputRestore?.(trimmed)
 
         // If API key is invalid, clear it
-        if (errorMsg.includes('Invalid API key')) {
+        if (provider === 'gemini' && errorMsg.includes('Invalid API key')) {
           setApiKey(null)
         }
       } finally {
@@ -258,11 +301,14 @@ export function useChatSend() {
     },
     [
       apiKey,
+      provider,
+      localModel,
       messages,
       isLoading,
       isStreaming,
       model,
       pageContext,
+      webllmStatus,
       addMessage,
       setLoading,
       setError,
@@ -270,6 +316,9 @@ export function useChatSend() {
       setStreamingContent,
       appendStreamingContent,
       setApiKey,
+      setWebLLMStatus,
+      setWebLLMProgress,
+      setWebLLMError,
     ]
   )
 

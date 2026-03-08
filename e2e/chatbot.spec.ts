@@ -100,17 +100,16 @@ test.describe('PQC Assistant Chatbot', () => {
     await expect(page.getByRole('dialog', { name: 'PQC Assistant' })).not.toBeVisible()
   })
 
-  test('shows API key setup when no key', async ({ page }) => {
+  test('shows provider setup when no provider', async ({ page }) => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
 
-    // Should show API key setup
-    await expect(page.getByRole('heading', { name: 'Connect to Gemini AI' })).toBeVisible()
+    // Should show provider setup with two cards
+    await expect(page.getByRole('heading', { name: 'Choose Your AI Assistant' })).toBeVisible()
+    await expect(page.getByText('Local (Private)')).toBeVisible()
+    await expect(page.getByText('Gemini (Cloud)')).toBeVisible()
     await expect(page.getByPlaceholder('Paste your API key here')).toBeVisible()
     await expect(page.getByRole('button', { name: 'Save & Connect' })).toBeVisible()
-
-    // Link to Google AI Studio
-    await expect(page.getByText('Get your free API key')).toBeVisible()
   })
 
   test('API key validation — success flow', async ({ page }) => {
@@ -268,8 +267,8 @@ test.describe('PQC Assistant Chatbot', () => {
     await expect(page.getByText('Ask me anything about post-quantum cryptography')).toBeVisible()
   })
 
-  test('disconnect API key', async ({ page }) => {
-    // Pre-seed API key
+  test('switch provider', async ({ page }) => {
+    // Pre-seed API key (v2 store will be auto-migrated to v5 with provider: 'gemini')
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-chat-storage',
@@ -283,14 +282,14 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.goto('/')
     await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
 
-    // Wait for chat input to appear (confirming key is active)
+    // Wait for chat input to appear (confirming provider is active)
     await expect(page.getByPlaceholder('Ask about PQC...')).toBeVisible({ timeout: 5000 })
 
-    // Click disconnect key button
-    await page.getByRole('button', { name: 'Disconnect API key' }).click()
+    // Click switch provider button
+    await page.getByRole('button', { name: 'Switch provider' }).click()
 
-    // Should return to API key setup
-    await expect(page.getByRole('heading', { name: 'Connect to Gemini AI' })).toBeVisible()
+    // Should return to provider setup
+    await expect(page.getByRole('heading', { name: 'Choose Your AI Assistant' })).toBeVisible()
   })
 
   test('Enter key sends message', async ({ page }) => {

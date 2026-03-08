@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useRef, useEffect, useState } from 'react'
-import { Bot, Send, Trash2, KeyRound, HelpCircle, Download } from 'lucide-react'
+import { Bot, Send, Trash2, Shield, Cloud, Key, HelpCircle, Download } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { ChatMessage } from '../Chat/ChatMessage'
-import { ApiKeySetup } from '../Chat/ApiKeySetup'
+import { ProviderSetup } from '../Chat/ProviderSetup'
+import { ModelDownloadBanner } from '../Chat/ModelDownloadBanner'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { CorpusFreshnessBadge } from '../Chat/CorpusFreshnessBadge'
 import { ConversationMenu } from '../Chat/ConversationMenu'
@@ -14,11 +15,14 @@ import { useChatSend } from '@/hooks/useChatSend'
 import { logChatFeedback } from '@/utils/analytics'
 import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
 import { clearCache } from '@/services/chat/responseCache'
+import { initializeEngine, isEngineReady } from '@/services/chat/WebLLMService'
 
 export const ChatPanelContent: React.FC = () => {
   const {
-    apiKey,
+    provider,
+    setProvider,
     setApiKey,
+    localModel,
     messages,
     isLoading,
     isStreaming,
@@ -30,6 +34,12 @@ export const ChatPanelContent: React.FC = () => {
     setPendingQuestion,
     conversations,
     activeConversationId,
+    webllmStatus,
+    webllmProgress,
+    webllmError,
+    setWebLLMStatus,
+    setWebLLMProgress,
+    setWebLLMError,
   } = useChatStore()
 
   const isOpen = useRightPanelStore((s) => s.isOpen)
@@ -42,16 +52,40 @@ export const ChatPanelContent: React.FC = () => {
 
   const { sendQuery, abort, pageContext, retryLastQuery, editAndResend } = useChatSend()
 
-  // Initialize retrieval service on first open
+  // Initialize retrieval service on first open (when provider is set)
   useEffect(() => {
-    if (isOpen && apiKey) {
+    if (isOpen && provider) {
       import('@/services/chat/RetrievalService').then(({ retrievalService }) => {
         retrievalService.initialize().catch((err) => {
           console.error('Failed to initialize retrieval service:', err)
         })
       })
     }
-  }, [isOpen, apiKey])
+  }, [isOpen, provider])
+
+  // Eagerly start loading local model when panel opens
+  useEffect(() => {
+    if (isOpen && provider === 'local' && webllmStatus === 'idle' && !isEngineReady()) {
+      setWebLLMStatus('checking')
+      initializeEngine(localModel, (progress) => {
+        setWebLLMProgress(progress)
+        setWebLLMStatus(progress.status)
+      })
+        .then(() => setWebLLMStatus('ready'))
+        .catch((err) => {
+          setWebLLMError(err instanceof Error ? err.message : 'Failed to load model.')
+          setWebLLMStatus('error')
+        })
+    }
+  }, [
+    isOpen,
+    provider,
+    localModel,
+    webllmStatus,
+    setWebLLMStatus,
+    setWebLLMProgress,
+    setWebLLMError,
+  ])
 
   // Auto-scroll to bottom on new messages
   useEffect(() => {
@@ -60,25 +94,25 @@ export const ChatPanelContent: React.FC = () => {
 
   // Focus input on open
   useEffect(() => {
-    if (isOpen && apiKey) {
+    if (isOpen && provider) {
       setTimeout(() => inputRef.current?.focus(), 200)
     }
-  }, [isOpen, apiKey])
+  }, [isOpen, provider])
 
-  // Abort any in-flight Gemini stream when the panel closes
+  // Abort any in-flight stream when the panel closes
   useEffect(() => {
     if (!isOpen) abort()
   }, [isOpen, abort])
 
   // Auto-send pending question from Ask Assistant buttons
   useEffect(() => {
-    if (pendingQuestion && apiKey && isOpen && !isLoading && !isStreaming) {
+    if (pendingQuestion && provider && isOpen && !isLoading && !isStreaming) {
       const question = pendingQuestion
       setPendingQuestion(null)
       const timer = setTimeout(() => sendQuery(question), 300)
       return () => clearTimeout(timer)
     }
-  }, [pendingQuestion, apiKey, isOpen, isLoading, isStreaming, setPendingQuestion, sendQuery])
+  }, [pendingQuestion, provider, isOpen, isLoading, isStreaming, setPendingQuestion, sendQuery])
 
   // Auto-resize textarea (up to ~4 lines)
   useEffect(() => {
@@ -102,6 +136,19 @@ export const ChatPanelContent: React.FC = () => {
     }
   }
 
+  const handleDisconnect = () => {
+    setProvider(null)
+    setApiKey(null)
+  }
+
+  const handleRetryModelLoad = () => {
+    setWebLLMStatus('idle')
+    setWebLLMError(null)
+  }
+
+  const ProviderIcon = provider === 'local' ? Shield : Cloud
+  const providerLabel = provider === 'local' ? 'Local' : 'Cloud'
+
   return (
     <>
       {/* Chat header actions */}
@@ -110,11 +157,15 @@ export const ChatPanelContent: React.FC = () => {
           <div className="flex items-center gap-2 min-w-0">
             <Bot size={18} className="text-primary shrink-0" />
             <span className="text-sm font-medium text-foreground truncate">PQC Assistant</span>
-            <span className="text-xs text-muted-foreground hidden sm:inline">
-              — {pageContext.page}
-            </span>
+            {provider && (
+              <span className="text-xs text-muted-foreground hidden sm:inline flex items-center gap-1">
+                — {pageContext.page}
+                <ProviderIcon size={10} />
+                <span>{providerLabel}</span>
+              </span>
+            )}
           </div>
-          {apiKey && (
+          {provider && (
             <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
@@ -185,11 +236,12 @@ export const ChatPanelContent: React.FC = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setApiKey(null)}
+                onClick={handleDisconnect}
                 className="min-h-[44px] min-w-[44px] p-2"
-                aria-label="Disconnect API key"
+                aria-label="Switch provider"
+                title="Switch provider"
               >
-                <KeyRound size={16} />
+                <Key size={16} />
               </Button>
             </div>
           )}
@@ -197,11 +249,22 @@ export const ChatPanelContent: React.FC = () => {
       </div>
 
       {/* Content */}
-      {!apiKey ? (
-        <ApiKeySetup />
+      {!provider ? (
+        <ProviderSetup />
       ) : (
         <>
           <ConversationMenu />
+
+          {/* Model download banner for local mode */}
+          {provider === 'local' && webllmStatus !== 'ready' && webllmStatus !== 'idle' && (
+            <ModelDownloadBanner
+              status={webllmStatus}
+              progress={webllmProgress}
+              error={webllmError}
+              onRetry={handleRetryModelLoad}
+            />
+          )}
+
           {/* Messages */}
           <div className="flex-1 overflow-y-auto overflow-x-hidden p-4 md:p-6 md:px-12">
             <div className="max-w-4xl mx-auto space-y-4" aria-live="polite" aria-atomic="false">
