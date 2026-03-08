@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.33.1] - 2026-03-08
+
+### Added
+
+- **Complete dual-engine parity cross-checks** (`src/components/Playground/tabs/KemOpsTab.tsx`, `SignVerifyTab.tsx`, `hsm/symmetric/AesPanel.tsx`): Extended dual-engine cross-checks to all six paired HSM operation directions:
+  - **ML-KEM Decapsulate** (new): C++ encapsulates using a fresh Rust keypair → Rust decapsulates → secrets match (works around non-extractable ML-KEM private keys)
+  - **ML-DSA Verify** (new): C++ verifies signature → Rust also verifies using the same pubkey + sig
+  - **AES-GCM / AES-CBC Decrypt** (new log entries): C++ decrypts → Rust decrypts → plaintexts compared, with success `Dual-Engine Parity / SUCCESS` log entries
+  - All successful cross-checks emit a PKCS#11 log entry with a human-readable description of the operation direction. [view:/playground]
+
 ## [2.33.0] - 2026-03-08
 
 ### Added
