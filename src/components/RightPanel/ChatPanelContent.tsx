@@ -462,6 +462,9 @@ export const ChatPanelContent: React.FC = () => {
                 <Send size={18} />
               </Button>
             </div>
+            <p className="text-[11px] text-muted-foreground text-center mt-1.5 opacity-70">
+              PQC Assistant can be inaccurate. Please double-check its responses.
+            </p>
           </div>
         </>
       )}
