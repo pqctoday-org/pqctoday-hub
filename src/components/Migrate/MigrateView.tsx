@@ -18,6 +18,7 @@ import {
   ChevronDown,
   ChevronUp,
   PackageSearch,
+  EyeOff,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -76,6 +77,7 @@ export const MigrateView: React.FC = () => {
     hiddenProducts,
     hideProduct,
     restoreLayerProducts,
+    restoreAll,
     activeLayer,
     activeSubCategory,
     setActiveLayer,
@@ -173,6 +175,9 @@ export const MigrateView: React.FC = () => {
             return (
               item.softwareName.toLowerCase().includes(q) ||
               item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
+              item.pqcSupport?.toLowerCase().includes(q) ||
+              item.productBrief?.toLowerCase().includes(q) ||
+              item.categoryName?.toLowerCase().includes(q) ||
               item.license?.toLowerCase().includes(q)
             )
           }
@@ -299,6 +304,9 @@ export const MigrateView: React.FC = () => {
         return (
           item.softwareName.toLowerCase().includes(q) ||
           item.pqcCapabilityDescription?.toLowerCase().includes(q) ||
+          item.pqcSupport?.toLowerCase().includes(q) ||
+          item.productBrief?.toLowerCase().includes(q) ||
+          item.categoryName?.toLowerCase().includes(q) ||
           item.license?.toLowerCase().includes(q)
         )
       }
@@ -392,12 +400,14 @@ export const MigrateView: React.FC = () => {
   )
 
   // Visible product count for flat modes
+  // When a search is active, hidden items are surfaced (search bypasses hide filter), so count all matches
   const flatVisibleCount = useMemo(() => {
     const items: SoftwareItem[] = viewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
+    if (filterText) return items.length
     return hiddenSet.size > 0
       ? items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
       : items.length
-  }, [viewMode, sortedFlatProducts, allFilteredProducts, hiddenSet])
+  }, [viewMode, sortedFlatProducts, allFilteredProducts, hiddenSet, filterText])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
@@ -575,6 +585,19 @@ export const MigrateView: React.FC = () => {
         {/* Sort — cards mode only */}
         {viewMode === 'cards' && <MigrateSortControl value={sortBy} onChange={setSortBy} />}
 
+        {/* Restore hidden — flat modes only, when any products are hidden */}
+        {viewMode !== 'stack' && hiddenSet.size > 0 && (
+          <Button
+            variant="ghost"
+            onClick={() => restoreAll()}
+            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+            aria-label={`Restore ${hiddenSet.size} hidden product${hiddenSet.size !== 1 ? 's' : ''}`}
+          >
+            <EyeOff size={14} />
+            {hiddenSet.size} hidden
+          </Button>
+        )}
+
         {/* View toggle — always visible */}
         <MigrateViewToggle mode={viewMode} onChange={setViewMode} />
       </div>
@@ -582,9 +605,18 @@ export const MigrateView: React.FC = () => {
       {/* Results count — flat modes only */}
       {viewMode !== 'stack' && (
         <p className="text-xs text-muted-foreground">
-          {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
-          {activeLayer !== 'All' &&
-            ` in ${LAYERS.find((l) => l.id === activeLayer)?.label ?? activeLayer}`}
+          {flatVisibleCount === softwareData.length ? (
+            <>
+              {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
+            </>
+          ) : (
+            <>
+              {flatVisibleCount} of {softwareData.length} product
+              {softwareData.length !== 1 ? 's' : ''}
+              {activeLayer !== 'All' &&
+                ` in ${LAYERS.find((l) => l.id === activeLayer)?.label ?? activeLayer}`}
+            </>
+          )}
         </p>
       )}
 
@@ -633,7 +665,7 @@ export const MigrateView: React.FC = () => {
         {viewMode === 'cards' && (
           <SoftwareCardGrid
             items={sortedFlatProducts}
-            hiddenProducts={hiddenSet}
+            hiddenProducts={filterText ? undefined : hiddenSet}
             onHideProduct={hideProduct}
             selectedProducts={myProductsSet}
             onToggleProduct={toggleMyProduct}
@@ -646,7 +678,7 @@ export const MigrateView: React.FC = () => {
               key={`flat-table-${activeLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
               data={allFilteredProducts}
               defaultSort={{ key: 'softwareName', direction: 'asc' }}
-              hiddenProducts={hiddenSet}
+              hiddenProducts={filterText ? undefined : hiddenSet}
               onHideProduct={hideProduct}
               selectedProducts={myProductsSet}
               onToggleProduct={toggleMyProduct}
