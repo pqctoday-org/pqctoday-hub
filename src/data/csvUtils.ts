@@ -35,7 +35,7 @@ export interface CSVLoadResult<T> {
  *                      Return `null` to skip a row.
  * @param withPrevious - If `true`, also parse the second-latest file for status-badge comparison.
  */
-export function loadLatestCSV<TRaw extends Record<string, string>, T>(
+export function loadLatestCSV<TRaw extends object, T>(
   modules: Record<string, unknown>,
   regex: RegExp,
   transform: (raw: TRaw, index: number) => T | null,
@@ -68,7 +68,7 @@ export function loadLatestCSV<TRaw extends Record<string, string>, T>(
  * Async variant for lazy-loaded globs (`eager` omitted / `false`).
  * Loads only the latest file.
  */
-export async function loadLatestCSVAsync<TRaw extends Record<string, string>, T>(
+export async function loadLatestCSVAsync<TRaw extends object, T>(
   modules: Record<string, unknown>,
   regex: RegExp,
   transform: (raw: TRaw, index: number) => T | null,
@@ -136,7 +136,7 @@ function sortCSVFiles(modules: Record<string, unknown>, regex: RegExp): CSVFileE
   return files
 }
 
-function parseCSV<TRaw extends Record<string, string>, T>(
+function parseCSV<TRaw extends object, T>(
   content: string,
   transform: (raw: TRaw, index: number) => T | null,
   expectedHeaders?: string[],

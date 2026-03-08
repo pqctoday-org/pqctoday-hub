@@ -1,4 +1,5 @@
-import { useState, MutableRefObject } from 'react'
+import { useState } from 'react'
+import type { MutableRefObject } from 'react'
 import { Loader2, CheckCircle, XCircle } from 'lucide-react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '../../../ui/button'

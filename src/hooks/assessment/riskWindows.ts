@@ -16,7 +16,7 @@ import type {
   MigrationEffortItem,
 } from '../assessmentTypes'
 
-import { getMaxRetentionYears } from './scoring'
+import { getMaxRetentionYears, getIndustryRetentionDefault } from './scoring'
 
 export function getEffectiveThreatYear(country?: string): number {
   return Math.min(

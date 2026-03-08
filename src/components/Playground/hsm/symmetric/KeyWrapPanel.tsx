@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Lock, Loader2 } from 'lucide-react'
-import { Button } from '../../../../ui/button'
-import { ErrorAlert } from '../../../../ui/error-alert'
+import { Button } from '../../../ui/button'
+import { ErrorAlert } from '../../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   hsm_aesWrapKey,
@@ -14,7 +14,7 @@ import {
   CKA_VALUE_LEN,
   CKK_AES,
   type AttrDef,
-} from '../../../../../wasm/softhsm'
+} from '../../../../wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { HsmResultRow, toHex, hexSnippet } from '../shared'
 

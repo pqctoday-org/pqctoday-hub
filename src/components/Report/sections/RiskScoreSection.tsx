@@ -1,4 +1,3 @@
-import React from 'react'
 import clsx from 'clsx'
 import { ShieldAlert } from 'lucide-react'
 import type { AssessmentResult } from '../../../hooks/assessmentTypes'

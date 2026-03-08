@@ -1,4 +1,3 @@
-import React from 'react'
 import clsx from 'clsx'
 import { Briefcase } from 'lucide-react'
 import type { AssessmentProfile } from '../../../hooks/assessmentTypes'
