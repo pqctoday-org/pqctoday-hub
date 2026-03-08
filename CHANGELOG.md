@@ -4,6 +4,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.31.1] - 2026-03-08
+
+### Fixed
+
+- **Assessment Report / Business Center crash** (`src/hooks/assessment/personas.ts`): Implemented four missing persona narrative functions — `generateExecNarrative`, `generateDevNarrative`, `generateArchitectNarrative`, and `generateResearcherNarrative` — that were referenced in `generatePersonaNarrative()` but never defined, causing a `ReferenceError` on any page that renders the report or Business Center. [view:/assess] [view:/business]
+
+- **Module-level import crash** (`src/hooks/assessmentUtils.ts`): Removed stale `useAssessmentEngine` re-export that referenced a hook removed in the v2.30.0 assessment engine refactor. The dangling export caused a module-resolution crash for any page importing from `assessmentUtils`. [view:/assess] [view:/business]
+
+- **9 missing WASM exports** (`src/wasm/softhsm.ts`): Added exports for PKCS#11 constants and helper functions (`CKM_SHA256_HMAC`, `CKM_AES_KEY_WRAP`, `hsm_generate_aes_key`, `hsm_generate_hmac_key`, `hsm_wrap_key`, `hsm_unwrap_key`, `hsm_derive_key`, `hsm_generate_rng`, `CKM_ECDH1_DERIVE`) that were missing from the Phase 6 singleton loader barrel, preventing Playground symmetric and wrap panels from loading. [view:/playground]
+
+### Changed
+
+- **E2E test reliability** (all spec files): Eliminated all `waitForTimeout` antipatterns across 9 spec files — replaced with `expect().toBeVisible()`, `waitForFunction()`, and `expect().toPass()` per CI policy. Playground spec fully rewritten to use `selectFromFilterDropdown` / `selectFirstKeyFromFilterDropdown` helpers matching the refactored Playground UI. All 124 CI-eligible E2E tests pass on Chromium (9 `test.fixme` skipped). [view:/playground]
+
+- **RAG corpus updated** (`public/data/rag-corpus.json`): Regenerated corpus — 3,495 chunks from 22 sources (was 3,494). [view:/]
+
 ## [2.31.0] - 2026-03-07
 
 ### Added

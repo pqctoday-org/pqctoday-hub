@@ -86,25 +86,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Accessibility overhaul</strong> &mdash; WCAG
-                    2.1 AA: keyboard navigation, ARIA roles, focus management, and screen reader
-                    support across all major UI areas
+                    <strong className="text-foreground">Report &amp; Business Center fix</strong>{' '}
+                    &mdash; persona narrative crash resolved; Assessment Report and Business Center
+                    now render correctly for all personas
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">SoftHSM WASM refactor</strong> &mdash; Phase
-                    6 singleton loader, modular SoftHSM tab (ML-KEM, ML-DSA, SLH-DSA demos), and
-                    split HSM symmetric panels
+                    <strong className="text-foreground">Playground WASM fix</strong> &mdash; 9
+                    missing WASM exports restored; symmetric and key-wrap panels now load correctly
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Code quality</strong> &mdash; 5G service and
-                    Report sections decomposed; shared CSV loader; Button and FilterDropdown
-                    components rolled out across all views
+                    <strong className="text-foreground">E2E test reliability</strong> &mdash; all
+                    waitForTimeout antipatterns eliminated; 124 CI tests pass on Chromium
                   </span>
                 </li>
               </ul>
