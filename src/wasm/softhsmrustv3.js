@@ -11,6 +11,19 @@ export function _C_CloseSession(h_session) {
 
 /**
  * @param {number} _h_session
+ * @param {number} _h_object
+ * @param {number} _p_template
+ * @param {number} _ul_count
+ * @param {number} _ph_new_object
+ * @returns {number}
+ */
+export function _C_CopyObject(_h_session, _h_object, _p_template, _ul_count, _ph_new_object) {
+    const ret = wasm._C_CopyObject(_h_session, _h_object, _p_template, _ul_count, _ph_new_object);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
  * @param {number} p_template
  * @param {number} count
  * @param {number} ph_object
@@ -51,6 +64,17 @@ export function _C_Decrypt(h_session, p_encrypted_data, ul_encrypted_data_len, p
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _p_last_part
+ * @param {number} _pul_last_part_len
+ * @returns {number}
+ */
+export function _C_DecryptFinal(_h_session, _p_last_part, _pul_last_part_len) {
+    const ret = wasm._C_DecryptFinal(_h_session, _p_last_part, _pul_last_part_len);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} h_key
@@ -58,6 +82,19 @@ export function _C_Decrypt(h_session, p_encrypted_data, ul_encrypted_data_len, p
  */
 export function _C_DecryptInit(h_session, p_mechanism, h_key) {
     const ret = wasm._C_DecryptInit(h_session, p_mechanism, h_key);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_encrypted_part
+ * @param {number} _ul_encrypted_part_len
+ * @param {number} _p_part
+ * @param {number} _pul_part_len
+ * @returns {number}
+ */
+export function _C_DecryptUpdate(_h_session, _p_encrypted_part, _ul_encrypted_part_len, _p_part, _pul_part_len) {
+    const ret = wasm._C_DecryptUpdate(_h_session, _p_encrypted_part, _ul_encrypted_part_len, _p_part, _pul_part_len);
     return ret >>> 0;
 }
 
@@ -120,6 +157,16 @@ export function _C_DigestInit(h_session, p_mechanism) {
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _h_key
+ * @returns {number}
+ */
+export function _C_DigestKey(_h_session, _h_key) {
+    const ret = wasm._C_DigestKey(_h_session, _h_key);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_part
  * @param {number} ul_part_len
@@ -160,6 +207,17 @@ export function _C_Encrypt(h_session, p_data, ul_data_len, p_encrypted_data, pul
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _p_last_encrypted_part
+ * @param {number} _pul_last_encrypted_part_len
+ * @returns {number}
+ */
+export function _C_EncryptFinal(_h_session, _p_last_encrypted_part, _pul_last_encrypted_part_len) {
+    const ret = wasm._C_EncryptFinal(_h_session, _p_last_encrypted_part, _pul_last_encrypted_part_len);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} h_key
@@ -167,6 +225,19 @@ export function _C_Encrypt(h_session, p_data, ul_data_len, p_encrypted_data, pul
  */
 export function _C_EncryptInit(h_session, p_mechanism, h_key) {
     const ret = wasm._C_EncryptInit(h_session, p_mechanism, h_key);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_part
+ * @param {number} _ul_part_len
+ * @param {number} _p_encrypted_part
+ * @param {number} _pul_encrypted_part_len
+ * @returns {number}
+ */
+export function _C_EncryptUpdate(_h_session, _p_part, _ul_part_len, _p_encrypted_part, _pul_encrypted_part_len) {
+    const ret = wasm._C_EncryptUpdate(_h_session, _p_part, _ul_part_len, _p_encrypted_part, _pul_encrypted_part_len);
     return ret >>> 0;
 }
 
@@ -264,6 +335,16 @@ export function _C_GetAttributeValue(_h_session, h_object, p_template, count) {
 }
 
 /**
+ * CK_INFO: cryptokiVersion(2) + manufacturerID(32) + flags(4) + libraryDescription(32) + libraryVersion(2) = 72 bytes
+ * @param {number} p_info
+ * @returns {number}
+ */
+export function _C_GetInfo(p_info) {
+    const ret = wasm._C_GetInfo(p_info);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} _slot_id
  * @param {number} mech_type
  * @param {number} p_info
@@ -287,11 +368,45 @@ export function _C_GetMechanismList(_slot_id, p_mechanism_list, pul_count) {
 
 /**
  * @param {number} _h_session
+ * @param {number} _h_object
+ * @param {number} _pul_size
+ * @returns {number}
+ */
+export function _C_GetObjectSize(_h_session, _h_object, _pul_size) {
+    const ret = wasm._C_GetObjectSize(_h_session, _h_object, _pul_size);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_operation_state
+ * @param {number} _pul_operation_state_len
+ * @returns {number}
+ */
+export function _C_GetOperationState(_h_session, _p_operation_state, _pul_operation_state_len) {
+    const ret = wasm._C_GetOperationState(_h_session, _p_operation_state, _pul_operation_state_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
  * @param {number} p_info
  * @returns {number}
  */
 export function _C_GetSessionInfo(_h_session, p_info) {
     const ret = wasm._C_GetSessionInfo(_h_session, p_info);
+    return ret >>> 0;
+}
+
+/**
+ * C_GetSlotInfo: returns basic slot info for slot 0.
+ * CK_SLOT_INFO: slotDescription(64) + manufacturerID(32) + flags(4) + hardwareVersion(2) + firmwareVersion(2) = 104 bytes
+ * @param {number} _slot_id
+ * @param {number} p_info
+ * @returns {number}
+ */
+export function _C_GetSlotInfo(_slot_id, p_info) {
+    const ret = wasm._C_GetSlotInfo(_slot_id, p_info);
     return ret >>> 0;
 }
 
@@ -427,6 +542,55 @@ export function _C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_ses
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _p_seed
+ * @param {number} _ul_seed_len
+ * @returns {number}
+ */
+export function _C_SeedRandom(_h_session, _p_seed, _ul_seed_len) {
+    const ret = wasm._C_SeedRandom(_h_session, _p_seed, _ul_seed_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _h_object
+ * @param {number} _p_template
+ * @param {number} _ul_count
+ * @returns {number}
+ */
+export function _C_SetAttributeValue(_h_session, _h_object, _p_template, _ul_count) {
+    const ret = wasm._C_SetAttributeValue(_h_session, _h_object, _p_template, _ul_count);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_operation_state
+ * @param {number} _ul_operation_state_len
+ * @param {number} _h_encryption_key
+ * @param {number} _h_authentication_key
+ * @returns {number}
+ */
+export function _C_SetOperationState(_h_session, _p_operation_state, _ul_operation_state_len, _h_encryption_key, _h_authentication_key) {
+    const ret = wasm._C_SetOperationState(_h_session, _p_operation_state, _ul_operation_state_len, _h_encryption_key, _h_authentication_key);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_old_pin
+ * @param {number} _ul_old_len
+ * @param {number} _p_new_pin
+ * @param {number} _ul_new_len
+ * @returns {number}
+ */
+export function _C_SetPIN(_h_session, _p_old_pin, _ul_old_len, _p_new_pin, _ul_new_len) {
+    const ret = wasm._C_SetPIN(_h_session, _p_old_pin, _ul_old_len, _p_new_pin, _ul_new_len);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_data
  * @param {number} ul_data_len
@@ -436,6 +600,17 @@ export function _C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_ses
  */
 export function _C_Sign(h_session, p_data, ul_data_len, p_signature, pul_signature_len) {
     const ret = wasm._C_Sign(h_session, p_data, ul_data_len, p_signature, pul_signature_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_signature
+ * @param {number} _pul_signature_len
+ * @returns {number}
+ */
+export function _C_SignFinal(_h_session, _p_signature, _pul_signature_len) {
+    const ret = wasm._C_SignFinal(_h_session, _p_signature, _pul_signature_len);
     return ret >>> 0;
 }
 
@@ -462,6 +637,17 @@ export function _C_SignInit(h_session, p_mechanism, h_key) {
  */
 export function _C_SignMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, pul_signature_len) {
     const ret = wasm._C_SignMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, pul_signature_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_part
+ * @param {number} _ul_part_len
+ * @returns {number}
+ */
+export function _C_SignUpdate(_h_session, _p_part, _ul_part_len) {
+    const ret = wasm._C_SignUpdate(_h_session, _p_part, _ul_part_len);
     return ret >>> 0;
 }
 
@@ -495,6 +681,17 @@ export function _C_Verify(h_session, p_data, ul_data_len, p_signature, ul_signat
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _p_signature
+ * @param {number} _ul_signature_len
+ * @returns {number}
+ */
+export function _C_VerifyFinal(_h_session, _p_signature, _ul_signature_len) {
+    const ret = wasm._C_VerifyFinal(_h_session, _p_signature, _ul_signature_len);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_mechanism
  * @param {number} h_key
@@ -517,6 +714,17 @@ export function _C_VerifyInit(h_session, p_mechanism, h_key) {
  */
 export function _C_VerifyMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, ul_signature_len) {
     const ret = wasm._C_VerifyMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, ul_signature_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_part
+ * @param {number} _ul_part_len
+ * @returns {number}
+ */
+export function _C_VerifyUpdate(_h_session, _p_part, _ul_part_len) {
+    const ret = wasm._C_VerifyUpdate(_h_session, _p_part, _ul_part_len);
     return ret >>> 0;
 }
 

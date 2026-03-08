@@ -3908,6 +3908,7 @@ export const hsm_seedRandom = (M: SoftHSMModule, hSession: number, seed: Uint8Ar
   checkRV(rv, 'C_SeedRandom')
 }
 
+/** @deprecated Use hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP_KWP, ...) instead */
 export const hsm_aesWrapKeyKwp = (
   M: SoftHSMModule,
   hSession: number,
@@ -3940,6 +3941,7 @@ export const hsm_aesWrapKeyKwp = (
   return result
 }
 
+/** @deprecated Use hsm_unwrapKeyMech(M, hSession, mechType, ...) instead */
 export const hsm_unwrapKey = (
   M: SoftHSMModule,
   hSession: number,

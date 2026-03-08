@@ -4,6 +4,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.3] - 2026-03-08
+
+### Fixed
+
+- **PKCS#11 v3.2 compliance audit — C++ engine** (`softhsmv3`): `CKA_ENCAPSULATE` / `CKA_DECAPSULATE` attribute defaults corrected from `true` to `false` for `C_CreateObject` (PKCS#11 v3.2 Table 18); `C_GenerateKeyPair` now explicitly sets them to `true` for ML-KEM keys. PQC key wrapping reads `CKA_VALUE` directly, avoiding PKCS#8 re-encode failures in WASM. [view:/playground]
+- **PKCS#11 v3.2 compliance audit — Rust engine** (`softhsmv3`): 12 fixes — `SUPPORTED_MECHS` expanded from 31 to 62 mechanisms; `CKA_SIGN/VERIFY/ENCRYPT/DECRYPT` capability checks enforced in all `*Init` functions (`CKR_KEY_FUNCTION_NOT_PERMITTED`); unique session handles via `AtomicU32`; `CKA_SENSITIVE` defaults to `true` for all generated private keys; `CKA_DERIVE` check added to `C_DeriveKey`; `C_DestroyObject` cleans up stale operation state; output keys from `C_EncapsulateKey/C_DecapsulateKey/C_DeriveKey` now carry proper attributes (`CKA_EXTRACTABLE`, `CKA_CLASS`, `CKA_KEY_TYPE`, `CKA_VALUE_LEN`). [view:/playground]
+- **Rust engine completeness**: Added 10 missing PKCS#11 admin function stubs (`C_GetInfo`, `C_GetSlotInfo`, `C_SetPIN`, `C_CopyObject`, `C_GetObjectSize`, `C_SetAttributeValue`, `C_DigestKey`, `C_GetOperationState`, `C_SetOperationState`, `C_SeedRandom`) plus 8 multi-part operation stubs — all 45 core functions now exported. [view:/playground]
+
 ## [2.34.2] - 2026-03-08
 
 ### Changed
