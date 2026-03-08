@@ -1741,6 +1741,7 @@ function processSoftHSMv3Guide(): RAGChunk[] {
     { file: 'softhsmv3devguide.md', prefix: 'softhsmv3-devguide' },
     { file: 'gap-analysis-pkcs11-v3.2.md', prefix: 'softhsmv3-gap' },
     { file: 'howtotestsofthsmv3.md', prefix: 'softhsmv3-test' },
+    { file: 'rust-engine.md', prefix: 'softhsmv3-rust' },
   ]
 
   const chunks: RAGChunk[] = []
