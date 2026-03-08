@@ -4,16 +4,20 @@ import { test, expect } from '@playwright/test'
 test('verify hd wallet flow', async ({ page }) => {
   // Helper to wait for crypto operation to complete
   const waitForCryptoOperation = async () => {
-    await page.waitForTimeout(500)
     try {
       const executing = page.getByText('Executing...')
-      if (await executing.isVisible({ timeout: 2000 }).catch(() => false)) {
+      // Wait up to 500ms for "Executing..." to appear (may be instant)
+      if (
+        await executing
+          .waitFor({ state: 'visible', timeout: 500 })
+          .then(() => true)
+          .catch(() => false)
+      ) {
         await expect(executing).toBeHidden({ timeout: 45000 })
       }
     } catch {
       // Operation may have been very quick
     }
-    await page.waitForTimeout(500)
   }
 
   // 1. Navigate to Digital Assets directly

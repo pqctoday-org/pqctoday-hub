@@ -14,6 +14,7 @@
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+export type { SoftHSMModule }
 import { buildInspect } from './pkcs11Inspect'
 export type {
   Pkcs11LogInspect,
@@ -1090,6 +1091,120 @@ export const hsm_finalize = (M: SoftHSMModule, hSession: number): void => {
   }
 }
 
+/** CK_SESSION_INFO fields returned by C_GetSessionInfo. */
+export interface SessionInfo {
+  slotID: number
+  state: number
+  flags: number
+  ulDeviceError: number
+}
+
+/** CK_TOKEN_INFO fields returned by C_GetTokenInfo. */
+export interface TokenInfo {
+  label: string
+  manufacturerID: string
+  model: string
+  serialNumber: string
+  flags: number
+  ulMaxPinLen: number
+  ulMinPinLen: number
+  hardwareVersion: { major: number; minor: number }
+  firmwareVersion: { major: number; minor: number }
+}
+
+/** Read CK_SESSION_INFO via C_GetSessionInfo. */
+export const hsm_getSessionInfo = (M: SoftHSMModule, hSession: number): SessionInfo => {
+  // CK_SESSION_INFO: slotID(4) + state(4) + flags(4) + ulDeviceError(4) = 16 bytes
+  const infoPtr = M._malloc(16)
+  try {
+    checkRV(M._C_GetSessionInfo(hSession, infoPtr), 'C_GetSessionInfo')
+    return {
+      slotID: readUlong(M, infoPtr),
+      state: readUlong(M, infoPtr + 4),
+      flags: readUlong(M, infoPtr + 8),
+      ulDeviceError: readUlong(M, infoPtr + 12),
+    }
+  } finally {
+    M._free(infoPtr)
+  }
+}
+
+/** Read CK_TOKEN_INFO via C_GetTokenInfo. */
+export const hsm_getTokenInfo = (M: SoftHSMModule, slotId: number): TokenInfo => {
+  // CK_TOKEN_INFO layout (PKCS#11 v3.2):
+  //   label[32] + manufacturerID[32] + model[16] + serialNumber[16] = 96 bytes of char arrays
+  //   flags(4) + ulMaxSessionCount(4) + ulSessionCount(4) + ulMaxRwSessionCount(4)
+  //   + ulRwSessionCount(4) + ulMaxPinLen(4) + ulMinPinLen(4)
+  //   + ulTotalPublicMemory(4) + ulFreePublicMemory(4)
+  //   + ulTotalPrivateMemory(4) + ulFreePrivateMemory(4) = 44 bytes at offset 96
+  //   hardwareVersion(2) + firmwareVersion(2) = 4 bytes at offset 140
+  //   utcTime[16] = 16 bytes at offset 144
+  //   Total = 160 bytes
+  const TOKEN_INFO_SIZE = 160
+  const infoPtr = M._malloc(TOKEN_INFO_SIZE)
+  try {
+    checkRV(M._C_GetTokenInfo(slotId, infoPtr), 'C_GetTokenInfo')
+    const readFixedStr = (offset: number, len: number): string => {
+      const bytes = M.HEAPU8.subarray(infoPtr + offset, infoPtr + offset + len)
+      return new TextDecoder().decode(bytes).replace(/\s+$/, '')
+    }
+    return {
+      label: readFixedStr(0, 32),
+      manufacturerID: readFixedStr(32, 32),
+      model: readFixedStr(64, 16),
+      serialNumber: readFixedStr(80, 16),
+      flags: readUlong(M, infoPtr + 96),
+      ulMaxPinLen: readUlong(M, infoPtr + 116),
+      ulMinPinLen: readUlong(M, infoPtr + 120),
+      hardwareVersion: { major: M.HEAPU8[infoPtr + 140], minor: M.HEAPU8[infoPtr + 141] },
+      firmwareVersion: { major: M.HEAPU8[infoPtr + 142], minor: M.HEAPU8[infoPtr + 143] },
+    }
+  } finally {
+    M._free(infoPtr)
+  }
+}
+
+/** Destroy a PKCS#11 object via C_DestroyObject. */
+export const hsm_destroyObject = (M: SoftHSMModule, hSession: number, hObject: number): void => {
+  checkRV(M._C_DestroyObject(hSession, hObject), 'C_DestroyObject')
+}
+
+/** Find all PKCS#11 objects matching an optional template via C_FindObjects*. */
+export const hsm_findAllObjects = (
+  M: SoftHSMModule,
+  hSession: number,
+  template: AttrDef[]
+): number[] => {
+  const MAX_OBJECTS = 512
+  const handleBufPtr = M._malloc(MAX_OBJECTS * 4)
+  const foundCountPtr = allocUlong(M)
+  const handles: number[] = []
+  let tpl: { ptr: number; auxPtrs: number[] } | null = null
+  try {
+    if (template.length > 0) {
+      tpl = buildTemplate(M, template)
+      checkRV(M._C_FindObjectsInit(hSession, tpl.ptr, template.length), 'C_FindObjectsInit')
+    } else {
+      checkRV(M._C_FindObjectsInit(hSession, 0, 0), 'C_FindObjectsInit')
+    }
+    checkRV(M._C_FindObjects(hSession, handleBufPtr, MAX_OBJECTS, foundCountPtr), 'C_FindObjects')
+    const foundCount = readUlong(M, foundCountPtr)
+    for (let i = 0; i < foundCount; i++) {
+      handles.push(readUlong(M, handleBufPtr + i * 4))
+    }
+  } finally {
+    try {
+      M._C_FindObjectsFinal(hSession)
+    } catch {
+      // ignore — best-effort cleanup
+    }
+    M._free(handleBufPtr)
+    M._free(foundCountPtr)
+    if (tpl) freeTemplate(M, tpl, template.length)
+  }
+  return handles
+}
+
 // ── Additional PKCS#11 constants (exported for HSM panel UI) ─────────────────
 
 // Key types
@@ -2162,6 +2277,43 @@ export const hsm_eddsaVerify = (
   }
 }
 
+/**
+ * Multi-part sign via C_SignInit + C_SignUpdate × N + C_SignFinal.
+ * Works with RSA-PKCS, RSA-PSS, ECDSA, EdDSA, or any mechanism that supports streaming.
+ */
+export const hsm_signMultiPart = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  chunks: Uint8Array[],
+  mechType: number
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  const chunkPtrs: number[] = []
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(multi-part)')
+    for (const chunk of chunks) {
+      const ptr = writeBytes(M, chunk)
+      chunkPtrs.push(ptr)
+      checkRV(M._C_SignUpdate(hSession, ptr, chunk.length), 'C_SignUpdate')
+    }
+    // Size query: pSignature=0 returns required length without consuming state
+    checkRV(M._C_SignFinal(hSession, 0, sigLenPtr), 'C_SignFinal(len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_SignFinal(hSession, sigPtr, sigLenPtr), 'C_SignFinal')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(sigLenPtr)
+    for (const ptr of chunkPtrs) M._free(ptr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
 // ── AES helpers ───────────────────────────────────────────────────────────────
 
 /** Generate an AES symmetric key (128/192/256 bits). Returns CKO_SECRET_KEY handle. */
@@ -2526,6 +2678,42 @@ export const hsm_digest = (
     M._free(mech)
     M._free(dataPtr)
     M._free(digestLenPtr)
+    if (digestPtr) M._free(digestPtr)
+  }
+}
+
+/**
+ * Compute a SHA digest via C_DigestInit + C_DigestUpdate × N + C_DigestFinal.
+ * mechType: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
+ */
+export const hsm_digestMultiPart = (
+  M: SoftHSMModule,
+  hSession: number,
+  chunks: Uint8Array[],
+  mechType: number = CKM_SHA256
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const digestLenPtr = allocUlong(M)
+  let digestPtr = 0
+  const chunkPtrs: number[] = []
+  try {
+    checkRV(M._C_DigestInit(hSession, mech), 'C_DigestInit')
+    for (const chunk of chunks) {
+      const ptr = writeBytes(M, chunk)
+      chunkPtrs.push(ptr)
+      checkRV(M._C_DigestUpdate(hSession, ptr, chunk.length), 'C_DigestUpdate')
+    }
+    // Size query: pDigest=0 returns required length without consuming state
+    checkRV(M._C_DigestFinal(hSession, 0, digestLenPtr), 'C_DigestFinal(len)')
+    const digestLen = readUlong(M, digestLenPtr)
+    digestPtr = M._malloc(digestLen)
+    writeUlong(M, digestLenPtr, digestLen)
+    checkRV(M._C_DigestFinal(hSession, digestPtr, digestLenPtr), 'C_DigestFinal')
+    return M.HEAPU8.slice(digestPtr, digestPtr + readUlong(M, digestLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(digestLenPtr)
+    for (const ptr of chunkPtrs) M._free(ptr)
     if (digestPtr) M._free(digestPtr)
   }
 }

@@ -58,8 +58,16 @@ test.describe('Library Feature', () => {
     const header = table.getByRole('columnheader', { name: 'Last Update' })
     await header.click()
 
-    // Wait for sort to apply (re-render)
-    await page.waitForTimeout(500)
+    // Wait for sort state to propagate to the DOM
+    await expect(header)
+      .toHaveAttribute('aria-sort', /.+/)
+      .catch(async () => {
+        // Fallback: use short poll to ensure sort re-render completes
+        await expect(async () => {
+          const first = await table.locator('tbody tr td:nth-child(4)').first().innerText()
+          expect(first.length).toBeGreaterThan(0)
+        }).toPass({ timeout: 2000 })
+      })
 
     const dates = await table.locator('tbody tr td:nth-child(4)').allInnerTexts()
     console.log('Dates after sort click:', dates)

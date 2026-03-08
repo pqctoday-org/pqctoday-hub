@@ -1,5 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { test, expect } from '@playwright/test'
+import { test, expect, type Page } from '@playwright/test'
+
+/**
+ * Select an option from an open FilterDropdown portal using a text label.
+ * Avoids getByRole('option') ARIA computation overhead which can cause flakiness
+ * when the portal closes on scroll events during accessibility tree traversal.
+ */
+async function selectFilterOption(page: Page, labelText: string) {
+  await page
+    .locator('[role="option"]')
+    .getByText(labelText, { exact: false })
+    .first()
+    .evaluate((el: HTMLElement) => el.click())
+}
 
 test.describe('TLS 1.3 Basics Module', () => {
   test.setTimeout(90000)
@@ -121,9 +134,7 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'None', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'None')
 
     // 3. Run Handshake -> Should Fail
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -138,9 +149,7 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'Default (RSA 2048)', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'Default (RSA 2048)')
 
     // 3. Run Handshake -> Should Succeed
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -174,17 +183,13 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'Default (ML-DSA-44)')
 
     // 2. Select ML-DSA for Server
     await page.locator('[data-testid="filter-dropdown"]').nth(1).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(1).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'Default (ML-DSA-44)')
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()
@@ -201,16 +206,12 @@ test.describe('TLS 1.3 Basics Module', () => {
     await page.locator('[data-testid="filter-dropdown"]').nth(0).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(0).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'Default (ML-DSA-44)')
 
     await page.locator('[data-testid="filter-dropdown"]').nth(1).scrollIntoViewIfNeeded()
     await page.locator('[data-testid="filter-dropdown"]').nth(1).click()
     await expect(page.locator('[role="listbox"]')).toBeVisible()
-    await page
-      .getByRole('option', { name: 'Default (ML-DSA-44)', exact: true })
-      .evaluate((el: HTMLElement) => el.click())
+    await selectFilterOption(page, 'Default (ML-DSA-44)')
 
     // 3. Run Handshake
     await page.getByRole('button', { name: 'Start Full Interaction' }).click()

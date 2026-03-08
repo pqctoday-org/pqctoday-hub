@@ -26,8 +26,8 @@ test.describe('OpenSSL Studio - Debug Providers', () => {
     // 2. Run Command
     await page.getByRole('button', { name: 'Run Command' }).click()
 
-    // 3. Wait for output
-    await page.waitForTimeout(2000) // Give it a moment to run
+    // 3. Wait for output table to populate
+    await expect(page.locator('table tbody tr')).not.toHaveCount(0, { timeout: 10000 })
 
     // 4. Capture output
     const logs = await page.locator('table tbody tr td:nth-child(2)').allInnerTexts()

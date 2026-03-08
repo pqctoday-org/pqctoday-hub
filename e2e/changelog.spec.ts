@@ -120,8 +120,8 @@ test.describe("What's New Toast", () => {
     // Reload page
     await page.reload()
 
-    // Wait a bit more than the toast delay
-    await page.waitForTimeout(2000)
+    // Wait past the 1000ms toast delay to confirm it doesn't re-appear
+    await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1500)))
 
     // Toast should not appear again
     await expect(page.getByRole('alertdialog')).not.toBeVisible()

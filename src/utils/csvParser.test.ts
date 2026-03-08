@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { parseTimelineCSV } from './csvParser'
+import { parseTimelineCSV } from '../data/timelineData'
 
 const validCSV = `Country,FlagCode,OrgName,OrgFullName,OrgLogoUrl,Type,Category,StartYear,EndYear,Title,Description,SourceUrl,SourceDate,Status
 United States,us,NIST,National Institute of Standards and Technology,,Event,Standardization,2016,2024,Call for Proposals,Description text...,http://example.com,2016-01-01,Completed

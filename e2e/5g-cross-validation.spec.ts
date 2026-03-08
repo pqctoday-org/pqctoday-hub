@@ -287,7 +287,9 @@ MC4CAQAwBQYDK2VuBCIEIKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
       }
     })
 
-    await page.waitForTimeout(1000)
+    await expect(page.locator('button[data-testid="profile-a-btn"]')).toBeVisible({
+      timeout: 10000,
+    })
     await page.click('button[data-testid="profile-a-btn"]')
 
     // Capture outputs from each step
@@ -316,7 +318,6 @@ MC4CAQAwBQYDK2VuBCIEIKqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq
 
       if (i < 9) {
         await page.click('button:has-text("Next Step")')
-        await page.waitForTimeout(500)
       }
     }
 

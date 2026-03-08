@@ -4,20 +4,20 @@ import { test, expect } from '@playwright/test'
 test('Ethereum Flow E2E', async ({ page }) => {
   // Helper to wait for crypto operation to complete
   const waitForCryptoOperation = async () => {
-    // Wait for the "Executing..." text to appear and disappear
-    // This indicates the crypto operation is in progress
-    await page.waitForTimeout(500) // Brief wait for click to register
     try {
-      // If executing text appears, wait for it to disappear
+      // Wait up to 500ms for "Executing..." to appear (may be instant)
       const executing = page.getByText('Executing...')
-      if (await executing.isVisible({ timeout: 2000 }).catch(() => false)) {
+      if (
+        await executing
+          .waitFor({ state: 'visible', timeout: 500 })
+          .then(() => true)
+          .catch(() => false)
+      ) {
         await expect(executing).toBeHidden({ timeout: 45000 })
       }
     } catch {
       // If executing text never appeared, the operation may have been very quick
     }
-    // Additional wait for output to render
-    await page.waitForTimeout(500)
   }
 
   // 1. Navigate to Digital Assets Module
@@ -27,9 +27,7 @@ test('Ethereum Flow E2E', async ({ page }) => {
       window.localStorage.setItem('pqc-tour-completed', 'true')
     })
 
-    await page.goto('/learn')
-    // await page.waitForLoadState('networkidle') - Causes hacks
-    await page.getByText('Digital Assets', { exact: true }).click()
+    await page.goto('/learn/digital-assets')
     await expect(
       page.getByRole('heading', { name: 'Blockchain Cryptography', exact: true })
     ).toBeVisible({
