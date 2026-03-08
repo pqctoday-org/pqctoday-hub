@@ -247,6 +247,40 @@ const HsmSignPanel: React.FC = () => {
           buildOpts()
         )
         setVerifyResult(ok)
+
+        // Dual-engine parity: Rust also verifies using imported C++ public key
+        if (ok && engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
+            const rustPub = hsm_importMLDSAPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            const checkOk = hsm_verify(
+              checkM,
+              hSessionRef.current,
+              rustPub,
+              message,
+              signature!,
+              buildOpts()
+            )
+            if (!checkOk) {
+              setDsaError('Dual-Engine Parity Failure: Rust failed to verify C++ ML-DSA signature')
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1_000_000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: `Rust Verify(C++ ML-DSA-${variant} Signature) → valid`,
+              })
+            }
+          } catch (e) {
+            setDsaError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setDsaError(String(e))
       }

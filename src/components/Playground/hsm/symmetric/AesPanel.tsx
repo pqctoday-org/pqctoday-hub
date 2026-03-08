@@ -13,7 +13,8 @@ import { useHsmContext } from '../HsmContext'
 import { HsmResultRow, toHex, hexSnippet } from '../shared'
 
 export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
-  const { moduleRef, hSessionRef, addHsmKey, engineMode, crossCheckModuleRef } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmKey, engineMode, crossCheckModuleRef, addHsmLog } =
+    useHsmContext()
   const [keyBits, setKeyBits] = useState<128 | 192 | 256>(256)
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [plaintext, setPlaintext] = useState('Hello, PQC World!')
@@ -93,6 +94,18 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
           )
           if (new TextDecoder().decode(checkPlain) !== plaintext) {
             setError('Dual-Engine Parity Failure: Rust failed to decrypt C++ AES ciphertext')
+          } else {
+            addHsmLog({
+              id: Math.floor(Math.random() * 1_000_000),
+              timestamp: new Date().toISOString().slice(11, 19),
+              fn: 'Dual-Engine Parity',
+              rvName: 'SUCCESS',
+              rvHex: '0x00000000',
+              ms: 0,
+              ok: true,
+              engineName: 'dual',
+              args: `Rust Decrypt(C++ AES-${keyBits}-${mode === 'aes-gcm' ? 'GCM' : 'CBC'} Ciphertext) → plaintext matches`,
+            })
           }
         } catch (e) {
           setError('Cross-check failed: ' + String(e))
@@ -129,6 +142,18 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
           )
           if (new TextDecoder().decode(checkPlain) !== plainTextStr) {
             setError('Dual-Engine Parity Failure: Rust decrypted plaintext diverges from C++')
+          } else {
+            addHsmLog({
+              id: Math.floor(Math.random() * 1_000_000),
+              timestamp: new Date().toISOString().slice(11, 19),
+              fn: 'Dual-Engine Parity',
+              rvName: 'SUCCESS',
+              rvHex: '0x00000000',
+              ms: 0,
+              ok: true,
+              engineName: 'dual',
+              args: `C++ Decrypt(AES-${keyBits}-${mode === 'aes-gcm' ? 'GCM' : 'CBC'}) = Rust Decrypt → plaintexts match`,
+            })
           }
         } catch (e) {
           setError('Cross-check failed: ' + String(e))

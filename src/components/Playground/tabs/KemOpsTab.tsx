@@ -185,6 +185,60 @@ const HsmKemPanel: React.FC = () => {
         const ssH2 = hsm_decapsulate(M, hSessionRef.current, handles!.priv, ciphertext!, variant)
         const ss2 = hsm_extractKeyValue(M, hSessionRef.current, ssH2)
         setSecret2(ss2)
+
+        // Dual-engine parity: C++ encapsulates → Rust decapsulates (reverse interop direction)
+        // ML-KEM private keys are non-extractable, so we use a fresh Rust keypair for this direction
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            // 1. Generate fresh Rust keypair
+            const { pubHandle: rustPub, privHandle: rustPriv } = hsm_generateMLKEMKeyPair(
+              checkM,
+              hSessionRef.current,
+              variant
+            )
+            // 2. Export Rust pub key → import into C++
+            const rustPubBytes = hsm_extractKeyValue(checkM, hSessionRef.current, rustPub)
+            const cppImportedPub = hsm_importMLKEMPublicKey(
+              M,
+              hSessionRef.current,
+              variant,
+              rustPubBytes
+            )
+            // 3. C++ encapsulates using Rust's public key
+            const cppResult = hsm_encapsulate(M, hSessionRef.current, cppImportedPub, variant)
+            const cppSecret = hsm_extractKeyValue(M, hSessionRef.current, cppResult.secretHandle)
+            // 4. Rust decapsulates C++'s ciphertext using Rust's private key
+            const rustDecapH = hsm_decapsulate(
+              checkM,
+              hSessionRef.current,
+              rustPriv,
+              cppResult.ciphertextBytes,
+              variant
+            )
+            const rustSecret = hsm_extractKeyValue(checkM, hSessionRef.current, rustDecapH)
+            // 5. Verify secrets match
+            if (!arraysEqual(cppSecret, rustSecret)) {
+              setKemError(
+                'Dual-Engine Parity Failure: C++ encapsulation secret ≠ Rust decapsulation secret'
+              )
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1_000_000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: 'C++ Encapsulate × Rust Decapsulate → secrets match',
+              })
+            }
+          } catch (e) {
+            setKemError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setKemError(String(e))
       }
