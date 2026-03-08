@@ -199,8 +199,11 @@ animation.html
 explainer.html
 generate_animation.py
 platform_map_with_labels_*.png
-# Root-level PDFs only — public/timeline/*.pdf and public/threats/*.pdf MUST remain tracked
+# PDFs — enrichment source artifacts, not used at runtime
 /*.pdf
+public/timeline/*.pdf
+public/threats/*.pdf
+.cache/*.pdf
 
 # One-off scripts
 update_threats_csv.py
