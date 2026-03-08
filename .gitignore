@@ -147,6 +147,11 @@ CLAUDE.md
 requirements/
 REQUIREMENTS.md
 QandA_pqctoday.md
+QandA_app-pages.md
+QandA_learn-modules.md
+QandA_role-guides.md
+scripts/rag-test-cases.json
+scripts/rag-validation-methodology.md
 walkthrough.md
 pqctoday1.21.0.md
 

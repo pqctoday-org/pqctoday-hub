@@ -4,15 +4,26 @@
  *
  * Loads public/data/rag-corpus.json, indexes it with the same MiniSearch
  * config used by RetrievalService, then runs representative questions from
- * QandA_pqctoday.md and checks:
+ * the Q&A test suite (scripts/rag-test-cases.json) and checks:
  *
- *   1. Retrieval accuracy — do the top-N results contain chunks with the
- *      expected key terms / entities?
- *   2. Deep link presence — do the retrieved chunks carry deepLink fields?
- *   3. Deep link validity — do the deep links match known route patterns?
- *   4. Corpus-wide deep link audit — validate every deepLink in the corpus.
+ *   Phase 1: Corpus deep link audit — validate every deepLink in the corpus.
+ *   Phase 2: Retrieval accuracy — do the top-N results contain chunks with
+ *            the expected key terms / entities?
+ *   Phase 3: Summary
+ *   Phase 4: Source coverage analysis
  *
- * Usage: npx tsx scripts/test-rag-qanda.ts
+ *   --phase2 flag: LLM Response Quality scoring (requires GEMINI_API_KEY env var)
+ *            Generates an answer via Gemini Flash using the same RAG context
+ *            as production, then scores it against a 10-point rubric:
+ *              - Required key points covered (0–4)
+ *              - Deep link to expected route (0–2)
+ *              - No forbidden claims (0–2, programmatic heuristic)
+ *              - Groundedness (0–2, programmatic heuristic)
+ *
+ * Usage:
+ *   npx tsx scripts/test-rag-qanda.ts              # Phase 1–4 only (offline)
+ *   npx tsx scripts/test-rag-qanda.ts --phase2     # + LLM quality scoring
+ *   TEST_PHASE2=1 GEMINI_API_KEY=... npx tsx scripts/test-rag-qanda.ts
  */
 import fs from 'fs'
 import path from 'path'
@@ -38,12 +49,42 @@ interface Corpus {
 }
 
 interface TestCase {
+  id: string
   section: string
+  sectionUrl: string
   question: string
   /** Key terms that MUST appear in at least one top-N chunk's title or content */
   expectedTerms: string[]
   /** Expected deep link pattern prefix (route path) */
   expectedDeepLinkRoute?: string
+  tags: string[]
+  /** Key points the LLM answer should cover (used in Phase 2 scoring) */
+  expectedAnswerKeyPoints: string[]
+}
+
+interface TestCasesFile {
+  version: string
+  generatedFrom: string[]
+  passThreshold: {
+    phase1MinScore: number
+    phase2MinScore: number
+    phase2AggregateMin: number
+  }
+  testCases: TestCase[]
+}
+
+interface LLMScore {
+  id: string
+  question: string
+  score: number // 0–10
+  breakdown: {
+    keyPoints: number // 0–4
+    deepLink: number // 0–2
+    noForbiddenClaims: number // 0–2
+    groundedness: number // 0–2
+  }
+  issues: string[]
+  passed: boolean
 }
 
 // ---------------------------------------------------------------------------
@@ -103,6 +144,7 @@ function isValidDeepLink(link: string): { valid: boolean; reason?: string } {
         Object.keys(VALID_QUERY_PARAMS).find(
           (r) => pathname === r || (r.endsWith('/') && pathname.startsWith(r))
         ) ?? pathname
+      // eslint-disable-next-line security/detect-object-injection
       const allowedParams = VALID_QUERY_PARAMS[routeKey] ?? []
       for (const [key] of params) {
         if (!allowedParams.includes(key)) {
@@ -118,254 +160,267 @@ function isValidDeepLink(link: string): { valid: boolean; reason?: string } {
 }
 
 // ---------------------------------------------------------------------------
-// Test cases — 2-3 representative questions per QandA section
+// Load test cases from JSON (single source of truth)
 // ---------------------------------------------------------------------------
-const TEST_CASES: TestCase[] = [
-  // §1 Landing
-  {
-    section: 'Landing',
-    question: 'What five persona types does PQC Today support?',
-    expectedTerms: ['persona', 'executive', 'developer'],
-    expectedDeepLinkRoute: '/',
-  },
-  {
-    section: 'Landing',
-    question: 'How many learning modules does PQC Today offer?',
-    expectedTerms: ['27', 'module'],
-  },
+function loadTestCases(): TestCase[] {
+  const jsonPath = path.join(process.cwd(), 'scripts', 'rag-test-cases.json')
+  if (!fs.existsSync(jsonPath)) {
+    console.error('ERROR: scripts/rag-test-cases.json not found.')
+    process.exit(1)
+  }
+  const data: TestCasesFile = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+  console.log(
+    `  Loaded ${data.testCases.length} test cases from rag-test-cases.json (v${data.version})\n`
+  )
+  return data.testCases
+}
 
-  // §2 Timeline
-  {
-    section: 'Timeline',
-    question: 'Which country has the most aggressive PQC migration deadline?',
-    expectedTerms: ['Australia', '2030'],
-    expectedDeepLinkRoute: '/timeline',
-  },
-  {
-    section: 'Timeline',
-    question: "What is Germany's QUANTITY initiative?",
-    expectedTerms: ['Germany', 'QUANTITY'],
-    expectedDeepLinkRoute: '/timeline',
-  },
-  {
-    section: 'Timeline',
-    question: "How does China's PQC program differ from NIST-aligned countries?",
-    expectedTerms: ['China'],
-    expectedDeepLinkRoute: '/timeline',
-  },
+// ---------------------------------------------------------------------------
+// Phase 2 (LLM): Gemini-based response quality scoring
+// ---------------------------------------------------------------------------
+const GEMINI_BASE = 'https://generativelanguage.googleapis.com/v1beta/models'
+const EVAL_MODEL = 'gemini-2.5-flash'
+const LLM_PASS_THRESHOLD = 7
+const LLM_AGGREGATE_PASS = 0.8
+const RATE_LIMIT_DELAY_MS = 300 // polite delay between API calls
 
-  // §3 Algorithms
-  {
-    section: 'Algorithms',
-    question: 'What FIPS standard covers ML-KEM?',
-    expectedTerms: ['FIPS 203', 'ML-KEM'],
-    expectedDeepLinkRoute: '/algorithms',
-  },
-  {
-    section: 'Algorithms',
-    question: 'What is SLH-DSA and how many variants does it have?',
-    expectedTerms: ['SLH-DSA', 'FIPS 205'],
-    expectedDeepLinkRoute: '/algorithms',
-  },
-  {
-    section: 'Algorithms',
-    question: 'When does NIST IR 8547 plan to deprecate classical algorithms?',
-    expectedTerms: ['IR 8547', '2030'],
-  },
+function buildContextBlocks(chunks: RAGChunk[]): string {
+  return chunks
+    .slice(0, 15)
+    .map((c) => {
+      const header = `--- Source: ${c.source} | ${c.title} ---`
+      const deepLinkLine = c.deepLink ? `Deep Link: ${c.deepLink}` : ''
+      return [header, deepLinkLine, c.content, '---'].filter(Boolean).join('\n')
+    })
+    .join('\n\n')
+}
 
-  // §4 Library
-  {
-    section: 'Library',
-    question: 'What are the four FIPS standards published for PQC?',
-    expectedTerms: ['FIPS 203', 'FIPS 204'],
-    expectedDeepLinkRoute: '/library',
-  },
-  {
-    section: 'Library',
-    question: 'What is RFC 9629 about?',
-    expectedTerms: ['RFC 9629', 'CMS'],
-    expectedDeepLinkRoute: '/library',
-  },
-  {
-    section: 'Library',
-    question: 'What is NIST CSWP 39?',
-    expectedTerms: ['CSWP 39', 'agility'],
-    expectedDeepLinkRoute: '/library',
-  },
+function buildEvalSystemPrompt(contextBlocks: string): string {
+  return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). Answer questions based ONLY on the provided context from the PQC Today database. When referencing learning modules, algorithms, or standards, include their deep link URLs from the context (format: /learn/module-id?tab=learn or /algorithms?highlight=slug etc.).
 
-  // §5 Threats
-  {
-    section: 'Threats',
-    question: 'What is a Harvest Now Decrypt Later attack?',
-    expectedTerms: ['HNDL', 'harvest'],
-    expectedDeepLinkRoute: '/threats',
-  },
-  {
-    section: 'Threats',
-    question: 'How much Bitcoin value is at risk from quantum attacks?',
-    expectedTerms: ['Bitcoin', 'P2PK'],
-    expectedDeepLinkRoute: '/threats',
-  },
-  {
-    section: 'Threats',
-    question: 'What is the quantum threat to power grid SCADA systems?',
-    expectedTerms: ['SCADA', 'energy'],
-    expectedDeepLinkRoute: '/threats',
-  },
+CONTEXT FROM PQC TODAY DATABASE:
+${contextBlocks}`
+}
 
-  // §6 Compliance
-  {
-    section: 'Compliance',
-    question: 'What is CNSA 2.0 and what are its key deadlines?',
-    expectedTerms: ['CNSA 2.0', '2035'],
-    expectedDeepLinkRoute: '/compliance',
-  },
-  {
-    section: 'Compliance',
-    question: 'What is eIDAS 2.0 and its PQC requirement?',
-    expectedTerms: ['eIDAS', 'wallet'],
-  },
-  {
-    section: 'Compliance',
-    question: 'What PQC-related certification does ACVP provide?',
-    expectedTerms: ['ACVP', 'validation'],
-  },
+async function generateAnswer(
+  question: string,
+  contextBlocks: string,
+  apiKey: string
+): Promise<string> {
+  const response = await fetch(`${GEMINI_BASE}/${EVAL_MODEL}:generateContent?key=${apiKey}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      systemInstruction: { parts: [{ text: buildEvalSystemPrompt(contextBlocks) }] },
+      contents: [{ role: 'user', parts: [{ text: question }] }],
+      generationConfig: {
+        temperature: 0.2,
+        maxOutputTokens: 1024,
+      },
+      safetySettings: [
+        { category: 'HARM_CATEGORY_DANGEROUS_CONTENT', threshold: 'BLOCK_ONLY_HIGH' },
+      ],
+    }),
+  })
 
-  // §7 Migrate
-  {
-    section: 'Migrate',
-    question: 'What are the seven phases of the PQC migration framework?',
-    expectedTerms: ['Assess', 'Prepare', 'Test'],
-    expectedDeepLinkRoute: '/migrate',
-  },
-  {
-    section: 'Migrate',
-    question: 'What do the three FIPS badge tiers mean?',
-    expectedTerms: ['Validated', 'Partial'],
-    expectedDeepLinkRoute: '/migrate',
-  },
+  if (!response.ok) {
+    const status = response.status
+    if (status === 429) throw new Error('Rate limit — back off')
+    throw new Error(`Gemini API error: ${status}`)
+  }
 
-  // §8 Assess
-  {
-    section: 'Assess',
-    question: 'What are the 14 steps of the comprehensive assessment wizard?',
-    expectedTerms: ['Industry', 'Country', 'Data Sensitivity'],
-    expectedDeepLinkRoute: '/assess',
-  },
-  {
-    section: 'Assess',
-    question: 'How does the HNDL window calculation work?',
-    expectedTerms: ['HNDL', 'retention'],
-  },
+  const data = await response.json()
+  return data.candidates?.[0]?.content?.parts?.[0]?.text ?? ''
+}
 
-  // §9 Playground
-  {
-    section: 'Playground',
-    question: 'What cryptographic operations can you perform in the Playground?',
-    expectedTerms: ['KEM', 'Sign'],
-    expectedDeepLinkRoute: '/playground',
-  },
+function scoreAnswer(tc: TestCase, answer: string, chunks: RAGChunk[]): LLMScore {
+  const answerLower = answer.toLowerCase()
+  const issues: string[] = []
 
-  // §10 OpenSSL Studio
-  {
-    section: 'OpenSSL',
-    question: 'What version of OpenSSL runs in the browser via OpenSSL Studio?',
-    expectedTerms: ['OpenSSL', '3.6.0'],
-    expectedDeepLinkRoute: '/openssl',
-  },
+  // Criterion 1: Key points (0–4)
+  const coveredPoints = tc.expectedAnswerKeyPoints.filter((kp) =>
+    answerLower.includes(kp.toLowerCase())
+  )
+  const keyPoints = Math.min(4, coveredPoints.length)
+  if (keyPoints < 4) {
+    const missed = tc.expectedAnswerKeyPoints.filter(
+      (kp) => !answerLower.includes(kp.toLowerCase())
+    )
+    issues.push(`Missing key points: ${missed.slice(0, 3).join(', ')}`)
+  }
 
-  // §11 Leaders
-  {
-    section: 'Leaders',
-    question: 'Who led the NIST PQC standardization effort?',
-    expectedTerms: ['Dustin Moody', 'NIST'],
-    expectedDeepLinkRoute: '/leaders',
-  },
-  {
-    section: 'Leaders',
-    question: "What is SandboxAQ's role in PQC?",
-    expectedTerms: ['SandboxAQ', 'AQtive Guard'],
-    expectedDeepLinkRoute: '/leaders',
-  },
+  // Criterion 2: Deep link to expected route (0–2)
+  let deepLink = 0
+  if (tc.expectedDeepLinkRoute) {
+    if (answer.includes(tc.expectedDeepLinkRoute)) {
+      deepLink = 2
+    } else if (
+      answer.includes('/learn/') ||
+      answer.includes('/algorithms') ||
+      answer.includes('/library')
+    ) {
+      deepLink = 1
+      issues.push(`Expected deep link to ${tc.expectedDeepLinkRoute} — only generic link found`)
+    } else {
+      deepLink = 0
+      issues.push(`No deep link to ${tc.expectedDeepLinkRoute}`)
+    }
+  } else {
+    // No expected route — give credit if any link is present
+    deepLink = answer.includes('](/') ? 2 : 1
+  }
 
-  // §12 Learn
-  {
-    section: 'Learn',
-    question: 'How are the 27 learning modules organized?',
-    expectedTerms: ['module', 'track'],
-    expectedDeepLinkRoute: '/learn',
-  },
-  {
-    section: 'Learn',
-    question: 'How many quiz questions are available?',
-    expectedTerms: ['quiz', '530'],
-  },
+  // Criterion 3: No forbidden claims (0–2) — heuristic
+  const isTooLong = answer.length > 3000 // overly verbose = more hallucination risk
+  let noForbiddenClaims = 2
+  if (isTooLong) {
+    noForbiddenClaims = 1
+    issues.push('Response is unusually long (>3000 chars) — potential padding/fabrication')
+  }
+  // Check for common hallucination red flags
+  const redFlags = ['according to wikipedia', 'as of 2024', 'as of 2025', 'i should note that']
+  if (redFlags.some((f) => answerLower.includes(f))) {
+    noForbiddenClaims = 0
+    issues.push('Potential hallucination red flags detected')
+  }
 
-  // §13 About
-  {
-    section: 'About',
-    question: "What cryptographic libraries does PQC Today's SBOM list?",
-    expectedTerms: ['OpenSSL', 'liboqs'],
-    expectedDeepLinkRoute: '/about',
-  },
+  // Criterion 4: Groundedness (0–2) — check if answer references source material
+  // Source titles from top chunks should appear or paraphrase in the answer
+  const sourceTerms = chunks
+    .slice(0, 5)
+    .flatMap((c) =>
+      c.title
+        .toLowerCase()
+        .split(/\s+/)
+        .filter((w) => w.length > 5)
+    )
+    .slice(0, 20)
+  const groundednessHits = sourceTerms.filter((t) => answerLower.includes(t)).length
+  const groundedness = groundednessHits >= 5 ? 2 : groundednessHits >= 2 ? 1 : 0
+  if (groundedness < 2) {
+    issues.push(`Low groundedness — few source terms found in answer (${groundednessHits} hits)`)
+  }
 
-  // §14 KMS
-  {
-    section: 'KMS-PQC',
-    question: 'What is the envelope encryption pipeline when using ML-KEM?',
-    expectedTerms: ['ML-KEM', 'envelope'],
-    expectedDeepLinkRoute: '/learn/',
-  },
-  {
-    section: 'KMS-PQC',
-    question: 'What is the hybrid KEM combiner formula?',
-    expectedTerms: ['hybrid', 'KDF'],
-    expectedDeepLinkRoute: '/learn/',
-  },
+  const score = keyPoints + deepLink + noForbiddenClaims + groundedness
 
-  // §15 HSM
-  {
-    section: 'HSM-PQC',
-    question: 'What is the PQC Maturity Score and what does a score above 80 indicate?',
-    expectedTerms: ['Maturity', 'HSM'],
-    expectedDeepLinkRoute: '/learn/',
-  },
+  return {
+    id: tc.id,
+    question: tc.question,
+    score,
+    breakdown: { keyPoints, deepLink, noForbiddenClaims, groundedness },
+    issues,
+    passed: score >= LLM_PASS_THRESHOLD,
+  }
+}
 
-  // §16 Data Asset Sensitivity
-  {
-    section: 'Data-Asset',
-    question: 'What is the composite scoring formula in the Sensitivity Scoring Engine?',
-    expectedTerms: ['Sensitivity', 'Retention'],
-    expectedDeepLinkRoute: '/learn/',
-  },
+async function runLLMPhase(TEST_CASES: TestCase[], index: MiniSearch<RAGChunk>, apiKey: string) {
+  console.log('═══════════════════════════════════════════════════════════════')
+  console.log('  LLM PHASE: Response Quality Scoring (Gemini Flash)')
+  console.log(
+    `  Model: ${EVAL_MODEL}  |  Pass threshold: ${LLM_PASS_THRESHOLD}/10  |  Aggregate: ≥${LLM_AGGREGATE_PASS * 100}%`
+  )
+  console.log('═══════════════════════════════════════════════════════════════\n')
 
-  // §17 Hybrid Crypto
-  {
-    section: 'Hybrid-Crypto',
-    question: 'What four IETF Hackathon reference certificates are embedded in the inspector?',
-    expectedTerms: ['Composite', 'Chameleon'],
-    expectedDeepLinkRoute: '/learn/',
-  },
+  const scores: LLMScore[] = []
+  let processed = 0
 
-  // §18 5G Security
-  {
-    section: '5G-Security',
-    question: 'What are the three SUCI protection profiles and which is quantum-resistant?',
-    expectedTerms: ['SUCI', 'Profile C'],
-    expectedDeepLinkRoute: '/learn/',
-  },
-  {
-    section: '5G-Security',
-    question: 'Why is MILENAGE quantum-resistant while SUCI Profile A/B is not?',
-    expectedTerms: ['MILENAGE', 'AES'],
-    expectedDeepLinkRoute: '/learn/',
-  },
-]
+  for (const tc of TEST_CASES) {
+    processed++
+    process.stdout.write(`  [${String(processed).padStart(3)}/${TEST_CASES.length}] ${tc.id} ...`)
+
+    try {
+      const chunks = index.search(tc.question, { limit: 15 }) as unknown as RAGChunk[]
+      const contextBlocks = buildContextBlocks(chunks)
+      const answer = await generateAnswer(tc.question, contextBlocks, apiKey)
+      const llmScore = scoreAnswer(tc, answer, chunks)
+      scores.push(llmScore)
+
+      const status = llmScore.passed ? '✅' : '❌'
+      process.stdout.write(` ${status} ${llmScore.score}/10\n`)
+      if (llmScore.issues.length > 0 && !llmScore.passed) {
+        for (const issue of llmScore.issues.slice(0, 2)) {
+          console.log(`         ↳ ${issue}`)
+        }
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err)
+      process.stdout.write(` ⚠️  ERROR: ${msg}\n`)
+      scores.push({
+        id: tc.id,
+        question: tc.question,
+        score: 0,
+        breakdown: { keyPoints: 0, deepLink: 0, noForbiddenClaims: 0, groundedness: 0 },
+        issues: [`API error: ${msg}`],
+        passed: false,
+      })
+    }
+
+    // Rate-limit delay
+    if (processed < TEST_CASES.length) {
+      await new Promise((resolve) => setTimeout(resolve, RATE_LIMIT_DELAY_MS))
+    }
+  }
+
+  // LLM Phase Summary
+  const passed = scores.filter((s) => s.passed).length
+  const aggRate = scores.length > 0 ? passed / scores.length : 0
+  const avgScore =
+    scores.length > 0
+      ? (scores.reduce((sum, s) => sum + s.score, 0) / scores.length).toFixed(1)
+      : '0.0'
+  const aggOk = aggRate >= LLM_AGGREGATE_PASS
+
+  console.log(`\n  LLM Phase Results:`)
+  console.log(
+    `    Passed:     ${passed}/${scores.length} questions (${(aggRate * 100).toFixed(1)}%) ${aggOk ? '✅' : '❌'}`
+  )
+  console.log(`    Avg score:  ${avgScore}/10`)
+
+  // Per-criterion breakdown
+  const totalKeyPoints = scores.reduce((s, r) => s + r.breakdown.keyPoints, 0)
+  const totalDeepLink = scores.reduce((s, r) => s + r.breakdown.deepLink, 0)
+  const totalNoForbidden = scores.reduce((s, r) => s + r.breakdown.noForbiddenClaims, 0)
+  const totalGrounded = scores.reduce((s, r) => s + r.breakdown.groundedness, 0)
+  const n = scores.length
+
+  console.log(`\n  Per-criterion averages (out of max):`)
+  console.log(`    Key Points:           ${(totalKeyPoints / n).toFixed(1)}/4`)
+  console.log(`    Deep Link:            ${(totalDeepLink / n).toFixed(1)}/2`)
+  console.log(`    No Forbidden Claims:  ${(totalNoForbidden / n).toFixed(1)}/2`)
+  console.log(`    Groundedness:         ${(totalGrounded / n).toFixed(1)}/2`)
+
+  // Failures
+  const failures = scores.filter((s) => !s.passed)
+  if (failures.length > 0) {
+    console.log(`\n  ❌ ${failures.length} questions below threshold (${LLM_PASS_THRESHOLD}/10):`)
+    for (const f of failures.slice(0, 15)) {
+      console.log(`    [${f.id}] ${f.score}/10 — "${f.question.substring(0, 60)}..."`)
+      if (f.issues.length > 0) {
+        console.log(`         ${f.issues[0]}`)
+      }
+    }
+    if (failures.length > 15) {
+      console.log(`    ... and ${failures.length - 15} more`)
+    }
+  }
+
+  console.log()
+  return { passed, total: scores.length, aggOk }
+}
 
 // ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
+  const PHASE2_ENABLED = process.argv.includes('--phase2') || process.env.TEST_PHASE2 === '1'
+  const GEMINI_API_KEY = process.env.GEMINI_API_KEY ?? ''
+
+  if (PHASE2_ENABLED && !GEMINI_API_KEY) {
+    console.error('ERROR: --phase2 requires GEMINI_API_KEY environment variable.')
+    console.error('Usage: GEMINI_API_KEY=<key> npx tsx scripts/test-rag-qanda.ts --phase2')
+    process.exit(1)
+  }
+
   const corpusPath = path.join(process.cwd(), 'public', 'data', 'rag-corpus.json')
   if (!fs.existsSync(corpusPath)) {
     console.error('ERROR: rag-corpus.json not found. Run: npx tsx scripts/generate-rag-corpus.ts')
@@ -374,6 +429,8 @@ async function main() {
 
   const corpus: Corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
   console.log(`\n📦 Loaded corpus: ${corpus.chunkCount} chunks (generated ${corpus.generatedAt})\n`)
+
+  const TEST_CASES = loadTestCases()
 
   // ── Phase 1: Corpus-wide deep link audit ──────────────────────────────
 
@@ -398,6 +455,7 @@ async function main() {
       const route = new URL(chunk.deepLink!, 'http://localhost').pathname
       const key =
         VALID_ROUTES.find((r) => route === r || (r.endsWith('/') && route.startsWith(r))) ?? route
+      // eslint-disable-next-line security/detect-object-injection
       linksByRoute[key] = (linksByRoute[key] ?? 0) + 1
     } catch {
       // already caught above
@@ -482,6 +540,7 @@ async function main() {
   let passedTests = 0
   let deepLinkHits = 0
   const failures: {
+    id: string
     section: string
     question: string
     expectedTerms: string[]
@@ -534,6 +593,7 @@ async function main() {
 
     if (!allTermsFound || !routeMatch) {
       failures.push({
+        id: tc.id,
         section: tc.section,
         question: tc.question,
         expectedTerms: tc.expectedTerms,
@@ -544,7 +604,7 @@ async function main() {
     }
 
     console.log(
-      `  ${status} ${linkStatus} [${tc.section.padEnd(14)}] ${tc.question.substring(0, 70)}${tc.question.length > 70 ? '...' : ''}`
+      `  ${status} ${linkStatus} [${tc.id.padEnd(10)}] [${tc.section.padEnd(16)}] ${tc.question.substring(0, 60)}${tc.question.length > 60 ? '...' : ''}`
     )
     if (missingTerms.length > 0) {
       console.log(`     Missing: ${missingTerms.join(', ')}`)
@@ -587,7 +647,7 @@ async function main() {
   if (failures.length > 0) {
     console.log(`  ❌ ${failures.length} retrieval failures:`)
     for (const f of failures) {
-      console.log(`    [${f.section}] "${f.question.substring(0, 60)}..."`)
+      console.log(`    [${f.id}] [${f.section}] "${f.question.substring(0, 60)}..."`)
       console.log(`       Missing terms: ${f.missingTerms.join(', ')}`)
     }
   } else {
@@ -620,8 +680,20 @@ async function main() {
     )
   }
 
+  // ── LLM Phase (optional) ──────────────────────────────────────────────
+
+  let llmOk = true
+  if (PHASE2_ENABLED) {
+    console.log()
+    const result = await runLLMPhase(TEST_CASES, index, GEMINI_API_KEY)
+    llmOk = result.aggOk
+  } else {
+    console.log('\n  ℹ️  LLM phase skipped — run with --phase2 flag to enable')
+    console.log('     Requires: GEMINI_API_KEY=<key> npx tsx scripts/test-rag-qanda.ts --phase2\n')
+  }
+
   // ── Exit code ─────────────────────────────────────────────────────────
-  const hasErrors = invalidLinks.length > 0 || failures.length > 0
+  const hasErrors = invalidLinks.length > 0 || failures.length > 0 || !llmOk
   if (hasErrors) {
     console.log('\n⚠️  Issues found — review above for details.\n')
     process.exit(1)
