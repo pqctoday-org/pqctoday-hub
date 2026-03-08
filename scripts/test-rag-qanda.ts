@@ -21,9 +21,11 @@
  *              - Groundedness (0–2, programmatic heuristic)
  *
  * Usage:
- *   npx tsx scripts/test-rag-qanda.ts              # Phase 1–4 only (offline)
- *   npx tsx scripts/test-rag-qanda.ts --phase2     # + LLM quality scoring
- *   TEST_PHASE2=1 GEMINI_API_KEY=... npx tsx scripts/test-rag-qanda.ts
+ *   npx tsx scripts/test-rag-qanda.ts                          # all 123 test cases
+ *   npx tsx scripts/test-rag-qanda.ts --section PQC-101        # filter by section name
+ *   npx tsx scripts/test-rag-qanda.ts --tags module,role-guide # filter by tag
+ *   npx tsx scripts/test-rag-qanda.ts --phase2                 # + LLM quality scoring
+ *   GEMINI_API_KEY=... npx tsx scripts/test-rag-qanda.ts --phase2 --section KMS-PQC
  */
 import fs from 'fs'
 import path from 'path'
@@ -160,19 +162,73 @@ function isValidDeepLink(link: string): { valid: boolean; reason?: string } {
 }
 
 // ---------------------------------------------------------------------------
+// CLI argument parsing
+// ---------------------------------------------------------------------------
+function parseArgs(): { section?: string; tags?: string[]; phase2: boolean; apiKey: string } {
+  const args = process.argv.slice(2)
+  const phase2 = args.includes('--phase2') || process.env.TEST_PHASE2 === '1'
+  const apiKey = process.env.GEMINI_API_KEY ?? ''
+
+  let section: string | undefined
+  let tags: string[] | undefined
+
+  for (let i = 0; i < args.length; i++) {
+    if (args[i] === '--section' && args[i + 1]) {
+      section = args[i + 1]
+      i++
+    } else if (args[i].startsWith('--section=')) {
+      section = args[i].slice('--section='.length)
+    } else if (args[i] === '--tags' && args[i + 1]) {
+      tags = args[i + 1].split(',').map((t) => t.trim())
+      i++
+    } else if (args[i].startsWith('--tags=')) {
+      tags = args[i]
+        .slice('--tags='.length)
+        .split(',')
+        .map((t) => t.trim())
+    }
+  }
+
+  return { section, tags, phase2, apiKey }
+}
+
+// ---------------------------------------------------------------------------
 // Load test cases from JSON (single source of truth)
 // ---------------------------------------------------------------------------
-function loadTestCases(): TestCase[] {
+function loadTestCases(section?: string, tags?: string[]): TestCase[] {
   const jsonPath = path.join(process.cwd(), 'scripts', 'rag-test-cases.json')
   if (!fs.existsSync(jsonPath)) {
     console.error('ERROR: scripts/rag-test-cases.json not found.')
     process.exit(1)
   }
   const data: TestCasesFile = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'))
+  let cases = data.testCases
+
+  if (section) {
+    cases = cases.filter((tc) => tc.section.toLowerCase().includes(section.toLowerCase()))
+    if (cases.length === 0) {
+      console.error(`ERROR: No test cases found for --section="${section}"`)
+      const sections = [...new Set(data.testCases.map((tc) => tc.section))].sort()
+      console.error(`Available sections: ${sections.join(', ')}`)
+      process.exit(1)
+    }
+  }
+
+  if (tags && tags.length > 0) {
+    cases = cases.filter((tc) => tags.some((tag) => tc.tags.includes(tag)))
+    if (cases.length === 0) {
+      console.error(`ERROR: No test cases found for --tags="${tags.join(',')}"`)
+      const allTags = [...new Set(data.testCases.flatMap((tc) => tc.tags))].sort()
+      console.error(`Available tags: ${allTags.join(', ')}`)
+      process.exit(1)
+    }
+  }
+
+  const filterDesc = section ? ` (section="${section}")` : tags ? ` (tags=${tags.join(',')})` : ''
   console.log(
-    `  Loaded ${data.testCases.length} test cases from rag-test-cases.json (v${data.version})\n`
+    `  Loaded ${cases.length}/${data.testCases.length} test cases from rag-test-cases.json (v${data.version})${filterDesc}\n`
   )
-  return data.testCases
+  return cases
 }
 
 // ---------------------------------------------------------------------------
@@ -412,8 +468,7 @@ async function runLLMPhase(TEST_CASES: TestCase[], index: MiniSearch<RAGChunk>, 
 // Main
 // ---------------------------------------------------------------------------
 async function main() {
-  const PHASE2_ENABLED = process.argv.includes('--phase2') || process.env.TEST_PHASE2 === '1'
-  const GEMINI_API_KEY = process.env.GEMINI_API_KEY ?? ''
+  const { section, tags, phase2: PHASE2_ENABLED, apiKey: GEMINI_API_KEY } = parseArgs()
 
   if (PHASE2_ENABLED && !GEMINI_API_KEY) {
     console.error('ERROR: --phase2 requires GEMINI_API_KEY environment variable.')
@@ -430,7 +485,7 @@ async function main() {
   const corpus: Corpus = JSON.parse(fs.readFileSync(corpusPath, 'utf-8'))
   console.log(`\n📦 Loaded corpus: ${corpus.chunkCount} chunks (generated ${corpus.generatedAt})\n`)
 
-  const TEST_CASES = loadTestCases()
+  const TEST_CASES = loadTestCases(section, tags)
 
   // ── Phase 1: Corpus-wide deep link audit ──────────────────────────────
 
