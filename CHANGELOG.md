@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.33.0] - 2026-03-08
+
+### Added
+
+- **Dual-engine cross-check in KEM panel** (`src/components/Playground/tabs/KemOpsTab.tsx`): After C++ encapsulates, the Rust engine imports the C++ public key, encapsulates independently, then C++ decapsulates the Rust ciphertext — shared secrets are compared byte-for-byte. Parity success/failure logged to the unified PKCS#11 log. [view:/playground]
+
+- **Dual-engine cross-check in Sign panel** (`src/components/Playground/tabs/SignVerifyTab.tsx`): After C++ signs, the Rust engine imports the C++ public key and verifies the signature — cross-engine ML-DSA interoperability confirmed at the KEM and Sign tab level (not just SoftHSM tab). [view:/playground]
+
+- **Rust WASM Phase 2** (`public/wasm/rust/softhsmrustv3_bg.wasm`, `src/wasm/softhsmrustv3.d.ts`, `src/wasm/softhsmrustv3.js`): Expanded Rust PKCS#11 WASM binary with RSA, ECDSA, EdDSA, SLH-DSA, digest, and key wrap/unwrap operations — full algorithm parity with the C++ Emscripten engine. [view:/playground]
+
+- **RAG corpus — 5 new knowledge sources** (`scripts/generate-rag-corpus.ts`, `public/data/rag-corpus.json`): Added corpus processors for Achievement Catalog (badges, rarity tiers, belt grading), Business Center (/business GRC dashboard), Right Panel (Assistant + Journey + Graph tabs), Guided Tour (3-phase onboarding with 14 feature slides), and SoftHSMv3 developer docs (dev guide, PKCS#11 v3.2 gap analysis, test guide). Source priority weights assigned for all new sources. [view:/]
+
+### Changed
+
+- **PKCS#11 proxy TRAP error logging** (`src/wasm/softhsm.ts`): `createLoggingProxy()` now wraps every PKCS#11 call in try/catch — WASM runtime errors are caught and emitted as TRAP log entries (with `rvHex: 'TRAP'` and the error message) instead of silently crashing the call chain. [view:/playground]
+
+- **RAG source labels corrected** (`scripts/generate-rag-corpus.ts`, `src/services/chat/__tests__/golden-queries.test.ts`): Playground guide chunks now tagged `source: 'playground-guide'` and OpenSSL Studio guide chunks `source: 'openssl-guide'` (were both `'documentation'`). Enables precise source-based retrieval filtering. [view:/]
+
+- **Prettier ignores for generated Rust WASM files** (`.prettierignore`): Added `src/wasm/softhsmrustv3.js` and `src/wasm/softhsmrustv3.d.ts` to avoid Prettier reformatting wasm-bindgen generated output. [view:/]
+
+### Fixed
+
+- **Quiz persona filter — empty personas = all-audience** (`src/components/PKILearning/modules/Quiz/index.tsx`): Questions with `personas: []` (intended for all personas) were previously hidden when a persona was selected. Fixed to: `q.personas.length === 0 || q.personas.includes(selectedPersona)`. [view:/learn/quiz]
+
 ## [2.32.0] - 2026-03-07
 
 ### Added

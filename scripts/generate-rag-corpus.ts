@@ -1530,7 +1530,7 @@ function processPlaygroundGuide(): RAGChunk[] {
   return [
     {
       id: 'playground-overview',
-      source: 'documentation',
+      source: 'playground-guide',
       title: 'PQC Playground — Interactive Crypto Demos',
       content:
         'PQC Playground Overview\n\nThe PQC Playground is an interactive browser-based tool for generating real post-quantum cryptographic keys, encrypting data, and signing messages. All operations run locally in the browser using WebAssembly (WASM) — no data leaves your machine. Available operations: Key Generation, Encryption/Decryption (KEM), and Digital Signatures.\n\nSupported algorithms: ML-KEM-512/768/1024 (key encapsulation), ML-DSA-44/65/87 (digital signatures), SLH-DSA-SHA2-128s/192s/256s (hash-based signatures), X25519 (classical ECDH), P-256 (classical ECDSA), RSA-2048/4096 (classical). All generated keys are for educational purposes only — not for production use.',
@@ -1540,7 +1540,7 @@ function processPlaygroundGuide(): RAGChunk[] {
     },
     {
       id: 'playground-keygen',
-      source: 'documentation',
+      source: 'playground-guide',
       title: 'Playground — Key Generation',
       content:
         'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM.',
@@ -1550,7 +1550,7 @@ function processPlaygroundGuide(): RAGChunk[] {
     },
     {
       id: 'playground-kem',
-      source: 'documentation',
+      source: 'playground-guide',
       title: 'Playground — Key Encapsulation (KEM)',
       content:
         'Key Encapsulation in the PQC Playground\n\nML-KEM (FIPS 203) key encapsulation generates a shared secret between two parties. The playground demonstrates: 1) Generate a keypair, 2) Encapsulate — create a ciphertext + shared secret using the public key, 3) Decapsulate — recover the shared secret using the private key. Compare ciphertext sizes: ML-KEM-768 produces 1,088-byte ciphertexts vs X25519 at 32 bytes. The shared secret is always 32 bytes regardless of parameter set.',
@@ -1560,7 +1560,7 @@ function processPlaygroundGuide(): RAGChunk[] {
     },
     {
       id: 'playground-signatures',
-      source: 'documentation',
+      source: 'playground-guide',
       title: 'Playground — Digital Signatures',
       content:
         'Digital Signatures in the PQC Playground\n\nML-DSA (FIPS 204) and SLH-DSA (FIPS 205) digital signatures can be generated and verified in the playground. Enter a message, sign it with a private key, then verify the signature with the public key. Compare signature sizes: ML-DSA-65 signatures are 3,309 bytes, SLH-DSA-SHA2-128s signatures are 7,856 bytes, vs ECDSA P-256 at 64 bytes. ML-DSA is faster but SLH-DSA is based on hash functions only (conservative security assumption).',
@@ -1570,7 +1570,7 @@ function processPlaygroundGuide(): RAGChunk[] {
     },
     {
       id: 'playground-softhsm',
-      source: 'documentation',
+      source: 'playground-guide',
       title: 'Playground — SoftHSM (PKCS#11 v3.2 Emulation)',
       content:
         'SoftHSM Tab in the PQC Playground\n\nThe SoftHSM tab emulates a PKCS#11 v3.2 hardware security module in the browser using softhsmv3 (a fork of SoftHSM2 compiled to WebAssembly). It demonstrates real HSM-style key operations with PQC algorithms — all running client-side with no real hardware required.\n\nML-DSA Operations: Generate ML-DSA-44/65/87 keypairs in a PKCS#11 token slot, sign messages, and verify signatures. Pre-hash signing is supported via a dropdown with 10 hash variants (SHA-256, SHA-384, SHA-512, SHA3-256, SHA3-384, SHA3-512, SHAKE-128, SHAKE-256) plus Pure (no pre-hash).\n\nSLH-DSA Operations: Generate SLH-DSA keypairs with all 12 FIPS 205 parameter sets (CKP_SLH_DSA_SHA2_128S, CKP_SLH_DSA_SHA2_192S, CKP_SLH_DSA_SHA2_256S, CKP_SLH_DSA_SHAKE_128S, CKP_SLH_DSA_SHAKE_192S, CKP_SLH_DSA_SHAKE_256S, and their -F fast variants). Pre-hash dropdown shared with ML-DSA.\n\nAdditional tabs: Key Agreement (ECDH, ML-KEM), KDF (HKDF, PBKDF2/BIP39), Classical (AES, RSA, ECDSA). All operations use the PKCS#11 C_Sign, C_Verify, C_GenerateKeyPair, C_EncapsulateKey, C_DecapsulateKey interfaces — mirroring what a real PKCS#11 application would do against a hardware HSM.',
@@ -1589,7 +1589,7 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
   return [
     {
       id: 'openssl-studio-overview',
-      source: 'documentation',
+      source: 'openssl-guide',
       title: 'OpenSSL Studio — Browser-Based WASM Terminal',
       content:
         'OpenSSL Studio Overview\n\nOpenSSL Studio provides a full OpenSSL 3.6.0 terminal running in the browser via WebAssembly (WASM). It supports PQC algorithms through the OQS provider, enabling hands-on practice with post-quantum key generation, certificate creation, and cryptographic operations without installing anything. All operations execute locally in the browser with SharedArrayBuffer support.',
@@ -1599,7 +1599,7 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
     },
     {
       id: 'openssl-studio-keygen',
-      source: 'documentation',
+      source: 'openssl-guide',
       title: 'OpenSSL Studio — PQC Key Generation Commands',
       content:
         'PQC Key Generation with OpenSSL Studio\n\nGenerate PQC keys using modern OpenSSL 3.x commands:\n- ML-KEM: openssl genpkey -algorithm mlkem768 -out mlkem768_key.pem\n- ML-DSA: openssl genpkey -algorithm mldsa65 -out mldsa65_key.pem\n- SLH-DSA: openssl genpkey -algorithm slhdsa-sha2-128s -out slhdsa_key.pem\n- Extract public key: openssl pkey -in key.pem -pubout -out pub.pem\n\nUse genpkey (not genrsa/ecparam) — modern OpenSSL commands support all PQC algorithms through the OQS provider.',
@@ -1609,7 +1609,7 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
     },
     {
       id: 'openssl-studio-certs',
-      source: 'documentation',
+      source: 'openssl-guide',
       title: 'OpenSSL Studio — PQC Certificate Operations',
       content:
         'PQC Certificate Operations with OpenSSL Studio\n\nCreate PQC certificates and CSRs:\n- Self-signed cert: openssl req -x509 -new -key mldsa65_key.pem -out cert.pem -days 365 -subj "/CN=PQC Test"\n- CSR: openssl req -new -key mldsa65_key.pem -out csr.pem -subj "/CN=PQC Test"\n- Verify cert: openssl x509 -in cert.pem -text -noout\n- Sign data: openssl pkeyutl -sign -inkey mldsa65_key.pem -in data.txt -out sig.bin\n- Verify signature: openssl pkeyutl -verify -pubin -inkey pub.pem -in data.txt -sigfile sig.bin\n\nAll certificates use ML-DSA-65 or other PQC algorithms for signing, demonstrating post-quantum PKI workflows.',
@@ -1618,6 +1618,163 @@ function processOpenSSLStudioGuide(): RAGChunk[] {
       deepLink: '/openssl?cmd=x509',
     },
   ]
+}
+
+// ---------------------------------------------------------------------------
+// Achievement catalog
+// ---------------------------------------------------------------------------
+
+async function processAchievementCatalog(): Promise<RAGChunk[]> {
+  // Dynamic import — works with tsx; condition function is not serialized
+  const { ACHIEVEMENT_CATALOG } = await import('../src/data/achievementCatalog')
+
+  const byCategory = new Map<string, typeof ACHIEVEMENT_CATALOG>()
+  for (const a of ACHIEVEMENT_CATALOG) {
+    const arr = byCategory.get(a.category) ?? []
+    arr.push(a)
+    byCategory.set(a.category, arr)
+  }
+
+  const chunks: RAGChunk[] = []
+
+  chunks.push({
+    id: 'achievements-overview',
+    source: 'achievements',
+    title: 'Achievement & Badge System Overview',
+    content: `Achievement & Badge System\n\nPQC Today features a gamification layer with ${ACHIEVEMENT_CATALOG.length} achievement badges across categories (Consistency, Workshop Depth, Cross-Feature) and 4 rarity tiers (Common, Uncommon, Rare, Epic). Achievements unlock automatically based on user activity tracked across all stores. Secret achievements add discovery incentive. The system integrates with the 7-belt judo grading system (White → Black belt) and the ScoreCard on the landing page.\n\nComposite awareness score weights: quiz performance, module step completion, artifact generation (keys, certs, CSRs, executive documents), time spent, and streak (consecutive daily visits). Belt thresholds gate based on minimum quiz%, steps%, artifacts, time, and streak per tier.`,
+    category: 'gamification',
+    metadata: { totalBadges: String(ACHIEVEMENT_CATALOG.length) },
+    deepLink: '/',
+  })
+
+  for (const [category, badges] of byCategory) {
+    const label = category.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+    const listing = badges
+      .map(
+        (b) =>
+          `- **${'secret' in b && b.secret ? '[SECRET] ' : ''}${b.title}** (${b.rarity}): ${b.description}`
+      )
+      .join('\n')
+    chunks.push({
+      id: `achievements-${category}`,
+      source: 'achievements',
+      title: `Achievements: ${label}`,
+      content: `Achievement Category: ${label}\n\n${listing}`,
+      category: 'gamification',
+      metadata: { achievementCategory: category, count: String(badges.length) },
+      deepLink: '/',
+    })
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
+// Business Center guide
+// ---------------------------------------------------------------------------
+
+function processBusinessCenterGuide(): RAGChunk[] {
+  return [
+    {
+      id: 'business-center-overview',
+      source: 'business-center',
+      title: 'Business Center — PQC Readiness Command Center',
+      content:
+        "Business Center (/business) Overview\n\nThe Business Center is a GRC (Governance, Risk, Compliance) dashboard that aggregates executive-level PQC readiness data from across the platform. It provides a centralized view of risk posture, compliance status, governance artifacts, and vendor dependencies — all contextualized by the user's selected industry and country.\n\nFive dashboard sections:\n1. Risk Management — Risk score from Assessment wizard, HNDL/HNFL exposure windows, threat summary by industry\n2. Compliance & Regulatory — Active compliance frameworks, deadline tracking, framework coverage gaps per jurisdiction\n3. Governance & Policy — Executive documents generated from learning modules (board briefs, policy templates, risk registers) with view/edit/delete artifact management via ArtifactDrawer\n4. Vendor & Supply Chain — PQC-ready vendor count from Migrate catalog, supply chain risk indicators by infrastructure layer\n5. Action Items — Prioritized next steps derived from assessment results and compliance gaps\n\nCompact Executive Learning bar shows progress across executive-track modules: exec-quantum-impact, pqc-risk-management, pqc-business-case, pqc-governance, compliance-strategy, migration-program, vendor-risk.\n\nWelcome state: displayed when no assessment has been completed — guides user to run assessment, explore compliance, or start executive learning path.\n\nArtifact Drawer: slide-over panel for viewing and editing executive documents with full markdown rendering.",
+      category: 'business-center',
+      metadata: { feature: 'overview' },
+      deepLink: '/business',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+// Right Panel guide
+// ---------------------------------------------------------------------------
+
+function processRightPanelGuide(): RAGChunk[] {
+  return [
+    {
+      id: 'right-panel-overview',
+      source: 'right-panel',
+      title: 'Right Panel — Assistant, Journey & Knowledge Graph',
+      content:
+        'Right Panel Overview\n\nThe Right Panel is a slide-over drawer (60vw on desktop, full-width on mobile) accessible from every page via the floating action button (z-60). Three tabs:\n\n1. **Assistant** (Bot icon) — PQC Assistant chatbot (BYOK Gemini API key, RAG-powered over 3,500+ corpus chunks). Context-aware of current page, persona, industry, and assessment results. Conversation history persisted via useChatStore.\n\n2. **Journey** (Clock icon) — Persona-aware view:\n   - With persona selected: JourneyMapPanel showing learning path phases, milestone checkpoints, belt progression visual (White → Black), achievement badge grid, off-the-beaten-path module suggestions, and recent activity feed\n   - Without persona: ProgressDashboard with belt/score display, track completion pills, stats row (streak, total time, keys generated, certs created, executive docs), assessment status card, and 30-day streak calendar\n\n3. **Graph** (Network icon) — Four sub-tabs:\n   - Explore: Interactive node-link knowledge graph of platform entities (modules, algorithms, threats, standards) with search\n   - Coverage: Visual heatmap/bar chart of learning progress across knowledge domains\n   - Pathways: Prerequisite chains and dependency flows between modules\n   - Mindmap: Radial interactive mindmap (ReactFlow) of the entire platform with expandable nodes, track color coding, and clickable navigation links\n\nKeyboard: Escape closes panel. Body scroll locked while open.',
+      category: 'right-panel',
+      metadata: { feature: 'overview' },
+      deepLink: '/',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+// Guided Tour guide
+// ---------------------------------------------------------------------------
+
+function processGuidedTourGuide(): RAGChunk[] {
+  return [
+    {
+      id: 'guided-tour-overview',
+      source: 'guided-tour',
+      title: 'Guided Tour — 3-Phase Onboarding',
+      content:
+        "Guided Tour Overview\n\nFirst-time visitors see a 3-phase guided tour overlay that introduces the platform. The tour uses centered swipeable cards (Framer Motion drag gestures) and can be dismissed at any time. Completion is persisted to localStorage ('pqc-tour-completed'). Adding ?tour to any URL resets the tour for re-entry.\n\nPhase 1: Why PQC? (3 educational slides)\n1. 'Everything runs on encryption' — RSA/ECC depend on classical math\n2. 'Quantum computers change everything' — Shor's algorithm breaks them; Harvest Now, Decrypt Later is already happening\n3. 'The solution exists — the race is on' — NIST PQC standards published 2024, government mandates 2030-2035\n\nPhase 2: Knowledge Gate\nAfter the intro, users choose: 'I'm new to this' (full feature tour, 14 slides) or 'I know the basics' (essential-only subset of 6 slides).\n\nPhase 3: Feature Tour (up to 14 slides, persona-filtered)\nOnly pages accessible to the current persona are shown. Features covered: Learning Modules, Migration Timeline, Algorithm Explorer, Migrate Catalog, Compliance Tracker, Risk Assessment, Readiness Report, Crypto Playground, OpenSSL Studio, Threat Landscape, Standards Library, Industry Leaders, PQC Assistant, Glossary.\n\nEssential slides (shown in both modes): Learning Modules, Migration Timeline, Risk Assessment, Readiness Report, PQC Assistant, Glossary.",
+      category: 'guided-tour',
+      metadata: { feature: 'overview' },
+      deepLink: '/',
+    },
+  ]
+}
+
+// ---------------------------------------------------------------------------
+// SoftHSMv3 guide (C++ engine + Rust engine)
+// ---------------------------------------------------------------------------
+
+function processSoftHSMv3Guide(): RAGChunk[] {
+  const SOFTHSM_DOCS_DIR = path.join(process.cwd(), '..', 'softhsmv3', 'docs')
+  if (!fs.existsSync(SOFTHSM_DOCS_DIR)) {
+    console.warn(`  ⚠ softhsmv3 docs not found at ${SOFTHSM_DOCS_DIR} — skipping`)
+    return []
+  }
+
+  const docFiles = [
+    { file: 'softhsmv3devguide.md', prefix: 'softhsmv3-devguide' },
+    { file: 'gap-analysis-pkcs11-v3.2.md', prefix: 'softhsmv3-gap' },
+    { file: 'howtotestsofthsmv3.md', prefix: 'softhsmv3-test' },
+  ]
+
+  const chunks: RAGChunk[] = []
+
+  for (const { file, prefix } of docFiles) {
+    const filePath = path.join(SOFTHSM_DOCS_DIR, file)
+    if (!fs.existsSync(filePath)) continue
+
+    const raw = fs.readFileSync(filePath, 'utf-8')
+    // Split on level-2 headings to create one chunk per section
+    const sections = raw.split(/\n(?=## )/)
+
+    for (let i = 0; i < sections.length; i++) {
+      const section = sections[i].trim()
+      if (!section) continue
+
+      // Extract heading for title
+      const headingMatch = section.match(/^##\s+(.+)/)
+      const heading = headingMatch ? headingMatch[1].trim() : `Section ${i + 1}`
+      const content = section.length > 4000 ? section.slice(0, 4000) + '\n\n[truncated]' : section
+
+      chunks.push({
+        id: `${prefix}-${i}`,
+        source: 'softhsmv3',
+        title: `softhsmv3 — ${heading}`,
+        content,
+        category: 'softhsmv3',
+        metadata: { file, section: String(i) },
+        deepLink: '/playground',
+      })
+    }
+  }
+
+  return chunks
 }
 
 // ---------------------------------------------------------------------------
@@ -2215,6 +2372,11 @@ async function main() {
     { name: 'Getting Started', fn: processGettingStarted },
     { name: 'Playground Guide', fn: processPlaygroundGuide },
     { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
+    { name: 'Achievement Catalog', fn: processAchievementCatalog },
+    { name: 'Business Center Guide', fn: processBusinessCenterGuide },
+    { name: 'Right Panel Guide', fn: processRightPanelGuide },
+    { name: 'Guided Tour Guide', fn: processGuidedTourGuide },
+    { name: 'SoftHSMv3 Guide', fn: processSoftHSMv3Guide },
     { name: 'Priority Matrix', fn: processPriorityMatrix },
     { name: 'Certification Xref', fn: processCertificationXref },
     { name: 'Document Enrichments', fn: processDocumentEnrichments },
@@ -2255,6 +2417,13 @@ async function main() {
     leaders: 1.0,
     'document-enrichment': 0.9,
     quiz: 0.8,
+    'playground-guide': 1.0,
+    'openssl-guide': 1.0,
+    achievements: 0.9,
+    'business-center': 0.95,
+    'right-panel': 0.95,
+    'guided-tour': 0.85,
+    softhsmv3: 1.0,
     changelog: 0.6,
   }
   for (const chunk of corpus) {

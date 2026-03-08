@@ -509,24 +509,40 @@ export const createLoggingProxy = (
         const specName = prop.slice(1) // e.g. 'C_EncapsulateKey'
         return (...args: unknown[]) => {
           const t0 = performance.now()
-          const rv = (val as (...a: unknown[]) => number).apply(target, args)
-          const ms = Math.round((performance.now() - t0) * 10) / 10
-          const rvUnsigned = rv >>> 0
-          const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
-          const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
-          onLog({
-            id: ++_logId,
-            timestamp: fmtTime(),
-            fn: specName,
-            args: fmtArgs(specName, args),
-            rvHex: `0x${rvUnsigned.toString(16).padStart(8, '0')}`,
-            rvName: rvName(rvUnsigned),
-            ms,
-            ok,
-            engineName,
-            inspect,
-          })
-          return rv
+          try {
+            const rv = (val as (...a: unknown[]) => number).apply(target, args)
+            const ms = Math.round((performance.now() - t0) * 10) / 10
+            const rvUnsigned = rv >>> 0
+            const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
+            const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
+            onLog({
+              id: ++_logId,
+              timestamp: fmtTime(),
+              fn: specName,
+              args: fmtArgs(specName, args),
+              rvHex: `0x${rvUnsigned.toString(16).padStart(8, '0')}`,
+              rvName: rvName(rvUnsigned),
+              ms,
+              ok,
+              engineName,
+              inspect,
+            })
+            return rv
+          } catch (err) {
+            const ms = Math.round((performance.now() - t0) * 10) / 10
+            onLog({
+              id: ++_logId,
+              timestamp: fmtTime(),
+              fn: specName,
+              args: fmtArgs(specName, args),
+              rvHex: 'TRAP',
+              rvName: err instanceof Error ? err.message : 'RuntimeError',
+              ms,
+              ok: false,
+              engineName,
+            })
+            throw err
+          }
         }
       }
       return val

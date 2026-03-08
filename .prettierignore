@@ -5,6 +5,8 @@ package-lock.json
 test-results.json
 test-results-clean.json
 public/wasm/openssl.js
+src/wasm/softhsmrustv3.js
+src/wasm/softhsmrustv3.d.ts
 openssl-3.6.0-build
 public/wasm-new
 public/timeline

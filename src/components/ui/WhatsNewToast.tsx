@@ -86,25 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Rust SoftHSMv3 engine</strong> &mdash; new
-                    Rust wasm-bindgen PKCS#11 engine alongside the C++ Emscripten build; choose C++,
-                    Rust, or Dual Cross-Check mode in the Playground
+                    <strong className="text-foreground">Cross-engine KEM &amp; Sign</strong> &mdash;
+                    KEM and Sign panels now run dual cross-checks: Rust encapsulates with C++ pubkey
+                    and C++ decapsulates, C++ signs and Rust verifies
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Dual-engine parity</strong> &mdash; run both
-                    engines simultaneously and cross-verify ML-KEM, ML-DSA, SLH-DSA, and AES
-                    operations for correctness
+                    <strong className="text-foreground">Rust WASM Phase 2</strong> &mdash; RSA,
+                    ECDSA, EdDSA, SLH-DSA, digest, and key wrap/unwrap now available in the Rust
+                    PKCS#11 engine
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PKCS#11 bug fixes</strong> &mdash; 6 missing
-                    underscore prefixes on C bindings and memory access fixes for cross-engine
-                    compatibility
+                    <strong className="text-foreground">Expanded AI assistant</strong> &mdash;
+                    Achievement catalog, Business Center, Right Panel, Guided Tour, and SoftHSMv3
+                    docs added to the RAG knowledge base
                   </span>
                 </li>
               </ul>

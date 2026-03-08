@@ -123,7 +123,7 @@ export const QuizModule: React.FC = () => {
   const filteredQuestions = useMemo(() => {
     let pool = QUIZ_QUESTIONS
     if (selectedPersona) {
-      pool = pool.filter((q) => q.personas.includes(selectedPersona))
+      pool = pool.filter((q) => q.personas.length === 0 || q.personas.includes(selectedPersona))
     }
     pool = pool.filter((q) => selectedDifficulties.includes(q.difficulty))
     if (industryFilter) {

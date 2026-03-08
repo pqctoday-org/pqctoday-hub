@@ -345,7 +345,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     query: 'What algorithms can I test in the PQC playground?',
     expectedIntent: 'general', // "what algorithms" doesn't match "what is/what are" definition patterns
     mustInclude: ['playground-'],
-    expectedSources: ['documentation'],
+    expectedSources: ['playground-guide'],
     minTop5Hits: 1,
   },
 
@@ -354,7 +354,7 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     query: 'How do I generate PQC keys with OpenSSL Studio?',
     expectedIntent: 'recommendation', // "how do i" → recommendation
     mustInclude: ['openssl-studio-'],
-    expectedSources: ['documentation'],
+    expectedSources: ['openssl-guide'],
     minTop5Hits: 0,
   },
 ]

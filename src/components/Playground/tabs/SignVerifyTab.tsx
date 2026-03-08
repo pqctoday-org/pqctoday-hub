@@ -13,6 +13,8 @@ import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
+  hsm_extractKeyValue,
+  hsm_importMLDSAPublicKey,
   type MLDSASignOptions,
 } from '../../../wasm/softhsm'
 import { FilterDropdown } from '../../common/FilterDropdown'
@@ -104,7 +106,8 @@ const toHexSnippetDsa = (b: Uint8Array) => {
 }
 
 const HsmSignPanel: React.FC = () => {
-  const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
+  const { moduleRef, crossCheckModuleRef, hSessionRef, isReady, addHsmKey, engineMode, addHsmLog } =
+    useHsmContext()
 
   const [variant, setVariant] = useState<44 | 65 | 87>(65)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
@@ -189,6 +192,42 @@ const HsmSignPanel: React.FC = () => {
         const M = moduleRef.current!
         const sig = hsm_sign(M, hSessionRef.current, handles!.priv, message, buildOpts())
         setSignature(sig)
+
+        // Dual-engine parity: C++ signs, Rust verifies (cross-engine interop test)
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            // 1. Export pub key from C++ and import into Rust
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
+            const rustPub = hsm_importMLDSAPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            // 2. Rust verifies C++ signature
+            const checkOk = hsm_verify(
+              checkM,
+              hSessionRef.current,
+              rustPub,
+              message,
+              sig,
+              buildOpts()
+            )
+            if (!checkOk) {
+              setDsaError('Dual-Engine Parity Failure: Rust failed to verify C++ ML-DSA signature')
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1_000_000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: `Rust Verify(C++ ML-DSA-${variant} Signature) → valid`,
+              })
+            }
+          } catch (e) {
+            setDsaError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setDsaError(String(e))
       }

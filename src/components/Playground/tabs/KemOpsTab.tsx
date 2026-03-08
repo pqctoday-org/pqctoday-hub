@@ -15,6 +15,7 @@ import {
   hsm_encapsulate,
   hsm_decapsulate,
   hsm_extractKeyValue,
+  hsm_importMLKEMPublicKey,
 } from '../../../wasm/softhsm'
 
 // ── HSM KEM Panel ─────────────────────────────────────────────────────────────
@@ -39,7 +40,8 @@ const arraysEqual = (a: Uint8Array, b: Uint8Array) => {
 }
 
 const HsmKemPanel: React.FC = () => {
-  const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
+  const { moduleRef, crossCheckModuleRef, hSessionRef, isReady, addHsmKey, engineMode, addHsmLog } =
+    useHsmContext()
 
   const [variant, setVariant] = useState<512 | 768 | 1024>(768)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
@@ -123,6 +125,52 @@ const HsmKemPanel: React.FC = () => {
         const ss = hsm_extractKeyValue(M, hSessionRef.current, secretHandle)
         setCiphertext(ciphertextBytes)
         setSecret1(ss)
+
+        // Dual-engine parity: C++ encapsulates, Rust decapsulates (cross-engine interop test)
+        if (engineMode === 'dual' && crossCheckModuleRef.current) {
+          const checkM = crossCheckModuleRef.current
+          try {
+            // 1. Export pub key from C++ and import into Rust
+            const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles!.pub)
+            const rustPub = hsm_importMLKEMPublicKey(checkM, hSessionRef.current, variant, pubBytes)
+            // 2. Rust encapsulates using C++ public key
+            const rustResult = hsm_encapsulate(checkM, hSessionRef.current, rustPub, variant)
+            const rustSecret = hsm_extractKeyValue(
+              checkM,
+              hSessionRef.current,
+              rustResult.secretHandle
+            )
+            // 3. C++ decapsulates Rust's ciphertext using C++ private key
+            const cppDecapHandle = hsm_decapsulate(
+              M,
+              hSessionRef.current,
+              handles!.priv,
+              rustResult.ciphertextBytes,
+              variant
+            )
+            const cppDecapSecret = hsm_extractKeyValue(M, hSessionRef.current, cppDecapHandle)
+            // 4. Verify secrets match
+            if (!arraysEqual(rustSecret, cppDecapSecret)) {
+              setKemError(
+                'Dual-Engine Parity Failure: Rust encapsulation secret ≠ C++ decapsulation secret'
+              )
+            } else {
+              addHsmLog({
+                id: Math.floor(Math.random() * 1_000_000),
+                timestamp: new Date().toISOString().slice(11, 19),
+                fn: 'Dual-Engine Parity',
+                rvName: 'SUCCESS',
+                rvHex: '0x00000000',
+                ms: 0,
+                ok: true,
+                engineName: 'dual',
+                args: 'Rust Encapsulate × C++ Decapsulate → secrets match',
+              })
+            }
+          } catch (e) {
+            setKemError('Cross-check failed: ' + String(e))
+          }
+        }
       } catch (e) {
         setKemError(String(e))
       }
