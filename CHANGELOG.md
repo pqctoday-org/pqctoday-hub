@@ -4,6 +4,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.5] - 2026-03-08
+
+### Changed
+
+- **TLS Basics module refactored with tabbed layout**: Added Learn, Simulate (workshop), Exercises, References, and Tools tabs with deep-linking support (`?tab=workshop`), module progress tracking via `useModuleStore`, and step completion on tab navigation. [view:/learn/tls-basics]
+- **Leaders data updated**: New `leaders_03082026.csv` with latest industry leader entries. [view:/leaders]
+- **RAG corpus regenerated**: Rebuilt `rag-corpus.json` reflecting latest module and data changes. [view:/]
+
+### Fixed
+
+- **WASM deployment artifacts**: Added missing C++ engine files (`libsofthsmv3.js`, `libsofthsmv3.wasm`) and Rust engine JS glue (`softhsmrustv3.d.ts`, `softhsmrustv3.js`) to `public/wasm/` — required for runtime WASM loading. [view:/playground]
+
 ## [2.34.4] - 2026-03-08
 
 ### Fixed
