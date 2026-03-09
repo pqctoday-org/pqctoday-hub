@@ -6,6 +6,7 @@ import {
   ChevronDown,
   ChevronRight,
   Compass,
+  Cpu,
   Lightbulb,
   Network,
   Server,
@@ -37,7 +38,6 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
   Strategy: [
     'hybrid-crypto',
     'crypto-agility',
-    'qkd',
     'data-asset-sensitivity',
     'standards-bodies',
     'migration-planning',
@@ -51,30 +51,30 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'web-gateway-pqc',
     'network-security-pqc',
   ],
-  Infrastructure: [
-    'pki-infrastructure',
-    'kms-pqc',
+  'Hardware Infrastructure': [
     'hsm-pqc',
+    'kms-pqc',
+    'qkd',
     'key-management',
+    'secure-boot-pqc',
+    'confidential-computing',
+  ],
+  'Software Infrastructure': [
+    'pki-infrastructure',
     'stateful-signatures',
     'merkle-tree-certs',
-    'confidential-computing',
     'crypto-dev-apis',
     'secrets-management-pqc',
     'database-encryption-pqc',
-    'secure-boot-pqc',
     'os-pqc',
   ],
   Applications: [
-    'digital-assets',
-    '5g-security',
     'digital-id',
     'code-signing',
     'iot-ot-pqc',
     'ai-security-pqc',
     'platform-eng-pqc',
     'iam-pqc',
-    'industry-threats',
   ],
   Executive: [
     'pqc-risk-management',
@@ -86,6 +86,8 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'compliance',
   ],
   Industries: [
+    'digital-assets',
+    '5g-security',
     'energy-utilities-pqc',
     'healthcare-pqc',
     'aerospace-space-pqc',
@@ -125,7 +127,7 @@ const TRACK_META: {
   {
     track: 'Strategy',
     icon: Lightbulb,
-    description: 'Hybrid crypto, crypto agility, QKD, data sensitivity, standards bodies',
+    description: 'Hybrid crypto, crypto agility, data sensitivity, standards bodies',
     colorClass: 'from-secondary/15 to-secondary/5 border-secondary/30',
     activeClass:
       'bg-card border-secondary/60 shadow-[0_0_12px_rgba(var(--secondary-rgb,139,92,246),0.3)]',
@@ -138,18 +140,24 @@ const TRACK_META: {
     activeClass: 'bg-card border-sky-500/60',
   },
   {
-    track: 'Infrastructure',
-    icon: Server,
-    description:
-      'PKI, KMS, HSM, stateful sigs, Merkle tree certs, confidential computing, crypto APIs, secrets mgmt, database encryption, secure boot, OS PQC',
+    track: 'Hardware Infrastructure',
+    icon: Cpu,
+    description: 'HSMs, KMS, QKD, secure boot & firmware, confidential computing & TEEs',
     colorClass: 'from-amber-500/20 to-orange-400/10 border-amber-500/30',
     activeClass: 'bg-card border-amber-500/60',
   },
   {
+    track: 'Software Infrastructure',
+    icon: Server,
+    description:
+      'PKI, secrets management, stateful sigs, Merkle tree certs, crypto APIs, database encryption, OS PQC',
+    colorClass: 'from-amber-400/15 to-yellow-400/10 border-amber-400/30',
+    activeClass: 'bg-card border-amber-400/60',
+  },
+  {
     track: 'Applications',
     icon: Layers,
-    description:
-      'Digital assets, 5G, digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
+    description: 'Digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
     colorClass: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30',
     activeClass: 'bg-card border-emerald-500/60',
   },
@@ -164,7 +172,7 @@ const TRACK_META: {
     track: 'Industries',
     icon: Factory,
     description:
-      'Energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC migration',
+      'Digital assets, 5G, energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC',
     colorClass: 'from-orange-500/20 to-amber-400/10 border-orange-500/30',
     activeClass: 'bg-card border-orange-500/60',
   },

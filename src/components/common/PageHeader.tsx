@@ -56,14 +56,12 @@ export const PageHeader = ({
           <GlossaryButton />
           {onExport && <ExportButton onExport={onExport} />}
           <Button
-            variant="ghost"
-            size="sm"
+            variant="gradient"
             onClick={() => openChat('chat')}
-            className="flex items-center gap-2 px-3 py-1.5 h-auto rounded-lg bg-primary/20 hover:bg-primary/30 text-primary text-sm font-medium transition-colors border border-primary/30"
+            className="w-8 h-8 rounded-full shadow-md shadow-primary/25 p-0 shrink-0"
             aria-label="Open PQC Assistant"
           >
-            <MessageCircle size={14} aria-hidden="true" />
-            <span>Chat</span>
+            <MessageCircle size={15} aria-hidden="true" />
           </Button>
         </div>
       )}

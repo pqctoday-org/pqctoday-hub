@@ -475,7 +475,8 @@ export const TRACK_COLORS: Record<string, string> = {
   Foundations: 'bg-primary/10 text-primary',
   Strategy: 'bg-secondary/10 text-secondary',
   Protocols: 'bg-status-info/15 text-status-info',
-  Infrastructure: 'bg-status-warning/15 text-status-warning',
+  'Hardware Infrastructure': 'bg-status-warning/20 text-status-warning',
+  'Software Infrastructure': 'bg-status-warning/10 text-status-warning',
   Applications: 'bg-status-success/15 text-status-success',
   Executive: 'bg-status-error/15 text-status-error',
   Industries: 'bg-tertiary/10 text-tertiary',
@@ -509,7 +510,6 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['crypto-agility'],
       MODULE_CATALOG['data-asset-sensitivity'],
       MODULE_CATALOG['standards-bodies'],
-      MODULE_CATALOG['qkd'],
     ],
   },
   {
@@ -524,26 +524,30 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
     ],
   },
   {
-    track: 'Infrastructure',
+    track: 'Hardware Infrastructure',
+    modules: [
+      MODULE_CATALOG['hsm-pqc'],
+      MODULE_CATALOG['kms-pqc'],
+      MODULE_CATALOG['qkd'],
+      MODULE_CATALOG['secure-boot-pqc'],
+      MODULE_CATALOG['confidential-computing'],
+    ],
+  },
+  {
+    track: 'Software Infrastructure',
     modules: [
       MODULE_CATALOG['pki-workshop'],
-      MODULE_CATALOG['kms-pqc'],
-      MODULE_CATALOG['hsm-pqc'],
       MODULE_CATALOG['secrets-management-pqc'],
       MODULE_CATALOG['stateful-signatures'],
       MODULE_CATALOG['merkle-tree-certs'],
-      MODULE_CATALOG['confidential-computing'],
       MODULE_CATALOG['database-encryption-pqc'],
       MODULE_CATALOG['crypto-dev-apis'],
-      MODULE_CATALOG['secure-boot-pqc'],
       MODULE_CATALOG['os-pqc'],
     ],
   },
   {
     track: 'Applications',
     modules: [
-      MODULE_CATALOG['digital-assets'],
-      MODULE_CATALOG['5g-security'],
       MODULE_CATALOG['digital-id'],
       MODULE_CATALOG['code-signing'],
       MODULE_CATALOG['iot-ot-pqc'],
@@ -566,6 +570,8 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
   {
     track: 'Industries',
     modules: [
+      MODULE_CATALOG['digital-assets'],
+      MODULE_CATALOG['5g-security'],
       MODULE_CATALOG['energy-utilities-pqc'],
       MODULE_CATALOG['healthcare-pqc'],
       MODULE_CATALOG['aerospace-space-pqc'],

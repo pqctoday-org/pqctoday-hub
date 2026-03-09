@@ -771,22 +771,19 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                 <div className="space-y-6 print:space-y-4">
                   {/* Header */}
                   <div className="text-center">
-                    <div className="flex items-center justify-center gap-2">
-                      <h2 className="text-3xl font-bold text-gradient mb-2 print:text-black">
-                        Your PQC Risk Assessment Report
-                      </h2>
+                    <div className="flex items-center justify-center gap-1.5">
+                      <p className="text-sm text-muted-foreground print:text-gray-600">
+                        Generated on {generatedDate}
+                      </p>
                       <Button
                         variant="ghost"
                         onClick={() => setMethodologyOpen(true)}
-                        className="p-1.5 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden mb-2"
+                        className="p-1 h-auto w-auto rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground print:hidden"
                         aria-label="How this report works"
                       >
-                        <Info size={18} />
+                        <Info size={15} />
                       </Button>
                     </div>
-                    <p className="text-sm text-muted-foreground print:text-gray-600">
-                      Generated on {generatedDate}
-                    </p>
                     <span
                       className={clsx(
                         'inline-flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full border mt-2',
