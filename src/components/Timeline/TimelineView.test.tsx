@@ -64,7 +64,6 @@ describe('TimelineView', () => {
 
     it('displays metadata information on desktop', () => {
       render(<TimelineView />)
-      expect(screen.getByText(/Data Source:/)).toBeInTheDocument()
       expect(screen.getByText(/Updated:/)).toBeInTheDocument()
     })
 

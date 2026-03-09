@@ -177,7 +177,7 @@ const LeaderRow = ({
           )}
           <div className="min-w-0">
             <span className="font-semibold text-foreground truncate block">{leader.name}</span>
-            <StatusBadge status={leader.status} size="xs" />
+            <StatusBadge status={leader.status} size="sm" />
           </div>
         </div>
       </td>

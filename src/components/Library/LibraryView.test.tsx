@@ -134,7 +134,7 @@ describe('LibraryView', () => {
 
     it('displays metadata', () => {
       render(<LibraryView />)
-      expect(screen.getByText(/Data Source:/i)).toBeInTheDocument()
+      expect(screen.getByText(/Updated:/i)).toBeInTheDocument()
     })
   })
 

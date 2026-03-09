@@ -12,6 +12,7 @@ import {
   Radio,
   Stethoscope,
   Shield,
+  ShieldAlert,
   Car,
   AlertOctagon,
   AlertCircle,

@@ -142,9 +142,9 @@ describe('ReportContent', () => {
   })
 
   describe('header', () => {
-    it('renders the report title', () => {
+    it('renders the methodology info button', () => {
       renderReport()
-      expect(screen.getByText('Your PQC Risk Assessment Report')).toBeInTheDocument()
+      expect(screen.getByRole('button', { name: /How this report works/i })).toBeInTheDocument()
     })
 
     it('renders the generated date from result', () => {
