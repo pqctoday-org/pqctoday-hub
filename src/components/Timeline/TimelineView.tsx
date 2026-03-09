@@ -1,18 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
+import { Globe } from 'lucide-react'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
-
 import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -139,30 +136,21 @@ export const TimelineView = () => {
 
   return (
     <div data-testid="timeline-view-root">
-      <div className="text-center mb-2 md:mb-12" data-testid="timeline-header">
-        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
-          Global Migration Timeline
-        </h2>
-        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from
-          discovery to full migration and key regulatory milestones.
-        </p>
-        {timelineMetadata && (
-          <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
-            <p>
-              Data Source: {timelineMetadata.filename} • Updated:{' '}
-              {timelineMetadata.lastUpdate.toLocaleDateString()}
-            </p>
-            <SourcesButton viewType="Timeline" />
-            <ShareButton
-              title="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
-              text="Compare PQC migration timelines across nations — track phases from discovery to full migration."
-            />
-            <GlossaryButton />
-            <ExportButton onExport={handleExportCsv} />
-          </div>
-        )}
-      </div>
+      <PageHeader
+        icon={Globe}
+        title="Global Migration Timeline"
+        description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
+        dataSource={
+          timelineMetadata
+            ? `${timelineMetadata.filename} • Updated: ${timelineMetadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        viewType="Timeline"
+        shareTitle="PQC Migration Timeline — Global Post-Quantum Cryptography Roadmap"
+        shareText="Compare PQC migration timelines across nations — track phases from discovery to full migration."
+        onExport={handleExportCsv}
+        testId="timeline-header"
+      />
 
       <div className="mt-2 md:mt-12">
         {/* Desktop View: Full Gantt Chart */}

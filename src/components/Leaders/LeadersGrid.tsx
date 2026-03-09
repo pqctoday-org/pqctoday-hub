@@ -2,18 +2,22 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Briefcase, Building2, School, AlertCircle, Trophy, Users } from 'lucide-react'
+import { Search, Briefcase, Building2, School, AlertCircle, Users } from 'lucide-react'
 
 import { leadersData, leadersMetadata } from '../../data/leadersData'
+import type { Leader } from '../../data/leadersData'
 import { logEvent } from '../../utils/analytics'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { EmptyState } from '../ui/empty-state'
 import { CountryFlag } from '../common/CountryFlag'
 import { LeaderCard } from './LeaderCard'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
+import { LeadersTable } from './LeadersTable'
+import { LeaderDetailPopover } from './LeaderDetailPopover'
+import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { ViewToggle } from '../Library/ViewToggle'
+import type { ViewMode } from '../Library/ViewToggle'
+import { SortControl } from '../Library/SortControl'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 
@@ -76,6 +80,14 @@ const FLAG_CODE_MAP: Record<string, string> = {
   'France/USA': 'fr',
 }
 
+type LeaderSortOption = 'name' | 'country' | 'category'
+
+const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
+  { id: 'name', label: 'Name A-Z' },
+  { id: 'country', label: 'Country' },
+  { id: 'category', label: 'Category' },
+]
+
 export const LeadersGrid = () => {
   const [searchParams] = useSearchParams()
   const [selectedRegion, setSelectedRegion] = useState<string>(() => {
@@ -88,11 +100,15 @@ export const LeadersGrid = () => {
     const sector = searchParams.get('sector')
     return sector && ['Public', 'Private', 'Academic'].includes(sector) ? sector : 'All'
   })
+  const [activeCategory, setActiveCategory] = useState('All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
     searchParams.get('leader')
   )
   const [notFoundMessage, setNotFoundMessage] = useState<string | null>(null)
+  const [viewMode, setViewMode] = useState<ViewMode>('cards')
+  const [sortBy, setSortBy] = useState<LeaderSortOption>('name')
+  const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
@@ -136,6 +152,7 @@ export const LeadersGrid = () => {
           setSelectedRegion('All')
           setSelectedCountry('All')
           setSelectedSector('All')
+          setActiveCategory('All')
           setSearchQuery('')
         } else {
           // Leader doesn't exist in database at all
@@ -146,7 +163,7 @@ export const LeadersGrid = () => {
       }
     }, 300)
     return () => clearTimeout(timer)
-  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery])
+  }, [highlightedLeader, selectedCountry, selectedSector, searchQuery, activeCategory])
 
   // Region items
   const regionItems = useMemo(
@@ -201,10 +218,33 @@ export const LeadersGrid = () => {
     ]
   }, [])
 
+  // Category tabs for mobile dropdown
+  const categoryTabs = useMemo(() => ['All', ...LEADER_CATEGORIES], [])
+
+  // Category info for the sidebar pills
+  const categoryInfo = useMemo(() => {
+    return LEADER_CATEGORIES.map((name) => {
+      const items = leadersData.filter((l) => l.category === name)
+      return {
+        name,
+        count: items.length,
+        hasUpdates: items.some((l) => l.status === 'New' || l.status === 'Updated'),
+      }
+    })
+  }, [])
+
+  const totalHasUpdates = leadersData.some((l) => l.status === 'New' || l.status === 'Updated')
+
   // Filter leaders
   const filteredLeaders = useMemo(() => {
     let result = leadersData
 
+    // Category filter
+    if (activeCategory !== 'All') {
+      result = result.filter((l) => l.category === activeCategory)
+    }
+
+    // Country / Region filter
     if (selectedCountry !== 'All') {
       result = result.filter((l) => l.country === selectedCountry)
     } else if (selectedRegion !== 'All') {
@@ -213,10 +253,12 @@ export const LeadersGrid = () => {
       result = result.filter((l) => regionSet.has(l.country))
     }
 
+    // Sector filter
     if (selectedSector !== 'All') {
       result = result.filter((l) => l.type === selectedSector)
     }
 
+    // Search filter
     if (searchQuery.trim()) {
       const q = searchQuery.toLowerCase()
       result = result.filter(
@@ -230,98 +272,129 @@ export const LeadersGrid = () => {
     }
 
     return result
-  }, [selectedRegion, selectedCountry, selectedSector, searchQuery])
+  }, [selectedRegion, selectedCountry, selectedSector, activeCategory, searchQuery])
+
+  // Sort for card view
+  const sortedLeaders = useMemo(() => {
+    const items = [...filteredLeaders]
+    switch (sortBy) {
+      case 'name':
+        items.sort((a, b) => a.name.localeCompare(b.name))
+        break
+      case 'country':
+        items.sort((a, b) => a.country.localeCompare(b.country))
+        break
+      case 'category':
+        items.sort((a, b) => a.category.localeCompare(b.category))
+        break
+    }
+    return items
+  }, [filteredLeaders, sortBy])
 
   const handleExportCsv = useCallback(() => {
-    const csv = generateCsv(filteredLeaders, LEADERS_CSV_COLUMNS)
+    const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-leaders'))
-  }, [filteredLeaders])
+  }, [sortedLeaders])
+
+  const handleCategorySelect = (category: string) => {
+    setActiveCategory(category)
+    logEvent('Leaders', 'Filter Category', category)
+  }
+
+  const openDetail = (leader: Leader) => setSelectedLeader(leader)
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-2 md:mb-8">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-3">
-          <Trophy className="text-primary shrink-0" size={28} />
-          Transformation Leaders
-        </h2>
-        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          Meet the visionaries and organizations driving the global transition to Post-Quantum
-          Cryptography.
-        </p>
-        {leadersMetadata && (
-          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 mb-4 md:mb-8 font-mono">
-            <p>
-              Data Source: {leadersMetadata.filename} • Updated:{' '}
-              {leadersMetadata.lastUpdate.toLocaleDateString()}
-            </p>
-            <SourcesButton viewType="Leaders" />
-            <ShareButton
-              title="PQC Industry Leaders — Organizations Driving Post-Quantum Adoption"
-              text="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
+      <PageHeader
+        icon={Users}
+        title="Transformation Leaders"
+        description="Visionaries and organizations driving the global transition to Post-Quantum Cryptography."
+        dataSource={
+          leadersMetadata
+            ? `${leadersMetadata.filename} • Updated: ${leadersMetadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        viewType="Leaders"
+        shareTitle="PQC Industry Leaders — Organizations Driving Post-Quantum Adoption"
+        shareText="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
+        onExport={handleExportCsv}
+      />
+
+      {/* Category pill tabs (desktop) */}
+      <LeaderCategorySidebar
+        categories={categoryInfo}
+        active={activeCategory}
+        onSelect={handleCategorySelect}
+        totalCount={leadersData.length}
+        totalHasUpdates={totalHasUpdates}
+      />
+
+      {/* Controls Bar */}
+      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row items-center gap-3">
+        {/* Mobile: Category dropdown (hidden on lg where pills show) */}
+        <div className="flex items-center gap-2 w-full lg:hidden text-xs">
+          <div className="flex-1 min-w-[150px]">
+            <FilterDropdown
+              items={categoryTabs}
+              selectedId={activeCategory}
+              onSelect={handleCategorySelect}
+              defaultLabel="Category"
+              noContainer
+              opaque
+              className="mb-0 w-full"
             />
-            <GlossaryButton />
-            <ExportButton onExport={handleExportCsv} />
           </div>
-        )}
+        </div>
 
-        {/* Filters Section */}
-        <div className="bg-card border border-border rounded-lg shadow-lg p-2 mb-8 flex flex-col md:flex-row items-center gap-3">
-          {/* Mobile: Filters on one row */}
-          <div className="flex items-center gap-2 w-full md:w-auto text-xs">
-            {/* Sector Filter */}
-            <div className="flex-1 min-w-[100px] sm:min-w-[120px]">
-              <FilterDropdown
-                items={sectorItems}
-                selectedId={selectedSector}
-                onSelect={(id) => {
-                  setSelectedSector(id)
-                  logEvent('Leaders', 'Filter Sector', id)
-                }}
-                defaultLabel="Sector"
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
-            </div>
-
-            {/* Region Filter */}
-            <div className="flex-1 min-w-[100px] sm:min-w-[120px]">
-              <FilterDropdown
-                items={regionItems}
-                selectedId={selectedRegion}
-                onSelect={(id) => {
-                  setSelectedRegion(id)
-                  setSelectedCountry('All')
-                  logEvent('Leaders', 'Filter Region', id)
-                }}
-                defaultLabel="Region"
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
-            </div>
-
-            {/* Country Filter */}
-            <div className="flex-1 min-w-[100px] sm:min-w-[140px]">
-              <FilterDropdown
-                items={countryItems}
-                selectedId={selectedCountry}
-                onSelect={(id) => {
-                  setSelectedCountry(id)
-                  logEvent('Leaders', 'Filter Country', id)
-                }}
-                defaultLabel="Country"
-                opaque
-                className="mb-0 w-full"
-                noContainer
-              />
-            </div>
+        {/* Sector + Region + Country + Search + Sort + ViewToggle */}
+        <div className="flex items-center gap-2 w-full text-xs">
+          <div className="min-w-[100px]">
+            <FilterDropdown
+              items={sectorItems}
+              selectedId={selectedSector}
+              onSelect={(id) => {
+                setSelectedSector(id)
+                logEvent('Leaders', 'Filter Sector', id)
+              }}
+              defaultLabel="Sector"
+              opaque
+              className="mb-0 w-full"
+              noContainer
+            />
           </div>
 
-          <span className="hidden md:inline text-muted-foreground px-2" aria-hidden="true">
-            Search:
-          </span>
-          <div className="relative flex-1 min-w-[200px] w-full">
+          <div className="hidden sm:block min-w-[100px]">
+            <FilterDropdown
+              items={regionItems}
+              selectedId={selectedRegion}
+              onSelect={(id) => {
+                setSelectedRegion(id)
+                setSelectedCountry('All')
+                logEvent('Leaders', 'Filter Region', id)
+              }}
+              defaultLabel="Region"
+              opaque
+              className="mb-0 w-full"
+              noContainer
+            />
+          </div>
+
+          <div className="hidden sm:block min-w-[100px]">
+            <FilterDropdown
+              items={countryItems}
+              selectedId={selectedCountry}
+              onSelect={(id) => {
+                setSelectedCountry(id)
+                logEvent('Leaders', 'Filter Country', id)
+              }}
+              defaultLabel="Country"
+              opaque
+              className="mb-0 w-full"
+              noContainer
+            />
+          </div>
+
+          <div className="relative flex-1 min-w-[140px]">
             <Search
               size={16}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
@@ -344,9 +417,22 @@ export const LeadersGrid = () => {
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
+
+          {viewMode === 'cards' && (
+            <SortControl value={sortBy} onChange={setSortBy} options={LEADER_SORT_OPTIONS} />
+          )}
+
+          <ViewToggle mode={viewMode} onChange={setViewMode} />
         </div>
       </div>
 
+      {/* Results count */}
+      <p className="text-xs text-muted-foreground">
+        {filteredLeaders.length} leader{filteredLeaders.length !== 1 ? 's' : ''}
+        {activeCategory !== 'All' && ` in ${activeCategory}`}
+      </p>
+
+      {/* Not found toast */}
       <AnimatePresence>
         {notFoundMessage && (
           <motion.div
@@ -361,31 +447,65 @@ export const LeadersGrid = () => {
         )}
       </AnimatePresence>
 
+      {/* Empty state */}
       {filteredLeaders.length === 0 && (
         <EmptyState
           icon={<Users size={32} />}
           title="No leaders found"
-          description="Try adjusting the region, country, sector, or search query."
+          description="Try adjusting the category, sector, region, country, or search query."
         />
       )}
-      <div
-        ref={gridRef}
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
-      >
-        {filteredLeaders.map((leader) => (
-          <div
-            key={leader.id}
-            id={`leader-${leader.name.replace(/\s+/g, '-')}`}
-            className={
-              highlightedLeader === leader.name
-                ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
-                : ''
-            }
-          >
-            <LeaderCard leader={leader} />
+
+      {/* Content area */}
+      {filteredLeaders.length > 0 && viewMode === 'cards' ? (
+        <div
+          ref={gridRef}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+        >
+          {sortedLeaders.map((leader) => (
+            <div
+              key={leader.id}
+              id={`leader-${leader.name.replace(/\s+/g, '-')}`}
+              className={
+                highlightedLeader === leader.name
+                  ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                  : ''
+              }
+            >
+              <LeaderCard leader={leader} onClick={() => openDetail(leader)} />
+            </div>
+          ))}
+        </div>
+      ) : filteredLeaders.length > 0 ? (
+        <>
+          <div className="hidden md:block">
+            <LeadersTable data={filteredLeaders} onViewDetails={openDetail} />
           </div>
-        ))}
-      </div>
+          {/* Mobile fallback to cards */}
+          <div ref={gridRef} className="md:hidden grid grid-cols-1 gap-4">
+            {sortedLeaders.map((leader) => (
+              <div
+                key={leader.id}
+                id={`leader-${leader.name.replace(/\s+/g, '-')}`}
+                className={
+                  highlightedLeader === leader.name
+                    ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                    : ''
+                }
+              >
+                <LeaderCard leader={leader} onClick={() => openDetail(leader)} />
+              </div>
+            ))}
+          </div>
+        </>
+      ) : null}
+
+      {/* Detail Popover */}
+      <LeaderDetailPopover
+        isOpen={!!selectedLeader}
+        onClose={() => setSelectedLeader(null)}
+        leader={selectedLeader}
+      />
     </div>
   )
 }

@@ -2,7 +2,14 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ShieldCheck, RotateCcw, PlayCircle, Zap, ClipboardList, FileBarChart } from 'lucide-react'
+import {
+  ClipboardCheck,
+  RotateCcw,
+  PlayCircle,
+  Zap,
+  ClipboardList,
+  FileBarChart,
+} from 'lucide-react'
 import { AssessWizard } from './AssessWizard'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import type { AssessmentMode } from '../../store/useAssessmentStore'
@@ -10,8 +17,7 @@ import { metadata } from '../../data/industryAssessConfig'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP, PERSONA_RECOMMENDED_MODE } from '../../data/personaConfig'
 import { Button } from '../ui/button'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
+import { PageHeader } from '../common/PageHeader'
 
 const STEP_LABELS = [
   'Industry',
@@ -144,34 +150,18 @@ export const AssessView: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-8"
-      >
-        <div className="inline-flex items-center gap-3 mb-4">
-          <div className="p-3 rounded-full bg-primary/10">
-            <ShieldCheck className="text-primary" size={28} />
-          </div>
-        </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-3">PQC Risk Assessment</h1>
-        <p className="text-muted-foreground max-w-xl mx-auto">
-          Answer a few questions to get a personalized quantum risk score, migration priorities, and
-          actionable recommendations for your organization.
-        </p>
-        {metadata && (
-          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-3">
-            <p>
-              Data Source: {metadata.filename} • Updated: {metadata.lastUpdate.toLocaleDateString()}
-            </p>
-            <ShareButton
-              title="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
-              text="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
-            />
-            <GlossaryButton />
-          </div>
-        )}
-      </motion.div>
+      <PageHeader
+        icon={ClipboardCheck}
+        title="PQC Risk Assessment"
+        description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+        dataSource={
+          metadata
+            ? `${metadata.filename} • Updated: ${metadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        shareTitle="PQC Risk Assessment — Post-Quantum Cryptography Migration Tool"
+        shareText="Get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
+      />
 
       {/* Banner: assessment already complete, link to report */}
       {assessmentStatus === 'complete' && (

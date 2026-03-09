@@ -17,6 +17,7 @@ import {
   AVAILABLE_INFRASTRUCTURE,
 } from '../../hooks/assessmentData'
 import type { AssessmentInput } from '../../hooks/assessmentTypes'
+import { PageHeader } from '../common/PageHeader'
 
 const VALID_SENSITIVITIES = new Set(['low', 'medium', 'high', 'critical'])
 const VALID_MIGRATIONS = new Set(['started', 'planning', 'not-started', 'unknown'])
@@ -234,6 +235,13 @@ export const ReportView: React.FC = () => {
 
   return (
     <div className="animate-fade-in">
+      <PageHeader
+        icon={FileBarChart}
+        title="PQC Assessment Report"
+        description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
+        shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"
+        shareText="View your personalized PQC risk score, migration priorities, and actionable recommendations."
+      />
       {/* Banner when assessment is in-progress */}
       {assessmentStatus === 'in-progress' && (
         <motion.div

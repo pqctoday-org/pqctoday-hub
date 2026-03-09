@@ -108,7 +108,7 @@ describe('LeadersGrid', () => {
   it('renders the header and description', () => {
     render(<LeadersGrid />)
     expect(screen.getByText('Transformation Leaders')).toBeInTheDocument()
-    expect(screen.getByText(/Meet the visionaries/)).toBeInTheDocument()
+    expect(screen.getByText(/Visionaries and organizations/)).toBeInTheDocument()
   })
 
   it('renders a grid of leaders', () => {
@@ -129,9 +129,8 @@ describe('LeadersGrid', () => {
     expect(screen.getByText('"Leading PQC research."')).toBeInTheDocument()
     expect(screen.getByText('Private Sector')).toBeInTheDocument()
 
-    // Check for social links
-    expect(screen.getByText('Website')).toBeInTheDocument()
-    expect(screen.getByText('LinkedIn')).toBeInTheDocument()
+    // Social links moved to detail popover — verify Info button exists
+    expect(screen.getAllByLabelText(/View details for/)).toBeTruthy()
   })
 
   it('renders fallback icon when no image url provided', () => {

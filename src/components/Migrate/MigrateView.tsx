@@ -14,7 +14,6 @@ import {
   Search,
   X,
   ArrowRightLeft,
-  CheckSquare,
   ChevronDown,
   ChevronUp,
   PackageSearch,
@@ -23,10 +22,7 @@ import {
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
 import type { MigrationStep, SoftwareItem } from '../../types/MigrateTypes'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useMigrateSelectionStore } from '../../store/useMigrateSelectionStore'
@@ -434,47 +430,20 @@ export const MigrateView: React.FC = () => {
 
   return (
     <div className="space-y-8">
-      {/* Page Header */}
-      <div className="text-center mb-2 md:mb-12">
-        <h2 className="text-lg md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
-          <ArrowRightLeft className="w-5 h-5 md:w-9 md:h-9 text-primary" aria-hidden="true" />
-          PQC Migration Guide
-        </h2>
-        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance.
-        </p>
-        {/* Mobile-only: icon buttons cluster — desktop gets these inside the metadata row below */}
-        <div className="flex lg:hidden items-center justify-center gap-2 mb-2">
-          <SourcesButton viewType="Migrate" />
-          <ShareButton
-            title="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
-            text="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
-          />
-          <GlossaryButton />
-          <ExportButton onExport={handleExportCsv} />
-        </div>
-        {softwareMetadata && (
-          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-            <p>
-              Data Source: {softwareMetadata.filename} • Updated:{' '}
-              {softwareMetadata.lastUpdate.toLocaleDateString()}
-            </p>
-            {myProducts.length > 0 && (
-              <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-sans">
-                <CheckSquare size={12} />
-                {myProducts.length} selected
-              </span>
-            )}
-            <SourcesButton viewType="Migrate" />
-            <ShareButton
-              title="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
-              text="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
-            />
-            <GlossaryButton />
-            <ExportButton onExport={handleExportCsv} />
-          </div>
-        )}
-      </div>
+      <PageHeader
+        icon={ArrowRightLeft}
+        title="PQC Migration Guide"
+        description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
+        dataSource={
+          softwareMetadata
+            ? `${softwareMetadata.filename} • Updated: ${softwareMetadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        viewType="Migrate"
+        shareTitle="PQC Migration Guide — 7-Phase Framework for Post-Quantum Readiness"
+        shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
+        onExport={handleExportCsv}
+      />
 
       {/* Migration Workflow Hero — collapsible */}
       <div>

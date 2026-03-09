@@ -12,7 +12,6 @@ import {
   Radio,
   Stethoscope,
   Shield,
-  ShieldAlert,
   Car,
   AlertOctagon,
   AlertCircle,
@@ -30,9 +29,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
+import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 
@@ -233,28 +230,15 @@ export const ThreatsDashboard: React.FC = () => {
 
   return (
     <div>
-      <div className="text-center mb-2 md:mb-12">
-        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-3">
-          <ShieldAlert className="text-primary shrink-0" size={32} />
-          Quantum Threats
-        </h2>
-        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          Detailed analysis of quantum threats across industries, including criticality, at-risk
-          cryptography, and PQC replacements.
-        </p>
-        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-          <p>
-            Data Source: {threatsMetadata?.filename || 'quantum_threats_hsm_industries.csv'} •
-            Updated: {threatsMetadata?.lastUpdate?.toLocaleDateString() || 'Unknown'}
-          </p>
-          <SourcesButton viewType="Threats" />
-          <ShareButton
-            title="Quantum Threats Dashboard — Industry Risk Analysis"
-            text="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
-          />
-          <GlossaryButton />
-        </div>
-      </div>
+      <PageHeader
+        icon={AlertTriangle}
+        title="Quantum Threats"
+        description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
+        dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
+        viewType="Threats"
+        shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
+        shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
+      />
 
       {/* Persona summary card */}
       {personaSummary && (

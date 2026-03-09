@@ -86,25 +86,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Local AI assistant</strong> &mdash; Run the
-                    PQC assistant entirely in your browser with Qwen 3 models &mdash; no API key, no
-                    cloud, fully private
+                    <strong className="text-foreground">Full SEO coverage</strong> &mdash; All 48
+                    learning modules now have rich metadata, structured data, and sitemap entries
+                    for better search visibility
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Key Wrap / Unwrap tab</strong> &mdash;
-                    Dedicated HSM tab with AES-KW, AES-KWP, AES-GCM, and RSA-OAEP key wrapping
-                    mechanisms
+                    <strong className="text-foreground">Migration catalog UX</strong> &mdash;
+                    Framework section collapsed by default for faster access to the software catalog
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">PKCS#11 attribute controls</strong> &mdash;
-                    Toggle CKA_EXTRACTABLE, CKA_WRAP, CKA_DERIVE and more on every key generation
-                    form
+                    <strong className="text-foreground">Cleaner navigation</strong> &mdash; Removed
+                    the return banner for a less cluttered browsing experience
                   </span>
                 </li>
               </ul>

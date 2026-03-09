@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { User, Building2, Briefcase } from 'lucide-react'
+import { User, Building2, Briefcase, Info } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
@@ -9,9 +9,10 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 
 interface LeaderCardProps {
   leader: Leader
+  onClick?: () => void
 }
 
-export const LeaderCard = ({ leader }: LeaderCardProps) => {
+export const LeaderCard = ({ leader, onClick }: LeaderCardProps) => {
   const [hasError, setHasError] = useState(false)
 
   return (
@@ -81,95 +82,20 @@ export const LeaderCard = ({ leader }: LeaderCardProps) => {
         ))}
       </div>
 
-      <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4">
+      <p className="text-sm text-muted-foreground leading-relaxed border-t border-border pt-4 mb-4 line-clamp-3">
         "{leader.bio}"
       </p>
 
-      {leader.keyResourceUrl && (
-        <div className="mb-4 p-3 rounded-lg bg-muted/20 border border-border">
-          <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
-            Key Resource
-          </p>
-          <a
-            href={leader.keyResourceUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2 truncate"
-            title={leader.keyResourceUrl}
+      <div className="flex items-center justify-end gap-2 mt-auto pt-2 border-t border-border">
+        {onClick && (
+          <button
+            onClick={onClick}
+            className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
+            aria-label={`View details for ${leader.name}`}
           >
-            <span className="truncate">View Resource</span>
-            <svg width="12" height="12" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-              />
-            </svg>
-          </a>
-        </div>
-      )}
-
-      {(leader.websiteUrl || leader.linkedinUrl) && (
-        <div className="flex flex-wrap gap-3 pt-4 border-t border-border">
-          {leader.websiteUrl && (
-            <a
-              href={leader.websiteUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit ${leader.name}'s website (opens in new window)`}
-              className="flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all group"
-            >
-              <svg
-                width="14"
-                height="14"
-                className="group-hover:scale-110 transition-transform"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <title>Website icon</title>
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"
-                />
-              </svg>
-              Website
-            </a>
-          )}
-          {leader.linkedinUrl && (
-            <a
-              href={leader.linkedinUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`Visit ${leader.name}'s LinkedIn profile (opens in new window)`}
-              className="flex items-center gap-2 px-3 py-2 min-h-[44px] rounded-lg bg-status-info hover:bg-primary/20 border-status-info/50 hover:border-primary/40 text-status-info text-xs font-medium transition-all group"
-            >
-              <svg
-                width="14"
-                height="14"
-                className="group-hover:scale-110 transition-transform"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-                aria-hidden="true"
-              >
-                <title>LinkedIn icon</title>
-                <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-              </svg>
-              LinkedIn
-            </a>
-          )}
-        </div>
-      )}
-      <div
-        className={clsx(
-          'flex justify-end mt-auto',
-          leader.websiteUrl || leader.linkedinUrl ? 'pt-2' : 'pt-4 border-t border-border'
+            <Info size={16} />
+          </button>
         )}
-      >
         <AskAssistantButton
           variant="text"
           label={`Ask about ${leader.name}`}

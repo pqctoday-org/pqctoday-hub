@@ -177,6 +177,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/assess`,
   },
 
+  '/report': {
+    title: 'PQC Assessment Report — Personalized Quantum Risk Analysis | PQC Today',
+    description:
+      'View your personalized PQC risk assessment report with migration roadmap, compliance gap analysis, threat landscape, and actionable recommendations.',
+    canonical: `${BASE_URL}/report`,
+  },
+
   '/threats': {
     title: 'Quantum Threat Dashboard — Cryptographic Risk Timeline | PQC Today',
     description:
@@ -230,14 +237,14 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       '@type': 'Course',
       name: 'Post-Quantum Cryptography Learning Path',
       description:
-        '27 interactive modules covering PQC fundamentals, protocols, infrastructure, and applications with real cryptographic operations.',
+        '48 interactive modules covering PQC fundamentals, protocols, infrastructure, applications, industry verticals, and role-based guides with real cryptographic operations.',
       provider: { '@type': 'Organization', name: 'PQC Today', url: BASE_URL },
       isAccessibleForFree: true,
-      numberOfCredits: 27,
+      numberOfCredits: 48,
       hasCourseInstance: {
         '@type': 'CourseInstance',
         courseMode: 'online',
-        courseWorkload: 'PT34H',
+        courseWorkload: 'PT61H',
       },
     },
   },
@@ -464,6 +471,200 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/learn/data-asset-sensitivity`,
     structuredData: buildModuleSchema(
       'Data & Asset Sensitivity Assessment',
+      'PT75M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/standards-bodies': {
+    title: 'Standards, Certification & Compliance Bodies — NIST, ISO, ETSI, CCRA | PQC Today',
+    description:
+      'Understand who creates PQC standards, who certifies products, and who mandates compliance. Explore 12 organizations across standards development, certification, and regulatory enforcement.',
+    canonical: `${BASE_URL}/learn/standards-bodies`,
+    structuredData: buildModuleSchema(
+      'Standards, Certification & Compliance Bodies',
+      'PT60M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/confidential-computing': {
+    title: 'Confidential Computing & TEEs — SGX, SEV-SNP, ARM CCA & PQC | PQC Today',
+    description:
+      'Explore Trusted Execution Environments for PQC: Intel SGX, AMD SEV-SNP, ARM CCA architectures, remote attestation flows, sealing key migration, and quantum threat timelines for TEE-based systems.',
+    canonical: `${BASE_URL}/learn/confidential-computing`,
+    structuredData: buildModuleSchema('Confidential Computing & TEEs', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/web-gateway-pqc': {
+    title: 'Web Gateway PQC — CDN, WAF, Load Balancer & Reverse Proxy Migration | PQC Today',
+    description:
+      'Plan PQC migration for web infrastructure: CDN edge TLS, WAF inspection with ML-KEM, load balancer cipher suite updates, and reverse proxy certificate chain management.',
+    canonical: `${BASE_URL}/learn/web-gateway-pqc`,
+    structuredData: buildModuleSchema('Web Gateway PQC', 'PT90M', 'Intermediate'),
+  },
+
+  '/learn/emv-payment-pqc': {
+    title: 'EMV Payment Systems & PQC — Card Auth, Tokenization & DUKPT Migration | PQC Today',
+    description:
+      'Post-quantum migration for payment ecosystems: EMV SDA/DDA/CDA authentication, Visa/Mastercard tokenization, POS terminal upgrades, DUKPT key injection, and FN-DSA for constrained cards.',
+    canonical: `${BASE_URL}/learn/emv-payment-pqc`,
+    structuredData: buildModuleSchema('EMV Payment Systems & PQC', 'PT120M', 'Advanced'),
+  },
+
+  '/learn/crypto-dev-apis': {
+    title: 'Cryptographic APIs & Developer Languages — JCA, OpenSSL EVP, PKCS#11, CNG | PQC Today',
+    description:
+      'Master PQC integration across 7 languages and 5 crypto APIs: JCA/JCE, OpenSSL EVP, PKCS#11, CNG, and Bouncy Castle. Provider patterns, build-vs-buy analysis, and crypto agility patterns.',
+    canonical: `${BASE_URL}/learn/crypto-dev-apis`,
+    structuredData: buildModuleSchema(
+      'Cryptographic APIs & Developer Languages',
+      'PT120M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/platform-eng-pqc': {
+    title:
+      'Platform Engineering & PQC — CI/CD Crypto Inventory, Container Signing & Policy | PQC Today',
+    description:
+      'Migrate your platform to post-quantum: CI/CD pipeline crypto inventory, container signing with ML-DSA via cosign/Notation, IaC defaults, OPA/Kyverno policy enforcement, and crypto posture monitoring.',
+    canonical: `${BASE_URL}/learn/platform-eng-pqc`,
+    structuredData: buildModuleSchema('Platform Engineering & PQC', 'PT120M', 'Advanced'),
+  },
+
+  '/learn/energy-utilities-pqc': {
+    title: 'Energy & Utilities PQC — SCADA, Smart Grid & IEC 62351 Migration | PQC Today',
+    description:
+      'Post-quantum cryptography for energy infrastructure: SCADA/ICS protocols, smart grid security, IEC 62351 compliance, substation automation, and OT network migration planning.',
+    canonical: `${BASE_URL}/learn/energy-utilities-pqc`,
+    structuredData: buildModuleSchema('Energy & Utilities PQC', 'PT90M', 'Intermediate'),
+  },
+
+  '/learn/healthcare-pqc': {
+    title: 'Healthcare PQC — HIPAA, HL7 FHIR, Medical Device & EHR Migration | PQC Today',
+    description:
+      'Post-quantum migration for healthcare: HIPAA compliance, HL7 FHIR API security, medical device firmware signing, EHR encryption, and clinical data protection strategies.',
+    canonical: `${BASE_URL}/learn/healthcare-pqc`,
+    structuredData: buildModuleSchema('Healthcare PQC', 'PT90M', 'Intermediate'),
+  },
+
+  '/learn/aerospace-space-pqc': {
+    title: 'Aerospace & Space PQC — Satellite Comms, CCSDS & DO-326A Migration | PQC Today',
+    description:
+      'Post-quantum cryptography for aerospace: satellite communication links, CCSDS protocol security, DO-326A airworthiness, ground station upgrades, and long-lifecycle mission planning.',
+    canonical: `${BASE_URL}/learn/aerospace-space-pqc`,
+    structuredData: buildModuleSchema('Aerospace & Space PQC', 'PT120M', 'Advanced'),
+  },
+
+  '/learn/automotive-pqc': {
+    title: 'Automotive PQC — V2X, AUTOSAR, ISO 21434 & ECU Migration | PQC Today',
+    description:
+      'Post-quantum migration for automotive: V2X communication security, AUTOSAR crypto stack, ISO 21434 compliance, ECU firmware signing, and connected vehicle PKI.',
+    canonical: `${BASE_URL}/learn/automotive-pqc`,
+    structuredData: buildModuleSchema('Automotive PQC', 'PT120M', 'Advanced'),
+  },
+
+  '/learn/exec-quantum-impact': {
+    title: 'Executive Quantum Impact Guide — PQC Strategy for Business Leaders | PQC Today',
+    description:
+      'A 30-minute executive briefing on quantum computing threats to your business. Understand HNDL risks, regulatory deadlines, budget implications, and board-level action items.',
+    canonical: `${BASE_URL}/learn/exec-quantum-impact`,
+    structuredData: buildModuleSchema('Executive Quantum Impact Guide', 'PT30M', 'Beginner'),
+  },
+
+  '/learn/dev-quantum-impact': {
+    title: 'Developer Quantum Impact Guide — PQC for Software Engineers | PQC Today',
+    description:
+      'A 30-minute developer guide to post-quantum cryptography. Learn which libraries support PQC, how to integrate ML-KEM/ML-DSA, and what changes in your code.',
+    canonical: `${BASE_URL}/learn/dev-quantum-impact`,
+    structuredData: buildModuleSchema('Developer Quantum Impact Guide', 'PT30M', 'Beginner'),
+  },
+
+  '/learn/arch-quantum-impact': {
+    title: 'Architect Quantum Impact Guide — PQC System Design Decisions | PQC Today',
+    description:
+      'A 30-minute architect guide to post-quantum system design. Crypto agility patterns, hybrid deployment strategies, and infrastructure migration sequencing.',
+    canonical: `${BASE_URL}/learn/arch-quantum-impact`,
+    structuredData: buildModuleSchema('Architect Quantum Impact Guide', 'PT30M', 'Beginner'),
+  },
+
+  '/learn/ops-quantum-impact': {
+    title: 'Operations Quantum Impact Guide — PQC for IT & Security Ops | PQC Today',
+    description:
+      'A 30-minute operations guide to PQC migration. Certificate rotation, HSM firmware updates, monitoring for algorithm deprecation, and incident response planning.',
+    canonical: `${BASE_URL}/learn/ops-quantum-impact`,
+    structuredData: buildModuleSchema('Operations Quantum Impact Guide', 'PT30M', 'Beginner'),
+  },
+
+  '/learn/research-quantum-impact': {
+    title: 'Researcher Quantum Impact Guide — PQC for Security Researchers | PQC Today',
+    description:
+      'A 30-minute guide for security researchers on post-quantum cryptography. Lattice-based security proofs, side-channel considerations, and open research questions.',
+    canonical: `${BASE_URL}/learn/research-quantum-impact`,
+    structuredData: buildModuleSchema('Researcher Quantum Impact Guide', 'PT30M', 'Beginner'),
+  },
+
+  '/learn/ai-security-pqc': {
+    title:
+      'AI Security & PQC — Model Protection, Federated Learning & ML Pipeline Security | PQC Today',
+    description:
+      'Post-quantum security for AI systems: model weight encryption, federated learning channel protection, ML pipeline integrity, inference API authentication, and adversarial robustness in a quantum era.',
+    canonical: `${BASE_URL}/learn/ai-security-pqc`,
+    structuredData: buildModuleSchema('AI Security & PQC', 'PT120M', 'Advanced'),
+  },
+
+  '/learn/secrets-management-pqc': {
+    title: 'Secrets Management & PQC — Vault, AWS, Azure & GCP Migration | PQC Today',
+    description:
+      'Post-quantum secrets management: HashiCorp Vault transit encryption, AWS/Azure/GCP secrets migration, rotation policy design, and CI/CD pipeline integration with PQC-safe key wrapping.',
+    canonical: `${BASE_URL}/learn/secrets-management-pqc`,
+    structuredData: buildModuleSchema('Secrets Management & PQC', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/network-security-pqc': {
+    title: 'Network Security & PQC — NGFW, TLS Inspection, IDS/IPS & ZTNA | PQC Today',
+    description:
+      'Post-quantum network security: next-gen firewall cipher analysis, TLS inspection with ML-KEM, IDS/IPS signature updates, vendor migration matrices, and Zero Trust Network Access with PQC.',
+    canonical: `${BASE_URL}/learn/network-security-pqc`,
+    structuredData: buildModuleSchema('Network Security & PQC Migration', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/database-encryption-pqc': {
+    title: 'Database Encryption & PQC — TDE, CLE, Queryable Encryption & BYOK | PQC Today',
+    description:
+      'Post-quantum database encryption: TDE migration planning, column-level encryption with ML-KEM, queryable encryption patterns, BYOK/HYOK key management, and database vendor readiness.',
+    canonical: `${BASE_URL}/learn/database-encryption-pqc`,
+    structuredData: buildModuleSchema('Database Encryption & PQC', 'PT75M', 'Intermediate'),
+  },
+
+  '/learn/iam-pqc': {
+    title: 'Identity & Access Management with PQC — JWT, SAML, OIDC & Zero Trust | PQC Today',
+    description:
+      'Post-quantum IAM migration: JWT/SAML/OIDC token signing with ML-DSA, Active Directory and LDAP upgrades, vendor readiness scoring, and Zero Trust identity architecture.',
+    canonical: `${BASE_URL}/learn/iam-pqc`,
+    structuredData: buildModuleSchema(
+      'Identity & Access Management with PQC',
+      'PT90M',
+      'Intermediate'
+    ),
+  },
+
+  '/learn/secure-boot-pqc': {
+    title: 'Secure Boot & Firmware PQC — UEFI, TPM 2.0, DICE & ML-DSA Signing | PQC Today',
+    description:
+      'Post-quantum secure boot: UEFI PK/KEK/db key migration to ML-DSA, TPM 2.0 key hierarchy, DICE attestation, firmware vendor readiness, and boot chain integrity verification.',
+    canonical: `${BASE_URL}/learn/secure-boot-pqc`,
+    structuredData: buildModuleSchema('Secure Boot & Firmware PQC', 'PT90M', 'Advanced'),
+  },
+
+  '/learn/os-pqc': {
+    title: 'Operating System & Platform Crypto PQC — OpenSSL, SSH, GnuTLS & FIPS | PQC Today',
+    description:
+      'Post-quantum OS crypto migration: OpenSSL provider architecture, SSH host key migration, GnuTLS/Schannel policy configuration, package signing, and FIPS 140-3 compatibility across RHEL, Ubuntu, Windows Server, and more.',
+    canonical: `${BASE_URL}/learn/os-pqc`,
+    structuredData: buildModuleSchema(
+      'Operating System & Platform Crypto PQC',
       'PT75M',
       'Intermediate'
     ),

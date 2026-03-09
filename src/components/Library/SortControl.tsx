@@ -1,23 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
+/* eslint-disable react-refresh/only-export-components */
 import { ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'
 import { useState, useRef, useEffect } from 'react'
 
 export type SortOption = 'newest' | 'name' | 'referenceId' | 'urgency'
 
-interface SortControlProps {
-  value: SortOption
-  onChange: (value: SortOption) => void
-}
-
-const SORT_OPTIONS: { id: SortOption; label: string }[] = [
+export const LIBRARY_SORT_OPTIONS: { id: SortOption; label: string }[] = [
   { id: 'newest', label: 'Newest first' },
   { id: 'name', label: 'Name A-Z' },
   { id: 'referenceId', label: 'Reference ID' },
   { id: 'urgency', label: 'Urgency' },
 ]
 
-export const SortControl = ({ value, onChange }: SortControlProps) => {
+interface SortControlProps<T extends string = SortOption> {
+  value: T
+  onChange: (value: T) => void
+  options?: { id: T; label: string }[]
+}
+
+export function SortControl<T extends string = SortOption>({
+  value,
+  onChange,
+  options,
+}: SortControlProps<T>) {
+  const items = (options ?? LIBRARY_SORT_OPTIONS) as { id: T; label: string }[]
   const [isOpen, setIsOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -31,7 +38,7 @@ export const SortControl = ({ value, onChange }: SortControlProps) => {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [isOpen])
 
-  const selected = SORT_OPTIONS.find((o) => o.id === value)
+  const selected = items.find((o) => o.id === value)
 
   return (
     <div className="relative" ref={ref}>
@@ -51,7 +58,7 @@ export const SortControl = ({ value, onChange }: SortControlProps) => {
           aria-label="Sort by"
           className="absolute top-full right-0 mt-1 w-40 bg-popover border border-border rounded-lg shadow-xl overflow-hidden z-50"
         >
-          {SORT_OPTIONS.map((option) => (
+          {items.map((option) => (
             <button
               key={option.id}
               role="option"

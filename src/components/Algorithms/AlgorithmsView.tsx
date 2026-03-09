@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { AlgorithmComparison } from './AlgorithmComparison'
 import { AlgorithmDetailedComparison } from './AlgorithmDetailedComparison'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ArrowRight, BarChart3, Info } from 'lucide-react'
+import { ArrowRight, BarChart3, Shield } from 'lucide-react'
 import {
   loadPQCAlgorithmsData,
   loadedFileMetadata,
@@ -13,14 +13,10 @@ import {
 } from '../../data/pqcAlgorithmsData'
 import { loadAlgorithmsData, loadedTransitionMetadata } from '../../data/algorithmsData'
 import { Skeleton } from '../ui/skeleton'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
-import { Button } from '../ui/button'
 
 export function AlgorithmsView() {
   const [searchParams] = useSearchParams()
@@ -65,44 +61,20 @@ export function AlgorithmsView() {
 
   return (
     <div>
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="text-center mb-2 md:mb-12"
-      >
-        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">
-          Post-Quantum Cryptography Algorithms
-        </h2>
-        <p className="hidden lg:block text-lg text-muted-foreground max-w-3xl mx-auto">
-          Migration from classical to post-quantum cryptographic algorithms
-        </p>
-        <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono mt-1 md:mt-2">
-          <p>
-            Data Sources: {transitionMetadata?.filename || 'algorithms_transitions.csv'},{' '}
-            {metadata?.filename || 'pqc_complete_algorithm_reference.csv'} • Updated:{' '}
-            {metadata?.date
-              ? metadata.date.toLocaleDateString()
-              : transitionMetadata?.date
-                ? transitionMetadata.date.toLocaleDateString()
-                : new Date().toLocaleDateString()}
-          </p>
-          <SourcesButton viewType="Algorithms" />
-          <Button
-            variant="ghost"
-            onClick={() => setInfoOpen(true)}
-            className="p-1 h-auto w-auto rounded hover:bg-muted/30 text-muted-foreground hover:text-foreground"
-            aria-label="About this data"
-          >
-            <Info size={14} />
-          </Button>
-          <ShareButton
-            title="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
-            text="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
-          />
-          <GlossaryButton />
-          <ExportButton onExport={handleExportCsv} />
-        </div>
-      </motion.div>
+      <PageHeader
+        icon={Shield}
+        title="Post-Quantum Cryptography Algorithms"
+        description="Migration from classical to post-quantum cryptographic algorithms"
+        dataSource={
+          `Data Sources: ${transitionMetadata?.filename ?? 'algorithms_transitions.csv'}, ` +
+          `${metadata?.filename ?? 'pqc_complete_algorithm_reference.csv'} • Updated: ` +
+          `${(metadata?.date ?? transitionMetadata?.date ?? new Date()).toLocaleDateString()}`
+        }
+        viewType="Algorithms"
+        shareTitle="PQC Algorithm Comparison — ML-KEM, ML-DSA, SLH-DSA & More"
+        shareText="Compare 42 post-quantum cryptographic algorithms side-by-side — security levels, key sizes, and performance."
+        onExport={handleExportCsv}
+      />
 
       {/* Loading skeleton */}
       {isLoading && (
@@ -144,7 +116,10 @@ export function AlgorithmsView() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <AlgorithmDetailedComparison highlightAlgorithms={highlightAlgorithms} />
+              <AlgorithmDetailedComparison
+                highlightAlgorithms={highlightAlgorithms}
+                onInfoOpen={() => setInfoOpen(true)}
+              />
             </motion.div>
           </TabsContent>
         </Tabs>

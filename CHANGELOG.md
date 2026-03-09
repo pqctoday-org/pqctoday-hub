@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.6] - 2026-03-08
+
+### Changed
+
+- **SEO metadata for all 48 learning modules**: Added per-route titles, descriptions, canonical URLs, and `LearningResource` structured data (schema.org) for 22 previously missing modules — industries, role guides, infrastructure, and applications tracks. Updated `/learn` hub Course schema from 27 to 48 modules (PT61H total). Added `/report` and `/business` routes to sitemap. All `lastmod` dates updated. [view:/learn]
+- **Migration framework collapsed by default**: The migration workflow hero section on `/migrate` now starts collapsed, giving immediate focus to the software catalog. Users can expand it with the toggle button. [view:/migrate]
+
+### Fixed
+
+- **Removed ReturnBanner navigation**: Removed the "Back to Business Center" banner that appeared on every page after visiting the Business Center — reduced visual clutter across all views. [view:/]
+
 ## [2.34.5] - 2026-03-08
 
 ### Changed

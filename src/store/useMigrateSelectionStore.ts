@@ -37,7 +37,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       activeSubCategory: 'All',
       myProducts: [],
       viewMode: 'stack' as MigrateViewMode,
-      workflowCollapsed: false,
+      workflowCollapsed: true,
 
       hideProduct: (key) =>
         set((state) => ({
@@ -72,7 +72,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 4,
+      version: 5,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -92,6 +92,10 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             state.viewMode = 'stack'
           }
           state.workflowCollapsed = state.workflowCollapsed ?? false
+        }
+        if (version < 5) {
+          // v4 → v5: default workflowCollapsed to true (hide by default)
+          state.workflowCollapsed = true
         }
         return state
       },

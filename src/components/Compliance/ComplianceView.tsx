@@ -15,13 +15,9 @@ import {
   Scale,
   ExternalLink,
   FileText,
-  CheckSquare,
 } from 'lucide-react'
 import { logComplianceFilter } from '../../utils/analytics'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
-import { SourcesButton } from '../ui/SourcesButton'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { COMPLIANCE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -281,41 +277,20 @@ export const ComplianceView = () => {
 
   return (
     <div className="space-y-6 animate-fade-in">
-      {/* Header Section */}
-      <div className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gradient flex items-center gap-3 flex-wrap">
-            <ShieldCheck className="w-7 h-7 sm:w-8 sm:h-8 text-primary shrink-0" />
-            Standardization, Compliance and Certification
-          </h1>
-        </div>
-        <p className="text-muted-foreground max-w-3xl">
-          Explore the three pillars of PQC compliance: standardization bodies that define the
-          algorithms, certification bodies that validate implementations, and compliance frameworks
-          that mandate adoption.
-        </p>
-        <div className="hidden md:flex items-center justify-center gap-3 text-xs text-muted-foreground/60 font-mono">
-          {complianceMetadata && (
-            <p>
-              Data Source: {complianceMetadata.filename} • Updated:{' '}
-              {complianceMetadata.lastUpdate.toLocaleDateString()}
-            </p>
-          )}
-          {myFrameworks.length > 0 && (
-            <span className="inline-flex items-center gap-1 text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary border border-primary/20 font-sans">
-              <CheckSquare size={12} />
-              {myFrameworks.length} selected
-            </span>
-          )}
-          <SourcesButton viewType="Compliance" />
-          <ShareButton
-            title="PQC Compliance Tracker — Standards, Certifications, Frameworks"
-            text="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
-          />
-          <GlossaryButton />
-          <ExportButton onExport={handleExportCsv} />
-        </div>
-      </div>
+      <PageHeader
+        icon={ShieldCheck}
+        title="Standardization, Compliance and Certification"
+        description="Explore the three pillars of PQC compliance: standardization bodies that define the algorithms, certification bodies that validate implementations, and compliance frameworks that mandate adoption."
+        dataSource={
+          complianceMetadata
+            ? `${complianceMetadata.filename} • Updated: ${complianceMetadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        viewType="Compliance"
+        shareTitle="PQC Compliance Tracker — Standards, Certifications, Frameworks"
+        shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
+        onExport={handleExportCsv}
+      />
 
       {/* Persona/industry context hint */}
       {complianceHint && complianceHintLabel && (

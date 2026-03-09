@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback } from 'react'
 import { LayoutDashboard, ClipboardCheck, ShieldCheck, BookOpen } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { ShareButton } from '@/components/ui/ShareButton'
-import { GlossaryButton } from '@/components/ui/GlossaryButton'
+import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
@@ -82,11 +81,6 @@ export function BusinessCenterView() {
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
 
-  // Mark Business Center as origin for ReturnBanner navigation
-  useEffect(() => {
-    sessionStorage.setItem('pqc-return-to', '/business')
-  }, [])
-
   // Drawer state
   const [drawerDoc, setDrawerDoc] = useState<ExecutiveDocument | null>(null)
   const [drawerMode, setDrawerMode] = useState<DrawerMode>('view')
@@ -120,22 +114,13 @@ export function BusinessCenterView() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
-      {/* Page header */}
-      <div className="flex flex-col sm:flex-row sm:items-center gap-4 mb-4">
-        <div className="flex items-center gap-3 flex-1">
-          <LayoutDashboard className="text-primary shrink-0" size={28} />
-          <div>
-            <h1 className="text-2xl font-bold text-gradient">Business Center</h1>
-            <p className="text-sm text-muted-foreground">
-              Your PQC readiness command center — risk, compliance, governance, and next steps
-            </p>
-          </div>
-        </div>
-        <div className="hidden sm:flex items-center gap-2">
-          <ShareButton title="Business Center" />
-          <GlossaryButton />
-        </div>
-      </div>
+      <PageHeader
+        icon={LayoutDashboard}
+        title="Business Center"
+        description="Your PQC readiness command center — risk, compliance, governance, and next steps."
+        shareTitle="PQC Business Center — Quantum Readiness Command Center"
+        shareText="Your PQC readiness command center — risk, compliance, governance, and actionable next steps."
+      />
 
       <ContextBanner
         industry={metrics.industry}

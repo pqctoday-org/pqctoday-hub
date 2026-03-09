@@ -8,9 +8,7 @@ import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
 import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
 import { LogsTab } from './LogsTab'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { SourcesButton } from '../ui/SourcesButton'
+import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
 
 import { useOpenSSLStore } from './store'
@@ -79,23 +77,14 @@ export const OpenSSLStudioView = () => {
 
   return (
     <div className="h-full flex flex-col animate-fade-in">
-      <div className="mb-6 shrink-0">
-        <h2 className="text-3xl md:text-4xl font-bold text-gradient mb-2 flex items-center gap-3">
-          <Terminal className="text-primary" aria-hidden="true" />
-          OpenSSL Studio
-        </h2>
-        <p className="text-muted-foreground">
-          Interactive OpenSSL v3.6.0 environment running entirely in your browser via WebAssembly.
-        </p>
-        <div className="hidden md:flex items-center gap-2 mt-2">
-          <SourcesButton viewType="Library" />
-          <ShareButton
-            title="OpenSSL Studio — Interactive OpenSSL v3.6.0 in Your Browser"
-            text="Run real OpenSSL 3.6.0 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
-          />
-          <GlossaryButton />
-        </div>
-      </div>
+      <PageHeader
+        icon={Terminal}
+        title="OpenSSL Studio"
+        description="Interactive OpenSSL v3.6.0 environment running entirely in your browser via WebAssembly."
+        viewType="Library"
+        shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.0 in Your Browser"
+        shareText="Run real OpenSSL 3.6.0 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
+      />
 
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
         {/* Left Pane: Workbench (Command Builder & Preview) */}

@@ -53,10 +53,12 @@ function getPerformanceMultiplier(cycles: string): number {
 
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
+  onInfoOpen?: () => void
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
   highlightAlgorithms,
+  onInfoOpen,
 }) => {
   const [algorithms, setAlgorithms] = useState<AlgorithmDetail[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -174,24 +176,37 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
 
       {/* Tabs */}
       <Tabs defaultValue="performance">
-        <TabsList className="mb-4 bg-muted/50 border border-border">
-          <TabsTrigger value="performance" className="flex items-center gap-2">
-            <Zap size={16} />
-            <span className="hidden sm:inline">Performance</span>
-          </TabsTrigger>
-          <TabsTrigger value="security" className="flex items-center gap-2">
-            <Shield size={16} />
-            <span className="hidden sm:inline">Security Levels</span>
-          </TabsTrigger>
-          <TabsTrigger value="sizes" className="flex items-center gap-2">
-            <HardDrive size={16} />
-            <span className="hidden sm:inline">Size Comparison</span>
-          </TabsTrigger>
-          <TabsTrigger value="usecases" className="flex items-center gap-2">
-            <TrendingUp size={16} />
-            <span className="hidden sm:inline">Use Cases</span>
-          </TabsTrigger>
-        </TabsList>
+        <div className="flex items-center gap-2 mb-4">
+          <TabsList className="bg-muted/50 border border-border">
+            <TabsTrigger value="performance" className="flex items-center gap-2">
+              <Zap size={16} />
+              <span className="hidden sm:inline">Performance</span>
+            </TabsTrigger>
+            <TabsTrigger value="security" className="flex items-center gap-2">
+              <Shield size={16} />
+              <span className="hidden sm:inline">Security Levels</span>
+            </TabsTrigger>
+            <TabsTrigger value="sizes" className="flex items-center gap-2">
+              <HardDrive size={16} />
+              <span className="hidden sm:inline">Size Comparison</span>
+            </TabsTrigger>
+            <TabsTrigger value="usecases" className="flex items-center gap-2">
+              <TrendingUp size={16} />
+              <span className="hidden sm:inline">Use Cases</span>
+            </TabsTrigger>
+          </TabsList>
+          {onInfoOpen && (
+            <button
+              onClick={onInfoOpen}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
+              aria-label="Performance data methodology"
+              title="About performance data"
+            >
+              <Info size={14} />
+              <span className="hidden sm:inline">About</span>
+            </button>
+          )}
+        </div>
 
         <TabsContent value="performance">
           <motion.div

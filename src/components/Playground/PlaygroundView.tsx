@@ -2,8 +2,7 @@
 import { InteractivePlayground } from './InteractivePlayground'
 import { MobilePlaygroundView } from './MobilePlaygroundView'
 import { FlaskConical } from 'lucide-react'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
+import { PageHeader } from '../common/PageHeader'
 
 export const PlaygroundView = () => {
   return (
@@ -15,23 +14,13 @@ export const PlaygroundView = () => {
 
       {/* Desktop View */}
       <div className="hidden md:block">
-        <div className="mb-2 md:mb-8">
-          <h2 className="text-xl md:text-4xl font-bold text-gradient mb-1 md:mb-2 flex items-center gap-2 md:gap-3">
-            <FlaskConical className="text-secondary w-5 h-5 md:w-8 md:h-8" aria-hidden="true" />
-            Interactive Playground
-          </h2>
-          <p className="text-muted-foreground mb-1">
-            Test ML-KEM and ML-DSA post-quantum cryptographic algorithms in real-time using
-            WebAssembly
-          </p>
-          <div className="hidden md:flex items-center gap-2">
-            <ShareButton
-              title="PQC Playground — Test ML-KEM & ML-DSA in Your Browser"
-              text="Run real post-quantum cryptographic operations in your browser — key generation, encapsulation, signing with ML-KEM and ML-DSA via WASM."
-            />
-            <GlossaryButton />
-          </div>
-        </div>
+        <PageHeader
+          icon={FlaskConical}
+          title="Interactive Playground"
+          description="Test ML-KEM and ML-DSA post-quantum cryptographic algorithms in real-time using WebAssembly."
+          shareTitle="PQC Playground — Test ML-KEM & ML-DSA in Your Browser"
+          shareText="Run real post-quantum cryptographic operations in your browser — key generation, encapsulation, signing with ML-KEM and ML-DSA via WASM."
+        />
         <InteractivePlayground />
       </div>
     </div>

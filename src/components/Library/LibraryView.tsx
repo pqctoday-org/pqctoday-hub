@@ -18,11 +18,8 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, FileSearch } from 'lucide-react'
-import { SourcesButton } from '../ui/SourcesButton'
-import { ShareButton } from '../ui/ShareButton'
-import { GlossaryButton } from '../ui/GlossaryButton'
-import { ExportButton } from '../ui/ExportButton'
+import { Search, FileSearch, BookOpen } from 'lucide-react'
+import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
@@ -464,28 +461,20 @@ export const LibraryView: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Page Header */}
-      <div className="text-center mb-2 md:mb-8">
-        <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient">PQC Library</h2>
-        <p className="hidden lg:block text-muted-foreground max-w-2xl mx-auto mb-4">
-          Explore the latest Post-Quantum Cryptography standards, drafts, and related documents.
-        </p>
-        {libraryMetadata && (
-          <div className="hidden lg:flex items-center justify-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
-            <p>
-              Data Source: {libraryMetadata.filename} • Updated:{' '}
-              {libraryMetadata.lastUpdate.toLocaleDateString()}
-            </p>
-            <SourcesButton viewType="Library" />
-            <ShareButton
-              title="PQC Library — NIST, IETF, ETSI & More"
-              text="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
-            />
-            <GlossaryButton />
-            <ExportButton onExport={handleExportCsv} />
-          </div>
-        )}
-      </div>
+      <PageHeader
+        icon={BookOpen}
+        title="PQC Library"
+        description="Explore the latest Post-Quantum Cryptography standards, drafts, and related documents."
+        dataSource={
+          libraryMetadata
+            ? `${libraryMetadata.filename} • Updated: ${libraryMetadata.lastUpdate.toLocaleDateString()}`
+            : undefined
+        }
+        viewType="Library"
+        shareTitle="PQC Library — NIST, IETF, ETSI & More"
+        shareText="Explore post-quantum cryptography standards, drafts, and key documents from NIST, IETF, ETSI, and other organizations."
+        onExport={handleExportCsv}
+      />
 
       {/* Zone 1: Activity Feed */}
       <ActivityFeed items={activityItems} onSelect={openDetail} />
