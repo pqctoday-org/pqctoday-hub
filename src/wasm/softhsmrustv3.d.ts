@@ -122,6 +122,8 @@ export function _C_SignUpdate(_h_session: number, _p_part: number, _ul_part_len:
 
 export function _C_UnwrapKey(_h_session: number, p_mechanism: number, h_unwrapping_key: number, p_wrapped_key: number, ul_wrapped_key_len: number, p_template: number, ul_attribute_count: number, ph_key: number): number;
 
+export function _C_UnwrapKeyAuthenticated(_h_session: number, p_mechanism: number, h_unwrapping_key: number, p_wrapped_key: number, ul_wrapped_key_len: number, p_template: number, ul_attribute_count: number, _p_associated_data: number, _ul_associated_data_len: number, ph_key: number): number;
+
 export function _C_Verify(h_session: number, p_data: number, ul_data_len: number, p_signature: number, ul_signature_len: number): number;
 
 export function _C_VerifyFinal(_h_session: number, _p_signature: number, _ul_signature_len: number): number;
@@ -133,6 +135,8 @@ export function _C_VerifyMessage(h_session: number, _p_param: number, _ul_param_
 export function _C_VerifyUpdate(_h_session: number, _p_part: number, _ul_part_len: number): number;
 
 export function _C_WrapKey(_h_session: number, p_mechanism: number, h_wrapping_key: number, h_key: number, p_wrapped_key: number, pul_wrapped_key_len: number): number;
+
+export function _C_WrapKeyAuthenticated(_h_session: number, p_mechanism: number, h_wrapping_key: number, h_key: number, _p_associated_data: number, _ul_associated_data_len: number, p_wrapped_key: number, pul_wrapped_key_len: number): number;
 
 export function _free(ptr: number, _js_size: number): void;
 
@@ -189,10 +193,12 @@ export interface InitOutput {
     readonly _C_SignInit: (a: number, b: number, c: number) => number;
     readonly _C_SignMessage: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
     readonly _C_UnwrapKey: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
+    readonly _C_UnwrapKeyAuthenticated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number, j: number) => number;
     readonly _C_Verify: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_VerifyInit: (a: number, b: number, c: number) => number;
     readonly _C_VerifyMessage: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
     readonly _C_WrapKey: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
+    readonly _C_WrapKeyAuthenticated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _free: (a: number, b: number) => void;
     readonly _malloc: (a: number) => number;
     readonly wasm_start: () => void;

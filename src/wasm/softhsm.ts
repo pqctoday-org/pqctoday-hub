@@ -189,8 +189,8 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_WrapKey: wasmExports._C_WrapKey,
         _C_UnwrapKey: wasmExports._C_UnwrapKey,
         _C_DeriveKey: wasmExports._C_DeriveKey,
-        _C_WrapKeyAuthenticated: () => CKR_NOT_IMPL,
-        _C_UnwrapKeyAuthenticated: () => CKR_NOT_IMPL,
+        _C_WrapKeyAuthenticated: wasmExports._C_WrapKeyAuthenticated,
+        _C_UnwrapKeyAuthenticated: wasmExports._C_UnwrapKeyAuthenticated,
 
         // ── Random ───────────────────────────────────────────────────────
         _C_SeedRandom: () => 0,
@@ -2655,17 +2655,17 @@ export const hsm_importGenericSecret = (
     { type: CKA_EXTRACTABLE, boolVal: true },
     { type: CKA_DERIVE, boolVal: true },
     { type: CKA_VALUE, bytesPtr: ptr, bytesLen: secretBytes.length },
-    { type: CKA_VALUE_LEN, ulongVal: secretBytes.length },
+    // CKA_VALUE_LEN omitted — read-only during C_CreateObject (auto-computed from CKA_VALUE)
   ])
   const hKeyPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_CreateObject(hSession, tpl.ptr, 8, hKeyPtr),
+      M._C_CreateObject(hSession, tpl.ptr, 7, hKeyPtr),
       'C_CreateObject(Import GenericSecret)'
     )
     return readUlong(M, hKeyPtr)
   } finally {
-    freeTemplate(M, tpl, 8)
+    freeTemplate(M, tpl, 7)
     M._free(hKeyPtr)
     M._free(ptr)
   }
@@ -4065,7 +4065,7 @@ export const hsm_wrapKeyMech = (
 }
 
 /**
- * AES-GCM key wrap via C_WrapKey(CKM_AES_GCM, CK_GCM_PARAMS).
+ * AES-GCM key wrap via C_WrapKeyAuthenticated(CKM_AES_GCM, CK_GCM_PARAMS).
  * Returns both the wrapped blob and the IV (both required for unwrap).
  * If iv has length 0 a fresh 12-byte IV is generated automatically.
  */
@@ -4083,15 +4083,33 @@ export const hsm_aesGcmWrapKey = (
   let wrappedPtr = 0
   try {
     checkRV(
-      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, 0, wrappedLenPtr),
-      'C_WrapKey(GCM,len)'
+      M._C_WrapKeyAuthenticated(
+        hSession,
+        mech,
+        wrappingHandle,
+        targetHandle,
+        0,
+        0,
+        0,
+        wrappedLenPtr
+      ),
+      'C_WrapKeyAuthenticated(GCM,len)'
     )
     const wrappedLen = readUlong(M, wrappedLenPtr)
     wrappedPtr = M._malloc(wrappedLen)
     writeUlong(M, wrappedLenPtr, wrappedLen)
     checkRV(
-      M._C_WrapKey(hSession, mech, wrappingHandle, targetHandle, wrappedPtr, wrappedLenPtr),
-      'C_WrapKey(GCM)'
+      M._C_WrapKeyAuthenticated(
+        hSession,
+        mech,
+        wrappingHandle,
+        targetHandle,
+        0,
+        0,
+        wrappedPtr,
+        wrappedLenPtr
+      ),
+      'C_WrapKeyAuthenticated(GCM)'
     )
     return {
       wrapped: M.HEAPU8.slice(wrappedPtr, wrappedPtr + readUlong(M, wrappedLenPtr)),
@@ -4222,7 +4240,7 @@ export const hsm_unwrapKeyMech = (
 }
 
 /**
- * AES-GCM key unwrap via C_UnwrapKey(CKM_AES_GCM, CK_GCM_PARAMS).
+ * AES-GCM key unwrap via C_UnwrapKeyAuthenticated(CKM_AES_GCM, CK_GCM_PARAMS).
  * @param iv  The 12-byte IV that was used during wrapping.
  */
 export const hsm_aesGcmUnwrapKey = (
@@ -4240,7 +4258,7 @@ export const hsm_aesGcmUnwrapKey = (
   const phKey = allocUlong(M)
   try {
     checkRV(
-      M._C_UnwrapKey(
+      M._C_UnwrapKeyAuthenticated(
         hSession,
         mech,
         hUnwrapKey,
@@ -4248,9 +4266,11 @@ export const hsm_aesGcmUnwrapKey = (
         wrappedBytes.length,
         tpl.ptr,
         template.length,
+        0,
+        0,
         phKey
       ),
-      'C_UnwrapKey(GCM)'
+      'C_UnwrapKeyAuthenticated(GCM)'
     )
     return readUlong(M, phKey)
   } finally {

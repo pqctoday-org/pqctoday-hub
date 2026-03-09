@@ -547,7 +547,6 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['digital-id'],
       MODULE_CATALOG['code-signing'],
       MODULE_CATALOG['iot-ot-pqc'],
-      MODULE_CATALOG['emv-payment-pqc'],
       MODULE_CATALOG['ai-security-pqc'],
       MODULE_CATALOG['platform-eng-pqc'],
       MODULE_CATALOG['iam-pqc'],
@@ -571,6 +570,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['healthcare-pqc'],
       MODULE_CATALOG['aerospace-space-pqc'],
       MODULE_CATALOG['automotive-pqc'],
+      MODULE_CATALOG['emv-payment-pqc'],
     ],
   },
 ]

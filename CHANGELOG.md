@@ -4,6 +4,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.34.4] - 2026-03-08
+
+### Fixed
+
+- **Key wrapping — AES-GCM routed through `C_WrapKeyAuthenticated`**: AES-GCM key wrapping now correctly calls `C_WrapKeyAuthenticated` / `C_UnwrapKeyAuthenticated` (PKCS#11 v3.2 §5.18.6–7) instead of the non-authenticated `C_WrapKey`, which rejected `CKM_AES_GCM` on both engines. Rust engine: new `C_WrapKeyAuthenticated` and `C_UnwrapKeyAuthenticated` functions added with full AES-128/256 GCM support. [view:/playground]
+- **Key wrapping — C++ `CKM_AES_KEY_WRAP_PAD` registration**: Added missing `CKM_AES_KEY_WRAP_PAD` (0x210A) to `prepareSupportedMechanisms()` — indirect RSA+KEK wrapping now works on the C++ engine. [view:/playground]
+- **Key wrapping — Rust RSA-OAEP wrap/unwrap**: Extended Rust `C_WrapKey` / `C_UnwrapKey` to accept `CKM_RSA_PKCS_OAEP` — indirect RSA+KEK wrapping now works on the Rust engine. [view:/playground]
+- **Key wrapping — seed mode `CKA_VALUE_LEN` fix**: Removed read-only `CKA_VALUE_LEN` from `hsm_importGenericSecret` template (was causing `CKR_ATTRIBUTE_READ_ONLY` on C++ engine during seed-mode wrapping). [view:/playground]
+- **Rust `C_GetMechanismInfo` — `CKM_AES_KEY_WRAP_KWP` case added**: Querying mechanism info for AES-KWP no longer returns `CKR_MECHANISM_INVALID`. [view:/playground]
+
+### Changed
+
+- **EMV Payment module moved to Industries track**: `emv-payment-pqc` relocated from Applications to Industries track in module catalog, quiz categories, and track descriptions. [view:/learn]
+
 ## [2.34.3] - 2026-03-08
 
 ### Fixed

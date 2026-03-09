@@ -668,6 +668,24 @@ export function _C_UnwrapKey(_h_session, p_mechanism, h_unwrapping_key, p_wrappe
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} p_mechanism
+ * @param {number} h_unwrapping_key
+ * @param {number} p_wrapped_key
+ * @param {number} ul_wrapped_key_len
+ * @param {number} p_template
+ * @param {number} ul_attribute_count
+ * @param {number} _p_associated_data
+ * @param {number} _ul_associated_data_len
+ * @param {number} ph_key
+ * @returns {number}
+ */
+export function _C_UnwrapKeyAuthenticated(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, p_template, ul_attribute_count, _p_associated_data, _ul_associated_data_len, ph_key) {
+    const ret = wasm._C_UnwrapKeyAuthenticated(_h_session, p_mechanism, h_unwrapping_key, p_wrapped_key, ul_wrapped_key_len, p_template, ul_attribute_count, _p_associated_data, _ul_associated_data_len, ph_key);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @param {number} p_data
  * @param {number} ul_data_len
@@ -739,6 +757,22 @@ export function _C_VerifyUpdate(_h_session, _p_part, _ul_part_len) {
  */
 export function _C_WrapKey(_h_session, p_mechanism, h_wrapping_key, h_key, p_wrapped_key, pul_wrapped_key_len) {
     const ret = wasm._C_WrapKey(_h_session, p_mechanism, h_wrapping_key, h_key, p_wrapped_key, pul_wrapped_key_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} p_mechanism
+ * @param {number} h_wrapping_key
+ * @param {number} h_key
+ * @param {number} _p_associated_data
+ * @param {number} _ul_associated_data_len
+ * @param {number} p_wrapped_key
+ * @param {number} pul_wrapped_key_len
+ * @returns {number}
+ */
+export function _C_WrapKeyAuthenticated(_h_session, p_mechanism, h_wrapping_key, h_key, _p_associated_data, _ul_associated_data_len, p_wrapped_key, pul_wrapped_key_len) {
+    const ret = wasm._C_WrapKeyAuthenticated(_h_session, p_mechanism, h_wrapping_key, h_key, _p_associated_data, _ul_associated_data_len, p_wrapped_key, pul_wrapped_key_len);
     return ret >>> 0;
 }
 

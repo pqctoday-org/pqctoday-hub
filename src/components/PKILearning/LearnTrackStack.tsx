@@ -71,7 +71,6 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'digital-id',
     'code-signing',
     'iot-ot-pqc',
-    'emv-payment-pqc',
     'ai-security-pqc',
     'platform-eng-pqc',
     'iam-pqc',
@@ -91,6 +90,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'healthcare-pqc',
     'aerospace-space-pqc',
     'automotive-pqc',
+    'emv-payment-pqc',
     'iot-ot-pqc',
     'industry-threats',
   ],
@@ -149,7 +149,7 @@ const TRACK_META: {
     track: 'Applications',
     icon: Layers,
     description:
-      'Digital assets, 5G, digital ID, code signing, IoT/OT, EMV payments, AI security, platform engineering, IAM',
+      'Digital assets, 5G, digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
     colorClass: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30',
     activeClass: 'bg-card border-emerald-500/60',
   },
@@ -163,7 +163,8 @@ const TRACK_META: {
   {
     track: 'Industries',
     icon: Factory,
-    description: 'Energy, healthcare, aerospace, automotive \u2014 sector-specific PQC migration',
+    description:
+      'Energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC migration',
     colorClass: 'from-orange-500/20 to-amber-400/10 border-orange-500/30',
     activeClass: 'bg-card border-orange-500/60',
   },
