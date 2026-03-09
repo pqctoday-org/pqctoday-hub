@@ -8,15 +8,14 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
-- **Infrastructure track split into Hardware + Software**: The single `Infrastructure` track is now two separate tracks. **Hardware Infrastructure** groups HSM, KMS, QKD, Secure Boot, and Confidential Computing. **Software Infrastructure** groups PKI Workshop, Secrets Management, Stateful Signatures, Merkle Tree Certs, Database Encryption, Crypto Dev APIs, and OS PQC. QKD moved from Strategy to Hardware Infrastructure. Each track has a distinct shade (stronger warning for hardware, lighter for software). [view:/learn]
-- **Persona learning paths expanded**: All 4 role-based personas updated with recently added modules that were missing from their journeys.
-  - **Executive**: Added `iam-pqc` (90 min) — estimated time updated to 1,020 min.
-  - **Developer**: Added `iam-pqc`, `database-encryption-pqc`, `secrets-management-pqc`, `os-pqc`; new "Identity & Data" checkpoint (cp-5); existing cp-5 renamed to cp-6 "Platform & Infrastructure" — estimated time updated to 1,635 min.
-  - **Architect**: Added `network-security-pqc`, `secrets-management-pqc`, `database-encryption-pqc`, `os-pqc`, `secure-boot-pqc`, `confidential-computing`, `iam-pqc` — estimated time updated to 1,845 min.
-  - **Researcher**: Added `network-security-pqc`, `secrets-management-pqc`, `database-encryption-pqc`, `os-pqc`, `secure-boot-pqc`, `iam-pqc`.
-    [view:/]
-- **PageHeader — round gradient FAB button**: The flat "Chat" text button in all data-page headers replaced with a round gradient button (`variant=gradient`, `w-8 h-8`, `rounded-full`) matching the floating action button style. Icon-only with `aria-label="Open PQC Assistant"`. [view:/timeline]
-- **Assessment report header — date + info inline**: "Generated on" date and the methodology info button now share a single compact row instead of the date appearing below the report title. Report title `<h2>` removed from this row (title is already in the page heading). [view:/assess]
+- **Learning tracks restructured — Hardware vs. Software Infrastructure**: The Infrastructure track is now split into two distinct tracks for clearer module discovery. **Hardware Infrastructure** covers HSM, KMS, QKD, Secure Boot, and Confidential Computing. **Software Infrastructure** covers PKI Workshop, Secrets Management, Stateful Signatures, Merkle Tree Certs, Database Encryption, Crypto Dev APIs, and OS PQC. QKD moved from the Strategy track to Hardware Infrastructure. [view:/learn] [persona:developer,architect,ops,researcher]
+- **Persona learning paths expanded with recently published modules**: All four role-based learning paths now include modules that had been added to the platform but were missing from the guided journeys. [view:/] [persona:executive,developer,architect,researcher]
+  - **Executive**: Added Identity & Access Management (IAM) — 1,020 min total.
+  - **Developer**: Added IAM, Database Encryption, Secrets Management, OS PQC; new "Identity & Data" milestone checkpoint — 1,635 min total.
+  - **Architect**: Added Network Security, Secrets Management, Database Encryption, OS PQC, Secure Boot, Confidential Computing, and IAM — 1,845 min total.
+  - **Researcher**: Added Network Security, Secrets Management, Database Encryption, OS PQC, Secure Boot, and IAM.
+- **PQC Assistant button — consistent round gradient style on all pages**: The "Chat" text button in data-page headers is replaced with a compact round gradient icon button matching the floating action button (FAB) visible when the assistant panel is closed — consistent visual language across all views. [view:/timeline]
+- **Assessment report — compact header row**: The generated date and methodology info button are now displayed on the same row, reducing visual weight at the top of the report. [view:/assess]
 
 ## [2.34.6] - 2026-03-08
 
