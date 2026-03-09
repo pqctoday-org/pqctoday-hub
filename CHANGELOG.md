@@ -4,6 +4,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.35.0] - 2026-03-08
+
+### Changed
+
+- **Infrastructure track split into Hardware + Software**: The single `Infrastructure` track is now two separate tracks. **Hardware Infrastructure** groups HSM, KMS, QKD, Secure Boot, and Confidential Computing. **Software Infrastructure** groups PKI Workshop, Secrets Management, Stateful Signatures, Merkle Tree Certs, Database Encryption, Crypto Dev APIs, and OS PQC. QKD moved from Strategy to Hardware Infrastructure. Each track has a distinct shade (stronger warning for hardware, lighter for software). [view:/learn]
+- **Persona learning paths expanded**: All 4 role-based personas updated with recently added modules that were missing from their journeys.
+  - **Executive**: Added `iam-pqc` (90 min) — estimated time updated to 1,020 min.
+  - **Developer**: Added `iam-pqc`, `database-encryption-pqc`, `secrets-management-pqc`, `os-pqc`; new "Identity & Data" checkpoint (cp-5); existing cp-5 renamed to cp-6 "Platform & Infrastructure" — estimated time updated to 1,635 min.
+  - **Architect**: Added `network-security-pqc`, `secrets-management-pqc`, `database-encryption-pqc`, `os-pqc`, `secure-boot-pqc`, `confidential-computing`, `iam-pqc` — estimated time updated to 1,845 min.
+  - **Researcher**: Added `network-security-pqc`, `secrets-management-pqc`, `database-encryption-pqc`, `os-pqc`, `secure-boot-pqc`, `iam-pqc`.
+    [view:/]
+- **PageHeader — round gradient FAB button**: The flat "Chat" text button in all data-page headers replaced with a round gradient button (`variant=gradient`, `w-8 h-8`, `rounded-full`) matching the floating action button style. Icon-only with `aria-label="Open PQC Assistant"`. [view:/timeline]
+- **Assessment report header — date + info inline**: "Generated on" date and the methodology info button now share a single compact row instead of the date appearing below the report title. Report title `<h2>` removed from this row (title is already in the page heading). [view:/assess]
+
 ## [2.34.6] - 2026-03-08
 
 ### Changed
