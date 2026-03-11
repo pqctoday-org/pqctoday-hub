@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { OS_VENDORS, OS_VENDOR_STATUS_LABELS, FIPS_STATUS_LABELS } from '../data/osProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface OSPQCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -518,6 +519,8 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="OS" />
 
       {/* CTA */}
       <div className="text-center">

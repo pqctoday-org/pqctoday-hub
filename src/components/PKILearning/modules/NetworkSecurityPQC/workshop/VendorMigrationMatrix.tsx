@@ -10,6 +10,7 @@ import {
   type SupportStatusKey,
 } from '../data/networkProviderData'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 function StatusIcon({ status }: { status: PQCStatusKey }) {
   if (status === 'ga') return <CheckCircle size={12} className="text-status-success inline" />
@@ -73,6 +74,8 @@ export const VendorMigrationMatrix: React.FC = () => {
           which platforms support your requirements today.
         </p>
       </div>
+
+      <VendorCoverageNotice migrateLayer="Network" className="mb-2" />
 
       {/* Readiness Summary */}
       <div className="grid grid-cols-3 gap-3">

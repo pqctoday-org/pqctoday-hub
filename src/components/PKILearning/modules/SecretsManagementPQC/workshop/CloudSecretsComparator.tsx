@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
 import { CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   CLOUD_SECRETS_PROVIDERS,
   PQC_STATUS_LABELS,
@@ -105,6 +106,7 @@ export const CloudSecretsComparator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
       {/* Filter buttons */}
       <div className="flex flex-wrap gap-2">
         {filterBtns.map(({ id, label }) => (

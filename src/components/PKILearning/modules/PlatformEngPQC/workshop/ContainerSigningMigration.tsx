@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, CheckSquare, Square, ShieldCheck } from 'lucide
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { SIGNING_TOOLS } from '../data/signingToolsData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   PQC_READINESS_COLORS,
   PQC_READINESS_LABELS,
@@ -118,6 +119,7 @@ export const ContainerSigningMigration: React.FC = () => {
           ML-DSA before CRQC arrival.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Application" className="mb-2" />
 
       {/* Filters + Compare toggle */}
       <div className="glass-panel p-4 flex flex-wrap items-center gap-3">

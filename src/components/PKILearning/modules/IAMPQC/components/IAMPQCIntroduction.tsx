@@ -22,6 +22,7 @@ import {
 } from '../data/iamConstants'
 import { IAM_VENDORS, PQC_STATUS_LABELS } from '../data/iamProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface IAMPQCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -553,6 +554,8 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Security Stack" />
 
       {/* CTA */}
       <div className="text-center">

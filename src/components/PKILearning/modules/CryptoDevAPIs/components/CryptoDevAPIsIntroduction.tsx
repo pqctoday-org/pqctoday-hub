@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface CollapsibleSectionProps {
   title: string
@@ -559,6 +560,8 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </ul>
         </div>
       </CollapsibleSection>
+
+      <VendorCoverageNotice migrateLayer="Application" />
 
       <ReadingCompleteButton />
     </div>

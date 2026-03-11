@@ -17,6 +17,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES, FIRMWARE_ALGO_SIZES } from '../data/secureBootConstants'
 import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface SecureBootIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -562,6 +563,8 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Hardware" />
 
       {/* CTA */}
       <div className="text-center">

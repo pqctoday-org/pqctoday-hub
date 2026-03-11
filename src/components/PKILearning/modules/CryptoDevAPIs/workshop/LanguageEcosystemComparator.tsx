@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { ChevronDown, ChevronUp, CheckSquare, Square } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { DEV_LANGUAGES, type DevLanguage, type MemorySafety } from '../data/languageData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 type MemFilter = 'All' | MemorySafety
 
@@ -305,6 +306,8 @@ export const LanguageEcosystemComparator: React.FC = () => {
           {compareMode ? `Compare (${selectedIds.size}/3)` : 'Compare Mode'}
         </button>
       </div>
+
+      <VendorCoverageNotice migrateLayer="Application" className="mb-2" />
 
       {compareMode && compareLangs.length >= 2 && (
         <div className="glass-panel p-4">

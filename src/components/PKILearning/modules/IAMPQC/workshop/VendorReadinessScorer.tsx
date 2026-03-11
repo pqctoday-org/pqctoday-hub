@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { BarChart3, Shield, Download, ChevronDown, ChevronUp } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   IAM_VENDORS,
   PQC_STATUS_LABELS,
@@ -214,6 +215,7 @@ export const VendorReadinessScorer: React.FC = () => {
           API security, and roadmap clarity. Select a vendor to see detailed score breakdown.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Security Stack" className="mb-2" />
 
       {/* Vendor Selector */}
       <div className="glass-panel p-5">

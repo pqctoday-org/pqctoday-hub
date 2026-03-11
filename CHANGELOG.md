@@ -4,6 +4,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.36.0] - 2026-03-11
+
+### Changed
+
+- **Airplane Mode — PWA offline support**: The app now registers a service worker (via `vite-plugin-pwa`) that caches WASM files, data assets, and application routes for offline use. An Airplane Mode toggle in the chat header lets you switch to local-only mode; connectivity changes trigger automatic toasts with one-tap recovery. Gemini is disabled with a "Switch to Local" prompt when offline. A persistent banner and update prompt round out the offline experience. [view:/] [persona:developer,architect,ops]
+- **Mobile navigation overflow menu**: Less-used nav items (Algorithms, Compliance, Report, Business Center) are collapsed into a "More" overflow button on mobile, keeping the bottom bar clean with 6 primary items visible. [view:/]
+- **Mobile responsive improvements**: Landing hero text scales down on small screens (`text-2xl sm:text-3xl`), CTA buttons stack properly, step descriptions use `line-clamp-3`, avatar sizes adjust (`w-24 sm:w-32`), belt progress text visible on all screen widths, and the Algorithm Comparison Table shows a swipe hint on mobile. [view:/] [view:/learn/pqc-101]
+- **Vendor coverage cross-links in 15+ modules**: A new `VendorCoverageNotice` component connects learning modules directly to the Migrate catalog. Each notice links to the matching infrastructure layer — readers can jump from vendor tables in HSM, KMS, Network Security, Database Encryption, IAM, Secure Boot, OS PQC, Secrets Management, Web Gateway, EMV Payment, Crypto Dev APIs, Platform Engineering, and Confidential Computing modules to the full product listing. [view:/learn] [persona:developer,architect,ops]
+- **CSV data audit — 45 new library records**: Added 6 gap-analysis records (FIPS 207/HQC pre-draft, NIST IR 8528, SP 800-232/Ascon, DoD CIO PQC Memo, GSA PQC Buyer's Guide, CISA Bad Practices #7) and 39 foundational standards (NIST SP 800-37/53/56A/66/88/90/90A/90B/108/111/207/218, FIPS 199, BSI TR-02102, 16 RFCs, 5 IETF drafts including ML-DSA for SSH and IKEv2). Replaced SP 800-57 Part 1 R5 with R6 IPD (Dec 2025). Library now at 303 records. All 46 new entries enriched with `qwen3.5:27b` (19 dimensions) and source documents archived locally. [view:/library]
+- **Compliance reclassifications**: OASIS PKCS#11 moved to Technical Standards; KpqC and OSCCA-NGCC moved to Standardization Bodies; PQCC Roadmap moved to Technical Standards — correcting body_type dispatch across the 4 compliance page sections. [view:/compliance]
+- **Compliance cross-references updated**: CNSA 2.0 and DISA STIGs now link to the DoD CIO PQC Memo; FedRAMP links to the GSA Buyer's Guide. [view:/compliance]
+- **RAG corpus regenerated**: 3,670 chunks from 22 sources (up from 3,506), incorporating 46 new library enrichments, compliance reclassifications, and cross-reference updates. [view:/]
+
+### Fixed
+
+- **Library dates corrected**: FIPS 203, 204, and 205 `initial_publication_date` fixed from 2023-08-24 to 2024-08-13 (actual publication). [view:/library]
+- **Migrate catalog corrections**: Signal libsignal updated to v0.88.0, HashiCorp Vault to 1.21.4, Google Cloud KMS PQC support corrected from "GA" to "Preview", OpenSSL release date fixed to 2026-01-27. [view:/migrate]
+- **Timeline date corrections**: CISA PQC Product Categories event date corrected from 2025-12-01 to 2026-01-23 (actual publication); EU Crypto Inventory Mandate year updated from 2025 to 2026 reflecting NIS Cooperation Group Roadmap v1.1 timeline. [view:/timeline]
+
 ## [2.35.0] - 2026-03-08
 
 ### Changed

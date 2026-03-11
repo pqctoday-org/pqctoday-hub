@@ -24,6 +24,7 @@ import {
 } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface KmsPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -632,6 +633,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Security Stack" />
 
       {/* CTA */}
       <div className="text-center">

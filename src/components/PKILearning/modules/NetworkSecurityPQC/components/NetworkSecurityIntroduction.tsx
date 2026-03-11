@@ -15,6 +15,7 @@ import {
   Wrench,
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { NGFW_VENDORS, INSPECTION_CHALLENGES, IDS_RULE_CATEGORIES } from '../data/networkConstants'
 import {
   VENDOR_MIGRATION_DATA,
@@ -467,6 +468,8 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Network" />
 
       {/* CTA */}
       <div className="text-center">

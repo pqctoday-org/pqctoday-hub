@@ -18,13 +18,20 @@ import {
   ClipboardCheck,
   FileBarChart,
   LayoutDashboard,
+  MoreHorizontal,
+  X,
+  Plane,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { AchievementToast } from '../ui/AchievementToast'
+import { AirplaneModeToast } from '../ui/AirplaneModeToast'
+import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
+import { PWAUpdatePrompt } from '../ui/PWAUpdatePrompt'
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
+import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
 import { WorkflowBanner } from '../common/WorkflowBanner'
 
@@ -38,6 +45,7 @@ export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
   const isPanelOpen = useRightPanelStore((s) => s.isOpen)
+  const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -47,14 +55,42 @@ export const MainLayout = () => {
     // — Start the Journey —
     { path: '/learn', label: 'Learn', icon: GraduationCap, section: 'start' },
     { path: '/timeline', label: 'Timeline', icon: Globe, section: 'start' },
-    { path: '/algorithms', label: 'Algorithms', icon: Shield, section: 'start' },
+    {
+      path: '/algorithms',
+      label: 'Algorithms',
+      icon: Shield,
+      section: 'start',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
     // — My Journey —
     { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft, section: 'journey' },
-    { path: '/compliance', label: 'Compliance', icon: ShieldCheck, section: 'journey' },
+    {
+      path: '/compliance',
+      label: 'Compliance',
+      icon: ShieldCheck,
+      section: 'journey',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
     // — Assess & Report —
     { path: '/assess', label: 'Assess', icon: ClipboardCheck, section: 'assess' },
-    { path: '/report', label: 'Report', icon: FileBarChart, section: 'assess' },
-    { path: '/business', label: 'Business Center', icon: LayoutDashboard, section: 'assess' },
+    {
+      path: '/report',
+      label: 'Report',
+      icon: FileBarChart,
+      section: 'assess',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
+    {
+      path: '/business',
+      label: 'Business Center',
+      icon: LayoutDashboard,
+      section: 'assess',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
     {
       path: '/playground',
       label: 'Playground',
@@ -72,9 +108,23 @@ export const MainLayout = () => {
     // — Keep Up to Date —
     { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
     { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
-    { path: '/leaders', label: 'Leaders', icon: Users, section: 'current' },
-    { path: '/about', label: 'About', icon: Info },
+    {
+      path: '/leaders',
+      label: 'Leaders',
+      icon: Users,
+      section: 'current',
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
+    { path: '/about', label: 'About', icon: Info, hiddenOnMobile: true, mobileMore: true },
   ]
+
+  const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
+
+  // Close the More menu on route changes (e.g., browser back button)
+  React.useEffect(() => {
+    setMoreMenuOpen(false)
+  }, [location.pathname])
 
   const personaAllowed = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
   const visibleNavItems = personaAllowed
@@ -82,6 +132,12 @@ export const MainLayout = () => {
         (item) => ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
       )
     : navItems
+
+  // Items that appear in the mobile "More" bottom sheet
+  const moreNavItems = visibleNavItems.filter((item) => item.mobileMore)
+  const isMoreActive = moreNavItems.some((item) =>
+    item.end ? location.pathname === item.path : location.pathname.startsWith(item.path)
+  )
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
@@ -158,12 +214,111 @@ export const MainLayout = () => {
                 </React.Fragment>
               )
             })}
+
+            {/* Mobile "More" button — only shown when there are overflow items */}
+            {moreNavItems.length > 0 && (
+              <div className="flex-1 lg:hidden flex justify-center">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setMoreMenuOpen(true)}
+                  aria-label="More navigation options"
+                  aria-expanded={moreMenuOpen}
+                  aria-haspopup="dialog"
+                  className={
+                    isMoreActive
+                      ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px]'
+                      : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px]'
+                  }
+                >
+                  <MoreHorizontal size={20} aria-hidden="true" />
+                </Button>
+              </div>
+            )}
+
+            {/* Airplane Mode toggle */}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setAirplaneMode(!airplaneMode)}
+              aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
+              aria-pressed={airplaneMode}
+              title={airplaneMode ? 'Airplane Mode is on' : 'Airplane Mode'}
+              className={`shrink-0 min-h-[44px] min-w-[44px] p-2 ${
+                airplaneMode
+                  ? 'text-primary bg-primary/10 border border-primary/20'
+                  : 'text-muted-foreground hover:text-foreground'
+              }`}
+            >
+              <Plane size={20} aria-hidden="true" />
+            </Button>
           </nav>
         </div>
       </header>
 
+      {/* Mobile "More" bottom sheet */}
+      {moreMenuOpen && (
+        <>
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 z-[69] bg-black/40 lg:hidden"
+            onClick={() => setMoreMenuOpen(false)}
+            aria-hidden="true"
+          />
+          {/* Sheet */}
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label="More navigation"
+            className="fixed inset-x-0 bottom-0 z-[70] lg:hidden bg-card border-t border-border rounded-t-2xl p-4 shadow-2xl"
+          >
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-medium text-foreground">More</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-8 w-8 p-0"
+                onClick={() => setMoreMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={16} />
+              </Button>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
+              {moreNavItems.map((item) => (
+                <NavLink
+                  key={item.path}
+                  to={item.path}
+                  end={item.end}
+                  onClick={() => setMoreMenuOpen(false)}
+                >
+                  {({ isActive }) => (
+                    <Button
+                      variant="ghost"
+                      className={`w-full justify-start gap-2 ${
+                        isActive
+                          ? 'bg-primary/10 text-foreground border border-primary/20'
+                          : 'text-muted-foreground hover:text-foreground'
+                      }`}
+                      aria-label={`${item.label} view`}
+                      aria-current={isActive ? 'page' : undefined}
+                    >
+                      <item.icon size={18} aria-hidden="true" />
+                      <span>{item.label}</span>
+                    </Button>
+                  )}
+                </NavLink>
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+
       {/* Main Content Area */}
-      <main id="main-content" className="flex-grow container py-4 px-2 md:py-8 md:px-8" role="main">
+      <main id="main-content" className="flex-grow container py-4 px-4 md:py-8 md:px-8" role="main">
+        {/* Airplane Mode limitations banner */}
+        <AirplaneModeBanner />
+
         {/* Migration planning workflow progress banner */}
         <WorkflowBanner />
 
@@ -215,6 +370,12 @@ export const MainLayout = () => {
 
       {/* Achievement Toast Notification */}
       <AchievementToast />
+
+      {/* Airplane Mode connectivity toast */}
+      <AirplaneModeToast />
+
+      {/* PWA update notification */}
+      <PWAUpdatePrompt />
 
       {/* First-visit Guided Tour */}
       <GuidedTour />

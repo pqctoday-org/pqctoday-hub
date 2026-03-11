@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
 import { CARD_AUTH_SPECS } from '../data/cardCryptoData'
 import { MOBILE_WALLETS } from '../data/tokenizationData'
@@ -540,6 +541,8 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <ShieldCheck size={16} className="mr-2" />
             Start Workshop
           </Button>
+          <VendorCoverageNotice migrateLayer="Application" />
+
           <ReadingCompleteButton />
         </div>
       </CollapsibleSection>

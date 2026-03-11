@@ -11,6 +11,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface DatabaseEncryptionIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -468,6 +469,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           </p>
         </div>
       </CollapsibleSection>
+
+      <VendorCoverageNotice migrateLayer="Database" />
 
       {/* CTA */}
       <div className="text-center">

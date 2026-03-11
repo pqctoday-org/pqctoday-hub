@@ -76,6 +76,9 @@ export const AlgorithmComparisonTable: React.FC = () => {
         </p>
       </div>
 
+      <p className="text-xs text-muted-foreground sm:hidden mb-2 text-center">
+        ← Swipe to see all columns →
+      </p>
       <div className="overflow-x-auto rounded-lg border border-border">
         <table className="w-full text-sm">
           <thead>

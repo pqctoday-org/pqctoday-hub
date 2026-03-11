@@ -19,6 +19,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
 import {
   MEMORY_ENCRYPTION_ENGINES,
@@ -730,6 +731,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </Link>
         </div>
       </div>
+
+      <VendorCoverageNotice migrateLayer="Hardware" />
 
       {/* ── Reading Complete ─────────────────────────────────────────────── */}
       <ReadingCompleteButton />

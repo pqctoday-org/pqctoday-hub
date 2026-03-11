@@ -3,9 +3,21 @@ import { createRoot } from 'react-dom/client'
 import './styles/index.css'
 import AppRoot from './AppRoot'
 import { initGA } from './utils/analytics'
+import { registerSW } from 'virtual:pwa-register'
 
 // Initialize Google Analytics
 initGA()
+
+// Register service worker for Airplane Mode (offline support)
+const updateSW = registerSW({
+  onNeedRefresh() {
+    // Dispatch custom event so React components can show update prompt
+    window.dispatchEvent(new CustomEvent('pwa-update-available', { detail: { updateSW } }))
+  },
+  onOfflineReady() {
+    // App is cached and ready for offline use — no action needed
+  },
+})
 
 // Automatically disable Guided Tour during E2E testing
 if (typeof window !== 'undefined' && window.navigator?.webdriver) {

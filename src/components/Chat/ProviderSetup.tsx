@@ -10,11 +10,13 @@ import {
   AlertCircle,
   AlertTriangle,
   Info,
+  Plane,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { useChatStore } from '@/store/useChatStore'
+import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { validateApiKey } from '@/services/chat/GeminiService'
 import {
   checkWebGPUSupport,
@@ -32,6 +34,7 @@ export const ProviderSetup: React.FC = () => {
   const setProvider = useChatStore((s) => s.setProvider)
   const setLocalModel = useChatStore((s) => s.setLocalModel)
   const setLocalContextWindow = useChatStore((s) => s.setLocalContextWindow)
+  const airplaneMode = useAirplaneModeStore((s) => s.isEnabled)
 
   // Gemini state
   const [keyInput, setKeyInput] = useState('')
@@ -391,7 +394,20 @@ export const ProviderSetup: React.FC = () => {
           </div>
 
           {/* Gemini (Cloud) Card */}
-          <div className="glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto">
+          <div
+            className={`glass-panel rounded-xl p-5 space-y-4 border border-border max-h-[80vh] overflow-y-auto ${
+              airplaneMode ? 'opacity-50 pointer-events-none' : ''
+            }`}
+            aria-disabled={airplaneMode}
+          >
+            {airplaneMode && (
+              <div className="rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 flex items-center gap-2 pointer-events-auto opacity-100">
+                <Plane size={14} className="text-status-warning shrink-0" />
+                <p className="text-xs text-foreground">
+                  Gemini requires an internet connection. Use the Local model for Airplane Mode.
+                </p>
+              </div>
+            )}
             <div className="flex items-center gap-2">
               <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center">
                 <Cloud size={18} className="text-primary" />

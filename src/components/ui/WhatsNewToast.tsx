@@ -86,23 +86,23 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Full SEO coverage</strong> &mdash; All 48
-                    learning modules now have rich metadata, structured data, and sitemap entries
-                    for better search visibility
+                    <strong className="text-foreground">Airplane Mode</strong> &mdash; Full offline
+                    support with service worker caching — switch to local AI when disconnected
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Migration catalog UX</strong> &mdash;
-                    Framework section collapsed by default for faster access to the software catalog
+                    <strong className="text-foreground">Vendor cross-links</strong> &mdash; 15+
+                    learning modules now link directly to the Migrate catalog for full product
+                    coverage
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Cleaner navigation</strong> &mdash; Removed
-                    the return banner for a less cluttered browsing experience
+                    <strong className="text-foreground">Data audit</strong> &mdash; 45 new library
+                    records (303 total), compliance reclassifications, and 3,670 RAG chunks
                   </span>
                 </li>
               </ul>

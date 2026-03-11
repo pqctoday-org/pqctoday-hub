@@ -124,9 +124,9 @@ function buildJourneySteps(
   migrateCount: number | null,
   libraryCount: number | null
 ): JourneyStep[] {
-  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '40+'
-  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '350+'
-  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '250+'
+  const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '45+'
+  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '360+'
+  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '300+'
 
   return [
     // — Start the Journey —
@@ -445,11 +445,11 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={1}
-          className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
+          className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6"
         >
           The quantum era is <span className="text-gradient">here.</span>
           <br />
-          <span className="text-muted-foreground text-2xl md:text-3xl lg:text-4xl font-normal mt-2 block">
+          <span className="text-muted-foreground text-xl sm:text-2xl md:text-3xl lg:text-4xl font-normal mt-2 block">
             Your transformation journey starts now.
           </span>
         </motion.h1>
@@ -494,13 +494,13 @@ export const LandingView = () => {
           custom={3}
           className="flex flex-col sm:flex-row gap-4 justify-center"
         >
-          <Link to={heroCta.primary.path}>
+          <Link to={heroCta.primary.path} className="block sm:inline-block">
             <Button variant="gradient" size="lg" className="w-full sm:w-auto text-base">
               {heroCta.primary.label}
               <ArrowRight className="ml-2" size={18} />
             </Button>
           </Link>
-          <Link to={heroCta.secondary.path}>
+          <Link to={heroCta.secondary.path} className="block sm:inline-block">
             <Button variant="outline" size="lg" className="w-full sm:w-auto text-base">
               {heroCta.secondary.label}
             </Button>
@@ -508,6 +508,7 @@ export const LandingView = () => {
           <AskAssistantButton
             variant="text"
             label="Ask the PQC Assistant"
+            className="block sm:inline-block"
             question={
               selectedPersona === 'developer'
                 ? 'How do I start integrating post-quantum cryptography into my applications?'
@@ -530,7 +531,7 @@ export const LandingView = () => {
           animate="visible"
           variants={fadeUp}
           custom={4}
-          className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-4 max-w-3xl mx-auto"
+          className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 max-w-3xl mx-auto"
         >
           {[
             {
@@ -657,11 +658,11 @@ export const LandingView = () => {
                           <h3 className="text-sm font-bold mb-1 group-hover:text-primary transition-colors tracking-tight">
                             {step.label}
                           </h3>
-                          <p className="text-xs text-muted-foreground leading-snug flex-1">
+                          <p className="text-xs text-muted-foreground leading-snug flex-1 line-clamp-3">
                             {step.description}
                           </p>
                           <div className="flex items-center justify-between mt-3">
-                            <div className="flex flex-wrap gap-1">
+                            <div className="hidden sm:flex flex-wrap gap-1">
                               {step.paths.map((p) => (
                                 <span
                                   key={p}
@@ -704,7 +705,7 @@ export const LandingView = () => {
           <Save size={20} className="text-primary" />
           Backup &amp; Restore
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <motion.button
             type="button"
             variants={fadeUp}
@@ -774,6 +775,15 @@ export const LandingView = () => {
               </p>
             </div>
           </motion.button>
+
+          <motion.div
+            variants={fadeUp}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true }}
+          >
+            <LinkToUsButton variant="card" />
+          </motion.div>
         </div>
       </section>
     </div>

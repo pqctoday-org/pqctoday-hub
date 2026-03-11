@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { LinkToUsButton } from '../ui/LinkToUsButton'
 import {
   Users,
   Globe,
@@ -99,7 +100,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today brings together 48 learning modules across 8 tracks &mdash; including role
-          guides, industry verticals, and hands-on crypto labs &mdash; 770+ quiz questions, a risk
+          guides, industry verticals, and hands-on crypto labs &mdash; 755 quiz questions, a risk
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role as a developer, architect, operations professional, executive, or researcher.
         </p>
@@ -122,15 +123,15 @@ export const MobileAboutView = () => {
           </div>
         </div>
         <div className="text-center mb-3">
-          <span className="text-3xl font-bold text-gradient">1,550+</span>
+          <span className="text-3xl font-bold text-gradient">2,100+</span>
           <p className="text-xs text-muted-foreground mt-1">curated records across 10 datasets</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { label: 'Timeline Events', value: '187' },
-            { label: 'Migrate Products', value: '223' },
-            { label: 'Library Resources', value: '236' },
-            { label: 'Quiz Questions', value: '520' },
+            { label: 'Timeline Events', value: '202' },
+            { label: 'Migrate Products', value: '366' },
+            { label: 'Library Resources', value: '303' },
+            { label: 'Quiz Questions', value: '755' },
           ].map((s) => (
             <div
               key={s.label}
@@ -245,7 +246,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
-          ~2,200 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
+          ~3,670 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
           deep links to relevant pages.
         </p>
       </motion.div>
@@ -277,6 +278,7 @@ export const MobileAboutView = () => {
             <Sparkles size={16} className="group-hover:animate-pulse" />
             View My Career Journey
           </button>
+          <LinkToUsButton />
         </div>
       </motion.div>
 
@@ -311,7 +313,7 @@ export const MobileAboutView = () => {
       {/* Disclaimer */}
       <div className="text-center px-4">
         <p className="text-xs text-muted-foreground/60">
-          © 2026 PQC Timeline App. All rights reserved.
+          © 2025 PQC Today. Data sourced from the public internet resources.
         </p>
       </div>
       <CareerJourneyModal

@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TERMINATION_PATTERNS, GATEWAY_VENDORS, HANDSHAKE_MITIGATIONS } from '../data/gatewayData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface WebGatewayIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -403,6 +404,8 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           </p>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Network" />
 
       {/* Workshop CTA */}
       <div className="glass-panel p-6 border-l-4 border-l-primary">

@@ -14,6 +14,7 @@ import {
   Route,
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -615,6 +616,8 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           </Link>
         </div>
       </section>
+
+      <VendorCoverageNotice migrateLayer="Security Stack" />
 
       {/* CTA */}
       <div className="text-center">

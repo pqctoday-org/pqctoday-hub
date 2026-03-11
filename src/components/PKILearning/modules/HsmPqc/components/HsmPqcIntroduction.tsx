@@ -26,6 +26,7 @@ import {
 } from '../data/hsmConstants'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface HsmPqcIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -818,6 +819,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       </div>
 
       {/* Related Resources */}
+      <VendorCoverageNotice migrateLayer="Hardware" />
+
       <div className="glass-panel p-6">
         <h3 className="text-sm font-bold text-foreground mb-3">Related Modules</h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

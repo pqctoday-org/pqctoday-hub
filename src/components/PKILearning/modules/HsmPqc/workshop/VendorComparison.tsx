@@ -2,6 +2,7 @@
 import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ArrowUpDown, Server, Cloud, Filter, Shield } from 'lucide-react'
 import { HSM_VENDORS, STATUS_LABELS, type HSMVendor } from '../data/hsmVendorData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 type FilterType = 'all' | 'on-prem' | 'cloud'
 type FilterStatus = 'all' | HSMVendor['pqcSupportStatus']
@@ -76,6 +77,7 @@ export const VendorComparison: React.FC = () => {
           Click a row to expand vendor details.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
 
       {/* Summary Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">

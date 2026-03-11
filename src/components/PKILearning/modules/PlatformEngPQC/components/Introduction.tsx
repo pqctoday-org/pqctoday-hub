@@ -16,6 +16,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 // ── Local CollapsibleSection ──────────────────────────────────────────────────
 
@@ -514,6 +515,8 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           </Link>
         </div>
       </CollapsibleSection>
+
+      <VendorCoverageNotice migrateLayer="Application" />
 
       {/* ── Workshop CTA ────────────────────────────────────────────────── */}
       <div className="glass-panel p-6 border-primary/20">

@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { AlertTriangle, CheckCircle, Clock, Download } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface CryptoComponent {
   id: string
@@ -161,6 +162,7 @@ export const OSCryptoInventory: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <VendorCoverageNotice migrateLayer="OS" className="mb-2" />
       {/* Summary cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="glass-panel p-3 text-center">

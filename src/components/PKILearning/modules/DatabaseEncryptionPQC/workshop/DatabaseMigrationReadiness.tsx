@@ -3,6 +3,7 @@
 import React, { useState } from 'react'
 import { CheckSquare, Square, AlertTriangle, CheckCircle } from 'lucide-react'
 import { DATABASE_PROFILES, COMPLEXITY_LABELS } from '../data/databaseConstants'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface ChecklistItem {
   id: string
@@ -144,6 +145,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <VendorCoverageNotice migrateLayer="Database" className="mb-2" />
       {/* Readiness score */}
       <div className="glass-panel p-5">
         <div className="flex items-center justify-between gap-4 mb-3">

@@ -5,6 +5,7 @@ import type { Plugin } from 'vite'
 import react from '@vitejs/plugin-react'
 import wasm from 'vite-plugin-wasm'
 import topLevelAwait from 'vite-plugin-top-level-await'
+import { VitePWA } from 'vite-plugin-pwa'
 
 import tailwindcss from '@tailwindcss/vite'
 
@@ -37,7 +38,64 @@ import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [buildTimestampPlugin(), react(), tailwindcss(), wasm(), topLevelAwait()],
+  plugins: [
+    buildTimestampPlugin(),
+    react(),
+    tailwindcss(),
+    wasm(),
+    topLevelAwait(),
+    VitePWA({
+      registerType: 'prompt',
+      includeAssets: [
+        'favicon.svg',
+        'favicon-32x32.png',
+        'apple-touch-icon.png',
+        'data/rag-corpus.json',
+        'data/compliance-data.json',
+      ],
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
+        maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB — accommodate WASM files
+        navigateFallback: 'index.html',
+        runtimeCaching: [
+          {
+            // Cache WASM files with cache-first strategy
+            urlPattern: /\.wasm$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'wasm-cache',
+              expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
+            },
+          },
+          {
+            // Cache data files (JSON/CSV) with stale-while-revalidate
+            urlPattern: /\/(data|dist)\/.+\.(json|csv)$/,
+            handler: 'StaleWhileRevalidate',
+            options: {
+              cacheName: 'data-cache',
+              expiration: { maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 },
+            },
+          },
+        ],
+      },
+      manifest: {
+        name: 'PQC Today',
+        short_name: 'PQC Today',
+        description:
+          'Post-Quantum Cryptography education, migration planning, and interactive cryptographic operations',
+        theme_color: '#6366f1',
+        background_color: '#0f172a',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          { src: 'favicon-32x32.png', sizes: '32x32', type: 'image/png' },
+          { src: 'apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+          { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' },
+        ],
+      },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),

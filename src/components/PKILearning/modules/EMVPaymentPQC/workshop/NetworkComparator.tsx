@@ -13,6 +13,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PAYMENT_NETWORKS } from '../data/paymentNetworkData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   PQC_POSTURE_COLORS,
   PQC_POSTURE_LABELS,
@@ -389,6 +390,7 @@ export const NetworkComparator: React.FC = () => {
               <X size={14} className="mr-1" /> Clear
             </Button>
           </div>
+          <VendorCoverageNotice migrateLayer="Application" className="mb-2" />
 
           {/* Comparison table */}
           <div className="glass-panel overflow-x-auto">

@@ -28,21 +28,22 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
+import { LinkToUsButton } from '../ui/LinkToUsButton'
 import { MobileAboutView } from './MobileAboutView'
 import { CareerJourneyModal } from './CareerJourneyModal'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 198, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 256, sources: '30+ standards bodies' },
-  { dataset: 'Algorithm Reference', records: 45, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 62, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 331, sources: '7 infrastructure layers' },
+  { dataset: 'Timeline Events', records: 202, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Library Resources', records: 303, sources: '30+ standards bodies' },
+  { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
+  { dataset: 'Compliance Frameworks', records: 90, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 366, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 103, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 770, sources: 'All PQC topic areas' },
-  { dataset: 'Authoritative Sources', records: 89, sources: 'Gov, Academic, Industry' },
+  { dataset: 'Industry Leaders', records: 114, sources: 'Public, Private, Academic' },
+  { dataset: 'Quiz Questions', records: 755, sources: 'All PQC topic areas' },
+  { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 48, sources: '3,000+ min of content' },
 ]
 
@@ -123,7 +124,7 @@ export function AboutView() {
             </p>
             <p className="text-muted-foreground mt-4">
               Everything here is free, transparent, and built in the open &mdash; 48 learning
-              modules across 8 tracks, 770+ quiz questions, hands-on cryptographic labs, a guided
+              modules across 8 tracks, 755 quiz questions, hands-on cryptographic labs, a guided
               migration catalog, global compliance tracking, and a risk assessment wizard, all
               powered by real implementations running directly in your browser. No accounts, no
               paywalls, no vendor lock-in.
@@ -228,7 +229,7 @@ export function AboutView() {
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gradient">1,560+</span>
+              <span className="text-2xl font-bold text-gradient">2,100+</span>
               <span className="text-sm text-muted-foreground">total curated records</span>
             </div>
             <span className="text-xs text-muted-foreground">Compliance data refreshed weekly</span>
@@ -252,11 +253,11 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React</span>
-                  <span className="text-xs text-muted-foreground/60">v19.2.4</span>
+                  <span className="text-xs text-muted-foreground/60">v19.2.3</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Framer Motion</span>
-                  <span className="text-xs text-muted-foreground/60">v12.34.2</span>
+                  <span className="text-xs text-muted-foreground/60">v12.27.5</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Lucide React</span>
@@ -264,7 +265,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Tailwind CSS</span>
-                  <span className="text-xs text-muted-foreground/60">v4.2.0</span>
+                  <span className="text-xs text-muted-foreground/60">v4.1.17</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">clsx</span>
@@ -272,7 +273,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">tailwind-merge</span>
-                  <span className="text-xs text-muted-foreground/60">v3.5.0</span>
+                  <span className="text-xs text-muted-foreground/60">v3.4.0</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">class-variance-authority</span>
@@ -280,7 +281,7 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Router</span>
-                  <span className="text-xs text-muted-foreground/60">v7.13.0</span>
+                  <span className="text-xs text-muted-foreground/60">v7.12.0</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">React Markdown</span>
@@ -393,7 +394,7 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Zustand</span>
-                  <span className="text-xs text-muted-foreground/60">v5.0.11</span>
+                  <span className="text-xs text-muted-foreground/60">v5.0.10</span>
                 </li>
               </ul>
             </div>
@@ -436,11 +437,15 @@ export function AboutView() {
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Prettier</span>
-                  <span className="text-xs text-muted-foreground/60">v3.8.1</span>
+                  <span className="text-xs text-muted-foreground/60">v3.8.0</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Husky</span>
                   <span className="text-xs text-muted-foreground/60">v9.1.7</span>
+                </li>
+                <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
+                  <span className="text-muted-foreground">vite-plugin-pwa</span>
+                  <span className="text-xs text-muted-foreground/60">v1.2.0</span>
                 </li>
               </ul>
             </div>
@@ -449,11 +454,11 @@ export function AboutView() {
               <ul className="space-y-2">
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Vitest</span>
-                  <span className="text-xs text-muted-foreground/60">v4.0.18</span>
+                  <span className="text-xs text-muted-foreground/60">v4.0.17</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Playwright</span>
-                  <span className="text-xs text-muted-foreground/60">v1.58.2</span>
+                  <span className="text-xs text-muted-foreground/60">v1.57.0</span>
                 </li>
                 <li className="flex justify-between items-baseline gap-2 flex-wrap text-sm border-b border-border pb-1">
                   <span className="text-muted-foreground">Testing Library (React)</span>
@@ -575,7 +580,7 @@ export function AboutView() {
             <ShieldCheck className="text-primary" size={24} />
             <div>
               <h2 className="text-xl font-semibold">Security Audit</h2>
-              <p className="text-xs text-muted-foreground">Last audited: February 27, 2026</p>
+              <p className="text-xs text-muted-foreground">Last audited: March 11, 2026</p>
             </div>
           </div>
 
@@ -818,6 +823,7 @@ export function AboutView() {
                 <GithubIcon size={16} />
                 View GitHub Repository
               </a>
+              <LinkToUsButton />
             </div>
           </div>
         </motion.div>
@@ -842,7 +848,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~3,200 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~3,670 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -924,7 +930,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~3,200 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~3,670 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

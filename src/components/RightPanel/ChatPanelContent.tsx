@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useRef, useEffect, useState } from 'react'
-import { Bot, Send, Trash2, Shield, Cloud, Key, HelpCircle, Download } from 'lucide-react'
+import { Bot, Send, Trash2, Shield, Cloud, Key, HelpCircle, Download, Plane } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Textarea } from '../ui/textarea'
 import { ChatMessage } from '../Chat/ChatMessage'
@@ -12,6 +12,7 @@ import { ConversationMenu } from '../Chat/ConversationMenu'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
+import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { logChatFeedback } from '@/utils/analytics'
 import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
 import { clearCache } from '@/services/chat/responseCache'
@@ -44,6 +45,7 @@ export const ChatPanelContent: React.FC = () => {
   } = useChatStore()
 
   const isOpen = useRightPanelStore((s) => s.isOpen)
+  const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
 
   const [input, setInput] = useState('')
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
@@ -193,6 +195,21 @@ export const ChatPanelContent: React.FC = () => {
               <Button
                 variant="ghost"
                 size="sm"
+                onClick={() => setAirplaneMode(!airplaneMode)}
+                aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
+                aria-pressed={airplaneMode}
+                title={airplaneMode ? 'Airplane Mode is on' : 'Airplane Mode'}
+                className={`min-h-[44px] min-w-[44px] p-2 ${
+                  airplaneMode
+                    ? 'text-primary bg-primary/10'
+                    : 'text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                <Plane size={16} />
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   const conv = conversations.find((c) => c.id === activeConversationId)
                   if (conv) {
@@ -303,6 +320,27 @@ export const ChatPanelContent: React.FC = () => {
       ) : (
         <>
           <ConversationMenu />
+
+          {/* Airplane Mode warning when connected to Gemini */}
+          {airplaneMode && provider === 'gemini' && (
+            <div className="mx-4 md:mx-12 mt-2 rounded-lg bg-status-warning/10 border border-status-warning/30 p-3 flex items-center gap-3">
+              <Plane size={16} className="text-status-warning shrink-0" />
+              <div className="flex-1 min-w-0">
+                <p className="text-xs text-foreground font-medium">Airplane Mode active</p>
+                <p className="text-xs text-muted-foreground">
+                  Gemini requires an internet connection. Switch to a local model for offline chat.
+                </p>
+              </div>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleDisconnect}
+                className="shrink-0 text-xs"
+              >
+                Switch to Local
+              </Button>
+            </div>
+          )}
 
           {/* Model download banner for local mode */}
           {provider === 'local' && webllmStatus !== 'ready' && webllmStatus !== 'idle' && (

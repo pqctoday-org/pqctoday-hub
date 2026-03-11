@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, Cpu, CheckSquare, Square, AlertTriangle } from 
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   SCOPE_LABELS,
   PQC_READINESS_COLORS,
@@ -155,6 +156,7 @@ export const TEEArchitectureExplorer: React.FC = () => {
           to view platforms side by side.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
 
       {/* Filter Bar */}
       <div className="glass-panel p-4">

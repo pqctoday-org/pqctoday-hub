@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { CheckCircle2, Clock, XCircle, Copy, Check } from 'lucide-react'
 import { GATEWAY_VENDORS, type GatewayVendor } from '../data/gatewayData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 const STATUS_STYLES: Record<
   string,
@@ -154,6 +155,7 @@ export const VendorReadinessMatrix: React.FC = () => {
             </button>
           </div>
         </div>
+        <VendorCoverageNotice migrateLayer="Network" className="mb-2" />
 
         {Object.entries(grouped).map(([category, vendors]) => (
           <div key={category}>

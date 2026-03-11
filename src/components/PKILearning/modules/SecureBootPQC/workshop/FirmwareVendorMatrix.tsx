@@ -4,6 +4,7 @@ import { Building2, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
 import type { VendorTier, FirmwareVendorStatus } from '../data/secureBootProviderData'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 const TIER_LABELS: Record<VendorTier, string> = {
   enterprise: 'Enterprise',
@@ -57,6 +58,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
           products matching your infrastructure. Click any vendor for detailed migration guidance.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
 
       {/* Summary stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">

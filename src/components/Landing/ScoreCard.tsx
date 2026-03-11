@@ -245,9 +245,11 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
 
           {/* Next belt hint */}
           {nextBelt && (
-            <div className="text-right shrink-0 hidden sm:block">
-              <p className="text-xs text-muted-foreground">{pointsToNextBelt} pts to</p>
-              <p className="text-xs font-medium text-foreground">{nextBelt.name}</p>
+            <div className="text-right shrink-0">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
+                {pointsToNextBelt} pts to
+              </p>
+              <p className="text-[10px] sm:text-xs font-medium text-foreground">{nextBelt.name}</p>
             </div>
           )}
         </div>
