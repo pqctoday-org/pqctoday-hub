@@ -38,5 +38,10 @@
     "label": "United States:NSA — NSS Acquisitions CNSA 2.0 Required",
     "reason": "forbidden",
     "date": "2026-02-27T04:20:00.655Z"
+  },
+  "https://trustedcomputinggroup.org/resource/tpm-library-specification/": {
+    "label": "Global:TCG — TPM 2.0 PQC Library Specification Draft",
+    "reason": "forbidden",
+    "date": "2026-03-12T21:45:57.786Z"
   }
 }

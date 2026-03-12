@@ -4,6 +4,20 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.41.0] - 2026-03-12
+
+### Added
+
+- **GRI Quantum Threat Timeline Report 2025 — library and timeline reference**: Added the March 2026 GRI annual expert survey to both the library catalog and the timeline. The 2025 report (26 global experts, authored by Dr. Michele Mosca and Dr. Marco Piani at evolutionQ Inc.) shows a significant acceleration in CRQC probability estimates — 28–49% within 10 years (up from 19–34% in 2024) and 51–70% within 15 years. Majority of experts now consider a CRQC by 2035 quite likely. [view:/library] [view:/timeline]
+
+### Changed
+
+- **CRQC probability estimates updated to GRI 2025 figures**: All downstream data referencing the 2024 GRI survey updated to reflect the 2025 survey results.
+  - `CROSS-004` threat description updated: 28–49% within 10 years (was 19–34%), 26 experts (was 32), source URL points to 2025b report.
+  - Quiz questions `fund-011` and `qt-005` updated: option C of fund-011 changed from "19-34%" to "28-49%"; option B of qt-005 changed from "5-14%" to "5-15%".
+  - `quantumConstants.ts` CRQC_ESTIMATES GRI entry updated to `Global Risk Institute (2025)` with `yearHigh: 2041` and updated confidence string.
+- **RAG corpus regenerated** with updated threats, quiz, library, and timeline data. [view:/]
+
 ## [2.40.0] - 2026-03-12
 
 ### Added

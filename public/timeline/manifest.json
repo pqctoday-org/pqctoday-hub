@@ -1,10 +1,10 @@
 {
-  "generated": "2026-02-27T05:10:40.426Z",
-  "source": "src/data/timeline_02262026.csv",
+  "generated": "2026-03-12T21:45:23.985Z",
+  "source": "src/data/timeline_03122026.csv",
   "summary": {
-    "downloaded": 0,
-    "skipped": 109,
-    "failed": 1,
+    "downloaded": 4,
+    "skipped": 115,
+    "failed": 2,
     "persisted_skip": 0
   },
   "entries": [
@@ -66,7 +66,7 @@
     },
     {
       "label": "United States:SandboxAQ — AQtive Guard Pentagon 5-Year Agreement",
-      "url": "https://www.sandboxaq.com/press/sandboxaq-and-dow-cio-partner-to-strengthen-us-defenses-against-quantum-and-ai-driven-cyber-threats",
+      "url": "https://www.sandboxaq.com/press/sandboxaq-and-dod-cio-partner-to-strengthen-us-defenses-against-quantum-and-ai-driven-cyber-threats",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/United_States_SandboxAQ_AQtive_Guard_Pentagon_5-Year_Agreement.html"
@@ -107,11 +107,11 @@
       "file": "public/timeline/International_BIS_Paper_158_Quantum_Roadmap.html"
     },
     {
-      "label": "Canada:CCCS — PQC Best Practices Published",
+      "label": "Canada:ISED — PQC Best Practices Published",
       "url": "https://ised-isde.canada.ca/site/spectrum-management-telecommunications/sites/default/files/attachments/2023/cfdir-quantum-readiness-best-practices-v03.pdf",
       "status": "skipped",
       "reason": "already-exists",
-      "file": "public/timeline/Canada_CCCS_PQC_Best_Practices_Published.pdf"
+      "file": "public/timeline/Canada_ISED_PQC_Best_Practices_Published.pdf"
     },
     {
       "label": "Canada:CCCS — PQC Migration Roadmap Published",
@@ -549,7 +549,7 @@
     },
     {
       "label": "United States:CISA — CISA PQC Product Category List Publication",
-      "url": "https://www.cisa.gov/quantum",
+      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/United_States_CISA_CISA_PQC_Product_Category_List_Publication.html"
@@ -609,13 +609,6 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/G7_G7_CEG_Financial_Sector_PQC_Roadmap.html"
-    },
-    {
-      "label": "United States:CISA — Federal PQC Procurement Guidance",
-      "url": "https://www.cisa.gov/resources-tools/resources/product-categories-technologies-use-post-quantum-cryptography-standards",
-      "status": "skipped",
-      "reason": "already-exists",
-      "file": "public/timeline/United_States_CISA_Federal_PQC_Procurement_Guidance.html"
     },
     {
       "label": "Global:Ethereum Foundation — Post-Quantum Security Top Priority",
@@ -777,6 +770,94 @@
       "status": "skipped",
       "reason": "already-exists",
       "file": "public/timeline/Jordan_CBJ_Financial_Sector_PQC_Roadmap.html"
+    },
+    {
+      "label": "Global:Ethereum Foundation — Vitalik Buterin Publishes PQ Defense Roadmap",
+      "url": "https://www.coindesk.com/tech/2026/02/26/vitalik-buterin-unveils-ethereum-roadmap-to-counter-quantum-computing-threat/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Global_Ethereum_Foundation_Vitalik_Buterin_Publishes_PQ_Defense_Roadmap.html"
+    },
+    {
+      "label": "United States:Google — Google Cloud ML-KEM Default and Chrome MTC Program",
+      "url": "https://blog.google/innovation-and-ai/technology/safety-security/the-quantum-era-is-coming-are-we-ready-to-secure-it/",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_Google_Google_Cloud_ML-KEM_Default_and_Chrome_MTC_Program.html"
+    },
+    {
+      "label": "Germany:BSI — Hybrid TLS Required for Classified Communications",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-2.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_Hybrid_TLS_Required_for_Classified_Communications.pdf"
+    },
+    {
+      "label": "Germany:BSI — Hybrid IPsec and SSH Required",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-3.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_Hybrid_IPsec_and_SSH_Required.pdf"
+    },
+    {
+      "label": "Germany:BSI — Full PQC Transition — Standalone Algorithms Requir",
+      "url": "https://www.bsi.bund.de/SharedDocs/Downloads/EN/BSI/Publications/TechGuidelines/TG02102/BSI-TR-02102-1.pdf",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/Germany_BSI_Full_PQC_Transition_Standalone_Algorithms_Required.pdf"
+    },
+    {
+      "label": "European Union:EC — Cryptographic Inventory Mandate",
+      "url": "https://digital-strategy.ec.europa.eu/en/library/recommendation-post-quantum-cryptography",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/European_Union_EC_Cryptographic_Inventory_Mandate.html"
+    },
+    {
+      "label": "United States:NIST — NIST SP 800-208 Published (LMS/XMSS)",
+      "url": "https://csrc.nist.gov/pubs/sp/800/208/final",
+      "status": "skipped",
+      "reason": "already-exists",
+      "file": "public/timeline/United_States_NIST_NIST_SP_800-208_Published_LMS_XMSS_.html"
+    },
+    {
+      "label": "Global:OASIS — PKCS#11 v3.2 Committee Specification Draft Publish",
+      "url": "https://docs.oasis-open.org/pkcs11/pkcs11-spec/v3.2/csd01/pkcs11-spec-v3.2-csd01.html",
+      "status": "downloaded",
+      "file": "public/timeline/Global_OASIS_PKCS_11_v3.2_Committee_Specification_Draft_Published.html",
+      "sizeBytes": 4922757,
+      "contentType": "text/html"
+    },
+    {
+      "label": "Global:CA/Browser Forum — Ballot SMC013 ML-DSA for S/MIME Adopted",
+      "url": "https://cabforum.org/2025/07/02/ballot-smc-013/",
+      "status": "downloaded",
+      "file": "public/timeline/Global_CA_Browser_Forum_Ballot_SMC013_ML-DSA_for_S_MIME_Adopted.html",
+      "sizeBytes": 23895,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "Global:3GPP SA3 — TR 33.841 PQC Study Item Approved",
+      "url": "https://www.3gpp.org/ftp/Specs/archive/33_series/33.841/",
+      "status": "downloaded",
+      "file": "public/timeline/Global_3GPP_SA3_TR_33.841_PQC_Study_Item_Approved.html",
+      "sizeBytes": 29145,
+      "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "Global:TCG — TPM 2.0 PQC Library Specification Draft",
+      "url": "https://trustedcomputinggroup.org/resource/tpm-library-specification/",
+      "status": "failed",
+      "reason": "forbidden",
+      "persistent": true
+    },
+    {
+      "label": "International:GRI — Quantum Threat Timeline Report 2025",
+      "url": "https://globalriskinstitute.org/publication/quantum-threat-timeline-report-2025b/",
+      "status": "downloaded",
+      "file": "public/timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html",
+      "sizeBytes": 223157,
+      "contentType": "text/html; charset=utf-8"
     }
   ]
 }

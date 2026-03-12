@@ -305,11 +305,12 @@ export interface CRQCEstimate {
 
 export const CRQC_ESTIMATES: CRQCEstimate[] = [
   {
-    source: 'Global Risk Institute (2024)',
+    source: 'Global Risk Institute (2025)',
     yearLow: 2030,
-    yearHigh: 2040,
-    confidence: '~33% by 2033, ~50% by 2038',
-    notes: 'Annual expert survey of quantum computing researchers.',
+    yearHigh: 2041,
+    confidence: '28-49% by 2036, 51-70% by 2041',
+    notes:
+      '26-expert survey (March 2026). Significant acceleration: 28-49% probability within 10 years (up from 19-34% in 2024). Majority consider CRQC by 2035 quite likely.',
   },
   {
     source: 'NIST IR 8547 (2025)',
