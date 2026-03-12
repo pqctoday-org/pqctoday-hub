@@ -85,7 +85,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
     ],
     pqcConstraints: [
       'Abundant compute/memory for all PQC algorithms',
-      'Deployed for 7-10 year lifecycle \u2014 replacement cycle is slow',
+      'Deployed for 7-12 year physical terminal replacement cycle — replacement is slow',
       'EPP hardware may need physical replacement for PQC PIN encryption',
       'Remote key management migration requires coordinated HSM + ATM update',
     ],
@@ -108,7 +108,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
     pqcConstraints: [
       '256 KB RAM supports FN-DSA-512 but tight for ML-KEM-768',
       'Often in remote locations \u2014 firmware updates are complex',
-      'Long deployment lifecycle (5-10 years)',
+      'Long deployment lifecycle with 7-12 year physical terminal replacement cycle',
       'Network connectivity may be intermittent \u2014 offline operation critical',
     ],
   },

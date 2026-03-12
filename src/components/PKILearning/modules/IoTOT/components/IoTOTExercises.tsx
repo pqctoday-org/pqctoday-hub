@@ -74,15 +74,26 @@ export const IoTOTExercises: React.FC<IoTOTExercisesProps> = ({
       config: { step: 3 },
     },
     {
+      id: 'ble-mesh-oob',
+      title: '5. Provision a BLE Mesh device with PQC Out-of-Band (OOB)',
+      description:
+        'BLE Mesh networks face extreme payload constraints. Review a simulated provisioning flow for a new BLE Mesh sensor joining a network.',
+      badge: 'BLE Mesh',
+      badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+      observe:
+        'Due to tight payload limits, transmitting a 1,088-byte ML-KEM public key over standard BLE advertising channels is prohibitive. An out-of-band (OOB) PQC provisioning channel — such as QR codes or NFC — must be used to securely bootstrap the device before standard RF communications begin.',
+      config: { step: 4 },
+    },
+    {
       id: 'scada-plan',
-      title: '5. Assess a power grid SCADA system and prioritize PQC migration layers',
+      title: '6. Assess a power grid SCADA system and prioritize PQC migration layers',
       description:
         'In the SCADA Migration Planner, the default configuration approximates a typical power grid. Review the generated migration priority matrix and timeline. Then try setting the DMZ to "PQC Hybrid" and observe how the priority matrix changes.',
       badge: 'SCADA',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
         'The DMZ (Level 3.5) and enterprise boundary (Level 4\u20135) score highest migration priority because they are internet-facing and subject to HNDL. Level 0\u20131 devices may not need PQC directly if they are air-gapped, but gateway devices at Level 2 must protect data in transit from quantum threats.',
-      config: { step: 4 },
+      config: { step: 5 },
     },
   ]
 

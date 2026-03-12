@@ -132,6 +132,10 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
                 d: 'CT logs (RFC 9162) must store PQC certificates that are 5\u201310\u00d7 larger than classical ones. This increases CT log bandwidth and storage requirements significantly.',
               },
               {
+                t: 'Edge Memory Consumption',
+                d: 'Caching larger PQC certificates and expanded session state at millions-of-connections scale significantly impacts edge nodes. Large-scale deployments have observed up to a 38% increase in CDN edge memory consumption just for cert caching.',
+              },
+              {
                 t: 'SAN Consolidation vs Isolation',
                 d: 'Subject Alternative Name certificates covering multiple domains reduce the total cert count but increase blast radius if compromised. With PQC, the size trade-off shifts \u2014 fewer, larger certs may be preferable.',
               },
@@ -253,6 +257,12 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           <div className="space-y-2">
             {[
               {
+                t: 'NGFW Hardware Buffer Limits',
+                d: 'Next-Gen Firewalls (NGFWs) often have hardcoded ~4 KB inspection buffer limits for deep packet TLS inspection. A PQC hybrid handshake (~15+ KB) exceeds these limits, causing the firewall to drop the connection entirely.',
+                icon: Server,
+                iconColor: 'text-status-error',
+              },
+              {
                 t: 'Passthrough Breaks Inspection',
                 d: 'If an upstream CDN negotiates PQC with the client and passes through to a WAF that only supports classical TLS, the WAF cannot decrypt or inspect the traffic. This creates a security blind spot.',
                 icon: AlertTriangle,
@@ -300,9 +310,9 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
           <p>
             Content Delivery Networks deploy PQC at{' '}
             <InlineTooltip term="Edge PoP">edge Points of Presence (PoPs)</InlineTooltip>{' '}
-            distributed globally. Cloudflare reports that over 20% of TLS connections to their
-            network already use <InlineTooltip term="ML-KEM">ML-KEM</InlineTooltip> hybrid key
-            exchange (X25519MLKEM768), making CDN edges the largest real-world PQC deployment.
+            distributed globally. Cloudflare deployed X25519MLKEM768 in production in 2024, AWS
+            CloudFront offers hybrid TLS in preview, and nginx supports it via OpenSSL. This makes
+            CDN edge nodes the largest real-world PQC deployment today.
           </p>
 
           <div className="space-y-2">

@@ -78,7 +78,7 @@ export const VENDOR_MIGRATION_DATA: VendorMigrationStatus[] = [
   {
     id: 'cisco-firepower',
     vendor: 'Cisco',
-    product: 'ASA / Firepower Threat Defense (FTD)',
+    product: 'ASA / Firepower Threat Defense (FTD 7.4+)',
     tier: 'enterprise',
     pqcStatus: 'roadmap',
     tlsInspectionPQC: 'roadmap',

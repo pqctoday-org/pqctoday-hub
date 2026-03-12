@@ -32,6 +32,7 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { LinkToUsButton } from '../ui/LinkToUsButton'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 

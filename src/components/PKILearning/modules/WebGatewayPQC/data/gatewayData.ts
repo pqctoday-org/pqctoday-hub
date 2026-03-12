@@ -543,7 +543,17 @@ export const GATEWAY_VENDORS: GatewayVendor[] = [
     pqcVersion: 'Current',
     algorithms: ['X25519MLKEM768'],
     fipsStatus: 'Edge platform',
-    notes: 'ML-KEM enabled by default. 20%+ of TLS connections use hybrid PQC.',
+    notes: 'ML-KEM enabled by default since 2024. 20%+ of TLS connections use hybrid PQC.',
+  },
+  {
+    id: 'aws-cloudfront',
+    name: 'AWS CloudFront',
+    category: 'cdn',
+    pqcStatus: 'planned',
+    pqcVersion: 'Preview',
+    algorithms: ['X25519MLKEM768'],
+    fipsStatus: 'TBD',
+    notes: 'Managed CDN offering hybrid PQC TLS in preview. No application code changes needed.',
   },
   {
     id: 'aws-alb',

@@ -51,12 +51,42 @@ export const ROUTE_META: Record<string, RouteMeta> = {
           featureList: [
             'Post-Quantum Cryptography Timeline',
             'Interactive ML-KEM and ML-DSA Demos',
+            'PKCS#11 HSM Mode via SoftHSMv3 WASM',
             'OpenSSL WASM Studio',
             'PQC Migration Planning',
             'Compliance Tracker (NIST, ANSSI, Common Criteria)',
             '48 Hands-on Learning Modules',
             'PQC Risk Assessment Wizard',
             'Migration Software Catalog',
+          ],
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What is post-quantum cryptography (PQC)?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Post-quantum cryptography (PQC) refers to cryptographic algorithms designed to resist attacks from both classical and quantum computers. NIST finalized the first PQC standards in August 2024: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), and FIPS 205 (SLH-DSA), with FIPS 206 (FN-DSA) expected in 2025.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'When will quantum computers break current encryption?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'Expert estimates for a Cryptographically Relevant Quantum Computer (CRQC) range from 2029 to 2040. However, "Harvest Now, Decrypt Later" attacks mean adversaries can collect encrypted data today and decrypt it once quantum computers become available, making migration urgent now.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'What are the NIST PQC standards?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'NIST published four PQC standards: FIPS 203 (ML-KEM for key encapsulation), FIPS 204 (ML-DSA for digital signatures), FIPS 205 (SLH-DSA for hash-based signatures), and FIPS 206 (FN-DSA for compact signatures). NIST IR 8547 sets the transition timeline: deprecate classical algorithms by 2030, disallow by 2035.',
+              },
+            },
           ],
         },
       ],
@@ -70,12 +100,45 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/timeline`,
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'Dataset',
-      name: 'PQC Migration Timeline',
-      description:
-        'Global post-quantum cryptography migration deadlines and milestones by country.',
-      creator: { '@type': 'Organization', name: 'PQC Today' },
-      license: 'https://opensource.org/licenses/GPL-3.0',
+      '@graph': [
+        {
+          '@type': 'Dataset',
+          name: 'PQC Migration Timeline',
+          description:
+            'Global post-quantum cryptography migration deadlines and milestones by country.',
+          creator: { '@type': 'Organization', name: 'PQC Today' },
+          license: 'https://opensource.org/licenses/GPL-3.0',
+        },
+        {
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'When does NIST plan to deprecate classical cryptographic algorithms?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'According to NIST IR 8547, classical algorithms like RSA, ECDSA, and ECDH will be deprecated by 2030 and fully disallowed by 2035. Organizations should begin planning their migration now to meet these deadlines.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'Which country has the most aggressive PQC migration deadline?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'France has one of the most aggressive timelines — ANSSI requires PQC support in qualified products by 2025. The CNSA 2.0 Suite requires US national security systems to adopt ML-KEM and ML-DSA by 2025, with all classical algorithms disallowed by 2033.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: "What is the EU's coordinated PQC transition plan?",
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'EU Recommendation 2024/1101 calls on all member states to develop coordinated PQC migration plans. Combined with DORA (financial sector), NIS2 (critical infrastructure), and eIDAS 2.0 (digital identity), the EU is building a comprehensive quantum-readiness regulatory framework.',
+              },
+            },
+          ],
+        },
+      ],
     },
   },
 
@@ -86,33 +149,67 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/algorithms`,
     structuredData: {
       '@context': 'https://schema.org',
-      '@type': 'ItemList',
-      name: 'Post-Quantum Cryptography Algorithms',
-      description: 'NIST standardized and candidate PQC algorithms with key sizes and benchmarks.',
-      itemListElement: [
+      '@graph': [
         {
-          '@type': 'ListItem',
-          position: 1,
-          name: 'ML-KEM (FIPS 203)',
-          description: 'Module-Lattice Key Encapsulation Mechanism',
+          '@type': 'ItemList',
+          name: 'Post-Quantum Cryptography Algorithms',
+          description:
+            'NIST standardized and candidate PQC algorithms with key sizes and benchmarks.',
+          itemListElement: [
+            {
+              '@type': 'ListItem',
+              position: 1,
+              name: 'ML-KEM (FIPS 203)',
+              description: 'Module-Lattice Key Encapsulation Mechanism',
+            },
+            {
+              '@type': 'ListItem',
+              position: 2,
+              name: 'ML-DSA (FIPS 204)',
+              description: 'Module-Lattice Digital Signature Algorithm',
+            },
+            {
+              '@type': 'ListItem',
+              position: 3,
+              name: 'SLH-DSA (FIPS 205)',
+              description: 'Stateless Hash-based Digital Signature Algorithm',
+            },
+            {
+              '@type': 'ListItem',
+              position: 4,
+              name: 'FN-DSA (FIPS 206)',
+              description: 'FFT over NTRU-Lattice Digital Signature Algorithm',
+            },
+          ],
         },
         {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'ML-DSA (FIPS 204)',
-          description: 'Module-Lattice Digital Signature Algorithm',
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: 'SLH-DSA (FIPS 205)',
-          description: 'Stateless Hash-based Digital Signature Algorithm',
-        },
-        {
-          '@type': 'ListItem',
-          position: 4,
-          name: 'FN-DSA (FIPS 206)',
-          description: 'FFT over NTRU-Lattice Digital Signature Algorithm',
+          '@type': 'FAQPage',
+          mainEntity: [
+            {
+              '@type': 'Question',
+              name: 'What is ML-KEM and what FIPS standard covers it?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'ML-KEM (Module-Lattice Key Encapsulation Mechanism) is standardized in FIPS 203, published August 2024. It is a lattice-based KEM that replaces RSA and ECDH for key exchange, offering three parameter sets: ML-KEM-512 (Level 1), ML-KEM-768 (Level 3), and ML-KEM-1024 (Level 5).',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'What is the recommended PQC replacement for RSA-2048?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'For key exchange, ML-KEM-768 (FIPS 203, NIST Level 3) replaces RSA key transport. For digital signatures, ML-DSA-65 (FIPS 204, NIST Level 3) replaces RSA-2048 signing. Both provide equivalent or higher security against quantum attacks.',
+              },
+            },
+            {
+              '@type': 'Question',
+              name: 'What is the difference between ML-DSA and SLH-DSA?',
+              acceptedAnswer: {
+                '@type': 'Answer',
+                text: 'ML-DSA (FIPS 204) is lattice-based with compact signatures (~2.4-4.6 KB) and fast verification, making it the primary choice. SLH-DSA (FIPS 205) is hash-based with larger signatures (~7-50 KB) but relies only on hash function security, serving as a conservative fallback if lattice assumptions are broken.',
+              },
+            },
+          ],
         },
       ],
     },
@@ -189,6 +286,36 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     description:
       'Monitor quantum computing threats to cryptography. CRQC timeline estimates, harvest-now-decrypt-later risks, and algorithm vulnerability tracking.',
     canonical: `${BASE_URL}/threats`,
+    structuredData: {
+      '@context': 'https://schema.org',
+      '@type': 'FAQPage',
+      mainEntity: [
+        {
+          '@type': 'Question',
+          name: 'What is a "Harvest Now, Decrypt Later" (HNDL) attack?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'In a Harvest Now, Decrypt Later attack, an adversary records encrypted network traffic today and stores it until a sufficiently powerful quantum computer becomes available to decrypt it. This makes data with long confidentiality requirements — such as healthcare records, government secrets, and financial data — vulnerable right now.',
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'When will quantum computers be able to break RSA and ECDSA?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: "Expert estimates for a Cryptographically Relevant Quantum Computer (CRQC) capable of running Shor's algorithm at scale range from 2029 to 2040. A CRQC with approximately 4,000 logical qubits could factor RSA-2048 in hours, breaking both RSA and ECDSA/ECDH.",
+          },
+        },
+        {
+          '@type': 'Question',
+          name: 'Which industries are most vulnerable to quantum computing threats?',
+          acceptedAnswer: {
+            '@type': 'Answer',
+            text: 'Financial services, healthcare, government/defense, and critical infrastructure face the highest quantum risk due to long data lifetimes, strict regulatory requirements, and the potential for HNDL attacks on currently encrypted communications.',
+          },
+        },
+      ],
+    },
   },
 
   '/leaders': {
@@ -209,6 +336,15 @@ export const ROUTE_META: Record<string, RouteMeta> = {
       name: 'PQC Reference Library',
       description: 'Curated post-quantum cryptography standards, papers, and guides.',
     },
+  },
+
+  '/faq': {
+    title: 'PQC FAQ — Post-Quantum Cryptography Questions & Answers | PQC Today',
+    description:
+      'Answers to 100+ common post-quantum cryptography questions: ML-KEM, ML-DSA, NIST FIPS standards, migration timelines, compliance requirements, algorithm comparisons, and industry-specific PQC guidance.',
+    canonical: `${BASE_URL}/faq`,
+    // FAQPage structured data is injected dynamically by FAQPage component
+    // to avoid duplicating 100+ Q&A pairs in this static config
   },
 
   '/about': {

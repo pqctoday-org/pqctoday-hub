@@ -149,7 +149,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
         </div>
         <input
           type="range"
-          min={10}
+          min={2}
           max={256}
           step={1}
           value={ramBudgetKB}
@@ -157,7 +157,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
           className="w-full accent-primary"
         />
         <div className="flex justify-between text-[10px] text-muted-foreground mt-1">
-          <span>10 KB (Class 0/1)</span>
+          <span>2 KB (MS-IoT) / 10 KB (Class 0/1)</span>
           <span>50 KB (Class 2)</span>
           <span>256 KB (Class 3)</span>
         </div>

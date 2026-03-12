@@ -71,6 +71,7 @@ const ROUTES = [
   '/learn/ops-quantum-impact',
   '/learn/research-quantum-impact',
   '/learn/quiz',
+  '/faq',
 ]
 
 /**

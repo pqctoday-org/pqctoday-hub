@@ -89,10 +89,10 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-4 border border-warning/20">
-            <div className="text-xs font-bold text-status-warning mb-2">Handshake Overhead</div>
-            <div className="text-2xl font-bold text-status-warning mb-1">+140%</div>
+            <div className="text-xs font-bold text-status-warning mb-2">TLS Inspection Latency</div>
+            <div className="text-2xl font-bold text-status-warning mb-1">35 ms</div>
             <p className="text-xs text-muted-foreground">
-              Hybrid TLS handshake: ~12ms vs classical TLS 1.3: ~5ms on typical hardware.
+              Classical (9 ms), Hybrid (28 ms), and Pure PQC (35 ms) overhead across boundaries.
             </p>
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">

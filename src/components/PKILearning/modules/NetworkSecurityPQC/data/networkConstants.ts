@@ -87,7 +87,7 @@ export const NGFW_VENDORS: NGFWVendor[] = [
   {
     id: 'cisco-firepower',
     name: 'Cisco',
-    product: 'ASA / Firepower Threat Defense (FTD)',
+    product: 'ASA / Firepower Threat Defense (FTD 7.4+)',
     tier: 'enterprise',
     pqcReadiness: 'roadmap',
     tlsInspectionPQC: false,
@@ -147,7 +147,7 @@ export const NGFW_VENDORS: NGFWVendor[] = [
   {
     id: 'check-point',
     name: 'Check Point',
-    product: 'Quantum Security Gateway',
+    product: 'Quantum Security Gateway (R82)',
     tier: 'enterprise',
     pqcReadiness: 'ga',
     tlsInspectionPQC: false,
@@ -239,7 +239,8 @@ export const TRAFFIC_TYPES: TrafficType[] = [
     pqcImpact:
       'NGFW must re-encrypt with PQC certs, doubling the key exchange cost. Inline inspection adds latency from PQC key derivation.',
     certSizeImpact: 'Re-signed PQC cert chain: 5-8KB vs classical 2-3KB',
-    latencyImpact: '+20-50ms for software-only DPI; ASIC offload critical for PQC performance',
+    latencyImpact:
+      'Classical (9 ms) vs Hybrid (28 ms) vs Pure PQC (35 ms) overhead; ASIC offload critical',
     inspectionComplexity: 'very-high',
   },
   {

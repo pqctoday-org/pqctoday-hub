@@ -82,6 +82,11 @@ const BusinessCenterView = lazyWithRetry(() =>
     default: module.BusinessCenterView,
   }))
 )
+const FAQPage = lazyWithRetry(() =>
+  import('./components/FAQ/FAQPage').then((module) => ({
+    default: module.FAQPage,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -262,6 +267,14 @@ function App() {
               element={
                 <ErrorBoundary>
                   <BusinessCenterView />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/faq"
+              element={
+                <ErrorBoundary>
+                  <FAQPage />
                 </ErrorBoundary>
               }
             />

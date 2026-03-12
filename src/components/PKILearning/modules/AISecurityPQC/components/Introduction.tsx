@@ -206,9 +206,10 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
       >
         <p className="text-foreground/80 leading-relaxed">
           <InlineTooltip term="Model Weights">Model weights</InlineTooltip> are the crown jewels of
-          an AI organization — billions of parameters representing millions of dollars in training
-          compute. Protecting these assets requires encryption at rest, in transit, and in use, plus
-          integrity signatures to detect tampering.
+          an AI organization — billions of parameters representing multi-million dollar intellectual
+          property (IP). Protecting this IP from Harvest-Now-Decrypt-Later (HNDL) attacks requires
+          ML-KEM wrapping for confidentiality and ML-DSA signing for integrity to ensure long-term
+          protection.
         </p>
 
         <h3 className="text-lg font-bold text-foreground mt-4">Three Layers of Protection</h3>
@@ -253,14 +254,16 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
           ))}
         </div>
 
-        <h3 className="text-lg font-bold text-foreground mt-4">Model Signing</h3>
+        <h3 className="text-lg font-bold text-foreground mt-4">Model Signing & Attestation</h3>
         <p className="text-sm text-foreground/70">
           Just as{' '}
           <Link to="/learn/code-signing" className="text-primary hover:underline">
             code signing
           </Link>{' '}
           verifies software integrity, <strong>model signing</strong> uses digital signatures to
-          prove a model has not been tampered with. ML-DSA signatures on model artifacts create a{' '}
+          prove a model has not been tampered with. Frameworks like{' '}
+          <strong>Sigstore (cosign)</strong> and <strong>in-toto</strong> are adding support for
+          ML-DSA signatures on model artifacts. This creates a{' '}
           <InlineTooltip term="Model Provenance">provenance</InlineTooltip> record: who trained the
           model, on what data, when, and with what hyperparameters.
         </p>

@@ -161,9 +161,10 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
           <p className="text-xs text-foreground/90">
             <strong>Key insight:</strong> The{' '}
             <InlineTooltip term="Secret Zero">&quot;Secret Zero&quot;</InlineTooltip> problem — how
-            do you protect the credentials that protect all other credentials? — is solved by using
-            ML-KEM for the vault master seal key. This single change cascades protection to all
-            secrets in the vault.
+            do you securely introduce an application to the vault without hardcoding a first
+            credential? — is addressed by <strong>SPIFFE/SPIRE</strong> injecting verified workload
+            identity. For the vault itself, migrating the master seal key to ML-KEM cascades PQC
+            protection to all stored secrets.
           </p>
         </div>
       </CollapsibleSection>
@@ -356,19 +357,21 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               <code className="bg-muted px-1 rounded border border-border">rsa-4096</code> to{' '}
               <code className="bg-muted px-1 rounded border border-border">ml-kem-768</code> or{' '}
               <code className="bg-muted px-1 rounded border border-border">ml-dsa-65</code> (Vault
-              1.18+) changes the transit key store without breaking the API surface. Client code
-              only changes the <code>key_type</code> parameter.
+              1.18+) changes the internal transit key store without breaking the API surface.
+              Applications simply update the <code>key_type</code> parameter during key creation,
+              and Vault mechanically handles the larger PQC ciphertexts and nested encapsulation
+              transparency.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="text-xs font-bold text-foreground mb-2">
-              <InlineTooltip term="Lease/Renewal">Lease Renewal</InlineTooltip> Strategy
+              <InlineTooltip term="Lease/Renewal">Dynamic TTL vs Key Rotation</InlineTooltip>
             </div>
             <p className="text-xs text-muted-foreground">
-              Vault&apos;s lease system allows TTL renewal up to max_ttl. For PQC, max_ttl should
-              align with your HNDL window. POST-2026: max_ttl for DB creds should be reduced from 30
-              days to 24h as CRQC timelines become clearer. Vault policies enforce max_ttl
-              centrally.
+              Dynamic credential TTLs (e.g., 1-8 hour bounds) completely eliminate HNDL risk for the
+              credential itself, as it expires long before a CRQC appears. Contrast this with PQC
+              rotation bounds for static KEKs (30-90 days), which require complex re-wrapping
+              operations. Short TTLs negate the need for PQC migration of the secret value itself.
             </p>
           </div>
         </div>
@@ -377,7 +380,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
       {/* Section 4 */}
       <CollapsibleSection
         icon={<Cloud size={24} className="text-primary" />}
-        title="AWS / Azure / GCP / HashiCorp Vault PQC Roadmaps"
+        title="AWS / Azure / GCP / HashiCorp Vault / Delinea PQC Roadmaps"
       >
         <p>
           Cloud secrets managers vary significantly in their PQC readiness. Understanding each

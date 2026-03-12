@@ -2,6 +2,7 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { Bot, Send, Trash2, Shield, Cloud, Key, HelpCircle, Download, Plane } from 'lucide-react'
 import { Button } from '../ui/button'
+import { Switch } from '../ui/switch'
 import { Textarea } from '../ui/textarea'
 import { ChatMessage } from '../Chat/ChatMessage'
 import { ProviderSetup } from '../Chat/ProviderSetup'
@@ -192,21 +193,18 @@ export const ChatPanelContent: React.FC = () => {
           </div>
           {provider && (
             <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setAirplaneMode(!airplaneMode)}
-                aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
-                aria-pressed={airplaneMode}
-                title={airplaneMode ? 'Airplane Mode is on' : 'Airplane Mode'}
-                className={`min-h-[44px] min-w-[44px] p-2 ${
-                  airplaneMode
-                    ? 'text-primary bg-primary/10'
-                    : 'text-muted-foreground hover:text-foreground'
-                }`}
-              >
-                <Plane size={16} />
-              </Button>
+              <div className="flex items-center gap-1.5 px-1">
+                <Plane
+                  size={14}
+                  className={airplaneMode ? 'text-primary' : 'text-muted-foreground'}
+                  aria-hidden="true"
+                />
+                <Switch
+                  checked={airplaneMode}
+                  onCheckedChange={(checked) => setAirplaneMode(checked)}
+                  aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
+                />
+              </div>
               <Button
                 variant="ghost"
                 size="sm"

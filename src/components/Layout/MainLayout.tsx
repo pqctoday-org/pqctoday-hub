@@ -23,6 +23,7 @@ import {
   Plane,
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import { Switch } from '../ui/switch'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { AchievementToast } from '../ui/AchievementToast'
 import { AirplaneModeToast } from '../ui/AirplaneModeToast'
@@ -235,24 +236,21 @@ export const MainLayout = () => {
                 </Button>
               </div>
             )}
-
-            {/* Airplane Mode toggle */}
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setAirplaneMode(!airplaneMode)}
-              aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
-              aria-pressed={airplaneMode}
-              title={airplaneMode ? 'Airplane Mode is on' : 'Airplane Mode'}
-              className={`shrink-0 min-h-[44px] min-w-[44px] p-2 ${
-                airplaneMode
-                  ? 'text-primary bg-primary/10 border border-primary/20'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              <Plane size={20} aria-hidden="true" />
-            </Button>
           </nav>
+
+          {/* Airplane Mode toggle */}
+          <div className="shrink-0 flex items-center gap-1.5 pl-2">
+            <Plane
+              size={16}
+              className={airplaneMode ? 'text-primary' : 'text-muted-foreground'}
+              aria-hidden="true"
+            />
+            <Switch
+              checked={airplaneMode}
+              onCheckedChange={(checked) => setAirplaneMode(checked)}
+              aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
+            />
+          </div>
         </div>
       </header>
 

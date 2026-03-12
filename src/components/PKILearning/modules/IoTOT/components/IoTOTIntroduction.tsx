@@ -46,7 +46,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
             {[
               {
                 t: 'Memory Constraints',
-                d: 'Many IoT devices have 10\u2013256 KB of RAM. PQC algorithms like ML-KEM-768 require ~6 KB of stack RAM just for one key exchange \u2014 a significant fraction of a Class 1 device\u2019s total memory.',
+                d: 'Many IoT devices have 10–256 KB of RAM (ultra-constrained OS like MS-IoT run on just 2 KB RAM). PQC algorithms like ML-KEM-768 require ~6 KB of stack RAM just for one key exchange — exceeding the memory of many Class 0/1 devices entirely.',
               },
               {
                 t: 'Bandwidth Limits',
@@ -310,8 +310,8 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
 
           <p>
             <InlineTooltip term="LMS/HSS">LMS/HSS</InlineTooltip> is the leading choice for firmware
-            signing: 56-byte public key, 2.5 KB signature, and the fastest PQC verifier on
-            constrained MCUs (~4&times; faster than XMSS on Cortex-M4). Its stateful nature
+            signing: 56-byte public key, 2,512-byte (2.5 KB) signature, and the fastest PQC verifier
+            on constrained MCUs (~4&times; faster than XMSS on Cortex-M4). Its stateful nature
             (monotonic counter in TPM) is acceptable for firmware signing servers that sign
             infrequently. The <InlineTooltip term="SUIT">SUIT manifest</InlineTooltip> (RFC 9019)
             wraps the firmware image with metadata, conditions, and signatures for secure OTA
