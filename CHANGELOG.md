@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.39.0] - 2026-03-12
+
+### Added
+
+- **PWA icons for install prompts and adaptive icons**: Added `pwa-192x192.png` and `pwa-512x512.png` to `public/` and registered them in the Vite PWA plugin manifest. The 192×192 icon satisfies Chrome/Android install prompt requirements; the 512×512 maskable icon enables adaptive icon support on Android home screens. Both are included in the service worker pre-cache manifest. [view:/] [persona:developer,ops]
+- **Timeline source documents — 4 new archives**: Archived HTML copies of four timeline reference documents now included in `public/timeline/`: EU Cryptographic Inventory Mandate (NIS Cooperation Group Roadmap v1.1), Ethereum Foundation Vitalik Buterin PQ Defense Roadmap, Google Cloud ML-KEM Default and Chrome MTC Program, and NIST SP 800-208 (LMS/XMSS publication). [view:/timeline]
+
+### Changed
+
+- **RAG corpus regenerated**: 3,671 chunks from 22 sources (was 3,670), reflecting minor corpus delta from latest data. [view:/]
+
 ## [2.38.0] - 2026-03-12
 
 ### Added

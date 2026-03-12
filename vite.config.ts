@@ -50,6 +50,8 @@ export default defineConfig({
         'favicon.svg',
         'favicon-32x32.png',
         'apple-touch-icon.png',
+        'pwa-192x192.png',
+        'pwa-512x512.png',
         'data/rag-corpus.json',
         'data/compliance-data.json',
       ],
@@ -91,6 +93,8 @@ export default defineConfig({
         icons: [
           { src: 'favicon-32x32.png', sizes: '32x32', type: 'image/png' },
           { src: 'apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+          { src: 'pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'pwa-512x512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
           { src: 'favicon.svg', sizes: 'any', type: 'image/svg+xml' },
         ],
       },
