@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import type { LearningProgress, ExecutiveDocument } from '../services/storage/types'
 import {
   logModuleStart,
@@ -406,6 +406,7 @@ export const useModuleStore = create<ModuleState>()(
     {
       name: 'pki-module-storage',
       version: MODULE_STORE_VERSION,
+      storage: createJSONStorage(() => localStorage),
       // Migration function for handling state version upgrades
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any

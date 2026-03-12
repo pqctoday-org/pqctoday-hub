@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.39.1] - 2026-03-12
+
+### Fixed
+
+- **Zustand persist storage made explicit**: `useModuleStore` and `tls-learning.store` now pass `storage: createJSONStorage(() => localStorage)` to their `persist` configs. Without an explicit storage declaration, Zustand falls back to an in-memory store in non-browser environments (SSR, test runners, service workers), causing silent data loss on page reload. This was surfacing as intermittent loss of learning progress and TLS simulation state. [view:/learn] [view:/playground]
+
 ## [2.39.0] - 2026-03-12
 
 ### Added

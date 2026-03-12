@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { persist, createJSONStorage } from 'zustand/middleware'
 import { useHistoryStore } from './useHistoryStore'
 
 export interface TLSConfig {
@@ -334,6 +334,7 @@ system_default = system_default_sect
     {
       name: 'tls-learning-storage',
       version: 1,
+      storage: createJSONStorage(() => localStorage),
       // Only persist configuration and history, not ephemeral simulation state
       partialize: (state) => ({
         clientConfig: state.clientConfig,
