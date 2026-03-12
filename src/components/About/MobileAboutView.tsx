@@ -23,6 +23,8 @@ import {
   Handshake,
   ChevronRight,
   ChevronDown,
+  ExternalLink,
+  BookMarked,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -72,6 +74,63 @@ const DISCUSSIONS = [
   { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
 ]
 
+const CRYPTO_BUFF_SITES = [
+  {
+    label: 'A Security Site — PQC',
+    description:
+      'Prof. Bill Buchanan OBE — extensive PQC algorithm references and interactive labs',
+    url: 'https://asecuritysite.com/pqc',
+  },
+  {
+    label: 'Schneier on Security',
+    description: "Bruce Schneier's blog — crypto policy, applied security, and PQC commentary",
+    url: 'https://www.schneier.com',
+  },
+  {
+    label: 'Stanford Cryptography Group',
+    description: "Dan Boneh's research group — papers, courses, and applied crypto projects",
+    url: 'https://crypto.stanford.edu',
+  },
+  {
+    label: 'MIT OpenCourseWare — Cryptography',
+    description: 'Free MIT lecture notes and problem sets for cryptography courses',
+    url: 'https://ocw.mit.edu',
+  },
+  {
+    label: 'Cryptography I — Dan Boneh (Coursera)',
+    description: "The gold-standard free online cryptography course by Stanford's Dan Boneh",
+    url: 'https://www.coursera.org/learn/crypto',
+  },
+]
+
+const CRYPTO_BUFF_BOOKS = [
+  {
+    title: 'Real World Cryptography',
+    author: 'David Wong',
+    description:
+      'Hands-on guide to modern crypto primitives, protocols, and their real-world application',
+    url: 'https://www.manning.com/books/real-world-cryptography',
+  },
+  {
+    title: 'The Code Book',
+    author: 'Simon Singh',
+    description: 'The history of codes and ciphers — from Caesar to quantum cryptography',
+    url: 'https://simonsingh.net/books/the-code-book/',
+  },
+  {
+    title: 'Self-Sovereign Identity',
+    author: 'Alex Preukschat & Drummond Reed',
+    description: 'Decentralized digital identity architecture, VCs, DIDs, and trust frameworks',
+    url: 'https://www.manning.com/books/self-sovereign-identity',
+  },
+  {
+    title: 'Serious Cryptography',
+    author: 'Jean-Philippe Aumasson',
+    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
+    url: 'https://nostarch.com/seriouscrypto',
+  },
+]
+
 export const MobileAboutView = () => {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
@@ -79,6 +138,8 @@ export const MobileAboutView = () => {
   const [selectedWorkgroup, setSelectedWorkgroup] = useState<Workgroup | null>(null)
   const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
   const [isWorkgroupsOpen, setIsWorkgroupsOpen] = useState(false)
+  const [isCryptoBuffSitesOpen, setIsCryptoBuffSitesOpen] = useState(false)
+  const [isCryptoBuffBooksOpen, setIsCryptoBuffBooksOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -138,9 +199,9 @@ export const MobileAboutView = () => {
         </div>
         <div className="grid grid-cols-2 gap-2">
           {[
-            { label: 'Timeline Events', value: '202' },
-            { label: 'Migrate Products', value: '366' },
-            { label: 'Library Resources', value: '303' },
+            { label: 'Timeline Events', value: '203' },
+            { label: 'Migrate Products', value: '371' },
+            { label: 'Library Resources', value: '304' },
             { label: 'Quiz Questions', value: '755' },
           ].map((s) => (
             <div
@@ -384,11 +445,132 @@ export const MobileAboutView = () => {
         </p>
       </motion.div>
 
-      {/* Connect Section */}
+      {/* Cryptography Buff Section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.22 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <BookOpen size={20} />
+          </div>
+          <div>
+            <h2 className="text-lg font-semibold">Cryptography Buff</h2>
+            <p className="text-xs text-muted-foreground">Websites and essential reading</p>
+          </div>
+        </div>
+
+        {/* Websites & Blogs subsection */}
+        <button
+          onClick={() => setIsCryptoBuffSitesOpen(!isCryptoBuffSitesOpen)}
+          className="flex items-center gap-2 w-full text-left cursor-pointer"
+        >
+          <Globe className="text-primary shrink-0" size={14} />
+          <span className="text-xs font-semibold flex-1">Websites &amp; Blogs</span>
+          <span className="text-xs text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full mr-1">
+            {CRYPTO_BUFF_SITES.length}
+          </span>
+          <ChevronDown
+            size={14}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isCryptoBuffSitesOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isCryptoBuffSitesOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="flex flex-col gap-2 mt-2">
+                {CRYPTO_BUFF_SITES.map((site) => (
+                  <a
+                    key={site.url}
+                    href={site.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start gap-2 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                  >
+                    <ExternalLink className="text-primary shrink-0 mt-0.5" size={14} />
+                    <div className="min-w-0">
+                      <p className="text-xs font-medium group-hover:text-primary transition-colors">
+                        {site.label}
+                      </p>
+                      <p className="text-xs text-muted-foreground truncate">{site.description}</p>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        {/* Essential Books subsection */}
+        <button
+          onClick={() => setIsCryptoBuffBooksOpen(!isCryptoBuffBooksOpen)}
+          className="flex items-center gap-2 w-full text-left cursor-pointer mt-3 pt-3 border-t border-border"
+        >
+          <BookMarked className="text-primary shrink-0" size={14} />
+          <span className="text-xs font-semibold flex-1">Essential Books</span>
+          <span className="text-xs text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full mr-1">
+            {CRYPTO_BUFF_BOOKS.length}
+          </span>
+          <ChevronDown
+            size={14}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isCryptoBuffBooksOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isCryptoBuffBooksOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="flex flex-col gap-2 mt-2">
+                {CRYPTO_BUFF_BOOKS.map((book) => (
+                  <a
+                    key={book.url}
+                    href={book.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-start justify-between gap-2 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                  >
+                    <div className="min-w-0">
+                      <p className="text-xs font-semibold group-hover:text-primary transition-colors">
+                        {book.title}
+                      </p>
+                      <p className="text-xs text-accent">by {book.author}</p>
+                    </div>
+                    <ExternalLink
+                      className="text-muted-foreground shrink-0 mt-0.5 group-hover:text-primary transition-colors"
+                      size={12}
+                    />
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Connect Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.24 }}
         className="glass-panel p-4 text-center space-y-3"
       >
         <p className="text-sm text-muted-foreground">
@@ -419,7 +601,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.25 }}
+        transition={{ delay: 0.26 }}
         className="glass-panel p-4 flex flex-col items-center justify-center gap-3"
       >
         <h3 className="text-sm font-semibold">Appearance</h3>

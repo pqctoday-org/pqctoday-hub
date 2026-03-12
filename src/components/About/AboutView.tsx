@@ -25,6 +25,8 @@ import {
   Handshake,
   ChevronRight,
   ChevronDown,
+  ExternalLink,
+  BookMarked,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -41,11 +43,11 @@ import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DATA_FOUNDATION = [
-  { dataset: 'Timeline Events', records: 202, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 303, sources: '30+ standards bodies' },
+  { dataset: 'Timeline Events', records: 203, sources: '80+ orgs, 50+ countries' },
+  { dataset: 'Library Resources', records: 304, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
   { dataset: 'Compliance Frameworks', records: 90, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 366, sources: '7 infrastructure layers' },
+  { dataset: 'Migrate Products', records: 371, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 114, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 755, sources: 'All PQC topic areas' },
@@ -93,6 +95,63 @@ const DISCUSSIONS = [
   { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
 ]
 
+const CRYPTO_BUFF_SITES = [
+  {
+    label: 'A Security Site — PQC',
+    description:
+      'Prof. Bill Buchanan OBE — extensive PQC algorithm references and interactive labs',
+    url: 'https://asecuritysite.com/pqc',
+  },
+  {
+    label: 'Schneier on Security',
+    description: "Bruce Schneier's blog — crypto policy, applied security, and PQC commentary",
+    url: 'https://www.schneier.com',
+  },
+  {
+    label: 'Stanford Cryptography Group',
+    description: "Dan Boneh's research group — papers, courses, and applied crypto projects",
+    url: 'https://crypto.stanford.edu',
+  },
+  {
+    label: 'MIT OpenCourseWare — Cryptography',
+    description: 'Free MIT lecture notes and problem sets for cryptography courses',
+    url: 'https://ocw.mit.edu',
+  },
+  {
+    label: 'Cryptography I — Dan Boneh (Coursera)',
+    description: "The gold-standard free online cryptography course by Stanford's Dan Boneh",
+    url: 'https://www.coursera.org/learn/crypto',
+  },
+]
+
+const CRYPTO_BUFF_BOOKS = [
+  {
+    title: 'Real World Cryptography',
+    author: 'David Wong',
+    description:
+      'Hands-on guide to modern crypto primitives, protocols, and their real-world application',
+    url: 'https://www.manning.com/books/real-world-cryptography',
+  },
+  {
+    title: 'The Code Book',
+    author: 'Simon Singh',
+    description: 'The history of codes and ciphers — from Caesar to quantum cryptography',
+    url: 'https://simonsingh.net/books/the-code-book/',
+  },
+  {
+    title: 'Self-Sovereign Identity',
+    author: 'Alex Preukschat & Drummond Reed',
+    description: 'Decentralized digital identity architecture, VCs, DIDs, and trust frameworks',
+    url: 'https://www.manning.com/books/self-sovereign-identity',
+  },
+  {
+    title: 'Serious Cryptography',
+    author: 'Jean-Philippe Aumasson',
+    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
+    url: 'https://nostarch.com/seriouscrypto',
+  },
+]
+
 export function AboutView() {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
@@ -101,6 +160,8 @@ export function AboutView() {
   const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
   const [isWorkgroupsOpen, setIsWorkgroupsOpen] = useState(false)
   const [isSbomOpen, setIsSbomOpen] = useState(false)
+  const [isCryptoBuffSitesOpen, setIsCryptoBuffSitesOpen] = useState(false)
+  const [isCryptoBuffBooksOpen, setIsCryptoBuffBooksOpen] = useState(false)
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -1119,11 +1180,133 @@ export function AboutView() {
           </div>
         </motion.div>
 
-        {/* AI Acknowledgment */}
+        {/* Cryptography Buff Section */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.44 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <BookOpen className="text-primary shrink-0" size={24} />
+            <div>
+              <h2 className="text-xl font-semibold">Cryptography Buff</h2>
+              <p className="text-xs text-muted-foreground">
+                Curated websites and essential reading
+              </p>
+            </div>
+          </div>
+
+          {/* Websites & Blogs subsection */}
+          <button
+            onClick={() => setIsCryptoBuffSitesOpen(!isCryptoBuffSitesOpen)}
+            className="flex items-center gap-2 w-full text-left cursor-pointer"
+          >
+            <Globe className="text-primary shrink-0" size={16} />
+            <span className="text-sm font-semibold flex-1">Websites &amp; Blogs</span>
+            <span className="text-xs text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full mr-2">
+              {CRYPTO_BUFF_SITES.length}
+            </span>
+            <ChevronDown
+              size={16}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200 shrink-0',
+                isCryptoBuffSitesOpen && 'rotate-180'
+              )}
+            />
+          </button>
+          <AnimatePresence>
+            {isCryptoBuffSitesOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                  {CRYPTO_BUFF_SITES.map((site) => (
+                    <a
+                      key={site.url}
+                      href={site.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    >
+                      <ExternalLink className="text-primary shrink-0 mt-0.5" size={16} />
+                      <div>
+                        <p className="text-sm font-medium group-hover:text-primary transition-colors">
+                          {site.label}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{site.description}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Essential Books subsection */}
+          <button
+            onClick={() => setIsCryptoBuffBooksOpen(!isCryptoBuffBooksOpen)}
+            className="flex items-center gap-2 w-full text-left cursor-pointer mt-4 pt-4 border-t border-border"
+          >
+            <BookMarked className="text-primary shrink-0" size={16} />
+            <span className="text-sm font-semibold flex-1">Essential Books</span>
+            <span className="text-xs text-muted-foreground bg-muted/40 px-2 py-0.5 rounded-full mr-2">
+              {CRYPTO_BUFF_BOOKS.length}
+            </span>
+            <ChevronDown
+              size={16}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200 shrink-0',
+                isCryptoBuffBooksOpen && 'rotate-180'
+              )}
+            />
+          </button>
+          <AnimatePresence>
+            {isCryptoBuffBooksOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                  {CRYPTO_BUFF_BOOKS.map((book) => (
+                    <a
+                      key={book.url}
+                      href={book.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-start justify-between gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold group-hover:text-primary transition-colors">
+                          {book.title}
+                        </p>
+                        <p className="text-xs text-accent mt-0.5">by {book.author}</p>
+                        <p className="text-xs text-muted-foreground mt-1">{book.description}</p>
+                      </div>
+                      <ExternalLink
+                        className="text-muted-foreground shrink-0 mt-0.5 group-hover:text-primary transition-colors"
+                        size={14}
+                      />
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+
+        {/* AI Acknowledgment */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.46 }}
           className="glass-panel p-6 text-center"
         >
           <h3 className="text-lg font-semibold mb-2">AI Technology Acknowledgment</h3>
@@ -1139,7 +1322,7 @@ export function AboutView() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.48 }}
+          transition={{ delay: 0.5 }}
           className="glass-panel p-6 flex flex-col items-center justify-center gap-4"
         >
           <h3 className="text-lg font-semibold">Appearance</h3>

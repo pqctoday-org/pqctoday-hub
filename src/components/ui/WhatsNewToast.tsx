@@ -86,16 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Stronger Together</strong> &mdash; 20 global
-                    PQC workgroups across 10 regions with details and links on the About page
+                    <strong className="text-foreground">GRI Quantum Threat Timeline 2025</strong>{' '}
+                    &mdash; new library &amp; timeline reference: 28&ndash;49% CRQC probability
+                    within 10 years, majority expect a CRQC by 2035
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Collapsible About sections</strong> &mdash;
-                    SBOM, workgroup list, and community discussions now collapse for cleaner
-                    browsing
+                    <strong className="text-foreground">evolutionQ BasejumpQDN &amp; SKI</strong>{' '}
+                    &mdash; QKD orchestration and hybrid quantum-safe key infrastructure added to
+                    the Migrate catalog
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Updated CRQC estimates</strong> &mdash;
+                    threats, quiz, and module data now reflect the 2025 GRI survey figures
                   </span>
                 </li>
               </ul>

@@ -18,6 +18,10 @@ All notable changes to this project will be documented in this file.
   - `quantumConstants.ts` CRQC_ESTIMATES GRI entry updated to `Global Risk Institute (2025)` with `yearHigh: 2041` and updated confidence string.
 - **RAG corpus regenerated** with updated threats, quiz, library, and timeline data. [view:/]
 
+### Fixed
+
+- **Library detail enrichment for GRI-2025**: The initial v2.41.0 release created a timeline enrichment entry for the GRI 2025 report but not the required library enrichment entry. The library detail popover looks for `libraryEnrichments[referenceId]` in `library_doc_enrichments_*.md` files; the key format differs from timeline enrichments. Added `library_doc_enrichments_03122026.md` with the `## GRI-Quantum-Threat-Timeline-2025` entry fully populated from the PDF data. [view:/library]
+
 ## [2.40.0] - 2026-03-12
 
 ### Added
