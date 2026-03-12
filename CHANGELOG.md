@@ -4,6 +4,22 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.40.0] - 2026-03-12
+
+### Added
+
+- **Quantum networking products — 6 new entries in Migrate catalog**: Expanded the quantum networking and QKD categories with six products that were absent from all historical versions of the catalog. QKD Software (CSC-030) grows from 3 to 5 entries; QRNG (CSC-047) from 3 to 5. All six products are linked to the QKD learning module. Catalog total: 366 → 372 products. [view:/migrate] [view:/learn/qkd]
+  - **evolutionQ BasejumpQDN** — QKD orchestration software for Quantum Delivery Networks; vendor-neutral (works with ID Quantique, Toshiba), extends QKD beyond 300 km fiber limit using trusted repeater nodes. Deployed by Nokia/ID Quantique for Proximus.
+  - **evolutionQ BasejumpSKI** — Symmetric Key Infrastructure combining ML-KEM, ECDH, and PSK in a multimodal approach for hybrid quantum-safe key establishment without QKD hardware.
+  - **Post-Quantum Hybrid PQ VPN** — RFC 9370 hybrid PQC VPN (IKEv2 + ML-KEM-1024 + Classic McEliece); co-authored the IETF standard; deployed protecting NATO communications.
+  - **Quantinuum Quantum Origin Onboard** — First software QRNG to achieve NIST SP 800-90B validation (April 2025); embeds quantum-computer-generated entropy into IoT and edge devices without hardware chips.
+  - **Qrypt BLAST SDK** — REST API/SDK generating symmetric keys independently at multiple endpoints from quantum entropy (LANL, ORNL, ICFO, EPFL) — no key transmission required.
+  - **ISARA Advance** — Autonomous cryptographic inventory and risk assessment tool; companion to ISARA Radiate (already in catalog) for full discover-then-remediate PQC migration workflow.
+
+### Changed
+
+- **RAG corpus regenerated**: 3,680 chunks from 22 sources (was 3,671), incorporating 6 new migrate product entries and 372 migrate chunks total. [view:/]
+
 ## [2.39.1] - 2026-03-12
 
 ### Fixed
