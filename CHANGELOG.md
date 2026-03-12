@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.38.0] - 2026-03-12
+
+### Added
+
+- **"Stronger Together" section on About page**: Showcases 20 PQC industry workgroups across 10 regions (US, EU, UK, Germany, France, Japan, South Korea, Australia, Canada, Singapore) — 2 leading groups per region. Each card opens a detail modal with full description, founding year, focus area badges, key members, and an external link to the group's website. Section explains why global collaboration is essential to the PQC transition. [view:/about] [persona:executive,architect,researcher]
+
+### Changed
+
+- **About page — collapsible sections**: Three long-form sections now collapse by default for better scannability. SBOM starts collapsed (click header to expand); "Stronger Together" shows the intro text but hides the workgroup list until clicked; Community shows the first 2 discussions with a "Show all N more" toggle for the remaining 9. Chevron indicators and smooth Framer Motion animations signal interactivity. [view:/about]
+- **About page mobile UX improvements**: All interactive elements meet the 44px touch target minimum (`min-h-[44px]`). Stat grid label size raised from 10px to 12px. Expanded discussion items animate as a single block (fixes content clipping during height animation). "Visit Website" modal button uses `size="lg"` for a proper tap surface. [view:/about]
+
 ## [2.37.0] - 2026-03-11
 
 ### Changed

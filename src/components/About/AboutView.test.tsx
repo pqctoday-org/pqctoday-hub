@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { render, screen } from '@testing-library/react'
+import { render, screen, fireEvent } from '@testing-library/react'
 import { AboutView } from './AboutView'
 import '@testing-library/jest-dom'
 
@@ -16,6 +16,8 @@ vi.mock('framer-motion', () => ({
   motion: {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     div: ({ children, ...props }: any) => <div {...props}>{children}</div>,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    a: ({ children, ...props }: any) => <a {...props}>{children}</a>,
   },
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   AnimatePresence: ({ children }: any) => <>{children}</>,
@@ -53,10 +55,12 @@ describe('AboutView', () => {
 
   it('renders the SBOM list correctly', () => {
     render(<AboutView />)
+    // SBOM is collapsed by default — expand it first
+    const sbomHeader = screen.getAllByText('Software Bill of Materials (SBOM)')[0]
+    fireEvent.click(sbomHeader)
     // Verify a few key packages from the SBOM list
     expect(screen.getByText('React')).toBeInTheDocument()
     expect(screen.getByText('Vite')).toBeInTheDocument()
-    // expect(screen.getByText('liboqs (ML-DSA, ML-KEM)')).toBeInTheDocument()
     expect(screen.getByText('OpenSSL WASM')).toBeInTheDocument()
     expect(screen.getByText('Tailwind CSS')).toBeInTheDocument()
   })
@@ -69,8 +73,11 @@ describe('AboutView', () => {
       screen.getAllByText('Join the conversation on GitHub Discussions').length
     ).toBeGreaterThan(0)
 
-    // Discussion category labels from DISCUSSIONS constant (mobile+desktop duplicated)
+    // First 2 discussion categories visible by default
     expect(screen.getAllByText('Contribute').length).toBeGreaterThan(0)
+    // 'Ideas' is collapsed by default — expand via "Show all" toggle
+    const showAllBtn = screen.getAllByText(/Show all \d+ more/)[0]
+    fireEvent.click(showAllBtn)
     expect(screen.getAllByText('Ideas').length).toBeGreaterThan(0)
 
     // All community links should open in a new tab

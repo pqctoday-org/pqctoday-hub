@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { LinkToUsButton } from '../ui/LinkToUsButton'
 import {
   Users,
@@ -20,7 +20,17 @@ import {
   CalendarDays,
   ShieldAlert,
   Package,
+  Handshake,
+  ChevronRight,
+  ChevronDown,
 } from 'lucide-react'
+import clsx from 'clsx'
+import { CareerJourneyModal } from './CareerJourneyModal'
+import { WorkgroupDetailModal } from './WorkgroupDetailModal'
+import { PQC_WORKGROUPS, WORKGROUP_REGIONS } from './workgroupData'
+import type { Workgroup } from './workgroupData'
+import { useTheme } from '../../hooks/useTheme'
+import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
 const DISCUSSIONS = [
@@ -61,15 +71,15 @@ const DISCUSSIONS = [
   { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
   { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
 ]
-import clsx from 'clsx'
-import { CareerJourneyModal } from './CareerJourneyModal'
-import { useTheme } from '../../hooks/useTheme'
-import { getCurrentVersion } from '../../store/useVersionStore'
 
 export const MobileAboutView = () => {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
+  const [selectedWorkgroup, setSelectedWorkgroup] = useState<Workgroup | null>(null)
+  const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
+  const [isWorkgroupsOpen, setIsWorkgroupsOpen] = useState(false)
+
   return (
     <div className="flex flex-col gap-6 pb-8">
       {/* Header */}
@@ -138,7 +148,7 @@ export const MobileAboutView = () => {
               className="p-2 rounded-lg border border-border bg-muted/30 text-center"
             >
               <div className="text-sm font-bold text-foreground">{s.value}</div>
-              <div className="text-[10px] text-muted-foreground">{s.label}</div>
+              <div className="text-xs text-muted-foreground">{s.label}</div>
             </div>
           ))}
         </div>
@@ -148,7 +158,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.14 }}
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
@@ -165,13 +175,13 @@ export const MobileAboutView = () => {
           questions, share ideas, or request new content.
         </p>
         <div className="grid grid-cols-1 gap-2">
-          {DISCUSSIONS.map(({ number, icon: Icon, label, description }) => (
+          {DISCUSSIONS.slice(0, 2).map(({ number, icon: Icon, label, description }) => (
             <a
               key={number}
               href={`${DISCUSSIONS_BASE}${number}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-3 p-2.5 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+              className="flex items-center gap-3 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
             >
               <Icon className="text-primary shrink-0" size={16} />
               <div className="min-w-0">
@@ -182,14 +192,137 @@ export const MobileAboutView = () => {
               </div>
             </a>
           ))}
+          <AnimatePresence>
+            {isShowAllDiscussions && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="grid grid-cols-1 gap-2">
+                  {DISCUSSIONS.slice(2).map(({ number, icon: Icon, label, description }) => (
+                    <a
+                      key={number}
+                      href={`${DISCUSSIONS_BASE}${number}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-3 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
+                    >
+                      <Icon className="text-primary shrink-0" size={16} />
+                      <div className="min-w-0">
+                        <p className="text-xs font-medium group-hover:text-primary transition-colors">
+                          {label}
+                        </p>
+                        <p className="text-xs text-muted-foreground truncate">{description}</p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
+        <button
+          onClick={() => setIsShowAllDiscussions(!isShowAllDiscussions)}
+          className="mt-2 py-2 min-h-[44px] text-xs text-muted-foreground hover:text-primary flex items-center gap-1 transition-colors"
+        >
+          {isShowAllDiscussions ? 'Show less' : `Show all ${DISCUSSIONS.length - 2} more`}
+          <ChevronDown
+            size={14}
+            className={clsx(
+              'transition-transform duration-200',
+              isShowAllDiscussions && 'rotate-180'
+            )}
+          />
+        </button>
+      </motion.div>
+
+      {/* Stronger Together Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+        className="glass-panel p-4"
+      >
+        <button
+          onClick={() => setIsWorkgroupsOpen(!isWorkgroupsOpen)}
+          className="flex items-center gap-3 mb-3 w-full text-left cursor-pointer rounded-lg active:bg-muted/20 transition-colors"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary">
+            <Handshake size={20} />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold">Stronger Together</h2>
+            <p className="text-xs text-muted-foreground">Global PQC workgroups</p>
+          </div>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isWorkgroupsOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+          Governments, consortiums, and standards bodies across the world are collaborating to drive
+          the PQC transition. Tap any group to learn more.
+        </p>
+        <AnimatePresence>
+          {isWorkgroupsOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="space-y-4 pt-2">
+                {WORKGROUP_REGIONS.map((region) => {
+                  const regionGroups = PQC_WORKGROUPS.filter((w) => w.region === region)
+                  return (
+                    <div key={region}>
+                      <p className="text-xs font-semibold text-foreground flex items-center gap-1.5 mb-1.5">
+                        <span aria-hidden="true">{regionGroups[0]?.regionFlag}</span>
+                        {region}
+                      </p>
+                      <div className="grid grid-cols-1 gap-2">
+                        {regionGroups.map((wg) => (
+                          <button
+                            key={wg.shortName}
+                            onClick={() => setSelectedWorkgroup(wg)}
+                            className="flex items-center gap-3 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group text-left"
+                          >
+                            <div className="min-w-0 flex-1">
+                              <p className="text-xs font-medium group-hover:text-primary transition-colors">
+                                {wg.shortName}
+                              </p>
+                              <p className="text-xs text-muted-foreground truncate">
+                                {wg.description}
+                              </p>
+                            </div>
+                            <ChevronRight
+                              size={14}
+                              className="text-muted-foreground/40 group-hover:text-primary shrink-0 transition-colors"
+                            />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* Data Privacy Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.15 }}
+        transition={{ delay: 0.18 }}
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
@@ -235,7 +368,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18 }}
+        transition={{ delay: 0.2 }}
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
@@ -319,6 +452,10 @@ export const MobileAboutView = () => {
       <CareerJourneyModal
         isOpen={isJourneyModalOpen}
         onClose={() => setIsJourneyModalOpen(false)}
+      />
+      <WorkgroupDetailModal
+        workgroup={selectedWorkgroup}
+        onClose={() => setSelectedWorkgroup(null)}
       />
     </div>
   )

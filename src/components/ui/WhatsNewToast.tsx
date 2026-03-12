@@ -86,22 +86,16 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Faster learning paths</strong> &mdash; All
-                    48 module durations reduced by a third — 10 to 100 min range
+                    <strong className="text-foreground">Stronger Together</strong> &mdash; 20 global
+                    PQC workgroups across 10 regions with details and links on the About page
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Vendor cross-links</strong> &mdash; 15+
-                    modules link directly to the Migrate catalog for full product coverage
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Data audit</strong> &mdash; 45 new library
-                    records (303 total), compliance reclassifications, and 3,670 RAG chunks
+                    <strong className="text-foreground">Collapsible About sections</strong> &mdash;
+                    SBOM, workgroup list, and community discussions now collapse for cleaner
+                    browsing
                   </span>
                 </li>
               </ul>
