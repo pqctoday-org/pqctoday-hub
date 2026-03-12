@@ -20,7 +20,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PQC 101',
     description:
       'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
-    duration: '15 min',
+    duration: '10 min',
     difficulty: 'beginner',
   },
   'quantum-threats': {
@@ -28,7 +28,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Quantum Threats',
     description:
       "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics.",
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'beginner',
   },
   'hybrid-crypto': {
@@ -36,7 +36,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Hybrid Cryptography',
     description:
       'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'crypto-agility': {
@@ -44,14 +44,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Crypto Agility',
     description:
       'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'tls-basics': {
     id: 'tls-basics',
     title: 'TLS Basics',
     description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'vpn-ssh-pqc': {
@@ -59,7 +59,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'VPN/IPsec & SSH',
     description:
       'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'email-signing': {
@@ -67,7 +67,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Email & Document Signing',
     description:
       'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'pki-workshop': {
@@ -75,7 +75,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PKI',
     description:
       'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'kms-pqc': {
@@ -83,7 +83,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'KMS & PQC Key Management',
     description:
       'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'hsm-pqc': {
@@ -91,7 +91,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'HSM & PQC Operations',
     description:
       'Hardware Security Module operations for PQC: PKCS#11 v3.2, vendor comparison, firmware migration, and FIPS 140-3 validation.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'stateful-signatures': {
@@ -99,7 +99,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Stateful Hash Signatures',
     description:
       'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'advanced',
   },
   'digital-assets': {
@@ -107,14 +107,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Digital Assets',
     description:
       'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
-    duration: '75 min',
+    duration: '50 min',
     difficulty: 'intermediate',
   },
   '5g-security': {
     id: '5g-security',
     title: '5G Security',
     description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'digital-id': {
@@ -122,7 +122,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Digital ID',
     description:
       'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'entropy-randomness': {
@@ -130,7 +130,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Entropy & Randomness',
     description:
       'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'advanced',
   },
   'merkle-tree-certs': {
@@ -138,7 +138,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Merkle Tree Certificates',
     description:
       'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'advanced',
   },
   qkd: {
@@ -146,7 +146,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Quantum Key Distribution',
     description:
       'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, global deployments, protocol integration, and HSM key derivation.',
-    duration: '150 min',
+    duration: '100 min',
     difficulty: 'advanced',
   },
   'code-signing': {
@@ -154,7 +154,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Code Signing',
     description:
       'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity, Sigstore keyless signing, and secure boot firmware verification.',
-    duration: '75 min',
+    duration: '50 min',
     difficulty: 'intermediate',
   },
   'api-security-jwt': {
@@ -162,7 +162,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'API Security & JWT',
     description:
       'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'crypto-dev-apis': {
@@ -170,7 +170,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Cryptographic APIs & Developer Languages',
     description:
       'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle across 7 languages. Provider patterns, PQC library selection, support matrix, crypto agility patterns, and migration decision lab.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'intermediate',
   },
   'web-gateway-pqc': {
@@ -178,7 +178,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Web Gateway PQC',
     description:
       'PQC deployment at the infrastructure edge: TLS termination patterns, certificate lifecycle at scale, CDN/WAF/load balancer vendor migration paths.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'iot-ot-pqc': {
@@ -186,7 +186,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'IoT & OT Security',
     description:
       'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'pqc-risk-management': {
@@ -194,7 +194,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PQC Risk Management',
     description:
       'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'beginner',
   },
   'pqc-business-case': {
@@ -202,7 +202,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PQC Business Case',
     description:
       'Build ROI models, simulate breach costs, and create board-ready pitch decks for PQC investment.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'beginner',
   },
   'pqc-governance': {
@@ -210,7 +210,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PQC Governance & Policy',
     description:
       'Create RACI matrices, draft PQC policies, and design KPI dashboards for board reporting.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'beginner',
   },
   'vendor-risk': {
@@ -218,7 +218,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Vendor & Supply Chain Risk',
     description:
       'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'intermediate',
   },
   'migration-program': {
@@ -226,7 +226,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Migration Program Mgmt',
     description:
       'Build migration roadmaps with real country deadlines, plan stakeholder communications, and track KPIs.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'intermediate',
   },
   'compliance-strategy': {
@@ -234,7 +234,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Compliance & Regulatory Strategy',
     description:
       'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
-    duration: '45 min',
+    duration: '30 min',
     difficulty: 'beginner',
   },
   'data-asset-sensitivity': {
@@ -242,7 +242,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Data & Asset Sensitivity',
     description:
       'Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.',
-    duration: '75 min',
+    duration: '50 min',
     difficulty: 'intermediate',
   },
   'standards-bodies': {
@@ -250,7 +250,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Standards, Certification & Compliance Bodies',
     description:
       'Identify who creates PQC standards, who certifies products, and who mandates compliance — worldwide and by region.',
-    duration: '60 min',
+    duration: '40 min',
     difficulty: 'intermediate',
   },
   'confidential-computing': {
@@ -258,7 +258,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Confidential Computing & TEEs',
     description:
       'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'database-encryption-pqc': {
@@ -266,7 +266,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Database Encryption & PQC',
     description:
       'Migrate database encryption to quantum-safe algorithms: TDE re-keying, BYOK/HYOK key ownership, queryable encryption compatibility, and fleet readiness assessment.',
-    duration: '75 min',
+    duration: '50 min',
     difficulty: 'intermediate',
   },
   'energy-utilities-pqc': {
@@ -274,7 +274,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Energy & Utilities PQC',
     description:
       'PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'emv-payment-pqc': {
@@ -282,7 +282,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'EMV Payment Systems & PQC',
     description:
       'Explore the EMV payment ecosystem \u2014 card authentication, tokenization, authorization networks, POS terminals, and e-commerce \u2014 and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'ai-security-pqc': {
@@ -290,7 +290,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'AI Security & PQC',
     description:
       'Quantum threats to AI systems: pipeline data protection, model weight security, synthetic data contamination, agent authentication, agentic commerce, and encryption at scale.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'platform-eng-pqc': {
@@ -298,7 +298,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Platform Engineering & PQC',
     description:
       'Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'healthcare-pqc': {
@@ -306,7 +306,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Healthcare PQC',
     description:
       'Healthcare-specific PQC challenges: biometric data permanence, pharmaceutical IP protection, patient privacy lifecycles, medical device safety, and hospital network migration.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'aerospace-space-pqc': {
@@ -314,7 +314,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Aerospace & Space PQC',
     description:
       'PQC challenges unique to aerospace and space: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'automotive-pqc': {
@@ -322,7 +322,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Automotive PQC',
     description:
       'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
-    duration: '120 min',
+    duration: '80 min',
     difficulty: 'advanced',
   },
   'exec-quantum-impact': {
@@ -330,7 +330,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Executive Quantum Impact',
     description:
       'Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.',
-    duration: '30 min',
+    duration: '20 min',
     difficulty: 'beginner',
   },
   'dev-quantum-impact': {
@@ -338,7 +338,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Developer Quantum Impact',
     description:
       'How quantum breaks your code: library transitions, larger keys/signatures, TLS/JWT/signing impacts, and a hands-on migration readiness plan.',
-    duration: '30 min',
+    duration: '20 min',
     difficulty: 'beginner',
   },
   'arch-quantum-impact': {
@@ -346,7 +346,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Architect Quantum Impact',
     description:
       'Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.',
-    duration: '30 min',
+    duration: '20 min',
     difficulty: 'beginner',
   },
   'ops-quantum-impact': {
@@ -354,7 +354,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Ops Quantum Impact',
     description:
       'Operational PQC challenges: certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks.',
-    duration: '30 min',
+    duration: '20 min',
     difficulty: 'beginner',
   },
   'research-quantum-impact': {
@@ -362,7 +362,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Researcher Quantum Impact',
     description:
       'Quantum threats to research: long-lived data confidentiality, publication integrity, emerging PQC research frontiers, and funding opportunities.',
-    duration: '30 min',
+    duration: '20 min',
     difficulty: 'beginner',
   },
   'secrets-management-pqc': {
@@ -370,7 +370,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Secrets Management & PQC',
     description:
       'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate Vault transit with ML-KEM, design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'network-security-pqc': {
@@ -378,7 +378,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Network Security & PQC Migration',
     description:
       'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'iam-pqc': {
@@ -386,7 +386,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Identity & Access Management with PQC',
     description:
       'Migrate enterprise IAM systems to quantum-safe cryptography. Covers JWT/SAML token signing with ML-DSA, OIDC and OAuth 2.0 PQC migration, Active Directory and LDAP vulnerabilities, vendor roadmaps (Okta, Microsoft Entra, PingFederate, ForgeRock), and PQC-aware zero trust identity architecture.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'intermediate',
   },
   'secure-boot-pqc': {
@@ -394,7 +394,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Secure Boot & Firmware PQC',
     description:
       'Migrate UEFI Secure Boot and firmware signing to quantum-safe cryptography. Covers the PK/KEK/db key hierarchy, TPM 2.0 attestation, ML-DSA firmware signing, DICE hardware roots of trust, and firmware vendor PQC roadmaps.',
-    duration: '90 min',
+    duration: '60 min',
     difficulty: 'advanced',
   },
   'os-pqc': {
@@ -402,7 +402,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Operating System & Platform Crypto PQC',
     description:
       'Migrate OS-level cryptography to quantum-safe algorithms. Covers system TLS policy (OpenSSL, GnuTLS, SChannel), SSH host key migration to ML-DSA, RPM/DEB package signing, and FIPS mode compatibility for PQC-enabled operating systems.',
-    duration: '75 min',
+    duration: '50 min',
     difficulty: 'intermediate',
   },
   quiz: {
@@ -410,7 +410,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'PQC Quiz',
     description:
       'Test your knowledge across all PQC topics — algorithms, standards, compliance, migration, and more.',
-    duration: '15 min',
+    duration: '10 min',
   },
 })
 

@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.37.0] - 2026-03-11
+
+### Changed
+
+- **Learning module durations recalibrated**: Reduced all 48 module time estimates by one-third to better reflect actual completion times. New range: 10–100 min (was 15–150 min). Total platform content: 2,400+ min across 8 duration tiers. [view:/learn] [persona:executive,developer,architect,researcher]
+
 ## [2.36.0] - 2026-03-11
 
 ### Changed

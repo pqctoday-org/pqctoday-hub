@@ -44,7 +44,7 @@ const DATA_FOUNDATION = [
   { dataset: 'Industry Leaders', records: 114, sources: 'Public, Private, Academic' },
   { dataset: 'Quiz Questions', records: 755, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
-  { dataset: 'Learning Modules', records: 48, sources: '3,000+ min of content' },
+  { dataset: 'Learning Modules', records: 48, sources: '2,400+ min of content' },
 ]
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'

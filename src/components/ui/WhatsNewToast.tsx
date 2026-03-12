@@ -86,16 +86,15 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Airplane Mode</strong> &mdash; Full offline
-                    support with service worker caching — switch to local AI when disconnected
+                    <strong className="text-foreground">Faster learning paths</strong> &mdash; All
+                    48 module durations reduced by a third — 10 to 100 min range
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
                     <strong className="text-foreground">Vendor cross-links</strong> &mdash; 15+
-                    learning modules now link directly to the Migrate catalog for full product
-                    coverage
+                    modules link directly to the Migrate catalog for full product coverage
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
