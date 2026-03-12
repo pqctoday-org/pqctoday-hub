@@ -20,19 +20,14 @@ import {
   LayoutDashboard,
   MoreHorizontal,
   X,
-  Plane,
 } from 'lucide-react'
 import { Button } from '../ui/button'
-import { Switch } from '../ui/switch'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
 import { AchievementToast } from '../ui/AchievementToast'
-import { AirplaneModeToast } from '../ui/AirplaneModeToast'
-import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
 import { PWAUpdatePrompt } from '../ui/PWAUpdatePrompt'
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
-import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
 import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
 import { WorkflowBanner } from '../common/WorkflowBanner'
 
@@ -46,7 +41,6 @@ export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
   const isPanelOpen = useRightPanelStore((s) => s.isOpen)
-  const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -237,20 +231,6 @@ export const MainLayout = () => {
               </div>
             )}
           </nav>
-
-          {/* Airplane Mode toggle */}
-          <div className="shrink-0 flex items-center gap-1.5 pl-2">
-            <Plane
-              size={16}
-              className={airplaneMode ? 'text-primary' : 'text-muted-foreground'}
-              aria-hidden="true"
-            />
-            <Switch
-              checked={airplaneMode}
-              onCheckedChange={(checked) => setAirplaneMode(checked)}
-              aria-label={airplaneMode ? 'Disable Airplane Mode' : 'Enable Airplane Mode'}
-            />
-          </div>
         </div>
       </header>
 
@@ -314,9 +294,6 @@ export const MainLayout = () => {
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-grow container py-4 px-4 md:py-8 md:px-8" role="main">
-        {/* Airplane Mode limitations banner */}
-        <AirplaneModeBanner />
-
         {/* Migration planning workflow progress banner */}
         <WorkflowBanner />
 
@@ -368,9 +345,6 @@ export const MainLayout = () => {
 
       {/* Achievement Toast Notification */}
       <AchievementToast />
-
-      {/* Airplane Mode connectivity toast */}
-      <AirplaneModeToast />
 
       {/* PWA update notification */}
       <PWAUpdatePrompt />
