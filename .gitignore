@@ -238,6 +238,8 @@ reports/
 # Infographic / marketing images (root-level)
 pqc_*.png
 pqctoday*.png
+pqctoday*.jpg
+weneed*.png
 
 # Private sync tooling
 sync-private.sh
