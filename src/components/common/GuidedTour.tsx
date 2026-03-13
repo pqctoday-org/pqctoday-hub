@@ -25,6 +25,7 @@ import {
 
 import { Button } from '../ui/button'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 
 const TOUR_STORAGE_KEY = 'pqc-tour-completed'
@@ -307,6 +308,9 @@ export const GuidedTour: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [essentialOnly, setEssentialOnly] = useState(false)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isDisclaimerDone = useDisclaimerStore(
+    (s) => s.acknowledgedMajorVersion === getAppMajorVersion()
+  )
 
   // Filter feature slides to match what's accessible for this persona
   const visibleFeatures = useMemo(() => {
@@ -323,6 +327,9 @@ export const GuidedTour: React.FC = () => {
   }, [selectedPersona, essentialOnly])
 
   useEffect(() => {
+    // Don't start the tour until the disclaimer has been acknowledged
+    if (!isDisclaimerDone) return
+
     const params = new URLSearchParams(window.location.search)
     let completed = false
     try {
@@ -335,7 +342,7 @@ export const GuidedTour: React.FC = () => {
       const timer = setTimeout(() => setIsActive(true), 2000)
       return () => clearTimeout(timer)
     }
-  }, [])
+  }, [isDisclaimerDone])
 
   const dismiss = useCallback(() => {
     setIsActive(false)
