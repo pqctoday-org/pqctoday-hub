@@ -89,6 +89,23 @@
     animation: bounce-subtle 2s ease-in-out infinite;
   }
 
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 4px var(--status-warning);
+    }
+
+    50% {
+      opacity: 0.75;
+      box-shadow: 0 0 12px var(--status-warning);
+    }
+  }
+
+  .animate-pulse-glow {
+    animation: pulse-glow 2.5s ease-in-out infinite;
+  }
+
   /* Respect user's reduced-motion preference for CSS animations/transitions */
   @media (prefers-reduced-motion: reduce) {
     *,

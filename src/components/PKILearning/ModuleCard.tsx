@@ -134,7 +134,8 @@ export const ModuleCard = ({
             </span>
           )}
           {module.workInProgress && (
-            <span className="px-3 py-1 rounded-full text-xs font-bold border bg-status-warning text-status-warning">
+            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow">
+              <Wrench size={12} className="animate-bounce-subtle" />
               WIP
             </span>
           )}
