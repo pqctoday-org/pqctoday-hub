@@ -70,15 +70,13 @@ describe('DisclaimerModal', () => {
     expect(linkedinLink).toHaveAttribute('href', 'https://www.linkedin.com/in/eric-amador-971850a')
   })
 
-  it('does not dismiss on Escape key', async () => {
+  it('dismisses on Escape key', async () => {
     const user = userEvent.setup()
     renderModal()
 
     expect(screen.getByText('Welcome to PQC Today')).toBeInTheDocument()
     await user.keyboard('{Escape}')
 
-    // Modal should still be visible
-    expect(screen.getByText('Welcome to PQC Today')).toBeInTheDocument()
-    expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(false)
+    expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
   })
 })
