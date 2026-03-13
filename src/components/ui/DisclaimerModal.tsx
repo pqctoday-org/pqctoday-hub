@@ -2,7 +2,7 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Construction, ExternalLink, MessageSquare, Linkedin } from 'lucide-react'
+import { Construction, ExternalLink, MessageSquare, Linkedin, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 
@@ -55,13 +55,24 @@ export function DisclaimerModal() {
               onClick={(e) => e.stopPropagation()}
             >
               {/* Header */}
-              <div className="flex items-center gap-3 px-6 pt-6 pb-4 shrink-0 border-b border-border/50">
-                <div className="p-2 rounded-lg bg-primary/20">
-                  <Construction size={20} className="text-primary" />
+              <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-4 shrink-0 border-b border-border/50">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 rounded-lg bg-primary/20">
+                    <Construction size={20} className="text-primary" />
+                  </div>
+                  <h2 id="disclaimer-modal-title" className="text-lg font-bold text-foreground">
+                    Welcome to PQC Today
+                  </h2>
                 </div>
-                <h2 id="disclaimer-modal-title" className="text-lg font-bold text-foreground">
-                  Welcome to PQC Today
-                </h2>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={acknowledgeDisclaimer}
+                  aria-label="Close disclaimer"
+                  className="shrink-0 text-muted-foreground hover:text-foreground"
+                >
+                  <X size={18} />
+                </Button>
               </div>
 
               {/* Scrollable content */}
