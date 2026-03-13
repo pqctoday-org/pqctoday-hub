@@ -1082,7 +1082,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~3,670 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~3,760 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -1164,7 +1164,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~3,670 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~3,760 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

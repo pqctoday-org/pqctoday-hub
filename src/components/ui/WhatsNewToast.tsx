@@ -86,24 +86,27 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">GRI Quantum Threat Timeline 2025</strong>{' '}
-                    &mdash; new library &amp; timeline reference: 28&ndash;49% CRQC probability
-                    within 10 years, majority expect a CRQC by 2035
+                    <strong className="text-foreground">
+                      ASC X9 Financial PKI &amp; Standards
+                    </strong>{' '}
+                    &mdash; 4 new library records + Compliance page entry for the financial
+                    industry&rsquo;s PQC trust framework launched June 2025
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">evolutionQ BasejumpQDN &amp; SKI</strong>{' '}
-                    &mdash; QKD orchestration and hybrid quantum-safe key infrastructure added to
-                    the Migrate catalog
+                    <strong className="text-foreground">43 new PQC Leaders</strong> &mdash; 181
+                    total; includes CA/B Forum, PKCS#11, Cloudflare, X9, NIST, FS-ISAC contributors
+                    with library deep-links
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Updated CRQC estimates</strong> &mdash;
-                    threats, quiz, and module data now reflect the 2025 GRI survey figures
+                    <strong className="text-foreground">Leader resource links</strong> &mdash; 95
+                    leaders now link directly to the reference documents they authored in the
+                    Library
                   </span>
                 </li>
               </ul>

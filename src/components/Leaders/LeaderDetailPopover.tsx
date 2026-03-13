@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { X, Briefcase, Building2, MapPin, User } from 'lucide-react'
+import { X, Briefcase, Building2, MapPin, User, BookOpen } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import FocusLock from 'react-focus-lock'
 import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
@@ -176,36 +177,26 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             </p>
           </div>
 
-          {/* Key Resource */}
-          {leader.keyResourceUrl && (
+          {/* Key Resources — links to validated library references */}
+          {leader.keyResourceUrl && leader.keyResourceUrl.length > 0 && (
             <div className="p-3 rounded-lg bg-muted/20 border border-border">
               <p className="text-xs text-muted-foreground uppercase tracking-wider font-bold mb-2">
-                Key Resource
+                {leader.keyResourceUrl.length === 1 ? 'Key Resource' : 'Key Resources'}
               </p>
-              <a
-                href={leader.keyResourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
-                title={leader.keyResourceUrl}
-              >
-                <span className="truncate">{leader.keyResourceUrl}</span>
-                <svg
-                  width="12"
-                  height="12"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                  />
-                </svg>
-              </a>
+              <div className="flex flex-col gap-1">
+                {leader.keyResourceUrl.map((ref, i) => (
+                  <Link
+                    key={i}
+                    to={`/library?ref=${encodeURIComponent(ref)}`}
+                    onClick={onClose}
+                    className="text-sm font-medium text-secondary hover:text-secondary/80 transition-colors flex items-center gap-2"
+                    title={`Open in Library: ${ref}`}
+                  >
+                    <BookOpen size={12} className="shrink-0" aria-hidden="true" />
+                    <span className="truncate">{ref}</span>
+                  </Link>
+                ))}
+              </div>
             </div>
           )}
 

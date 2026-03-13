@@ -4,6 +4,31 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.42.0] - 2026-03-12
+
+### Added
+
+- **ASC X9 financial cryptography standards — 4 new library records**: Added the Accredited Standards Committee X9 (ANSI-accredited financial standards body) reference catalog with four documents covering financial sector PQC readiness. [view:/library]
+  - **ASC X9 TR 50-2019** — Quantum Techniques in Cryptographic Message Syntax (CMS): X9F4 workgroup guidance on using quantum-safe cryptography within CMS and migrating financial systems.
+  - **ASC X9 IR 01-2022** — Quantum Computing Risks to the Financial Services Industry: X9F risk study group assessment of HNDL threats, timeline projections, and migration priorities.
+  - **ASC X9 PQC Financial Readiness Needs Assessment (2025)** — August 2025 report providing safe, cost-effective PQC migration guidance for financial institutions including inventory, risk assessment, and vendor engagement frameworks.
+  - **ASC X9 Financial PKI** — Production PKI infrastructure launched June 2025 (key ceremony June 13) with DigiCert as managed provider; supports ML-KEM and ML-DSA alongside legacy algorithms for financial payment terminals, cross-enterprise authentication, and secure device communication.
+- **ASC X9 added to Compliance page — Technical Standards tab**: X9 now appears as a `technical_standard` entry mapped to the Finance & Banking industry, linking to all four library records. [view:/compliance]
+- **43 new PQC leaders added to Leaders catalog**: Expanded from 138 to 181 leaders via systematic cross-referencing of enrichment `Authors` fields across all library, timeline, and threat documents. Highlights include:
+  - CA/Browser Forum: Stephen Davidson, Martijn Katerbarg, Clint Wilson, Ashish Dhiman, Andreas Henschel
+  - PKCS#11 v3.x: Tony Cox, Robert Relyea, Dieter Bong, Valerie Fenwick
+  - Cloudflare: Luke Valenta, Christopher Patton, Vânia Gonçalves
+  - ASC X9: Steve Stevens (Executive Director), Roy C. DeCicco (Former Chair, JPMorgan), Angela Hendershott (Vice Chair)
+  - NIST: Meltem Sönmez Turan, John Kelsey, Quynh Dang
+  - QKD: Romain Alléaume, Marco Lucamarini, Bruno Huttner
+  - Financial/FS-ISAC: Peter Bordow (Wells Fargo, FS-ISAC PQC Workgroup Chair)
+  - Other: Craig Gidney (Google Quantum AI), Shuichi Katsumata (PQShield), Valery Smyslov (IKEv2), Samuel Jaques, Yilei Chen
+- **Leaders — library deep-links via KeyResourceUrl**: `keyResourceUrl` field upgraded from single `string` to `string[]` (split on `;`). Leader detail popover now renders each linked library reference as a navigable `/library?ref=ID` internal link. 95 of 181 leaders now have at least one library reference. [view:/leaders]
+
+### Changed
+
+- **RAG corpus regenerated**: 3,761 chunks from 22 sources (was 3,687), incorporating 4 new X9 library records, 4 X9 document enrichments, and leaders data. [view:/]
+
 ## [2.41.0] - 2026-03-12
 
 ### Added

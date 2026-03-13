@@ -14,7 +14,7 @@ export interface Leader {
   imageUrl?: string
   websiteUrl?: string
   linkedinUrl?: string
-  keyResourceUrl?: string
+  keyResourceUrl?: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -58,7 +58,7 @@ const {
     imageUrl: row.ImageUrl,
     websiteUrl: row.WebsiteUrl,
     linkedinUrl: row.LinkedinUrl,
-    keyResourceUrl: row.KeyResourceUrl,
+    keyResourceUrl: row.KeyResourceUrl ? splitSemicolon(row.KeyResourceUrl) : undefined,
   }),
   true // withPrevious for status badges
 )
