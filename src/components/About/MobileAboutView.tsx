@@ -28,6 +28,7 @@ import {
   Construction,
   Wrench,
   Linkedin,
+  Stamp,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -75,6 +76,13 @@ const DISCUSSIONS = [
   },
   { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
   { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
+  {
+    number: 0,
+    icon: Stamp,
+    label: 'Library Endorsements',
+    description: 'Endorse a library resource for relevance and accuracy',
+    url: 'https://github.com/pqctoday/pqc-timeline-app/discussions/categories/library-resource-endorsement',
+  },
 ]
 
 const CRYPTO_BUFF_SITES = [
@@ -351,10 +359,10 @@ export const MobileAboutView = () => {
           questions, share ideas, or request new content.
         </p>
         <div className="grid grid-cols-1 gap-2">
-          {DISCUSSIONS.slice(0, 2).map(({ number, icon: Icon, label, description }) => (
+          {DISCUSSIONS.slice(0, 2).map(({ number, icon: Icon, label, description, url }) => (
             <a
               key={number}
-              href={`${DISCUSSIONS_BASE}${number}`}
+              href={url ?? `${DISCUSSIONS_BASE}${number}`}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-3 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
@@ -378,10 +386,10 @@ export const MobileAboutView = () => {
                 className="overflow-hidden"
               >
                 <div className="grid grid-cols-1 gap-2">
-                  {DISCUSSIONS.slice(2).map(({ number, icon: Icon, label, description }) => (
+                  {DISCUSSIONS.slice(2).map(({ number, icon: Icon, label, description, url }) => (
                     <a
                       key={number}
-                      href={`${DISCUSSIONS_BASE}${number}`}
+                      href={url ?? `${DISCUSSIONS_BASE}${number}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex items-center gap-3 p-2.5 min-h-[44px] rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"

@@ -8,6 +8,7 @@ export type EndorsementCategory =
   | 'threat-endorsement'
   | 'learn-module-endorsement'
   | 'timeline-endorsement'
+  | 'library-resource-endorsement'
 
 interface EndorsementParams {
   category: EndorsementCategory
@@ -58,6 +59,50 @@ export function buildEndorsementUrl({
 
 export const logEndorsement = (resourceType: string, resourceLabel: string) => {
   logEvent('Endorsement', 'Open', `${resourceType}:${resourceLabel}`)
+}
+
+/* ── Flag Issue Discussions ── */
+
+export function buildFlagUrl({
+  category,
+  title,
+  resourceType,
+  resourceId,
+  resourceDetails,
+  pageUrl,
+}: EndorsementParams): string {
+  const body = [
+    `## Flag: ${resourceType}`,
+    '',
+    `**Resource:** ${resourceId}`,
+    `**Page:** [View on PQC Today](https://pqctoday.com${pageUrl})`,
+    '',
+    resourceDetails,
+    '',
+    '### Issue type',
+    '',
+    '- [ ] Inaccurate or outdated information',
+    '- [ ] Not relevant to PQC migration',
+    '- [ ] Inadequate depth or coverage',
+    '- [ ] Broken link or missing content',
+    '',
+    '### Description of the issue',
+    '',
+    '<!-- Describe what is wrong and, if possible, suggest a correction -->',
+    '',
+  ].join('\n')
+
+  const params = new URLSearchParams({
+    category,
+    title,
+    body,
+  })
+
+  return `${DISCUSSIONS_NEW_BASE}?${params.toString()}`
+}
+
+export const logFlag = (resourceType: string, resourceLabel: string) => {
+  logEvent('Flag', 'Open', `${resourceType}:${resourceLabel}`)
 }
 
 /* ── Product Update Discussions ── */

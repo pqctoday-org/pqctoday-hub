@@ -4,6 +4,9 @@ import { Calendar, Eye, ExternalLink, Info, Sparkles } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { StatusBadge } from '../common/StatusBadge'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import clsx from 'clsx'
 
 interface DocumentCardProps {
@@ -120,6 +123,18 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
             Open
           </a>
         )}
+        <div className="flex items-center gap-1 ml-auto">
+          <EndorseButton
+            endorseUrl={buildLibraryEndorsementUrl(item)}
+            resourceLabel={item.referenceId}
+            resourceType="Library"
+          />
+          <FlagButton
+            flagUrl={buildLibraryFlagUrl(item)}
+            resourceLabel={item.referenceId}
+            resourceType="Library"
+          />
+        </div>
       </div>
     </motion.article>
   )

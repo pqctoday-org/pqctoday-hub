@@ -11,6 +11,7 @@ import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 
 const MODULE_ID = 'exec-quantum-impact'
 
@@ -221,10 +222,14 @@ export const ExecQuantumImpactModule: React.FC = () => {
 
             {/* Content Area */}
             <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
-              <div className="mb-6 border-b border-border pb-4">
-                <h2 className="text-2xl font-bold text-foreground">{PARTS[currentPart].title}</h2>
-                <p className="text-muted-foreground">{PARTS[currentPart].description}</p>
-              </div>
+              <WorkshopStepHeader
+                moduleId={MODULE_ID}
+                stepId={PARTS[currentPart].id}
+                stepTitle={PARTS[currentPart].title}
+                stepDescription={PARTS[currentPart].description}
+                stepIndex={currentPart}
+                totalSteps={PARTS.length}
+              />
               {currentPart === 0 && (
                 <RoleWhyItMatters key={`why-${configKey}`} data={EXEC_GUIDE_DATA} />
               )}

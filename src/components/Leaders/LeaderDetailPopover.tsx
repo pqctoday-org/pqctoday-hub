@@ -8,7 +8,8 @@ import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
@@ -109,6 +110,24 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
               endorseUrl={buildEndorsementUrl({
                 category: 'leader-endorsement',
                 title: `Endorse: ${leader.name}`,
+                resourceType: 'Leader',
+                resourceId: leader.name,
+                resourceDetails: [
+                  `**Name:** ${leader.name}`,
+                  `**Title:** ${leader.title}`,
+                  `**Organization(s):** ${leader.organizations.join(', ')}`,
+                  `**Country:** ${leader.country}`,
+                  `**Sector:** ${leader.type}`,
+                ].join('\n'),
+                pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+              })}
+              resourceLabel={leader.name}
+              resourceType="Leader"
+            />
+            <FlagButton
+              flagUrl={buildFlagUrl({
+                category: 'leader-endorsement',
+                title: `Flag: ${leader.name}`,
                 resourceType: 'Leader',
                 resourceId: leader.name,
                 resourceDetails: [

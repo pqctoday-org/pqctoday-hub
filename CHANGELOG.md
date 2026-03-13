@@ -4,6 +4,28 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.45.0] - 2026-03-13
+
+### Added
+
+- **Flag issue button (FlagButton component)**: New reusable `FlagButton` component (`src/components/ui/FlagButton.tsx`) — red Flag icon that opens a prefilled GitHub Discussion for reporting inaccuracies, broken links, or outdated content. Supports `icon` (default) and `text` variants. Respects `stopPropagation` to avoid interfering with parent click targets. [view:/library] [view:/threats] [view:/leaders] [view:/learn]
+- **`buildFlagUrl` utility**: Added to `src/utils/endorsement.ts` — builds a prefilled GitHub Discussions "new discussion" URL with structured body template (issue type checkboxes, description prompt, resource context). New `library-resource-endorsement` category added to `EndorsementCategory` union type. [view:/library]
+- **`libraryEndorsement.ts` helper module**: New `src/components/Library/libraryEndorsement.ts` — exports `buildLibraryEndorsementUrl` and `buildLibraryFlagUrl`, each accepting a `LibraryItem` and optional `includeExtended` flag for additional algorithm metadata fields. [view:/library]
+- **Endorse + Flag on Library cards**: `DocumentCard`, `LibraryDetailPopover`, and `LibraryTreeTable` now each render an `EndorseButton` + `FlagButton` pair. Card view places them in the action row (right-aligned); popover and tree table place them inline. [view:/library]
+- **Endorse + Flag on Threats table**: New hidden-until-lg "Actions" column in `ThreatsDashboard` table and `ThreatDetailDialog` with `EndorseButton` + `FlagButton` per threat row. Pre-fills discussion with Threat ID, industry, criticality, at-risk crypto, and PQC mitigation. [view:/threats]
+- **Endorse + Flag on Leaders table**: New "Actions" column (hidden on xs, visible sm+) in `LeadersTable` with `EndorseButton` + `FlagButton` per leader row. Pre-fills with name, title, organizations, country, and sector. [view:/leaders]
+- **Endorse button on Timeline Gantt per-country**: `EndorseButton` placed inline next to each country name in the sticky first column of `SimpleGanttChart`. Pre-fills with country name, organizations, and phase count. [view:/timeline]
+- **`WorkshopStepHeader` component**: New `src/components/PKILearning/common/WorkshopStepHeader.tsx` — replaces the inline `h2 + p` step header used by all 43 module workshops. Renders the step title, description, and an absolute-positioned `EndorseButton` + `FlagButton` pair at top-right. Endorsement pre-fills with module title, step title/index/total, and description. [view:/learn]
+- **Workshop step headers refactored across all 43 modules**: Every module `index.tsx` now imports and uses `WorkshopStepHeader` instead of inline heading markup, bringing consistent endorse/flag affordance to all workshop content. [view:/learn]
+- **LeaderConsentModal — Government/Policy and Education/Training criteria**: Added two new qualification categories with `Landmark` and `GraduationCap` icons. Removed framer-motion dependency (replaced with plain div). Added a "Copy template" button (`Copy`/`Check` icons, 2s feedback) and pre-built GitHub Discussions URL with `LEADER_TEMPLATE` body. [view:/leaders]
+- **LeaderRemovalModal**: Removed framer-motion dependency — replaced motion elements with plain div and CSS transitions. [view:/leaders]
+- **About page — Library Endorsements discussion entry**: Added a new entry to the community discussions grid with `Stamp` icon linking to the `library-resource-endorsement` discussions category. Updated Leaders entry description to "I consent to be added as a PQC leader" and pointed its URL to the prefilled consent discussion. Discussions now support per-entry `url` override alongside the default `${DISCUSSIONS_BASE}${number}` pattern. [view:/about]
+
+### Changed
+
+- **All 43 module workshop step headers**: Migrated from inline `<div className="mb-6 border-b ..."><h2>...</h2><p>...</p></div>` to `<WorkshopStepHeader moduleId stepId stepTitle stepDescription stepIndex totalSteps />`. No visual change to content — adds endorse/flag buttons only. [view:/learn]
+- **RAG corpus (`public/data/rag-corpus.json`)**: Minified format — from 46,558-line pretty-printed JSON to single-line output, matching generator's `JSON.stringify(output)` default. No content changes; reduces file size and diff noise. [data]
+
 ## [2.44.9] - 2026-03-13
 
 ### Fixed

@@ -7,7 +7,8 @@ import { useEffect, useRef } from 'react'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -172,6 +173,28 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             resourceType="Timeline"
             variant="text"
             label="Endorse"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'timeline-endorsement',
+              title: `Flag: ${primaryEvent?.countryName ?? 'Unknown'} — ${phase.title}`,
+              resourceType: 'Timeline Event',
+              resourceId: `${primaryEvent?.countryName ?? 'Unknown'} / ${phase.title}`,
+              resourceDetails: [
+                `**Country:** ${primaryEvent?.countryName ?? 'Unknown'}`,
+                `**Phase:** ${phase.phase}`,
+                `**Title:** ${phase.title}`,
+                `**Period:** ${phase.startYear}–${phase.endYear}`,
+                phase.description ? `**Description:** ${phase.description}` : '',
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/timeline?country=${encodeURIComponent(primaryEvent?.countryName ?? '')}`,
+            })}
+            resourceLabel={phase.title}
+            resourceType="Timeline"
+            variant="text"
+            label="Flag"
           />
           <AskAssistantButton
             variant="text"

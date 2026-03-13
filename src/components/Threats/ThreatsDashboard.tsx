@@ -31,7 +31,9 @@ import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { PageHeader } from '../common/PageHeader'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 
@@ -377,6 +379,9 @@ export const ThreatsDashboard: React.FC = () => {
 
                 <th className="p-4 font-semibold text-sm">Crypto</th>
                 <th className="p-4 font-semibold text-sm">PQC Repl.</th>
+                <th className="hidden lg:table-cell p-4 font-semibold text-sm text-center">
+                  Actions
+                </th>
                 <th className="p-4 font-semibold text-sm text-center">Info</th>
               </tr>
             </thead>
@@ -446,6 +451,47 @@ export const ThreatsDashboard: React.FC = () => {
                       {item.pqcReplacement.split(',').map((c, i) => (
                         <div key={i}>{c.trim()}</div>
                       ))}
+                    </td>
+                    {/* Endorse / Flag Column */}
+                    <td className="hidden lg:table-cell p-4 text-center">
+                      <div className="flex items-center justify-center gap-1">
+                        <EndorseButton
+                          endorseUrl={buildEndorsementUrl({
+                            category: 'threat-endorsement',
+                            title: `Endorse: ${item.threatId} — ${item.industry}`,
+                            resourceType: 'Threat Assessment',
+                            resourceId: item.threatId,
+                            resourceDetails: [
+                              `**Threat ID:** ${item.threatId}`,
+                              `**Industry:** ${item.industry}`,
+                              `**Criticality:** ${item.criticality}`,
+                              `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
+                              `**PQC Mitigation:** ${item.pqcReplacement}`,
+                            ].join('\n'),
+                            pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                          })}
+                          resourceLabel={item.threatId}
+                          resourceType="Threat"
+                        />
+                        <FlagButton
+                          flagUrl={buildFlagUrl({
+                            category: 'threat-endorsement',
+                            title: `Flag: ${item.threatId} — ${item.industry}`,
+                            resourceType: 'Threat Assessment',
+                            resourceId: item.threatId,
+                            resourceDetails: [
+                              `**Threat ID:** ${item.threatId}`,
+                              `**Industry:** ${item.industry}`,
+                              `**Criticality:** ${item.criticality}`,
+                              `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
+                              `**PQC Mitigation:** ${item.pqcReplacement}`,
+                            ].join('\n'),
+                            pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                          })}
+                          resourceLabel={item.threatId}
+                          resourceType="Threat"
+                        />
+                      </div>
                     </td>
                     {/* Info Button Column */}
                     <td className="p-4 text-center">

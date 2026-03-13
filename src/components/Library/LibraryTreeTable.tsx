@@ -15,6 +15,9 @@ import {
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 import { StatusBadge } from '../common/StatusBadge'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 
 interface LibraryTreeTableProps {
@@ -230,6 +233,16 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   </button>
                 )
               })()}
+              <EndorseButton
+                endorseUrl={buildLibraryEndorsementUrl(item)}
+                resourceLabel={item.referenceId}
+                resourceType="Library"
+              />
+              <FlagButton
+                flagUrl={buildLibraryFlagUrl(item)}
+                resourceLabel={item.referenceId}
+                resourceType="Library"
+              />
             </div>
           </td>
         </tr>,

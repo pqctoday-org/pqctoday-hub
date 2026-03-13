@@ -329,7 +329,7 @@ export const LeadersGrid = () => {
           }}
           className="gap-2 text-sm"
         >
-          <Award size={16} className="text-primary" />I agree to be referenced as a PQC Leader
+          <Award size={16} className="text-primary" />I consent to be added as a PQC Leader
         </Button>
         <Button
           variant="ghost"

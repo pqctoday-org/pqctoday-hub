@@ -30,6 +30,7 @@ import {
   Construction,
   Wrench,
   Linkedin,
+  Stamp,
 } from 'lucide-react'
 
 import { useState } from 'react'
@@ -81,7 +82,13 @@ const DISCUSSIONS = [
     label: 'Learn Modules',
     description: 'Update or add a new learning module',
   },
-  { number: 116, icon: Trophy, label: 'Leaders', description: 'Update or add a new leader' },
+  {
+    number: 116,
+    icon: Trophy,
+    label: 'Leaders',
+    description: 'I consent to be added as a PQC leader',
+    url: 'https://github.com/pqctoday/pqc-timeline-app/discussions/new?category=i-consent-to-be-added-as-a-pqc-leader',
+  },
   {
     number: 117,
     icon: FileText,
@@ -96,6 +103,13 @@ const DISCUSSIONS = [
   },
   { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
   { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
+  {
+    number: 0,
+    icon: Stamp,
+    label: 'Library Endorsements',
+    description: 'Endorse a library resource for relevance and accuracy',
+    url: 'https://github.com/pqctoday/pqc-timeline-app/discussions/categories/library-resource-endorsement',
+  },
 ]
 
 const CRYPTO_BUFF_SITES = [
@@ -409,10 +423,10 @@ export function AboutView() {
             </div>
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-4">
-            {DISCUSSIONS.slice(0, 2).map(({ number, icon: Icon, label, description }) => (
+            {DISCUSSIONS.slice(0, 2).map(({ number, icon: Icon, label, description, url }) => (
               <a
                 key={number}
-                href={`${DISCUSSIONS_BASE}${number}`}
+                href={url ?? `${DISCUSSIONS_BASE}${number}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"
@@ -436,10 +450,10 @@ export function AboutView() {
                   className="overflow-hidden contents-wrapper col-span-full"
                 >
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {DISCUSSIONS.slice(2).map(({ number, icon: Icon, label, description }) => (
+                    {DISCUSSIONS.slice(2).map(({ number, icon: Icon, label, description, url }) => (
                       <a
                         key={number}
-                        href={`${DISCUSSIONS_BASE}${number}`}
+                        href={url ?? `${DISCUSSIONS_BASE}${number}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="flex items-start gap-3 p-3 rounded-lg border border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60 transition-colors group"

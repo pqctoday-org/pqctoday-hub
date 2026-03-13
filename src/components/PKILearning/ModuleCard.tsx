@@ -4,7 +4,8 @@ import { BookOpen, CheckCircle, Circle, Clock, Wrench } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 
 export interface ModuleItem {
@@ -188,6 +189,25 @@ export const ModuleCard = ({
             endorseUrl={buildEndorsementUrl({
               category: 'learn-module-endorsement',
               title: `Endorse: ${module.title}`,
+              resourceType: 'Learning Module',
+              resourceId: module.id,
+              resourceDetails: [
+                `**Module:** ${module.title}`,
+                `**Duration:** ${module.duration}`,
+                module.difficulty ? `**Difficulty:** ${module.difficulty}` : '',
+                `**Description:** ${module.description}`,
+              ]
+                .filter(Boolean)
+                .join('\n'),
+              pageUrl: `/learn/${module.id}`,
+            })}
+            resourceLabel={module.title}
+            resourceType="Module"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'learn-module-endorsement',
+              title: `Flag: ${module.title}`,
               resourceType: 'Learning Module',
               resourceId: module.id,
               resourceDetails: [

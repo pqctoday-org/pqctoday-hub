@@ -5,6 +5,9 @@ import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import { leadersData } from '../../data/leadersData'
@@ -132,6 +135,16 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
           <div className="flex items-center gap-1 flex-shrink-0">
             <AskAssistantButton
               question={`What is the significance of "${item.documentTitle?.trim()}"${item.authorsOrOrganization ? ` by ${item.authorsOrOrganization}` : ''}${item.documentType ? ` (${item.documentType})` : ''} for PQC migration?${item.shortDescription ? ` Summary: ${item.shortDescription}` : ''}`}
+            />
+            <EndorseButton
+              endorseUrl={buildLibraryEndorsementUrl(item, true)}
+              resourceLabel={item.referenceId}
+              resourceType="Library"
+            />
+            <FlagButton
+              flagUrl={buildLibraryFlagUrl(item, true)}
+              resourceLabel={item.referenceId}
+              resourceType="Library"
             />
             <button
               onClick={onClose}

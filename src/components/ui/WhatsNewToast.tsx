@@ -86,24 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Modal escape hatches</strong> &mdash;
-                    backdrop click, Escape key, and faster exit animation — no more stuck overlays
+                    <strong className="text-foreground">Endorse &amp; Flag everywhere</strong>{' '}
+                    &mdash; Stamp + Flag buttons on Library cards, Threats, Leaders, Timeline, and
+                    every Workshop step across all 43 modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">WIP Badges & Transparency</strong> &mdash;
-                    animated pulse-glow badges on modules, landing banner, and new About page
-                    transparency section (v2.44.7)
+                    <strong className="text-foreground">Flag issue button</strong> &mdash; red Flag
+                    icon opens a prefilled GitHub Discussion with issue-type checkboxes for
+                    reporting inaccuracies or broken content
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Community Endorsements</strong> &mdash;
-                    Stamp button on every resource, product PQC update submissions on Migrate
-                    (v2.44.6)
+                    <strong className="text-foreground">Leader consent modal improved</strong>{' '}
+                    &mdash; Government/Policy &amp; Education criteria, copy-template button,
+                    prefilled GitHub Discussions URL
                   </span>
                 </li>
               </ul>

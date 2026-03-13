@@ -4,6 +4,9 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Info, User } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
 import { StatusBadge } from '../common/StatusBadge'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
 
@@ -100,6 +103,9 @@ export const LeadersTable = ({ data, onViewDetails }: LeadersTableProps) => {
               >
                 <span className="flex items-center gap-1.5">Sector {sortIcon('type')}</span>
               </th>
+              <th className="hidden sm:table-cell px-3 py-2.5 text-center text-xs font-semibold text-muted-foreground uppercase tracking-wider w-[80px]">
+                Actions
+              </th>
               <th className="px-3 py-2.5 text-right text-xs font-semibold text-muted-foreground uppercase tracking-wider w-[60px]">
                 Details
               </th>
@@ -187,6 +193,48 @@ const LeaderRow = ({
         >
           {leader.type}
         </span>
+      </td>
+
+      {/* Endorse / Flag */}
+      <td className="hidden sm:table-cell px-3 py-3 text-center">
+        <div className="flex items-center justify-center gap-1">
+          <EndorseButton
+            endorseUrl={buildEndorsementUrl({
+              category: 'leader-endorsement',
+              title: `Endorse: ${leader.name}`,
+              resourceType: 'Leader',
+              resourceId: leader.name,
+              resourceDetails: [
+                `**Name:** ${leader.name}`,
+                `**Title:** ${leader.title}`,
+                `**Organization(s):** ${leader.organizations.join(', ')}`,
+                `**Country:** ${leader.country}`,
+                `**Sector:** ${leader.type}`,
+              ].join('\n'),
+              pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+            })}
+            resourceLabel={leader.name}
+            resourceType="Leader"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'leader-endorsement',
+              title: `Flag: ${leader.name}`,
+              resourceType: 'Leader',
+              resourceId: leader.name,
+              resourceDetails: [
+                `**Name:** ${leader.name}`,
+                `**Title:** ${leader.title}`,
+                `**Organization(s):** ${leader.organizations.join(', ')}`,
+                `**Country:** ${leader.country}`,
+                `**Sector:** ${leader.type}`,
+              ].join('\n'),
+              pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+            })}
+            resourceLabel={leader.name}
+            resourceType="Leader"
+          />
+        </div>
       </td>
 
       {/* Actions */}

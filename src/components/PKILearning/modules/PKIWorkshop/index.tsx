@@ -10,6 +10,7 @@ import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
 import { CertSigner } from './CertSigner'
@@ -212,10 +213,14 @@ export const PKIWorkshop: React.FC = () => {
 
             {/* Content Area */}
             <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
-              <div className="mb-6 border-b border-border pb-4">
-                <h2 className="text-2xl font-bold text-foreground">{PARTS[currentStep].title}</h2>
-                <p className="text-muted-foreground">{PARTS[currentStep].description}</p>
-              </div>
+              <WorkshopStepHeader
+                moduleId={MODULE_ID}
+                stepId={PARTS[currentStep].id}
+                stepTitle={PARTS[currentStep].title}
+                stepDescription={PARTS[currentStep].description}
+                stepIndex={currentStep}
+                totalSteps={PARTS.length}
+              />
 
               {currentStep === 0 && (
                 <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />

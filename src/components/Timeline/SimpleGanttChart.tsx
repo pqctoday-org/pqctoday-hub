@@ -16,6 +16,8 @@ import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import { DocumentTable } from './DocumentTable'
 import { logEvent } from '../../utils/analytics'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '../../utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { StatusBadge } from '../common/StatusBadge'
@@ -641,6 +643,24 @@ export const SimpleGanttChart = ({
                                   {country.countryName}
                                 </span>
                               </div>
+                              <EndorseButton
+                                endorseUrl={buildEndorsementUrl({
+                                  category: 'timeline-endorsement',
+                                  title: `Endorse: ${country.countryName} PQC Timeline`,
+                                  resourceType: 'Country Timeline',
+                                  resourceId: country.countryName,
+                                  resourceDetails: [
+                                    `**Country:** ${country.countryName}`,
+                                    `**Organizations:** ${country.bodies.map((b) => b.name).join(', ')}`,
+                                    `**Phases:** ${phases.length}`,
+                                  ].join('\n'),
+                                  pageUrl: `/timeline?country=${encodeURIComponent(country.countryName)}`,
+                                })}
+                                resourceLabel={`${country.countryName} Timeline`}
+                                resourceType="Country Timeline"
+                                variant="icon"
+                                className="-ml-1 mt-0.5"
+                              />
                             </td>
                           )}
                           {idx === 0 && (

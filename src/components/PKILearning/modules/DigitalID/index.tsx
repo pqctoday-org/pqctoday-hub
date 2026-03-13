@@ -13,6 +13,7 @@ import { OverviewComponent } from './components/Overview/OverviewComponent'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 
 const MODULE_ID = 'digital-id'
@@ -270,6 +271,14 @@ export const DigitalIDModule: React.FC = () => {
 
             {/* Content Area */}
             <div className="glass-panel p-4 animate-fade-in min-h-[400px] md:min-h-[600px] overflow-y-auto">
+              <WorkshopStepHeader
+                moduleId={MODULE_ID}
+                stepId={WORKSHOP_STEPS[currentStep].id}
+                stepTitle={WORKSHOP_STEPS[currentStep].title}
+                stepDescription={WORKSHOP_STEPS[currentStep].description}
+                stepIndex={currentStep}
+                totalSteps={WORKSHOP_STEPS.length}
+              />
               {currentStepComponent}
             </div>
 
