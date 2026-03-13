@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.1] - 2026-03-13
+
+### Changed
+
+- **CSV archival**: `library_03132026_r1.csv` removed — superseded by r2 (v2.43.0) and r3 (v2.44.0). [data]
+
 ## [2.44.0] - 2026-03-13
 
 ### Added
