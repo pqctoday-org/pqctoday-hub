@@ -42,7 +42,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 1 })
       )
     })
 
@@ -84,20 +84,20 @@ test.describe('PQC Assistant — Persona & Context', () => {
   test('page context header updates on navigation', async ({ page }) => {
     // Start on algorithms page
     await page.goto('/algorithms')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
     await expect(page.getByText('— Algorithms')).toBeVisible({ timeout: 5000 })
 
     // Close, navigate, reopen
     await page.keyboard.press('Escape')
     await page.goto('/timeline')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
     await expect(page.getByText('— Timeline')).toBeVisible({ timeout: 5000 })
   })
 
   test('suggested questions differ between pages', async ({ page }) => {
     // On algorithms page
     await page.goto('/algorithms')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Should see algorithm-related suggestions
     const panel = page.getByRole('dialog', { name: 'PQC Assistant' })
@@ -107,7 +107,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
 
     // On timeline page
     await page.goto('/timeline')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     const timelineText = await panel.textContent()
 
@@ -148,7 +148,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     })
 
     await page.goto('/algorithms')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     const input = page.getByPlaceholder('Ask about PQC...')
     await expect(input).toBeVisible({ timeout: 5000 })
@@ -197,7 +197,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     const input = page.getByPlaceholder('Ask about PQC...')
     await expect(input).toBeVisible({ timeout: 5000 })
@@ -229,7 +229,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     const input = page.getByPlaceholder('Ask about PQC...')
     await expect(input).toBeVisible({ timeout: 5000 })

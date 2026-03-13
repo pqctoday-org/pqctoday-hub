@@ -18,7 +18,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
   // ── Page-level ────────────────────────────────────────────────────────────────
 
   test('loads the assessment page with mode selector', async ({ page }) => {
-    await expect(page.getByRole('heading', { name: 'PQC Risk Assessment', level: 1 })).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'PQC Risk Assessment', level: 2 })).toBeVisible()
     // Quick mode description
     await expect(page.getByText(/6 questions/)).toBeVisible()
     // Comprehensive mode description
@@ -35,7 +35,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
   test('Quick mode: starts at Industry step (Step 1 of 6)', async ({ page }) => {
     await page.getByRole('button', { name: /Quick/ }).click()
     await expect(page.getByText('What industry are you in?')).toBeVisible()
-    await expect(page.getByText('Step 1 of 6')).toBeVisible()
+    await expect(page.getByText('Step 1 of 6').locator('visible=true').first()).toBeVisible()
   })
 
   test('Quick mode: step indicator shows all 6 step titles', async ({ page }) => {
@@ -51,7 +51,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
   test('Comprehensive mode: starts at Industry step (Step 1 of 13)', async ({ page }) => {
     await page.getByRole('button', { name: /Comprehensive/ }).click()
     await expect(page.getByText('What industry are you in?')).toBeVisible()
-    await expect(page.getByText('Step 1 of 13')).toBeVisible()
+    await expect(page.getByText('Step 1 of 13').locator('visible=true').first()).toBeVisible()
   })
 
   // ── Navigation guards ─────────────────────────────────────────────────────────
@@ -85,7 +85,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
       .first()
       .click()
     await page.getByRole('button', { name: 'Next' }).click()
-    await expect(page.getByText('Step 2 of 6')).toBeVisible()
+    await expect(page.getByText('Step 2 of 6').locator('visible=true').first()).toBeVisible()
   })
 
   test('Previous navigates back from step 2 to step 1', async ({ page }) => {
@@ -96,10 +96,10 @@ test.describe('PQC Risk Assessment (/assess)', () => {
       .first()
       .click()
     await page.getByRole('button', { name: 'Next' }).click()
-    await expect(page.getByText('Step 2 of 6')).toBeVisible()
+    await expect(page.getByText('Step 2 of 6').locator('visible=true').first()).toBeVisible()
 
     await page.getByRole('button', { name: 'Previous' }).click()
-    await expect(page.getByText('Step 1 of 6')).toBeVisible()
+    await expect(page.getByText('Step 1 of 6').locator('visible=true').first()).toBeVisible()
     await expect(page.getByText('What industry are you in?')).toBeVisible()
   })
 
@@ -129,7 +129,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
     })
     await page.goto('/assess?step=2')
     // Step 3 (0-indexed step=2)
-    await expect(page.getByText('Step 3 of 13')).toBeVisible()
+    await expect(page.getByText('Step 3 of 13').locator('visible=true').first()).toBeVisible()
   })
 
   // ── Resume banner ─────────────────────────────────────────────────────────────
@@ -231,6 +231,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
   // ── Accessibility ─────────────────────────────────────────────────────────────
 
   test('mode selector passes accessibility audit', async ({ page }) => {
+    await expect(page).toHaveTitle(/PQC Risk Assessment/i, { timeout: 10000 })
     await injectAxe(page)
     await checkA11y(page, undefined, {
       axeOptions: {

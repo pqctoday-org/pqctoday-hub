@@ -42,7 +42,7 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 1 })
       )
     })
 
@@ -58,7 +58,7 @@ test.describe('PQC Assistant Chatbot', () => {
 
   test('FAB opens chat panel', async ({ page }) => {
     await page.goto('/')
-    const fab = page.getByRole('button', { name: 'Open PQC Assistant' })
+    const fab = page.getByRole('button', { name: 'Open PQC Assistant' }).last()
     await expect(fab).toBeVisible({ timeout: 5000 })
     await fab.click()
 
@@ -73,14 +73,14 @@ test.describe('PQC Assistant Chatbot', () => {
 
   test('Escape closes chat panel', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
     await expect(page.getByRole('dialog', { name: 'PQC Assistant' })).toBeVisible()
 
     await page.keyboard.press('Escape')
     await expect(page.getByRole('dialog', { name: 'PQC Assistant' })).not.toBeVisible()
 
     // FAB should reappear
-    await expect(page.getByRole('button', { name: 'Open PQC Assistant' })).toBeVisible()
+    await expect(page.getByRole('button', { name: 'Open PQC Assistant' }).last()).toBeVisible()
   })
 
   test('close button closes chat panel', async ({ page }) => {
@@ -88,10 +88,10 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.evaluate(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '2.99.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 1 })
       )
     })
-    const fab = page.getByRole('button', { name: 'Open PQC Assistant' })
+    const fab = page.getByRole('button', { name: 'Open PQC Assistant' }).last()
     await expect(fab).toBeVisible({ timeout: 5000 })
     await fab.click()
     await expect(page.getByRole('dialog', { name: 'PQC Assistant' })).toBeVisible()
@@ -102,7 +102,7 @@ test.describe('PQC Assistant Chatbot', () => {
 
   test('shows provider setup when no provider', async ({ page }) => {
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Should show provider setup with two cards
     await expect(page.getByRole('heading', { name: 'Choose Your AI Assistant' })).toBeVisible()
@@ -125,7 +125,7 @@ test.describe('PQC Assistant Chatbot', () => {
         JSON.stringify({ state: { lastSeenVersion: '2.9.0' }, version: 1 })
       )
     })
-    const fab = page.getByRole('button', { name: 'Open PQC Assistant' })
+    const fab = page.getByRole('button', { name: 'Open PQC Assistant' }).last()
     await expect(fab).toBeVisible({ timeout: 5000 })
     await fab.click()
 
@@ -147,7 +147,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     await page.getByPlaceholder('Paste your API key here').fill('bad-key')
     await page.getByRole('button', { name: 'Save & Connect' }).click()
@@ -172,7 +172,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Suggested questions should be visible in empty state
     await expect(page.getByText('What is post-quantum cryptography?')).toBeVisible({
@@ -210,7 +210,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Type and send a message
     const input = page.getByPlaceholder('Ask about PQC...')
@@ -249,7 +249,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Verify messages are visible
     await expect(page.getByText('Test message')).toBeVisible({ timeout: 5000 })
@@ -280,7 +280,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Wait for chat input to appear (confirming provider is active)
     await expect(page.getByPlaceholder('Ask about PQC...')).toBeVisible({ timeout: 5000 })
@@ -319,7 +319,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     const input = page.getByPlaceholder('Ask about PQC...')
     await expect(input).toBeVisible({ timeout: 5000 })
@@ -343,7 +343,7 @@ test.describe('PQC Assistant Chatbot', () => {
     })
 
     await page.goto('/algorithms')
-    await page.getByRole('button', { name: 'Open PQC Assistant' }).click()
+    await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Page context should appear in header
     await expect(page.getByText('— Algorithms')).toBeVisible({ timeout: 5000 })
