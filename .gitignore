@@ -87,11 +87,8 @@ screenshot-*.png
 *.mov
 *.mp4
 
-# Audit Reports
-docs/audits/
-
-# Requirements Documentation (BRDs, PRDs, competitive analysis)
-docs/requirements/
+# All internal docs (private — entire directory)
+docs/
 
 # Temp HTML
 pqc_today_clean_icons.html
@@ -122,8 +119,18 @@ test_parse_2.mjs
 test_personas.mjs
 pqctoday_nextsteps_*.md
 scripts/fix_*.mjs
+scripts/fix_*.cjs
 scripts/recover_data*.mjs
 scripts/remove_duplicates*.mjs
+scripts/refactor_*.cjs
+scripts/refactor_*.mjs
+scripts/patch_*.cjs
+scripts/finish_constants*.cjs
+scripts/extract_constants.cjs
+scripts/add_slhdsa_stubs.cjs
+scripts/bind_softhsm.cjs
+scripts/check_learn_modules*.ts
+scripts/leader-enrichment-output.json
 scripts/split_hook.mjs
 scripts/split_wizard.js
 scripts/check_gaps.mjs
@@ -199,10 +206,12 @@ animation.html
 explainer.html
 generate_animation.py
 platform_map_with_labels_*.png
-# PDFs — enrichment source artifacts, not used at runtime
+# PDFs & HTML reference documents — enrichment source artifacts, not used at runtime
 /*.pdf
 public/timeline/*.pdf
+public/timeline/*.html
 public/threats/*.pdf
+public/threats/*.html
 .cache/*.pdf
 
 # One-off scripts
@@ -214,6 +223,21 @@ test-improvements.cjs
 test-openssl-hash.sh
 validate-hash-vectors.mjs
 run_opt_200.exp
+refactor_fiveg.cjs
+check_version.mjs
+test_backup.js
+test_backup.ts
+test_hsm_version.mjs
+test_mlkem.rs
+module_accuracy_report_local.md
+reports/
+
+# macOS clippings
+*.textClipping
+
+# Infographic / marketing images (root-level)
+pqc_*.png
+pqctoday*.png
 
 # Private sync tooling
 sync-private.sh
