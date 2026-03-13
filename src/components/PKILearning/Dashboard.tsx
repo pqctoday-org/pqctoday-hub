@@ -37,13 +37,18 @@ const SORT_OPTIONS: { id: LearnSortMode; label: string }[] = [
   { id: 'status', label: 'Status (in progress first)' },
 ]
 
-const PERSONA_FILTER_ITEMS = [
+const PROFESSIONAL_PERSONA_FILTER_ITEMS = [
   { id: 'All', label: 'All Roles' },
   { id: 'executive', label: 'Executive / GRC' },
   { id: 'developer', label: 'Developer / Engineer' },
   { id: 'architect', label: 'Security Architect' },
   { id: 'ops', label: 'IT Ops / DevOps' },
   { id: 'researcher', label: 'Researcher' },
+]
+
+const CURIOUS_PERSONA_FILTER_ITEMS = [
+  { id: 'All', label: 'All Paths' },
+  { id: 'curious', label: 'Curious Explorer' },
 ]
 
 const TRACK_FILTER_ITEMS = ['All', ...MODULE_TRACKS.map((t) => t.track)]
@@ -251,12 +256,18 @@ const ModuleTracksGrid = ({
   const [selectedTrack, setSelectedTrack] = useState('All')
   const [selectedDifficulty, setSelectedDifficulty] = useState('All')
   const [selectedStatus, setSelectedStatus] = useState('All')
-  // Initialize from persona store so selecting a persona on the home page pre-selects the dropdown
+  // Professional personas pre-select their learning path; curious users start with all modules visible
   const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
-    selectedPersona ?? 'All'
+    selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All')
   )
   const [sortBy, setSortBy] = useState<LearnSortMode>('default')
   const [viewMode, setViewMode] = useState<LearnViewMode>('stack')
+
+  // Show Curious Explorer path in curious mode (persona or experience level); professionals see professional roles
+  const isCuriousMode = selectedPersona === 'curious' || experienceLevel === 'curious'
+  const personaFilterItems = isCuriousMode
+    ? CURIOUS_PERSONA_FILTER_ITEMS
+    : PROFESSIONAL_PERSONA_FILTER_ITEMS
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedSearch(searchText), 150)
@@ -283,14 +294,15 @@ const ModuleTracksGrid = ({
 
   const isModuleAboveLevel = useCallback(
     (moduleId: string): boolean => {
+      // Curious mode (persona OR experience level): all modules have curious-summary.md — no dimming
+      if (isCuriousMode) return false
       if (!experienceLevel) return false
       const mod = MODULE_CATALOG[moduleId]
       if (!mod?.difficulty) return false
-      if (experienceLevel === 'new') return mod.difficulty !== 'beginner'
       if (experienceLevel === 'basics') return mod.difficulty === 'advanced'
       return false
     },
-    [experienceLevel]
+    [isCuriousMode, experienceLevel]
   )
 
   const allModules = useMemo(() => MODULE_TRACKS.flatMap((t) => t.modules), [])
@@ -547,10 +559,10 @@ const ModuleTracksGrid = ({
 
         {/* Persona / Role */}
         <FilterDropdown
-          items={PERSONA_FILTER_ITEMS}
+          items={personaFilterItems}
           selectedId={selectedPersonaFilter}
           onSelect={handlePersonaFilterChange}
-          defaultLabel="All Roles"
+          defaultLabel={isCuriousMode ? 'All Paths' : 'All Roles'}
           noContainer
         />
 

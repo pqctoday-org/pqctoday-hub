@@ -122,10 +122,13 @@ const PERSONA_DEPTH: Record<string, string> = {
   architect: 'Emphasize integration patterns, architecture decisions, and system-level trade-offs.',
   researcher: 'Include mathematical foundations, algorithm comparisons, and academic references.',
   ops: 'Focus on deployment steps, infrastructure configs, and operational procedures. Include CLI commands, config examples, and rollback guidance.',
+  curious:
+    'This person has no technical background. Lead with real-world impact and simple metaphors. Avoid all jargon — if you must mention a standard (e.g., FIPS 203), immediately explain what it means in plain English. Keep answers short (2-3 paragraphs max). Use questions and everyday examples to make concepts relatable.',
 }
 
 const EXPERIENCE_DEPTH: Record<string, string> = {
-  new: 'The user is new to PQC. Use simple language, define technical terms on first use, and provide introductory context. Avoid assumptions about prior knowledge.',
+  curious:
+    'The user is a non-technical person exploring PQC for the first time. Use everyday language and real-world analogies (e.g., "like changing the locks on your house before a new type of lockpick is invented"). Define every technical term in parentheses on first use. Focus on "why it matters" and "what happens next" rather than implementation details. Never assume familiarity with cryptography, standards bodies, or IT infrastructure.',
   basics:
     'The user has basic familiarity with PQC concepts. Provide moderate detail with brief explanations of advanced terms.',
   expert:
@@ -264,7 +267,8 @@ GUIDELINES:
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
 
 FOLLOW-UP SUGGESTIONS:
-After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering). Example:
+After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering).${pageContext?.experienceLevel === 'curious' ? '\nFOLLOW-UP STYLE: The user is non-technical. Follow-up questions should use simple language and invite exploration (e.g., "What does this mean for online banking?" rather than "How does ML-KEM integrate with TLS 1.3?").' : ''}
+Example:
 \`\`\`followups
 What are the performance trade-offs of ML-KEM-768 vs ML-KEM-1024?
 Which HSMs currently support ML-KEM?
@@ -318,7 +322,7 @@ Example: [ML-KEM](/algorithms?highlight=ml-kem), [NIST IR 8547](/library?ref=NIS
 
 BREVITY: Keep answers to 2–4 short paragraphs. Use bullet points for lists. Do not repeat the question. Do not add preamble. Educational only — not production advice.
 
-After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering):
+After your response, append 2–3 follow-up questions in a \`\`\`followups code fence (one per line, no numbering):${pageContext?.experienceLevel === 'curious' ? '\nFollow-ups should use simple language — no jargon.' : ''}
 \`\`\`followups
 Example follow-up question 1?
 Example follow-up question 2?

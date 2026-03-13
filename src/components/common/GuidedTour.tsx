@@ -371,7 +371,7 @@ export const GuidedTour: React.FC = () => {
   // ── Knowledge gate ──────────────────────────────────────────────────────────
 
   const handleGateChoice = (choice: 'learning' | 'basics' | 'expert') => {
-    usePersonaStore.getState().setExperienceLevel(choice === 'learning' ? 'new' : choice)
+    usePersonaStore.getState().setExperienceLevel(choice === 'learning' ? 'curious' : choice)
     if (choice === 'expert') {
       dismiss()
     } else {

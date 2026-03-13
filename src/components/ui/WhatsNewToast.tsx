@@ -86,25 +86,27 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Persona-aware AI chat</strong> &mdash;
-                    retrieval boosting by industry/region, experience-level-adaptive prompts, and
-                    multi-dimensional response caching
+                    <strong className="text-foreground">Curious Explorer</strong> &mdash; new
+                    persona for non-technical users with a 9-module beginner path and plain-language
+                    AI responses
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Module cross-linking</strong> &mdash; 26+
-                    module intros now have Related Modules panels; all 5 Role Guides enriched with
-                    industry deep-links
+                    <strong className="text-foreground">
+                      &ldquo;In Simple Terms&rdquo; banners
+                    </strong>{' '}
+                    &mdash; every learning module now has a jargon-free plain-language summary for
+                    curious users
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Mobile &amp; accessibility</strong> &mdash;
-                    44px touch targets across all pages, mobile-first Migrate layout, Timeline
-                    mobile filters
+                    <strong className="text-foreground">Curious-mode AI chat</strong> &mdash;
+                    simplified prompts, beginner suggested questions, and plain-language RAG
+                    retrieval on all 48 modules
                   </span>
                 </li>
               </ul>

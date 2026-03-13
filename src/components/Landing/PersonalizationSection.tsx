@@ -23,6 +23,7 @@ import {
   Info,
   Landmark,
   Layers,
+  Lightbulb,
   MapPin,
   Pencil,
   Plane,
@@ -53,9 +54,17 @@ type ActiveModal = 'experience' | 'role' | 'region' | 'industry' | null
 
 // ─── Static data ──────────────────────────────────────────────────────────────
 
-const PERSONA_ORDER: PersonaId[] = ['executive', 'developer', 'architect', 'ops', 'researcher']
+const PERSONA_ORDER: PersonaId[] = [
+  'curious',
+  'executive',
+  'developer',
+  'architect',
+  'ops',
+  'researcher',
+]
 
 const PERSONA_ICONS = {
+  Lightbulb,
   Briefcase,
   Code,
   ShieldCheck,
@@ -64,6 +73,7 @@ const PERSONA_ICONS = {
 } as const
 
 const PERSONA_CORNER_ICONS: Record<PersonaId, LucideIcon> = {
+  curious: HelpCircle,
   executive: User,
   developer: Code2,
   architect: Compass,
@@ -129,10 +139,10 @@ const EXPERIENCE_LEVELS: {
   cornerIcon: LucideIcon
 }[] = [
   {
-    id: 'new',
-    label: 'New to PQC',
-    description: 'Just starting to learn',
-    Icon: BookOpen,
+    id: 'curious',
+    label: 'Curious',
+    description: 'No technical background needed',
+    Icon: Lightbulb,
     cornerIcon: HelpCircle,
   },
   {
@@ -229,12 +239,12 @@ const SelectionCard = ({
 
 const EXPERIENCE_HIGHLIGHTS: { level: string; Icon: LucideIcon; items: string[] }[] = [
   {
-    level: 'New to PQC',
-    Icon: BookOpen,
+    level: 'Curious',
+    Icon: Lightbulb,
     items: [
-      'Learning modules start with PQC 101 and the quantum threat overview',
-      'Quiz difficulty defaults to foundational concepts',
-      'Journey step descriptions use plain-language framing',
+      'Jargon-free "In Simple Terms" summaries shown on every module',
+      'Chat assistant explains everything in everyday language with analogies',
+      'Technical workshop steps are hidden — only visual and conceptual activities shown',
     ],
   },
   {
@@ -311,6 +321,16 @@ const ROLE_ADAPTATIONS: {
       'Hero CTA leads to "Start the Journey" — shortcut to Algorithms',
       'All sections fully accessible — no dimming applied',
       'Headings and descriptions focus on mathematical foundations and protocol detail',
+    ],
+  },
+  {
+    id: 'curious',
+    icon: Lightbulb,
+    color: 'text-accent',
+    highlights: [
+      'Hero CTA leads to "Start Learning" — beginning with PQC 101',
+      'Learn, Timeline, Threats, and Assess steps are featured',
+      'Everything explained in plain language — no technical jargon assumed',
     ],
   },
 ]
@@ -612,7 +632,10 @@ export const PersonalizationSection = () => {
   })
 
   const handlePersona = (id: PersonaId) => {
-    setPersona(id === selectedPersona ? null : id)
+    const next = id === selectedPersona ? null : id
+    setPersona(next)
+    // Auto-set experience level to 'curious' when Curious Explorer persona is selected
+    if (next === 'curious') setExperienceLevel('curious')
   }
 
   const handleRegion = (id: Region) => {

@@ -131,7 +131,7 @@ vi.mock('../../store/usePersonaStore', () => ({
       selectedRegion: 'global',
       selectedIndustry: '',
       selectedIndustries: [],
-      experienceLevel: 'new',
+      experienceLevel: 'curious',
       hasSeenPersonaPicker: true,
       suppressSuggestion: true,
     }

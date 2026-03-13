@@ -114,7 +114,7 @@ export const QuizModule: React.FC = () => {
   const [lastTimeMin, setLastTimeMin] = useState(DEFAULT_TIME_MIN)
   const [lastCategories, setLastCategories] = useState<QuizCategory[]>([])
   const [selectedDifficulties, setSelectedDifficulties] = useState<string[]>(() => {
-    if (experienceLevel === 'new') return ['beginner']
+    if (experienceLevel === 'curious') return ['beginner']
     if (experienceLevel === 'basics') return ['beginner', 'intermediate']
     return ['beginner', 'intermediate', 'advanced']
   })

@@ -814,8 +814,8 @@ describe('AssessWizard', () => {
   })
 
   describe('proficiency-based auto-suggest', () => {
-    it('proficiency "new" auto-suggests unknown on sensitivity step (general)', () => {
-      personaStoreState.experienceLevel = 'new'
+    it('proficiency "curious" auto-suggests unknown on sensitivity step (general)', () => {
+      personaStoreState.experienceLevel = 'curious'
       personaStoreState.selectedPersona = 'developer'
       mockStore.currentStep = 3 // sensitivity
       render(<AssessWizard onComplete={onComplete} />)
@@ -855,7 +855,7 @@ describe('AssessWizard', () => {
     })
 
     it('does not auto-suggest when user already selected a value', () => {
-      personaStoreState.experienceLevel = 'new'
+      personaStoreState.experienceLevel = 'curious'
       personaStoreState.selectedPersona = 'developer'
       mockStore.currentStep = 3 // sensitivity
       mockStore.dataSensitivity = ['high'] // already selected

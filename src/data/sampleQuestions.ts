@@ -254,6 +254,18 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What accessibility features does PQC Today support?',
   ],
 
+  // ── Curious Explorer ───────────────────────────────────────────────────
+
+  'Curious Explorer': [
+    'What is post-quantum cryptography in simple terms?',
+    'Why are people worried about quantum computers?',
+    'What is "harvest now, decrypt later" and should I be concerned?',
+    'When will quantum computers be able to break encryption?',
+    'What are governments doing to prepare?',
+    'What are the most important things an organization should do first?',
+    'How does this affect regular people?',
+  ],
+
   // ── Learning Modules ────────────────────────────────────────────────────
 
   'PQC 101': [

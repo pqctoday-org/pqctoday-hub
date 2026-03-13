@@ -69,6 +69,10 @@ const PERSONA_HERO_CTA: Record<
     primary: { label: 'Start the Journey', path: '/learn' },
     secondary: { label: 'Jump to Migration Catalog', path: '/migrate' },
   },
+  curious: {
+    primary: { label: 'Start Learning', path: '/learn' },
+    secondary: { label: 'What Is the Quantum Threat?', path: '/learn/pqc-101' },
+  },
 }
 
 const DEFAULT_HERO_CTA = {
@@ -309,6 +313,10 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
   ops: {
     title: 'Your operations hub for PQC deployment',
     sub: 'Migration catalogs, key management, and infrastructure tooling — built for the teams who keep it running.',
+  },
+  curious: {
+    title: 'Your guide to understanding the quantum security shift',
+    sub: 'No technical background needed — learn why encryption is changing and what it means for you.',
   },
   default: {
     title: 'The complete platform for your PQC transformation',

@@ -25,6 +25,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Run a dependency-level crypto audit: scan for algorithm identifiers in your codebase and audit transitive crypto library dependencies.',
       architect:
         'Map all cryptographic assets across your system topology — protocol endpoints, key stores, certificate chains, and embedded crypto.',
+      curious:
+        'Ask your IT team to make a list of all the encryption your organization uses — think of it as checking all the locks on your doors before getting new ones.',
     },
   },
   {
@@ -37,6 +39,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Scan your codebase and dependency tree for quantum-vulnerable algorithm usage before planning migration.',
       architect:
         'Map all systems consuming cryptographic services — direct and transitive — to scope the migration effort.',
+      curious:
+        'Find out which of your computer systems use encryption that needs upgrading — your IT team can help.',
     },
   },
   {
@@ -46,6 +50,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Commission a data classification exercise to understand which business data requires quantum-safe protection — this drives your HNDL risk exposure.',
       developer:
         'Audit the data sensitivity levels your code handles — PII, financial, and health data in long-lived stores drive HNDL risk.',
+      curious:
+        'Figure out which of your important data (customer records, financial info, health data) needs the strongest protection from future quantum computers.',
     },
   },
   {
@@ -57,6 +63,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Introduce a provider/factory pattern for all crypto operations to enable algorithm-agnostic migration paths.',
       architect:
         'Design a crypto abstraction layer that supports algorithm negotiation and hybrid schemes across the infrastructure.',
+      curious:
+        'Make your encryption systems flexible so they can be updated to new methods in the future — like installing modular locks that can be rekeyed.',
     },
   },
   {
@@ -68,6 +76,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Complete PQC learning modules relevant to your stack and share findings with your engineering team.',
       architect:
         'Conduct architecture review workshops focused on PQC migration patterns and hybrid deployment strategies.',
+      curious:
+        'Start learning about quantum computing threats and share what you learn with your team — awareness is the first step.',
     },
   },
   {
@@ -79,6 +89,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Benchmark PQC library candidates (liboqs, OpenSSL 3.5+, BoringSSL) against your performance and compatibility requirements.',
       architect:
         'Evaluate PQC-ready libraries for compatibility with your infrastructure topology, HSM integrations, and deployment pipeline.',
+      curious:
+        'Ask your technology team to start looking at new encryption tools that are designed to resist quantum computers.',
     },
   },
   {
@@ -90,6 +102,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Configure hybrid ML-KEM + X25519 key exchange on your TLS endpoints — start with non-critical services to validate performance.',
       architect:
         'Plan TLS migration as a phased rollout: hybrid ML-KEM + X25519 at edge gateways first, then propagate to internal service mesh.',
+      curious:
+        'Upgrade the encryption on your websites and online services to use quantum-safe methods — this protects data being sent over the internet.',
     },
   },
   {
@@ -135,6 +149,7 @@ export const PERSONA_UNKNOWN_WEIGHTS: Record<
   leadership: { agility: 0.7, infra: 0.7, compliance: 1.0, migration: 0.8 },
   researcher: { agility: 0.85, infra: 0.8, compliance: 0.75, migration: 0.85 },
   ops: { agility: 0.9, infra: 1.0, compliance: 0.85, migration: 1.0 },
+  curious: { agility: 0.7, infra: 0.7, compliance: 0.8, migration: 0.7 },
 }
 
 export const DEFAULT_UNKNOWN_WEIGHTS = { agility: 1.0, infra: 1.0, compliance: 1.0, migration: 1.0 }
@@ -391,6 +406,37 @@ function generateResearcherNarrative(
   return parts.filter(Boolean).join(' ')
 }
 
+function generateCuriousNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  hndl: HNDLRiskWindow | undefined
+): string {
+  const parts: string[] = []
+  if (riskScore > 55) {
+    parts.push(
+      `Your organization has a ${riskLevel.toLowerCase()} level of exposure to quantum computing threats (${riskScore} out of 100). This means action is needed soon to keep your data safe.`
+    )
+  } else {
+    parts.push(
+      `Your organization has a ${riskLevel.toLowerCase()} level of exposure to quantum computing threats (${riskScore} out of 100). You have some time, but it's smart to start preparing.`
+    )
+  }
+  if (hndl?.isAtRisk) {
+    parts.push(
+      'One important risk: adversaries could be capturing your encrypted data right now and storing it until quantum computers can break it — this is called "harvest now, decrypt later." The sooner you upgrade, the less data is at risk.'
+    )
+  }
+  parts.push(
+    input.migrationStatus === 'started'
+      ? 'Good news: your organization has already started preparing. Keep the momentum going!'
+      : input.migrationStatus === 'planning'
+        ? 'Your organization is planning to prepare — the next step is to start making changes.'
+        : "Most organizations haven't started preparing yet. The three most important steps are: learn about the threat, find out what encryption you use, and make a plan to upgrade."
+  )
+  return parts.join(' ')
+}
+
 export function generatePersonaNarrative(
   persona: string | undefined,
   input: AssessmentInput,
@@ -440,6 +486,8 @@ export function generatePersonaNarrative(
         hnfl,
         pqcFrameworkCount
       )
+    case 'curious':
+      return generateCuriousNarrative(input, riskScore, riskLevel, hndl)
     default:
       return undefined
   }

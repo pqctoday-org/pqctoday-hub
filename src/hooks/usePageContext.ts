@@ -477,6 +477,36 @@ const PERSONA_GENERIC_QUESTIONS: Record<string, (moduleName: string) => string[]
     `What monitoring or config changes does ${m} need?`,
     `What are the operational risks of ${m}?`,
   ],
+  curious: (m) => [
+    `What is ${m} and why should I care?`,
+    `How does ${m} affect everyday people?`,
+    `What's the simplest way to understand ${m}?`,
+  ],
+}
+
+/** Simplified suggested questions for Curious experience level on accessible pages. */
+const CURIOUS_PAGE_QUESTIONS: Record<string, string[]> = {
+  '/learn': [
+    'What should I learn first?',
+    'What is quantum computing?',
+    'Why does encryption need to change?',
+  ],
+  '/timeline': [
+    'When will quantum computers be powerful enough to matter?',
+    'Which countries are preparing?',
+    'What are the key deadlines?',
+  ],
+  '/threats': [
+    "What could go wrong if we don't prepare?",
+    'What is "harvest now, decrypt later"?',
+    'Which industries are most at risk?',
+  ],
+  '/library': [
+    'What are the most important documents about quantum-safe security?',
+    'Where do I start reading?',
+  ],
+  '/compliance': ['Who is making the rules?', 'What deadlines should I know about?'],
+  '/assess': ['How exposed is my organization?', 'What does this assessment measure?'],
 }
 
 const DEFAULT_CONTEXT: PageContext = {
@@ -561,11 +591,24 @@ export function usePageContext(): PageContext {
 
     // Match exact routes
     const ctx = PAGE_CONTEXTS[pathname]
-    if (ctx) return { ...ctx, ...personaFields, ...assessmentFields }
+    if (ctx) {
+      // Override suggested questions for Curious experience level
+      const curiousOverride =
+        experienceLevel === 'curious' ? CURIOUS_PAGE_QUESTIONS[pathname] : undefined
+      const resolved = curiousOverride ? { ...ctx, suggestedQuestions: curiousOverride } : ctx
+      return { ...resolved, ...personaFields, ...assessmentFields }
+    }
 
     // Fallback for /learn (without sub-path) or unknown routes
-    if (pathname.startsWith('/learn'))
-      return { ...PAGE_CONTEXTS['/learn'], ...personaFields, ...assessmentFields }
+    if (pathname.startsWith('/learn')) {
+      const learnCtx = PAGE_CONTEXTS['/learn']
+      const curiousOverride =
+        experienceLevel === 'curious' ? CURIOUS_PAGE_QUESTIONS['/learn'] : undefined
+      const resolved = curiousOverride
+        ? { ...learnCtx, suggestedQuestions: curiousOverride }
+        : learnCtx
+      return { ...resolved, ...personaFields, ...assessmentFields }
+    }
 
     return { ...DEFAULT_CONTEXT, ...personaFields, ...assessmentFields }
   }, [

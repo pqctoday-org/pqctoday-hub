@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 import type { PersonaId } from '../data/learningPersonas'
 
 export type Region = 'americas' | 'eu' | 'apac' | 'global'
-export type ExperienceLevel = 'new' | 'basics' | 'expert'
+export type ExperienceLevel = 'curious' | 'basics' | 'expert'
 
 interface PersonaState {
   selectedPersona: PersonaId | null
@@ -67,11 +67,15 @@ export const usePersonaStore = create<PersonaState>()(
     {
       name: 'pqc-learning-persona',
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persisted: unknown, fromVersion: number) => {
         const s = (persisted ?? {}) as Record<string, unknown>
         if (fromVersion < 1) {
           s.experienceLevel = s.experienceLevel ?? null
+        }
+        if (fromVersion < 2) {
+          // Rename 'new' → 'curious'
+          if (s.experienceLevel === 'new') s.experienceLevel = 'curious'
         }
         return s
       },

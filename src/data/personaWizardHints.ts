@@ -4,7 +4,7 @@ import type { ExperienceLevel } from '../store/usePersonaStore'
 
 export interface PersonaStepHint {
   hint: string
-  /** Simpler hint for 'new' proficiency users — reassuring, jargon-free */
+  /** Simpler hint for 'curious' proficiency users — reassuring, jargon-free */
   hintBeginner?: string
   /** Technical hint for 'expert' proficiency users — deep, actionable */
   hintExpert?: string
@@ -12,11 +12,11 @@ export interface PersonaStepHint {
   recommendedOptions?: string[]
   /** Persona-tailored step title (replaces the default h3) */
   title?: string
-  /** Simpler title for 'new' proficiency */
+  /** Simpler title for 'curious' proficiency */
   titleBeginner?: string
   /** Persona-tailored step description (replaces the default subtitle) */
   description?: string
-  /** Simpler description for 'new' proficiency */
+  /** Simpler description for 'curious' proficiency */
   descriptionBeginner?: string
   /** Per-option description overrides: maps option value → persona-specific description */
   optionDescriptions?: Record<string, string>
@@ -42,7 +42,7 @@ export function resolveHintKey(stepKey: string): string {
 
 /**
  * Returns persona-specific title and description for a wizard step.
- * When experienceLevel is 'new', prefers beginner variants if available.
+ * When experienceLevel is 'curious', prefers beginner variants if available.
  * Falls back to empty object when no persona or no overrides exist.
  */
 export function getPersonaStepContent(
@@ -54,9 +54,11 @@ export function getPersonaStepContent(
   // eslint-disable-next-line security/detect-object-injection
   const hint = PERSONA_STEP_HINTS[persona]?.[resolveHintKey(stepKey)]
   if (!hint) return {}
-  const title = experienceLevel === 'new' ? (hint.titleBeginner ?? hint.title) : hint.title
+  const title = experienceLevel === 'curious' ? (hint.titleBeginner ?? hint.title) : hint.title
   const description =
-    experienceLevel === 'new' ? (hint.descriptionBeginner ?? hint.description) : hint.description
+    experienceLevel === 'curious'
+      ? (hint.descriptionBeginner ?? hint.description)
+      : hint.description
   return { title, description }
 }
 
@@ -650,6 +652,79 @@ export const PERSONA_STEP_HINTS: Record<PersonaId, Record<string, PersonaStepHin
       hint: 'If your organization has a compliance deadline, select it. Otherwise, align with industry peers — check the timeline view for your sector.',
       hintBeginner:
         'When does your infrastructure need to be quantum-safe? Check with your compliance team, or select "I don\'t know" if there\'s no clear deadline yet.',
+    },
+  },
+  curious: {
+    industry: {
+      hint: "Pick the field that best describes your organization or the area you're curious about. This helps us show you the most relevant information.",
+      title: 'What area are you interested in?',
+      description: 'This helps us show you threats and rules that matter most to your area.',
+    },
+    country: {
+      hint: 'Pick the country where your organization is based, or just pick where you live. Different countries have different timelines for upgrading their security.',
+      title: 'Where are you based?',
+      description: 'Different countries have different deadlines for updating encryption.',
+    },
+    crypto: {
+      hint: "Most people don't know this — and that's perfectly fine! Select \"I don't know\" and we'll use safe assumptions.",
+      suggestUnknown: true,
+      title: 'What kind of encryption is being used?',
+      titleBeginner: 'What kind of encryption is being used?',
+      description: "It's OK to not know — most people don't. We'll fill in the blanks.",
+      descriptionBeginner: "It's OK to not know — most people don't. We'll fill in the blanks.",
+    },
+    sensitivity: {
+      hint: 'Think about the most important information you or your organization protects — customer data, financial records, medical records, trade secrets.',
+      title: 'How sensitive is the data being protected?',
+      description: 'Think about what kind of information would be most damaging if exposed.',
+    },
+    compliance: {
+      hint: 'These are rules that organizations must follow. If you\'re not sure, select "I don\'t know" — the assessment will still give useful results.',
+      suggestUnknown: true,
+      title: 'Are there any security rules you need to follow?',
+      description: "If you're not sure, that's fine — select \"I don't know\".",
+    },
+    migration: {
+      hint: "Has anyone started upgrading encryption systems? Most organizations haven't yet — that's very normal.",
+      suggestUnknown: true,
+      title: 'Has anyone started upgrading the encryption?',
+      description: "Most organizations haven't started yet — that's completely normal.",
+    },
+    'use-cases': {
+      hint: 'Think about how encryption is used — websites, email, payments, digital signatures. Pick what applies or select "I don\'t know".',
+      suggestUnknown: true,
+    },
+    retention: {
+      hint: 'How long does your data need to stay secret? Medical records might be forever, financial records maybe 7 years. If unsure, pick "I don\'t know".',
+      suggestUnknown: true,
+    },
+    credential: {
+      hint: "This is about digital certificates and passwords. If you're not sure, select \"I don't know\" — most people aren't familiar with this.",
+      suggestUnknown: true,
+    },
+    scale: {
+      hint: 'Give your best guess. "Systems" means computers, servers, and applications. Don\'t worry about being exact.',
+    },
+    agility: {
+      hint: 'This is a very technical question. Select "I don\'t know" — the assessment will use a safe default.',
+      suggestUnknown: true,
+      title: 'How easy is it to change the encryption?',
+      description: 'This is technical — it\'s perfectly fine to select "I don\'t know".',
+    },
+    infra: {
+      hint: 'This asks about specialized encryption hardware. Most people don\'t manage this directly. Select "I don\'t know" if unsure.',
+      suggestUnknown: true,
+      title: 'Is there special encryption hardware?',
+      description: 'This is technical — select "I don\'t know" if you\'re not sure.',
+    },
+    vendors: {
+      hint: 'Do you use outside companies for your technology? Cloud services like AWS, Google Cloud, or Microsoft Azure all count.',
+      title: 'Do you rely on outside technology companies?',
+      description: 'Cloud services, payment processors, and software vendors all count.',
+    },
+    timeline: {
+      hint: 'When does the encryption need to be upgraded? If there\'s no deadline yet, select "I don\'t know" — most organizations are still figuring this out.',
+      suggestUnknown: true,
     },
   },
 }

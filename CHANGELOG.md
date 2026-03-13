@@ -4,6 +4,27 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.0] - 2026-03-13
+
+### Added
+
+- **Curious Explorer persona**: New 6th persona for non-technical users exploring quantum security for the first time. Includes a curated 9-module learning path (PQC 101 → Quantum Threats → Risk Management → Data Sensitivity → Compliance Strategy → Standards Bodies → Crypto Agility → Migration Program → Quiz), 3 checkpoints, and ~340 min estimated duration. Selected from the landing page with `Lightbulb` icon and hero CTA "Start Learning". [view:/] [persona:curious]
+- **Curious experience level**: `'curious'` replaces `'new'` as the beginner proficiency tier. `usePersonaStore` bumped to v2 with automatic migration (`'new'` → `'curious'`). Works independently of the Curious persona — any professional persona can combine with curious experience level for simplified language on their role-specific navigation path. [view:/]
+- **"In Simple Terms" banner — all 48 learning modules**: Collapsible `CuriousSummaryBanner` component renders at the top of every module when experience level is curious. Loads `curious-summary.md` via Vite eager glob; gracefully absent for any module without a file. [view:/learn]
+- **48 plain-language module summaries**: Every learning module now has a `curious-summary.md` written at an ~8th-grade reading level — no jargon, real-world analogies, ~200-350 words each. Sections: What This Is About / Why It Matters / The Key Takeaway / What's Happening. [view:/learn]
+- **Curious-mode AI chat**: System prompt adapts for non-technical users when curious mode is active — `PERSONA_DEPTH['curious']` + `EXPERIENCE_DEPTH['curious']` applied simultaneously for maximally plain language. Follow-up suggestions use simple questions that invite exploration rather than technical deep-dives. Chat panel shows "Curious" badge and a simplified welcome message. [view:/]
+- **Curious page-level suggested questions**: Six pages (`/learn`, `/timeline`, `/threats`, `/library`, `/compliance`, `/assess`) override their default suggested questions with beginner-friendly alternatives (e.g., "What is quantum computing?", "When will this matter?", "What could go wrong if we don't prepare?") when experience level is curious. [view:/]
+- **Curious Explorer sample questions**: New "Curious Explorer" section added to `sampleQuestions.ts` with 7 beginner-friendly questions covering quantum threat basics, HNDL, government responses, and everyday impact. [view:/]
+- **RAG corpus — 49 new module-curious chunks**: `processModuleCuriousSummaries()` added to `generate-rag-corpus.ts`. Curious-summary chunks use `source: 'module-curious'` with `SOURCE_PRIORITY` 1.1. Hard-excluded from non-curious searches; boosted 1.5× and technical `module-content` demoted 0.6× in curious mode. [view:/]
+- **Curious persona config**: Full `personaConfig.ts` coverage — nav paths, recommended paths/mode, report config, CTAs, milestones, workflow labels, library categories, and migrate layers all defined for the curious persona.
+- **Assessment curious hints**: `personaWizardHints.ts` includes maximally simplified wizard hints for curious mode; `reframeActionsForPersona()` provides plain-language action reframes.
+
+### Changed
+
+- **Dashboard learning module filter**: `PROFESSIONAL_PERSONA_FILTER_ITEMS` and `CURIOUS_PERSONA_FILTER_ITEMS` are now separate constants selected by `isCuriousMode`. Curious users see "All Paths / Curious Explorer" dropdown and start with all 48 modules visible (no track graying). Module dimming (`isModuleAboveLevel`) is disabled entirely in curious mode since all modules have plain-language summaries. [view:/learn]
+- **Persona store v2 migration**: `experienceLevel === 'new'` automatically migrated to `'curious'` on first load after update.
+- **RAG corpus regenerated**: 3,876 chunks from 22 sources (was 3,826), adding 49 new `module-curious` chunks covering all 48 learning modules. [view:/]
+
 ## [2.43.0] - 2026-03-13
 
 ### Added

@@ -927,6 +927,52 @@ function processModuleRAGSummaries(): RAGChunk[] {
   return chunks
 }
 
+/**
+ * Process curious-summary.md files from each module directory.
+ * These are jargon-free, plain-language summaries for non-technical users
+ * in Curious mode. Same priority as rag-summary.md; the chat system prompt
+ * steers the LLM toward these chunks when experienceLevel === 'curious'.
+ */
+function processModuleCuriousSummaries(): RAGChunk[] {
+  if (!fs.existsSync(MODULES_DIR)) return []
+
+  const chunks: RAGChunk[] = []
+  const moduleDirs = fs
+    .readdirSync(MODULES_DIR, { withFileTypes: true })
+    .filter((d) => d.isDirectory() && d.name !== 'Quiz')
+
+  for (const moduleDir of moduleDirs) {
+    const summaryPath = path.join(MODULES_DIR, moduleDir.name, 'curious-summary.md')
+    if (!fs.existsSync(summaryPath)) continue
+
+    const content = fs.readFileSync(summaryPath, 'utf-8').trim()
+    if (!content) continue
+
+    const moduleId = MODULE_DIR_TO_ID[moduleDir.name]
+    const moduleName = MODULE_NAME_MAP[moduleDir.name] ?? moduleDir.name
+
+    // Extract title from first heading or use module name
+    const titleMatch = content.match(/^#\s+(.+)/m)
+    const title = titleMatch ? titleMatch[1].trim() : `${moduleName} — In Simple Terms`
+
+    chunks.push({
+      id: `module-curious-${moduleId ?? moduleDir.name.toLowerCase()}`,
+      source: 'module-curious',
+      title,
+      content,
+      category: 'learning-module',
+      metadata: {
+        moduleId: moduleId ?? '',
+        moduleName,
+        audience: 'curious',
+      },
+      ...(moduleId ? { deepLink: `/learn/${moduleId}` } : {}),
+    } as RAGChunk)
+  }
+
+  return chunks
+}
+
 function processModuleContent(): RAGChunk[] {
   if (!fs.existsSync(MODULES_DIR)) return []
 
@@ -2364,6 +2410,7 @@ async function main() {
     { name: 'Leaders', fn: processLeaders },
     { name: 'Learning Modules', fn: processModules },
     { name: 'Module RAG Summaries', fn: processModuleRAGSummaries },
+    { name: 'Module Curious Summaries', fn: processModuleCuriousSummaries },
     { name: 'Module Content', fn: processModuleContent },
     { name: 'Authoritative Sources', fn: processAuthoritativeSources },
     { name: 'Documentation', fn: processMarkdownDocs },
@@ -2407,6 +2454,7 @@ async function main() {
     'module-content': 1.15,
     modules: 1.1,
     'module-summaries': 1.1,
+    'module-curious': 1.1,
     algorithms: 1.05,
     glossary: 1.0,
     assessment: 1.05,

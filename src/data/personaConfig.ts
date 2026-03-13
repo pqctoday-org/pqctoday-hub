@@ -32,6 +32,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
   researcher: null,
   ops: ['/migrate', '/business', '/assess', '/report', '/library', '/playground', '/openssl'],
+  curious: ['/compliance', '/assess', '/report', '/library'],
 }
 
 /**
@@ -43,6 +44,7 @@ export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
   architect: ['/learn', '/timeline', '/assess', '/compliance'],
   researcher: ['/learn', '/algorithms', '/playground', '/library'],
   ops: ['/learn', '/migrate', '/openssl', '/assess'],
+  curious: ['/learn', '/timeline', '/assess', '/threats'],
 }
 
 /**
@@ -55,6 +57,7 @@ export const PERSONA_RECOMMENDED_MODE: Record<PersonaId, AssessmentMode> = {
   architect: 'comprehensive',
   researcher: 'comprehensive',
   ops: 'comprehensive',
+  curious: 'quick',
 }
 
 /**
@@ -331,6 +334,13 @@ export const PERSONA_REPORT_CONFIG: Record<
     migrationToolkit: { state: 'open' },
     algorithmMigration: { state: 'open' },
   },
+  curious: {
+    hndlHnfl: { state: 'hidden' },
+    algorithmMigration: { state: 'hidden' },
+    migrationRoadmap: { state: 'hidden' },
+    migrationToolkit: { state: 'hidden' },
+    recommendedActions: { state: 'open', maxItems: 3 },
+  },
 }
 
 /**
@@ -401,6 +411,11 @@ export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
     { label: 'Try OpenSSL Studio', path: '/openssl', icon: 'Terminal' },
     { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
+  curious: [
+    { label: 'Share report', path: '', icon: 'Share2', isShareAction: true },
+    { label: 'Explore the timeline', path: '/timeline', icon: 'Calendar' },
+    { label: 'Continue learning', path: '/learn', icon: 'BookOpen' },
+  ],
 }
 
 /* ──────────────────────────────────────────────────────────────────────────────
@@ -444,6 +459,10 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'ops-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
+  curious: [
+    { afterPhase: 'curious-cp-2', route: '/assess', label: 'Take Assessment' },
+    { afterPhase: 'curious-cp-3', route: '/timeline', label: 'Explore Timeline' },
+  ],
 }
 
 // ── Workflow banner: persona-specific phase labels ───────────────────────
@@ -481,6 +500,12 @@ export const PERSONA_WORKFLOW_LABELS: Record<PersonaId, Record<WorkflowPhaseId, 
     migrate: 'Select Deployment Tools',
     timeline: 'Schedule Rollout Windows',
   },
+  curious: {
+    assess: 'Check Your Exposure',
+    comply: 'See Who Sets the Rules',
+    migrate: 'What Organizations Are Doing',
+    timeline: 'When Is This Happening?',
+  },
 }
 
 // ── Migrate catalog: persona → preferred infrastructure layers ───────────
@@ -491,6 +516,7 @@ export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
   architect: ['Cloud', 'Network', 'Application', 'Security Stack'],
   researcher: [],
   ops: ['Network', 'Hardware', 'OS', 'Security Stack'],
+  curious: [],
 }
 
 // ── Library: persona → preferred document categories ─────────────────────
@@ -501,4 +527,5 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
   architect: ['PKI Certificate Management', 'KEM', 'Protocols', 'General Recommendations'],
   researcher: [],
   ops: ['PKI Certificate Management', 'Protocols', 'General Recommendations'],
+  curious: ['General Recommendations'],
 }

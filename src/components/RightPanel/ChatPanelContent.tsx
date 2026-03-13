@@ -366,8 +366,9 @@ export const ChatPanelContent: React.FC = () => {
                 <div className="text-center py-12 space-y-4">
                   <Bot size={40} className="text-muted-foreground mx-auto opacity-40" />
                   <p className="text-sm text-muted-foreground">
-                    Ask me anything about post-quantum cryptography, algorithms, compliance, or
-                    migration strategies.
+                    {experienceLevel === 'curious'
+                      ? 'Ask me anything about quantum computing and why encryption needs to change. I\u2019ll explain in simple terms.'
+                      : 'Ask me anything about post-quantum cryptography, algorithms, compliance, or migration strategies.'}
                   </p>
                   {selectedPersona && (
                     <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground flex-wrap">
@@ -381,7 +382,7 @@ export const ChatPanelContent: React.FC = () => {
                       )}
                       {experienceLevel && experienceLevel !== 'basics' && (
                         <span className="bg-muted/50 px-2 py-0.5 rounded-full">
-                          {experienceLevel === 'new' ? 'Beginner' : 'Expert'}
+                          {experienceLevel === 'curious' ? 'Curious' : 'Expert'}
                         </span>
                       )}
                     </div>

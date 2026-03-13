@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useEffect, useRef, useState } from 'react'
-import { BookOpen, CheckCircle, Wrench, X } from 'lucide-react'
+import { BookOpen, CheckCircle, Lightbulb, Wrench, X } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 
 interface ModuleProgressHeaderProps {
@@ -18,6 +19,7 @@ type BannerType = 'learn' | 'workshop' | null
  */
 export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) => {
   const { modules } = useModuleStore()
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
 
   const learnSections = LEARN_SECTIONS[moduleId] ?? []
   const workshopSteps = WORKSHOP_STEPS[moduleId] ?? []
@@ -85,6 +87,19 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
           >
             <X size={12} />
           </button>
+        </div>
+      )}
+
+      {/* Curious mode indicator */}
+      {experienceLevel === 'curious' && (
+        <div
+          className="flex items-center gap-1.5 mb-1"
+          title="Simplified mode curated for non-specialists — jargon-free explanations with everyday language"
+        >
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 text-[10px] font-semibold">
+            <Lightbulb size={10} className="shrink-0" />
+            Curious Mode
+          </span>
         </div>
       )}
 

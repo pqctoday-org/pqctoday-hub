@@ -613,12 +613,16 @@ class RetrievalService {
     const selected: RAGChunk[] = []
     const quizExplicit = /\b(quiz|quizzes|test me|practice questions?|flashcards?)\b/i.test(query)
 
+    const isCurious = pageContext?.experienceLevel === 'curious'
+
     const addChunk = (id: string): boolean => {
       if (selectedIds.has(id)) return false
       const chunk = this.corpusById.get(id)
       if (!chunk) return false
       // Suppress quiz chunks unless the user explicitly asked for a quiz
       if (chunk.source === 'quiz' && !quizExplicit) return false
+      // Curious summaries are only served in curious mode; excluded otherwise
+      if (chunk.source === 'module-curious' && !isCurious) return false
       selectedIds.add(id)
       selected.push(chunk)
       return true
@@ -802,6 +806,11 @@ class RetrievalService {
             multiplier *= 1.3
           }
         }
+      }
+      // Curious mode: prefer plain-language summaries, demote technical module content
+      if (isCurious) {
+        if (chunk.source === 'module-curious') multiplier *= 1.5
+        else if (chunk.source === 'module-content') multiplier *= 0.6
       }
       return { ...r, boostedScore: r.score * multiplier }
     })

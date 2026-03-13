@@ -215,7 +215,8 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
     const stepCategory = PROFICIENCY_SUGGEST_MAP[stepKey]
     const isProficiencySuggest =
       stepCategory !== undefined &&
-      (experienceLevel === 'new' || (experienceLevel === 'basics' && stepCategory === 'technical'))
+      (experienceLevel === 'curious' ||
+        (experienceLevel === 'basics' && stepCategory === 'technical'))
 
     if (!isExecutiveSuggest && !isProficiencySuggest) return
 

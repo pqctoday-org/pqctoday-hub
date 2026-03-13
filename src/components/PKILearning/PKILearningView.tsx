@@ -7,6 +7,7 @@ import { GlossaryButton } from '../ui/GlossaryButton'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
+import { CuriousSummaryBanner } from './common/CuriousSummaryBanner'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -270,6 +271,8 @@ export const PKILearningView: React.FC = () => {
         <div className="flex-1 min-w-0 order-last lg:order-first">
           {/* Dual progress header bar — above all module tabs */}
           {showSidebar && <ModuleProgressHeader moduleId={moduleId} />}
+          {/* Curious mode: plain-language summary banner */}
+          {showSidebar && <CuriousSummaryBanner moduleId={moduleId} />}
           <Suspense
             fallback={
               <div className="flex h-64 w-full items-center justify-center">

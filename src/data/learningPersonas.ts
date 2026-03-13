@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { QuizCategory } from '@/components/PKILearning/modules/Quiz/types'
 
-export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops'
+export type PersonaId = 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious'
 
 export type PathItem =
   | { type: 'module'; moduleId: string }
@@ -16,7 +16,7 @@ export interface LearningPersona {
   id: PersonaId
   label: string
   subtitle: string
-  icon: 'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap' | 'Server'
+  icon: 'Briefcase' | 'Code' | 'ShieldCheck' | 'GraduationCap' | 'Server' | 'Lightbulb'
   description: string
   /** Ordered module IDs — first = start here, sequence matters */
   recommendedPath: string[]
@@ -775,6 +775,72 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       'aerospace-pqc',
       'ai-security-pqc',
       'platform-eng-pqc',
+    ],
+  },
+  curious: {
+    id: 'curious',
+    label: 'Curious Explorer',
+    subtitle: 'New to cryptography & quantum computing',
+    icon: 'Lightbulb',
+    description:
+      'Start from zero — understand what quantum computing means for everyday security, why it matters, and what the world is doing about it. No technical background required.',
+    recommendedPath: [
+      'pqc-101',
+      'quantum-threats',
+      'pqc-risk-management',
+      'data-asset-sensitivity',
+      'compliance-strategy',
+      'standards-bodies',
+      'crypto-agility',
+      'migration-program',
+      'quiz',
+    ],
+    pathItems: [
+      { type: 'module', moduleId: 'pqc-101' },
+      { type: 'module', moduleId: 'quantum-threats' },
+      {
+        type: 'checkpoint',
+        id: 'curious-cp-1',
+        label: 'Understanding the Threat',
+        categories: ['pqc-fundamentals', 'quantum-threats'],
+      },
+      { type: 'module', moduleId: 'pqc-risk-management' },
+      { type: 'module', moduleId: 'data-asset-sensitivity' },
+      {
+        type: 'checkpoint',
+        id: 'curious-cp-2',
+        label: 'Why It Matters',
+        categories: ['pqc-risk-management', 'data-asset-sensitivity', 'industry-threats'],
+      },
+      { type: 'module', moduleId: 'compliance-strategy' },
+      { type: 'module', moduleId: 'standards-bodies' },
+      { type: 'module', moduleId: 'crypto-agility' },
+      { type: 'module', moduleId: 'migration-program' },
+      {
+        type: 'checkpoint',
+        id: 'curious-cp-3',
+        label: 'What the World Is Doing',
+        categories: [
+          'compliance-strategy',
+          'standards-bodies',
+          'crypto-agility',
+          'migration-program',
+        ],
+      },
+      { type: 'module', moduleId: 'quiz' },
+    ],
+    estimatedMinutes: 340,
+    quizDescription:
+      'Test your understanding of quantum threats, risk basics, compliance timelines, and migration concepts.',
+    quizCategories: [
+      'pqc-fundamentals',
+      'quantum-threats',
+      'pqc-risk-management',
+      'data-asset-sensitivity',
+      'compliance-strategy',
+      'standards-bodies',
+      'crypto-agility',
+      'migration-program',
     ],
   },
 }

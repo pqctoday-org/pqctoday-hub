@@ -13,7 +13,7 @@ export const PersonaHint = ({ stepKey }: { stepKey: string }) => {
 
   // Pick proficiency-appropriate hint text
   const hintText =
-    experienceLevel === 'new'
+    experienceLevel === 'curious'
       ? (hint.hintBeginner ?? hint.hint)
       : experienceLevel === 'expert'
         ? (hint.hintExpert ?? hint.hint)
