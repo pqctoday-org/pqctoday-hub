@@ -30,7 +30,7 @@ export function PWAUpdatePrompt() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[80] print:hidden"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-[120] print:hidden"
         >
           <div className="glass-panel rounded-xl px-4 py-3 shadow-lg border border-border flex items-center gap-3 max-w-sm">
             <RefreshCw size={18} className="text-primary shrink-0" />
