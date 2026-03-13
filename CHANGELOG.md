@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.8] - 2026-03-13
+
+### Fixed
+
+- **DisclaimerModal — X close button**: Added an X button to the modal header as a secondary dismiss path alongside "I Understand". Both call `acknowledgeDisclaimer` so the modal doesn't reappear. Fixes production blocking where the button was unreachable on some devices. [view:/]
+- **DisclaimerModal — backdrop merged into single motion.div**: Refactored from two separate fixed elements to one, eliminating a potential z-index race between backdrop and container.
+- **DisclaimerModal — `>= APP_MAJOR` acknowledgment check**: Changed strict equality to `>=` so users who previously acknowledged a higher major version are not re-shown the modal. [view:/]
+- **PWAUpdatePrompt — z-index raised to z-[120]**: "New version available / Update" button was trapped behind the DisclaimerModal backdrop (z-[110]). Now always renders above all overlays. [view:/]
+- **GuidedTour — disclaimer gate + tour skip**: Tour activation now waits for disclaimer acknowledgment, and acknowledging the disclaimer also marks the tour as completed — preventing two blocking overlays in sequence on first visit. [view:/]
+- **WhatsNewToast — `99.0.0` sentinel**: `hasSeenCurrentVersion()` returns `true` for the sentinel value `99.0.0`, enabling E2E fixtures to suppress the toast without matching exact version strings. [accessibility]
+
 ## [2.44.7] - 2026-03-13
 
 ### Added

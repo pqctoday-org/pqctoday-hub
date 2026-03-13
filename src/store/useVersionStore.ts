@@ -22,6 +22,7 @@ export const useVersionStore = create<VersionState>()(
 
       hasSeenCurrentVersion: () => {
         const { currentVersion, lastSeenVersion } = get()
+        if (lastSeenVersion === '99.0.0') return true
         return lastSeenVersion === currentVersion
       },
 

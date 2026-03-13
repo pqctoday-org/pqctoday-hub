@@ -86,24 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Transparency & WIP Badges</strong> &mdash;
-                    animated pulse-glow WIP badges on learn modules, landing banner, and new About
-                    page transparency section
+                    <strong className="text-foreground">Disclaimer fixes</strong> &mdash; X close
+                    button, PWA update unblocked, tour sequencing fixed — no more stuck overlays
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">WIP Badges & Transparency</strong> &mdash;
+                    animated pulse-glow badges on modules, landing banner, and new About page
+                    transparency section (v2.44.7)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
                     <strong className="text-foreground">Community Endorsements</strong> &mdash;
-                    Stamp button on every resource to endorse via GitHub Discussions, plus product
-                    PQC update submissions on Migrate (v2.44.6)
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Disclaimer Gate</strong> &mdash; first-visit
-                    acknowledgment modal with incognito-safe tour sequencing (v2.44.5)
+                    Stamp button on every resource, product PQC update submissions on Migrate
+                    (v2.44.6)
                   </span>
                 </li>
               </ul>

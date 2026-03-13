@@ -27,7 +27,8 @@ export const useDisclaimerStore = create<DisclaimerState>()(
       acknowledgedMajorVersion: null,
 
       hasAcknowledgedCurrentMajor: () => {
-        return get().acknowledgedMajorVersion === APP_MAJOR
+        const val = get().acknowledgedMajorVersion
+        return val !== null && val >= APP_MAJOR
       },
 
       acknowledgeDisclaimer: () => {
