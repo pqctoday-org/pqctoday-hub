@@ -33,6 +33,7 @@ import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { LinkToUsButton } from '../ui/LinkToUsButton'
+import { TransparencyBanner } from './TransparencyBanner'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -566,6 +567,9 @@ export const LandingView = () => {
           ))}
         </motion.div>
       </section>
+
+      {/* Transparency Banner */}
+      <TransparencyBanner />
 
       {/* Journey Section */}
       <section>

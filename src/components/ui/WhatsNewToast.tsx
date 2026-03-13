@@ -86,16 +86,17 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">HSM Mechanism Panel</strong> &mdash; all 104
-                    PKCS#11 mechanisms fully named with correct flags, key sizes, and family &mdash;
-                    no more &ldquo;CKM_UNKNOWN&rdquo; entries
+                    <strong className="text-foreground">Transparency Disclaimer</strong> &mdash;
+                    one-time acknowledgment modal on first visit clarifying community-driven status
+                    and data sourcing
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">KMAC-128 &amp; KMAC-256</strong> &mdash;
-                    NIST SP 800-185 MAC mechanisms now visible in playground mechanism discovery
+                    <strong className="text-foreground">Leader Consent</strong> &mdash; leaders page
+                    now features only consented individuals with a self-nomination flow via GitHub
+                    Discussions
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

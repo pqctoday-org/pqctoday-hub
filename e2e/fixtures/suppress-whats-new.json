@@ -7,6 +7,10 @@
         {
           "name": "pqc-version-storage",
           "value": "{\"state\":{\"lastSeenVersion\":\"99.0.0\"},\"version\":0}"
+        },
+        {
+          "name": "pqc-disclaimer-storage",
+          "value": "{\"state\":{\"acknowledgedMajorVersion\":99},\"version\":0}"
         }
       ]
     }

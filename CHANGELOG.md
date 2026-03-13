@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.5] - 2026-03-13
+
+### Added
+
+- **Disclaimer modal — first-visit acknowledgment**: New `DisclaimerModal` component mounted in `MainLayout` that requires every user (new and existing) to acknowledge a transparency disclaimer before using the app. Explains that PQC Today is community-driven, not endorsed by cited organizations, sourced from public information, and may contain inaccuracies. Persisted per major version via `useDisclaimerStore` (localStorage key `pqc-disclaimer-storage`) — re-shown only on major version bumps. Uses `alertdialog` role, `z-[110]` to layer above all other overlays, body scroll lock, and auto-focused "I Understand" button. No backdrop dismiss or Escape — only the button advances. [view:/]
+- **Transparency banner — landing page**: Inline `TransparencyBanner` component below the stats section on the landing page. Links to `/about#transparency` for full details. [view:/]
+- **Leader consent modal**: "I agree to be referenced as a PQC Leader" button on the Leaders page opens a modal explaining qualification criteria (standards contributions, product development, algorithm research, PQC advocacy) and linking to GitHub Discussions and LinkedIn for consent requests. [view:/leaders]
+
+### Changed
+
+- **Leaders CSV filtered to 68 entries**: Removed 113 private-sector leaders without explicit consent. Retained all Public (government) and Academic leaders plus 13 named Private exceptions with confirmed PKI/PQC involvement. Backup of removed entries archived to `leadersbackup03122026.md`. [view:/leaders] [data]
+- **E2E fixtures updated**: `suppress-whats-new.json` now seeds `pqc-disclaimer-storage` with `acknowledgedMajorVersion: 99` to prevent the disclaimer modal from blocking test runs.
+
 ## [2.44.4] - 2026-03-13
 
 ### Changed

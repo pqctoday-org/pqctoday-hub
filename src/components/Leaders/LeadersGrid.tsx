@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Briefcase, Building2, School, AlertCircle, Users } from 'lucide-react'
+import { Search, Briefcase, Building2, School, AlertCircle, Users, Award } from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { leadersData, leadersMetadata } from '../../data/leadersData'
@@ -22,6 +22,8 @@ import { SortControl } from '../Library/SortControl'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
+import { LeaderConsentModal } from './LeaderConsentModal'
+import { Button } from '../ui/button'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -58,6 +60,7 @@ export const LeadersGrid = () => {
   const [viewMode, setViewMode] = useState<ViewMode>('cards')
   const [sortBy, setSortBy] = useState<LeaderSortOption>('name')
   const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
+  const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
   const { selectedIndustries } = usePersonaStore()
 
@@ -293,6 +296,20 @@ export const LeadersGrid = () => {
         onExport={handleExportCsv}
       />
 
+      {/* Leader consent CTA */}
+      <div className="flex items-center justify-center">
+        <Button
+          variant="outline"
+          onClick={() => {
+            setIsConsentModalOpen(true)
+            logEvent('Leaders', 'Open Consent Modal')
+          }}
+          className="gap-2 text-sm"
+        >
+          <Award size={16} className="text-primary" />I agree to be referenced as a PQC Leader
+        </Button>
+      </div>
+
       {/* Category pill tabs (desktop) */}
       <LeaderCategorySidebar
         categories={categoryInfo}
@@ -486,6 +503,12 @@ export const LeadersGrid = () => {
         isOpen={!!selectedLeader}
         onClose={() => setSelectedLeader(null)}
         leader={selectedLeader}
+      />
+
+      {/* Leader Consent Modal */}
+      <LeaderConsentModal
+        isOpen={isConsentModalOpen}
+        onClose={() => setIsConsentModalOpen(false)}
       />
     </div>
   )

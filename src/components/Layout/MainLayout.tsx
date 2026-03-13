@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
+import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PWAUpdatePrompt } from '../ui/PWAUpdatePrompt'
 import { GuidedTour } from '../common/GuidedTour'
@@ -342,6 +343,9 @@ export const MainLayout = () => {
 
       {/* What's New Toast Notification */}
       <WhatsNewToast />
+
+      {/* First-visit disclaimer — must acknowledge before using the app */}
+      <DisclaimerModal />
 
       {/* Achievement Toast Notification */}
       <AchievementToast />
