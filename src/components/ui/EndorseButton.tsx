@@ -2,7 +2,8 @@
 import React from 'react'
 import { Stamp } from 'lucide-react'
 import { Button } from './button'
-import { logEndorsement } from '@/utils/endorsement'
+import { logEndorsement, buildDiscussionSearchUrl } from '@/utils/endorsement'
+import { useEndorsementStore } from '@/store/useEndorsementStore'
 
 interface EndorseButtonProps {
   endorseUrl: string
@@ -21,10 +22,18 @@ export const EndorseButton: React.FC<EndorseButtonProps> = ({
   label = 'Endorse',
   className,
 }) => {
+  const { isEndorsed, markEndorsed } = useEndorsementStore()
+  const endorsed = isEndorsed(resourceType, resourceLabel)
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    logEndorsement(resourceType, resourceLabel)
-    window.open(endorseUrl, '_blank', 'noopener,noreferrer')
+    if (endorsed) {
+      window.open(buildDiscussionSearchUrl(resourceLabel), '_blank', 'noopener,noreferrer')
+    } else {
+      logEndorsement(resourceType, resourceLabel)
+      markEndorsed(resourceType, resourceLabel)
+      window.open(endorseUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 
   if (variant === 'text') {
@@ -33,12 +42,20 @@ export const EndorseButton: React.FC<EndorseButtonProps> = ({
         variant="ghost"
         size="sm"
         onClick={handleClick}
-        className={`inline-flex items-center gap-1.5 text-xs text-primary hover:text-primary/80 transition-colors ${className ?? ''}`}
-        aria-label={`Endorse ${resourceLabel}`}
-        title={`Endorse ${resourceLabel}`}
+        className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
+          endorsed
+            ? 'text-primary bg-primary/15 hover:bg-primary/20'
+            : 'text-primary hover:text-primary/80'
+        } ${className ?? ''}`}
+        aria-label={
+          endorsed ? `You endorsed ${resourceLabel} — view on GitHub` : `Endorse ${resourceLabel}`
+        }
+        title={
+          endorsed ? `You endorsed this — click to view on GitHub` : `Endorse ${resourceLabel}`
+        }
       >
-        <Stamp size={16} className="animate-bounce-subtle" />
-        {label}
+        <Stamp size={16} className={endorsed ? '' : 'animate-bounce-subtle'} />
+        {endorsed ? 'Endorsed' : label}
       </Button>
     )
   }
@@ -48,11 +65,17 @@ export const EndorseButton: React.FC<EndorseButtonProps> = ({
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[36px] [@media(pointer:coarse)]:min-w-[36px] text-primary hover:text-primary/80 hover:bg-primary/10 transition-colors rounded-lg ${className ?? ''}`}
-      aria-label={`Endorse ${resourceLabel}`}
-      title={`Endorse ${resourceLabel}`}
+      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[36px] [@media(pointer:coarse)]:min-w-[36px] transition-colors rounded-lg ${
+        endorsed
+          ? 'text-primary bg-primary/15 ring-1 ring-primary/30 hover:bg-primary/20'
+          : 'text-primary hover:text-primary/80 hover:bg-primary/10'
+      } ${className ?? ''}`}
+      aria-label={
+        endorsed ? `You endorsed ${resourceLabel} — view on GitHub` : `Endorse ${resourceLabel}`
+      }
+      title={endorsed ? 'You endorsed this — click to view on GitHub' : `Endorse ${resourceLabel}`}
     >
-      <Stamp size={18} className="animate-bounce-subtle" />
+      <Stamp size={18} className={endorsed ? '' : 'animate-bounce-subtle'} />
     </Button>
   )
 }

@@ -2,7 +2,8 @@
 import React from 'react'
 import { Flag } from 'lucide-react'
 import { Button } from './button'
-import { logFlag } from '@/utils/endorsement'
+import { logFlag, buildDiscussionSearchUrl } from '@/utils/endorsement'
+import { useEndorsementStore } from '@/store/useEndorsementStore'
 
 interface FlagButtonProps {
   flagUrl: string
@@ -21,10 +22,18 @@ export const FlagButton: React.FC<FlagButtonProps> = ({
   label = 'Flag',
   className,
 }) => {
+  const { isFlagged, markFlagged } = useEndorsementStore()
+  const flagged = isFlagged(resourceType, resourceLabel)
+
   const handleClick = (e: React.MouseEvent) => {
     e.stopPropagation()
-    logFlag(resourceType, resourceLabel)
-    window.open(flagUrl, '_blank', 'noopener,noreferrer')
+    if (flagged) {
+      window.open(buildDiscussionSearchUrl(resourceLabel), '_blank', 'noopener,noreferrer')
+    } else {
+      logFlag(resourceType, resourceLabel)
+      markFlagged(resourceType, resourceLabel)
+      window.open(flagUrl, '_blank', 'noopener,noreferrer')
+    }
   }
 
   if (variant === 'text') {
@@ -33,12 +42,24 @@ export const FlagButton: React.FC<FlagButtonProps> = ({
         variant="ghost"
         size="sm"
         onClick={handleClick}
-        className={`inline-flex items-center gap-1.5 text-xs text-status-error hover:text-status-error/80 transition-colors ${className ?? ''}`}
-        aria-label={`Flag issue with ${resourceLabel}`}
-        title={`Flag issue with ${resourceLabel}`}
+        className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
+          flagged
+            ? 'text-status-error bg-status-error/15 hover:bg-status-error/20'
+            : 'text-status-error hover:text-status-error/80'
+        } ${className ?? ''}`}
+        aria-label={
+          flagged
+            ? `You flagged ${resourceLabel} — view on GitHub`
+            : `Flag issue with ${resourceLabel}`
+        }
+        title={
+          flagged
+            ? 'You flagged this — click to view on GitHub'
+            : `Flag issue with ${resourceLabel}`
+        }
       >
-        <Flag size={16} className="animate-bounce-subtle" />
-        {label}
+        <Flag size={16} className={flagged ? '' : 'animate-bounce-subtle'} />
+        {flagged ? 'Flagged' : label}
       </Button>
     )
   }
@@ -48,11 +69,21 @@ export const FlagButton: React.FC<FlagButtonProps> = ({
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[36px] [@media(pointer:coarse)]:min-w-[36px] text-status-error hover:text-status-error/80 hover:bg-status-error/10 transition-colors rounded-lg ${className ?? ''}`}
-      aria-label={`Flag issue with ${resourceLabel}`}
-      title={`Flag issue with ${resourceLabel}`}
+      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[36px] [@media(pointer:coarse)]:min-w-[36px] transition-colors rounded-lg ${
+        flagged
+          ? 'text-status-error bg-status-error/15 ring-1 ring-status-error/30 hover:bg-status-error/20'
+          : 'text-status-error hover:text-status-error/80 hover:bg-status-error/10'
+      } ${className ?? ''}`}
+      aria-label={
+        flagged
+          ? `You flagged ${resourceLabel} — view on GitHub`
+          : `Flag issue with ${resourceLabel}`
+      }
+      title={
+        flagged ? 'You flagged this — click to view on GitHub' : `Flag issue with ${resourceLabel}`
+      }
     >
-      <Flag size={18} className="animate-bounce-subtle" />
+      <Flag size={18} className={flagged ? '' : 'animate-bounce-subtle'} />
     </Button>
   )
 }

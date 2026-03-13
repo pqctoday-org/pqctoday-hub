@@ -2,6 +2,17 @@
 import { logEvent } from './analytics'
 
 const DISCUSSIONS_NEW_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/new'
+const DISCUSSIONS_SEARCH_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions'
+
+/**
+ * Build a GitHub Discussions search URL for a resource label.
+ * Used when a user re-clicks an already-endorsed/flagged button to find
+ * the discussion they previously created.
+ */
+export const buildDiscussionSearchUrl = (resourceLabel: string): string => {
+  const params = new URLSearchParams({ discussions_q: resourceLabel })
+  return `${DISCUSSIONS_SEARCH_BASE}?${params.toString()}`
+}
 
 export type EndorsementCategory =
   | 'leader-endorsement'
