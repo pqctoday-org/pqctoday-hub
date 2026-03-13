@@ -86,27 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
+                    <strong className="text-foreground">HSM Mechanism Panel</strong> &mdash; all 104
+                    PKCS#11 mechanisms fully named with correct flags, key sizes, and family &mdash;
+                    no more &ldquo;CKM_UNKNOWN&rdquo; entries
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">KMAC-128 &amp; KMAC-256</strong> &mdash;
+                    NIST SP 800-185 MAC mechanisms now visible in playground mechanism discovery
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
                     <strong className="text-foreground">Curious Explorer</strong> &mdash; new
                     persona for non-technical users with a 9-module beginner path and plain-language
-                    AI responses
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">
-                      &ldquo;In Simple Terms&rdquo; banners
-                    </strong>{' '}
-                    &mdash; every learning module now has a jargon-free plain-language summary for
-                    curious users
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Curious-mode AI chat</strong> &mdash;
-                    simplified prompts, beginner suggested questions, and plain-language RAG
-                    retrieval on all 48 modules
+                    AI responses (v2.44.0)
                   </span>
                 </li>
               </ul>

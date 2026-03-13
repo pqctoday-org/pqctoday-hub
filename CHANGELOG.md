@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.3] - 2026-03-13
+
+### Fixed
+
+- **HSM mechanism panel — complete `MECH_TABLE` coverage**: All 104 mechanisms advertised by `C_GetMechanismList` now have named entries in `MECH_TABLE`. Previously 10 mechanisms displayed as `CKM_UNKNOWN` or fell into the wrong family. Fixed entries: corrected `CKM_RSA_AES_KEY_WRAP` key (was historical `0x00000210`, correct value is `0x00001054`); added 6 SHA3-RSA variants (`CKM_SHA3_{224,256,512}_RSA_PKCS` and `CKM_SHA3_{224,256,512}_RSA_PKCS_PSS`); added `CKM_AES_KEY_WRAP_PAD` (`0x0000210a`); added `CKM_AES_ECB_ENCRYPT_DATA` and `CKM_AES_CBC_ENCRYPT_DATA`; added `CKM_KMAC_128` / `CKM_KMAC_256` (vendor-defined, NIST SP 800-185). [view:/playground]
+
 ## [2.44.2] - 2026-03-13
 
 ### Fixed
