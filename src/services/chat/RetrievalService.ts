@@ -23,6 +23,9 @@ export interface PageContext {
   relevantSources: string[]
   conversationContext?: string[]
   persona?: string | null
+  industry?: string | null
+  region?: string | null
+  experienceLevel?: string | null
 }
 
 /**
@@ -98,6 +101,32 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     'module-content': 1.2,
     compliance: 1.2,
   },
+}
+
+/**
+ * Industry keyword map — maps persona industry names to lowercase keywords
+ * found in threat/compliance chunk metadata.industry fields.
+ */
+const INDUSTRY_KEYWORDS: Record<string, string[]> = {
+  'Finance & Banking': ['financial', 'banking', 'insurance', 'payment', 'cryptocurrency'],
+  'Government & Defense': ['government', 'defense', 'legal', 'notary'],
+  Healthcare: ['healthcare', 'pharmaceutical'],
+  Telecommunications: ['telecommunications', 'telecom'],
+  Technology: ['software', 'cloud', 'iot', 'media', 'supply chain'],
+  'Energy & Utilities': ['energy', 'critical infrastructure', 'water'],
+  Automotive: ['automotive', 'connected vehicles', 'rail', 'transit'],
+  Aerospace: ['aerospace', 'aviation'],
+  'Retail & E-Commerce': ['retail', 'e-commerce'],
+}
+
+/**
+ * Region keyword map — maps persona regions to lowercase country name keywords
+ * found in timeline/compliance chunk metadata.country fields.
+ */
+const REGION_KEYWORDS: Record<string, string[]> = {
+  americas: ['united states', 'usa', 'canada'],
+  eu: ['france', 'germany', 'european', 'uk', 'united kingdom', 'italy', 'spain', 'czech'],
+  apac: ['japan', 'singapore', 'australia', 'south korea', 'china', 'india', 'taiwan'],
 }
 
 const COUNTRY_KEYS = new Set([
@@ -451,7 +480,11 @@ class RetrievalService {
     if (this.index) return
     if (this.initPromise) return this.initPromise
 
-    this.initPromise = this.load()
+    this.initPromise = this.load().catch((err) => {
+      // Clear the promise so subsequent calls retry instead of returning the same rejection
+      this.initPromise = null
+      throw err
+    })
     return this.initPromise
   }
 
@@ -748,6 +781,26 @@ class RetrievalService {
         const pBoost = PERSONA_BOOSTS[pageContext.persona]
         if (pBoost?.[chunk.source]) {
           multiplier *= pBoost[chunk.source]
+        }
+      }
+      // Industry boost — boost threats/compliance chunks matching user's industry
+      if (pageContext?.industry) {
+        const keywords = INDUSTRY_KEYWORDS[pageContext.industry]
+        if (keywords && chunk.metadata?.industry) {
+          const chunkInd = (chunk.metadata.industry as string).toLowerCase()
+          if (keywords.some((kw) => chunkInd.includes(kw))) {
+            multiplier *= 1.4
+          }
+        }
+      }
+      // Region boost — boost timeline/compliance chunks matching user's region
+      if (pageContext?.region && pageContext.region !== 'global' && chunk.metadata?.country) {
+        const regionCountries = REGION_KEYWORDS[pageContext.region]
+        if (regionCountries) {
+          const chunkCountry = (chunk.metadata.country as string).toLowerCase()
+          if (regionCountries.some((c) => chunkCountry.includes(c))) {
+            multiplier *= 1.3
+          }
         }
       }
       return { ...r, boostedScore: r.score * multiplier }

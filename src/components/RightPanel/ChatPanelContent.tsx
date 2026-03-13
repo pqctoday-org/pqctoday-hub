@@ -10,6 +10,8 @@ import { ModelDownloadBanner } from '../Chat/ModelDownloadBanner'
 import { SampleQuestionsModal } from '../About/SampleQuestionsModal'
 import { CorpusFreshnessBadge } from '../Chat/CorpusFreshnessBadge'
 import { ConversationMenu } from '../Chat/ConversationMenu'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONAS } from '@/data/learningPersonas'
 import { useChatStore } from '@/store/useChatStore'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
@@ -31,6 +33,7 @@ export const ChatPanelContent: React.FC = () => {
     isStreaming,
     streamingContent,
     error,
+    setError,
     clearMessages,
     setMessageFeedback,
     pendingQuestion,
@@ -45,6 +48,7 @@ export const ChatPanelContent: React.FC = () => {
     setWebLLMError,
   } = useChatStore()
 
+  const { selectedPersona, selectedIndustry, experienceLevel } = usePersonaStore()
   const isOpen = useRightPanelStore((s) => s.isOpen)
   const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
 
@@ -133,6 +137,7 @@ export const ChatPanelContent: React.FC = () => {
   }, [input])
 
   const handleSend = () => {
+    if (!input.trim() || isLoading || isStreaming) return
     const text = input
     setInput('')
     if (inputRef.current) inputRef.current.style.height = 'auto'
@@ -149,6 +154,7 @@ export const ChatPanelContent: React.FC = () => {
   const handleDisconnect = () => {
     clearMessages()
     clearCache()
+    setError(null)
     setProvider(null)
     setApiKey(null)
     setShowSwitchConfirm(false)
@@ -164,6 +170,7 @@ export const ChatPanelContent: React.FC = () => {
     await unloadEngine()
     clearMessages()
     clearCache()
+    setError(null)
     setWebLLMStatus('idle')
     setWebLLMError(null)
     setProvider(null)
@@ -192,7 +199,7 @@ export const ChatPanelContent: React.FC = () => {
             )}
           </div>
           {provider && (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-1 flex-wrap">
               <div className="flex items-center gap-1.5 px-1">
                 <Plane
                   size={14}
@@ -362,6 +369,23 @@ export const ChatPanelContent: React.FC = () => {
                     Ask me anything about post-quantum cryptography, algorithms, compliance, or
                     migration strategies.
                   </p>
+                  {selectedPersona && (
+                    <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground flex-wrap">
+                      <span className="bg-accent/10 text-accent px-2 py-0.5 rounded-full">
+                        {PERSONAS[selectedPersona]?.label ?? selectedPersona}
+                      </span>
+                      {selectedIndustry && (
+                        <span className="bg-muted/50 px-2 py-0.5 rounded-full">
+                          {selectedIndustry}
+                        </span>
+                      )}
+                      {experienceLevel && experienceLevel !== 'basics' && (
+                        <span className="bg-muted/50 px-2 py-0.5 rounded-full">
+                          {experienceLevel === 'new' ? 'Beginner' : 'Expert'}
+                        </span>
+                      )}
+                    </div>
+                  )}
                   <CorpusFreshnessBadge />
                   {/* Page-contextual suggested questions */}
                   <div className="flex flex-wrap gap-2 justify-center mt-4">

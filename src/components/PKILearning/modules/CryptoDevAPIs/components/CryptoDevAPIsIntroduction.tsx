@@ -557,6 +557,20 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
               </Link>{' '}
               — Signing operations → this module for API selection
             </li>
+            <li>
+              •{' '}
+              <Link to="/learn/os-pqc" className="text-primary hover:underline">
+                OS Cryptographic Stacks
+              </Link>{' '}
+              — OS-level crypto providers → this module for application API layer
+            </li>
+            <li>
+              •{' '}
+              <Link to="/learn/platform-eng-pqc" className="text-primary hover:underline">
+                Platform Engineering
+              </Link>{' '}
+              — CI/CD pipeline crypto → this module for library selection
+            </li>
           </ul>
         </div>
       </CollapsibleSection>

@@ -56,7 +56,7 @@ async function fetchWithRetry(
   // Only retry on transient server errors (5xx), not client errors
   if (response.status >= 500 && retries > 0) {
     await new Promise((resolve) =>
-      setTimeout(resolve, RETRY_DELAY_MS * (MAX_RETRIES - retries + 1))
+      setTimeout(resolve, RETRY_DELAY_MS * Math.pow(2, MAX_RETRIES - retries))
     )
     return fetchWithRetry(url, init, retries - 1)
   }
@@ -138,7 +138,10 @@ export async function* streamResponse(
             yield '\n\n*(Response stopped due to potential copyright concerns. Try a more specific question.)*'
           }
         } catch {
-          // Skip malformed SSE chunks
+          // Log non-trivial malformed chunks for debugging incomplete responses
+          if (json.length > 2) {
+            console.warn('[Gemini] Malformed SSE chunk:', json.slice(0, 200))
+          }
         }
       }
     }

@@ -132,6 +132,7 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       linkedModules: [
         { id: 'pqc-101', label: 'PQC 101' },
         { id: 'quantum-threats', label: 'Quantum Threats' },
+        { id: 'crypto-dev-apis', label: 'Crypto Developer APIs' },
       ],
     },
     {
@@ -158,7 +159,10 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       description:
         'Adapting JWT signing, API authentication, and token formats for PQC-sized signatures.',
       targetLevel: 'intermediate',
-      linkedModules: [{ id: 'api-security-jwt', label: 'API Security & JWT' }],
+      linkedModules: [
+        { id: 'api-security-jwt', label: 'API Security & JWT' },
+        { id: 'database-encryption-pqc', label: 'Database Encryption' },
+      ],
     },
     {
       id: 'crypto-agility',
@@ -167,7 +171,10 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       description:
         'Writing code with abstraction layers that allow algorithm swaps without application changes.',
       targetLevel: 'intermediate',
-      linkedModules: [{ id: 'crypto-agility', label: 'Crypto Agility' }],
+      linkedModules: [
+        { id: 'crypto-agility', label: 'Crypto Agility' },
+        { id: 'secrets-management-pqc', label: 'Secrets Management' },
+      ],
     },
     {
       id: 'pki-certs',
@@ -184,7 +191,10 @@ export const DEV_GUIDE_DATA: RoleGuideData = {
       skill: 'PQC Code & Container Signing',
       description: 'Signing and verifying code, containers, and packages with PQC algorithms.',
       targetLevel: 'basic',
-      linkedModules: [{ id: 'code-signing', label: 'Code Signing' }],
+      linkedModules: [
+        { id: 'code-signing', label: 'Code Signing' },
+        { id: 'platform-eng-pqc', label: 'Platform Engineering' },
+      ],
     },
     {
       id: 'testing-pqc',

@@ -204,7 +204,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             e.stopPropagation()
                             onHideProduct(key)
                           }}
-                          className="p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
                         >
                           <EyeOff size={14} />
                         </button>

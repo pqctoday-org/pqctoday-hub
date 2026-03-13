@@ -8,7 +8,11 @@ import type { PageContext } from '@/hooks/usePageContext'
 // Mocks
 // ---------------------------------------------------------------------------
 
-const mockAddMessage = vi.fn()
+// Track messages so getState().messages reflects addMessage calls
+let trackedMessages: ChatMessage[] = []
+const mockAddMessage = vi.fn((msg: ChatMessage) => {
+  trackedMessages = [...trackedMessages, msg]
+})
 const mockSetLoading = vi.fn()
 const mockSetStreaming = vi.fn()
 const mockSetStreamingContent = vi.fn()
@@ -41,9 +45,15 @@ const defaultStoreState = {
 
 let chatStoreOverrides: Partial<typeof defaultStoreState> = {}
 
-vi.mock('@/store/useChatStore', () => ({
-  useChatStore: () => ({ ...defaultStoreState, ...chatStoreOverrides }),
-}))
+vi.mock('@/store/useChatStore', () => {
+  const hook = () => ({ ...defaultStoreState, ...chatStoreOverrides })
+  hook.getState = () => ({
+    ...defaultStoreState,
+    ...chatStoreOverrides,
+    messages: trackedMessages,
+  })
+  return { useChatStore: hook }
+})
 
 const defaultPageContext: PageContext = {
   page: 'Algorithms',
@@ -146,6 +156,7 @@ describe('useChatSend', () => {
   beforeEach(() => {
     vi.clearAllMocks()
     chatStoreOverrides = {}
+    trackedMessages = []
     setupStream(['Hello ', 'world!'])
   })
 

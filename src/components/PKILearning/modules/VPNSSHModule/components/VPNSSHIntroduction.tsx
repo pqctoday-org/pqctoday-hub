@@ -418,6 +418,18 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
               </div>
             </div>
           </Link>
+          <Link
+            to="/learn/network-security-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Network size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Network Security</div>
+              <div className="text-xs text-muted-foreground">
+                NGFWs, TLS inspection, IDS/IPS, and ZTNA PQC migration
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 

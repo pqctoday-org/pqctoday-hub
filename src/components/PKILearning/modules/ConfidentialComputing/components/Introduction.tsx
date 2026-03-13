@@ -729,6 +729,13 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <ArrowRight size={14} />
             PKI Workshop
           </Link>
+          <Link
+            to="/learn/secure-boot-pqc"
+            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+          >
+            <ArrowRight size={14} />
+            Secure Boot
+          </Link>
         </div>
       </div>
 

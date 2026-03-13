@@ -185,7 +185,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       description:
         'Identifying and mitigating side-channel vulnerabilities in PQC implementations.',
       targetLevel: 'basic',
-      linkedModules: [],
+      linkedModules: [{ id: 'confidential-computing', label: 'Confidential Computing' }],
     },
     {
       id: 'pqc-applications',
@@ -197,6 +197,7 @@ export const RESEARCH_GUIDE_DATA: RoleGuideData = {
       linkedModules: [
         { id: 'digital-assets', label: 'Digital Assets' },
         { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'ai-security-pqc', label: 'AI Security & PQC' },
       ],
     },
   ],

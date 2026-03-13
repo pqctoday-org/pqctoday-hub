@@ -12,6 +12,7 @@ import {
   BookOpen,
   Cpu,
   Route,
+  Monitor,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { UEFI_KEY_TYPES, BOOT_CHAIN_STAGES, FIRMWARE_ALGO_SIZES } from '../data/secureBootConstants'
@@ -558,6 +559,18 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
               <div className="text-sm font-medium text-foreground">Crypto Agility</div>
               <div className="text-xs text-muted-foreground">
                 Algorithm-agnostic cryptographic infrastructure
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/os-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Monitor size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">OS Cryptographic Stacks</div>
+              <div className="text-xs text-muted-foreground">
+                OS-level crypto providers, SSH host keys, and system TLS policy
               </div>
             </div>
           </Link>

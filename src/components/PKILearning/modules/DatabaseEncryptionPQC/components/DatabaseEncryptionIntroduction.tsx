@@ -9,6 +9,7 @@ import {
   ChevronRight,
   ArrowRight,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -471,6 +472,28 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
       </CollapsibleSection>
 
       <VendorCoverageNotice migrateLayer="Database" />
+
+      {/* Related Modules */}
+      <div className="glass-panel p-4">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Related Modules</h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { path: '/learn/kms-pqc', label: 'KMS & PQC' },
+            { path: '/learn/hsm-pqc', label: 'HSM & PQC' },
+            { path: '/learn/crypto-agility', label: 'Crypto Agility' },
+            { path: '/learn/secrets-management-pqc', label: 'Secrets Management' },
+          ].map((m) => (
+            <Link
+              key={m.path}
+              to={m.path}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-primary hover:text-primary/80 bg-primary/10 border border-primary/20 transition-colors"
+            >
+              <ArrowRight size={10} />
+              {m.label}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* CTA */}
       <div className="text-center">

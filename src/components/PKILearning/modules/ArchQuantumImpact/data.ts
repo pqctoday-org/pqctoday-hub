@@ -138,7 +138,10 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       skill: 'HSM & PKCS#11 v3.2 Modernization',
       description: 'Understanding PKCS#11 v3.2 PQC mechanisms and HSM vendor migration paths.',
       targetLevel: 'advanced',
-      linkedModules: [{ id: 'hsm-pqc', label: 'HSM & PQC' }],
+      linkedModules: [
+        { id: 'hsm-pqc', label: 'HSM & PQC' },
+        { id: 'secure-boot-pqc', label: 'Secure Boot' },
+      ],
     },
     {
       id: 'pki-strategy',
@@ -150,6 +153,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       linkedModules: [
         { id: 'pki-workshop', label: 'PKI' },
         { id: 'hybrid-crypto', label: 'Hybrid Crypto' },
+        { id: 'iam-pqc', label: 'IAM & PQC' },
       ],
     },
     {
@@ -180,7 +184,7 @@ export const ARCH_GUIDE_DATA: RoleGuideData = {
       description:
         'Modeling PQC performance impacts on throughput, latency, and infrastructure sizing.',
       targetLevel: 'basic',
-      linkedModules: [],
+      linkedModules: [{ id: '5g-security', label: '5G Security' }],
     },
     {
       id: 'tee-integration',

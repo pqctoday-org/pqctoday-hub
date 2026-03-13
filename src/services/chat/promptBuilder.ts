@@ -76,6 +76,12 @@ export function extractEntityInventory(
     }
 
     if (!name || name.length < 2) continue
+    // Sanitize: collapse newlines and excess whitespace
+    name = name
+      .replace(/[\n\r]+/g, ' ')
+      .replace(/\s{2,}/g, ' ')
+      .trim()
+    if (name.length < 2) continue
     // Truncate long names
     if (name.length > 50) name = name.slice(0, 47) + '...'
 
@@ -118,6 +124,14 @@ const PERSONA_DEPTH: Record<string, string> = {
   ops: 'Focus on deployment steps, infrastructure configs, and operational procedures. Include CLI commands, config examples, and rollback guidance.',
 }
 
+const EXPERIENCE_DEPTH: Record<string, string> = {
+  new: 'The user is new to PQC. Use simple language, define technical terms on first use, and provide introductory context. Avoid assumptions about prior knowledge.',
+  basics:
+    'The user has basic familiarity with PQC concepts. Provide moderate detail with brief explanations of advanced terms.',
+  expert:
+    'The user is an expert. Be concise and technical. Skip introductory explanations. Use precise terminology and reference standards directly.',
+}
+
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
   eu: 'Europe',
@@ -158,6 +172,12 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
     if (depth) personaSection = `\nRESPONSE STYLE: ${depth}\n`
   }
 
+  let experienceSection = ''
+  if (pageContext?.experienceLevel) {
+    const depth = EXPERIENCE_DEPTH[pageContext.experienceLevel as string]
+    if (depth) experienceSection = `EXPERIENCE LEVEL: ${depth}\n`
+  }
+
   const profileLines: string[] = []
   if (pageContext?.industry) profileLines.push(`Industry: ${pageContext.industry}`)
   if (pageContext?.region) {
@@ -185,7 +205,14 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
 
   const inventorySection = extractEntityInventory(chunks, maxEntities)
 
-  return { pageNote, personaSection, profileSection, assessmentSection, inventorySection }
+  return {
+    pageNote,
+    personaSection,
+    experienceSection,
+    profileSection,
+    assessmentSection,
+    inventorySection,
+  }
 }
 
 /* ------------------------------------------------------------------ */
@@ -194,11 +221,17 @@ function buildSharedSections(chunks: RAGChunk[], pageContext?: PageContext, maxE
 
 export function buildGeminiSystemPrompt(chunks: RAGChunk[], pageContext?: PageContext): string {
   const contextBlocks = buildContextBlocks(chunks)
-  const { pageNote, personaSection, profileSection, assessmentSection, inventorySection } =
-    buildSharedSections(chunks, pageContext)
+  const {
+    pageNote,
+    personaSection,
+    experienceSection,
+    profileSection,
+    assessmentSection,
+    inventorySection,
+  } = buildSharedSections(chunks, pageContext)
 
   return `You are PQC Today Assistant, an expert in post-quantum cryptography (PQC). You help users understand PQC concepts, standards, migration strategies, and the quantum threat landscape.
-${pageNote}${personaSection}${profileSection}${assessmentSection}
+${pageNote}${personaSection}${experienceSection}${profileSection}${assessmentSection}
 Answer based ONLY on the provided context from the PQC Today database. You may use general knowledge only to explain concepts or give background — never to list specific items.
 ${inventorySection}
 ANTI-HALLUCINATION RULES (MANDATORY — violations break user trust):
@@ -227,7 +260,7 @@ GUIDELINES:
    - /learn/quiz?category=<id> (comma-separated quiz categories, e.g. ?category=pqc-fundamentals,nist-standards)
    Every named item (product, leader, document, algorithm, threat) MUST be a markdown link. Never output bare names or paths.
 4. Main pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [Threats](/threats), [Leaders](/leaders), [Compliance](/compliance), [Migrate](/migrate), [Assessment](/assess), [Report](/report), [Playground](/playground), [OpenSSL Studio](/openssl), [Learn](/learn), [Quiz](/learn/quiz)
-5. Learning modules (27 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [KMS & PQC Key Management](/learn/kms-pqc), [HSM & PQC Operations](/learn/hsm-pqc), [Data & Asset Sensitivity](/learn/data-asset-sensitivity), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance)
+5. Learning modules (49 total): [PQC 101](/learn/pqc-101), [Quantum Threats](/learn/quantum-threats), [Hybrid Crypto](/learn/hybrid-crypto), [Crypto Agility](/learn/crypto-agility), [TLS Basics](/learn/tls-basics), [VPN & SSH](/learn/vpn-ssh-pqc), [Email Signing](/learn/email-signing), [PKI Workshop](/learn/pki-workshop), [KMS & PQC Key Management](/learn/kms-pqc), [HSM & PQC Operations](/learn/hsm-pqc), [Data & Asset Sensitivity](/learn/data-asset-sensitivity), [Stateful Signatures](/learn/stateful-signatures), [Digital Assets](/learn/digital-assets), [5G Security](/learn/5g-security), [Digital Identity](/learn/digital-id), [Entropy & Randomness](/learn/entropy-randomness), [Merkle Tree Certs](/learn/merkle-tree-certs), [QKD](/learn/qkd), [Code Signing](/learn/code-signing), [API Security & JWT](/learn/api-security-jwt), [IoT & OT Security](/learn/iot-ot-pqc), [Vendor & Supply Chain Risk](/learn/vendor-risk), [Compliance & Regulatory Strategy](/learn/compliance-strategy), [Migration Program Management](/learn/migration-program), [PQC Risk Management](/learn/pqc-risk-management), [PQC Business Case](/learn/pqc-business-case), [PQC Governance & Policy](/learn/pqc-governance), [Crypto Dev APIs](/learn/crypto-dev-apis), [Web Gateway PQC](/learn/web-gateway-pqc), [Standards Bodies](/learn/standards-bodies), [Confidential Computing](/learn/confidential-computing), [Database Encryption](/learn/database-encryption-pqc), [Energy & Utilities](/learn/energy-utilities-pqc), [EMV Payments](/learn/emv-payment-pqc), [AI Security & PQC](/learn/ai-security-pqc), [Platform Engineering](/learn/platform-eng-pqc), [Healthcare PQC](/learn/healthcare-pqc), [Aerospace PQC](/learn/aerospace-pqc), [Automotive PQC](/learn/automotive-pqc), [Executive Quantum Impact](/learn/exec-quantum-impact), [Developer Quantum Impact](/learn/dev-quantum-impact), [Architect Quantum Impact](/learn/arch-quantum-impact), [Ops Quantum Impact](/learn/ops-quantum-impact), [Researcher Quantum Impact](/learn/research-quantum-impact), [Secrets Management](/learn/secrets-management-pqc), [Network Security](/learn/network-security-pqc), [IAM & Identity](/learn/iam-pqc), [Secure Boot & Firmware](/learn/secure-boot-pqc), [OS Crypto Stacks](/learn/os-pqc)
 6. Keep answers concise but thorough. Use markdown formatting. This is an educational assistant — never provide production security advice.
 
 FOLLOW-UP SUGGESTIONS:
@@ -263,11 +296,16 @@ export function buildLocalSystemPrompt(
     const depth = PERSONA_DEPTH[pageContext.persona as string]
     if (depth) personaNote = `Style: ${depth}\n`
   }
+  let experienceNote = ''
+  if (pageContext?.experienceLevel) {
+    const depth = EXPERIENCE_DEPTH[pageContext.experienceLevel as string]
+    if (depth) experienceNote = `Experience: ${depth}\n`
+  }
 
   const inventorySection = extractEntityInventory(chunks, maxEntities)
 
   return `You are PQC Today Assistant — expert in post-quantum cryptography.
-${pageNote}${personaNote}
+${pageNote}${personaNote}${experienceNote}
 Answer ONLY from context below. Never fabricate names, dates, numbers, or claims.
 If unsure, say "Based on the PQC Today database, I don't have that information."
 ${inventorySection}

@@ -526,7 +526,7 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is the DICOM imaging PQC signing migration path for radiology systems?',
     'How does the Biometric Vault Assessor workshop step work?',
   ],
-  'Aerospace & Space PQC': [
+  'Aerospace PQC': [
     'What avionics protocols face the greatest PQC migration challenges and why?',
     'How does DO-178C certification affect the cost of adding PQC to airborne software?',
     'What is the HNDL risk for satellite telemetry encrypted today?',

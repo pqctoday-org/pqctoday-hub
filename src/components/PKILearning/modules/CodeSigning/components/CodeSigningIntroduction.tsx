@@ -16,6 +16,8 @@ import {
   Cpu,
   Shield,
   Boxes,
+  HardDrive,
+  Workflow,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
@@ -693,6 +695,30 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
               <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
               <div className="text-xs text-muted-foreground">
                 LMS/XMSS deep dive, state management, and CNSA 2.0 timelines
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/secure-boot-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <HardDrive size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Secure Boot</div>
+              <div className="text-xs text-muted-foreground">
+                UEFI PK/KEK migration, TPM 2.0, and ML-DSA firmware signing
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/platform-eng-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Workflow size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Platform Engineering</div>
+              <div className="text-xs text-muted-foreground">
+                CI/CD pipeline crypto, container signing, and OPA/Kyverno policy
               </div>
             </div>
           </Link>

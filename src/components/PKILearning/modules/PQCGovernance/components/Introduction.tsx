@@ -13,6 +13,8 @@ import {
   Network,
   ClipboardCheck,
   BookOpen,
+  Briefcase,
+  Landmark,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -399,6 +401,30 @@ const Step3ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
             <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
             <div className="text-xs text-muted-foreground">
               Quantify quantum risk and build risk registers
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/learn/pqc-business-case"
+          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+        >
+          <Briefcase size={18} className="text-primary shrink-0" />
+          <div>
+            <div className="text-sm font-medium text-foreground">PQC Business Case</div>
+            <div className="text-xs text-muted-foreground">
+              Build executive-ready justification for PQC investment
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/learn/standards-bodies"
+          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+        >
+          <Landmark size={18} className="text-primary shrink-0" />
+          <div>
+            <div className="text-sm font-medium text-foreground">Standards Bodies</div>
+            <div className="text-xs text-muted-foreground">
+              Who creates PQC standards, certifies products, and mandates compliance
             </div>
           </div>
         </Link>

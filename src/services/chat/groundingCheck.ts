@@ -190,12 +190,37 @@ export function checkGrounding(
     // Check exact match
     if (groundedTerms.has(lower)) continue
 
-    // Check partial match — "ML-KEM" should match "ML-KEM-768" in grounded set
+    // Check partial match — "ML-KEM" should match "ML-KEM-768" in grounded set.
+    // Use boundary-aware matching (hyphen or space) to prevent false positives
+    // like "hash" matching "hashababy" or "ml" matching "html".
     let partialMatch = false
     for (const term of groundedTerms) {
-      if (term.includes(lower) || lower.includes(term)) {
+      if (term === lower) {
         partialMatch = true
         break
+      }
+      // Only attempt substring matching for terms long enough to be meaningful
+      if (lower.length >= 4 && term.length >= 4) {
+        // Match algorithm family names: "ml-kem" ↔ "ml-kem-768"
+        if (term.startsWith(lower + '-') || lower.startsWith(term + '-')) {
+          partialMatch = true
+          break
+        }
+        // Match when one contains the other at a word boundary (start, space, or hyphen)
+        if (
+          term.includes(lower) &&
+          (term.startsWith(lower) || term.includes(' ' + lower) || term.includes('-' + lower))
+        ) {
+          partialMatch = true
+          break
+        }
+        if (
+          lower.includes(term) &&
+          (lower.startsWith(term) || lower.includes(' ' + term) || lower.includes('-' + term))
+        ) {
+          partialMatch = true
+          break
+        }
       }
     }
     if (partialMatch) continue

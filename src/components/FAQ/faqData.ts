@@ -548,7 +548,7 @@ export const FAQ_DATA: FAQCategory[] = [
         question: 'What PQC challenges does aerospace face?',
         answer:
           'Aerospace faces unique PQC challenges including 20-year or longer mission lifecycles for satellites and aircraft, DO-178C and DO-326A airworthiness certification costs for crypto updates, and bandwidth-constrained satellite links where compact signatures are critical. Space-based systems deployed today will still be operating well into the post-quantum era. The Aerospace module covers satellite communications, avionics firmware signing, and ground station security.',
-        deepLink: '/learn/aerospace-space-pqc',
+        deepLink: '/learn/aerospace-pqc',
       },
       {
         question: 'How does the automotive industry approach PQC?',

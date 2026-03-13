@@ -11,6 +11,7 @@ import {
   FlaskConical,
   ChevronRight,
   ArrowRight,
+  HeartPulse,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -552,6 +553,60 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
           </div>
         </div>
       </CollapsibleSection>
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/pqc-risk-management"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <BarChart3 size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
+              <div className="text-xs text-muted-foreground">
+                NIST RMF, ISO 27005, FAIR, and DORA/NIS2 applied to PQC migration
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/compliance-strategy"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Globe size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
+              <div className="text-xs text-muted-foreground">
+                Framework-driven PQC compliance planning and gap analysis
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/healthcare-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <HeartPulse size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Healthcare PQC</div>
+              <div className="text-xs text-muted-foreground">
+                HIPAA, ePHI protection, and healthcare data PQC migration
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/database-encryption-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Database size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Database Encryption</div>
+              <div className="text-xs text-muted-foreground">
+                TDE, column-level encryption, and BYOK key management
+              </div>
+            </div>
+          </Link>
+        </div>
+      </section>
       <ReadingCompleteButton />
     </div>
   )

@@ -154,7 +154,7 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
   )
 
   const btnClass = (active: boolean) =>
-    `flex-none px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
+    `flex-none px-3 py-2 min-h-[44px] rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
       active ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
     }`
 

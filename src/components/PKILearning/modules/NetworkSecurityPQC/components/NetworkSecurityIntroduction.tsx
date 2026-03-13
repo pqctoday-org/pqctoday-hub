@@ -13,6 +13,7 @@ import {
   BookOpen,
   Lock,
   Wrench,
+  Globe,
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -463,6 +464,18 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
               <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
               <div className="text-xs text-muted-foreground">
                 Classical + PQC hybrid schemes for the transition period
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/web-gateway-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Globe size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Web Gateway PQC</div>
+              <div className="text-xs text-muted-foreground">
+                PQC TLS termination at reverse proxies, CDNs, and API gateways
               </div>
             </div>
           </Link>

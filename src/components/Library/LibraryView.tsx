@@ -506,7 +506,7 @@ export const LibraryView: React.FC = () => {
         </div>
 
         {/* Org + Search + Sort + ViewToggle */}
-        <div className="flex items-center gap-2 w-full text-xs">
+        <div className="flex flex-wrap items-center gap-2 w-full text-xs">
           <div className="min-w-[140px]">
             <FilterDropdown
               items={orgs}
@@ -550,7 +550,7 @@ export const LibraryView: React.FC = () => {
               aria-label="Search PQC standards library"
               value={inputValue}
               onChange={handleSearchChange}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
 

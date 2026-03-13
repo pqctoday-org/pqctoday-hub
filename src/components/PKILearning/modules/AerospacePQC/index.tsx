@@ -2,8 +2,8 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Radio, Satellite, ShieldCheck, Plane, Scale, Rocket } from 'lucide-react'
-import { AerospaceSpaceIntroduction } from './components/AerospaceSpaceIntroduction'
-import { AerospaceSpaceExercises, type WorkshopConfig } from './components/AerospaceSpaceExercises'
+import { AerospaceIntroduction } from './components/AerospaceIntroduction'
+import { AerospaceExercises, type WorkshopConfig } from './components/AerospaceExercises'
 import { AvionicsProtocolAnalyzer } from './workshop/AvionicsProtocolAnalyzer'
 import { SatelliteLinkBudgetCalculator } from './workshop/SatelliteLinkBudgetCalculator'
 import { CertificationImpactAnalyzer } from './workshop/CertificationImpactAnalyzer'
@@ -16,7 +16,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 
-const MODULE_ID = 'aerospace-space-pqc'
+const MODULE_ID = 'aerospace-pqc'
 
 const PARTS = [
   {
@@ -63,7 +63,7 @@ const PARTS = [
   },
 ]
 
-export const AerospaceSpacePQCModule: React.FC = () => {
+export const AerospacePQCModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
@@ -119,7 +119,7 @@ export const AerospaceSpacePQCModule: React.FC = () => {
   )
 
   const handleReset = () => {
-    if (confirm('Restart Aerospace & Space PQC Module?')) {
+    if (confirm('Restart Aerospace PQC Module?')) {
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
       startTimeRef.current = Date.now()
@@ -135,7 +135,7 @@ export const AerospaceSpacePQCModule: React.FC = () => {
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          <h1 className="text-3xl font-bold text-gradient">Aerospace & Space PQC</h1>
+          <h1 className="text-3xl font-bold text-gradient">Aerospace PQC</h1>
           <p className="text-muted-foreground mt-2">
             Rad-hardened avionics, satellite link budgets, DO-326A certification, ITAR/EAR export
             controls, and multi-decade fleet interoperability across ground, airborne, and space
@@ -154,7 +154,7 @@ export const AerospaceSpacePQCModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
-          <AerospaceSpaceIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          <AerospaceIntroduction onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="workshop">
@@ -252,7 +252,7 @@ export const AerospaceSpacePQCModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <AerospaceSpaceExercises
+          <AerospaceExercises
             onNavigateToWorkshop={navigateToWorkshop}
             onSetWorkshopConfig={handleSetWorkshopConfig}
           />

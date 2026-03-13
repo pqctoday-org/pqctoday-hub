@@ -309,11 +309,11 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '60 min',
     difficulty: 'intermediate',
   },
-  'aerospace-space-pqc': {
-    id: 'aerospace-space-pqc',
-    title: 'Aerospace & Space PQC',
+  'aerospace-pqc': {
+    id: 'aerospace-pqc',
+    title: 'Aerospace PQC',
     description:
-      'PQC challenges unique to aerospace and space: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
+      'PQC challenges unique to aerospace: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
     duration: '80 min',
     difficulty: 'advanced',
   },
@@ -330,7 +330,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Executive Quantum Impact',
     description:
       'Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.',
-    duration: '20 min',
+    duration: '30 min',
     difficulty: 'beginner',
   },
   'dev-quantum-impact': {
@@ -457,7 +457,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'ai-security-pqc': 7,
   'platform-eng-pqc': 6,
   'healthcare-pqc': 5,
-  'aerospace-space-pqc': 6,
+  'aerospace-pqc': 6,
   'automotive-pqc': 6,
   'exec-quantum-impact': 3,
   'dev-quantum-impact': 3,
@@ -574,7 +574,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['5g-security'],
       MODULE_CATALOG['energy-utilities-pqc'],
       MODULE_CATALOG['healthcare-pqc'],
-      MODULE_CATALOG['aerospace-space-pqc'],
+      MODULE_CATALOG['aerospace-pqc'],
       MODULE_CATALOG['automotive-pqc'],
       MODULE_CATALOG['emv-payment-pqc'],
     ],
@@ -864,8 +864,8 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'device-safety', label: 'Medical Device Safety & PQC' },
     { id: 'healthcare-migration', label: 'Healthcare PQC Migration: A Sector-Wide Challenge' },
   ],
-  'aerospace-space-pqc': [
-    { id: 'quantum-threat', label: 'The Quantum Threat to Aerospace & Space' },
+  'aerospace-pqc': [
+    { id: 'quantum-threat', label: 'The Quantum Threat to Aerospace' },
     { id: 'protocol-limits', label: 'PQC Algorithm Sizes vs Aviation Protocol Limits' },
     { id: 'radiation-integrity', label: 'Radiation & Cryptographic Key Material Integrity' },
     { id: 'certification-cost', label: 'Certification Cost of PQC Crypto Library Integration' },
@@ -1192,7 +1192,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'device-safety-simulator', label: 'Device Safety Simulator' },
     { id: 'hospital-migration-planner', label: 'Hospital Migration Planner' },
   ],
-  'aerospace-space-pqc': [
+  'aerospace-pqc': [
     { id: 'avionics-protocol-analyzer', label: 'Avionics Protocol Analyzer' },
     { id: 'satellite-link-budget', label: 'Satellite Link Budget' },
     { id: 'certification-impact-analyzer', label: 'Certification Impact' },

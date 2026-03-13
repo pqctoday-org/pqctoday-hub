@@ -4,6 +4,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.43.0] - 2026-03-13
+
+### Added
+
+- **Persona-aware AI chat**: Response caching, retrieval boosting, and system prompts now adapt to the user's selected persona, industry, region, and experience level. Industry-matching threats/compliance chunks receive a 1.4x retrieval boost; region-matching timeline chunks receive 1.3x. Experience level (new/basics/expert) shapes response depth and vocabulary. [view:/] [persona:all]
+- **Module cross-linking — 26+ learning modules**: Each module introduction page now includes a "Related Modules" navigation panel with contextual deep-links. All 5 Role Guide modules (Executive, Developer, Architect, Operations, Research) enriched with linkedModules to industry and specialist modules (e.g., Executive → Healthcare PQC, EMV Payments, Aerospace PQC). [view:/learn]
+- **5 quiz categories for Role Guides**: `exec-quantum-impact`, `dev-quantum-impact`, `arch-quantum-impact`, `ops-quantum-impact`, `research-quantum-impact` added to the quiz engine, enabling role-specific assessment questions. [view:/learn/quiz]
+- **Leaders industry relevance badges**: When a persona with selected industries is active, leaders whose bio/organizations match those industries display a "Relevant to you" accent badge. Shared constants extracted to `leadersConstants.ts`. [view:/leaders]
+- **Mobile Timeline filters**: Region and Country `FilterDropdown` components now available on mobile view alongside the existing desktop filters. [view:/timeline]
+- **Meta description and Open Graph tags**: Added global meta description and `og:description` to `index.html` for improved SEO and social sharing previews.
+- **Library enrichments**: 13 new library document enrichments added (`library_doc_enrichments_03132026.md`). [view:/library]
+
+### Changed
+
+- **Aerospace module renamed**: `aerospace-space-pqc` → `aerospace-pqc` (shorter ID). Directory, components, moduleData, glossary entries, FAQ deep-links, RAG corpus, SEO routes, and quiz categories all updated. [view:/learn/aerospace-pqc]
+- **Executive Role Guide duration**: Increased from 20 min to 30 min to reflect expanded content with CNSA 2.0 networking equipment coverage and Button component modernization. [view:/learn/exec-quantum-impact]
+- **Migrate page mobile-first layout**: Card view is now the default on mobile with always-visible sort/filter controls. View toggle hidden on small screens. [view:/migrate]
+- **WCAG 2.5.5 touch targets**: All interactive elements across Migrate, Leaders, Timeline, Assess, FAQ, and Chat now meet the 44px minimum touch target size. Buttons, inputs, and accordion triggers updated. [accessibility]
+- **Chat system improvements**: Monotonic message IDs prevent collisions; exponential retry backoff replaces linear; boundary-aware grounding check eliminates false positives on partial words; WebLLM init race condition fixed; empty submission guard added; stale message closure fixed after deletions. [view:/]
+- **Data updates**: Library 325 records (+21), Quiz 805 questions (+50), Migrate 377 products (+6), Compliance 91 frameworks (+1), 13 new library enrichments. [data]
+- **RAG corpus regenerated**: 3,826 chunks from 22 sources (was 3,761), incorporating new library records, enrichments, cross-linking updates, and module rename. [view:/]
+- **CSV archival**: 6 old CSV revisions archived to `src/data/archive/`; 4 superseded compliance/library CSVs removed.
+
+### Fixed
+
+- **Chat grounding false positives**: Short terms like "hash" no longer falsely match substrings (e.g., "hashababy"). Terms under 4 characters and non-boundary matches are now excluded. Algorithm family matching improved ("ml-kem" correctly matches "ml-kem-768"). [view:/]
+- **Chat follow-up regex**: Algorithm names like "SHA" in "SPHINCS+" no longer greedily match trailing words in follow-up suggestion parsing.
+
 ## [2.42.0] - 2026-03-12
 
 ### Added
@@ -420,9 +448,9 @@ All notable changes to this project will be documented in this file.
 
 - **moduleData.ts validation infrastructure** (`src/components/PKILearning/moduleData.ts`): Added `validateCatalog()` wrapper (dev-only id/key mismatch check), `SPECIAL_IDS` constant (`quiz`, `assess`), and a dev-time validation block at end of file that cross-checks `MODULE_STEP_COUNTS` ↔ `WORKSHOP_STEPS` ↔ `MODULE_CATALOG` ↔ `LEARN_SECTIONS` ↔ `MODULE_TRACKS` on first page load. Standardised all unquoted object keys to quoted form. Added clarifying comments to `quiz` and `assess` step-count entries. Fixed `Industries` track color to use semantic tokens (`bg-tertiary/10 text-tertiary`).
 
-- **Aerospace module — Space Segment clarification** (`AerospaceSpacePQC/data/aerospaceConstants.ts`): Expanded `constraintDescription` to clarify that the 2027 PQC readiness year refers to ground-segment infrastructure readiness (PQC-secured uplinks, ground key management for newly launched satellites), not a retrofit of existing on-orbit satellite hardware.
+- **Aerospace module — Space Segment clarification** (`AerospacePQC/data/aerospaceConstants.ts`): Expanded `constraintDescription` to clarify that the 2027 PQC readiness year refers to ground-segment infrastructure readiness (PQC-secured uplinks, ground key management for newly launched satellites), not a retrofit of existing on-orbit satellite hardware.
 
-- **Aerospace module — ACARS standard reference fix** (`AerospaceSpacePQC/data/aerospaceProtocolData.ts`): Corrected `standardRef` for ACARS from `RTCA DO-258A / EUROCAE ED-110C` to `RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)`.
+- **Aerospace module — ACARS standard reference fix** (`AerospacePQC/data/aerospaceProtocolData.ts`): Corrected `standardRef` for ACARS from `RTCA DO-258A / EUROCAE ED-110C` to `RTCA DO-258A / ED-100A (FANS 1/A) · DO-280B / ED-110B (ATN B1)`.
 
 - **Automotive module — UNECE WP.29 R155/R156 regulatory context** (`AutomotivePQC/components/AutomotivePQCIntroduction.tsx`): Added paragraph explaining the mandatory regulatory backdrop — since July 2024 all new vehicle type approvals in the EU, Japan, and Korea require certified CSMS (R155) and SUMS (R156), with national authorities beginning to interpret "adequate cryptographic protection" to include PQC readiness for systems with multi-decade operating lives.
 
@@ -458,7 +486,7 @@ All notable changes to this project will be documented in this file.
 
 - **Healthcare PQC** (`src/components/PKILearning/modules/HealthcarePQC/`): Healthcare-specific PQC challenges. 5 workshop steps: Biometric Vault Assessor (biometric data permanence and quantum vulnerability), Pharma IP Calculator (pharmaceutical IP protection timelines), Patient Privacy Mapper (HIPAA/GDPR lifecycle analysis), Device Safety Simulator (FDA-regulated medical device safety-crypto intersection), Hospital Migration Planner (network migration across clinical systems). 90 min, intermediate. [view:/learn/healthcare-pqc] [persona:architect,ops]
 
-- **Aerospace & Space PQC** (`src/components/PKILearning/modules/AerospaceSpacePQC/`): PQC challenges unique to aerospace. 6 workshop steps: Avionics Protocol Analyzer (ARINC 429/629 and DO-326A), Satellite Link Budget (bandwidth constraints for PQC signatures), Certification Impact Analyzer (DO-178C/DO-326A recertification), Fleet Interoperability Matrix (multi-decade fleet crypto interoperability), Export Control Classifier (ITAR/EAR), Mission Lifecycle Planner. 120 min, advanced. [view:/learn/aerospace-space-pqc] [persona:architect,researcher]
+- **Aerospace & Space PQC** (`src/components/PKILearning/modules/AerospacePQC/`): PQC challenges unique to aerospace. 6 workshop steps: Avionics Protocol Analyzer (ARINC 429/629 and DO-326A), Satellite Link Budget (bandwidth constraints for PQC signatures), Certification Impact Analyzer (DO-178C/DO-326A recertification), Fleet Interoperability Matrix (multi-decade fleet crypto interoperability), Export Control Classifier (ITAR/EAR), Mission Lifecycle Planner. 120 min, advanced. [view:/learn/aerospace-pqc] [persona:architect,researcher]
 
 - **Automotive PQC** (`src/components/PKILearning/modules/AutomotivePQC/`): Post-quantum cryptography for connected and autonomous vehicles. 6 workshop steps: Vehicle Architecture Mapper (ECU/CAN bus/V2X topology), Sensor Data Integrity (LiDAR/camera signing), Safety-Crypto Analyzer (ISO 26262 ASIL/crypto intersection), OTA Orchestration Planner (15–20 year lifecycle OTA), Car Key Protocol Explorer (digital car keys and in-vehicle payments), Lifecycle Migration Roadmap. 120 min, advanced. [view:/learn/automotive-pqc] [persona:architect,developer]
 
@@ -486,7 +514,7 @@ All notable changes to this project will be documented in this file.
 
 - **Glossary expanded** (`src/data/glossaryData.ts`): 71 new terms added covering Energy & Utilities (NERC CIP, IEC 61850, IEC 62351, DNP3, SCADA, AMI, DUKPT-energy, smart meter domains) and industry-specific PQC migration vocabulary. Cross-references updated: EMV → `/learn/emv-payment-pqc`, V2X → `/learn/automotive-pqc`, ECU → `/learn/automotive-pqc`, DUKPT now includes technical note on quantum vulnerability at Key Injection Facility. [view:/glossary]
 
-- **Quiz coverage extended** (`src/data/pqcquiz_03062026_r5.csv`): 635 questions total; new categories added for `energy-utilities-pqc`, `healthcare-pqc`, `aerospace-space-pqc`, `automotive-pqc`, and `crypto-dev-apis`. `quizDataLoader.ts` updated with category mappings for all 5 new modules. [view:/learn/quiz]
+- **Quiz coverage extended** (`src/data/pqcquiz_03062026_r5.csv`): 635 questions total; new categories added for `energy-utilities-pqc`, `healthcare-pqc`, `aerospace-pqc`, `automotive-pqc`, and `crypto-dev-apis`. `quizDataLoader.ts` updated with category mappings for all 5 new modules. [view:/learn/quiz]
 
 - **Learn tracks updated** (`src/components/PKILearning/LearnTrackStack.tsx`): "Role Guides" track added with Compass icon (accent color palette). "Industries" track added with Factory icon. Track filter now supports all 7 tracks. Module persona routing for new tracks integrated. [view:/learn]
 

@@ -685,12 +685,12 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     structuredData: buildModuleSchema('Healthcare PQC', 'PT90M', 'Intermediate'),
   },
 
-  '/learn/aerospace-space-pqc': {
-    title: 'Aerospace & Space PQC — Satellite Comms, CCSDS & DO-326A Migration | PQC Today',
+  '/learn/aerospace-pqc': {
+    title: 'Aerospace PQC — Satellite Comms, CCSDS & DO-326A Migration | PQC Today',
     description:
       'Post-quantum cryptography for aerospace: satellite communication links, CCSDS protocol security, DO-326A airworthiness, ground station upgrades, and long-lifecycle mission planning.',
-    canonical: `${BASE_URL}/learn/aerospace-space-pqc`,
-    structuredData: buildModuleSchema('Aerospace & Space PQC', 'PT120M', 'Advanced'),
+    canonical: `${BASE_URL}/learn/aerospace-pqc`,
+    structuredData: buildModuleSchema('Aerospace PQC', 'PT120M', 'Advanced'),
   },
 
   '/learn/automotive-pqc': {

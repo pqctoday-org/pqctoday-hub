@@ -90,7 +90,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     '5g-security',
     'energy-utilities-pqc',
     'healthcare-pqc',
-    'aerospace-space-pqc',
+    'aerospace-pqc',
     'automotive-pqc',
     'emv-payment-pqc',
     'iot-ot-pqc',

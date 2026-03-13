@@ -10,6 +10,7 @@ import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
+import { FilterDropdown } from '../common/FilterDropdown'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
@@ -63,12 +64,20 @@ export const TimelineView = () => {
     return transformToGanttData(timelineData)
   }, [])
 
-  // Mobile: filter ganttData to the selected region's countries (mirrors desktop Gantt behaviour)
+  // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
-    if (regionFilter === 'All' || regionFilter === 'global') return ganttData
-    const allowed = new Set(REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP])
-    return ganttData.filter((d) => allowed.has(d.country.countryName))
-  }, [ganttData, regionFilter])
+    let result = ganttData
+    if (regionFilter !== 'All' && regionFilter !== 'global') {
+      const allowed = new Set(
+        REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP]
+      )
+      result = result.filter((d) => allowed.has(d.country.countryName))
+    }
+    if (countryFilter !== 'All') {
+      result = result.filter((d) => d.country.countryName === countryFilter)
+    }
+    return result
+  }, [ganttData, regionFilter, countryFilter])
 
   const handleExportCsv = useCallback(() => {
     const flatEvents = ganttData.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
@@ -169,14 +178,39 @@ export const TimelineView = () => {
 
         {/* Mobile View: Simplified List */}
         <div className="md:hidden" data-testid="mobile-view-container">
-          {regionFilter !== 'All' && regionFilter !== 'global' && (
+          <div className="flex gap-2 mb-4">
+            <div className="flex-1">
+              <FilterDropdown
+                items={regionItems}
+                selectedId={regionFilter}
+                onSelect={handleRegionChange}
+                defaultLabel="Region"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+            <div className="flex-1">
+              <FilterDropdown
+                items={countryItems}
+                selectedId={countryFilter}
+                onSelect={setCountryFilter}
+                defaultLabel="Country"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+          </div>
+          {(regionFilter !== 'All' || countryFilter !== 'All') && (
             <p className="text-xs text-primary/90 mb-3">
-              Filtered:{' '}
-              {
-                // eslint-disable-next-line security/detect-object-injection
-                REGION_LABELS[regionFilter] ?? regionFilter
-              }{' '}
-              ({mobileGanttData.length} countries)
+              {mobileGanttData.length} countr{mobileGanttData.length === 1 ? 'y' : 'ies'}
+              {regionFilter !== 'All' && regionFilter !== 'global' && (
+                <>
+                  {/* eslint-disable-next-line security/detect-object-injection */} in{' '}
+                  {REGION_LABELS[regionFilter] ?? regionFilter}
+                </>
+              )}
             </p>
           )}
           <MobileTimelineList data={mobileGanttData} />

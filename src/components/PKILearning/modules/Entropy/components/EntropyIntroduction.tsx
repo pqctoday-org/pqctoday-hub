@@ -11,6 +11,7 @@ import {
   Atom,
   Shield,
   ArrowRight,
+  Radio,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -443,6 +444,18 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
               <div className="text-sm font-medium text-foreground">KMS & PQC Key Management</div>
               <div className="text-xs text-muted-foreground">
                 Key lifecycle, envelope encryption, and PQC rotation
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/qkd"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Radio size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
+              <div className="text-xs text-muted-foreground">
+                BB84 protocol, QRNG sources, and real-world QKD deployments
               </div>
             </div>
           </Link>

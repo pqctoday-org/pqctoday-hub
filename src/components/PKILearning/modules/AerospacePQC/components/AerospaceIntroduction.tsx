@@ -15,6 +15,7 @@ import {
   Satellite,
   Plane,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -63,14 +64,12 @@ interface IntroductionProps {
   onNavigateToWorkshop: () => void
 }
 
-export const AerospaceSpaceIntroduction: React.FC<IntroductionProps> = ({
-  onNavigateToWorkshop,
-}) => {
+export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
     <div className="space-y-8 max-w-4xl mx-auto">
       {/* -- Section 1: The Quantum Threat to Aerospace ----------------------- */}
       <CollapsibleSection
-        title="The Quantum Threat to Aerospace & Space"
+        title="The Quantum Threat to Aerospace"
         icon={<Rocket size={24} className="text-primary" />}
         defaultOpen={true}
       >
@@ -624,6 +623,28 @@ export const AerospaceSpaceIntroduction: React.FC<IntroductionProps> = ({
           </p>
         </div>
       </CollapsibleSection>
+
+      {/* Related Modules */}
+      <div className="glass-panel p-4">
+        <h3 className="text-sm font-semibold text-foreground mb-3">Related Modules</h3>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { path: '/learn/iot-ot-pqc', label: 'IoT/OT Security' },
+            { path: '/learn/hsm-pqc', label: 'HSM & PQC' },
+            { path: '/learn/code-signing', label: 'Code Signing' },
+            { path: '/learn/stateful-signatures', label: 'Stateful Signatures' },
+          ].map((m) => (
+            <Link
+              key={m.path}
+              to={m.path}
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-primary hover:text-primary/80 bg-primary/10 border border-primary/20 transition-colors"
+            >
+              <ArrowRight size={10} />
+              {m.label}
+            </Link>
+          ))}
+        </div>
+      </div>
 
       {/* -- Reading Complete + Workshop CTA ----------------------------------- */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4 glass-panel p-6">

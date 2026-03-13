@@ -86,27 +86,25 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">
-                      ASC X9 Financial PKI &amp; Standards
-                    </strong>{' '}
-                    &mdash; 4 new library records + Compliance page entry for the financial
-                    industry&rsquo;s PQC trust framework launched June 2025
+                    <strong className="text-foreground">Persona-aware AI chat</strong> &mdash;
+                    retrieval boosting by industry/region, experience-level-adaptive prompts, and
+                    multi-dimensional response caching
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">43 new PQC Leaders</strong> &mdash; 181
-                    total; includes CA/B Forum, PKCS#11, Cloudflare, X9, NIST, FS-ISAC contributors
-                    with library deep-links
+                    <strong className="text-foreground">Module cross-linking</strong> &mdash; 26+
+                    module intros now have Related Modules panels; all 5 Role Guides enriched with
+                    industry deep-links
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Leader resource links</strong> &mdash; 95
-                    leaders now link directly to the reference documents they authored in the
-                    Library
+                    <strong className="text-foreground">Mobile &amp; accessibility</strong> &mdash;
+                    44px touch targets across all pages, mobile-first Migrate layout, Timeline
+                    mobile filters
                   </span>
                 </li>
               </ul>

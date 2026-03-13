@@ -3809,7 +3809,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Aircraft Communications Addressing and Reporting System. A digital data link for transmitting short messages between aircraft and ground stations via VHF radio or SATCOM.',
     technicalNote:
       'ACARS messages are limited to 220-byte blocks. ML-DSA-65 signatures (3,309 bytes) require 15+ blocks, making in-band PQC authentication infeasible without protocol redesign or gateway-mediated signing.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'protocol',
   },
@@ -3819,7 +3819,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Avionics Application Standard Software Interface (ARINC 653). An RTOS partitioning standard that isolates safety-critical software functions in separate memory/time partitions on shared hardware.',
     technicalNote:
       'Each ARINC 653 partition has a fixed memory budget (typically 1-4 MB) and CPU time window. PQC libraries must fit within these constraints alongside existing avionics functions, limiting algorithm choice.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -3829,7 +3829,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Software Considerations in Airborne Systems and Equipment Certification. The primary standard for certifying safety-critical avionics software, defining five Design Assurance Levels (DAL A through E).',
     technicalNote:
       'Adding a PQC cryptographic library to a DAL-A system (e.g., Flight Management System) requires MC/DC test coverage, traceability, and independent verification. Recertification costs $2-10M and takes 12-24 months.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -3839,7 +3839,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Airworthiness Security Process Specification. The FAA/EASA standard for addressing cybersecurity threats to airborne systems, requiring threat assessment and security controls for type certification.',
     technicalNote:
       'DO-326A mandates that cryptographic protections be evaluated against evolving threats including quantum computing. Aircraft manufacturers must demonstrate PQC readiness as part of the airworthiness security risk assessment.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -3850,7 +3850,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Controller-Pilot Data Link Communications. A text-based ATC communication system replacing voice with structured data messages between pilots and air traffic controllers.',
     technicalNote:
       'CPDLC operates over SATCOM with 600ms RTT and supports up to 1,024-byte messages. PQC signature authentication is feasible (ML-DSA-44 fits in 3 blocks) but adds latency to safety-critical ATC clearances.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'protocol',
   },
@@ -3861,7 +3861,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A change of state in a digital circuit caused by a single ionizing particle (cosmic ray or solar proton) striking a sensitive node, flipping one or more bits in memory or registers.',
     technicalNote:
       'SEUs can corrupt PQC private key material stored in spacecraft memory. Lattice-based keys (ML-KEM, ML-DSA) are particularly vulnerable due to large key sizes. Hash-based signatures (LMS/XMSS) are more resilient because verification reconstructs from public data.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -3871,7 +3871,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A microprocessor designed to operate in high-radiation environments (space, nuclear facilities) with protection against single-event effects, total ionizing dose, and latch-up.',
     technicalNote:
       'Rad-hard processors (RAD750 at 200 MHz, GR740 at 250 MHz) lag commercial silicon by 2-4 generations. Their limited clock speed, RAM (256 KB to 256 MB), and instruction sets constrain PQC algorithm performance.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'concept',
   },
@@ -3882,7 +3882,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'A modular avionics component designed to be quickly swapped on an aircraft during maintenance without extensive disassembly, enabling field-level repairs.',
     technicalNote:
       'LRU replacement is the primary mechanism for upgrading aircraft crypto hardware. Legacy LRUs certified under DO-178B may lack the flash/RAM capacity for PQC libraries. New LRUs require full DO-178C recertification.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'intermediate',
     category: 'concept',
   },
@@ -3893,7 +3893,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'US export control regulations (22 CFR 120-130) governing the export and transfer of defense articles and services, including military cryptographic systems listed on the US Munitions List.',
     technicalNote:
       'ITAR Category XI covers military cryptographic equipment. PQC implementations for military aircraft or defense satellites require State Department export licenses. No license exceptions exist for embargoed destinations.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'standard',
   },
@@ -3904,7 +3904,7 @@ export const glossaryTerms: GlossaryTerm[] = [
       'Automatic Dependent Surveillance-Broadcast. A surveillance system where aircraft broadcast their GPS-derived position, altitude, and velocity on 1090 MHz, receivable by ground stations and other aircraft.',
     technicalNote:
       'ADS-B transmits unauthenticated 112-bit messages (14 bytes payload) with no encryption or signing. The message size is far too small for any PQC signature. Authentication requires out-of-band verification or protocol redesign.',
-    relatedModule: '/learn/aerospace-space-pqc',
+    relatedModule: '/learn/aerospace-pqc',
     complexity: 'advanced',
     category: 'protocol',
   },

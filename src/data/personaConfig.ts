@@ -173,7 +173,7 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
   'emv-payment-pqc': ['Finance & Banking', 'Retail & E-Commerce'],
   'energy-utilities-pqc': ['Energy & Utilities', 'Government & Defense'],
   'healthcare-pqc': ['Healthcare', 'Government & Defense', 'Finance & Banking'],
-  'aerospace-space-pqc': ['Aerospace', 'Government & Defense'],
+  'aerospace-pqc': ['Aerospace', 'Government & Defense'],
   'automotive-pqc': ['Automotive'],
   'confidential-computing': [
     'Technology',
@@ -424,6 +424,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'dev-cp-3', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'dev-cp-3', route: '/openssl', label: 'OpenSSL Studio' },
     { afterPhase: 'dev-cp-4', route: '/assess', label: 'Run Risk Assessment' },
+    { afterPhase: 'dev-cp-5', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
   architect: [
     { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },

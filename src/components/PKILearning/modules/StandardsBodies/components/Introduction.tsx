@@ -875,6 +875,27 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
       </div>
     </section>
 
+    {/* Related Modules */}
+    <div className="glass-panel p-4">
+      <h3 className="text-sm font-semibold text-foreground mb-3">Related Modules</h3>
+      <div className="flex flex-wrap gap-2">
+        {[
+          { path: '/learn/compliance-strategy', label: 'Compliance Strategy' },
+          { path: '/learn/pqc-101', label: 'PQC 101' },
+          { path: '/learn/pki-workshop', label: 'PKI Workshop' },
+        ].map((m) => (
+          <Link
+            key={m.path}
+            to={m.path}
+            className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-primary hover:text-primary/80 bg-primary/10 border border-primary/20 transition-colors"
+          >
+            <ArrowRight size={10} />
+            {m.label}
+          </Link>
+        ))}
+      </div>
+    </div>
+
     <div className="text-center">
       <Button variant="gradient" size="lg" onClick={onNavigateToWorkshop}>
         Start Workshop <ArrowRight size={18} />

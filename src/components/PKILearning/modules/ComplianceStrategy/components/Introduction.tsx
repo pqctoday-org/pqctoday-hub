@@ -14,6 +14,7 @@ import {
   Building2,
   MapPin,
   Lock,
+  Landmark,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -616,6 +617,18 @@ const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> 
             <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
             <div className="text-xs text-muted-foreground">
               RACI matrices, policies, and board reporting
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/learn/standards-bodies"
+          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+        >
+          <Landmark size={18} className="text-primary shrink-0" />
+          <div>
+            <div className="text-sm font-medium text-foreground">Standards Bodies</div>
+            <div className="text-xs text-muted-foreground">
+              Who creates PQC standards, certifies products &amp; mandates compliance
             </div>
           </div>
         </Link>

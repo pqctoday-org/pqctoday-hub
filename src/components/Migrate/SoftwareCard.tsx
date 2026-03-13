@@ -71,7 +71,7 @@ export const SoftwareCard = ({
             type="button"
             aria-label="Hide this product"
             onClick={() => onHide(key)}
-            className="ml-auto p-1 rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+            className="ml-auto p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
           >
             <EyeOff size={14} />
           </button>
@@ -141,7 +141,7 @@ export const SoftwareCard = ({
             type="button"
             aria-label={isSelected ? 'Remove from My Products' : 'Add to My Products'}
             onClick={() => onToggleSelect(key)}
-            className={`ml-auto p-1 rounded transition-colors ${
+            className={`ml-auto p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors ${
               isSelected
                 ? 'text-primary hover:text-primary/80'
                 : 'text-muted-foreground/40 hover:text-primary'

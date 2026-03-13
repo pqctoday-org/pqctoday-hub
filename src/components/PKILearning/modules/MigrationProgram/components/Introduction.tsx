@@ -12,6 +12,7 @@ import {
   BarChart3,
   Shield,
   Calendar,
+  Briefcase,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
@@ -331,6 +332,18 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
             <div className="text-sm font-medium text-foreground">PQC Governance &amp; Policy</div>
             <div className="text-xs text-muted-foreground">
               RACI matrices, policy drafts, and KPI dashboards
+            </div>
+          </div>
+        </Link>
+        <Link
+          to="/learn/pqc-business-case"
+          className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+        >
+          <Briefcase size={18} className="text-primary shrink-0" />
+          <div>
+            <div className="text-sm font-medium text-foreground">PQC Business Case</div>
+            <div className="text-xs text-muted-foreground">
+              Build executive-ready justification for PQC investment
             </div>
           </div>
         </Link>

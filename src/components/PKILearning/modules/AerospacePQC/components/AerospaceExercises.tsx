@@ -22,7 +22,7 @@ interface Scenario {
   config: WorkshopConfig
 }
 
-export const AerospaceSpaceExercises: React.FC<ExercisesProps> = ({
+export const AerospaceExercises: React.FC<ExercisesProps> = ({
   onNavigateToWorkshop,
   onSetWorkshopConfig,
 }) => {

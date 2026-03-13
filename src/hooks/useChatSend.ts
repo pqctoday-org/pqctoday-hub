@@ -19,6 +19,12 @@ const STREAM_TIMEOUT_MS = 60_000
 const LOCAL_STREAM_TIMEOUT_MS = 120_000 // Local models may be slower
 const MAX_INPUT_LENGTH = 1_000
 
+/** Monotonic counter to prevent ID collisions when multiple messages are created in the same ms. */
+let msgCounter = 0
+function nextMsgId(prefix: string): string {
+  return `${prefix}-${Date.now()}-${++msgCounter}`
+}
+
 /**
  * Shared hook encapsulating RAG retrieval → LLM streaming → follow-up parsing.
  * Dispatches to Gemini (cloud) or WebLLM (local) based on the provider field
@@ -63,7 +69,7 @@ export function useChatSend() {
       logChatQuery(pageContext.page)
 
       const userMessage: ChatMessage = {
-        id: `user-${Date.now()}`,
+        id: nextMsgId('user'),
         role: 'user',
         content: trimmed,
         timestamp: Date.now(),
@@ -74,11 +80,17 @@ export function useChatSend() {
       setError(null)
 
       // Check response cache before RAG retrieval
-      const cached = getCached(trimmed, pageContext.page)
+      const personaDims = {
+        persona: pageContext.persona,
+        experienceLevel: pageContext.experienceLevel,
+        industry: pageContext.industry,
+        region: pageContext.region,
+      }
+      const cached = getCached(trimmed, pageContext.page, personaDims)
       if (cached) {
         logChatCacheHit(pageContext.page)
         const cachedMessage: ChatMessage = {
-          id: `assistant-${Date.now()}`,
+          id: nextMsgId('assistant'),
           role: 'assistant',
           content: cached.content,
           timestamp: Date.now(),
@@ -98,6 +110,10 @@ export function useChatSend() {
       const sourceRefs: ChatSourceRef[] = []
       const timeoutMs = provider === 'local' ? LOCAL_STREAM_TIMEOUT_MS : STREAM_TIMEOUT_MS
 
+      // Create abort controller early so Stop button works during model download
+      const controller = new AbortController()
+      abortRef.current = controller
+
       try {
         // For local provider: ensure engine is loaded (lazy initialization)
         if (provider === 'local' && !isEngineReady()) {
@@ -113,6 +129,11 @@ export function useChatSend() {
               localContextWindow
             )
             setWebLLMStatus('ready')
+            // Bail if user clicked Stop during download
+            if (controller.signal.aborted) {
+              setLoading(false)
+              return
+            }
           } catch (err) {
             const msg = err instanceof Error ? err.message : 'Failed to load local model.'
             setWebLLMError(msg)
@@ -136,14 +157,16 @@ export function useChatSend() {
           relevantSources: pageContext.relevantSources,
           conversationContext: recentQueries,
           persona: pageContext.persona,
+          industry: pageContext.industry,
+          region: pageContext.region,
         })
 
-        // Build conversation for API
-        const allMessages = [...messages, userMessage]
+        // Read latest messages from store (not closure) so that prior
+        // deleteMessagesFrom calls in retryLastQuery/editAndResend are reflected.
+        // addMessage above already added userMessage synchronously.
+        const allMessages = useChatStore.getState().messages
 
         // Stream response with safety timeout
-        const controller = new AbortController()
-        abortRef.current = controller
         timeoutId = setTimeout(() => {
           timedOut = true
           controller.abort()
@@ -232,7 +255,7 @@ export function useChatSend() {
 
         // Finalize message
         const assistantMessage: ChatMessage = {
-          id: `assistant-${Date.now()}`,
+          id: nextMsgId('assistant'),
           role: 'assistant',
           content: finalContent,
           timestamp: Date.now(),
@@ -243,12 +266,12 @@ export function useChatSend() {
         addMessage(assistantMessage)
 
         // Cache successful response for deduplication
-        setCache(trimmed, pageContext.page, {
-          content: finalContent,
-          sourceIds,
-          sourceRefs,
-          followUps,
-        })
+        setCache(
+          trimmed,
+          pageContext.page,
+          { content: finalContent, sourceIds, sourceRefs, followUps },
+          personaDims
+        )
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {
           if (timedOut) {
@@ -256,7 +279,7 @@ export function useChatSend() {
               // Save partial content instead of discarding on timeout
               const { cleanContent, followUps } = parseFollowUps(fullContent)
               const assistantMessage: ChatMessage = {
-                id: `assistant-${Date.now()}`,
+                id: nextMsgId('assistant'),
                 role: 'assistant',
                 content:
                   cleanContent.trimEnd() +
@@ -278,7 +301,7 @@ export function useChatSend() {
         if (fullContent.trim()) {
           const { cleanContent, followUps } = parseFollowUps(fullContent)
           const assistantMessage: ChatMessage = {
-            id: `assistant-${Date.now()}`,
+            id: nextMsgId('assistant'),
             role: 'assistant',
             content:
               cleanContent.trimEnd() +
@@ -298,9 +321,10 @@ export function useChatSend() {
         // Restore the query so the user can retry by clicking Send
         onInputRestore?.(trimmed)
 
-        // If API key is invalid, clear it
+        // If API key is invalid, clear it and surface a clear message
         if (provider === 'gemini' && errorMsg.includes('Invalid API key')) {
           setApiKey(null)
+          setError('API key is invalid. Please update your key in the provider settings.')
         }
       } finally {
         if (timeoutId) clearTimeout(timeoutId)

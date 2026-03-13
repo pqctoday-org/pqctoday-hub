@@ -8,37 +8,8 @@ import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { CountryFlag } from '../common/CountryFlag'
+import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
-
-const FLAG_CODE_MAP: Record<string, string> = {
-  USA: 'us',
-  UK: 'gb',
-  France: 'fr',
-  Germany: 'de',
-  Switzerland: 'ch',
-  Canada: 'ca',
-  Singapore: 'sg',
-  Japan: 'jp',
-  'South Korea': 'kr',
-  Australia: 'au',
-  Israel: 'il',
-  Belgium: 'be',
-  Portugal: 'pt',
-  Netherlands: 'nl',
-  Sweden: 'se',
-  Spain: 'es',
-  Italy: 'it',
-  India: 'in',
-  China: 'cn',
-  Russia: 'ru',
-  'Estonia/EU': 'eu',
-  'USA/Switzerland': 'us',
-  'USA/Germany': 'us',
-  'USA/Canada': 'us',
-  'France/Netherlands': 'fr',
-  'Germany/Netherlands': 'de',
-  'France/USA': 'fr',
-}
 
 interface LeaderDetailPopoverProps {
   isOpen: boolean

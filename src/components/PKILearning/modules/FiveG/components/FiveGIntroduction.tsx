@@ -11,6 +11,8 @@ import {
   BarChart3,
   Calendar,
   Globe,
+  Cpu,
+  Car,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -385,6 +387,30 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
               <div className="text-sm font-medium text-foreground">TLS Basics</div>
               <div className="text-xs text-muted-foreground">
                 How TLS 1.3 works and where PQC fits in
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/iot-ot-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Cpu size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">IoT/OT Security</div>
+              <div className="text-xs text-muted-foreground">
+                PQC for constrained devices &amp; industrial protocols
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/automotive-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Car size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Automotive PQC</div>
+              <div className="text-xs text-muted-foreground">
+                V2X, AUTOSAR &amp; connected vehicle PQC migration
               </div>
             </div>
           </Link>

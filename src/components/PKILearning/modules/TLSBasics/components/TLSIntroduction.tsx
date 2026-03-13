@@ -387,6 +387,30 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
               </div>
             </div>
           </Link>
+          <Link
+            to="/learn/web-gateway-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Lock size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Web Gateway PQC</div>
+              <div className="text-xs text-muted-foreground">
+                PQC TLS termination at reverse proxies &amp; CDNs
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/network-security-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Shield size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Network Security</div>
+              <div className="text-xs text-muted-foreground">
+                NGFWs, TLS inspection &amp; ZTNA with PQC cipher suites
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
       <ReadingCompleteButton />

@@ -58,7 +58,7 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data
             type="button"
             onClick={() => setPqcOnly((v) => !v)}
             className={clsx(
-              'flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-xs font-medium transition-all',
+              'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-full border text-xs font-medium transition-all',
               pqcOnly
                 ? 'border-tertiary/30 bg-tertiary/10 text-foreground'
                 : 'border-border bg-card text-muted-foreground'

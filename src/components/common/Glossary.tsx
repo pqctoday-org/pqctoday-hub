@@ -153,7 +153,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       setSearch(e.target.value)
                       setActiveLetter(null)
                     }}
-                    className="w-full bg-muted/30 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
+                    className="w-full bg-muted/30 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 transition-colors text-foreground placeholder:text-muted-foreground"
                     aria-label="Search glossary terms"
                   />
                 </div>

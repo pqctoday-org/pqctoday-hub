@@ -4,37 +4,8 @@ import { ArrowUpDown, ArrowUp, ArrowDown, Info, User } from 'lucide-react'
 import type { Leader } from '../../data/leadersData'
 import { CountryFlag } from '../common/CountryFlag'
 import { StatusBadge } from '../common/StatusBadge'
+import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
-
-const FLAG_CODE_MAP: Record<string, string> = {
-  USA: 'us',
-  UK: 'gb',
-  France: 'fr',
-  Germany: 'de',
-  Switzerland: 'ch',
-  Canada: 'ca',
-  Singapore: 'sg',
-  Japan: 'jp',
-  'South Korea': 'kr',
-  Australia: 'au',
-  Israel: 'il',
-  Belgium: 'be',
-  Portugal: 'pt',
-  Netherlands: 'nl',
-  Sweden: 'se',
-  Spain: 'es',
-  Italy: 'it',
-  India: 'in',
-  China: 'cn',
-  Russia: 'ru',
-  'Estonia/EU': 'eu',
-  'USA/Switzerland': 'us',
-  'USA/Germany': 'us',
-  'USA/Canada': 'us',
-  'France/Netherlands': 'fr',
-  'Germany/Netherlands': 'de',
-  'France/USA': 'fr',
-}
 
 type SortKey = 'name' | 'title' | 'organization' | 'country' | 'type'
 type SortDirection = 'asc' | 'desc'
@@ -222,7 +193,7 @@ const LeaderRow = ({
       <td className="px-3 py-3 text-right">
         <button
           onClick={() => onViewDetails(leader)}
-          className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
+          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
           aria-label={`View details for ${leader.name}`}
         >
           <Info size={16} />

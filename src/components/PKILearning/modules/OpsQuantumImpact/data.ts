@@ -133,7 +133,10 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       skill: 'PQC TLS Configuration',
       description: 'Configuring servers, load balancers, and proxies for PQC TLS cipher suites.',
       targetLevel: 'advanced',
-      linkedModules: [{ id: 'tls-basics', label: 'TLS Basics' }],
+      linkedModules: [
+        { id: 'tls-basics', label: 'TLS Basics' },
+        { id: 'os-pqc', label: 'OS PQC' },
+      ],
     },
     {
       id: 'vpn-ssh-config',
@@ -142,7 +145,10 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Configuring IPsec IKEv2 with ML-KEM and SSH with PQC key exchange across device fleets.',
       targetLevel: 'intermediate',
-      linkedModules: [{ id: 'vpn-ssh-pqc', label: 'VPN/SSH PQC' }],
+      linkedModules: [
+        { id: 'vpn-ssh-pqc', label: 'VPN/SSH PQC' },
+        { id: 'network-security-pqc', label: 'Network Security' },
+      ],
     },
     {
       id: 'kms-ops',
@@ -151,7 +157,10 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Operating key management systems with PQC key types, rotation policies, and envelope encryption.',
       targetLevel: 'intermediate',
-      linkedModules: [{ id: 'kms-pqc', label: 'KMS & PQC' }],
+      linkedModules: [
+        { id: 'kms-pqc', label: 'KMS & PQC' },
+        { id: 'database-encryption-pqc', label: 'Database Encryption' },
+      ],
     },
     {
       id: 'fleet-migration',
@@ -178,7 +187,10 @@ export const OPS_GUIDE_DATA: RoleGuideData = {
       description:
         'Managing PQC transitions for constrained IoT devices and operational technology systems.',
       targetLevel: 'basic',
-      linkedModules: [{ id: 'iot-ot-pqc', label: 'IoT/OT PQC' }],
+      linkedModules: [
+        { id: 'iot-ot-pqc', label: 'IoT/OT PQC' },
+        { id: 'secure-boot-pqc', label: 'Secure Boot' },
+      ],
     },
     {
       id: 'crypto-agility-ops',

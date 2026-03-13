@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, AlertTriangle, BookOpen, Rocket } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { DEV_GUIDE_DATA } from './data'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
@@ -172,13 +173,15 @@ export const DevQuantumImpactModule: React.FC = () => {
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+                className="text-destructive hover:bg-destructive/10 border border-destructive/20"
               >
                 <Trash2 size={16} />
                 Reset
-              </button>
+              </Button>
             </div>
 
             <div className="overflow-x-auto px-2 sm:px-0">
@@ -228,27 +231,26 @@ export const DevQuantumImpactModule: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
+              <Button
+                variant="outline"
+                size="lg"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
-              </button>
+              </Button>
               {currentPart === PARTS.length - 1 ? (
-                <button
+                <Button
+                  variant="gradient"
+                  size="lg"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
                   Complete Module
-                </button>
+                </Button>
               ) : (
-                <button
-                  onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-                >
+                <Button size="lg" onClick={() => handlePartChange(currentPart + 1)}>
                   Next Step &rarr;
-                </button>
+                </Button>
               )}
             </div>
           </div>

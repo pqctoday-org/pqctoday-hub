@@ -16,6 +16,7 @@ export interface PageContext {
   persona?: string | null
   industry?: string | null
   region?: string | null
+  experienceLevel?: string | null
   // Assessment context (only populated when assessment is complete)
   assessmentComplete?: boolean
   riskScore?: number
@@ -181,6 +182,23 @@ const MODULE_NAMES: Record<string, string> = {
   'arch-quantum-impact': 'Architect Quantum Impact',
   'ops-quantum-impact': 'Ops Quantum Impact',
   'research-quantum-impact': 'Researcher Quantum Impact',
+  'web-gateway-pqc': 'Web Gateway PQC',
+  'network-security-pqc': 'Network Security & PQC Migration',
+  'ai-security-pqc': 'AI Security & PQC',
+  'emv-payment-pqc': 'EMV Payment Systems & PQC',
+  'healthcare-pqc': 'Healthcare PQC',
+  'energy-utilities-pqc': 'Energy & Utilities PQC',
+  'automotive-pqc': 'Automotive PQC',
+  'aerospace-pqc': 'Aerospace PQC',
+  'confidential-computing': 'Confidential Computing & TEEs',
+  'database-encryption-pqc': 'Database Encryption & PQC',
+  'secrets-management-pqc': 'Secrets Management & PQC',
+  'platform-eng-pqc': 'Platform Engineering & PQC',
+  'secure-boot-pqc': 'Secure Boot & Firmware PQC',
+  'os-pqc': 'Operating System & Platform Crypto PQC',
+  'iam-pqc': 'Identity & Access Management with PQC',
+  'standards-bodies': 'Standards, Certification & Compliance Bodies',
+  'crypto-dev-apis': 'Cryptographic APIs & Developer Languages',
 }
 
 /** Module-specific suggested questions — curated for top modules, others use generic template */
@@ -345,6 +363,120 @@ const MODULE_SUGGESTED_QUESTIONS: Record<string, string[]> = {
     'What are the emerging PQC research frontiers?',
     'How can researchers contribute to PQC standards?',
   ],
+  'web-gateway-pqc': [
+    'How do PQC handshake sizes affect CDN and load balancer performance?',
+    'What TLS termination patterns work best for hybrid PQC deployment?',
+    'Which web gateway vendors support PQC today?',
+  ],
+  'network-security-pqc': [
+    'How does PQC affect TLS inspection on next-gen firewalls?',
+    'What IDS/IPS signature updates are needed for PQC traffic detection?',
+    'How do I design a PQC-aware zero trust network architecture?',
+  ],
+  'ai-security-pqc': [
+    'How does HNDL risk apply to AI training data pipelines?',
+    'What PQC algorithms protect AI model weights and signing?',
+    'How do AI agent authentication and delegation chains use PQC?',
+  ],
+  'emv-payment-pqc': [
+    'Why is FN-DSA-512 preferred over ML-DSA for constrained payment cards?',
+    'Which EMV authentication methods (SDA, DDA, CDA) are quantum-vulnerable?',
+    'What is the PQC migration timeline for payment network HSMs?',
+  ],
+  'healthcare-pqc': [
+    'Why are biometric data and genomic records the highest HNDL priority?',
+    'How does PQC affect HIPAA compliance and PHI encryption requirements?',
+    'What are the PQC constraints for implantable medical devices?',
+  ],
+  'energy-utilities-pqc': [
+    'Can PQC signatures fit within IEC 61850 GOOSE 4ms trip timing budgets?',
+    'How do I migrate DNP3 Secure Authentication key ceremonies to ML-KEM?',
+    'What is the HNDL risk for smart meters with 20-year lifetimes?',
+  ],
+  'automotive-pqc': [
+    'How do ASIL safety levels constrain PQC algorithm choices in vehicles?',
+    'What is the OTA firmware signing migration path to ML-DSA?',
+    'How does CCC Digital Key 3.0 use hybrid PQC key exchange?',
+  ],
+  'aerospace-pqc': [
+    'Why can ARINC 429 and ACARS not carry PQC signatures on-wire?',
+    'How does DO-178C re-certification affect PQC migration timelines?',
+    'What are the ITAR/EAR export control implications for PQC in avionics?',
+  ],
+  'confidential-computing': [
+    'How do TEE attestation chains become vulnerable to quantum attacks?',
+    'What is the PQC migration path for Intel SGX, AMD SEV-SNP, and ARM CCA?',
+    'How do TEE-HSM trusted channels integrate PQC key provisioning?',
+  ],
+  'database-encryption-pqc': [
+    'Is AES-256 TDE already quantum-safe, and what still needs migration?',
+    'How do BYOK and HYOK patterns change with ML-KEM key wrapping?',
+    'Which database vendors support PQC-capable queryable encryption?',
+  ],
+  'secrets-management-pqc': [
+    'How do I classify secrets by HNDL risk for PQC migration priority?',
+    'What is the Vault transit engine upgrade path to ML-KEM and ML-DSA?',
+    'How do Kubernetes secrets and external secrets operators adopt PQC?',
+  ],
+  'platform-eng-pqc': [
+    'How do I inventory quantum-vulnerable crypto in a CI/CD pipeline?',
+    'What is the container image signing migration path from ECDSA to ML-DSA?',
+    'How do OPA/Kyverno policies enforce PQC algorithm requirements?',
+  ],
+  'secure-boot-pqc': [
+    'How do I migrate the UEFI PK/KEK/db key hierarchy to ML-DSA?',
+    'What is the TPM 2.0 path to post-quantum attestation?',
+    'Which firmware vendors have PQC roadmaps?',
+  ],
+  'os-pqc': [
+    'How do I configure system-wide TLS crypto policies for PQC?',
+    'What is the SSH host key migration path to ML-DSA?',
+    'How does FIPS mode interact with PQC algorithm enablement?',
+  ],
+  'iam-pqc': [
+    'How do I migrate JWT and SAML token signing to ML-DSA?',
+    'What are the HNDL risks for Kerberos tickets and OIDC tokens?',
+    'Which IAM vendors have PQC roadmaps?',
+  ],
+  'standards-bodies': [
+    'What is the difference between standards bodies, certification bodies, and regulators?',
+    'How does the NIST-to-CMVP-to-CNSA 2.0 standards chain work?',
+    'How do ETSI, BSI, and ANSSI differ in their PQC requirements?',
+  ],
+  'crypto-dev-apis': [
+    'How do JCA/JCE, OpenSSL EVP, and PKCS#11 compare for PQC integration?',
+    'Which PQC libraries have FIPS validation?',
+    'What crypto agility patterns minimize migration effort when algorithms change?',
+  ],
+}
+
+/** Persona-specific generic fallback questions for module pages without curated questions */
+const PERSONA_GENERIC_QUESTIONS: Record<string, (moduleName: string) => string[]> = {
+  executive: (m) => [
+    `What is the business impact of ${m}?`,
+    `What are the compliance implications of ${m}?`,
+    `How does ${m} affect our PQC migration timeline?`,
+  ],
+  developer: (m) => [
+    `What are the implementation details of ${m}?`,
+    `How do I integrate ${m} into my codebase?`,
+    `What APIs or libraries support ${m}?`,
+  ],
+  architect: (m) => [
+    `What are the architecture trade-offs in ${m}?`,
+    `How does ${m} fit into a crypto-agile design?`,
+    `What infrastructure changes does ${m} require?`,
+  ],
+  researcher: (m) => [
+    `What are the mathematical foundations behind ${m}?`,
+    `What open research questions exist in ${m}?`,
+    `How does ${m} compare to alternative approaches?`,
+  ],
+  ops: (m) => [
+    `How do I deploy ${m} in production?`,
+    `What monitoring or config changes does ${m} need?`,
+    `What are the operational risks of ${m}?`,
+  ],
 }
 
 const DEFAULT_CONTEXT: PageContext = {
@@ -359,7 +491,7 @@ const DEFAULT_CONTEXT: PageContext = {
 
 export function usePageContext(): PageContext {
   const location = useLocation()
-  const { selectedPersona, selectedIndustry, selectedRegion } = usePersonaStore()
+  const { selectedPersona, selectedIndustry, selectedRegion, experienceLevel } = usePersonaStore()
   const {
     assessmentStatus,
     lastResult,
@@ -378,6 +510,7 @@ export function usePageContext(): PageContext {
       persona: selectedPersona,
       industry: selectedIndustry,
       region: selectedRegion,
+      experienceLevel,
     }
 
     // Assessment fields — only when complete with a result
@@ -414,11 +547,12 @@ export function usePageContext(): PageContext {
             'glossary',
             'algorithms',
           ],
-          suggestedQuestions: moduleQuestions ?? [
-            `What are the key concepts in ${moduleName}?`,
-            `How does ${moduleName} relate to PQC migration?`,
-            'What other modules should I explore?',
-          ],
+          suggestedQuestions: moduleQuestions ??
+            (selectedPersona ? PERSONA_GENERIC_QUESTIONS[selectedPersona]?.(moduleName) : null) ?? [
+              `What are the key concepts in ${moduleName}?`,
+              `How does ${moduleName} relate to PQC migration?`,
+              'What other modules should I explore?',
+            ],
           ...personaFields,
           ...assessmentFields,
         }
@@ -439,6 +573,7 @@ export function usePageContext(): PageContext {
     selectedPersona,
     selectedIndustry,
     selectedRegion,
+    experienceLevel,
     assessmentStatus,
     lastResult,
     complianceRequirements,

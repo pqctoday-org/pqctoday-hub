@@ -76,10 +76,39 @@ const DISCUSSIONS = [
 
 const CRYPTO_BUFF_SITES = [
   {
+    label: 'NIST Post-Quantum Cryptography',
+    description:
+      'Official NIST PQC standardization project — FIPS 203/204/205 standards, submissions, and status updates',
+    url: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
+  },
+  {
+    label: 'Open Quantum Safe (OQS)',
+    description:
+      'Open-source PQC library (liboqs) and OpenSSL/BoringSSL integrations — reference implementations',
+    url: 'https://openquantumsafe.org',
+  },
+  {
+    label: 'IACR ePrint Archive',
+    description: 'Preprint server for cryptography research — where PQC papers appear first',
+    url: 'https://eprint.iacr.org',
+  },
+  {
     label: 'A Security Site — PQC',
     description:
       'Prof. Bill Buchanan OBE — extensive PQC algorithm references and interactive labs',
     url: 'https://asecuritysite.com/pqc',
+  },
+  {
+    label: 'cr.yp.to — Daniel J. Bernstein',
+    description:
+      'Co-creator of SPHINCS+/SLH-DSA and NTRU contributor — papers, software, and PQC commentary',
+    url: 'https://cr.yp.to',
+  },
+  {
+    label: 'Cryptographic Engineering — Matthew Green',
+    description:
+      'Johns Hopkins professor — accessible deep dives on PQC, protocol security, and crypto policy',
+    url: 'https://blog.cryptographyengineering.com',
   },
   {
     label: 'Schneier on Security',
@@ -92,24 +121,57 @@ const CRYPTO_BUFF_SITES = [
     url: 'https://crypto.stanford.edu',
   },
   {
-    label: 'MIT OpenCourseWare — Cryptography',
-    description: 'Free MIT lecture notes and problem sets for cryptography courses',
-    url: 'https://ocw.mit.edu',
-  },
-  {
     label: 'Cryptography I — Dan Boneh (Coursera)',
     description: "The gold-standard free online cryptography course by Stanford's Dan Boneh",
     url: 'https://www.coursera.org/learn/crypto',
   },
+  {
+    label: 'MIT OpenCourseWare — Cryptography',
+    description: 'Free MIT lecture notes and problem sets for cryptography courses',
+    url: 'https://ocw.mit.edu',
+  },
 ]
 
 const CRYPTO_BUFF_BOOKS = [
+  {
+    title: 'Post-Quantum Cryptography',
+    author: 'Daniel J. Bernstein, Johannes Buchmann & Erik Dahmen',
+    description:
+      'The foundational PQC textbook — lattice, code-based, hash-based, and multivariate algorithm families',
+    url: 'https://link.springer.com/book/10.1007/978-3-540-88702-7',
+  },
+  {
+    title: 'An Introduction to Mathematical Cryptography',
+    author: 'Jeffrey Hoffstein, Jill Pipher & Joseph H. Silverman',
+    description:
+      'Lattice-based crypto foundations (the math behind ML-KEM and ML-DSA) — by the creators of NTRU',
+    url: 'https://link.springer.com/book/10.1007/978-1-4939-1711-2',
+  },
+  {
+    title: 'A Graduate Course in Applied Cryptography',
+    author: 'Dan Boneh & Victor Shoup',
+    description:
+      'Comprehensive and free — provable security, public-key encryption, and signature schemes',
+    url: 'https://toc.cryptobook.us',
+  },
   {
     title: 'Real World Cryptography',
     author: 'David Wong',
     description:
       'Hands-on guide to modern crypto primitives, protocols, and their real-world application',
     url: 'https://www.manning.com/books/real-world-cryptography',
+  },
+  {
+    title: 'Serious Cryptography',
+    author: 'Jean-Philippe Aumasson',
+    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
+    url: 'https://nostarch.com/seriouscrypto',
+  },
+  {
+    title: 'Applied Cryptography',
+    author: 'Bruce Schneier',
+    description: 'The classic reference on cryptographic protocols, algorithms, and source code',
+    url: 'https://www.schneier.com/books/applied-cryptography/',
   },
   {
     title: 'The Code Book',
@@ -122,12 +184,6 @@ const CRYPTO_BUFF_BOOKS = [
     author: 'Alex Preukschat & Drummond Reed',
     description: 'Decentralized digital identity architecture, VCs, DIDs, and trust frameworks',
     url: 'https://www.manning.com/books/self-sovereign-identity',
-  },
-  {
-    title: 'Serious Cryptography',
-    author: 'Jean-Philippe Aumasson',
-    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
-    url: 'https://nostarch.com/seriouscrypto',
   },
 ]
 
@@ -171,7 +227,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today brings together 48 learning modules across 8 tracks &mdash; including role
-          guides, industry verticals, and hands-on crypto labs &mdash; 755 quiz questions, a risk
+          guides, industry verticals, and hands-on crypto labs &mdash; 805 quiz questions, a risk
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role as a developer, architect, operations professional, executive, or researcher.
         </p>
@@ -194,15 +250,15 @@ export const MobileAboutView = () => {
           </div>
         </div>
         <div className="text-center mb-3">
-          <span className="text-3xl font-bold text-gradient">2,100+</span>
+          <span className="text-3xl font-bold text-gradient">2,200+</span>
           <p className="text-xs text-muted-foreground mt-1">curated records across 10 datasets</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
           {[
             { label: 'Timeline Events', value: '203' },
-            { label: 'Migrate Products', value: '371' },
-            { label: 'Library Resources', value: '304' },
-            { label: 'Quiz Questions', value: '755' },
+            { label: 'Migrate Products', value: '377' },
+            { label: 'Library Resources', value: '325' },
+            { label: 'Quiz Questions', value: '805' },
           ].map((s) => (
             <div
               key={s.label}
@@ -440,7 +496,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
-          ~3,670 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
+          ~3,830 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
           deep links to relevant pages.
         </p>
       </motion.div>

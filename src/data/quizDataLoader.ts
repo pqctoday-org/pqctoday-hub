@@ -347,8 +347,8 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'HIPAA/HITECH compliance, HL7 FHIR security, medical device cryptography, and healthcare data protection.',
       icon: 'Heart',
     },
-    'aerospace-space-pqc': {
-      label: 'Aerospace & Space PQC',
+    'aerospace-pqc': {
+      label: 'Aerospace PQC',
       description:
         'Avionics protocol constraints, satellite link budgets, DO-178C certification, export controls, and multi-decade fleet crypto interoperability.',
       icon: 'Rocket',
@@ -412,6 +412,36 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
       description:
         'System-wide TLS policies, SSH host key migration, package signing, and FIPS mode compatibility for OS-level PQC.',
       icon: 'Monitor',
+    },
+    'exec-quantum-impact': {
+      label: 'Executive Quantum Impact',
+      description:
+        'Fiduciary risk, regulatory deadlines, board-level PQC action planning, and quantum exposure self-assessment.',
+      icon: 'Briefcase',
+    },
+    'dev-quantum-impact': {
+      label: 'Developer Quantum Impact',
+      description:
+        'Library transitions, key/signature size impacts, TLS/JWT migration, and developer PQC readiness.',
+      icon: 'Code',
+    },
+    'arch-quantum-impact': {
+      label: 'Architect Quantum Impact',
+      description:
+        'PKI hierarchy migration, hybrid certificate design, HSM root of trust, and crypto-agile architecture.',
+      icon: 'Layers',
+    },
+    'ops-quantum-impact': {
+      label: 'Ops Quantum Impact',
+      description:
+        'Certificate operations, VPN/SSH fleet migration, monitoring recalibration, and deployment pipeline PQC.',
+      icon: 'Settings',
+    },
+    'research-quantum-impact': {
+      label: 'Researcher Quantum Impact',
+      description:
+        'Research data HNDL exposure, institutional infrastructure, PQC algorithm research opportunities.',
+      icon: 'Microscope',
     },
   }
 

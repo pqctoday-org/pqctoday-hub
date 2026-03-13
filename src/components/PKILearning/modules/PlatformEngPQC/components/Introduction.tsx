@@ -12,6 +12,7 @@ import {
   Map,
   AlertTriangle,
   ArrowRight,
+  Brain,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -511,6 +512,12 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Button variant="outline" size="sm">
               <ArrowRight size={14} className="mr-1" />
               KMS & PQC module
+            </Button>
+          </Link>
+          <Link to="/learn/ai-security-pqc">
+            <Button variant="outline" size="sm">
+              <Brain size={14} className="mr-1" />
+              AI Security & PQC
             </Button>
           </Link>
         </div>

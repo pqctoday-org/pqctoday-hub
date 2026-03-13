@@ -1,4 +1,4 @@
-# Aerospace & Space PQC — Module Summary
+# Aerospace PQC — Module Summary
 
 ## Overview
 
@@ -63,4 +63,4 @@ Advanced-level module (120 min, 6 workshop steps) covering post-quantum cryptogr
 - `migration-program` — multi-year fleet migration governance
 - `hybrid-crypto` — hybrid classical+PQC during transition for AFDX-capable platforms
 - `stateful-signatures` — LMS/HSS as alternative for spacecraft firmware signing (hardware-friendly)
-- Quiz: 15 questions (asp-001 through asp-015)
+- Quiz: 15 questions (aero-001 through aero-015)

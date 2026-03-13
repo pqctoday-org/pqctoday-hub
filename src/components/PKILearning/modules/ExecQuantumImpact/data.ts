@@ -130,6 +130,7 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       linkedModules: [
         { id: 'compliance-strategy', label: 'Compliance & Regulatory Strategy' },
         { id: 'standards-bodies', label: 'Standards Bodies' },
+        { id: 'healthcare-pqc', label: 'Healthcare PQC' },
       ],
     },
     {
@@ -139,7 +140,10 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       description:
         'Constructing ROI models, cost-benefit analyses, and investment proposals for PQC migration.',
       targetLevel: 'intermediate',
-      linkedModules: [{ id: 'pqc-business-case', label: 'PQC Business Case' }],
+      linkedModules: [
+        { id: 'pqc-business-case', label: 'PQC Business Case' },
+        { id: 'emv-payment-pqc', label: 'EMV Payment PQC' },
+      ],
     },
     {
       id: 'governance',
@@ -157,7 +161,10 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       description:
         'Evaluating vendor PQC roadmaps, contract requirements, and supply chain cryptographic dependencies.',
       targetLevel: 'basic',
-      linkedModules: [{ id: 'vendor-risk', label: 'Vendor Risk' }],
+      linkedModules: [
+        { id: 'vendor-risk', label: 'Vendor Risk' },
+        { id: 'aerospace-pqc', label: 'Aerospace PQC' },
+      ],
     },
     {
       id: 'data-sensitivity',
@@ -166,7 +173,10 @@ export const EXEC_GUIDE_DATA: RoleGuideData = {
       description:
         'Classifying data assets by confidentiality lifetime and mapping them to PQC migration priority.',
       targetLevel: 'basic',
-      linkedModules: [{ id: 'data-asset-sensitivity', label: 'Data & Asset Sensitivity' }],
+      linkedModules: [
+        { id: 'data-asset-sensitivity', label: 'Data & Asset Sensitivity' },
+        { id: 'energy-utilities-pqc', label: 'Energy & Utilities PQC' },
+      ],
     },
     {
       id: 'migration-oversight',

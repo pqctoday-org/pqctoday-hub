@@ -15,6 +15,9 @@ import {
   Wrench,
   Route,
   Shield,
+  KeySquare,
+  Database,
+  Brain,
 } from 'lucide-react'
 import {
   KEY_SIZE_COMPARISONS,
@@ -628,6 +631,42 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
               <div className="text-sm font-medium text-foreground">Migration Guide</div>
               <div className="text-xs text-muted-foreground">
                 Software catalog and migration workflows
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/secrets-management-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <KeySquare size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Secrets Management</div>
+              <div className="text-xs text-muted-foreground">
+                Vault, cloud secrets engines, and PQC rotation policies
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/database-encryption-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Database size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Database Encryption</div>
+              <div className="text-xs text-muted-foreground">
+                TDE, column-level encryption, and BYOK key management
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/ai-security-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Brain size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">AI Security &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">
+                AI model security, data pipeline encryption, and PQC for ML workloads
               </div>
             </div>
           </Link>

@@ -2,6 +2,7 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import { Briefcase, Clock, ArrowRight, Scale, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 
@@ -93,13 +94,15 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-error mt-0.5 shrink-0" />
               <span>
-                <strong>2030:</strong> CNSA 2.0 requires PQC for all NSS software/firmware signing
+                <strong>2030:</strong> CNSA 2.0 requires PQC exclusively for software/firmware
+                signing and networking equipment (VPNs, routers)
               </span>
             </li>
             <li className="flex items-start gap-2">
               <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
               <span>
-                <strong>2033:</strong> Full PQC transition for web browsers, cloud, and networking
+                <strong>2033:</strong> Full PQC transition for web browsers, cloud services, and
+                operating systems
               </span>
             </li>
             <li className="flex items-start gap-2">
@@ -212,12 +215,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             The interactive workshop takes about 30 minutes to complete.
           </p>
         </div>
-        <button
-          onClick={onNavigateToWorkshop}
-          className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap"
-        >
+        <Button variant="gradient" size="lg" onClick={onNavigateToWorkshop}>
           Go to Workshop &rarr;
-        </button>
+        </Button>
       </div>
 
       <ReadingCompleteButton />

@@ -43,7 +43,7 @@ export type QuizCategory =
   | 'ai-security-pqc'
   | 'energy-utilities-pqc'
   | 'healthcare-pqc'
-  | 'aerospace-space-pqc'
+  | 'aerospace-pqc'
   | 'automotive-pqc'
   | 'crypto-dev-apis'
   | 'confidential-computing'
@@ -54,6 +54,11 @@ export type QuizCategory =
   | 'iam-pqc'
   | 'secure-boot-pqc'
   | 'os-pqc'
+  | 'exec-quantum-impact'
+  | 'dev-quantum-impact'
+  | 'arch-quantum-impact'
+  | 'ops-quantum-impact'
+  | 'research-quantum-impact'
 
 export interface QuizOption {
   id: string

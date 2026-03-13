@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Search, Briefcase, Building2, School, AlertCircle, Users } from 'lucide-react'
 
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { leadersData, leadersMetadata } from '../../data/leadersData'
 import type { Leader } from '../../data/leadersData'
 import { logEvent } from '../../utils/analytics'
@@ -14,6 +15,7 @@ import { LeaderCard } from './LeaderCard'
 import { LeadersTable } from './LeadersTable'
 import { LeaderDetailPopover } from './LeaderDetailPopover'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
+import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
 import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
 import { SortControl } from '../Library/SortControl'
@@ -25,59 +27,6 @@ const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
   eu: 'Europe',
   apac: 'Asia-Pacific',
-}
-
-/** Maps region IDs to the country name values used in the leaders CSV. */
-const LEADERS_REGION_COUNTRIES: Record<string, string[]> = {
-  americas: ['USA', 'Canada', 'USA/Canada', 'USA/Switzerland', 'USA/Germany', 'France/USA'],
-  eu: [
-    'UK',
-    'France',
-    'Germany',
-    'Switzerland',
-    'Belgium',
-    'Portugal',
-    'Estonia/EU',
-    'Netherlands',
-    'Sweden',
-    'Russia',
-    'Spain',
-    'Italy',
-    'France/Netherlands',
-    'Germany/Netherlands',
-    'Israel',
-  ],
-  apac: ['Singapore', 'Japan', 'South Korea', 'Australia', 'India', 'China'],
-}
-
-const FLAG_CODE_MAP: Record<string, string> = {
-  USA: 'us',
-  UK: 'gb',
-  France: 'fr',
-  Germany: 'de',
-  Switzerland: 'ch',
-  Canada: 'ca',
-  Singapore: 'sg',
-  Japan: 'jp',
-  'South Korea': 'kr',
-  Australia: 'au',
-  Israel: 'il',
-  Belgium: 'be',
-  Portugal: 'pt',
-  Netherlands: 'nl',
-  Sweden: 'se',
-  Spain: 'es',
-  Italy: 'it',
-  India: 'in',
-  China: 'cn',
-  Russia: 'ru',
-  'Estonia/EU': 'eu',
-  'USA/Switzerland': 'us',
-  'USA/Germany': 'us',
-  'USA/Canada': 'us',
-  'France/Netherlands': 'fr',
-  'Germany/Netherlands': 'de',
-  'France/USA': 'fr',
 }
 
 type LeaderSortOption = 'name' | 'country' | 'category'
@@ -110,6 +59,7 @@ export const LeadersGrid = () => {
   const [sortBy, setSortBy] = useState<LeaderSortOption>('name')
   const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
   const gridRef = useRef<HTMLDivElement>(null)
+  const { selectedIndustries } = usePersonaStore()
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
@@ -274,6 +224,21 @@ export const LeadersGrid = () => {
     return result
   }, [selectedRegion, selectedCountry, selectedSector, activeCategory, searchQuery])
 
+  // Industry relevance — leaders whose bio/organizations match selected industries
+  const industryRelevant = useMemo(() => {
+    const relevant = new Set<string>()
+    if (selectedIndustries.length === 0) return relevant
+    const keywords = selectedIndustries.map((ind) => ind.toLowerCase().split(/\s*[&/]\s*/)).flat()
+    for (const leader of leadersData) {
+      const text =
+        `${leader.bio} ${leader.organizations.join(' ')} ${leader.category}`.toLowerCase()
+      if (keywords.some((kw) => text.includes(kw))) {
+        relevant.add(leader.id)
+      }
+    }
+    return relevant
+  }, [selectedIndustries])
+
   // Sort for card view
   const sortedLeaders = useMemo(() => {
     const items = [...filteredLeaders]
@@ -288,8 +253,16 @@ export const LeadersGrid = () => {
         items.sort((a, b) => a.category.localeCompare(b.category))
         break
     }
+    // Stable secondary sort: industry-relevant leaders float to top
+    if (industryRelevant.size > 0) {
+      items.sort((a, b) => {
+        const aR = industryRelevant.has(a.id) ? 0 : 1
+        const bR = industryRelevant.has(b.id) ? 0 : 1
+        return aR - bR
+      })
+    }
     return items
-  }, [filteredLeaders, sortBy])
+  }, [filteredLeaders, sortBy, industryRelevant])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(sortedLeaders, LEADERS_CSV_COLUMNS)
@@ -347,7 +320,7 @@ export const LeadersGrid = () => {
         </div>
 
         {/* Sector + Region + Country + Search + Sort + ViewToggle */}
-        <div className="flex items-center gap-2 w-full text-xs">
+        <div className="flex flex-wrap items-center gap-2 w-full text-xs">
           <div className="min-w-[100px]">
             <FilterDropdown
               items={sectorItems}
@@ -363,7 +336,7 @@ export const LeadersGrid = () => {
             />
           </div>
 
-          <div className="hidden sm:block min-w-[100px]">
+          <div className="min-w-[100px]">
             <FilterDropdown
               items={regionItems}
               selectedId={selectedRegion}
@@ -379,7 +352,7 @@ export const LeadersGrid = () => {
             />
           </div>
 
-          <div className="hidden sm:block min-w-[100px]">
+          <div className="min-w-[100px]">
             <FilterDropdown
               items={countryItems}
               selectedId={selectedCountry}
@@ -414,7 +387,7 @@ export const LeadersGrid = () => {
                   logEvent('Leaders', 'Search', e.target.value)
                 }
               }}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
@@ -472,7 +445,11 @@ export const LeadersGrid = () => {
                   : ''
               }
             >
-              <LeaderCard leader={leader} onClick={() => openDetail(leader)} />
+              <LeaderCard
+                leader={leader}
+                onClick={() => openDetail(leader)}
+                isIndustryMatch={industryRelevant.has(leader.id)}
+              />
             </div>
           ))}
         </div>
@@ -493,7 +470,11 @@ export const LeadersGrid = () => {
                     : ''
                 }
               >
-                <LeaderCard leader={leader} onClick={() => openDetail(leader)} />
+                <LeaderCard
+                  leader={leader}
+                  onClick={() => openDetail(leader)}
+                  isIndustryMatch={industryRelevant.has(leader.id)}
+                />
               </div>
             ))}
           </div>

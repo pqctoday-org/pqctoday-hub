@@ -14,6 +14,7 @@ import {
   KeyRound,
   PackageCheck,
   Globe,
+  Radio,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -483,6 +484,30 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <div className="text-sm font-medium text-foreground">Code Signing</div>
               <div className="text-xs text-muted-foreground">
                 Hybrid &amp; composite signatures for software supply chain
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <KeyRound size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">
+                Key lifecycle management for hybrid &amp; PQC key pairs
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/qkd"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Radio size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
+              <div className="text-xs text-muted-foreground">
+                Physical-layer key exchange complementing hybrid PQC schemes
               </div>
             </div>
           </Link>

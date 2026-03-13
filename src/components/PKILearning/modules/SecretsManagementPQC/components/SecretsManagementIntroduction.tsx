@@ -12,6 +12,7 @@ import {
   ChevronRight,
   Lock,
   Route,
+  Workflow,
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
@@ -614,6 +615,18 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               <div className="text-sm font-medium text-foreground">Migration Catalog</div>
               <div className="text-xs text-muted-foreground">
                 Vault, AWS, Azure, GCP PQC readiness tracker
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/platform-eng-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Workflow size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Platform Engineering</div>
+              <div className="text-xs text-muted-foreground">
+                CI/CD pipeline crypto, container signing, and policy enforcement
               </div>
             </div>
           </Link>

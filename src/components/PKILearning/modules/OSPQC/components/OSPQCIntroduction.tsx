@@ -13,6 +13,7 @@ import {
   BookOpen,
   Route,
   Server,
+  HardDrive,
 } from 'lucide-react'
 import { OS_VENDORS, OS_VENDOR_STATUS_LABELS, FIPS_STATUS_LABELS } from '../data/osProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -514,6 +515,18 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
               <div className="text-sm font-medium text-foreground">Migration Catalog</div>
               <div className="text-xs text-muted-foreground">
                 OS vendor products and PQC migration status
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/secure-boot-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <HardDrive size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Secure Boot &amp; Firmware</div>
+              <div className="text-xs text-muted-foreground">
+                UEFI PK/KEK migration, TPM 2.0, and ML-DSA firmware signing
               </div>
             </div>
           </Link>

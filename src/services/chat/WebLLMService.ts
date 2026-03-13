@@ -106,6 +106,7 @@ export const DEFAULT_LOCAL_MODEL = 'Qwen3-1.7B-q4f16_1-MLC'
 let engine: any = null
 let loadedModelId: string | null = null
 let isInitializing = false
+let activeInitPromise: Promise<void> | null = null
 
 /* ------------------------------------------------------------------ */
 /*  Public API                                                         */
@@ -136,8 +137,10 @@ export async function initializeEngine(
   onProgress: (progress: WebLLMProgress) => void,
   contextWindowSize: number = DEFAULT_CONTEXT_WINDOW
 ): Promise<void> {
-  // Prevent concurrent initialization (React re-renders can fire useEffect multiple times)
-  if (isInitializing) return
+  // Prevent concurrent initialization (React re-renders can fire useEffect multiple times).
+  // Return the existing promise so callers await the same operation instead of
+  // silently returning undefined and treating the engine as ready.
+  if (isInitializing && activeInitPromise) return activeInitPromise
 
   // Clamp context window to the model's maximum (defense against stale localStorage values)
   const modelMax =
@@ -154,7 +157,7 @@ export async function initializeEngine(
 
   isInitializing = true
 
-  try {
+  const doInit = async () => {
     onProgress({ status: 'checking', text: 'Checking WebGPU support...', progress: 0 })
 
     const supported = await checkWebGPUSupport()
@@ -260,9 +263,14 @@ export async function initializeEngine(
 
     loadedModelId = modelId
     onProgress({ status: 'ready', text: 'Model ready', progress: 1 })
-  } finally {
-    isInitializing = false
   }
+
+  activeInitPromise = doInit().finally(() => {
+    isInitializing = false
+    activeInitPromise = null
+  })
+
+  return activeInitPromise
 }
 
 /** Whether the engine is loaded and ready to generate. */
@@ -359,8 +367,10 @@ export async function* streamResponse(
   // Strip <think>...</think> blocks from Qwen 3 output.
   // Approach: accumulate full text, regex-strip after each chunk, yield only new clean content.
   // This handles all edge cases (split tags, nested whitespace, unclosed blocks).
+  // Optimization: skip regex when no <think> tag has been seen (common with /no_think).
   let accumulated = ''
   let yieldedLength = 0
+  let seenThink = false
 
   for await (const chunk of stream) {
     if (signal?.aborted) {
@@ -383,10 +393,15 @@ export async function* streamResponse(
 
     accumulated += delta
 
+    // Track whether we've ever seen a <think> tag to skip regex on clean streams
+    if (!seenThink && accumulated.includes('<think>')) seenThink = true
+
     // Strip all closed <think>...</think> blocks, then truncate at any unclosed <think>
-    let cleaned = accumulated.replace(/<think>[\s\S]*?<\/think>/g, '')
-    const unclosedIdx = cleaned.indexOf('<think>')
-    if (unclosedIdx !== -1) cleaned = cleaned.slice(0, unclosedIdx)
+    let cleaned = seenThink ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '') : accumulated
+    if (seenThink) {
+      const unclosedIdx = cleaned.indexOf('<think>')
+      if (unclosedIdx !== -1) cleaned = cleaned.slice(0, unclosedIdx)
+    }
 
     // Yield only the new portion since last yield
     if (cleaned.length > yieldedLength) {
@@ -396,7 +411,9 @@ export async function* streamResponse(
   }
 
   // Final flush: strip any trailing unclosed <think> block
-  const final = accumulated.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<think>[\s\S]*$/, '')
+  const final = seenThink
+    ? accumulated.replace(/<think>[\s\S]*?<\/think>/g, '').replace(/<think>[\s\S]*$/, '')
+    : accumulated
   if (final.length > yieldedLength) {
     yield final.slice(yieldedLength)
   }

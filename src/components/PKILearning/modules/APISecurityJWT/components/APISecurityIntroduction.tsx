@@ -12,6 +12,7 @@ import {
   Lock,
   Globe,
   FileCode2,
+  Shield,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { VULNERABILITY_TABLE, JOSE_HEADER_COMPARISONS, OAUTH_MIGRATION_ITEMS } from '../constants'
@@ -519,6 +520,18 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
               <div className="text-xs text-muted-foreground">
                 <InlineTooltip term="JWKS">JWKS</InlineTooltip> key rotation and lifecycle for PQC
                 keys
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/iam-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">IAM &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">
+                JWT/SAML/OIDC token migration &amp; identity provider PQC readiness
               </div>
             </div>
           </Link>

@@ -44,13 +44,13 @@ import { getCurrentVersion } from '../../store/useVersionStore'
 
 const DATA_FOUNDATION = [
   { dataset: 'Timeline Events', records: 203, sources: '80+ orgs, 50+ countries' },
-  { dataset: 'Library Resources', records: 304, sources: '30+ standards bodies' },
+  { dataset: 'Library Resources', records: 325, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
-  { dataset: 'Compliance Frameworks', records: 90, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 371, sources: '7 infrastructure layers' },
+  { dataset: 'Compliance Frameworks', records: 91, sources: 'NIST, ACVP, CC, ANSSI' },
+  { dataset: 'Migrate Products', records: 377, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
-  { dataset: 'Industry Leaders', records: 114, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 755, sources: 'All PQC topic areas' },
+  { dataset: 'Industry Leaders', records: 181, sources: 'Public, Private, Academic' },
+  { dataset: 'Quiz Questions', records: 805, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 48, sources: '2,400+ min of content' },
 ]
@@ -97,10 +97,39 @@ const DISCUSSIONS = [
 
 const CRYPTO_BUFF_SITES = [
   {
+    label: 'NIST Post-Quantum Cryptography',
+    description:
+      'Official NIST PQC standardization project — FIPS 203/204/205 standards, submissions, and status updates',
+    url: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
+  },
+  {
+    label: 'Open Quantum Safe (OQS)',
+    description:
+      'Open-source PQC library (liboqs) and OpenSSL/BoringSSL integrations — reference implementations',
+    url: 'https://openquantumsafe.org',
+  },
+  {
+    label: 'IACR ePrint Archive',
+    description: 'Preprint server for cryptography research — where PQC papers appear first',
+    url: 'https://eprint.iacr.org',
+  },
+  {
     label: 'A Security Site — PQC',
     description:
       'Prof. Bill Buchanan OBE — extensive PQC algorithm references and interactive labs',
     url: 'https://asecuritysite.com/pqc',
+  },
+  {
+    label: 'cr.yp.to — Daniel J. Bernstein',
+    description:
+      'Co-creator of SPHINCS+/SLH-DSA and NTRU contributor — papers, software, and PQC commentary',
+    url: 'https://cr.yp.to',
+  },
+  {
+    label: 'Cryptographic Engineering — Matthew Green',
+    description:
+      'Johns Hopkins professor — accessible deep dives on PQC, protocol security, and crypto policy',
+    url: 'https://blog.cryptographyengineering.com',
   },
   {
     label: 'Schneier on Security',
@@ -113,24 +142,57 @@ const CRYPTO_BUFF_SITES = [
     url: 'https://crypto.stanford.edu',
   },
   {
-    label: 'MIT OpenCourseWare — Cryptography',
-    description: 'Free MIT lecture notes and problem sets for cryptography courses',
-    url: 'https://ocw.mit.edu',
-  },
-  {
     label: 'Cryptography I — Dan Boneh (Coursera)',
     description: "The gold-standard free online cryptography course by Stanford's Dan Boneh",
     url: 'https://www.coursera.org/learn/crypto',
   },
+  {
+    label: 'MIT OpenCourseWare — Cryptography',
+    description: 'Free MIT lecture notes and problem sets for cryptography courses',
+    url: 'https://ocw.mit.edu',
+  },
 ]
 
 const CRYPTO_BUFF_BOOKS = [
+  {
+    title: 'Post-Quantum Cryptography',
+    author: 'Daniel J. Bernstein, Johannes Buchmann & Erik Dahmen',
+    description:
+      'The foundational PQC textbook — lattice, code-based, hash-based, and multivariate algorithm families',
+    url: 'https://link.springer.com/book/10.1007/978-3-540-88702-7',
+  },
+  {
+    title: 'An Introduction to Mathematical Cryptography',
+    author: 'Jeffrey Hoffstein, Jill Pipher & Joseph H. Silverman',
+    description:
+      'Lattice-based crypto foundations (the math behind ML-KEM and ML-DSA) — by the creators of NTRU',
+    url: 'https://link.springer.com/book/10.1007/978-1-4939-1711-2',
+  },
+  {
+    title: 'A Graduate Course in Applied Cryptography',
+    author: 'Dan Boneh & Victor Shoup',
+    description:
+      'Comprehensive and free — provable security, public-key encryption, and signature schemes',
+    url: 'https://toc.cryptobook.us',
+  },
   {
     title: 'Real World Cryptography',
     author: 'David Wong',
     description:
       'Hands-on guide to modern crypto primitives, protocols, and their real-world application',
     url: 'https://www.manning.com/books/real-world-cryptography',
+  },
+  {
+    title: 'Serious Cryptography',
+    author: 'Jean-Philippe Aumasson',
+    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
+    url: 'https://nostarch.com/seriouscrypto',
+  },
+  {
+    title: 'Applied Cryptography',
+    author: 'Bruce Schneier',
+    description: 'The classic reference on cryptographic protocols, algorithms, and source code',
+    url: 'https://www.schneier.com/books/applied-cryptography/',
   },
   {
     title: 'The Code Book',
@@ -143,12 +205,6 @@ const CRYPTO_BUFF_BOOKS = [
     author: 'Alex Preukschat & Drummond Reed',
     description: 'Decentralized digital identity architecture, VCs, DIDs, and trust frameworks',
     url: 'https://www.manning.com/books/self-sovereign-identity',
-  },
-  {
-    title: 'Serious Cryptography',
-    author: 'Jean-Philippe Aumasson',
-    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
-    url: 'https://nostarch.com/seriouscrypto',
   },
 ]
 
@@ -195,7 +251,7 @@ export function AboutView() {
             </p>
             <p className="text-muted-foreground mt-4">
               Everything here is free, transparent, and built in the open &mdash; 48 learning
-              modules across 8 tracks, 755 quiz questions, hands-on cryptographic labs, a guided
+              modules across 8 tracks, 805 quiz questions, hands-on cryptographic labs, a guided
               migration catalog, global compliance tracking, and a risk assessment wizard, all
               powered by real implementations running directly in your browser. No accounts, no
               paywalls, no vendor lock-in.
@@ -427,7 +483,7 @@ export function AboutView() {
 
           <div className="mt-4 flex items-center justify-between">
             <div className="flex items-baseline gap-2">
-              <span className="text-2xl font-bold text-gradient">2,100+</span>
+              <span className="text-2xl font-bold text-gradient">2,200+</span>
               <span className="text-sm text-muted-foreground">total curated records</span>
             </div>
             <span className="text-xs text-muted-foreground">Compliance data refreshed weekly</span>
@@ -1082,7 +1138,7 @@ export function AboutView() {
               The PQC Assistant chatbot uses{' '}
               <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
               deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~3,760 PQC knowledge chunks &mdash; covering
+              question, it searches a curated corpus of ~3,830 PQC knowledge chunks &mdash; covering
               algorithms, standards, threats, compliance certifications, migration products,
               leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
               (adaptive per query intent), and injects them as context into a{' '}
@@ -1164,7 +1220,7 @@ export function AboutView() {
             <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
             <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
               <li>
-                Knowledge is bounded by the curated corpus (~3,760 chunks) &mdash; niche or very
+                Knowledge is bounded by the curated corpus (~3,830 chunks) &mdash; niche or very
                 recent topics may lack coverage
               </li>
               <li>

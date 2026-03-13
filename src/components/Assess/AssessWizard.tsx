@@ -300,7 +300,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           <Button
             variant="ghost"
             onClick={() => setInfoModalStep(steps[currentStep]?.key ?? null)}
-            className="p-1.5 h-auto w-auto rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10"
+            className="p-2 min-h-[44px] min-w-[44px] h-auto w-auto rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10"
             aria-label="How this step is personalized"
             title="How this step is personalized"
           >
@@ -333,7 +333,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           Please complete the required selection to continue.
         </p>
       )}
-      <div className="flex justify-between items-center mt-2">
+      <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
         <Button
           variant="outline"
           onClick={() => setStep(Math.max(0, currentStep - 1))}
@@ -347,7 +347,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
         <Button
           variant="ghost"
           onClick={reset}
-          className="text-xs text-muted-foreground hover:text-destructive"
+          className="text-xs min-h-[44px] text-muted-foreground hover:text-destructive"
           title="Clear all answers and start over"
         >
           <RotateCcw size={13} />

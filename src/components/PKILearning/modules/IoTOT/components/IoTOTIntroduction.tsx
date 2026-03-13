@@ -11,6 +11,9 @@ import {
   Layers,
   ArrowRight,
   AlertTriangle,
+  Car,
+  Zap,
+  HeartPulse,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, IOT_PROTOCOLS, PURDUE_LAYERS } from '../constants'
@@ -609,6 +612,24 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
               icon: Cpu,
               title: 'Crypto Agility',
               desc: 'Abstraction layers and the 7-phase migration framework',
+            },
+            {
+              to: '/learn/automotive-pqc',
+              icon: Car,
+              title: 'Automotive PQC',
+              desc: 'V2X, AUTOSAR, and connected vehicle PQC migration',
+            },
+            {
+              to: '/learn/energy-utilities-pqc',
+              icon: Zap,
+              title: 'Energy & Utilities',
+              desc: 'Smart grid, SCADA, and critical infrastructure PQC',
+            },
+            {
+              to: '/learn/healthcare-pqc',
+              icon: HeartPulse,
+              title: 'Healthcare PQC',
+              desc: 'Medical device security and health data protection',
             },
           ].map((link) => (
             <Link

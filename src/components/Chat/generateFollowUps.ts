@@ -10,7 +10,7 @@ export function generateFollowUps(
 
   // Match PQC algorithm names (broadened)
   const algoMatches = content.match(
-    /\b(ML-KEM(?:-\d+)?|ML-DSA(?:-\d+)?|SLH-DSA(?:-\d+)?|FN-DSA|FALCON|Kyber(?:-\d+)?|Dilithium(?:-\d+)?|FrodoKEM|HQC|Classic.?McEliece|BIKE|LMS|XMSS|HSS|SPHINCS\+?|X-Wing|X25519MLKEM768)\b/gi
+    /\b(ML-KEM(?:-\d+)?|ML-DSA(?:-\d+)?|SLH-DSA(?:-\d+)?|FN-DSA|FALCON|Kyber(?:-\d+)?|Dilithium(?:-\d+)?|FrodoKEM|HQC|Classic.?McEliece|BIKE|LMS|XMSS|HSS|SPHINCS\+?|X-Wing|X25519MLKEM768)(?!\w)/gi
   )
   if (algoMatches) {
     const algo = algoMatches[0].replace(/-\d+$/, '')

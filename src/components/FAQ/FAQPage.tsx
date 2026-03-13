@@ -12,7 +12,7 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
   return (
     <div className="border-b border-border last:border-b-0">
       <button
-        className="flex w-full items-start gap-3 py-4 text-left transition-colors hover:text-accent"
+        className="flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
       >

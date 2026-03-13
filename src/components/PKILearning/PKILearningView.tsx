@@ -175,9 +175,9 @@ const HealthcarePQCModule = lazyWithRetry(() =>
     default: module.HealthcarePQCModule,
   }))
 )
-const AerospaceSpacePQCModule = lazyWithRetry(() =>
-  import('./modules/AerospaceSpacePQC').then((module) => ({
-    default: module.AerospaceSpacePQCModule,
+const AerospacePQCModule = lazyWithRetry(() =>
+  import('./modules/AerospacePQC').then((module) => ({
+    default: module.AerospacePQCModule,
   }))
 )
 const AutomotivePQCModule = lazyWithRetry(() =>
@@ -321,7 +321,7 @@ export const PKILearningView: React.FC = () => {
               <Route path="platform-eng-pqc" element={<PlatformEngPQCModule />} />
               <Route path="energy-utilities-pqc" element={<EnergyUtilitiesModule />} />
               <Route path="healthcare-pqc" element={<HealthcarePQCModule />} />
-              <Route path="aerospace-space-pqc" element={<AerospaceSpacePQCModule />} />
+              <Route path="aerospace-pqc" element={<AerospacePQCModule />} />
               <Route path="automotive-pqc" element={<AutomotivePQCModule />} />
               <Route path="exec-quantum-impact" element={<ExecQuantumImpactModule />} />
               <Route path="dev-quantum-impact" element={<DevQuantumImpactModule />} />

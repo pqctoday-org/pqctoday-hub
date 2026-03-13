@@ -445,8 +445,8 @@ export const MigrateView: React.FC = () => {
         onExport={handleExportCsv}
       />
 
-      {/* Migration Workflow Hero — collapsible */}
-      <div>
+      {/* Migration Workflow Hero — collapsible (desktop only) */}
+      <div className="hidden md:block">
         <Button
           variant="ghost"
           onClick={() => setWorkflowCollapsed(!workflowCollapsed)}
@@ -506,8 +506,8 @@ export const MigrateView: React.FC = () => {
 
       {/* Filter control band */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-2">
-        {/* Layer dropdown — flat modes only */}
-        {viewMode !== 'stack' && (
+        {/* Layer dropdown — flat modes + always on mobile (mobile always shows cards) */}
+        <div className={viewMode === 'stack' ? 'md:hidden' : ''}>
           <FilterDropdown
             items={layerFilterItems}
             selectedId={activeLayer === 'All' ? 'All' : activeLayer}
@@ -518,19 +518,21 @@ export const MigrateView: React.FC = () => {
             }}
             defaultLabel="All Layers"
           />
-        )}
+        </div>
 
-        {/* Category dropdown — flat modes only, scoped to selected layer */}
-        {viewMode !== 'stack' && flatCategories.length > 1 && (
-          <FilterDropdown
-            items={categoryFilterItems}
-            selectedId={flatCategoryFilter}
-            onSelect={(id) => {
-              setFlatCategoryFilter(id)
-              logMigrateAction('Filter Category', id)
-            }}
-            defaultLabel="All Categories"
-          />
+        {/* Category dropdown — flat modes + always on mobile, scoped to selected layer */}
+        {flatCategories.length > 1 && (
+          <div className={viewMode === 'stack' ? 'md:hidden' : ''}>
+            <FilterDropdown
+              items={categoryFilterItems}
+              selectedId={flatCategoryFilter}
+              onSelect={(id) => {
+                setFlatCategoryFilter(id)
+                logMigrateAction('Filter Category', id)
+              }}
+              defaultLabel="All Categories"
+            />
+          </div>
         )}
 
         {/* Search */}
@@ -547,15 +549,17 @@ export const MigrateView: React.FC = () => {
             aria-label="Search software"
             value={inputValue}
             onChange={handleSearchChange}
-            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
 
-        {/* Sort — cards mode only */}
-        {viewMode === 'cards' && <MigrateSortControl value={sortBy} onChange={setSortBy} />}
+        {/* Sort — cards mode + always on mobile */}
+        <div className={viewMode !== 'cards' ? 'md:hidden' : ''}>
+          <MigrateSortControl value={sortBy} onChange={setSortBy} />
+        </div>
 
-        {/* Restore hidden — flat modes only, when any products are hidden */}
-        {viewMode !== 'stack' && hiddenSet.size > 0 && (
+        {/* Restore hidden — when any products are hidden */}
+        {hiddenSet.size > 0 && (
           <Button
             variant="ghost"
             onClick={() => restoreAll()}
@@ -567,71 +571,32 @@ export const MigrateView: React.FC = () => {
           </Button>
         )}
 
-        {/* View toggle — always visible */}
-        <MigrateViewToggle mode={viewMode} onChange={setViewMode} />
+        {/* View toggle — desktop only (mobile always shows cards) */}
+        <div className="hidden md:block">
+          <MigrateViewToggle mode={viewMode} onChange={setViewMode} />
+        </div>
       </div>
 
-      {/* Results count — flat modes only */}
-      {viewMode !== 'stack' && (
-        <p className="text-xs text-muted-foreground">
-          {flatVisibleCount === softwareData.length ? (
-            <>
-              {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
-            </>
-          ) : (
-            <>
-              {flatVisibleCount} of {softwareData.length} product
-              {softwareData.length !== 1 ? 's' : ''}
-              {activeLayer !== 'All' &&
-                ` in ${LAYERS.find((l) => l.id === activeLayer)?.label ?? activeLayer}`}
-            </>
-          )}
-        </p>
-      )}
+      {/* Results count — flat modes + always on mobile */}
+      <p className={`text-xs text-muted-foreground ${viewMode === 'stack' ? 'md:hidden' : ''}`}>
+        {flatVisibleCount === softwareData.length ? (
+          <>
+            {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
+          </>
+        ) : (
+          <>
+            {flatVisibleCount} of {softwareData.length} product
+            {softwareData.length !== 1 ? 's' : ''}
+            {activeLayer !== 'All' &&
+              ` in ${LAYERS.find((l) => l.id === activeLayer)?.label ?? activeLayer}`}
+          </>
+        )}
+      </p>
 
       {/* Content area — mode-specific rendering */}
       <div className="py-4">
-        {viewMode === 'stack' && (
-          <InfrastructureStack
-            activeLayer={activeInfrastructureLayer}
-            onSelectLayer={(layer) => {
-              setActiveLayer(layer)
-            }}
-            subCategories={activeInfrastructureLayer !== 'All' ? categories : []}
-            activeSubCategory={activeTab}
-            onSelectSubCategory={(cat) => {
-              setActiveSubCategory(cat)
-              logMigrateAction('Filter Category', cat)
-            }}
-            layerProductCounts={layerProductCounts}
-            layerHiddenCounts={layerHiddenCounts}
-            layerProductKeys={layerProductKeys}
-            onRestoreLayer={(keys) => restoreLayerProducts(keys)}
-            layerSelectedCounts={layerSelectedCounts}
-            expandedContent={
-              activeInfrastructureLayer !== 'All' ? (
-                activeLayerTableData.length > 0 ? (
-                  <SoftwareTable
-                    key={`${activeInfrastructureLayer}-${activeTab}-${stepFilter?.stepId ?? 'none'}`}
-                    data={activeLayerTableData}
-                    defaultSort={{ key: 'softwareName', direction: 'asc' }}
-                    hiddenProducts={hiddenSet}
-                    onHideProduct={hideProduct}
-                    selectedProducts={myProductsSet}
-                    onToggleProduct={toggleMyProduct}
-                  />
-                ) : (
-                  <EmptyState
-                    icon={<PackageSearch size={32} />}
-                    title="No products match the current filters."
-                  />
-                )
-              ) : undefined
-            }
-          />
-        )}
-
-        {viewMode === 'cards' && (
+        {/* Mobile: always show card grid */}
+        <div className="md:hidden">
           <SoftwareCardGrid
             items={sortedFlatProducts}
             hiddenProducts={filterText ? undefined : hiddenSet}
@@ -639,25 +604,78 @@ export const MigrateView: React.FC = () => {
             selectedProducts={myProductsSet}
             onToggleProduct={toggleMyProduct}
           />
-        )}
+        </div>
 
-        {viewMode === 'table' &&
-          (allFilteredProducts.length > 0 ? (
-            <SoftwareTable
-              key={`flat-table-${activeLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
-              data={allFilteredProducts}
-              defaultSort={{ key: 'softwareName', direction: 'asc' }}
+        {/* Desktop: mode-specific rendering */}
+        <div className="hidden md:block">
+          {viewMode === 'stack' && (
+            <InfrastructureStack
+              activeLayer={activeInfrastructureLayer}
+              onSelectLayer={(layer) => {
+                setActiveLayer(layer)
+              }}
+              subCategories={activeInfrastructureLayer !== 'All' ? categories : []}
+              activeSubCategory={activeTab}
+              onSelectSubCategory={(cat) => {
+                setActiveSubCategory(cat)
+                logMigrateAction('Filter Category', cat)
+              }}
+              layerProductCounts={layerProductCounts}
+              layerHiddenCounts={layerHiddenCounts}
+              layerProductKeys={layerProductKeys}
+              onRestoreLayer={(keys) => restoreLayerProducts(keys)}
+              layerSelectedCounts={layerSelectedCounts}
+              expandedContent={
+                activeInfrastructureLayer !== 'All' ? (
+                  activeLayerTableData.length > 0 ? (
+                    <SoftwareTable
+                      key={`${activeInfrastructureLayer}-${activeTab}-${stepFilter?.stepId ?? 'none'}`}
+                      data={activeLayerTableData}
+                      defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                      hiddenProducts={hiddenSet}
+                      onHideProduct={hideProduct}
+                      selectedProducts={myProductsSet}
+                      onToggleProduct={toggleMyProduct}
+                    />
+                  ) : (
+                    <EmptyState
+                      icon={<PackageSearch size={32} />}
+                      title="No products match the current filters."
+                    />
+                  )
+                ) : undefined
+              }
+            />
+          )}
+
+          {viewMode === 'cards' && (
+            <SoftwareCardGrid
+              items={sortedFlatProducts}
               hiddenProducts={filterText ? undefined : hiddenSet}
               onHideProduct={hideProduct}
               selectedProducts={myProductsSet}
               onToggleProduct={toggleMyProduct}
             />
-          ) : (
-            <EmptyState
-              icon={<PackageSearch size={32} />}
-              title="No products match the current filters."
-            />
-          ))}
+          )}
+
+          {viewMode === 'table' &&
+            (allFilteredProducts.length > 0 ? (
+              <SoftwareTable
+                key={`flat-table-${activeLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
+                data={allFilteredProducts}
+                defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                hiddenProducts={filterText ? undefined : hiddenSet}
+                onHideProduct={hideProduct}
+                selectedProducts={myProductsSet}
+                onToggleProduct={toggleMyProduct}
+              />
+            ) : (
+              <EmptyState
+                icon={<PackageSearch size={32} />}
+                title="No products match the current filters."
+              />
+            ))}
+        </div>
       </div>
     </div>
   )

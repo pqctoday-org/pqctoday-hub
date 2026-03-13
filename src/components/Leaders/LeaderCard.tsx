@@ -6,13 +6,16 @@ import type { Leader } from '../../data/leadersData'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { CountryFlag } from '../common/CountryFlag'
+import { FLAG_CODE_MAP } from './leadersConstants'
 
 interface LeaderCardProps {
   leader: Leader
   onClick?: () => void
+  isIndustryMatch?: boolean
 }
 
-export const LeaderCard = ({ leader, onClick }: LeaderCardProps) => {
+export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps) => {
   const [hasError, setHasError] = useState(false)
 
   return (
@@ -36,18 +39,8 @@ export const LeaderCard = ({ leader, onClick }: LeaderCardProps) => {
               <User size={24} />
             </div>
           )}
-          <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border text-xs font-bold shadow-sm">
-            {/* Simple flag mapping based on country name */}
-            {leader.country === 'USA' && '🇺🇸'}
-            {leader.country === 'UK' && '🇬🇧'}
-            {leader.country === 'France' && '🇫🇷'}
-            {leader.country === 'Germany' && '🇩🇪'}
-            {leader.country === 'Switzerland' && '🇨🇭'}
-            {leader.country === 'Canada' && '🇨🇦'}
-            {/* Fallback for others if needed */}
-            {!['USA', 'UK', 'France', 'Germany', 'Switzerland', 'Canada'].includes(
-              leader.country
-            ) && '🌍'}
+          <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-1 border border-border shadow-sm">
+            <CountryFlag code={FLAG_CODE_MAP[leader.country] ?? 'un'} width={16} height={11} />
           </div>
         </div>
         <div className="flex flex-col items-end gap-2">
@@ -64,6 +57,11 @@ export const LeaderCard = ({ leader, onClick }: LeaderCardProps) => {
             {leader.type} Sector
           </span>
           <StatusBadge status={leader.status} size="sm" />
+          {isIndustryMatch && (
+            <span className="text-[10px] bg-accent/10 text-accent px-1.5 py-0.5 rounded-full font-medium">
+              Relevant to you
+            </span>
+          )}
         </div>
       </div>
 
