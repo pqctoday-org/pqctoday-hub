@@ -3788,6 +3788,17 @@ const MECH_TABLE: Record<number, MechEntry> = {
     description: 'EdDSA signing / verification (RFC 8032)',
     family: 'asymmetric',
   },
+  // ── Vendor-defined (softhsmv3 extensions) ────────────────────────────────
+  0x80000100: {
+    name: 'CKM_KMAC_128',
+    description: 'KMAC-128 message authentication (NIST SP 800-185)',
+    family: 'symmetric',
+  },
+  0x80000101: {
+    name: 'CKM_KMAC_256',
+    description: 'KMAC-256 message authentication (NIST SP 800-185)',
+    family: 'symmetric',
+  },
 }
 
 /** Decode a CKF_ flags bitmask into an array of short flag names. */
