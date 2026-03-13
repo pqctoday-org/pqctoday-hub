@@ -86,8 +86,8 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Disclaimer fixes</strong> &mdash; X close
-                    button, PWA update unblocked, tour sequencing fixed — no more stuck overlays
+                    <strong className="text-foreground">Modal escape hatches</strong> &mdash;
+                    backdrop click, Escape key, and faster exit animation — no more stuck overlays
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

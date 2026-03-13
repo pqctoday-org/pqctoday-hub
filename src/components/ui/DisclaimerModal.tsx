@@ -30,6 +30,16 @@ export function DisclaimerModal() {
     }
   }, [isOpen])
 
+  // Escape key to dismiss
+  useEffect(() => {
+    if (!isOpen) return
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') acknowledgeDisclaimer()
+    }
+    document.addEventListener('keydown', handler)
+    return () => document.removeEventListener('keydown', handler)
+  }, [isOpen, acknowledgeDisclaimer])
+
   return createPortal(
     <AnimatePresence>
       {isOpen && (
@@ -38,12 +48,15 @@ export function DisclaimerModal() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
+          transition={{ duration: 0.15 }}
           className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden"
+          onClick={acknowledgeDisclaimer}
         >
           <motion.div
             initial={{ opacity: 0, scale: 0.95, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ duration: 0.15 }}
             className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden"
             role="alertdialog"
             aria-modal="true"

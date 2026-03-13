@@ -4,6 +4,15 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.9] - 2026-03-13
+
+### Fixed
+
+- **DisclaimerModal — backdrop click to dismiss**: Clicking anywhere outside the modal panel now calls `acknowledgeDisclaimer`, giving users an additional escape hatch. [view:/]
+- **DisclaimerModal — Escape key to dismiss**: Pressing Escape while the modal is open now dismisses it. Standard a11y pattern for modal dialogs. [view:/] [accessibility]
+- **DisclaimerModal — faster exit animation**: Reduced exit transition from default 300ms to 150ms so the `fixed inset-0` backdrop clears faster and no longer feels blocking. [view:/]
+- **GuidedTour — `isDisclaimerDone` selector consistency**: Changed selector from `=== getAppMajorVersion()` to `>= getAppMajorVersion()`, matching the `hasAcknowledgedCurrentMajor` store method's semantics. [view:/]
+
 ## [2.44.8] - 2026-03-13
 
 ### Fixed

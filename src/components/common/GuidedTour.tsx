@@ -309,7 +309,7 @@ export const GuidedTour: React.FC = () => {
   const [essentialOnly, setEssentialOnly] = useState(false)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isDisclaimerDone = useDisclaimerStore(
-    (s) => s.acknowledgedMajorVersion === getAppMajorVersion()
+    (s) => s.acknowledgedMajorVersion !== null && s.acknowledgedMajorVersion >= getAppMajorVersion()
   )
 
   // Filter feature slides to match what's accessible for this persona
