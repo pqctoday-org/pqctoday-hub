@@ -31,6 +31,8 @@ All notable changes to this project will be documented in this file.
 
 - **Chat grounding false positives**: Short terms like "hash" no longer falsely match substrings (e.g., "hashababy"). Terms under 4 characters and non-boundary matches are now excluded. Algorithm family matching improved ("ml-kem" correctly matches "ml-kem-768"). [view:/]
 - **Chat follow-up regex**: Algorithm names like "SHA" in "SPHINCS+" no longer greedily match trailing words in follow-up suggestion parsing.
+- **CSV validator `_rN` revision support**: `latestCSV()` in `validate-csv-refs.ts` now matches revision suffixes (e.g., `leaders_03122026_r1.csv`, `library_03132026_r2.csv`) with proper date + revision tiebreaker sort. Previously only matched base `_YYYYMMDD.csv` filenames. [data]
+- **Leaders → Library deep-link validation (Check 4)**: `validate-csv-refs.ts` now validates all `KeyResourceUrl` reference IDs in the leaders CSV against the library CSV at build time. Catches broken `/library?ref=ID` deep links before deployment. 98 leaders with refs currently pass. [view:/leaders]
 
 ## [2.42.0] - 2026-03-12
 

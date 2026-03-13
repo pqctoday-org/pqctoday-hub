@@ -1,12 +1,13 @@
 #!/usr/bin/env tsx
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * Validates cross-references between the compliance, library, and timeline CSVs.
+ * Validates cross-references between the compliance, library, timeline, and leaders CSVs.
  *
  * Checks:
  *   1. compliance.library_refs  → library.reference_id  (broken links in UI)
  *   2. compliance.timeline_refs → Country:OrgName pairs in timeline  (broken links in UI)
  *   3. library.dependencies     → library.reference_id  (informational, exits 0)
+ *   4. leaders.KeyResourceUrl   → library.reference_id  (broken deep links in UI)
  *
  * Usage:  npx tsx scripts/validate-csv-refs.ts
  * Exit 0: no broken refs in compliance → library/timeline checks
@@ -22,8 +23,16 @@ const DATA_DIR = path.resolve(process.cwd(), 'src/data')
 function latestCSV(prefix: string): string {
   const files = fs
     .readdirSync(DATA_DIR)
-    .filter((f) => new RegExp(`^${prefix}_\\d{8}\\.csv$`).test(f))
-    .sort()
+    .filter((f) => new RegExp(`^${prefix}_\\d{8}(?:_r\\d+)?\\.csv$`).test(f))
+    .sort((a, b) => {
+      // Sort by date first, then by revision number (higher wins)
+      const dateA = a.match(/\d{8}/)?.[0] ?? ''
+      const dateB = b.match(/\d{8}/)?.[0] ?? ''
+      if (dateA !== dateB) return dateA.localeCompare(dateB)
+      const revA = parseInt(a.match(/_r(\d+)/)?.[1] ?? '0', 10)
+      const revB = parseInt(b.match(/_r(\d+)/)?.[1] ?? '0', 10)
+      return revA - revB
+    })
     .reverse()
   if (files.length === 0) throw new Error(`No ${prefix}_YYYYMMDD.csv found in src/data/`)
   return path.join(DATA_DIR, files[0])
@@ -124,26 +133,40 @@ function loadLibraryDeps(csvPath: string): Array<{ id: string; deps: string[] }>
   }))
 }
 
+/** Returns leaders rows with their KeyResourceUrl refs (column 10). */
+function loadLeaderRefs(csvPath: string): Array<{ name: string; refs: string[] }> {
+  return parseCSV(csvPath)
+    .map((cols) => ({
+      name: cols[0] ?? '',
+      refs: parseSemicolon(cols[10] ?? ''),
+    }))
+    .filter((row) => row.refs.length > 0)
+}
+
 // ── Main ───────────────────────────────────────────────────────────────────────
 
 function main(): void {
   const libraryPath = latestCSV('library')
   const timelinePath = latestCSV('timeline')
   const compliancePath = latestCSV('compliance')
+  const leadersPath = latestCSV('leaders')
 
   console.log(`Library:    ${path.basename(libraryPath)}`)
   console.log(`Timeline:   ${path.basename(timelinePath)}`)
   console.log(`Compliance: ${path.basename(compliancePath)}`)
+  console.log(`Leaders:    ${path.basename(leadersPath)}`)
   console.log()
 
   const libraryIds = loadLibraryIds(libraryPath)
   const timelinePairs = loadTimelinePairs(timelinePath)
   const complianceRows = loadCompliance(compliancePath)
   const libraryDeps = loadLibraryDeps(libraryPath)
+  const leaderRefs = loadLeaderRefs(leadersPath)
 
   console.log(`Library entries:    ${libraryIds.size}`)
   console.log(`Timeline org pairs: ${timelinePairs.size}`)
   console.log(`Compliance rows:    ${complianceRows.length}`)
+  console.log(`Leaders with refs:  ${leaderRefs.length}`)
   console.log()
 
   let hasErrors = false
@@ -210,6 +233,27 @@ function main(): void {
       console.warn(`    "${dep}"`)
     }
     console.warn()
+  }
+
+  // ── Check 4: leaders.KeyResourceUrl → library.reference_id ────────────────
+  console.log('── Check 4: leaders.KeyResourceUrl → library.reference_id ─────────')
+  const brokenLeaderRefs: Array<{ leaderName: string; ref: string }> = []
+  for (const { name, refs } of leaderRefs) {
+    for (const ref of refs) {
+      if (!libraryIds.has(ref)) {
+        brokenLeaderRefs.push({ leaderName: name, ref })
+      }
+    }
+  }
+  if (brokenLeaderRefs.length === 0) {
+    console.log('✓ All leader KeyResourceUrl refs resolve\n')
+  } else {
+    hasErrors = true
+    console.error(`✗ ${brokenLeaderRefs.length} broken leader KeyResourceUrl ref(s):`)
+    for (const { leaderName, ref } of brokenLeaderRefs) {
+      console.error(`  [${leaderName}] "${ref}" — not found in library CSV`)
+    }
+    console.error()
   }
 
   // ── Result ────────────────────────────────────────────────────────────────
