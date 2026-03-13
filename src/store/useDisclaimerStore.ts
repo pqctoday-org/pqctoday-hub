@@ -32,6 +32,14 @@ export const useDisclaimerStore = create<DisclaimerState>()(
 
       acknowledgeDisclaimer: () => {
         set({ acknowledgedMajorVersion: APP_MAJOR })
+        // Also mark the guided tour as completed so users aren't hit with
+        // two blocking overlays in a row (disclaimer → tour).
+        // Users can re-trigger the tour later via ?tour URL param.
+        try {
+          localStorage.setItem('pqc-tour-completed', 'true')
+        } catch {
+          // localStorage unavailable
+        }
       },
 
       resetForTesting: () => {
