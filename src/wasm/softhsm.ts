@@ -3441,9 +3441,39 @@ const MECH_TABLE: Record<number, MechEntry> = {
     description: 'RSA-PSS with SHA-224',
     family: 'asymmetric',
   },
-  0x00000210: {
+  0x00000060: {
+    name: 'CKM_SHA3_256_RSA_PKCS',
+    description: 'RSA PKCS#1 v1.5 with SHA3-256',
+    family: 'asymmetric',
+  },
+  0x00000062: {
+    name: 'CKM_SHA3_512_RSA_PKCS',
+    description: 'RSA PKCS#1 v1.5 with SHA3-512',
+    family: 'asymmetric',
+  },
+  0x00000063: {
+    name: 'CKM_SHA3_256_RSA_PKCS_PSS',
+    description: 'RSA-PSS with SHA3-256',
+    family: 'asymmetric',
+  },
+  0x00000065: {
+    name: 'CKM_SHA3_512_RSA_PKCS_PSS',
+    description: 'RSA-PSS with SHA3-512',
+    family: 'asymmetric',
+  },
+  0x00000066: {
+    name: 'CKM_SHA3_224_RSA_PKCS',
+    description: 'RSA PKCS#1 v1.5 with SHA3-224',
+    family: 'asymmetric',
+  },
+  0x00000067: {
+    name: 'CKM_SHA3_224_RSA_PKCS_PSS',
+    description: 'RSA-PSS with SHA3-224',
+    family: 'asymmetric',
+  },
+  0x00001054: {
     name: 'CKM_RSA_AES_KEY_WRAP',
-    description: 'RSA-OAEP + AES key wrapping',
+    description: 'RSA-OAEP + AES key wrapping (PKCS#11 v3.2)',
     family: 'asymmetric',
   },
   // ── ML-KEM (PKCS#11 v3.2 — FIPS 203) ────────────────────────────────────
@@ -3664,6 +3694,21 @@ const MECH_TABLE: Record<number, MechEntry> = {
   0x00002109: {
     name: 'CKM_AES_KEY_WRAP',
     description: 'AES key wrapping (RFC 3394 / NIST SP 800-38F)',
+    family: 'symmetric',
+  },
+  0x0000210a: {
+    name: 'CKM_AES_KEY_WRAP_PAD',
+    description: 'AES key wrapping with padding (NIST SP 800-38F §6.3)',
+    family: 'symmetric',
+  },
+  0x00001104: {
+    name: 'CKM_AES_ECB_ENCRYPT_DATA',
+    description: 'AES-ECB encrypt-data key derivation',
+    family: 'symmetric',
+  },
+  0x00001105: {
+    name: 'CKM_AES_CBC_ENCRYPT_DATA',
+    description: 'AES-CBC encrypt-data key derivation',
     family: 'symmetric',
   },
   // ── KDF / Key Agreement ───────────────────────────────────────────────────
