@@ -5,6 +5,8 @@ import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -107,7 +109,27 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
             </div>
           )}
 
-          <div className="pt-4 border-t border-border mt-4 flex justify-end">
+          <div className="pt-4 border-t border-border mt-4 flex justify-end gap-2">
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'threat-endorsement',
+                title: `Endorse: ${threat.threatId} — ${threat.industry}`,
+                resourceType: 'Threat Assessment',
+                resourceId: threat.threatId,
+                resourceDetails: [
+                  `**Threat ID:** ${threat.threatId}`,
+                  `**Industry:** ${threat.industry}`,
+                  `**Criticality:** ${threat.criticality}`,
+                  `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
+                  `**PQC Mitigation:** ${threat.pqcReplacement}`,
+                ].join('\n'),
+                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+              })}
+              resourceLabel={threat.threatId}
+              resourceType="Threat"
+              variant="text"
+              label="Endorse"
+            />
             <AskAssistantButton
               variant="text"
               label="Ask about mitigations"

@@ -5,6 +5,8 @@ import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
 import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { UpdateProductButton } from '../ui/UpdateProductButton'
+import { buildProductUpdateUrl } from '@/utils/endorsement'
 
 interface SoftwareCardProps {
   item: SoftwareItem
@@ -130,6 +132,19 @@ export const SoftwareCard = ({
             <ExternalLink size={12} /> Repo
           </a>
         )}
+        <UpdateProductButton
+          updateUrl={buildProductUpdateUrl({
+            productName: item.softwareName,
+            categoryName: item.categoryName,
+            currentPqcSupport: item.pqcSupport || 'Unknown',
+            productDetails: [
+              `**Version:** ${item.latestVersion || 'N/A'}`,
+              `**FIPS:** ${item.fipsValidated || 'N/A'}`,
+            ].join('\n'),
+            pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
+          })}
+          resourceLabel={item.softwareName}
+        />
         <AskAssistantButton
           variant="text"
           label="Ask"

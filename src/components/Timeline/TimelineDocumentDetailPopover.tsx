@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
 import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../Library/DocumentAnalysis'
 import {
   timelineEnrichments,
@@ -112,6 +114,24 @@ export const TimelineDocumentDetailPopover = ({
             </h3>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'timeline-endorsement',
+                title: `Endorse: ${row.countryName} — ${row.title}`,
+                resourceType: 'Timeline Document',
+                resourceId: `${row.countryName} / ${row.title}`,
+                resourceDetails: [
+                  `**Country:** ${row.countryName}`,
+                  `**Organization:** ${row.org}`,
+                  `**Phase:** ${row.phase}`,
+                  `**Title:** ${row.title}`,
+                  `**Period:** ${row.startYear}–${row.endYear}`,
+                ].join('\n'),
+                pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+              })}
+              resourceLabel={row.title}
+              resourceType="Timeline"
+            />
             <AskAssistantButton
               question={`Explain the "${row.title}" ${row.type.toLowerCase()} for ${row.org} (${row.countryName}) in the context of PQC migration.${row.description ? ` Context: ${row.description}` : ''}`}
             />

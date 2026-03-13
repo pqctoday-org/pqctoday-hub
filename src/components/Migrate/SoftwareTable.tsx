@@ -19,6 +19,8 @@ import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
 import { getProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { UpdateProductButton } from '../ui/UpdateProductButton'
+import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
 import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 
@@ -435,6 +437,26 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   <ExternalLink size={12} /> Authoritative Source
                                 </a>
                               )}
+                              <UpdateProductButton
+                                updateUrl={buildProductUpdateUrl({
+                                  productName: item.softwareName,
+                                  categoryName: item.categoryName,
+                                  currentPqcSupport: item.pqcSupport || 'Unknown',
+                                  productDetails: [
+                                    `**Version:** ${item.latestVersion || 'N/A'}`,
+                                    `**FIPS:** ${item.fipsValidated || 'N/A'}`,
+                                    `**Migration Priority:** ${item.pqcMigrationPriority || 'N/A'}`,
+                                    item.pqcCapabilityDescription
+                                      ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
+                                      : '',
+                                  ]
+                                    .filter(Boolean)
+                                    .join('\n'),
+                                  pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
+                                })}
+                                resourceLabel={item.softwareName}
+                                variant="text"
+                              />
                               <AskAssistantButton
                                 variant="text"
                                 label="Ask about PQC capabilities"

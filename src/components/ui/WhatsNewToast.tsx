@@ -86,17 +86,17 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Transparency Disclaimer</strong> &mdash;
-                    one-time acknowledgment modal on first visit clarifying community-driven status
-                    and data sourcing
+                    <strong className="text-foreground">Community Endorsements</strong> &mdash;
+                    animated Stamp button on every resource to endorse leaders, threats, timeline
+                    docs, and learn modules via GitHub Discussions
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Leader Consent</strong> &mdash; leaders page
-                    now features only consented individuals with a self-nomination flow via GitHub
-                    Discussions
+                    <strong className="text-foreground">Product Updates</strong> &mdash; PenLine
+                    button on Migrate products to submit PQC data corrections, new versions, and
+                    certifications
                   </span>
                 </li>
                 <li className="flex items-start gap-2">

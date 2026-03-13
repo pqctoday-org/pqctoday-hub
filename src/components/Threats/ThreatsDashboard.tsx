@@ -31,6 +31,7 @@ import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
 import { PageHeader } from '../common/PageHeader'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { Button } from '../ui/button'
 import { EmptyState } from '../ui/empty-state'
 
@@ -239,6 +240,17 @@ export const ThreatsDashboard: React.FC = () => {
         viewType="Threats"
         shareTitle="Quantum Threats Dashboard — Industry Risk Analysis"
         shareText="Detailed analysis of quantum threats across industries — criticality ratings, at-risk cryptography, and PQC replacements."
+        endorseUrl={buildEndorsementUrl({
+          category: 'threat-endorsement',
+          title: 'Endorse: Quantum Threats Dashboard',
+          resourceType: 'Threats Page',
+          resourceId: 'Quantum Threats Dashboard',
+          resourceDetails:
+            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+          pageUrl: '/threats',
+        })}
+        endorseLabel="Threats Page"
+        endorseResourceType="Threats"
       />
 
       {/* Persona summary card */}

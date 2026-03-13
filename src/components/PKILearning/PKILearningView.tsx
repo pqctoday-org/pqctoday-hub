@@ -4,10 +4,13 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
 import { CuriousSummaryBanner } from './common/CuriousSummaryBanner'
+import { MODULE_CATALOG } from './moduleData'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -241,6 +244,7 @@ export const PKILearningView: React.FC = () => {
   const moduleId = location.pathname.replace(/^\/learn\/?/, '')
   // Show progress sidebar for module pages (not dashboard, not quiz)
   const showSidebar = !isDashboard && moduleId !== 'quiz' && moduleId !== ''
+  const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
 
   return (
     <div className="animate-fade-in">
@@ -256,7 +260,28 @@ export const PKILearningView: React.FC = () => {
         ) : (
           <div />
         )}
-        <GlossaryButton />
+        <div className="flex items-center gap-1">
+          {showSidebar && moduleMeta && (
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'learn-module-endorsement',
+                title: `Endorse: ${moduleMeta.title}`,
+                resourceType: 'Learn Module',
+                resourceId: moduleMeta.title,
+                resourceDetails: [
+                  `**Module:** ${moduleMeta.title}`,
+                  `**Duration:** ${moduleMeta.duration}`,
+                  `**Difficulty:** ${moduleMeta.difficulty}`,
+                  `**Description:** ${moduleMeta.description}`,
+                ].join('\n'),
+                pageUrl: `/learn/${moduleId}`,
+              })}
+              resourceLabel={moduleMeta.title}
+              resourceType="Learn Module"
+            />
+          )}
+          <GlossaryButton />
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">

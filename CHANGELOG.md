@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.6] - 2026-03-13
+
+### Added
+
+- **Community endorsement buttons**: Animated Stamp icon button on every resource — leaders, threats, timeline documents, and learn modules — opens a pre-filled GitHub Discussion for community endorsements. Four new discussion categories: Leader Endorsement, Threat Endorsement, Learn Module Endorsement, Timeline Endorsement. Endorsement template includes resource details, reason checkboxes, and optional comments. [view:/leaders] [view:/threats] [view:/timeline] [view:/learn]
+- **Page-level endorsement in headers**: PageHeader component now supports an optional endorsement button in the action cluster. Enabled on Leaders, Timeline, and Threats pages. [view:/leaders] [view:/threats] [view:/timeline]
+- **Learn module endorsement in module header**: Stamp button appears next to GlossaryButton when inside any individual learn module, pre-filled with module title, duration, difficulty, and description. [view:/learn]
+- **Product PQC update button**: PenLine icon button in Migrate product details (expanded row and card view) opens a GitHub Discussion pre-filled with product name, category, current PQC support, and structured template for submitting version updates, new certifications, or corrected information. New discussion category: Update product pqc information. [view:/migrate]
+- **Bounce-subtle animation**: Shared CSS keyframe animation (±8° rocking, 2s cycle) applied to both Stamp and PenLine icons for visual discoverability. Respects `prefers-reduced-motion`. [accessibility]
+
 ## [2.44.5] - 2026-03-13
 
 ### Added

@@ -14,6 +14,8 @@ import { StatusBadge } from '../common/StatusBadge'
 import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
 import { EmptyState } from '../ui/empty-state'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { TimelineDocumentCard } from './TimelineDocumentCard'
 import {
   TimelineDocumentDetailPopover,
@@ -245,27 +247,47 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
 
                       {/* Actions */}
                       <td className="p-4 text-sm">
-                        <button
-                          onClick={() => setSelectedRow(row)}
-                          className={clsx(
-                            'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
-                            rowIsEnriched
-                              ? 'text-primary hover:text-primary/80 hover:bg-primary/10'
-                              : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
-                          )}
-                          title={
-                            rowIsEnriched
-                              ? 'View details (document analysis available)'
-                              : 'View details'
-                          }
-                          aria-label={`View details for ${row.title}`}
-                        >
-                          {rowIsEnriched ? (
-                            <Sparkles size={16} aria-hidden="true" />
-                          ) : (
-                            <Info size={16} aria-hidden="true" />
-                          )}
-                        </button>
+                        <div className="flex items-center gap-1">
+                          <button
+                            onClick={() => setSelectedRow(row)}
+                            className={clsx(
+                              'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
+                              rowIsEnriched
+                                ? 'text-primary hover:text-primary/80 hover:bg-primary/10'
+                                : 'text-muted-foreground hover:text-primary hover:bg-primary/10'
+                            )}
+                            title={
+                              rowIsEnriched
+                                ? 'View details (document analysis available)'
+                                : 'View details'
+                            }
+                            aria-label={`View details for ${row.title}`}
+                          >
+                            {rowIsEnriched ? (
+                              <Sparkles size={16} aria-hidden="true" />
+                            ) : (
+                              <Info size={16} aria-hidden="true" />
+                            )}
+                          </button>
+                          <EndorseButton
+                            endorseUrl={buildEndorsementUrl({
+                              category: 'timeline-endorsement',
+                              title: `Endorse: ${row.countryName} — ${row.title}`,
+                              resourceType: 'Timeline Document',
+                              resourceId: `${row.countryName} / ${row.title}`,
+                              resourceDetails: [
+                                `**Country:** ${row.countryName}`,
+                                `**Organization:** ${row.org}`,
+                                `**Phase:** ${row.phase}`,
+                                `**Title:** ${row.title}`,
+                                `**Period:** ${row.startYear}–${row.endYear}`,
+                              ].join('\n'),
+                              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                            })}
+                            resourceLabel={row.title}
+                            resourceType="Timeline"
+                          />
+                        </div>
                       </td>
                     </tr>
                   )

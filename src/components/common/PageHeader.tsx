@@ -6,6 +6,7 @@ import { SourcesButton } from '@/components/ui/SourcesButton'
 import { ShareButton } from '@/components/ui/ShareButton'
 import { GlossaryButton } from '@/components/ui/GlossaryButton'
 import { ExportButton } from '@/components/ui/ExportButton'
+import { EndorseButton } from '@/components/ui/EndorseButton'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ViewType } from '@/data/authoritativeSourcesData'
 
@@ -19,6 +20,10 @@ interface PageHeaderProps {
   shareTitle?: string
   shareText?: string
   onExport?: () => void
+  /** When provided, renders an EndorseButton in the action cluster */
+  endorseUrl?: string
+  endorseLabel?: string
+  endorseResourceType?: string
   testId?: string
 }
 
@@ -35,6 +40,9 @@ export const PageHeader = ({
   shareTitle,
   shareText,
   onExport,
+  endorseUrl,
+  endorseLabel,
+  endorseResourceType,
   testId,
 }: PageHeaderProps) => {
   const openChat = useRightPanelStore((s) => s.open)
@@ -48,13 +56,20 @@ export const PageHeader = ({
       <p className="hidden lg:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
         {description}
       </p>
-      {(dataSource || viewType || shareTitle || onExport) && (
+      {(dataSource || viewType || shareTitle || onExport || endorseUrl) && (
         <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
           {dataSource && <p>{dataSource}</p>}
           {viewType && <SourcesButton viewType={viewType} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
           <GlossaryButton />
           {onExport && <ExportButton onExport={onExport} />}
+          {endorseUrl && (
+            <EndorseButton
+              endorseUrl={endorseUrl}
+              resourceLabel={endorseLabel ?? title}
+              resourceType={endorseResourceType ?? 'Page'}
+            />
+          )}
           <Button
             variant="gradient"
             onClick={() => openChat('chat')}

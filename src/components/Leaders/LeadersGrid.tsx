@@ -2,7 +2,16 @@
 import { useEffect, useRef, useState, useMemo, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Search, Briefcase, Building2, School, AlertCircle, Users, Award } from 'lucide-react'
+import {
+  Search,
+  Briefcase,
+  Building2,
+  School,
+  AlertCircle,
+  Users,
+  Award,
+  ShieldX,
+} from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { leadersData, leadersMetadata } from '../../data/leadersData'
@@ -20,9 +29,11 @@ import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
 import { SortControl } from '../Library/SortControl'
 import { PageHeader } from '../common/PageHeader'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { LeaderConsentModal } from './LeaderConsentModal'
+import { LeaderRemovalModal } from './LeaderRemovalModal'
 import { Button } from '../ui/button'
 
 const REGION_LABELS: Record<string, string> = {
@@ -61,6 +72,7 @@ export const LeadersGrid = () => {
   const [sortBy, setSortBy] = useState<LeaderSortOption>('name')
   const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
+  const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
   const { selectedIndustries } = usePersonaStore()
 
@@ -294,10 +306,21 @@ export const LeadersGrid = () => {
         shareTitle="PQC Industry Leaders — Organizations Driving Post-Quantum Adoption"
         shareText="Meet the visionaries and organizations driving the global transition to post-quantum cryptography."
         onExport={handleExportCsv}
+        endorseUrl={buildEndorsementUrl({
+          category: 'leader-endorsement',
+          title: 'Endorse: PQC Transformation Leaders',
+          resourceType: 'Leaders Page',
+          resourceId: 'Transformation Leaders',
+          resourceDetails:
+            '**Page:** Transformation Leaders — Visionaries and organizations driving the global transition to Post-Quantum Cryptography.',
+          pageUrl: '/leaders',
+        })}
+        endorseLabel="Leaders Page"
+        endorseResourceType="Leaders"
       />
 
-      {/* Leader consent CTA */}
-      <div className="flex items-center justify-center">
+      {/* Leader consent / removal CTAs */}
+      <div className="flex flex-wrap items-center justify-center gap-3">
         <Button
           variant="outline"
           onClick={() => {
@@ -307,6 +330,17 @@ export const LeadersGrid = () => {
           className="gap-2 text-sm"
         >
           <Award size={16} className="text-primary" />I agree to be referenced as a PQC Leader
+        </Button>
+        <Button
+          variant="ghost"
+          onClick={() => {
+            setIsRemovalModalOpen(true)
+            logEvent('Leaders', 'Open Removal Modal')
+          }}
+          className="gap-2 text-sm text-muted-foreground"
+        >
+          <ShieldX size={16} />
+          Request removal
         </Button>
       </div>
 
@@ -509,6 +543,12 @@ export const LeadersGrid = () => {
       <LeaderConsentModal
         isOpen={isConsentModalOpen}
         onClose={() => setIsConsentModalOpen(false)}
+      />
+
+      {/* Leader Removal Modal */}
+      <LeaderRemovalModal
+        isOpen={isRemovalModalOpen}
+        onClose={() => setIsRemovalModalOpen(false)}
       />
     </div>
   )

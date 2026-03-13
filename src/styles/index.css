@@ -70,6 +70,25 @@
     }
   }
 
+  @keyframes bounce-subtle {
+    0%,
+    100% {
+      transform: rotate(0deg);
+    }
+
+    25% {
+      transform: rotate(-8deg);
+    }
+
+    75% {
+      transform: rotate(8deg);
+    }
+  }
+
+  .animate-bounce-subtle {
+    animation: bounce-subtle 2s ease-in-out infinite;
+  }
+
   /* Respect user's reduced-motion preference for CSS animations/transitions */
   @media (prefers-reduced-motion: reduce) {
     *,

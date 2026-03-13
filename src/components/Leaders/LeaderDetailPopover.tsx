@@ -7,6 +7,8 @@ import FocusLock from 'react-focus-lock'
 import type { Leader } from '../../data/leadersData'
 import { StatusBadge } from '../common/StatusBadge'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { EndorseButton } from '../ui/EndorseButton'
+import { buildEndorsementUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
@@ -103,6 +105,24 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             </div>
           </div>
           <div className="flex items-center gap-1 flex-shrink-0">
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'leader-endorsement',
+                title: `Endorse: ${leader.name}`,
+                resourceType: 'Leader',
+                resourceId: leader.name,
+                resourceDetails: [
+                  `**Name:** ${leader.name}`,
+                  `**Title:** ${leader.title}`,
+                  `**Organization(s):** ${leader.organizations.join(', ')}`,
+                  `**Country:** ${leader.country}`,
+                  `**Sector:** ${leader.type}`,
+                ].join('\n'),
+                pageUrl: `/leaders?leader=${encodeURIComponent(leader.name)}`,
+              })}
+              resourceLabel={leader.name}
+              resourceType="Leader"
+            />
             <AskAssistantButton
               question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
             />
