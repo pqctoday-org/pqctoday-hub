@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.7] - 2026-03-13
+
+### Added
+
+- **Animated WIP badge**: Work-in-progress modules now display a pulsing badge with Wrench icon and `pulse-glow` CSS animation (opacity + box-shadow cycling, 2.5s, respects `prefers-reduced-motion`). Applied to `ModuleCard` and `TransparencyBanner`. [view:/learn] [view:/] [accessibility]
+- **Transparency section on About page**: New "Transparency & Disclaimer" section with `id="transparency"` anchor on both desktop and mobile About pages, positioned prominently after the page title. Includes animated WIP badge, 5 disclaimer bullet points, and GitHub Discussions + LinkedIn contact links. Resolves the `/about#transparency` deep link from the landing page banner. [view:/about]
+- **WIP badge on landing page banner**: `TransparencyBanner` component now includes the animated WIP badge alongside the "Community-Driven Educational Resource" label. [view:/]
+
+### Fixed
+
+- **Incognito mode — guided tour blocked by disclaimer**: In fresh sessions (incognito/new browser), the `GuidedTour` timer now waits for the `DisclaimerModal` to be acknowledged before activating. Previously both overlays appeared simultaneously, with the tour trapped behind the z-[110] disclaimer backdrop. [view:/]
+- **RAG corpus format**: Normalized `public/data/rag-corpus.json` from pretty-printed (46K lines) to minified (1 line) to match the generator's `JSON.stringify(output)` output format.
+
 ## [2.44.6] - 2026-03-13
 
 ### Added

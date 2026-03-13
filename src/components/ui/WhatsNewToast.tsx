@@ -86,25 +86,24 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
+                    <strong className="text-foreground">Transparency & WIP Badges</strong> &mdash;
+                    animated pulse-glow WIP badges on learn modules, landing banner, and new About
+                    page transparency section
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
                     <strong className="text-foreground">Community Endorsements</strong> &mdash;
-                    animated Stamp button on every resource to endorse leaders, threats, timeline
-                    docs, and learn modules via GitHub Discussions
+                    Stamp button on every resource to endorse via GitHub Discussions, plus product
+                    PQC update submissions on Migrate (v2.44.6)
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Product Updates</strong> &mdash; PenLine
-                    button on Migrate products to submit PQC data corrections, new versions, and
-                    certifications
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Curious Explorer</strong> &mdash; new
-                    persona for non-technical users with a 9-module beginner path and plain-language
-                    AI responses (v2.44.0)
+                    <strong className="text-foreground">Disclaimer Gate</strong> &mdash; first-visit
+                    acknowledgment modal with incognito-safe tour sequencing (v2.44.5)
                   </span>
                 </li>
               </ul>

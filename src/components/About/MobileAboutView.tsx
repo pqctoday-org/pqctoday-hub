@@ -25,6 +25,9 @@ import {
   ChevronDown,
   ExternalLink,
   BookMarked,
+  Construction,
+  Wrench,
+  Linkedin,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -212,6 +215,60 @@ export const MobileAboutView = () => {
           Learn, assess, explore, and act on the post-quantum transition.
         </p>
         <p className="text-xs text-muted-foreground/60 font-mono mt-1">v{version}</p>
+      </motion.div>
+
+      {/* Transparency & Disclaimer Card */}
+      <motion.div
+        id="transparency"
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.05 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center gap-3 mb-3">
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
+            <Construction size={20} />
+          </div>
+          <h2 className="text-lg font-semibold flex-1">Transparency</h2>
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow">
+            <Wrench size={10} className="animate-bounce-subtle" />
+            WIP
+          </span>
+        </div>
+        <div className="space-y-2.5 text-sm text-muted-foreground">
+          <p>
+            PQC Today is a{' '}
+            <strong className="text-foreground">community-driven educational platform</strong>. It
+            has not received endorsement from the organizations cited and may contain inaccuracies.
+          </p>
+          <p>
+            Industry leaders are included only with{' '}
+            <strong className="text-foreground">written consent</strong>. We welcome collaboration
+            from domain experts.
+          </p>
+          <div className="flex flex-wrap gap-3 pt-1">
+            <a
+              href="https://github.com/pqctoday/pqc-timeline-app/discussions/108"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+            >
+              <MessageSquare size={12} />
+              Discussions
+              <ExternalLink size={10} />
+            </a>
+            <a
+              href="https://www.linkedin.com/in/eric-amador-971850a"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+            >
+              <Linkedin size={12} />
+              Eric Amador
+              <ExternalLink size={10} />
+            </a>
+          </div>
+        </div>
       </motion.div>
 
       {/* Mission Card */}
