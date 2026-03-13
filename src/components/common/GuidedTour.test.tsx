@@ -2,6 +2,7 @@
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { GuidedTour } from './GuidedTour'
+import { useDisclaimerStore, getAppMajorVersion } from '../../store/useDisclaimerStore'
 
 // Mock framer-motion so AnimatePresence transitions are synchronous in tests.
 // Without this, AnimatePresence mode="wait" holds exiting elements in the DOM
@@ -53,6 +54,9 @@ describe('GuidedTour', () => {
   beforeEach(() => {
     vi.useFakeTimers()
     localStorage.clear()
+    // Seed the disclaimer store as acknowledged so the tour's disclaimer gate
+    // doesn't block activation (GuidedTour requires isDisclaimerDone = true)
+    useDisclaimerStore.setState({ acknowledgedMajorVersion: getAppMajorVersion() })
     Object.defineProperty(window, 'location', {
       value: { search: '' },
       writable: true,
@@ -94,6 +98,7 @@ describe('GuidedTour', () => {
     vi.useRealTimers()
     document.body.innerHTML = ''
     vi.clearAllMocks()
+    useDisclaimerStore.setState({ acknowledgedMajorVersion: null })
   })
 
   it('does not show if already completed', () => {
