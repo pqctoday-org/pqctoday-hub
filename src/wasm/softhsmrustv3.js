@@ -1,5 +1,75 @@
 /* @ts-self-types="./softhsmrustv3.d.ts" */
 
+export class SoftHsmRust {
+    __destroy_into_raw() {
+        const ptr = this.__wbg_ptr;
+        this.__wbg_ptr = 0;
+        SoftHsmRustFinalization.unregister(this);
+        return ptr;
+    }
+    free() {
+        const ptr = this.__destroy_into_raw();
+        wasm.__wbg_softhsmrust_free(ptr, 0);
+    }
+    /**
+     * @param {number} key_handle
+     * @param {Uint8Array} iv
+     * @param {Uint8Array} ciphertext
+     * @returns {Uint8Array}
+     */
+    aes_ctr_decrypt(key_handle, iv, ciphertext) {
+        const ptr0 = passArray8ToWasm0(iv, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(ciphertext, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.softhsmrust_aes_ctr_decrypt(this.__wbg_ptr, key_handle, ptr0, len0, ptr1, len1);
+        return ret;
+    }
+    /**
+     * @param {number} key_handle
+     * @param {Uint8Array} iv
+     * @param {Uint8Array} plaintext
+     * @returns {Uint8Array}
+     */
+    aes_ctr_encrypt(key_handle, iv, plaintext) {
+        const ptr0 = passArray8ToWasm0(iv, wasm.__wbindgen_malloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passArray8ToWasm0(plaintext, wasm.__wbindgen_malloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.softhsmrust_aes_ctr_encrypt(this.__wbg_ptr, key_handle, ptr0, len0, ptr1, len1);
+        return ret;
+    }
+    /**
+     * @param {number} key_size
+     * @returns {number}
+     */
+    generate_aes_key(key_size) {
+        const ret = wasm.softhsmrust_generate_aes_key(this.__wbg_ptr, key_size);
+        return ret >>> 0;
+    }
+    /**
+     * @param {number} slot_id
+     * @param {string} pin
+     * @param {string} label
+     * @returns {boolean}
+     */
+    init_token(slot_id, pin, label) {
+        const ptr0 = passStringToWasm0(pin, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len0 = WASM_VECTOR_LEN;
+        const ptr1 = passStringToWasm0(label, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc);
+        const len1 = WASM_VECTOR_LEN;
+        const ret = wasm.softhsmrust_init_token(this.__wbg_ptr, slot_id, ptr0, len0, ptr1, len1);
+        return ret !== 0;
+    }
+    constructor() {
+        const ret = wasm.softhsmrust_new();
+        this.__wbg_ptr = ret >>> 0;
+        SoftHsmRustFinalization.register(this, this.__wbg_ptr, this);
+        return this;
+    }
+}
+if (Symbol.dispose) SoftHsmRust.prototype[Symbol.dispose] = SoftHsmRust.prototype.free;
+
 /**
  * @param {number} h_session
  * @returns {number}
@@ -854,6 +924,10 @@ function __wbg_get_imports() {
             const ret = new Error();
             return ret;
         },
+        __wbg_new_from_slice_22da9388ac046e50: function(arg0, arg1) {
+            const ret = new Uint8Array(getArrayU8FromWasm0(arg0, arg1));
+            return ret;
+        },
         __wbg_new_with_length_825018a1616e9e55: function(arg0) {
             const ret = new Uint8Array(arg0 >>> 0);
             return ret;
@@ -933,6 +1007,10 @@ function __wbg_get_imports() {
     };
 }
 
+const SoftHsmRustFinalization = (typeof FinalizationRegistry === 'undefined')
+    ? { register: () => {}, unregister: () => {} }
+    : new FinalizationRegistry(ptr => wasm.__wbg_softhsmrust_free(ptr >>> 0, 1));
+
 function addToExternrefTable0(obj) {
     const idx = wasm.__externref_table_alloc();
     wasm.__wbindgen_externrefs.set(idx, obj);
@@ -976,6 +1054,13 @@ function handleError(f, args) {
 
 function isLikeNone(x) {
     return x === undefined || x === null;
+}
+
+function passArray8ToWasm0(arg, malloc) {
+    const ptr = malloc(arg.length * 1, 1) >>> 0;
+    getUint8ArrayMemory0().set(arg, ptr / 1);
+    WASM_VECTOR_LEN = arg.length;
+    return ptr;
 }
 
 function passStringToWasm0(arg, malloc, realloc) {

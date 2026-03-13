@@ -4,6 +4,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.2] - 2026-03-13
+
+### Fixed
+
+- **HSM WASM — `C_GetMechanismInfo` coverage**: 30 mechanisms advertised by `C_GetMechanismList` previously returned `CKR_MECHANISM_INVALID` from `C_GetMechanismInfo`, causing errors in the playground mechanism discovery panel. Both C++ and Rust engines now return correct capability info for: `CKM_AES_CTR`, all 10 `CKM_HASH_ML_DSA_*` pre-hash variants, all 10 `CKM_HASH_SLH_DSA_*` pre-hash variants, `CKM_ECDSA_SHA3_{224,256,384,512}`, `CKM_ECDH1_COFACTOR_DERIVE`, and the 4 KDF mechanisms. [view:/playground]
+- **WASM rebuilt** from softhsmv3 `main` (PR #25 merged): C++ and Rust engines both updated to include KMAC vendor extensions and the `C_GetMechanismInfo` fix. [view:/playground]
+
 ## [2.44.1] - 2026-03-13
 
 ### Changed

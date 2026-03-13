@@ -50,7 +50,7 @@ var createSoftHSMModule = (() => {
     }
     var readAsync, readBinary
     if (ENVIRONMENT_IS_NODE) {
-      var fs = require('fs')
+      var fs = require('node:fs')
       scriptDirectory = __dirname + '/'
       readBinary = (filename) => {
         filename = isFileURI(filename) ? new URL(filename) : filename
@@ -145,7 +145,7 @@ var createSoftHSMModule = (() => {
     }
     var wasmBinaryFile
     function findWasmBinary() {
-      return locateFile('libsofthsmv3.wasm')
+      return locateFile('softhsm.wasm')
     }
     function getBinarySync(file) {
       if (file == wasmBinaryFile && wasmBinary) {
@@ -340,7 +340,7 @@ var createSoftHSMModule = (() => {
     }
     var initRandomFill = () => {
       if (ENVIRONMENT_IS_NODE) {
-        var nodeCrypto = require('crypto')
+        var nodeCrypto = require('node:crypto')
         return (view) => nodeCrypto.randomFillSync(view)
       }
       return (view) => crypto.getRandomValues(view)
@@ -1101,7 +1101,6 @@ var createSoftHSMModule = (() => {
       ignorePermissions: true,
       filesystems: null,
       syncFSRequests: 0,
-      readFiles: {},
       ErrnoError: class {
         name = 'ErrnoError'
         constructor(errno) {
@@ -1335,9 +1334,11 @@ var createSoftHSMModule = (() => {
         }
         if (perms.includes('r') && !(node.mode & 292)) {
           return 2
-        } else if (perms.includes('w') && !(node.mode & 146)) {
+        }
+        if (perms.includes('w') && !(node.mode & 146)) {
           return 2
-        } else if (perms.includes('x') && !(node.mode & 73)) {
+        }
+        if (perms.includes('x') && !(node.mode & 73)) {
           return 2
         }
         return 0
@@ -1377,10 +1378,8 @@ var createSoftHSMModule = (() => {
           if (FS.isRoot(node) || FS.getPath(node) === FS.cwd()) {
             return 10
           }
-        } else {
-          if (FS.isDir(node.mode)) {
-            return 31
-          }
+        } else if (FS.isDir(node.mode)) {
+          return 31
         }
         return 0
       },
@@ -1390,12 +1389,14 @@ var createSoftHSMModule = (() => {
         }
         if (FS.isLink(node.mode)) {
           return 32
-        } else if (FS.isDir(node.mode)) {
-          if (FS.flagsToPermissionString(flags) !== 'r' || flags & (512 | 64)) {
+        }
+        var mode = FS.flagsToPermissionString(flags)
+        if (FS.isDir(node.mode)) {
+          if (mode !== 'r' || flags & (512 | 64)) {
             return 31
           }
         }
-        return FS.nodePermissions(node, FS.flagsToPermissionString(flags))
+        return FS.nodePermissions(node, mode)
       },
       checkOpExists(op, err) {
         if (!op) {
@@ -1944,11 +1945,6 @@ var createSoftHSMModule = (() => {
         }
         if (created) {
           FS.chmod(node, mode & 511)
-        }
-        if (Module['logReadFiles'] && !(flags & 1)) {
-          if (!(path in FS.readFiles)) {
-            FS.readFiles[path] = 1
-          }
         }
         return stream
       },
@@ -3230,7 +3226,6 @@ var createSoftHSMModule = (() => {
     var UTF8ToString = (ptr, maxBytesToRead, ignoreNul) =>
       ptr ? UTF8ArrayToString(HEAPU8, ptr, maxBytesToRead, ignoreNul) : ''
     var SYSCALLS = {
-      DEFAULT_POLLMASK: 5,
       calculateAt(dirfd, path, allowEmpty) {
         if (PATH.isAbs(path)) {
           return path

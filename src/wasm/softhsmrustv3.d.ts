@@ -1,6 +1,16 @@
 /* tslint:disable */
 /* eslint-disable */
 
+export class SoftHsmRust {
+    free(): void;
+    [Symbol.dispose](): void;
+    aes_ctr_decrypt(key_handle: number, iv: Uint8Array, ciphertext: Uint8Array): Uint8Array;
+    aes_ctr_encrypt(key_handle: number, iv: Uint8Array, plaintext: Uint8Array): Uint8Array;
+    generate_aes_key(key_size: number): number;
+    init_token(slot_id: number, pin: string, label: string): boolean;
+    constructor();
+}
+
 export function _C_CloseSession(h_session: number): number;
 
 export function _C_CopyObject(_h_session: number, _h_object: number, _p_template: number, _ul_count: number, _ph_new_object: number): number;
@@ -175,7 +185,6 @@ export interface InitOutput {
     readonly _C_GetAttributeValue: (a: number, b: number, c: number, d: number) => number;
     readonly _C_GetInfo: (a: number) => number;
     readonly _C_GetMechanismInfo: (a: number, b: number, c: number) => number;
-    readonly _C_GetMechanismList: (a: number, b: number, c: number) => number;
     readonly _C_GetSessionInfo: (a: number, b: number) => number;
     readonly _C_GetSlotInfo: (a: number, b: number) => number;
     readonly _C_GetSlotList: (a: number, b: number, c: number) => number;
@@ -199,9 +208,12 @@ export interface InitOutput {
     readonly _C_VerifyMessage: (a: number, b: number, c: number, d: number, e: number, f: number, g: number) => number;
     readonly _C_WrapKey: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
     readonly _C_WrapKeyAuthenticated: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
-    readonly _free: (a: number, b: number) => void;
-    readonly _malloc: (a: number) => number;
-    readonly wasm_start: () => void;
+    readonly __wbg_softhsmrust_free: (a: number, b: number) => void;
+    readonly softhsmrust_aes_ctr_decrypt: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
+    readonly softhsmrust_aes_ctr_encrypt: (a: number, b: number, c: number, d: number, e: number, f: number) => any;
+    readonly softhsmrust_generate_aes_key: (a: number, b: number) => number;
+    readonly softhsmrust_init_token: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
+    readonly softhsmrust_new: () => number;
     readonly _C_Login: (a: number, b: number, c: number, d: number) => number;
     readonly _C_DecryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_EncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number;
@@ -216,6 +228,10 @@ export interface InitOutput {
     readonly _C_VerifyFinal: (a: number, b: number, c: number) => number;
     readonly _C_VerifyUpdate: (a: number, b: number, c: number) => number;
     readonly _C_Logout: (a: number) => number;
+    readonly _free: (a: number, b: number) => void;
+    readonly _malloc: (a: number) => number;
+    readonly wasm_start: () => void;
+    readonly _C_GetMechanismList: (a: number, b: number, c: number) => number;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;
