@@ -7,6 +7,19 @@ import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { DocumentAnalysis } from './DocumentAnalysis'
+import { leadersData } from '../../data/leadersData'
+
+/** Strip parenthetical annotations and honorific prefixes, then lowercase. */
+function normalizeLeaderName(raw: string): string {
+  return raw
+    .replace(/\s*\(.*?\)/g, '')
+    .replace(/^(Dr\.|Prof\.|Dr |Prof )\s*/i, '')
+    .trim()
+    .toLowerCase()
+}
+
+/** Built once at module load: normalized name → Leader. */
+const leaderByNormalizedName = new Map(leadersData.map((l) => [normalizeLeaderName(l.name), l]))
 
 interface LibraryDetailPopoverProps {
   isOpen: boolean
@@ -60,6 +73,28 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   }, [item])
 
   if (!isOpen || !item) return null
+
+  // Pass 1: reverse keyResourceUrl lookup (authoritative)
+  const seen = new Set<string>()
+  const relatedLeaders = []
+  for (const l of leadersData) {
+    if (l.keyResourceUrl?.includes(item.referenceId)) {
+      relatedLeaders.push(l)
+      seen.add(l.id)
+    }
+  }
+
+  // Pass 2: name-match from enrichment leadersContributions (additive, deduplicated)
+  const enrichment = libraryEnrichments[item.referenceId]
+  if (enrichment) {
+    for (const contrib of enrichment.leadersContributions) {
+      const leader = leaderByNormalizedName.get(normalizeLeaderName(contrib))
+      if (leader && !seen.has(leader.id)) {
+        relatedLeaders.push(leader)
+        seen.add(leader.id)
+      }
+    }
+  }
 
   const style: React.CSSProperties = { zIndex: 9999 }
 
@@ -228,7 +263,10 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
           {/* Document Analysis — enriched dimensions */}
           {libraryEnrichments[item.referenceId] && (
-            <DocumentAnalysis enrichment={libraryEnrichments[item.referenceId]} />
+            <DocumentAnalysis
+              enrichment={libraryEnrichments[item.referenceId]}
+              relatedLeaders={relatedLeaders}
+            />
           )}
         </div>
       </div>

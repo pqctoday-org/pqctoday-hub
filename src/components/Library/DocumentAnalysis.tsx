@@ -5,9 +5,12 @@ import clsx from 'clsx'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../ui/button'
 import type { LibraryEnrichment } from '../../data/libraryEnrichmentData'
+import type { Leader } from '../../data/leadersData'
+import { LeaderDetailPopover } from '../Leaders/LeaderDetailPopover'
 
 interface DocumentAnalysisProps {
   enrichment: LibraryEnrichment
+  relatedLeaders?: Leader[]
 }
 
 type TagVariant =
@@ -72,6 +75,46 @@ const FEATURE_ROUTES: Record<string, string> = {
   'code-signing': '/learn/code-signing',
   'api-security-jwt': '/learn/api-security-jwt',
   'iot-ot-pqc': '/learn/iot-ot-pqc',
+}
+
+function DimensionLeaders({
+  leaders,
+  onSelect,
+}: {
+  leaders: Leader[]
+  onSelect: (leader: Leader) => void
+}) {
+  return (
+    <div>
+      <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
+        Leaders in PQC Today
+      </h5>
+      <div className="flex flex-wrap gap-2 mt-1">
+        {leaders.map((leader) => (
+          <button
+            key={leader.id}
+            onClick={() => onSelect(leader)}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-muted/40 hover:bg-muted/70 border border-border hover:border-primary/40 transition-colors text-left"
+          >
+            {leader.imageUrl && (
+              <img
+                src={leader.imageUrl}
+                alt=""
+                className="w-5 h-5 rounded-full shrink-0 object-cover"
+                aria-hidden="true"
+              />
+            )}
+            <span className="text-xs font-medium text-foreground">{leader.name}</span>
+            {leader.organizations[0] && (
+              <span className="text-xs text-muted-foreground hidden sm:inline">
+                · {leader.organizations[0]}
+              </span>
+            )}
+          </button>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 function DimensionText({ label, value }: { label: string; value: string }) {
@@ -201,8 +244,9 @@ function DimensionSection({
   )
 }
 
-export const DocumentAnalysis = ({ enrichment }: DocumentAnalysisProps) => {
+export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysisProps) => {
   const [open, setOpen] = useState(false)
+  const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
   const navigate = useNavigate()
 
   const hasCoreAnalysis =
@@ -224,6 +268,7 @@ export const DocumentAnalysis = ({ enrichment }: DocumentAnalysisProps) => {
   const hasEcosystem =
     enrichment.quantumThreats.length > 0 ||
     enrichment.regionsAndBodies !== null ||
+    (relatedLeaders && relatedLeaders.length > 0) ||
     enrichment.leadersContributions.length > 0 ||
     enrichment.pqcProducts.length > 0 ||
     enrichment.protocols.length > 0 ||
@@ -253,6 +298,12 @@ export const DocumentAnalysis = ({ enrichment }: DocumentAnalysisProps) => {
           )}
         />
       </Button>
+
+      <LeaderDetailPopover
+        isOpen={selectedLeader !== null}
+        onClose={() => setSelectedLeader(null)}
+        leader={selectedLeader}
+      />
 
       {open && (
         <div className="mt-3 space-y-4 pl-1">
@@ -389,8 +440,15 @@ export const DocumentAnalysis = ({ enrichment }: DocumentAnalysisProps) => {
                 </div>
               )}
 
-              {enrichment.leadersContributions.length > 0 && (
-                <DimensionTags label="Leaders Mentioned" items={enrichment.leadersContributions} />
+              {relatedLeaders && relatedLeaders.length > 0 ? (
+                <DimensionLeaders leaders={relatedLeaders} onSelect={setSelectedLeader} />
+              ) : (
+                enrichment.leadersContributions.length > 0 && (
+                  <DimensionTags
+                    label="Leaders Mentioned"
+                    items={enrichment.leadersContributions}
+                  />
+                )
               )}
 
               {enrichment.pqcProducts.length > 0 && (

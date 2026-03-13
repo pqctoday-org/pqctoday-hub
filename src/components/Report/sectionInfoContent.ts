@@ -50,7 +50,7 @@ export const SECTION_INFO: Record<string, SectionInfoEntry> = {
     scoringPrinciples: [
       'Composite = (QE \u00d7 w1) + (MC \u00d7 w2) + (RP \u00d7 w3) + (OR \u00d7 w4), where weights are industry-specific.',
       'Situational boosts (up to +20%) apply for compounding risks: critical data with long retention and no migration started (HNDL), signing algorithms with long credential lifetime (HNFL), government with CNSA 2.0 obligations, or hardcoded crypto with legacy infrastructure.',
-      'Risk level thresholds: Low (0\u201329), Medium (30\u201359), High (60\u201379), Critical (80\u2013100).',
+      'Risk level thresholds: Low (0\u201325), Medium (26\u201355), High (56\u201375), Critical (76\u2013100).',
     ],
     personaEffects: [
       {

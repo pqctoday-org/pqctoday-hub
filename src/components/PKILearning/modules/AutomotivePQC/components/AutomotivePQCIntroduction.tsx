@@ -18,6 +18,7 @@ import {
   XCircle,
   Minus,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -420,9 +421,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Cross-reference the{' '}
-            <a href="/learn/iot-ot-pqc" className="text-primary hover:underline">
+            <Link to="/learn/iot-ot-pqc" className="text-primary hover:underline">
               IoT &amp; OT PQC module
-            </a>{' '}
+            </Link>{' '}
             for constrained device algorithm selection mechanics, including the tradeoffs between
             ML-DSA, FN-DSA, and hash-based signatures in resource-limited environments.
           </p>
@@ -595,9 +596,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Cross-reference the{' '}
-            <a href="/learn/hsm-pqc" className="text-primary hover:underline">
+            <Link to="/learn/hsm-pqc" className="text-primary hover:underline">
               HSM PQC module
-            </a>{' '}
+            </Link>{' '}
             for detailed <InlineTooltip term="PKCS#11">PKCS#11</InlineTooltip> operations, key
             lifecycle management patterns, and hands-on exercises with PQC-enabled HSM emulation.
           </p>
@@ -862,9 +863,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Cross-reference the{' '}
-            <a href="/learn/emv-payment-pqc" className="text-primary hover:underline">
+            <Link to="/learn/emv-payment-pqc" className="text-primary hover:underline">
               EMV Payment PQC module
-            </a>{' '}
+            </Link>{' '}
             for detailed coverage of payment network PQC migration (Visa, Mastercard, Amex),
             tokenization frameworks, and the role of{' '}
             <InlineTooltip term="FN-DSA">FN-DSA-512</InlineTooltip> in constrained payment
@@ -1140,9 +1141,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
 
           <p>
             Cross-reference the{' '}
-            <a href="/learn/vendor-risk" className="text-primary hover:underline">
+            <Link to="/learn/vendor-risk" className="text-primary hover:underline">
               Vendor Risk module
-            </a>{' '}
+            </Link>{' '}
             for a comprehensive supply chain assessment methodology, including questionnaire
             templates for evaluating supplier PQC readiness, risk scoring frameworks, and contract
             clause recommendations for cryptographic requirements.
