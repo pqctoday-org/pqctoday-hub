@@ -584,7 +584,7 @@ const ModuleTracksGrid = ({
               <span className="font-semibold">{totalModuleCount}</span> modules
               {personaFilterActive && (
                 <span className="text-secondary ml-1">
-                  · {PERSONA_FILTER_ITEMS.find((p) => p.id === selectedPersonaFilter)?.label} path
+                  · {personaFilterItems.find((p) => p.id === selectedPersonaFilter)?.label} path
                 </span>
               )}
             </span>

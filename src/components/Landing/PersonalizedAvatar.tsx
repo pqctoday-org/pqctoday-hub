@@ -75,7 +75,7 @@ const REGION_CONFIG: Record<Region, { flag: string; label: string } | null> = {
 }
 
 const EXP_CONFIG: Record<ExperienceLevel, { Icon: LucideIcon; label: string; color: string }> = {
-  new: { Icon: BookOpen, label: 'Novice', color: 'text-status-info' },
+  curious: { Icon: BookOpen, label: 'Curious', color: 'text-status-info' },
   basics: { Icon: GraduationCap, label: 'Intermediate', color: 'text-status-warning' },
   expert: { Icon: Award, label: 'Expert', color: 'text-status-success' },
 }

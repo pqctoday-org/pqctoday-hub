@@ -46,7 +46,7 @@ export interface AssessmentInput {
   /** Sub-categories per infrastructure layer (e.g., { Cloud: ['AWS KMS', 'Azure Key Vault'] }). */
   infrastructureSubCategories?: Record<string, string[]>
   /** Active persona at assessment time — drives narrative framing and scoring adjustments. */
-  persona?: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops'
+  persona?: 'executive' | 'developer' | 'architect' | 'researcher' | 'ops' | 'curious'
 }
 
 export interface AlgorithmMigration {
