@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.44.4] - 2026-03-13
+
+### Changed
+
+- **About page — collapsible Data Privacy and PQC Assistant sections**: Both sections now start collapsed and expand on click with a `ChevronDown` toggle. Applied to both desktop (`AboutView`) and mobile (`MobileAboutView`) layouts, matching the existing collapsible pattern used by the Cryptography Buff subsections. [view:/about]
+
 ## [2.44.3] - 2026-03-13
 
 ### Fixed

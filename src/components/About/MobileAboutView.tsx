@@ -196,6 +196,8 @@ export const MobileAboutView = () => {
   const [isWorkgroupsOpen, setIsWorkgroupsOpen] = useState(false)
   const [isCryptoBuffSitesOpen, setIsCryptoBuffSitesOpen] = useState(false)
   const [isCryptoBuffBooksOpen, setIsCryptoBuffBooksOpen] = useState(false)
+  const [isDataPrivacyOpen, setIsDataPrivacyOpen] = useState(false)
+  const [isPqcAssistantOpen, setIsPqcAssistantOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -442,43 +444,67 @@ export const MobileAboutView = () => {
         transition={{ delay: 0.18 }}
         className="glass-panel p-4"
       >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
+        <button
+          onClick={() => setIsDataPrivacyOpen(!isDataPrivacyOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
             <Lock size={20} />
           </div>
-          <h2 className="text-lg font-semibold">Data Privacy</h2>
-        </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today is a fully static website with no backend, no database, and no user accounts. We
-          do not collect, store, or transmit any personal data.
-        </p>
-        <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
-          <li>No personal data — no names, emails, cookies, or server-side logging</li>
-          <li>All preferences and progress stored locally in your browser</li>
-          <li>Cryptographic keys and certificates never leave your device</li>
-          <li>No external API calls at runtime</li>
-        </ul>
-        <div className="mt-4 pt-4 border-t border-border">
-          <div className="flex items-center gap-2 mb-2">
-            <BarChart2 size={13} className="text-primary flex-shrink-0" />
-            <span className="text-xs font-semibold text-foreground">Anonymous usage analytics</span>
-          </div>
-          <p className="text-xs text-muted-foreground leading-relaxed">
-            We use <strong className="text-foreground">Google Analytics 4</strong> to collect
-            anonymous behavioral signals (page views, feature interactions, accuracy votes, learning
-            milestones). No personal identifiers are ever transmitted. Analytics are disabled on
-            localhost.{' '}
-            <a
-              href="https://tools.google.com/dlpage/gaoptout"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
+          <h2 className="text-lg font-semibold flex-1">Data Privacy</h2>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isDataPrivacyOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isDataPrivacyOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
             >
-              Opt out
-            </a>
-            .
-          </p>
-        </div>
+              <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+                PQC Today is a fully static website with no backend, no database, and no user
+                accounts. We do not collect, store, or transmit any personal data.
+              </p>
+              <ul className="mt-3 space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
+                <li>No personal data — no names, emails, cookies, or server-side logging</li>
+                <li>All preferences and progress stored locally in your browser</li>
+                <li>Cryptographic keys and certificates never leave your device</li>
+                <li>No external API calls at runtime</li>
+              </ul>
+              <div className="mt-4 pt-4 border-t border-border">
+                <div className="flex items-center gap-2 mb-2">
+                  <BarChart2 size={13} className="text-primary flex-shrink-0" />
+                  <span className="text-xs font-semibold text-foreground">
+                    Anonymous usage analytics
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground leading-relaxed">
+                  We use <strong className="text-foreground">Google Analytics 4</strong> to collect
+                  anonymous behavioral signals (page views, feature interactions, accuracy votes,
+                  learning milestones). No personal identifiers are ever transmitted. Analytics are
+                  disabled on localhost.{' '}
+                  <a
+                    href="https://tools.google.com/dlpage/gaoptout"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Opt out
+                  </a>
+                  .
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* PQC Assistant Card */}
@@ -488,17 +514,39 @@ export const MobileAboutView = () => {
         transition={{ delay: 0.2 }}
         className="glass-panel p-4"
       >
-        <div className="flex items-center gap-3 mb-3">
-          <div className="p-2 rounded-full bg-primary/10 text-primary">
+        <button
+          onClick={() => setIsPqcAssistantOpen(!isPqcAssistantOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
             <BrainCircuit size={20} />
           </div>
-          <h2 className="text-lg font-semibold">PQC Assistant</h2>
-        </div>
-        <p className="text-sm text-muted-foreground leading-relaxed">
-          Ask questions about post-quantum cryptography using our RAG-powered chatbot. It searches
-          ~3,830 curated knowledge chunks and uses Gemini 2.5 Flash to deliver grounded answers with
-          deep links to relevant pages.
-        </p>
+          <h2 className="text-lg font-semibold flex-1">PQC Assistant</h2>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isPqcAssistantOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isPqcAssistantOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <p className="text-sm text-muted-foreground leading-relaxed mt-3">
+                Ask questions about post-quantum cryptography using our RAG-powered chatbot. It
+                searches ~3,830 curated knowledge chunks and uses Gemini 2.5 Flash to deliver
+                grounded answers with deep links to relevant pages.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* Cryptography Buff Section */}

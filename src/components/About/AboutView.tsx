@@ -218,6 +218,8 @@ export function AboutView() {
   const [isSbomOpen, setIsSbomOpen] = useState(false)
   const [isCryptoBuffSitesOpen, setIsCryptoBuffSitesOpen] = useState(false)
   const [isCryptoBuffBooksOpen, setIsCryptoBuffBooksOpen] = useState(false)
+  const [isDataPrivacyOpen, setIsDataPrivacyOpen] = useState(false)
+  const [isPqcAssistantOpen, setIsPqcAssistantOpen] = useState(false)
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -964,113 +966,143 @@ export function AboutView() {
           transition={{ delay: 0.37 }}
           className="glass-panel p-6"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <Lock className="text-primary" size={24} />
-            <h2 className="text-xl font-semibold">Data Privacy</h2>
-          </div>
-          <div className="prose prose-invert max-w-none">
-            <p className="text-muted-foreground">
-              PQC Today is a fully static website &mdash; there is no backend server, no database,
-              and no user accounts. We do not collect, store, or transmit any personal data.
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
-              <li>
-                <strong className="text-foreground">No personal data collection</strong> &mdash; no
-                names, email addresses, cookies, tracking pixels, form submissions, or server-side
-                logging of any kind.
-              </li>
-              <li>
-                <strong className="text-foreground">Local-only persistence</strong> &mdash; all user
-                preferences, assessment results, learning progress, and saved state are stored
-                exclusively in your browser&apos;s localStorage. Nothing leaves your device.
-              </li>
-              <li>
-                <strong className="text-foreground">Client-side cryptography</strong> &mdash; all
-                cryptographic operations run entirely in your browser via WebAssembly (OpenSSL,
-                liboqs). No keys or certificates are ever sent to a server.
-              </li>
-              <li>
-                <strong className="text-foreground">No third-party services at runtime</strong>
-                &mdash; the site is served as static files from GitHub Pages and makes no external
-                API calls at runtime &mdash; <em>except</em> when you use the PQC Assistant, which
-                sends your query and retrieved context chunks to{' '}
-                <strong className="text-foreground">Google&apos;s Gemini API</strong>. See the PQC
-                Assistant section below for details.
-              </li>
-              <li>
-                <strong className="text-foreground">Full transparency</strong> &mdash; the entire
-                source code is{' '}
-                <a
-                  href="https://github.com/pqctoday/pqc-timeline-app"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  publicly available
-                </a>{' '}
-                for inspection under GPLv3.
-              </li>
-            </ul>
+          <button
+            onClick={() => setIsDataPrivacyOpen(!isDataPrivacyOpen)}
+            className="flex items-center gap-3 w-full text-left cursor-pointer"
+          >
+            <Lock className="text-primary shrink-0" size={24} />
+            <h2 className="text-xl font-semibold flex-1">Data Privacy</h2>
+            <ChevronDown
+              size={20}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200 shrink-0',
+                isDataPrivacyOpen && 'rotate-180'
+              )}
+            />
+          </button>
+          <AnimatePresence>
+            {isDataPrivacyOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
+              >
+                <div className="prose prose-invert max-w-none mt-4">
+                  <p className="text-muted-foreground">
+                    PQC Today is a fully static website &mdash; there is no backend server, no
+                    database, and no user accounts. We do not collect, store, or transmit any
+                    personal data.
+                  </p>
+                  <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
+                    <li>
+                      <strong className="text-foreground">No personal data collection</strong>{' '}
+                      &mdash; no names, email addresses, cookies, tracking pixels, form submissions,
+                      or server-side logging of any kind.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Local-only persistence</strong> &mdash;
+                      all user preferences, assessment results, learning progress, and saved state
+                      are stored exclusively in your browser&apos;s localStorage. Nothing leaves
+                      your device.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Client-side cryptography</strong> &mdash;
+                      all cryptographic operations run entirely in your browser via WebAssembly
+                      (OpenSSL, liboqs). No keys or certificates are ever sent to a server.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">
+                        No third-party services at runtime
+                      </strong>
+                      &mdash; the site is served as static files from GitHub Pages and makes no
+                      external API calls at runtime &mdash; <em>except</em> when you use the PQC
+                      Assistant, which sends your query and retrieved context chunks to{' '}
+                      <strong className="text-foreground">Google&apos;s Gemini API</strong>. See the
+                      PQC Assistant section below for details.
+                    </li>
+                    <li>
+                      <strong className="text-foreground">Full transparency</strong> &mdash; the
+                      entire source code is{' '}
+                      <a
+                        href="https://github.com/pqctoday/pqc-timeline-app"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        publicly available
+                      </a>{' '}
+                      for inspection under GPLv3.
+                    </li>
+                  </ul>
 
-            {/* Anonymous analytics disclosure */}
-            <div className="mt-6 pt-5 border-t border-border">
-              <div className="flex items-center gap-2 mb-3">
-                <BarChart2 size={16} className="text-primary flex-shrink-0" />
-                <h3 className="text-sm font-semibold text-foreground">Anonymous usage analytics</h3>
-              </div>
-              <p className="text-sm text-muted-foreground mb-3">
-                To improve content accuracy and usability, PQC Today uses{' '}
-                <strong className="text-foreground">Google Analytics 4</strong> to collect
-                anonymous, aggregated behavioral signals. No personal identifiers are ever
-                transmitted. Specifically, we collect:
-              </p>
-              <ul className="space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
-                <li>
-                  <strong className="text-foreground">Page navigation</strong> &mdash; which
-                  sections of the site are visited.
-                </li>
-                <li>
-                  <strong className="text-foreground">Feature interactions</strong> &mdash; searches
-                  performed, filters applied, algorithms and compliance items viewed.
-                </li>
-                <li>
-                  <strong className="text-foreground">Content accuracy signals</strong> &mdash;
-                  thumbs-up / thumbs-down votes on content pages (page path and vote only).
-                </li>
-                <li>
-                  <strong className="text-foreground">Learning milestones</strong> &mdash; module
-                  started / completed events and artifact generation (key type only, never the key
-                  itself).
-                </li>
-                <li>
-                  <strong className="text-foreground">Assistant feedback</strong> &mdash; helpful /
-                  unhelpful votes on PQC Assistant responses.
-                </li>
-              </ul>
-              <p className="text-sm text-muted-foreground mt-3">
-                Analytics are <strong className="text-foreground">disabled on localhost</strong>.
-                Google Analytics 4 anonymizes IP addresses by default &mdash;{' '}
-                <a
-                  href="https://policies.google.com/privacy"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Google&apos;s Privacy Policy
-                </a>{' '}
-                applies. You may opt out at any time via the{' '}
-                <a
-                  href="https://tools.google.com/dlpage/gaoptout"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Google Analytics opt-out browser extension
-                </a>
-                .
-              </p>
-            </div>
-          </div>
+                  {/* Anonymous analytics disclosure */}
+                  <div className="mt-6 pt-5 border-t border-border">
+                    <div className="flex items-center gap-2 mb-3">
+                      <BarChart2 size={16} className="text-primary flex-shrink-0" />
+                      <h3 className="text-sm font-semibold text-foreground">
+                        Anonymous usage analytics
+                      </h3>
+                    </div>
+                    <p className="text-sm text-muted-foreground mb-3">
+                      To improve content accuracy and usability, PQC Today uses{' '}
+                      <strong className="text-foreground">Google Analytics 4</strong> to collect
+                      anonymous, aggregated behavioral signals. No personal identifiers are ever
+                      transmitted. Specifically, we collect:
+                    </p>
+                    <ul className="space-y-1.5 text-sm text-muted-foreground list-disc list-inside">
+                      <li>
+                        <strong className="text-foreground">Page navigation</strong> &mdash; which
+                        sections of the site are visited.
+                      </li>
+                      <li>
+                        <strong className="text-foreground">Feature interactions</strong> &mdash;
+                        searches performed, filters applied, algorithms and compliance items viewed.
+                      </li>
+                      <li>
+                        <strong className="text-foreground">Content accuracy signals</strong>{' '}
+                        &mdash; thumbs-up / thumbs-down votes on content pages (page path and vote
+                        only).
+                      </li>
+                      <li>
+                        <strong className="text-foreground">Learning milestones</strong> &mdash;
+                        module started / completed events and artifact generation (key type only,
+                        never the key itself).
+                      </li>
+                      <li>
+                        <strong className="text-foreground">Assistant feedback</strong> &mdash;
+                        helpful / unhelpful votes on PQC Assistant responses.
+                      </li>
+                    </ul>
+                    <p className="text-sm text-muted-foreground mt-3">
+                      Analytics are{' '}
+                      <strong className="text-foreground">disabled on localhost</strong>. Google
+                      Analytics 4 anonymizes IP addresses by default &mdash;{' '}
+                      <a
+                        href="https://policies.google.com/privacy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Google&apos;s Privacy Policy
+                      </a>{' '}
+                      applies. You may opt out at any time via the{' '}
+                      <a
+                        href="https://tools.google.com/dlpage/gaoptout"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Google Analytics opt-out browser extension
+                      </a>
+                      .
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* License Section */}
@@ -1125,115 +1157,139 @@ export function AboutView() {
           transition={{ delay: 0.41 }}
           className="glass-panel p-6"
         >
-          <div className="flex items-center gap-3 mb-4">
-            <BrainCircuit className="text-primary" size={24} />
-            <div>
+          <button
+            onClick={() => setIsPqcAssistantOpen(!isPqcAssistantOpen)}
+            className="flex items-center gap-3 w-full text-left cursor-pointer"
+          >
+            <BrainCircuit className="text-primary shrink-0" size={24} />
+            <div className="flex-1">
               <h2 className="text-xl font-semibold">PQC Assistant</h2>
               <p className="text-xs text-muted-foreground">RAG + Gemini 2.5 Flash</p>
             </div>
-          </div>
-
-          <div className="prose prose-invert max-w-none">
-            <p className="text-muted-foreground">
-              The PQC Assistant chatbot uses{' '}
-              <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong> to
-              deliver grounded, sourced answers about post-quantum cryptography. When you ask a
-              question, it searches a curated corpus of ~3,830 PQC knowledge chunks &mdash; covering
-              algorithms, standards, threats, compliance certifications, migration products,
-              leaders, and learning modules &mdash; retrieves the 10&ndash;20 most relevant passages
-              (adaptive per query intent), and injects them as context into a{' '}
-              <strong className="text-foreground">Gemini 2.5 Flash</strong> prompt. The result is an
-              answer grounded in platform data, enriched with deep links to the exact page or
-              section being discussed.
-            </p>
-            <p className="text-muted-foreground mt-3">
-              To use the PQC Assistant, you need to provide your own{' '}
-              <a
-                href="https://aistudio.google.com/apikey"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary hover:underline"
+            <ChevronDown
+              size={20}
+              className={clsx(
+                'text-muted-foreground transition-transform duration-200 shrink-0',
+                isPqcAssistantOpen && 'rotate-180'
+              )}
+            />
+          </button>
+          <AnimatePresence>
+            {isPqcAssistantOpen && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className="overflow-hidden"
               >
-                Google AI Studio API key
-              </a>
-              . Your key is stored only in your browser&apos;s localStorage and is never sent to any
-              server other than Google&apos;s Gemini API. You can obtain a free API key from Google
-              AI Studio in seconds.
-            </p>
-            <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
-              <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={16} />
-              <p className="text-xs text-muted-foreground">
-                <strong className="text-foreground">Data routing notice:</strong> When you submit a
-                question, your query text and the retrieved context chunks are sent to{' '}
-                <strong className="text-foreground">Google&apos;s servers</strong> for processing by
-                the Gemini 2.5 Flash model. Do not include sensitive, confidential, or personal
-                information in your queries.{' '}
-                <a
-                  href="https://ai.google.dev/gemini-api/terms"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-primary hover:underline"
-                >
-                  Google AI Studio terms
-                </a>{' '}
-                apply.
-              </p>
-            </div>
-          </div>
+                <div className="prose prose-invert max-w-none mt-4">
+                  <p className="text-muted-foreground">
+                    The PQC Assistant chatbot uses{' '}
+                    <strong className="text-foreground">
+                      Retrieval-Augmented Generation (RAG)
+                    </strong>{' '}
+                    to deliver grounded, sourced answers about post-quantum cryptography. When you
+                    ask a question, it searches a curated corpus of ~3,830 PQC knowledge chunks
+                    &mdash; covering algorithms, standards, threats, compliance certifications,
+                    migration products, leaders, and learning modules &mdash; retrieves the
+                    10&ndash;20 most relevant passages (adaptive per query intent), and injects them
+                    as context into a <strong className="text-foreground">Gemini 2.5 Flash</strong>{' '}
+                    prompt. The result is an answer grounded in platform data, enriched with deep
+                    links to the exact page or section being discussed.
+                  </p>
+                  <p className="text-muted-foreground mt-3">
+                    To use the PQC Assistant, you need to provide your own{' '}
+                    <a
+                      href="https://aistudio.google.com/apikey"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Google AI Studio API key
+                    </a>
+                    . Your key is stored only in your browser&apos;s localStorage and is never sent
+                    to any server other than Google&apos;s Gemini API. You can obtain a free API key
+                    from Google AI Studio in seconds.
+                  </p>
+                  <div className="mt-4 flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
+                    <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={16} />
+                    <p className="text-xs text-muted-foreground">
+                      <strong className="text-foreground">Data routing notice:</strong> When you
+                      submit a question, your query text and the retrieved context chunks are sent
+                      to <strong className="text-foreground">Google&apos;s servers</strong> for
+                      processing by the Gemini 2.5 Flash model. Do not include sensitive,
+                      confidential, or personal information in your queries.{' '}
+                      <a
+                        href="https://ai.google.dev/gemini-api/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-primary hover:underline"
+                      >
+                        Google AI Studio terms
+                      </a>{' '}
+                      apply.
+                    </p>
+                  </div>
+                </div>
 
-          {/* Capability Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5">
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
-              <Database className="text-primary mt-0.5 shrink-0" size={18} />
-              <div>
-                <p className="text-sm font-semibold text-foreground">Grounded Answers</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Responses cite specific data from the platform&apos;s curated corpus &mdash;
-                  algorithm specs, NIST standards, threat scenarios, compliance certs, and more.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
-              <Link2 className="text-primary mt-0.5 shrink-0" size={18} />
-              <div>
-                <p className="text-sm font-semibold text-foreground">Deep Linking</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Answers include clickable links that navigate directly to the relevant page
-                  &mdash; a specific algorithm, cert record, learning module, or workshop tab.
-                </p>
-              </div>
-            </div>
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
-              <Sparkles className="text-primary mt-0.5 shrink-0" size={18} />
-              <div>
-                <p className="text-sm font-semibold text-foreground">PQC Domain Expertise</p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Gemini Flash supplements RAG context with broad PQC knowledge from its training
-                  data for topics not fully covered in the corpus.
-                </p>
-              </div>
-            </div>
-          </div>
+                {/* Capability Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mt-5">
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+                    <Database className="text-primary mt-0.5 shrink-0" size={18} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Grounded Answers</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Responses cite specific data from the platform&apos;s curated corpus &mdash;
+                        algorithm specs, NIST standards, threat scenarios, compliance certs, and
+                        more.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+                    <Link2 className="text-primary mt-0.5 shrink-0" size={18} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Deep Linking</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Answers include clickable links that navigate directly to the relevant page
+                        &mdash; a specific algorithm, cert record, learning module, or workshop tab.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/20 border border-border">
+                    <Sparkles className="text-primary mt-0.5 shrink-0" size={18} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">PQC Domain Expertise</p>
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Gemini Flash supplements RAG context with broad PQC knowledge from its
+                        training data for topics not fully covered in the corpus.
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-          {/* Limitations */}
-          <div className="mt-5">
-            <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
-            <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
-              <li>
-                Knowledge is bounded by the curated corpus (~3,830 chunks) &mdash; niche or very
-                recent topics may lack coverage
-              </li>
-              <li>
-                Requires a user-provided Gemini API key (BYOK) &mdash; no keys are stored
-                server-side
-              </li>
-              <li>Cannot perform actions &mdash; read-only Q&A, no write operations</li>
-              <li>
-                General LLM caveats apply &mdash; may occasionally hallucinate details outside its
-                context window
-              </li>
-            </ul>
-          </div>
+                {/* Limitations */}
+                <div className="mt-5">
+                  <h3 className="text-sm font-semibold text-muted-foreground mb-2">Limitations</h3>
+                  <ul className="space-y-1.5 text-xs text-muted-foreground list-disc list-inside">
+                    <li>
+                      Knowledge is bounded by the curated corpus (~3,830 chunks) &mdash; niche or
+                      very recent topics may lack coverage
+                    </li>
+                    <li>
+                      Requires a user-provided Gemini API key (BYOK) &mdash; no keys are stored
+                      server-side
+                    </li>
+                    <li>Cannot perform actions &mdash; read-only Q&A, no write operations</li>
+                    <li>
+                      General LLM caveats apply &mdash; may occasionally hallucinate details outside
+                      its context window
+                    </li>
+                  </ul>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Cryptography Buff Section */}
