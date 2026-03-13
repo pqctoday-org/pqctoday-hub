@@ -8,12 +8,9 @@ import { registerSW } from 'virtual:pwa-register'
 // Initialize Google Analytics
 initGA()
 
-// Register service worker for Airplane Mode (offline support)
-const updateSW = registerSW({
-  onNeedRefresh() {
-    // Dispatch custom event so React components can show update prompt
-    window.dispatchEvent(new CustomEvent('pwa-update-available', { detail: { updateSW } }))
-  },
+// Register service worker for offline support — autoUpdate mode reloads
+// automatically when a new version is detected, no user prompt needed.
+registerSW({
   onOfflineReady() {
     // App is cached and ready for offline use — no action needed
   },

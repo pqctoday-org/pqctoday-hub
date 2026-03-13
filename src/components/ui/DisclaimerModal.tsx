@@ -1,14 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useCallback, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
 import { Construction, ExternalLink, MessageSquare, Linkedin, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
 
+/**
+ * Non-blocking disclaimer banner pinned to bottom of viewport.
+ * Does NOT use createPortal or full-screen overlays — the page remains
+ * fully interactive so users are never locked out.
+ */
 export function DisclaimerModal() {
   const { hasAcknowledgedCurrentMajor, acknowledgeDisclaimer } = useDisclaimerStore()
   const buttonRef = useRef<HTMLButtonElement>(null)
-  // Belt-and-suspenders: local state guarantees unmount even if Zustand re-render fails
   const [forceClosed, setForceClosed] = useState(false)
   const isOpen = !hasAcknowledgedCurrentMajor() && !forceClosed
 
@@ -17,21 +20,11 @@ export function DisclaimerModal() {
     setForceClosed(true)
   }, [acknowledgeDisclaimer])
 
-  // Auto-focus the button when modal opens
+  // Auto-focus the button when banner appears
   useEffect(() => {
     if (isOpen) {
       const timer = setTimeout(() => buttonRef.current?.focus(), 100)
       return () => clearTimeout(timer)
-    }
-  }, [isOpen])
-
-  // Prevent body scroll while modal is open
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-      return () => {
-        document.body.style.overflow = ''
-      }
     }
   }, [isOpen])
 
@@ -45,31 +38,22 @@ export function DisclaimerModal() {
     return () => document.removeEventListener('keydown', handler)
   }, [isOpen, handleDismiss])
 
-  // No framer-motion — plain conditional render guarantees DOM removal
   if (!isOpen) return null
 
-  return createPortal(
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+  return (
     <div
-      className="fixed inset-0 z-[110] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm print:hidden animate-in fade-in duration-150"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) handleDismiss()
-      }}
+      className="fixed inset-x-0 bottom-0 z-[110] p-4 print:hidden safe-bottom"
+      role="alert"
+      aria-labelledby="disclaimer-title"
     >
-      <div
-        className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden animate-in fade-in zoom-in-95 duration-150"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="disclaimer-modal-title"
-        aria-describedby="disclaimer-modal-description"
-      >
+      <div className="glass-panel bg-card max-w-2xl mx-auto max-h-[70dvh] flex flex-col overflow-hidden shadow-2xl border-primary/30">
         {/* Header */}
-        <div className="flex items-center justify-between gap-3 px-6 pt-6 pb-4 shrink-0 border-b border-border/50">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg bg-primary/20">
-              <Construction size={20} className="text-primary" />
+        <div className="flex items-center justify-between gap-3 px-5 pt-4 pb-3 shrink-0 border-b border-border/50">
+          <div className="flex items-center gap-2.5">
+            <div className="p-1.5 rounded-lg bg-primary/20">
+              <Construction size={18} className="text-primary" />
             </div>
-            <h2 id="disclaimer-modal-title" className="text-lg font-bold text-foreground">
+            <h2 id="disclaimer-title" className="text-base font-bold text-foreground">
               Welcome to PQC Today
             </h2>
           </div>
@@ -85,104 +69,49 @@ export function DisclaimerModal() {
         </div>
 
         {/* Scrollable content */}
-        <div
-          id="disclaimer-modal-description"
-          className="overflow-y-auto flex-1 px-6 py-5 space-y-4"
-        >
+        <div className="overflow-y-auto flex-1 px-5 py-4 space-y-3">
           <p className="text-sm text-muted-foreground leading-relaxed">
             PQC Today is a{' '}
             <span className="font-medium text-foreground">
               community-driven educational platform
-            </span>{' '}
-            built to help professionals understand and prepare for the post-quantum cryptography
-            transition.
+            </span>
+            . Content is sourced from publicly available resources and{' '}
+            <span className="font-medium text-foreground">may contain inaccuracies</span>. This site
+            has not received endorsement from organizations referenced in its content. Leaders are
+            included only with <span className="font-medium text-foreground">written consent</span>.
           </p>
 
-          <div>
-            <p className="text-sm font-medium text-foreground mb-2">Please be aware that:</p>
-            <ul className="space-y-2.5 text-sm text-muted-foreground leading-relaxed">
-              <li className="flex items-start gap-2.5">
-                <span className="text-primary mt-1 shrink-0">&#9679;</span>
-                <span>
-                  This website has{' '}
-                  <span className="font-medium text-foreground">not received endorsement</span> from
-                  the organizations, standards bodies, or government agencies referenced in its
-                  content
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-primary mt-1 shrink-0">&#9679;</span>
-                <span>
-                  All information is sourced from{' '}
-                  <span className="font-medium text-foreground">publicly available resources</span>{' '}
-                  on the internet
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-primary mt-1 shrink-0">&#9679;</span>
-                <span>
-                  Significant effort has gone into ensuring accuracy through{' '}
-                  <span className="font-medium text-foreground">
-                    thorough automated and manual verification processes
-                  </span>
-                  , but the content{' '}
-                  <span className="font-medium text-foreground">
-                    may still contain inaccuracies
-                  </span>
-                </span>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <span className="text-primary mt-1 shrink-0">&#9679;</span>
-                <span>
-                  We are actively working to{' '}
-                  <span className="font-medium text-foreground">
-                    collaborate with authoritative organizations and domain experts
-                  </span>{' '}
-                  to cross-validate and continuously improve the quality of this content
-                </span>
-              </li>
-            </ul>
-          </div>
-
-          <p className="text-sm text-muted-foreground leading-relaxed">
-            Industry leaders featured on this platform are included only with their{' '}
-            <span className="font-medium text-foreground">written consent</span>. If you represent a
-            cited organization, are a domain expert, or simply want to help improve the accuracy of
-            this platform, we welcome your involvement:
-          </p>
-
-          <div className="flex flex-wrap gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <a
               href="https://github.com/pqctoday/pqc-timeline-app/discussions/108"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
             >
-              <MessageSquare size={14} />
+              <MessageSquare size={12} />
               GitHub Discussions
-              <ExternalLink size={12} />
+              <ExternalLink size={10} />
             </a>
             <a
               href="https://www.linkedin.com/in/eric-amador-971850a"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+              className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
             >
-              <Linkedin size={14} />
+              <Linkedin size={12} />
               Eric Amador
-              <ExternalLink size={12} />
+              <ExternalLink size={10} />
             </a>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="px-6 pb-6 pt-4 shrink-0 border-t border-border/50">
+        <div className="px-5 pb-4 pt-3 shrink-0 border-t border-border/50">
           <Button ref={buttonRef} variant="gradient" className="w-full" onClick={handleDismiss}>
             I Understand
           </Button>
         </div>
       </div>
-    </div>,
-    document.body
+    </div>
   )
 }

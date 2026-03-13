@@ -11,7 +11,7 @@ describe('DisclaimerModal', () => {
     useDisclaimerStore.getState().resetForTesting()
   })
 
-  const renderModal = () =>
+  const renderBanner = () =>
     render(
       <BrowserRouter>
         <DisclaimerModal />
@@ -19,28 +19,26 @@ describe('DisclaimerModal', () => {
     )
 
   it('renders when disclaimer is not acknowledged', () => {
-    renderModal()
+    renderBanner()
     expect(screen.getByText('Welcome to PQC Today')).toBeInTheDocument()
     expect(screen.getByRole('button', { name: 'I Understand' })).toBeInTheDocument()
   })
 
   it('does not render when disclaimer is acknowledged', () => {
     useDisclaimerStore.getState().acknowledgeDisclaimer()
-    renderModal()
+    renderBanner()
     expect(screen.queryByText('Welcome to PQC Today')).not.toBeInTheDocument()
   })
 
   it('has correct ARIA attributes', () => {
-    renderModal()
-    const dialog = screen.getByRole('alertdialog')
-    expect(dialog).toHaveAttribute('aria-modal', 'true')
-    expect(dialog).toHaveAttribute('aria-labelledby', 'disclaimer-modal-title')
-    expect(dialog).toHaveAttribute('aria-describedby', 'disclaimer-modal-description')
+    renderBanner()
+    const banner = screen.getByRole('alert')
+    expect(banner).toHaveAttribute('aria-labelledby', 'disclaimer-title')
   })
 
-  it('clicking I Understand dismisses the modal', async () => {
+  it('clicking I Understand dismisses the banner', async () => {
     const user = userEvent.setup()
-    renderModal()
+    renderBanner()
 
     expect(screen.getByText('Welcome to PQC Today')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'I Understand' }))
@@ -48,16 +46,14 @@ describe('DisclaimerModal', () => {
     expect(useDisclaimerStore.getState().hasAcknowledgedCurrentMajor()).toBe(true)
   })
 
-  it('displays all key disclaimer points', () => {
-    renderModal()
+  it('displays key disclaimer points', () => {
+    renderBanner()
     expect(screen.getByText(/not received endorsement/)).toBeInTheDocument()
-    expect(screen.getByText(/publicly available resources/)).toBeInTheDocument()
-    expect(screen.getByText(/may still contain inaccuracies/)).toBeInTheDocument()
-    expect(screen.getByText(/collaborate with authoritative organizations/)).toBeInTheDocument()
+    expect(screen.getByText(/may contain inaccuracies/)).toBeInTheDocument()
   })
 
   it('contains GitHub and LinkedIn links', () => {
-    renderModal()
+    renderBanner()
     const githubLink = screen.getByRole('link', { name: /GitHub Discussions/ })
     expect(githubLink).toHaveAttribute(
       'href',
@@ -72,7 +68,7 @@ describe('DisclaimerModal', () => {
 
   it('dismisses on Escape key', async () => {
     const user = userEvent.setup()
-    renderModal()
+    renderBanner()
 
     expect(screen.getByText('Welcome to PQC Today')).toBeInTheDocument()
     await user.keyboard('{Escape}')

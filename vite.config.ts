@@ -45,7 +45,7 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     VitePWA({
-      registerType: 'prompt',
+      registerType: 'autoUpdate',
       includeAssets: [
         'favicon.svg',
         'favicon-32x32.png',
