@@ -22,6 +22,8 @@ import {
   X,
   Plane,
   FileText,
+  Clock,
+  Network,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -46,7 +48,7 @@ import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfi
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
-  const { isOpen: isPanelOpen } = useRightPanelStore()
+  const { isOpen: isPanelOpen, toggle: openPanel } = useRightPanelStore()
   const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
 
   // Build timestamp - set at compile time
@@ -323,6 +325,32 @@ export const MainLayout = () => {
                 >
                   {airplaneMode ? 'On' : 'Off'}
                 </span>
+              </button>
+
+              {/* Journey History shortcut */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMoreMenuOpen(false)
+                  openPanel('history')
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+              >
+                <Clock size={18} aria-hidden="true" />
+                Journey History
+              </button>
+
+              {/* Knowledge Graph shortcut */}
+              <button
+                type="button"
+                onClick={() => {
+                  setMoreMenuOpen(false)
+                  openPanel('graph')
+                }}
+                className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+              >
+                <Network size={18} aria-hidden="true" />
+                Knowledge Graph
               </button>
             </div>
           </div>
