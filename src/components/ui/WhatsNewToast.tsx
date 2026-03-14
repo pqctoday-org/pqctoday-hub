@@ -86,9 +86,17 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Endorse &amp; Flag everywhere</strong>{' '}
-                    &mdash; Stamp + Flag buttons on Library cards, Threats, Leaders, Timeline, and
-                    every Workshop step across all 43 modules
+                    <strong className="text-foreground">Endorsements &amp; flags remembered</strong>{' '}
+                    &mdash; Stamp and Flag buttons now stay activated after you use them; re-click
+                    to jump straight to your GitHub discussion
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Endorse &amp; Flag on every surface</strong>{' '}
+                    &mdash; Library, Threats, Leaders, Timeline (all views), and every Workshop step
+                    across all 43 modules
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
@@ -97,14 +105,6 @@ export const WhatsNewToast = () => {
                     <strong className="text-foreground">Flag issue button</strong> &mdash; red Flag
                     icon opens a prefilled GitHub Discussion with issue-type checkboxes for
                     reporting inaccuracies or broken content
-                  </span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-primary mt-0.5">&#9679;</span>
-                  <span>
-                    <strong className="text-foreground">Leader consent modal improved</strong>{' '}
-                    &mdash; Government/Policy &amp; Education criteria, copy-template button,
-                    prefilled GitHub Discussions URL
                   </span>
                 </li>
               </ul>

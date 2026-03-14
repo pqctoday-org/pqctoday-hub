@@ -4,6 +4,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.45.1] - 2026-03-14
+
+### Added
+
+- **Stateful Endorse/Flag buttons with discussion deeplink**: `EndorseButton` and `FlagButton` now persist state to localStorage (`useEndorsementStore`, key `pqc-endorsements-storage`). First click marks the resource as endorsed/flagged and opens the GitHub Discussion form. Re-clicking an activated button opens a GitHub Discussions search for that resource label so users can find the discussion they created. Activated state is shown with solid `bg-primary/15 ring-primary/30` (Endorse) or `bg-status-error/15 ring-status-error/30` (Flag), no bounce animation, and updated tooltip. [view:/library] [view:/threats] [view:/leaders] [view:/timeline] [view:/learn]
+- **`useEndorsementStore`**: New Zustand store (`src/store/useEndorsementStore.ts`) persisting endorsed/flagged records per resource using composite key `${resourceType}:${resourceId}`. Full `version`, `migrate()`, and `onRehydrateStorage` crash guard per project conventions. [data]
+- **`buildDiscussionSearchUrl`**: New export in `src/utils/endorsement.ts` — builds a GitHub Discussions search URL for a resource label, enabling re-click navigation to previously created discussions.
+
+### Fixed
+
+- **FlagButton missing from timeline document components**: `DocumentTable`, `TimelineDocumentCard`, `TimelineDocumentDetailPopover`, and the Gantt country row in `SimpleGanttChart` had `EndorseButton` only. `FlagButton` added to all four; country row now wraps both in a `flex gap-0.5` div. [view:/timeline]
+- **FlagButton missing from PageHeader**: `PageHeader` gained `flagUrl`, `flagLabel`, `flagResourceType` optional props and renders a `FlagButton` in the action cluster. Threat, Leaders, and Timeline page headers now pass matching `flagUrl` values. [view:/threats] [view:/leaders] [view:/timeline]
+- **FlagButton missing from `PKILearningView` module nav bar**: The module-level `EndorseButton` in the learn module navigation bar now has a paired `FlagButton` (wrapped in React fragment). [view:/learn]
+- **Test state leak in `FlagButton.test.tsx`**: Added `beforeEach(() => useEndorsementStore.setState({ records: {} }))` to reset the Zustand singleton between tests. Test 3's `fireEvent.click` called `markFlagged`, changing the aria-label for test 4 and causing `getByRole` to fail.
+
+### Data
+
+- **RAG corpus regenerated**: 3,776 chunks (was 3,775); `generatedAt: 2026-03-14`. [data]
+
 ## [2.45.0] - 2026-03-13
 
 ### Added
