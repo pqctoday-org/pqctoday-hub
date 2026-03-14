@@ -10,7 +10,7 @@ import { GanttLegend } from './GanttLegend'
 import { MobileTimelineList } from './MobileTimelineList'
 import { CountryFlag } from '../common/CountryFlag'
 import { PageHeader } from '../common/PageHeader'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -170,6 +170,17 @@ export const TimelineView = () => {
         })}
         endorseLabel="Timeline Page"
         endorseResourceType="Timeline"
+        flagUrl={buildFlagUrl({
+          category: 'timeline-endorsement',
+          title: 'Flag: Global PQC Migration Timeline',
+          resourceType: 'Timeline Page',
+          resourceId: 'Global Migration Timeline',
+          resourceDetails:
+            '**Page:** Global Migration Timeline — Compare PQC migration roadmaps across nations.',
+          pageUrl: '/timeline',
+        })}
+        flagLabel="Timeline Page"
+        flagResourceType="Timeline"
         testId="timeline-header"
       />
 

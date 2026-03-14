@@ -7,6 +7,7 @@ import { ShareButton } from '@/components/ui/ShareButton'
 import { GlossaryButton } from '@/components/ui/GlossaryButton'
 import { ExportButton } from '@/components/ui/ExportButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ViewType } from '@/data/authoritativeSourcesData'
 
@@ -24,6 +25,10 @@ interface PageHeaderProps {
   endorseUrl?: string
   endorseLabel?: string
   endorseResourceType?: string
+  /** When provided, renders a FlagButton in the action cluster */
+  flagUrl?: string
+  flagLabel?: string
+  flagResourceType?: string
   testId?: string
 }
 
@@ -43,6 +48,9 @@ export const PageHeader = ({
   endorseUrl,
   endorseLabel,
   endorseResourceType,
+  flagUrl,
+  flagLabel,
+  flagResourceType,
   testId,
 }: PageHeaderProps) => {
   const openChat = useRightPanelStore((s) => s.open)
@@ -56,7 +64,7 @@ export const PageHeader = ({
       <p className="hidden lg:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
         {description}
       </p>
-      {(dataSource || viewType || shareTitle || onExport || endorseUrl) && (
+      {(dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl) && (
         <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
           {dataSource && <p>{dataSource}</p>}
           {viewType && <SourcesButton viewType={viewType} />}
@@ -68,6 +76,13 @@ export const PageHeader = ({
               endorseUrl={endorseUrl}
               resourceLabel={endorseLabel ?? title}
               resourceType={endorseResourceType ?? 'Page'}
+            />
+          )}
+          {flagUrl && (
+            <FlagButton
+              flagUrl={flagUrl}
+              resourceLabel={flagLabel ?? title}
+              resourceType={flagResourceType ?? 'Page'}
             />
           )}
           <Button

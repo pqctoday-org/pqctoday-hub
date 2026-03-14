@@ -5,7 +5,8 @@ import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
@@ -262,23 +263,42 @@ export const PKILearningView: React.FC = () => {
         )}
         <div className="flex items-center gap-1">
           {showSidebar && moduleMeta && (
-            <EndorseButton
-              endorseUrl={buildEndorsementUrl({
-                category: 'learn-module-endorsement',
-                title: `Endorse: ${moduleMeta.title}`,
-                resourceType: 'Learn Module',
-                resourceId: moduleMeta.title,
-                resourceDetails: [
-                  `**Module:** ${moduleMeta.title}`,
-                  `**Duration:** ${moduleMeta.duration}`,
-                  `**Difficulty:** ${moduleMeta.difficulty}`,
-                  `**Description:** ${moduleMeta.description}`,
-                ].join('\n'),
-                pageUrl: `/learn/${moduleId}`,
-              })}
-              resourceLabel={moduleMeta.title}
-              resourceType="Learn Module"
-            />
+            <>
+              <EndorseButton
+                endorseUrl={buildEndorsementUrl({
+                  category: 'learn-module-endorsement',
+                  title: `Endorse: ${moduleMeta.title}`,
+                  resourceType: 'Learn Module',
+                  resourceId: moduleMeta.title,
+                  resourceDetails: [
+                    `**Module:** ${moduleMeta.title}`,
+                    `**Duration:** ${moduleMeta.duration}`,
+                    `**Difficulty:** ${moduleMeta.difficulty}`,
+                    `**Description:** ${moduleMeta.description}`,
+                  ].join('\n'),
+                  pageUrl: `/learn/${moduleId}`,
+                })}
+                resourceLabel={moduleMeta.title}
+                resourceType="Learn Module"
+              />
+              <FlagButton
+                flagUrl={buildFlagUrl({
+                  category: 'learn-module-endorsement',
+                  title: `Flag: ${moduleMeta.title}`,
+                  resourceType: 'Learn Module',
+                  resourceId: moduleMeta.title,
+                  resourceDetails: [
+                    `**Module:** ${moduleMeta.title}`,
+                    `**Duration:** ${moduleMeta.duration}`,
+                    `**Difficulty:** ${moduleMeta.difficulty}`,
+                    `**Description:** ${moduleMeta.description}`,
+                  ].join('\n'),
+                  pageUrl: `/learn/${moduleId}`,
+                })}
+                resourceLabel={moduleMeta.title}
+                resourceType="Learn Module"
+              />
+            </>
           )}
           <GlossaryButton />
         </div>

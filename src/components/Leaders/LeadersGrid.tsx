@@ -29,7 +29,7 @@ import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
 import { SortControl } from '../Library/SortControl'
 import { PageHeader } from '../common/PageHeader'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LEADERS_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { LeaderConsentModal } from './LeaderConsentModal'
@@ -317,6 +317,17 @@ export const LeadersGrid = () => {
         })}
         endorseLabel="Leaders Page"
         endorseResourceType="Leaders"
+        flagUrl={buildFlagUrl({
+          category: 'leader-endorsement',
+          title: 'Flag: PQC Transformation Leaders',
+          resourceType: 'Leaders Page',
+          resourceId: 'Transformation Leaders',
+          resourceDetails:
+            '**Page:** Transformation Leaders — Visionaries and organizations driving the global transition to Post-Quantum Cryptography.',
+          pageUrl: '/leaders',
+        })}
+        flagLabel="Leaders Page"
+        flagResourceType="Leaders"
       />
 
       {/* Leader consent / removal CTAs */}

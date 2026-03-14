@@ -253,6 +253,17 @@ export const ThreatsDashboard: React.FC = () => {
         })}
         endorseLabel="Threats Page"
         endorseResourceType="Threats"
+        flagUrl={buildFlagUrl({
+          category: 'threat-endorsement',
+          title: 'Flag: Quantum Threats Dashboard',
+          resourceType: 'Threats Page',
+          resourceId: 'Quantum Threats Dashboard',
+          resourceDetails:
+            '**Page:** Quantum Threats — Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements.',
+          pageUrl: '/threats',
+        })}
+        flagLabel="Threats Page"
+        flagResourceType="Threats"
       />
 
       {/* Persona summary card */}
