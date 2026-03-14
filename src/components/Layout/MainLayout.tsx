@@ -165,49 +165,44 @@ export const MainLayout = () => {
         role="banner"
       >
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
-          <div className="flex flex-row items-baseline gap-4">
-            {/* Abbreviated brand on mobile — tappable when Airplane Mode is on */}
-            {airplaneMode ? (
-              <button
-                type="button"
-                onClick={() => setAirplaneMode(false)}
-                className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px]"
-                aria-label="Airplane Mode is on — tap to go online"
-                title="Tap to disable Airplane Mode"
-              >
-                <span className="text-base font-bold text-gradient">PQC</span>
+          <div className="flex flex-row items-center gap-4">
+            {/* Mobile brand — always a button; toggles Airplane Mode on/off */}
+            <button
+              type="button"
+              onClick={() => setAirplaneMode(!airplaneMode)}
+              className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
+              aria-label={
+                airplaneMode ? 'Airplane Mode on — tap to go online' : 'Toggle Airplane Mode'
+              }
+              title={airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'}
+            >
+              <span className="text-base font-bold text-gradient">PQC</span>
+              {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
-              </button>
-            ) : (
-              <div className="lg:hidden flex-shrink-0">
-                <span className="text-base font-bold text-gradient">PQC</span>
-              </div>
-            )}
-            {/* Full brand on desktop — clickable when Airplane Mode is on */}
-            {airplaneMode ? (
-              <button
-                type="button"
-                onClick={() => setAirplaneMode(false)}
-                className="hidden lg:flex flex-col items-start"
-                aria-label="Airplane Mode is on — click to go online"
-                title="Click to disable Airplane Mode"
-              >
-                <span className="flex items-center gap-2">
-                  <span className="text-2xl font-bold text-gradient">PQC Today</span>
+              )}
+            </button>
+            {/* Desktop brand — always a button; toggles Airplane Mode on/off */}
+            <button
+              type="button"
+              onClick={() => setAirplaneMode(!airplaneMode)}
+              className="hidden lg:flex flex-col items-start"
+              aria-label={
+                airplaneMode ? 'Airplane Mode on — click to go online' : 'Toggle Airplane Mode'
+              }
+              title={
+                airplaneMode ? 'Click to disable Airplane Mode' : 'Click to enable Airplane Mode'
+              }
+            >
+              <span className="flex items-center gap-2">
+                <span className="text-2xl font-bold text-gradient">PQC Today</span>
+                {airplaneMode && (
                   <Plane size={14} className="text-primary animate-pulse" aria-hidden="true" />
-                </span>
-                <span className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
-                  Last Updated: {buildTime}
-                </span>
-              </button>
-            ) : (
-              <div className="hidden lg:block">
-                <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
-                <p className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
-                  Last Updated: {buildTime}
-                </p>
-              </div>
-            )}
+                )}
+              </span>
+              <span className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
+                Last Updated: {buildTime}
+              </span>
+            </button>
           </div>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
