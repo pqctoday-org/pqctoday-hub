@@ -21,7 +21,7 @@ import {
   MoreHorizontal,
   X,
   Plane,
-  MessageCircle,
+  FileText,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -36,8 +36,6 @@ import { WorkflowBanner } from '../common/WorkflowBanner'
 import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
 import { AirplaneModeToast } from '../ui/AirplaneModeToast'
 import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
-import { useChatStore } from '../../store/useChatStore'
-import { checkWebGPUSupport } from '../../services/chat/WebLLMService'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -48,20 +46,8 @@ import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfi
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
-  const { isOpen: isPanelOpen, toggle: togglePanel } = useRightPanelStore()
+  const { isOpen: isPanelOpen } = useRightPanelStore()
   const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
-  const apiKey = useChatStore((s) => s.apiKey)
-
-  // Check WebGPU support once on mount to determine if local AI is available
-  const [webGPUSupported, setWebGPUSupported] = React.useState<boolean | null>(null)
-  React.useEffect(() => {
-    checkWebGPUSupport().then(setWebGPUSupported)
-  }, [])
-
-  // Show the assistant FAB only when at least one AI provider is usable.
-  // null (still checking) → show by default to avoid a flash of missing FAB on capable devices.
-  // false (no WebGPU) + no Gemini key → hide; user can enable via More menu.
-  const showAssistant = webGPUSupported !== false || Boolean(apiKey)
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -133,6 +119,13 @@ export const MainLayout = () => {
       mobileMore: true,
     },
     { path: '/about', label: 'About', icon: Info, hiddenOnMobile: true, mobileMore: true },
+    {
+      path: '/changelog',
+      label: 'Changelog',
+      icon: FileText,
+      hiddenOnMobile: true,
+      mobileMore: true,
+    },
   ]
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
@@ -331,21 +324,6 @@ export const MainLayout = () => {
                   {airplaneMode ? 'On' : 'Off'}
                 </span>
               </button>
-
-              {/* Enable AI Assistant — shown when FAB is hidden (no WebGPU + no Gemini key) */}
-              {!showAssistant && (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setMoreMenuOpen(false)
-                    togglePanel()
-                  }}
-                  className="col-span-2 w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
-                >
-                  <MessageCircle size={18} aria-hidden="true" />
-                  Enable AI Assistant
-                </button>
-              )}
             </div>
           </div>
         </>
@@ -421,8 +399,7 @@ export const MainLayout = () => {
       <GuidedTour />
 
       {/* Right Panel (PQC Assistant + Journey History) */}
-      {/* FAB hidden on devices with no WebGPU and no Gemini key configured */}
-      {showAssistant && <RightPanelFAB />}
+      <RightPanelFAB />
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
     </div>
   )
