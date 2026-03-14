@@ -15,7 +15,8 @@ import { ViewToggle } from '../Library/ViewToggle'
 import type { ViewMode } from '../Library/ViewToggle'
 import { EmptyState } from '../ui/empty-state'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { TimelineDocumentCard } from './TimelineDocumentCard'
 import {
   TimelineDocumentDetailPopover,
@@ -273,6 +274,24 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                             endorseUrl={buildEndorsementUrl({
                               category: 'timeline-endorsement',
                               title: `Endorse: ${row.countryName} — ${row.title}`,
+                              resourceType: 'Timeline Document',
+                              resourceId: `${row.countryName} / ${row.title}`,
+                              resourceDetails: [
+                                `**Country:** ${row.countryName}`,
+                                `**Organization:** ${row.org}`,
+                                `**Phase:** ${row.phase}`,
+                                `**Title:** ${row.title}`,
+                                `**Period:** ${row.startYear}–${row.endYear}`,
+                              ].join('\n'),
+                              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+                            })}
+                            resourceLabel={row.title}
+                            resourceType="Timeline"
+                          />
+                          <FlagButton
+                            flagUrl={buildFlagUrl({
+                              category: 'timeline-endorsement',
+                              title: `Flag: ${row.countryName} — ${row.title}`,
                               resourceType: 'Timeline Document',
                               resourceId: `${row.countryName} / ${row.title}`,
                               resourceDetails: [

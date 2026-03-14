@@ -3,7 +3,8 @@ import { motion } from 'framer-motion'
 import { Calendar, ExternalLink, Flag, Info, Sparkles } from 'lucide-react'
 import { StatusBadge } from '../common/StatusBadge'
 import { EndorseButton } from '../ui/EndorseButton'
-import { buildEndorsementUrl } from '@/utils/endorsement'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import type { Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import {
@@ -130,6 +131,24 @@ export const TimelineDocumentCard = ({
           endorseUrl={buildEndorsementUrl({
             category: 'timeline-endorsement',
             title: `Endorse: ${row.countryName} — ${row.title}`,
+            resourceType: 'Timeline Document',
+            resourceId: `${row.countryName} / ${row.title}`,
+            resourceDetails: [
+              `**Country:** ${row.countryName}`,
+              `**Organization:** ${row.org}`,
+              `**Phase:** ${row.phase}`,
+              `**Title:** ${row.title}`,
+              `**Period:** ${row.startYear}–${row.endYear}`,
+            ].join('\n'),
+            pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+          })}
+          resourceLabel={row.title}
+          resourceType="Timeline"
+        />
+        <FlagButton
+          flagUrl={buildFlagUrl({
+            category: 'timeline-endorsement',
+            title: `Flag: ${row.countryName} — ${row.title}`,
             resourceType: 'Timeline Document',
             resourceId: `${row.countryName} / ${row.title}`,
             resourceDetails: [
