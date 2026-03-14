@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.45.2] - 2026-03-13
+
+### Changed
+
+- **Library detail popover — mobile sheet redesign** [view:/library]: On small screens the popover now slides up as a bottom sheet (rounded top corners, `slide-in-from-bottom-4` animation, `max-h-[90dvh]`). Includes a visible drag-handle pill, body scroll lock while open, and a dark backdrop (`bg-black/60`). `AskAssistantButton` relocated from the crowded header to the top of the scrollable content area on mobile; still shown in the header on `sm+`. Bottom padding respects `safe-area-inset-bottom`. On desktop the layout is unchanged (centered dialog). [persona:developer] [persona:researcher]
+- **PageHeader — Endorse/Flag buttons visible on mobile** [view:/library] [view:/threats] [view:/leaders] [view:/timeline]: The Endorse and Flag buttons in `PageHeader` were only rendered inside the `hidden lg:flex` action cluster and therefore invisible below `lg` breakpoint. Added a `lg:hidden` flex row that renders them directly below the description text, ensuring mobile users can endorse or flag any page.
+- **TimelineDocumentCard — Endorse/Flag right-aligned**: `EndorseButton` and `FlagButton` are now wrapped in a `flex items-center gap-1 ml-auto` div so they always cluster to the far-right of the card action row, regardless of whether a source link is present. [view:/timeline]
+- **MainLayout — Airplane Mode toggle + AI Assistant gate** [view:/]: Airplane Mode toggle added to the mobile More menu — shows current On/Off state with a chip badge. `RightPanelFAB` is now conditionally rendered: hidden on devices where `checkWebGPUSupport()` returns `false` and no Gemini API key is configured. An "Enable AI Assistant" entry appears in the More menu in that case to let users open the right panel manually. `AirplaneModeBanner` and `AirplaneModeToast` are now mounted in the main layout. [persona:developer] [persona:architect]
+
+### Fixed
+
+- **MobileAboutView — removed stray `LinkToUsButton`**: The `LinkToUsButton` in the mobile About page bottom-actions row was removed (matching the desktop view which had already dropped it). [view:/about]
+
 ## [2.45.1] - 2026-03-14
 
 ### Added

@@ -127,42 +127,44 @@ export const TimelineDocumentCard = ({
             Source
           </a>
         )}
-        <EndorseButton
-          endorseUrl={buildEndorsementUrl({
-            category: 'timeline-endorsement',
-            title: `Endorse: ${row.countryName} — ${row.title}`,
-            resourceType: 'Timeline Document',
-            resourceId: `${row.countryName} / ${row.title}`,
-            resourceDetails: [
-              `**Country:** ${row.countryName}`,
-              `**Organization:** ${row.org}`,
-              `**Phase:** ${row.phase}`,
-              `**Title:** ${row.title}`,
-              `**Period:** ${row.startYear}–${row.endYear}`,
-            ].join('\n'),
-            pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
-          })}
-          resourceLabel={row.title}
-          resourceType="Timeline"
-        />
-        <FlagButton
-          flagUrl={buildFlagUrl({
-            category: 'timeline-endorsement',
-            title: `Flag: ${row.countryName} — ${row.title}`,
-            resourceType: 'Timeline Document',
-            resourceId: `${row.countryName} / ${row.title}`,
-            resourceDetails: [
-              `**Country:** ${row.countryName}`,
-              `**Organization:** ${row.org}`,
-              `**Phase:** ${row.phase}`,
-              `**Title:** ${row.title}`,
-              `**Period:** ${row.startYear}–${row.endYear}`,
-            ].join('\n'),
-            pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
-          })}
-          resourceLabel={row.title}
-          resourceType="Timeline"
-        />
+        <div className="flex items-center gap-1 ml-auto">
+          <EndorseButton
+            endorseUrl={buildEndorsementUrl({
+              category: 'timeline-endorsement',
+              title: `Endorse: ${row.countryName} — ${row.title}`,
+              resourceType: 'Timeline Document',
+              resourceId: `${row.countryName} / ${row.title}`,
+              resourceDetails: [
+                `**Country:** ${row.countryName}`,
+                `**Organization:** ${row.org}`,
+                `**Phase:** ${row.phase}`,
+                `**Title:** ${row.title}`,
+                `**Period:** ${row.startYear}–${row.endYear}`,
+              ].join('\n'),
+              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+            })}
+            resourceLabel={row.title}
+            resourceType="Timeline"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'timeline-endorsement',
+              title: `Flag: ${row.countryName} — ${row.title}`,
+              resourceType: 'Timeline Document',
+              resourceId: `${row.countryName} / ${row.title}`,
+              resourceDetails: [
+                `**Country:** ${row.countryName}`,
+                `**Organization:** ${row.org}`,
+                `**Phase:** ${row.phase}`,
+                `**Title:** ${row.title}`,
+                `**Period:** ${row.startYear}–${row.endYear}`,
+              ].join('\n'),
+              pageUrl: `/timeline?country=${encodeURIComponent(row.countryName)}`,
+            })}
+            resourceLabel={row.title}
+            resourceType="Timeline"
+          />
+        </div>
       </div>
     </motion.article>
   )

@@ -20,6 +20,8 @@ import {
   LayoutDashboard,
   MoreHorizontal,
   X,
+  Plane,
+  MessageCircle,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { WhatsNewToast } from '../ui/WhatsNewToast'
@@ -31,6 +33,11 @@ import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
 import { WorkflowBanner } from '../common/WorkflowBanner'
+import { AirplaneModeBanner } from '../ui/AirplaneModeBanner'
+import { AirplaneModeToast } from '../ui/AirplaneModeToast'
+import { useAirplaneModeStore } from '../../store/useAirplaneModeStore'
+import { useChatStore } from '../../store/useChatStore'
+import { checkWebGPUSupport } from '../../services/chat/WebLLMService'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -41,7 +48,20 @@ import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfi
 export const MainLayout = () => {
   const location = useLocation()
   const { selectedPersona } = usePersonaStore()
-  const isPanelOpen = useRightPanelStore((s) => s.isOpen)
+  const { isOpen: isPanelOpen, toggle: togglePanel } = useRightPanelStore()
+  const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
+  const apiKey = useChatStore((s) => s.apiKey)
+
+  // Check WebGPU support once on mount to determine if local AI is available
+  const [webGPUSupported, setWebGPUSupported] = React.useState<boolean | null>(null)
+  React.useEffect(() => {
+    checkWebGPUSupport().then(setWebGPUSupported)
+  }, [])
+
+  // Show the assistant FAB only when at least one AI provider is usable.
+  // null (still checking) → show by default to avoid a flash of missing FAB on capable devices.
+  // false (no WebGPU) + no Gemini key → hide; user can enable via More menu.
+  const showAssistant = webGPUSupported !== false || Boolean(apiKey)
 
   // Build timestamp - set at compile time
   const buildTime = __BUILD_TIMESTAMP__
@@ -288,6 +308,44 @@ export const MainLayout = () => {
                   )}
                 </NavLink>
               ))}
+
+              {/* Airplane Mode toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  setAirplaneMode(!airplaneMode)
+                  setMoreMenuOpen(false)
+                }}
+                className="col-span-2 w-full flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                aria-pressed={airplaneMode}
+              >
+                <span className="flex items-center gap-2">
+                  <Plane size={18} aria-hidden="true" />
+                  Airplane Mode
+                </span>
+                <span
+                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                    airplaneMode ? 'bg-primary/20 text-primary' : 'bg-muted text-muted-foreground'
+                  }`}
+                >
+                  {airplaneMode ? 'On' : 'Off'}
+                </span>
+              </button>
+
+              {/* Enable AI Assistant — shown when FAB is hidden (no WebGPU + no Gemini key) */}
+              {!showAssistant && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMoreMenuOpen(false)
+                    togglePanel()
+                  }}
+                  className="col-span-2 w-full flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-primary/5 transition-colors"
+                >
+                  <MessageCircle size={18} aria-hidden="true" />
+                  Enable AI Assistant
+                </button>
+              )}
             </div>
           </div>
         </>
@@ -295,6 +353,9 @@ export const MainLayout = () => {
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-grow container py-4 px-4 md:py-8 md:px-8" role="main">
+        {/* Offline mode info banner */}
+        <AirplaneModeBanner />
+
         {/* Migration planning workflow progress banner */}
         <WorkflowBanner />
 
@@ -341,6 +402,9 @@ export const MainLayout = () => {
       {/* Page accuracy feedback widget */}
       <PageAccuracyFeedback />
 
+      {/* Offline connectivity toast + monitor */}
+      <AirplaneModeToast />
+
       {/* What's New Toast Notification */}
       <WhatsNewToast />
 
@@ -357,7 +421,8 @@ export const MainLayout = () => {
       <GuidedTour />
 
       {/* Right Panel (PQC Assistant + Journey History) */}
-      <RightPanelFAB />
+      {/* FAB hidden on devices with no WebGPU and no Gemini key configured */}
+      {showAssistant && <RightPanelFAB />}
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
     </div>
   )

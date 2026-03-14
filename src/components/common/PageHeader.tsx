@@ -64,6 +64,26 @@ export const PageHeader = ({
       <p className="hidden lg:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
         {description}
       </p>
+      {(endorseUrl || flagUrl) && (
+        <div className="flex lg:hidden justify-center items-center gap-2 mb-2">
+          {endorseUrl && (
+            <EndorseButton
+              endorseUrl={endorseUrl}
+              resourceLabel={endorseLabel ?? title}
+              resourceType={endorseResourceType ?? 'Page'}
+              variant="text"
+            />
+          )}
+          {flagUrl && (
+            <FlagButton
+              flagUrl={flagUrl}
+              resourceLabel={flagLabel ?? title}
+              resourceType={flagResourceType ?? 'Page'}
+              variant="text"
+            />
+          )}
+        </div>
+      )}
       {(dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl) && (
         <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
           {dataSource && <p>{dataSource}</p>}

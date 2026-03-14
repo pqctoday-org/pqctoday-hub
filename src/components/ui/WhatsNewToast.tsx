@@ -86,25 +86,27 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Endorsements &amp; flags remembered</strong>{' '}
-                    &mdash; Stamp and Flag buttons now stay activated after you use them; re-click
-                    to jump straight to your GitHub discussion
+                    <strong className="text-foreground">Library popover — mobile sheet</strong>{' '}
+                    &mdash; the document detail popover now slides up from the bottom on mobile with
+                    a drag handle and backdrop, keeping the desktop layout unchanged
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Endorse &amp; Flag on every surface</strong>{' '}
-                    &mdash; Library, Threats, Leaders, Timeline (all views), and every Workshop step
-                    across all 43 modules
+                    <strong className="text-foreground">Endorse &amp; Flag on mobile</strong>{' '}
+                    &mdash; page-level Endorse and Flag buttons are now visible on small screens;
+                    previously they were hidden below the lg breakpoint
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Flag issue button</strong> &mdash; red Flag
-                    icon opens a prefilled GitHub Discussion with issue-type checkboxes for
-                    reporting inaccuracies or broken content
+                    <strong className="text-foreground">
+                      Airplane Mode &amp; AI Assistant gate
+                    </strong>{' '}
+                    &mdash; Airplane Mode toggle in the nav More menu; AI Assistant FAB shown only
+                    when WebGPU or a Gemini key is available
                   </span>
                 </li>
               </ul>

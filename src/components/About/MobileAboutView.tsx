@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LinkToUsButton } from '../ui/LinkToUsButton'
 import {
   Users,
   Globe,
@@ -762,7 +761,6 @@ export const MobileAboutView = () => {
             <Sparkles size={16} className="group-hover:animate-pulse" />
             View My Career Journey
           </button>
-          <LinkToUsButton />
         </div>
       </motion.div>
 
