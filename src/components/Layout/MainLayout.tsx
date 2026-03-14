@@ -166,16 +166,48 @@ export const MainLayout = () => {
       >
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
           <div className="flex flex-row items-baseline gap-4">
-            {/* Abbreviated brand on mobile, full brand on desktop */}
-            <div className="lg:hidden flex-shrink-0">
-              <span className="text-base font-bold text-gradient">PQC</span>
-            </div>
-            <div className="hidden lg:block">
-              <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
-              <p className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
-                Last Updated: {buildTime}
-              </p>
-            </div>
+            {/* Abbreviated brand on mobile — tappable when Airplane Mode is on */}
+            {airplaneMode ? (
+              <button
+                type="button"
+                onClick={() => setAirplaneMode(false)}
+                className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px]"
+                aria-label="Airplane Mode is on — tap to go online"
+                title="Tap to disable Airplane Mode"
+              >
+                <span className="text-base font-bold text-gradient">PQC</span>
+                <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
+              </button>
+            ) : (
+              <div className="lg:hidden flex-shrink-0">
+                <span className="text-base font-bold text-gradient">PQC</span>
+              </div>
+            )}
+            {/* Full brand on desktop — clickable when Airplane Mode is on */}
+            {airplaneMode ? (
+              <button
+                type="button"
+                onClick={() => setAirplaneMode(false)}
+                className="hidden lg:flex flex-col items-start"
+                aria-label="Airplane Mode is on — click to go online"
+                title="Click to disable Airplane Mode"
+              >
+                <span className="flex items-center gap-2">
+                  <span className="text-2xl font-bold text-gradient">PQC Today</span>
+                  <Plane size={14} className="text-primary animate-pulse" aria-hidden="true" />
+                </span>
+                <span className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
+                  Last Updated: {buildTime}
+                </span>
+              </button>
+            ) : (
+              <div className="hidden lg:block">
+                <h1 className="text-2xl font-bold text-gradient">PQC Today</h1>
+                <p className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
+                  Last Updated: {buildTime}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
