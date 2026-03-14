@@ -762,6 +762,12 @@ export const MobileAboutView = () => {
             View My Career Journey
           </button>
         </div>
+        <p className="text-muted-foreground text-sm mt-2">
+          See the latest updates:{' '}
+          <a href="/changelog" className="text-primary hover:underline">
+            View Changelog
+          </a>
+        </p>
       </motion.div>
 
       {/* Appearance Section */}
