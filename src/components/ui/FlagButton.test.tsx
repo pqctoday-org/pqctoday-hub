@@ -1,9 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { FlagButton } from './FlagButton'
+import { useEndorsementStore } from '@/store/useEndorsementStore'
 
 describe('FlagButton', () => {
+  beforeEach(() => {
+    useEndorsementStore.setState({ records: {} })
+  })
+
   const baseProps = {
     flagUrl: 'https://github.com/pqctoday/pqc-timeline-app/discussions/new?category=test',
     resourceLabel: 'FIPS-203',
