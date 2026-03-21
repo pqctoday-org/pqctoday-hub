@@ -74,7 +74,7 @@
     "framer-motion": "^12.27.5",
     "jszip": "^3.10.1",
     "localforage": "^1.10.0",
-    "lucide-react": "^0.562.0",
+    "lucide-react": "^0.577.0",
     "micro-eth-signer": "^0.18.1",
     "minisearch": "^7.2.0",
     "papaparse": "^5.5.3",
