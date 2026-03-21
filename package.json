@@ -51,6 +51,9 @@
     "enrich:timeline:dry": "python3 scripts/enrich-timeline-haiku.py --dry-run",
     "notebooklm": "npx tsx scripts/generate-notebooklm.ts"
   },
+  "overrides": {
+    "serialize-javascript": ">=7.0.3"
+  },
   "dependencies": {
     "@mlc-ai/web-llm": "^0.2.81",
     "@noble/curves": "^2.0.1",

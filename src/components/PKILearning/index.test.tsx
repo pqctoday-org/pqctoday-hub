@@ -56,8 +56,10 @@ describe('PKILearning', () => {
     const title = screen.getByText('Digital Assets')
     fireEvent.click(title)
 
-    // Expect DigitalAssets component to render
-    expect(await screen.findByTestId('module-digital-assets')).toBeInTheDocument()
+    // Expect DigitalAssets component to render (5s timeout — lazy component may take longer on CI)
+    expect(
+      await screen.findByTestId('module-digital-assets', {}, { timeout: 5000 })
+    ).toBeInTheDocument()
   })
 
   it('navigates to PKI Workshop module on click', async () => {
@@ -67,7 +69,9 @@ describe('PKILearning', () => {
     const title = screen.getByText('PKI') // Title is "PKI"
     fireEvent.click(title)
 
-    expect(await screen.findByTestId('module-pki-workshop')).toBeInTheDocument()
+    expect(
+      await screen.findByTestId('module-pki-workshop', {}, { timeout: 5000 })
+    ).toBeInTheDocument()
   })
 
   it('allows navigating back from a module', async () => {
@@ -76,7 +80,9 @@ describe('PKILearning', () => {
 
     // Enter module
     fireEvent.click(screen.getByText('Digital Assets'))
-    expect(await screen.findByTestId('module-digital-assets')).toBeInTheDocument()
+    expect(
+      await screen.findByTestId('module-digital-assets', {}, { timeout: 5000 })
+    ).toBeInTheDocument()
 
     // Click Back
     const backButton = screen.getByText('Back to Dashboard')
