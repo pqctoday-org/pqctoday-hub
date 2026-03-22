@@ -16,6 +16,9 @@
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 export type { SoftHSMModule }
+
+// Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
+const _WASM_VERSION = typeof __WASM_HASH__ !== 'undefined' ? __WASM_HASH__ : Date.now().toString()
 import { buildInspect } from './pkcs11Inspect'
 export type {
   Pkcs11LogInspect,
@@ -40,7 +43,7 @@ export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
       if (!document.querySelector('script[data-softhsm-cpp]')) {
         await new Promise<void>((resolve, reject) => {
           const s = document.createElement('script')
-          s.src = '/wasm/softhsm.js'
+          s.src = `/wasm/softhsm.js?v=${_WASM_VERSION}`
           s.dataset.softhsmCpp = '1'
           s.onload = () => resolve()
           s.onerror = () => reject(new Error('Failed to load /wasm/softhsm.js (C++)'))
@@ -52,7 +55,8 @@ export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
         | undefined
       if (!createFn) throw new Error('createSoftHSMModule not available after script load')
       return createFn({
-        locateFile: (path: string) => (path.endsWith('.wasm') ? '/wasm/softhsm.wasm' : path),
+        locateFile: (path: string) =>
+          path.endsWith('.wasm') ? `/wasm/softhsm.wasm?v=${_WASM_VERSION}` : path,
       })
     })().catch((e) => {
       cppModulePromise = null
@@ -71,12 +75,15 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
   if (!rustModulePromise) {
     rustModulePromise = (async () => {
       const rustShim = await import('./softhsmrustv3.js')
-      const isNode = typeof process !== 'undefined' && process.versions != null && process.versions.node != null
+      const isNode =
+        typeof process !== 'undefined' && process.versions != null && process.versions.node != null
       let wasmInput: any = '/wasm/rust/softhsmrustv3_bg.wasm'
       if (isNode) {
         const fs = await import('fs')
         const path = await import('path')
-        wasmInput = fs.readFileSync(path.resolve(process.cwd(), 'public/wasm/rust/softhsmrustv3_bg.wasm'))
+        wasmInput = fs.readFileSync(
+          path.resolve(process.cwd(), 'public/wasm/rust/softhsmrustv3_bg.wasm')
+        )
       }
       const wasmExports = await rustShim.default(wasmInput)
 
@@ -314,6 +321,7 @@ const RV_NAMES: Record<number, string> = {
   0x00000101: 'CKR_USER_NOT_LOGGED_IN',
   0x00000102: 'CKR_USER_PIN_NOT_INITIALIZED',
   0x00000103: 'CKR_USER_TYPE_INVALID',
+  0x00000104: 'CKR_USER_ANOTHER_ALREADY_LOGGED_IN',
   0x00000110: 'CKR_WRAPPED_KEY_INVALID',
   0x00000113: 'CKR_WRAPPING_KEY_HANDLE_INVALID',
   0x00000130: 'CKR_DOMAIN_PARAMS_INVALID',
@@ -663,7 +671,10 @@ export interface AttrDef {
   bytesLen?: number
 }
 
-export const buildTemplate = (M: SoftHSMModule, defs: AttrDef[]): { ptr: number; auxPtrs: number[] } => {
+export const buildTemplate = (
+  M: SoftHSMModule,
+  defs: AttrDef[]
+): { ptr: number; auxPtrs: number[] } => {
   const ptr = M._malloc(defs.length * CK_ATTRIBUTE_SIZE)
   const auxPtrs: number[] = []
 
@@ -769,7 +780,10 @@ export const hsm_initToken = (
   M.HEAPU8.set(lb, labelPtr)
   const pinPtr = writeStr(M, soPin)
   try {
-    checkRV(M._C_InitToken(slot, pinPtr, soPin.length, labelPtr), 'C_InitToken')
+    const initRv = M._C_InitToken(slot, pinPtr, soPin.length, labelPtr)
+    // CKR_SESSION_EXISTS (0xb6): token is already initialized with active sessions;
+    // skip re-initialization and fall through to re-enumerate the existing slot.
+    if (initRv !== 0 && initRv >>> 0 !== 0x000000b6) checkRV(initRv, 'C_InitToken')
   } finally {
     M._free(labelPtr)
     M._free(pinPtr)
@@ -816,13 +830,19 @@ export const hsm_openUserSession = (
   const hSession = readUlong(M, sessionPtr)
   M._free(sessionPtr)
 
-  // Login as SO to set user PIN
+  // Login as SO to set user PIN.
+  // CKR_USER_ANOTHER_ALREADY_LOGGED_IN (0x104): another session already has USER logged in at
+  // the token level. PKCS#11 login is per-token, so the new session inherits the logged-in state
+  // — skip the SO→InitPIN→Logout→Login(USER) sequence and return the session directly.
   const soPinPtr = writeStr(M, soPin)
+  let soLoginRv: number
   try {
-    checkRV(M._C_Login(hSession, CKU_SO, soPinPtr, soPin.length), 'C_Login(SO)')
+    soLoginRv = M._C_Login(hSession, CKU_SO, soPinPtr, soPin.length)
+    if (soLoginRv !== 0 && soLoginRv >>> 0 !== 0x00000104) checkRV(soLoginRv, 'C_Login(SO)')
   } finally {
     M._free(soPinPtr)
   }
+  if (soLoginRv! >>> 0 === 0x00000104) return hSession
 
   const userPinPtr = writeStr(M, userPin)
   try {
@@ -937,6 +957,43 @@ export const hsm_importMLKEMPublicKey = (
     freeTemplate(M, pubTpl, 7)
     M._free(pubHPtr)
     M._free(pubPtr)
+  }
+}
+
+/** Import an ML-KEM private key. Returns the new privHandle.
+ * Used for ACVP decapsulation KAT testing with NIST reference vectors. */
+export const hsm_importMLKEMPrivateKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  variant: 512 | 768 | 1024,
+  privKeyBytes: Uint8Array
+): number => {
+  const ps = kemParamSet(variant)
+  const privPtr = M._malloc(privKeyBytes.length)
+  M.HEAPU8.set(privKeyBytes, privPtr)
+
+  const privTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_DECAPSULATE, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: ps },
+    { type: CKA_VALUE, bytesPtr: privPtr, bytesLen: privKeyBytes.length },
+  ])
+
+  const privHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_CreateObject(hSession, privTpl.ptr, 8, privHPtr),
+      'C_CreateObject(Import ML-KEM PrivKey)'
+    )
+    return readUlong(M, privHPtr)
+  } finally {
+    freeTemplate(M, privTpl, 8)
+    M._free(privHPtr)
+    M._free(privPtr)
   }
 }
 
@@ -1382,6 +1439,37 @@ export const hsm_verify = (
     M._free(msgPtr)
     M._free(sigPtr)
     if (ctxAlloc) ctxAlloc.allocPtrs.forEach((p) => M._free(p))
+  }
+}
+
+/** Verify a binary message (Uint8Array) against a signature — for ACVP KAT testing. */
+export const hsm_verifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  msgBytes: Uint8Array,
+  sigBytes: Uint8Array
+): boolean => {
+  const mech = M._malloc(12)
+  M.setValue(mech, CKM_ML_DSA, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const msgPtr = M._malloc(msgBytes.length)
+  M.HEAPU8.set(msgBytes, msgPtr)
+  const sigPtr = M._malloc(sigBytes.length)
+  M.HEAPU8.set(sigBytes, sigPtr)
+
+  checkRV(M._C_MessageVerifyInit(hSession, mech, pubHandle), 'C_MessageVerifyInit')
+  try {
+    const rv =
+      M._C_VerifyMessage(hSession, 0, 0, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+    return rv === 0
+  } finally {
+    M._C_MessageVerifyFinal(hSession)
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
   }
 }
 
@@ -2754,6 +2842,161 @@ export const hsm_importAESKey = (
   }
 }
 
+/** Import an HMAC key (CKK_GENERIC_SECRET with CKA_SIGN + CKA_VERIFY). Returns handle. */
+export const hsm_importHMACKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBytes: Uint8Array
+): number => {
+  const keyPtr = M._malloc(keyBytes.length)
+  M.HEAPU8.set(keyBytes, keyPtr)
+
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 8, hKeyPtr), 'C_CreateObject(Import HMAC)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+    M._free(keyPtr)
+  }
+}
+
+/** Import an RSA public key from raw modulus + exponent bytes. Returns CKO_PUBLIC_KEY handle. */
+export const hsm_importRSAPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  modulusBytes: Uint8Array,
+  exponentBytes: Uint8Array
+): number => {
+  const modPtr = M._malloc(modulusBytes.length)
+  M.HEAPU8.set(modulusBytes, modPtr)
+  const expPtr = M._malloc(exponentBytes.length)
+  M.HEAPU8.set(exponentBytes, expPtr)
+
+  // CKA_VALUE in Rust engine format: [n_len:4LE][n_bytes][e_bytes]
+  const ckValue = new Uint8Array(4 + modulusBytes.length + exponentBytes.length)
+  new DataView(ckValue.buffer).setUint32(0, modulusBytes.length, true)
+  ckValue.set(modulusBytes, 4)
+  ckValue.set(exponentBytes, 4 + modulusBytes.length)
+  const valPtr = writeBytes(M, ckValue)
+
+  const baseAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_MODULUS, bytesPtr: modPtr, bytesLen: modulusBytes.length },
+    { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: exponentBytes.length },
+  ]
+  const hKeyPtr = allocUlong(M)
+  try {
+    // Try with CKA_VALUE (Rust engine needs it); fall back without it (C++ rejects it on public keys)
+    const tplFull = buildTemplate(M, [
+      ...baseAttrs,
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: ckValue.length },
+    ])
+    const rv = M._C_CreateObject(hSession, tplFull.ptr, 8, hKeyPtr) >>> 0
+    freeTemplate(M, tplFull, 8)
+    if (rv === 0x12) {
+      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
+      const tplStd = buildTemplate(M, baseAttrs)
+      checkRV(
+        M._C_CreateObject(hSession, tplStd.ptr, 7, hKeyPtr),
+        'C_CreateObject(Import RSA PubKey)'
+      )
+      freeTemplate(M, tplStd, 7)
+    } else {
+      checkRV(rv, 'C_CreateObject(Import RSA PubKey)')
+    }
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(modPtr)
+    M._free(expPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Import an EC public key from raw (qx, qy) coordinates. Returns CKO_PUBLIC_KEY handle.
+ * Builds the DER-encoded CKA_EC_POINT (OCTET STRING wrapping 04 || x || y).
+ */
+export const hsm_importECPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  qx: Uint8Array,
+  qy: Uint8Array,
+  curve: 'P-256' | 'P-384' | 'P-521' = 'P-256'
+): number => {
+  const oid = ecCurveOID(curve)
+  const oidPtr = writeBytes(M, oid)
+
+  // Build DER-encoded uncompressed EC point: OCTET STRING { 04 || x || y }
+  const pointLen = 1 + qx.length + qy.length // 04 prefix + coordinates
+  const derPoint = new Uint8Array(2 + pointLen)
+  derPoint[0] = 0x04 // OCTET STRING tag
+  derPoint[1] = pointLen
+  derPoint[2] = 0x04 // uncompressed point prefix
+  derPoint.set(qx, 3)
+  derPoint.set(qy, 3 + qx.length)
+  const pointPtr = writeBytes(M, derPoint)
+
+  // Build CKA_VALUE as raw SEC1 uncompressed point for Rust engine: 04 || x || y
+  const sec1Point = new Uint8Array(1 + qx.length + qy.length)
+  sec1Point[0] = 0x04
+  sec1Point.set(qx, 1)
+  sec1Point.set(qy, 1 + qx.length)
+  const valPtr = writeBytes(M, sec1Point)
+
+  const baseAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_EC_POINT, bytesPtr: pointPtr, bytesLen: derPoint.length },
+  ]
+  const hKeyPtr = allocUlong(M)
+  try {
+    // Try with CKA_VALUE (Rust engine needs it); fall back without it (C++ rejects it on public keys)
+    const tplFull = buildTemplate(M, [
+      ...baseAttrs,
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: sec1Point.length },
+    ])
+    const rv = M._C_CreateObject(hSession, tplFull.ptr, 7, hKeyPtr) >>> 0
+    freeTemplate(M, tplFull, 7)
+    if (rv === 0x12) {
+      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
+      const tplStd = buildTemplate(M, baseAttrs)
+      checkRV(
+        M._C_CreateObject(hSession, tplStd.ptr, 6, hKeyPtr),
+        'C_CreateObject(Import EC PubKey)'
+      )
+      freeTemplate(M, tplStd, 6)
+    } else {
+      checkRV(rv, 'C_CreateObject(Import EC PubKey)')
+    }
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(oidPtr)
+    M._free(pointPtr)
+    M._free(valPtr)
+  }
+}
+
 /**
  * AES encrypt (GCM or CBC-PAD). A random IV is generated internally.
  * GCM output: ciphertext bytes include the 16-byte auth tag appended by SoftHSM.
@@ -3338,6 +3581,8 @@ export interface KeyAttributeSet {
   ckDecapsulate: boolean | null
   /** CKA_VALUE_LEN in bytes; present on secret keys only */
   ckValueLen: number | null
+  /** CKA_CHECK_VALUE (KCV) bytes; present on symmetric/secret keys */
+  ckCheckValue?: Uint8Array | null
 }
 
 /** Read common PKCS#11 attributes for any key object in the current session. */
@@ -3370,6 +3615,14 @@ export const hsm_getKeyAttributes = (
     ckEncapsulate: b(CKA_ENCAPSULATE),
     ckDecapsulate: b(CKA_DECAPSULATE),
     ckValueLen: u(CKA_VALUE_LEN),
+    ckCheckValue: (() => {
+      try {
+        return hsm_getKeyCheckValue(M, hSession, handle)
+      } catch (e) {
+        console.warn('[softhsm] KCV read failed for handle', handle, e)
+        return null
+      }
+    })(),
   }
 }
 
@@ -4393,11 +4646,7 @@ export const hsm_aesGcmUnwrapKey = (
 // ── KMAC helpers (NIST SP 800-185, softhsmv3 vendor extension) ───────────────
 
 /** Generate a GENERIC_SECRET key for KMAC-128/256 operations. Returns key handle. */
-export const hsm_generateKMACKey = (
-  M: SoftHSMModule,
-  hSession: number,
-  keyBytes = 32
-): number => {
+export const hsm_generateKMACKey = (M: SoftHSMModule, hSession: number, keyBytes = 32): number => {
   const mech = buildMech(M, CKM_GENERIC_SECRET_KEY_GEN)
   const tpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
@@ -4496,6 +4745,33 @@ export const hsm_getPublicKeyInfo = (
     checkRV(
       M._C_GetAttributeValue(hSession, pubHandle, valTpl.ptr, 1),
       'C_GetAttributeValue(PUBLIC_KEY_INFO)'
+    )
+    return M.HEAPU8.slice(valPtr, valPtr + len)
+  } finally {
+    freeTemplate(M, valTpl, 1)
+    M._free(valPtr)
+  }
+}
+export const CKA_CHECK_VALUE = 0x90
+
+export const hsm_getKeyCheckValue = (
+  M: SoftHSMModule,
+  hSession: number,
+  hKey: number
+): Uint8Array => {
+  const lenTpl = buildTemplate(M, [{ type: CKA_CHECK_VALUE }])
+  checkRV(
+    M._C_GetAttributeValue(hSession, hKey, lenTpl.ptr, 1),
+    'C_GetAttributeValue(CKA_CHECK_VALUE,len)'
+  )
+  const len = readUlong(M, lenTpl.ptr + 8)
+  freeTemplate(M, lenTpl, 1)
+  const valPtr = M._malloc(len)
+  const valTpl = buildTemplate(M, [{ type: CKA_CHECK_VALUE, bytesPtr: valPtr, bytesLen: len }])
+  try {
+    checkRV(
+      M._C_GetAttributeValue(hSession, hKey, valTpl.ptr, 1),
+      'C_GetAttributeValue(CKA_CHECK_VALUE)'
     )
     return M.HEAPU8.slice(valPtr, valPtr + len)
   } finally {

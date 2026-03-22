@@ -28,6 +28,13 @@ function buildTimestampPlugin(): Plugin {
             })
           ),
           __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
+          __WASM_HASH__: JSON.stringify(
+            (() => {
+              const p = path.resolve(__dirname, 'public/wasm/softhsm.wasm')
+              if (!existsSync(p)) return Date.now().toString()
+              return createHash('md5').update(readFileSync(p)).digest('hex').slice(0, 8)
+            })()
+          ),
         },
       }
     },
@@ -35,6 +42,8 @@ function buildTimestampPlugin(): Plugin {
 }
 
 import path from 'path'
+import { createHash } from 'crypto'
+import { readFileSync, existsSync } from 'fs'
 
 // https://vite.dev/config/
 export default defineConfig({

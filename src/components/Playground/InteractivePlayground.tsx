@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useState } from 'react'
 import {
   Play,
   Database,
@@ -15,12 +15,15 @@ import {
   ArrowLeftRight,
   Filter,
   Layers,
+  FlaskConical,
+  Construction,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { PlaygroundProvider } from './PlaygroundProvider'
 import { useSettingsContext } from './contexts/SettingsContext'
 import { useKeyStoreContext } from './contexts/KeyStoreContext'
 import { useHsmContext } from './hsm/HsmContext'
+import { HsmTestMethodologyModal } from './hsm/HsmTestMethodologyModal'
 import { ACVPTesting } from '../ACVP/ACVPTesting'
 import { DataTab } from './tabs/DataTab'
 import { KemOpsTab } from './tabs/KemOpsTab'
@@ -53,6 +56,7 @@ const PlaygroundContent = () => {
     useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
   const { engineMode, setEngineMode, phase } = useHsmContext()
+  const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -144,8 +148,23 @@ const PlaygroundContent = () => {
           >
             PKCS#11 HSM
           </span>
+          {hsmMode && (
+            <button
+              onClick={() => setShowMethodologyModal(true)}
+              className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+              aria-label="View PKCS#11 test methodology"
+            >
+              <Construction size={11} />
+              WIP
+              <FlaskConical size={11} />
+            </button>
+          )}
         </div>
       </div>
+
+      {showMethodologyModal && (
+        <HsmTestMethodologyModal onClose={() => setShowMethodologyModal(false)} />
+      )}
 
       {/* Last log entry strip */}
       {lastLogEntry && !hsmMode && (

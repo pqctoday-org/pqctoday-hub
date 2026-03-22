@@ -4,3 +4,4 @@
 
 declare const __BUILD_TIMESTAMP__: string
 declare const __APP_VERSION__: string
+declare const __WASM_HASH__: string
