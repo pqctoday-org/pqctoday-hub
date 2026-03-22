@@ -1,0 +1,18 @@
+{
+  "algorithm": "AES-CTR",
+  "source": "Generated via Node.js crypto (OpenSSL backend), AES-256-CTR (SP 800-38A)",
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "counterBits": 128,
+      "tests": [
+        {
+          "key": "a5ec3f76ee80ab9b36d8e0bf1924910c885a50570d683cd02278644b70414ffb",
+          "iv": "6dfc3ec5d5c38a900189dcbeb4c74eb1",
+          "pt": "4145532d4354522d3235362041435650204b6e6f776e20416e73776572205465737420666f7220504b43532331312076332e322076616c69646174696f6e",
+          "ct": "88bb78f94ef6bd0c6f79bb9a09de4d0fd25c6787abaa1d6ee62e78a42e1ecc4fcfe279774b4d4969fa04d9ec27fa1c364b34902197c870d52a68f80fe0ec"
+        }
+      ]
+    }
+  ]
+}

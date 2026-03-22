@@ -58,10 +58,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
-  - **ACVP Testing**: validates six algorithm families against NIST test vectors — AES-GCM-256
-    (SP 800-38D), HMAC-SHA-256 (FIPS 198-1), RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256
-    signature verify, ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS
-    204); runs on both C++ and Rust engines in Dual Mode simultaneously
+  - **ACVP Testing**: validates 14 algorithm families against NIST test vectors — AES-GCM-256
+    (SP 800-38D), AES-CBC, AES-CTR, AES Key Wrap, HMAC-SHA-256/384/512 (FIPS 198-1),
+    SHA-256, RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256, ECDSA P-384, EdDSA (Ed25519),
+    ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS 204); runs on both
+    C++ and Rust engines in Dual Mode simultaneously
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
@@ -100,7 +101,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 805 questions across 49 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 820 questions across 49 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
     - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, PQC Testing & Validation, and additional topic categories covering all 49 learning modules
@@ -444,6 +445,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   `useDisclaimerStore`. `TransparencyBanner` on the landing page links to the `/about#transparency`
   anchor. About page includes a dedicated "Transparency & Disclaimer" section with animated WIP
   badge and contact links.
+- **What's New Modal**: Persona-aware, filterable notification modal showing app updates and
+  data changes since the user's last visit. Auto-opens for returning users with unseen changes;
+  filters by persona and industry; shows deep-linked new/updated items from library, migrate,
+  threats, timeline, and leaders data sources
+- **Terms of Service** (`/terms`): Legal compliance page covering GPL-3.0 licensing, educational
+  crypto disclaimer, export compliance (ECCN 5D002), prohibited destinations, acceptable use,
+  and privacy (zero tracking, client-side only)
 - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
@@ -504,7 +512,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - ANSSI recommendations, BSI Technical Guidelines, ENISA PQC guidelines
   - Common Criteria certifications (CC/CCRA/EUCC), CMVP/ACVP validation
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository (325 entries)
+- **Standards Library**: Comprehensive PQC standards repository (326 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more
@@ -519,7 +527,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks, vulnerable
     algorithms, PQC replacements, and primary source citations
   - Direct access to primary source references for each threat
-- **Transformation Leaders**: 100+ verified profiles of key PQC transition figures
+- **Transformation Leaders**: 68 consent-verified profiles of key PQC transition figures
 
 > 📋 See [REQUIREMENTS.md](REQUIREMENTS.md) for detailed specifications of each feature.
 
@@ -625,6 +633,10 @@ npm run download:library
 # Enrich the quantum-safe software reference CSV with infrastructure_layer classification
 # and append new software entries; outputs a date-stamped CSV to src/data/
 python scripts/update_csv.py
+
+# Generate module infographics via Google Vertex AI Imagen 3
+# Requires GCLOUD_TOKEN env var; use --test for first 3, --all for all 50
+node scripts/generate-infographics.mjs --all
 ```
 
 ## Architecture Overview
@@ -665,6 +677,7 @@ The application is structured into several key components:
 │   │   ├── Assess/          # 14-step PQC risk assessment with compound scoring
 │   │   ├── Changelog/       # Changelog view
 │   │   ├── Compliance/      # Compliance tracking and visualization
+│   │   ├── Terms/           # Terms of Service page (/terms)
 │   │   ├── ErrorBoundary.tsx # Global error boundary component
 │   │   ├── Executive/       # Executive summary components
 │   │   ├── Landing/         # Landing/home page (PersonalizationSection, LandingView)
@@ -704,7 +717,7 @@ The application is structured into several key components:
 │   │   │                    #   CuriousSummaryBanner, WorkshopStepHeader, GuidedTour, etc.)
 │   │   └── ui/              # Reusable UI components (Button, Card, EndorseButton, FlagButton, etc.)
 │   ├── data/                # Static data (timelines, test vectors, profiles, personaConfig)
-│   │   ├── acvp/            # NIST ACVP test vectors (ML-KEM, ML-DSA)
+│   │   ├── acvp/            # NIST ACVP test vectors (14 algorithm families)
 │   │   ├── doc-enrichments/ # Enriched document metadata for RAG corpus
 │   │   └── x509_profiles/   # CSV-based certificate profiles (3GPP, CAB Forum, ETSI)
 │   ├── hooks/               # Custom React hooks

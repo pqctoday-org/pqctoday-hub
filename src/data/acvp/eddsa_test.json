@@ -1,0 +1,18 @@
+{
+  "algorithm": "EdDSA",
+  "mode": "sigVer",
+  "source": "Generated via Node.js crypto (OpenSSL backend), Ed25519 (RFC 8032)",
+  "testGroups": [
+    {
+      "curve": "Ed25519",
+      "tests": [
+        {
+          "pk": "732144a00bfd9e32232066d2b8d39661dd66cbeda36bcb6088a77fc123fcd772",
+          "msg": "456444534120456432353531392041435650205369675665722074657374",
+          "signature": "be76a69e7473441b363f0e3d75eb5ec9c9e041cbbaae36d2d1c6225d24a3f714a5bdeefe3ed250f766d5cc188515ae55b218235ba6d87747e44d094dc77ddf06",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

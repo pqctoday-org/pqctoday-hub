@@ -1,0 +1,21 @@
+{
+  "algorithm": "ECDSA",
+  "mode": "sigVer",
+  "source": "Generated via Node.js crypto (OpenSSL backend), ECDSA P-384 with SHA-384",
+  "testGroups": [
+    {
+      "curve": "P-384",
+      "hashAlg": "SHA-384",
+      "tests": [
+        {
+          "qx": "e011c26a6a08b208387b97a312899aa4bc6ad61b1af179d6e17a935e6fdacc053a72541cc309785a05982831d542a9da",
+          "qy": "fc4de8939c6160a29d67e7120d2e717d56a457b57b8cadcd0991fa734f2fb3fca0b57f0a4a97010be9d255c44c80b511",
+          "msg": "ECDSA P-384 ACVP SigVer test",
+          "r": "b28a9281097447b19163648a2844ec1397088ad04ed8133fb21cf8bc585273a0e5771988c62f61a835914ee2946a075f",
+          "s": "0622a09df789c77be6090f3d821241296cf52ae52740bc772dcad3d60506660930075070924bdfb08fa202d1a5c1bd86",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

@@ -18,6 +18,11 @@ All notable changes to this project will be documented in this file.
 - **`hsm_importMLKEMPrivateKey`** [data]: New PKCS#11 helper in `softhsm.ts` — imports a raw ML-KEM private key via `C_CreateObject` with `CKA_SENSITIVE=false` for ACVP decapsulation KATs against NIST reference vectors without requiring seed injection.
 - **`hsm_verifyBytes` + `hsm_importMLDSAPublicKey`** [data]: Two new helpers for ACVP ML-DSA signature verification — import a raw public key via `C_CreateObject` and verify a binary message/signature pair via `C_MessageVerifyInit` + `C_VerifyMessage`.
 - **`buildTemplate` exported** [data]: `buildTemplate(M, defs)` in `softhsm.ts` promoted from internal to public export, enabling external KAT runners and scripts to build `CK_ATTRIBUTE[]` arrays without duplicating the pattern.
+- **What's New modal** [view:/]: Persona-aware, filterable modal showing app updates and data changes since the user's last visit. Auto-opens 1 second after page load for returning users with unseen changes; filters changelog entries by persona and shows deep-linked new/updated data items from library, migrate, threats, timeline, and leaders. Powered by `changelogParser.ts` (CHANGELOG.md parser with `[persona:]` and `[view:]` tag extraction) and `dataFingerprint.ts` (CSV change detection with persona-aware filtering). [persona:all]
+- **Terms of Service page** (`/terms`) [view:/terms]: 11-section legal page covering GPL-3.0 licensing, educational crypto disclaimer, export compliance (ECCN 5D002, License Exceptions TSU/ENC), prohibited destinations, acceptable use, no warranty, and privacy (zero tracking, client-side only). Source markdown in `TERMS.md`. [persona:all]
+- **Curious Explorer glossary** [data]: 24 simplified jargon-free definitions (`curiousGlossary.ts`) for the Curious Explorer persona, with interactive inline tooltips via `parseGlossary.tsx` (hover/click support, case-insensitive word-boundary matching). [persona:all]
+- **Infographic generation script** [data]: `scripts/generate-infographics.mjs` — Google Vertex AI Imagen 3 batch generator for 640×640 module infographics with fixed seed (133742) for visual consistency across all 50 modules. Supports `--test` (first 3) and `--all` modes. [persona:developer]
+- **WhatsNewModal E2E test**: `e2e/whats-new-modal.spec.ts` validates modal auto-opening for returning users with stale data fingerprints and suppression for first-time visitors.
 
 ### Changed
 
@@ -43,6 +48,12 @@ All notable changes to this project will be documented in this file.
 - **Compliance data refreshed** (`public/data/compliance-data.json`): daily scrape update 2026-03-22. [data]
 - **Rust WASM engine** (`softhsmrustv3_bg.wasm`): rebuilt with KCV for asymmetric keys — SHA-256(CKA_VALUE)\[0..3\] computed in `compute_kcv()` for `CKO_PUBLIC_KEY` and `CKO_PRIVATE_KEY`. [data]
 - **C++ WASM engine** (`softhsm.wasm`): rebuilt with KCV for asymmetric keys — `computeAsymKCV()` static helper added to `SoftHSM_keygen.cpp`, called in 12 keygen code paths (6 algorithms × pub+priv); `P11AttrCheckValue` registered on `P11PublicKeyObj` and `P11PrivateKeyObj` base classes. [data]
+- **8 new ACVP test vectors**: AES-CBC, AES-CTR, AES Key Wrap, ECDSA P-384, EdDSA (Ed25519), HMAC-SHA-384, HMAC-SHA-512, and SHA-256. Expands the NIST ACVP KAT suite to 14 algorithm test files for SoftHSMv3 PKCS#11 conformance testing. [data]
+- **Quiz dataset updated**: `pqcquiz_03222026.csv` — 820 questions (was 805); `curious` persona added to quiz persona counting in `quizDataLoader.ts`. [data]
+- **Leaders dataset updated**: `leaders_03222026.csv` — 68 consent-verified leader profiles (consent-filtered from 181 total). [data]
+- **Library dataset updated**: `library_03222026.csv` — 326 reference documents with new enrichment entry in `library_doc_enrichments_03222026.md` (IETF constrained device PQC integration draft). [data]
+- **50 batch-generated infographics** (`public/images/infographics/gcp_*.png`): all module visuals generated via Google Vertex AI Imagen 3 with fixed seed for visual consistency. [data]
+- **SoftHSMv3 validation report**: `pqc_validate_03222026.json` — comprehensive PKCS#11 operations regression test covering RNG, AES, ECDSA, EdDSA, HMAC, SHA, ML-KEM, and ML-DSA. [data]
 
 ## [2.45.2] - 2026-03-13
 

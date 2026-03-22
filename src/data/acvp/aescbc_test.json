@@ -1,0 +1,19 @@
+{
+  "algorithm": "AES-CBC",
+  "source": "Generated via Node.js crypto (OpenSSL backend), AES-256-CBC with PKCS#7 padding",
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "ivLen": 128,
+      "direction": "decrypt",
+      "tests": [
+        {
+          "key": "0c2a9b81cf6f218a368704edf9bad7de0d84b504c7ba9a2ca8baff67b8876159",
+          "iv": "516ea14750e96e7889d82b167bdc1a20",
+          "pt": "4145532d4342432d3235362041435650204b6e6f776e20416e73776572205465737420766563746f7220666f7220504b43532331312076616c69646174696f6e",
+          "ct": "614857c6f9695fc098f864add5289bb632d5203e3a20e2b5e9bf36abd58e0e52754da813a89ed0ceed9d9b2df65e91f5616f88d0e696e8029da63c03eba04d7027d454c6d103df4923e52f3f2204b234"
+        }
+      ]
+    }
+  ]
+}
