@@ -37,7 +37,7 @@ export type EnrichmentLookup = Record<string, LibraryEnrichment>
 function splitList(val: string | undefined): string[] {
   if (!val || val === 'None detected') return []
   return val
-    .split(',')
+    .split(/[,;]/)
     .map((s) => s.trim())
     .filter(Boolean)
 }
