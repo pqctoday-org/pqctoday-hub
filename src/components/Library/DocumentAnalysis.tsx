@@ -36,7 +36,7 @@ const TAG_STYLES: Record<TagVariant, string> = {
   success: 'bg-status-success/10 text-status-success border border-status-success/20',
 }
 
-const FEATURE_ROUTES: Record<string, string> = {
+const FEATURE_ROUTES_RAW: Record<string, string> = {
   Timeline: '/timeline',
   Threats: '/threats',
   Compliance: '/compliance',
@@ -97,6 +97,17 @@ const FEATURE_ROUTES: Record<string, string> = {
   'secure-boot-pqc': '/learn/secure-boot-pqc',
   'os-pqc': '/learn/os-pqc',
   'standards-bodies': '/learn/standards-bodies',
+  'pqc-testing-validation': '/learn/pqc-testing-validation',
+}
+
+/** Case-insensitive lookup: lowercased key → route path */
+const FEATURE_ROUTES = new Map<string, string>(
+  Object.entries(FEATURE_ROUTES_RAW).map(([k, v]) => [k.toLowerCase(), v])
+)
+
+/** Look up a route by feature name, case-insensitive */
+function resolveFeatureRoute(item: string): string | undefined {
+  return FEATURE_ROUTES.get(item.toLowerCase())
 }
 
 function DimensionLeaders({
@@ -214,7 +225,7 @@ function DimensionLinks({
       </h5>
       <div className="flex flex-wrap gap-1">
         {items.map((item) => {
-          const route = FEATURE_ROUTES[item]
+          const route = resolveFeatureRoute(item)
           if (!route) {
             return (
               <span
