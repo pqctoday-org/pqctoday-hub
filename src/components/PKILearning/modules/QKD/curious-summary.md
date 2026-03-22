@@ -1,6 +1,13 @@
-Curious about the difference between quantum math and quantum physics?
+# Quantum Key Distribution — In Simple Terms
 
-**The Problem:** Most encryption relies entirely on complex mathematical problems that future quantum computers are guaranteed to break. Even new mathematically hardened algorithms could theoretically be cracked by unforeseen future breakthroughs.
-**The Solution:** Use the fundamental, unalterable laws of quantum physics (transmitting single photons of light) to distribute mathematically unbreakable encryption keys.
-**The Strategy:** Because measuring a quantum state inevitably disturbs it, organizations can definitively prove nobody has intercepted their keys. If a hacker tries to spy on the transmission, the laws of physics instantly destroy the key.
-**The Ecosystem:** Building this physical infrastructure requires the deployment of specialized hardware by telecom operators, satellite networks, and government defense agencies.
+## What This Is About
+Quantum Key Distribution (QKD) shares encryption keys using the fundamental laws of quantum physics—specifically the "no-cloning theorem"—rather than relying on difficult mathematical equations. 
+
+## Why It Matters
+Standard Post-Quantum Cryptography relies on math problems that we *hope* quantum computers cannot solve. QKD is entirely different: it offers "information-theoretic security" because measuring a quantum state physically disturbs it, immediately exposing any eavesdropper on the network.
+
+## The Key Takeaway
+Despite its immense security, QKD has severe physical limitations. Standard fiber optic cables max out at roughly 100 kilometers for QKD transmission. Extending this distance requires "trusted nodes" to relay the signal, but compromising any single node exposes all the keys. 
+
+## What's Happening
+Governments are aggressively investing in QKD, with China maintaining a 2,000 km backbone and Micius satellite link. However, NIST remains highly skeptical of its real-world viability, officially recommending mathematical PQC (like FIPS 203) over QKD for almost all enterprise use cases.
