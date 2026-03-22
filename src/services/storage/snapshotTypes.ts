@@ -2,11 +2,16 @@
 import type { LearningProgress } from './types'
 import type { TLSConfig, TLSRunRecord } from '@/store/tls-learning.store'
 import type { VirtualFile, StructuredLogEntry } from '@/components/OpenSSLStudio/store'
-import type { Region } from '@/store/usePersonaStore'
+import type { Region, ExperienceLevel } from '@/store/usePersonaStore'
 import type { PersonaId } from '@/data/learningPersonas'
-import type { AssessmentMode, AssessmentStatus } from '@/store/useAssessmentStore'
+import type {
+  AssessmentMode,
+  AssessmentSnapshot,
+  AssessmentStatus,
+} from '@/store/useAssessmentStore'
 import type { AssessmentInput, AssessmentResult } from '@/hooks/assessmentTypes'
-import type { Conversation } from '@/types/ChatTypes'
+import type { ChatProvider, Conversation } from '@/types/ChatTypes'
+import type { MigrateViewMode } from '@/store/useMigrateSelectionStore'
 
 /** Magic string identifying a valid PQC Today snapshot file. */
 export const SNAPSHOT_FORMAT = 'pqc-today-snapshot' as const
@@ -35,6 +40,7 @@ export interface AssessmentData {
   complianceRequirements: string[]
   complianceUnknown: boolean
   migrationStatus: AssessmentInput['migrationStatus'] | ''
+  migrationUnknown: boolean
   cryptoUseCases: string[]
   useCasesUnknown: boolean
   dataRetention: string[]
@@ -43,13 +49,18 @@ export interface AssessmentData {
   credentialLifetimeUnknown: boolean
   systemCount: NonNullable<AssessmentInput['systemCount']> | ''
   teamSize: NonNullable<AssessmentInput['teamSize']> | ''
+  scaleUnknown: boolean
   cryptoAgility: NonNullable<AssessmentInput['cryptoAgility']> | ''
+  agilityUnknown: boolean
   infrastructure: string[]
   infrastructureUnknown: boolean
   infrastructureSubCategories: Record<string, string[]>
   vendorDependency: NonNullable<AssessmentInput['vendorDependency']> | ''
   vendorUnknown: boolean
   timelinePressure: NonNullable<AssessmentInput['timelinePressure']> | ''
+  timelineUnknown: boolean
+  importComplianceSelection: boolean
+  importProductSelection: boolean
   hiddenThreats: string[]
   assessmentStatus: AssessmentStatus
   lastResult: AssessmentResult | null
@@ -57,6 +68,7 @@ export interface AssessmentData {
   completedAt: string | null
   lastModifiedAt: string | null
   previousRiskScore: number | null
+  assessmentHistory: AssessmentSnapshot[]
 }
 
 /**
@@ -69,6 +81,7 @@ export interface PersonaData {
   selectedIndustry: string | null
   selectedIndustries: string[]
   suppressSuggestion: boolean
+  experienceLevel: ExperienceLevel | null
 }
 
 /**
@@ -113,6 +126,9 @@ export interface MigrateData {
   hiddenProducts: string[]
   activeLayer: string
   activeSubCategory: string
+  myProducts: string[]
+  viewMode: MigrateViewMode
+  workflowCollapsed: boolean
 }
 
 /**
@@ -122,6 +138,9 @@ export interface ChatData {
   conversations: Conversation[]
   activeConversationId: string | null
   model: string
+  provider: ChatProvider | null
+  localModel: string
+  localContextWindow: number
 }
 
 /**

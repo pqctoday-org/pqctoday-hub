@@ -74,6 +74,7 @@ function getAssessmentData(): AssessmentData {
     complianceRequirements: state.complianceRequirements,
     complianceUnknown: state.complianceUnknown,
     migrationStatus: state.migrationStatus,
+    migrationUnknown: state.migrationUnknown,
     cryptoUseCases: state.cryptoUseCases,
     useCasesUnknown: state.useCasesUnknown,
     dataRetention: state.dataRetention,
@@ -82,13 +83,18 @@ function getAssessmentData(): AssessmentData {
     credentialLifetimeUnknown: state.credentialLifetimeUnknown,
     systemCount: state.systemCount,
     teamSize: state.teamSize,
+    scaleUnknown: state.scaleUnknown,
     cryptoAgility: state.cryptoAgility,
+    agilityUnknown: state.agilityUnknown,
     infrastructure: state.infrastructure,
     infrastructureUnknown: state.infrastructureUnknown,
     infrastructureSubCategories: state.infrastructureSubCategories,
     vendorDependency: state.vendorDependency,
     vendorUnknown: state.vendorUnknown,
     timelinePressure: state.timelinePressure,
+    timelineUnknown: state.timelineUnknown,
+    importComplianceSelection: state.importComplianceSelection,
+    importProductSelection: state.importProductSelection,
     hiddenThreats: state.hiddenThreats,
     assessmentStatus: state.assessmentStatus,
     lastResult: state.lastResult,
@@ -96,6 +102,7 @@ function getAssessmentData(): AssessmentData {
     completedAt: state.completedAt,
     lastModifiedAt: state.lastModifiedAt,
     previousRiskScore: state.previousRiskScore,
+    assessmentHistory: state.assessmentHistory,
   }
 }
 
@@ -108,6 +115,7 @@ function getPersonaData(): PersonaData {
     selectedIndustry: state.selectedIndustry,
     selectedIndustries: state.selectedIndustries,
     suppressSuggestion: state.suppressSuggestion,
+    experienceLevel: state.experienceLevel,
   }
 }
 
@@ -143,6 +151,9 @@ function getMigrateData(): MigrateData {
     hiddenProducts: state.hiddenProducts,
     activeLayer: state.activeLayer,
     activeSubCategory: state.activeSubCategory,
+    myProducts: state.myProducts,
+    viewMode: state.viewMode,
+    workflowCollapsed: state.workflowCollapsed,
   }
 }
 
@@ -152,6 +163,9 @@ function getChatData(): ChatData {
     conversations: state.conversations,
     activeConversationId: state.activeConversationId,
     model: state.model,
+    provider: state.provider,
+    localModel: state.localModel,
+    localContextWindow: state.localContextWindow,
   }
 }
 
@@ -324,6 +338,7 @@ export class UnifiedStorageService {
           ? stores.persona.selectedIndustries
           : [],
         suppressSuggestion: stores.persona.suppressSuggestion ?? false,
+        experienceLevel: stores.persona.experienceLevel ?? null,
       })
     }
 
@@ -347,6 +362,7 @@ export class UnifiedStorageService {
           : [],
         complianceUnknown: a.complianceUnknown ?? false,
         migrationStatus: a.migrationStatus ?? '',
+        migrationUnknown: a.migrationUnknown ?? false,
         cryptoUseCases: Array.isArray(a.cryptoUseCases) ? a.cryptoUseCases : [],
         useCasesUnknown: a.useCasesUnknown ?? false,
         dataRetention: Array.isArray(a.dataRetention) ? a.dataRetention : [],
@@ -355,7 +371,9 @@ export class UnifiedStorageService {
         credentialLifetimeUnknown: a.credentialLifetimeUnknown ?? false,
         systemCount: a.systemCount ?? '',
         teamSize: a.teamSize ?? '',
+        scaleUnknown: a.scaleUnknown ?? false,
         cryptoAgility: a.cryptoAgility ?? '',
+        agilityUnknown: a.agilityUnknown ?? false,
         infrastructure: Array.isArray(a.infrastructure) ? a.infrastructure : [],
         infrastructureUnknown: a.infrastructureUnknown ?? false,
         infrastructureSubCategories:
@@ -367,6 +385,9 @@ export class UnifiedStorageService {
         vendorDependency: a.vendorDependency ?? '',
         vendorUnknown: a.vendorUnknown ?? false,
         timelinePressure: a.timelinePressure ?? '',
+        timelineUnknown: a.timelineUnknown ?? false,
+        importComplianceSelection: a.importComplianceSelection ?? false,
+        importProductSelection: a.importProductSelection ?? false,
         hiddenThreats: Array.isArray(a.hiddenThreats) ? a.hiddenThreats : [],
         assessmentStatus: a.assessmentStatus ?? 'not-started',
         lastResult: a.lastResult ?? null,
@@ -374,6 +395,7 @@ export class UnifiedStorageService {
         completedAt: a.completedAt ?? null,
         lastModifiedAt: a.lastModifiedAt ?? null,
         previousRiskScore: a.previousRiskScore ?? null,
+        assessmentHistory: Array.isArray(a.assessmentHistory) ? a.assessmentHistory : [],
       })
     }
 
@@ -410,6 +432,12 @@ export class UnifiedStorageService {
         hiddenProducts: Array.isArray(m.hiddenProducts) ? m.hiddenProducts : [],
         activeLayer: m.activeLayer ?? 'All',
         activeSubCategory: m.activeSubCategory ?? 'All',
+        myProducts: Array.isArray(m.myProducts) ? m.myProducts : [],
+        viewMode:
+          m.viewMode === 'stack' || m.viewMode === 'cards' || m.viewMode === 'table'
+            ? m.viewMode
+            : 'stack',
+        workflowCollapsed: m.workflowCollapsed ?? true,
       })
     }
 
@@ -424,6 +452,9 @@ export class UnifiedStorageService {
         conversations,
         activeConversationId,
         model: typeof c.model === 'string' ? c.model : 'gemini-2.5-flash',
+        provider: c.provider ?? null,
+        localModel: typeof c.localModel === 'string' ? c.localModel : 'Qwen3-1.7B-q4f16_1-MLC',
+        localContextWindow: typeof c.localContextWindow === 'number' ? c.localContextWindow : 4096,
         messages: activeConv?.messages ?? [],
       })
     }
