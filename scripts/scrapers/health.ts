@@ -21,7 +21,8 @@ const EXPECTED_MINIMUMS: Record<string, number> = {
 
 export const validateRecordCounts = (
   records: ComplianceRecord[],
-  previousRecords: ComplianceRecord[]
+  previousRecords: ComplianceRecord[],
+  skippedSources: Set<string> = new Set()
 ): HealthCheckResult[] => {
   const results: HealthCheckResult[] = []
 
@@ -71,8 +72,9 @@ export const validateRecordCounts = (
     })
   }
 
-  // Check for missing sources that were expected
+  // Check for missing sources that were expected (skip cached/unchanged sources)
   for (const source of Object.keys(EXPECTED_MINIMUMS)) {
+    if (skippedSources.has(source)) continue
     if (!bySource[source] && prevBySource[source]) {
       results.push({
         source,

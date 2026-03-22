@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface TLSIntroductionProps {
   onNavigateToSimulate: () => void
@@ -413,6 +414,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </Link>
         </div>
       </section>
+      <VendorCoverageNotice migrateLayer="Network" />
       <ReadingCompleteButton />
     </div>
   )

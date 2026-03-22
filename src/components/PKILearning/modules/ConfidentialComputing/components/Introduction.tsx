@@ -15,6 +15,7 @@ import {
   Eye,
   Layers,
   Link2,
+  KeyRound,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
@@ -704,40 +705,52 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </div>
 
-      {/* ── Related Modules ─────────────────────────────────────────────── */}
-      <div className="glass-panel p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">Related Modules</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* ── Related Resources ────────────────────────────────────────────── */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
             to="/learn/hsm-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            HSM & PQC Integration
+            <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Hardware roots of trust for TEE attestation keys</div>
+            </div>
           </Link>
           <Link
             to="/learn/kms-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            KMS & PQC Integration
+            <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Sealing key management and PQC key wrapping for enclaves</div>
+            </div>
           </Link>
           <Link
             to="/learn/pki-workshop"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            PKI Workshop
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
+              <div className="text-xs text-muted-foreground">Certificate infrastructure for remote attestation chains</div>
+            </div>
           </Link>
           <Link
             to="/learn/secure-boot-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Secure Boot
+            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Secure Boot &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">UEFI and firmware signing that underpins TEE security</div>
+            </div>
           </Link>
         </div>
-      </div>
+      </section>
 
       <VendorCoverageNotice migrateLayer="Hardware" />
 

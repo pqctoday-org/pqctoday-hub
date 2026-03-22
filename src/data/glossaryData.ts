@@ -4867,4 +4867,86 @@ export const glossaryTerms: GlossaryTerm[] = [
     complexity: 'advanced',
     category: 'concept',
   },
+  {
+    term: 'Passive Discovery',
+    definition:
+      'A network analysis technique that inspects encrypted traffic in-flight without injecting any packets. Used to detect and classify cryptographic algorithms across TLS, SSH, IKEv2, and OT protocols by analyzing observable handshake metadata on a SPAN port or network tap.',
+    technicalNote:
+      'Tools like CryptoNext COMPASS and pqc-flow operate in passive mode — zero packets are injected, making them safe for production environments including OT/ICS. Observable data includes ClientHello cipher suites, server certificate algorithms, key exchange group identifiers, and SSH algorithm negotiation. Cannot validate whether a remote endpoint actively supports PQC — only detects what is being used in current flows.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Active Scanning',
+    definition:
+      'A network assessment technique that initiates real connections to target endpoints to probe which cryptographic algorithms they support. Unlike passive discovery, active scanning actively negotiates TLS/SSH/IKEv2 handshakes to discover PQC readiness.',
+    technicalNote:
+      'Tools like pqcscan (Anvil Secure, Rust-based) and SSLyze probe endpoints by attempting handshakes with specific algorithm sets. Key metrics collected: supported PQC algorithms, hybrid key exchange groups, TLS versions, certificate details, and risk scores. Active scanning requires network access and generates detectable connection attempts — should be coordinated with security operations before running at scale.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'TVLA',
+    acronym: 'Test Vector Leakage Assessment',
+    definition:
+      "A statistical methodology for detecting side-channel information leakage in cryptographic hardware implementations. Uses Welch's t-test to determine whether power consumption during cryptographic operations is statistically correlated with secret key data.",
+    technicalNote:
+      'Classical fixed-vs-random TVLA fails for lattice-based PQC (ML-KEM/ML-DSA) because the public key and ciphertext are structurally coupled, making fixed test vectors trivially distinguishable from random ones regardless of implementation quality. Instead, target specific algorithmic stages: NTT/INTT transform, polynomial multiplication, and modular reduction. |t| > 4.5 (NIST standard threshold) indicates statistically significant leakage requiring countermeasures.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'advanced',
+    category: 'concept',
+  },
+  {
+    term: 'CBOM',
+    acronym: 'Cryptography Bill of Materials',
+    definition:
+      'A structured inventory of all cryptographic assets in a software system or codebase, including algorithms, key sizes, library versions, and usage contexts. Extends the SBOM (Software Bill of Materials) concept to specifically track cryptographic dependencies.',
+    technicalNote:
+      'Standardized in CycloneDX 1.6 (contributed by IBM). CBOM records: algorithm identifiers (e.g., ML-KEM-768, RSA-2048), key lengths, certificate types, library sources, and usage locations. Tools: CBOMkit (IBM, open source) generates CBOM from git repositories. CBOM generation is the first step in PQC migration — you cannot migrate what you have not inventoried.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'RFC 9794',
+    definition:
+      'IETF standard (2025) defining design rules for hybrid cryptographic schemes combining classical and post-quantum algorithms. Core rule: both the classical and PQC components of a hybrid scheme must complete successfully — no silent fallback is permitted if either component fails.',
+    technicalNote:
+      'RFC 9794 supersedes earlier hybrid design patterns and formalizes the "security-conservative" hybrid approach. Key rules: (1) shared secret = KDF(classical_secret || pqc_secret), (2) both KEMs must run to completion, (3) at least one algorithm from the set must be shared between peers, (4) ciphertext fragmentation from oversized ClientHellos (>1,400B) must not cause silent failure. Chrome 130+ and Cloudflare implement RFC 9794-compliant X25519+ML-KEM-768.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'Interoperability Matrix',
+    definition:
+      'A compatibility mapping showing which combinations of client and server PQC algorithm configurations successfully negotiate a shared secret. Used during the lab testing phase of PQC migration to identify which vendor combinations are compatible, require fallback, or are incompatible.',
+    technicalNote:
+      'Key findings from production interop testing: Chrome 130+ (hybrid X25519+ML-KEM-768) is compatible with Cloudflare, AWS, and OQS test servers. Pure PQC clients (no classical component) are rejected by Cloudflare per RFC 9794 policy. Legacy TLS 1.2 servers reject all PQC ClientHello extensions — connection succeeds via fallback but PQC is not used. Use test.openquantumsafe.org for reference server testing.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Crypto Inventory',
+    definition:
+      'A comprehensive catalog of all cryptographic assets across an organization — including algorithms in use, key sizes, certificate types, library versions, protocol configurations, and their locations across code, infrastructure, and third-party systems.',
+    technicalNote:
+      'Crypto inventory differs from CBOM in scope: CBOM is code-level (source and binaries), while a crypto inventory spans network traffic (passive discovery), endpoint configuration (active scanning), and code analysis. A complete inventory combines all three: passive network probes (CryptoNext COMPASS, pqc-flow) + endpoint scans (pqcscan) + CBOM generation (CBOMkit). Typical enterprise inventory phase: 2–4 weeks for network + 1 week for endpoint scans.',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Performance Baseline',
+    definition:
+      'A set of established metrics for classical cryptographic algorithm performance (ECDH, RSA, ECDSA) used as a reference point to measure the overhead introduced by PQC algorithms. Enables data-driven decisions about hardware capacity, latency budgets, and migration sequencing.',
+    technicalNote:
+      'Critical baselines for PQC migration: TLS handshake latency (classical: 8ms LAN, 68ms WAN), IKEv2 SA setup (classical: 38ms LAN, 240ms WAN), certificate size (RSA-2048: 1.2KB). PQC overhead vs baseline: hybrid TLS ~1.2x handshake latency, pure-PQC IKEv2 up to 53x SA setup time on WAN. Tools for baseline measurement: PQC-LEO (open source), VIAVI TeraVM (commercial), Keysight CyPerf (freemium).',
+    relatedModule: '/learn/pqc-testing-validation',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
 ]

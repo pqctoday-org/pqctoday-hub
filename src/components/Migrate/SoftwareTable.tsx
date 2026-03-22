@@ -22,7 +22,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
-import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -271,6 +271,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 Enriched
                               </span>
                             )}
+                            <CertBadges
+                              certs={certsByProduct.get(item.softwareName) || []}
+                            />
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {item.latestVersion}

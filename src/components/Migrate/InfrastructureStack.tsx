@@ -45,7 +45,7 @@ export const LAYERS = [
     label: 'Network',
     icon: Network,
     description:
-      'VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom',
+      'VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation',
     color: 'from-sky-500/20 to-indigo-500/20',
     borderColor: 'border-sky-500/50',
     activeColor: 'bg-card border-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.5)]',

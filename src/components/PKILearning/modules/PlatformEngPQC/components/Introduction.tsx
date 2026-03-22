@@ -541,6 +541,52 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </div>
 
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/migration-program"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Map size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Program</div>
+              <div className="text-xs text-muted-foreground">Phase-based PQC rollout planning for platform teams</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Key management backends for platform secret injection</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/code-signing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <FileCode size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Code Signing</div>
+              <div className="text-xs text-muted-foreground">Sigstore and Notation migration to ML-DSA in CI/CD pipelines</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/ai-security-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Brain size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">AI Security &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">PQC considerations for ML pipelines and model signing</div>
+            </div>
+          </Link>
+        </div>
+      </section>
       <ReadingCompleteButton />
     </div>
   )

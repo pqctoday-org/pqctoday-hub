@@ -10,11 +10,15 @@ import {
   Clock,
   ChevronDown,
   ChevronUp,
+  Cpu,
+  Scale,
+  GitBranch,
   ArrowRight,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import { NERC_CIP_STANDARDS, IEC_62351_PARTS } from '../data/nercCipData'
 import { ENERGY_PROTOCOLS } from '../data/substationProtocolData'
 import { EQUIPMENT_LIFECYCLES } from '../data/energyConstants'
@@ -890,54 +894,73 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </div>
 
-      {/* -- Related Modules -------------------------------------------------- */}
-      <div className="glass-panel p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">Related Modules</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
             to="/learn/iot-ot-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            IoT &amp; OT Security
+            <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
+              <div className="text-xs text-muted-foreground">PQC for RTUs, PLCs, and SCADA field devices</div>
+            </div>
           </Link>
           <Link
             to="/learn/compliance-strategy"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Compliance Strategy
+            <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
+              <div className="text-xs text-muted-foreground">NERC CIP and IEC 62351 regulatory alignment</div>
+            </div>
           </Link>
           <Link
             to="/learn/stateful-signatures"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Stateful Signatures
+            <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Stateful Signatures</div>
+              <div className="text-xs text-muted-foreground">LMS for firmware signing on long-lifecycle grid equipment</div>
+            </div>
           </Link>
           <Link
             to="/learn/kms-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            KMS &amp; PQC Integration
+            <Key size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Key management for substation and SCADA communication channels</div>
+            </div>
           </Link>
           <Link
             to="/learn/data-asset-sensitivity"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Data Asset Sensitivity
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Data Asset Sensitivity</div>
+              <div className="text-xs text-muted-foreground">Classify OT data and prioritize PQC migration by impact</div>
+            </div>
           </Link>
           <Link
             to="/learn/migration-program"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Migration Program
+            <Clock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Migration Program</div>
+              <div className="text-xs text-muted-foreground">Phase-based PQC rollout planning for critical infrastructure</div>
+            </div>
           </Link>
         </div>
-      </div>
+      </section>
+      <VendorCoverageNotice migrateLayer="Application" />
 
       {/* -- Reading Complete ------------------------------------------------- */}
       <ReadingCompleteButton />

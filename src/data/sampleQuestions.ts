@@ -583,6 +583,15 @@ export const SAMPLE_QUESTIONS: Record<string, string[]> = {
     'What is the PQC migration path for SSL/TLS offload devices in data centers?',
     'How does the NGFW vendor comparison matrix help select PQC-ready network security?',
   ],
+  'PQC Testing & Validation': [
+    'What is the difference between passive crypto discovery and active PQC scanning?',
+    'How does PQC affect TLS handshake latency and IKEv2 SA setup times?',
+    'What is TVLA and why does classical fixed-vs-random testing fail for lattice-based PQC?',
+    'How does the interoperability test matrix validate hybrid PQC client-server combinations?',
+    'What tools are available for PQC performance benchmarking (VIAVI TeraVM, PQC-LEO, Keysight CyPerf)?',
+    'How does CryptoNext COMPASS perform passive PQC crypto discovery?',
+    'What is the 6-phase PQC test strategy from discovery through production monitoring?',
+  ],
   'Database Encryption PQC': [
     'What is Transparent Data Encryption (TDE) and how does it migrate to PQC key wrapping?',
     'How does Column-Level Encryption (CLE) / Always Encrypted change with PQC?',

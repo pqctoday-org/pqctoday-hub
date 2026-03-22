@@ -16,6 +16,7 @@ import {
   Layers,
   Zap,
   Eye,
+  GitBranch,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import {
@@ -151,7 +152,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <ul className="text-xs text-muted-foreground space-y-1">
                 <li>&bull; Thales Luna 7 (Network HSM, FIPS 140-3 L3)</li>
                 <li>&bull; Entrust nShield 5 (Network HSM, FIPS 140-3 L3)</li>
-                <li>&bull; Utimaco SecurityServer (PCIe, FIPS 140-2 L4)</li>
+                <li>&bull; Utimaco SecurityServer (PCIe, FIPS 140-3 L3)</li>
               </ul>
               <p className="text-xs text-success mt-2 font-medium">
                 Full PQC firmware support available today
@@ -168,7 +169,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <li>&bull; Google Cloud HSM (PQC on roadmap)</li>
               </ul>
               <p className="text-xs text-warning mt-2 font-medium">
-                PQC support lags on-prem by 12&ndash;18 months
+                Cloud HSMs currently lack firmware-level PQC support
               </p>
             </div>
           </div>
@@ -420,8 +421,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                  <span className="text-warning font-medium">
-                    FIPS 140-2 Level 4 / FIPS 140-3 pending
+                  <span className="text-success font-medium">
+                    FIPS 140-3 Level 3 (cert #3925)
                   </span>
                 </div>
                 <div>
@@ -441,9 +442,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
                 </p>
                 <p>
-                  <strong>Unique Features:</strong> Highest physical security (FIPS Level 4). Free
-                  PQC simulator mirrors hardware APIs. SLH-DSA on roadmap. PCIe form factor
-                  optimized for data center density.
+                  <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator available
+                  for API testing. SLH-DSA on roadmap. PCIe form factor for data center
+                  deployment.
                 </p>
               </div>
             </div>
@@ -467,9 +468,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="flex items-start gap-2">
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
-                <strong>Key insight:</strong> Cloud HSMs lag on-prem by approximately 12&ndash;18
-                months for PQC firmware. This is because cloud providers must validate PQC support
-                across their entire fleet before enabling it for customers.
+                <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) are
+                in production with firmware-level PQC support. Cloud HSMs currently deliver PQC
+                through SDK updates rather than firmware — AWS is preview-only and Azure/GCP are on
+                roadmap. Azure Dedicated HSM is the same Thales Luna 7 hardware and gains full PQC
+                once firmware is upgraded via Azure Support.
               </p>
             </div>
           </div>
@@ -523,7 +526,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
-                  <span className="text-foreground">FIPS 140-2 Level 3</span>
+                  <span className="text-foreground">FIPS 140-3 Level 3 (via Thales Luna 7 cert)</span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
@@ -681,7 +684,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     Algorithms Added
                   </th>
                   <th className="text-center p-2 text-muted-foreground font-medium">Complexity</th>
-                  <th className="text-left p-2 text-muted-foreground font-medium">Downtime</th>
+                  <th className="text-left p-2 text-muted-foreground font-medium">
+                    Downtime (est.)
+                  </th>
                   <th className="text-center p-2 text-muted-foreground font-medium">Recert</th>
                 </tr>
               </thead>
@@ -819,41 +824,52 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
       </div>
 
       {/* Related Resources */}
-      <VendorCoverageNotice migrateLayer="Hardware" />
-
-      <div className="glass-panel p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">Related Modules</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
             to="/learn/kms-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            KMS & PQC Integration
+            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Key management services that integrate with HSM backends</div>
+            </div>
           </Link>
           <Link
             to="/learn/stateful-signatures"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Stateful Hash-Based Signatures
+            <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
+              <div className="text-xs text-muted-foreground">LMS and XMSS signing stored in HSM key stores</div>
+            </div>
           </Link>
           <Link
             to="/learn/pki-workshop"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            PKI Workshop
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PKI Workshop</div>
+              <div className="text-xs text-muted-foreground">HSM-backed CA operations and PQC certificate issuance</div>
+            </div>
           </Link>
           <Link
             to="/learn/qkd"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Quantum Key Distribution
+            <Zap size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
+              <div className="text-xs text-muted-foreground">QKD integration with HSM-based key injection pipelines</div>
+            </div>
           </Link>
         </div>
-      </div>
+      </section>
+      <VendorCoverageNotice migrateLayer="Hardware" />
       <ReadingCompleteButton />
     </div>
   )

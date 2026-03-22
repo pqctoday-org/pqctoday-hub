@@ -353,11 +353,6 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
         <div className="space-y-3">
           {IAM_VENDORS.slice(0, 4).map((vendor) => {
             const status = PQC_STATUS_LABELS[vendor.pqcStatus]
-            const total =
-              vendor.scores.tokenSigning +
-              vendor.scores.mfa +
-              vendor.scores.apiSecurity +
-              vendor.scores.roadmap
             return (
               <div key={vendor.id} className="bg-muted/50 rounded-lg p-4 border border-border">
                 <div className="flex items-start gap-3">
@@ -371,18 +366,7 @@ export const IAMPQCIntroduction: React.FC<IAMPQCIntroductionProps> = ({ onNaviga
                         {status.label}
                       </span>
                     </div>
-                    <p className="text-xs text-muted-foreground mb-2">{vendor.notes}</p>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 bg-muted/50 rounded-full h-2 overflow-hidden">
-                        <div
-                          className={`h-full rounded-full ${total >= 70 ? 'bg-status-success' : total >= 50 ? 'bg-primary' : total >= 35 ? 'bg-warning' : 'bg-status-error'}`}
-                          style={{ width: `${total}%` }}
-                        />
-                      </div>
-                      <span className="text-[10px] font-bold text-muted-foreground w-12 text-right">
-                        {total}/100
-                      </span>
-                    </div>
+                    <p className="text-xs text-muted-foreground">{vendor.notes}</p>
                   </div>
                 </div>
               </div>

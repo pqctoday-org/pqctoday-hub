@@ -209,7 +209,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'Composite certificates bind both algorithms under a single OID — the strongest security model since both signatures MUST verify. However, legacy validators cannot process composite OIDs. OpenSSL 3.6.0 does not yet support composite OIDs natively; this demo generates component certs separately to illustrate the structure.',
+      'Composite certificates bind both algorithms under a single OID and require both signatures to verify — if either signature fails, the certificate is rejected. However, legacy validators cannot process composite OIDs. OpenSSL 3.6.0 does not yet support composite OIDs natively; this demo generates component certs separately to illustrate the structure.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

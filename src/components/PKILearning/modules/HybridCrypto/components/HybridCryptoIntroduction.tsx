@@ -153,7 +153,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
               <p className="text-xs text-muted-foreground">
                 A single composite OID identifies the algorithm pair. Both signatures must verify.
                 Defined in <strong>draft-ietf-lamps-pq-composite-sigs</strong>. Not yet in OpenSSL
-                production builds — strongest security model.
+                production builds — requires both signatures to verify.
               </p>
             </div>
             {/* Parallel/Concatenated */}

@@ -10,12 +10,14 @@ HSMs are used whenever the stakes are highest. Banks use them to authorize finan
 
 Because HSMs sit at the very top of the trust chain, they protect everything beneath them. If the encryption algorithms running inside an HSM become vulnerable to quantum computers, the consequences cascade outward. Every certificate, every financial transaction, and every digital signature that depends on those keys could be compromised.
 
-Upgrading HSMs is especially tricky because they are physical hardware, not just software. You cannot simply download an update the way you update an app on your phone. Some older HSMs will need to be physically replaced, which takes time, money, and careful planning.
+Upgrading HSMs is especially tricky because they are physical hardware. To prepare for post-quantum security, HSMs must natively support PQC mechanisms so they can generate and protect quantum-resistant keys internally.
 
-## The Key Takeaway
+## The Key Takeaways
 
-HSMs are the ultimate guardians of the most important encryption keys in the world. Because they are hardware — not just software — upgrading them to resist quantum attacks requires longer lead times and more planning than almost any other part of the cryptographic ecosystem.
+1. **Native PQC Support**: HSMs must natively integrate and support PQC mechanisms (like ML-KEM and ML-DSA) to generate and store quantum-safe keys.
+2. **Hybrid KEM First**: The most immediate step for HSM migration is enabling hybrid Key Encapsulation Mechanisms (KEMs) to secure key transport pipelines.
+3. **Firmware Protection**: In the near future, HSM firmware updates and secure boot procedures must be protected using stateful hash-based PQC signatures to prevent tampering.
 
 ## What's Happening
 
-Major HSM manufacturers like Thales, Entrust, and Utimaco are releasing new models and firmware updates that support post-quantum algorithms such as ML-KEM and ML-DSA. The PKCS#11 standard, which defines how software talks to HSMs, has been updated to version 3.2 to include post-quantum key types. Cloud HSM services from AWS, Google, and Microsoft are also beginning to integrate quantum-safe capabilities, giving organizations a path forward without replacing physical hardware.
+Major HSM manufacturers like Thales, Entrust, and Utimaco are releasing new models and firmware updates that add native PQC support. The PKCS#11 standard, which defines how software talks to HSMs, has been updated to version 3.2 to include post-quantum key types. Cloud HSM services from AWS, Google, and Microsoft are also beginning to integrate quantum-safe capabilities, prioritizing hybrid KEMs for secure transport first.

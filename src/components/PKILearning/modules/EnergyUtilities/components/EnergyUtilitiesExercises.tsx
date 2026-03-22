@@ -48,7 +48,7 @@ export const EnergyUtilitiesExercises: React.FC<EnergyUtilitiesExercisesProps> =
       badge: 'Substation',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'The WAN/ICCP zone scores highest because it is internet-facing (25pts), has High BES Impact (40pts), and CIP-012 mandates encrypted inter-control-center communications. Station Bus (MMS/TLS) scores second. Process Bus (GOOSE HMAC) scores lowest because its symmetric authentication is already quantum-safe.',
+        'The WAN/ICCP zone has the highest migration priority: it is internet-facing and High BES Impact, and CIP-012 mandates encrypted inter-control-center communications. Station Bus (MMS/TLS) uses asymmetric auth and requires migration. Process Bus (GOOSE HMAC) uses symmetric authentication, which is already quantum-safe, so its migration priority is lower.',
       config: { step: 1 },
     },
     {

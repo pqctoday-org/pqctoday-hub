@@ -27,7 +27,7 @@ const PARTS = [
   {
     id: 'vendor-comparison',
     title: 'Step 2: Vendor Comparison',
-    description: 'Compare 8 HSM vendors by PQC maturity, algorithms, and FIPS validation.',
+    description: 'Compare 9 HSM vendors by PQC maturity, algorithms, and FIPS validation.',
     icon: BarChart3,
   },
   {

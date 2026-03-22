@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface QKDIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -599,6 +600,7 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
           <Radio size={18} /> Try the BB84 Simulator
         </button>
       </div>
+      <VendorCoverageNotice migrateLayer="Hardware" />
       <ReadingCompleteButton />
     </div>
   )

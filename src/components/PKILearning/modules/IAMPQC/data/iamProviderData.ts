@@ -14,12 +14,6 @@ export interface IAMVendorStatus {
   roadmapYear: number | null
   certifications: string[]
   notes: string
-  scores: {
-    tokenSigning: number // 0-25
-    mfa: number // 0-25
-    apiSecurity: number // 0-25
-    roadmap: number // 0-25
-  }
 }
 
 export const PQC_STATUS_LABELS: Record<PQCStatus, { label: string; className: string }> = {
@@ -60,12 +54,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     certifications: ['FIPS 140-2 validated (crypto modules)', 'SOC 2 Type II', 'ISO 27001'],
     notes:
       'Okta partnered with NIST NCCoE for PQC migration guidance. Preview available in Okta Preview (sandbox) orgs as of Q2 2025.',
-    scores: {
-      tokenSigning: 18,
-      mfa: 14,
-      apiSecurity: 15,
-      roadmap: 20,
-    },
   },
   {
     id: 'microsoft-entra',
@@ -89,12 +77,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     ],
     notes:
       'SymCrypt (Microsoft crypto library) has full ML-KEM and ML-DSA support. Windows Server 2025 includes experimental PKINIT PQC. Entra conditional access PQC policies in public preview.',
-    scores: {
-      tokenSigning: 20,
-      mfa: 18,
-      apiSecurity: 20,
-      roadmap: 23,
-    },
   },
   {
     id: 'ping-federate',
@@ -112,12 +94,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     certifications: ['FIPS 140-2 (select modules)', 'SOC 2 Type II', 'ISO 27001'],
     notes:
       'Ping Identity (acquired by Thoma Bravo in 2022) merged with ForgeRock in 2023. Combined roadmap consolidating PQC plans across PingFederate, PingOne, and ForgeRock AM. Joint PQC advisory published 2025.',
-    scores: {
-      tokenSigning: 10,
-      mfa: 12,
-      apiSecurity: 12,
-      roadmap: 16,
-    },
   },
   {
     id: 'forgerock',
@@ -133,13 +109,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     roadmapYear: 2026,
     certifications: ['FIPS 140-2 (Bouncy Castle FIPS)', 'ISO 27001', 'SOC 2 Type II'],
     notes:
-      'ForgeRock now part of Ping Identity. Bouncy Castle FIPS (BC-FJA) includes ML-DSA and ML-KEM. AM 7.x can use BC as crypto provider enabling PQC without major architectural changes.',
-    scores: {
-      tokenSigning: 12,
-      mfa: 10,
-      apiSecurity: 14,
-      roadmap: 15,
-    },
+      'ForgeRock now part of Ping Identity. Bouncy Castle FIPS (BC-FJA) includes ML-DSA and ML-KEM. AM 7.x can use BC as crypto provider enabling PQC.',
   },
   {
     id: 'sailpoint',
@@ -155,13 +125,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     roadmapYear: 2027,
     certifications: ['SOC 2 Type II', 'ISO 27001', 'FedRAMP Moderate'],
     notes:
-      'SailPoint focuses on identity governance (IGA) and delegates cryptographic operations to integrated IdPs. PQC impact is primarily on API TLS and workflow integrity; lower direct crypto exposure than authentication-primary vendors.',
-    scores: {
-      tokenSigning: 6,
-      mfa: 10,
-      apiSecurity: 8,
-      roadmap: 10,
-    },
+      'SailPoint focuses on identity governance (IGA) and delegates cryptographic operations to integrated IdPs. PQC impact is primarily on API TLS and workflow integrity.',
   },
   {
     id: 'cyberark',
@@ -178,13 +142,7 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     roadmapYear: 2025,
     certifications: ['FIPS 140-2 Level 1-3', 'Common Criteria EAL4+', 'SOC 2 Type II'],
     notes:
-      'PAM vaults holding privileged credentials are critical HNDL targets. CyberArk prioritizes vault-to-agent channel security. Conjur (secrets manager) PQC transit encryption under active development.',
-    scores: {
-      tokenSigning: 16,
-      mfa: 16,
-      apiSecurity: 20,
-      roadmap: 22,
-    },
+      'PAM vaults holding privileged credentials are critical HNDL targets. CyberArk is developing PQC transit encryption for vault-to-agent channels. Conjur (secrets manager) PQC transit encryption under active development.',
   },
   {
     id: 'hashicorp-vault',
@@ -201,12 +159,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     certifications: ['FIPS 140-2 (Vault FIPS edition)', 'SOC 2 Type II', 'FedRAMP Moderate'],
     notes:
       'HashiCorp Vault Transit Secrets Engine ML-DSA signing planned (roadmap). PKI Secrets Engine PQC certificates planned. Vault OIDC provider (identity broker) PQC migration tracked in GitHub.',
-    scores: {
-      tokenSigning: 18,
-      mfa: 12,
-      apiSecurity: 18,
-      roadmap: 20,
-    },
   },
   {
     id: 'keycloak',
@@ -224,40 +176,6 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
     certifications: ['Common Criteria (RHSSO)', 'FIPS 140-2 (RHSSO with NSS)'],
     notes:
       'Keycloak is open source; PQC integration available via oqsprovider for OpenSSL and BouncyCastle Java. Community PQC SPI for token signing already available. Red Hat SSO (RHSSO) enterprise version targets 2026 GA.',
-    scores: {
-      tokenSigning: 19,
-      mfa: 15,
-      apiSecurity: 16,
-      roadmap: 18,
-    },
   },
 ]
 
-export const VENDOR_SCORING_DIMENSIONS = [
-  {
-    id: 'tokenSigning',
-    label: 'Token Signing',
-    description: 'JWT, SAML, OIDC token signing with ML-DSA',
-    maxScore: 25,
-  },
-  {
-    id: 'mfa',
-    label: 'MFA / Attestation',
-    description: 'FIDO2/WebAuthn PQC attestation and MFA channel security',
-    maxScore: 25,
-  },
-  {
-    id: 'apiSecurity',
-    label: 'API Security',
-    description: 'PQC TLS for API channels and secrets delivery',
-    maxScore: 25,
-  },
-  {
-    id: 'roadmap',
-    label: 'Roadmap Clarity',
-    description: 'Commitment, timelines, and published PQC migration guidance',
-    maxScore: 25,
-  },
-] as const
-
-export type ScoringDimension = (typeof VENDOR_SCORING_DIMENSIONS)[number]['id']

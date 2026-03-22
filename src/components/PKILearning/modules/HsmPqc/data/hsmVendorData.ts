@@ -14,7 +14,6 @@ export interface HSMVendor {
   pkcs11Version: string
   hybridSupport: boolean
   sideChannelCountermeasures: string[]
-  pqcMaturityScore: number
 }
 
 export interface PKCS11Operation {
@@ -41,7 +40,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'network',
     notes:
-      'Full PQC support in firmware v7.9.2+. ML-KEM and ML-DSA integrated into core firmware (no external modules needed). CBOM via REST API. USB G7 extension supports PQC. Luna Client 10.9.2+ required for PKCS#11 PQC mechanisms.',
+      'Full PQC support in firmware v7.9.2+. ML-KEM and ML-DSA integrated into core firmware. CBOM via REST API. USB G7 extension supports PQC. Luna Client 10.9.2+ required for PKCS#11 PQC mechanisms.',
     firmwareVersion: '7.9.2+',
     pkcs11Version: '3.0 (PQC extensions)',
     hybridSupport: true,
@@ -51,7 +50,6 @@ export const HSM_VENDORS: HSMVendor[] = [
       'EM emanation protection',
       'Tamper-responsive enclosure',
     ],
-    pqcMaturityScore: 95,
   },
   {
     id: 'entrust-nshield',
@@ -59,7 +57,7 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'nShield 5',
     type: 'on-prem',
     pqcSupportStatus: 'production',
-    fips140Level: 'FIPS 140-3 Level 3 (submitted)',
+    fips140Level: 'FIPS 140-3 Level 3 (cert #4765; PQC firmware resubmission pending)',
     supportedPQCAlgorithms: ['ML-KEM-768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
     formFactor: 'network',
     notes:
@@ -73,7 +71,6 @@ export const HSM_VENDORS: HSMVendor[] = [
       'Masking countermeasures',
       'CodeSafe secure execution',
     ],
-    pqcMaturityScore: 90,
   },
   {
     id: 'utimaco',
@@ -81,11 +78,11 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'SecurityServer Se Gen2 (Quantum Protect)',
     type: 'on-prem',
     pqcSupportStatus: 'production',
-    fips140Level: 'FIPS 140-2 Level 4 / FIPS 140-3 pending',
+    fips140Level: 'FIPS 140-3 Level 3 (cert #3925)',
     supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
     formFactor: 'pcie',
     notes:
-      'Q-safe firmware extension enables PQC on existing hardware — no HSM replacement needed. Highest physical security (Level 4). Free PQC simulator mirrors hardware APIs for pre-procurement testing. SLH-DSA support on roadmap. CAVP validated for ML-KEM, ML-DSA, LMS.',
+      'Q-safe firmware extension adds PQC support via software update to SecurityServer Se Gen2. FIPS 140-3 Level 3 (cert #3925, 2021). PQC simulator available for API testing. SLH-DSA support on roadmap. CAVP validated for ML-KEM, ML-DSA, LMS.',
     firmwareVersion: '5.0+ (Q-safe)',
     pkcs11Version: '3.0',
     hybridSupport: true,
@@ -95,7 +92,6 @@ export const HSM_VENDORS: HSMVendor[] = [
       'Voltage/temperature monitoring',
       'Active tamper response',
     ],
-    pqcMaturityScore: 85,
   },
   {
     id: 'marvell-ls2',
@@ -107,12 +103,11 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65', 'LMS'],
     formFactor: 'pcie',
     notes:
-      'High-throughput PCIe HSM with hardware PQC acceleration. PQC algorithms in beta firmware. Powers Azure Managed HSM backend. Designed for cloud infrastructure and high-volume financial transaction processing.',
+      'PCIe HSM with hardware PQC acceleration. PQC algorithms in beta firmware. Powers Azure Managed HSM backend. Designed for cloud infrastructure and financial transaction processing.',
     firmwareVersion: 'Beta firmware',
     pkcs11Version: '2.40',
     hybridSupport: false,
     sideChannelCountermeasures: ['Hardware crypto acceleration', 'Isolated execution environment'],
-    pqcMaturityScore: 55,
   },
   {
     id: 'futurex-cryptohub',
@@ -124,12 +119,11 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['ML-KEM-768', 'ML-DSA-65'],
     formFactor: 'network',
     notes:
-      'Enterprise HSM with PQC firmware development in progress. Strong presence in payment processing (PCI HSM certified). PQC support targeting production readiness.',
+      'Enterprise HSM with PQC firmware development in progress. PCI HSM certified. PQC support targeting production readiness.',
     firmwareVersion: 'PQC beta',
     pkcs11Version: '2.40',
     hybridSupport: false,
     sideChannelCountermeasures: ['Tamper-responsive enclosure', 'PCI HSM physical protections'],
-    pqcMaturityScore: 40,
   },
   // Cloud HSM vendors
   {
@@ -147,7 +141,6 @@ export const HSM_VENDORS: HSMVendor[] = [
     pkcs11Version: '2.40 (PQC via SDK)',
     hybridSupport: false,
     sideChannelCountermeasures: ['AWS Nitro System isolation', 'Dedicated hardware per customer'],
-    pqcMaturityScore: 35,
   },
   {
     id: 'azure-dhsm',
@@ -155,19 +148,18 @@ export const HSM_VENDORS: HSMVendor[] = [
     product: 'Azure Dedicated HSM',
     type: 'cloud',
     pqcSupportStatus: 'roadmap',
-    fips140Level: 'FIPS 140-2 Level 3',
-    supportedPQCAlgorithms: ['Roadmap: ML-KEM, ML-DSA (via Thales firmware)'],
+    fips140Level: 'FIPS 140-3 Level 3 (via Thales Luna 7 cert)',
+    supportedPQCAlgorithms: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     formFactor: 'cloud',
     notes:
-      'Powered by Thales Luna 7 hardware. PQC available when customers request firmware upgrade to v7.9+. Azure Managed HSM (powered by Marvell LS2) also on PQC roadmap. Microsoft targets CNSA 2.0 compliance by 2029.',
-    firmwareVersion: 'Pending Thales firmware',
-    pkcs11Version: '3.0 (after upgrade)',
-    hybridSupport: false,
+      'Backed by Thales Luna Network HSM 7 — identical hardware and PQC capabilities once upgraded to firmware v7.9.2+. PQC algorithms and FIPS coverage are the same as Thales Luna 7. Customers request the firmware upgrade via Azure Support; Microsoft does not auto-upgrade dedicated HSMs. Azure Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.',
+    firmwareVersion: '7.9.2+ (customer-requested via Azure Support)',
+    pkcs11Version: '3.0 (PQC extensions)',
+    hybridSupport: true,
     sideChannelCountermeasures: [
-      'Thales Luna hardware protections',
-      'Azure confidential computing',
+      'Thales Luna hardware protections (identical to on-prem Luna 7)',
+      'Azure physical data center security',
     ],
-    pqcMaturityScore: 25,
   },
   {
     id: 'gcp-cloudhsm',
@@ -179,12 +171,33 @@ export const HSM_VENDORS: HSMVendor[] = [
     supportedPQCAlgorithms: ['Planned: ML-KEM, ML-DSA (via Cloud KMS integration)'],
     formFactor: 'cloud',
     notes:
-      'Hardware HSM backing for Cloud KMS keys. PQC support planned — currently PQC algorithms available in Cloud KMS software mode. HSM-backed PQC keys expected as algorithms mature. Google already uses PQC internally for infrastructure.',
+      'Hardware HSM backing for Cloud KMS keys. PQC support planned — currently PQC algorithms available in Cloud KMS software mode. HSM-backed PQC keys expected as algorithms mature.',
     firmwareVersion: 'Planned',
     pkcs11Version: 'N/A (Cloud KMS API)',
     hybridSupport: false,
     sideChannelCountermeasures: ['Google Titan chip', 'Physical security of Google data centers'],
-    pqcMaturityScore: 20,
+  },
+  // On-prem — Crypto4A
+  {
+    id: 'crypto4a-qxhsm',
+    name: 'Crypto4A',
+    product: 'QxHSM (QASM core)',
+    type: 'on-prem',
+    pqcSupportStatus: 'production',
+    fips140Level: 'FIPS 140-3 Level 3 (cert #4250, Active)',
+    supportedPQCAlgorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS/HSS', 'XMSS', 'Classic McEliece'],
+    formFactor: 'network',
+    notes:
+      "World's first FIPS 140-3 Level 3 validated PQC-capable HSM (cert #4250). Modular blade design (QxBMC-1/3/12 chassis — up to 12 blades per 4RU). FPGA-based crypto-agility enables firmware updates for new algorithms without hardware replacement. Full NIST PQC suite plus Classic McEliece. Integrations: EJBCA (v9.3+), DigiCert, Keyfactor. Canadian sovereign solution (Ottawa).",
+    firmwareVersion: 'v4.4+ (production PQC); v5.0 (FIPS 140-3 resubmission pending)',
+    pkcs11Version: '3.0 (PQC extensions)',
+    hybridSupport: true,
+    sideChannelCountermeasures: [
+      'Electromagnetic isolation enclosure',
+      'Multi-event tamper-evidence sensors',
+      'FPGA-based crypto isolation',
+      'Automatic key zeroization on tamper detection',
+    ],
   },
 ]
 

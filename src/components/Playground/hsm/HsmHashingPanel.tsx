@@ -14,6 +14,7 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
+import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Algorithm table ────────────────────────────────────────────────────────────
 
@@ -255,52 +256,7 @@ export const HsmHashingPanel = () => {
           </div>
         )}
 
-        {/* PKCS#11 call trace */}
-        <div className="glass-panel p-4 space-y-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            PKCS#11 Call Sequence
-          </p>
-          <div className="space-y-1 text-xs font-mono">
-            <div className="text-muted-foreground">
-              <span className="text-foreground">C_DigestInit</span>
-              (hSession, &{'{'}
-              {selectedAlgo.label.replace('-', '_')}
-              {'}'}) → <span className="text-status-success">CKR_OK</span>
-            </div>
-            {multiPart ? (
-              <>
-                <div className="text-muted-foreground">
-                  <span className="text-foreground">C_DigestUpdate</span>
-                  (hSession, pPart, ulPartLen) → <span className="text-status-success">
-                    CKR_OK
-                  </span>{' '}
-                  <span className="text-muted-foreground">[× {chunks.length} chunks]</span>
-                </div>
-                <div className="text-muted-foreground">
-                  <span className="text-foreground">C_DigestFinal</span>
-                  (hSession, pDigest, &amp;digestLen) →{' '}
-                  <span className="text-status-success">CKR_OK</span> → {selectedAlgo.outBytes}{' '}
-                  bytes
-                </div>
-              </>
-            ) : (
-              <>
-                <div className="text-muted-foreground">
-                  <span className="text-foreground">C_Digest</span>
-                  (hSession, pData, ulDataLen, NULL, &amp;digestLen) →{' '}
-                  <span className="text-status-success">CKR_OK</span>{' '}
-                  <span className="text-muted-foreground">[size query]</span>
-                </div>
-                <div className="text-muted-foreground">
-                  <span className="text-foreground">C_Digest</span>
-                  (hSession, pData, ulDataLen, pDigest, &amp;digestLen) →{' '}
-                  <span className="text-status-success">CKR_OK</span> → {selectedAlgo.outBytes}{' '}
-                  bytes
-                </div>
-              </>
-            )}
-          </div>
-        </div>
+        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

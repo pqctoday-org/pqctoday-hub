@@ -346,7 +346,7 @@ export const CRYPTO_APIS: CryptoAPI[] = [
     pqcStatus:
       'Most comprehensive PQC support in managed languages: ML-KEM (all parameter sets), ML-DSA, SLH-DSA (all 12 variants), FN-DSA (Falcon), LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU. Both JCA and lightweight API.',
     strengths: [
-      'Broadest PQC algorithm coverage of any managed-language library',
+      'Supports ML-KEM, ML-DSA, SLH-DSA (all 12 variants), FN-DSA, LMS/HSS, XMSS, BIKE, HQC, Classic McEliece, FrodoKEM, NTRU',
       'Dual API: JCA compatible + standalone lightweight',
       'Cross-platform: Java + C#/.NET',
       'BC-FIPS variant for regulated environments',

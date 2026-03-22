@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, KeyRound, GitBranch, ShieldAlert } from 'lucide-react'
+import { Trash2, KeyRound, GitBranch, ShieldAlert, Fingerprint } from 'lucide-react'
 import { StatefulSigsIntroduction } from './components/StatefulSigsIntroduction'
 import { StatefulSigsExercises, type WorkshopConfig } from './components/StatefulSigsExercises'
 import { LMSKeyGenDemo } from './workshop/LMSKeyGenDemo'
 import { XMSSKeyGenDemo } from './workshop/XMSSKeyGenDemo'
 import { StateManagementVisualizer } from './workshop/StateManagementVisualizer'
+import { SLHDSALiveDemo } from './workshop/SLHDSALiveDemo'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -34,6 +35,13 @@ const PARTS = [
     title: 'Step 3: State Management',
     description: 'Simulate signing, key exhaustion, and catastrophic state loss.',
     icon: ShieldAlert,
+  },
+  {
+    id: 'slh-dsa-live',
+    title: 'Step 4: SLH-DSA Live Demo',
+    description:
+      'Generate real SLH-DSA keys, sign, and verify via PKCS#11 — compare stateless vs stateful.',
+    icon: Fingerprint,
   },
 ]
 
@@ -114,8 +122,9 @@ export const StatefulSignaturesModule: React.FC = () => {
         <div>
           <h1 className="text-3xl font-bold text-gradient">Stateful Hash Signatures (LMS/XMSS)</h1>
           <p className="text-muted-foreground mt-2">
-            Master hash-based digital signatures &mdash; the most conservative post-quantum
-            signature schemes, standardized in NIST SP 800-208.
+            Master hash-based digital signatures &mdash; LMS and XMSS standardized in NIST SP
+            800-208, with security based on hash function properties rather than new hardness
+            assumptions.
           </p>
         </div>
       </div>
@@ -199,6 +208,7 @@ export const StatefulSignaturesModule: React.FC = () => {
                 />
               )}
               {currentPart === 2 && <StateManagementVisualizer key={`state-${configKey}`} />}
+              {currentPart === 3 && <SLHDSALiveDemo key={`slhdsa-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

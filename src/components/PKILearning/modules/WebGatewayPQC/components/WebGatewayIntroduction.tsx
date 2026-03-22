@@ -438,6 +438,53 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
         </div>
       </div>
 
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/tls-basics"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">TLS Basics &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">ML-KEM hybrid KEMs and TLS 1.3 handshake fundamentals</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/vpn-ssh-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Network size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">VPN &amp; SSH</div>
+              <div className="text-xs text-muted-foreground">PQC key exchange for tunnelled gateway traffic</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/network-security-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Network Security</div>
+              <div className="text-xs text-muted-foreground">NGFW, TLS inspection, and ZTNA with PQC cipher suites</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <RefreshCw size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
+              <div className="text-xs text-muted-foreground">Algorithm-agnostic gateway configuration for rapid cipher rollout</div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* Reading complete */}
       <ReadingCompleteButton />
     </div>

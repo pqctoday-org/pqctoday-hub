@@ -66,11 +66,11 @@ export const SecretsManagementExercises: React.FC<SecretsManagementExercisesProp
       id: 'cloud-provider-selection',
       title: '4. Cloud Provider PQC Readiness',
       description:
-        'Compare all 5 secrets management providers across PQC status, dynamic secrets support, envelope encryption, FIPS mode, and Kubernetes integration. Filter by deployment type (Cloud / On-Prem / Hybrid). Identify which provider scores highest for dynamic secrets + FIPS compliance combined.',
+        'Compare all 5 secrets management providers across PQC status, dynamic secrets support, envelope encryption, FIPS mode, and Kubernetes integration. Filter by deployment type (Cloud / On-Prem / Hybrid). Identify which providers support both dynamic secrets and FIPS compliance simultaneously.',
       badge: 'Cloud',
       badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
       observe:
-        'HashiCorp Vault scores highest for dynamic secrets capability (native DB, AWS, GCP, Azure credential generation) but PQC is planned not GA. AWS Secrets Manager has GA PQC via KMS integration but no native dynamic secrets. GCP Cloud KMS has the broadest algorithm preview. FIPS mode is unavailable on GCP Secret Manager — critical for federal/regulated workloads.',
+        'HashiCorp Vault supports native dynamic secrets (DB, AWS, GCP, Azure credential generation) with FIPS 140-3 (Enterprise), but PQC is planned rather than GA. AWS Secrets Manager has GA PQC via KMS integration but does not generate dynamic secrets natively. GCP Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview), but FIPS mode is unavailable for GCP Secret Manager.',
       config: { step: 3 },
     },
   ]

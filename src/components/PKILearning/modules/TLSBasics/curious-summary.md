@@ -4,20 +4,20 @@
 
 Every time you see a padlock icon in your web browser, a technology called TLS is working behind the scenes. TLS stands for Transport Layer Security, and it is the system that keeps your connection to a website private — like a sealed envelope around every message you send and receive.
 
-Here is how it works in everyday terms. When you visit your bank's website, your browser and the bank's server do a quick, invisible handshake. During this handshake, they agree on a secret code that only the two of them know. From that point on, everything you send — your password, your account number, your transactions — is scrambled using that secret code. Anyone who intercepts the data sees only meaningless gibberish.
-
-But TLS does more than just scramble data. It also proves identity. That padlock means the browser has verified that the server really belongs to your bank and is not an imposter. It is like checking someone's ID before handing over a confidential document.
+Here is how it works in everyday terms. When you visit your bank's website, your browser and the bank's server do a quick, invisible handshake. During this handshake, they agree on a secret key that only the two of them know. From that point on, everything you send — your password, your account number, your transactions — is encrypted using that secret key.
 
 ## Why It Matters
 
-TLS protects nearly every interaction on the internet. Email, messaging apps, online shopping, video calls, cloud storage — all of it depends on TLS. If TLS were broken, the entire concept of online privacy would collapse. Passwords, credit card numbers, medical records, and personal messages would all be exposed.
+TLS protects nearly every interaction on the internet. However, the quantum computing threat directly targets the parts of TLS that handle the secret handshake. 
 
-The quantum computing threat directly targets the parts of TLS that handle the secret handshake. If a quantum computer can break the handshake, it can eavesdrop on every conversation — even ones recorded in the past. This is why upgrading TLS to use quantum-safe encryption is one of the highest priorities in the entire transition.
+A future quantum computer could break the math used during the initial handshake. If an attacker records your encrypted web traffic today, they cannot immediately read it. But later, using a quantum computer, they can mathematically crack the recorded handshake to extract the encryption key. Once they have the key, they can decrypt all the data they recorded. This is known as "Store Now, Decrypt Later."
 
-## The Key Takeaway
+## The Key Takeaways
 
-TLS is the invisible security system that makes the modern internet possible. It protects nearly everything you do online. Upgrading TLS to resist quantum computers is critical because it is the single biggest point of vulnerability — and the single biggest opportunity to protect billions of connections at once.
+1. **Targeting the Handshake**: Quantum attackers do not attack the data directly; they target the initial mathematical handshake used to agree on a secret key.
+2. **Stealing the Key**: By breaking the handshake, the attacker steals the symmetric encryption key that was used for the session.
+3. **Decrypting the Data**: Once the key is stolen, the attacker uses it to cleanly decrypt the entire payload of locked personal data, even if it was recorded years ago.
 
 ## What's Happening
 
-The latest version, TLS 1.3, is already being updated to support post-quantum encryption. Google Chrome and other browsers have begun testing hybrid quantum-safe handshakes with real users. The Internet Engineering Task Force (IETF) is working on official specifications for quantum-safe TLS. Cloud providers and content delivery networks are rolling out support on their servers. The transition is happening now, and for most users it will be invisible — the padlock will keep working, but the protection behind it will be much stronger.
+The latest version, TLS 1.3, is already being updated to support post-quantum encryption. The Internet Engineering Task Force (IETF) is working on official specifications for quantum-safe TLS. For most users it will be invisible — the padlock will keep working, but the handshake behind it will be much stronger.

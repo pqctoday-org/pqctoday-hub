@@ -8,6 +8,9 @@ import {
   BookOpen,
   ChevronRight,
   ArrowRight,
+  HardDrive,
+  RefreshCw,
+  Lock,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -107,8 +110,8 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <p>
               FLE is performed by the application before data reaches the database wire. MongoDB FLE
               1.0/2.0 encrypts document fields client-side; the server stores only ciphertext. Key
-              material never leaves the application. This provides the strongest protection but
-              limits server-side query capabilities.
+              material never leaves the application, so the server stores only ciphertext. This
+              architecture limits server-side query capabilities.
             </p>
           </div>
 
@@ -176,7 +179,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
           </div>
           <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
             <div className="text-xs font-bold text-primary mb-2">
-              <InlineTooltip term="HYOK">HYOK</InlineTooltip> (Hold Your Own Key) — Strongest
+              <InlineTooltip term="HYOK">HYOK</InlineTooltip> (Hold Your Own Key)
             </div>
             <p className="text-xs text-muted-foreground">
               Customer key never leaves on-prem infrastructure. Cloud receives only encrypted{' '}
@@ -418,7 +421,7 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
               framework: 'GDPR Art. 32',
               requirement: '"State of the art" technical measures for personal data.',
               pqcNote:
-                'ENISA recommendations will make PQC mandatory for long-lived personal data by 2026. HYOK architecture strongly preferred for GDPR compliance. Databases retaining PII beyond 2030 should prioritize ML-KEM DEK wrapping.',
+                'ENISA recommendations will make PQC mandatory for long-lived personal data by 2026. HYOK architecture keeps customer keys on-prem, ensuring the cloud provider cannot access plaintext data. Databases retaining PII beyond 2030 should prioritize ML-KEM DEK wrapping.',
               color: 'border-primary/30 bg-primary/5',
               labelColor: 'text-primary',
             },
@@ -473,27 +476,52 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
 
       <VendorCoverageNotice migrateLayer="Database" />
 
-      {/* Related Modules */}
-      <div className="glass-panel p-4">
-        <h3 className="text-sm font-semibold text-foreground mb-3">Related Modules</h3>
-        <div className="flex flex-wrap gap-2">
-          {[
-            { path: '/learn/kms-pqc', label: 'KMS & PQC' },
-            { path: '/learn/hsm-pqc', label: 'HSM & PQC' },
-            { path: '/learn/crypto-agility', label: 'Crypto Agility' },
-            { path: '/learn/secrets-management-pqc', label: 'Secrets Management' },
-          ].map((m) => (
-            <Link
-              key={m.path}
-              to={m.path}
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded text-xs text-primary hover:text-primary/80 bg-primary/10 border border-primary/20 transition-colors"
-            >
-              <ArrowRight size={10} />
-              {m.label}
-            </Link>
-          ))}
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Manage DEK and CMK lifecycles with PQC key wrapping</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/hsm-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">Hardware-backed TDE master key storage and ML-KEM support</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <RefreshCw size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
+              <div className="text-xs text-muted-foreground">Algorithm-agnostic encryption layers for future-proof databases</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/secrets-management-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Secrets Management</div>
+              <div className="text-xs text-muted-foreground">Vault-based dynamic secrets and PQC BYOK patterns</div>
+            </div>
+          </Link>
         </div>
-      </div>
+      </section>
 
       {/* CTA */}
       <div className="text-center">

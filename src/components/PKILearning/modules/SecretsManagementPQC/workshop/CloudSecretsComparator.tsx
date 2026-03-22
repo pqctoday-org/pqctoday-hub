@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { CheckCircle, XCircle, AlertCircle, Star } from 'lucide-react'
+import { CheckCircle, XCircle } from 'lucide-react'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   CLOUD_SECRETS_PROVIDERS,
@@ -23,40 +23,6 @@ const TYPE_BADGE: Record<CloudSecretsProvider['type'], string> = {
   hybrid: 'text-status-info bg-status-info/10 border-status-info/30',
 }
 
-function calcPqcScore(provider: CloudSecretsProvider): number {
-  let score = 0
-  // Status score
-  if (provider.pqcStatus === 'ga') score += 35
-  else if (provider.pqcStatus === 'preview') score += 20
-  else if (provider.pqcStatus === 'planned') score += 10
-  else score += 5 // 'none' — inherits via integration
-  // Algorithm breadth
-  score += Math.min(provider.pqcAlgorithms.length * 8, 24)
-  // Features
-  if (provider.envelopeEncryption) score += 10
-  if (provider.dynamicSecrets) score += 15
-  if (provider.fipsMode) score += 10
-  if (provider.kubernetesIntegration.length > 10) score += 6
-  return Math.min(score, 100)
-}
-
-const ScoreBar: React.FC<{ score: number }> = ({ score }) => {
-  const color =
-    score >= 70 ? 'bg-status-success' : score >= 45 ? 'bg-status-warning' : 'bg-status-error'
-
-  return (
-    <div className="flex items-center gap-2">
-      <div className="flex-1 bg-muted rounded-full h-2">
-        <div
-          className={`h-2 rounded-full transition-all duration-500 ${color}`}
-          style={{ width: `${score}%` }}
-        />
-      </div>
-      <span className="text-xs font-bold text-foreground w-8 text-right">{score}</span>
-    </div>
-  )
-}
-
 const BoolIndicator: React.FC<{ value: boolean; label?: string }> = ({ value, label }) => (
   <span className="flex items-center gap-1">
     {value ? (
@@ -67,29 +33,6 @@ const BoolIndicator: React.FC<{ value: boolean; label?: string }> = ({ value, la
     {label && <span className="text-[10px] text-muted-foreground">{label}</span>}
   </span>
 )
-
-const USE_CASE_RECOMMENDATIONS = [
-  {
-    useCase: 'Highest Dynamic Secrets Need',
-    recommended: 'hashicorp-vault',
-    reason: 'Native dynamic secrets engine with Kubernetes-native integration',
-  },
-  {
-    useCase: 'AWS-Native Workloads',
-    recommended: 'aws-secrets-manager',
-    reason: 'Best KMS PQC coverage (GA), IAM-native, no additional infrastructure',
-  },
-  {
-    useCase: 'Azure-Native / Microsoft 365',
-    recommended: 'azure-key-vault',
-    reason: 'Deep Azure AD integration, Managed HSM for PQC when available',
-  },
-  {
-    useCase: 'Privileged Access (PAM)',
-    recommended: 'delinea-secret-server',
-    reason: 'Full PAM with session recording, hybrid deployment, just-in-time access',
-  },
-]
 
 export const CloudSecretsComparator: React.FC = () => {
   const [filter, setFilter] = useState<FilterType>('all')
@@ -124,7 +67,7 @@ export const CloudSecretsComparator: React.FC = () => {
         ))}
       </div>
 
-      {/* Comparison table (desktop) */}
+      {/* Status table (desktop) */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
@@ -142,14 +85,10 @@ export const CloudSecretsComparator: React.FC = () => {
               <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[160px]">
                 K8s Integration
               </th>
-              <th className="text-left py-3 px-2 text-muted-foreground font-medium min-w-[120px]">
-                PQC Score
-              </th>
             </tr>
           </thead>
           <tbody>
             {filtered.map((provider) => {
-              const score = calcPqcScore(provider)
               const isExpanded = expandedId === provider.id
               return (
                 <React.Fragment key={provider.id}>
@@ -187,13 +126,10 @@ export const CloudSecretsComparator: React.FC = () => {
                     <td className="py-3 px-2 text-[10px] text-muted-foreground">
                       <span className="line-clamp-2">{provider.kubernetesIntegration}</span>
                     </td>
-                    <td className="py-3 px-2 min-w-[120px]">
-                      <ScoreBar score={score} />
-                    </td>
                   </tr>
                   {isExpanded && (
                     <tr className="bg-muted/20">
-                      <td colSpan={8} className="px-3 py-4">
+                      <td colSpan={7} className="px-3 py-4">
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                           <div>
                             <div className="text-[10px] font-bold text-foreground mb-1">
@@ -250,7 +186,6 @@ export const CloudSecretsComparator: React.FC = () => {
       {/* Mobile cards */}
       <div className="sm:hidden space-y-3">
         {filtered.map((provider) => {
-          const score = calcPqcScore(provider)
           const isExpanded = expandedId === provider.id
           return (
             <div
@@ -284,10 +219,6 @@ export const CloudSecretsComparator: React.FC = () => {
                   </span>
                 </div>
               </div>
-              <div className="mb-2">
-                <span className="text-[10px] text-muted-foreground">PQC Score: </span>
-                <ScoreBar score={score} />
-              </div>
               <div className="flex gap-3 text-[10px] text-muted-foreground">
                 <BoolIndicator value={provider.envelopeEncryption} label="Envelope Enc." />
                 <BoolIndicator value={provider.dynamicSecrets} label="Dynamic Secrets" />
@@ -305,32 +236,6 @@ export const CloudSecretsComparator: React.FC = () => {
             </div>
           )
         })}
-      </div>
-
-      {/* Use case recommendations */}
-      <div className="bg-muted/50 rounded-lg p-5 border border-border">
-        <div className="text-sm font-bold text-foreground mb-3 flex items-center gap-2">
-          <Star size={15} className="text-primary" />
-          Recommended Provider by Use Case
-        </div>
-        <div className="space-y-3">
-          {USE_CASE_RECOMMENDATIONS.map((rec) => {
-            const provider = CLOUD_SECRETS_PROVIDERS.find((p) => p.id === rec.recommended)
-            if (!provider) return null
-            return (
-              <div key={rec.useCase} className="flex items-start gap-3">
-                <div className="flex-1 min-w-0">
-                  <div className="text-xs font-bold text-foreground">{rec.useCase}</div>
-                  <div className="text-[10px] text-muted-foreground">
-                    <span className="text-primary font-medium">{provider.product}</span> —{' '}
-                    {rec.reason}
-                  </div>
-                </div>
-                <AlertCircle size={13} className="text-muted-foreground shrink-0 mt-0.5" />
-              </div>
-            )
-          })}
-        </div>
       </div>
     </div>
   )

@@ -88,11 +88,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Crypto Visibility**: Detailed key derivation, HKDF, signature, and encryption logs
     - **PQC Support**: ML-KEM (Kyber) key exchange and ML-DSA/SLH-DSA signatures
   - **PQC 101 Introduction**: Beginner-friendly module covering quantum threats, Shor's algorithm, at-risk sectors, HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attacks
-  - **PQC Quiz**: Interactive knowledge assessment with 770 questions across 48 categories
+  - **PQC Quiz**: Interactive knowledge assessment with 805 questions across 49 categories
     - **3 Modes**: Quick (20 questions, guaranteed category coverage), Full Assessment (80 questions randomly sampled), Custom (by topic)
     - **CSV-Driven**: Questions loaded from date-stamped CSV (`pqcquiz_MMDDYYYY.csv`) via `import.meta.glob`, with smart sampling guaranteeing ≥2 per category (Quick) / ≥10 per category (Full)
-    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, and additional topic categories covering all 48 learning modules
+    - **Categories**: PQC Fundamentals, Algorithm Families, NIST Standards, Migration Planning, Compliance, Protocol Integration, Industry Threats, Crypto Operations, Entropy & Randomness, Standards Bodies, Data Asset Sensitivity, Energy & Utilities, Healthcare, Aerospace & Space, Automotive, Cryptographic APIs, Secrets Management, Network Security, Database Encryption, IAM, Secure Boot, OS Crypto, Platform Engineering, PQC Testing & Validation, and additional topic categories covering all 49 learning modules
     - **Score Tracking**: Per-category highest scores persisted across sessions
+  - **Module cross-linking**: 26+ learning modules include a "Related Modules" navigation panel
+    with contextual deep-links to prerequisite and follow-on modules; all 5 Role Guide modules
+    cross-link to relevant industry and specialist modules
   - **Quantum Threats**:
     - Analyzes security level degradation and algorithm vulnerability matrices
     - Features a key size analyzer and "Harvest Now, Decrypt Later" timeline calculator
@@ -222,6 +225,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - IDS Signature Updater: IDS/IPS signature updates for PQC-aware traffic patterns
     - Vendor Migration Matrix: firewall/IDS vendor PQC support comparison
     - ZTNA PQC Designer: Zero Trust Network Access architecture with PQC identity verification
+  - **PQC Testing & Validation** (6-step workshop, Protocols track):
+    - Passive Discovery Lab: classify TLS/SSH/IKEv2 sessions from a network tap/SPAN by quantum safety
+    - Active PQC Scanner: detect PQC support, hybrid key exchange, and quantum-vulnerable configs per host
+    - Performance Benchmark Designer: compare classical vs hybrid vs pure-PQC latency/throughput
+    - Interop Test Matrix: validate client/server algorithm compatibility per RFC 9794
+    - TVLA Leakage Analyzer: identify side-channel leakage in ML-KEM/ML-DSA implementations (NTT/INTT focus)
+    - Test Strategy Builder: compose a complete PQC validation program by phase and environment
   - **Database Encryption PQC** (5-step workshop, Infrastructure track):
     - Encryption Layer Mapper: TDE, CLE, and queryable encryption topology analysis
     - TDE Migration Planner: transparent data encryption key algorithm migration
@@ -256,7 +266,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
     license info, and deep-links to the Migrate view
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 350+ verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 375+ verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -337,18 +347,29 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
-  - **Inline tooltips** on key terms throughout all 48 learning modules — portal-rendered with
+  - **Inline tooltips** on key terms throughout all 49 learning modules — portal-rendered with
     `position: fixed` so they always appear above overflow-constrained containers (modals,
     scrollable panels, diagram wrappers)
 - **Personalization System**: 4-step onboarding wizard on the home page that adapts the entire
-  application to the user's context across 5 personas
+  application to the user's context across 6 personas
   - **4-step wizard**: Experience → Role → Region → Industry with animated stepper, info modals
     explaining how each choice shapes the experience, `PersonalizedAvatar` live preview, and
     embedded `ScoreCard`
-  - **Experience level**: New/Basics/Expert — adjusts guided tour length, learning paths, and
-    quiz difficulty filtering
-  - **Role picker**: Executive/CISO, Developer/Engineer, Security Architect, IT Ops/DevOps,
-    Researcher/Academic — ordered by access breadth; unified order across home page and Learn page
+  - **Experience level**: Curious/Basics/Expert — adjusts guided tour length, learning paths, and
+    quiz difficulty filtering; `Curious` replaces `New` as the entry-level tier with simplified
+    language, plain-language module summaries, and beginner AI chat suggestions
+  - **Role picker**: Curious Explorer, Executive/CISO, Developer/Engineer, Security Architect,
+    IT Ops/DevOps, Researcher/Academic — ordered by access breadth; unified order across home page
+    and Learn page
+  - **Curious Explorer persona**: 6th persona for non-technical users exploring quantum security
+    for the first time. Curated 9-module learning path (PQC 101 → Quantum Threats → Risk Management
+    → Data Sensitivity → Compliance Strategy → Standards Bodies → Crypto Agility → Migration Program
+    → Quiz), simplified AI chat language with a "Curious" badge, and beginner-friendly suggested
+    questions across all 6 pages
+  - **"In Simple Terms" banner**: collapsible `CuriousSummaryBanner` shown at the top of every
+    learning module when experience level is Curious — renders plain-language `curious-summary.md`
+    content (~8th-grade reading level, real-world analogies, ~200-350 words); gracefully absent if
+    a module has no summary file
   - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
     Learn, Timeline, Threats, About) remain accessible to all. Each persona's nav is tuned:
     Executive includes Compliance and Migrate; Developer includes Assess; Architect includes
@@ -380,11 +401,28 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Journey Map**: Persona-driven visual representation of the user's learning journey —
     completed modules, recommended next steps, and progress toward persona-specific goals
   - Body scroll is locked when the panel is open on mobile (drawer mode)
+  - **Airplane Mode**: Toggle in the mobile More menu disables cloud-dependent features (AI chat,
+    external links) for offline or restricted environments; pulsing plane badge on the PQC logo
+    indicates active state; AI Assistant gate shows "Enable AI Assistant" entry when WebGPU is
+    unavailable and no Gemini API key is configured
 - **Guided Tour**: Interactive first-visit onboarding with 3-phase design
   - Phase 1 — Intro (3 slides explaining why PQC matters)
   - Phase 2 — Knowledge Gate: adjusts tour length based on experience level
   - Phase 3 — Feature tour (up to 13 persona-filtered slides) with swipeable cards
   - Remembers completion status; re-trigger with `?tour` query parameter
+- **Community Endorse/Flag System**: Stamp and Flag icon buttons on every resource — library
+  documents, threats, leaders, timeline milestones, and all 49 learning module workshop steps.
+  Endorse opens a prefilled GitHub Discussion for community validation; Flag opens a prefilled
+  report for inaccuracies, broken links, or outdated content. Activation state persisted via
+  `useEndorsementStore` (localStorage); re-clicking an activated button navigates to the existing
+  discussion thread. `WorkshopStepHeader` component provides consistent endorse/flag affordance
+  across all 43 module workshop steps. Mobile-visible endorse/flag buttons on all page headers.
+- **Transparency & Disclaimer**: First-visit `DisclaimerModal` (`alertdialog` role, `z-[110]`)
+  explains that PQC Today is community-driven, not endorsed by cited organizations, sourced from
+  public information, and may contain inaccuracies. Persisted per major app version via
+  `useDisclaimerStore`. `TransparencyBanner` on the landing page links to the `/about#transparency`
+  anchor. About page includes a dedicated "Transparency & Disclaimer" section with animated WIP
+  badge and contact links.
 - **Page Accuracy Feedback**: Fixed bottom-left thumbs-up/down widget on content pages;
   GA4 analytics logging; resets on navigation
 - **PQC Assistant**: AI-powered chatbot for post-quantum cryptography questions
@@ -394,9 +432,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
     model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
     tips to guide model selection
-  - Client-side RAG retrieval using MiniSearch over 3,500+ content chunks from 22 data sources
+  - Client-side RAG retrieval using MiniSearch over 3,776 content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
-  - **Document enrichment**: 230+ archived HTML/PDF documents enriched with 11 structured
+  - **Document enrichment**: 260+ archived HTML/PDF documents enriched with 18 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
     etc.) and fed into the RAG corpus
   - **Entity inventory**: Extracted entity list injected into the system prompt to prevent
@@ -407,7 +445,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - SPA-aware navigation: internal links close the chat panel and navigate via React Router
   - Covers: glossary, algorithms, threats, timeline, library, compliance, migrate catalog, leaders,
     quiz content, assessment config, certifications, priority matrix, document enrichments, and
-    all 48 learning modules
+    all 49 learning modules
   - **Precision deep links**: 10 views accept URL params for direct navigation — Library `?ref=`,
     Threats `?id=`, Learn `?tab=`, Algorithms `?highlight=`, Compliance `?cert=`, Assess `?step=`,
     Playground `?algo=`, Leaders `?leader=`/`?sector=`/`?country=`, OpenSSL `?cmd=`,
@@ -439,13 +477,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
     the Assessment wizard compliance step
   - **Deadline urgency indicators**: deadline badges color-coded as imminent (red) / near-term
     (amber) / future (green) using extracted deadline years
-  - **Body-type awareness**: 62 records categorised as `standardization_body`, `technical_standard`,
+  - **Body-type awareness**: 91 records categorised as `standardization_body`, `technical_standard`,
     `certification_body`, or `compliance_framework` — enabling richer filtering and UI context
   - NIST FIPS document tracking (203, 204, 205, 206)
   - ANSSI recommendations, BSI Technical Guidelines, ENISA PQC guidelines
   - Common Criteria certifications (CC/CCRA/EUCC), CMVP/ACVP validation
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository (256 entries)
+- **Standards Library**: Comprehensive PQC standards repository (325 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more
@@ -575,13 +613,13 @@ The application is structured into several key components:
 - **`src/components/Playground`**: The core interactive component allowing users to generate keys, sign/verify messages, and encapsulate/decapsulate secrets.
 - **`src/wasm`**: TypeScript wrappers for WebAssembly cryptographic libraries (`liboqs`, ML-KEM, ML-DSA, LMS). `softhsm/` provides the Phase 6 PKCS#11 singleton loader and modular sub-modules; `inspect/` decodes PKCS#11 call parameters for the call log.
 - **`src/components/OpenSSLStudio`**: A simulated OpenSSL workbench for advanced users.
-- **`src/components/PKILearning`**: Educational platform with 48 modules across 8 tracks — foundations, strategy, protocols, infrastructure, applications, industries, role guides, and executive.
+- **`src/components/PKILearning`**: Educational platform with 49 modules across 8 tracks — foundations, strategy, protocols, infrastructure, applications, industries, role guides, and executive.
 - **`src/components/Assess`**: 14-step industry-aware risk assessment wizard with compound scoring engine, consolidated HNDL/HNFL risk analysis, and PDF print support.
 - **`src/components/Migrate`**: Comprehensive PQC migration planning module with verified software database and workflow guidance.
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
 - **`src/services/crypto/OpenSSLService.ts`**: Primary cryptographic service wrapping OpenSSL WASM operations.
-- **`src/store`**: Zustand state stores for theme, learning progress, assessment wizard, TLS simulation, and version tracking (all persisted to localStorage).
+- **`src/store`**: Zustand state stores for theme, learning progress, assessment wizard, TLS simulation, version tracking, persona, compliance selection, endorsements, and disclaimer (all persisted to localStorage).
 - **`src/data`**: Static data layer — TypeScript data files, versioned CSV files (timelines, leaders, library, software references), X.509 certificate profiles, and ACVP test vectors. `csvUtils.ts` provides a shared date-stamped / revision-sorted CSV loader used by all data modules.
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
@@ -615,8 +653,8 @@ The application is structured into several key components:
 │   │   ├── Migrate/         # PQC migration planning with verified software database
 │   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
 │   │   ├── BusinessCenter/  # GRC command center dashboard
-│   │   ├── PKILearning/     # Learning platform with 48 modules across 8 tracks
-│   │   │   ├── modules/     # 48 module directories + Quiz
+│   │   ├── PKILearning/     # Learning platform with 49 modules across 8 tracks
+│   │   │   ├── modules/     # 49 module directories + Quiz
 │   │   │   │   ├── Introduction/         # PQC 101 Introduction module
 │   │   │   │   ├── PKIWorkshop/          # 4-step PKI lifecycle
 │   │   │   │   ├── DigitalAssets/        # Bitcoin, Ethereum, Solana, HD Wallet
@@ -635,13 +673,15 @@ The application is structured into several key components:
 │   │   │   │   ├── SecureBootPQC/       # UEFI, TPM 2.0, DICE attestation
 │   │   │   │   ├── OSPQC/              # OpenSSL providers, SSH, package signing
 │   │   │   │   ├── PlatformEngPQC/      # CI/CD, container signing, IaC, OPA
+│   │   │   │   ├── PQCTestingValidation/ # Passive/active discovery, TVLA, interop, benchmarks
 │   │   │   │   └── Quiz/                 # PQC knowledge assessment quiz
 │   │   ├── Playground/      # Interactive cryptography playground
 │   │   ├── Router/          # Routing utilities (ScrollToTop)
 │   │   ├── Threats/         # Industry-specific threat analysis
 │   │   ├── Timeline/        # Migration timeline visualization
-│   │   ├── common/          # Shared components and utilities
-│   │   └── ui/              # Reusable UI components (Button, Card, etc.)
+│   │   ├── common/          # Shared components (CuriousModuleView, CuriousStackCarousel,
+│   │   │                    #   CuriousSummaryBanner, WorkshopStepHeader, GuidedTour, etc.)
+│   │   └── ui/              # Reusable UI components (Button, Card, EndorseButton, FlagButton, etc.)
 │   ├── data/                # Static data (timelines, test vectors, profiles, personaConfig)
 │   │   ├── acvp/            # NIST ACVP test vectors (ML-KEM, ML-DSA)
 │   │   ├── doc-enrichments/ # Enriched document metadata for RAG corpus

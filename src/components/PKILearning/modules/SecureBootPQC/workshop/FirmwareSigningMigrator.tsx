@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useCallback, useRef } from 'react'
 import {
   FileCode,
   Key,
@@ -8,8 +8,21 @@ import {
   AlertTriangle,
   RotateCcw,
   Info,
+  Loader2,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_extractKeyValue,
+  hsm_digest,
+  hsm_sign,
+  hsm_verify,
+  CKM_SHA256,
+} from '@/wasm/softhsm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 type WizardStep = 0 | 1 | 2 | 3
 
@@ -38,6 +51,7 @@ interface GeneratedKey {
   privateKeySize: number
   nistLevel: string
   usage: string
+  isLive?: boolean
 }
 
 interface SignatureResult {
@@ -46,6 +60,7 @@ interface SignatureResult {
   signatureSize: number
   signingTime: string
   certChain: string[]
+  isLive?: boolean
 }
 
 interface VerificationResult {
@@ -55,6 +70,7 @@ interface VerificationResult {
   validFrom: string
   validUntil: string
   nistLevel: string
+  isLive?: boolean
 }
 
 const MOCK_MANIFEST: FirmwareManifest = {
@@ -116,18 +132,177 @@ const STEP_TITLES = [
 
 const STEP_ICONS = [FileCode, Key, AlertTriangle, CheckCircle]
 
+const LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_DigestInit',
+  'C_Digest',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageSignFinal',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+  'C_MessageVerifyFinal',
+]
+
+/** Convert byte array to hex string */
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+/** Truncate hex for display */
+const truncateHex = (hex: string, maxChars = 80): string => {
+  if (hex.length <= maxChars) return hex
+  return `${hex.slice(0, maxChars / 2)}...${hex.slice(-maxChars / 2)}`
+}
+
+/** Build a deterministic manifest string from the component hashes */
+const buildManifestString = (): string =>
+  MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
+
 export const FirmwareSigningMigrator: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<WizardStep>(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
+  const [isProcessing, setIsProcessing] = useState(false)
+
+  // Live HSM state
+  const hsm = useHSM()
+  const liveKeyRef = useRef<{ pubHandle: number; privHandle: number }>({
+    pubHandle: 0,
+    privHandle: 0,
+  })
+  const [liveKey, setLiveKey] = useState<GeneratedKey | null>(null)
+  const [liveSig, setLiveSig] = useState<SignatureResult | null>(null)
+  const [liveVerify, setLiveVerify] = useState<VerificationResult | null>(null)
+  const liveSigBytesRef = useRef<Uint8Array | null>(null)
+
+  const [hasPrivHandle, setHasPrivHandle] = useState(false)
+  const [hasSigBytes, setHasSigBytes] = useState(false)
+
+  const isLive = hsm.isReady && !!hsm.moduleRef.current
+  const keyData = isLive && liveKey ? liveKey : MOCK_PQC_KEY
+  const sigData = isLive && liveSig ? liveSig : MOCK_SIGNATURE
+  const verifyData = isLive && liveVerify ? liveVerify : MOCK_VERIFICATION
 
   const markComplete = (step: number) => {
     setCompletedSteps((prev) => new Set([...prev, step]))
   }
 
-  const handleNext = () => {
+  // Step 2: Generate real ML-DSA-65 key pair via PKCS#11
+  const handleGenerateKey = useCallback(async () => {
+    if (!hsm.isReady || !hsm.moduleRef.current) return
+    setIsProcessing(true)
+    try {
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+      liveKeyRef.current = { pubHandle, privHandle }
+      setHasPrivHandle(true)
+
+      const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+      const pubHex = toHex(pubBytes)
+
+      setLiveKey({
+        algorithm: 'ML-DSA-65 (FIPS 204)',
+        publicKeyHex: pubHex,
+        publicKeySize: pubBytes.length,
+        privateKeySize: 4032,
+        nistLevel: 'NIST Level 3',
+        usage: 'Firmware Signing (id-ml-dsa-65)',
+        isLive: true,
+      })
+    } catch (err) {
+      console.error('[FirmwareSigningMigrator] live keygen error:', err)
+    }
+    setIsProcessing(false)
+  }, [hsm])
+
+  // Step 3: Sign firmware manifest hash via PKCS#11
+  const handleSign = useCallback(async () => {
+    if (!hsm.isReady || !hsm.moduleRef.current || !liveKeyRef.current.privHandle) return
+    setIsProcessing(true)
+    try {
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+      const { privHandle } = liveKeyRef.current
+
+      // Build the firmware manifest string and hash it for PKCS#11 log visibility
+      const manifestStr = buildManifestString()
+      const manifestBytes = new TextEncoder().encode(manifestStr)
+      hsm_digest(M, hSession, manifestBytes, CKM_SHA256)
+
+      // Sign with ML-DSA-65 (message signing, not pre-hash)
+      const sig = hsm_sign(M, hSession, privHandle, manifestStr)
+      liveSigBytesRef.current = sig
+      setHasSigBytes(true)
+
+      setLiveSig({
+        algorithm: 'ML-DSA-65 (FIPS 204)',
+        signatureHex: toHex(sig),
+        signatureSize: sig.length,
+        signingTime: new Date().toISOString(),
+        certChain: MOCK_SIGNATURE.certChain,
+        isLive: true,
+      })
+    } catch (err) {
+      console.error('[FirmwareSigningMigrator] live sign error:', err)
+    }
+    setIsProcessing(false)
+  }, [hsm])
+
+  // Step 4: Verify firmware signature via PKCS#11
+  const handleVerify = useCallback(async () => {
+    if (
+      !hsm.isReady ||
+      !hsm.moduleRef.current ||
+      !liveKeyRef.current.pubHandle ||
+      !liveSigBytesRef.current
+    )
+      return
+    setIsProcessing(true)
+    try {
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+      const { pubHandle } = liveKeyRef.current
+
+      const manifestStr = buildManifestString()
+      const verified = hsm_verify(M, hSession, pubHandle, manifestStr, liveSigBytesRef.current)
+
+      setLiveVerify({
+        verified,
+        algorithm: 'ML-DSA-65 (FIPS 204)',
+        signerDN: 'CN=ami-fw-sign-pqc-001, O=AMI, C=US',
+        validFrom: '2026-01-01T00:00:00Z',
+        validUntil: '2029-01-01T00:00:00Z',
+        nistLevel: 'NIST Level 3 — Quantum-safe',
+        isLive: true,
+      })
+    } catch (err) {
+      console.error('[FirmwareSigningMigrator] live verify error:', err)
+    }
+    setIsProcessing(false)
+  }, [hsm])
+
+  const handleNext = useCallback(async () => {
+    // Auto-execute live operations when advancing steps
+    if (isLive) {
+      if (currentStep === 1 && !liveKey) await handleGenerateKey()
+      if (currentStep === 2 && !liveSig) await handleSign()
+      if (currentStep === 3 && !liveVerify) await handleVerify()
+    }
     markComplete(currentStep)
     if (currentStep < 3) setCurrentStep((currentStep + 1) as WizardStep)
-  }
+  }, [
+    currentStep,
+    isLive,
+    liveKey,
+    liveSig,
+    liveVerify,
+    handleGenerateKey,
+    handleSign,
+    handleVerify,
+  ])
 
   const handleBack = () => {
     if (currentStep > 0) setCurrentStep((currentStep - 1) as WizardStep)
@@ -136,6 +311,15 @@ export const FirmwareSigningMigrator: React.FC = () => {
   const handleReset = () => {
     setCurrentStep(0)
     setCompletedSteps(new Set())
+    setLiveKey(null)
+    setLiveSig(null)
+    setLiveVerify(null)
+    liveSigBytesRef.current = null
+    liveKeyRef.current = { pubHandle: 0, privHandle: 0 }
+    setHasPrivHandle(false)
+    setHasSigBytes(false)
+    hsm.clearLog()
+    hsm.clearKeys()
   }
 
   return (
@@ -147,6 +331,9 @@ export const FirmwareSigningMigrator: React.FC = () => {
           ML-DSA-65 signature sizes, certificate chains, and verification flows.
         </p>
       </div>
+
+      {/* Live HSM Toggle */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
       {/* Step Progress */}
       <div className="overflow-x-auto px-1">
@@ -284,6 +471,33 @@ export const FirmwareSigningMigrator: React.FC = () => {
               is <strong>3.4× larger</strong> (4,032 bytes vs 1,192 bytes).
             </p>
 
+            {isLive && (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleGenerateKey}
+                  disabled={isProcessing}
+                  variant="outline"
+                  className="text-sm"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin mr-1" /> Generating...
+                    </>
+                  ) : (
+                    <>
+                      <Key size={14} className="mr-1" />
+                      Generate (Live WASM)
+                    </>
+                  )}
+                </Button>
+                {liveKey?.isLive && (
+                  <span className="text-[11px] text-status-success font-semibold">
+                    Real key via C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)
+                  </span>
+                )}
+              </div>
+            )}
+
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20">
                 <div className="text-xs font-bold text-status-error mb-2">
@@ -314,27 +528,29 @@ export const FirmwareSigningMigrator: React.FC = () => {
               </div>
 
               <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-                <div className="text-xs font-bold text-primary mb-2">ML-DSA-65 Key (Generated)</div>
+                <div className="text-xs font-bold text-primary mb-2">
+                  ML-DSA-65 Key {keyData.isLive ? '(Live WASM)' : '(Generated)'}
+                </div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Algorithm:</span>
-                    <span className="font-mono text-primary">{MOCK_PQC_KEY.algorithm}</span>
+                    <span className="font-mono text-primary">{keyData.algorithm}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Public key:</span>
                     <span className="font-mono text-primary">
-                      {MOCK_PQC_KEY.publicKeySize.toLocaleString()} bytes
+                      {keyData.publicKeySize.toLocaleString()} bytes
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Private key:</span>
                     <span className="font-mono text-primary">
-                      {MOCK_PQC_KEY.privateKeySize.toLocaleString()} bytes
+                      {keyData.privateKeySize.toLocaleString()} bytes
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Security:</span>
-                    <span className="text-primary">{MOCK_PQC_KEY.nistLevel}</span>
+                    <span className="text-primary">{keyData.nistLevel}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Quantum-safe:</span>
@@ -347,11 +563,12 @@ export const FirmwareSigningMigrator: React.FC = () => {
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-2">Public Key (excerpt)</div>
               <pre className="text-[10px] font-mono text-muted-foreground bg-background rounded p-2 border border-border overflow-x-auto whitespace-pre-wrap break-all">
-                {MOCK_PQC_KEY.publicKeyHex}
+                {truncateHex(keyData.publicKeyHex, 120)}
               </pre>
               <p className="text-[10px] text-muted-foreground mt-2">
-                Usage: {MOCK_PQC_KEY.usage} — This key will be enrolled in the UEFI Secure Boot db
-                as an EFI_CERT_X509 entry.
+                {keyData.isLive
+                  ? `${keyData.publicKeySize.toLocaleString()} bytes — CKA_VALUE extracted via C_GetAttributeValue. Private key is HSM-protected (CKA_EXTRACTABLE=FALSE).`
+                  : `Usage: ${keyData.usage} — This key will be enrolled in the UEFI Secure Boot db as an EFI_CERT_X509 entry.`}
               </p>
             </div>
           </div>
@@ -359,11 +576,35 @@ export const FirmwareSigningMigrator: React.FC = () => {
 
         {currentStep === 2 && (
           <div className="space-y-4">
-            <p className="text-sm text-muted-foreforeground text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Sign the firmware manifest with the ML-DSA-65 private key. The signature is{' '}
               <strong>12.9× larger</strong> than RSA-2048 (3,309 bytes vs 256 bytes). This affects
               UEFI Authenticated Variable storage.
             </p>
+
+            {isLive && (
+              <div className="flex items-center gap-2">
+                <Button
+                  onClick={handleSign}
+                  disabled={isProcessing || !hasPrivHandle}
+                  variant="outline"
+                  className="text-sm"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin mr-1" /> Signing...
+                    </>
+                  ) : (
+                    'Sign Manifest (Live WASM)'
+                  )}
+                </Button>
+                {liveSig?.isLive && (
+                  <span className="text-[11px] text-status-success font-semibold">
+                    Real signature via C_MessageSignInit + C_SignMessage (CKM_ML_DSA)
+                  </span>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="bg-status-error/5 rounded-lg p-3 border border-status-error/20 text-center">
@@ -371,11 +612,15 @@ export const FirmwareSigningMigrator: React.FC = () => {
                 <div className="text-[10px] text-muted-foreground">RSA-2048 signature</div>
               </div>
               <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
-                <div className="text-lg font-bold text-primary">3,309 B</div>
+                <div className="text-lg font-bold text-primary">
+                  {sigData.signatureSize.toLocaleString()} B
+                </div>
                 <div className="text-[10px] text-muted-foreground">ML-DSA-65 signature</div>
               </div>
               <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20 text-center">
-                <div className="text-lg font-bold text-status-warning">12.9×</div>
+                <div className="text-lg font-bold text-status-warning">
+                  {(sigData.signatureSize / 256).toFixed(1)}×
+                </div>
                 <div className="text-[10px] text-muted-foreground">Size increase</div>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
@@ -389,18 +634,20 @@ export const FirmwareSigningMigrator: React.FC = () => {
                 Signature (ML-DSA-65, DER-encoded)
               </div>
               <pre className="text-[10px] font-mono text-primary bg-background rounded p-2 border border-primary/20 overflow-x-auto whitespace-pre-wrap break-all">
-                {MOCK_SIGNATURE.signatureHex}
+                {truncateHex(sigData.signatureHex, 120)}
               </pre>
               <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
-                <span>Signing time: {MOCK_SIGNATURE.signingTime}</span>
-                <span className="font-mono text-primary">{MOCK_SIGNATURE.signatureSize} bytes</span>
+                <span>Signing time: {sigData.signingTime}</span>
+                <span className="font-mono text-primary">
+                  {sigData.signatureSize.toLocaleString()} bytes
+                </span>
               </div>
             </div>
 
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="text-xs font-bold text-foreground mb-2">Certificate Chain</div>
               <div className="space-y-1.5">
-                {MOCK_SIGNATURE.certChain.map((cert, idx) => (
+                {sigData.certChain.map((cert, idx) => (
                   <div
                     key={idx}
                     className="flex items-start gap-2 bg-background rounded p-2 border border-border"
@@ -424,11 +671,35 @@ export const FirmwareSigningMigrator: React.FC = () => {
               firmware hash, (3) certificate validity period.
             </p>
 
+            {isLive && (
+              <div className="flex items-center gap-2 mb-2">
+                <Button
+                  onClick={handleVerify}
+                  disabled={isProcessing || !hasSigBytes}
+                  variant="outline"
+                  className="text-sm"
+                >
+                  {isProcessing ? (
+                    <>
+                      <Loader2 size={14} className="animate-spin mr-1" /> Verifying...
+                    </>
+                  ) : (
+                    'Verify (Live WASM)'
+                  )}
+                </Button>
+                {liveVerify?.isLive && (
+                  <span className="text-[11px] text-status-success font-semibold">
+                    Real verification via C_MessageVerifyInit + C_VerifyMessage
+                  </span>
+                )}
+              </div>
+            )}
+
             <div
-              className={`rounded-lg p-4 border-2 ${MOCK_VERIFICATION.verified ? 'border-status-success/50 bg-status-success/5' : 'border-status-error/50 bg-status-error/5'}`}
+              className={`rounded-lg p-4 border-2 ${verifyData.verified ? 'border-status-success/50 bg-status-success/5' : 'border-status-error/50 bg-status-error/5'}`}
             >
               <div className="flex items-center gap-2 mb-3">
-                {MOCK_VERIFICATION.verified ? (
+                {verifyData.verified ? (
                   <CheckCircle size={20} className="text-status-success" aria-label="Verified" />
                 ) : (
                   <AlertTriangle
@@ -438,9 +709,9 @@ export const FirmwareSigningMigrator: React.FC = () => {
                   />
                 )}
                 <span
-                  className={`text-sm font-bold ${MOCK_VERIFICATION.verified ? 'text-status-success' : 'text-status-error'}`}
+                  className={`text-sm font-bold ${verifyData.verified ? 'text-status-success' : 'text-status-error'}`}
                 >
-                  {MOCK_VERIFICATION.verified
+                  {verifyData.verified
                     ? 'Signature Verification PASSED'
                     : 'Signature Verification FAILED'}
                 </span>
@@ -449,27 +720,23 @@ export const FirmwareSigningMigrator: React.FC = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs">
                 <div>
                   <span className="text-muted-foreground">Algorithm: </span>
-                  <span className="text-primary font-medium">{MOCK_VERIFICATION.algorithm}</span>
+                  <span className="text-primary font-medium">{verifyData.algorithm}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Security level: </span>
-                  <span className="text-status-success">{MOCK_VERIFICATION.nistLevel}</span>
+                  <span className="text-status-success">{verifyData.nistLevel}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Signer: </span>
-                  <span className="font-mono text-foreground/80">{MOCK_VERIFICATION.signerDN}</span>
+                  <span className="font-mono text-foreground/80">{verifyData.signerDN}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Valid from: </span>
-                  <span className="font-mono text-foreground/80">
-                    {MOCK_VERIFICATION.validFrom}
-                  </span>
+                  <span className="font-mono text-foreground/80">{verifyData.validFrom}</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">Valid until: </span>
-                  <span className="font-mono text-foreground/80">
-                    {MOCK_VERIFICATION.validUntil}
-                  </span>
+                  <span className="font-mono text-foreground/80">{verifyData.validUntil}</span>
                 </div>
               </div>
             </div>
@@ -517,6 +784,17 @@ export const FirmwareSigningMigrator: React.FC = () => {
           </div>
         )}
 
+        {/* PKCS#11 Call Log */}
+        {hsm.isReady && hsm.log.length > 0 && (
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={false}
+            className="mt-4"
+          />
+        )}
+
         {/* Navigation */}
         <div className="flex justify-between mt-6 pt-4 border-t border-border">
           <div className="flex gap-2">
@@ -539,8 +817,21 @@ export const FirmwareSigningMigrator: React.FC = () => {
           </div>
 
           {currentStep < 3 ? (
-            <Button onClick={handleNext} variant="gradient" className="flex items-center gap-2">
-              Next <ArrowRight size={14} />
+            <Button
+              onClick={handleNext}
+              disabled={isProcessing}
+              variant="gradient"
+              className="flex items-center gap-2"
+            >
+              {isProcessing ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> Processing...
+                </>
+              ) : (
+                <>
+                  Next <ArrowRight size={14} />
+                </>
+              )}
             </Button>
           ) : (
             <Button
@@ -553,6 +844,17 @@ export const FirmwareSigningMigrator: React.FC = () => {
             </Button>
           )}
         </div>
+      </div>
+
+      {/* Educational note */}
+      <div className="bg-muted/50 rounded-lg p-4 border border-border">
+        <p className="text-xs text-muted-foreground">
+          <strong>Note:</strong>{' '}
+          {isLive
+            ? 'All cryptographic operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Key sizes and signature sizes match the FIPS 204 (ML-DSA) specification exactly.'
+            : 'In simulation mode, key and signature data are representative examples. Enable Live WASM mode to execute real PKCS#11 v3.2 operations.'}{' '}
+          Generated keys are for educational purposes only.
+        </p>
       </div>
     </div>
   )

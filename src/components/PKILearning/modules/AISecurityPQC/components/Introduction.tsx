@@ -421,6 +421,63 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         <ReadingCompleteButton />
       </CollapsibleSection>
 
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/code-signing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <FileCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Code Signing</div>
+              <div className="text-xs text-muted-foreground">ML-DSA model signing, Sigstore cosign, and in-toto attestation</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/confidential-computing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Eye size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Confidential Computing</div>
+              <div className="text-xs text-muted-foreground">TEE-based model protection and PQC attestation during inference</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/api-security-jwt"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Server size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
+              <div className="text-xs text-muted-foreground">PQC token signing for AI API authentication and agent identity</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Database size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">PQC key hierarchies for AI model encryption and signing keys</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
+              <div className="text-xs text-muted-foreground">Algorithm-agnostic AI pipeline design for PQC algorithm rollout</div>
+            </div>
+          </Link>
+        </div>
+      </section>
+
       {/* CTA */}
       <div className="glass-panel p-6 border-primary/20 text-center">
         <h3 className="text-lg font-bold text-foreground mb-2">Ready for the Workshop?</h3>

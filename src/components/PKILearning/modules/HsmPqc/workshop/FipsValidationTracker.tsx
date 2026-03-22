@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useMemo } from 'react'
-import { Filter, Calendar, Award, ChevronDown, ChevronUp } from 'lucide-react'
+import { Filter, Calendar, Award, ChevronDown, ChevronUp, ExternalLink, Info } from 'lucide-react'
 import { FIPS_VALIDATIONS, type FipsValidationEntry } from '../data/hsmConstants'
 
 type CertTypeFilter = 'all' | FipsValidationEntry['certType']
@@ -99,11 +99,31 @@ export const FipsValidationTracker: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">FIPS Validation Tracker</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">Certification &amp; Algorithm Validation Tracker</h3>
         <p className="text-sm text-muted-foreground">
-          Track CMVP/CAVP/ACVP PQC validation status across HSM vendors. Filter by certification
-          type, status, or algorithm to see which vendors have achieved PQC validation.
+          Track FIPS 140-3 module certifications and ACVP PQC algorithm validations across HSM
+          vendors. Filter by certification type, status, or algorithm.
         </p>
+      </div>
+
+      {/* FIPS vs ACVP clarification banner */}
+      <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+        <div className="flex items-start gap-2">
+          <Info size={14} className="text-primary shrink-0 mt-0.5" />
+          <div className="space-y-1 text-xs text-foreground/80">
+            <p>
+              <strong className="text-foreground">FIPS 140-3 (CMVP)</strong> certifies the
+              cryptographic hardware module — its physical security boundary and classical algorithm
+              implementations (AES, SHA, RSA, ECDH). As of early 2026,{' '}
+              <strong>no HSM has a FIPS 140-3 module certificate that includes PQC algorithms</strong>.
+            </p>
+            <p>
+              <strong className="text-foreground">ACVP</strong> validates individual algorithm
+              implementations against NIST test vectors. This is where PQC algorithm support is
+              formally validated — separate from module certification.
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Summary Stats */}
@@ -294,22 +314,48 @@ export const FipsValidationTracker: React.FC = () => {
 
                       <div className="flex items-center gap-2 mb-2">
                         <span className="text-xs text-muted-foreground">Cert ID:</span>
-                        <span className="text-xs font-mono text-foreground">{v.certId}</span>
+                        {v.certLink ? (
+                          <a
+                            href={v.certLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-xs font-mono text-primary hover:underline flex items-center gap-1"
+                          >
+                            {v.certId}
+                            <ExternalLink size={10} />
+                          </a>
+                        ) : (
+                          <span className="text-xs font-mono text-foreground">{v.certId}</span>
+                        )}
                       </div>
 
-                      <div>
-                        <span className="text-xs text-muted-foreground">Algorithms:</span>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {v.algorithms.map((alg) => (
-                            <span
-                              key={alg}
-                              className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono"
-                            >
-                              {alg}
-                            </span>
-                          ))}
-                        </div>
+                      <div className="mb-2">
+                        <span className="text-xs text-muted-foreground">
+                          {v.certType === 'FIPS 140-3' ? 'PQC Coverage:' : 'Algorithms:'}
+                        </span>
+                        {v.algorithms.length > 0 ? (
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {v.algorithms.map((alg) => (
+                              <span
+                                key={alg}
+                                className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono"
+                              >
+                                {alg}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="text-[10px] text-muted-foreground mt-1 italic">
+                            None — module certs do not include PQC algorithm certification
+                          </p>
+                        )}
                       </div>
+
+                      {v.note && (
+                        <p className="text-[10px] text-muted-foreground border-t border-border/50 pt-2 mt-2">
+                          {v.note}
+                        </p>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -382,21 +428,32 @@ export const FipsValidationTracker: React.FC = () => {
         <h5 className="text-xs font-bold text-foreground mb-2">Reference Databases</h5>
         <div className="space-y-1 text-xs text-muted-foreground">
           <p>
-            <strong>NIST CMVP</strong> &mdash; Cryptographic Module Validation Program
-            (csrc.nist.gov/projects/cryptographic-module-validation-program)
+            <strong>NIST CMVP</strong> &mdash; Cryptographic Module Validation Program —{' '}
+            <a
+              href="https://csrc.nist.gov/projects/cryptographic-module-validation-program"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              csrc.nist.gov/projects/cryptographic-module-validation-program
+            </a>
           </p>
           <p>
-            <strong>NIST CAVP</strong> &mdash; Cryptographic Algorithm Validation Program
-            (csrc.nist.gov/projects/cryptographic-algorithm-validation-program)
-          </p>
-          <p>
-            <strong>NIST ACVP</strong> &mdash; Automated Cryptographic Validation Protocol
-            (csrc.nist.gov/projects/acvp)
+            <strong>NIST ACVP</strong> &mdash; Automated Cryptographic Validation Protocol —{' '}
+            <a
+              href="https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              csrc.nist.gov/projects/cryptographic-algorithm-validation-program
+            </a>
           </p>
           <p>
             <strong>Note:</strong> Validation data is based on publicly available NIST records and
             vendor announcements as of early 2026. Check the official databases for the most current
-            status.
+            status. FIPS 140-3 module certs currently show &ldquo;No PQC Mechanisms Detected&rdquo;
+            — only ACVP provides PQC algorithm validation.
           </p>
         </div>
       </div>

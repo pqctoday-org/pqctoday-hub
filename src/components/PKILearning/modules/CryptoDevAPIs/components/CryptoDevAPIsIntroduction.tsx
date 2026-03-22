@@ -575,6 +575,72 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
         </div>
       </CollapsibleSection>
 
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shuffle size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
+              <div className="text-xs text-muted-foreground">Design provider-agnostic APIs to swap algorithms at runtime</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/hsm-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Server size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">PKCS#11 from the HSM admin view vs. developer API perspective</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">KMIP protocol and API-level key management integration</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/code-signing"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Code Signing</div>
+              <div className="text-xs text-muted-foreground">Signing operations and API selection for CI/CD pipelines</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/os-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Globe size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">OS Cryptographic Stacks</div>
+              <div className="text-xs text-muted-foreground">OS-level crypto providers that application APIs build on top of</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/platform-eng-pqc"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Wrench size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Platform Engineering</div>
+              <div className="text-xs text-muted-foreground">CI/CD pipeline crypto inventory and library selection</div>
+            </div>
+          </Link>
+        </div>
+      </section>
       <VendorCoverageNotice migrateLayer="Application" />
 
       <ReadingCompleteButton />

@@ -59,18 +59,18 @@ export const IAMPQCExercises: React.FC<IAMPQCExercisesProps> = ({
       badge: 'Directory',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Active Directory scores 9/10 HNDL risk — the highest of any analyzed system. PKINIT RSA decryption and NTLM credential exposure are the two critical vectors. Microsoft Entra ID scores 8/10 due to long-lived refresh tokens (90 days) signed with RSA-2048.',
+        'Active Directory exposes two critical HNDL vectors: PKINIT RSA decryption (Kerberos TGT traffic) and NTLM credential exposure. Microsoft Entra ID uses long-lived refresh tokens (90-day default) signed with RSA-2048, which are at risk under HNDL if intercepted.',
       config: { step: 2 },
     },
     {
       id: 'vendor-evaluation',
       title: '4. Vendor Evaluation',
       description:
-        'Score your IAM vendor across four PQC readiness dimensions: Token Signing, MFA/Attestation, API Security, and Roadmap Clarity. Use the comparison mode to evaluate two vendors side-by-side. Export the score report for your procurement team.',
+        'Review the IAM Vendor PQC Status workshop. For each vendor, inspect the Token Signing, MFA/Attestation, API Security, and Roadmap details. Identify which vendors have GA PQC token signing support today versus which have roadmap commitments only.',
       badge: 'Vendor PQC',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        "Microsoft Entra ID scores highest overall (81/100) due to SymCrypt's full ML-KEM/ML-DSA support and FedRAMP High certification. Keycloak (open-source) scores 68/100 and is the best option for self-hosted environments with immediate PQC needs via oqsprovider.",
+        "Microsoft Entra ID uses SymCrypt which supports ML-KEM and ML-DSA, and holds FedRAMP High certification. Keycloak (open-source) can be integrated with oqsprovider for PQC signing in self-hosted deployments. Roadmap timelines vary by vendor — check each vendor's public announcements for GA dates.",
       config: { step: 3 },
     },
     {

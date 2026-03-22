@@ -51,7 +51,7 @@ aws kms sign \\
   --message fileb://data.bin \\
   --message-type RAW`,
     notes:
-      'Industry-leading PQC KMS: ML-DSA signing GA across all regions. ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager. Built on AWS-LC, a FIPS 140-3 validated open-source library with ML-KEM and ML-DSA support. No PQC BYOK yet.',
+      'ML-DSA signing GA across all regions. ML-KEM hybrid TLS protects data in transit to KMS, ACM, and Secrets Manager. Built on AWS-LC, a FIPS 140-3 validated open-source library with ML-KEM and ML-DSA support. No PQC BYOK yet.',
   },
   {
     id: 'gcp-kms',
@@ -87,7 +87,7 @@ gcloud kms keys create my-pqc-key \\
 gcloud kms keys create my-xwing-key \\
   --default-algorithm=X_WING`,
     notes:
-      'Broadest PQC algorithm coverage among cloud KMS providers. X-Wing hybrid KEM is unique to GCP. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. ML-KEM and X-Wing in GA; ML-DSA and SLH-DSA in preview.',
+      'Supports ML-KEM-768, ML-KEM-1024, X-Wing hybrid KEM (X25519+ML-KEM-768), ML-DSA-65, and SLH-DSA. X-Wing is a Google-originated hybrid KEM design. Powered by BoringCrypto (Google fork of BoringSSL) and Tink library. ML-KEM and X-Wing in GA; ML-DSA and SLH-DSA in preview.',
   },
   {
     id: 'azure-kv',

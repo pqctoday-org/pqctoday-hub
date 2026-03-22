@@ -22,6 +22,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { CODE_SIGNING_ALGORITHMS, PACKAGE_MANAGERS, SIGSTORE_STEPS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface CodeSigningIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -738,6 +739,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           secure boot trust chains.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Application" />
       <ReadingCompleteButton />
     </div>
   )

@@ -433,7 +433,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
               statusCls: 'text-status-info bg-status-info/10 border-status-info/30',
               details: [
                 'No direct PQC — relies on Cloud KMS CMEK for secret encryption',
-                'Cloud KMS has broadest PQC preview: ML-KEM, X-Wing, ML-DSA, SLH-DSA',
+                'Cloud KMS PQC preview: ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, SLH-DSA',
                 'Enable CMEK on Secret Manager with Cloud KMS ML-KEM key ring',
                 'FIPS mode not available for Secret Manager',
               ],
@@ -512,7 +512,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
             {
               title: 'Kubernetes Encryption at Rest',
               content:
-                'Configure --encryption-provider-config on kube-apiserver with a KMS provider. Use the KMS v2 plugin (Kubernetes 1.25+) pointing to a cloud KMS or Vault instance. With AWS KMS ML-KEM key spec as the KMS provider, all etcd secrets are ML-KEM protected. The External Secrets Operator (ESO) pattern is preferred: secrets live only in the vault, never duplicated into etcd.',
+                'Configure --encryption-provider-config on kube-apiserver with a KMS provider. Use the KMS v2 plugin (Kubernetes 1.25+) pointing to a cloud KMS or Vault instance. With AWS KMS ML-KEM key spec as the KMS provider, all etcd secrets are ML-KEM protected. The External Secrets Operator (ESO) pattern keeps secrets in the vault and injects them at runtime, so they are not duplicated into etcd.',
             },
             {
               title: 'External Secrets Operator (ESO)',

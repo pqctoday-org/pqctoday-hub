@@ -35,6 +35,7 @@ import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
 import { HsmKdfPanel } from './hsm/HsmKdfPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
+import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
 import { logEvent } from '../../utils/analytics'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -369,6 +370,23 @@ const PlaygroundContent = () => {
             >
               <Layers size={16} className="mr-2" aria-hidden="true" /> Mechanisms
             </Button>
+            <Button
+              role="tab"
+              id="tab-acvp"
+              aria-selected={activeTab === 'acvp'}
+              aria-controls="playground-tabpanel"
+              onClick={() => handleTabChange('acvp')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'acvp'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <ShieldCheck size={16} className="mr-2" aria-hidden="true" /> ACVP
+            </Button>
           </>
         )}
 
@@ -440,6 +458,11 @@ const PlaygroundContent = () => {
         {activeTab === 'acvp' && !hsmMode && (
           <div className="h-full">
             <ACVPTesting keyStore={keyStore} setKeyStore={setKeyStore} />
+          </div>
+        )}
+        {activeTab === 'acvp' && hsmMode && (
+          <div className="h-full">
+            <HsmAcvpTesting />
           </div>
         )}
       </div>

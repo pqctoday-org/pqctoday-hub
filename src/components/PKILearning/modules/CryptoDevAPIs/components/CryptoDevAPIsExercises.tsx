@@ -46,7 +46,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
       badge: 'Languages',
       badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
       observe:
-        "Rust scores highest on memory safety (10/10, ownership model) and compile-time guarantees (9/10). The borrow checker prevents use-after-free on key buffers. The pqcrypto and aws-lc-rs crates provide production-ready PQC support. Java ranks second — the JVM's GC means key material may persist longer in memory, but Bouncy Castle's zero-copy APIs mitigate this. Go has weaker compile-time guarantees and the GC is non-deterministic for key cleanup.",
+        "Rust's ownership model and borrow checker prevent use-after-free on key buffers at compile time; the pqcrypto and aws-lc-rs crates provide PQC support. In Java, the JVM's garbage collector means key material may persist in memory longer before collection, though Bouncy Castle's zero-copy APIs reduce exposure. Go's garbage collector is non-deterministic for key cleanup, and compile-time memory guarantees are not provided by the language.",
       config: { step: 1 },
     },
     {

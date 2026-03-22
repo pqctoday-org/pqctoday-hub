@@ -235,7 +235,7 @@ export const NetworkSecurityPQCModule: React.FC = () => {
               ) : (
                 <button
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Next Step &rarr;
                 </button>

@@ -1,21 +1,23 @@
-# Cryptographic APIs & Developer Languages — In Simple Terms
+# Cryptographic APIs & Developer Best Practices — In Simple Terms
 
 ## What This Is About
 
-When developers build apps and websites, they do not invent encryption from scratch. Instead, they use pre-built toolkits — like a chef using kitchen appliances instead of building an oven. These toolkits are called cryptographic APIs (Application Programming Interfaces), and they come built into programming languages and operating systems. A Java developer uses one toolkit, a Python developer uses another, and a C++ developer uses yet another.
+When developers build apps and websites, they do not invent encryption from scratch. Instead, they use pre-built toolkits — called cryptographic APIs. The transition to post-quantum security is not about developers using "quantum computing libraries" (which are for building quantum programs); it is about developers switching to "quantum-safe cryptographic libraries" that defend classical apps against quantum attacks.
 
-Think of it like different brands of power tools. They all drill holes, but each brand has different buttons, settings, and instructions. When the industry needs to switch to quantum-safe encryption, every one of these toolkits needs to be updated — and every developer who uses them needs to learn the new settings. It is like an entire industry switching from gas-powered to electric tools: the end result is the same, but the way you operate them changes.
+Think of it like upgrading the locks on your house. You don't need a quantum computer to install the new locks, but you do need new, certified locking mechanisms.
 
 ## Why It Matters
 
-Almost every piece of software in the world uses one of these encryption toolkits. Your banking app, your email, your video calls, the website where you shop — they all rely on developers correctly using these tools. If the toolkits are not updated for quantum safety, then none of the software built with them will be safe either.
+Almost every piece of software in the world uses encryption toolkits, but swapping out the old math for the new math isn't a simple drag-and-drop. The new quantum-safe algorithms behave very differently. For instance, the new encryption keys and digital signatures are often significantly larger in data size, which can affect network speed and memory usage. 
 
-The challenge is scale. There are millions of developers writing software in dozens of programming languages, and each language has its own encryption toolkit with its own quirks. Updating all of them is like translating a safety manual into every language on Earth — the core message is the same, but the details change for each audience. Getting even one translation wrong could leave millions of users vulnerable.
+To handle this, developers must adopt "Crypto Agility" — a best practice where encryption code is written flexibly so algorithms can be easily swapped in the future without completely rewriting the application.
 
-## The Key Takeaway
+## The Key Takeaways
 
-Cryptographic APIs are the hidden building blocks that make all software encryption work. Upgrading them to quantum-safe versions is one of the largest coordinated efforts in software history, because every programming language, every toolkit, and every developer needs to make the switch.
+1. **Quantum-Safe Libraries**: The focus is on adopting standard, quantum-safe cryptographic libraries to protect classical software, NOT on using raw quantum computing SDKs.
+2. **Key Size & Performance**: Developers must account for the increased size of post-quantum keys and signatures, proactively designing systems that can handle the new memory and performance impacts.
+3. **Crypto Agility**: Adopting crypto-agile best practices ensures that applications are modular, allowing them to rapidly swap out algorithms if a new vulnerability is discovered or standards change.
 
 ## What's Happening
 
-Major toolkit providers are already adding quantum-safe options. OpenSSL, the most widely used encryption library in the world, now supports quantum-safe algorithms through a plugin system. Java, Python, and .NET are all working on similar updates. The Open Quantum Safe project provides experimental libraries that developers can test today. Meanwhile, cloud providers like AWS and Google are building quantum-safe options into their developer services so that app builders can start preparing without becoming cryptography experts themselves.
+Major toolkit providers are already adding quantum-safe options. The Open Quantum Safe (OQS) project provides experimental libraries that developers can test today to understand the performance impacts of larger keys. Cloud providers are building quantum-safe APIs into their developer services, emphasizing crypto agility so that app builders can seamlessly upgrade as standards evolve.

@@ -23,6 +23,7 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
+import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
@@ -75,8 +76,6 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
   const [ckaExtractable, setCkaExtractable] = useState(true)
 
   const anyLoading = loadingOp !== null
-  const mechLabel = mode === 'aes-gcm' ? 'AES-GCM' : 'AES-CBC-PAD'
-  const mechHex = mode === 'aes-gcm' ? '0x1087' : '0x1085'
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -295,40 +294,7 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
         </div>
       )}
 
-      {/* PKCS#11 call trace */}
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          PKCS#11 Call Sequence
-        </p>
-        <div className="space-y-1 text-xs font-mono">
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_EncryptInit</span>
-            {`(hSession, ${mechHex} /* ${mechLabel} */, hKey) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Encrypt</span>
-            {`(hSession, pPlain, plainLen, NULL, &ctLen) → `}
-            <span className="text-status-success">CKR_OK</span> [size query]
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Encrypt</span>
-            {`(hSession, pPlain, plainLen, pCT, &ctLen) → `}
-            <span className="text-status-success">CKR_OK</span>
-            {mode === 'aes-gcm' ? ' [+16 B auth tag]' : ''}
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_DecryptInit</span>
-            {`(hSession, ${mechHex}, hKey) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Decrypt</span>
-            {`(hSession, pCT, ctLen, pPlain, &plainLen) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-        </div>
-      </div>
+      <MiniPkcsLog />
     </div>
   )
 }
@@ -509,40 +475,7 @@ const HmacPanel = () => {
         </div>
       )}
 
-      {/* PKCS#11 call trace */}
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          PKCS#11 Call Sequence
-        </p>
-        <div className="space-y-1 text-xs font-mono">
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_SignInit</span>
-            {`(hSession, 0x${selectedMech.toString(16)} /* ${selectedAlgo.label} */, hKey) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Sign</span>
-            {`(hSession, pData, dataLen, NULL, &macLen) → `}
-            <span className="text-status-success">CKR_OK</span> [size query]
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Sign</span>
-            {`(hSession, pData, dataLen, pMAC, &macLen) → `}
-            <span className="text-status-success">CKR_OK</span>
-            {` → ${selectedAlgo.outBytes} bytes`}
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_VerifyInit</span>
-            {`(hSession, 0x${selectedMech.toString(16)}, hKey) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Verify</span>
-            {`(hSession, pData, dataLen, pMAC, macLen) → `}
-            <span className="text-status-success">CKR_OK</span>
-          </div>
-        </div>
-      </div>
+      <MiniPkcsLog />
     </div>
   )
 }
@@ -779,32 +712,7 @@ const AesCtrPanel = () => {
         </div>
       )}
 
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          PKCS#11 Call Sequence
-        </p>
-        <div className="space-y-1 text-xs font-mono">
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_EncryptInit</span>(hSession, 0x1086 /* CKM_AES_CTR
-            */, hKey, &params) → <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground text-[10px] pl-2">
-            params: CK_AES_CTR_PARAMS{' { ulCounterBits=128, cb[16]=0x00…00 }'}
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Encrypt</span>(hSession, pPlain, plainLen, pCT,
-            &ctLen) → <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_DecryptInit</span>(hSession, 0x1086, hKey, &params)
-            → <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Decrypt</span>(hSession, pCT, ctLen, pPlain,
-            &plainLen) → <span className="text-status-success">CKR_OK</span>
-          </div>
-        </div>
-      </div>
+      <MiniPkcsLog />
     </div>
   )
 }
@@ -1031,21 +939,7 @@ const AesCmacPanel = () => {
         </div>
       )}
 
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-          PKCS#11 Call Sequence
-        </p>
-        <div className="space-y-1 text-xs font-mono">
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_SignInit</span>(hSession, 0x108a /* CKM_AES_CMAC */,
-            hKey) → <span className="text-status-success">CKR_OK</span>
-          </div>
-          <div className="text-muted-foreground">
-            <span className="text-foreground">C_Sign</span>(hSession, pData, dataLen, pMAC, &macLen)
-            → <span className="text-status-success">CKR_OK</span> → 16 bytes
-          </div>
-        </div>
-      </div>
+      <MiniPkcsLog />
     </div>
   )
 }

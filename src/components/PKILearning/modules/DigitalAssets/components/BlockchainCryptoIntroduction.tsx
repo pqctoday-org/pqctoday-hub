@@ -11,6 +11,8 @@ import {
   BarChart3,
   FlaskConical,
   ClipboardCheck,
+  Layers,
+  RefreshCw,
 } from 'lucide-react'
 import { HDWalletFlowDiagram } from './CryptoFlowDiagram'
 import { InfoTooltip } from './InfoTooltip'
@@ -337,6 +339,42 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
               <div className="text-sm font-medium text-foreground">Risk Assessment</div>
               <div className="text-xs text-muted-foreground">
                 Assess your organisation&apos;s quantum readiness
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/crypto-agility"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <RefreshCw size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Crypto Agility</div>
+              <div className="text-xs text-muted-foreground">
+                Algorithm-agnostic wallet and smart contract design
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/kms-pqc"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Key size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
+              <div className="text-xs text-muted-foreground">
+                PQC key management for custodial and self-custody wallets
+              </div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/hybrid-crypto"
+            className="flex items-center gap-2 p-3 rounded-lg bg-muted/50 border border-border hover:border-primary/30 transition-colors"
+          >
+            <Layers size={16} className="text-primary shrink-0" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
+              <div className="text-xs text-muted-foreground">
+                Transitional signature schemes for DeFi protocols and wallets
               </div>
             </div>
           </Link>

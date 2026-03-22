@@ -38,7 +38,7 @@ export const ConfidentialComputingExercises: React.FC<ExercisesProps> = ({
       badge: 'Architecture',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'SGX has a smaller TCB (CPU + enclave only) but is limited to 256 MB EPC — too small for large ML models. SEV-SNP supports full VM memory with transparent encryption, but has a larger TCB (includes guest OS). For ML inference on large models, SEV-SNP is preferred. Both are available on Azure.',
+        'SGX has a smaller TCB (CPU + enclave only) but is limited to 256 MB EPC — too small for large ML models without partitioning. SEV-SNP encrypts the full VM including guest OS, which results in a larger TCB. Both are available on Azure and have distinct PQC attestation roadmaps.',
       config: { step: 0 },
     },
     {

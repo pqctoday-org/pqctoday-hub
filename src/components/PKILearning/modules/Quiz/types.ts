@@ -59,6 +59,7 @@ export type QuizCategory =
   | 'arch-quantum-impact'
   | 'ops-quantum-impact'
   | 'research-quantum-impact'
+  | 'pqc-testing-validation'
 
 export interface QuizOption {
   id: string

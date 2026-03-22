@@ -70,7 +70,7 @@ export const KmsPqcExercises: React.FC<KmsPqcExercisesProps> = ({
       badge: 'Multi-Cloud',
       badgeColor: 'bg-destructive/20 text-destructive border-destructive/50',
       observe:
-        'AWS KMS is the only provider with GA PQC signing (ML-DSA). Google Cloud KMS has the broadest algorithm preview (ML-KEM, X-Wing, ML-DSA, SLH-DSA). Azure Key Vault lacks native PQC key types but SymCrypt supports ML-KEM/ML-DSA internally.',
+        'AWS KMS has GA ML-DSA signing (ML-DSA-44/65/87) across all regions. Google Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview). Azure Key Vault does not yet expose PQC key types natively; SymCrypt supports ML-KEM/ML-DSA internally but not through the Key Vault API.',
       config: { step: 2 },
     },
     {

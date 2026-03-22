@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import type { Step } from '../DigitalAssets/components/StepWizard'
 import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
@@ -17,10 +17,15 @@ import {
   hsm_aesEncrypt,
   hsm_hmac,
   hsm_generateHMACKey,
+  hsm_extractKeyValue,
+  hsm_ecdhDerive,
+  hsm_hkdf,
+  CKM_SHA256,
 } from '@/wasm/softhsm'
 
 const SUCI_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
+  'C_GetAttributeValue',
   'C_DeriveKey',
   'C_GenerateKey',
   'C_EncryptInit',
@@ -42,15 +47,26 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
   const hsm = useHSM()
 
+  // Track HSM key handles across steps for ECDH derive + HKDF
+  const hsmHandlesRef = useRef<{
+    hnPubHandle?: number
+    hnPrivHandle?: number
+    ephPubHandle?: number
+    ephPrivHandle?: number
+    sharedSecretHandle?: number
+  }>({})
+
   // Wrap setters to also clear crypto state when switching profiles/modes
   const changeProfile = (p: Profile) => {
     fiveGService.cleanup()
     setArtifacts({})
+    hsmHandlesRef.current = {}
     setProfile(p)
   }
   const changePqcMode = (m: 'hybrid' | 'pure') => {
     fiveGService.cleanup()
     setArtifacts({})
+    hsmHandlesRef.current = {}
     setPqcMode(m)
   }
 
@@ -104,6 +120,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             hSession,
             curve === 'X25519' ? 'P-256' : curve
           )
+          hsmHandlesRef.current.hnPubHandle = pubHandle
+          hsmHandlesRef.current.hnPrivHandle = privHandle
           hsm.addKey({
             handle: pubHandle,
             label: `HN Key (${curve})`,
@@ -177,27 +195,172 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           result = await fiveGService.computeMAC()
         }
       } else if (stepData.id === 'provision_usim') {
-        // Use the file we just generated, or fallback if testing/skipped
-        const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
-        result = await fiveGService.provisionUSIM(targetFile)
+        if (
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          hsmHandlesRef.current.hnPubHandle
+        ) {
+          // ── Live HSM Mode: Extract public key for USIM provisioning ──
+          const M = hsm.moduleRef.current
+          const hSession = hsm.hSessionRef.current
+          const pubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          const pubHex = Array.from(pubBytes)
+            .map((b: number) => b.toString(16).padStart(2, '0'))
+            .join('')
+          result =
+            `[PKCS#11] C_GetAttributeValue(CKA_VALUE) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n` +
+            `  Public key bytes: ${pubBytes.length}\n` +
+            `  Key (hex): ${pubHex.slice(0, 64)}...\n` +
+            `\nHN public key extracted from SoftHSM3 → provisioned to USIM.`
+        } else {
+          const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
+          result = await fiveGService.provisionUSIM(targetFile)
+        }
       } else if (stepData.id === 'retrieve_key') {
-        const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
-        result = await fiveGService.retrieveKey(targetFile, profile)
+        if (
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          hsmHandlesRef.current.hnPubHandle
+        ) {
+          // ── Live HSM Mode: Read back public key ──
+          const M = hsm.moduleRef.current
+          const hSession = hsm.hSessionRef.current
+          const pubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          result =
+            `[PKCS#11] C_GetAttributeValue(CKA_VALUE) — key retrieved from HSM\n` +
+            `  Public key size: ${pubBytes.length} bytes\n` +
+            `  Profile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n` +
+            `\nUE retrieved HN public key from USIM (HSM-backed).`
+        } else {
+          const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
+          result = await fiveGService.retrieveKey(targetFile, profile)
+        }
       } else if (stepData.id === 'gen_ephemeral_key') {
-        const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
-        setArtifacts((prev) => ({
-          ...prev,
-          ephPrivKey: res.privKey,
-          ephPubKey: res.pubKey,
-        }))
-        result = res.output
+        if (
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          (profile === 'A' || profile === 'B')
+        ) {
+          // ── Live HSM Mode: Ephemeral EC key gen via PKCS#11 ──
+          const M = hsm.moduleRef.current
+          const hSession = hsm.hSessionRef.current
+          const curve = profile === 'A' ? 'P-256' : 'P-256'
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+          hsmHandlesRef.current.ephPubHandle = pubHandle
+          hsmHandlesRef.current.ephPrivHandle = privHandle
+          const ephPubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+          const ephPubHex = Array.from(ephPubBytes)
+            .map((b: number) => b.toString(16).padStart(2, '0'))
+            .join('')
+          setArtifacts((prev) => ({
+            ...prev,
+            ephPrivKey: `hsm_eph_priv_${privHandle}`,
+            ephPubKey: `hsm_eph_pub_${pubHandle}`,
+          }))
+          result =
+            `[PKCS#11] C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, ${curve})\n` +
+            `  → Ephemeral pub handle:  ${pubHandle}\n` +
+            `  → Ephemeral priv handle: ${privHandle}\n` +
+            `  → Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n` +
+            `\nEphemeral key pair generated via SoftHSM3 WASM.`
+        } else {
+          const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
+          setArtifacts((prev) => ({
+            ...prev,
+            ephPrivKey: res.privKey,
+            ephPubKey: res.pubKey,
+          }))
+          result = res.output
+        }
       } else if (stepData.id === 'compute_shared_secret') {
-        const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
-        const hnPub = artifacts.hnPubFile || 'sim_hn_pub.key'
-        result = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
+        if (
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          hsmHandlesRef.current.ephPrivHandle &&
+          hsmHandlesRef.current.hnPubHandle
+        ) {
+          // ── Live HSM Mode: ECDH key agreement via PKCS#11 ──
+          const M = hsm.moduleRef.current
+          const hSession = hsm.hSessionRef.current
+          const hnPubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          const derivedHandle = hsm_ecdhDerive(
+            M,
+            hSession,
+            hsmHandlesRef.current.ephPrivHandle,
+            hnPubBytes
+          )
+          hsmHandlesRef.current.sharedSecretHandle = derivedHandle
+          const sharedBytes = hsm_extractKeyValue(M, hSession, derivedHandle)
+          const sharedHex = Array.from(sharedBytes)
+            .map((b: number) => b.toString(16).padStart(2, '0'))
+            .join('')
+          result =
+            `[PKCS#11] C_DeriveKey(CKM_ECDH1_DERIVE)\n` +
+            `  ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}\n` +
+            `  hnPub bytes: ${hnPubBytes.length}\n` +
+            `  → Shared secret handle: ${derivedHandle}\n` +
+            `  → Z (hex): ${sharedHex.slice(0, 64)}...\n` +
+            `\nECDH shared secret computed via SoftHSM3 WASM.`
+        } else {
+          const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
+          const hnPub = artifacts.hnPubFile || 'sim_hn_pub.key'
+          result = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
+        }
       } else if (stepData.id === 'derive_keys') {
-        // Call the new KDF visualization method
-        result = await fiveGService.deriveKeys(profile)
+        if (
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          hsmHandlesRef.current.sharedSecretHandle
+        ) {
+          // ── Live HSM Mode: HKDF key derivation via PKCS#11 ──
+          const M = hsm.moduleRef.current
+          const hSession = hsm.hSessionRef.current
+          const salt = new TextEncoder().encode('5G-SUCI-KDF-salt')
+          const infoEnc = new TextEncoder().encode('encryption-key')
+          const infoMac = new TextEncoder().encode('mac-key')
+
+          const kEnc = hsm_hkdf(
+            M,
+            hSession,
+            hsmHandlesRef.current.sharedSecretHandle,
+            CKM_SHA256,
+            true,
+            true,
+            salt,
+            infoEnc,
+            16
+          )
+          const kMac = hsm_hkdf(
+            M,
+            hSession,
+            hsmHandlesRef.current.sharedSecretHandle,
+            CKM_SHA256,
+            true,
+            true,
+            salt,
+            infoMac,
+            32
+          )
+          const kEncHex = Array.from(kEnc)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          const kMacHex = Array.from(kMac)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          result =
+            `[PKCS#11] C_DeriveKey(CKM_HKDF_DERIVE, CKM_SHA256)\n` +
+            `  Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n` +
+            `  → K_enc (${kEnc.length} bytes): ${kEncHex}\n` +
+            `  → K_mac (${kMac.length} bytes): ${kMacHex}\n` +
+            `\nEncryption + MAC keys derived via HKDF in SoftHSM3 WASM.`
+        } else {
+          result = await fiveGService.deriveKeys(profile)
+        }
       } else if (stepData.id === 'sidf_decryption') {
         result = await fiveGService.sidfDecrypt(profile)
       } else if (stepData.id === 'visualize_suci') {

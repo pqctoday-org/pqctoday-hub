@@ -1,13 +1,19 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { JSDOM } from 'jsdom'
 import { ComplianceRecord } from './types.js'
-import { fetchWithRetry, extractAlgorithms, PQC_PATTERNS, CLASSICAL_PATTERNS } from './utils.js'
+import {
+  fetchWithRetry,
+  extractAlgorithms,
+  PQC_PATTERNS,
+  CLASSICAL_PATTERNS,
+  NIST_RETRY_CONFIG,
+} from './utils.js'
 
 export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
   try {
     const url =
       'https://csrc.nist.gov/projects/cryptographic-module-validation-program/validated-modules/search/all?searchMode=Advanced&Standard=FIPS+140-3&ValidationStatus=Active&SecurityLevel=3'
-    const html = await fetchWithRetry(url)
+    const html = await fetchWithRetry(url, NIST_RETRY_CONFIG)
     const dom = new JSDOM(html)
     const doc = dom.window.document
 
@@ -63,7 +69,7 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
             const detailUrl = relativeLink.startsWith('http')
               ? relativeLink
               : `https://csrc.nist.gov${relativeLink}`
-            const detailHtml = await fetchWithRetry(detailUrl)
+            const detailHtml = await fetchWithRetry(detailUrl, NIST_RETRY_CONFIG)
             const detailDom = new JSDOM(detailHtml)
             const detailText = detailDom.window.document.body.textContent || ''
 
@@ -104,8 +110,10 @@ export const scrapeNIST = async (): Promise<ComplianceRecord[]> => {
       const valid = results.filter((r) => r !== null) as ComplianceRecord[]
       records.push(...valid)
 
-      if (i % 50 === 0) console.log(`[NIST] Processed ${i} / ${rows.length} records...`)
-      await new Promise((r) => setTimeout(r, 500))
+      const processed = Math.min(i + BATCH_SIZE, rows.length)
+      if (i % 100 === 0 || processed === rows.length)
+        console.log(`[NIST] Processed ${processed} / ${rows.length} records...`)
+      await new Promise((r) => setTimeout(r, 750))
     }
 
     return records

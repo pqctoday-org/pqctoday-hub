@@ -203,7 +203,7 @@ export const TRANSACTION_FLOWS: TransactionFlow[] = [
     name: 'Offline CDA',
     mode: 'offline-cda',
     description:
-      'Combined Data Authentication: the most secure offline method. The card signs the Application Cryptogram (AC) together with dynamic data, combining authentication and transaction integrity in a single RSA signature.',
+      'Combined Data Authentication (CDA): the card signs the Application Cryptogram (AC) together with dynamic transaction data, combining card authentication and transaction integrity in a single signature. Requires the terminal to verify the card signature offline.',
     totalLatencyMs: 400,
     cryptoTouchpoints: 4,
     quantumVulnerableSteps: 3,

@@ -38,11 +38,11 @@ const Step1WhyAndMerkle: React.FC = () => (
           <strong>
             <InlineTooltip term="Hash-Based Signatures">Hash-based signatures</InlineTooltip>
           </strong>{' '}
-          derive their security solely from the properties of cryptographic hash functions &mdash;
-          the most conservative and well-understood assumption in cryptography. Unlike{' '}
+          derive their security solely from the properties of cryptographic hash functions, which
+          have a longer standardization history than{' '}
           <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> or{' '}
-          <InlineTooltip term="Code-Based Cryptography">code-based</InlineTooltip> schemes, they
-          require no new hardness assumptions. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip>{' '}
+          <InlineTooltip term="Code-Based Cryptography">code-based</InlineTooltip> constructions.
+          Unlike those schemes, they require no new hardness assumptions. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip>{' '}
           security rests on collision and second-preimage resistance;{' '}
           <InlineTooltip term="XMSS">XMSS</InlineTooltip> has a tighter proof requiring only{' '}
           <strong>second-preimage resistance</strong> &mdash; a weaker assumption that provides a

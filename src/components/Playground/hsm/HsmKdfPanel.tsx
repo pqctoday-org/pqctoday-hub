@@ -22,6 +22,7 @@ import {
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
+import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types & constants ────────────────────────────────────────────────────────
 
@@ -228,6 +229,7 @@ const Pbkdf2Panel = () => {
         </div>
       )}
 
+      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -412,6 +414,7 @@ const HkdfPanel = () => {
         </div>
       )}
 
+      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -632,6 +635,7 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
         </div>
       )}
 
+      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )

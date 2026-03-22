@@ -378,7 +378,15 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     title: 'Network Security & PQC Migration',
     description:
       'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
-    duration: '60 min',
+    duration: '90 min',
+    difficulty: 'advanced',
+  },
+  'pqc-testing-validation': {
+    id: 'pqc-testing-validation',
+    title: 'PQC Network Testing & Validation',
+    description:
+      'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
+    duration: '120 min',
     difficulty: 'advanced',
   },
   'iam-pqc': {
@@ -426,7 +434,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'quantum-threats': 5,
   'hybrid-crypto': 5,
   'crypto-agility': 3,
-  'stateful-signatures': 3,
+  'stateful-signatures': 4,
   'email-signing': 3,
   'vpn-ssh-pqc': 3,
   'kms-pqc': 5,
@@ -451,6 +459,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'database-encryption-pqc': 5,
   'secrets-management-pqc': 5,
   'network-security-pqc': 5,
+  'pqc-testing-validation': 6,
   'iam-pqc': 5,
   'energy-utilities-pqc': 5,
   'emv-payment-pqc': 6,
@@ -521,6 +530,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['api-security-jwt'],
       MODULE_CATALOG['web-gateway-pqc'],
       MODULE_CATALOG['network-security-pqc'],
+      MODULE_CATALOG['pqc-testing-validation'],
     ],
   },
   {
@@ -658,6 +668,7 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'lms', label: 'LMS/HSS Merkle Tree Signatures' },
     { id: 'xmss', label: 'XMSS/XMSS^MT Parameter Trade-offs' },
     { id: 'state', label: 'Critical State Management & Key Exhaustion' },
+    { id: 'slh-dsa', label: 'SLH-DSA Stateless Comparison (FIPS 205)' },
   ],
   'digital-assets': [
     { id: 'bitcoin', label: 'Bitcoin: secp256k1 & ECDSA' },
@@ -812,6 +823,13 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'ids-ips-migration', label: 'IDS/IPS: Signature Updates & Algorithm Visibility' },
     { id: 'vendor-roadmaps', label: 'Cisco, Palo Alto, Fortinet, Juniper Migration Timelines' },
     { id: 'zero-trust-pqc', label: 'Zero Trust Network Access with PQC' },
+  ],
+  'pqc-testing-validation': [
+    { id: 'why-pqc-testing', label: 'Why PQC Testing Is Different' },
+    { id: 'passive-vs-active', label: 'Passive Discovery vs Active Scanning' },
+    { id: 'performance-testing-method', label: 'PQC Performance Benchmarking Methodology' },
+    { id: 'interop-testing', label: 'Interoperability Testing & RFC 9794 Compliance' },
+    { id: 'side-channel-tvla', label: 'Side-Channel Testing & TVLA for Lattice Crypto' },
   ],
   'iam-pqc': [
     { id: 'iam-crypto-foundations', label: 'Crypto in IAM: Tokens, Certificates, MFA' },
@@ -994,6 +1012,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'lms-keygen', label: 'LMS Key Generation' },
     { id: 'xmss-keygen', label: 'XMSS Key Generation' },
     { id: 'state-management', label: 'State Management' },
+    { id: 'slh-dsa-live', label: 'SLH-DSA Live Demo' },
   ],
   'digital-assets': [
     { id: 'bitcoin', label: 'Bitcoin Flow' },
@@ -1145,6 +1164,14 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'ids-signature-updater', label: 'IDS Signature Updater' },
     { id: 'vendor-migration-matrix', label: 'Vendor Migration Matrix' },
     { id: 'ztna-pqc-designer', label: 'ZTNA PQC Designer' },
+  ],
+  'pqc-testing-validation': [
+    { id: 'passive-discovery-lab', label: 'Passive Crypto Discovery Lab' },
+    { id: 'active-pqc-scanner', label: 'Active PQC Server Scanner' },
+    { id: 'performance-benchmark-designer', label: 'Performance Benchmark Designer' },
+    { id: 'interop-test-matrix', label: 'Interoperability Test Matrix' },
+    { id: 'tvla-leakage-analyzer', label: 'TVLA Leakage Analyzer' },
+    { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
   ],
   'iam-pqc': [
     { id: 'iam-crypto-inventory', label: 'IAM Crypto Inventory' },

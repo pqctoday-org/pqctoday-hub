@@ -71,7 +71,14 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
   if (!rustModulePromise) {
     rustModulePromise = (async () => {
       const rustShim = await import('./softhsmrustv3.js')
-      const wasmExports = await rustShim.default('/wasm/rust/softhsmrustv3_bg.wasm')
+      const isNode = typeof process !== 'undefined' && process.versions != null && process.versions.node != null
+      let wasmInput: any = '/wasm/rust/softhsmrustv3_bg.wasm'
+      if (isNode) {
+        const fs = await import('fs')
+        const path = await import('path')
+        wasmInput = fs.readFileSync(path.resolve(process.cwd(), 'public/wasm/rust/softhsmrustv3_bg.wasm'))
+      }
+      const wasmExports = await rustShim.default(wasmInput)
 
       // Rust lib.rs uses #[wasm_bindgen(js_name = _C_*)] — exports match
       // the PKCS#11 v3.2 C ABI names directly on the InitOutput object.
@@ -656,7 +663,7 @@ export interface AttrDef {
   bytesLen?: number
 }
 
-const buildTemplate = (M: SoftHSMModule, defs: AttrDef[]): { ptr: number; auxPtrs: number[] } => {
+export const buildTemplate = (M: SoftHSMModule, defs: AttrDef[]): { ptr: number; auxPtrs: number[] } => {
   const ptr = M._malloc(defs.length * CK_ATTRIBUTE_SIZE)
   const auxPtrs: number[] = []
 
@@ -702,8 +709,29 @@ const freeTemplate = (
 // ── High-level PKCS#11 helpers ───────────────────────────────────────────────
 
 /** C_Initialize */
-export const hsm_initialize = (M: SoftHSMModule): void => {
-  checkRV(M._C_Initialize(0), 'C_Initialize')
+export const hsm_initialize = (M: SoftHSMModule, testSeed?: Uint8Array): void => {
+  if (testSeed) {
+    const seedPtr = M._malloc(testSeed.length)
+    M.HEAPU8.set(testSeed, seedPtr)
+
+    const acvpPtr = M._malloc(8)
+    M.setValue(acvpPtr, seedPtr, 'i32')
+    M.setValue(acvpPtr + 4, testSeed.length, 'i32')
+
+    const initArgsPtr = M._malloc(24)
+    for (let i = 0; i < 24; i++) M.HEAPU8[initArgsPtr + i] = 0 // Zero out
+    M.setValue(initArgsPtr + 20, acvpPtr, 'i32')
+
+    try {
+      checkRV(M._C_Initialize(initArgsPtr), 'C_Initialize(ACVP_MODE)')
+    } finally {
+      M._free(initArgsPtr)
+      M._free(acvpPtr)
+      M._free(seedPtr)
+    }
+  } else {
+    checkRV(M._C_Initialize(0), 'C_Initialize')
+  }
 }
 
 /** C_GetSlotList → first slot id (two-step: count then fill) */
@@ -1445,6 +1473,23 @@ export const hsm_getTokenInfo = (M: SoftHSMModule, slotId: number): TokenInfo =>
 }
 
 /** Destroy a PKCS#11 object via C_DestroyObject. */
+export const hsm_createObject = (
+  M: SoftHSMModule,
+  hSession: number,
+  attributes: AttrDef[]
+): number => {
+  const tpl = buildTemplate(M, attributes)
+  const pHandle = M._malloc(4)
+  try {
+    const rv = M._C_CreateObject(hSession, tpl.ptr, attributes.length, pHandle)
+    if (rv !== 0) throw new Error(`C_CreateObject failed: ${rv.toString(16)}`)
+    return M.getValue(pHandle, 'i32')
+  } finally {
+    freeTemplate(M, tpl, attributes.length)
+    M._free(pHandle)
+  }
+}
+
 export const hsm_destroyObject = (M: SoftHSMModule, hSession: number, hObject: number): void => {
   checkRV(M._C_DestroyObject(hSession, hObject), 'C_DestroyObject')
 }
@@ -1548,6 +1593,10 @@ export const CKM_SHA512 = 0x270
 export const CKM_SHA3_256 = 0x2b0
 export const CKM_SHA3_512 = 0x2d0
 
+// KMAC mechanisms — vendor-defined (NIST SP 800-185, softhsmv3 extension)
+export const CKM_KMAC_128 = 0x80000100
+export const CKM_KMAC_256 = 0x80000101
+
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
 export const CKM_SLH_DSA = 0x2e
@@ -1577,6 +1626,7 @@ export const CKA_UNWRAP = 0x107
 export const CKA_DERIVE = 0x10c
 export const CKA_EC_PARAMS = 0x180
 export const CKA_EC_POINT = 0x181 // DER-encoded ECPoint (uncompressed or compressed)
+export const CKA_PUBLIC_KEY_INFO = 0x248 // SPKI-encoded public key (PKCS#11 v3.2)
 
 // SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
 // Ordering follows pkcs11t.h: interleaved SHA2/SHAKE per security level
@@ -1671,7 +1721,7 @@ const buildMech = (M: SoftHSMModule, type: number, paramPtr = 0, paramLen = 0): 
 }
 
 /** Copy bytes into WASM heap; returns pointer. Caller must free. */
-const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
+export const writeBytes = (M: SoftHSMModule, bytes: Uint8Array): number => {
   const ptr = M._malloc(bytes.length || 1)
   if (bytes.length) M.HEAPU8.set(bytes, ptr)
   return ptr
@@ -2714,14 +2764,16 @@ export const hsm_aesEncrypt = (
   hSession: number,
   keyHandle: number,
   plaintext: Uint8Array,
-  mode: 'gcm' | 'cbc' = 'gcm'
+  mode: 'gcm' | 'cbc' = 'gcm',
+  forcedIv?: Uint8Array,
+  aad?: Uint8Array
 ): { ciphertext: Uint8Array; iv: Uint8Array } => {
-  const iv = new Uint8Array(mode === 'gcm' ? 12 : 16)
-  crypto.getRandomValues(iv)
+  const iv = forcedIv || new Uint8Array(mode === 'gcm' ? 12 : 16)
+  if (!forcedIv) crypto.getRandomValues(iv)
   let mech: number
   const allocPtrs: number[] = []
   if (mode === 'gcm') {
-    const gcmP = buildGCMParams(M, iv)
+    const gcmP = buildGCMParams(M, iv, aad)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
   } else {
@@ -4335,5 +4387,119 @@ export const hsm_aesGcmUnwrapKey = (
     M._free(pWrapped)
     freeTemplate(M, tpl, template.length)
     M._free(phKey)
+  }
+}
+
+// ── KMAC helpers (NIST SP 800-185, softhsmv3 vendor extension) ───────────────
+
+/** Generate a GENERIC_SECRET key for KMAC-128/256 operations. Returns key handle. */
+export const hsm_generateKMACKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyBytes = 32
+): number => {
+  const mech = buildMech(M, CKM_GENERIC_SECRET_KEY_GEN)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_VALUE_LEN, ulongVal: keyBytes },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 8, hKeyPtr), 'C_GenerateKey(KMAC)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(mech)
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+  }
+}
+
+/** Compute KMAC via C_SignInit + C_Sign. mechType: CKM_KMAC_128 or CKM_KMAC_256. */
+export const hsm_kmac = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mechType: number = CKM_KMAC_256
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const dataPtr = writeBytes(M, data)
+  const macLenPtr = allocUlong(M)
+  let macPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, keyHandle), 'C_SignInit(KMAC)')
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, 0, macLenPtr), 'C_Sign(KMAC,len)')
+    const macLen = readUlong(M, macLenPtr)
+    macPtr = M._malloc(macLen)
+    writeUlong(M, macLenPtr, macLen)
+    checkRV(M._C_Sign(hSession, dataPtr, data.length, macPtr, macLenPtr), 'C_Sign(KMAC)')
+    return M.HEAPU8.slice(macPtr, macPtr + readUlong(M, macLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macLenPtr)
+    if (macPtr) M._free(macPtr)
+  }
+}
+
+/** Verify KMAC via C_VerifyInit + C_Verify. Returns true if MAC matches. */
+export const hsm_kmacVerify = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number,
+  data: Uint8Array,
+  mac: Uint8Array,
+  mechType: number = CKM_KMAC_256
+): boolean => {
+  const mech = buildMech(M, mechType)
+  const dataPtr = writeBytes(M, data)
+  const macPtr = writeBytes(M, mac)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, keyHandle), 'C_VerifyInit(KMAC)')
+    const rv = M._C_Verify(hSession, dataPtr, data.length, macPtr, mac.length) >>> 0
+    return rv === 0
+  } finally {
+    M._free(mech)
+    M._free(dataPtr)
+    M._free(macPtr)
+  }
+}
+
+// ── SPKI public key extraction (PKCS#11 v3.2) ───────────────────────────────
+
+/**
+ * Extract SPKI-encoded public key via C_GetAttributeValue(CKA_PUBLIC_KEY_INFO).
+ * Returns the DER-encoded SubjectPublicKeyInfo bytes.
+ */
+export const hsm_getPublicKeyInfo = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number
+): Uint8Array => {
+  const lenTpl = buildTemplate(M, [{ type: CKA_PUBLIC_KEY_INFO }])
+  checkRV(
+    M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1),
+    'C_GetAttributeValue(PUBLIC_KEY_INFO,len)'
+  )
+  const len = readUlong(M, lenTpl.ptr + 8)
+  freeTemplate(M, lenTpl, 1)
+
+  const valPtr = M._malloc(len)
+  const valTpl = buildTemplate(M, [{ type: CKA_PUBLIC_KEY_INFO, bytesPtr: valPtr, bytesLen: len }])
+  try {
+    checkRV(
+      M._C_GetAttributeValue(hSession, pubHandle, valTpl.ptr, 1),
+      'C_GetAttributeValue(PUBLIC_KEY_INFO)'
+    )
+    return M.HEAPU8.slice(valPtr, valPtr + len)
+  } finally {
+    freeTemplate(M, valTpl, 1)
+    M._free(valPtr)
   }
 }

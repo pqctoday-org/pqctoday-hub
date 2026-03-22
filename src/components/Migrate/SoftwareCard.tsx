@@ -3,7 +3,8 @@ import { motion } from 'framer-motion'
 import { ExternalLink, EyeOff, CheckSquare, Square } from 'lucide-react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
-import { renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { certsByProduct } from '../../data/certificationXrefData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
@@ -93,6 +94,7 @@ export const SoftwareCard = ({
       <div className="flex flex-wrap items-center gap-2 mb-3">
         {renderPqcSupport(item.pqcSupport)}
         {renderFipsStatus(item.fipsValidated)}
+        <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
       </div>
 
       {/* Metadata */}

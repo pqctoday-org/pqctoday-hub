@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { CheckCircle, ShieldAlert } from 'lucide-react'
+import { CheckCircle, ExternalLink, ShieldAlert } from 'lucide-react'
+import type { CertificationXref } from '../../types/MigrateTypes'
 
 /** Three-tier FIPS badge: Validated (green), Partial (amber), No (gray) */
 export const renderFipsStatus = (status: string): React.ReactElement => {
@@ -50,5 +51,70 @@ export const renderPqcSupport = (support: string): React.ReactElement => {
     >
       {support || 'Unknown'}
     </span>
+  )
+}
+
+const CERT_TYPE_CONFIG: Record<string, { label: string; className: string }> = {
+  'FIPS 140-3': {
+    label: 'FIPS',
+    className: 'bg-status-success text-status-success',
+  },
+  ACVP: {
+    label: 'ACVP',
+    className: 'bg-primary/10 text-primary border-primary/20',
+  },
+  'Common Criteria': {
+    label: 'CC',
+    className: 'bg-status-warning text-status-warning',
+  },
+}
+
+/**
+ * Compact clickable cert badges — one per cert type (FIPS, ACVP, CC).
+ * Links to the most recent cert of each type for the product.
+ */
+export const CertBadges: React.FC<{ certs: CertificationXref[] }> = ({ certs }) => {
+  if (!certs || certs.length === 0) return null
+
+  // Group by cert type, pick the most recent cert per type
+  const byType = new Map<string, CertificationXref>()
+  for (const cert of certs) {
+    const existing = byType.get(cert.certType)
+    if (!existing || cert.certDate > existing.certDate) {
+      byType.set(cert.certType, cert)
+    }
+  }
+
+  // Count certs per type for tooltip
+  const countByType = new Map<string, number>()
+  for (const cert of certs) {
+    countByType.set(cert.certType, (countByType.get(cert.certType) || 0) + 1)
+  }
+
+  return (
+    <>
+      {['FIPS 140-3', 'ACVP', 'Common Criteria'].map((type) => {
+        const cert = byType.get(type)
+        if (!cert) return null
+        const config = CERT_TYPE_CONFIG[type]
+        const count = countByType.get(type) || 0
+        const hasPqc = cert.pqcAlgorithms && !cert.pqcAlgorithms.startsWith('No ')
+        return (
+          <a
+            key={type}
+            href={cert.certLink}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
+            title={`${count} ${config.label} cert${count > 1 ? 's' : ''}${hasPqc ? ` — PQC: ${cert.pqcAlgorithms}` : ''}`}
+            className={`inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border font-semibold hover:opacity-80 transition-opacity ${config.className}`}
+          >
+            {config.label}
+            {count > 1 && <span className="font-normal opacity-70">({count})</span>}
+            <ExternalLink size={8} className="opacity-50" />
+          </a>
+        )
+      })}
+    </>
   )
 }

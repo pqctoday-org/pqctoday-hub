@@ -63,7 +63,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
       'Quantum computers could forge ICC signatures, undermining the entire offline trust model',
     ],
     pqcMigrationPath:
-      'FN-DSA-512 (Falcon, FIPS 206 draft) is preferred for DDA replacement due to compact signatures (~690 bytes) fitting constrained card NVM. ML-DSA-44 is an alternative but signatures are ~2,420 bytes.',
+      'FN-DSA-512 (Falcon, FIPS 206 draft) produces compact signatures (~690 bytes) that fit constrained card NVM. ML-DSA-44 signatures are ~2,420 bytes. FIPS 206 standardization for FN-DSA is pending.',
     prevalence: '~35% of active EMV cards',
   },
   {
@@ -76,7 +76,7 @@ export const CARD_AUTH_SPECS: CardAuthSpec[] = [
     offlineCapable: true,
     quantumVulnerable: true,
     description:
-      'The most secure offline method. CDA combines dynamic authentication with the Application Cryptogram (AC), binding card identity to the specific transaction. The card signs both its challenge response AND the transaction authorization data in a single RSA signature.',
+      'CDA (Combined Data Authentication) combines dynamic card authentication with the Application Cryptogram (AC), binding card identity to the specific transaction. The card signs both its challenge response AND the transaction authorization data in a single RSA signature, providing both card authentication and transaction integrity.',
     howItWorks: [
       'Terminal requests a Generate AC command from the card, including transaction data',
       'Card computes the Application Cryptogram (AC) using its symmetric session key (3DES/AES)',

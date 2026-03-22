@@ -2,20 +2,22 @@
 
 ## What This Is About
 
-IT operations teams are the people who keep digital systems running day to day. They manage servers, monitor networks, deploy software updates, handle security certificates, and respond when something breaks. The quantum threat affects them directly because nearly every system they manage uses encryption — and that encryption needs to be upgraded.
+IT operations teams are the people who keep digital systems running day to day. They manage servers, monitor networks, deploy software updates, handle security certificates, and respond when something breaks. The quantum threat affects them directly because nearly every piece of infrastructure relies on classical encryption.
 
-Think of an operations team like the maintenance crew for a large apartment building. They keep the lights on, the elevators running, and the locks working. Now imagine being told that every lock in the building — front doors, mailboxes, storage rooms, parking garages — will eventually become pickable, and they all need to be replaced. But residents still need to get in and out during the renovation, nothing can go down for too long, and the new locks work a little differently than the old ones. That is the challenge facing IT operations teams.
+Think of an operations team like the maintenance crew for a large apartment building. They keep the lights on, the elevators running, and the locks working. Now imagine being told that every lock in the building — front doors, mailboxes, storage rooms, parking garages — will eventually become pickable, and they all need to be replaced without locking anyone out.
 
 ## Why It Matters
 
-Operations teams manage the nuts and bolts of security infrastructure: TLS certificates that protect websites, SSH keys that allow secure remote access, VPN tunnels that connect offices, and the monitoring tools that watch for attacks. All of these use encryption that quantum computers will threaten.
+Operations teams manage the nuts and bolts of security infrastructure. To prepare for PQC, DevOps and IT teams must prioritize updating the foundational tools that administrators rely on every day. If the underlying tools aren't quantum-secure, the entire CI/CD pipeline and server infrastructure is at risk of "Harvest Now, Decrypt Later" or unauthorized access.
 
-The transition cannot happen all at once. Operations teams will need to run old and new encryption side by side for an extended period, which means managing twice as many certificates, testing compatibility at every step, and troubleshooting new kinds of failures. Any misstep during the changeover could knock critical systems offline or create security gaps.
+The transition cannot happen all at once. Operations teams will need to run old and new encryption side by side to ensure compatibility across internal tools, scripts, and server environments.
 
-## The Key Takeaway
+## The Key Takeaways
 
-IT operations teams need to start building familiarity with quantum-safe tools and processes now. The transition will be gradual and complex, and the teams who practice early — with test environments, pilot projects, and updated runbooks — will handle it far more smoothly than those who wait.
+1. **Update Core Tools**: DevOps must ensure that foundational utilities like OpenSSL and OpenSSH are upgraded to versions that support post-quantum key exchange (e.g., ML-KEM).
+2. **Secure SSH Access**: Upgrading SSH infrastructure to quantum-resistant hybrid algorithms is critical to prevent attackers from storing server access handshakes for future decryption.
+3. **PQC Code Signing**: CI/CD pipelines must transition to using post-quantum digital signatures (like ML-DSA) for code signing tools to guarantee that software updates cannot be spoofed by a quantum computer.
 
 ## What's Happening
 
-Major operating system vendors (Red Hat, Ubuntu, Microsoft) are adding quantum-safe algorithm support to their platforms. Certificate authorities are beginning to issue hybrid certificates that work with both old and new encryption. Monitoring and configuration management tools are being updated to detect and report on cryptographic algorithm usage, helping operations teams build inventories of what needs to change. Industry groups are publishing operational playbooks for the transition. Cloud providers are rolling out quantum-safe options for key management, TLS connections, and VPN services, giving operations teams concrete products to test against.
+Major operating system vendors (Red Hat, Ubuntu) are adding quantum-safe algorithm support to their platforms. Organizations are auditing their CI/CD pipelines to ensure their code signing tools and SSH access keys are ready for the PQC transition. Cloud providers are rolling out quantum-safe options for key management and VPN services, giving operations teams concrete products to test against.

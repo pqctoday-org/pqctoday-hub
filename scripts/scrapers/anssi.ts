@@ -10,7 +10,7 @@ const { PDFParse } = require('pdf-parse')
 const ANSSI_CATALOG_PDF_URL =
   'https://messervices.cyber.gouv.fr/visas/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi.pdf'
 
-export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
+export const scrapeANSSI = async (): Promise<ComplianceRecord[] | null> => {
   try {
     console.log('[ANSSI] Starting ANSSI scraper...')
 
@@ -53,8 +53,8 @@ export const scrapeANSSI = async (): Promise<ComplianceRecord[]> => {
       }
 
       if (newHash === cachedHash) {
-        console.log('[ANSSI] Catalog unchanged, skipping re-scrape')
-        return []
+        console.log('[ANSSI] Catalog unchanged — preserving existing records')
+        return null
       }
 
       // Cache successful download

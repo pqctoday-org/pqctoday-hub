@@ -14,10 +14,12 @@ import {
   AlertTriangle,
   Clock,
   Shield,
+  Cpu,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { Button } from '@/components/ui/button'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 // -- Local CollapsibleSection ------------------------------------------------
 
@@ -697,33 +699,43 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </div>
 
-      {/* -- Related Modules -------------------------------------------------- */}
-      <div className="glass-panel p-6">
-        <h3 className="text-sm font-bold text-foreground mb-3">Related Modules</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
             to="/learn/iot-ot-pqc"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            IoT &amp; OT Security
+            <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
+              <div className="text-xs text-muted-foreground">PQC for implantable devices, monitors, and hospital OT networks</div>
+            </div>
           </Link>
           <Link
             to="/learn/compliance-strategy"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            Compliance Strategy
+            <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
+              <div className="text-xs text-muted-foreground">HIPAA, FDA 510(k), and NIS2 quantum-readiness requirements</div>
+            </div>
           </Link>
           <Link
             to="/learn/pqc-risk-management"
-            className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
           >
-            <ArrowRight size={14} />
-            PQC Risk Management
+            <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
+              <div className="text-xs text-muted-foreground">Risk registers for patient data and long-lifecycle medical records</div>
+            </div>
           </Link>
         </div>
-      </div>
+      </section>
+      <VendorCoverageNotice migrateLayer="Application" />
 
       {/* -- Reading Complete ------------------------------------------------- */}
       <ReadingCompleteButton />

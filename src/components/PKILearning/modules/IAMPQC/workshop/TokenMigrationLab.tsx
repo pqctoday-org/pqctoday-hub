@@ -1,9 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
-import { Play, AlertTriangle, CheckCircle2, TrendingUp } from 'lucide-react'
+import React, { useState, useCallback, useRef } from 'react'
+import { Play, AlertTriangle, CheckCircle2, TrendingUp, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { SIGNATURE_SIZE_DATA, type SigningAlgorithm } from '../data/iamConstants'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_generateECKeyPair,
+  hsm_generateRSAKeyPair,
+  hsm_sign,
+  hsm_ecdsaSign,
+  hsm_rsaSign,
+  CKM_SHA256_RSA_PKCS,
+  CKM_ECDSA_SHA256,
+} from '@/wasm/softhsm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 const ALGORITHM_OPTIONS = Object.entries(SIGNATURE_SIZE_DATA).map(([id, data]) => ({
   id,
@@ -83,40 +97,148 @@ const ALGORITHM_NOTES: Record<SigningAlgorithm, string> = {
     'FIPS 204 NIST Level 5. For highest security requirements (government, NSS). Largest signature — evaluate HTTP/2 header compression and CDN configuration before deploying.',
 }
 
+const LIVE_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_GetAttributeValue',
+  'C_MessageSignInit',
+  'C_SignMessage',
+  'C_MessageSignFinal',
+  'C_SignInit',
+  'C_Sign',
+]
+
+/** Convert byte array to hex */
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+/** Base64url encode a string */
+const base64url = (s: string): string =>
+  btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
+
+/** Key handle cache for multi-algorithm comparison */
+interface KeyCache {
+  pubHandle: number
+  privHandle: number
+}
+
 export const TokenMigrationLab: React.FC = () => {
   const [selectedAlgorithm, setSelectedAlgorithm] = useState<SigningAlgorithm>('RS256')
   const [signed, setSigned] = useState(false)
   const [signing, setSigning] = useState(false)
+  const [liveSignatureHex, setLiveSignatureHex] = useState<string | null>(null)
+  const [liveSignatureBytes, setLiveSignatureBytes] = useState<number | null>(null)
+
+  // Live HSM state
+  const hsm = useHSM()
+  const keyCacheRef = useRef<Partial<Record<SigningAlgorithm, KeyCache>>>({})
 
   const algoData = SIGNATURE_SIZE_DATA[selectedAlgorithm]
   const isQuantumSafe = selectedAlgorithm.startsWith('ML-DSA')
+  const isLive = hsm.isReady && !!hsm.moduleRef.current
 
   const handleAlgorithmSelect = (id: string) => {
     if (id === 'All') return
     setSelectedAlgorithm(id as SigningAlgorithm)
     setSigned(false)
+    setLiveSignatureHex(null)
+    setLiveSignatureBytes(null)
   }
 
-  const handleSign = () => {
+  /** Generate or retrieve cached key pair for the selected algorithm */
+  const getOrGenerateKey = useCallback(
+    async (algo: SigningAlgorithm): Promise<KeyCache | null> => {
+      if (!hsm.isReady || !hsm.moduleRef.current) return null
+      const cached = keyCacheRef.current[algo]
+      if (cached) return cached
+
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+
+      let result: KeyCache
+      if (algo === 'RS256') {
+        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, 2048)
+        result = { pubHandle, privHandle }
+      } else if (algo === 'ES256') {
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+        result = { pubHandle, privHandle }
+      } else if (algo === 'ML-DSA-44') {
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 44)
+        result = { pubHandle, privHandle }
+      } else if (algo === 'ML-DSA-65') {
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+        result = { pubHandle, privHandle }
+      } else {
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 87)
+        result = { pubHandle, privHandle }
+      }
+
+      keyCacheRef.current[algo] = result
+      return result
+    },
+    [hsm]
+  )
+
+  const handleSign = useCallback(async () => {
     setSigning(true)
     setSigned(false)
-    const delay = algoData.timingMs * 10 + Math.random() * 5
-    setTimeout(() => {
-      setSigning(false)
+    setLiveSignatureHex(null)
+    setLiveSignatureBytes(null)
+
+    if (isLive) {
+      try {
+        const keys = await getOrGenerateKey(selectedAlgorithm)
+        if (!keys) throw new Error('Key generation failed')
+
+        const M = hsm.moduleRef.current as unknown as SoftHSMModule
+        const hSession = hsm.hSessionRef.current
+        const { privHandle } = keys
+
+        // Build JWT signing input: base64url(header).base64url(payload)
+        const signingInput = `${base64url(JWT_HEADERS[selectedAlgorithm])}.${base64url(JWT_PAYLOAD)}`
+
+        let sig: Uint8Array
+        if (selectedAlgorithm === 'RS256') {
+          sig = hsm_rsaSign(M, hSession, privHandle, signingInput, CKM_SHA256_RSA_PKCS)
+        } else if (selectedAlgorithm === 'ES256') {
+          sig = hsm_ecdsaSign(M, hSession, privHandle, signingInput, CKM_ECDSA_SHA256)
+        } else {
+          // ML-DSA variants use message signing (hsm_sign)
+          sig = hsm_sign(M, hSession, privHandle, signingInput)
+        }
+
+        setLiveSignatureHex(toHex(sig))
+        setLiveSignatureBytes(sig.length)
+        setSigned(true)
+      } catch (err) {
+        console.error('[TokenMigrationLab] live sign error:', err)
+        // Fall back to mock on error
+        const delay = algoData.timingMs * 10 + Math.random() * 5
+        await new Promise((resolve) => setTimeout(resolve, delay))
+        setSigned(true)
+      }
+    } else {
+      const delay = algoData.timingMs * 10 + Math.random() * 5
+      await new Promise((resolve) => setTimeout(resolve, delay))
       setSigned(true)
-    }, delay)
-  }
+    }
+    setSigning(false)
+  }, [selectedAlgorithm, algoData, isLive, hsm, getOrGenerateKey])
+
+  const displayedSigBytes = liveSignatureBytes ?? algoData.bytes
+  const displayedSigHex = liveSignatureHex ?? (signed ? MOCK_SIGNATURES[selectedAlgorithm] : null)
 
   const rs256Size = SIGNATURE_SIZE_DATA.RS256.bytes
-  const sizeRatio = (algoData.bytes / rs256Size).toFixed(1)
+  const sizeRatio = (displayedSigBytes / rs256Size).toFixed(1)
 
   const tokenSizeEstimate = {
     header: JWT_HEADERS[selectedAlgorithm].length,
     payload: JWT_PAYLOAD.length,
-    signature: algoData.bytes,
+    signature: displayedSigBytes,
     total:
       Math.round((JWT_HEADERS[selectedAlgorithm].length + JWT_PAYLOAD.length) * 1.4) +
-      algoData.bytes,
+      displayedSigBytes,
   }
 
   return (
@@ -128,6 +250,9 @@ export const TokenMigrationLab: React.FC = () => {
           quantum-safe ML-DSA variants to observe signature size impact and header changes.
         </p>
       </div>
+
+      {/* Live HSM Toggle */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
       {/* Algorithm Selector */}
       <div className="glass-panel p-5">
@@ -199,19 +324,23 @@ export const TokenMigrationLab: React.FC = () => {
           <div
             className={`text-xs font-bold mb-2 uppercase tracking-wide ${isQuantumSafe ? 'text-status-success' : 'text-status-error'}`}
           >
-            Signature ({algoData.bytes.toLocaleString()} bytes)
+            Signature ({displayedSigBytes.toLocaleString()} bytes)
           </div>
-          {signed ? (
+          {signed && displayedSigHex ? (
             <>
               <pre
                 className={`text-[10px] font-mono bg-muted/50 rounded p-3 border overflow-x-auto whitespace-pre-wrap break-all ${isQuantumSafe ? 'text-status-success border-status-success/30' : 'text-status-error border-status-error/30'}`}
               >
-                {MOCK_SIGNATURES[selectedAlgorithm]}
+                {liveSignatureHex
+                  ? `${liveSignatureHex.slice(0, 80)}...${liveSignatureHex.slice(-20)}`
+                  : displayedSigHex}
               </pre>
               <div className="mt-2 flex items-center gap-2">
                 <CheckCircle2 size={12} className="text-status-success" aria-hidden="true" />
                 <span className="text-[10px] text-status-success font-medium">
-                  Signed in ~{algoData.timingMs}ms
+                  {liveSignatureHex
+                    ? `Signed via PKCS#11 v3.2 — ${displayedSigBytes.toLocaleString()} bytes`
+                    : `Signed in ~${algoData.timingMs}ms`}
                 </span>
               </div>
             </>
@@ -233,10 +362,29 @@ export const TokenMigrationLab: React.FC = () => {
           variant="gradient"
           className="flex items-center gap-2"
         >
-          <Play size={14} fill="currentColor" aria-hidden="true" />
-          {signing ? 'Signing...' : 'Sign Token'}
+          {signing ? (
+            <>
+              <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+              Signing...
+            </>
+          ) : (
+            <>
+              <Play size={14} fill="currentColor" aria-hidden="true" />
+              {isLive ? 'Sign Token (Live WASM)' : 'Sign Token'}
+            </>
+          )}
         </Button>
       </div>
+
+      {/* PKCS#11 Call Log */}
+      {hsm.isReady && hsm.log.length > 0 && (
+        <Pkcs11LogPanel
+          log={hsm.log}
+          onClear={hsm.clearLog}
+          title="PKCS#11 Call Log"
+          defaultOpen={false}
+        />
+      )}
 
       {/* Size Impact Analysis */}
       <div className="glass-panel p-5">
@@ -248,7 +396,7 @@ export const TokenMigrationLab: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
             <div className="text-xl font-bold text-foreground">
-              {algoData.bytes.toLocaleString()}
+              {displayedSigBytes.toLocaleString()}
             </div>
             <div className="text-[10px] text-muted-foreground">Signature bytes</div>
           </div>
@@ -331,6 +479,17 @@ export const TokenMigrationLab: React.FC = () => {
             </li>
           </ul>
         </div>
+      </div>
+
+      {/* Educational note */}
+      <div className="bg-muted/50 rounded-lg p-4 border border-border">
+        <p className="text-xs text-muted-foreground">
+          <strong>Note:</strong>{' '}
+          {isLive
+            ? 'All signing operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Real key pairs are generated and cached per algorithm. Signature sizes match the actual FIPS 204 / PKCS#1 / ECDSA specifications.'
+            : 'In simulation mode, signature data is representative. Enable Live WASM mode to execute real PKCS#11 v3.2 signing operations across all five algorithms.'}{' '}
+          Generated keys are for educational purposes only.
+        </p>
       </div>
     </div>
   )

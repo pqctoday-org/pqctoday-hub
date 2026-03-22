@@ -35,28 +35,51 @@ function getRandomUUID(): string {
   })
 }
 
+import {
+  getSoftHSMRustModule,
+  hsm_initialize,
+  hsm_getFirstSlot,
+  hsm_importGenericSecret,
+  hsm_kbkdf,
+} from '../../../../../wasm/softhsm'
+
 async function sp800108CounterKDF(
   keyMaterialHex: string,
   label: string,
   context: string,
   outputBytes: number
 ): Promise<string> {
-  // Simulate NIST SP 800-108 counter-mode KDF using HMAC-SHA-256 as PRF
-  // K(i) = PRF(KI, [i]_2 || Label || 0x00 || Context || [L]_2)
-  // We approximate using Web Crypto HKDF with label+context as info
   const ikm = new Uint8Array(32)
   for (let i = 0; i < 32; i++) ikm[i] = parseInt(keyMaterialHex.slice(i * 2, i * 2 + 2), 16)
 
-  const keyMaterial = await crypto.subtle.importKey('raw', ikm, 'HKDF', false, ['deriveBits'])
-  const info = new TextEncoder().encode(`${label}\x00${context}`)
-  const bits = await crypto.subtle.deriveBits(
-    { name: 'HKDF', hash: 'SHA-256', salt: new Uint8Array(32), info },
-    keyMaterial,
-    outputBytes * 8
-  )
-  return Array.from(new Uint8Array(bits))
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
+  // NIST SP 800-108 fixed input = Label || 0x00 || Context
+  const fixedInput = new TextEncoder().encode(`${label}\x00${context}`)
+
+  const M = await getSoftHSMRustModule()
+  
+  try {
+    hsm_initialize(M)
+  } catch (e: any) {
+    if (!e.message.includes('CKR_CRYPTOKI_ALREADY_INITIALIZED')) throw e
+  }
+
+  const slot = hsm_getFirstSlot(M)
+  const sessionPtr = M._malloc(4)
+  M._C_OpenSession(slot, 0x0006, 0, 0, sessionPtr) // CKF_SERIAL_SESSION(0x04) | CKF_RW_SESSION(0x02)
+  const hSession = (M.getValue(sessionPtr, 'i32') >>> 0)
+  M._free(sessionPtr)
+
+  try {
+    const baseKeyHandle = hsm_importGenericSecret(M, hSession, ikm)
+    // Call HSM C_DeriveKey via CKM_SP800_108_COUNTER_KDF with PRF CKM_SHA256_HMAC (0x251)
+    const derived = hsm_kbkdf(M, hSession, baseKeyHandle, 0x00000251, fixedInput, outputBytes)
+    M._C_DestroyObject(hSession, baseKeyHandle)
+    return Array.from(derived)
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
+  } finally {
+    M._C_CloseSession(hSession)
+  }
 }
 
 interface DemoState {

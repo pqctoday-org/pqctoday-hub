@@ -24,6 +24,13 @@ export interface RetryConfig {
   maxDelayMs?: number
 }
 
+// NIST-specific retry config — NIST rate-limits aggressively; use longer delays
+export const NIST_RETRY_CONFIG: RetryConfig = {
+  maxRetries: 4,
+  baseDelayMs: 2000,
+  maxDelayMs: 30000,
+}
+
 // Helper: Fetch with Retry and Exponential Backoff
 export const fetchWithRetry = async (url: string, config: RetryConfig = {}): Promise<string> => {
   const { maxRetries = 3, baseDelayMs = 1000, maxDelayMs = 30000 } = config

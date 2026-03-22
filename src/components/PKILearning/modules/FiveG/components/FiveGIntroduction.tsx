@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface FiveGIntroductionProps {
   onNavigateToSimulate: () => void
@@ -416,6 +417,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </Link>
         </div>
       </section>
+      <VendorCoverageNotice migrateLayer="Network" />
       <ReadingCompleteButton />
     </div>
   )

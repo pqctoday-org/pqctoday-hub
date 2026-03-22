@@ -70,63 +70,81 @@ const main = async () => {
 
   console.log(`[Master Scraper] Loaded ${currentData.length} existing records.`)
 
-  // Define Tasks
-  const tasks: Promise<ComplianceRecord[]>[] = []
+  // Define Tasks — each entry tracks the source key and its scraper promise
+  // Scrapers may return null to signal "no change, preserve existing data"
+  interface ScraperTask {
+    sourceKey: string
+    promise: Promise<ComplianceRecord[] | null>
+  }
+  const scraperTasks: ScraperTask[] = []
   const activeSources = new Set<string>()
 
   if (runAll || args.includes('--nist')) {
     console.log('[Master Scraper] Queueing NIST Scraper...')
-    activeSources.add('NIST') // Source string in type is 'NIST'
-    tasks.push(scrapeNIST())
+    activeSources.add('NIST')
+    scraperTasks.push({ sourceKey: 'NIST', promise: scrapeNIST() })
   }
   if (runAll || args.includes('--acvp')) {
     console.log('[Master Scraper] Queueing ACVP Scraper...')
-    activeSources.add('ACVP') // Note: ACVP scraper returns source='NIST' usually but let's check scraper implementation
-    tasks.push(scrapeACVP())
+    activeSources.add('ACVP')
+    scraperTasks.push({ sourceKey: 'ACVP', promise: scrapeACVP() })
   }
   if (runAll || args.includes('--cc')) {
     console.log('[Master Scraper] Queueing CC Scraper...')
     activeSources.add('Common Criteria')
-    tasks.push(scrapeCC())
+    scraperTasks.push({ sourceKey: 'Common Criteria', promise: scrapeCC() })
   }
   if (runAll || args.includes('--anssi')) {
     console.log('[Master Scraper] Queueing ANSSI Scraper...')
     activeSources.add('ANSSI')
-    tasks.push(scrapeANSSI())
+    scraperTasks.push({ sourceKey: 'ANSSI', promise: scrapeANSSI() })
   }
   if (runAll || args.includes('--enisa')) {
     console.log('[Master Scraper] Queueing ENISA Scraper...')
     activeSources.add('ENISA')
-    tasks.push(scrapeENISA())
+    scraperTasks.push({ sourceKey: 'ENISA', promise: scrapeENISA() })
   }
 
-  if (tasks.length === 0) {
+  if (scraperTasks.length === 0) {
     console.log('No scrapers selected.')
     return
   }
 
-  // Execute
-  const results = await Promise.all(tasks)
-  const newRecords = results.flat()
+  // Execute all scrapers in parallel
+  const results = await Promise.all(scraperTasks.map((t) => t.promise))
 
-  console.log(`[Master Scraper] Collected ${newRecords.length} new records.`)
+  // Process results: null = "unchanged, preserve existing"; [] = "genuine empty"
+  const newRecords: ComplianceRecord[] = []
+  const skippedSources = new Set<string>()
+
+  for (let i = 0; i < scraperTasks.length; i++) {
+    const task = scraperTasks[i]
+    const result = results[i]
+
+    if (result === null) {
+      // Scraper returned null — data unchanged, preserve existing records for this source
+      console.log(`[Master Scraper] ${task.sourceKey}: unchanged — preserving existing records`)
+      skippedSources.add(task.sourceKey)
+      activeSources.delete(task.sourceKey)
+    } else {
+      console.log(`[Master Scraper] ${task.sourceKey}: collected ${result.length} records`)
+      newRecords.push(...result)
+    }
+  }
+
+  console.log(`[Master Scraper] Collected ${newRecords.length} new records (${skippedSources.size} source(s) unchanged).`)
 
   // Merge Strategy:
-  // 1. Remove old records from the ACTIVE sources we just scraped.
-  // 2. Keep records from INACTIVE sources (e.g. if we only ran --anssi, keep NIST).
+  // 1. Remove old records from ACTIVE sources that returned fresh data.
+  // 2. Keep records from INACTIVE sources AND sources that returned null (unchanged).
   // 3. Add new records.
 
-  // Identify sources provided by new records to be safe, or use activeSources logic
-  // But 'ACVP' vs 'NIST' source string might vary.
-  // The safest way is to filter out based on the 'source' or 'type' field that the scrapers return.
-
-  // Check what scrapers return:
+  // Scrapers return:
   // NIST -> source: 'NIST', type: 'FIPS 140-3'
-  // ACVP -> source: 'NIST', type: 'ACVP' (Based on acvp.ts implementation)
+  // ACVP -> source: 'NIST', type: 'ACVP'
   // CC -> source: 'Common Criteria'
-  // ANSSI -> source: 'ANSSI'
-
-  // So we filter based on what we INTENDED to update.
+  // ANSSI -> source: 'ANSSI', type: 'Common Criteria'
+  // ENISA -> source: 'ENISA'
   let keptData = currentData
 
   if (activeSources.has('NIST')) {
@@ -136,10 +154,7 @@ const main = async () => {
     keptData = keptData.filter((r) => r.type !== 'ACVP')
   }
   if (activeSources.has('Common Criteria')) {
-    keptData = keptData.filter((r) => r.type !== 'Common Criteria' || r.source === 'ANSSI') // Don't remove ANSSI if it mimics CC type?
-    // Wait, ANSSI scraper returns: source: 'ANSSI', type: 'Common Criteria'.
-    // So if we run --cc (Global CC), we should remove source='Common Criteria'.
-    // If we run --anssi, we remove source='ANSSI'.
+    keptData = keptData.filter((r) => r.type !== 'Common Criteria' || r.source === 'ANSSI')
     keptData = keptData.filter((r) => r.source !== 'Common Criteria')
   }
   if (activeSources.has('ANSSI')) {
@@ -165,7 +180,7 @@ const main = async () => {
 
   // Health Check Validation
   console.log('\n[Master Scraper] Running health checks...')
-  const healthResults = validateRecordCounts(uniqueData, currentData)
+  const healthResults = validateRecordCounts(uniqueData, currentData, skippedSources)
   const hasFailures = logHealthChecks(healthResults)
 
   if (hasFailures && !force) {

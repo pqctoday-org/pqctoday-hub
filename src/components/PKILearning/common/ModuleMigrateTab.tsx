@@ -3,6 +3,8 @@ import { ExternalLink, Package, CheckCircle, ShieldAlert } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { getMigrateItemsForModule } from '@/data/migrateData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
+import { CertBadges } from '@/components/Migrate/migrateHelpers'
+import { certsByProduct } from '@/data/certificationXrefData'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 interface ModuleMigrateTabProps {
@@ -138,9 +140,10 @@ export function ModuleMigrateTab({ moduleId }: ModuleMigrateTabProps) {
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-1 shrink-0 flex-wrap justify-end">
                     {renderPqcBadge(product.pqcSupport)}
                     {renderFipsBadge(product.fipsValidated)}
+                    <CertBadges certs={certsByProduct.get(product.softwareName) || []} />
                   </div>
                 </div>
 

@@ -437,7 +437,7 @@ export const CLOUD_SECRETS_PROVIDERS: CloudSecretsProvider[] = [
     kubernetesIntegration: 'External Secrets Operator + GCP provider / Config Connector',
     fipsMode: false,
     roadmapNote:
-      'PQC in Secret Manager relies on Cloud KMS CMEK configuration. Cloud KMS has the broadest PQC preview (ML-KEM, ML-DSA, X-Wing, SLH-DSA). FIPS mode not available for Secret Manager directly.',
+      'PQC in Secret Manager relies on Cloud KMS CMEK configuration. Cloud KMS supports ML-KEM-768, ML-KEM-1024, X-Wing, ML-DSA-65, and SLH-DSA (preview). FIPS mode not available for Secret Manager directly.',
   },
   {
     id: 'delinea-secret-server',

@@ -53,13 +53,13 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
     },
     {
       id: 'vendor-selection',
-      title: '3. Vendor Selection — Given requirements, identify the best vendor',
+      title: '3. Vendor Selection — Given requirements, identify matching vendors',
       description:
-        'Open the Vendor Comparison workshop. Filter vendors by "production" status and sort by maturity score. For a regulated financial institution requiring FIPS 140-3 Level 3 and ML-KEM + ML-DSA support, identify which vendor scores highest. Expand the vendor row to check hybrid support and side-channel countermeasures.',
+        'Open the Vendor Comparison workshop. Filter vendors by "production" status. For a regulated financial institution requiring FIPS 140-3 Level 3 and ML-KEM + ML-DSA support, identify which vendors meet those criteria. Expand each vendor row to check hybrid support and side-channel countermeasures.',
       badge: 'Vendor',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Thales Luna 7 (maturity score 95) leads for production ML-KEM + ML-DSA with FIPS 140-3 Level 3. However, Entrust nShield 5 (score 90) offers the broadest algorithm portfolio including SLH-DSA and XMSS — critical if CNSA 2.0 stateful signatures are required.',
+        'Thales Luna 7 and Entrust nShield 5 both have FIPS 140-3 Level 3 certification and GA ML-KEM + ML-DSA support. Entrust nShield 5 also supports SLH-DSA and XMSS, which are required for CNSA 2.0 stateful signature use cases.',
       config: { step: 1 },
     },
     {
@@ -70,7 +70,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Deployment',
       badgeColor: 'bg-success/20 text-success border-success/50',
       observe:
-        'No cloud HSM currently supports native PKCS#11 ML-KEM encapsulation in firmware. AWS CloudHSM offers ML-DSA preview via SDK only. For ML-KEM key exchange, an on-prem HSM (Thales, Entrust, or Utimaco) is required today. Cloud HSMs lag on-prem by 12-18 months.',
+        'No cloud HSM currently supports native PKCS#11 ML-KEM encapsulation in firmware. AWS CloudHSM offers ML-DSA preview via SDK only. For ML-KEM key exchange, an on-prem HSM (Thales, Entrust, Utimaco, or Crypto4A) is required today. Azure Dedicated HSM uses the same Thales Luna 7 hardware and gains full PQC once firmware is upgraded via Azure Support.',
       config: { step: 1 },
     },
     {

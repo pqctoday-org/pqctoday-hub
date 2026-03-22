@@ -10,8 +10,9 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
-import { CuriousSummaryBanner } from './common/CuriousSummaryBanner'
+import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG } from './moduleData'
+import { usePersonaStore } from '../../store/usePersonaStore'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -220,6 +221,11 @@ const NetworkSecurityPQCModule = lazyWithRetry(() =>
     default: module.NetworkSecurityPQCModule,
   }))
 )
+const PQCTestingValidationModule = lazyWithRetry(() =>
+  import('./modules/PQCTestingValidation').then((module) => ({
+    default: module.PQCTestingValidationModule,
+  }))
+)
 const IAMPQCModule = lazyWithRetry(() =>
   import('./modules/IAMPQC').then((module) => ({
     default: module.IAMPQCModule,
@@ -246,6 +252,18 @@ export const PKILearningView: React.FC = () => {
   // Show progress sidebar for module pages (not dashboard, not quiz)
   const showSidebar = !isDashboard && moduleId !== 'quiz' && moduleId !== ''
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
+
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
+
+  console.log('[DEBUG] PKILearningView render:', {
+    moduleId,
+    showSidebar,
+    experienceLevel,
+    selectedPersona,
+    isCuriousMode
+  })
 
   return (
     <div className="animate-fade-in">
@@ -306,7 +324,7 @@ export const PKILearningView: React.FC = () => {
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
         {/* Progress sidebar — mobile accordion (order-first) then desktop aside (order-last) */}
-        {showSidebar && (
+        {showSidebar && !isCuriousMode && (
           <div className="order-first lg:order-last w-full lg:w-auto shrink-0">
             <ModuleProgressSidebar moduleId={moduleId} />
           </div>
@@ -315,10 +333,12 @@ export const PKILearningView: React.FC = () => {
         {/* Main module content */}
         <div className="flex-1 min-w-0 order-last lg:order-first">
           {/* Dual progress header bar — above all module tabs */}
-          {showSidebar && <ModuleProgressHeader moduleId={moduleId} />}
-          {/* Curious mode: plain-language summary banner */}
-          {showSidebar && <CuriousSummaryBanner moduleId={moduleId} />}
-          <Suspense
+          {showSidebar && !isCuriousMode && <ModuleProgressHeader moduleId={moduleId} />}
+          
+          {isCuriousMode && showSidebar ? (
+            <CuriousModuleView moduleId={moduleId} />
+          ) : (
+            <Suspense
             fallback={
               <div className="flex h-64 w-full items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
@@ -377,12 +397,14 @@ export const PKILearningView: React.FC = () => {
               <Route path="ops-quantum-impact" element={<OpsQuantumImpactModule />} />
               <Route path="research-quantum-impact" element={<ResearchQuantumImpactModule />} />
               <Route path="network-security-pqc" element={<NetworkSecurityPQCModule />} />
+              <Route path="pqc-testing-validation" element={<PQCTestingValidationModule />} />
               <Route path="iam-pqc" element={<IAMPQCModule />} />
               <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
               <Route path="os-pqc" element={<OSPQCModule />} />
             </Routes>
           </Suspense>
-          {showSidebar && (
+          )}
+          {showSidebar && !isCuriousMode && (
             <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
               Learning module content can be inaccurate. Please double-check its information. Report
               inaccuracies in{' '}

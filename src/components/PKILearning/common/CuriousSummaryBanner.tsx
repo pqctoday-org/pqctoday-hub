@@ -4,6 +4,9 @@ import { ChevronDown, ChevronUp, Lightbulb } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { usePersonaStore } from '../../../store/usePersonaStore'
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+
+
 
 /**
  * Eagerly load all curious-summary.md files at bundle time.
@@ -84,17 +87,20 @@ for (const [filePath, content] of Object.entries(curiousSummaries)) {
 
 interface CuriousSummaryBannerProps {
   moduleId: string
+  isFullPage?: boolean
 }
 
 /**
  * Collapsible "In Simple Terms" banner shown above module tabs when
  * experienceLevel === 'curious'. Renders the module's curious-summary.md.
  */
-export const CuriousSummaryBanner = ({ moduleId }: CuriousSummaryBannerProps) => {
+export const CuriousSummaryBanner = ({ moduleId, isFullPage = false }: CuriousSummaryBannerProps) => {
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
   const [expanded, setExpanded] = useState(true)
 
-  if (experienceLevel !== 'curious') return null
+  if (!isCuriousMode && !isFullPage) return null
 
   const content = contentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
   if (!content) return null
@@ -103,28 +109,49 @@ export const CuriousSummaryBanner = ({ moduleId }: CuriousSummaryBannerProps) =>
   const body = content.replace(/^#\s+.+\n+/, '')
 
   return (
-    <div className="glass-panel border-l-4 border-l-amber-500/50 mb-3 overflow-hidden">
-      <button
-        type="button"
-        onClick={() => setExpanded((e) => !e)}
-        className="flex items-center justify-between w-full px-4 py-3 text-left"
-      >
-        <span className="flex items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
-          <Lightbulb size={16} className="shrink-0" />
-          In Simple Terms
-        </span>
-        {expanded ? (
-          <ChevronUp size={16} className="text-muted-foreground shrink-0" />
-        ) : (
-          <ChevronDown size={16} className="text-muted-foreground shrink-0" />
-        )}
-      </button>
+    <div className={isFullPage ? 'w-full' : 'glass-panel border-l-4 border-l-amber-500/50 mb-3 overflow-hidden'}>
+      {!isFullPage && (
+        <button
+          type="button"
+          onClick={() => setExpanded((e) => !e)}
+          className="flex items-center justify-between w-full px-4 py-3 text-left"
+        >
+          <span className="flex items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+            <Lightbulb size={16} className="shrink-0" />
+            In Simple Terms
+          </span>
+          {expanded ? (
+            <ChevronUp size={16} className="text-muted-foreground shrink-0" />
+          ) : (
+            <ChevronDown size={16} className="text-muted-foreground shrink-0" />
+          )}
+        </button>
+      )}
 
-      {expanded && (
-        <div className="px-4 pb-4 -mt-1">
-          <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
-          </div>
+      {(expanded || isFullPage) && (
+        <div className={isFullPage ? '' : 'px-4 pb-4 -mt-1'}>
+          <Tabs defaultValue="infographic" className="w-full">
+            <TabsList className="w-full sm:w-auto mb-4 bg-muted/50 border border-border">
+              <TabsTrigger value="infographic">Infographic</TabsTrigger>
+              <TabsTrigger value="text">Text (In Simple Terms)</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="infographic" className="mt-0">
+              <div className="w-full flex justify-center bg-black/20 rounded-lg border border-border p-3">
+                <img 
+                  src={`/images/infographics/${moduleId}.png`} 
+                  alt={`Infographic in simple terms for ${moduleId}`}
+                  className="max-w-full h-auto rounded-md shadow-md"
+                />
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="text" className="mt-0">
+              <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       )}
     </div>

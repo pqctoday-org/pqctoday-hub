@@ -443,6 +443,12 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'Research data HNDL exposure, institutional infrastructure, PQC algorithm research opportunities.',
       icon: 'Microscope',
     },
+    'pqc-testing-validation': {
+      label: 'PQC Testing & Validation',
+      description:
+        'Passive discovery, active scanning, performance benchmarking, interoperability testing, TVLA, and test strategy design.',
+      icon: 'ScanSearch',
+    },
   }
 
 // Compute question counts dynamically from loaded data

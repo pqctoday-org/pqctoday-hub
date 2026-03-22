@@ -191,7 +191,7 @@ export const IDSSignatureUpdater: React.FC = () => {
                   aria-label={`${rule.enabled ? 'Disable' : 'Enable'} ${rule.name}`}
                 >
                   <div
-                    className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${
+                    className={`absolute top-1 w-4 h-4 rounded-full bg-background transition-all ${
                       rule.enabled ? 'left-5' : 'left-1'
                     }`}
                   />

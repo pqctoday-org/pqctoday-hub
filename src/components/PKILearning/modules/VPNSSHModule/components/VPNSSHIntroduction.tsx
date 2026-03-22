@@ -3,6 +3,7 @@ import React from 'react'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 import {
   Shield,
   ArrowRight,
@@ -445,6 +446,7 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
           Step through IKEv2 and SSH handshakes, compare classical vs hybrid vs pure PQC modes.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Network" />
       <ReadingCompleteButton />
     </div>
   )

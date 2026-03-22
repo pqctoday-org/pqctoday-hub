@@ -15,7 +15,22 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
-import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_generateRSAKeyPair,
+  hsm_generateECKeyPair,
+  hsm_generateEdDSAKeyPair,
+  hsm_generateSLHDSAKeyPair,
+  hsm_extractKeyValue,
+  hsm_sign,
+  hsm_rsaSign,
+  hsm_ecdsaSign,
+  hsm_eddsaSign,
+  hsm_slhdsaSign,
+  CKP_SLH_DSA_SHA2_256S,
+  CKP_SLH_DSA_SHA2_256F,
+} from '@/wasm/softhsm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -243,28 +258,46 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
         log: `$ ${keyCmd}\nRoot CA private key generated and saved.`,
       })
 
-      // HSM demo — parallel PKCS#11 key generation when ML-DSA + live mode active
-      if (algoId === 'mldsa' && hsm.isReady && hsm.moduleRef.current) {
+      // HSM demo — parallel PKCS#11 key generation for all supported algorithms
+      if (hsm.isReady && hsm.moduleRef.current) {
         try {
-          const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
-            hsm.moduleRef.current,
-            hsm.hSessionRef.current,
-            87
-          )
-          liveKeyRef.current = { pubHandle, privHandle }
-          const pubKeyBytes = hsm_extractKeyValue(
-            hsm.moduleRef.current,
-            hsm.hSessionRef.current,
-            pubHandle
-          )
-          setOutput(
-            (prev) =>
-              prev +
-              `\n[PKCS#11] ML-DSA-87 key pair generated in SoftHSM3 WASM:\n` +
-              `  C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_87)\n` +
-              `  pubHandle=0x${pubHandle.toString(16).padStart(8, '0')} · ${pubKeyBytes.length} bytes (CKA_VALUE)\n` +
-              `  privHandle=0x${privHandle.toString(16).padStart(8, '0')} · CKA_EXTRACTABLE=FALSE\n`
-          )
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const hSession = hsm.hSessionRef.current
+          let handles: { pubHandle: number; privHandle: number } | null = null
+          let mechLabel = ''
+
+          if (algoId === 'rsa') {
+            handles = hsm_generateRSAKeyPair(M, hSession, 4096)
+            mechLabel = 'CKM_RSA_PKCS_KEY_PAIR_GEN, 4096-bit'
+          } else if (algoId === 'ecdsa') {
+            handles = hsm_generateECKeyPair(M, hSession, 'P-521')
+            mechLabel = 'CKM_EC_KEY_PAIR_GEN, P-521'
+          } else if (algoId === 'eddsa') {
+            handles = hsm_generateEdDSAKeyPair(M, hSession, 'Ed448')
+            mechLabel = 'CKM_EC_EDWARDS_KEY_PAIR_GEN, Ed448'
+          } else if (algoId === 'mldsa') {
+            handles = hsm_generateMLDSAKeyPair(M, hSession, 87)
+            mechLabel = 'CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_87'
+          } else if (algoId === 'slhdsa256s') {
+            handles = hsm_generateSLHDSAKeyPair(M, hSession, CKP_SLH_DSA_SHA2_256S)
+            mechLabel = 'CKM_SLH_DSA_KEY_PAIR_GEN, CKP_SLH_DSA_SHA2_256S'
+          } else if (algoId === 'slhdsa256f') {
+            handles = hsm_generateSLHDSAKeyPair(M, hSession, CKP_SLH_DSA_SHA2_256F)
+            mechLabel = 'CKM_SLH_DSA_KEY_PAIR_GEN, CKP_SLH_DSA_SHA2_256F'
+          }
+
+          if (handles) {
+            liveKeyRef.current = handles
+            const pubKeyBytes = hsm_extractKeyValue(M, hSession, handles.pubHandle)
+            setOutput(
+              (prev) =>
+                prev +
+                `\n[PKCS#11] ${algo.name} key pair generated in SoftHSM3 WASM:\n` +
+                `  C_GenerateKeyPair(${mechLabel})\n` +
+                `  pubHandle=0x${handles.pubHandle.toString(16).padStart(8, '0')} · ${pubKeyBytes.length} bytes (CKA_VALUE)\n` +
+                `  privHandle=0x${handles.privHandle.toString(16).padStart(8, '0')} · CKA_EXTRACTABLE=FALSE\n`
+            )
+          }
         } catch {
           // Non-fatal — log captured by createLoggingProxy
         }
@@ -549,21 +582,42 @@ x509_extensions = v3_ca
         // HSM demo — certificate signing via PKCS#11 when live mode active
         if (hsm.isReady && hsm.moduleRef.current && liveKeyRef.current) {
           try {
+            const M = hsm.moduleRef.current as unknown as SoftHSMModule
+            const hSession = hsm.hSessionRef.current
             const cn = attributes.find((a) => a.id === 'CN')?.value || 'Root CA'
-            const tbsPayload = `TBSCertificate(subject=CN=${cn},algorithm=ML-DSA-87)`
-            const sigBytes = hsm_sign(
-              hsm.moduleRef.current,
-              hsm.hSessionRef.current,
-              liveKeyRef.current.privHandle,
-              tbsPayload
-            )
+            const tbsPayload = `TBSCertificate(subject=CN=${cn},algorithm=${algoName})`
+
+            // Dispatch to the correct signing function based on algorithm
+            const currentAlgoId = selectedKeyId.startsWith('new-')
+              ? selectedKeyId.replace('new-', '')
+              : ''
+            let sigBytes: Uint8Array
+            let mechLabel: string
+
+            if (currentAlgoId === 'rsa') {
+              sigBytes = hsm_rsaSign(M, hSession, liveKeyRef.current.privHandle, tbsPayload)
+              mechLabel = 'CKM_SHA256_RSA_PKCS'
+            } else if (currentAlgoId === 'ecdsa') {
+              sigBytes = hsm_ecdsaSign(M, hSession, liveKeyRef.current.privHandle, tbsPayload)
+              mechLabel = 'CKM_ECDSA_SHA256'
+            } else if (currentAlgoId === 'eddsa') {
+              sigBytes = hsm_eddsaSign(M, hSession, liveKeyRef.current.privHandle, tbsPayload)
+              mechLabel = 'CKM_EDDSA'
+            } else if (currentAlgoId === 'slhdsa256s' || currentAlgoId === 'slhdsa256f') {
+              sigBytes = hsm_slhdsaSign(M, hSession, liveKeyRef.current.privHandle, tbsPayload)
+              mechLabel = 'CKM_SLH_DSA'
+            } else {
+              // ML-DSA (default)
+              sigBytes = hsm_sign(M, hSession, liveKeyRef.current.privHandle, tbsPayload)
+              mechLabel = 'CKM_ML_DSA'
+            }
+
             setOutput(
               (prev) =>
                 prev +
                 `\n[PKCS#11] CA certificate signing demonstrated via SoftHSM3:\n` +
-                `  C_MessageSignInit(CKM_ML_DSA)\n` +
-                `  C_SignMessage("${cn}") → ${sigBytes.length} bytes\n` +
-                `  C_MessageSignFinal()\n` +
+                `  SignInit(${mechLabel})\n` +
+                `  Sign("${cn}") → ${sigBytes.length} bytes\n` +
                 `  (In production: signs the DER-encoded TBSCertificate bytes)\n`
             )
           } catch {

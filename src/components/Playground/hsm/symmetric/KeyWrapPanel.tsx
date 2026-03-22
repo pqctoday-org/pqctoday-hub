@@ -49,6 +49,7 @@ import {
   hsm_hkdf,
   type AttrDef,
   type SoftHSMModule,
+  type Pkcs11LogEntry,
 } from '../../../../wasm/softhsm'
 import { useHsmContext } from '../HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
@@ -402,7 +403,7 @@ const hexToBytes = (hex: string): Uint8Array => {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export const KeyWrapPanel = () => {
-  const { moduleRef, hSessionRef, hsmKeys, keysForFamily, addHsmKey } = useHsmContext()
+  const { moduleRef, hSessionRef, hsmKeys, keysForFamily, addHsmKey, addHsmLog } = useHsmContext()
 
   const [showInfo, setShowInfo] = useState(false)
 
@@ -473,8 +474,21 @@ export const KeyWrapPanel = () => {
     return k ? `${k.label} (h=${handle})` : `h=${handle}`
   }
 
-  const addLogEntry = (entry: WrapLogEntry) =>
+  const addLogEntry = (entry: WrapLogEntry) => {
     setSessionLog((prev) => [entry, ...prev].slice(0, 50))
+    const synthetic: Pkcs11LogEntry = {
+      id: Date.now(),
+      timestamp: entry.timestamp.slice(11, 19),
+      fn: entry.op === 'wrap' ? '[WRAP]' : '[UNWRAP]',
+      args: `mech=${entry.mechanism} wrapping="${entry.wrappingKeyLabel}" target="${entry.targetKeyLabel}"`,
+      rvHex: entry.status === 'ok' ? '0x00000000' : '0x00000006',
+      rvName: entry.status === 'ok' ? 'CKR_OK' : 'CKR_FUNCTION_FAILED',
+      ms: 0,
+      ok: entry.status === 'ok',
+      engineName: 'cpp',
+    }
+    addHsmLog(synthetic)
+  }
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)

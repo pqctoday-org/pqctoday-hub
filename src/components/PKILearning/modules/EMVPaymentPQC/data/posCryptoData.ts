@@ -41,7 +41,7 @@ export const POS_TERMINAL_PROFILES: POSTerminalProfile[] = [
     pqcConstraints: [
       '128 KB RAM is tight for ML-KEM-768 (needs ~50 KB working memory)',
       'ML-DSA-44 signature verification feasible but slow (~500ms)',
-      'FN-DSA-512 is preferred due to smaller memory footprint',
+      'FN-DSA-512 produces smaller signatures (~690 bytes vs ~2,420 for ML-DSA-44), reducing memory requirements on constrained devices',
       'Battery-powered: PQC computation cost affects battery life',
     ],
   },

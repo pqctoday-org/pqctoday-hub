@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, IOT_PROTOCOLS, PURDUE_LAYERS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
 
 interface IoTOTIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -660,6 +661,7 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
           overhead, and plan SCADA migration.
         </p>
       </div>
+      <VendorCoverageNotice migrateLayer="Hardware" />
       <ReadingCompleteButton />
     </div>
   )

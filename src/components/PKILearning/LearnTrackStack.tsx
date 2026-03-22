@@ -19,6 +19,8 @@ import {
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '../ui/button'
 import { ModuleCard } from './ModuleCard'
+import { CuriousStackCarousel } from './common/CuriousStackCarousel'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import { MODULE_TRACKS, TRACK_COLORS } from './moduleData'
 import type { ModuleItem } from './ModuleCard'
 
@@ -50,6 +52,7 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
     'protocol-integration',
     'web-gateway-pqc',
     'network-security-pqc',
+    'pqc-testing-validation',
   ],
   'Hardware Infrastructure': [
     'hsm-pqc',
@@ -204,6 +207,10 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
   onClearFilters,
 }) => {
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
+  
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
 
   const handleSelectTrack = (track: string) => {
     setActiveTrack((prev) => (prev === track ? null : track))
@@ -394,6 +401,8 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                         <p className="text-xs text-muted-foreground text-center py-4">
                           No modules match the current filters.
                         </p>
+                      ) : isCuriousMode ? (
+                        <CuriousStackCarousel modules={visibleModules} />
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                           {visibleModules.map((module) => (

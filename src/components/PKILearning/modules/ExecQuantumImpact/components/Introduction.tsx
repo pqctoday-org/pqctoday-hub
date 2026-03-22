@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Briefcase, Clock, ArrowRight, Scale, TrendingUp, AlertTriangle } from 'lucide-react'
+import { Briefcase, Clock, Scale, TrendingUp, AlertTriangle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -156,52 +156,50 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
         </div>
       </section>
 
-      {/* Section 4: Where to Go Deeper */}
-      <section className="glass-panel p-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 rounded-lg bg-primary/10">
-            <TrendingUp size={24} className="text-primary" />
-          </div>
-          <h2 className="text-xl font-bold text-foreground">Deeper Learning</h2>
-        </div>
-        <p className="text-sm text-muted-foreground mb-4">
-          After completing this module, continue with these executive-focused modules:
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {[
-            {
-              id: 'pqc-risk-management',
-              label: 'PQC Risk Management',
-              desc: 'Build risk registers and heatmaps',
-            },
-            {
-              id: 'pqc-business-case',
-              label: 'PQC Business Case',
-              desc: 'ROI models and board presentations',
-            },
-            {
-              id: 'pqc-governance',
-              label: 'PQC Governance',
-              desc: 'Governance frameworks and policies',
-            },
-            {
-              id: 'compliance-strategy',
-              label: 'Compliance Strategy',
-              desc: 'Multi-jurisdiction requirements',
-            },
-          ].map((mod) => (
-            <Link
-              key={mod.id}
-              to={`/learn/${mod.id}`}
-              className="flex items-center gap-3 p-3 rounded-lg border border-border hover:bg-muted/30 transition-colors"
-            >
-              <ArrowRight size={16} className="text-primary shrink-0" />
-              <div>
-                <div className="text-sm font-medium text-foreground">{mod.label}</div>
-                <p className="text-xs text-muted-foreground">{mod.desc}</p>
-              </div>
-            </Link>
-          ))}
+      {/* Related Resources */}
+      <section className="glass-panel p-6 border-secondary/20">
+        <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <Link
+            to="/learn/pqc-risk-management"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
+              <div className="text-xs text-muted-foreground">Build risk registers and executive heatmaps</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/pqc-business-case"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <TrendingUp size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PQC Business Case</div>
+              <div className="text-xs text-muted-foreground">ROI models and board-level presentations</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/pqc-governance"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">PQC Governance</div>
+              <div className="text-xs text-muted-foreground">Governance frameworks and executive policies</div>
+            </div>
+          </Link>
+          <Link
+            to="/learn/compliance-strategy"
+            className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 hover:bg-muted transition-colors border border-border hover:border-primary/30"
+          >
+            <Briefcase size={18} className="text-primary shrink-0" aria-hidden="true" />
+            <div>
+              <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
+              <div className="text-xs text-muted-foreground">Multi-jurisdiction regulatory requirements</div>
+            </div>
+          </Link>
         </div>
       </section>
 
