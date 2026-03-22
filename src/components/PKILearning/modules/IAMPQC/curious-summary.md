@@ -1,6 +1,10 @@
-Curious about how digital identity is being upgraded to face quantum threats?
+# Identity & Access Management PQC — In Simple Terms
 
-**The Problem:** Standard digital identity systems rely entirely on vulnerable mathematical signatures (like RSA) to definitively prove who you are online. Hackers are recording encrypted network traffic today so they can simply forge master access tokens the moment quantum computers arrive.
-**The Solution:** Organizations must upgrade every single identity token (JWT, SAML) to use massive, quantum-proof, unforgeable digital signatures.
-**The Strategy:** Security architects must transition enterprise directories and Single Sign-On platforms to use quantum-resistant authentication at every layer of the Zero Trust verification process.
-**The Ecosystem:** Securing global digital identity relies heavily on Identity Providers, security architects, and directory services.
+## What This Is About
+Identity and Access Management (IAM) is built entirely on cryptographic signatures. Every time you log in, protocols like SAML, JWT, or Kerberos use math to assert your identity. 
+
+## Why It Matters
+Adversaries are actively capturing and storing these secure exchanges today. Kerberos is the highest priority risk: if a quantum computer breaks the initial RSA authentication exchange (PKINIT), the attacker could forge tickets and move laterally across an entire enterprise network, creating a catastrophic "Quantum Golden Ticket."
+
+## The Key Takeaway
+All enterprise token signing will soon migrate to the new ML-DSA (FIPS 204) standard. Because ML-DSA comes in different sizes, engineers will calibrate it to the task: ML-DSA-44 for short-lived access tokens, ML-DSA-65 for enterprise SAML logins, and ML-DSA-87 for highly classified government infrastructure.
