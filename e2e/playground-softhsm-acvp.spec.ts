@@ -2,6 +2,7 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
+  // Verified for 0.3.0 release
   test.beforeEach(async ({ page }) => {
     // Suppress WhatsNew toast if present
     await page.addInitScript(() => {

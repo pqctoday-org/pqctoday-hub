@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Outlet, NavLink, useLocation } from 'react-router-dom'
+import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
   Activity,
@@ -25,7 +25,7 @@ import {
   Network,
 } from 'lucide-react'
 import { Button } from '../ui/button'
-import { WhatsNewToast } from '../ui/WhatsNewToast'
+import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
 import { PWAUpdatePrompt } from '../ui/PWAUpdatePrompt'
@@ -248,11 +248,14 @@ export const MainLayout = () => {
                         aria-current={isActive ? 'page' : undefined}
                         className={
                           isActive
-                            ? 'bg-primary/10 text-foreground border border-primary/20 px-2 lg:px-4 min-h-[44px] lg:min-h-0'
-                            : 'text-muted-foreground hover:text-foreground px-2 lg:px-4 min-h-[44px] lg:min-h-0'
+                            ? 'bg-primary/10 text-foreground border border-primary/20 px-1 lg:px-4 min-h-[44px] lg:min-h-0 flex-col lg:flex-row items-center gap-0'
+                            : 'text-muted-foreground hover:text-foreground px-1 lg:px-4 min-h-[44px] lg:min-h-0 flex-col lg:flex-row items-center gap-0'
                         }
                       >
-                        <item.icon size={20} aria-hidden="true" className="lg:mr-2" />
+                        <item.icon size={18} aria-hidden="true" className="lg:mr-2" />
+                        <span className="lg:hidden text-[9px] leading-none mt-0.5 truncate max-w-[40px] text-center">
+                          {item.label}
+                        </span>
                         <span className="hidden lg:inline">{item.label}</span>
                       </Button>
                     )}
@@ -273,11 +276,12 @@ export const MainLayout = () => {
                   aria-haspopup="dialog"
                   className={
                     isMoreActive
-                      ? 'bg-primary/10 text-foreground border border-primary/20 px-2 min-h-[44px]'
-                      : 'text-muted-foreground hover:text-foreground px-2 min-h-[44px]'
+                      ? 'bg-primary/10 text-foreground border border-primary/20 px-1 min-h-[44px] flex-col items-center gap-0'
+                      : 'text-muted-foreground hover:text-foreground px-1 min-h-[44px] flex-col items-center gap-0'
                   }
                 >
-                  <MoreHorizontal size={20} aria-hidden="true" />
+                  <MoreHorizontal size={18} aria-hidden="true" />
+                  <span className="text-[9px] leading-none mt-0.5">More</span>
                 </Button>
               </div>
             )}
@@ -425,7 +429,12 @@ export const MainLayout = () => {
 
       {/* Footer */}
       <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
-        <p>© 2025 PQC Today. Data sourced from the public internet resources.</p>
+        <p>
+          © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+          <Link to="/terms" className="underline hover:text-foreground transition-colors">
+            Terms of Service
+          </Link>
+        </p>
         <p className="mt-1 text-xs opacity-70">
           Content may be inaccurate. Please verify information independently. Report inaccuracies in{' '}
           <a
@@ -446,8 +455,8 @@ export const MainLayout = () => {
       {/* Offline connectivity toast + monitor */}
       <AirplaneModeToast />
 
-      {/* What's New Toast Notification */}
-      <WhatsNewToast />
+      {/* What's New Modal — persona-aware, data-driven */}
+      <WhatsNewModal />
 
       {/* First-visit disclaimer — must acknowledge before using the app */}
       <DisclaimerModal />

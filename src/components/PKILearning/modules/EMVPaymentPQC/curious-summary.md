@@ -9,3 +9,7 @@ A quantum computer capable of breaking RSA-2048 could forge the EMV root certifi
 ### The Key Takeaway
 
 Because PQC algorithms like ML-DSA are too large for constrained smart cards, the payment industry is heavily focused on FN-DSA (Falcon) given its compact signature sizes. Organizations must plan now to align with 3-5 year card replacement cycles to meet late 2020s regulatory migration targets.
+
+### What's Happening
+
+Payment networks are evaluating FN-DSA (Falcon) for constrained smart cards and planning PQC migration roadmaps aligned with 3-5 year card replacement cycles, targeting late 2020s regulatory deadlines for offline EMV authentication upgrades across 14.7 billion cards in circulation.

@@ -354,6 +354,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/about`,
   },
 
+  '/terms': {
+    title: 'Terms of Service — PQC Today',
+    description:
+      'Terms of Service for PQC Today, including export compliance (ECCN 5D002), sanctions restrictions, educational-use disclaimers, and privacy policy for embedded cryptographic software.',
+    canonical: `${BASE_URL}/terms`,
+  },
+
   '/changelog': {
     title: 'Changelog — PQC Today Version History & Release Notes',
     description:

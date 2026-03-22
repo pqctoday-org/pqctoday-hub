@@ -261,6 +261,15 @@ export const ACHIEVEMENT_CATALOG: AchievementDefinition[] = [
     icon: 'Trophy',
     condition: (s) => s.quizQuestionsCorrect >= 50,
   },
+  {
+    id: 'first-endorsement',
+    title: 'Community Voice',
+    description: 'Endorsed your first resource',
+    category: 'cross-feature',
+    rarity: 'common',
+    icon: 'ThumbsUp',
+    condition: (s: ActivitySnapshot) => s.endorsementCount >= 1,
+  },
 ]
 
 /** O(1) lookup map derived from catalog */

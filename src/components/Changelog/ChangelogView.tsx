@@ -22,13 +22,12 @@ import {
 import { Link } from 'react-router-dom'
 import clsx from 'clsx'
 import { getCurrentVersion } from '../../store/useVersionStore'
+import {
+  ALL_CHANGELOG_VERSIONS,
+  HAS_DATA_SECTIONS,
+  HAS_SECURITY_SECTIONS,
+} from '../../utils/changelogParser'
 
-// Import CHANGELOG.md as raw text
-import changelogContent from '../../../CHANGELOG.md?raw'
-
-// ── Types ────────────────────────────────────────────────────────────────────
-
-type SectionType = 'added' | 'changed' | 'fixed' | 'data' | 'security' | 'other'
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
 interface FilterState {
@@ -37,28 +36,6 @@ interface FilterState {
   fixed: boolean
   data: boolean
   security: boolean
-}
-
-interface EntryMeta {
-  personas: string[]
-  views: string[]
-}
-
-interface Entry {
-  title: string
-  body: string
-  meta: EntryMeta
-}
-
-interface Section {
-  type: SectionType
-  entries: Entry[]
-}
-
-interface ChangelogVersion {
-  version: string
-  date: string
-  sections: Section[]
 }
 
 // ── Section display config ────────────────────────────────────────────────────
@@ -171,107 +148,7 @@ const DATA_FRESHNESS: FreshnessEntry[] = FRESHNESS_CATEGORIES.map(({ label, pref
 
 const now = Date.now()
 
-// ── Parser ────────────────────────────────────────────────────────────────────
-
-function parseEntry(raw: string): Entry {
-  const personas: string[] = []
-  const views: string[] = []
-
-  // Extract and strip inline impact tags before parsing title/body
-  const cleaned = raw
-    .replace(/\[persona:([^\]]+)\]/g, (_, p) => {
-      personas.push((p as string).trim())
-      return ''
-    })
-    .replace(/\[view:([^\]]+)\]/g, (_, v) => {
-      views.push((v as string).trim())
-      return ''
-    })
-    .trim()
-
-  const boldMatch = cleaned.match(/^\*\*([^*]+)\*\*/)
-  if (boldMatch) {
-    const title = boldMatch[1]
-    const body = cleaned.slice(boldMatch[0].length).replace(/^:\s*/, '').trim()
-    return { title, body, meta: { personas, views } }
-  }
-  return { title: cleaned, body: '', meta: { personas, views } }
-}
-
-function parseChangelog(content: string): ChangelogVersion[] {
-  const versions: ChangelogVersion[] = []
-  // Split at each '## [' version header
-  const versionBlocks = content.split(/\n(?=## \[)/)
-
-  for (const block of versionBlocks) {
-    const headerMatch = block.match(/^## \[([^\]]+)\] - (\S+)/)
-    if (!headerMatch) continue
-
-    const version = headerMatch[1]
-    const date = headerMatch[2]
-    const sections: Section[] = []
-
-    // Split at each '### ' section header
-    const sectionBlocks = block.split(/\n(?=### )/)
-
-    for (const sectionBlock of sectionBlocks) {
-      const sectionHeaderMatch = sectionBlock.match(/^### (.+)/)
-      if (!sectionHeaderMatch) continue
-
-      const sectionName = sectionHeaderMatch[1].toLowerCase()
-      const type: SectionType = sectionName.startsWith('add')
-        ? 'added'
-        : sectionName.startsWith('change')
-          ? 'changed'
-          : sectionName.startsWith('fix')
-            ? 'fixed'
-            : sectionName.startsWith('data')
-              ? 'data'
-              : sectionName.startsWith('sec')
-                ? 'security'
-                : 'other'
-
-      // Collect list items; continuation lines are indented with 2+ spaces
-      const lines = sectionBlock.split('\n').slice(1)
-      const entries: Entry[] = []
-      let currentLines: string[] | null = null
-
-      for (const line of lines) {
-        if (line.startsWith('- ')) {
-          if (currentLines !== null) {
-            entries.push(parseEntry(currentLines.join('\n').trim()))
-          }
-          currentLines = [line.slice(2)]
-        } else if (currentLines !== null) {
-          // Strip leading 2-space indent from continuation lines
-          currentLines.push(line.replace(/^ {2}/, ''))
-        }
-      }
-      if (currentLines !== null) {
-        entries.push(parseEntry(currentLines.join('\n').trim()))
-      }
-
-      if (entries.length > 0) {
-        sections.push({ type, entries })
-      }
-    }
-
-    if (sections.length > 0) {
-      versions.push({ version, date, sections })
-    }
-  }
-
-  return versions
-}
-
-// Parse once at module level — content is a static import
-const ALL_VERSIONS = parseChangelog(changelogContent)
-
-// Pre-compute whether data/security sections exist anywhere in the changelog
-const HAS_DATA_SECTIONS = ALL_VERSIONS.some((v) => v.sections.some((s) => s.type === 'data'))
-const HAS_SECURITY_SECTIONS = ALL_VERSIONS.some((v) =>
-  v.sections.some((s) => s.type === 'security')
-)
+// Parser types and functions extracted to src/utils/changelogParser.ts
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -292,7 +169,7 @@ export const ChangelogView = () => {
   }
 
   const filteredVersions = useMemo(() => {
-    return ALL_VERSIONS.map((v) => ({
+    return ALL_CHANGELOG_VERSIONS.map((v) => ({
       ...v,
       sections: v.sections.filter((s) => {
         if (s.type === 'other') return true

@@ -24,6 +24,7 @@ import {
   Compass,
   Sparkles,
   Lock,
+  ThumbsUp,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -52,4 +53,5 @@ export const achievementIconMap: Record<string, LucideIcon> = {
   Compass,
   Sparkles,
   Lock,
+  ThumbsUp,
 }

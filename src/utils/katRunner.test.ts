@@ -15,6 +15,21 @@ vi.mock('../wasm/softhsm', () => ({
   hsm_generateMLDSAKeyPair: vi.fn(),
   hsm_sign: vi.fn(),
   hsm_verify: vi.fn(),
+  hsm_generateSLHDSAKeyPair: vi.fn(),
+  hsm_slhdsaSign: vi.fn(),
+  hsm_slhdsaVerify: vi.fn(),
+  CKP_SLH_DSA_SHA2_128S: 0x01,
+  CKP_SLH_DSA_SHA2_128F: 0x03,
+  CKP_SLH_DSA_SHA2_192S: 0x05,
+  CKP_SLH_DSA_SHA2_192F: 0x07,
+  CKP_SLH_DSA_SHA2_256S: 0x09,
+  CKP_SLH_DSA_SHA2_256F: 0x0b,
+  CKP_SLH_DSA_SHAKE_128S: 0x02,
+  CKP_SLH_DSA_SHAKE_128F: 0x04,
+  CKP_SLH_DSA_SHAKE_192S: 0x06,
+  CKP_SLH_DSA_SHAKE_192F: 0x08,
+  CKP_SLH_DSA_SHAKE_256S: 0x0a,
+  CKP_SLH_DSA_SHAKE_256F: 0x0c,
 }))
 
 vi.mock('../data/acvp/mlkem_test.json', () => ({
@@ -85,6 +100,12 @@ describe('runKAT', () => {
     vi.mocked(softhsm.hsm_generateMLDSAKeyPair).mockReturnValue({ pubHandle: 5, privHandle: 6 })
     vi.mocked(softhsm.hsm_sign).mockReturnValue(new Uint8Array(10))
     vi.mocked(softhsm.hsm_verify).mockReturnValue(true)
+    vi.mocked(softhsm.hsm_generateSLHDSAKeyPair).mockReturnValue({
+      pubHandle: 7,
+      privHandle: 8,
+    })
+    vi.mocked(softhsm.hsm_slhdsaSign).mockReturnValue(new Uint8Array(7856))
+    vi.mocked(softhsm.hsm_slhdsaVerify).mockReturnValue(true)
   })
 
   // ── mlkem-decap ─────────────────────────────────────────────────────────────
@@ -100,7 +121,7 @@ describe('runKAT', () => {
         spec({ type: 'mlkem-decap', variant: 768 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/\d+ bytes/)
+      expect(result.details).toMatch(/SS\[\d+B\]/)
     })
 
     it('returns fail when shared secret does not match', async () => {
@@ -211,7 +232,7 @@ describe('runKAT', () => {
         spec({ type: 'mldsa-sigver', variant: 65 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('NIST ACVP')
+      expect(result.details).toContain('Verified sig')
     })
 
     it('returns fail when signature verification fails', async () => {
@@ -272,7 +293,7 @@ describe('runKAT', () => {
         spec({ type: 'mldsa-functional', variant: 65 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('sig=')
+      expect(result.details).toMatch(/sig\[\d+B\]/)
     })
 
     it('returns fail when round-trip verification fails', async () => {
@@ -292,6 +313,74 @@ describe('runKAT', () => {
         spec({ type: 'mldsa-functional', variant: 87 })
       )
       expect(result.algorithm).toBe('ML-DSA-87')
+    })
+  })
+
+  // ── slhdsa-functional ────────────────────────────────────────────────────────
+
+  describe('slhdsa-functional', () => {
+    it('returns pass when sign+verify round-trip succeeds', async () => {
+      vi.mocked(softhsm.hsm_slhdsaVerify).mockReturnValue(true)
+      const result = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHA2-128s' })
+      )
+      expect(result.status).toBe('pass')
+    })
+
+    it('returns fail when round-trip verification fails', async () => {
+      vi.mocked(softhsm.hsm_slhdsaVerify).mockReturnValue(false)
+      const result = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHAKE-256f' })
+      )
+      expect(result.status).toBe('fail')
+    })
+
+    it('sets correct algorithm name for SHA2-128s', async () => {
+      const result = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHA2-128s' })
+      )
+      expect(result.algorithm).toBe('SLH-DSA-SHA2-128s')
+    })
+
+    it('sets correct algorithm name for SHAKE-256f', async () => {
+      const result = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHAKE-256f' })
+      )
+      expect(result.algorithm).toBe('SLH-DSA-SHAKE-256f')
+    })
+
+    it('passes CKP constant to generateSLHDSAKeyPair', async () => {
+      await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHA2-128s' })
+      )
+      expect(softhsm.hsm_generateSLHDSAKeyPair).toHaveBeenCalledWith(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        0x01 // CKP_SLH_DSA_SHA2_128S
+      )
+    })
+
+    it('returns error when keygen throws', async () => {
+      vi.mocked(softhsm.hsm_generateSLHDSAKeyPair).mockImplementation(() => {
+        throw new Error('SLH-DSA keygen crash')
+      })
+      const result = await runKAT(
+        FAKE_MODULE,
+        FAKE_SESSION,
+        spec({ type: 'slhdsa-functional', variant: 'SHA2-192s' })
+      )
+      expect(result.status).toBe('error')
+      expect(result.details).toContain('SLH-DSA keygen crash')
     })
   })
 

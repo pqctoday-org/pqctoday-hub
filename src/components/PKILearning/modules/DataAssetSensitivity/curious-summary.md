@@ -9,3 +9,7 @@ Your PQC migration urgency is directly tied to data retention. If a CRQC arrives
 ### The Key Takeaway
 
 You must immediately inventory all cryptographic assets and classify them by sensitivity and retention. Key material (like root CAs and HSM secrets) must always be classified as Critical. Prioritize your PQC rollout based on a composite score of HNDL exposure risk and regulatory compliance deadlines.
+
+### What's Happening
+
+Regulations like DORA, HIPAA, and GDPR Art. 32 are increasingly being interpreted to require quantum-safe protections for highly sensitive data, making classification and prioritization an immediate compliance requirement rather than a future consideration.

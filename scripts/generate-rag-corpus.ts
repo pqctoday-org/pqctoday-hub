@@ -1993,15 +1993,21 @@ function processCertificationXref(): RAGChunk[] {
   }
 
   // --- Group by vendor (additional chunks for better retrieval) ---
-  const byVendor = new Map<string, typeof records>()
+  // Normalize vendor key so variants like "Apple Inc." / "Apple, Inc." merge
+  const vendorKey = (v: string) => v.toLowerCase().replace(/[^a-z0-9]+/g, '-')
+  const byVendor = new Map<string, { displayName: string; records: typeof records }>()
   for (const r of records) {
-    const vendor = sanitize(r.cert_vendor) || sanitize(r.software_name) || 'Unknown'
-    const existing = byVendor.get(vendor) ?? []
-    existing.push(r)
-    byVendor.set(vendor, existing)
+    const rawVendor = sanitize(r.cert_vendor) || sanitize(r.software_name) || 'Unknown'
+    const key = vendorKey(rawVendor)
+    const existing = byVendor.get(key)
+    if (existing) {
+      existing.records.push(r)
+    } else {
+      byVendor.set(key, { displayName: rawVendor, records: [r] })
+    }
   }
 
-  for (const [vendor, certs] of byVendor) {
+  for (const [key, { displayName, records: certs }] of byVendor) {
     const rows = certs.map((r) =>
       [
         `- ${sanitize(r.cert_type)}: ${sanitize(r.cert_product)}`,
@@ -2017,13 +2023,13 @@ function processCertificationXref(): RAGChunk[] {
     const firstCertId = sanitize(certs[0]?.cert_id)
     const softwareName = sanitize(certs[0]?.software_name)
     chunks.push({
-      id: `cert-vendor-${vendor.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      id: `cert-vendor-${key}`,
       source: 'certifications',
-      title: `${vendor} — PQC Certifications`,
-      content: `Vendor: ${vendor}\nProduct: ${softwareName}\nCertifications:\n\n${rows.join('\n\n')}`,
+      title: `${displayName} — PQC Certifications`,
+      content: `Vendor: ${displayName}\nProduct: ${softwareName}\nCertifications:\n\n${rows.join('\n\n')}`,
       category: 'certification',
       metadata: {
-        vendor,
+        vendor: displayName,
         softwareName,
         certCount: String(certs.length),
       },
@@ -2345,6 +2351,30 @@ function processPageGuides(): RAGChunk[] {
       category: 'page-guide',
       metadata: { page: 'about' },
       deepLink: '/about',
+    },
+    // --- Transparency & Disclaimer / Site Status ---
+    {
+      id: 'page-guide-transparency',
+      source: 'documentation',
+      title: 'PQC Today — Transparency, Disclaimer & Site Status',
+      content:
+        'PQC Today — Transparency & Disclaimer (Site Status)\n\nPQC Today is a work in progress (WIP). It is a community-driven educational platform built to help professionals understand and prepare for the post-quantum cryptography transition.\n\nEndorsement status: As of now, PQC Today has NOT received endorsement from any of the organizations, standards bodies, or government agencies referenced in its content (such as NIST, ETSI, IETF, BSI, ANSSI, ISO/IEC, or Common Criteria). However, we are actively working toward obtaining endorsement and recognition from these organizations. We are engaging with authoritative bodies and domain experts to cross-validate content and build credibility. Endorsement is a goal we are pursuing, not something we claim today.\n\nContent validation process: All content on PQC Today goes through a multi-layer validation process. We use automated cross-checking with multiple AI platforms to verify accuracy and consistency across data sources, combined with manual review by the maintainer. We are also actively seeking peer review support from domain experts and authoritative organizations, but formal peer review is not yet in place. This means the content has been carefully checked but has not yet undergone independent expert validation.\n\nKey disclaimers:\n- All information is sourced from publicly available resources on the internet.\n- Content is validated through automated AI-assisted cross-checking and manual review, but formal peer review is not yet in place.\n- The content may still contain inaccuracies despite our best efforts.\n- We are actively seeking peer reviewers and domain experts to further strengthen content quality.\n- Industry leaders featured on this platform are included only with their written consent.\n\nIf you represent a cited organization, are a domain expert, or simply want to help improve the accuracy of this platform, you can get involved via GitHub Discussions or by contacting Eric Amador on LinkedIn.\n\nThe platform is under active development. New features, data sources, and learning modules are added regularly. Check the Changelog (/changelog) for the latest updates.\n\nIf someone asks "is this endorsed?", "who endorses this?", "is this endorsed by NIST?", "is this official?" — the answer is: PQC Today is not yet endorsed by any referenced organization, but we are actively working to obtain endorsement from standards bodies and government agencies. If someone asks "what is the status of this site?", "is this site finished?", "is this a beta?", "is this work in progress?", "is the data accurate?", or "can I trust this site?" — direct them to the Transparency & Disclaimer section on the About page (/about#transparency). The site is a work in progress, community-driven, and actively pursuing endorsement. If someone asks "how is the content validated?", "how do you verify accuracy?", "is this peer reviewed?", "how do you check the data?", or "what is your validation process?" — explain that we use automated cross-checking with multiple AI platforms plus manual review, and that we are seeking peer review support but it is not yet in place.',
+      category: 'page-guide',
+      metadata: { page: 'about' },
+      deepLink: '/about#transparency',
+      priority: 8,
+    },
+    // --- Terms of Service ---
+    {
+      id: 'page-guide-terms',
+      source: 'documentation',
+      title: 'PQC Today — Terms of Service',
+      content:
+        "PQC Today — Terms of Service\n\nPQC Today has a dedicated Terms of Service page at /terms. The Terms cover:\n\n1. Acceptance of Terms — using the platform constitutes agreement.\n2. License — source code is licensed under GPL-3.0-only.\n3. Educational Purpose & Cryptographic Disclaimer — all crypto operations are for educational and demonstration purposes only. Do not use generated keys for production systems.\n4. Export Compliance & Sanctions — the platform embeds open-source cryptographic software classified under ECCN 5D002. Distribution is authorized under License Exception TSU (§740.13 EAR) and ENC (§740.17 EAR). Users in sanctioned countries (Cuba, Iran, North Korea, Syria, Crimea/Donetsk/Luhansk) are prohibited from accessing the platform.\n5. Acceptable Use — no unlawful use, no misrepresentation, no interference.\n6. No Warranty — provided 'as is' without warranties.\n7. Limitation of Liability — maintainers not liable for damages.\n8. Third-Party Content — references NIST, ETSI, IETF, BSI, ANSSI, ISO/IEC, Common Criteria. Not affiliated with or endorsed by these organizations.\n9. Intellectual Property — source code GPL-3.0; original content copyright PQC Today maintainers.\n10. Privacy — no personal data collected, no cookies, no tracking. All data stays in your browser (localStorage).\n11. Modifications — terms may be updated; continued use constitutes acceptance.\n12. Governing Law — State of Texas, United States.\n13. Contact — via GitHub Discussions.\n\nFor full details, visit the Terms of Service page: /terms\n\nIf someone asks about 'terms of use', 'terms of service', 'legal terms', 'privacy policy', 'data privacy', 'license', 'export controls', 'ECCN', 'sanctions', or 'acceptable use' — direct them to the Terms of Service page at /terms.",
+      category: 'page-guide',
+      metadata: { page: 'terms' },
+      deepLink: '/terms',
+      priority: 8,
     },
   ]
 }

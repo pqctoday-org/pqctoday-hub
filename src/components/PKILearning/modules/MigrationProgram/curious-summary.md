@@ -9,3 +9,7 @@ A rushed "big-bang" migration is far too risky for core cryptographic infrastruc
 ### The Key Takeaway
 
 Agencies and enterprises must establish a dedicated migration program today. Success requires building a Cryptographic Bill of Materials (CBOM), securing C-suite authority, and carefully executing phased rollouts to ensure infrastructure remains operational and compliant throughout the transition.
+
+### What's Happening
+
+Government agencies are already executing their PQC migration programs following CISA and NIST guidance, while early adopters in the private sector are completing their Discovery and Inventory phases to establish Cryptographic Bills of Materials as the foundation for phased rollouts.

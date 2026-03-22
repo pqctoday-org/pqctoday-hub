@@ -735,7 +735,7 @@ To verify: `npm audit`
 
 ## License
 
-This project is licensed under [GPL-3.0-only](LICENSE).
+This project is licensed under [GPL-3.0-only](LICENSE). See [Terms of Service](TERMS.md) for usage terms, export compliance (ECCN 5D002), and sanctions restrictions.
 
 **Fork policy**: forks and redistributions (source or built artifacts) must be licensed under GPL-3.0-only and include the corresponding source. Private/internal forks with no distribution have no obligation to publish changes.
 

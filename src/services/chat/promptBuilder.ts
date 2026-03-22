@@ -128,7 +128,7 @@ const PERSONA_DEPTH: Record<string, string> = {
 
 const EXPERIENCE_DEPTH: Record<string, string> = {
   curious:
-    'The user is a non-technical person exploring PQC for the first time. Use everyday language and real-world analogies (e.g., "like changing the locks on your house before a new type of lockpick is invented"). Define every technical term in parentheses on first use. Focus on "why it matters" and "what happens next" rather than implementation details. Never assume familiarity with cryptography, standards bodies, or IT infrastructure.',
+    'The user is a non-technical person exploring PQC for the first time. MANDATORY RULE: You are FORBIDDEN from inventing new technical analogies. You may ONLY use these approved analogies:\n1) Encryption: Like a locked mailbox where anyone can drop in a letter, but only the owner has the key.\n2) Quantum Threat: Like an army of millions of locksmiths working simultaneously to pick a lock, bypassing the need to guess combinations.\n3) PQC Transition: Like upgrading the locks on a bank vault from a standard physical key to a biometric scanner.\nDefine every technical term on first use. Focus on "why it matters" and "what happens next" rather than implementation details. Never assume familiarity with IT infrastructure.',
   basics:
     'The user has basic familiarity with PQC concepts. Provide moderate detail with brief explanations of advanced terms.',
   expert:

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 import React, { useState } from 'react'
-import { Network, BarChart3, GitBranch, Map, Loader2 } from 'lucide-react'
+import { Network, BarChart3, Map, Loader2 } from 'lucide-react'
 import { useGraphData } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphData'
 import { useGraphSearch } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphSearch'
 
@@ -17,24 +17,17 @@ const CoverageView = React.lazy(() =>
   }))
 )
 
-const PathwayView = React.lazy(() =>
-  import('../PKILearning/modules/KnowledgeGraph/components/PathwayView').then((m) => ({
-    default: m.PathwayView,
-  }))
-)
-
 const MindmapView = React.lazy(() =>
   import('./MindmapView').then((m) => ({
     default: m.MindmapView,
   }))
 )
 
-type GraphSubTab = 'explore' | 'coverage' | 'pathways' | 'mindmap'
+type GraphSubTab = 'explore' | 'coverage' | 'mindmap'
 
 const SUB_TABS: { id: GraphSubTab; label: string; icon: React.ElementType }[] = [
   { id: 'explore', label: 'Explore', icon: Network },
   { id: 'coverage', label: 'Coverage', icon: BarChart3 },
-  { id: 'pathways', label: 'Pathways', icon: GitBranch },
   { id: 'mindmap', label: 'Mindmap', icon: Map },
 ]
 
@@ -44,7 +37,7 @@ const LoadingSpinner: React.FC = () => (
   </div>
 )
 
-/** Content for graph-dependent tabs (Explore, Coverage, Pathways) */
+/** Content for graph-dependent tabs (Explore, Coverage) */
 function GraphContent({
   subTab,
   graph,
@@ -70,9 +63,6 @@ function GraphContent({
         />
       )}
       {subTab === 'coverage' && <CoverageView graph={graph} />}
-      {subTab === 'pathways' && (
-        <PathwayView graph={graph} searchQuery={query} searchResults={results} />
-      )}
     </>
   )
 }

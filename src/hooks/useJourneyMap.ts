@@ -193,14 +193,15 @@ export function useJourneyMap(): JourneyMapResult {
               migrationStarted,
               artifactCount
             )
+            const msId = `milestone-${ms.route}-${ms.label.toLowerCase().replace(/\s+/g, '-')}`
             phases.push({
-              id: `milestone-${ms.route}`,
+              id: msId,
               label: ms.label,
               type: 'milestone',
               status: msStatus,
               items: [
                 {
-                  id: `milestone-${ms.route}`,
+                  id: msId,
                   label: ms.label,
                   type: 'page-action',
                   status: msStatus,

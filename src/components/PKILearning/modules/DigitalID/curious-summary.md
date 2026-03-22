@@ -9,3 +9,7 @@ Current EUDI implementations are secured by classical ECDSA (P-256) signatures f
 ### The Key Takeaway
 
 Because digital identities represent high-value targets, national wallet infrastructures must be among the first adopters of PQC. Future architecture frameworks must officially mandate NIST algorithms (like ML-DSA and SLH-DSA) to protect long-lived credentials against Harvest Now, Decrypt Later threats.
+
+### What's Happening
+
+The eIDAS 2.0 framework requires all 27 EU member states to deploy EUDI Wallets by 2026, creating an urgent timeline to integrate quantum-safe signatures (ML-DSA and SLH-DSA) into national digital identity infrastructure before these systems go live.

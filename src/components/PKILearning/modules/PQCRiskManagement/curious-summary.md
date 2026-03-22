@@ -9,3 +9,7 @@ A CRQC will break the asymmetric cryptography that protects virtually all digita
 ### The Key Takeaway
 
 To align with stringent compliance deadlines like CNSA 2.0, organizations must adopt a three-step process: CRQC scenario planning, building a comprehensive risk register, and visualizing exposure on a 5x5 likelihood-impact heatmap to guide executive decision-making.
+
+### What's Happening
+
+Organizations are incorporating CRQC scenario planning into their enterprise risk frameworks, using likelihood-impact heatmaps to prioritize which cryptographic systems must migrate first based on HNDL exposure and compliance deadlines like CNSA 2.0.

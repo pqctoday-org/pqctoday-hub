@@ -16,6 +16,7 @@ import {
   ShieldCheck,
   Users,
   Info,
+  FileText,
 } from 'lucide-react'
 
 export interface MindmapItem {
@@ -145,6 +146,7 @@ export const MINDMAP_ROOT: MindmapItem = {
         { id: 'pg-kem', label: 'KEM', route: '/playground', icon: FlaskConical },
         { id: 'pg-sign', label: 'Sign', route: '/playground', icon: FlaskConical },
         { id: 'pg-hsm', label: 'SoftHSM', route: '/playground', icon: FlaskConical },
+        { id: 'pg-acvp', label: 'ACVP KAT', route: '/playground', icon: FlaskConical },
       ],
     },
     {
@@ -191,6 +193,12 @@ export const MINDMAP_ROOT: MindmapItem = {
       label: 'Changelog',
       route: '/changelog',
       icon: Activity,
+    },
+    {
+      id: 'terms',
+      label: 'Terms',
+      route: '/terms',
+      icon: FileText,
     },
   ],
 }

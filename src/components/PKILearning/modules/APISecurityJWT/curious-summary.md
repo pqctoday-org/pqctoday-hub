@@ -9,3 +9,7 @@ Shor's algorithm running on a future quantum computer breaks these classical mec
 ### The Key Takeaway
 
 While the JSON framework doesn't change, the math inside does—and it carries a massive size penalty. An ML-DSA-65 signature is 3,309 bytes compared to a 64-byte ES256 signature, representing a ~51x size increase. This enormous token size can immediately break default 8 KB HTTP headers, exceed 4 KB browser cookie limits, and spike bandwidth requirements for mobile APIs. Engineering teams must overhaul caching and session storage architectures to accommodate this PQC footprint.
+
+### What's Happening
+
+The IETF JOSE working group is defining new algorithm identifiers for ML-DSA and ML-KEM within the JWS and JWE specifications, while engineering teams are actively prototyping PQC token flows to measure the real-world impact of the massive size increase on API infrastructure.

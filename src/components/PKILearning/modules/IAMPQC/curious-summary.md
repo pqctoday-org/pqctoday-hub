@@ -11,3 +11,7 @@ Adversaries are actively capturing and storing these secure exchanges today. Ker
 ## The Key Takeaway
 
 All enterprise token signing will soon migrate to the new ML-DSA (FIPS 204) standard. Because ML-DSA comes in different sizes, engineers will calibrate it to the task: ML-DSA-44 for short-lived access tokens, ML-DSA-65 for enterprise SAML logins, and ML-DSA-87 for highly classified government infrastructure.
+
+## What's Happening
+
+Identity providers are beginning to prototype ML-DSA token signing across SAML, JWT, and Kerberos flows, while Active Directory teams prepare for the critical Kerberos PKINIT upgrade to prevent the catastrophic "Quantum Golden Ticket" scenario.

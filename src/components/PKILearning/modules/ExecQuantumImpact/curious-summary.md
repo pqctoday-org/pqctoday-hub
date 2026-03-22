@@ -9,3 +9,7 @@ Adversaries are actively executing "Harvest Now, Decrypt Later" (HNDL) attacks�
 ### The Key Takeaway
 
 Leaders cannot fix what they cannot see. You must immediately demand a comprehensive cryptographic inventory (CBOM) from your security teams to uncover hidden quantum exposure, and formally commission a PQC risk assessment to prioritize system migration.
+
+### What's Happening
+
+Governments are setting binding compliance deadlines—such as the US CNSA 2.0 mandate requiring PQC by 2030—and boards of directors are being held accountable for ensuring their organizations have funded cryptographic inventories and PQC migration programs.

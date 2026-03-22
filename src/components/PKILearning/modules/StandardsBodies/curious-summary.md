@@ -9,3 +9,7 @@ Confusing these roles is a common source of compliance failure. For example, pur
 ### The Key Takeaway
 
 You comply with a framework, get certified against a standard, and the standard is written by the standard body. Multinational teams must track NIST globally, ETSI in the EU, and specific national mandates (like BSI in Germany or OSCCA in China).
+
+### What's Happening
+
+The CMVP FIPS 140-3 certification backlog currently spans 18-36 months, creating a critical bottleneck for organizations requiring validated PQC modules. Meanwhile, regional bodies like ETSI, BSI, and OSCCA are publishing their own PQC guidance to address jurisdiction-specific requirements.

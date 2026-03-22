@@ -256,7 +256,7 @@ const ModuleTracksGrid = ({
   const [selectedTrack, setSelectedTrack] = useState('All')
   const [selectedDifficulty, setSelectedDifficulty] = useState('All')
   const [selectedStatus, setSelectedStatus] = useState('All')
-  // Professional personas pre-select their learning path; curious users start with all modules visible
+  // Professional personas pre-select their learning path; curious users start with all modules visible to explore, but advanced topics are guarded in the carousel.
   const [selectedPersonaFilter, setSelectedPersonaFilter] = useState<string>(
     selectedPersona === 'curious' ? 'All' : (selectedPersona ?? 'All')
   )

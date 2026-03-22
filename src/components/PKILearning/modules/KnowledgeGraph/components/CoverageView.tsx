@@ -41,6 +41,25 @@ const TYPE_LABELS: Record<EntityType, string> = {
   persona: 'Learning Personas',
 }
 
+const RELATIONSHIP_LABELS: Record<string, string> = {
+  'library-depends-on': 'Library Depends On',
+  'compliance-references': 'Compliance References',
+  'compliance-timeline': 'Compliance Timeline',
+  'library-teaches': 'Library Teaches',
+  'library-covers-algorithm': 'Library Covers Algorithm',
+  'threat-teaches': 'Threat Teaches',
+  'software-certified': 'Software Certified',
+  'glossary-teaches': 'Glossary Teaches',
+  'quiz-teaches': 'Quiz Teaches',
+  'timeline-country': 'Timeline by Country',
+  'leader-country': 'Leader by Country',
+  'source-feeds': 'Source Feeds',
+  'software-teaches': 'Software Teaches',
+  'module-in-track': 'Module in Track',
+  'persona-recommends': 'Persona Recommends',
+  'threat-targets-algorithm': 'Threat Targets Algorithm',
+}
+
 function buildClusterGraph(graph: KnowledgeGraph): {
   nodes: Node<ClusterNodeData>[]
   edges: Edge[]
@@ -279,7 +298,7 @@ export function CoverageView({ graph }: CoverageViewProps) {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {edgeTypeCounts.map(({ type, count }) => (
             <div key={type} className="flex items-center justify-between text-xs">
-              <span className="text-muted-foreground">{type}</span>
+              <span className="text-muted-foreground">{RELATIONSHIP_LABELS[type] ?? type}</span>
               <span className="text-foreground font-medium">{count}</span>
             </div>
           ))}

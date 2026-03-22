@@ -6,6 +6,7 @@ import { useChatStore } from '@/store/useChatStore'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import { useEndorsementStore } from '@/store/useEndorsementStore'
 import { ACHIEVEMENT_CATALOG } from '@/data/achievementCatalog'
 import { MODULE_TRACKS, LEARN_SECTIONS } from '@/components/PKILearning/moduleData'
 import type { ActivitySnapshot } from '@/types/AchievementTypes'
@@ -28,6 +29,7 @@ export function useAchievementChecker() {
 
   const playgroundOpCount = useAchievementStore((s) => s.playgroundOpCount)
   const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
+  const endorsementRecords = useEndorsementStore((s) => s.records)
   const unlocked = useAchievementStore((s) => s.unlocked)
   const unlock = useAchievementStore((s) => s.unlock)
 
@@ -92,6 +94,9 @@ export function useAchievementChecker() {
       chatMessageCount += conv.messages?.filter((m) => m.role === 'user').length ?? 0
     }
 
+    // Endorsements
+    const endorsementCount = Object.values(endorsementRecords).filter((r) => r?.endorsed).length
+
     return {
       currentStreak,
       longestStreak,
@@ -116,6 +121,7 @@ export function useAchievementChecker() {
       migrateProductCount: myProducts?.length ?? 0,
       sectionsVisited: sectionsVisited ?? [],
       quizQuestionsCorrect: quizMastery?.correctQuestionIds?.length ?? 0,
+      endorsementCount,
     }
   }, [
     modules,
@@ -128,6 +134,7 @@ export function useAchievementChecker() {
     myProducts,
     playgroundOpCount,
     sectionsVisited,
+    endorsementRecords,
   ])
 
   useEffect(() => {

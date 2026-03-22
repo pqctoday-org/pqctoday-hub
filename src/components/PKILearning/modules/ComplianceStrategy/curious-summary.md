@@ -9,3 +9,7 @@ Failure to map compliance correctly means missing severe, overlapping deadlines 
 ### The Key Takeaway
 
 A successful compliance strategy demands a two-phase arc: "Hybrid Now, Pure PQC Later." Organizations must construct a Jurisdiction Map to identify their earliest global deadlines, compile a strict CBOM to assess exposure, and prepare Audit Readiness Checklists aligned across all jurisdictions in which they operate.
+
+### What's Happening
+
+Compliance deadlines are arriving in overlapping waves—CNSA 2.0 mandates exclusive PQC by 2030, European frameworks like eIDAS 2.0 and DORA are driving hybrid requirements now, and the CMVP certification backlog means organizations must begin validation processes years in advance.

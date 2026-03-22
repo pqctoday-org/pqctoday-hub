@@ -87,6 +87,11 @@ const FAQPage = lazyWithRetry(() =>
     default: module.FAQPage,
   }))
 )
+const TermsView = lazyWithRetry(() =>
+  import('./components/Terms/TermsView').then((module) => ({
+    default: module.TermsView,
+  }))
+)
 
 // Helper component to log page views on route change
 function AnalyticsTracker() {
@@ -275,6 +280,14 @@ function App() {
               element={
                 <ErrorBoundary>
                   <FAQPage />
+                </ErrorBoundary>
+              }
+            />
+            <Route
+              path="/terms"
+              element={
+                <ErrorBoundary>
+                  <TermsView />
                 </ErrorBoundary>
               }
             />

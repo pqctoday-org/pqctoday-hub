@@ -9,3 +9,7 @@ Classical Test Vector Leakage Assessment (TVLA) fails for lattice-based PQC beca
 ### The Key Takeaway
 
 Successful PQC validation requires a layered approach: passive discovery for safe inventorying, active scanning for endpoint readiness, and rigorous interoperability testing conforming to RFC 9794 hybrid rules, ensuring that fallback paths don't silently compromise security.
+
+### What's Happening
+
+Testing frameworks are evolving to address PQC-specific challenges like lattice side-channel leakage and hybrid handshake interoperability, with organizations adopting layered validation strategies combining passive discovery, active scanning, and RFC 9794 conformance testing.

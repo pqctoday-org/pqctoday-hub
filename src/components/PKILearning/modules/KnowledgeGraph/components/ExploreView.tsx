@@ -13,7 +13,8 @@ import {
   type Edge,
 } from '@xyflow/react'
 import '@xyflow/react/dist/style.css'
-import { Network, TrendingUp } from 'lucide-react'
+import { Network, TrendingUp, ChevronLeft } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { SearchBar } from './SearchBar'
 import { NodeDetailPanel } from './NodeDetailPanel'
 import { GraphLegend } from './GraphLegend'
@@ -160,6 +161,15 @@ export function ExploreView({
     [navigateToNode]
   )
 
+  const handleReset = useCallback(() => {
+    setNodes([])
+    setEdges([])
+    setSelectedNodeId(null)
+    setCenteredNodeId(null)
+    setRawNodeIds(new Set())
+    onSearchQueryChange('')
+  }, [setNodes, setEdges, onSearchQueryChange])
+
   const handleNodeClick = useCallback(
     (_event: React.MouseEvent, node: Node) => {
       if (node.id === centeredNodeId) {
@@ -255,7 +265,24 @@ export function ExploreView({
       ) : (
         /* Graph canvas */
         <div className="relative">
-          <div className="h-[45vh] min-h-[300px] sm:h-[500px] rounded-lg border border-border overflow-hidden bg-background">
+          {/* Reset to overview */}
+          <div className="flex items-center justify-between mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-xs text-muted-foreground hover:text-foreground gap-1.5"
+              onClick={handleReset}
+            >
+              <ChevronLeft className="w-3.5 h-3.5" />
+              Overview
+            </Button>
+            {centeredNodeId && (
+              <span className="text-xs text-muted-foreground truncate max-w-[60%]">
+                {graph.nodes.get(centeredNodeId)?.label}
+              </span>
+            )}
+          </div>
+          <div className="h-[45vh] min-h-[300px] sm:h-[calc(100dvh-300px)] rounded-lg border border-border overflow-hidden bg-background">
             <ReactFlow
               nodes={nodes}
               edges={edges}

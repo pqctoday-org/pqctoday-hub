@@ -36,6 +36,10 @@ function getDeepLink(node: GraphNode): string | null {
       return '/learn'
     case 'persona':
       return '/'
+    case 'quiz':
+      return '/learn/quiz'
+    case 'certification':
+      return '/migrate'
     default:
       return null
   }

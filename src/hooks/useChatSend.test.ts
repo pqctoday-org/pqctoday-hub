@@ -100,7 +100,25 @@ vi.mock('@/services/chat/RetrievalService', () => ({
     initialize: (...args: unknown[]) => mockInitialize(...args),
     search: (...args: unknown[]) => mockSearch(...(args as [string])),
   },
+  classifyIntent: vi.fn().mockReturnValue('general'),
 }))
+
+vi.mock('@/utils/dataFingerprint', () => ({
+  buildWhatsNewRAGChunk: vi.fn().mockReturnValue(null),
+}))
+
+vi.mock('@/store/useVersionStore', () => {
+  const hook = () => ({})
+  hook.getState = () => ({ getChangedSources: () => [] })
+  hook.subscribe = vi.fn()
+  return { useVersionStore: hook }
+})
+
+vi.mock('@/store/usePersonaStore', () => {
+  const hook = () => ({})
+  hook.getState = () => ({ selectedPersona: null, selectedIndustries: [] })
+  return { usePersonaStore: hook }
+})
 
 const mockStreamResponse = vi.fn()
 

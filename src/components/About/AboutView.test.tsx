@@ -1,5 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { AboutView } from './AboutView'
 import '@testing-library/jest-dom'
 
@@ -41,7 +42,11 @@ describe('AboutView', () => {
   })
 
   it('renders the main sections', () => {
-    render(<AboutView />)
+    render(
+      <MemoryRouter>
+        <AboutView />
+      </MemoryRouter>
+    )
     // There might be multiple due to mobile/desktop views
     const titles = screen.getAllByText('About PQC Today')
     expect(titles.length).toBeGreaterThan(0)
@@ -54,7 +59,11 @@ describe('AboutView', () => {
   })
 
   it('renders the SBOM list correctly', () => {
-    render(<AboutView />)
+    render(
+      <MemoryRouter>
+        <AboutView />
+      </MemoryRouter>
+    )
     // SBOM is collapsed by default — expand it first
     const sbomHeader = screen.getAllByText('Software Bill of Materials (SBOM)')[0]
     fireEvent.click(sbomHeader)
@@ -66,7 +75,11 @@ describe('AboutView', () => {
   })
 
   it('renders community discussion links', () => {
-    render(<AboutView />)
+    render(
+      <MemoryRouter>
+        <AboutView />
+      </MemoryRouter>
+    )
 
     expect(screen.getAllByText('Community').length).toBeGreaterThan(0)
     expect(
@@ -92,14 +105,22 @@ describe('AboutView', () => {
   })
 
   it('renders platform data section', () => {
-    render(<AboutView />)
+    render(
+      <MemoryRouter>
+        <AboutView />
+      </MemoryRouter>
+    )
 
     expect(screen.getAllByText('Platform Data').length).toBeGreaterThan(0)
     expect(screen.getAllByText('Curated datasets powering every page').length).toBeGreaterThan(0)
   })
 
   it('verifies License section link', () => {
-    render(<AboutView />)
+    render(
+      <MemoryRouter>
+        <AboutView />
+      </MemoryRouter>
+    )
     const licenseLink = screen.getByRole('link', { name: /View Full License/i })
     expect(licenseLink).toHaveAttribute(
       'href',

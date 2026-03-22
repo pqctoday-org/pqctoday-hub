@@ -9,3 +9,7 @@ Without governance, migration efforts fragment. Different teams may select confl
 ### The Key Takeaway
 
 Most large organizations adopt a Hybrid governance model—centralizing algorithm policy while distributing migration execution to individual business units. Success requires tracking concrete KPIs like policy coverage rate and open exceptions, along with pre-defined escalation paths for conflicts.
+
+### What's Happening
+
+Leading enterprises are establishing dedicated PQC governance boards with formal RACI matrices and KPI dashboards, recognizing that without centralized policy coordination, migration efforts fragment across business units and miss critical deadlines.

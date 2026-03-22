@@ -2809,11 +2809,18 @@ export const hsm_importGenericSecret = (
   }
 }
 
-/** Import an AES symmetric key. Returns CKO_SECRET_KEY handle. */
+/** Import an AES symmetric key. Returns CKO_SECRET_KEY handle.
+ *  Optional boolean params control CKA_* attributes (all default true for backward compat). */
 export const hsm_importAESKey = (
   M: SoftHSMModule,
   hSession: number,
-  keyBytes: Uint8Array
+  keyBytes: Uint8Array,
+  encrypt = true,
+  decrypt = true,
+  wrap = true,
+  unwrap = true,
+  derive = true,
+  extractable = true
 ): number => {
   const keyPtr = M._malloc(keyBytes.length)
   M.HEAPU8.set(keyBytes, keyPtr)
@@ -2822,13 +2829,13 @@ export const hsm_importAESKey = (
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_ENCRYPT, boolVal: true },
-    { type: CKA_DECRYPT, boolVal: true },
-    { type: CKA_WRAP, boolVal: true },
-    { type: CKA_UNWRAP, boolVal: true },
-    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_ENCRYPT, boolVal: encrypt },
+    { type: CKA_DECRYPT, boolVal: decrypt },
+    { type: CKA_WRAP, boolVal: wrap },
+    { type: CKA_UNWRAP, boolVal: unwrap },
+    { type: CKA_DERIVE, boolVal: derive },
     { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
   ])
   const hKeyPtr = allocUlong(M)
@@ -2842,11 +2849,14 @@ export const hsm_importAESKey = (
   }
 }
 
-/** Import an HMAC key (CKK_GENERIC_SECRET with CKA_SIGN + CKA_VERIFY). Returns handle. */
+/** Import an HMAC key (CKK_GENERIC_SECRET with CKA_SIGN + CKA_VERIFY). Returns handle.
+ *  Optional boolean params control CKA_SIGN/CKA_VERIFY (both default true for backward compat). */
 export const hsm_importHMACKey = (
   M: SoftHSMModule,
   hSession: number,
-  keyBytes: Uint8Array
+  keyBytes: Uint8Array,
+  sign = true,
+  verify = true
 ): number => {
   const keyPtr = M._malloc(keyBytes.length)
   M.HEAPU8.set(keyBytes, keyPtr)
@@ -2857,8 +2867,8 @@ export const hsm_importHMACKey = (
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_SIGN, boolVal: true },
-    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_SIGN, boolVal: sign },
+    { type: CKA_VERIFY, boolVal: verify },
     { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
   ])
   const hKeyPtr = allocUlong(M)
@@ -2872,12 +2882,14 @@ export const hsm_importHMACKey = (
   }
 }
 
-/** Import an RSA public key from raw modulus + exponent bytes. Returns CKO_PUBLIC_KEY handle. */
+/** Import an RSA public key from raw modulus + exponent bytes. Returns CKO_PUBLIC_KEY handle.
+ *  Optional encrypt param controls CKA_ENCRYPT (default true). CKA_VERIFY is always true. */
 export const hsm_importRSAPublicKey = (
   M: SoftHSMModule,
   hSession: number,
   modulusBytes: Uint8Array,
-  exponentBytes: Uint8Array
+  exponentBytes: Uint8Array,
+  encrypt = true
 ): number => {
   const modPtr = M._malloc(modulusBytes.length)
   M.HEAPU8.set(modulusBytes, modPtr)
@@ -2896,7 +2908,7 @@ export const hsm_importRSAPublicKey = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_ENCRYPT, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: encrypt },
     { type: CKA_MODULUS, bytesPtr: modPtr, bytesLen: modulusBytes.length },
     { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: exponentBytes.length },
   ]

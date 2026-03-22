@@ -9,3 +9,7 @@ Every AI system relies on an immense data pipeline—from ingestion and storage 
 ### The Key Takeaway
 
 A holistic Post-Quantum Cryptography (PQC) strategy must secure the entire AI lifecycle. Migrating to ML-KEM ensures that proprietary training data and model weights remain confidential against HNDL attacks over decades. Adopting ML-DSA guarantees long-term integrity for model signing, content provenance (like C2PA), and agent-to-agent delegation tokens—defending the ecosystem against data poisoning and impersonation.
+
+### What's Happening
+
+AI organizations are beginning to audit their data pipelines for quantum exposure, migrating model signing to ML-DSA for long-term provenance guarantees, and designing quantum-safe authentication protocols for autonomous AI agents entering agentic commerce ecosystems.

@@ -9,3 +9,7 @@ The quantum vulnerability in databases lies entirely in the **key wrapping layer
 ### The Key Takeaway
 
 Regulated industries must prioritize HYOK (Hold Your Own Key) architectures and migrate key wrapping to ML-KEM-1024 immediately. Because the AES data layer remains unchanged, modern databases (like Oracle and SQL Server) support online TDE re-keying, allowing you to migrate the wrapping keys with zero application downtime.
+
+### What's Happening
+
+Cloud providers and database vendors are rolling out ML-KEM support for key wrapping operations, enabling organizations with BYOK and HYOK architectures to begin migrating their Data Encryption Key protection to quantum-safe algorithms without disrupting the underlying AES data layer.

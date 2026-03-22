@@ -192,6 +192,10 @@ export const logChatCacheHit = (page: string) => {
   logEvent('Chat', 'Cache Hit', page)
 }
 
+export const logChatOpened = () => {
+  logEvent('Chat', 'Opened')
+}
+
 // --- Page accuracy feedback ---
 
 export const logAccuracyFeedback = (vote: 'accurate' | 'inaccurate', pagePath: string) => {

@@ -9,3 +9,7 @@ Every elliptic curve algorithm currently protecting blockchain wallets (ECDSA, E
 ### The Key Takeaway
 
 The blockchain ecosystem faces a massive migration challenge. Protocols must transition to hybrid signature schemes and deploy crypto-agile smart contract architectures before quantum actors can drain exposed legacy wallets.
+
+### What's Happening
+
+Blockchain communities are actively researching quantum-resistant signature schemes and crypto-agile smart contract architectures, as the decentralized nature of these protocols makes coordinated algorithm migration exceptionally challenging compared to centralized systems.

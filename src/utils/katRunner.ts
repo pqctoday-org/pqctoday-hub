@@ -10,6 +10,7 @@
  * Test vector sources:
  *   ML-KEM: src/data/acvp/mlkem_test.json (NIST ACVP vsId=1, encapDecap)
  *   ML-DSA: src/data/acvp/mldsa_test.json (NIST ACVP vsId=2, sigGen)
+ *   SLH-DSA: functional round-trip (FIPS 205 — NIST ACVP vectors too large to embed)
  */
 import mlkemTestVectors from '../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../data/acvp/mldsa_test.json'
@@ -25,6 +26,21 @@ import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
   hsm_verify,
+  hsm_generateSLHDSAKeyPair,
+  hsm_slhdsaSign,
+  hsm_slhdsaVerify,
+  CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHA2_128F,
+  CKP_SLH_DSA_SHA2_192S,
+  CKP_SLH_DSA_SHA2_192F,
+  CKP_SLH_DSA_SHA2_256S,
+  CKP_SLH_DSA_SHA2_256F,
+  CKP_SLH_DSA_SHAKE_128S,
+  CKP_SLH_DSA_SHAKE_128F,
+  CKP_SLH_DSA_SHAKE_192S,
+  CKP_SLH_DSA_SHAKE_192F,
+  CKP_SLH_DSA_SHAKE_256S,
+  CKP_SLH_DSA_SHAKE_256F,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
 
@@ -38,11 +54,26 @@ export interface KATResult {
   details: string
 }
 
+export type SlhDsaVariant =
+  | 'SHA2-128s'
+  | 'SHA2-128f'
+  | 'SHA2-192s'
+  | 'SHA2-192f'
+  | 'SHA2-256s'
+  | 'SHA2-256f'
+  | 'SHAKE-128s'
+  | 'SHAKE-128f'
+  | 'SHAKE-192s'
+  | 'SHAKE-192f'
+  | 'SHAKE-256s'
+  | 'SHAKE-256f'
+
 export type KatKind =
   | { type: 'mlkem-decap'; variant: 512 | 768 | 1024 }
   | { type: 'mlkem-encap-roundtrip'; variant: 512 | 768 | 1024 }
   | { type: 'mldsa-sigver'; variant: 44 | 65 | 87 }
   | { type: 'mldsa-functional'; variant: 44 | 65 | 87 }
+  | { type: 'slhdsa-functional'; variant: SlhDsaVariant }
 
 export interface KatTestSpec {
   id: string
@@ -78,6 +109,21 @@ function getMldsaGroup(variant: 44 | 65 | 87) {
   const group = mldsaTestVectors.testGroups.find((g) => g.parameterSet === paramSet)
   if (!group) throw new Error(`No NIST test group for ${paramSet}`)
   return group
+}
+
+const SLH_DSA_CKP_MAP: Record<SlhDsaVariant, number> = {
+  'SHA2-128s': CKP_SLH_DSA_SHA2_128S,
+  'SHA2-128f': CKP_SLH_DSA_SHA2_128F,
+  'SHA2-192s': CKP_SLH_DSA_SHA2_192S,
+  'SHA2-192f': CKP_SLH_DSA_SHA2_192F,
+  'SHA2-256s': CKP_SLH_DSA_SHA2_256S,
+  'SHA2-256f': CKP_SLH_DSA_SHA2_256F,
+  'SHAKE-128s': CKP_SLH_DSA_SHAKE_128S,
+  'SHAKE-128f': CKP_SLH_DSA_SHAKE_128F,
+  'SHAKE-192s': CKP_SLH_DSA_SHAKE_192S,
+  'SHAKE-192f': CKP_SLH_DSA_SHAKE_192F,
+  'SHAKE-256s': CKP_SLH_DSA_SHAKE_256S,
+  'SHAKE-256f': CKP_SLH_DSA_SHAKE_256F,
 }
 
 // ── KAT implementations ───────────────────────────────────────────────────────
@@ -206,6 +252,31 @@ async function runMLDSAFunctionalKAT(
   return { status: 'fail', details: 'Functional sign+verify round-trip failed' }
 }
 
+/**
+ * SLH-DSA Functional Sign + Verify Round-Trip.
+ * Generates a fresh keypair, signs a message, verifies the signature.
+ * Authoritative: FIPS 205.
+ */
+async function runSLHDSAFunctionalKAT(
+  M: SoftHSMModule,
+  hSession: number,
+  variant: SlhDsaVariant
+): Promise<{ status: 'pass' | 'fail'; details: string }> {
+  const ckp = SLH_DSA_CKP_MAP[variant]
+  const message = `NIST PQC KAT validation — SLH-DSA-${variant} functional round-trip`
+  const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, ckp)
+  const sigBytes = hsm_slhdsaSign(M, hSession, privHandle, message)
+  const isValid = hsm_slhdsaVerify(M, hSession, pubHandle, message, sigBytes)
+
+  if (isValid) {
+    return {
+      status: 'pass',
+      details: `sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`,
+    }
+  }
+  return { status: 'fail', details: 'Functional sign+verify round-trip failed' }
+}
+
 // ── Public dispatcher ─────────────────────────────────────────────────────────
 
 export async function runKAT(
@@ -216,7 +287,9 @@ export async function runKAT(
   const algorithm =
     spec.kind.type === 'mlkem-decap' || spec.kind.type === 'mlkem-encap-roundtrip'
       ? `ML-KEM-${spec.kind.variant}`
-      : `ML-DSA-${spec.kind.variant}`
+      : spec.kind.type === 'slhdsa-functional'
+        ? `SLH-DSA-${spec.kind.variant}`
+        : `ML-DSA-${spec.kind.variant}`
 
   try {
     let result: { status: 'pass' | 'fail'; details: string }
@@ -233,6 +306,9 @@ export async function runKAT(
         break
       case 'mldsa-functional':
         result = await runMLDSAFunctionalKAT(M, hSession, spec.kind.variant)
+        break
+      case 'slhdsa-functional':
+        result = await runSLHDSAFunctionalKAT(M, hSession, spec.kind.variant)
         break
     }
 

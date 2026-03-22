@@ -9,3 +9,7 @@ The threat is active today due to "Harvest Now, Decrypt Later" (HNDL). Adversari
 ### The Key Takeaway
 
 The defense is ready. In August 2024, NIST officially published the first Post-Quantum Cryptography (PQC) standards (FIPS 203, 204, 205). Organizations must now begin the transition—starting with cryptographic inventory and risk assessments—before the classical algorithms are entirely deprecated by 2030.
+
+### What's Happening
+
+Governments worldwide are now setting aggressive timelines for organizations to complete their transition away from classical algorithms, with CNSA 2.0 mandating PQC compliance by 2030 and early procurement requirements already taking effect.

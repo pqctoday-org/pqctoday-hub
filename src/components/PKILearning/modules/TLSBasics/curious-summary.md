@@ -9,3 +9,7 @@ Post-quantum algorithms demand much larger ciphertexts and keys than classical E
 ### The Key Takeaway
 
 The industry is already deploying "Hybrid" key exchange (X25519MLKEM768) to protect traffic from Harvest-Now-Decrypt-Later attacks. To solve the signature bloat problem, engineers are developing Merkle Tree Certificates (MTCs) to replace heavy certificate chains with lightweight proofs.
+
+### What's Happening
+
+Major browsers and CDN providers are already deploying hybrid key exchange (X25519MLKEM768) in production TLS 1.3, while the IETF is actively standardizing Merkle Tree Certificates to address the signature bloat challenge at internet scale.

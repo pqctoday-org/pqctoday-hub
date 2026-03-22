@@ -89,15 +89,16 @@ describe('MainLayout', () => {
 
       const nav = screen.getByRole('navigation')
 
-      // Check for all nav items (desktop shows all including hidden-on-mobile)
-      expect(within(nav).getByText('Timeline')).toBeInTheDocument()
-      expect(within(nav).getByText('Algorithms')).toBeInTheDocument()
-      expect(within(nav).getByText('Library')).toBeInTheDocument()
-      expect(within(nav).getByText('Learn')).toBeInTheDocument()
-      expect(within(nav).getByText('Playground')).toBeInTheDocument()
-      expect(within(nav).getByText('OpenSSL Studio')).toBeInTheDocument()
-      expect(within(nav).getByText('Threats')).toBeInTheDocument()
-      expect(within(nav).getByText('About')).toBeInTheDocument()
+      // Each nav button has mobile + desktop <span> with the same label,
+      // so use aria-label ("X view") via getByRole to avoid duplicate matches
+      expect(within(nav).getByRole('button', { name: /timeline view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /algorithms view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /library view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /openssl studio view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
+      expect(within(nav).getByRole('button', { name: /about view/i })).toBeInTheDocument()
     })
 
     it('highlights the active route', () => {

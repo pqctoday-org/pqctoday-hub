@@ -35,7 +35,7 @@ import { WorkgroupDetailModal } from './WorkgroupDetailModal'
 import { PQC_WORKGROUPS, WORKGROUP_REGIONS } from './workgroupData'
 import type { Workgroup } from './workgroupData'
 import { useTheme } from '../../hooks/useTheme'
-import { getCurrentVersion } from '../../store/useVersionStore'
+import { getCurrentVersion, useVersionStore } from '../../store/useVersionStore'
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
 const DISCUSSIONS = [
@@ -200,6 +200,7 @@ const CRYPTO_BUFF_BOOKS = [
 export const MobileAboutView = () => {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
+  const requestShowWhatsNew = useVersionStore((s) => s.requestShowWhatsNew)
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
   const [selectedWorkgroup, setSelectedWorkgroup] = useState<Workgroup | null>(null)
   const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
@@ -241,13 +242,22 @@ export const MobileAboutView = () => {
               <p className="text-xs text-muted-foreground">v{version} — what&apos;s new</p>
             </div>
           </div>
-          <a
-            href="/changelog"
-            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors shrink-0"
-          >
-            View
-            <ChevronRight size={14} />
-          </a>
+          <div className="flex items-center gap-1.5 shrink-0">
+            <button
+              onClick={requestShowWhatsNew}
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg border border-border text-foreground font-semibold text-xs hover:bg-muted/40 transition-colors"
+            >
+              <Sparkles size={12} />
+              New
+            </button>
+            <a
+              href="/changelog"
+              className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors"
+            >
+              View
+              <ChevronRight size={14} />
+            </a>
+          </div>
         </div>
       </motion.div>
 

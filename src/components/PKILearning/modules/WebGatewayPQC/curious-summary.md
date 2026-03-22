@@ -9,3 +9,7 @@ Security appliances like Next-Gen Firewalls (NGFWs) often have strict hardware b
 ### The Key Takeaway
 
 A phased architecture is critical: deploy classical TLS at your local inspection points (maintaining WAF visibility) while enabling Hybrid PQC (X25519MLKEM768) on the internet-facing edge. This shields the perimeter against quantum harvesting without breaking internal inspection.
+
+### What's Happening
+
+Security vendors are updating their NGFW and WAF firmware to handle larger PQC handshakes, while organizations are testing phased gateway architectures that deploy hybrid PQC (X25519MLKEM768) at the internet edge while maintaining classical TLS at internal inspection points.

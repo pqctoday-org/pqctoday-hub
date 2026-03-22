@@ -9,3 +9,7 @@ Without executive sponsorship and dedicated funding, PQC migrations stall. Delay
 ### The Key Takeaway
 
 A successful business case accurately projects direct migration costs (software, hardware, training) and offsets them against measurable savings from breach avoidance, compliance penalty avoidance, and operational competitive advantages.
+
+### What's Happening
+
+Early adopters are using PQC migration cost models to secure board-level funding, demonstrating that proactive investment in quantum-safe cryptography is significantly cheaper than the compounding costs of delayed migration, breach exposure, and compliance penalties.

@@ -9,3 +9,7 @@ Because PQC certificates are 10-50x larger, automated lifecycle management tools
 ### The Key Takeaway
 
 Operations teams are on the front line of the quantum transition. They must immediately inventory all cryptographic assets, lab-test PQC protocols (like OpenSSH 9.x hybrid key exchanges), and update deployment playbooks before executing automated, phased rollovers.
+
+### What's Happening
+
+Operations teams are establishing PQC lab environments to test hybrid protocol deployments—including OpenSSH 9.x hybrid key exchanges—and recalibrating monitoring baselines to account for the larger certificate sizes and different latency profiles of quantum-safe algorithms.

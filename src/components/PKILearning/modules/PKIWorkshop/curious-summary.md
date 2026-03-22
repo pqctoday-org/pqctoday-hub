@@ -9,3 +9,7 @@ Because Root Certificate Authorities can live for 20+ years, they are highly vul
 ### The Key Takeaway
 
 Migration to PQC is urgent, with NIST and CNSA 2.0 targeting 2030 for full implementation. Organizations must immediately test hybrid certificates or emerging solutions like Merkle Tree Certificates (MTCs), which significantly reduce PQC signature overhead.
+
+### What's Happening
+
+Certificate Authorities and browser vendors are actively testing hybrid and composite certificates, while NIST and NSA CNSA 2.0 have set 2030 as the target date for full PQC implementation across government PKI infrastructure.

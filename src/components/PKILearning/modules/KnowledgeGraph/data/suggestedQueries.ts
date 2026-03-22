@@ -58,9 +58,9 @@ export const SUGGESTED_QUERIES: SuggestedQuery[] = [
     description: 'FIPS standards and certifications across the PQC ecosystem',
   },
   {
-    label: 'Healthcare',
-    query: 'Healthcare',
-    description: 'Healthcare PQC threats, compliance, and learning modules',
+    label: 'ACVP',
+    query: 'ACVP',
+    description: 'Algorithm Certification Validation Program — KAT suite and NIST test vectors',
   },
   {
     label: 'HNDL',

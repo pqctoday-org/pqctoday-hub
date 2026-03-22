@@ -9,3 +9,7 @@ PQC keys are vastly larger than classical ones. Integrating ML-KEM-768 adds over
 ### The Key Takeaway
 
 This complex migration strictly targets the "Control Plane" (Key Exchange and Authentication). The "Data Plane" (the actual encrypted tunnel) already uses symmetric ciphers like AES-GCM or ChaCha20, which are natively quantum-resistant at 256-bit strengths.
+
+### What's Happening
+
+OpenSSH already ships with hybrid PQC key exchange (mlkem768x25519-sha256) enabled by default, and the IETF is standardizing ML-KEM integration into IKEv2 for enterprise VPNs. WireGuard users can add quantum protection through the Rosenpass companion tool.

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useEffect, useRef, useState } from 'react'
-import { BookOpen, CheckCircle, Lightbulb, Wrench, X } from 'lucide-react'
+import { BookOpen, CheckCircle, Lightbulb, Wrench, X, ArrowLeft } from 'lucide-react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
@@ -20,6 +21,11 @@ type BannerType = 'learn' | 'workshop' | null
 export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) => {
   const { modules } = useModuleStore()
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const searchParams = new URLSearchParams(location.search)
+  const diveDeeper = searchParams.get('diveDeeper') === 'true'
 
   const learnSections = LEARN_SECTIONS[moduleId] ?? []
   const workshopSteps = WORKSHOP_STEPS[moduleId] ?? []
@@ -91,7 +97,24 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
       )}
 
       {/* Curious mode indicator */}
-      {experienceLevel === 'curious' && (
+      {(experienceLevel === 'curious' || selectedPersona === 'curious') && diveDeeper ? (
+        <div className="flex flex-col sm:flex-row sm:items-center gap-2 mb-2 bg-status-info/5 border border-status-info/20 p-2 rounded-lg">
+          <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-status-info/10 text-status-info text-[11px] font-semibold">
+            <Lightbulb size={12} className="shrink-0" />
+            Dive Deeper Active
+          </span>
+          <span className="text-xs text-muted-foreground flex-1">
+            You are viewing the standard technical module.
+          </span>
+          <button
+            onClick={() => navigate(location.pathname)}
+            className="flex items-center gap-1.5 text-xs text-foreground font-medium bg-background border border-border px-3 py-1.5 rounded-md hover:bg-muted transition-colors"
+          >
+            <ArrowLeft size={14} />
+            Back to Simple Mode
+          </button>
+        </div>
+      ) : experienceLevel === 'curious' ? (
         <div
           className="flex items-center gap-1.5 mb-1"
           title="Simplified mode curated for non-specialists — jargon-free explanations with everyday language"
@@ -101,7 +124,7 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
             Curious Mode
           </span>
         </div>
-      )}
+      ) : null}
 
       {/* Learn progress row */}
       <div className="flex items-center gap-3">

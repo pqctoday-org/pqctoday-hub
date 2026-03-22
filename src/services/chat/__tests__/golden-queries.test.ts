@@ -357,6 +357,125 @@ const GOLDEN_QUERIES: GoldenQuery[] = [
     expectedSources: ['openssl-guide'],
     minTop5Hits: 0,
   },
+
+  // === ROUND 5: What's New / Changelog queries ===
+
+  // --- What's new intent ---
+  {
+    query: "What's new?",
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'What changed recently?',
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Latest updates',
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'New features',
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 0, // keyword "features" may pull module content; changelog still in top 15
+  },
+  {
+    query: 'Release notes',
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 1,
+  },
+
+  // --- Curious-mode what's new (same intent, different phrasing) ---
+  {
+    query: "What's new on this site?",
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 0, // "site" may dilute; changelog in top 15
+  },
+  {
+    query: 'What was added recently?',
+    expectedIntent: 'whats_new',
+    mustInclude: ['changelog-'],
+    expectedSources: ['changelog'],
+    minTop5Hits: 1,
+  },
+
+  // === ROUND 6: Site Status & Terms of Service queries ===
+
+  // --- Site status / transparency ---
+  {
+    query: 'What is the status of this site?',
+    expectedIntent: 'definition',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Is this site a work in progress?',
+    expectedIntent: 'general',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0, // may rank lower; must be in top 15
+  },
+  {
+    query: 'Is this site endorsed by any organization?',
+    expectedIntent: 'general',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0, // "endorsed" keyword matches transparency chunk; may rank lower
+  },
+
+  // --- Content validation / peer review ---
+  {
+    query: 'How is the content validated?',
+    expectedIntent: 'general',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Is this peer reviewed?',
+    expectedIntent: 'general',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0, // "peer review" keywords match; may rank lower
+  },
+  {
+    query: 'What is the content validation process?',
+    expectedIntent: 'definition',
+    mustInclude: ['page-guide-transparency'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 0, // "validation process" matches but glossary/module chunks may rank higher
+  },
+
+  // --- Terms of service ---
+  {
+    query: 'What are the terms of use?',
+    expectedIntent: 'definition',
+    mustInclude: ['page-guide-terms'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 1,
+  },
+  {
+    query: 'Terms of service',
+    expectedIntent: 'general',
+    mustInclude: ['page-guide-terms'],
+    expectedSources: ['documentation'],
+    minTop5Hits: 1,
+  },
 ]
 
 let service: RetrievalService

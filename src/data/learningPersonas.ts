@@ -116,7 +116,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1020,
+    estimatedMinutes: 680,
     quizDescription:
       'Test your knowledge on quantum threats, risk management, data asset classification, business cases, governance, compliance strategy, and migration planning.',
     quizCategories: [
@@ -262,7 +262,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1755,
+    estimatedMinutes: 1350,
     quizDescription:
       'Test your knowledge on quantum threats, TLS, VPN/SSH, PKI, cryptographic APIs, hybrid cryptography, crypto agility, PQC testing & validation, and protocol integration.',
     quizCategories: [
@@ -409,7 +409,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1965,
+    estimatedMinutes: 1480,
     quizDescription:
       'Test your knowledge on cryptographic foundations, architecture strategy (crypto agility, hybrid crypto, QKD), infrastructure protocols (TLS, KMS, HSMs, stateful signatures, PKI, Merkle tree certs), PQC testing & validation, identity and credentials, API security, code signing, and IoT/OT security.',
     quizCategories: [
@@ -649,7 +649,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 3195,
+    estimatedMinutes: 2520,
     quizDescription:
       'Full assessment across all PQC categories — algorithms, protocols, standards, compliance, industries, and applications.',
     quizCategories: [], // empty = all categories shown (full coverage for researcher)
@@ -765,7 +765,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 1845,
+    estimatedMinutes: 1360,
     quizDescription:
       'Test your knowledge on TLS operations, VPN/SSH, web gateways, PQC testing & validation, PKI certificate management, KMS and HSM operations, standards bodies, energy/utilities, and infrastructure migration planning.',
     quizCategories: [
@@ -849,7 +849,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
       },
       { type: 'module', moduleId: 'quiz' },
     ],
-    estimatedMinutes: 340,
+    estimatedMinutes: 280,
     quizDescription:
       'Test your understanding of quantum threats, risk basics, compliance timelines, and migration concepts.',
     quizCategories: [

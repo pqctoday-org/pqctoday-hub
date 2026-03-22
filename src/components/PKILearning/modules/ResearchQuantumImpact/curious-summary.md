@@ -9,3 +9,7 @@ Standardized algorithms (like ML-KEM and ML-DSA) are just the beginning. Without
 ### The Key Takeaway
 
 We need researchers to improve post-quantum cryptography. Experiment with NIST algorithms, hunt for side-channel physical vulnerabilities, collaborate across disciplines, and secure grant funding by advancing the frontier of quantum-safe security.
+
+### What's Happening
+
+The global research community is actively stress-testing NIST's standardized algorithms through cryptanalysis challenges, side-channel evaluations, and formal verification efforts, ensuring that the foundations of post-quantum security remain robust as deployment scales worldwide.

@@ -12,6 +12,7 @@ export type QueryIntent =
   | 'recommendation'
   | 'country_query'
   | 'standard_query'
+  | 'whats_new'
   | 'general'
 
 /**
@@ -63,6 +64,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     compliance: 1.5,
     glossary: 1.2,
   },
+  whats_new: { changelog: 3, 'app-guide': 1.5 },
   general: { leaders: 1.5 },
 }
 
@@ -400,6 +402,14 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
 export function classifyIntent(query: string): QueryIntent {
   const q = query.toLowerCase()
 
+  // What's new / changelog queries — check early before "what" triggers definition
+  if (
+    /\b(what'?s new|what changed|latest updates?|recent changes?|new features?|what was added|release notes?|latest version)\b/.test(
+      q
+    )
+  )
+    return 'whats_new'
+
   if (/^(what is|define|explain|what does|what are|tell me about)\b/.test(q)) return 'definition'
   if (/\b(compare|comparison|difference|vs\.?|versus|better)\b/.test(q)) return 'comparison'
   if (
@@ -448,6 +458,8 @@ function getLimitForIntent(intent: QueryIntent): number {
       return 20
     case 'standard_query':
       return 12
+    case 'whats_new':
+      return 10
     default:
       return 15
   }

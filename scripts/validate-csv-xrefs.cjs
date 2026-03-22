@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global __dirname, process, console */
+
 // Cross-reference integrity validator for all CSV data sources.
 // Read-only — outputs JSON findings to stdout.
 // Usage: node scripts/validate-csv-xrefs.cjs

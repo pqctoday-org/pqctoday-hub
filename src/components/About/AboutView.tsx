@@ -34,6 +34,7 @@ import {
 } from 'lucide-react'
 
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Button } from '../ui/button'
@@ -44,7 +45,7 @@ import { WorkgroupDetailModal } from './WorkgroupDetailModal'
 import { PQC_WORKGROUPS, WORKGROUP_REGIONS } from './workgroupData'
 import type { Workgroup } from './workgroupData'
 import { useTheme } from '../../hooks/useTheme'
-import { getCurrentVersion } from '../../store/useVersionStore'
+import { getCurrentVersion, useVersionStore } from '../../store/useVersionStore'
 
 const MISSION_TAGS = [
   '48 learning modules',
@@ -285,6 +286,7 @@ const CRYPTO_BUFF_BOOKS = [
 export function AboutView() {
   const { theme, setTheme } = useTheme()
   const version = getCurrentVersion()
+  const requestShowWhatsNew = useVersionStore((s) => s.requestShowWhatsNew)
   const [isJourneyModalOpen, setIsJourneyModalOpen] = useState(false)
   const [selectedWorkgroup, setSelectedWorkgroup] = useState<Workgroup | null>(null)
   const [isShowAllDiscussions, setIsShowAllDiscussions] = useState(false)
@@ -321,13 +323,22 @@ export function AboutView() {
                 </p>
               </div>
             </div>
-            <a
-              href="/changelog"
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors shrink-0"
-            >
-              View Changelog
-              <ChevronRight size={16} />
-            </a>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                onClick={requestShowWhatsNew}
+                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-foreground font-semibold text-sm hover:bg-muted/40 transition-colors"
+              >
+                <Sparkles size={14} />
+                What&apos;s New
+              </button>
+              <a
+                href="/changelog"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors"
+              >
+                View Changelog
+                <ChevronRight size={16} />
+              </a>
+            </div>
           </div>
         </motion.div>
 
@@ -2092,6 +2103,26 @@ export function AboutView() {
               </Button>
             ))}
           </div>
+        </motion.div>
+        {/* Terms of Service */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.52 }}
+          className="glass-panel p-6 text-center"
+        >
+          <h3 className="text-lg font-semibold mb-2">Legal</h3>
+          <p className="text-muted-foreground text-sm max-w-2xl mx-auto">
+            This platform embeds open-source cryptographic software classified under ECCN 5D002.
+            Usage is subject to U.S. Export Administration Regulations.
+          </p>
+          <Link
+            to="/terms"
+            className="inline-flex items-center gap-2 mt-3 text-sm font-medium text-accent hover:underline"
+          >
+            <FileText size={14} />
+            Terms of Service
+          </Link>
         </motion.div>
       </div>
       <CareerJourneyModal

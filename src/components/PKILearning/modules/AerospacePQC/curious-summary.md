@@ -9,3 +9,7 @@ Because an aircraft or satellite deployed today will still be operational in 205
 ### The Key Takeaway
 
 Aerospace PQC demands exceptional engineering. Legacy protocols require ground-based "gateway-mediated" wrappers, while only modern networks (like ARINC 664) have the bandwidth for native PQC execution. For ultra-constrained or highly radiated hardware, hash-based algorithms (LMS/XMSS) offer the most resilient solution, relying entirely on public data without the fragile vulnerability of massive lattice matrices.
+
+### What's Happening
+
+Aerospace certification bodies are updating airworthiness standards to accommodate PQC signature sizes, while satellite operators are evaluating hash-based algorithms (LMS/XMSS) for long-duration missions where hardware cannot be physically upgraded post-launch.

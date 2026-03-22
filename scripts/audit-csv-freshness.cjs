@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-/* global __dirname, process, console, setTimeout */
+
 // CSV freshness audit — staleness detection + URL liveness checks.
 // Read-only — outputs JSON findings to stdout.
 // Usage: node scripts/audit-csv-freshness.cjs [--skip-urls]

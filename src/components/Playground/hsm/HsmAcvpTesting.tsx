@@ -8,6 +8,13 @@ import aesGcmTestVectors from '../../../data/acvp/aesgcm_test.json'
 import hmacTestVectors from '../../../data/acvp/hmac_test.json'
 import rsaPssTestVectors from '../../../data/acvp/rsapss_test.json'
 import ecdsaTestVectors from '../../../data/acvp/ecdsa_test.json'
+import sha256TestVectors from '../../../data/acvp/sha256_test.json'
+import aesCbcTestVectors from '../../../data/acvp/aescbc_test.json'
+import aesCtrTestVectors from '../../../data/acvp/aesctr_test.json'
+import hmac384TestVectors from '../../../data/acvp/hmac_sha384_test.json'
+import hmac512TestVectors from '../../../data/acvp/hmac_sha512_test.json'
+import ecdsaP384TestVectors from '../../../data/acvp/ecdsa_p384_test.json'
+import aesKwTestVectors from '../../../data/acvp/aeskw_test.json'
 import { hexToBytes } from '../../../utils/dataInputUtils'
 import {
   hsm_initialize,
@@ -31,6 +38,47 @@ import {
   hsm_verifyBytes,
   hsm_generateMLDSAKeyPair,
   hsm_sign,
+  hsm_verify,
+  hsm_generateMLKEMKeyPair,
+  hsm_encapsulate,
+  hsm_generateSLHDSAKeyPair,
+  hsm_slhdsaSign,
+  hsm_slhdsaVerify,
+  hsm_digest,
+  hsm_getMechanismList,
+  hsm_aesCtrDecrypt,
+  hsm_generateEdDSAKeyPair,
+  hsm_eddsaSign,
+  hsm_eddsaVerify,
+  hsm_generateAESKey,
+  hsm_wrapKeyMech,
+  hsm_unwrapKeyMech,
+  hsm_pbkdf2,
+  hsm_hkdf,
+  CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHAKE_256F,
+  CKM_SHA256,
+  CKM_AES_GCM,
+  CKM_AES_CBC_PAD,
+  CKM_AES_CTR,
+  CKM_AES_KEY_WRAP,
+  CKM_AES_KEY_WRAP_KWP,
+  CKM_SHA256_HMAC,
+  CKM_SHA384_HMAC,
+  CKM_SHA512_HMAC,
+  CKM_ECDSA_SHA256,
+  CKM_ECDSA_SHA384,
+  CKM_EDDSA,
+  CKM_PKCS5_PBKD2,
+  CKM_HKDF_DERIVE,
+  CKA_CLASS,
+  CKA_KEY_TYPE,
+  CKA_ENCRYPT,
+  CKA_DECRYPT,
+  CKA_TOKEN,
+  CKA_EXTRACTABLE,
+  CKO_SECRET_KEY,
+  CKK_AES,
 } from '../../../wasm/softhsm'
 import type { SoftHSMModule } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
@@ -84,15 +132,25 @@ export const HsmAcvpTesting = () => {
 
     const newResults: TestResult[] = []
 
-    const engines: Array<{ M: SoftHSMModule; name: string; hSession: number }> = []
+    const engines: Array<{
+      M: SoftHSMModule
+      name: string
+      hSession: number
+      mechs: Set<number>
+    }> = []
     if (engineMode === 'cpp') {
-      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0 })
+      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, mechs: new Set() })
     } else if (engineMode === 'rust') {
-      engines.push({ M: moduleRef.current, name: 'Rust', hSession: 0 })
+      engines.push({ M: moduleRef.current, name: 'Rust', hSession: 0, mechs: new Set() })
     } else if (engineMode === 'dual') {
-      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0 })
+      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, mechs: new Set() })
       if (crossCheckModuleRef.current) {
-        engines.push({ M: crossCheckModuleRef.current, name: 'Rust', hSession: 0 })
+        engines.push({
+          M: crossCheckModuleRef.current,
+          name: 'Rust',
+          hSession: 0,
+          mechs: new Set(),
+        })
       }
     }
 
@@ -110,6 +168,12 @@ export const HsmAcvpTesting = () => {
         const slot = hsm_getFirstSlot(engine.M)
         hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
         engine.hSession = hsm_openUserSession(engine.M, slot, '12345678', 'user1234')
+        // Probe supported mechanisms so we can skip unsupported tests gracefully
+        try {
+          engine.mechs = new Set(hsm_getMechanismList(engine.M, slot))
+        } catch {
+          // If mechanism probing fails, leave empty — tests will run and fail individually
+        }
       }
 
       for (const engine of engines) {
@@ -122,9 +186,15 @@ export const HsmAcvpTesting = () => {
           addHsmKey({ ...key, generatedAt: ts() })
 
         // ── 1. AES-GCM-256 Decrypt KAT (SP 800-38D) ────────────────────
-        {
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_GCM)) {
+          addLog(`[${eName}] [SKIP] AES-GCM-256: mechanism not supported`)
+        } else {
           const tv = aesGcmTestVectors.testGroups[0].tests[0]
           addLog(`[${eName}] Testing AES-GCM-256 Decrypt KAT (SP 800-38D)...`)
+          addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
+          addLog(
+            `  ACVP CT[${tv.ct.length / 2}B]: ${tv.ct.slice(0, 32)}… | Expected PT: ${tv.pt.slice(0, 32)}…`
+          )
           try {
             const keyBytes = hexToBytes(tv.key)
             const ivBytes = hexToBytes(tv.iv)
@@ -132,8 +202,17 @@ export const HsmAcvpTesting = () => {
             const tagBytes = hexToBytes(tv.tag)
             const expectedPt = hexToBytes(tv.pt)
 
-            // Import known key
-            const aesHandle = hsm_importAESKey(M, hSession, keyBytes)
+            // Import known key — decrypt only (PKCS#11 v3.2 least privilege)
+            const aesHandle = hsm_importAESKey(
+              M,
+              hSession,
+              keyBytes,
+              false,
+              true,
+              false,
+              false,
+              false
+            )
             regKey({
               handle: aesHandle,
               family: 'aes',
@@ -179,16 +258,20 @@ export const HsmAcvpTesting = () => {
         }
 
         // ── 2. HMAC-SHA256 Verify KAT (RFC 4231) ────────────────────────
-        {
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_HMAC)) {
+          addLog(`[${eName}] [SKIP] HMAC-SHA256: mechanism not supported`)
+        } else {
           const tv = hmacTestVectors.testGroups[0].tests[0]
           addLog(`[${eName}] Testing HMAC-SHA256 Verify KAT (RFC 4231)...`)
+          addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | Msg: ${tv.msg.slice(0, 32)}…`)
+          addLog(`  ACVP Expected MAC: ${tv.mac}`)
           try {
             const keyBytes = hexToBytes(tv.key)
             const msgBytes = hexToBytes(tv.msg)
             const macBytes = hexToBytes(tv.mac)
 
-            // Import known HMAC key
-            const hmacHandle = hsm_importHMACKey(M, hSession, keyBytes)
+            // Import known HMAC key — verify only (PKCS#11 v3.2 least privilege)
+            const hmacHandle = hsm_importHMACKey(M, hSession, keyBytes, false, true)
             regKey({
               handle: hmacHandle,
               family: 'hmac',
@@ -227,16 +310,20 @@ export const HsmAcvpTesting = () => {
         }
 
         // ── 3. RSA-PSS-2048 SigVer KAT (FIPS 186-5) ────────────────────
-        {
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256_RSA_PKCS_PSS)) {
+          addLog(`[${eName}] [SKIP] RSA-PSS-2048: mechanism not supported`)
+        } else {
           const tv = rsaPssTestVectors.testGroups[0].tests[0]
           addLog(`[${eName}] Testing RSA-PSS-2048 SigVer KAT (FIPS 186-5)...`)
+          addLog(`  ACVP Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
+          addLog(`  ACVP Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`)
           try {
             const modBytes = hexToBytes(tv.n)
             const expBytes = hexToBytes(tv.e)
             const sigBytes = hexToBytes(tv.signature)
 
-            // Import known RSA public key
-            const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes)
+            // Import known RSA public key — verify only (PKCS#11 v3.2 least privilege)
+            const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes, false)
             regKey({
               handle: rsaPubHandle,
               family: 'rsa',
@@ -283,9 +370,13 @@ export const HsmAcvpTesting = () => {
         }
 
         // ── 4. ECDSA P-256 SigVer KAT (FIPS 186-5) ─────────────────────
-        {
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {
+          addLog(`[${eName}] [SKIP] ECDSA P-256: mechanism not supported`)
+        } else {
           const tv = ecdsaTestVectors.testGroups[0].tests[0]
           addLog(`[${eName}] Testing ECDSA P-256 SigVer KAT (FIPS 186-5)...`)
+          addLog(`  ACVP Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
+          addLog(`  ACVP r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
           try {
             const qx = hexToBytes(tv.qx)
             const qy = hexToBytes(tv.qy)
@@ -342,6 +433,9 @@ export const HsmAcvpTesting = () => {
           const algo = group.parameterSet
           const variantNum = parseInt(algo.split('-')[2]) as 44 | 65 | 87
           addLog(`[${eName}] Testing ${algo} SigVer (FIPS 204)...`)
+          addLog(
+            `  ACVP PK: ${test.pk.slice(0, 32)}… | Sig[${test.sig.length / 2}B]: ${test.sig.slice(0, 32)}…`
+          )
 
           try {
             const pkBytes = hexToBytes(test.pk)
@@ -386,50 +480,54 @@ export const HsmAcvpTesting = () => {
           }
         }
 
-        // ── 6. ML-DSA Functional Sign Test ───────────────────────────────
-        addLog(`[${eName}] Testing ML-DSA-65 Sign (FIPS 204)...`)
-        try {
-          const mldsaPair = hsm_generateMLDSAKeyPair(M, hSession, 65)
-          regKey({
-            handle: mldsaPair.pubHandle,
-            family: 'ml-dsa',
-            role: 'public',
-            label: `ACVP ML-DSA-65 Keygen Public (${eName})`,
-            variant: '65',
-            engine: engineId,
-          })
-          regKey({
-            handle: mldsaPair.privHandle,
-            family: 'ml-dsa',
-            role: 'private',
-            label: `ACVP ML-DSA-65 Keygen Private (${eName})`,
-            variant: '65',
-            engine: engineId,
-          })
-          const sig = hsm_sign(M, hSession, mldsaPair.privHandle, 'ACVP NIST PQC test')
-          if (sig && sig.length > 0) {
-            const signHex = toHex(sig, 16)
-            newResults.push({
-              id: `mldsa-sign-${eName}`,
-              algorithm: `ML-DSA-65 (${eName})`,
-              testCase: 'Functional Sign',
-              status: 'pass',
-              details: `sig[${sig.length}B]: ${signHex}…`,
+        // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
+        for (const dsaVariant of [44, 65, 87] as const) {
+          const dsaAlgo = `ML-DSA-${dsaVariant}`
+          addLog(`[${eName}] Testing ${dsaAlgo} Functional Sign+Verify (FIPS 204)...`)
+          try {
+            const mldsaPair = hsm_generateMLDSAKeyPair(M, hSession, dsaVariant)
+            regKey({
+              handle: mldsaPair.pubHandle,
+              family: 'ml-dsa',
+              role: 'public',
+              label: `ACVP ${dsaAlgo} Keygen Public (${eName})`,
+              variant: String(dsaVariant),
+              engine: engineId,
             })
-            addLog(`[${eName}] ML-DSA-65 Sign: PASS | sig[0:16]: ${signHex}…`)
-          } else {
-            throw new Error('Empty signature')
+            regKey({
+              handle: mldsaPair.privHandle,
+              family: 'ml-dsa',
+              role: 'private',
+              label: `ACVP ${dsaAlgo} Keygen Private (${eName})`,
+              variant: String(dsaVariant),
+              engine: engineId,
+            })
+            const sig = hsm_sign(M, hSession, mldsaPair.privHandle, 'ACVP NIST PQC test')
+            const isValid = hsm_verify(M, hSession, mldsaPair.pubHandle, 'ACVP NIST PQC test', sig)
+            if (isValid) {
+              const signHex = toHex(sig, 16)
+              newResults.push({
+                id: `mldsa-func-${dsaVariant}-${eName}`,
+                algorithm: `${dsaAlgo} (${eName})`,
+                testCase: 'Functional Sign+Verify',
+                status: 'pass',
+                details: `sig[${sig.length}B]: ${signHex}…`,
+              })
+              addLog(`[${eName}] ${dsaAlgo} Functional: PASS | sig[0:16]: ${signHex}…`)
+            } else {
+              throw new Error('Signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `mldsa-func-${dsaVariant}-err-${eName}`,
+              algorithm: `${dsaAlgo} (${eName})`,
+              testCase: 'Functional Sign+Verify',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] ${dsaAlgo} Functional: ${errMessage}`)
           }
-        } catch (e: unknown) {
-          const errMessage = e instanceof Error ? e.message : String(e)
-          newResults.push({
-            id: `mldsa-sign-err-${eName}`,
-            algorithm: `ML-DSA-65 (${eName})`,
-            testCase: 'Functional Sign',
-            status: 'fail',
-            details: errMessage,
-          })
-          addLog(`[DISCREPANCY] [${eName}] ML-DSA-65 Sign: ${errMessage}`)
         }
 
         // ── 7. ML-KEM Decapsulation KAT (FIPS 203) ──────────────────────
@@ -438,6 +536,10 @@ export const HsmAcvpTesting = () => {
           const algo = group.parameterSet
           const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
           addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
+          addLog(
+            `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
+          )
+          addLog(`  ACVP Expected SS: ${test.ss}`)
 
           try {
             const skBytes = hexToBytes(test.sk)
@@ -523,6 +625,839 @@ export const HsmAcvpTesting = () => {
               ms: 0,
               ok: false,
             })
+          }
+        }
+
+        // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
+        for (const kemVariant of [512, 768, 1024] as const) {
+          const kemAlgo = `ML-KEM-${kemVariant}`
+          addLog(`[${eName}] Testing ${kemAlgo} Encap+Decap Round-Trip (FIPS 203)...`)
+          try {
+            const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, kemVariant)
+            regKey({
+              handle: pubHandle,
+              family: 'ml-kem',
+              role: 'public',
+              label: `ACVP ${kemAlgo} RT Public (${eName})`,
+              variant: String(kemVariant),
+              engine: engineId,
+            })
+            regKey({
+              handle: privHandle,
+              family: 'ml-kem',
+              role: 'private',
+              label: `ACVP ${kemAlgo} RT Private (${eName})`,
+              variant: String(kemVariant),
+              engine: engineId,
+            })
+            const { ciphertextBytes, secretHandle: encapSecret } = hsm_encapsulate(
+              M,
+              hSession,
+              pubHandle,
+              kemVariant
+            )
+            const encapSs = hsm_extractKeyValue(M, hSession, encapSecret)
+            const decapSecret = hsm_decapsulate(
+              M,
+              hSession,
+              privHandle,
+              ciphertextBytes,
+              kemVariant
+            )
+            const decapSs = hsm_extractKeyValue(M, hSession, decapSecret)
+
+            const ssMatch =
+              encapSs.length === decapSs.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              encapSs.every((b: number, i: number) => b === decapSs[i])
+
+            if (ssMatch) {
+              const ssHex = toHex(encapSs)
+              newResults.push({
+                id: `mlkem-rt-${kemVariant}-${eName}`,
+                algorithm: `${kemAlgo} (${eName})`,
+                testCase: 'Encap+Decap Round-Trip',
+                status: 'pass',
+                details: `SS[${encapSs.length}B]: ${ssHex} | ct=${ciphertextBytes.length}B`,
+              })
+              addLog(`[${eName}] ${kemAlgo} Round-Trip: PASS | SS: ${ssHex}`)
+            } else {
+              newResults.push({
+                id: `mlkem-rt-${kemVariant}-${eName}`,
+                algorithm: `${kemAlgo} (${eName})`,
+                testCase: 'Encap+Decap Round-Trip',
+                status: 'fail',
+                details: `SS mismatch: encap=${toHex(encapSs, 8)}… decap=${toHex(decapSs, 8)}…`,
+              })
+              addLog(`[DISCREPANCY] [${eName}] ${kemAlgo} Round-Trip: SS mismatch`)
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `mlkem-rt-${kemVariant}-err-${eName}`,
+              algorithm: `${kemAlgo} (${eName})`,
+              testCase: 'Encap+Decap Round-Trip',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] ${kemAlgo} Round-Trip: ${errMessage}`)
+          }
+        }
+
+        // ── 9. SLH-DSA Functional Sign+Verify (FIPS 205) ────────────────
+        for (const slhParam of [
+          { ckp: CKP_SLH_DSA_SHA2_128S, name: 'SLH-DSA-SHA2-128s' },
+          { ckp: CKP_SLH_DSA_SHAKE_256F, name: 'SLH-DSA-SHAKE-256f' },
+        ]) {
+          addLog(`[${eName}] Testing ${slhParam.name} Functional Sign+Verify (FIPS 205)...`)
+          try {
+            const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, slhParam.ckp)
+            regKey({
+              handle: pubHandle,
+              family: 'slh-dsa',
+              role: 'public',
+              label: `ACVP ${slhParam.name} Public (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privHandle,
+              family: 'slh-dsa',
+              role: 'private',
+              label: `ACVP ${slhParam.name} Private (${eName})`,
+              engine: engineId,
+            })
+            const sigBytes = hsm_slhdsaSign(M, hSession, privHandle, 'ACVP SLH-DSA functional test')
+            const isValid = hsm_slhdsaVerify(
+              M,
+              hSession,
+              pubHandle,
+              'ACVP SLH-DSA functional test',
+              sigBytes
+            )
+            if (isValid) {
+              const sigHex = toHex(sigBytes, 16)
+              newResults.push({
+                id: `slhdsa-func-${slhParam.name}-${eName}`,
+                algorithm: `${slhParam.name} (${eName})`,
+                testCase: 'Functional Sign+Verify',
+                status: 'pass',
+                details: `sig[${sigBytes.length}B]: ${sigHex}…`,
+              })
+              addLog(`[${eName}] ${slhParam.name} Functional: PASS | sig[0:16]: ${sigHex}…`)
+            } else {
+              throw new Error('Signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `slhdsa-func-${slhParam.name}-err-${eName}`,
+              algorithm: `${slhParam.name} (${eName})`,
+              testCase: 'Functional Sign+Verify',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] ${slhParam.name} Functional: ${errMessage}`)
+          }
+        }
+
+        // ── 10. SHA-256 Digest KAT (FIPS 180-4) ─────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA256)) {
+          addLog(`[${eName}] [SKIP] SHA-256 Digest: mechanism not supported`)
+        } else {
+          for (const test of sha256TestVectors.testGroups[0].tests) {
+            addLog(`[${eName}] Testing SHA-256 Digest KAT tc=${test.tcId} (FIPS 180-4)...`)
+            addLog(
+              `  ACVP Msg: ${test.msg.slice(0, 32)}${test.msg.length > 32 ? '…' : ''} | Expected MD: ${test.md}`
+            )
+            try {
+              const msgBytes = hexToBytes(test.msg)
+              const expectedMd = hexToBytes(test.md)
+              const digest = hsm_digest(M, hSession, msgBytes, CKM_SHA256)
+
+              const matches =
+                digest.length === expectedMd.length &&
+                // eslint-disable-next-line security/detect-object-injection
+                digest.every((b: number, i: number) => b === expectedMd[i])
+
+              const mdHex = toHex(digest)
+              newResults.push({
+                id: `sha256-tc${test.tcId}-${eName}`,
+                algorithm: `SHA-256 (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                status: matches ? 'pass' : 'fail',
+                details: matches
+                  ? `MD[${digest.length}B]: ${mdHex}`
+                  : `MD mismatch: got ${toHex(digest, 8)}… expected ${toHex(expectedMd, 8)}…`,
+              })
+              addLog(
+                `[${eName}] SHA-256 tc=${test.tcId}: ${matches ? 'PASS' : 'FAIL'} | MD: ${mdHex}`
+              )
+            } catch (e: unknown) {
+              const errMessage = e instanceof Error ? e.message : String(e)
+              newResults.push({
+                id: `sha256-tc${test.tcId}-err-${eName}`,
+                algorithm: `SHA-256 (${eName})`,
+                testCase: `Digest KAT tc=${test.tcId}`,
+                status: 'fail',
+                details: errMessage,
+              })
+              addLog(`[DISCREPANCY] [${eName}] SHA-256 tc=${test.tcId}: ${errMessage}`)
+            }
+          }
+        }
+
+        // ── 11. AES-CBC-256 Decrypt KAT (SP 800-38A) ──────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CBC_PAD)) {
+          addLog(`[${eName}] [SKIP] AES-CBC-256: mechanism not supported`)
+        } else {
+          const tv = aesCbcTestVectors.testGroups[0].tests[0]
+          addLog(`[${eName}] Testing AES-CBC-256 Decrypt KAT (SP 800-38A)...`)
+          addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… IV: ${tv.iv}`)
+          try {
+            const keyBytes = hexToBytes(tv.key)
+            const ivBytes = hexToBytes(tv.iv)
+            const ctBytes = hexToBytes(tv.ct)
+            const expectedPt = hexToBytes(tv.pt)
+
+            const aesHandle = hsm_importAESKey(
+              M,
+              hSession,
+              keyBytes,
+              false,
+              true,
+              false,
+              false,
+              false
+            )
+            regKey({
+              handle: aesHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-CBC-256 (${eName})`,
+              engine: engineId,
+            })
+
+            const recoveredPt = hsm_aesDecrypt(M, hSession, aesHandle, ctBytes, ivBytes, 'cbc')
+            const matches =
+              recoveredPt.length === expectedPt.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              recoveredPt.every((b: number, i: number) => b === expectedPt[i])
+
+            const ptHex = toHex(recoveredPt)
+            newResults.push({
+              id: `aescbc-acvp-${eName}`,
+              algorithm: `AES-CBC-256 (${eName})`,
+              testCase: 'Decrypt KAT',
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `PT[${recoveredPt.length}B]: ${ptHex}`
+                : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+            })
+            addLog(`[${eName}] AES-CBC Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `aescbc-err-${eName}`,
+              algorithm: `AES-CBC-256 (${eName})`,
+              testCase: 'Decrypt KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] AES-CBC: ${errMessage}`)
+          }
+        }
+
+        // ── 12. AES-CTR-256 Decrypt KAT (SP 800-38A) ──────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_CTR)) {
+          addLog(`[${eName}] [SKIP] AES-CTR-256: mechanism not supported`)
+        } else {
+          const tv = aesCtrTestVectors.testGroups[0].tests[0]
+          const counterBits = aesCtrTestVectors.testGroups[0].counterBits
+          addLog(`[${eName}] Testing AES-CTR-256 Decrypt KAT (SP 800-38A)...`)
+          addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… IV: ${tv.iv} ctrBits: ${counterBits}`)
+          try {
+            const keyBytes = hexToBytes(tv.key)
+            const ivBytes = hexToBytes(tv.iv)
+            const ctBytes = hexToBytes(tv.ct)
+            const expectedPt = hexToBytes(tv.pt)
+
+            const aesHandle = hsm_importAESKey(
+              M,
+              hSession,
+              keyBytes,
+              false,
+              true,
+              false,
+              false,
+              false
+            )
+            regKey({
+              handle: aesHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-CTR-256 (${eName})`,
+              engine: engineId,
+            })
+
+            const recoveredPt = hsm_aesCtrDecrypt(
+              M,
+              hSession,
+              aesHandle,
+              ivBytes,
+              counterBits,
+              ctBytes
+            )
+            const matches =
+              recoveredPt.length === expectedPt.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              recoveredPt.every((b: number, i: number) => b === expectedPt[i])
+
+            const ptHex = toHex(recoveredPt)
+            newResults.push({
+              id: `aesctr-acvp-${eName}`,
+              algorithm: `AES-CTR-256 (${eName})`,
+              testCase: 'Decrypt KAT',
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `PT[${recoveredPt.length}B]: ${ptHex}`
+                : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
+            })
+            addLog(`[${eName}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `aesctr-err-${eName}`,
+              algorithm: `AES-CTR-256 (${eName})`,
+              testCase: 'Decrypt KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] AES-CTR: ${errMessage}`)
+          }
+        }
+
+        // ── 13. HMAC-SHA384 Verify KAT ─────────────────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA384_HMAC)) {
+          addLog(`[${eName}] [SKIP] HMAC-SHA384: mechanism not supported`)
+        } else {
+          const tv = hmac384TestVectors.testGroups[0].tests[0]
+          addLog(`[${eName}] Testing HMAC-SHA384 Verify KAT...`)
+          addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
+          try {
+            const keyBytes = hexToBytes(tv.key)
+            const msgBytes = hexToBytes(tv.msg)
+            const macBytes = hexToBytes(tv.mac)
+
+            const hmacHandle = hsm_importHMACKey(M, hSession, keyBytes, false, true)
+            regKey({
+              handle: hmacHandle,
+              family: 'hmac',
+              role: 'secret',
+              label: `ACVP HMAC-SHA384 (${eName})`,
+              engine: engineId,
+            })
+
+            const isValid = hsm_hmacVerify(
+              M,
+              hSession,
+              hmacHandle,
+              msgBytes,
+              macBytes,
+              CKM_SHA384_HMAC
+            )
+            const macHex = toHex(macBytes)
+            newResults.push({
+              id: `hmac384-acvp-${eName}`,
+              algorithm: `HMAC-SHA384 (${eName})`,
+              testCase: 'Verify KAT',
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `MAC[${macBytes.length}B] verified: ${macHex}`
+                : 'MAC verification failed',
+            })
+            addLog(
+              `[${eName}] HMAC-SHA384 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `hmac384-err-${eName}`,
+              algorithm: `HMAC-SHA384 (${eName})`,
+              testCase: 'Verify KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] HMAC-SHA384: ${errMessage}`)
+          }
+        }
+
+        // ── 14. HMAC-SHA512 Verify KAT ─────────────────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SHA512_HMAC)) {
+          addLog(`[${eName}] [SKIP] HMAC-SHA512: mechanism not supported`)
+        } else {
+          const tv = hmac512TestVectors.testGroups[0].tests[0]
+          addLog(`[${eName}] Testing HMAC-SHA512 Verify KAT...`)
+          addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
+          try {
+            const keyBytes = hexToBytes(tv.key)
+            const msgBytes = hexToBytes(tv.msg)
+            const macBytes = hexToBytes(tv.mac)
+
+            const hmacHandle = hsm_importHMACKey(M, hSession, keyBytes, false, true)
+            regKey({
+              handle: hmacHandle,
+              family: 'hmac',
+              role: 'secret',
+              label: `ACVP HMAC-SHA512 (${eName})`,
+              engine: engineId,
+            })
+
+            const isValid = hsm_hmacVerify(
+              M,
+              hSession,
+              hmacHandle,
+              msgBytes,
+              macBytes,
+              CKM_SHA512_HMAC
+            )
+            const macHex = toHex(macBytes)
+            newResults.push({
+              id: `hmac512-acvp-${eName}`,
+              algorithm: `HMAC-SHA512 (${eName})`,
+              testCase: 'Verify KAT',
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `MAC[${macBytes.length}B] verified: ${macHex}`
+                : 'MAC verification failed',
+            })
+            addLog(
+              `[${eName}] HMAC-SHA512 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `hmac512-err-${eName}`,
+              algorithm: `HMAC-SHA512 (${eName})`,
+              testCase: 'Verify KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] HMAC-SHA512: ${errMessage}`)
+          }
+        }
+
+        // ── 15. ECDSA P-384 SigVer KAT (FIPS 186-5) ──────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA384)) {
+          addLog(`[${eName}] [SKIP] ECDSA P-384: mechanism not supported`)
+        } else {
+          const tv = ecdsaP384TestVectors.testGroups[0].tests[0]
+          addLog(`[${eName}] Testing ECDSA P-384 SigVer KAT (FIPS 186-5)...`)
+          addLog(`[${eName}]   Qx: ${tv.qx.slice(0, 32)}… R: ${tv.r.slice(0, 32)}…`)
+          try {
+            const qx = hexToBytes(tv.qx)
+            const qy = hexToBytes(tv.qy)
+            const rBytes = hexToBytes(tv.r)
+            const sBytes = hexToBytes(tv.s)
+            const sigBytes = new Uint8Array(rBytes.length + sBytes.length)
+            sigBytes.set(rBytes)
+            sigBytes.set(sBytes, rBytes.length)
+
+            const ecPubHandle = hsm_importECPublicKey(M, hSession, qx, qy, 'P-384')
+            regKey({
+              handle: ecPubHandle,
+              family: 'ecdsa',
+              role: 'public',
+              label: `ACVP ECDSA P-384 Public (${eName})`,
+              variant: 'P-384',
+              engine: engineId,
+            })
+
+            const isValid = hsm_ecdsaVerify(
+              M,
+              hSession,
+              ecPubHandle,
+              tv.msg,
+              sigBytes,
+              CKM_ECDSA_SHA384
+            )
+            const ecSigHex = toHex(sigBytes, 16)
+            newResults.push({
+              id: `ecdsa384-acvp-${eName}`,
+              algorithm: `ECDSA P-384 (${eName})`,
+              testCase: 'SigVer KAT',
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
+                : 'Signature verification failed against FIPS 186-5 vector',
+            })
+            addLog(
+              `[${eName}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `ecdsa384-err-${eName}`,
+              algorithm: `ECDSA P-384 (${eName})`,
+              testCase: 'SigVer KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] ECDSA P-384: ${errMessage}`)
+          }
+        }
+
+        // ── 16. EdDSA Ed25519 Functional Sign+Verify (RFC 8032) ───────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EDDSA)) {
+          addLog(`[${eName}] [SKIP] EdDSA Ed25519: mechanism not supported`)
+        } else {
+          addLog(`[${eName}] Testing EdDSA Ed25519 Functional Sign+Verify (RFC 8032)...`)
+          try {
+            const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, 'Ed25519')
+            regKey({
+              handle: pubHandle,
+              family: 'eddsa',
+              role: 'public',
+              label: `ACVP EdDSA Ed25519 Public (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privHandle,
+              family: 'eddsa',
+              role: 'private',
+              label: `ACVP EdDSA Ed25519 Private (${eName})`,
+              engine: engineId,
+            })
+
+            const msg = 'ACVP EdDSA Ed25519 functional round-trip'
+            const sigBytes = hsm_eddsaSign(M, hSession, privHandle, msg)
+            addLog(`[${eName}]   sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`)
+            const isValid = hsm_eddsaVerify(M, hSession, pubHandle, msg, sigBytes)
+
+            if (isValid) {
+              newResults.push({
+                id: `eddsa-func-${eName}`,
+                algorithm: `EdDSA Ed25519 (${eName})`,
+                testCase: 'Functional Sign+Verify',
+                status: 'pass',
+                details: `sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`,
+              })
+              addLog(`[${eName}] EdDSA Ed25519 Functional: PASS`)
+            } else {
+              throw new Error('Signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `eddsa-func-err-${eName}`,
+              algorithm: `EdDSA Ed25519 (${eName})`,
+              testCase: 'Functional Sign+Verify',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] EdDSA Ed25519: ${errMessage}`)
+          }
+        }
+
+        // ── 17. PBKDF2 Functional Derivation (PKCS#5 v2.1) ────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_PKCS5_PBKD2)) {
+          addLog(`[${eName}] [SKIP] PBKDF2: mechanism not supported`)
+        } else {
+          addLog(`[${eName}] Testing PBKDF2 Functional Derivation (PKCS#5 v2.1)...`)
+          try {
+            const password = new TextEncoder().encode('ACVP-PBKDF2-test-password')
+            const salt = new TextEncoder().encode('ACVP-salt-value')
+            const iterations = 4096
+            const keyLen = 32
+            addLog(`[${eName}]   iterations: ${iterations}, keyLen: ${keyLen}, PRF: HMAC-SHA512`)
+
+            const derived1 = hsm_pbkdf2(M, hSession, password, salt, iterations, keyLen)
+            const derived2 = hsm_pbkdf2(M, hSession, password, salt, iterations, keyLen)
+            const matches =
+              derived1.length === derived2.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              derived1.every((b: number, i: number) => b === derived2[i])
+
+            const dkHex = toHex(derived1)
+            newResults.push({
+              id: `pbkdf2-func-${eName}`,
+              algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
+              testCase: 'Functional Derivation',
+              status: matches && derived1.length === keyLen ? 'pass' : 'fail',
+              details: matches
+                ? `DK[${derived1.length}B]: ${dkHex}`
+                : 'Determinism failure: run1 ≠ run2',
+            })
+            addLog(`[${eName}] PBKDF2: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `pbkdf2-func-err-${eName}`,
+              algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
+              testCase: 'Functional Derivation',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] PBKDF2: ${errMessage}`)
+          }
+        }
+
+        // ── 18. HKDF Functional Derivation (RFC 5869) ──────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HKDF_DERIVE)) {
+          addLog(`[${eName}] [SKIP] HKDF: mechanism not supported`)
+        } else {
+          addLog(`[${eName}] Testing HKDF Functional Derivation (RFC 5869)...`)
+          try {
+            const ikmHandle = hsm_generateAESKey(
+              M,
+              hSession,
+              256,
+              false,
+              false,
+              false,
+              false,
+              true,
+              false
+            )
+            regKey({
+              handle: ikmHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP HKDF IKM (${eName})`,
+              engine: engineId,
+            })
+
+            const salt = new TextEncoder().encode('ACVP-HKDF-salt')
+            const info = new TextEncoder().encode('ACVP-HKDF-info')
+            const keyLen = 32
+            addLog(`[${eName}]   PRF: SHA-256, salt: 14B, info: 14B, keyLen: ${keyLen}`)
+
+            const derived1 = hsm_hkdf(
+              M,
+              hSession,
+              ikmHandle,
+              CKM_SHA256,
+              true,
+              true,
+              salt,
+              info,
+              keyLen
+            )
+            const derived2 = hsm_hkdf(
+              M,
+              hSession,
+              ikmHandle,
+              CKM_SHA256,
+              true,
+              true,
+              salt,
+              info,
+              keyLen
+            )
+            const matches =
+              derived1.length === derived2.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              derived1.every((b: number, i: number) => b === derived2[i])
+
+            const dkHex = toHex(derived1)
+            newResults.push({
+              id: `hkdf-func-${eName}`,
+              algorithm: `HKDF-SHA256 (${eName})`,
+              testCase: 'Functional Derivation',
+              status: matches && derived1.length === keyLen ? 'pass' : 'fail',
+              details: matches
+                ? `OKM[${derived1.length}B]: ${dkHex}`
+                : 'Determinism failure: run1 ≠ run2',
+            })
+            addLog(`[${eName}] HKDF: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `hkdf-func-err-${eName}`,
+              algorithm: `HKDF-SHA256 (${eName})`,
+              testCase: 'Functional Derivation',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] HKDF: ${errMessage}`)
+          }
+        }
+
+        // ── 19. AES-KW Wrap KAT (RFC 3394) ────────────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_KEY_WRAP)) {
+          addLog(`[${eName}] [SKIP] AES-KW: mechanism not supported`)
+        } else {
+          const tv = aesKwTestVectors.testGroups[0].tests[0]
+          addLog(`[${eName}] Testing AES-KW Wrap KAT (RFC 3394)...`)
+          addLog(`[${eName}]   KEK: ${tv.kek.slice(0, 32)}… Expected: ${tv.wrapped.slice(0, 32)}…`)
+          try {
+            const kekBytes = hexToBytes(tv.kek)
+            const keyDataBytes = hexToBytes(tv.keyData)
+            const expectedWrapped = hexToBytes(tv.wrapped)
+
+            const kekHandle = hsm_importAESKey(
+              M,
+              hSession,
+              kekBytes,
+              false,
+              false,
+              true,
+              false,
+              false
+            )
+            regKey({
+              handle: kekHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-KW KEK (${eName})`,
+              engine: engineId,
+            })
+            const targetHandle = hsm_importAESKey(
+              M,
+              hSession,
+              keyDataBytes,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true
+            )
+            regKey({
+              handle: targetHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-KW Target (${eName})`,
+              engine: engineId,
+            })
+
+            const wrapped = hsm_wrapKeyMech(M, hSession, CKM_AES_KEY_WRAP, kekHandle, targetHandle)
+            const matches =
+              wrapped.length === expectedWrapped.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              wrapped.every((b: number, i: number) => b === expectedWrapped[i])
+
+            const wrappedHex = toHex(wrapped)
+            newResults.push({
+              id: `aeskw-acvp-${eName}`,
+              algorithm: `AES-KW-256 (${eName})`,
+              testCase: 'Wrap KAT',
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `Wrapped[${wrapped.length}B]: ${wrappedHex}`
+                : `Mismatch: got ${toHex(wrapped, 8)}… expected ${toHex(expectedWrapped, 8)}…`,
+            })
+            addLog(
+              `[${eName}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `aeskw-err-${eName}`,
+              algorithm: `AES-KW-256 (${eName})`,
+              testCase: 'Wrap KAT',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] AES-KW: ${errMessage}`)
+          }
+        }
+
+        // ── 20. AES-KWP Wrap+Unwrap Round-Trip (RFC 5649) ─────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_KEY_WRAP_KWP)) {
+          addLog(`[${eName}] [SKIP] AES-KWP: mechanism not supported`)
+        } else {
+          addLog(`[${eName}] Testing AES-KWP Wrap+Unwrap Round-Trip (RFC 5649)...`)
+          try {
+            const kekHandle = hsm_generateAESKey(
+              M,
+              hSession,
+              256,
+              false,
+              false,
+              true,
+              true,
+              false,
+              false
+            )
+            regKey({
+              handle: kekHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-KWP KEK (${eName})`,
+              engine: engineId,
+            })
+            const targetHandle = hsm_generateAESKey(
+              M,
+              hSession,
+              256,
+              false,
+              false,
+              false,
+              false,
+              false,
+              true
+            )
+            regKey({
+              handle: targetHandle,
+              family: 'aes',
+              role: 'secret',
+              label: `ACVP AES-KWP Target (${eName})`,
+              engine: engineId,
+            })
+
+            const origValue = hsm_extractKeyValue(M, hSession, targetHandle)
+            const wrapped = hsm_wrapKeyMech(
+              M,
+              hSession,
+              CKM_AES_KEY_WRAP_KWP,
+              kekHandle,
+              targetHandle
+            )
+            addLog(`[${eName}]   Wrapped[${wrapped.length}B]: ${toHex(wrapped, 16)}…`)
+
+            const unwrappedHandle = hsm_unwrapKeyMech(
+              M,
+              hSession,
+              CKM_AES_KEY_WRAP_KWP,
+              kekHandle,
+              wrapped,
+              [
+                { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+                { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+                { type: CKA_ENCRYPT, boolVal: true },
+                { type: CKA_DECRYPT, boolVal: true },
+                { type: CKA_TOKEN, boolVal: false },
+                { type: CKA_EXTRACTABLE, boolVal: true },
+              ]
+            )
+            const unwrappedValue = hsm_extractKeyValue(M, hSession, unwrappedHandle)
+            const matches =
+              origValue.length === unwrappedValue.length &&
+              // eslint-disable-next-line security/detect-object-injection
+              origValue.every((b: number, i: number) => b === unwrappedValue[i])
+
+            newResults.push({
+              id: `aeskwp-func-${eName}`,
+              algorithm: `AES-KWP-256 (${eName})`,
+              testCase: 'Wrap+Unwrap Round-Trip',
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `Key[${origValue.length}B] recovered | wrapped=${wrapped.length}B`
+                : 'Key mismatch after unwrap',
+            })
+            addLog(
+              `[${eName}] AES-KWP Round-Trip: ${matches ? 'PASS' : 'FAIL'} | key=${origValue.length}B wrapped=${wrapped.length}B`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `aeskwp-func-err-${eName}`,
+              algorithm: `AES-KWP-256 (${eName})`,
+              testCase: 'Wrap+Unwrap Round-Trip',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] AES-KWP: ${errMessage}`)
           }
         }
       }

@@ -4,6 +4,11 @@ import { ArrowLeft, ArrowRight } from 'lucide-react'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_TO_TRACK } from '../moduleData'
 import { CuriousSummaryBanner } from './CuriousSummaryBanner'
 import { useModuleStore } from '@/store/useModuleStore'
+import { PERSONAS } from '@/data/learningPersonas'
+import { EndorseButton } from '@/components/ui/EndorseButton'
+import { FlagButton } from '@/components/ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { CheckCircle } from 'lucide-react'
 
 interface CuriousModuleViewProps {
   moduleId: string
@@ -12,7 +17,12 @@ interface CuriousModuleViewProps {
 export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }) => {
   const navigate = useNavigate()
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
-  const { updateModuleProgress } = useModuleStore()
+  const { updateModuleProgress, modules } = useModuleStore()
+  const isCompleted = modules[moduleId]?.status === 'completed'
+
+  const handleMarkReviewed = () => {
+    updateModuleProgress(moduleId, { status: 'completed' })
+  }
 
   // Find next/prev in the same track
   const { prevModuleId, nextModuleId } = useMemo(() => {
@@ -45,9 +55,49 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
   return (
     <div className="space-y-6 animate-fade-in max-w-5xl mx-auto pb-12 mt-4">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
+        <div className="w-full">
           <h1 className="text-3xl font-bold text-gradient">{moduleMeta.title}</h1>
           <p className="text-muted-foreground mt-2 text-lg">{moduleMeta.description}</p>
+          <div className="flex flex-wrap items-center gap-4 mt-6">
+            <div className="flex items-center gap-2">
+              <EndorseButton
+                endorseUrl={buildEndorsementUrl({
+                  category: 'learn-module-endorsement',
+                  title: `Endorse: ${moduleMeta.title}`,
+                  resourceType: 'Learning Module',
+                  resourceId: moduleId,
+                  resourceDetails: `**Module:** ${moduleMeta.title}\n**Description:** ${moduleMeta.description}`,
+                  pageUrl: `/learn/${moduleId}`,
+                })}
+                resourceLabel={moduleMeta.title}
+                resourceType="Module"
+              />
+              <FlagButton
+                flagUrl={buildFlagUrl({
+                  category: 'learn-module-endorsement',
+                  title: `Flag: ${moduleMeta.title}`,
+                  resourceType: 'Learning Module',
+                  resourceId: moduleId,
+                  resourceDetails: `**Module:** ${moduleMeta.title}\n**Description:** ${moduleMeta.description}`,
+                  pageUrl: `/learn/${moduleId}`,
+                })}
+                resourceLabel={moduleMeta.title}
+                resourceType="Module"
+              />
+            </div>
+            <button
+              onClick={handleMarkReviewed}
+              disabled={isCompleted}
+              className={`px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-2 ${
+                isCompleted
+                  ? 'bg-green-500/20 text-green-500 dark:text-green-400 cursor-default border border-green-500/30'
+                  : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 cursor-pointer'
+              }`}
+            >
+              <CheckCircle size={16} />
+              {isCompleted ? 'Reviewed ✓' : 'Mark as Reviewed'}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -86,6 +136,21 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
           </button>
         )}
       </div>
+
+      {PERSONAS.curious.recommendedPath.includes(moduleId) && (
+        <div className="mt-8 p-6 glass-panel border border-primary/20 bg-primary/5 rounded-xl text-center">
+          <h3 className="text-xl font-semibold mb-2">Want to learn more?</h3>
+          <p className="text-muted-foreground mb-4">
+            Dive deeper into the details with an interactive beginner workshop for this module.
+          </p>
+          <button
+            onClick={() => navigate(`/learn/${moduleId}?diveDeeper=true&tab=workshop`)}
+            className="px-6 py-2.5 bg-background border border-border hover:border-primary hover:text-primary transition-all rounded-lg font-medium shadow-sm"
+          >
+            Dive Deeper
+          </button>
+        </div>
+      )}
     </div>
   )
 }

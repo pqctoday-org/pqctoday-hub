@@ -60,4 +60,5 @@ export interface ActivitySnapshot {
   complianceFrameworkCount: number
   migrateProductCount: number
   sectionsVisited: string[]
+  endorsementCount: number
 }

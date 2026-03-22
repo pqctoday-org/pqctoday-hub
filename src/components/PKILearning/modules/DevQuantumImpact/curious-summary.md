@@ -9,3 +9,7 @@ PQC algorithms are not drop-in replacements. ML-KEM public keys are massive (up 
 ### The Key Takeaway
 
 Developers must immediately audit their codebases to locate hardcoded algorithms and cipher suites. The critical path forward is building "Crypto Agility"—implementing abstraction layers that allow the application to swap cryptographic algorithms without requiring a total code rewrite.
+
+### What's Happening
+
+Major cryptographic libraries are already shipping PQC support—OpenSSL 3.5, BoringSSL, and Go 1.24 include ML-KEM and ML-DSA implementations—giving developers the tools to begin integrating quantum-safe algorithms into their applications today.

@@ -9,3 +9,7 @@ Migrating to ML-DSA-65 is the standard path, but it introduces a massive size im
 ### The Key Takeaway
 
 Firmware vendors are targeting 2026-2027 for PQC rollouts. In the interim, organizations must prepare for a dual-signature (RSA + ML-DSA) hybrid transition and immediately audit UEFI NVRAM capacity to accommodate the larger public keys and signatures.
+
+### What's Happening
+
+Firmware vendors are targeting 2026-2027 for PQC-capable UEFI implementations, while organizations are auditing their NVRAM capacity and planning dual-signature (RSA + ML-DSA) hybrid boot chains to maintain backward compatibility during the transition.

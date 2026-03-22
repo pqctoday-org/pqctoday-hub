@@ -5,6 +5,7 @@ import { Trash2, BarChart3, KeyRound, PenLine, Shapes } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { PQC101Module } from './PQC101Module'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -25,30 +26,45 @@ const PARTS = [
     description:
       'Explore why lattice, hash-based, and code-based algorithms resist quantum computers.',
     icon: Shapes,
+    difficulty: 'beginner',
   },
   {
     id: 'algorithm-comparison',
     title: 'Step 2: Algorithm Comparison',
     description: 'Compare classical and post-quantum algorithms side-by-side.',
     icon: BarChart3,
+    difficulty: 'beginner',
   },
   {
     id: 'key-generation',
     title: 'Step 3: Key Generation',
     description: 'Generate a real key pair with OpenSSL and observe size differences.',
     icon: KeyRound,
+    difficulty: 'intermediate',
   },
   {
     id: 'signature-demo',
     title: 'Step 4: Signature Demo',
     description: 'Sign a message and see how digital signatures prove authenticity.',
     icon: PenLine,
+    difficulty: 'intermediate',
   },
 ]
 
 export const Module1: React.FC = () => {
   const { markStepComplete, updateModuleProgress } = useModuleStore()
-  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+
+  const experienceLevel = usePersonaStore((s) => s.experienceLevel)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
+  const visibleParts = React.useMemo(() => {
+    return isCuriousMode ? PARTS.filter((p) => p.difficulty === 'beginner') : PARTS
+  }, [isCuriousMode])
+
+  const deepLink = getModuleDeepLink({
+    maxStep: visibleParts.length - 1,
+    defaultTab: isCuriousMode ? 'workshop' : 'learn',
+  })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
   useSyncDeepLink(activeTab, currentPart)
@@ -93,13 +109,13 @@ export const Module1: React.FC = () => {
 
   const handlePartChange = useCallback(
     (newPart: number) => {
-      const partIds = PARTS.map((p) => p.id)
+      const partIds = visibleParts.map((p) => p.id)
       if (newPart > currentPart) {
         markStepComplete(MODULE_ID, partIds[currentPart], currentPart)
       }
       setCurrentPart(newPart)
     },
-    [currentPart, markStepComplete]
+    [currentPart, markStepComplete, visibleParts]
   )
 
   const handleReset = () => {
@@ -129,26 +145,28 @@ export const Module1: React.FC = () => {
 
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
-          <TabsTrigger value="learn">Learn</TabsTrigger>
+          {!isCuriousMode && <TabsTrigger value="learn">Learn</TabsTrigger>}
           <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
-          <TabsTrigger value="exercises">Exercises</TabsTrigger>
-          <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
+          {!isCuriousMode && <TabsTrigger value="exercises">Exercises</TabsTrigger>}
+          {!isCuriousMode && <TabsTrigger value="references">References</TabsTrigger>}
+          {!isCuriousMode && <TabsTrigger value="tools">Tools & Products</TabsTrigger>}
         </TabsList>
 
-        {/* Learn Tab */}
-        <TabsContent value="learn">
-          <PQC101Module />
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={navigateToWorkshop}
-              className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
-            >
-              Go to Workshop &rarr;
-            </button>
-          </div>
-        </TabsContent>
+        {/* Learn Tab (Hidden in Curious Mode) */}
+        {!isCuriousMode && (
+          <TabsContent value="learn">
+            <PQC101Module />
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={navigateToWorkshop}
+                className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Go to Workshop &rarr;
+              </button>
+            </div>
+          </TabsContent>
+        )}
 
         {/* Workshop Tab */}
 
@@ -174,7 +192,7 @@ export const Module1: React.FC = () => {
               <div className="flex justify-between relative min-w-max sm:min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
-                {PARTS.map((part, idx) => {
+                {visibleParts.map((part, idx) => {
                   const Icon = part.icon
                   return (
                     <button
@@ -207,26 +225,28 @@ export const Module1: React.FC = () => {
             <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
               <WorkshopStepHeader
                 moduleId={MODULE_ID}
-                stepId={PARTS[currentPart].id}
-                stepTitle={PARTS[currentPart].title}
-                stepDescription={PARTS[currentPart].description}
+                stepId={visibleParts[currentPart]?.id ?? ''}
+                stepTitle={visibleParts[currentPart]?.title ?? ''}
+                stepDescription={visibleParts[currentPart]?.description ?? ''}
                 stepIndex={currentPart}
-                totalSteps={PARTS.length}
+                totalSteps={visibleParts.length}
               />
-              {currentPart === 0 && (
+              {visibleParts[currentPart]?.id === 'algorithm-families' && (
                 <AlgorithmFamilyWorkshop
                   key={`families-${configKey}`}
                   onComplete={() => markStepComplete(MODULE_ID, 'algorithm-families')}
                 />
               )}
-              {currentPart === 1 && <AlgorithmComparisonTable key={`comparison-${configKey}`} />}
-              {currentPart === 2 && (
+              {visibleParts[currentPart]?.id === 'algorithm-comparison' && (
+                <AlgorithmComparisonTable key={`comparison-${configKey}`} />
+              )}
+              {visibleParts[currentPart]?.id === 'key-generation' && (
                 <KeyGenWorkshop
                   key={`keygen-${configKey}`}
                   onComplete={() => markStepComplete(MODULE_ID, 'key-generation')}
                 />
               )}
-              {currentPart === 3 && (
+              {visibleParts[currentPart]?.id === 'signature-demo' && (
                 <SignatureDemo
                   key={`sigdemo-${configKey}`}
                   onComplete={() => markStepComplete(MODULE_ID, 'signature-demo')}
@@ -243,9 +263,9 @@ export const Module1: React.FC = () => {
               >
                 &larr; Previous Step
               </button>
-              {currentPart === PARTS.length - 1 ? (
+              {currentPart === visibleParts.length - 1 ? (
                 <button
-                  onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
+                  onClick={() => markStepComplete(MODULE_ID, visibleParts[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
                   Complete Module ✓

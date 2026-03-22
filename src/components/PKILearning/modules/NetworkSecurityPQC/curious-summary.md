@@ -9,3 +9,7 @@ Because PQC artifacts are so large, they severely stress modern firewalls and De
 ### The Key Takeaway
 
 Zero Trust Network Access (ZTNA) Identity Providers are the highest priority for migration, as a compromised IdP invalidates all access. Network teams must immediately plan for 35ms inspection latency overhead and evaluate vendor PQC roadmaps before deploying hybrid traffic across inline security boundaries.
+
+### What's Happening
+
+Firewall and DPI appliance vendors are releasing firmware updates to handle larger PQC certificate chains, while network teams are testing hybrid TLS deployments and recalibrating inspection latency baselines to accommodate the increased processing overhead of quantum-safe traffic.

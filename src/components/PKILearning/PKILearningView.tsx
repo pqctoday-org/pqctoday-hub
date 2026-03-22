@@ -254,9 +254,13 @@ export const PKILearningView: React.FC = () => {
   const showSidebar = !isDashboard && moduleId !== 'quiz' && moduleId !== ''
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
 
+  const searchParams = new URLSearchParams(location.search)
+  const diveDeeper = searchParams.get('diveDeeper') === 'true'
+
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
-  const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
+  const isCuriousMode =
+    (experienceLevel === 'curious' || selectedPersona === 'curious') && !diveDeeper
 
   console.log('[DEBUG] PKILearningView render:', {
     moduleId,
@@ -264,6 +268,7 @@ export const PKILearningView: React.FC = () => {
     experienceLevel,
     selectedPersona,
     isCuriousMode,
+    diveDeeper,
   })
 
   return (

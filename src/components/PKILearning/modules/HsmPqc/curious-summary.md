@@ -11,3 +11,7 @@ Classical cryptography used tiny memory buffers. For example, ECDSA uses roughly
 ## The Key Takeaway
 
 The physical hardware upgrades are happening right now. Major on-premise HSM vendors (such as Thales, Entrust, and Utimaco) already offer production-ready PQC firmware updates. Meanwhile, major Cloud HSM providers are currently lagging behind, mostly offering preview SDKs rather than core firmware updates.
+
+## What's Happening
+
+The PKCS#11 v3.2 specification is being finalized to standardize how HSMs handle ML-KEM encapsulation, ML-DSA signatures, and stateful hash-based signature state management, while on-premise vendors continue to ship production PQC firmware ahead of their cloud counterparts.

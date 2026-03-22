@@ -79,8 +79,8 @@ async function sp800108CounterKDF(
 
   try {
     hsm_initialize(M)
-  } catch (e: any) {
-    if (!e.message.includes('CKR_CRYPTOKI_ALREADY_INITIALIZED')) throw e
+  } catch (e: unknown) {
+    if (e instanceof Error && !e.message.includes('CKR_CRYPTOKI_ALREADY_INITIALIZED')) throw e
   }
 
   const slot = hsm_getFirstSlot(M)

@@ -32,7 +32,7 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
   ],
   researcher: null,
   ops: ['/migrate', '/business', '/assess', '/report', '/library', '/playground', '/openssl'],
-  curious: ['/compliance', '/assess', '/report', '/library'],
+  curious: ['/compliance', '/assess', '/report', '/library', '/leaders'],
 }
 
 /**
@@ -447,6 +447,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'dev-cp-3', route: '/openssl', label: 'OpenSSL Studio' },
     { afterPhase: 'dev-cp-4', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'dev-cp-5', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'dev-cp-5', route: '/playground', label: 'Run ACVP Tests' },
   ],
   architect: [
     { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },
@@ -464,6 +465,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'ops-cp-2', route: '/openssl', label: 'OpenSSL Studio' },
     { afterPhase: 'ops-cp-3', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
+    { afterPhase: 'ops-cp-3', route: '/playground', label: 'Run ACVP Tests' },
     { afterPhase: 'ops-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
   curious: [

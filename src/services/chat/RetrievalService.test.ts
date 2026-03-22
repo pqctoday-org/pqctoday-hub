@@ -132,6 +132,16 @@ const MOCK_CORPUS: RAGChunk[] = [
     deepLink: '/compliance?cert=5164',
   },
   {
+    id: 'changelog-2.46.0',
+    source: 'changelog',
+    title: 'PQC Today v2.46.0 — Release Notes (2026-03-22)',
+    content:
+      'Version 2.46.0 released 2026-03-22.\n\n### Added\n- ACVP multi-algorithm KAT suite\n- Terms of Service page\n\n### Changed\n- Curious Explorer persona improvements',
+    category: 'changelog',
+    metadata: { version: '2.46.0', date: '2026-03-22' },
+    deepLink: '/changelog',
+  },
+  {
     id: 'leader-1',
     source: 'leaders',
     title: 'Peter Schwabe',
@@ -288,6 +298,48 @@ describe('classifyIntent', () => {
 
   it('should NOT classify "DORA regulation" as standard_query', () => {
     expect(classifyIntent('DORA regulation')).not.toBe('standard_query')
+  })
+
+  // --- whats_new intent ---
+
+  it('should classify "what\'s new" as whats_new', () => {
+    expect(classifyIntent("what's new")).toBe('whats_new')
+  })
+
+  it('should classify "whats new" (no apostrophe) as whats_new', () => {
+    expect(classifyIntent('whats new')).toBe('whats_new')
+  })
+
+  it('should classify "What changed?" as whats_new', () => {
+    expect(classifyIntent('What changed?')).toBe('whats_new')
+  })
+
+  it('should classify "latest updates" as whats_new', () => {
+    expect(classifyIntent('latest updates')).toBe('whats_new')
+  })
+
+  it('should classify "recent changes" as whats_new', () => {
+    expect(classifyIntent('recent changes')).toBe('whats_new')
+  })
+
+  it('should classify "new features" as whats_new', () => {
+    expect(classifyIntent('new features')).toBe('whats_new')
+  })
+
+  it('should classify "release notes" as whats_new', () => {
+    expect(classifyIntent('release notes')).toBe('whats_new')
+  })
+
+  it('should classify "what was added" as whats_new', () => {
+    expect(classifyIntent('what was added')).toBe('whats_new')
+  })
+
+  it('should classify "What\'s new in PQC Today?" as whats_new (not definition)', () => {
+    expect(classifyIntent("What's new in PQC Today?")).toBe('whats_new')
+  })
+
+  it('should classify "latest version" as whats_new', () => {
+    expect(classifyIntent('latest version')).toBe('whats_new')
   })
 
   it('should classify generic queries as general', () => {
@@ -460,6 +512,23 @@ describe('RetrievalService', () => {
     it('should respect explicit limit override', () => {
       const results = service.search('ML-KEM', 5)
       expect(results.length).toBeLessThanOrEqual(5)
+    })
+  })
+
+  describe('whats_new intent', () => {
+    it('should boost changelog chunks for "what\'s new" queries', () => {
+      const results = service.search("what's new")
+      expect(results.some((r) => r.source === 'changelog')).toBe(true)
+    })
+
+    it('should return changelog for "release notes"', () => {
+      const results = service.search('release notes')
+      expect(results.some((r) => r.source === 'changelog')).toBe(true)
+    })
+
+    it('should respect limit for whats_new intent', () => {
+      const results = service.search('recent changes')
+      expect(results.length).toBeLessThanOrEqual(10)
     })
   })
 

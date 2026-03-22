@@ -2,7 +2,7 @@
 import { useRef, useCallback } from 'react'
 import { useChatStore } from '@/store/useChatStore'
 import { usePageContext } from '@/hooks/usePageContext'
-import { retrievalService } from '@/services/chat/RetrievalService'
+import { retrievalService, classifyIntent } from '@/services/chat/RetrievalService'
 import { streamResponse as geminiStreamResponse } from '@/services/chat/GeminiService'
 import {
   streamResponse as localStreamResponse,
@@ -14,6 +14,10 @@ import { checkGrounding } from '@/services/chat/groundingCheck'
 import type { ChatMessage, ChatSourceRef } from '@/types/ChatTypes'
 import { logChatQuery, logChatRetry, logChatChunksUsed, logChatCacheHit } from '@/utils/analytics'
 import { getCached, setCache } from '@/services/chat/responseCache'
+import { buildWhatsNewRAGChunk } from '@/utils/dataFingerprint'
+import { useVersionStore } from '@/store/useVersionStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import type { PersonaId } from '@/data/learningPersonas'
 
 const STREAM_TIMEOUT_MS = 60_000
 const LOCAL_STREAM_TIMEOUT_MS = 120_000 // Local models may be slower
@@ -160,6 +164,22 @@ export function useChatSend() {
           industry: pageContext.industry,
           region: pageContext.region,
         })
+
+        // Dynamically inject persona-curated "What's New" chunk for changelog queries
+        if (classifyIntent(trimmed) === 'whats_new') {
+          const { selectedPersona, selectedIndustries, experienceLevel } =
+            usePersonaStore.getState()
+          const changedSources = useVersionStore.getState().getChangedSources()
+          const whatsNewChunk = buildWhatsNewRAGChunk(
+            changedSources,
+            selectedPersona as PersonaId | null,
+            selectedIndustries ?? [],
+            experienceLevel
+          )
+          if (whatsNewChunk) {
+            chunks.unshift(whatsNewChunk)
+          }
+        }
 
         // Read latest messages from store (not closure) so that prior
         // deleteMessagesFrom calls in retryLastQuery/editAndResend are reflected.

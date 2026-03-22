@@ -9,3 +9,7 @@ Shor's and Grover's algorithms severely threaten the TEE trust model. Grover's a
 ### The Key Takeaway
 
 All attestation chains are currently quantum-vulnerable. Hardware vendors must rapidly upgrade CPU architectures to support AES-256 for memory encryption, while the ecosystem transitions Remote Attestation protocols to Post-Quantum signatures (ML-DSA) to guarantee trusted TEE-HSM communication.
+
+### What's Happening
+
+Hardware vendors are beginning to evaluate AES-256 upgrades for TEE memory encryption engines and exploring ML-DSA integration into Remote Attestation protocols, as the quantum threat to classical ECDSA attestation signatures across Intel SGX/TDX, AMD SEV-SNP, and ARM CCA becomes increasingly urgent.
