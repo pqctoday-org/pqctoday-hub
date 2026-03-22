@@ -1,6 +1,13 @@
-Curious why healthcare data operates under entirely different rules?
+# Healthcare PQC — In Simple Terms
 
-**The Problem:** A stolen password or credit card can be canceled in minutes. Biometric data—like your fingerprints, iris patterns, or genetic DNA—is permanent and unchangeable. Hackers are stealing encrypted health archives today specifically to decrypt them later when quantum computers are built.
-**The Proposed Solution:** The healthcare sector must immediately apply quantum-proof encryption to long-term health databases to prevent irreversible future decryption.
-**The Strategy:** Hospitals must prioritize upgrading the protection around permanent, irrevocable health records long before worrying about easily changeable temporary credentials.
-**The Ecosystem:** This directly involves hospitals, medical device manufacturers, genomic research facilities, and overarching patient privacy laws.
+## What This Is About
+Unlike a stolen password that can be quickly reset, biometric data (like DNA profiles, fingerprints, and iris scans) is completely permanent. Currently, massive healthcare databases rely on standard encryption to protect these irrevocable lifetime records.
+
+## Why It Matters
+State-sponsored adversaries are archiving stolen, encrypted health data today. Because they cannot crack the encryption yet, they just store it in massive server farms. When quantum computers become available, they will perform "Harvest Now, Decrypt Later" attacks, instantly unlocking decades of deeply sensitive, unchangeable health data.
+
+## The Key Takeaway
+Healthcare providers must prioritize the Post-Quantum Cryptography transition for permanent, irrevocable biometric datasets immediately. These datasets must be shielded with massive quantum-proof encryption far earlier than easily rotatable systems.
+
+## What's Happening
+Medical device manufacturers, genomic research centers, and hospital networks are auditing their longest-term data vaults to build "crypto-agile" architectures capable of wrapping existing records in an impenetrable quantum-safe layer.
