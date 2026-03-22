@@ -1,21 +1,11 @@
-# Stateful Hash Signatures — In Simple Terms
+### What This Is About
 
-## What This Is About
+Stateful hash-based signatures (LMS and XMSS) derive their security entirely from proven hash functions like SHA-256, rather than new, emerging mathematical assumptions like lattices or isogenies.
 
-Imagine you have a book of one-time-use stamps. Each stamp can only be used once to seal a single letter, and once you use it, you tear it out and can never use it again. Stateful hash signatures work in a similar way. They are a method of digitally "signing" files and messages to prove they are authentic, but each signing key can only be used a limited number of times.
+### Why It Matters
 
-These signatures are built on a structure called a Merkle tree, which you can think of as a family tree for numbers. At the bottom are individual signing keys (like leaves on a tree), and they connect upward through branches to a single root. That root is your public identity. When you sign something, you use one leaf and show the path from that leaf up to the root, proving the signature belongs to you.
+Because each One-Time Signature (OTS) key in the Merkle tree can only be used safely once, the signer must track a monotonic state counter. Reusing the same leaf index for two different messages guarantees a catastrophic security failure, allowing an attacker to forge signatures.
 
-## Why It Matters
+### The Key Takeaway
 
-Most digital signatures today can be reused millions of times without any problem. But stateful signatures require you to carefully track which keys you have already used. If you accidentally reuse the same key, your security breaks completely — it is like using the same lock combination twice after promising it would be unique each time.
-
-So why bother with them? Because these signatures are already proven to be safe against quantum computers. While other approaches are still being tested, stateful hash signatures rely on well-understood math that even a powerful quantum computer cannot crack. For high-security systems like military communications or critical infrastructure, that certainty matters enormously.
-
-## The Key Takeaway
-
-Stateful hash signatures trade convenience for certainty. They demand careful bookkeeping (never reuse a key), but in return they offer some of the strongest quantum-safe security available today. They are already approved by governments for use in the most sensitive systems.
-
-## What's Happening
-
-The U.S. National Institute of Standards and Technology (NIST) has already approved two stateful signature standards called LMS and XMSS. Several governments, including the U.S. and Germany, recommend them for firmware signing — the process that ensures the software running on your devices has not been tampered with. Because they require special state management, they are mostly used in controlled environments like servers and network equipment rather than everyday consumer devices.
+Stateful signatures are so secure they are already authorized by NIST and strictly mandated by NSA's CNSA 2.0 for firmware. However, they require flawless state management, almost always implemented inside a secure hardware module (HSM) with a non-volatile monotonic counter.

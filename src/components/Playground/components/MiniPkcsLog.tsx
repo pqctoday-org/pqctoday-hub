@@ -51,9 +51,7 @@ export const MiniPkcsLog = () => {
             </span>
             <span className="ml-auto shrink-0">→</span>
             <span
-              className={
-                entry.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'
-              }
+              className={entry.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'}
             >
               {entry.rvName}
             </span>

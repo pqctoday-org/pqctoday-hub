@@ -86,27 +86,34 @@ export const WhatsNewToast = () => {
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Library popover — mobile sheet</strong>{' '}
-                    &mdash; the document detail popover now slides up from the bottom on mobile with
-                    a drag handle and backdrop, keeping the desktop layout unchanged
+                    <strong className="text-foreground">Visual tab for all 48 modules</strong>{' '}
+                    &mdash; new single-panel infographics (640&times;640) with fully rewritten
+                    plain-language summaries, factually verified against each module&apos;s source
+                    content; accessible to everyone, not just Curious mode
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">Endorse &amp; Flag on mobile</strong>{' '}
-                    &mdash; page-level Endorse and Flag buttons are now visible on small screens;
-                    previously they were hidden below the lg breakpoint
+                    <strong className="text-foreground">ACVP multi-algorithm test suite</strong>{' '}
+                    &mdash; Playground ACVP tab validates AES-GCM, HMAC, RSA-PSS, ECDSA, ML-KEM, and
+                    ML-DSA against NIST vectors across both C++ and Rust engines in Dual Mode
                   </span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-primary mt-0.5">&#9679;</span>
                   <span>
-                    <strong className="text-foreground">
-                      Airplane Mode &amp; AI Assistant gate
-                    </strong>{' '}
-                    &mdash; Airplane Mode toggle in the nav More menu; AI Assistant FAB shown only
-                    when WebGPU or a Gemini key is available
+                    <strong className="text-foreground">Tools tab from live catalog</strong> &mdash;
+                    every module&apos;s Tools &amp; Products tab now pulls directly from the migrate
+                    catalog CSV, with PQC/FIPS badges and certification chips
+                  </span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <span className="text-primary mt-0.5">&#9679;</span>
+                  <span>
+                    <strong className="text-foreground">Timeline enrichment popovers</strong>{' '}
+                    &mdash; Gantt phase and document popovers now show mandate level, migration
+                    urgency, sector tags, and library cross-links from document enrichment data
                   </span>
                 </li>
               </ul>

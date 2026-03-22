@@ -5,9 +5,19 @@ import {
   type EnrichmentLookup,
   type LibraryEnrichment,
 } from './libraryEnrichmentData'
+import { libraryData } from './libraryData'
 
 export type { LibraryEnrichment, EnrichmentLookup }
 export { hasSubstantiveEnrichment }
+
+/**
+ * Maps library downloadUrl → referenceId for cross-linking timeline events to library records.
+ * Used by UI components to show "Also in Library →" badges when a timeline SourceUrl
+ * matches a library document.
+ */
+export const timelineToLibraryRef: Record<string, string> = Object.fromEntries(
+  libraryData.filter((item) => item.downloadUrl).map((item) => [item.downloadUrl, item.referenceId])
+)
 
 function loadTimelineEnrichments(): EnrichmentLookup {
   const modules = import.meta.glob('./doc-enrichments/timeline_doc_enrichments_*.md', {

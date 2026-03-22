@@ -21,7 +21,6 @@ import {
   MoreHorizontal,
   X,
   Plane,
-  FileText,
   Clock,
   Network,
 } from 'lucide-react'
@@ -121,13 +120,6 @@ export const MainLayout = () => {
       mobileMore: true,
     },
     { path: '/about', label: 'About', icon: Info, hiddenOnMobile: true, mobileMore: true },
-    {
-      path: '/changelog',
-      label: 'Changelog',
-      icon: FileText,
-      hiddenOnMobile: true,
-      mobileMore: true,
-    },
   ]
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)

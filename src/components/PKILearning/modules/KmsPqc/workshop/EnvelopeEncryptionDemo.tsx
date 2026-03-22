@@ -168,6 +168,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             defaultOpen={true}
             title="PKCS#11 Call Log — Envelope Encryption"
             emptyMessage="Click 'Execute' to run the live envelope encryption flow."
+            filterFns={LIVE_OPERATIONS}
           />
         </div>
       )}

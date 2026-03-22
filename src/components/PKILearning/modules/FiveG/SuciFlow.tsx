@@ -546,6 +546,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log — SUCI Construction"
           emptyMessage="Execute a step to see live PKCS#11 operations."
+          filterFns={SUCI_LIVE_OPERATIONS}
         />
       )}
 

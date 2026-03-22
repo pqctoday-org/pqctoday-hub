@@ -1,21 +1,11 @@
-# Secure Boot & Firmware PQC — In Simple Terms
+### What This Is About
 
-## What This Is About
+UEFI Secure Boot uses a cryptographic chain of trust (Platform Key, KEK, db) to protect the OS kernel. Currently, every link relies on quantum-vulnerable algorithms like RSA-2048 or ECDSA.
 
-When you press the power button on your computer, a lot happens before you see your desktop. The computer runs a chain of software checks, each one verifying that the next piece of software has not been tampered with. This process is called "secure boot," and it works like a series of trust handshakes: the hardware checks the firmware, the firmware checks the bootloader, and the bootloader checks the operating system. If any link in the chain has been altered by malware, the computer refuses to start.
+### Why It Matters
 
-Each of these checks uses a digital signature — a mathematical seal that proves the software is genuine and has not been modified. The keys behind those signatures are some of the most critical in all of computing, because they control what is allowed to run at the deepest level of your machine. If an attacker can forge those signatures, they can install invisible malware that loads before any antivirus software even starts.
+Migrating to ML-DSA-65 is the standard path, but it introduces a massive size impact. ML-DSA signatures are roughly 13x larger than RSA-2048, threatening to exceed the typical 32–64 KB limits of UEFI NVRAM and breaking the boot chain. Hardware TPM 2.0 also lacks native PQC support.
 
-## Why It Matters
+### The Key Takeaway
 
-Firmware-level attacks are among the most dangerous in cybersecurity because they hide below the operating system, making them nearly impossible to detect with normal security tools. If quantum computers can break the signature algorithms used in secure boot, attackers could create fake firmware that passes all verification checks. This would affect every device — laptops, servers, phones, medical equipment, industrial controllers — that relies on secure boot for protection.
-
-The challenge of upgrading is significant. Firmware lives on chips inside devices and is much harder to update than a regular app. Some devices may need physical replacement. And the transition must be carefully managed, because a mistake during a firmware update can turn a device into an expensive paperweight.
-
-## The Key Takeaway
-
-Secure boot is the first line of defense when a computer powers on, and it depends entirely on digital signatures. If those signatures become forgeable by quantum computers, attackers could compromise devices at the deepest level — before any other security measures even activate.
-
-## What's Happening
-
-Chip manufacturers and firmware vendors like Intel, AMD, Tianocore, and AMI are beginning to integrate post-quantum signature algorithms (such as ML-DSA) into their secure boot implementations. The Trusted Computing Group is updating TPM (Trusted Platform Module) specifications to support quantum-safe keys. Government agencies have identified firmware security as a high-priority area for quantum migration, recognizing that hardware upgrade cycles are long and planning must start early.
+Firmware vendors are targeting 2026-2027 for PQC rollouts. In the interim, organizations must prepare for a dual-signature (RSA + ML-DSA) hybrid transition and immediately audit UEFI NVRAM capacity to accommodate the larger public keys and signatures.

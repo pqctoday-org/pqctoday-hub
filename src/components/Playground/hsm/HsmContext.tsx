@@ -31,6 +31,8 @@ export interface HsmKey {
   label: string
   /** Variant/size identifier, e.g. "65", "P-256", "2048", "sha2-128s" */
   variant?: string
+  /** Which PKCS#11 engine owns this key (for dual-mode attribute reads) */
+  engine?: 'cpp' | 'rust'
   /** Wall-clock time when generated (for display) */
   generatedAt: string
 }

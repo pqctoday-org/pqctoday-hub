@@ -1,0 +1,16 @@
+{
+  "algorithm": "HMAC-SHA2-256",
+  "source": "Generated via Node.js crypto (OpenSSL backend), HMAC-SHA256 with 32-byte random key",
+  "testGroups": [
+    {
+      "macLen": 256,
+      "tests": [
+        {
+          "key": "69646aece8c561d1276ed06ec239492d8a611a4be416597d1f0c971494dc07c2",
+          "msg": "4143565020484d41432d534841323536204b4154207465737420776974682033322d62797465206b6579",
+          "mac": "6eb8359fb18f2b34c8d82fafdf960b095bc32782cf6819f5a09c17ca8913406e"
+        }
+      ]
+    }
+  ]
+}

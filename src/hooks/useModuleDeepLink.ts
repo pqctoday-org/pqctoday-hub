@@ -12,7 +12,11 @@ export function getModuleDeepLink(
     defaultTab?: string
   } = {}
 ): { initialTab: string; initialStep: number } {
-  const { validTabs = ['learn', 'workshop'], maxStep, defaultTab = 'learn' } = opts
+  const {
+    validTabs = ['learn', 'visual', 'workshop', 'exercises', 'references', 'tools'],
+    maxStep,
+    defaultTab = 'learn',
+  } = opts
   const params = new URLSearchParams(window.location.search)
 
   const tabParam = params.get('tab')

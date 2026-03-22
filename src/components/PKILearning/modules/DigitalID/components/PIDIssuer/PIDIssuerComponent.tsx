@@ -329,6 +329,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             onClear={hsm.clearLog}
             title="PKCS#11 Call Log — PID Issuance"
             className="mt-4"
+            filterFns={PID_LIVE_OPERATIONS}
           />
         )}
       </CardContent>

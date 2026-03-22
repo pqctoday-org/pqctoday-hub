@@ -259,6 +259,12 @@ export const FirmwareSigningSimulator: React.FC = () => {
           transferTime={transferTimeSec}
         />
       )}
+
+      <KatValidationPanel
+        specs={IOT_KAT_SPECS}
+        label="IoT/OT Firmware PQC Known Answer Tests"
+        authorityNote="IEC 62443 · NIST FIPS 203/204"
+      />
     </div>
   )
 }
@@ -359,12 +365,6 @@ function BandwidthImpact({
         to the firmware delivery. The firmware payload itself ({device.firmwareSizeKB} KB) dominates
         the transfer.
       </p>
-
-      <KatValidationPanel
-        specs={IOT_KAT_SPECS}
-        label="IoT/OT Firmware PQC Known Answer Tests"
-        authorityNote="IEC 62443 · NIST FIPS 203/204"
-      />
     </div>
   )
 }

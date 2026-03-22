@@ -310,6 +310,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
             onClear={hsm.clearLog}
             title="PKCS#11 Call Log — QES Signing"
             className="mt-4"
+            filterFns={QES_LIVE_OPERATIONS}
           />
         )}
       </CardContent>

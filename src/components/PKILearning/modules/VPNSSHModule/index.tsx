@@ -15,6 +15,7 @@ import type { IKEv2Mode } from './data/ikev2Constants'
 import type { SSHKexAlgorithm } from './data/sshConstants'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 
 const MODULE_ID = 'vpn-ssh-pqc'
@@ -42,7 +43,7 @@ const PARTS = [
 
 export const VPNSSHModule: React.FC = () => {
   const deepLink = getModuleDeepLink({
-    validTabs: ['learn', 'simulate'],
+    validTabs: ['learn', 'visual', 'simulate'],
     maxStep: PARTS.length - 1,
   })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
@@ -144,6 +145,7 @@ export const VPNSSHModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="simulate">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -153,6 +155,11 @@ export const VPNSSHModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <VPNSSHIntroduction onNavigateToSimulate={navigateToSimulate} />
+        </TabsContent>
+
+        {/* Visual Tab */}
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
         {/* Simulate Tab */}

@@ -14,6 +14,7 @@ import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import {
   DEFAULT_ASSETS,
@@ -168,6 +169,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -180,6 +182,11 @@ export const DataAssetSensitivityModule: React.FC = () => {
         </TabsContent>
 
         {/* ── Workshop Tab ──────────────────────────────────────────────── */}
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
+        </TabsContent>
+
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">

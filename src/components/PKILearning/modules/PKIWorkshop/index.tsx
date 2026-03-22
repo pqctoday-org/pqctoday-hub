@@ -10,6 +10,7 @@ import { PKIIntroduction } from './components/PKIIntroduction'
 import { PKIExercises } from './components/PKIExercises'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { CSRGenerator } from './CSRGenerator'
 import { RootCAGenerator } from './RootCAGenerator'
@@ -152,6 +153,7 @@ export const PKIWorkshop: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -164,6 +166,11 @@ export const PKIWorkshop: React.FC = () => {
         </TabsContent>
 
         {/* Workshop Tab */}
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
+        </TabsContent>
+
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}

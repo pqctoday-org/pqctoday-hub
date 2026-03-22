@@ -474,6 +474,7 @@ export const TLSBasicsModule: React.FC = () => {
                     defaultOpen={true}
                     title="PKCS#11 Call Log — TLS Server Operations"
                     emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+                    filterFns={TLS_HSM_OPERATIONS}
                   />
                 </div>
               )}

@@ -14,6 +14,7 @@ import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 
 const MODULE_ID = 'api-security-jwt'
@@ -134,6 +135,7 @@ export const APISecurityJWTModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -142,6 +144,10 @@ export const APISecurityJWTModule: React.FC = () => {
 
         <TabsContent value="learn">
           <APISecurityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+        </TabsContent>
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
         <TabsContent value="workshop">

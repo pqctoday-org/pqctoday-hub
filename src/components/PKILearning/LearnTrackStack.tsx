@@ -138,7 +138,8 @@ const TRACK_META: {
   {
     track: 'Protocols',
     icon: Network,
-    description: 'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security',
+    description:
+      'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security, PQC testing & validation',
     colorClass: 'from-sky-500/20 to-indigo-500/10 border-sky-500/30',
     activeClass: 'bg-card border-sky-500/60',
   },
@@ -207,7 +208,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
   onClearFilters,
 }) => {
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
-  
+
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'

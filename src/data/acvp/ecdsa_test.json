@@ -1,0 +1,21 @@
+{
+  "algorithm": "ECDSA",
+  "mode": "sigVer",
+  "source": "Generated via Node.js crypto (OpenSSL backend), ECDSA P-256 with SHA-256",
+  "testGroups": [
+    {
+      "curve": "P-256",
+      "hashAlg": "SHA-256",
+      "tests": [
+        {
+          "qx": "4cfb8d7ba520246a030cd8b37d3e2b82d002eee4cc7e613414264e3d17ffad0f",
+          "qy": "bdefda6ce7f6c010c7d6a63b43478f9ea8174159fb3630cc9eb734fb9f23c9aa",
+          "msg": "ACVP ECDSA P-256 SigVer test vector",
+          "r": "ce567dd7d2fad3cce860d50e79d1a8d4473fb946e8eda251480a8c37c0dd703a",
+          "s": "895358d335518537c9e45b43d3705d985030ae8215e2e06e21e5973e0e3c638b",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

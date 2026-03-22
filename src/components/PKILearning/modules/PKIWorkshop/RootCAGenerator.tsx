@@ -830,6 +830,7 @@ x509_extensions = v3_ca
               defaultOpen={true}
               title="PKCS#11 Call Log — CA Key & Signing Operations"
               emptyMessage="Run key generation or certificate creation to see PKCS#11 calls."
+              filterFns={LIVE_OPERATIONS}
             />
           )}
         </div>

@@ -271,9 +271,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 Enriched
                               </span>
                             )}
-                            <CertBadges
-                              certs={certsByProduct.get(item.softwareName) || []}
-                            />
+                            <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
                           </div>
                           <span className="text-xs text-muted-foreground">
                             {item.latestVersion}

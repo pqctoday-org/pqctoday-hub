@@ -13,6 +13,7 @@ import { ModuleProgressHeader } from './ModuleProgressHeader'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG } from './moduleData'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { WipModuleBadge } from './common/WipModuleBadge'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -262,7 +263,7 @@ export const PKILearningView: React.FC = () => {
     showSidebar,
     experienceLevel,
     selectedPersona,
-    isCuriousMode
+    isCuriousMode,
   })
 
   return (
@@ -318,6 +319,7 @@ export const PKILearningView: React.FC = () => {
               />
             </>
           )}
+          {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
           <GlossaryButton />
         </div>
       </div>
@@ -334,75 +336,75 @@ export const PKILearningView: React.FC = () => {
         <div className="flex-1 min-w-0 order-last lg:order-first">
           {/* Dual progress header bar — above all module tabs */}
           {showSidebar && !isCuriousMode && <ModuleProgressHeader moduleId={moduleId} />}
-          
+
           {isCuriousMode && showSidebar ? (
             <CuriousModuleView moduleId={moduleId} />
           ) : (
             <Suspense
-            fallback={
-              <div className="flex h-64 w-full items-center justify-center">
-                <div className="flex flex-col items-center gap-4">
-                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                  <p className="text-muted-foreground animate-pulse">Loading Module...</p>
+              fallback={
+                <div className="flex h-64 w-full items-center justify-center">
+                  <div className="flex flex-col items-center gap-4">
+                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                    <p className="text-muted-foreground animate-pulse">Loading Module...</p>
+                  </div>
                 </div>
-              </div>
-            }
-          >
-            <Routes>
-              <Route index element={<Dashboard />} />
-              <Route path="pki-workshop" element={<PKIWorkshop />} />
-              <Route path="digital-assets" element={<DigitalAssetsModule />} />
-              <Route path="5g-security" element={<FiveGModule />} />
-              <Route path="digital-id" element={<DigitalIDModule />} />
-              <Route path="tls-basics" element={<TLSBasicsModule />} />
-              <Route path="pqc-101" element={<PQC101Module />} />
-              <Route path="quiz" element={<QuizModule />} />
-              <Route path="quantum-threats" element={<QuantumThreatsModule />} />
-              <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
-              <Route path="crypto-agility" element={<CryptoAgilityModule />} />
-              <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
-              <Route path="email-signing" element={<EmailSigningModule />} />
-              <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
-              <Route path="kms-pqc" element={<KmsPqcModule />} />
-              <Route path="hsm-pqc" element={<HsmPqcModule />} />
-              <Route path="qkd" element={<QKDModule />} />
-              <Route path="entropy-randomness" element={<EntropyModule />} />
-              <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
-              <Route path="code-signing" element={<CodeSigningModule />} />
-              <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
-              <Route path="iot-ot-pqc" element={<IoTOTModule />} />
-              <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
-              <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
-              <Route path="pqc-governance" element={<PQCGovernanceModule />} />
-              <Route path="vendor-risk" element={<VendorRiskModule />} />
-              <Route path="migration-program" element={<MigrationProgramModule />} />
-              <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
-              <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
-              <Route path="standards-bodies" element={<StandardsBodiesModule />} />
-              <Route path="confidential-computing" element={<ConfidentialComputingModule />} />
-              <Route path="database-encryption-pqc" element={<DatabaseEncryptionPQCModule />} />
-              <Route path="secrets-management-pqc" element={<SecretsManagementPQCModule />} />
-              <Route path="crypto-dev-apis" element={<CryptoDevAPIsModule />} />
-              <Route path="web-gateway-pqc" element={<WebGatewayPQCModule />} />
-              <Route path="emv-payment-pqc" element={<EMVPaymentPQCModule />} />
-              <Route path="ai-security-pqc" element={<AISecurityPQCModule />} />
-              <Route path="platform-eng-pqc" element={<PlatformEngPQCModule />} />
-              <Route path="energy-utilities-pqc" element={<EnergyUtilitiesModule />} />
-              <Route path="healthcare-pqc" element={<HealthcarePQCModule />} />
-              <Route path="aerospace-pqc" element={<AerospacePQCModule />} />
-              <Route path="automotive-pqc" element={<AutomotivePQCModule />} />
-              <Route path="exec-quantum-impact" element={<ExecQuantumImpactModule />} />
-              <Route path="dev-quantum-impact" element={<DevQuantumImpactModule />} />
-              <Route path="arch-quantum-impact" element={<ArchQuantumImpactModule />} />
-              <Route path="ops-quantum-impact" element={<OpsQuantumImpactModule />} />
-              <Route path="research-quantum-impact" element={<ResearchQuantumImpactModule />} />
-              <Route path="network-security-pqc" element={<NetworkSecurityPQCModule />} />
-              <Route path="pqc-testing-validation" element={<PQCTestingValidationModule />} />
-              <Route path="iam-pqc" element={<IAMPQCModule />} />
-              <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
-              <Route path="os-pqc" element={<OSPQCModule />} />
-            </Routes>
-          </Suspense>
+              }
+            >
+              <Routes>
+                <Route index element={<Dashboard />} />
+                <Route path="pki-workshop" element={<PKIWorkshop />} />
+                <Route path="digital-assets" element={<DigitalAssetsModule />} />
+                <Route path="5g-security" element={<FiveGModule />} />
+                <Route path="digital-id" element={<DigitalIDModule />} />
+                <Route path="tls-basics" element={<TLSBasicsModule />} />
+                <Route path="pqc-101" element={<PQC101Module />} />
+                <Route path="quiz" element={<QuizModule />} />
+                <Route path="quantum-threats" element={<QuantumThreatsModule />} />
+                <Route path="hybrid-crypto" element={<HybridCryptoModule />} />
+                <Route path="crypto-agility" element={<CryptoAgilityModule />} />
+                <Route path="stateful-signatures" element={<StatefulSignaturesModule />} />
+                <Route path="email-signing" element={<EmailSigningModule />} />
+                <Route path="vpn-ssh-pqc" element={<VPNSSHModule />} />
+                <Route path="kms-pqc" element={<KmsPqcModule />} />
+                <Route path="hsm-pqc" element={<HsmPqcModule />} />
+                <Route path="qkd" element={<QKDModule />} />
+                <Route path="entropy-randomness" element={<EntropyModule />} />
+                <Route path="merkle-tree-certs" element={<MerkleTreeCertsModule />} />
+                <Route path="code-signing" element={<CodeSigningModule />} />
+                <Route path="api-security-jwt" element={<APISecurityJWTModule />} />
+                <Route path="iot-ot-pqc" element={<IoTOTModule />} />
+                <Route path="pqc-risk-management" element={<PQCRiskManagementModule />} />
+                <Route path="pqc-business-case" element={<PQCBusinessCaseModule />} />
+                <Route path="pqc-governance" element={<PQCGovernanceModule />} />
+                <Route path="vendor-risk" element={<VendorRiskModule />} />
+                <Route path="migration-program" element={<MigrationProgramModule />} />
+                <Route path="compliance-strategy" element={<ComplianceStrategyModule />} />
+                <Route path="data-asset-sensitivity" element={<DataAssetSensitivityModule />} />
+                <Route path="standards-bodies" element={<StandardsBodiesModule />} />
+                <Route path="confidential-computing" element={<ConfidentialComputingModule />} />
+                <Route path="database-encryption-pqc" element={<DatabaseEncryptionPQCModule />} />
+                <Route path="secrets-management-pqc" element={<SecretsManagementPQCModule />} />
+                <Route path="crypto-dev-apis" element={<CryptoDevAPIsModule />} />
+                <Route path="web-gateway-pqc" element={<WebGatewayPQCModule />} />
+                <Route path="emv-payment-pqc" element={<EMVPaymentPQCModule />} />
+                <Route path="ai-security-pqc" element={<AISecurityPQCModule />} />
+                <Route path="platform-eng-pqc" element={<PlatformEngPQCModule />} />
+                <Route path="energy-utilities-pqc" element={<EnergyUtilitiesModule />} />
+                <Route path="healthcare-pqc" element={<HealthcarePQCModule />} />
+                <Route path="aerospace-pqc" element={<AerospacePQCModule />} />
+                <Route path="automotive-pqc" element={<AutomotivePQCModule />} />
+                <Route path="exec-quantum-impact" element={<ExecQuantumImpactModule />} />
+                <Route path="dev-quantum-impact" element={<DevQuantumImpactModule />} />
+                <Route path="arch-quantum-impact" element={<ArchQuantumImpactModule />} />
+                <Route path="ops-quantum-impact" element={<OpsQuantumImpactModule />} />
+                <Route path="research-quantum-impact" element={<ResearchQuantumImpactModule />} />
+                <Route path="network-security-pqc" element={<NetworkSecurityPQCModule />} />
+                <Route path="pqc-testing-validation" element={<PQCTestingValidationModule />} />
+                <Route path="iam-pqc" element={<IAMPQCModule />} />
+                <Route path="secure-boot-pqc" element={<SecureBootPQCModule />} />
+                <Route path="os-pqc" element={<OSPQCModule />} />
+              </Routes>
+            </Suspense>
           )}
           {showSidebar && !isCuriousMode && (
             <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">

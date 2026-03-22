@@ -15,7 +15,7 @@ The application is divided into the following main modules. Detailed requirement
    - *Note on SoftHSMv3 Integration*: SoftHSMv3 integration for PKCS#11 v3.2 complies with OASIS spec for PQC constants (CKK_ML_DSA = 0x4a, CKK_SLH_DSA = 0x4b).
 5. **[Learning Platform](requirements/learn.md)**: 25 interactive educational modules with 470-question quiz:
    - *Note on Dynamic Tooling*: All "Featured Products" module lists are now powered dynamically by the `ModuleMigrateTab` component, which sources tagged products directly from the global CSV database (`quantum_safe_cryptographic_software_reference`).
-   - *Note on Curious Summaries*: All learning modules strictly feature standardized 4-panel "Problem/Solution/Strategy/Ecosystem" neon infographics and jargon-free markdown summaries.
+   - *Note on Curious Summaries*: All learning modules strictly feature standardized 3-panel "In Simple Terms" (What This Is About, Why It Matters, The Key Takeaway) neon infographics and factually-verified, jargon-free markdown summaries without hallucination.
    - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
    - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin (secp256k1, P2PKH/SegWit, ECDSA), Ethereum (Keccak-256, EIP-55, EIP-1559), Solana (Ed25519), and HD Wallet (BIP32/39/44)
    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)

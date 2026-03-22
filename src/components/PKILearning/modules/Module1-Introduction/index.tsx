@@ -8,6 +8,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { PQC101Module } from './PQC101Module'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { AlgorithmFamilyWorkshop } from './AlgorithmFamilyWorkshop'
 import { AlgorithmComparisonTable } from './AlgorithmComparisonTable'
@@ -129,6 +130,7 @@ export const Module1: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -149,6 +151,11 @@ export const Module1: React.FC = () => {
         </TabsContent>
 
         {/* Workshop Tab */}
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
+        </TabsContent>
+
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}

@@ -506,6 +506,7 @@ export const BinarySigning: React.FC = () => {
               title="PKCS#11 Call Log"
               defaultOpen={true}
               className="mt-4"
+              filterFns={LIVE_OPERATIONS}
             />
           )}
         </div>

@@ -132,7 +132,9 @@ const main = async () => {
     }
   }
 
-  console.log(`[Master Scraper] Collected ${newRecords.length} new records (${skippedSources.size} source(s) unchanged).`)
+  console.log(
+    `[Master Scraper] Collected ${newRecords.length} new records (${skippedSources.size} source(s) unchanged).`
+  )
 
   // Merge Strategy:
   // 1. Remove old records from ACTIVE sources that returned fresh data.

@@ -232,6 +232,7 @@ export const SLHDSALiveDemo: React.FC = () => {
 
   // Track pre-hash used during signing for verify consistency
   const signPreHashRef = useRef<string>('')
+  const [signedPreHash, setSignedPreHash] = useState<string>('')
 
   const selectedParam = PARAM_SETS.find((p) => p.id === paramSetId) ?? PARAM_SETS[0]
 
@@ -241,6 +242,7 @@ export const SLHDSALiveDemo: React.FC = () => {
     setSignature(null)
     setVerifyResult(null)
     setError(null)
+    setSignedPreHash('')
     signPreHashRef.current = ''
   }, [])
 
@@ -283,6 +285,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       const opts = preHash ? { preHash: preHash as SLHDSAPreHash } : undefined
       const sig = hsm_slhdsaSign(M, hSession, keyHandles.priv, message, opts)
       setSignature(sig)
+      setSignedPreHash(preHash)
       signPreHashRef.current = preHash
     } catch (err) {
       setError(err instanceof Error ? err.message : String(err))
@@ -328,9 +331,9 @@ export const SLHDSALiveDemo: React.FC = () => {
           {/* Parameter Set + Pre-hash Selection */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+              <p className="block text-xs font-medium text-muted-foreground mb-1.5">
                 Parameter Set (12 FIPS 205 variants)
-              </label>
+              </p>
               <FilterDropdown
                 items={DROPDOWN_ITEMS}
                 selectedId={paramSetId}
@@ -339,9 +342,9 @@ export const SLHDSALiveDemo: React.FC = () => {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+              <p className="block text-xs font-medium text-muted-foreground mb-1.5">
                 Pre-hash (optional, default: Pure)
-              </label>
+              </p>
               <FilterDropdown
                 items={PREHASH_OPTIONS}
                 selectedId={preHash || 'All'}
@@ -387,10 +390,14 @@ export const SLHDSALiveDemo: React.FC = () => {
 
           {/* Message Input */}
           <div>
-            <label className="block text-xs font-medium text-muted-foreground mb-1.5">
+            <label
+              htmlFor="slhdsa-message-input"
+              className="block text-xs font-medium text-muted-foreground mb-1.5"
+            >
               Message to sign
             </label>
             <Input
+              id="slhdsa-message-input"
               value={message}
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Enter message..."
@@ -472,7 +479,7 @@ export const SLHDSALiveDemo: React.FC = () => {
               <div className="flex items-center justify-between">
                 <div className="text-xs font-bold text-primary">
                   SLH-DSA Signature
-                  {signPreHashRef.current ? ` (HashSLH-DSA-${signPreHashRef.current})` : ' (Pure)'}
+                  {signedPreHash ? ` (HashSLH-DSA-${signedPreHash})` : ' (Pure)'}
                 </div>
                 <span className="text-xs font-mono text-primary">
                   {formatBytes(signature.length)}
@@ -512,6 +519,7 @@ export const SLHDSALiveDemo: React.FC = () => {
               onClear={hsm.clearLog}
               title="PKCS#11 Call Log"
               defaultOpen={false}
+              filterFns={LIVE_OPERATIONS}
             />
           )}
         </div>

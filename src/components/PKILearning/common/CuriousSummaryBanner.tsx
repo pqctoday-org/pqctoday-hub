@@ -26,7 +26,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   HybridCrypto: 'hybrid-crypto',
   CryptoAgility: 'crypto-agility',
   TLSBasics: 'tls-basics',
-  VPNSSH: 'vpn-ssh-pqc',
+  VPNSSHModule: 'vpn-ssh-pqc',
   EmailSigning: 'email-signing',
   PKIWorkshop: 'pki-workshop',
   KmsPqc: 'kms-pqc',
@@ -43,6 +43,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   ComplianceStrategy: 'compliance-strategy',
   MigrationProgram: 'migration-program',
   PQCRiskManagement: 'pqc-risk-management',
+  PQCTestingValidation: 'pqc-testing-validation',
   PQCBusinessCase: 'pqc-business-case',
   PQCGovernance: 'pqc-governance',
   CodeSigning: 'code-signing',
@@ -55,7 +56,7 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
   PlatformEngPQC: 'platform-eng-pqc',
   EnergyUtilities: 'energy-utilities-pqc',
   HealthcarePQC: 'healthcare-pqc',
-  AerospaceSpacePQC: 'aerospace-pqc',
+  AerospacePQC: 'aerospace-pqc',
   AutomotivePQC: 'automotive-pqc',
   ExecQuantumImpact: 'exec-quantum-impact',
   DevQuantumImpact: 'dev-quantum-impact',
@@ -136,18 +137,29 @@ export const CuriousSummaryBanner = ({
       {(expanded || isFullPage) && (
         <div className={isFullPage ? '' : 'px-4 pb-4 -mt-1'}>
           <Tabs defaultValue="infographic" className="w-full">
-            <TabsList className="w-full sm:w-auto mb-4 bg-muted/50 border border-border">
+            <TabsList className="w-full sm:w-auto mb-4">
               <TabsTrigger value="infographic">Infographic</TabsTrigger>
-              <TabsTrigger value="text">Text (In Simple Terms)</TabsTrigger>
+              <TabsTrigger value="text">In Simple Terms</TabsTrigger>
             </TabsList>
 
             <TabsContent value="infographic" className="mt-0">
-              <div className="w-full flex justify-center bg-black/20 rounded-lg border border-border p-3">
-                <img
-                  src={`/images/infographics/${moduleId}.png?v=conversational_v2`}
-                  alt={`Infographic in simple terms for ${moduleId}`}
-                  className="max-w-full h-auto rounded-md shadow-md"
-                />
+              <div className="w-full bg-muted/30 rounded-lg border border-border p-1.5 sm:p-3">
+                <a
+                  href={`/images/infographics/${moduleId}.png`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block"
+                  title="Tap to view full size"
+                >
+                  <img
+                    src={`/images/infographics/${moduleId}.png?v=conversational_v2`}
+                    alt={`Infographic in simple terms for ${moduleId}`}
+                    className="w-full h-auto rounded-md shadow-md cursor-zoom-in"
+                  />
+                </a>
+                <p className="text-center text-[11px] text-muted-foreground mt-1.5">
+                  Tap image to view full size
+                </p>
               </div>
             </TabsContent>
 

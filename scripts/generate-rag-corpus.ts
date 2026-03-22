@@ -154,6 +154,7 @@ const MODULE_DIR_TO_ID: Record<string, string> = {
   SecretsManagementPQC: 'secrets-management-pqc',
   SecureBootPQC: 'secure-boot-pqc',
   StandardsBodies: 'standards-bodies',
+  PQCTestingValidation: 'pqc-testing-validation',
 }
 
 // ---------------------------------------------------------------------------
@@ -210,6 +211,9 @@ function processTimeline(): RAGChunk[] {
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
 
+  // Load timeline enrichments once for all rows
+  const enrichLookup = loadEnrichmentFields('timeline')
+
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
@@ -230,14 +234,53 @@ function processTimeline(): RAGChunk[] {
       sourceUrl,
     ] = row
 
-    const content = [
+    const contentLines = [
       `Country: ${sanitize(country)}`,
       `Organization: ${sanitize(orgFullName || orgName)}`,
       `Type: ${sanitize(type)} | Phase: ${sanitize(category)}`,
       `Period: ${sanitize(startYear)}–${sanitize(endYear)}`,
       `Title: ${sanitize(title)}`,
       `Description: ${sanitize(description)}`,
-    ].join('\n')
+    ]
+
+    // Augment with enrichment dimensions when available
+    // Enrichment key format matches the Python script: "{country}:{orgName} — {title}"
+    const enrichKey = `${sanitize(country)}:${sanitize(orgName)} — ${sanitize(title)}`
+    const enrich = enrichLookup.get(enrichKey)
+    const enrichMetadata: Record<string, string> = {}
+    if (enrich) {
+      const skip = new Set(['None detected', 'Not specified', 'See document for details.'])
+      const enrichFieldOrder: [string, string][] = [
+        ['Main Topic', 'Main Topic'],
+        ['Key Takeaways', 'Key Takeaways'],
+        ['Migration Timeline Info', 'Migration Timeline'],
+        ['Applicable Regions / Bodies', 'Regions / Bodies'],
+        ['Compliance Frameworks Referenced', 'Compliance Frameworks'],
+        ['Standardization Bodies', 'Standardization Bodies'],
+        ['Phase Classification Rationale', 'Phase Rationale'],
+        ['Regulatory Mandate Level', 'Mandate Level'],
+        ['Sector / Industry Applicability', 'Sector Applicability'],
+        ['Migration Urgency & Priority', 'Migration Urgency'],
+        ['Historical Significance', 'Historical Significance'],
+        ['Implementation Timeline Dates', 'Key Dates'],
+        ['Successor Events & Dependencies', 'Dependencies'],
+      ]
+      const enrichLines: string[] = []
+      for (const [mdKey, label] of enrichFieldOrder) {
+        const val = enrich[mdKey]
+        if (val && !skip.has(val)) enrichLines.push(`${label}: ${val}`)
+      }
+      if (enrichLines.length > 0) {
+        contentLines.push('', ...enrichLines)
+      }
+      // Surface key timeline metadata for search filtering
+      const mandateVal = enrich['Regulatory Mandate Level']
+      const urgencyVal = enrich['Migration Urgency & Priority']
+      const sectorVal = enrich['Sector / Industry Applicability']
+      if (mandateVal && !skip.has(mandateVal)) enrichMetadata['mandateLevel'] = mandateVal
+      if (urgencyVal && !skip.has(urgencyVal)) enrichMetadata['migrationUrgency'] = urgencyVal
+      if (sectorVal && !skip.has(sectorVal)) enrichMetadata['sectorApplicability'] = sectorVal
+    }
 
     // Cross-link: if timeline event title matches a library referenceId,
     // deep link to /library?ref= instead of generic /timeline?country=
@@ -250,12 +293,13 @@ function processTimeline(): RAGChunk[] {
       id: `timeline-${i}`,
       source: 'timeline',
       title: `${sanitize(country)} — ${sanitize(title)}`,
-      content,
+      content: contentLines.join('\n'),
       category: sanitize(category),
       metadata: {
         country: sanitize(country),
         org: sanitize(orgName),
         sourceUrl: sanitize(sourceUrl),
+        ...enrichMetadata,
       },
       deepLink,
     })
@@ -881,6 +925,7 @@ const MODULE_NAME_MAP: Record<string, string> = {
   SecretsManagementPQC: 'Secrets Management & PQC',
   SecureBootPQC: 'Secure Boot & Firmware PQC',
   StandardsBodies: 'Standards, Certification & Compliance Bodies',
+  PQCTestingValidation: 'PQC Network Testing & Validation',
 }
 
 /**
@@ -2060,7 +2105,7 @@ function processDocumentEnrichments(): RAGChunk[] {
       if (title === '---') continue
 
       const contentParts: string[] = [`Title: ${title}`]
-      const fieldOrder = [
+      const baseFieldOrder = [
         'Authors',
         'Publication Date',
         'Last Updated',
@@ -2077,6 +2122,21 @@ function processDocumentEnrichments(): RAGChunk[] {
         'Standardization Bodies',
         'Compliance Frameworks Referenced',
       ]
+      // Timeline enrichments include 8 additional fields
+      const timelineExtraFields =
+        collection === 'timeline'
+          ? [
+              'Phase Classification Rationale',
+              'Regulatory Mandate Level',
+              'Sector / Industry Applicability',
+              'Migration Urgency & Priority',
+              'Phase Transition Narrative',
+              'Historical Significance',
+              'Implementation Timeline Dates',
+              'Successor Events & Dependencies',
+            ]
+          : []
+      const fieldOrder = [...baseFieldOrder, ...timelineExtraFields]
       for (const key of fieldOrder) {
         const val = fields[key]
         if (val && val !== 'None detected' && val !== 'Not specified')

@@ -1,17 +1,20 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Calendar, X, Flag } from 'lucide-react'
+import { ExternalLink, Calendar, X, Flag, BookOpen } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import { useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import FocusLock from 'react-focus-lock'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { DocumentAnalysis } from '../Library/DocumentAnalysis'
+import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import {
   timelineEnrichments,
   hasSubstantiveEnrichment,
   getTimelineEnrichmentKey,
+  timelineToLibraryRef,
 } from '../../data/timelineEnrichmentData'
 import type { Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
@@ -80,6 +83,9 @@ export const TimelineDocumentDetailPopover = ({
   const enrichmentKey = getTimelineEnrichmentKey(row.countryName, row.org, row.title)
   const enrichment = timelineEnrichments[enrichmentKey]
   const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
+
+  // Check if this timeline doc's SourceUrl matches a library record
+  const libraryRefId = row.sourceUrl ? timelineToLibraryRef[row.sourceUrl] : undefined
 
   const content = (
     <FocusLock returnFocus>
@@ -241,23 +247,37 @@ export const TimelineDocumentDetailPopover = ({
             )}
           </div>
 
-          {/* Source link */}
-          {row.sourceUrl && (
-            <div className="pt-2 border-t border-border">
-              <a
-                href={row.sourceUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
-              >
-                <ExternalLink size={14} aria-hidden="true" />
-                View Source
-              </a>
+          {/* Source link + Library cross-link */}
+          {(row.sourceUrl || libraryRefId) && (
+            <div className="pt-2 border-t border-border flex flex-wrap items-center gap-3">
+              {row.sourceUrl && (
+                <a
+                  href={row.sourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
+                >
+                  <ExternalLink size={14} aria-hidden="true" />
+                  View Source
+                </a>
+              )}
+              {libraryRefId && (
+                <Link
+                  to={`/library?ref=${encodeURIComponent(libraryRefId)}`}
+                  className="inline-flex items-center gap-1.5 text-accent hover:text-accent/80 transition-colors text-sm font-medium"
+                >
+                  <BookOpen size={13} aria-hidden="true" />
+                  Also in Library
+                </Link>
+              )}
             </div>
           )}
 
-          {/* Document Analysis — enriched dimensions */}
+          {/* Document Analysis — enriched base dimensions */}
           {isEnriched && <DocumentAnalysis enrichment={enrichment} />}
+
+          {/* Timeline Analysis — timeline-specific dimensions */}
+          {isEnriched && <TimelineAnalysisPanel enrichment={enrichment} />}
         </div>
       </div>
     </FocusLock>

@@ -13,6 +13,7 @@ import { TestStrategyBuilder } from './workshop/TestStrategyBuilder'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
@@ -148,6 +149,7 @@ export const PQCTestingValidationModule: React.FC = () => {
       <Tabs value={activeTab} onValueChange={handleTabChange}>
         <TabsList className="w-full sm:w-auto">
           <TabsTrigger value="learn">Learn</TabsTrigger>
+          <TabsTrigger value="visual">Visual</TabsTrigger>
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
@@ -156,6 +158,10 @@ export const PQCTestingValidationModule: React.FC = () => {
 
         <TabsContent value="learn">
           <PQCTestingIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+        </TabsContent>
+
+        <TabsContent value="visual">
+          <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
         <TabsContent value="workshop">

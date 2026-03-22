@@ -4,6 +4,44 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.46.0] - 2026-03-22
+
+### Added
+
+- **CKA_CHECK_VALUE (KCV) for asymmetric keys** [view:/playground]: Both the C++ and Rust PKCS#11 WASM engines now compute and expose `CKA_CHECK_VALUE` for all asymmetric key types — ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA, and EdDSA. KCV is computed as SHA-256(CKA_VALUE) → first 3 bytes, matching PKCS#11 v3.2 §4.2 common-attributes table. The HSM Key Store attribute inspector renders the 3-byte hex fingerprint (e.g. `35599A`) in `text-status-success` for all key types when available. [persona:developer] [persona:architect]
+- **ACVP multi-algorithm KAT suite** [view:/playground]: The HSM ACVP Testing tab now validates five additional algorithm families alongside ML-DSA: AES-GCM-256 decrypt (SP 800-38D), HMAC-SHA-256 (FIPS 198-1), RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256 signature verify, and ML-KEM-768 key decapsulation. All six test families run in parallel against both C++ and Rust engines in Dual Mode. New ACVP test vector files: `aesgcm_test.json`, `hmac_test.json`, `rsapss_test.json`, `ecdsa_test.json`. [persona:developer]
+- **KAT Validation Panel in learn modules** [view:/learn]: Seven modules — 5G Security, Code Signing, Email Signing, IoT/OT, Digital ID, QKD, and Digital Assets — now embed a `KatValidationPanel` component in their workshop steps. A single "Run NIST KAT" button executes use-case-specific Known Answer Tests against NIST FIPS 203/204 ACVP vectors (ML-KEM + ML-DSA) and displays per-spec pass/fail results inline. Backed by `src/utils/katRunner.ts` and covered by `e2e/learn-modules-kat.spec.ts` (20 KAT specs). [persona:developer]
+- **Visual tab for all 48 learn modules** [view:/learn]: Every module now has a **Visual** tab (`ModuleVisualTab`) that renders the module's infographic and "In Simple Terms" summary, making visual content available at all experience levels without requiring Curious mode. The tab is registered in `useModuleDeepLink` and accessible via deep link (`/learn/module?tab=visual`). [persona:all]
+- **WIP module badge with community feedback** [view:/learn]: A `WipModuleBadge` (animated pulsing "WIP" chip) appears in the module header for all modules undergoing peer review. Clicking it opens a review-status modal showing automated cross-check status, editorial review completion, and peer-review progress, with inline Endorse/Flag buttons and a GitHub Discussions search link for community feedback. [persona:all]
+- **Timeline enrichment analysis in popovers** [view:/timeline]: The Gantt phase detail popover (`GanttDetailPopover`) now shows a compact enrichment preview — main topic, mandate level badge, migration urgency badge, and sector tags — for phases that have substantive document enrichment. The Timeline document detail popover (`TimelineDocumentDetailPopover`) renders a full `TimelineAnalysisPanel` (8 dimensions: mandate level, migration urgency, implementation timeline, sector applicability, key requirements, related standards, comparison points, priority action) and a `BookOpen` "Also in Library" cross-link whenever the source URL matches a library record. [persona:researcher] [persona:architect]
+- **PQC Testing & Validation module** [view:/learn]: New module `pqc-testing-validation` (120 min, advanced) added to the module catalog with 6 workshop steps covering passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a PQC test program. Added to persona config for Technology, Finance, Government, Telecom, and Healthcare sectors.
+- **`hsm_importMLKEMPrivateKey`** [data]: New PKCS#11 helper in `softhsm.ts` — imports a raw ML-KEM private key via `C_CreateObject` with `CKA_SENSITIVE=false` for ACVP decapsulation KATs against NIST reference vectors without requiring seed injection.
+- **`hsm_verifyBytes` + `hsm_importMLDSAPublicKey`** [data]: Two new helpers for ACVP ML-DSA signature verification — import a raw public key via `C_CreateObject` and verify a binary message/signature pair via `C_MessageVerifyInit` + `C_VerifyMessage`.
+- **`buildTemplate` exported** [data]: `buildTemplate(M, defs)` in `softhsm.ts` promoted from internal to public export, enabling external KAT runners and scripts to build `CK_ATTRIBUTE[]` arrays without duplicating the pattern.
+
+### Changed
+
+- **Dual-mode engine routing in Key Store** [view:/playground]: `HsmKeyTable` now routes key inspection and destruction to the correct WASM module based on `key.engine` (`'cpp'` | `'rust'`). Previously all operations used `moduleRef` (C++), so Rust-engine keys in Dual Mode could not be inspected or destroyed correctly. `HsmContext.HsmKey` gains an optional `engine` discriminator field. [persona:developer]
+- **5G AuthFlow simplified** [view:/learn]: The live-HSM MILENAGE path in `AuthFlow.tsx` (Step 1 — Authentication) was removed. The step now renders purely as a diagram-driven walkthrough, eliminating confusing PKCS#11 noise for a conceptual authentication step. [persona:all]
+- **AttestationIssuer — PKCS#11 key handle detection** [view:/learn]: `AttestationIssuerComponent` now detects PKCS#11 handle strings (prefixed `[PKCS#11 handle`) and emits a `C_Sign(CKM_ECDSA_SHA256)` log entry instead of attempting PEM base64 decode, which crashed for HSM-resident keys. [persona:developer]
+- **`useModuleDeepLink` — expanded default valid tabs**: Default `validTabs` list extended from `['learn', 'workshop']` to `['learn', 'visual', 'workshop', 'exercises', 'references', 'tools']`. URL-driven tab navigation now handles all tab values used across the module suite without per-module overrides.
+- **Tools & Products tab — dynamic CSV sourcing** [view:/learn]: `ModuleMigrateTab` now sources tools directly from the migrate catalog CSV via `getMigrateItemsForModule()` rather than per-module hardcoded lists. Products are filtered by `module_ids` CSV column and displayed with PQC support badge, FIPS badge, ACVP/CC certification chips, license info, and a deep-link to the full catalog entry. [persona:developer] [persona:architect]
+- **"In Simple Terms" summaries — full rewrite across all 48 modules** [view:/learn]: All `curious-summary.md` files were rewritten in a conversational, ~8th-grade reading level format — consistent structure (what it is, why it matters, what you will learn), real-world analogies, factually verified line-by-line against the source module components. Previous summaries contained hallucinated claims and inconsistent depth; all 48 are now accurate. [persona:all]
+- **Infographics — standardized to 640×640 single-panel** [view:/learn]: All module infographics replaced with new 640×640 square single-panel designs (previously 4-panel grid layouts). The previous infographics are preserved as `old_4panel_*` in `public/images/infographics/` for reference. New images served with `?v=2` cache-bust query parameter to force browser refresh. [persona:all]
+
+### Fixed
+
+- **`C_Login` session reuse** [view:/playground]: Added `CKR_USER_ANOTHER_ALREADY_LOGGED_IN (0x104)` guard in `hsm_initToken`. When a new session inherits an existing USER login, the SO→InitPIN→Logout→Login sequence is skipped and the session is returned directly, preventing `CKR_USER_ANOTHER_ALREADY_LOGGED_IN` errors in multi-session ACVP runs.
+- **`C_InitToken` re-init guard** [view:/playground]: Added `CKR_SESSION_EXISTS (0xb6)` guard in `hsm_initToken` — if a token is already initialized with active sessions, re-initialization is skipped and slot enumeration falls through, preventing unnecessary token resets.
+- **Crypto Dev APIs infographic** [view:/learn]: Replaced an infographic that incorrectly depicted quantum computing hardware (Qiskit-style circuits) with accurate content showing cryptographic API abstraction layers. [persona:developer]
+
+### Data
+
+- **Timeline enrichments**: 12 new enrichment entries added to `timeline_doc_enrichments_03222026.md`. [data]
+- **Compliance data refreshed** (`public/data/compliance-data.json`): daily scrape update 2026-03-22. [data]
+- **Rust WASM engine** (`softhsmrustv3_bg.wasm`): rebuilt with KCV for asymmetric keys — SHA-256(CKA_VALUE)\[0..3\] computed in `compute_kcv()` for `CKO_PUBLIC_KEY` and `CKO_PRIVATE_KEY`. [data]
+- **C++ WASM engine** (`softhsm.wasm`): rebuilt with KCV for asymmetric keys — `computeAsymKCV()` static helper added to `SoftHSM_keygen.cpp`, called in 12 keygen code paths (6 algorithms × pub+priv); `P11AttrCheckValue` registered on `P11PublicKeyObj` and `P11PrivateKeyObj` base classes. [data]
+
 ## [2.45.2] - 2026-03-13
 
 ### Changed

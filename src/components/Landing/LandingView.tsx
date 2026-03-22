@@ -131,8 +131,8 @@ function buildJourneySteps(
   libraryCount: number | null
 ): JourneyStep[] {
   const algoLabel = algorithmCount !== null ? `${algorithmCount}` : '45+'
-  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '360+'
-  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '300+'
+  const migrateLabel = migrateCount !== null ? `${migrateCount}` : '380+'
+  const libraryLabel = libraryCount !== null ? `${libraryCount}` : '320+'
 
   return [
     // — Start the Journey —

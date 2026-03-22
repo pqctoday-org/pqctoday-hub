@@ -49,7 +49,7 @@ import { getCurrentVersion } from '../../store/useVersionStore'
 const MISSION_TAGS = [
   '48 learning modules',
   '14-step risk assessment',
-  '350+ migration catalog',
+  '385+ migration catalog',
   'PKCS#11 v3.2 simulator',
   'FIPS 203 / 204 / 205',
   'AI assistant — runs locally',
@@ -108,10 +108,10 @@ const DATA_FOUNDATION = [
   { dataset: 'Library Resources', records: 325, sources: '30+ standards bodies' },
   { dataset: 'Algorithm Reference', records: 46, sources: 'FIPS 203/204/205/206' },
   { dataset: 'Compliance Frameworks', records: 91, sources: 'NIST, ACVP, CC, ANSSI' },
-  { dataset: 'Migrate Products', records: 377, sources: '7 infrastructure layers' },
+  { dataset: 'Migrate Products', records: 385, sources: '7 infrastructure layers' },
   { dataset: 'Threat Landscape', records: 79, sources: '8+ industry sectors' },
   { dataset: 'Industry Leaders', records: 181, sources: 'Public, Private, Academic' },
-  { dataset: 'Quiz Questions', records: 805, sources: 'All PQC topic areas' },
+  { dataset: 'Quiz Questions', records: 820, sources: 'All PQC topic areas' },
   { dataset: 'Authoritative Sources', records: 88, sources: 'Gov, Academic, Industry' },
   { dataset: 'Learning Modules', records: 48, sources: '2,400+ min of content' },
 ]
@@ -305,6 +305,32 @@ export function AboutView() {
 
       {/* Desktop View: Full Experience */}
       <div className="hidden md:block space-y-8">
+        {/* Changelog Card */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="glass-panel p-6"
+        >
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <FileText className="text-primary shrink-0" size={24} />
+              <div>
+                <h2 className="text-xl font-semibold">Release Notes</h2>
+                <p className="text-sm text-muted-foreground">
+                  What&apos;s new in v{version} — features, fixes, and improvements
+                </p>
+              </div>
+            </div>
+            <a
+              href="/changelog"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors shrink-0"
+            >
+              View Changelog
+              <ChevronRight size={16} />
+            </a>
+          </div>
+        </motion.div>
+
         {/* Bio Section / Mission Statement */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -384,10 +410,10 @@ export function AboutView() {
                     post-quantum cryptography transition.
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-2">
-                    We run production-grade cryptographic reference implementations &mdash;
-                    including SoftHSMv3, the world&apos;s first open source PKCS#11 v3.2 hardware
-                    security module with full NIST PQC standard support &mdash; directly in your
-                    browser. No installation. No cloud account. No data leaving your device.
+                    We run real cryptographic reference implementations &mdash; including SoftHSMv3,
+                    an experimental open source PKCS#11 v3.2 HSM with NIST PQC algorithm support
+                    &mdash; directly in your browser. No installation. No cloud account. No data
+                    leaving your device.
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed mb-3">
                     We cover every domain the transition touches: TLS, SSH, email, PKI, HSM key
@@ -486,9 +512,9 @@ export function AboutView() {
                   <p className="text-sm text-muted-foreground leading-relaxed mb-2">
                     PQCToday is built on open source. Our platform code, our cryptographic
                     simulators, and our community corpus are all publicly available. SoftHSMv3
-                    &mdash; the PKCS#11 v3.2 hardware security module implementation at the heart of
-                    our simulator &mdash; is a standalone open source project available on GitHub
-                    and npm, free for anyone to use in their own applications.
+                    &mdash; an experimental PKCS#11 v3.2 HSM implementation at the heart of our
+                    simulator &mdash; is a standalone open source project available on GitHub and
+                    npm, free for anyone to use in their own applications.
                   </p>
                   <p className="text-sm text-muted-foreground leading-relaxed">
                     We believe the infrastructure for PQC migration training should be open,
@@ -549,10 +575,6 @@ export function AboutView() {
                       View My Career Journey
                     </span>
                   </Button>
-                  <span className="hidden sm:inline text-muted-foreground/30">•</span>
-                  <a href="/changelog" className="text-sm text-primary hover:underline">
-                    View Changelog
-                  </a>
                 </div>
               </div>
             </div>
@@ -1110,7 +1132,7 @@ export function AboutView() {
                       </li>
                       <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                         <a
-                          href="https://github.com/pqctoday/softhsmv3"
+                          href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.2.0"
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-primary hover:underline flex items-center gap-1"

@@ -51,7 +51,7 @@ export default defineConfig([
   {
     files: [
       '*.{js,cjs,mjs,ts}',
-      'scripts/**/*.{js,mjs,ts}',
+      'scripts/**/*.{js,cjs,mjs,ts}',
       'e2e/**/*.{ts,js}',
       'test-improvements.cjs',
     ],

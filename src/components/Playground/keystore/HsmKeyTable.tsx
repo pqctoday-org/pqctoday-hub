@@ -166,6 +166,17 @@ const KeyAttrModal = ({
                 <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
               </tr>
             )}
+            {attrs.ckCheckValue && (
+              <tr className="border-b border-border/40">
+                <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
+                <td className="py-1.5 text-status-success font-bold font-mono">
+                  {Array.from(attrs.ckCheckValue)
+                    .map((b) => b.toString(16).padStart(2, '0'))
+                    .join('')
+                    .toUpperCase()}
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>
@@ -211,7 +222,8 @@ const ROLE_COLORS: Record<string, string> = {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export const HsmKeyTable = () => {
-  const { hsmKeys, moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
+  const { hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, removeHsmKey } =
+    useHsmContext()
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
   const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
   const [confirmHandle, setConfirmHandle] = useState<number | null>(null)
@@ -219,7 +231,8 @@ export const HsmKeyTable = () => {
   const [discovering, setDiscovering] = useState(false)
 
   const openInspect = (key: HsmKey) => {
-    const M = moduleRef.current
+    // Route to the correct engine — Rust keys live on crossCheckModuleRef
+    const M = key.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
     const hSession = hSessionRef.current
     if (!M || !hSession) return
     try {
@@ -231,13 +244,13 @@ export const HsmKeyTable = () => {
     }
   }
 
-  const destroyKey = (handle: number) => {
-    const M = moduleRef.current
+  const destroyKey = (key: HsmKey) => {
+    const M = key.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
     const hSession = hSessionRef.current
     if (!M || !hSession) return
     try {
-      hsm_destroyObject(M, hSession, handle)
-      removeHsmKey(handle)
+      hsm_destroyObject(M, hSession, key.handle)
+      removeHsmKey(key.handle)
     } catch {
       // key may already be destroyed
     }
@@ -367,7 +380,7 @@ export const HsmKeyTable = () => {
                       <div className="flex items-center gap-1">
                         <button
                           type="button"
-                          onClick={() => destroyKey(k.handle)}
+                          onClick={() => destroyKey(k)}
                           className="text-status-error text-[10px] font-sans font-medium hover:underline"
                           aria-label={`Confirm destroy key ${k.handle}`}
                         >

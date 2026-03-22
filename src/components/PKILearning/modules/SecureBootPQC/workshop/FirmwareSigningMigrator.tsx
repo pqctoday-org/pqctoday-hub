@@ -792,6 +792,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
             title="PKCS#11 Call Log"
             defaultOpen={false}
             className="mt-4"
+            filterFns={LIVE_OPERATIONS}
           />
         )}
 

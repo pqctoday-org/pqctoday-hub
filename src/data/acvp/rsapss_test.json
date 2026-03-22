@@ -1,0 +1,22 @@
+{
+  "algorithm": "RSA",
+  "mode": "sigVer",
+  "source": "Generated via Node.js crypto (OpenSSL backend), RSA-PSS with SHA-256",
+  "testGroups": [
+    {
+      "modLen": 2048,
+      "hashAlg": "SHA-256",
+      "sigType": "pss",
+      "saltLen": 32,
+      "tests": [
+        {
+          "n": "dccf5194d1e6017eddeca175b40fd0328a3f888868b3e1bac8717bb8cf046d3ce2e826b83edb8bf7e5fb9b86458c9d621bc6026d07be76ece82466a1305020fd44d8cc45e61308c2aed4c29b8545f6f7aba151d9d91f0095b20f8ff57a0de83f0aabb543286259da33d32ce975384868886e066abc14612d349ee95806c0d812ee864446fc37df4c9eb3a219044786ea8166e73a141b0d2ebf8ee101696f31706e057457a9601532596812e6e2c91c9ac4688c30007005342e1d326313532d26336fb05aaaf4524f15caa551c970cb343fcad70617c02e5ddf88fb154949604428707c50b96abd99465706f107f76289aef866dceff2696d9a9e449f7a77b1b7",
+          "e": "010001",
+          "msg": "ACVP RSA-PSS SigVer test vector",
+          "signature": "349359bfb965bd833a2c68955d06289a3e7bf99b118e512e832470f0b42e5e635ecbe424a3e42d2c72a6fc711d2b8ebe1f48168b27a52fdc886498d6a70c2b8a7197614fadade735630d1b20b804b1c6e124e6ae60106671b699e3405c8eb54fff168cd994ab94838f0de7f815ef5f86188809a8c7db1d52b720a2334313ac5a7c442edd76a9d0d28e3a813134075e01a3b54909f9d445d258b40b10173df498bfe2086ee194104bb9ee25c28a4a306e1992767bd21851e1b4a50aac22ad12fff49eec3dd4465eae7851b486214c5879d7f69d87cbcafa4720782d46f5a3b0e45e6e7416ba148f4b6a85526ebe4ee8aae0ce0430172a6b40eecbb7db8982101f",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

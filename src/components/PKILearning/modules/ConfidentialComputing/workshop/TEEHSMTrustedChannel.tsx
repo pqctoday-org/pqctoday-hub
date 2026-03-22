@@ -267,6 +267,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
             defaultOpen={true}
             title="PKCS#11 Call Log — TEE-HSM Channel"
             emptyMessage="Click 'Execute' to run the TEE-HSM key provisioning flow."
+            filterFns={TEE_LIVE_OPERATIONS}
           />
         </div>
       )}

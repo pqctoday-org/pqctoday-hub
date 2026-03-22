@@ -581,6 +581,7 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log — PQC vs Classical"
           emptyMessage="Click 'Generate Both Keypairs' to see live PKCS#11 operations."
+          filterFns={COMPARISON_LIVE_OPERATIONS}
         />
       )}
     </div>

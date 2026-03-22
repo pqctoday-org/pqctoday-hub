@@ -44,6 +44,12 @@ interface Pkcs11LogPanelProps {
   className?: string
   /** Empty-state message shown when log has no entries */
   emptyMessage?: string
+  /**
+   * When provided, only entries whose fn matches one of these names are shown.
+   * Use to surface only the operations relevant to the current use-case
+   * (e.g. ['C_GenerateKeyPair', 'C_Sign']) — hides the identical init sequence.
+   */
+  filterFns?: string[]
 }
 
 export const Pkcs11LogPanel = ({
@@ -53,12 +59,15 @@ export const Pkcs11LogPanel = ({
   defaultOpen = false,
   className = '',
   emptyMessage = 'No PKCS#11 calls yet — run a live operation to see activity.',
+  filterFns,
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
 
+  const visibleLog = filterFns ? log.filter((e) => filterFns.includes(e.fn)) : log
+
   const copyAll = () => {
-    const text = [...log]
+    const text = [...visibleLog]
       .reverse()
       .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
       .join('\n')
@@ -86,7 +95,9 @@ export const Pkcs11LogPanel = ({
             <ChevronRight size={14} className="text-muted-foreground" />
           )}
           {title}
-          <span className="text-xs font-normal text-muted-foreground">({log.length} calls)</span>
+          <span className="text-xs font-normal text-muted-foreground">
+            ({visibleLog.length} calls)
+          </span>
         </span>
         {/* role="presentation" + onKeyDown satisfies jsx-a11y for stopPropagation wrapper */}
         <span
@@ -100,7 +111,7 @@ export const Pkcs11LogPanel = ({
               variant="ghost"
               size="sm"
               className="h-6 px-1.5 text-xs"
-              disabled={log.length === 0}
+              disabled={visibleLog.length === 0}
               onClick={onClear}
               title="Clear log"
             >
@@ -111,7 +122,7 @@ export const Pkcs11LogPanel = ({
             variant="ghost"
             size="sm"
             className="h-6 px-1.5 text-xs"
-            disabled={log.length === 0}
+            disabled={visibleLog.length === 0}
             onClick={copyAll}
             title="Copy all entries"
           >
@@ -127,12 +138,12 @@ export const Pkcs11LogPanel = ({
       {/* Body */}
       {open && (
         <div className="mt-2">
-          {log.length === 0 ? (
+          {visibleLog.length === 0 ? (
             <p className="text-xs text-muted-foreground italic">{emptyMessage}</p>
           ) : (
             <div className="space-y-0 max-h-64 overflow-y-auto">
               {/* Log is newest-first; display oldest-first */}
-              {[...log].reverse().map((e) => (
+              {[...visibleLog].reverse().map((e) => (
                 <LogEntryRow key={e.id} entry={e} />
               ))}
             </div>

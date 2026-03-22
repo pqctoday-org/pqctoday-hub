@@ -391,6 +391,7 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
             defaultOpen={true}
             title="PKCS#11 Call Log — Hybrid KEM"
             emptyMessage="Click 'Execute' to run the hybrid KEM flow."
+            filterFns={HYBRID_LIVE_OPERATIONS}
           />
         </div>
       )}

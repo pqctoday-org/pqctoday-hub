@@ -222,6 +222,13 @@ export const MODULE_INDUSTRY_RELEVANCE: Record<string, string[] | null> = {
     'Energy & Utilities',
   ],
   'os-pqc': ['Technology', 'Government & Defense', 'Finance & Banking'],
+  'pqc-testing-validation': [
+    'Technology',
+    'Finance & Banking',
+    'Government & Defense',
+    'Telecommunications',
+    'Healthcare',
+  ],
   'standards-bodies': null,
   'exec-quantum-impact': null,
   'dev-quantum-impact': null,

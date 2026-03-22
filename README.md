@@ -8,6 +8,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Country filter with active filter chips, result count, and empty state
   - Document table: select a country to see all its phases/milestones in a structured table
     with organization, phase type, title, period, description, and source links
+  - **Enrichment analysis in popovers**: Gantt phase popover shows a compact enrichment preview
+    (main topic, mandate level badge, migration urgency badge, sector tags) for phases with
+    document enrichment data; document detail popover renders a full 8-dimension analysis panel
+    (mandate level, migration urgency, implementation timeline, sector applicability, key
+    requirements, related standards, comparison points, priority action) and a cross-link to the
+    matching Library record when the source URL maps to a known library entry
 - **Algorithm Comparison**: Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) transition table
   - Interactive table with 3-way column sorting (asc → desc → none) and drag-to-resize columns
   - "Find tools" deep-links from each PQC algorithm cell to pre-filtered `/migrate` catalog
@@ -37,7 +43,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     `CKA_SENSITIVE`, `CKA_LOCAL`, `CKA_ALWAYS_SENSITIVE`, `CKA_NEVER_EXTRACTABLE`,
     `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_KEY_GEN_MECHANISM`, `CKA_PARAMETER_SET`;
     all key generation forms expose `CKA_EXTRACTABLE` and usage attribute toggles
-    (`CKA_ENCRYPT`, `CKA_DECRYPT`, `CKA_WRAP`, `CKA_UNWRAP`, `CKA_DERIVE`)
+    (`CKA_ENCRYPT`, `CKA_DECRYPT`, `CKA_WRAP`, `CKA_UNWRAP`, `CKA_DERIVE`);
+    **CKA_CHECK_VALUE (KCV)**: 3-byte SHA-256 fingerprint shown for all key types — symmetric
+    (AES-ECB zero-block for AES, SHA-256 for HMAC) and asymmetric (SHA-256 of public/private key
+    bytes for ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA) — in both C++ and Rust engines
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
     timing, and optional "Show Params" inspect mode (powered by `src/wasm/inspect/` — decodes
     mechanism IDs, attribute types, and CKR return codes into human-readable form)
@@ -49,7 +58,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (RSA, ML-KEM, ML-DSA, SLH-DSA, SHA-1/2/3, AES, EC/ECDSA/EdDSA, ECDH, PBKDF2, HKDF, SP 800-108
     KBKDFs); decodes CKF\_ flag bitmasks to human-readable names; groups by algorithm family
     (PQC, asymmetric, symmetric, hash, kdf)
-  - ACVP Testing against NIST test vectors (software mode)
+  - **ACVP Testing**: validates six algorithm families against NIST test vectors — AES-GCM-256
+    (SP 800-38D), HMAC-SHA-256 (FIPS 198-1), RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256
+    signature verify, ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS
+    204); runs on both C++ and Rust engines in Dual Mode simultaneously
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
@@ -262,11 +274,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - IaC crypto defaults and OPA/Kyverno policy enforcement
     - Prometheus/SIEM posture monitoring for algorithm drift detection
     - Platform migration planner with SLSA and SBOM integration
-  - **Tools & Products Tab**: Every module includes a "Tools & Products" tab surfacing PQC-ready
-    products from the Migrate catalog, grouped by infrastructure layer with PQC/FIPS badges,
-    license info, and deep-links to the Migrate view
+  - **Tools & Products Tab**: Every module includes a "Tools & Products" tab sourcing products
+    directly from the migrate catalog CSV via `getMigrateItemsForModule()`, grouped by
+    infrastructure layer with PQC support badge, FIPS badge, ACVP/CC certification chips,
+    license info, and a deep-link to the full Migrate catalog entry
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 375+ verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 385+ verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -370,6 +383,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
     learning module when experience level is Curious — renders plain-language `curious-summary.md`
     content (~8th-grade reading level, real-world analogies, ~200-350 words); gracefully absent if
     a module has no summary file
+  - **Visual tab**: dedicated Visual tab on all 48 modules rendering a 640×640 single-panel
+    infographic and a fully rewritten "In Simple Terms" summary — conversational prose verified
+    line-by-line against each module's source content, available at all experience levels;
+    accessible via deep link (`/learn/module?tab=visual`)
+  - **Inline NIST KAT validation**: seven modules (5G Security, Code Signing, Email Signing,
+    IoT/OT, Digital ID, QKD, Digital Assets) embed a `KatValidationPanel` in their workshop
+    steps — click "Run NIST KAT" to execute use-case-specific Known Answer Tests against NIST
+    FIPS 203/204 ACVP vectors (ML-KEM + ML-DSA) with per-spec pass/fail results displayed inline
   - **Persona-driven navigation**: irrelevant pages hidden from nav; always-visible pages (Home,
     Learn, Timeline, Threats, About) remain accessible to all. Each persona's nav is tuned:
     Executive includes Compliance and Migrate; Developer includes Assess; Architect includes

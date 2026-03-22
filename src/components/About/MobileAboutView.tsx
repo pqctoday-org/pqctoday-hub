@@ -224,6 +224,33 @@ export const MobileAboutView = () => {
         <p className="text-xs text-muted-foreground/60 font-mono mt-1">v{version}</p>
       </motion.div>
 
+      {/* Changelog Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.02 }}
+        className="glass-panel p-4"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
+              <FileText size={18} />
+            </div>
+            <div>
+              <h2 className="text-base font-semibold">Release Notes</h2>
+              <p className="text-xs text-muted-foreground">v{version} — what&apos;s new</p>
+            </div>
+          </div>
+          <a
+            href="/changelog"
+            className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary text-black font-semibold text-sm hover:bg-primary/90 transition-colors shrink-0"
+          >
+            View
+            <ChevronRight size={14} />
+          </a>
+        </div>
+      </motion.div>
+
       {/* Transparency & Disclaimer Card */}
       <motion.div
         id="transparency"
@@ -293,7 +320,7 @@ export const MobileAboutView = () => {
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
           PQC Today brings together 48 learning modules across 8 tracks &mdash; including role
-          guides, industry verticals, and hands-on crypto labs &mdash; 805 quiz questions, a risk
+          guides, industry verticals, and hands-on crypto labs &mdash; 820 quiz questions, a risk
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role as a developer, architect, operations professional, executive, or researcher.
         </p>
@@ -322,9 +349,9 @@ export const MobileAboutView = () => {
         <div className="grid grid-cols-2 gap-2">
           {[
             { label: 'Timeline Events', value: '203' },
-            { label: 'Migrate Products', value: '377' },
+            { label: 'Migrate Products', value: '385' },
             { label: 'Library Resources', value: '325' },
-            { label: 'Quiz Questions', value: '805' },
+            { label: 'Quiz Questions', value: '820' },
           ].map((s) => (
             <div
               key={s.label}
@@ -762,12 +789,6 @@ export const MobileAboutView = () => {
             View My Career Journey
           </button>
         </div>
-        <p className="text-muted-foreground text-sm mt-2">
-          See the latest updates:{' '}
-          <a href="/changelog" className="text-primary hover:underline">
-            View Changelog
-          </a>
-        </p>
       </motion.div>
 
       {/* Appearance Section */}

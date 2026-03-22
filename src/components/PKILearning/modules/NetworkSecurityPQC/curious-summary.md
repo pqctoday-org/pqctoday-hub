@@ -1,21 +1,11 @@
-# Network Security & PQC — In Simple Terms
+### What This Is About
 
-## What This Is About
+Post-quantum cryptography fundamentally alters network security operations across the entire enterprise stack. Quantum-safe certificates (like ML-DSA) are 108% larger than their classical counterparts, resulting in 5-8KB hybrid TLS certificate chains and heavier, more complex key exchanges.
 
-Imagine your company's computer network as a building. Firewalls are the locked doors that decide who gets in and who stays out. Intrusion detection systems are the security cameras watching for suspicious behavior. And "zero trust" is a policy that says nobody gets automatic access — every person and every device must prove they belong, every single time, even if they are already inside the building.
+### Why It Matters
 
-All of these security systems rely on encryption and digital signatures to do their jobs. Firewalls inspect encrypted traffic to spot threats. Security cameras (intrusion detection) compare network activity against known attack patterns. Zero trust systems constantly verify identities using cryptographic checks. The math behind all of this works well today, but quantum computers could eventually break it.
+Because PQC artifacts are so large, they severely stress modern firewalls and Deep Packet Inspection (DPI) appliances. Older Next-Generation Firewalls (NGFWs) with fixed-size TLS buffers often fail silently (buffer overflows) when inspecting PQC traffic. Furthermore, software-only DPI CPU costs increase significantly, and legacy IDS/IPS signatures cannot parse hybrid KEM codepoints.
 
-## Why It Matters
+### The Key Takeaway
 
-Network security is the foundation that everything else sits on. If a firewall cannot properly inspect traffic because quantum computers have broken the encryption, threats slip through unnoticed. If intrusion detection systems cannot verify digital signatures, attackers could disguise their activity. If the identity checks in a zero trust system become unreliable, the entire "trust nobody" approach collapses.
-
-This affects every organization — hospitals, banks, power plants, schools, and government agencies. A network security failure is not just a technology problem; it can disrupt real services that real people depend on every day.
-
-## The Key Takeaway
-
-Network security tools like firewalls, intrusion detection, and zero trust systems are the invisible guards protecting every organization's digital infrastructure. They all depend on encryption that quantum computers could break, so upgrading them is not optional — it is essential to keeping the guards effective.
-
-## What's Happening
-
-Firewall and network security vendors like Palo Alto Networks, Cisco, and Fortinet are beginning to add post-quantum algorithm support to their products. Standards bodies are updating protocols like TLS and IPsec to accommodate quantum-safe encryption. Government agencies, especially in the United States and Europe, are setting deadlines for organizations to complete their transitions, creating urgency across the industry to upgrade network security infrastructure before quantum computers become powerful enough to be a real threat.
+Zero Trust Network Access (ZTNA) Identity Providers are the highest priority for migration, as a compromised IdP invalidates all access. Network teams must immediately plan for 35ms inspection latency overhead and evaluate vendor PQC roadmaps before deploying hybrid traffic across inline security boundaries.

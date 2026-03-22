@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { ExternalLink, Calendar } from 'lucide-react'
+import { ExternalLink, Calendar, Sparkles } from 'lucide-react'
 import { createPortal } from 'react-dom'
 import type { TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
@@ -9,6 +9,11 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import {
+  timelineEnrichments,
+  hasSubstantiveEnrichment,
+  getTimelineEnrichmentKey,
+} from '../../data/timelineEnrichmentData'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -66,6 +71,13 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
   const sourceUrl = primaryEvent?.sourceUrl
   const sourceDate = primaryEvent?.sourceDate
 
+  // Look up enrichment for compact preview
+  const enrichmentKey = primaryEvent
+    ? getTimelineEnrichmentKey(primaryEvent.countryName, primaryEvent.orgName, phase.title)
+    : null
+  const enrichment = enrichmentKey ? timelineEnrichments[enrichmentKey] : null
+  const isEnriched = !!enrichment && hasSubstantiveEnrichment(enrichment)
+
   // Center the popover
   const style: React.CSSProperties = {
     zIndex: 9999, // Ensure it's on top of everything
@@ -104,6 +116,41 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             {phase.description}
           </p>
         </div>
+
+        {/* Compact enrichment preview */}
+        {isEnriched && enrichment && (
+          <div className="pt-2 border-t border-border space-y-2">
+            <p className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider flex items-center gap-1">
+              <Sparkles size={9} aria-hidden="true" />
+              Analysis
+            </p>
+            {enrichment.mainTopic && (
+              <p className="text-xs text-foreground leading-relaxed line-clamp-2">
+                {enrichment.mainTopic}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-1.5">
+              {enrichment.mandateLevel && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-accent/10 text-accent border border-accent/20">
+                  {enrichment.mandateLevel}
+                </span>
+              )}
+              {enrichment.migrationUrgency && (
+                <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning/10 text-status-warning border border-status-warning/20">
+                  {enrichment.migrationUrgency}
+                </span>
+              )}
+              {enrichment.sectorApplicability?.slice(0, 3).map((s) => (
+                <span
+                  key={s}
+                  className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] bg-muted/30 text-muted-foreground border border-border"
+                >
+                  {s}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Detail grid: 2×2 on small screens, 4-col inline on sm+ */}
         <div className="pt-3 border-t border-border">

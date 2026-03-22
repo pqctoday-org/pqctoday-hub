@@ -20,6 +20,15 @@ export interface LibraryEnrichment {
   targetAudience: string[]
   implementationPrereqs: string[]
   relevantFeatures: string[]
+  // v3 timeline-specific dimensions (only present on timeline enrichments)
+  phaseClassification?: string | null
+  mandateLevel?: string | null
+  sectorApplicability?: string[]
+  migrationUrgency?: string | null
+  phaseTransition?: string | null
+  historicalSignificance?: string | null
+  implementationDates?: string[]
+  successorDependencies?: string | null
 }
 
 export type EnrichmentLookup = Record<string, LibraryEnrichment>
@@ -114,7 +123,17 @@ export function parseEnrichmentMarkdown(raw: string): EnrichmentLookup {
       // Skip entries with no real content extracted
     }
 
-    lookup[refId] = {
+    // v3 timeline-specific dimensions (optional — only set when present in enrichment)
+    const phaseClassRaw = fields['Phase Classification Rationale']
+    const mandateLevelRaw = fields['Regulatory Mandate Level']
+    const sectorRaw = fields['Sector / Industry Applicability']
+    const urgencyRaw = fields['Migration Urgency & Priority']
+    const phaseTransRaw = fields['Phase Transition Narrative']
+    const historicalRaw = fields['Historical Significance']
+    const implDatesRaw = fields['Implementation Timeline Dates']
+    const successorRaw = fields['Successor Events & Dependencies']
+
+    const entry: LibraryEnrichment = {
       mainTopic: mainTopic && mainTopic !== 'None detected' ? mainTopic : '',
       pqcAlgorithms: splitList(fields['PQC Algorithms Covered']),
       quantumThreats: splitList(fields['Quantum Threats Addressed']),
@@ -136,6 +155,29 @@ export function parseEnrichmentMarkdown(raw: string): EnrichmentLookup {
       implementationPrereqs: parseSemicolonList(fields['Implementation Prerequisites']),
       relevantFeatures: splitList(fields['Relevant PQC Today Features']),
     }
+
+    // v3 timeline dimensions — only attach when the field is present in the markdown
+    if (phaseClassRaw !== undefined)
+      entry.phaseClassification =
+        phaseClassRaw && phaseClassRaw !== 'None detected' ? phaseClassRaw : null
+    if (mandateLevelRaw !== undefined)
+      entry.mandateLevel =
+        mandateLevelRaw && mandateLevelRaw !== 'None detected' ? mandateLevelRaw : null
+    if (sectorRaw !== undefined) entry.sectorApplicability = parseSemicolonList(sectorRaw)
+    if (urgencyRaw !== undefined)
+      entry.migrationUrgency = urgencyRaw && urgencyRaw !== 'None detected' ? urgencyRaw : null
+    if (phaseTransRaw !== undefined)
+      entry.phaseTransition =
+        phaseTransRaw && phaseTransRaw !== 'None detected' ? phaseTransRaw : null
+    if (historicalRaw !== undefined)
+      entry.historicalSignificance =
+        historicalRaw && historicalRaw !== 'None detected' ? historicalRaw : null
+    if (implDatesRaw !== undefined) entry.implementationDates = parseSemicolonList(implDatesRaw)
+    if (successorRaw !== undefined)
+      entry.successorDependencies =
+        successorRaw && successorRaw !== 'None detected' ? successorRaw : null
+
+    lookup[refId] = entry
   }
 
   return lookup

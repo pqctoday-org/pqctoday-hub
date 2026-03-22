@@ -383,6 +383,7 @@ export const TokenMigrationLab: React.FC = () => {
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log"
           defaultOpen={false}
+          filterFns={LIVE_OPERATIONS}
         />
       )}
 
