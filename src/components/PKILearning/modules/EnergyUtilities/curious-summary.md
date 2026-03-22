@@ -1,6 +1,13 @@
-Curious about why the power grid is exceptionally vulnerable?
+# Energy Grid PQC — In Simple Terms
 
-**The Problem:** Unlike office laptops that are replaced every few years, power plants use safety-critical hardware that operates for decades. Future quantum computers will easily break current encryption long before this equipment physically expires. If a hacker forges a safety command, it can cause devastating physical blackouts or pipeline explosions.
-**The Solution:** The energy sector must apply advanced quantum-proof security directly to physical infrastructure today to prevent future catastrophic hacking. 
-**The Strategy:** Transitioning the power grid requires upgrading long-lasting hardware to support unforgeable commands, ensuring the lights stay on no matter how fast supercomputers evolve.
-**The Ecosystem:** Protecting the grid impacts power plants, transmission operators, and international energy regulatory agencies.
+## What This Is About
+Energy infrastructure operates on 20–40 year asset lifecycles and provides safety-critical functions. A substation controller deployed today will still be operational in 2050—well past the expected arrival timeline for cryptographically relevant quantum computers.
+
+## Why It Matters
+Unlike IT data breaches, cryptographic failures in the energy sector can trigger severe physical consequences, including grid blackouts or pipeline overpressure. A "Harvest Now, Decrypt Later" attacker could capture encrypted utility communications today and decrypt them in the future to map out sensitive protection settings for physical attacks.
+
+## The Key Takeaway
+For crucial substation protocols (like GOOSE, Sampled Values, and DNP3), the per-message authentication (HMAC) is already quantum-safe. The actual vulnerability lies in the asymmetric key distribution channels (like classical RSA certificates) used to share those HMAC keys.
+
+## What's Happening
+Replacing classic keys with PQC keys creates a massive bandwidth bottleneck for smart meters. Moving from a 33-byte classical ECDH key to a 1,088-byte ML-KEM ciphertext transforms a routine background key rotation on a slow powerline network into a multi-day network operation.

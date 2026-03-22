@@ -1,6 +1,13 @@
-Curious about why "randomness" is the strongest foundation of security?
+# Entropy & PQC — In Simple Terms
 
-**The Problem:** The strongest encryption lock in the world is completely worthless if the random numbers used to create the secret key are predictable. If your system's randomness is flawed, hackers can simply guess your secure keys instantly.
-**The Solution:** Security architectures must generate bulletproof "entropy" (true unpredictability) by combining physical hardware noise with certified software mixing algorithms.
-**The Strategy:** Organizations must constantly monitor their random number generators for failure or bias, ensuring hackers can never guess their underlying mathematical patterns.
-**The Ecosystem:** Perfect randomness relies entirely on computer hardware manufacturers, operating system developers, and strict government security certifiers.
+## What This Is About
+Cryptographic security depends on the quality of randomness, known as entropy. A perfectly designed cryptographic algorithm is essentially worthless if the underlying random number generator (RNG) used to pick the keys is predictable.
+
+## Why It Matters
+Predictable random seeds lead to total key recovery attacks. In Post-Quantum Cryptography, standard algorithms like ML-KEM (FIPS 203) and ML-DSA (FIPS 204) strictly require exactly 32 bytes of full entropy to generate their seeds securely. Furthermore, if random numbers repeat during the generation of Stateful Signatures (like LMS or XMSS), it causes catastrophic tree security failures.
+
+## The Key Takeaway
+Current Hardware Random Number Generators (TRNGs) are actually already quantum-safe because they rely on physical, unpredictable noise processes, rather than computational math assumptions. The core challenge is ensuring these physical sources are properly conditioned, tested, and combined without bias.
+
+## What's Happening
+NIST explicitly defines how to test and combine these random sources through the SP 800-90 standards. Additionally, the NIST Entropy Source Validation (ESV) program provides formal certification for these sources to guarantee they meet the strict 256-bit security strength required to power high-level PQC operations.
