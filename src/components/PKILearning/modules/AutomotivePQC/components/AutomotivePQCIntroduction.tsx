@@ -1170,7 +1170,6 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </CollapsibleSection>
 
-
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>

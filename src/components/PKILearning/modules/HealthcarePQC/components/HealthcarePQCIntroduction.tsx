@@ -710,7 +710,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
-              <div className="text-xs text-muted-foreground">PQC for implantable devices, monitors, and hospital OT networks</div>
+              <div className="text-xs text-muted-foreground">
+                PQC for implantable devices, monitors, and hospital OT networks
+              </div>
             </div>
           </Link>
           <Link
@@ -720,7 +722,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-              <div className="text-xs text-muted-foreground">HIPAA, FDA 510(k), and NIS2 quantum-readiness requirements</div>
+              <div className="text-xs text-muted-foreground">
+                HIPAA, FDA 510(k), and NIS2 quantum-readiness requirements
+              </div>
             </div>
           </Link>
           <Link
@@ -730,7 +734,9 @@ export const HealthcarePQCIntroduction: React.FC<IntroductionProps> = ({
             <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
-              <div className="text-xs text-muted-foreground">Risk registers for patient data and long-lifecycle medical records</div>
+              <div className="text-xs text-muted-foreground">
+                Risk registers for patient data and long-lifecycle medical records
+              </div>
             </div>
           </Link>
         </div>

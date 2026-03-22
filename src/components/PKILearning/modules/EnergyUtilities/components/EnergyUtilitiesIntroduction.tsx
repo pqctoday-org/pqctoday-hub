@@ -905,7 +905,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
-              <div className="text-xs text-muted-foreground">PQC for RTUs, PLCs, and SCADA field devices</div>
+              <div className="text-xs text-muted-foreground">
+                PQC for RTUs, PLCs, and SCADA field devices
+              </div>
             </div>
           </Link>
           <Link
@@ -915,7 +917,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-              <div className="text-xs text-muted-foreground">NERC CIP and IEC 62351 regulatory alignment</div>
+              <div className="text-xs text-muted-foreground">
+                NERC CIP and IEC 62351 regulatory alignment
+              </div>
             </div>
           </Link>
           <Link
@@ -925,7 +929,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Stateful Signatures</div>
-              <div className="text-xs text-muted-foreground">LMS for firmware signing on long-lifecycle grid equipment</div>
+              <div className="text-xs text-muted-foreground">
+                LMS for firmware signing on long-lifecycle grid equipment
+              </div>
             </div>
           </Link>
           <Link
@@ -935,7 +941,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <Key size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Key management for substation and SCADA communication channels</div>
+              <div className="text-xs text-muted-foreground">
+                Key management for substation and SCADA communication channels
+              </div>
             </div>
           </Link>
           <Link
@@ -945,7 +953,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Data Asset Sensitivity</div>
-              <div className="text-xs text-muted-foreground">Classify OT data and prioritize PQC migration by impact</div>
+              <div className="text-xs text-muted-foreground">
+                Classify OT data and prioritize PQC migration by impact
+              </div>
             </div>
           </Link>
           <Link
@@ -955,7 +965,9 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
             <Clock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Migration Program</div>
-              <div className="text-xs text-muted-foreground">Phase-based PQC rollout planning for critical infrastructure</div>
+              <div className="text-xs text-muted-foreground">
+                Phase-based PQC rollout planning for critical infrastructure
+              </div>
             </div>
           </Link>
         </div>
