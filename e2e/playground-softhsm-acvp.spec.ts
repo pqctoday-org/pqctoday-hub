@@ -16,9 +16,7 @@ test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
     await page.reload() // Force reload to ensure fresh WASM
   })
 
-  test('should execute the ACVP validation suite across the token', async ({
-    page,
-  }) => {
+  test('should execute the ACVP validation suite across the token', async ({ page }) => {
     test.setTimeout(90000)
 
     // 1. Enable Dual HSM Mode
@@ -28,7 +26,7 @@ test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
     // 2. Token Setup
     await page.getByRole('button', { name: /Initialize/i, exact: true }).click()
     await expect(page.getByText(/Initialized/i).first()).toBeVisible({ timeout: 15000 })
-    
+
     await page.getByRole('button', { name: /Create Token/i }).click()
     await expect(page.getByText(/Token Created/i).first()).toBeVisible({ timeout: 15000 })
 
@@ -44,5 +42,17 @@ test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
 
     // Wait for the completion log
     await expect(page.getByText(/Validation Suite Completed/i)).toBeVisible({ timeout: 30000 })
+
+    // 5. Verify at least one PASS result in the results table
+    const passBadges = page.locator('span', { hasText: 'pass' }).filter({
+      has: page.locator('svg'), // CheckCircle icon
+    })
+    await expect(passBadges.first()).toBeVisible({ timeout: 5000 })
+
+    // 6. Verify zero DISCREPANCY entries in the execution log
+    const logPanel = page.locator('.font-mono.text-success\\/80')
+    await expect(logPanel).toBeVisible()
+    const logText = await logPanel.textContent()
+    expect(logText).not.toContain('[DISCREPANCY]')
   })
 })

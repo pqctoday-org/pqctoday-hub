@@ -96,7 +96,7 @@ export function _C_InitPIN(_h_session: number, _p_pin: number, _ul_pin_len: numb
 
 export function _C_InitToken(_slot_id: number, _p_pin: number, _ul_pin_len: number, _p_label: number): number;
 
-export function _C_Initialize(_p_init_args: number): number;
+export function _C_Initialize(p_init_args: number): number;
 
 export function _C_Login(_h_session: number, _user_type: number, _p_pin: number, _ul_pin_len: number): number;
 
@@ -192,6 +192,7 @@ export interface InitOutput {
     readonly _C_InitPIN: (a: number, b: number, c: number) => number;
     readonly _C_InitToken: (a: number, b: number, c: number, d: number) => number;
     readonly _C_Initialize: (a: number) => number;
+    readonly _C_Logout: (a: number) => number;
     readonly _C_MessageSignFinal: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_MessageSignInit: (a: number, b: number, c: number) => number;
     readonly _C_MessageVerifyFinal: (a: number) => number;
@@ -227,7 +228,6 @@ export interface InitOutput {
     readonly _C_SignUpdate: (a: number, b: number, c: number) => number;
     readonly _C_VerifyFinal: (a: number, b: number, c: number) => number;
     readonly _C_VerifyUpdate: (a: number, b: number, c: number) => number;
-    readonly _C_Logout: (a: number) => number;
     readonly _free: (a: number, b: number) => void;
     readonly _malloc: (a: number) => number;
     readonly wasm_start: () => void;

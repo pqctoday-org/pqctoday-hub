@@ -525,11 +525,11 @@ export function _C_InitToken(_slot_id, _p_pin, _ul_pin_len, _p_label) {
 }
 
 /**
- * @param {number} _p_init_args
+ * @param {number} p_init_args
  * @returns {number}
  */
-export function _C_Initialize(_p_init_args) {
-    const ret = wasm._C_Initialize(_p_init_args);
+export function _C_Initialize(p_init_args) {
+    const ret = wasm._C_Initialize(p_init_args);
     return ret >>> 0;
 }
 
