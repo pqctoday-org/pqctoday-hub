@@ -178,4 +178,3 @@ export const IAM_VENDORS: IAMVendorStatus[] = [
       'Keycloak is open source; PQC integration available via oqsprovider for OpenSSL and BouncyCastle Java. Community PQC SPI for token signing already available. Red Hat SSO (RHSSO) enterprise version targets 2026 GA.',
   },
 ]
-

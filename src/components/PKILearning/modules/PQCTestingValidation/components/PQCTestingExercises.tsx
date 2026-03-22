@@ -106,8 +106,8 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Practice Scenarios</h2>
         <p className="text-sm text-muted-foreground">
-          Six real-world PQC testing scenarios — each designed to reveal a key insight about
-          testing methodology. Click &ldquo;Try It&rdquo; to jump to the relevant workshop step.
+          Six real-world PQC testing scenarios — each designed to reveal a key insight about testing
+          methodology. Click &ldquo;Try It&rdquo; to jump to the relevant workshop step.
         </p>
       </div>
 
@@ -116,7 +116,9 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
           <div key={scenario.id} className="glass-panel p-6 space-y-3">
             <div className="flex items-start justify-between gap-4">
               <h3 className="font-bold text-foreground">{scenario.title}</h3>
-              <span className={`text-xs px-2 py-1 rounded-full border whitespace-nowrap ${scenario.badgeColor}`}>
+              <span
+                className={`text-xs px-2 py-1 rounded-full border whitespace-nowrap ${scenario.badgeColor}`}
+              >
                 {scenario.badge}
               </span>
             </div>

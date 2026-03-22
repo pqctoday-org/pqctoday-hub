@@ -8,6 +8,35 @@ import {
   type IoTDeviceType,
   type IoTFirmwareAlgorithm,
 } from '../constants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const IOT_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'iot-constrained-decap',
+    useCase: 'Constrained device key exchange',
+    standard: 'IEC 62443 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 512 },
+  },
+  {
+    id: 'iot-firmware-sigver',
+    useCase: 'Embedded firmware signing',
+    standard: 'IEC 62443 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 44 },
+  },
+  {
+    id: 'iot-dtls-decap',
+    useCase: 'DTLS session key (Level 2 OT)',
+    standard: 'IEC 62443 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+]
 
 type SimPhase = 'idle' | 'hashing' | 'signing' | 'manifest' | 'verifying' | 'done'
 
@@ -330,6 +359,12 @@ function BandwidthImpact({
         to the firmware delivery. The firmware payload itself ({device.firmwareSizeKB} KB) dominates
         the transfer.
       </p>
+
+      <KatValidationPanel
+        specs={IOT_KAT_SPECS}
+        label="IoT/OT Firmware PQC Known Answer Tests"
+        authorityNote="IEC 62443 · NIST FIPS 203/204"
+      />
     </div>
   )
 }

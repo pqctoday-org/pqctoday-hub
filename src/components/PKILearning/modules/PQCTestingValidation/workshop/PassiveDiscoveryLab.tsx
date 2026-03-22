@@ -42,10 +42,7 @@ export const PassiveDiscoveryLab: React.FC = () => {
     () => NETWORK_SEGMENTS.find((s) => s.id === selectedSegment)!,
     [selectedSegment]
   )
-  const observations = useMemo(
-    () => PASSIVE_OBSERVATIONS[selectedSegment] ?? [],
-    [selectedSegment]
-  )
+  const observations = useMemo(() => PASSIVE_OBSERVATIONS[selectedSegment] ?? [], [selectedSegment])
 
   const summary = useMemo(() => {
     const counts = { 'quantum-safe': 0, vulnerable: 0, hybrid: 0, unknown: 0 }
@@ -89,7 +86,9 @@ export const PassiveDiscoveryLab: React.FC = () => {
 
       {/* Segment selector */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-        <span className="text-sm font-medium text-foreground whitespace-nowrap">Network segment:</span>
+        <span className="text-sm font-medium text-foreground whitespace-nowrap">
+          Network segment:
+        </span>
         <FilterDropdown
           items={segmentItems}
           selectedId={selectedSegment}
@@ -102,18 +101,25 @@ export const PassiveDiscoveryLab: React.FC = () => {
       {/* Segment info */}
       <div className="p-4 rounded-lg bg-muted border border-border">
         <div className="flex items-center gap-2 mb-2">
-          <span className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
-            segment.riskLevel === 'critical' ? 'bg-destructive/20 text-destructive' :
-            segment.riskLevel === 'high' ? 'bg-status-warning/20 text-status-warning' :
-            'bg-status-success/20 text-status-success'
-          }`}>
+          <span
+            className={`text-xs px-2 py-0.5 rounded-full font-semibold ${
+              segment.riskLevel === 'critical'
+                ? 'bg-destructive/20 text-destructive'
+                : segment.riskLevel === 'high'
+                  ? 'bg-status-warning/20 text-status-warning'
+                  : 'bg-status-success/20 text-status-success'
+            }`}
+          >
             {segment.riskLevel.toUpperCase()} RISK SEGMENT
           </span>
         </div>
         <p className="text-sm text-foreground/80">{segment.description}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           {segment.typicalTraffic.map((t) => (
-            <span key={t} className="text-xs bg-background border border-border px-2 py-0.5 rounded font-mono">
+            <span
+              key={t}
+              className="text-xs bg-background border border-border px-2 py-0.5 rounded font-mono"
+            >
               {t}
             </span>
           ))}
@@ -122,11 +128,18 @@ export const PassiveDiscoveryLab: React.FC = () => {
 
       {/* Summary bar */}
       <div className="grid grid-cols-4 gap-2">
-        {([['quantum-safe', 'Quantum-Safe', 'text-status-success bg-status-success/10'],
-          ['hybrid', 'Hybrid', 'text-status-warning bg-status-warning/10'],
-          ['vulnerable', 'Vulnerable', 'text-destructive bg-destructive/10'],
-          ['unknown', 'Unknown', 'text-muted-foreground bg-muted']] as const).map(([key, label, cls]) => (
-          <div key={key} className={`p-3 rounded-lg border border-border text-center ${cls.split(' ')[1]}`}>
+        {(
+          [
+            ['quantum-safe', 'Quantum-Safe', 'text-status-success bg-status-success/10'],
+            ['hybrid', 'Hybrid', 'text-status-warning bg-status-warning/10'],
+            ['vulnerable', 'Vulnerable', 'text-destructive bg-destructive/10'],
+            ['unknown', 'Unknown', 'text-muted-foreground bg-muted'],
+          ] as const
+        ).map(([key, label, cls]) => (
+          <div
+            key={key}
+            className={`p-3 rounded-lg border border-border text-center ${cls.split(' ')[1]}`}
+          >
             <div className={`text-2xl font-bold ${cls.split(' ')[0]}`}>{summary[key]}</div>
             <div className="text-xs text-muted-foreground">{label}</div>
           </div>
@@ -143,7 +156,13 @@ export const PassiveDiscoveryLab: React.FC = () => {
         {observations.map((obs) => {
           const userAnswer = classified[obs.id]
           const isRevealed = revealed[obs.id]
-          const isCorrect = userAnswer === (obs.quantumSafe === 'yes' ? 'quantum-safe' : obs.quantumSafe === 'no' ? 'vulnerable' : obs.quantumSafe)
+          const isCorrect =
+            userAnswer ===
+            (obs.quantumSafe === 'yes'
+              ? 'quantum-safe'
+              : obs.quantumSafe === 'no'
+                ? 'vulnerable'
+                : obs.quantumSafe)
 
           return (
             <div key={obs.id} className={`p-4 rounded-lg border ${RISK_BG[obs.risk]}`}>
@@ -153,7 +172,9 @@ export const PassiveDiscoveryLab: React.FC = () => {
                     <span className="text-muted-foreground">{obs.source}</span>
                     <span className="text-muted-foreground">→</span>
                     <span className="text-muted-foreground">{obs.destination}</span>
-                    <span className="bg-background border border-border px-1.5 py-0.5 rounded text-xs">{obs.protocol}</span>
+                    <span className="bg-background border border-border px-1.5 py-0.5 rounded text-xs">
+                      {obs.protocol}
+                    </span>
                   </div>
                   <p className="text-xs font-mono text-foreground/70">{obs.algorithm}</p>
                 </div>
@@ -198,11 +219,17 @@ export const PassiveDiscoveryLab: React.FC = () => {
               {isRevealed && (
                 <div className="space-y-2">
                   {userAnswer && (
-                    <div className={`text-xs flex items-center gap-2 ${isCorrect ? 'text-status-success' : 'text-destructive'}`}>
-                      {isCorrect ? '✓ Correct' : `✗ You said: ${userAnswer} — Actual: ${obs.quantumSafe === 'yes' ? 'quantum-safe' : obs.quantumSafe === 'no' ? 'vulnerable' : obs.quantumSafe}`}
+                    <div
+                      className={`text-xs flex items-center gap-2 ${isCorrect ? 'text-status-success' : 'text-destructive'}`}
+                    >
+                      {isCorrect
+                        ? '✓ Correct'
+                        : `✗ You said: ${userAnswer} — Actual: ${obs.quantumSafe === 'yes' ? 'quantum-safe' : obs.quantumSafe === 'no' ? 'vulnerable' : obs.quantumSafe}`}
                     </div>
                   )}
-                  <p className="text-xs text-muted-foreground border-t border-border/50 pt-2">{obs.details}</p>
+                  <p className="text-xs text-muted-foreground border-t border-border/50 pt-2">
+                    {obs.details}
+                  </p>
                 </div>
               )}
             </div>

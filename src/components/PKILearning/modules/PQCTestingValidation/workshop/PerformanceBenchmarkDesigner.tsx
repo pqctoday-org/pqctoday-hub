@@ -10,10 +10,34 @@ import {
 } from '../data/testingConstants'
 
 const METRICS = [
-  { key: 'tlsHandshakeMs', label: 'TLS Handshake', unit: 'ms', maxVal: 1600, description: 'Full TLS 1.3 handshake latency (ClientHello → Finished)' },
-  { key: 'saSetupMs', label: 'IKEv2 SA Setup', unit: 'ms', maxVal: 100000, description: 'IKEv2 Security Association establishment (4 messages)' },
-  { key: 'certSizeKb', label: 'Certificate Size', unit: 'KB', maxVal: 20, description: 'Leaf certificate size (affects ClientHello fragmentation)' },
-  { key: 'clientHelloBytes', label: 'ClientHello Size', unit: 'B', maxVal: 1600, description: 'TLS ClientHello byte count (>1400B forces TCP fragmentation)' },
+  {
+    key: 'tlsHandshakeMs',
+    label: 'TLS Handshake',
+    unit: 'ms',
+    maxVal: 1600,
+    description: 'Full TLS 1.3 handshake latency (ClientHello → Finished)',
+  },
+  {
+    key: 'saSetupMs',
+    label: 'IKEv2 SA Setup',
+    unit: 'ms',
+    maxVal: 100000,
+    description: 'IKEv2 Security Association establishment (4 messages)',
+  },
+  {
+    key: 'certSizeKb',
+    label: 'Certificate Size',
+    unit: 'KB',
+    maxVal: 20,
+    description: 'Leaf certificate size (affects ClientHello fragmentation)',
+  },
+  {
+    key: 'clientHelloBytes',
+    label: 'ClientHello Size',
+    unit: 'B',
+    maxVal: 1600,
+    description: 'TLS ClientHello byte count (>1400B forces TCP fragmentation)',
+  },
 ] as const
 
 type MetricKey = (typeof METRICS)[number]['key']
@@ -48,9 +72,9 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <BarChart2 size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Simulating:</span> VIAVI TeraVM + PQC-LEO benchmark
-          data. Configure a network profile and metric to compare Classical vs Hybrid PQC vs Pure PQC
-          performance overhead.
+          <span className="font-semibold text-foreground">Simulating:</span> VIAVI TeraVM + PQC-LEO
+          benchmark data. Configure a network profile and metric to compare Classical vs Hybrid PQC
+          vs Pure PQC performance overhead.
         </p>
       </div>
 
@@ -58,7 +82,12 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
       <div className="space-y-2">
         <span className="text-sm font-medium text-foreground">Network Profile:</span>
         <div className="grid sm:grid-cols-3 gap-2">
-          {(Object.entries(NETWORK_PROFILE_LABELS) as [NetworkProfile, typeof NETWORK_PROFILE_LABELS[NetworkProfile]][]).map(([id, info]) => (
+          {(
+            Object.entries(NETWORK_PROFILE_LABELS) as [
+              NetworkProfile,
+              (typeof NETWORK_PROFILE_LABELS)[NetworkProfile],
+            ][]
+          ).map(([id, info]) => (
             <button
               key={id}
               onClick={() => setNetworkProfile(id)}
@@ -125,17 +154,21 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
                   style={{ width: `${pct}%` }}
                 >
                   {pct > 20 && (
-                    <span className="text-xs text-primary-foreground font-semibold">{formatVal(raw, metric.unit)}</span>
+                    <span className="text-xs text-primary-foreground font-semibold">
+                      {formatVal(raw, metric.unit)}
+                    </span>
                   )}
                 </div>
               </div>
               {/* Fragmentation warning */}
-              {data.fragmentation && (selectedMetric === 'clientHelloBytes' || selectedMetric === 'certSizeKb') && (
-                <div className="flex items-center gap-1.5 text-xs text-status-warning">
-                  <AlertTriangle size={11} />
-                  TCP fragmentation occurs — adds 1 extra RTT ({NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms) to handshake
-                </div>
-              )}
+              {data.fragmentation &&
+                (selectedMetric === 'clientHelloBytes' || selectedMetric === 'certSizeKb') && (
+                  <div className="flex items-center gap-1.5 text-xs text-status-warning">
+                    <AlertTriangle size={11} />
+                    TCP fragmentation occurs — adds 1 extra RTT (
+                    {NETWORK_PROFILE_LABELS[networkProfile].rttMs}ms) to handshake
+                  </div>
+                )}
             </div>
           )
         })}

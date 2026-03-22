@@ -10,9 +10,21 @@ import {
 
 const PHASE_OPTIONS: { id: MigrationPhase; label: string; description: string }[] = [
   { id: 'inventory', label: 'Inventory', description: 'Discover and classify all crypto assets' },
-  { id: 'lab-test', label: 'Lab Testing', description: 'Validate PQC performance and interop in isolated lab' },
-  { id: 'pilot', label: 'Pilot Rollout', description: 'Limited production deployment with monitoring' },
-  { id: 'production', label: 'Full Production', description: 'Enterprise-wide PQC enforcement and ongoing compliance' },
+  {
+    id: 'lab-test',
+    label: 'Lab Testing',
+    description: 'Validate PQC performance and interop in isolated lab',
+  },
+  {
+    id: 'pilot',
+    label: 'Pilot Rollout',
+    description: 'Limited production deployment with monitoring',
+  },
+  {
+    id: 'production',
+    label: 'Full Production',
+    description: 'Enterprise-wide PQC enforcement and ongoing compliance',
+  },
 ]
 
 const ENV_OPTIONS: { id: EnvironmentType; label: string; icon: string }[] = [
@@ -22,7 +34,11 @@ const ENV_OPTIONS: { id: EnvironmentType; label: string; icon: string }[] = [
   { id: 'embedded', label: 'Embedded / IoT', icon: '📱' },
 ]
 
-const DEADLINE_OPTIONS: { id: ComplianceDeadline; label: string; urgency: 'high' | 'medium' | 'low' }[] = [
+const DEADLINE_OPTIONS: {
+  id: ComplianceDeadline
+  label: string
+  urgency: 'high' | 'medium' | 'low'
+}[] = [
   { id: 'eu-2026', label: 'EU 2026 Crypto Inventory (NIS2)', urgency: 'high' },
   { id: 'nist-2030', label: 'NIST 2030 Deprecation (RSA/ECDH)', urgency: 'medium' },
   { id: 'nist-2035', label: 'NIST 2035 Prohibition', urgency: 'low' },
@@ -35,10 +51,26 @@ const URGENCY_COLORS: Record<string, string> = {
 }
 
 const TOOL_TYPE = (tool: string): 'open-source' | 'commercial' => {
-  const openSource = ['pqc-flow', 'pqcscan', 'CBOMkit', 'SSLyze', 'PQC Network Scanner',
-    'PQC-LEO', 'OQS Test Server', 'ChipWhisperer', 'OQS-Envoy', 'SCANOSS', 'Syft',
-    'Binwalk', 'Ghidra crypto plugin', 'crypto-detector', 'Wireshark OQS',
-    'cosign (ML-DSA)', 'OPA/Kyverno PQC policy', 'Argo Rollouts']
+  const openSource = [
+    'pqc-flow',
+    'pqcscan',
+    'CBOMkit',
+    'SSLyze',
+    'PQC Network Scanner',
+    'PQC-LEO',
+    'OQS Test Server',
+    'ChipWhisperer',
+    'OQS-Envoy',
+    'SCANOSS',
+    'Syft',
+    'Binwalk',
+    'Ghidra crypto plugin',
+    'crypto-detector',
+    'Wireshark OQS',
+    'cosign (ML-DSA)',
+    'OPA/Kyverno PQC policy',
+    'Argo Rollouts',
+  ]
   return openSource.some((s) => tool.includes(s)) ? 'open-source' : 'commercial'
 }
 
@@ -66,9 +98,9 @@ export const TestStrategyBuilder: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <ClipboardList size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Strategy Builder:</span> Configure your migration
-          phase, environment type, and compliance deadline. The builder generates a prioritized test
-          sequence with recommended tools and go/no-go gates.
+          <span className="font-semibold text-foreground">Strategy Builder:</span> Configure your
+          migration phase, environment type, and compliance deadline. The builder generates a
+          prioritized test sequence with recommended tools and go/no-go gates.
         </p>
       </div>
 
@@ -132,7 +164,9 @@ export const TestStrategyBuilder: React.FC = () => {
             </button>
           ))}
         </div>
-        <div className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded border ${URGENCY_COLORS[selectedDeadline.urgency]}`}>
+        <div
+          className={`inline-flex items-center gap-1.5 text-xs px-2 py-1 rounded border ${URGENCY_COLORS[selectedDeadline.urgency]}`}
+        >
           <Flag size={11} />
           {selectedDeadline.urgency.toUpperCase()} urgency — {selectedDeadline.label}
         </div>
@@ -210,7 +244,10 @@ export const TestStrategyBuilder: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {openSourceTools.map((t) => (
-                  <span key={t} className="text-xs px-2 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
+                  <span
+                    key={t}
+                    className="text-xs px-2 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30"
+                  >
                     {t}
                   </span>
                 ))}
@@ -222,7 +259,10 @@ export const TestStrategyBuilder: React.FC = () => {
               </p>
               <div className="flex flex-wrap gap-1.5">
                 {commercialTools.map((t) => (
-                  <span key={t} className="text-xs px-2 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
+                  <span
+                    key={t}
+                    className="text-xs px-2 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30"
+                  >
                     {t}
                   </span>
                 ))}

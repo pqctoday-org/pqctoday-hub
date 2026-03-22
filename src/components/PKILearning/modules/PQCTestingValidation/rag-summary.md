@@ -8,7 +8,7 @@
 **Difficulty**: Advanced
 **Prerequisites**: hybrid-crypto, network-security-pqc, vpn-ssh-pqc (recommended)
 
-This module teaches how to design and execute testing strategies for post-quantum cryptography deployments. It covers the full PQC testing lifecycle from initial crypto discovery through production monitoring — distinct from protocol migration modules which cover *what* to migrate.
+This module teaches how to design and execute testing strategies for post-quantum cryptography deployments. It covers the full PQC testing lifecycle from initial crypto discovery through production monitoring — distinct from protocol migration modules which cover _what_ to migrate.
 
 ---
 
@@ -29,12 +29,13 @@ PQC testing introduces challenges absent from classical cryptography assessments
 ## Passive vs Active Discovery
 
 **Passive discovery** inspects network traffic on SPAN ports or network taps without injecting packets. Tools observe:
+
 - TLS ClientHello cipher suite extensions (hybrid KEM identifiers)
 - Server certificate algorithm (RSA, ECDSA, or ML-DSA)
 - SSH key exchange algorithm negotiation
 - IKEv2 Key Exchange payload algorithm identifiers
 
-Key limitation: passive tools can only detect algorithms in *current* flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively.
+Key limitation: passive tools can only detect algorithms in _current_ flows. If no ML-KEM-capable connection is being made, ML-KEM support cannot be detected passively.
 
 **Tools**: CryptoNext COMPASS (commercial, NIST NCCoE recommended, NIST CAVP certified for all 3 PQC standards), pqc-flow (open source, CipherIQ), VIAVI Observer Analyzer (commercial, PQC detection in development).
 
@@ -50,13 +51,13 @@ Key insight: **TCP-to-TLS overhead dominates, not crypto computation.** On a WAN
 
 ### Critical benchmark data (from VIAVI TeraVM + PQC-LEO):
 
-| Metric | Classical | Hybrid PQC | Pure PQC |
-|--------|-----------|------------|----------|
-| TLS handshake (WAN) | 68ms | 82ms (+21%) | 95ms (+40%) |
-| IKEv2 SA setup (WAN) | 240ms | 380ms (+58%) | 12,626ms (+5,161%) |
-| Certificate size | 1.2KB | 4.8KB | 17.2KB |
-| ClientHello size | 320B | 1,120B | 1,536B |
-| Throughput (WAN) | 100% | 87% | 79% |
+| Metric               | Classical | Hybrid PQC   | Pure PQC           |
+| -------------------- | --------- | ------------ | ------------------ |
+| TLS handshake (WAN)  | 68ms      | 82ms (+21%)  | 95ms (+40%)        |
+| IKEv2 SA setup (WAN) | 240ms     | 380ms (+58%) | 12,626ms (+5,161%) |
+| Certificate size     | 1.2KB     | 4.8KB        | 17.2KB             |
+| ClientHello size     | 320B      | 1,120B       | 1,536B             |
+| Throughput (WAN)     | 100%      | 87%          | 79%                |
 
 The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN gateways. Pure-PQC TLS is more manageable (1.4× overhead on WAN).
 
@@ -69,6 +70,7 @@ The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN ga
 ## Interoperability Testing & RFC 9794 Compliance
 
 RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
+
 1. Both classical and PQC components must run to completion
 2. Shared secret = KDF(classical_secret ∥ pqc_secret)
 3. At least one algorithm must be shared between peers
@@ -76,12 +78,12 @@ RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
 
 ### Real-world interoperability status (as of 2025):
 
-| Client | OQS Server | Cloudflare | Legacy TLS 1.2 |
-|--------|-----------|------------|----------------|
-| Chrome 130+ (hybrid) | Compatible | Compatible | Partial (fallback) |
-| Firefox 128+ (hybrid) | Compatible | Compatible | Partial (fallback) |
-| Pure PQC client | Compatible | **Incompatible** (RFC 9794 policy) | **Incompatible** |
-| Classical-only | Partial | Partial | Compatible |
+| Client                | OQS Server | Cloudflare                         | Legacy TLS 1.2     |
+| --------------------- | ---------- | ---------------------------------- | ------------------ |
+| Chrome 130+ (hybrid)  | Compatible | Compatible                         | Partial (fallback) |
+| Firefox 128+ (hybrid) | Compatible | Compatible                         | Partial (fallback) |
+| Pure PQC client       | Compatible | **Incompatible** (RFC 9794 policy) | **Incompatible**   |
+| Classical-only        | Partial    | Partial                            | Compatible         |
 
 **Oversized ClientHello risk**: Pure PQC ClientHellos (1,536B) exceed TCP MSS on some network devices — load balancers and firewalls may silently drop fragmented ClientHellos.
 
@@ -96,6 +98,7 @@ RFC 9794 (IETF, 2025) defines hybrid scheme design rules:
 Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "random plaintext" groups, then uses Welch's t-test to detect key-dependent power differences. For ML-KEM/ML-DSA, this approach fails: the public key and ciphertext are mathematically coupled, so a fixed ciphertext always uses the same secret polynomial — making the groups trivially distinguishable regardless of implementation quality.
 
 **Correct approach**: Target specific algorithmic stages:
+
 - **NTT/INTT** (Number Theoretic Transform) — primary leakage point in both ML-KEM and ML-DSA
 - **Polynomial multiplication** — coefficient-wise multiplication in the Zq ring; leaks nonce information in ML-DSA signing
 - **Modular reduction** — conditional subtraction for q=3329 (ML-KEM); leaks in unmasked implementations
@@ -104,11 +107,11 @@ Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "
 
 ### Implementation comparison:
 
-| Stage | ML-KEM (unmasked) | ML-KEM (1st-order masked) | ML-DSA (unmasked) | ML-DSA (masked) |
-|-------|-------------------|---------------------------|-------------------|-----------------|
-| NTT/INTT | 12.7 (LEAKS) | 3.4 (safe) | 14.8 (LEAKS) | 3.1 (safe) |
-| Poly. multiplication | 9.1 (LEAKS) | 2.8 (safe) | 11.3 (LEAKS) | 5.9 (LEAKS) |
-| Modular reduction | 7.8 (LEAKS) | 1.9 (safe) | 3.1 (safe) | 1.3 (safe) |
+| Stage                | ML-KEM (unmasked) | ML-KEM (1st-order masked) | ML-DSA (unmasked) | ML-DSA (masked) |
+| -------------------- | ----------------- | ------------------------- | ----------------- | --------------- |
+| NTT/INTT             | 12.7 (LEAKS)      | 3.4 (safe)                | 14.8 (LEAKS)      | 3.1 (safe)      |
+| Poly. multiplication | 9.1 (LEAKS)       | 2.8 (safe)                | 11.3 (LEAKS)      | 5.9 (LEAKS)     |
+| Modular reduction    | 7.8 (LEAKS)       | 1.9 (safe)                | 3.1 (safe)        | 1.3 (safe)      |
 
 First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication still leaks under masking (higher-order attack required).
 
@@ -119,18 +122,23 @@ First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication 
 ## Test Strategy by Phase & Environment
 
 ### Phase 1: Inventory
+
 Focus: Discover and classify all crypto assets. Tools: passive discovery + CBOM generation.
 
 ### Phase 2: Lab Testing
+
 Focus: Validate PQC performance overhead and interoperability before production exposure.
 
 ### Phase 3: Pilot Rollout
+
 Focus: Limited production deployment (5–10% of traffic/devices) with continuous monitoring.
 
 ### Phase 4: Full Production
+
 Focus: Enterprise-wide enforcement, continuous compliance scanning, policy automation.
 
 ### Environment-specific constraints:
+
 - **Enterprise**: Full toolset available; start with passive network scan, then active endpoint scan
 - **Cloud-native**: CBOM first (CBOMkit), then service mesh PQC validation (Keysight CyPerf)
 - **OT/ICS**: Passive-only during inventory phase (active probing can trigger safety faults); 4–8 week isolated pilot
@@ -140,20 +148,20 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Tool Catalog (CSC-061)
 
-| Tool | Category | License | PQC Support |
-|------|----------|---------|-------------|
-| CryptoNext COMPASS | Passive Discovery | Commercial | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP) |
-| pqc-flow | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC |
-| VIAVI Observer | Passive Discovery | Commercial | In development |
-| pqcscan | Active Scanning | Open Source | Detects PQC, hybrid KEMs |
-| CryptoLyzer | Active Scanning | Open Source | Experimental PQC OID detection |
-| VIAVI TeraVM | Benchmarking | Commercial | ML-KEM, ML-DSA, SLH-DSA |
-| Keysight CyPerf | Benchmarking | Freemium | X25519+ML-KEM-768 hybrid |
-| PQC-LEO | Benchmarking | Open Source | All NIST PQC via OQS |
-| OQS Test Server | Interop | Open Source | All NIST KEMs + signatures |
-| Keysight Inspector | Side-Channel | Commercial | ML-DSA (prod), ML-KEM (pre-release) |
-| ChipWhisperer | Side-Channel | Open Source | Community Kyber/Dilithium modules |
-| CBOMkit | Inventory | Open Source | Crypto discovery in source code |
+| Tool               | Category          | License     | PQC Support                         |
+| ------------------ | ----------------- | ----------- | ----------------------------------- |
+| CryptoNext COMPASS | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP) |
+| pqc-flow           | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC      |
+| VIAVI Observer     | Passive Discovery | Commercial  | In development                      |
+| pqcscan            | Active Scanning   | Open Source | Detects PQC, hybrid KEMs            |
+| CryptoLyzer        | Active Scanning   | Open Source | Experimental PQC OID detection      |
+| VIAVI TeraVM       | Benchmarking      | Commercial  | ML-KEM, ML-DSA, SLH-DSA             |
+| Keysight CyPerf    | Benchmarking      | Freemium    | X25519+ML-KEM-768 hybrid            |
+| PQC-LEO            | Benchmarking      | Open Source | All NIST PQC via OQS                |
+| OQS Test Server    | Interop           | Open Source | All NIST KEMs + signatures          |
+| Keysight Inspector | Side-Channel      | Commercial  | ML-DSA (prod), ML-KEM (pre-release) |
+| ChipWhisperer      | Side-Channel      | Open Source | Community Kyber/Dilithium modules   |
+| CBOMkit            | Inventory         | Open Source | Crypto discovery in source code     |
 
 ---
 

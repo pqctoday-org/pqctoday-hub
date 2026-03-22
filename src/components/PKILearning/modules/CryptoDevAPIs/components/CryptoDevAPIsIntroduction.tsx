@@ -586,7 +586,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Shuffle size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">Design provider-agnostic APIs to swap algorithms at runtime</div>
+              <div className="text-xs text-muted-foreground">
+                Design provider-agnostic APIs to swap algorithms at runtime
+              </div>
             </div>
           </Link>
           <Link
@@ -596,7 +598,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Server size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">PKCS#11 from the HSM admin view vs. developer API perspective</div>
+              <div className="text-xs text-muted-foreground">
+                PKCS#11 from the HSM admin view vs. developer API perspective
+              </div>
             </div>
           </Link>
           <Link
@@ -606,7 +610,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">KMIP protocol and API-level key management integration</div>
+              <div className="text-xs text-muted-foreground">
+                KMIP protocol and API-level key management integration
+              </div>
             </div>
           </Link>
           <Link
@@ -616,7 +622,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">Signing operations and API selection for CI/CD pipelines</div>
+              <div className="text-xs text-muted-foreground">
+                Signing operations and API selection for CI/CD pipelines
+              </div>
             </div>
           </Link>
           <Link
@@ -626,7 +634,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Globe size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">OS Cryptographic Stacks</div>
-              <div className="text-xs text-muted-foreground">OS-level crypto providers that application APIs build on top of</div>
+              <div className="text-xs text-muted-foreground">
+                OS-level crypto providers that application APIs build on top of
+              </div>
             </div>
           </Link>
           <Link
@@ -636,7 +646,9 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
             <Wrench size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Platform Engineering</div>
-              <div className="text-xs text-muted-foreground">CI/CD pipeline crypto inventory and library selection</div>
+              <div className="text-xs text-muted-foreground">
+                CI/CD pipeline crypto inventory and library selection
+              </div>
             </div>
           </Link>
         </div>

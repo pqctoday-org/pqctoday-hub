@@ -11,6 +11,34 @@ import clsx from 'clsx'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const FIVEG_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: '5g-suci-encap',
+    useCase: 'SUCI subscriber concealment',
+    standard: '3GPP TR 33.841 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: '5g-gnb-decap',
+    useCase: 'gNB session key derivation',
+    standard: '3GPP TR 33.841 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+  {
+    id: '5g-nas-sigver',
+    useCase: 'NAS/RRC control plane integrity',
+    standard: '3GPP TR 33.841 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+]
 import {
   hsm_generateECKeyPair,
   hsm_generateAESKey,
@@ -520,6 +548,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           emptyMessage="Execute a step to see live PKCS#11 operations."
         />
       )}
+
+      <KatValidationPanel
+        specs={FIVEG_KAT_SPECS}
+        label="5G PQC Known Answer Tests"
+        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
+      />
     </div>
   )
 }

@@ -886,7 +886,9 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
           <div>
             <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-            <div className="text-xs text-muted-foreground">Map standards-body mandates to your regulatory obligations</div>
+            <div className="text-xs text-muted-foreground">
+              Map standards-body mandates to your regulatory obligations
+            </div>
           </div>
         </Link>
         <Link
@@ -896,7 +898,9 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           <BookOpen size={18} className="text-primary shrink-0" aria-hidden="true" />
           <div>
             <div className="text-sm font-medium text-foreground">PQC 101</div>
-            <div className="text-xs text-muted-foreground">Foundational concepts behind NIST&apos;s standardization process</div>
+            <div className="text-xs text-muted-foreground">
+              Foundational concepts behind NIST&apos;s standardization process
+            </div>
           </div>
         </Link>
         <Link
@@ -906,7 +910,9 @@ const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
           <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
           <div>
             <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-            <div className="text-xs text-muted-foreground">Hands-on implementation of NIST-standardized PQ algorithms</div>
+            <div className="text-xs text-muted-foreground">
+              Hands-on implementation of NIST-standardized PQ algorithms
+            </div>
           </div>
         </Link>
       </div>

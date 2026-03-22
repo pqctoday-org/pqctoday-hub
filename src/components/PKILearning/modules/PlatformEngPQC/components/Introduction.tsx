@@ -552,7 +552,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Map size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Migration Program</div>
-              <div className="text-xs text-muted-foreground">Phase-based PQC rollout planning for platform teams</div>
+              <div className="text-xs text-muted-foreground">
+                Phase-based PQC rollout planning for platform teams
+              </div>
             </div>
           </Link>
           <Link
@@ -562,7 +564,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Key management backends for platform secret injection</div>
+              <div className="text-xs text-muted-foreground">
+                Key management backends for platform secret injection
+              </div>
             </div>
           </Link>
           <Link
@@ -572,7 +576,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <FileCode size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">Sigstore and Notation migration to ML-DSA in CI/CD pipelines</div>
+              <div className="text-xs text-muted-foreground">
+                Sigstore and Notation migration to ML-DSA in CI/CD pipelines
+              </div>
             </div>
           </Link>
           <Link
@@ -582,7 +588,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Brain size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">AI Security &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">PQC considerations for ML pipelines and model signing</div>
+              <div className="text-xs text-muted-foreground">
+                PQC considerations for ML pipelines and model signing
+              </div>
             </div>
           </Link>
         </div>

@@ -3,10 +3,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { Trash2, Radio, ScanSearch, BarChart2, GitBranch, Cpu, ClipboardList } from 'lucide-react'
 import { PQCTestingIntroduction } from './components/PQCTestingIntroduction'
-import {
-  PQCTestingExercises,
-  type WorkshopConfig,
-} from './components/PQCTestingExercises'
+import { PQCTestingExercises, type WorkshopConfig } from './components/PQCTestingExercises'
 import { PassiveDiscoveryLab } from './workshop/PassiveDiscoveryLab'
 import { ActivePQCScanner } from './workshop/ActivePQCScanner'
 import { PerformanceBenchmarkDesigner } from './workshop/PerformanceBenchmarkDesigner'

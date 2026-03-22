@@ -395,8 +395,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           Merkle trees internally for quantum-resistant signatures. Stateful hash-based schemes like{' '}
           <InlineTooltip term="LMS">LMS</InlineTooltip> and{' '}
           <InlineTooltip term="XMSS">XMSS</InlineTooltip> use Merkle trees to organize pools of
-          one-time signing keys. MTCs apply the same principle at the{' '}
-          <em>infrastructure</em> level to solve the certificate size problem PQ signatures create.
+          one-time signing keys. MTCs apply the same principle at the <em>infrastructure</em> level
+          to solve the certificate size problem PQ signatures create.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <Link
@@ -406,7 +406,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
-              <div className="text-xs text-muted-foreground">LMS, XMSS, and SLH-DSA Merkle tree internals</div>
+              <div className="text-xs text-muted-foreground">
+                LMS, XMSS, and SLH-DSA Merkle tree internals
+              </div>
             </div>
           </Link>
           <Link
@@ -416,7 +418,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">Certificate issuance and PQC root of trust migration</div>
+              <div className="text-xs text-muted-foreground">
+                Certificate issuance and PQC root of trust migration
+              </div>
             </div>
           </Link>
           <Link
@@ -426,7 +430,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">TLS Basics &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">How MTCs reduce TLS handshake size with PQ certificates</div>
+              <div className="text-xs text-muted-foreground">
+                How MTCs reduce TLS handshake size with PQ certificates
+              </div>
             </div>
           </Link>
         </div>

@@ -129,13 +129,13 @@ export const RAD_HARD_PROCESSORS: RadHardProcessor[] = [
       'ESA-selected processor for European missions (JUICE, ExoMars). 128 MB RAM limits ML-DSA-65 key generation under concurrent workloads. LEON4 SPARC core is well-supported by RTEMS.',
   },
   {
-    id: 'va10820',
-    name: 'VA10820',
+    id: 'va416x0',
+    name: 'VA416x0',
     manufacturer: 'Vorago Technologies',
-    architecture: 'ARM Cortex-M0',
-    clockMhz: 50,
-    ramMB: 0.128,
-    flashMB: 0.256,
+    architecture: 'ARM Cortex-M4',
+    clockMhz: 100,
+    ramMB: 0.256,
+    flashMB: 0.512,
     tidKrad: 50,
     seuImmune: true,
     pqcCapability: {
@@ -147,7 +147,7 @@ export const RAD_HARD_PROCESSORS: RadHardProcessor[] = [
       xmss: false,
     },
     notes:
-      'Ultra-low-power rad-hard MCU for CubeSats and sensors. 128 KB RAM only supports hash-based signature verification (LMS). No lattice-based PQC feasible.',
+      'Ultra-low-power rad-hard MCU for CubeSats and sensors. Target processor for the wolfBoot PQC secure bootloader (using ML-DSA/LMS firmware signatures).',
   },
   {
     id: 'samrh71f20',

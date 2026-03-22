@@ -6,6 +6,8 @@ import { CODE_SIGNING_ALGORITHMS } from '../constants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_extractKeyValue,
@@ -15,6 +17,33 @@ import {
   CKM_SHA256,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+
+const CODE_SIGNING_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'cs-binary-sigver',
+    useCase: 'Software artifact signing (ML-DSA-65)',
+    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'cs-pkg-sigver',
+    useCase: 'OS package signing (ML-DSA-87)',
+    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+  {
+    id: 'cs-sigstore-sigver',
+    useCase: 'Sigstore transparency log entry',
+    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+]
 
 type AlgorithmName = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
 
@@ -549,6 +578,12 @@ export const BinarySigning: React.FC = () => {
           keys are for educational purposes only.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={CODE_SIGNING_KAT_SPECS}
+        label="Code Signing PQC Known Answer Tests"
+        authorityNote="CNSA 2.0 · NIST FIPS 204"
+      />
     </div>
   )
 }

@@ -421,9 +421,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS Status:</span>{' '}
-                  <span className="text-success font-medium">
-                    FIPS 140-3 Level 3 (cert #3925)
-                  </span>
+                  <span className="text-success font-medium">FIPS 140-3 Level 3 (cert #3925)</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
@@ -442,8 +440,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   replacement). 1&ndash;3 hours per HSM. Existing keys preserved.
                 </p>
                 <p>
-                  <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator available
-                  for API testing. SLH-DSA on roadmap. PCIe form factor for data center
+                  <strong>Unique Features:</strong> FIPS 140-3 Level 3 (cert #3925). PQC simulator
+                  available for API testing. SLH-DSA on roadmap. PCIe form factor for data center
                   deployment.
                 </p>
               </div>
@@ -526,7 +524,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
-                  <span className="text-foreground">FIPS 140-3 Level 3 (via Thales Luna 7 cert)</span>
+                  <span className="text-foreground">
+                    FIPS 140-3 Level 3 (via Thales Luna 7 cert)
+                  </span>
                 </div>
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
@@ -834,7 +834,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Key management services that integrate with HSM backends</div>
+              <div className="text-xs text-muted-foreground">
+                Key management services that integrate with HSM backends
+              </div>
             </div>
           </Link>
           <Link
@@ -844,7 +846,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Stateful Hash Signatures</div>
-              <div className="text-xs text-muted-foreground">LMS and XMSS signing stored in HSM key stores</div>
+              <div className="text-xs text-muted-foreground">
+                LMS and XMSS signing stored in HSM key stores
+              </div>
             </div>
           </Link>
           <Link
@@ -854,7 +858,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">HSM-backed CA operations and PQC certificate issuance</div>
+              <div className="text-xs text-muted-foreground">
+                HSM-backed CA operations and PQC certificate issuance
+              </div>
             </div>
           </Link>
           <Link
@@ -864,7 +870,9 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <Zap size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Quantum Key Distribution</div>
-              <div className="text-xs text-muted-foreground">QKD integration with HSM-based key injection pipelines</div>
+              <div className="text-xs text-muted-foreground">
+                QKD integration with HSM-based key injection pipelines
+              </div>
             </div>
           </Link>
         </div>

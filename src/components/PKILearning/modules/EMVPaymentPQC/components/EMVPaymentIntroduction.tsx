@@ -517,7 +517,6 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             </li>
           </ul>
         </div>
-
       </CollapsibleSection>
 
       {/* Related Resources */}
@@ -531,7 +530,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">TLS Basics &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">ML-KEM hybrid KEMs for securing payment network channels</div>
+              <div className="text-xs text-muted-foreground">
+                ML-KEM hybrid KEMs for securing payment network channels
+              </div>
             </div>
           </Link>
           <Link
@@ -541,7 +542,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <Layers size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Hybrid Cryptography</div>
-              <div className="text-xs text-muted-foreground">Dual-signature card strategies for backwards-compatible migration</div>
+              <div className="text-xs text-muted-foreground">
+                Dual-signature card strategies for backwards-compatible migration
+              </div>
             </div>
           </Link>
           <Link
@@ -551,7 +554,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">DUKPT and KIF key management lifecycle for PQC migration</div>
+              <div className="text-xs text-muted-foreground">
+                DUKPT and KIF key management lifecycle for PQC migration
+              </div>
             </div>
           </Link>
           <Link
@@ -561,7 +566,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <Server size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Payment HSM vendors and PQC key-wrapping support timelines</div>
+              <div className="text-xs text-muted-foreground">
+                Payment HSM vendors and PQC key-wrapping support timelines
+              </div>
             </div>
           </Link>
           <Link
@@ -571,7 +578,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
-              <div className="text-xs text-muted-foreground">FN-DSA for constrained card chips and POS terminal migration</div>
+              <div className="text-xs text-muted-foreground">
+                FN-DSA for constrained card chips and POS terminal migration
+              </div>
             </div>
           </Link>
           <Link
@@ -581,7 +590,9 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
             <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-              <div className="text-xs text-muted-foreground">PCI DSS, G7, and BIS regulatory timelines for payment PQC</div>
+              <div className="text-xs text-muted-foreground">
+                PCI DSS, G7, and BIS regulatory timelines for payment PQC
+              </div>
             </div>
           </Link>
         </div>

@@ -365,9 +365,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
                   <td className="text-center py-2 px-3 text-status-success">&#10003;</td>
                 </tr>
                 <tr>
-                  <td className="py-2 px-3 font-medium text-foreground">Vorago VA10820</td>
-                  <td className="text-right py-2 px-3">50 MHz</td>
-                  <td className="text-right py-2 px-3">128 KB</td>
+                  <td className="py-2 px-3 font-medium text-foreground">Vorago VA416x0</td>
+                  <td className="text-right py-2 px-3">100 MHz</td>
+                  <td className="text-right py-2 px-3">256 KB</td>
                   <td className="text-right py-2 px-3">50 krad</td>
                   <td className="text-center py-2 px-3 text-status-error">&#10007;</td>
                   <td className="text-center py-2 px-3 text-status-error">&#10007;</td>
@@ -629,6 +629,7 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
         </div>
       </CollapsibleSection>
 
+
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
@@ -640,7 +641,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
-              <div className="text-xs text-muted-foreground">PQC migration for embedded and space-rated processors</div>
+              <div className="text-xs text-muted-foreground">
+                PQC migration for embedded and space-rated processors
+              </div>
             </div>
           </Link>
           <Link
@@ -650,7 +653,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Radiation-hardened HSMs for ML-KEM and ML-DSA key storage</div>
+              <div className="text-xs text-muted-foreground">
+                Radiation-hardened HSMs for ML-KEM and ML-DSA key storage
+              </div>
             </div>
           </Link>
           <Link
@@ -660,7 +665,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <FileCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">PQC firmware signing for flight-critical and satellite systems</div>
+              <div className="text-xs text-muted-foreground">
+                PQC firmware signing for flight-critical and satellite systems
+              </div>
             </div>
           </Link>
           <Link
@@ -670,7 +677,9 @@ export const AerospaceIntroduction: React.FC<IntroductionProps> = ({ onNavigateT
             <GitBranch size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Stateful Signatures</div>
-              <div className="text-xs text-muted-foreground">LMS and XMSS for long-lived aerospace mission signing keys</div>
+              <div className="text-xs text-muted-foreground">
+                LMS and XMSS for long-lived aerospace mission signing keys
+              </div>
             </div>
           </Link>
         </div>

@@ -12,7 +12,7 @@ QKD offers something that no math-based encryption can: a guarantee rooted in ph
 
 However, QKD has real limitations. It requires specialized hardware (dedicated fiber optic cables or satellite links) and currently works only over limited distances, typically a few hundred kilometers without relay stations. It is expensive to deploy and cannot easily be added to existing internet infrastructure.
 
-Furthermore, while the *physics* of QKD are theoretically perfectly secure, **the real-world implementations still need to be proven reliable**. The physical devices used to emit and detect photons (lasers and sensors) often have microscopic imperfections. Cunning attackers can exploit these flaws using physical side-channel attacks—like blinding the quantum detectors—to steal the key without triggering the alarm.
+Furthermore, while the _physics_ of QKD are theoretically perfectly secure, **the real-world implementations still need to be proven reliable**. The physical devices used to emit and detect photons (lasers and sensors) often have microscopic imperfections. Cunning attackers can exploit these flaws using physical side-channel attacks—like blinding the quantum detectors—to steal the key without triggering the alarm.
 
 ## The Key Takeaways
 

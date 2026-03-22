@@ -255,7 +255,8 @@ export const DEV_LANGUAGES: DevLanguage[] = [
       },
       {
         name: 'Bouncy Castle',
-        description: 'Comprehensive crypto library — supports ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/HSS, XMSS, HQC, Classic McEliece, FrodoKEM, NTRU',
+        description:
+          'Comprehensive crypto library — supports ML-KEM, ML-DSA, SLH-DSA, FN-DSA, LMS/HSS, XMSS, HQC, Classic McEliece, FrodoKEM, NTRU',
         pqcSupport: true,
       },
       {

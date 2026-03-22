@@ -716,7 +716,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Hardware roots of trust for TEE attestation keys</div>
+              <div className="text-xs text-muted-foreground">
+                Hardware roots of trust for TEE attestation keys
+              </div>
             </div>
           </Link>
           <Link
@@ -726,7 +728,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Sealing key management and PQC key wrapping for enclaves</div>
+              <div className="text-xs text-muted-foreground">
+                Sealing key management and PQC key wrapping for enclaves
+              </div>
             </div>
           </Link>
           <Link
@@ -736,7 +740,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PKI Workshop</div>
-              <div className="text-xs text-muted-foreground">Certificate infrastructure for remote attestation chains</div>
+              <div className="text-xs text-muted-foreground">
+                Certificate infrastructure for remote attestation chains
+              </div>
             </div>
           </Link>
           <Link
@@ -746,7 +752,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Secure Boot &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">UEFI and firmware signing that underpins TEE security</div>
+              <div className="text-xs text-muted-foreground">
+                UEFI and firmware signing that underpins TEE security
+              </div>
             </div>
           </Link>
         </div>

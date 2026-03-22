@@ -13,6 +13,27 @@ import {
   ArrowRight,
 } from 'lucide-react'
 import { PQCLiveComparisonFlow } from './PQCLiveComparisonFlow'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const DIGITAL_ASSETS_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'da-txn-sigver',
+    useCase: 'Quantum-safe transaction signing',
+    standard: 'EIP-7696 draft + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'da-multisig-sigver',
+    useCase: 'High-value custodial multi-sig',
+    standard: 'EIP-7696 draft + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+]
 
 interface PQCMigrationFlowProps {
   onBack: () => void
@@ -746,6 +767,14 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
       </div>
 
       {/* Content area */}
+      {currentPart === 4 && (
+        <KatValidationPanel
+          specs={DIGITAL_ASSETS_KAT_SPECS}
+          label="Digital Assets PQC Known Answer Tests"
+          authorityNote="EIP-7696 draft · NIST FIPS 204"
+        />
+      )}
+
       {currentPart < 4 ? (
         <div className="glass-panel p-6 min-h-[400px] md:min-h-[600px]">
           <div className="mb-6 border-b border-border pb-4">

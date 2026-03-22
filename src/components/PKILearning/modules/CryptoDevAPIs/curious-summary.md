@@ -8,7 +8,7 @@ Think of it like upgrading the locks on your house. You don't need a quantum com
 
 ## Why It Matters
 
-Almost every piece of software in the world uses encryption toolkits, but swapping out the old math for the new math isn't a simple drag-and-drop. The new quantum-safe algorithms behave very differently. For instance, the new encryption keys and digital signatures are often significantly larger in data size, which can affect network speed and memory usage. 
+Almost every piece of software in the world uses encryption toolkits, but swapping out the old math for the new math isn't a simple drag-and-drop. The new quantum-safe algorithms behave very differently. For instance, the new encryption keys and digital signatures are often significantly larger in data size, which can affect network speed and memory usage.
 
 To handle this, developers must adopt "Crypto Agility" — a best practice where encryption code is written flexibly so algorithms can be easily swapped in the future without completely rewriting the application.
 

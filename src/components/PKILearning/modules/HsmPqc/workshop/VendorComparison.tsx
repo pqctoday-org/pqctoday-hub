@@ -262,7 +262,6 @@ export const VendorComparison: React.FC = () => {
                       <p className="text-muted-foreground">{vendor.notes}</p>
                     </div>
                   </div>
-
                 </div>
               )}
             </div>

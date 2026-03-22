@@ -8,7 +8,7 @@ Here is how it works in everyday terms. When you visit your bank's website, your
 
 ## Why It Matters
 
-TLS protects nearly every interaction on the internet. However, the quantum computing threat directly targets the parts of TLS that handle the secret handshake. 
+TLS protects nearly every interaction on the internet. However, the quantum computing threat directly targets the parts of TLS that handle the secret handshake.
 
 A future quantum computer could break the math used during the initial handshake. If an attacker records your encrypted web traffic today, they cannot immediately read it. But later, using a quantum computer, they can mathematically crack the recorded handshake to extract the encryption key. Once they have the key, they can decrypt all the data they recorded. This is known as "Store Now, Decrypt Later."
 

@@ -8,7 +8,7 @@ A KMS handles the full life cycle of keys: creating them, securely distributing 
 
 ## Why It Matters
 
-Organizations today manage millions of encryption keys across cloud services, databases, applications, and devices. If quantum computers break the math behind those keys, every piece of data they protect becomes vulnerable. 
+Organizations today manage millions of encryption keys across cloud services, databases, applications, and devices. If quantum computers break the math behind those keys, every piece of data they protect becomes vulnerable.
 
 The challenge isn't just switching to new quantum-safe algorithms. It's securely transporting the new post-quantum keys to the devices that need them without losing access to the data, causing downtime, or leaving any old keys behind.
 

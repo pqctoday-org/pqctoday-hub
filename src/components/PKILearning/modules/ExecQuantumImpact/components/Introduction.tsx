@@ -167,7 +167,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PQC Risk Management</div>
-              <div className="text-xs text-muted-foreground">Build risk registers and executive heatmaps</div>
+              <div className="text-xs text-muted-foreground">
+                Build risk registers and executive heatmaps
+              </div>
             </div>
           </Link>
           <Link
@@ -177,7 +179,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <TrendingUp size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PQC Business Case</div>
-              <div className="text-xs text-muted-foreground">ROI models and board-level presentations</div>
+              <div className="text-xs text-muted-foreground">
+                ROI models and board-level presentations
+              </div>
             </div>
           </Link>
           <Link
@@ -187,7 +191,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <Scale size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">PQC Governance</div>
-              <div className="text-xs text-muted-foreground">Governance frameworks and executive policies</div>
+              <div className="text-xs text-muted-foreground">
+                Governance frameworks and executive policies
+              </div>
             </div>
           </Link>
           <Link
@@ -197,7 +203,9 @@ export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
             <Briefcase size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Compliance Strategy</div>
-              <div className="text-xs text-muted-foreground">Multi-jurisdiction regulatory requirements</div>
+              <div className="text-xs text-muted-foreground">
+                Multi-jurisdiction regulatory requirements
+              </div>
             </div>
           </Link>
         </div>

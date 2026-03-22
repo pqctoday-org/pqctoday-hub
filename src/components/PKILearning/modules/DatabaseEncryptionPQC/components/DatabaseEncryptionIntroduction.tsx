@@ -487,7 +487,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <KeyRound size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Manage DEK and CMK lifecycles with PQC key wrapping</div>
+              <div className="text-xs text-muted-foreground">
+                Manage DEK and CMK lifecycles with PQC key wrapping
+              </div>
             </div>
           </Link>
           <Link
@@ -497,7 +499,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Hardware-backed TDE master key storage and ML-KEM support</div>
+              <div className="text-xs text-muted-foreground">
+                Hardware-backed TDE master key storage and ML-KEM support
+              </div>
             </div>
           </Link>
           <Link
@@ -507,7 +511,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <RefreshCw size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">Algorithm-agnostic encryption layers for future-proof databases</div>
+              <div className="text-xs text-muted-foreground">
+                Algorithm-agnostic encryption layers for future-proof databases
+              </div>
             </div>
           </Link>
           <Link
@@ -517,7 +523,9 @@ export const DatabaseEncryptionIntroduction: React.FC<DatabaseEncryptionIntroduc
             <Lock size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Secrets Management</div>
-              <div className="text-xs text-muted-foreground">Vault-based dynamic secrets and PQC BYOK patterns</div>
+              <div className="text-xs text-muted-foreground">
+                Vault-based dynamic secrets and PQC BYOK patterns
+              </div>
             </div>
           </Link>
         </div>

@@ -2,9 +2,9 @@
 
 ## What This Is About
 
-Imagine securing a vault with two completely different types of locks. If a thief figures out how to pick one lock, the other still keeps the door shut. 
+Imagine securing a vault with two completely different types of locks. If a thief figures out how to pick one lock, the other still keeps the door shut.
 
-That is the concept behind hybrid cryptography. It combines today's proven encryption formulas with new post-quantum formulas. However, a common misconception is that *everything* becomes hybrid. **The actual data is still encrypted with algorithms like AES, which are already quantum-resistant.** The "hybrid" part applies primarily to the specific mechanisms used to share keys and verify identities over the network.
+That is the concept behind hybrid cryptography. It combines today's proven encryption formulas with new post-quantum formulas. However, a common misconception is that _everything_ becomes hybrid. **The actual data is still encrypted with algorithms like AES, which are already quantum-resistant.** The "hybrid" part applies primarily to the specific mechanisms used to share keys and verify identities over the network.
 
 ## Why It Matters
 

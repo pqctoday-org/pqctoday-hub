@@ -6,6 +6,34 @@ import {
   SIGNER_INFO_COMPARISON,
   type ASN1Node,
 } from '../data/emailSigningConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const EMAIL_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'email-cms-sigver',
+    useCase: 'CMS SignedData S/MIME signing',
+    standard: 'RFC 9629 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'email-dual-sig',
+    useCase: 'Dual-signature migration parity',
+    standard: 'RFC 9629 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+  },
+  {
+    id: 'email-cms-decap',
+    useCase: 'CMS EnvelopedData key transport',
+    standard: 'RFC 9629 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+]
 
 type SigningStep = 'content' | 'hash' | 'sign' | 'wrap'
 type AlgorithmView = 'ecdsa' | 'ml-dsa'
@@ -268,6 +296,12 @@ export const CMSSigningDemo: React.FC = () => {
           signatures are defined for CMS in RFC 9882.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={EMAIL_KAT_SPECS}
+        label="Email Signing PQC Known Answer Tests"
+        authorityNote="RFC 9629 · NIST FIPS 203/204"
+      />
     </div>
   )
 }

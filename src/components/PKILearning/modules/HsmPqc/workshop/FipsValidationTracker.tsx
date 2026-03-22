@@ -99,7 +99,9 @@ export const FipsValidationTracker: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Certification &amp; Algorithm Validation Tracker</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">
+          Certification &amp; Algorithm Validation Tracker
+        </h3>
         <p className="text-sm text-muted-foreground">
           Track FIPS 140-3 module certifications and ACVP PQC algorithm validations across HSM
           vendors. Filter by certification type, status, or algorithm.
@@ -115,7 +117,10 @@ export const FipsValidationTracker: React.FC = () => {
               <strong className="text-foreground">FIPS 140-3 (CMVP)</strong> certifies the
               cryptographic hardware module — its physical security boundary and classical algorithm
               implementations (AES, SHA, RSA, ECDH). As of early 2026,{' '}
-              <strong>no HSM has a FIPS 140-3 module certificate that includes PQC algorithms</strong>.
+              <strong>
+                no HSM has a FIPS 140-3 module certificate that includes PQC algorithms
+              </strong>
+              .
             </p>
             <p>
               <strong className="text-foreground">ACVP</strong> validates individual algorithm

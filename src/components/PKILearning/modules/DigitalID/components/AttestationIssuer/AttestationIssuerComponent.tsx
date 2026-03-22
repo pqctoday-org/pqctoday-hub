@@ -14,6 +14,43 @@ import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { MARIA_IDENTITY } from '../../constants'
 import { Loader2, CheckCircle, GraduationCap, ShieldCheck, AlertTriangle } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const DIGITAL_ID_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'did-epassport-decap',
+    useCase: 'ePassport chip auth (PACE)',
+    standard: 'ICAO Doc 9303 + BSI TR-03116 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+  {
+    id: 'did-pid-sigver',
+    useCase: 'PID credential SD-JWT signing',
+    standard: 'eIDAS 2.0 ARF v1.4 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'did-mdoc-sigver',
+    useCase: 'mDL attribute attestation',
+    standard: 'ISO 18013-5 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'did-qes-sigver',
+    useCase: 'Qualified Electronic Signature',
+    standard: 'eIDAS Reg 910/2014 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+]
 
 interface AttestationIssuerComponentProps {
   wallet: WalletInstance
@@ -136,6 +173,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   }
 
   return (
+    <>
     <Card className="max-w-7xl mx-auto border-secondary/30 shadow-xl">
       <CardHeader className="bg-secondary/5">
         <CardTitle className="text-secondary flex items-center gap-2">
@@ -295,5 +333,11 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
         </div>
       </CardContent>
     </Card>
+    <KatValidationPanel
+      specs={DIGITAL_ID_KAT_SPECS}
+      label="EU Digital Identity KATs"
+      authorityNote="eIDAS 2.0 ARF · ISO 18013-5 · NIST FIPS 203/204"
+    />
+    </>
   )
 }

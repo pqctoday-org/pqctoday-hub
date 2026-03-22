@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test'
 
+// Verify dynamic module rendering via e2e initialization
 test('has title', async ({ page }) => {
   await page.goto('/')
 

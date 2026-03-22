@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Cpu, AlertTriangle, CheckCircle, Info } from 'lucide-react'
-import {
-  TVLA_TARGETS,
-  TVLA_STAGES,
-  type TVLATarget,
-} from '../data/testingConstants'
+import { TVLA_TARGETS, TVLA_STAGES, type TVLATarget } from '../data/testingConstants'
 
 // Simulated t-test scores per (target, stage) — values > threshold indicate leakage
 // Scores are pre-generated representative values (not real measurements)
@@ -78,9 +74,10 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       <div className="flex items-start gap-3 p-3 rounded-lg bg-primary/5 border border-primary/20">
         <Cpu size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
-          <span className="font-semibold text-foreground">Simulating:</span> Keysight Inspector Crypto 3 /
-          ChipWhisperer TVLA analysis. Pre-recorded power traces (10,000 measurements) evaluated using
-          Welch&apos;s t-test. |t| &gt; threshold indicates statistically significant leakage.
+          <span className="font-semibold text-foreground">Simulating:</span> Keysight Inspector
+          Crypto 3 / ChipWhisperer TVLA analysis. Pre-recorded power traces (10,000 measurements)
+          evaluated using Welch&apos;s t-test. |t| &gt; threshold indicates statistically
+          significant leakage.
         </p>
       </div>
 
@@ -120,11 +117,10 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium text-foreground">
-            TVLA Threshold |t| = <span className="text-primary font-mono">{threshold.toFixed(1)}</span>
+            TVLA Threshold |t| ={' '}
+            <span className="text-primary font-mono">{threshold.toFixed(1)}</span>
           </span>
-          <span className="text-xs text-muted-foreground">
-            NIST standard: 4.5 | Strict: 3.0
-          </span>
+          <span className="text-xs text-muted-foreground">NIST standard: 4.5 | Strict: 3.0</span>
         </div>
         <input
           type="range"
@@ -166,7 +162,9 @@ export const TVLALeakageAnalyzer: React.FC = () => {
                   ) : (
                     <CheckCircle size={12} className="text-status-success" />
                   )}
-                  <span className={`font-mono font-bold tabular-nums ${barTextColor(score, threshold)}`}>
+                  <span
+                    className={`font-mono font-bold tabular-nums ${barTextColor(score, threshold)}`}
+                  >
                     |t| = {score.toFixed(1)}
                   </span>
                 </div>
@@ -210,7 +208,10 @@ export const TVLALeakageAnalyzer: React.FC = () => {
                   power variation at this stage enables key recovery with sufficient traces.
                 </span>
               ) : (
-                <span>Score above threshold — possible higher-order leakage. Increase trace count for confirmation.</span>
+                <span>
+                  Score above threshold — possible higher-order leakage. Increase trace count for
+                  confirmation.
+                </span>
               )}
             </div>
           ))}
@@ -229,13 +230,14 @@ export const TVLALeakageAnalyzer: React.FC = () => {
           Why classical fixed-vs-random TVLA fails for PQC
         </div>
         <p className="text-xs text-muted-foreground">
-          Classical TVLA uses a fixed plaintext set vs random plaintexts to distinguish key-dependent
-          leakage. For ML-KEM/ML-DSA, the public key and ciphertext are structurally coupled — a fixed
-          ciphertext always uses the same secret polynomial, making the &quot;fixed&quot; set trivially distinguishable
-          regardless of implementation quality. Instead, target specific algorithmic stages: NTT/INTT
-          (dominant leakage), polynomial multiplication (nonce leakage in ML-DSA), and modular reduction
-          (q=3329 conditional subtraction). Keysight Inspector&apos;s Dilithium TVLA generator targets these
-          operations directly.
+          Classical TVLA uses a fixed plaintext set vs random plaintexts to distinguish
+          key-dependent leakage. For ML-KEM/ML-DSA, the public key and ciphertext are structurally
+          coupled — a fixed ciphertext always uses the same secret polynomial, making the
+          &quot;fixed&quot; set trivially distinguishable regardless of implementation quality.
+          Instead, target specific algorithmic stages: NTT/INTT (dominant leakage), polynomial
+          multiplication (nonce leakage in ML-DSA), and modular reduction (q=3329 conditional
+          subtraction). Keysight Inspector&apos;s Dilithium TVLA generator targets these operations
+          directly.
         </p>
       </div>
     </div>

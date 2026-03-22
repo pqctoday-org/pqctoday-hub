@@ -8,7 +8,10 @@ import {
   type CompatStatus,
 } from '../data/testingConstants'
 
-const STATUS_CONFIG: Record<CompatStatus, { icon: React.ReactNode; label: string; cls: string; cellCls: string }> = {
+const STATUS_CONFIG: Record<
+  CompatStatus,
+  { icon: React.ReactNode; label: string; cls: string; cellCls: string }
+> = {
   compatible: {
     icon: <CheckCircle size={14} className="text-status-success" />,
     label: 'Compatible',
@@ -46,8 +49,7 @@ export const InteropTestMatrix: React.FC = () => {
   const activeEntry =
     selectedClient && selectedServer ? getEntry(selectedClient, selectedServer) : null
 
-  const hoveredEntry =
-    hoveredCell ? getEntry(hoveredCell.client, hoveredCell.server) : null
+  const hoveredEntry = hoveredCell ? getEntry(hoveredCell.client, hoveredCell.server) : null
 
   const displayEntry = activeEntry ?? hoveredEntry
 
@@ -68,8 +70,8 @@ export const InteropTestMatrix: React.FC = () => {
         <GitBranch size={16} className="text-primary mt-0.5 shrink-0" />
         <p className="text-xs text-muted-foreground">
           <span className="font-semibold text-foreground">Reference:</span> OQS Test Server
-          (test.openquantumsafe.org) + real-world browser/library compatibility data. Click a cell to
-          see test details and RFC 9794 compliance notes.
+          (test.openquantumsafe.org) + real-world browser/library compatibility data. Click a cell
+          to see test details and RFC 9794 compliance notes.
         </p>
       </div>
 
@@ -108,10 +110,7 @@ export const InteropTestMatrix: React.FC = () => {
           </thead>
           <tbody>
             {CLIENT_CONFIGS.map((c, ci) => (
-              <tr
-                key={c.id}
-                className={ci % 2 === 0 ? 'bg-background' : 'bg-muted/20'}
-              >
+              <tr key={c.id} className={ci % 2 === 0 ? 'bg-background' : 'bg-muted/20'}>
                 <td
                   className={`p-2 font-medium border-r border-border ${
                     selectedClient === c.id ? 'text-primary' : 'text-foreground/80'
@@ -185,9 +184,9 @@ export const InteropTestMatrix: React.FC = () => {
             <div className="mt-3 flex items-start gap-2 p-2 rounded bg-background/50 border border-border/50">
               <Info size={12} className="text-primary mt-0.5 shrink-0" />
               <div className="text-xs text-muted-foreground">
-                <span className="font-semibold text-foreground">RFC 9794 rule:</span> In a hybrid scheme,
-                both the classical and PQC components must complete successfully. If either fails,
-                the shared secret is invalid — no silent downgrade is permitted.
+                <span className="font-semibold text-foreground">RFC 9794 rule:</span> In a hybrid
+                scheme, both the classical and PQC components must complete successfully. If either
+                fails, the shared secret is invalid — no silent downgrade is permitted.
               </div>
             </div>
           )}
@@ -202,8 +201,8 @@ export const InteropTestMatrix: React.FC = () => {
       <div className="p-3 rounded-lg bg-muted border border-border text-xs text-muted-foreground space-y-1.5">
         <p className="font-semibold text-foreground">Oversized ClientHello risk:</p>
         <p>
-          Pure PQC clients send ClientHello messages up to 1,536 bytes. When a server&apos;s TCP MSS is
-          1,460 bytes (standard Ethernet), the ClientHello spans 2 TCP segments — some older load
+          Pure PQC clients send ClientHello messages up to 1,536 bytes. When a server&apos;s TCP MSS
+          is 1,460 bytes (standard Ethernet), the ClientHello spans 2 TCP segments — some older load
           balancers and firewalls drop fragmented ClientHellos, causing silent failures. Test with{' '}
           <span className="font-mono">pqcscan --fragtest</span> to identify affected endpoints.
         </p>

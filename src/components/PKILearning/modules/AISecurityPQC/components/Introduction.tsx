@@ -432,7 +432,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <FileCheck size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Code Signing</div>
-              <div className="text-xs text-muted-foreground">ML-DSA model signing, Sigstore cosign, and in-toto attestation</div>
+              <div className="text-xs text-muted-foreground">
+                ML-DSA model signing, Sigstore cosign, and in-toto attestation
+              </div>
             </div>
           </Link>
           <Link
@@ -442,7 +444,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Eye size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Confidential Computing</div>
-              <div className="text-xs text-muted-foreground">TEE-based model protection and PQC attestation during inference</div>
+              <div className="text-xs text-muted-foreground">
+                TEE-based model protection and PQC attestation during inference
+              </div>
             </div>
           </Link>
           <Link
@@ -452,7 +456,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Server size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">API Security &amp; JWT</div>
-              <div className="text-xs text-muted-foreground">PQC token signing for AI API authentication and agent identity</div>
+              <div className="text-xs text-muted-foreground">
+                PQC token signing for AI API authentication and agent identity
+              </div>
             </div>
           </Link>
           <Link
@@ -462,7 +468,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Database size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">KMS &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">PQC key hierarchies for AI model encryption and signing keys</div>
+              <div className="text-xs text-muted-foreground">
+                PQC key hierarchies for AI model encryption and signing keys
+              </div>
             </div>
           </Link>
           <Link
@@ -472,7 +480,9 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
             <Shield size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Crypto Agility</div>
-              <div className="text-xs text-muted-foreground">Algorithm-agnostic AI pipeline design for PQC algorithm rollout</div>
+              <div className="text-xs text-muted-foreground">
+                Algorithm-agnostic AI pipeline design for PQC algorithm rollout
+              </div>
             </div>
           </Link>
         </div>

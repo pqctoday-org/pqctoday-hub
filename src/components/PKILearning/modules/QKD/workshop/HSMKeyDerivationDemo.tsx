@@ -2,6 +2,26 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap } from 'lucide-react'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const QKD_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'qkd-postproc-decap',
+    useCase: 'QKD post-processing key confirmation',
+    standard: 'ETSI GS QKD 014 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+  {
+    id: 'qkd-hsm-roundtrip',
+    useCase: 'HSM key derivation round-trip',
+    standard: 'ETSI GS QKD 014 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+]
 
 type HSMStep = 'idle' | 'qkd-fetch' | 'hsm-import' | 'kdf' | 'session-key' | 'use'
 
@@ -56,7 +76,7 @@ async function sp800108CounterKDF(
   const fixedInput = new TextEncoder().encode(`${label}\x00${context}`)
 
   const M = await getSoftHSMRustModule()
-  
+
   try {
     hsm_initialize(M)
   } catch (e: any) {
@@ -66,7 +86,7 @@ async function sp800108CounterKDF(
   const slot = hsm_getFirstSlot(M)
   const sessionPtr = M._malloc(4)
   M._C_OpenSession(slot, 0x0006, 0, 0, sessionPtr) // CKF_SERIAL_SESSION(0x04) | CKF_RW_SESSION(0x02)
-  const hSession = (M.getValue(sessionPtr, 'i32') >>> 0)
+  const hSession = M.getValue(sessionPtr, 'i32') >>> 0
   M._free(sessionPtr)
 
   try {
@@ -537,6 +557,12 @@ export const HSMKeyDerivationDemo: React.FC = () => {
           <Play size={14} /> {processing ? 'Processing…' : `Run Step ${currentStep + 1}`}
         </button>
       )}
+
+      <KatValidationPanel
+        specs={QKD_KAT_SPECS}
+        label="QKD/HSM PQC Known Answer Tests"
+        authorityNote="ETSI GS QKD 014 · NIST FIPS 203"
+      />
     </div>
   )
 }

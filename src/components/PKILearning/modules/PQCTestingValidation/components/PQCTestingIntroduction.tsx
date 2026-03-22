@@ -220,8 +220,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               <p className="font-semibold text-foreground text-sm">Establish Classical Baseline</p>
               <p className="text-xs text-muted-foreground">
                 Measure current TLS handshake latency, IPSec SA setup time, and throughput under
-                realistic load. Document hardware specs — CPU, NIC offload capabilities,
-                available RAM.
+                realistic load. Document hardware specs — CPU, NIC offload capabilities, available
+                RAM.
               </p>
             </div>
           </div>
@@ -233,8 +233,8 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
               </p>
               <p className="text-xs text-muted-foreground">
                 X25519+ML-KEM-768 adds ~400 bytes to ClientHello but minimal compute overhead on
-                modern hardware. Most organizations see &lt;7% TLS latency increase on LAN. Test
-                WAN separately — fragmentation risk increases with distance.
+                modern hardware. Most organizations see &lt;7% TLS latency increase on LAN. Test WAN
+                separately — fragmentation risk increases with distance.
               </p>
             </div>
           </div>
@@ -245,9 +245,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
                 Identify Certificate Size Impact
               </p>
               <p className="text-xs text-muted-foreground">
-                Pure PQC certificates (17KB for ML-DSA-65) exceed the typical TCP initial
-                congestion window. On high-latency links, this forces extra round-trips. Test
-                specifically against your worst-case latency links.
+                Pure PQC certificates (17KB for ML-DSA-65) exceed the typical TCP initial congestion
+                window. On high-latency links, this forces extra round-trips. Test specifically
+                against your worst-case latency links.
               </p>
             </div>
           </div>
@@ -319,10 +319,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         title="Side-Channel Testing & TVLA for Lattice Crypto"
       >
         <p>
-          <InlineTooltip term="TVLA">Test Vector Leakage Assessment</InlineTooltip> is the
-          standard method for detecting side-channel leakage in cryptographic implementations.
-          Classical TVLA uses fixed-vs-random test vectors — but this approach breaks down for
-          lattice-based PQC.
+          <InlineTooltip term="TVLA">Test Vector Leakage Assessment</InlineTooltip> is the standard
+          method for detecting side-channel leakage in cryptographic implementations. Classical TVLA
+          uses fixed-vs-random test vectors — but this approach breaks down for lattice-based PQC.
         </p>
 
         <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30 mt-2">
@@ -330,23 +329,33 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
             Why Classical TVLA Fails for PQC
           </p>
           <p className="text-xs">
-            In ML-KEM and ML-DSA, the public key and private key are mathematically tightly
-            coupled. Using a fixed public key with random plaintexts creates inputs that are not
-            statistically independent — violating the assumptions of the standard t-test. Leakage
-            at the NTT (Number Theoretic Transform) stage may not be detected at all.
+            In ML-KEM and ML-DSA, the public key and private key are mathematically tightly coupled.
+            Using a fixed public key with random plaintexts creates inputs that are not
+            statistically independent — violating the assumptions of the standard t-test. Leakage at
+            the NTT (Number Theoretic Transform) stage may not be detected at all.
           </p>
         </div>
 
-        <p className="mt-3">The adapted TVLA approach for lattice crypto targets specific operations:</p>
+        <p className="mt-3">
+          The adapted TVLA approach for lattice crypto targets specific operations:
+        </p>
 
         <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-          {['NTT / INTT', 'Polynomial Multiplication', 'Modular Reduction', 'Key Load', 'Compression / Encoding', 'Randomness Sampling'].map(
-            (stage) => (
-              <div key={stage} className="p-2 rounded bg-muted border border-border text-xs text-center">
-                {stage}
-              </div>
-            )
-          )}
+          {[
+            'NTT / INTT',
+            'Polynomial Multiplication',
+            'Modular Reduction',
+            'Key Load',
+            'Compression / Encoding',
+            'Randomness Sampling',
+          ].map((stage) => (
+            <div
+              key={stage}
+              className="p-2 rounded bg-muted border border-border text-xs text-center"
+            >
+              {stage}
+            </div>
+          ))}
         </div>
 
         <p className="mt-3">

@@ -2,7 +2,7 @@
 
 ## What This Is About
 
-Every secret key, every password, and every secure connection on the internet starts with randomness. To create an encryption key that nobody can guess, a computer needs to generate truly unpredictable numbers. 
+Every secret key, every password, and every secure connection on the internet starts with randomness. To create an encryption key that nobody can guess, a computer needs to generate truly unpredictable numbers.
 
 Most systems collect unpredictable physical events, like electrical noise or temperature fluctuations, using True Random Number Generators (TRNGs). Think of it like a perfect shuffle of a deck of cards — if an attacker cannot predict the shuffle, the keys generated from it are secure.
 

@@ -75,8 +75,7 @@ function VendorCard({ vendor }: { vendor: IAMVendorStatus }) {
 export const VendorReadinessScorer: React.FC = () => {
   const [selectedVendorId, setSelectedVendorId] = useState<string>(IAM_VENDORS[0].id)
 
-  const selectedVendor =
-    IAM_VENDORS.find((v) => v.id === selectedVendorId) ?? IAM_VENDORS[0]
+  const selectedVendor = IAM_VENDORS.find((v) => v.id === selectedVendorId) ?? IAM_VENDORS[0]
 
   const handleExport = () => {
     const v = selectedVendor

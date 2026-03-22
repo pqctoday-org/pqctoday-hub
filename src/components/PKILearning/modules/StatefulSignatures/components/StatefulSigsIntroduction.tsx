@@ -42,11 +42,11 @@ const Step1WhyAndMerkle: React.FC = () => (
           have a longer standardization history than{' '}
           <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> or{' '}
           <InlineTooltip term="Code-Based Cryptography">code-based</InlineTooltip> constructions.
-          Unlike those schemes, they require no new hardness assumptions. <InlineTooltip term="LMS/HSS">LMS</InlineTooltip>{' '}
-          security rests on collision and second-preimage resistance;{' '}
-          <InlineTooltip term="XMSS">XMSS</InlineTooltip> has a tighter proof requiring only{' '}
-          <strong>second-preimage resistance</strong> &mdash; a weaker assumption that provides a
-          stronger theoretical guarantee.
+          Unlike those schemes, they require no new hardness assumptions.{' '}
+          <InlineTooltip term="LMS/HSS">LMS</InlineTooltip> security rests on collision and
+          second-preimage resistance; <InlineTooltip term="XMSS">XMSS</InlineTooltip> has a tighter
+          proof requiring only <strong>second-preimage resistance</strong> &mdash; a weaker
+          assumption that provides a stronger theoretical guarantee.
         </p>
         <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
           <blockquote className="text-sm italic text-foreground/90">

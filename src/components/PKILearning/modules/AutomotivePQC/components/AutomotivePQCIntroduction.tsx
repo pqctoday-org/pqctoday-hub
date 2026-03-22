@@ -16,8 +16,8 @@ import {
   AlertTriangle,
   CheckCircle,
   XCircle,
-  Minus,
   Cpu,
+  Minus,
 } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -1170,6 +1170,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </CollapsibleSection>
 
+
       {/* Related Resources */}
       <section className="glass-panel p-6 border-secondary/20">
         <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>
@@ -1181,7 +1182,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <Cpu size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">IoT &amp; OT Security</div>
-              <div className="text-xs text-muted-foreground">PQC for V2X, CAN bus, and automotive OT networks</div>
+              <div className="text-xs text-muted-foreground">
+                PQC for V2X, CAN bus, and automotive OT networks
+              </div>
             </div>
           </Link>
           <Link
@@ -1191,7 +1194,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <HardDrive size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">HSM &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">Automotive-grade HSMs for secure boot and ECU key storage</div>
+              <div className="text-xs text-muted-foreground">
+                Automotive-grade HSMs for secure boot and ECU key storage
+              </div>
             </div>
           </Link>
           <Link
@@ -1201,7 +1206,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <CreditCard size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">EMV Payment &amp; PQC</div>
-              <div className="text-xs text-muted-foreground">In-vehicle payment systems and connected mobility PQC migration</div>
+              <div className="text-xs text-muted-foreground">
+                In-vehicle payment systems and connected mobility PQC migration
+              </div>
             </div>
           </Link>
           <Link
@@ -1211,7 +1218,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             <AlertTriangle size={18} className="text-primary shrink-0" aria-hidden="true" />
             <div>
               <div className="text-sm font-medium text-foreground">Vendor Risk</div>
-              <div className="text-xs text-muted-foreground">Tier-1 and Tier-2 supplier PQC readiness assessment</div>
+              <div className="text-xs text-muted-foreground">
+                Tier-1 and Tier-2 supplier PQC readiness assessment
+              </div>
             </div>
           </Link>
         </div>
