@@ -6,8 +6,6 @@ import remarkGfm from 'remark-gfm'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 
-
-
 /**
  * Eagerly load all curious-summary.md files at bundle time.
  * Keyed by relative path like '../modules/Module1-Introduction/curious-summary.md'.
@@ -94,7 +92,10 @@ interface CuriousSummaryBannerProps {
  * Collapsible "In Simple Terms" banner shown above module tabs when
  * experienceLevel === 'curious'. Renders the module's curious-summary.md.
  */
-export const CuriousSummaryBanner = ({ moduleId, isFullPage = false }: CuriousSummaryBannerProps) => {
+export const CuriousSummaryBanner = ({
+  moduleId,
+  isFullPage = false,
+}: CuriousSummaryBannerProps) => {
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
@@ -109,7 +110,11 @@ export const CuriousSummaryBanner = ({ moduleId, isFullPage = false }: CuriousSu
   const body = content.replace(/^#\s+.+\n+/, '')
 
   return (
-    <div className={isFullPage ? 'w-full' : 'glass-panel border-l-4 border-l-amber-500/50 mb-3 overflow-hidden'}>
+    <div
+      className={
+        isFullPage ? 'w-full' : 'glass-panel border-l-4 border-l-amber-500/50 mb-3 overflow-hidden'
+      }
+    >
       {!isFullPage && (
         <button
           type="button"
@@ -135,17 +140,17 @@ export const CuriousSummaryBanner = ({ moduleId, isFullPage = false }: CuriousSu
               <TabsTrigger value="infographic">Infographic</TabsTrigger>
               <TabsTrigger value="text">Text (In Simple Terms)</TabsTrigger>
             </TabsList>
-            
+
             <TabsContent value="infographic" className="mt-0">
               <div className="w-full flex justify-center bg-black/20 rounded-lg border border-border p-3">
-                <img 
-                  src={`/images/infographics/${moduleId}.png`} 
+                <img
+                  src={`/images/infographics/${moduleId}.png?v=conversational_v2`}
                   alt={`Infographic in simple terms for ${moduleId}`}
                   className="max-w-full h-auto rounded-md shadow-md"
                 />
               </div>
             </TabsContent>
-            
+
             <TabsContent value="text" className="mt-0">
               <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{body}</ReactMarkdown>
