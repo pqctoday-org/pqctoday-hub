@@ -1,6 +1,13 @@
-Curious about how organizations prepare for unknown future threats?
+# Crypto Agility — In Simple Terms
 
-**The Problem:** Standard software hardcodes specific cryptographic locks deep within its programming. Upgrading these hardcoded foundational locks requires massive, expensive, and incredibly dangerous system rewrites.
-**The Solution:** Organizations must adopt "Crypto Agility," designing systems where encryption algorithms can be swapped instantly via simple configuration menus.
-**The Strategy:** Security teams offload encryption to centralized security hubs or dynamic plugins, isolating the application code from the actual cryptographic math. 
-**The Ecosystem:** This architectural shift requires strict alignment between software architects, cloud service providers, and security auditors.
+## What This Is About
+Crypto agility is the engineering capability to rapidly switch cryptographic algorithms, protocols, and provider implementations without requiring significant changes to the underlying application code. 
+
+## Why It Matters
+Migrating to new algorithms requires locating every piece of cryptography in an enterprise via a Cryptographic Bill of Materials (CBOM). Without agility patterns—like relying on Provider Models, Service Meshes, or External HSMs—replacing these broken algorithms forces massive, expensive code rewrites.
+
+## The Key Takeaway
+The transition demands architectural patterns that completely decouple the cryptographic math from the business application. As algorithms get heavier, these patterns protect the app. For example, when Cloudflare enabled hybrid PQC key exchange, the key size grew from 32 bytes to 1,216 bytes, but the core network routing code remained untouched.
+
+## What's Happening
+NIST lists Crypto Agility as its top recommendation for quantum preparedness. Tech giants are already utilizing this agility—Google Chrome and Apple's iMessage have natively enabled hybrid PQC key exchanges through rapid, phased rollouts.
