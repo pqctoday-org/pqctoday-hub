@@ -202,9 +202,10 @@ export const WhatsNewModal = () => {
   }, [])
 
   // ── Imperative open via store (e.g. "What's New" button in About page) ─
+  // Note: Zustand v5 removed prevState from subscribe — check state directly
   useEffect(() => {
-    const unsub = useVersionStore.subscribe((state, prev) => {
-      if (state.showWhatsNew && !prev.showWhatsNew) {
+    const unsub = useVersionStore.subscribe((state) => {
+      if (state.showWhatsNew) {
         setIsVisible(true)
         state.clearShowWhatsNew()
       }
