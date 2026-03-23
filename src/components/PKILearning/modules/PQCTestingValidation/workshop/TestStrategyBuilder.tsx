@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
-import { ClipboardList, CheckCircle, Clock, Wrench, Flag } from 'lucide-react'
+import {
+  ClipboardList,
+  CheckCircle,
+  Clock,
+  Wrench,
+  Flag,
+  Building2,
+  Cloud,
+  Factory,
+  Smartphone,
+} from 'lucide-react'
 import {
   STRATEGY_MATRIX,
   type MigrationPhase,
@@ -27,11 +37,23 @@ const PHASE_OPTIONS: { id: MigrationPhase; label: string; description: string }[
   },
 ]
 
-const ENV_OPTIONS: { id: EnvironmentType; label: string; icon: string }[] = [
-  { id: 'enterprise', label: 'Enterprise / On-Premises', icon: '🏢' },
-  { id: 'cloud-native', label: 'Cloud-Native / Kubernetes', icon: '☁️' },
-  { id: 'ot-ics', label: 'OT / ICS / SCADA', icon: '🏭' },
-  { id: 'embedded', label: 'Embedded / IoT', icon: '📱' },
+const ENV_OPTIONS: { id: EnvironmentType; label: string; icon: React.ReactNode }[] = [
+  {
+    id: 'enterprise',
+    label: 'Enterprise / On-Premises',
+    icon: <Building2 size={20} className="text-primary" />,
+  },
+  {
+    id: 'cloud-native',
+    label: 'Cloud-Native / Kubernetes',
+    icon: <Cloud size={20} className="text-primary" />,
+  },
+  { id: 'ot-ics', label: 'OT / ICS / SCADA', icon: <Factory size={20} className="text-primary" /> },
+  {
+    id: 'embedded',
+    label: 'Embedded / IoT',
+    icon: <Smartphone size={20} className="text-primary" />,
+  },
 ]
 
 const DEADLINE_OPTIONS: {
@@ -139,7 +161,7 @@ export const TestStrategyBuilder: React.FC = () => {
                   : 'bg-muted/30 border-border hover:border-border/80'
               }`}
             >
-              <span className="text-xl">{e.icon}</span>
+              <span className="shrink-0">{e.icon}</span>
               <span className="font-semibold text-xs text-foreground">{e.label}</span>
             </button>
           ))}

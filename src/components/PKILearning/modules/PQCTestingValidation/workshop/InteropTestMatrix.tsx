@@ -203,8 +203,9 @@ export const InteropTestMatrix: React.FC = () => {
         <p>
           Pure PQC clients send ClientHello messages up to 1,536 bytes. When a server&apos;s TCP MSS
           is 1,460 bytes (standard Ethernet), the ClientHello spans 2 TCP segments — some older load
-          balancers and firewalls drop fragmented ClientHellos, causing silent failures. Test with{' '}
-          <span className="font-mono">pqcscan --fragtest</span> to identify affected endpoints.
+          balancers and firewalls drop fragmented ClientHellos, causing silent failures. Use{' '}
+          <span className="font-mono">pqcscan</span> to probe affected endpoints and verify they
+          handle oversized ClientHellos correctly.
         </p>
       </div>
     </div>

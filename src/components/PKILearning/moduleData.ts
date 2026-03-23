@@ -459,7 +459,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'database-encryption-pqc': 5,
   'secrets-management-pqc': 5,
   'network-security-pqc': 5,
-  'pqc-testing-validation': 6,
+  'pqc-testing-validation': 7,
   'iam-pqc': 5,
   'energy-utilities-pqc': 5,
   'emv-payment-pqc': 6,
@@ -830,6 +830,7 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'performance-testing-method', label: 'PQC Performance Benchmarking Methodology' },
     { id: 'interop-testing', label: 'Interoperability Testing & RFC 9794 Compliance' },
     { id: 'side-channel-tvla', label: 'Side-Channel Testing & TVLA for Lattice Crypto' },
+    { id: 'fips-acvp', label: 'FIPS 140-3 & Algorithmic Validation (ACVP)' },
   ],
   'iam-pqc': [
     { id: 'iam-crypto-foundations', label: 'Crypto in IAM: Tokens, Certificates, MFA' },
@@ -1172,6 +1173,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'interop-test-matrix', label: 'Interoperability Test Matrix' },
     { id: 'tvla-leakage-analyzer', label: 'TVLA Leakage Analyzer' },
     { id: 'test-strategy-builder', label: 'Test Strategy Builder' },
+    { id: 'acvp-validator', label: 'NIST ACVP Validation' },
   ],
   'iam-pqc': [
     { id: 'iam-crypto-inventory', label: 'IAM Crypto Inventory' },

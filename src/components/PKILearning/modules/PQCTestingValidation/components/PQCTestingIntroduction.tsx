@@ -11,6 +11,7 @@ import {
   AlertTriangle,
   CheckCircle,
   Info,
+  FileBadge,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -368,6 +369,40 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         <p className="text-xs text-muted-foreground mt-2">
           Tools: Keysight Inspector Crypto 3 (commercial, FIPS 140-3 Level 4), ChipWhisperer (open
           source, power analysis + fault injection)
+        </p>
+
+        <ReadingCompleteButton />
+      </CollapsibleSection>
+
+      {/* Section 6: FIPS 140-3 & ACVP */}
+      <CollapsibleSection
+        icon={<FileBadge size={24} className="text-primary" />}
+        title="FIPS 140-3 & Algorithmic Validation (ACVP)"
+      >
+        <p>
+          Before performance testing, interoperability, or TVLA, a cryptographic module must be
+          functionally correct. In regulated environments (Federal, Financial, Healthcare),
+          functional correctness is legally enforced via the{' '}
+          <InlineTooltip term="ACVP">Automated Cryptographic Validation Protocol</InlineTooltip> to
+          achieve a FIPS 140-3 certificate.
+        </p>
+
+        <div className="p-4 rounded-lg bg-primary/10 border border-primary/30 mt-2">
+          <p className="font-semibold text-primary text-sm mb-2">
+            The Testing Mechanism: Known Answer Tests (KATs)
+          </p>
+          <p className="text-xs">
+            NIST provides JSON files (<em>.req</em>) containing thousands of inputs, keys, and seeds
+            for specific algorithms. The module under test must process these exact inputs and
+            generate identical outputs, writing them back to a response file (<em>.rsp</em>). If a
+            single bit differs, the algorithm fails validation.
+          </p>
+        </div>
+
+        <p className="mt-3">
+          For PQC algorithms like <strong>ML-KEM</strong> and <strong>ML-DSA</strong>, ACVP testing
+          is rigorous. It covers key generation, encapsulation, decapsulation, and signature
+          verification under deterministic seeds to guarantee cross-platform mathematical parity.
         </p>
 
         <ReadingCompleteButton />

@@ -1,7 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Radio, ScanSearch, BarChart2, GitBranch, Cpu, ClipboardList } from 'lucide-react'
+import {
+  Trash2,
+  Radio,
+  ScanSearch,
+  BarChart2,
+  GitBranch,
+  Cpu,
+  ClipboardList,
+  FileCheck,
+} from 'lucide-react'
 import { PQCTestingIntroduction } from './components/PQCTestingIntroduction'
 import { PQCTestingExercises, type WorkshopConfig } from './components/PQCTestingExercises'
 import { PassiveDiscoveryLab } from './workshop/PassiveDiscoveryLab'
@@ -10,6 +19,7 @@ import { PerformanceBenchmarkDesigner } from './workshop/PerformanceBenchmarkDes
 import { InteropTestMatrix } from './workshop/InteropTestMatrix'
 import { TVLALeakageAnalyzer } from './workshop/TVLALeakageAnalyzer'
 import { TestStrategyBuilder } from './workshop/TestStrategyBuilder'
+import { ACVPValidator } from './workshop/ACVPValidator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -62,6 +72,13 @@ const PARTS = [
     description:
       'Compose a complete PQC validation program based on your migration phase, environment type, and compliance deadline.',
     icon: ClipboardList,
+  },
+  {
+    id: 'acvp-validator',
+    title: 'Step 7: NIST ACVP Validation',
+    description:
+      'Run NIST Known Answer Tests (KATs) against the SoftHSMv3 WASM engine to simulate FIPS 140-3 algorithmic validation.',
+    icon: FileCheck,
   },
 ]
 
@@ -226,6 +243,7 @@ export const PQCTestingValidationModule: React.FC = () => {
               {currentPart === 3 && <InteropTestMatrix key={`interop-${configKey}`} />}
               {currentPart === 4 && <TVLALeakageAnalyzer key={`tvla-${configKey}`} />}
               {currentPart === 5 && <TestStrategyBuilder key={`strategy-${configKey}`} />}
+              {currentPart === 6 && <ACVPValidator key={`acvp-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

@@ -1,0 +1,31 @@
+[
+  {
+    "platform_name": "pqc-flow",
+    "category": "Network Testing & Validation Tools",
+    "product_name": "pqc-flow",
+    "product_brief": "Production-ready passive network flow analyzer detecting post-quantum cryptography in encrypted TLS, SSH, QUIC, and IKEv2 traffic. Operates on flow metadata only with zero payload retention.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Detects PQC and hybrid algorithm usage in live network traffic and PCAP captures. SSH detection: sntrup761x25519-sha512@openssh.com (OpenSSH 9.0+), mlkem, kyber, ntruprime variants via custom SSH_MSG_KEXINIT parser. TLS 1.3 detection: X25519Kyber768 (Chrome 0x11ec), X25519Kyber768Draft00 (Cloudflare 0xfe31/0x6399), NIST ML-KEM drafts (0x2001-0x2010) via custom ClientHello/ServerHello supported_groups and key_share extension parser. QUIC detection via TLS-in-QUIC handshake parsing. IKE/IPsec via nDPI classification. PQC flags bitmask tracks KEM presence, signature presence, hybrid negotiation, offered-only, and session resumption states. No nDPI patches required for SSH/TLS PQC extraction.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM (Kyber) detection in TLS/QUIC key exchange; sntrup761 detection in SSH KEX; X25519+ML-KEM-768 hybrid detection; classical reference detection (x25519, P-256, curve25519-sha256). Signature detection roadmap: ML-DSA, SLH-DSA, Falcon via TLS certificate parsing.",
+    "key_management_model": "Not applicable (passive analyzer, does not perform key management). Detects key exchange algorithms negotiated in observed flows.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Passive network analyzer: libpcap (offline PCAP) or AF_PACKET TPACKET_V3 zero-copy ring buffers (live capture). Bidirectional flow tracking via canonical 5-tuple normalization. nDPI for protocol classification, custom parsers for SSH KEXINIT, TLS ClientHello/ServerHello, and PQC pattern matching. JSONL export per flow. Sub-100ms export latency in live mode. Memory: ~130MB base + 24KB per concurrent flow.",
+    "infrastructure_layer": "Network",
+    "license_type": "Open Source",
+    "license": "GPL-3.0-or-later (Copyright 2025 Graziano Labs Corp.)",
+    "latest_version": "0.x (pre-release)",
+    "release_date": "2025-11-13",
+    "fips_validated": "No",
+    "primary_platforms": "Linux (AF_PACKET live capture, PCAP offline); macOS (PCAP offline). Dependencies: CMake 3.16+, libpcap, nDPI 4.11+. Systemd service template included for 24/7 production monitoring.",
+    "target_industries": "Enterprise, Financial Services, Government, Healthcare, Any (privacy-preserving passive monitoring suitable for regulated environments)",
+    "regulatory_status": "No certification. Suitable for compliance monitoring use cases (PQC adoption tracking, crypto inventory). Zero payload retention enables deployment in privacy-sensitive and regulated environments.",
+    "pqc_roadmap_details": "Near-term: human-readable output mode, flow cleanup for 24/7 operation, CLI flags (--only-pqc, --min-fields), custom IKE parser, QUIC Initial packet parser. Medium-term: SSH exact negotiation (both KEXINIT), TLS certificate parsing for ML-DSA/Falcon/SLH-DSA signatures, IPFIX export, BPF filtering, statistics API. Long-term: eBPF/XDP for >10Gbps, PCAP-NG, plugin system, web dashboard.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Detection only (passive analyzer). Currently detects: sntrup761 (SSH), X25519Kyber768/ML-KEM (TLS). Roadmap: ML-DSA, SLH-DSA, Falcon signature detection via TLS certificate parsing.",
+    "authoritative_source_url": "https://github.com/CipherIQ/pqc-flow",
+    "performance_benchmarks": "Laptop (4-core i7): 50K pps, 2K concurrent flows, <5% CPU. Server (8-core Xeon): 150K pps, 10K concurrent flows, <15% CPU. 1Gbps sustained with <10% packet loss. Export latency: SSH ~25-50ms, TLS ~40-100ms after handshake. Multi-core scaling via PACKET_FANOUT_HASH.",
+    "integration_ecosystem": "Elasticsearch/Logstash pipeline (JSONL → index), Grafana dashboards (PQC adoption rate, algorithm distribution, vulnerable servers), systemd service for 24/7 monitoring, jq-based post-processing for custom aggregation and alerting.",
+    "detected_protocols": "SSH (complete custom parser), TLS 1.3/DTLS 1.3 (complete custom parser), QUIC/HTTP3 (partial via TLS-in-QUIC), IKEv2/IPsec (limited via nDPI), WireGuard (detection only, fixed classical crypto)"
+  }
+]

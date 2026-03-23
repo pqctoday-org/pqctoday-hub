@@ -21,6 +21,7 @@ The application is divided into the following main modules. Detailed requirement
    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)
    - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, OpenID4VCI/OpenID4VP flows, QEAA, Remote QES
    - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC support (ML-KEM, ML-DSA), certificate inspector
+   - **PQC Testing Validation**: Passive/Active scanning with `pqcscan`, IKEv2 Performance cliffs, TVLA side-channel analysis, and NIST ACVP KAT vector simulations.
    - **PQC 101 Introduction**: Quantum threats, Shor's algorithm, at-risk sectors, HNDL and HNFL attacks
    - **Quantum Threats**: Threat actor profiles, attack timelines, industry risk mapping
    - **Hybrid Cryptography**: Hybrid KEM via X25519 ECDH + ML-KEM-768 + HKDF, migration patterns
