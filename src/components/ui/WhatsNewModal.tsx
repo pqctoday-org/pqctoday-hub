@@ -124,6 +124,7 @@ export const WhatsNewModal = () => {
   const version = getCurrentVersion()
 
   const [isVisible, setIsVisible] = useState(false)
+  const [openedImperatively, setOpenedImperatively] = useState(false)
   const [showAllPersona, setShowAllPersona] = useState(false)
   const [showPersonaInfo, setShowPersonaInfo] = useState(false)
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({})
@@ -147,16 +148,20 @@ export const WhatsNewModal = () => {
     )
   }, [getChangedSources, effectivePersona, selectedIndustries])
 
+  // When opened imperatively (button click), always show current version — pass null
+  // so getUnseenChangelogSections falls back to ALL_CHANGELOG_VERSIONS.slice(0, 1)
+  const effectiveLastSeen = openedImperatively ? null : lastSeenVersion
+
   // Compute changelog sections
   const changelogSections = useMemo(
-    () => getUnseenChangelogSections(lastSeenVersion, effectivePersona as PersonaId | null),
-    [lastSeenVersion, effectivePersona]
+    () => getUnseenChangelogSections(effectiveLastSeen, effectivePersona as PersonaId | null),
+    [effectiveLastSeen, effectivePersona]
   )
 
   // Unfiltered totals — always computed with null persona/industries
   const allChangelogSections = useMemo(
-    () => getUnseenChangelogSections(lastSeenVersion, null),
-    [lastSeenVersion]
+    () => getUnseenChangelogSections(effectiveLastSeen, null),
+    [effectiveLastSeen]
   )
 
   const rawDataSummaries = useMemo((): DataSourceSummary[] => {
@@ -206,6 +211,7 @@ export const WhatsNewModal = () => {
   useEffect(() => {
     const unsub = useVersionStore.subscribe((state) => {
       if (state.showWhatsNew) {
+        setOpenedImperatively(true)
         setIsVisible(true)
         state.clearShowWhatsNew()
       }
@@ -232,6 +238,7 @@ export const WhatsNewModal = () => {
 
   const handleDismiss = useCallback(() => {
     setIsVisible(false)
+    setOpenedImperatively(false)
     markAllSeen()
   }, [markAllSeen])
 
