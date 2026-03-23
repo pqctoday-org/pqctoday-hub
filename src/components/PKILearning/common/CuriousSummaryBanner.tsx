@@ -175,7 +175,7 @@ export const CuriousSummaryBanner = ({
               </TabsList>
 
               <TabsContent value="infographic" className="mt-0">
-                <div className="w-full bg-muted/30 rounded-lg border border-border p-1.5 sm:p-3 md:flex md:flex-col md:items-center">
+                <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
                   <a
                     href={`/images/infographics/gcp_${moduleId}.png`}
                     target="_blank"
@@ -186,7 +186,8 @@ export const CuriousSummaryBanner = ({
                     <img
                       src={`/images/infographics/gcp_${moduleId}.png?v=conversational_v2`}
                       alt={altText}
-                      className="w-full h-auto rounded-md shadow-md cursor-zoom-in"
+                      loading="lazy"
+                      className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md cursor-zoom-in"
                     />
                   </a>
                   <p className="text-center text-[11px] text-muted-foreground mt-1.5">
@@ -216,7 +217,7 @@ export const CuriousSummaryBanner = ({
           </div>
 
           {/* Desktop Layout: 2-Column Side-by-Side */}
-          <div className="hidden md:grid md:grid-cols-[1.2fr_1fr] gap-x-8 items-start">
+          <div className="hidden md:grid md:grid-cols-[1.2fr_1fr] gap-x-6 lg:gap-x-8 items-start">
             {/* Left Column: Infographic */}
             <div className="flex flex-col">
               <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center">
@@ -230,7 +231,8 @@ export const CuriousSummaryBanner = ({
                   <img
                     src={`/images/infographics/gcp_${moduleId}.png?v=conversational_v2`}
                     alt={altText}
-                    className="w-full h-auto rounded-md shadow-md cursor-zoom-in"
+                    loading="lazy"
+                    className="w-full h-auto max-h-[70vh] object-contain rounded-md shadow-md cursor-zoom-in"
                   />
                 </a>
                 <p className="text-center text-[11px] text-muted-foreground mt-2">

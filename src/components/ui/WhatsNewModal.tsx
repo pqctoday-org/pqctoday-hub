@@ -311,7 +311,7 @@ export const WhatsNewModal = () => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed inset-4 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] max-w-lg w-full max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden"
+            className="fixed inset-2 sm:inset-auto sm:top-1/2 sm:left-1/2 sm:-translate-x-1/2 sm:-translate-y-1/2 z-[101] max-w-lg w-full max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden"
             role="dialog"
             aria-modal="true"
             aria-labelledby="whats-new-modal-title"
@@ -344,7 +344,7 @@ export const WhatsNewModal = () => {
             {/* Persona indicator */}
             {selectedPersona && (
               <div className="shrink-0 border-b border-border text-xs">
-                <div className="flex items-center justify-between px-4 py-2">
+                <div className="flex items-center justify-between flex-wrap gap-y-1 px-3 sm:px-4 py-2">
                   <div className="flex items-center gap-1 text-muted-foreground">
                     {showAllPersona ? (
                       'Showing all updates'
@@ -409,7 +409,7 @@ export const WhatsNewModal = () => {
             )}
 
             {/* Scrollable body */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3">
+            <div className="flex-1 overflow-y-auto min-h-0 p-3 sm:p-4 space-y-3">
               {/* App update entries from CHANGELOG */}
               {changelogSections.length > 0 && (
                 <div>
@@ -543,7 +543,7 @@ export const WhatsNewModal = () => {
             </div>
 
             {/* Footer */}
-            <div className="flex items-center gap-2 p-4 pt-3 border-t border-border shrink-0">
+            <div className="flex items-center gap-2 p-3 sm:p-4 pt-3 border-t border-border shrink-0">
               <button
                 onClick={handleViewChangelog}
                 className="text-sm text-primary hover:text-primary/80 transition-colors underline"
@@ -585,7 +585,9 @@ function DataChangeRow({
         className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded hover:bg-muted/30 transition-colors group"
       >
         <StatusBadge status={item.status} size="sm" />
-        <span className="text-xs text-foreground flex-1 truncate">{item.label}</span>
+        <span className="text-xs text-foreground flex-1 truncate" title={item.label}>
+          {item.label}
+        </span>
         {hasPreview ? (
           isExpanded ? (
             <ChevronUp size={12} className="text-muted-foreground shrink-0" />

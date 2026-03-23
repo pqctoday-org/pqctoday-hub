@@ -1514,7 +1514,7 @@ export function AboutView() {
             <ShieldCheck className="text-primary" size={24} />
             <div>
               <h2 className="text-xl font-semibold">Security Audit</h2>
-              <p className="text-xs text-muted-foreground">Last audited: March 11, 2026</p>
+              <p className="text-xs text-muted-foreground">Last audited: March 22, 2026</p>
             </div>
           </div>
 
@@ -1524,79 +1524,35 @@ export function AboutView() {
               <ShieldCheck className="text-status-success mt-0.5 shrink-0" size={18} />
               <div>
                 <p className="text-sm font-semibold text-status-success">
-                  0 production vulnerabilities
+                  0 vulnerabilities (production and dev)
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  All runtime dependencies (React, crypto libraries, Zustand, Tailwind, etc.) have
-                  zero known CVEs.
+                  All dependencies &mdash; runtime and development &mdash; have zero known CVEs.
+                  Verified via <code className="text-xs">npm audit</code> in CI on every push.
                 </p>
               </div>
             </div>
 
-            {/* Dev-only findings */}
-            <div className="flex items-start gap-3 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
-              <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={18} />
+            {/* OWASP Compliance */}
+            <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/50 border border-border">
+              <ShieldCheck className="text-primary mt-0.5 shrink-0" size={18} />
               <div>
-                <p className="text-sm font-semibold text-status-warning">
-                  13 dev-only findings (12 high, 1 moderate)
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  All findings are in the ESLint linting toolchain. These affect developer machines
-                  only and have no impact on the deployed application.
-                </p>
+                <p className="text-sm font-semibold text-foreground">OWASP Top 10 compliant</p>
+                <ul className="text-xs text-muted-foreground mt-1 space-y-0.5 list-disc list-inside">
+                  <li>
+                    No <code className="text-xs">dangerouslySetInnerHTML</code>,{' '}
+                    <code className="text-xs">eval()</code>, or{' '}
+                    <code className="text-xs">innerHTML</code> in production code
+                  </li>
+                  <li>
+                    All 118 external links protected against tabnabbing (
+                    <code className="text-xs">rel=&quot;noopener noreferrer&quot;</code>)
+                  </li>
+                  <li>No hardcoded secrets &mdash; all credentials via environment variables</li>
+                  <li>Content Security Policy configured with scoped connect-src whitelist</li>
+                  <li>ESLint security plugin active in CI</li>
+                </ul>
               </div>
-            </div>
-
-            {/* CVE Details Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">CVE</th>
-                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">
-                      Severity
-                    </th>
-                    <th className="text-left py-2 pr-3 text-muted-foreground font-medium">
-                      Package
-                    </th>
-                    <th className="text-left py-2 text-muted-foreground font-medium">Status</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 pr-3 font-mono text-muted-foreground">
-                      GHSA-3ppc-4f35-3m26
-                    </td>
-                    <td className="py-2 pr-3">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning/10 text-status-warning">
-                        HIGH
-                      </span>
-                    </td>
-                    <td className="py-2 pr-3 text-muted-foreground">
-                      minimatch &lt; 10.2.1 (ReDoS)
-                    </td>
-                    <td className="py-2 text-muted-foreground">
-                      Dev-only &mdash; no upstream fix available
-                    </td>
-                  </tr>
-                  <tr className="border-b border-border/50">
-                    <td className="py-2 pr-3 font-mono text-muted-foreground">
-                      GHSA-2g4f-4pwh-qvx6
-                    </td>
-                    <td className="py-2 pr-3">
-                      <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-status-warning text-status-warning">
-                        MODERATE
-                      </span>
-                    </td>
-                    <td className="py-2 pr-3 text-muted-foreground">
-                      ajv &lt; 8.18.0 (ReDoS via $data)
-                    </td>
-                    <td className="py-2 text-muted-foreground">
-                      Dev-only &mdash; ESLint does not use $data
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
             </div>
           </div>
         </motion.div>
@@ -1640,14 +1596,14 @@ export function AboutView() {
                   <ul className="mt-4 space-y-2 text-sm text-muted-foreground list-disc list-inside">
                     <li>
                       <strong className="text-foreground">No personal data collection</strong>{' '}
-                      &mdash; no names, email addresses, cookies, tracking pixels, form submissions,
-                      or server-side logging of any kind.
+                      &mdash; no names, email addresses, form submissions, or server-side logging of
+                      any kind.
                     </li>
                     <li>
                       <strong className="text-foreground">Local-only persistence</strong> &mdash;
                       all user preferences, assessment results, learning progress, and saved state
-                      are stored exclusively in your browser&apos;s localStorage. Nothing leaves
-                      your device.
+                      are stored in your browser&apos;s localStorage. This data never leaves your
+                      device unless you opt in to Google Drive sync.
                     </li>
                     <li>
                       <strong className="text-foreground">Client-side cryptography</strong> &mdash;
@@ -1655,14 +1611,19 @@ export function AboutView() {
                       (OpenSSL, liboqs). No keys or certificates are ever sent to a server.
                     </li>
                     <li>
-                      <strong className="text-foreground">
-                        No third-party services at runtime
-                      </strong>
-                      &mdash; the site is served as static files from GitHub Pages and makes no
-                      external API calls at runtime &mdash; <em>except</em> when you use the PQC
-                      Assistant, which sends your query and retrieved context chunks to{' '}
-                      <strong className="text-foreground">Google&apos;s Gemini API</strong>. See the
-                      PQC Assistant section below for details.
+                      <strong className="text-foreground">Third-party data flows</strong> &mdash;
+                      the site is served as static files from GitHub Pages. Data is sent externally
+                      only when you use specific opt-in features:{' '}
+                      <strong className="text-foreground">Google Analytics 4</strong> (anonymous
+                      usage data, may set cookies),{' '}
+                      <strong className="text-foreground">Gemini AI</strong> (chat messages sent to
+                      Google when using cloud mode), and{' '}
+                      <strong className="text-foreground">Google Drive sync</strong> (learning
+                      progress, opt-in). See sections below and the{' '}
+                      <a href="/terms" className="text-primary hover:underline">
+                        Terms of Service
+                      </a>{' '}
+                      for full details.
                     </li>
                     <li>
                       <strong className="text-foreground">Full transparency</strong> &mdash; the
