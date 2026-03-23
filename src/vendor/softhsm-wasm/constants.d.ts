@@ -196,7 +196,12 @@ export declare const CKM_AES_ECB: number
 export declare const CKM_AES_CBC: number
 export declare const CKM_AES_CBC_PAD: number
 export declare const CKM_AES_GCM: number
+export declare const CKM_AES_CTR: number
 export declare const CKM_AES_CMAC: number
+export declare const CKM_AES_KEY_WRAP: number
+export declare const CKM_AES_KEY_WRAP_KWP: number
+export declare const CKM_PKCS5_PBKD2: number
+export declare const CKM_EC_EDWARDS_KEY_PAIR_GEN: number
 export declare const CKM_GENERIC_SECRET_KEY_GEN: number
 export declare const CKM_HKDF_DERIVE: number
 /** ML-KEM key pair generation (FIPS 203) — PKCS#11 v3.2 */

@@ -4,6 +4,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.47.0] - 2026-03-23
+
+### Changed
+
+- **softhsm-wasm vendor package v0.4.0** [view:/playground]: Updated `@pqctoday/softhsm-wasm` from v1.0.0 (incorrect tag) to the correct v0.4.0 release. Package now exports five additional PKCS#11 mechanism constants: `CKM_AES_CTR`, `CKM_AES_KEY_WRAP`, `CKM_AES_KEY_WRAP_KWP`, `CKM_PKCS5_PBKD2`, and `CKM_EC_EDWARDS_KEY_PAIR_GEN`. TypeScript interface formatting standardized throughout (trailing commas, multi-parameter function reformatting per Prettier). [persona:developer]
+- **HKDF mechanism constants corrected** [view:/playground]: `CKM_HKDF_DERIVE` / `CKM_HKDF_DATA` / `CKM_HKDF_KEY_GEN` values corrected from `0x402c/402d/402e` to `0x402a/402b/402c` per PKCS#11 v3.2 specification. Previously misaligned values could cause `CKR_MECHANISM_INVALID` when dispatching HKDF operations against a compliant token. [persona:developer]
+- **SBOM softhsmv3 release link** [view:/about]: Updated softhsmv3 GitHub release link in the About page SBOM to `v0.4.0`. [persona:all]
+
+### Data
+
+- **RAG corpus regenerated** (`public/data/rag-corpus.json`): 3,957 chunks from 22 sources (was 3,761, +196). Top sources: module content 598, document enrichments 574, glossary 500, migrate 386, quiz 370, library 326. [data]
+- **Security audit report** (`src/data/security_audit_report_03222026.md`): v2.46.0 security audit completed 2026-03-22 — 0 high/critical CVEs in production dependencies; 118 `target="_blank"` links verified with `rel="noopener noreferrer"`; no hardcoded secrets or `eval()` usage; CSP trade-offs documented (dev/preview only). [data]
+- **C++ WASM engine updated** (`public/wasm/softhsm.js` + `softhsm.wasm`): Rebuilt with new mechanism support aligned to v0.4.0 constants. [data]
+- **Rust WASM engine updated** (`public/wasm/rust/softhsmrustv3.*`): Rebuilt; type definition formatting standardized. [data]
+
 ## [2.46.0] - 2026-03-22
 
 ### Added

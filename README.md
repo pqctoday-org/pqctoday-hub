@@ -461,7 +461,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
     model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
     tips to guide model selection
-  - Client-side RAG retrieval using MiniSearch over 3,776 content chunks from 22 data sources
+  - Client-side RAG retrieval using MiniSearch over 3,957 content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
   - **Document enrichment**: 260+ archived HTML/PDF documents enriched with 18 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
@@ -536,6 +536,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
+  - `@pqctoday/softhsm-wasm` v0.4.0 — SoftHSMv3 PKCS#11 v3.2 WASM (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, EdDSA)
   - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
@@ -734,7 +735,7 @@ The application is structured into several key components:
 
 ## Security
 
-Last audited: March 8, 2026
+Last audited: March 22, 2026
 
 | Severity | Production | Dev-only |
 | -------- | ---------- | -------- |
