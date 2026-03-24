@@ -105,7 +105,12 @@ function getUnseenChangelogSections(
   const sections: ChangelogSection[] = []
   for (const [type, entries] of mergedSections) {
     const filtered = personaId
-      ? entries.filter((e) => e.meta.personas.length === 0 || e.meta.personas.includes(personaId))
+      ? entries.filter(
+          (e) =>
+            e.meta.personas.length === 0 ||
+            e.meta.personas.includes('all') ||
+            e.meta.personas.includes(personaId)
+        )
       : entries
     if (filtered.length > 0) {
       sections.push({ type, entries: filtered })
