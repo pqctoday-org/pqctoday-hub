@@ -10,9 +10,38 @@ initGA()
 
 // Register service worker for offline support — autoUpdate mode reloads
 // automatically when a new version is detected, no user prompt needed.
-registerSW({
+const updateSW = registerSW({
+  // Force reload when new SW has activated — swaps in new JS bundles immediately
+  onNeedRefresh() {
+    updateSW(true)
+  },
   onOfflineReady() {
     // App is cached and ready for offline use — no action needed
+  },
+  onRegisteredSW(swUrl, r) {
+    if (!r) return
+
+    const tryUpdate = async () => {
+      if (r.installing) return
+      if ('connection' in navigator && !navigator.onLine) return
+      const resp = await fetch(swUrl, {
+        cache: 'no-store',
+        headers: { cache: 'no-store', 'cache-control': 'no-cache' },
+      })
+      if (resp?.status === 200) await r.update()
+    }
+
+    // Desktop: poll hourly (setInterval is reliable in foreground tabs)
+    setInterval(tryUpdate, 60 * 60 * 1000)
+
+    // iOS Safari + all mobile: check on every return to foreground
+    // (setInterval is throttled when backgrounded on iOS)
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') tryUpdate()
+    })
+
+    // Desktop tab focus: check when user switches back to the tab
+    window.addEventListener('focus', tryUpdate)
   },
 })
 

@@ -6,6 +6,10 @@ All notable changes to this project will be documented in this file.
 
 ## [2.52.0] - 2026-03-24
 
+### Fixed
+
+- **Service worker update lag on production** [infra]: Clients stayed on old cached version after deploy — especially on iOS Safari. Added `onNeedRefresh` → forced page reload when new SW activates, hourly `setInterval` poll for desktop, `visibilitychange` listener for iOS Safari (where background timers are throttled), and `focus` listener for desktop tab switches. Future deploys propagate within 1 hour on desktop and on next foreground return on mobile.
+
 ### Changed
 
 - **HSM Migration Planner — recertification fields removed** [view:/learn]: `recertificationRequired` and `recertificationTimeline` removed from `FirmwareUpgradePath` interface and all six vendor entries. All HSM vendors adding PQC algorithms to existing FIPS 140-3 validated modules require CMVP resubmission — the boolean distinction was misleading. Recertification status folded into each vendor's `notes` field. UI updated: two separate "Recertification Required / Recert Timeline" rows replaced with a single "FIPS Recertification: Required (CMVP resubmission)" label; phase 3 risk hardcoded to Medium. [persona:architect] [persona:developer]
