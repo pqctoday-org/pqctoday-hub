@@ -4,6 +4,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.52.0] - 2026-03-24
+
+### Changed
+
+- **HSM Migration Planner — recertification fields removed** [view:/learn]: `recertificationRequired` and `recertificationTimeline` removed from `FirmwareUpgradePath` interface and all six vendor entries. All HSM vendors adding PQC algorithms to existing FIPS 140-3 validated modules require CMVP resubmission — the boolean distinction was misleading. Recertification status folded into each vendor's `notes` field. UI updated: two separate "Recertification Required / Recert Timeline" rows replaced with a single "FIPS Recertification: Required (CMVP resubmission)" label; phase 3 risk hardcoded to Medium. [persona:architect] [persona:developer]
+- **HSM firmware upgrade complexity corrected** [view:/learn]: All six vendors now rated `low`. Entrust nShield 5 and Utimaco SecurityServer were incorrectly rated `medium` — the two-step reasoning (firmware + secondary package) was inconsistently applied since Thales Luna (firmware + Luna Client upgrade) was already `low`. [persona:architect]
+
 ## [2.51.0] - 2026-03-24
 
 ### Data

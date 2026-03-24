@@ -44,8 +44,6 @@ export interface FirmwareUpgradePath {
   pqcAlgorithmsAdded: string[]
   upgradeComplexity: 'low' | 'medium' | 'high'
   estimatedDowntime: string
-  recertificationRequired: boolean
-  recertificationTimeline: string
   notes: string
 }
 
@@ -768,23 +766,19 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM',
-    recertificationRequired: false,
-    recertificationTimeline: 'N/A — existing FIPS 140-3 covers PQC firmware',
     notes:
-      'PQC integrated into core firmware, not an external module. Luna Client must also be upgraded to 10.9.2+. Existing keys are preserved during upgrade. CBOM REST API available after upgrade.',
+      'PQC integrated into core firmware. Luna Client must also be upgraded to 10.9.2+. Existing keys are preserved during upgrade. CBOM REST API available after upgrade. FIPS 140-3 CMVP resubmission required for v7.9.2 — all vendors adding PQC to existing certified modules must resubmit.',
   },
   {
     vendorId: 'entrust-nshield',
     vendorName: 'Entrust nShield 5',
     currentFirmware: '13.6.x or earlier',
     targetFirmware: '13.8.0+',
-    pqcAlgorithmsAdded: ['ML-KEM-768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
-    upgradeComplexity: 'medium',
+    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
+    upgradeComplexity: 'low',
     estimatedDowntime: '1-2 hours per HSM',
-    recertificationRequired: true,
-    recertificationTimeline: 'FIPS 140-3 Level 3 resubmitted — estimated 12-18 months',
     notes:
-      'PQSDK v1.2.1+ must be installed alongside firmware. CAVP validation achieved. Full FIPS 140-3 resubmission in progress. nShield as a Service receives automatic updates.',
+      'ML-KEM, ML-DSA, and SLH-DSA are native in firmware v13.8.0 via standard PKCS#11 — no additional packages required for core PQC. LMS/XMSS available via optional PQSDK C API. CAVP validated Sep 2025. FIPS 140-3 Level 3 resubmission in progress (est. 12–18 months). nShield as a Service receives automatic updates.',
   },
   {
     vendorId: 'utimaco',
@@ -792,26 +786,21 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     currentFirmware: '4.x',
     targetFirmware: '5.0+ (Q-safe extension)',
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS', 'XMSS'],
-    upgradeComplexity: 'medium',
+    upgradeComplexity: 'low',
     estimatedDowntime: '1-3 hours per HSM (firmware + Q-safe extension)',
-    recertificationRequired: true,
-    recertificationTimeline:
-      'Base FIPS 140-3 Level 3 cert #3925 Active (2021); Q-safe v5.0 firmware resubmission in progress (12–18 months est.)',
     notes:
-      'Q-safe is a firmware extension (not a full firmware replacement). Existing keys preserved. Free PQC simulator available for pre-upgrade testing. SLH-DSA on roadmap for future extension update.',
+      'Q-safe is a firmware extension installed on top of the base firmware. Existing keys preserved. Free PQC simulator available for pre-upgrade testing. SLH-DSA on roadmap for a future Q-safe update. FIPS 140-3 Level 3 cert #3925 (Active); Q-safe v5.0 CMVP resubmission in progress (est. 12–18 months).',
   },
   {
     vendorId: 'aws-cloudhsm',
     vendorName: 'AWS CloudHSM',
     currentFirmware: 'Current (classical)',
     targetFirmware: 'SDK update (provider-managed)',
-    pqcAlgorithmsAdded: ['ML-DSA-65 (preview)'],
+    pqcAlgorithmsAdded: ['ML-DSA-44/65/87 (preview)'],
     upgradeComplexity: 'low',
     estimatedDowntime: 'Zero — SDK update only',
-    recertificationRequired: false,
-    recertificationTimeline: 'N/A — AWS manages FIPS validation',
     notes:
-      'PQC delivered via AWS-LC SDK, not HSM firmware change. Customers update SDK dependency. No downtime required. ML-DSA in preview; additional algorithms expected as AWS-LC adds support.',
+      'PQC delivered via AWS-LC SDK, not HSM firmware change — hardware FIPS boundary unchanged. Customers update SDK dependency only. No downtime required. ML-DSA (all 3 variants) in preview; ML-KEM not yet in CloudHSM hardware. ACVP certificates required for new algorithm implementations.',
   },
   {
     vendorId: 'azure-dhsm',
@@ -821,24 +810,19 @@ export const FIRMWARE_UPGRADE_PATHS: FirmwareUpgradePath[] = [
     pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'LMS/HSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (same as Thales Luna 7)',
-    recertificationRequired: false,
-    recertificationTimeline: 'N/A — Thales Luna 7 FIPS cert covers PQC firmware (same as on-prem)',
     notes:
-      'Azure Dedicated HSM is the same Thales Luna Network HSM 7 hardware — identical PQC capabilities and FIPS coverage once firmware is upgraded to v7.9.2+. Customer initiates the upgrade via Azure Support portal (Microsoft does not auto-upgrade dedicated HSMs). Backup/restore recommended before upgrade per Azure HSM documentation.',
+      'Azure Dedicated HSM is the same Thales Luna Network HSM 7 hardware — identical PQC upgrade path. Customer initiates via Azure Support portal (not auto-applied). Backup/restore recommended before upgrade. Note: Azure Dedicated HSM is retiring — no new customers after August 2025. FIPS 140-3 CMVP resubmission follows Thales Luna 7 resubmission timeline.',
   },
   {
     vendorId: 'crypto4a-qxhsm',
     vendorName: 'Crypto4A QxHSM',
     currentFirmware: 'v4.3 or earlier',
     targetFirmware: 'v4.4+ (PQC production)',
-    pqcAlgorithmsAdded: ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS/HSS', 'XMSS', 'Classic McEliece'],
+    pqcAlgorithmsAdded: ['ML-KEM-512/768/1024', 'ML-DSA-44/65/87', 'SLH-DSA', 'LMS/HSS', 'XMSS'],
     upgradeComplexity: 'low',
     estimatedDowntime: '30-60 minutes per HSM (FPGA firmware update)',
-    recertificationRequired: false,
-    recertificationTimeline:
-      'N/A — FIPS 140-3 Level 3 cert #4250 (Active) covers the hardware module; v5.0 FIPS 140-3 resubmission in progress for PQC firmware',
     notes:
-      "FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. World's first FIPS 140-3 Level 3 validated PQC-capable HSM (cert #4250, Active). v5.0 FIPS 140-3 resubmission in progress for PQC firmware. Classic McEliece support is unique among HSM vendors.",
+      "FPGA-based design enables algorithm agility via firmware update — no hardware replacement needed. World's first FIPS 140-3 Level 3 validated PQC-capable HSM (cert #4250, Active). CAVP A5631 validated (ML-KEM, ML-DSA, SLH-DSA, LMS). v5.0 FIPS 140-3 resubmission in progress for PQC firmware.",
   },
 ]
 

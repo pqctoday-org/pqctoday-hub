@@ -145,7 +145,7 @@ export const HsmMigrationPlanner: React.FC = () => {
       case 2:
         return 'text-warning'
       case 3:
-        return selectedPath.recertificationRequired ? 'text-warning' : 'text-success'
+        return 'text-warning'
       default:
         return 'text-muted-foreground'
     }
@@ -160,7 +160,7 @@ export const HsmMigrationPlanner: React.FC = () => {
       case 2:
         return 'Medium'
       case 3:
-        return selectedPath.recertificationRequired ? 'Medium' : 'Low'
+        return 'Medium'
       default:
         return 'Unknown'
     }
@@ -339,16 +339,8 @@ export const HsmMigrationPlanner: React.FC = () => {
                 <span className="text-foreground">{selectedPath.estimatedDowntime}</span>
               </div>
               <div>
-                <span className="text-muted-foreground">Recertification Required:</span>{' '}
-                {selectedPath.recertificationRequired ? (
-                  <span className="text-warning font-bold">Yes</span>
-                ) : (
-                  <span className="text-success font-bold">No</span>
-                )}
-              </div>
-              <div>
-                <span className="text-muted-foreground">Recert Timeline:</span>{' '}
-                <span className="text-foreground">{selectedPath.recertificationTimeline}</span>
+                <span className="text-muted-foreground">FIPS Recertification:</span>{' '}
+                <span className="text-warning font-bold">Required (CMVP resubmission)</span>
               </div>
             </div>
 
