@@ -4,6 +4,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.49.0] - 2026-03-23
+
+### Data
+
+- **Migrate catalog updated** (`quantum_safe_cryptographic_software_reference_03232026.csv`, 390 products): Added **Trail of Bits ml-dsa** (CSC-001, Cryptographic Libraries) — side-channel resistant ML-DSA (FIPS 204) implementation in Go. Supports all three parameter sets (ML-DSA-44/65/87), designed for constant-time execution and resistance to timing/power analysis attacks. Passed all 51 ML-DSA conformance tests in the Crucible test battery. Apache-2.0/BSD-3-Clause, v0.1.0 (Aug 2025). Module refs: `crypto-dev-apis`, `dev-quantum-impact`, `research-quantum-impact`. [data]
+- **RAG corpus regenerated** (`public/data/rag-corpus.json`): 3,965 chunks (was 3,963, +2). [data]
+
 ## [2.48.0] - 2026-03-23
 
 ### Added
