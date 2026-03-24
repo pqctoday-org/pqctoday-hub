@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.50.0] - 2026-03-24
+
+### Data
+
+- **Entrust nShield PQC support field corrected** (`quantum_safe_cryptographic_software_reference_03232026_r2.csv`): `pqc_support` updated from `Yes (Hybrid PQC)` → `Yes (ML-KEM ML-DSA SLH-DSA LMS XMSS)` for consistency with Crypto4A QxHSM and Securosys Primus HSM entries. Capability description and product brief updated to lead with specific algorithm support (ML-KEM 512/768/1024, ML-DSA 44/65/87, SLH-DSA all 12 param sets, LMS/XMSS via PQSDK) rather than generic hybrid framing. [data]
+
 ## [2.49.0] - 2026-03-23
 
 ### Data
