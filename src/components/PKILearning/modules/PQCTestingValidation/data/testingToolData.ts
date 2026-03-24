@@ -250,6 +250,33 @@ export const TESTING_TOOLS: TestingTool[] = [
     bestFor: 'Validating client PQC implementation against known-good reference server',
   },
 
+  {
+    id: 'crucible',
+    name: 'Crucible',
+    vendor: 'Symbolic Software',
+    category: 'interop',
+    license: 'open-source',
+    description:
+      'Conformance testing harness for ML-KEM (FIPS 203) and ML-DSA (FIPS 204) cryptographic library implementations. Identifies implementation bugs that evade both NIST Known Answer Tests and formal verification tools by testing against real-world vulnerabilities discovered during production audits.',
+    pqcSupport: 'ML-KEM (FIPS 203) — 78 tests; ML-DSA (FIPS 204) — 51 tests',
+    strengths: [
+      'Language-agnostic JSON line protocol — harness any implementation',
+      'Catches bugs that NIST KAT and formal verification miss',
+      '15 production harnesses (CIRCL, liboqs, AWS-LC, Go stdlib, Bouncy Castle)',
+      '78 ML-KEM + 51 ML-DSA targeted conformance tests',
+      'Apache 2.0 — free and open source',
+    ],
+    limitations: [
+      'ML-KEM and ML-DSA only — no SLH-DSA or FrodoKEM',
+      'Requires writing a harness adapter for your implementation',
+      'Not a network or protocol scanner',
+    ],
+    repositoryUrl: 'https://github.com/symbolicsoft/crucible',
+    productUrl: 'https://github.com/symbolicsoft/crucible',
+    bestFor:
+      'Cryptographic library developers and CMVP labs validating ML-KEM/ML-DSA implementation correctness beyond Known Answer Test coverage',
+  },
+
   // Side-Channel
   {
     id: 'keysight-inspector',

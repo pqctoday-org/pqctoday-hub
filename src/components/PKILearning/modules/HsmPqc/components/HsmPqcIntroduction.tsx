@@ -383,7 +383,8 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                 <div>
                   <span className="text-muted-foreground">PQC Algorithms:</span>{' '}
                   <span className="text-foreground">
-                    ML-KEM-768/1024, ML-DSA-44/65/87, SLH-DSA, LMS/HSS, XMSS
+                    ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 param sets), LMS/HSS
+                    (PQSDK), XMSS (PQSDK)
                   </span>
                 </div>
                 <div>
@@ -467,10 +468,11 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <AlertTriangle size={16} className="text-warning shrink-0 mt-0.5" />
               <p className="text-xs text-foreground">
                 <strong>Key insight:</strong> On-prem HSMs (Thales, Entrust, Utimaco, Crypto4A) are
-                in production with firmware-level PQC support. Cloud HSMs currently deliver PQC
-                through SDK updates rather than firmware — AWS is preview-only and Azure/GCP are on
-                roadmap. Azure Dedicated HSM is the same Thales Luna 7 hardware and gains full PQC
-                once firmware is upgraded via Azure Support.
+                in production with firmware-level PQC support. Cloud HSMs currently lag: AWS
+                CloudHSM is ML-DSA preview-only; Azure Dedicated HSM has PQC available via
+                customer-requested firmware upgrade (note: retiring Aug 2025, no new customers); GCP
+                Cloud HSM remains roadmap (Cloud KMS software is in preview for
+                ML-KEM/ML-DSA/SLH-DSA).
               </p>
             </div>
           </div>
@@ -487,7 +489,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
-                  <span className="text-foreground">ML-DSA-65 (preview via AWS-LC SDK)</span>
+                  <span className="text-foreground">ML-DSA-44/65/87 (preview)</span>
                 </div>
                 <div>
                   <span className="text-muted-foreground">FIPS:</span>{' '}
@@ -511,15 +513,15 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center justify-between mb-3">
                 <h4 className="text-sm font-bold text-foreground">Azure Dedicated HSM</h4>
-                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-muted/50 text-muted-foreground border-border">
-                  ROADMAP
+                <span className="text-[10px] px-2 py-0.5 rounded border font-bold bg-success/10 text-success border-success/20">
+                  PRODUCTION
                 </span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div>
                   <span className="text-muted-foreground">PQC Support:</span>{' '}
                   <span className="text-foreground">
-                    Planned (via Thales Luna firmware upgrade)
+                    ML-KEM-512/768/1024, ML-DSA-44/65/87, LMS/HSS (firmware v7.9.2+)
                   </span>
                 </div>
                 <div>
@@ -531,13 +533,13 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
               </div>
               <div className="mt-3 text-xs text-muted-foreground space-y-1">
                 <p>
-                  Powered by Thales Luna 7 hardware. PQC available when customers request firmware
-                  upgrade to v7.9+. Azure Managed HSM (Marvell LS2 backend) has a separate PQC
-                  roadmap.
+                  Powered by Thales Luna 7 hardware. PQC available via firmware v7.9.2+ — customers
+                  must request the upgrade via Azure Support. SLH-DSA not yet in Luna v7.9.2. Azure
+                  Managed HSM (Marvell LS2 backend) has a separate PQC roadmap.
                 </p>
                 <p>
-                  <strong>Limitation:</strong> Customer must request firmware upgrade through Azure
-                  support. Azure does not auto-upgrade dedicated HSMs.
+                  <strong>⚠ Retiring:</strong> No new customers after August 2025; existing
+                  customers supported until August 2028.
                 </p>
               </div>
             </div>

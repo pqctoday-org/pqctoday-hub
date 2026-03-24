@@ -59,7 +59,7 @@ export const HsmPqcExercises: React.FC<HsmPqcExercisesProps> = ({
       badge: 'Vendor',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Thales Luna 7 and Entrust nShield 5 both have FIPS 140-3 Level 3 certification and GA ML-KEM + ML-DSA support. Entrust nShield 5 also supports SLH-DSA and XMSS, which are required for CNSA 2.0 stateful signature use cases.',
+        'Thales Luna 7 and Entrust nShield 5 both have FIPS 140-3 Level 3 certification and GA ML-KEM + ML-DSA support. Entrust nShield 5 also supports SLH-DSA (all 12 param sets, native PKCS#11) and LMS/XMSS via the PQSDK C API — covering the full CNSA 2.0 signature suite. Crypto4A QxHSM supports all algorithms with FPGA-based crypto-agility.',
       config: { step: 1 },
     },
     {

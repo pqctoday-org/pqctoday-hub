@@ -511,7 +511,19 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2026-01-30',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20796',
-    note: 'LMS validated. ML-KEM and ML-DSA ACVP validations pending for nShield 5 firmware v13.8.0+.',
+    note: 'LMS validated (nShield 5 v13 + nShield XC v12 on NXP QorIQ T1024). ML-KEM, ML-DSA, and SLH-DSA CAVP validated Sep 2025 (firmware v13.8.0+); separate ACVP certificate pending NIST database listing.',
+  },
+  {
+    vendorId: 'entrust-nshield',
+    vendorName: 'Entrust nShield 5 Firmware v13.8.0 — PQC Algorithms',
+    certType: 'ACVP',
+    certId: 'TBD',
+    algorithms: ['ML-KEM', 'ML-DSA', 'SLH-DSA'],
+    status: 'Active',
+    date: '2025-09-10',
+    certLink:
+      'https://www.entrust.com/company/newsroom/entrust-nshield-hsms-achieve-validation-from-nist-cryptographic-algorithm-validation-program',
+    note: 'ML-KEM (512/768/1024), ML-DSA (44/65/87), SLH-DSA (all 12 param sets) CAVP validated. ACVP certificate number pending NIST database listing. FIPS 140-3 Level 3 resubmission in progress.',
   },
   {
     vendorId: 'utimaco',
@@ -523,7 +535,31 @@ export const FIPS_VALIDATIONS: FipsValidationEntry[] = [
     date: '2025-09-17',
     certLink:
       'https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=20182',
-    note: 'LMS validated. ML-KEM and ML-DSA ACVP validations pending for Q-safe extension v5.0.',
+    note: 'LMS validated. ML-KEM and ML-DSA CAVP validated Oct 2025 (separate certs #40010, #40011).',
+  },
+  {
+    vendorId: 'utimaco',
+    vendorName: 'Utimaco Quantum Protect — ML-KEM',
+    certType: 'ACVP',
+    certId: '#40010',
+    algorithms: ['ML-KEM'],
+    status: 'Active',
+    date: '2025-10-14',
+    certLink:
+      'https://utimaco.com/news/press-releases/utimacos-quantum-protect-algorithms-successfully-passed-nist-testing',
+    note: 'ML-KEM (512/768/1024) CAVP validated. Covers all standardized parameter sets for SecurityServer Se Gen2 Q-safe v5.0.',
+  },
+  {
+    vendorId: 'utimaco',
+    vendorName: 'Utimaco Quantum Protect — ML-DSA',
+    certType: 'ACVP',
+    certId: '#40011',
+    algorithms: ['ML-DSA'],
+    status: 'Active',
+    date: '2025-10-14',
+    certLink:
+      'https://utimaco.com/news/press-releases/utimacos-quantum-protect-algorithms-successfully-passed-nist-testing',
+    note: 'ML-DSA (44/65/87) CAVP validated. Covers all standardized parameter sets for SecurityServer Se Gen2 Q-safe v5.0.',
   },
   {
     vendorId: 'aws-cloudhsm',

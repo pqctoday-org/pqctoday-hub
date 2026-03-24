@@ -4,6 +4,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.48.0] - 2026-03-23
+
+### Added
+
+- **EdDSA Ed25519 ACVP SigVer KAT** [view:/playground]: ACVP Testing tab now includes an RFC 8032 Ed25519 signature verification Known Answer Test (test #16). Uses new `hsm_importEdDSAPublicKey` helper to import a raw public key via `C_CreateObject` — tries `CKA_VALUE` first (accepted by Rust engine), falls back without it on `CKR_ATTRIBUTE_TYPE_INVALID` (C++ rejects `CKA_VALUE` for EdDSA public keys). [persona:developer]
+- **SLH-DSA full-coverage functional tests** [view:/playground]: ACVP Testing tab now runs functional sign+verify tests for all 12 SLH-DSA parameter sets (SHA2-{128s/128f/192s/192f/256s/256f} + SHAKE-{128s/128f/192s/192f/256s/256f}) per FIPS 205. Previously only SHA2-128S was exercised. [persona:developer]
+- **ACVP canonical reference URLs** [view:/playground]: Each `TestResult` now carries a `referenceUrl` field linking to the canonical NIST/IETF standard page for the tested algorithm — FIPS 203/204/205, SP 800-38A/38D, FIPS 198-1, FIPS 186-5, RFC 4231, RFC 8018, RFC 5869, RFC 3394/5649, RFC 8032. [persona:developer]
+- **Crucible conformance harness** [view:/learn]: Added Crucible (Symbolic Software, Apache 2.0) to the PQC Testing & Validation module tool inventory — a language-agnostic JSON-line protocol harness with 78 ML-KEM + 51 ML-DSA targeted conformance tests that catches implementation bugs missed by NIST KAT and formal verification, with 15 production harnesses (CIRCL, liboqs, AWS-LC, Go stdlib, Bouncy Castle). [persona:developer]
+- **`hsm_importEdDSAPublicKey`** [data]: New PKCS#11 helper in `softhsm.ts` — imports a raw Ed25519/Ed448 public key via `C_CreateObject` with DER-wrapped `CKA_EC_POINT` + OID `CKA_EC_PARAMS`. Dual-engine compatible: attempts `CKA_VALUE` for Rust engine, retries without it when C++ returns `CKR_ATTRIBUTE_TYPE_INVALID (0x12)`. [persona:developer]
+
+### Changed
+
+- **HSM vendor data accuracy update** [view:/learn]: `hsmVendorData.ts` and `hsmConstants.ts` updated with verified production data across all six HSM vendors:
+  - **Thales Luna 7**: explicit PKCS#11 mechanism names listed; SLH-DSA not yet in v7.9.2 noted; `CKM_EXTMU_ML_DSA` documented
+  - **Entrust nShield 5**: ML-KEM-512 added to supported algorithms; SLH-DSA confirmed all 12 param sets (native PKCS#11); LMS/XMSS clarified as PQSDK C API only; CAVP validation Sep 2025 cited
+  - **Utimaco Quantum Protect**: CAVP certs #40010 (ML-KEM 512/768/1024) and #40011 (ML-DSA 44/65/87) added as separate `FIPS_VALIDATIONS` entries; Q-safe v5.0 in-field upgrade (no hardware swap) clarified; prior LMS entry note corrected
+  - **AWS CloudHSM**: ML-DSA updated to all three variants (44/65/87) in preview; ML-KEM not in CloudHSM hardware clarified (AWS KMS software is separate)
+  - **Azure Dedicated HSM**: status updated ROADMAP → PRODUCTION (firmware v7.9.2+, customer-requested upgrade via Azure Support); retirement notice added — no new customers after Aug 2025, existing customers supported until Aug 2028
+  - **GCP Cloud HSM**: Cloud KMS software preview for ML-KEM/ML-DSA/SLH-DSA noted; hardware Cloud HSM remains roadmap
+  - **Crypto4A QxHSM**: CAVP A5631 cert (ML-KEM, ML-DSA, SLH-DSA, LMS) noted; Classic McEliece clarified as roadmap (not yet validated); QxOS 5 (June 2025) referenced [persona:architect] [persona:developer]
+- **`CertificationXref.certType`** [data]: Type union in `MigrateTypes.ts` extended with `'PSA Certified'` alongside FIPS 140-3, ACVP, and Common Criteria. [persona:developer]
+- **`match_certifications.py`** [data]: Added match rules for `PQCryptoLib-Core` and `PQMicroLib-Core` (PQShield) to the certification cross-reference generator `MATCH_RULES`. [persona:developer]
+
+### Data
+
+- **Library updated** (`library_03232026.csv`, 327 records): WEF 2026 article added — "Quantum-Safe Migration: Cryptographic Defence in Depth and the R-Day" (`WEF-2026-QuantumSafe-Migration-CryptoDepth`). `downloadable: no-forbidden` — WEF blocks automated access. [data]
+- **Migrate catalog updated** (`quantum_safe_cryptographic_software_reference_03232026_r1.csv`, 389 products): Latest catalog revision with updated certification cross-references and product entries. [data]
+- **Certification cross-reference updated** (`migrate_certification_xref_03232026.csv`, 582 entries): Regenerated from updated migrate catalog and compliance data. [data]
+- **Library enrichments** (`src/data/doc-enrichments/library_doc_enrichments_03232026.md`): Manual enrichment for WEF 2026 article; `misc_info` terms: R-day, Q-day, HNDL, harvest now decrypt later, cryptographic agility, cryptographic inventory. [data]
+- **RAG corpus regenerated** (`public/data/rag-corpus.json`): 3,963 chunks (was 3,957, +6). [data]
+- **CSV archive**: `library_03132026_r2.csv`, `migrate_certification_xref_03052026.csv`, `quantum_safe_cryptographic_software_reference_03212026.csv`, `quantum_safe_cryptographic_software_reference_03222026.csv` moved to `src/data/archive/`. [data]
+
 ## [2.47.0] - 2026-03-23
 
 ### Changed

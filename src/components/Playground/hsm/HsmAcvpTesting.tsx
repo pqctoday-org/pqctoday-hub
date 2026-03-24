@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
-import { Play, CheckCircle, XCircle } from 'lucide-react'
+import { Play, CheckCircle, XCircle, ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
@@ -15,6 +15,7 @@ import hmac384TestVectors from '../../../data/acvp/hmac_sha384_test.json'
 import hmac512TestVectors from '../../../data/acvp/hmac_sha512_test.json'
 import ecdsaP384TestVectors from '../../../data/acvp/ecdsa_p384_test.json'
 import aesKwTestVectors from '../../../data/acvp/aeskw_test.json'
+import eddsaTestVectors from '../../../data/acvp/eddsa_test.json'
 import { hexToBytes } from '../../../utils/dataInputUtils'
 import {
   hsm_initialize,
@@ -47,8 +48,7 @@ import {
   hsm_digest,
   hsm_getMechanismList,
   hsm_aesCtrDecrypt,
-  hsm_generateEdDSAKeyPair,
-  hsm_eddsaSign,
+  hsm_importEdDSAPublicKey,
   hsm_eddsaVerify,
   hsm_generateAESKey,
   hsm_wrapKeyMech,
@@ -56,6 +56,16 @@ import {
   hsm_pbkdf2,
   hsm_hkdf,
   CKP_SLH_DSA_SHA2_128S,
+  CKP_SLH_DSA_SHA2_128F,
+  CKP_SLH_DSA_SHA2_192S,
+  CKP_SLH_DSA_SHA2_192F,
+  CKP_SLH_DSA_SHA2_256S,
+  CKP_SLH_DSA_SHA2_256F,
+  CKP_SLH_DSA_SHAKE_128S,
+  CKP_SLH_DSA_SHAKE_128F,
+  CKP_SLH_DSA_SHAKE_192S,
+  CKP_SLH_DSA_SHAKE_192F,
+  CKP_SLH_DSA_SHAKE_256S,
   CKP_SLH_DSA_SHAKE_256F,
   CKM_SHA256,
   CKM_AES_GCM,
@@ -88,6 +98,7 @@ interface TestResult {
   id: string
   algorithm: string
   testCase: string
+  referenceUrl: string
   status: 'pass' | 'fail' | 'pending'
   details: string
 }
@@ -131,6 +142,25 @@ export const HsmAcvpTesting = () => {
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
+
+    // Canonical reference URLs per algorithm / standard
+    const REF = {
+      aesgcm: 'https://csrc.nist.gov/publications/detail/sp/800-38d/final',
+      hmac: 'https://www.rfc-editor.org/rfc/rfc4231',
+      rsapss: 'https://csrc.nist.gov/publications/detail/fips/186/5/final',
+      ecdsa: 'https://csrc.nist.gov/publications/detail/fips/186/5/final',
+      mldsa: 'https://csrc.nist.gov/pubs/fips/204/final',
+      mlkem: 'https://csrc.nist.gov/pubs/fips/203/final',
+      sha256: 'https://csrc.nist.gov/publications/detail/fips/180/4/final',
+      aescbc: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
+      aesctr: 'https://csrc.nist.gov/publications/detail/sp/800-38a/final',
+      eddsa: 'https://www.rfc-editor.org/rfc/rfc8032',
+      pbkdf2: 'https://www.rfc-editor.org/rfc/rfc8018',
+      hkdf: 'https://www.rfc-editor.org/rfc/rfc5869',
+      aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
+      aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
+      slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
+    } as const
 
     const engines: Array<{
       M: SoftHSMModule
@@ -190,6 +220,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] AES-GCM-256: mechanism not supported`)
         } else {
           const tv = aesGcmTestVectors.testGroups[0].tests[0]
+          const id1 = `aes-acvp-${eName}`
           addLog(`[${eName}] Testing AES-GCM-256 Decrypt KAT (SP 800-38D)...`)
           addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | IV: ${tv.iv} | Tag: ${tv.tag}`)
           addLog(
@@ -235,25 +266,29 @@ export const HsmAcvpTesting = () => {
 
             const ptHex = toHex(recoveredPt)
             newResults.push({
-              id: `aes-acvp-${eName}`,
+              id: id1,
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aesgcm,
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
             })
-            addLog(`[${eName}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`)
+            addLog(
+              `[${eName}] [id:${id1}] AES-GCM Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
+            )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
               id: `aes-err-${eName}`,
               algorithm: `AES-GCM-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aesgcm,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] AES-GCM: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id1}] AES-GCM: ${errMessage}`)
           }
         }
 
@@ -262,6 +297,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] HMAC-SHA256: mechanism not supported`)
         } else {
           const tv = hmacTestVectors.testGroups[0].tests[0]
+          const id2 = `hmac-acvp-${eName}`
           addLog(`[${eName}] Testing HMAC-SHA256 Verify KAT (RFC 4231)...`)
           addLog(`  ACVP Key: ${tv.key.slice(0, 32)}… | Msg: ${tv.msg.slice(0, 32)}…`)
           addLog(`  ACVP Expected MAC: ${tv.mac}`)
@@ -285,16 +321,17 @@ export const HsmAcvpTesting = () => {
 
             const macHex = toHex(macBytes)
             newResults.push({
-              id: `hmac-acvp-${eName}`,
+              id: id2,
               algorithm: `HMAC-SHA256 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `MAC[${macBytes.length}B] verified: ${macHex}`
                 : 'MAC verification failed against RFC 4231 vector',
             })
             addLog(
-              `[${eName}] HMAC-SHA256 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
+              `[${eName}] [id:${id2}] HMAC-SHA256 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -302,10 +339,11 @@ export const HsmAcvpTesting = () => {
               id: `hmac-err-${eName}`,
               algorithm: `HMAC-SHA256 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] HMAC-SHA256: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id2}] HMAC-SHA256: ${errMessage}`)
           }
         }
 
@@ -314,6 +352,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] RSA-PSS-2048: mechanism not supported`)
         } else {
           const tv = rsaPssTestVectors.testGroups[0].tests[0]
+          const id3 = `rsa-acvp-${eName}`
           addLog(`[${eName}] Testing RSA-PSS-2048 SigVer KAT (FIPS 186-5)...`)
           addLog(`  ACVP Modulus: ${tv.n.slice(0, 32)}… | Exp: ${tv.e}`)
           addLog(`  ACVP Signature: ${tv.signature.slice(0, 32)}… | Msg: "${tv.msg.slice(0, 40)}"`)
@@ -345,16 +384,17 @@ export const HsmAcvpTesting = () => {
 
             const rsaSigHex = toHex(sigBytes, 16)
             newResults.push({
-              id: `rsa-acvp-${eName}`,
+              id: id3,
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.rsapss,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${rsaSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
             })
             addLog(
-              `[${eName}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
+              `[${eName}] [id:${id3}] RSA-PSS SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${rsaSigHex}…`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -362,10 +402,11 @@ export const HsmAcvpTesting = () => {
               id: `rsa-err-${eName}`,
               algorithm: `RSA-PSS-2048 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.rsapss,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] RSA-PSS-2048: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id3}] RSA-PSS-2048: ${errMessage}`)
           }
         }
 
@@ -374,6 +415,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] ECDSA P-256: mechanism not supported`)
         } else {
           const tv = ecdsaTestVectors.testGroups[0].tests[0]
+          const id4 = `ecdsa-acvp-${eName}`
           addLog(`[${eName}] Testing ECDSA P-256 SigVer KAT (FIPS 186-5)...`)
           addLog(`  ACVP Qx: ${tv.qx.slice(0, 32)}… | Qy: ${tv.qy.slice(0, 32)}…`)
           addLog(`  ACVP r: ${tv.r.slice(0, 32)}… | s: ${tv.s.slice(0, 32)}…`)
@@ -403,16 +445,17 @@ export const HsmAcvpTesting = () => {
             const ecSigHex = toHex(sigBytes, 16)
 
             newResults.push({
-              id: `ecdsa-acvp-${eName}`,
+              id: id4,
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.ecdsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
             })
             addLog(
-              `[${eName}] ECDSA P-256 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${ecSigHex}…`
+              `[${eName}] [id:${id4}] ECDSA P-256 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${ecSigHex}…`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -420,10 +463,11 @@ export const HsmAcvpTesting = () => {
               id: `ecdsa-err-${eName}`,
               algorithm: `ECDSA P-256 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.ecdsa,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ECDSA: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id4}] ECDSA: ${errMessage}`)
           }
         }
 
@@ -432,6 +476,7 @@ export const HsmAcvpTesting = () => {
           const test = group.tests[0]
           const algo = group.parameterSet
           const variantNum = parseInt(algo.split('-')[2]) as 44 | 65 | 87
+          const id5 = `mldsa-sigver-${algo}-${eName}`
           addLog(`[${eName}] Testing ${algo} SigVer (FIPS 204)...`)
           addLog(
             `  ACVP PK: ${test.pk.slice(0, 32)}… | Sig[${test.sig.length / 2}B]: ${test.sig.slice(0, 32)}…`
@@ -456,16 +501,17 @@ export const HsmAcvpTesting = () => {
             const mldsaSigHex = toHex(sigBytes, 16)
 
             newResults.push({
-              id: `mldsa-sigver-${algo}-${eName}`,
+              id: id5,
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.mldsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${mldsaSigHex}…`
                 : 'Signature verification failed',
             })
             addLog(
-              `[${eName}] ${algo} SigVer: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${mldsaSigHex}…`
+              `[${eName}] [id:${id5}] ${algo} SigVer: ${isValid ? 'PASS' : 'FAIL'} | sig[0:16]: ${mldsaSigHex}…`
             )
           } catch (err: unknown) {
             const errorMessage = err instanceof Error ? err.message : 'Unknown error'
@@ -473,16 +519,18 @@ export const HsmAcvpTesting = () => {
               id: `mldsa-err-${algo}-${eName}`,
               algorithm: `${algo} (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.mldsa,
               status: 'fail',
               details: errorMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ${algo} SigVer Error: ${errorMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id5}] ${algo} SigVer Error: ${errorMessage}`)
           }
         }
 
         // ── 6. ML-DSA Functional Sign+Verify (FIPS 204) — all variants ──
         for (const dsaVariant of [44, 65, 87] as const) {
           const dsaAlgo = `ML-DSA-${dsaVariant}`
+          const id6 = `mldsa-func-${dsaVariant}-${eName}`
           addLog(`[${eName}] Testing ${dsaAlgo} Functional Sign+Verify (FIPS 204)...`)
           try {
             const mldsaPair = hsm_generateMLDSAKeyPair(M, hSession, dsaVariant)
@@ -507,13 +555,14 @@ export const HsmAcvpTesting = () => {
             if (isValid) {
               const signHex = toHex(sig, 16)
               newResults.push({
-                id: `mldsa-func-${dsaVariant}-${eName}`,
+                id: id6,
                 algorithm: `${dsaAlgo} (${eName})`,
                 testCase: 'Functional Sign+Verify',
+                referenceUrl: REF.mldsa,
                 status: 'pass',
                 details: `sig[${sig.length}B]: ${signHex}…`,
               })
-              addLog(`[${eName}] ${dsaAlgo} Functional: PASS | sig[0:16]: ${signHex}…`)
+              addLog(`[${eName}] [id:${id6}] ${dsaAlgo} Functional: PASS | sig[0:16]: ${signHex}…`)
             } else {
               throw new Error('Signature verification failed on own signature')
             }
@@ -523,10 +572,11 @@ export const HsmAcvpTesting = () => {
               id: `mldsa-func-${dsaVariant}-err-${eName}`,
               algorithm: `${dsaAlgo} (${eName})`,
               testCase: 'Functional Sign+Verify',
+              referenceUrl: REF.mldsa,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ${dsaAlgo} Functional: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id6}] ${dsaAlgo} Functional: ${errMessage}`)
           }
         }
 
@@ -535,6 +585,7 @@ export const HsmAcvpTesting = () => {
           const test = group.tests[0]
           const algo = group.parameterSet
           const variantNum = (parseInt(algo.split('-')[2]) || 768) as 512 | 768 | 1024
+          const id7 = `test-${algo}-decap-${eName}`
           addLog(`[${eName}] Testing ${algo} Decapsulate KAT...`)
           addLog(
             `  ACVP SK: ${test.sk.slice(0, 32)}… | CT[${test.ct.length / 2}B]: ${test.ct.slice(0, 32)}…`
@@ -572,13 +623,14 @@ export const HsmAcvpTesting = () => {
             if (matches) {
               const ssHex = toHex(recoveredSs)
               newResults.push({
-                id: `test-${algo}-decap-${eName}`,
+                id: id7,
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
+                referenceUrl: REF.mlkem,
                 status: 'pass',
                 details: `SS[${recoveredSs.length}B]: ${ssHex}`,
               })
-              addLog(`[${eName}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
+              addLog(`[${eName}] [id:${id7}] ${algo} Decapsulate: PASS | SS: ${ssHex}`)
             } else {
               const gotHex = Array.from(recoveredSs.slice(0, 16))
                 .map((b) => b.toString(16).padStart(2, '0'))
@@ -587,13 +639,14 @@ export const HsmAcvpTesting = () => {
                 .map((b) => b.toString(16).padStart(2, '0'))
                 .join('')
               newResults.push({
-                id: `test-${algo}-decap-${eName}`,
+                id: id7,
                 algorithm: `${algo} (${eName})`,
                 testCase: 'Decapsulate KAT',
+                referenceUrl: REF.mlkem,
                 status: 'fail',
                 details: `SS mismatch: got ${gotHex}... expected ${expHex}...`,
               })
-              addLog(`[DISCREPANCY] [${eName}] ${algo} Decapsulate: SS mismatch`)
+              addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Decapsulate: SS mismatch`)
               addHsmLog({
                 id: Date.now(),
                 timestamp: new Date().toLocaleTimeString(),
@@ -611,10 +664,11 @@ export const HsmAcvpTesting = () => {
               id: `test-${algo}-err-${eName}`,
               algorithm: `${algo} (${eName})`,
               testCase: 'Decapsulate KAT',
+              referenceUrl: REF.mlkem,
               status: 'fail',
               details: errorMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ${algo} Error: ${errorMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id7}] ${algo} Error: ${errorMessage}`)
             addHsmLog({
               id: Date.now(),
               timestamp: new Date().toLocaleTimeString(),
@@ -631,6 +685,7 @@ export const HsmAcvpTesting = () => {
         // ── 8. ML-KEM Encap+Decap Round-Trip (FIPS 203) ─────────────────
         for (const kemVariant of [512, 768, 1024] as const) {
           const kemAlgo = `ML-KEM-${kemVariant}`
+          const id8 = `mlkem-rt-${kemVariant}-${eName}`
           addLog(`[${eName}] Testing ${kemAlgo} Encap+Decap Round-Trip (FIPS 203)...`)
           try {
             const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(M, hSession, kemVariant)
@@ -674,22 +729,24 @@ export const HsmAcvpTesting = () => {
             if (ssMatch) {
               const ssHex = toHex(encapSs)
               newResults.push({
-                id: `mlkem-rt-${kemVariant}-${eName}`,
+                id: id8,
                 algorithm: `${kemAlgo} (${eName})`,
                 testCase: 'Encap+Decap Round-Trip',
+                referenceUrl: REF.mlkem,
                 status: 'pass',
                 details: `SS[${encapSs.length}B]: ${ssHex} | ct=${ciphertextBytes.length}B`,
               })
-              addLog(`[${eName}] ${kemAlgo} Round-Trip: PASS | SS: ${ssHex}`)
+              addLog(`[${eName}] [id:${id8}] ${kemAlgo} Round-Trip: PASS | SS: ${ssHex}`)
             } else {
               newResults.push({
-                id: `mlkem-rt-${kemVariant}-${eName}`,
+                id: id8,
                 algorithm: `${kemAlgo} (${eName})`,
                 testCase: 'Encap+Decap Round-Trip',
+                referenceUrl: REF.mlkem,
                 status: 'fail',
                 details: `SS mismatch: encap=${toHex(encapSs, 8)}… decap=${toHex(decapSs, 8)}…`,
               })
-              addLog(`[DISCREPANCY] [${eName}] ${kemAlgo} Round-Trip: SS mismatch`)
+              addLog(`[DISCREPANCY] [${eName}] [id:${id8}] ${kemAlgo} Round-Trip: SS mismatch`)
             }
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -697,18 +754,30 @@ export const HsmAcvpTesting = () => {
               id: `mlkem-rt-${kemVariant}-err-${eName}`,
               algorithm: `${kemAlgo} (${eName})`,
               testCase: 'Encap+Decap Round-Trip',
+              referenceUrl: REF.mlkem,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ${kemAlgo} Round-Trip: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id8}] ${kemAlgo} Round-Trip: ${errMessage}`)
           }
         }
 
-        // ── 9. SLH-DSA Functional Sign+Verify (FIPS 205) ────────────────
+        // ── 9. SLH-DSA Functional Sign+Verify (FIPS 205) — all 12 sets ──
         for (const slhParam of [
           { ckp: CKP_SLH_DSA_SHA2_128S, name: 'SLH-DSA-SHA2-128s' },
+          { ckp: CKP_SLH_DSA_SHA2_128F, name: 'SLH-DSA-SHA2-128f' },
+          { ckp: CKP_SLH_DSA_SHA2_192S, name: 'SLH-DSA-SHA2-192s' },
+          { ckp: CKP_SLH_DSA_SHA2_192F, name: 'SLH-DSA-SHA2-192f' },
+          { ckp: CKP_SLH_DSA_SHA2_256S, name: 'SLH-DSA-SHA2-256s' },
+          { ckp: CKP_SLH_DSA_SHA2_256F, name: 'SLH-DSA-SHA2-256f' },
+          { ckp: CKP_SLH_DSA_SHAKE_128S, name: 'SLH-DSA-SHAKE-128s' },
+          { ckp: CKP_SLH_DSA_SHAKE_128F, name: 'SLH-DSA-SHAKE-128f' },
+          { ckp: CKP_SLH_DSA_SHAKE_192S, name: 'SLH-DSA-SHAKE-192s' },
+          { ckp: CKP_SLH_DSA_SHAKE_192F, name: 'SLH-DSA-SHAKE-192f' },
+          { ckp: CKP_SLH_DSA_SHAKE_256S, name: 'SLH-DSA-SHAKE-256s' },
           { ckp: CKP_SLH_DSA_SHAKE_256F, name: 'SLH-DSA-SHAKE-256f' },
         ]) {
+          const id9 = `slhdsa-func-${slhParam.name}-${eName}`
           addLog(`[${eName}] Testing ${slhParam.name} Functional Sign+Verify (FIPS 205)...`)
           try {
             const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, slhParam.ckp)
@@ -737,13 +806,16 @@ export const HsmAcvpTesting = () => {
             if (isValid) {
               const sigHex = toHex(sigBytes, 16)
               newResults.push({
-                id: `slhdsa-func-${slhParam.name}-${eName}`,
+                id: id9,
                 algorithm: `${slhParam.name} (${eName})`,
                 testCase: 'Functional Sign+Verify',
+                referenceUrl: REF.slhdsa,
                 status: 'pass',
                 details: `sig[${sigBytes.length}B]: ${sigHex}…`,
               })
-              addLog(`[${eName}] ${slhParam.name} Functional: PASS | sig[0:16]: ${sigHex}…`)
+              addLog(
+                `[${eName}] [id:${id9}] ${slhParam.name} Functional: PASS | sig[0:16]: ${sigHex}…`
+              )
             } else {
               throw new Error('Signature verification failed on own signature')
             }
@@ -753,10 +825,13 @@ export const HsmAcvpTesting = () => {
               id: `slhdsa-func-${slhParam.name}-err-${eName}`,
               algorithm: `${slhParam.name} (${eName})`,
               testCase: 'Functional Sign+Verify',
+              referenceUrl: REF.slhdsa,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ${slhParam.name} Functional: ${errMessage}`)
+            addLog(
+              `[DISCREPANCY] [${eName}] [id:${id9}] ${slhParam.name} Functional: ${errMessage}`
+            )
           }
         }
 
@@ -765,6 +840,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] SHA-256 Digest: mechanism not supported`)
         } else {
           for (const test of sha256TestVectors.testGroups[0].tests) {
+            const id10 = `sha256-tc${test.tcId}-${eName}`
             addLog(`[${eName}] Testing SHA-256 Digest KAT tc=${test.tcId} (FIPS 180-4)...`)
             addLog(
               `  ACVP Msg: ${test.msg.slice(0, 32)}${test.msg.length > 32 ? '…' : ''} | Expected MD: ${test.md}`
@@ -781,16 +857,17 @@ export const HsmAcvpTesting = () => {
 
               const mdHex = toHex(digest)
               newResults.push({
-                id: `sha256-tc${test.tcId}-${eName}`,
+                id: id10,
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: REF.sha256,
                 status: matches ? 'pass' : 'fail',
                 details: matches
                   ? `MD[${digest.length}B]: ${mdHex}`
                   : `MD mismatch: got ${toHex(digest, 8)}… expected ${toHex(expectedMd, 8)}…`,
               })
               addLog(
-                `[${eName}] SHA-256 tc=${test.tcId}: ${matches ? 'PASS' : 'FAIL'} | MD: ${mdHex}`
+                `[${eName}] [id:${id10}] SHA-256 tc=${test.tcId}: ${matches ? 'PASS' : 'FAIL'} | MD: ${mdHex}`
               )
             } catch (e: unknown) {
               const errMessage = e instanceof Error ? e.message : String(e)
@@ -798,10 +875,11 @@ export const HsmAcvpTesting = () => {
                 id: `sha256-tc${test.tcId}-err-${eName}`,
                 algorithm: `SHA-256 (${eName})`,
                 testCase: `Digest KAT tc=${test.tcId}`,
+                referenceUrl: REF.sha256,
                 status: 'fail',
                 details: errMessage,
               })
-              addLog(`[DISCREPANCY] [${eName}] SHA-256 tc=${test.tcId}: ${errMessage}`)
+              addLog(`[DISCREPANCY] [${eName}] [id:${id10}] SHA-256 tc=${test.tcId}: ${errMessage}`)
             }
           }
         }
@@ -811,6 +889,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] AES-CBC-256: mechanism not supported`)
         } else {
           const tv = aesCbcTestVectors.testGroups[0].tests[0]
+          const id11 = `aescbc-acvp-${eName}`
           addLog(`[${eName}] Testing AES-CBC-256 Decrypt KAT (SP 800-38A)...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… IV: ${tv.iv}`)
           try {
@@ -845,25 +924,29 @@ export const HsmAcvpTesting = () => {
 
             const ptHex = toHex(recoveredPt)
             newResults.push({
-              id: `aescbc-acvp-${eName}`,
+              id: id11,
               algorithm: `AES-CBC-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aescbc,
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
             })
-            addLog(`[${eName}] AES-CBC Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`)
+            addLog(
+              `[${eName}] [id:${id11}] AES-CBC Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
+            )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
               id: `aescbc-err-${eName}`,
               algorithm: `AES-CBC-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aescbc,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] AES-CBC: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id11}] AES-CBC: ${errMessage}`)
           }
         }
 
@@ -873,6 +956,7 @@ export const HsmAcvpTesting = () => {
         } else {
           const tv = aesCtrTestVectors.testGroups[0].tests[0]
           const counterBits = aesCtrTestVectors.testGroups[0].counterBits
+          const id12 = `aesctr-acvp-${eName}`
           addLog(`[${eName}] Testing AES-CTR-256 Decrypt KAT (SP 800-38A)...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… IV: ${tv.iv} ctrBits: ${counterBits}`)
           try {
@@ -914,25 +998,29 @@ export const HsmAcvpTesting = () => {
 
             const ptHex = toHex(recoveredPt)
             newResults.push({
-              id: `aesctr-acvp-${eName}`,
+              id: id12,
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aesctr,
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `PT[${recoveredPt.length}B]: ${ptHex}`
                 : `PT mismatch: got ${recoveredPt.length}B, expected ${expectedPt.length}B`,
             })
-            addLog(`[${eName}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`)
+            addLog(
+              `[${eName}] [id:${id12}] AES-CTR Decrypt KAT: ${matches ? 'PASS' : 'FAIL'} | PT: ${ptHex}`
+            )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
               id: `aesctr-err-${eName}`,
               algorithm: `AES-CTR-256 (${eName})`,
               testCase: 'Decrypt KAT',
+              referenceUrl: REF.aesctr,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] AES-CTR: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id12}] AES-CTR: ${errMessage}`)
           }
         }
 
@@ -941,6 +1029,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] HMAC-SHA384: mechanism not supported`)
         } else {
           const tv = hmac384TestVectors.testGroups[0].tests[0]
+          const id13 = `hmac384-acvp-${eName}`
           addLog(`[${eName}] Testing HMAC-SHA384 Verify KAT...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
           try {
@@ -967,16 +1056,17 @@ export const HsmAcvpTesting = () => {
             )
             const macHex = toHex(macBytes)
             newResults.push({
-              id: `hmac384-acvp-${eName}`,
+              id: id13,
               algorithm: `HMAC-SHA384 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `MAC[${macBytes.length}B] verified: ${macHex}`
                 : 'MAC verification failed',
             })
             addLog(
-              `[${eName}] HMAC-SHA384 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
+              `[${eName}] [id:${id13}] HMAC-SHA384 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -984,10 +1074,11 @@ export const HsmAcvpTesting = () => {
               id: `hmac384-err-${eName}`,
               algorithm: `HMAC-SHA384 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] HMAC-SHA384: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id13}] HMAC-SHA384: ${errMessage}`)
           }
         }
 
@@ -996,6 +1087,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] HMAC-SHA512: mechanism not supported`)
         } else {
           const tv = hmac512TestVectors.testGroups[0].tests[0]
+          const id14 = `hmac512-acvp-${eName}`
           addLog(`[${eName}] Testing HMAC-SHA512 Verify KAT...`)
           addLog(`[${eName}]   Key: ${tv.key.slice(0, 32)}… MAC: ${tv.mac.slice(0, 32)}…`)
           try {
@@ -1022,16 +1114,17 @@ export const HsmAcvpTesting = () => {
             )
             const macHex = toHex(macBytes)
             newResults.push({
-              id: `hmac512-acvp-${eName}`,
+              id: id14,
               algorithm: `HMAC-SHA512 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `MAC[${macBytes.length}B] verified: ${macHex}`
                 : 'MAC verification failed',
             })
             addLog(
-              `[${eName}] HMAC-SHA512 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
+              `[${eName}] [id:${id14}] HMAC-SHA512 Verify KAT: ${isValid ? 'PASS' : 'FAIL'} | MAC: ${macHex}`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -1039,10 +1132,11 @@ export const HsmAcvpTesting = () => {
               id: `hmac512-err-${eName}`,
               algorithm: `HMAC-SHA512 (${eName})`,
               testCase: 'Verify KAT',
+              referenceUrl: REF.hmac,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] HMAC-SHA512: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id14}] HMAC-SHA512: ${errMessage}`)
           }
         }
 
@@ -1051,6 +1145,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] ECDSA P-384: mechanism not supported`)
         } else {
           const tv = ecdsaP384TestVectors.testGroups[0].tests[0]
+          const id15 = `ecdsa384-acvp-${eName}`
           addLog(`[${eName}] Testing ECDSA P-384 SigVer KAT (FIPS 186-5)...`)
           addLog(`[${eName}]   Qx: ${tv.qx.slice(0, 32)}… R: ${tv.r.slice(0, 32)}…`)
           try {
@@ -1082,16 +1177,17 @@ export const HsmAcvpTesting = () => {
             )
             const ecSigHex = toHex(sigBytes, 16)
             newResults.push({
-              id: `ecdsa384-acvp-${eName}`,
+              id: id15,
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.ecdsa,
               status: isValid ? 'pass' : 'fail',
               details: isValid
                 ? `Verified sig[${sigBytes.length}B]: ${ecSigHex}…`
                 : 'Signature verification failed against FIPS 186-5 vector',
             })
             addLog(
-              `[${eName}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
+              `[${eName}] [id:${id15}] ECDSA P-384 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'} | sig: ${ecSigHex}…`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -1099,20 +1195,29 @@ export const HsmAcvpTesting = () => {
               id: `ecdsa384-err-${eName}`,
               algorithm: `ECDSA P-384 (${eName})`,
               testCase: 'SigVer KAT',
+              referenceUrl: REF.ecdsa,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] ECDSA P-384: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id15}] ECDSA P-384: ${errMessage}`)
           }
         }
 
-        // ── 16. EdDSA Ed25519 Functional Sign+Verify (RFC 8032) ───────────
+        // ── 16. EdDSA Ed25519 SigVer KAT (RFC 8032) ──────────────────────
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EDDSA)) {
           addLog(`[${eName}] [SKIP] EdDSA Ed25519: mechanism not supported`)
         } else {
-          addLog(`[${eName}] Testing EdDSA Ed25519 Functional Sign+Verify (RFC 8032)...`)
+          const edTv = eddsaTestVectors.testGroups[0].tests[0]
+          const id16 = `eddsa-sigver-${eName}`
+          addLog(`[${eName}] Testing EdDSA Ed25519 SigVer KAT (RFC 8032)...`)
+          addLog(`  ACVP PK: ${edTv.pk} | Sig: ${edTv.signature.slice(0, 32)}…`)
           try {
-            const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(M, hSession, 'Ed25519')
+            const pkBytes = hexToBytes(edTv.pk)
+            const msgBytes = hexToBytes(edTv.msg)
+            const sigBytes = hexToBytes(edTv.signature)
+
+            // Import NIST public key — verify only
+            const pubHandle = hsm_importEdDSAPublicKey(M, hSession, pkBytes, 'Ed25519')
             regKey({
               handle: pubHandle,
               family: 'eddsa',
@@ -1120,41 +1225,33 @@ export const HsmAcvpTesting = () => {
               label: `ACVP EdDSA Ed25519 Public (${eName})`,
               engine: engineId,
             })
-            regKey({
-              handle: privHandle,
-              family: 'eddsa',
-              role: 'private',
-              label: `ACVP EdDSA Ed25519 Private (${eName})`,
-              engine: engineId,
+
+            // msg is hex-encoded ASCII text in the ACVP vector — decode to string
+            const msgStr = new TextDecoder().decode(msgBytes)
+            const isValid = hsm_eddsaVerify(M, hSession, pubHandle, msgStr, sigBytes)
+
+            newResults.push({
+              id: id16,
+              algorithm: `EdDSA Ed25519 (${eName})`,
+              testCase: 'SigVer KAT',
+              referenceUrl: REF.eddsa,
+              status: isValid ? 'pass' : 'fail',
+              details: isValid
+                ? `Verified sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`
+                : 'Signature verification failed against RFC 8032 vector',
             })
-
-            const msg = 'ACVP EdDSA Ed25519 functional round-trip'
-            const sigBytes = hsm_eddsaSign(M, hSession, privHandle, msg)
-            addLog(`[${eName}]   sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`)
-            const isValid = hsm_eddsaVerify(M, hSession, pubHandle, msg, sigBytes)
-
-            if (isValid) {
-              newResults.push({
-                id: `eddsa-func-${eName}`,
-                algorithm: `EdDSA Ed25519 (${eName})`,
-                testCase: 'Functional Sign+Verify',
-                status: 'pass',
-                details: `sig[${sigBytes.length}B]: ${toHex(sigBytes, 16)}…`,
-              })
-              addLog(`[${eName}] EdDSA Ed25519 Functional: PASS`)
-            } else {
-              throw new Error('Signature verification failed on own signature')
-            }
+            addLog(`[${eName}] [id:${id16}] EdDSA Ed25519 SigVer KAT: ${isValid ? 'PASS' : 'FAIL'}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
-              id: `eddsa-func-err-${eName}`,
+              id: `eddsa-sigver-err-${eName}`,
               algorithm: `EdDSA Ed25519 (${eName})`,
-              testCase: 'Functional Sign+Verify',
+              testCase: 'SigVer KAT',
+              referenceUrl: REF.eddsa,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] EdDSA Ed25519: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id16}] EdDSA Ed25519: ${errMessage}`)
           }
         }
 
@@ -1162,6 +1259,7 @@ export const HsmAcvpTesting = () => {
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_PKCS5_PBKD2)) {
           addLog(`[${eName}] [SKIP] PBKDF2: mechanism not supported`)
         } else {
+          const id17 = `pbkdf2-func-${eName}`
           addLog(`[${eName}] Testing PBKDF2 Functional Derivation (PKCS#5 v2.1)...`)
           try {
             const password = new TextEncoder().encode('ACVP-PBKDF2-test-password')
@@ -1179,25 +1277,27 @@ export const HsmAcvpTesting = () => {
 
             const dkHex = toHex(derived1)
             newResults.push({
-              id: `pbkdf2-func-${eName}`,
+              id: id17,
               algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
               testCase: 'Functional Derivation',
+              referenceUrl: REF.pbkdf2,
               status: matches && derived1.length === keyLen ? 'pass' : 'fail',
               details: matches
                 ? `DK[${derived1.length}B]: ${dkHex}`
                 : 'Determinism failure: run1 ≠ run2',
             })
-            addLog(`[${eName}] PBKDF2: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`)
+            addLog(`[${eName}] [id:${id17}] PBKDF2: ${matches ? 'PASS' : 'FAIL'} | DK: ${dkHex}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
               id: `pbkdf2-func-err-${eName}`,
               algorithm: `PBKDF2-HMAC-SHA512 (${eName})`,
               testCase: 'Functional Derivation',
+              referenceUrl: REF.pbkdf2,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] PBKDF2: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id17}] PBKDF2: ${errMessage}`)
           }
         }
 
@@ -1205,6 +1305,7 @@ export const HsmAcvpTesting = () => {
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_HKDF_DERIVE)) {
           addLog(`[${eName}] [SKIP] HKDF: mechanism not supported`)
         } else {
+          const id18 = `hkdf-func-${eName}`
           addLog(`[${eName}] Testing HKDF Functional Derivation (RFC 5869)...`)
           try {
             const ikmHandle = hsm_generateAESKey(
@@ -1260,25 +1361,27 @@ export const HsmAcvpTesting = () => {
 
             const dkHex = toHex(derived1)
             newResults.push({
-              id: `hkdf-func-${eName}`,
+              id: id18,
               algorithm: `HKDF-SHA256 (${eName})`,
               testCase: 'Functional Derivation',
+              referenceUrl: REF.hkdf,
               status: matches && derived1.length === keyLen ? 'pass' : 'fail',
               details: matches
                 ? `OKM[${derived1.length}B]: ${dkHex}`
                 : 'Determinism failure: run1 ≠ run2',
             })
-            addLog(`[${eName}] HKDF: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
+            addLog(`[${eName}] [id:${id18}] HKDF: ${matches ? 'PASS' : 'FAIL'} | OKM: ${dkHex}`)
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
             newResults.push({
               id: `hkdf-func-err-${eName}`,
               algorithm: `HKDF-SHA256 (${eName})`,
               testCase: 'Functional Derivation',
+              referenceUrl: REF.hkdf,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] HKDF: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id18}] HKDF: ${errMessage}`)
           }
         }
 
@@ -1287,6 +1390,7 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] [SKIP] AES-KW: mechanism not supported`)
         } else {
           const tv = aesKwTestVectors.testGroups[0].tests[0]
+          const id19 = `aeskw-acvp-${eName}`
           addLog(`[${eName}] Testing AES-KW Wrap KAT (RFC 3394)...`)
           addLog(`[${eName}]   KEK: ${tv.kek.slice(0, 32)}… Expected: ${tv.wrapped.slice(0, 32)}…`)
           try {
@@ -1338,16 +1442,17 @@ export const HsmAcvpTesting = () => {
 
             const wrappedHex = toHex(wrapped)
             newResults.push({
-              id: `aeskw-acvp-${eName}`,
+              id: id19,
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
+              referenceUrl: REF.aeskw,
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `Wrapped[${wrapped.length}B]: ${wrappedHex}`
                 : `Mismatch: got ${toHex(wrapped, 8)}… expected ${toHex(expectedWrapped, 8)}…`,
             })
             addLog(
-              `[${eName}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
+              `[${eName}] [id:${id19}] AES-KW Wrap KAT: ${matches ? 'PASS' : 'FAIL'} | Wrapped: ${wrappedHex}`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -1355,10 +1460,11 @@ export const HsmAcvpTesting = () => {
               id: `aeskw-err-${eName}`,
               algorithm: `AES-KW-256 (${eName})`,
               testCase: 'Wrap KAT',
+              referenceUrl: REF.aeskw,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] AES-KW: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id19}] AES-KW: ${errMessage}`)
           }
         }
 
@@ -1366,6 +1472,7 @@ export const HsmAcvpTesting = () => {
         if (engine.mechs.size > 0 && !engine.mechs.has(CKM_AES_KEY_WRAP_KWP)) {
           addLog(`[${eName}] [SKIP] AES-KWP: mechanism not supported`)
         } else {
+          const id20 = `aeskwp-func-${eName}`
           addLog(`[${eName}] Testing AES-KWP Wrap+Unwrap Round-Trip (RFC 5649)...`)
           try {
             const kekHandle = hsm_generateAESKey(
@@ -1437,16 +1544,17 @@ export const HsmAcvpTesting = () => {
               origValue.every((b: number, i: number) => b === unwrappedValue[i])
 
             newResults.push({
-              id: `aeskwp-func-${eName}`,
+              id: id20,
               algorithm: `AES-KWP-256 (${eName})`,
               testCase: 'Wrap+Unwrap Round-Trip',
+              referenceUrl: REF.aeskwp,
               status: matches ? 'pass' : 'fail',
               details: matches
                 ? `Key[${origValue.length}B] recovered | wrapped=${wrapped.length}B`
                 : 'Key mismatch after unwrap',
             })
             addLog(
-              `[${eName}] AES-KWP Round-Trip: ${matches ? 'PASS' : 'FAIL'} | key=${origValue.length}B wrapped=${wrapped.length}B`
+              `[${eName}] [id:${id20}] AES-KWP Round-Trip: ${matches ? 'PASS' : 'FAIL'} | key=${origValue.length}B wrapped=${wrapped.length}B`
             )
           } catch (e: unknown) {
             const errMessage = e instanceof Error ? e.message : String(e)
@@ -1454,10 +1562,11 @@ export const HsmAcvpTesting = () => {
               id: `aeskwp-func-err-${eName}`,
               algorithm: `AES-KWP-256 (${eName})`,
               testCase: 'Wrap+Unwrap Round-Trip',
+              referenceUrl: REF.aeskwp,
               status: 'fail',
               details: errMessage,
             })
-            addLog(`[DISCREPANCY] [${eName}] AES-KWP: ${errMessage}`)
+            addLog(`[DISCREPANCY] [${eName}] [id:${id20}] AES-KWP: ${errMessage}`)
           }
         }
       }
@@ -1518,12 +1627,13 @@ export const HsmAcvpTesting = () => {
                   <th className="p-3 font-bold">Test Case</th>
                   <th className="p-3 font-bold">Status</th>
                   <th className="p-3 font-bold">Details</th>
+                  <th className="p-3 font-bold">Ref</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-border/40">
                 {results.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="p-8 text-center text-foreground/30 italic">
+                    <td colSpan={5} className="p-8 text-center text-foreground/30 italic">
                       No results yet. Run the validation suite to assert ACVP compliance.
                     </td>
                   </tr>
@@ -1554,6 +1664,17 @@ export const HsmAcvpTesting = () => {
                         title={res.details}
                       >
                         {res.details}
+                      </td>
+                      <td className="p-3">
+                        <a
+                          href={res.referenceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:text-primary/70 transition-colors"
+                          title={res.referenceUrl}
+                        >
+                          <ExternalLink size={12} />
+                        </a>
                       </td>
                     </tr>
                   ))

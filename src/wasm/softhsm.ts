@@ -2648,6 +2648,66 @@ export const hsm_generateEdDSAKeyPair = (
   }
 }
 
+/**
+ * Import an EdDSA public key from raw key bytes. Returns CKO_PUBLIC_KEY handle.
+ * Used for ACVP SigVer KAT against NIST/RFC 8032 Ed25519 reference vectors.
+ */
+export const hsm_importEdDSAPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubKeyBytes: Uint8Array,
+  curve: 'Ed25519' | 'Ed448' = 'Ed25519'
+): number => {
+  const oid = curve === 'Ed448' ? EC_OID_ED448 : EC_OID_ED25519
+  const oidPtr = writeBytes(M, oid)
+
+  // CKA_EC_POINT: DER OCTET STRING wrapping the raw point — required by C++ SoftHSM
+  const derPoint = new Uint8Array(2 + pubKeyBytes.length)
+  derPoint[0] = 0x04 // OCTET STRING tag
+  derPoint[1] = pubKeyBytes.length
+  derPoint.set(pubKeyBytes, 2)
+  const pointPtr = writeBytes(M, derPoint)
+
+  // CKA_VALUE: raw key bytes — accepted by Rust engine, rejected by C++ (0x12)
+  const valPtr = writeBytes(M, pubKeyBytes)
+
+  const baseAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_EC_POINT, bytesPtr: pointPtr, bytesLen: derPoint.length },
+  ]
+  const pubHPtr = allocUlong(M)
+  try {
+    // Try with CKA_VALUE (Rust engine needs it); fall back without it (C++ rejects it)
+    const tplFull = buildTemplate(M, [
+      ...baseAttrs,
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pubKeyBytes.length },
+    ])
+    const rv = M._C_CreateObject(hSession, tplFull.ptr, 7, pubHPtr) >>> 0
+    freeTemplate(M, tplFull, 7)
+    if (rv === 0x12) {
+      // CKR_ATTRIBUTE_TYPE_INVALID — retry without CKA_VALUE
+      const tplStd = buildTemplate(M, baseAttrs)
+      checkRV(
+        M._C_CreateObject(hSession, tplStd.ptr, 6, pubHPtr),
+        'C_CreateObject(Import EdDSA PubKey)'
+      )
+      freeTemplate(M, tplStd, 6)
+    } else {
+      checkRV(rv, 'C_CreateObject(Import EdDSA PubKey)')
+    }
+    return readUlong(M, pubHPtr)
+  } finally {
+    M._free(pubHPtr)
+    M._free(oidPtr)
+    M._free(pointPtr)
+    M._free(valPtr)
+  }
+}
+
 /** EdDSA sign via C_SignInit(CKM_EDDSA) + C_Sign. */
 export const hsm_eddsaSign = (
   M: SoftHSMModule,

@@ -59,7 +59,7 @@ export interface MigrationStep {
 
 export interface CertificationXref {
   softwareName: string
-  certType: 'FIPS 140-3' | 'ACVP' | 'Common Criteria'
+  certType: 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'PSA Certified'
   certId: string
   certVendor: string
   certProduct: string

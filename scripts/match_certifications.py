@@ -159,6 +159,8 @@ MATCH_RULES = [
     ("Red Hat Enterprise Linux 9", _v("red hat"), ["red hat enterprise linux 9"]),
     # ── PQShield ─────────────────────────────────────────────────────────
     ("PQShield PQSDK", _v("pqshield"), ["pqshield"]),
+    ("PQCryptoLib-Core", _vp("pqshield", "pqcryptolib"), ["pqcryptolib-core", "pqcryptolib"]),
+    ("PQMicroLib-Core", _vp("pqshield", "pqmicrolib"), ["pqmicrolib-core", "pqmicrolib"]),
     # ── Check Point ──────────────────────────────────────────────────────
     ("Check Point Quantum", _vp("check point", "quantum"), ["check point"]),
     # ── wolfSSL ──────────────────────────────────────────────────────────
