@@ -4,6 +4,19 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.51.0] - 2026-03-24
+
+### Data
+
+- **HSM PQC support field consistency pass** (`quantum_safe_cryptographic_software_reference_03232026_r3.csv`): Standardized `pqc_support` column across all HSM entries to use space-separated algorithm names without embedded FIPS numbers, consistent with Entrust nShield and Securosys Primus HSM format. Seven entries corrected:
+  - **Thales Luna HSM**: `Yes (ML-KEM FIPS 203 ML-DSA FIPS 204 LMS/HSS)` → `Yes (ML-KEM ML-DSA LMS/HSS)` (removed FIPS numbers)
+  - **Utimaco SecurityServer**: `Yes (ML-KEM, ML-DSA, XMSS, LMS)` → `Yes (ML-KEM ML-DSA LMS XMSS)` (removed commas, corrected order)
+  - **Marvell LiquidSecurity 2**: `Yes (Beta)` → `Yes (ML-KEM-768 ML-DSA-65 LMS — Beta)` (added algorithm names)
+  - **Futurex CryptoHub**: `Yes (PCI HSM Validated PQC)` → `Yes (ML-KEM-768 ML-DSA-65 — Beta)` (added algorithm names)
+  - **AWS CloudHSM**: `Limited (ML-KEM-768, ML-DSA-65 via SDK)` → `Limited (ML-DSA-44/65/87 preview)` (removed incorrect ML-KEM claim — ML-KEM not in CloudHSM hardware; all 3 ML-DSA variants now listed)
+  - **Google Cloud HSM**: `Yes (via Cloud KMS PQC key types)` → `Limited (Cloud KMS ML-KEM ML-DSA SLH-DSA preview; hardware roadmap)` (hardware HSM is roadmap; "Yes" was misleading)
+  - **Crypto4A QxHSM**: `Yes (ML-KEM FIPS 203 ML-DSA FIPS 204 SLH-DSA FIPS 205 LMS)` → `Yes (ML-KEM ML-DSA SLH-DSA LMS XMSS)` (removed FIPS numbers, added XMSS) [data]
+
 ## [2.50.0] - 2026-03-24
 
 ### Data
