@@ -31,8 +31,8 @@ const updateSW = registerSW({
       if (resp?.status === 200) await r.update()
     }
 
-    // Desktop: poll hourly (setInterval is reliable in foreground tabs)
-    setInterval(tryUpdate, 60 * 60 * 1000)
+    // Desktop: poll every 15 min (setInterval is reliable in foreground tabs)
+    setInterval(tryUpdate, 15 * 60 * 1000)
 
     // iOS Safari + all mobile: check on every return to foreground
     // (setInterval is throttled when backgrounded on iOS)

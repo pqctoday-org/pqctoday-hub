@@ -4,6 +4,16 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.53.0] - 2026-03-24
+
+### Changed
+
+- **PWA update polling interval reduced** (`src/main.tsx`): Service worker update check interval reduced from 60 minutes to 15 minutes. Desktop users with a tab open will now receive new deploys within ~15 minutes instead of up to an hour. iOS already checks on every `visibilitychange` (app foreground) — unaffected. The irreducible floor remains ~10 minutes due to GitHub Pages CDN cache on `sw.js`. [persona:all]
+
+### Fixed
+
+- **Dead code removed — `PWAUpdatePrompt`**: `src/components/ui/PWAUpdatePrompt.tsx` deleted and removed from `MainLayout.tsx`. The component listened for a custom `'pwa-update-available'` event that was never dispatched — it rendered but never triggered. `autoUpdate` mode in vite-plugin-pwa handles updates automatically via `onNeedRefresh` → `updateSW(true)` → page reload. [persona:developer]
+
 ## [2.52.0] - 2026-03-24
 
 ### Fixed

@@ -28,7 +28,7 @@ import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
-import { PWAUpdatePrompt } from '../ui/PWAUpdatePrompt'
+
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
@@ -463,9 +463,6 @@ export const MainLayout = () => {
 
       {/* Achievement Toast Notification */}
       <AchievementToast />
-
-      {/* PWA update notification */}
-      <PWAUpdatePrompt />
 
       {/* First-visit Guided Tour */}
       <GuidedTour />
