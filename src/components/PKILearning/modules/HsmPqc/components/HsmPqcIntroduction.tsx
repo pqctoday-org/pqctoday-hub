@@ -689,7 +689,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                   <th className="text-left p-2 text-muted-foreground font-medium">
                     Downtime (est.)
                   </th>
-                  <th className="text-center p-2 text-muted-foreground font-medium">Recert</th>
+                  <th className="text-center p-2 text-muted-foreground font-medium">FIPS Recert</th>
                 </tr>
               </thead>
               <tbody>
@@ -719,11 +719,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
                     </td>
                     <td className="p-2 text-xs text-muted-foreground">{path.estimatedDowntime}</td>
                     <td className="p-2 text-center">
-                      {path.recertificationRequired ? (
-                        <span className="text-warning text-xs font-bold">Yes</span>
-                      ) : (
-                        <span className="text-success text-xs font-bold">No</span>
-                      )}
+                      <span className="text-warning text-xs font-bold">Required</span>
                     </td>
                   </tr>
                 ))}
