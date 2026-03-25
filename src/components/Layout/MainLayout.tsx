@@ -170,14 +170,6 @@ export const MainLayout = () => {
               }
               title={airplaneMode ? 'Tap to disable Airplane Mode' : 'Tap to enable Airplane Mode'}
             >
-              <img
-                src="/favicon-light-32x32.png"
-                alt=""
-                width={24}
-                height={24}
-                className="rounded-md"
-                aria-hidden="true"
-              />
               <span className="text-base font-bold text-gradient">PQC</span>
               {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
@@ -196,14 +188,6 @@ export const MainLayout = () => {
               }
             >
               <span className="flex items-center gap-2">
-                <img
-                  src="/favicon-light-32x32.png"
-                  alt=""
-                  width={28}
-                  height={28}
-                  className="rounded-md"
-                  aria-hidden="true"
-                />
                 <span className="text-2xl font-bold text-gradient">PQC Today</span>
                 {airplaneMode && (
                   <Plane size={14} className="text-primary animate-pulse" aria-hidden="true" />

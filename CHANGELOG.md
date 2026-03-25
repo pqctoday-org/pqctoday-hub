@@ -15,6 +15,7 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Nav header — text-only branding**: Removed `favicon-light-32x32.png` logo image from both mobile and desktop nav header buttons; "PQC" / "PQC Today" text-gradient branding is now the sole identifier. [infra]
 - **OpenSSL Studio full mobile responsiveness pass**: FileEditor and FileViewer heights `h-64` on mobile (was `h-96`). LogsTab Time and File columns hidden on mobile. TerminalOutput timestamp column narrower and copy button always visible on mobile. WorkbenchFileManager hides timestamp/size columns and shows icon-only buttons on mobile. WorkbenchPreview min-height `80px` on mobile. WorkbenchToolbar uses 3-column grid on mobile vs 2-column on desktop. [view:/openssl]
 - **Playground tab layout**: Tab list wrapped in `relative` container with scroll fade indicator (ResizeObserver-based) for narrow viewports. Card min-height changed to `md:min-h-[85vh]` (was `md:h-[85vh]`) to prevent clipping on short screens. All tab label sizes unified to `text-xs` (was `text-[10px] sm:text-xs`). [view:/playground]
 - **Playground engine mode pill — mobile responsive**: Engine mode radio group stacks full-width below the toggle on mobile, moves inline on `sm+`. [view:/playground]
