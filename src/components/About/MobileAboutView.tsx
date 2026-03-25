@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   Users,
@@ -18,7 +19,10 @@ import {
   FileText,
   CalendarDays,
   ShieldAlert,
+  ShieldCheck,
   Package,
+  Shield,
+  GithubIcon,
   Handshake,
   ChevronRight,
   ChevronDown,
@@ -28,6 +32,10 @@ import {
   Wrench,
   Linkedin,
   Stamp,
+  Scale,
+  Eye,
+  Heart,
+  Info,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -36,6 +44,119 @@ import { PQC_WORKGROUPS, WORKGROUP_REGIONS } from './workgroupData'
 import type { Workgroup } from './workgroupData'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion, useVersionStore } from '../../store/useVersionStore'
+import { LinkToUsButton } from '../ui/LinkToUsButton'
+
+const MISSION_TAGS = [
+  '48 learning modules',
+  '14-step risk assessment',
+  '385+ migration catalog',
+  'PKCS#11 v3.2 simulator',
+  'FIPS 203 / 204 / 205',
+  'AI assistant — runs locally',
+  '5G SUCI simulation',
+  'Zero data collected',
+]
+
+const PRINCIPLES = [
+  {
+    label: 'Worldwide',
+    icon: Globe,
+    text: 'Not US-centric. NIST, ETSI, GSMA, ANSSI, ASD — all regulatory frameworks treated equally.',
+  },
+  {
+    label: 'Transparent',
+    icon: Eye,
+    text: 'Open source. GitHub-governed. Every correction, contribution, and decision is publicly auditable.',
+  },
+  {
+    label: 'Neutral',
+    icon: Scale,
+    text: 'No vendor relationships. No commercial bias. We do not take sides — we provide data so you can.',
+  },
+  {
+    label: 'Private by design',
+    icon: Lock,
+    text: 'No registration. No data collection. Processing runs on your device. We never know you visited.',
+  },
+  {
+    label: 'Free at the core',
+    icon: Heart,
+    text: 'Access to knowledge must not be gated. The community edition is free. Always.',
+  },
+  {
+    label: 'Community governed',
+    icon: Users,
+    text: 'PQC practitioners set the roadmap. The platform serves the community, not the other way around.',
+  },
+]
+
+const NOT_ITEMS = [
+  {
+    label: 'Not a vendor',
+    text: 'We have no commercial relationships with HSM, cloud, or security vendors. Our content is not for sale.',
+  },
+  {
+    label: 'Not a standards body',
+    text: 'We reference and empower NIST, ETSI, ANSSI, and GSMA. We do not replace them.',
+  },
+  {
+    label: 'Not a surveillance platform',
+    text: 'We collect zero user data. We do not know who you are. We never will.',
+  },
+  {
+    label: 'Not US-only',
+    text: 'The quantum transition is a global challenge. Our platform is designed for every regulatory environment.',
+  },
+]
+
+const DATA_FOUNDATION = [
+  { label: 'Timeline Events', value: '203', sub: '80+ orgs, 50+ countries' },
+  { label: 'Library Resources', value: '325', sub: '30+ standards bodies' },
+  { label: 'Algorithm Reference', value: '46', sub: 'FIPS 203/204/205/206' },
+  { label: 'Compliance Frameworks', value: '91', sub: 'NIST, ACVP, CC, ANSSI' },
+  { label: 'Migrate Products', value: '385', sub: '7 infrastructure layers' },
+  { label: 'Threat Landscape', value: '79', sub: '8+ industry sectors' },
+  { label: 'Industry Leaders', value: '181', sub: 'Public, Private, Academic' },
+  { label: 'Quiz Questions', value: '820', sub: 'All PQC topic areas' },
+  { label: 'Authoritative Sources', value: '88', sub: 'Gov, Academic, Industry' },
+  { label: 'Learning Modules', value: '48', sub: '2,400+ min of content' },
+]
+
+const SBOM_GROUPS = [
+  {
+    label: 'UI & Rendering',
+    items: [
+      'React',
+      'Framer Motion',
+      'Lucide React',
+      'Tailwind v4',
+      'React Router',
+      'React Markdown',
+      'clsx',
+      'recharts',
+    ],
+  },
+  {
+    label: 'Utilities',
+    items: ['localforage', 'jszip', 'file-saver', 'papaparse', 'minisearch'],
+  },
+  {
+    label: 'Cryptography & PQC',
+    items: ['OpenSSL WASM 3.6.0', 'liboqs-js v0.15.1', '@noble/*', '@scure/*', 'softhsmv3'],
+  },
+  {
+    label: 'State & DX',
+    items: ['Zustand', 'React Hot Toast', 'React GA4'],
+  },
+  {
+    label: 'Testing',
+    items: ['Vitest', 'Playwright', 'Testing Library', 'axe-playwright'],
+  },
+  {
+    label: 'Rust WASM',
+    items: ['ml-kem', 'ml-dsa', 'slh-dsa', 'wasm-bindgen', 'ed25519-dalek', 'x25519-dalek'],
+  },
+]
 
 const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
 const DISCUSSIONS = [
@@ -209,6 +330,10 @@ export const MobileAboutView = () => {
   const [isCryptoBuffBooksOpen, setIsCryptoBuffBooksOpen] = useState(false)
   const [isDataPrivacyOpen, setIsDataPrivacyOpen] = useState(false)
   const [isPqcAssistantOpen, setIsPqcAssistantOpen] = useState(false)
+  const [isFullVisionOpen, setIsFullVisionOpen] = useState(false)
+  const [isSbomOpen, setIsSbomOpen] = useState(false)
+  const [isSecurityAuditOpen, setIsSecurityAuditOpen] = useState(false)
+  const [isLicenseOpen, setIsLicenseOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -334,6 +459,134 @@ export const MobileAboutView = () => {
           assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
           to your role as a developer, architect, operations professional, executive, or researcher.
         </p>
+
+        {/* "Read full vision" toggle */}
+        <button
+          onClick={() => setIsFullVisionOpen(!isFullVisionOpen)}
+          className="mt-3 flex items-center gap-1 text-xs text-muted-foreground hover:text-primary transition-colors"
+        >
+          {isFullVisionOpen ? 'Collapse vision' : 'Read full vision'}
+          <ChevronDown
+            size={13}
+            className={clsx('transition-transform duration-200', isFullVisionOpen && 'rotate-180')}
+          />
+        </button>
+
+        <AnimatePresence>
+          {isFullVisionOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-4">
+                <hr className="border-border" />
+
+                {/* What we are building */}
+                <div>
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
+                    What we are building
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-3">
+                    PQCToday is a neutral, community-governed platform providing independent
+                    education, hands-on simulation, and migration guidance for the global
+                    post-quantum cryptography transition. We run real cryptographic reference
+                    implementations directly in your browser — no installation, no cloud account, no
+                    data leaving your device.
+                  </p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {MISSION_TAGS.map((tag) => (
+                      <span
+                        key={tag}
+                        className="px-2 py-0.5 rounded-lg bg-muted/40 border border-border text-xs text-muted-foreground"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="border-border" />
+
+                {/* Founding principles */}
+                <div>
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
+                    Our founding principles
+                  </h3>
+                  <div className="grid grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
+                    {PRINCIPLES.map(({ label, icon: Icon, text }) => (
+                      <div key={label} className="bg-card p-3">
+                        <div className="flex items-center gap-1.5 mb-1">
+                          <Icon size={12} className="text-primary shrink-0" />
+                          <p className="text-[10px] font-medium uppercase tracking-wider text-primary">
+                            {label}
+                          </p>
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="border-border" />
+
+                {/* What we are not */}
+                <div>
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
+                    What we are not
+                  </h3>
+                  <div className="grid grid-cols-1 gap-2">
+                    {NOT_ITEMS.map(({ label, text }) => (
+                      <div key={label} className="bg-muted/30 rounded-lg p-3">
+                        <p className="text-[10px] font-medium uppercase tracking-wider text-status-error mb-1">
+                          {label}
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">{text}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <hr className="border-border" />
+
+                {/* Quote */}
+                <div className="bg-muted/20 border border-primary/20 rounded-xl p-4">
+                  <p className="text-sm text-primary leading-relaxed italic">
+                    &ldquo;We seek the endorsement and support of existing standards bodies and PQC
+                    experts. We aim to empower these bodies rather than replace them &mdash; and to
+                    enable them to simplify and improve the deployment of quantum-safe best
+                    practices worldwide.&rdquo;
+                  </p>
+                </div>
+
+                <hr className="border-border" />
+
+                {/* Who this is for */}
+                <div>
+                  <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
+                    Who this is for
+                  </h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-2">
+                    Every organisation that processes sensitive data has a quantum exposure problem
+                    &mdash; whether they know it yet or not. Governments. Banks. Hospitals.
+                    Telecoms. Manufacturers. The practitioner who needs to understand ML-KEM before
+                    their next architecture review. The CISO who needs to explain quantum risk to
+                    their board. The engineer who needs to practice PKCS#11 v3.2 operations before
+                    touching production.
+                  </p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">
+                    PQCToday is built for all of them. The platform adapts to your role, your
+                    industry, your regulatory environment, and your proficiency level &mdash;
+                    without asking you to register, share data, or trust us with anything except
+                    your time.
+                  </p>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* Data Foundation Card */}
@@ -357,28 +610,244 @@ export const MobileAboutView = () => {
           <p className="text-xs text-muted-foreground mt-1">curated records across 10 datasets</p>
         </div>
         <div className="grid grid-cols-2 gap-2">
-          {[
-            { label: 'Timeline Events', value: '203' },
-            { label: 'Migrate Products', value: '385' },
-            { label: 'Library Resources', value: '325' },
-            { label: 'Quiz Questions', value: '820' },
-          ].map((s) => (
+          {DATA_FOUNDATION.map((s) => (
             <div
               key={s.label}
               className="p-2 rounded-lg border border-border bg-muted/30 text-center"
             >
               <div className="text-sm font-bold text-foreground">{s.value}</div>
-              <div className="text-xs text-muted-foreground">{s.label}</div>
+              <div className="text-xs text-muted-foreground leading-tight">{s.label}</div>
+              <div className="text-[10px] text-muted-foreground/60 mt-0.5 leading-tight">
+                {s.sub}
+              </div>
             </div>
           ))}
         </div>
+      </motion.div>
+
+      {/* SBOM Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.13 }}
+        className="glass-panel p-4"
+      >
+        <button
+          onClick={() => setIsSbomOpen(!isSbomOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
+            <Info size={20} />
+          </div>
+          <h2 className="text-lg font-semibold flex-1">Software Bill of Materials</h2>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isSbomOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isSbomOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-4">
+                {SBOM_GROUPS.map((group) => (
+                  <div key={group.label}>
+                    <p className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold mb-1.5">
+                      {group.label}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {group.items.map((item) => (
+                        <span
+                          key={item}
+                          className="text-[10px] font-mono px-1.5 py-0.5 rounded border border-border bg-muted text-muted-foreground"
+                        >
+                          {item}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+                <div className="pt-2 border-t border-border">
+                  <a
+                    href="https://github.com/pqctoday/pqc-timeline-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 text-xs text-primary hover:underline"
+                  >
+                    <ExternalLink size={12} />
+                    View full dependency tree on GitHub
+                  </a>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* Security Audit Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.14 }}
+        className="glass-panel p-4"
+      >
+        <button
+          onClick={() => setIsSecurityAuditOpen(!isSecurityAuditOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
+            <ShieldCheck size={20} />
+          </div>
+          <div className="flex-1 flex items-center gap-2">
+            <h2 className="text-lg font-semibold">Security Audit</h2>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-status-success/10 text-status-success border border-status-success/30">
+              OWASP
+            </span>
+          </div>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isSecurityAuditOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isSecurityAuditOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-3">
+                {/* CVE status */}
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-status-success/5 border border-status-success/30">
+                  <ShieldCheck size={16} className="text-status-success mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-status-success">
+                      0 vulnerabilities (production and dev)
+                    </p>
+                    <p className="text-xs text-muted-foreground mt-0.5">
+                      Verified via <code className="text-[10px]">npm audit</code> in CI on every
+                      push.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/60 mt-0.5">
+                      Last audited: March 22, 2026
+                    </p>
+                  </div>
+                </div>
+                {/* OWASP checklist */}
+                <div className="flex items-start gap-3 p-3 rounded-lg bg-muted/40 border border-border">
+                  <ShieldCheck size={16} className="text-primary mt-0.5 shrink-0" />
+                  <div>
+                    <p className="text-sm font-semibold text-foreground mb-1.5">
+                      OWASP Top 10 compliant
+                    </p>
+                    <ul className="text-xs text-muted-foreground space-y-1 list-disc list-inside">
+                      <li>
+                        No <code className="text-[10px]">dangerouslySetInnerHTML</code>,{' '}
+                        <code className="text-[10px]">eval()</code>, or{' '}
+                        <code className="text-[10px]">innerHTML</code> in production code
+                      </li>
+                      <li>
+                        All external links protected against tabnabbing (
+                        <code className="text-[10px]">rel=&quot;noopener noreferrer&quot;</code>)
+                      </li>
+                      <li>No hardcoded secrets — all credentials via environment variables</li>
+                      <li>Content Security Policy configured with scoped connect-src whitelist</li>
+                      <li>ESLint security plugin active in CI</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
+      {/* License Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.15 }}
+        className="glass-panel p-4"
+      >
+        <button
+          onClick={() => setIsLicenseOpen(!isLicenseOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-secondary/10 text-secondary shrink-0">
+            <Shield size={20} />
+          </div>
+          <h2 className="text-lg font-semibold flex-1">Open Source License</h2>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isLicenseOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isLicenseOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-4 space-y-3">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  PQC Today is open source software released under the{' '}
+                  <strong className="text-foreground">
+                    GNU General Public License v3.0 (GPLv3)
+                  </strong>
+                  . You are free to copy, distribute, and modify this software, provided that any
+                  modifications are also released under the same license terms.
+                </p>
+                <div className="flex flex-col gap-2 pt-1">
+                  <a
+                    href="https://github.com/pqctoday/pqc-timeline-app/blob/main/LICENSE"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <ExternalLink size={14} />
+                    View Full License
+                  </a>
+                  <a
+                    href="https://github.com/pqctoday/pqc-timeline-app"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-sm text-primary hover:underline"
+                  >
+                    <GithubIcon size={14} />
+                    View GitHub Repository
+                  </a>
+                  <LinkToUsButton />
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </motion.div>
 
       {/* Community Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.14 }}
+        transition={{ delay: 0.17 }}
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
@@ -463,7 +932,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.16 }}
+        transition={{ delay: 0.19 }}
         className="glass-panel p-4"
       >
         <button
@@ -542,7 +1011,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.18 }}
+        transition={{ delay: 0.21 }}
         className="glass-panel p-4"
       >
         <button
@@ -612,7 +1081,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
+        transition={{ delay: 0.23 }}
         className="glass-panel p-4"
       >
         <button
@@ -654,7 +1123,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.22 }}
+        transition={{ delay: 0.25 }}
         className="glass-panel p-4"
       >
         <div className="flex items-center gap-3 mb-3">
@@ -775,7 +1244,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.24 }}
+        transition={{ delay: 0.27 }}
         className="glass-panel p-4 text-center space-y-3"
       >
         <p className="text-sm text-muted-foreground">
@@ -805,7 +1274,7 @@ export const MobileAboutView = () => {
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.26 }}
+        transition={{ delay: 0.29 }}
         className="glass-panel p-4 flex flex-col items-center justify-center gap-3"
       >
         <h3 className="text-sm font-semibold">Appearance</h3>
@@ -829,12 +1298,34 @@ export const MobileAboutView = () => {
         </div>
       </motion.div>
 
+      {/* Legal Card */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.31 }}
+        className="glass-panel p-4 text-center"
+      >
+        <h3 className="text-sm font-semibold mb-2">Legal</h3>
+        <p className="text-xs text-muted-foreground max-w-xs mx-auto">
+          This platform embeds open-source cryptographic software classified under ECCN 5D002. Usage
+          is subject to U.S. Export Administration Regulations.
+        </p>
+        <Link
+          to="/terms"
+          className="inline-flex items-center gap-1.5 mt-3 text-sm font-medium text-accent hover:underline"
+        >
+          <FileText size={14} />
+          Terms of Service
+        </Link>
+      </motion.div>
+
       {/* Disclaimer */}
       <div className="text-center px-4">
         <p className="text-xs text-muted-foreground/60">
           © 2025 PQC Today. Data sourced from the public internet resources.
         </p>
       </div>
+
       <CareerJourneyModal
         isOpen={isJourneyModalOpen}
         onClose={() => setIsJourneyModalOpen(false)}
