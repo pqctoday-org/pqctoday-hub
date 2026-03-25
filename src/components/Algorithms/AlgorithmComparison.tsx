@@ -2,6 +2,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { loadAlgorithmsData, type AlgorithmTransition } from '../../data/algorithmsData'
+import { loadPQCAlgorithmsData, type AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import {
   Shield,
   Lock,
@@ -12,25 +13,12 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
-  Wrench,
 } from 'lucide-react'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
 import { useState, useEffect, useMemo } from 'react'
-import { Link } from 'react-router-dom'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
-
-// Extract the primary algorithm family from a PQC replacement string for migrate search
-function getPrimaryAlgoSearch(pqc: string): string {
-  const first = pqc.split(/[,/]/)[0].trim()
-  if (first.startsWith('ML-KEM')) return 'ML-KEM'
-  if (first.startsWith('ML-DSA')) return 'ML-DSA'
-  if (first.startsWith('SLH-DSA') || first.startsWith('SPHINCS')) return 'SLH-DSA'
-  if (first.startsWith('FN-DSA') || first.startsWith('Falcon')) return 'Falcon'
-  if (first.startsWith('LMS') || first.startsWith('HSS')) return 'LMS'
-  return first.split('-')[0]
-}
 
 type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
 type SortDirection = 'asc' | 'desc' | null
@@ -45,13 +33,17 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 }) => {
   // Data loading state
   const [algorithmsData, setAlgorithmsData] = useState<AlgorithmTransition[]>([])
+  const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
 
   // Load data on mount
   useEffect(() => {
-    loadAlgorithmsData()
-      .then((data) => {
-        setAlgorithmsData(data)
+    Promise.all([loadAlgorithmsData(), loadPQCAlgorithmsData()])
+      .then(([transitions, details]) => {
+        setAlgorithmsData(transitions)
+        const map = new Map<string, AlgorithmDetail>()
+        details.forEach((d) => map.set(d.name.toLowerCase(), d))
+        setPqcDetailMap(map)
         setIsLoading(false)
       })
       .catch((error) => {
@@ -62,10 +54,10 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 
   // Column widths state (in pixels)
   const [columnWidths, setColumnWidths] = useState({
-    function: 250,
-    classical: 300,
+    function: 200,
+    classical: 250,
     pqc: 300,
-    deprecation: 450,
+    deprecation: 380,
   })
 
   // Sorting state
@@ -335,6 +327,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           algo.classical.toLowerCase().includes(h.toLowerCase()) ||
                           h.toLowerCase().includes(algo.classical.toLowerCase())
                       )
+                    const pqcDetail = pqcDetailMap.get(
+                      algo.pqc.split(/[,/]/)[0].trim().toLowerCase()
+                    )
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
@@ -351,7 +346,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           'hover:bg-primary/10'
                         )}
                       >
-                        <td className="px-4 py-4" style={{ width: `${columnWidths.function}px` }}>
+                        <td className="px-4 py-3" style={{ width: `${columnWidths.function}px` }}>
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
                             {algo.function.includes('Signature') ? (
                               <FileSignature size={24} className="flex-shrink-0" />
@@ -365,7 +360,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             <span className="truncate">{algo.function}</span>
                           </div>
                         </td>
-                        <td className="px-4 py-4" style={{ width: `${columnWidths.classical}px` }}>
+                        <td className="px-4 py-3" style={{ width: `${columnWidths.classical}px` }}>
                           <div className="flex flex-col gap-1">
                             <span className="text-foreground font-semibold text-sm truncate">
                               {algo.classical}
@@ -377,19 +372,23 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                             )}
                           </div>
                         </td>
-                        <td className="px-4 py-4" style={{ width: `${columnWidths.pqc}px` }}>
+                        <td className="px-4 py-3" style={{ width: `${columnWidths.pqc}px` }}>
                           <div className="flex flex-col gap-1.5">
                             <span className="text-status-success font-semibold text-sm truncate">
                               {algo.pqc}
                             </span>
-                            <Link
-                              to={`/migrate?q=${encodeURIComponent(getPrimaryAlgoSearch(algo.pqc))}`}
-                              onClick={() => logEvent('Algorithms', 'Find Tools', algo.pqc)}
-                              className="inline-flex items-center gap-1 text-[11px] text-muted-foreground hover:text-primary transition-colors w-fit"
-                            >
-                              <Wrench size={11} />
-                              Find tools
-                            </Link>
+                            {pqcDetail && (
+                              <div className="flex items-center gap-1.5 flex-wrap">
+                                {pqcDetail.securityLevel !== null && (
+                                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-primary/10 text-primary border-primary/20">
+                                    L{pqcDetail.securityLevel}
+                                  </span>
+                                )}
+                                <span className="text-[10px] font-mono px-1.5 py-0.5 rounded border bg-muted border-border text-muted-foreground">
+                                  {pqcDetail.publicKeySize.toLocaleString()}B pk
+                                </span>
+                              </div>
+                            )}
                             <AskAssistantButton
                               variant="text"
                               label="Ask about this"
@@ -398,7 +397,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           </div>
                         </td>
                         <td
-                          className="px-4 py-4"
+                          className="px-4 py-3"
                           style={{ width: `${columnWidths.deprecation}px` }}
                         >
                           <div className="flex flex-wrap items-center gap-3">

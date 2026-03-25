@@ -119,105 +119,155 @@ export const KeyTable: React.FC<KeyTableProps> = ({
     return sortDirection === 'asc' ? comparison : -comparison
   })
 
+  const emptyState = (
+    <div className="flex flex-col items-center gap-3 p-8 text-muted-foreground">
+      <KeyIcon size={32} className="opacity-20" />
+      <p className="text-sm italic">No keys generated yet. Go to Settings to generate keys.</p>
+    </div>
+  )
+
   return (
-    <div className="flex-1 min-h-[300px] overflow-hidden rounded-xl border border-border bg-card flex flex-col">
-      <div className="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
-        <table className="w-full text-left text-sm border-collapse table-fixed">
-          <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
-            <tr>
-              {(['name', 'type', 'algorithm', 'size', 'id', 'timestamp'] as SortColumn[]).map(
-                (col) => (
-                  <th
-                    key={col}
-                    className={clsx(
-                      'p-0 relative select-none group',
-                      (col === 'id' || col === 'timestamp') && 'hidden md:table-cell'
-                    )}
-                    // eslint-disable-next-line security/detect-object-injection
-                    style={{ width: columnWidths[col] }}
-                  >
-                    <button
-                      onClick={() => handleSort(col)}
-                      className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
-                    >
-                      {col.charAt(0).toUpperCase() + col.slice(1)}
-                      {renderSortIcon(col)}
-                    </button>
-                    <div
-                      role="none"
-                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
-                      onMouseDown={(e) => startResize(e, col)}
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </th>
-                )
-              )}
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-border/40">
-            {sortedKeys.length === 0 ? (
+    <>
+      {/* Desktop: table layout */}
+      <div className="hidden md:flex flex-1 min-h-[300px] overflow-hidden rounded-xl border border-border bg-card flex-col">
+        <div className="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
+          <table className="w-full text-left text-sm border-collapse table-fixed">
+            <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
               <tr>
-                <td colSpan={6} className="p-12 text-center text-foreground/30 italic">
-                  <div className="flex flex-col items-center gap-3">
-                    <KeyIcon size={32} className="opacity-20" />
-                    No keys generated yet. Go to Settings to generate keys.
-                  </div>
-                </td>
-              </tr>
-            ) : (
-              sortedKeys.map((key) => (
-                <tr
-                  key={key.id}
-                  onClick={() => setSelectedKeyId(key.id)}
-                  className={clsx(
-                    'cursor-pointer transition-colors border-l-2',
-                    selectedKeyId === key.id
-                      ? 'bg-primary/10 border-primary'
-                      : 'hover:bg-accent/50 border-transparent'
-                  )}
-                  tabIndex={0}
-                  role="button"
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                      e.preventDefault()
-                      setSelectedKeyId(key.id)
-                    }
-                  }}
-                >
-                  <td className="p-4 font-medium text-foreground truncate">{key.name}</td>
-                  <td className="p-4">
-                    <span
-                      className={clsx(
-                        'px-2 py-0.5 rounded text-[10px] uppercase font-bold',
-                        key.type === 'public'
-                          ? 'bg-primary/20 text-primary'
-                          : key.type === 'private'
-                            ? 'bg-secondary/20 text-secondary'
-                            : 'bg-accent/20 text-accent'
-                      )}
+                {(['name', 'type', 'algorithm', 'size', 'id', 'timestamp'] as SortColumn[]).map(
+                  (col) => (
+                    <th
+                      key={col}
+                      className="p-0 relative select-none group"
+                      // eslint-disable-next-line security/detect-object-injection
+                      style={{ width: columnWidths[col] }}
                     >
-                      {key.type}
-                    </span>
+                      <button
+                        onClick={() => handleSort(col)}
+                        className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
+                      >
+                        {col.charAt(0).toUpperCase() + col.slice(1)}
+                        {renderSortIcon(col)}
+                      </button>
+                      <div
+                        role="none"
+                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+                        onMouseDown={(e) => startResize(e, col)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </th>
+                  )
+                )}
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-border/40">
+              {sortedKeys.length === 0 ? (
+                <tr>
+                  <td colSpan={6} className="p-12 text-center text-foreground/30 italic">
+                    {emptyState}
                   </td>
-                  <td className="p-4 text-muted-foreground truncate">{key.algorithm}</td>
-                  <td className="p-4 font-mono text-xs text-muted-foreground text-right tabular-nums">
+                </tr>
+              ) : (
+                sortedKeys.map((key) => (
+                  <tr
+                    key={key.id}
+                    onClick={() => setSelectedKeyId(key.id)}
+                    className={clsx(
+                      'cursor-pointer transition-colors border-l-2',
+                      selectedKeyId === key.id
+                        ? 'bg-primary/10 border-primary'
+                        : 'hover:bg-accent/50 border-transparent'
+                    )}
+                    tabIndex={0}
+                    role="button"
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault()
+                        setSelectedKeyId(key.id)
+                      }
+                    }}
+                  >
+                    <td className="p-4 font-medium text-foreground truncate">{key.name}</td>
+                    <td className="p-4">
+                      <span
+                        className={clsx(
+                          'px-2 py-0.5 rounded text-[10px] uppercase font-bold',
+                          key.type === 'public'
+                            ? 'bg-primary/20 text-primary'
+                            : key.type === 'private'
+                              ? 'bg-secondary/20 text-secondary'
+                              : 'bg-accent/20 text-accent'
+                        )}
+                      >
+                        {key.type}
+                      </span>
+                    </td>
+                    <td className="p-4 text-muted-foreground truncate">{key.algorithm}</td>
+                    <td className="p-4 font-mono text-xs text-muted-foreground text-right tabular-nums">
+                      {(() => {
+                        const size = getKeySize(key)
+                        return size !== null ? formatBytes(size) : '-'
+                      })()}
+                    </td>
+                    <td className="p-4 font-mono text-xs text-muted-foreground truncate">
+                      {key.id}
+                    </td>
+                    <td className="p-4 text-xs text-muted-foreground truncate font-mono">
+                      {key.timestamp ? new Date(key.timestamp).toLocaleString() : '-'}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Mobile: card layout */}
+      <div className="md:hidden flex-1 space-y-2 overflow-y-auto">
+        {sortedKeys.length === 0
+          ? emptyState
+          : sortedKeys.map((key) => (
+              <button
+                key={key.id}
+                type="button"
+                onClick={() => setSelectedKeyId(key.id)}
+                className={clsx(
+                  'w-full text-left p-3 rounded-xl border transition-colors',
+                  selectedKeyId === key.id
+                    ? 'bg-primary/10 border-primary'
+                    : 'bg-card border-border hover:border-primary/30'
+                )}
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-medium text-sm text-foreground truncate mr-2">
+                    {key.name}
+                  </span>
+                  <span
+                    className={clsx(
+                      'px-2 py-0.5 rounded text-[10px] uppercase font-bold shrink-0',
+                      key.type === 'public'
+                        ? 'bg-primary/20 text-primary'
+                        : key.type === 'private'
+                          ? 'bg-secondary/20 text-secondary'
+                          : 'bg-accent/20 text-accent'
+                    )}
+                  >
+                    {key.type}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                  <span className="truncate">{key.algorithm}</span>
+                  <span className="font-mono tabular-nums shrink-0">
                     {(() => {
                       const size = getKeySize(key)
                       return size !== null ? formatBytes(size) : '-'
                     })()}
-                  </td>
-                  <td className="p-4 font-mono text-xs text-muted-foreground truncate hidden md:table-cell">
-                    {key.id}
-                  </td>
-                  <td className="p-4 text-xs text-muted-foreground truncate font-mono hidden md:table-cell">
-                    {key.timestamp ? new Date(key.timestamp).toLocaleString() : '-'}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+                  </span>
+                </div>
+              </button>
+            ))}
       </div>
-    </div>
+    </>
   )
 }

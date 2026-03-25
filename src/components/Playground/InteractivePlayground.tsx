@@ -61,9 +61,29 @@ const PlaygroundContent = () => {
   const isSimplifiedPersona = selectedPersona === 'curious' || selectedPersona === 'executive'
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
+  const tabListRef = useRef<HTMLDivElement>(null)
+  const [showTabFade, setShowTabFade] = useState(false)
   useEffect(() => {
     if (error) errorRef.current?.focus()
   }, [error])
+
+  useEffect(() => {
+    const el = tabListRef.current
+    if (!el) return
+    const update = () => {
+      setShowTabFade(
+        el.scrollWidth > el.clientWidth + 1 && el.scrollLeft < el.scrollWidth - el.clientWidth - 1
+      )
+    }
+    update()
+    el.addEventListener('scroll', update, { passive: true })
+    const ro = new ResizeObserver(update)
+    ro.observe(el)
+    return () => {
+      el.removeEventListener('scroll', update)
+      ro.disconnect()
+    }
+  }, [])
 
   // Reset HSM mode if persona changes to simplified while HSM is active
   useEffect(() => {
@@ -86,7 +106,7 @@ const PlaygroundContent = () => {
   }
 
   return (
-    <Card className="p-3 md:p-6 min-h-[60vh] md:h-[85vh] flex flex-col">
+    <Card className="p-3 md:p-6 min-h-[60vh] md:min-h-[85vh] flex flex-col">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
         <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
@@ -96,9 +116,9 @@ const PlaygroundContent = () => {
 
         {/* HSM mode toggle pill — hidden for curious/executive personas */}
         {!isSimplifiedPersona && (
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             {hsmMode && (
-              <div className="flex items-center gap-2 sm:gap-4 mr-2 sm:mr-4 border-r border-border pr-2 sm:pr-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
+              <div className="flex items-center gap-2 sm:gap-4 sm:mr-4 sm:border-r border-border sm:pr-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner w-full sm:w-auto order-last sm:order-first justify-center sm:justify-start">
                 <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
                   Engine:
                 </span>
@@ -213,317 +233,329 @@ const PlaygroundContent = () => {
       )}
 
       {/* Tab Navigation */}
-      <div
-        role="tablist"
-        aria-label="Playground operations"
-        tabIndex={-1}
-        className="flex space-x-1 mb-6 bg-muted p-1 rounded-xl shrink-0 overflow-x-auto scrollbar-hide -mx-2 px-2 sm:mx-0 sm:px-1"
-        onKeyDown={(e) => {
-          const tabs = Array.from(e.currentTarget.querySelectorAll('[role="tab"]')) as HTMLElement[]
-          const idx = tabs.findIndex((t) => t === document.activeElement)
-          if (idx === -1) return
-          let next = idx
-          if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length
-          else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length
-          else if (e.key === 'Home') next = 0
-          else if (e.key === 'End') next = tabs.length - 1
-          else return
-          e.preventDefault()
-          tabs[next].focus()
-          tabs[next].click()
-        }}
-      >
-        <Button
-          role="tab"
-          id="tab-keystore"
-          aria-selected={activeTab === 'keystore'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('keystore')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'keystore'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
+      <div className="relative shrink-0 mb-4 sm:mb-6">
+        <div
+          ref={tabListRef}
+          role="tablist"
+          aria-label="Playground operations"
+          tabIndex={-1}
+          className="flex space-x-1 bg-muted p-1 rounded-xl overflow-x-auto no-scrollbar -mx-2 px-2 sm:mx-0 sm:px-1"
+          onKeyDown={(e) => {
+            const tabs = Array.from(
+              e.currentTarget.querySelectorAll('[role="tab"]')
+            ) as HTMLElement[]
+            const idx = tabs.findIndex((t) => t === document.activeElement)
+            if (idx === -1) return
+            let next = idx
+            if (e.key === 'ArrowRight') next = (idx + 1) % tabs.length
+            else if (e.key === 'ArrowLeft') next = (idx - 1 + tabs.length) % tabs.length
+            else if (e.key === 'Home') next = 0
+            else if (e.key === 'End') next = tabs.length - 1
+            else return
+            e.preventDefault()
+            tabs[next].focus()
+            tabs[next].click()
+          }}
         >
-          <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
-          <span className="text-[10px] sm:text-xs ml-1">
-            {hsmMode ? (
-              <>
-                <span className="sm:hidden">Keys</span>
-                <span className="hidden sm:inline">HSM Keys</span>
-              </>
-            ) : (
-              <>
-                <span className="sm:hidden">Keys</span>
-                <span className="hidden sm:inline">Key Store ({keyStore.length})</span>
-              </>
-            )}
-          </span>
-        </Button>
-        <Button
-          role="tab"
-          id="tab-data"
-          aria-selected={activeTab === 'data'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('data')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'data'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <Database size={16} className="shrink-0" aria-hidden="true" />{' '}
-          <span className="text-[10px] sm:text-xs ml-1">Data</span>
-        </Button>
-        <Button
-          role="tab"
-          id="tab-kem_ops"
-          aria-selected={activeTab === 'kem_ops'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('kem_ops')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'kem_ops'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <Activity size={16} className="shrink-0" aria-hidden="true" />{' '}
-          <span className="text-[10px] sm:text-xs ml-1">
-            <span className="sm:hidden">KEM</span>
-            <span className="hidden sm:inline">KEM &amp; Encrypt</span>
-          </span>
-        </Button>
-
-        <Button
-          role="tab"
-          id="tab-symmetric"
-          aria-selected={activeTab === 'symmetric'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('symmetric')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'symmetric'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <Lock size={16} className="shrink-0" aria-hidden="true" />{' '}
-          <span className="text-[10px] sm:text-xs ml-1">
-            <span className="sm:hidden">Sym</span>
-            <span className="hidden sm:inline">Sym Encrypt</span>
-          </span>
-        </Button>
-        {hsmMode && (
           <Button
             role="tab"
-            id="tab-key_wrap"
-            aria-selected={activeTab === 'key_wrap'}
+            id="tab-keystore"
+            aria-selected={activeTab === 'keystore'}
             aria-controls="playground-tabpanel"
-            onClick={() => handleTabChange('key_wrap')}
+            onClick={() => handleTabChange('keystore')}
             variant="ghost"
             size="sm"
             className={clsx(
               'whitespace-nowrap',
-              activeTab === 'key_wrap'
+              activeTab === 'keystore'
                 ? 'bg-primary/20 text-primary shadow-sm'
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
-            <Layers size={16} className="shrink-0" aria-hidden="true" />{' '}
-            <span className="text-[10px] sm:text-xs ml-1">
-              <span className="sm:hidden">Wrap</span>
-              <span className="hidden sm:inline">Wrap / Unwrap</span>
+            <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
+            <span className="text-xs ml-1">
+              {hsmMode ? (
+                <>
+                  <span className="sm:hidden">Keys</span>
+                  <span className="hidden sm:inline">HSM Keys</span>
+                </>
+              ) : (
+                <>
+                  <span className="sm:hidden">Keys</span>
+                  <span className="hidden sm:inline">Key Store ({keyStore.length})</span>
+                </>
+              )}
             </span>
           </Button>
-        )}
-        <Button
-          role="tab"
-          id="tab-hashing"
-          aria-selected={activeTab === 'hashing'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('hashing')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'hashing'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <Hash size={16} className="shrink-0" aria-hidden="true" />{' '}
-          <span className="text-[10px] sm:text-xs ml-1">Hash</span>
-        </Button>
+          <Button
+            role="tab"
+            id="tab-data"
+            aria-selected={activeTab === 'data'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('data')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'data'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            <Database size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-xs ml-1">Data</span>
+          </Button>
+          <Button
+            role="tab"
+            id="tab-kem_ops"
+            aria-selected={activeTab === 'kem_ops'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('kem_ops')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'kem_ops'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            <Activity size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-xs ml-1">
+              <span className="sm:hidden">KEM</span>
+              <span className="hidden sm:inline">KEM &amp; Encrypt</span>
+            </span>
+          </Button>
 
-        <Button
-          role="tab"
-          id="tab-sign_verify"
-          aria-selected={activeTab === 'sign_verify'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('sign_verify')}
-          variant="ghost"
-          size="sm"
-          className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'sign_verify'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-          )}
-        >
-          <FileSignature size={16} className="shrink-0" aria-hidden="true" />{' '}
-          <span className="text-[10px] sm:text-xs ml-1">
-            <span className="sm:hidden">Sign</span>
-            <span className="hidden sm:inline">Sign &amp; Verify</span>
-          </span>
-        </Button>
-
-        {hsmMode && (
-          <>
+          <Button
+            role="tab"
+            id="tab-symmetric"
+            aria-selected={activeTab === 'symmetric'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('symmetric')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'symmetric'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            <Lock size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-xs ml-1">
+              <span className="sm:hidden">Sym</span>
+              <span className="hidden sm:inline">Sym Encrypt</span>
+            </span>
+          </Button>
+          {hsmMode && (
             <Button
               role="tab"
-              id="tab-key_agree"
-              aria-selected={activeTab === 'key_agree'}
+              id="tab-key_wrap"
+              aria-selected={activeTab === 'key_wrap'}
               aria-controls="playground-tabpanel"
-              onClick={() => handleTabChange('key_agree')}
+              onClick={() => handleTabChange('key_wrap')}
               variant="ghost"
               size="sm"
               className={clsx(
                 'whitespace-nowrap',
-                activeTab === 'key_agree'
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              )}
-            >
-              <ArrowLeftRight size={16} className="shrink-0" aria-hidden="true" />{' '}
-              <span className="text-[10px] sm:text-xs ml-1">
-                <span className="sm:hidden">Agree</span>
-                <span className="hidden sm:inline">Key Agree</span>
-              </span>
-            </Button>
-            <Button
-              role="tab"
-              id="tab-key_derive"
-              aria-selected={activeTab === 'key_derive'}
-              aria-controls="playground-tabpanel"
-              onClick={() => handleTabChange('key_derive')}
-              variant="ghost"
-              size="sm"
-              className={clsx(
-                'whitespace-nowrap',
-                activeTab === 'key_derive'
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              )}
-            >
-              <Filter size={16} className="shrink-0" aria-hidden="true" />{' '}
-              <span className="text-[10px] sm:text-xs ml-1">KDF</span>
-            </Button>
-            <Button
-              role="tab"
-              id="tab-mechanisms"
-              aria-selected={activeTab === 'mechanisms'}
-              aria-controls="playground-tabpanel"
-              onClick={() => handleTabChange('mechanisms')}
-              variant="ghost"
-              size="sm"
-              className={clsx(
-                'whitespace-nowrap',
-                activeTab === 'mechanisms'
+                activeTab === 'key_wrap'
                   ? 'bg-primary/20 text-primary shadow-sm'
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
               <Layers size={16} className="shrink-0" aria-hidden="true" />{' '}
-              <span className="text-[10px] sm:text-xs ml-1">
-                <span className="sm:hidden">Mechs</span>
-                <span className="hidden sm:inline">Mechanisms</span>
+              <span className="text-xs ml-1">
+                <span className="sm:hidden">Wrap</span>
+                <span className="hidden sm:inline">Wrap / Unwrap</span>
               </span>
             </Button>
-            {!isSimplifiedPersona && (
-              <Button
-                role="tab"
-                id="tab-acvp"
-                aria-selected={activeTab === 'acvp'}
-                aria-controls="playground-tabpanel"
-                onClick={() => handleTabChange('acvp')}
-                variant="ghost"
-                size="sm"
-                className={clsx(
-                  'whitespace-nowrap',
-                  activeTab === 'acvp'
-                    ? 'bg-primary/20 text-primary shadow-sm'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                )}
-              >
-                <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
-                <span className="text-[10px] sm:text-xs ml-1">ACVP</span>
-              </Button>
-            )}
-          </>
-        )}
-
-        {!hsmMode && !isSimplifiedPersona && (
+          )}
           <Button
             role="tab"
-            id="tab-acvp"
-            aria-selected={activeTab === 'acvp'}
+            id="tab-hashing"
+            aria-selected={activeTab === 'hashing'}
             aria-controls="playground-tabpanel"
-            onClick={() => handleTabChange('acvp')}
+            onClick={() => handleTabChange('hashing')}
             variant="ghost"
             size="sm"
             className={clsx(
               'whitespace-nowrap',
-              activeTab === 'acvp'
+              activeTab === 'hashing'
                 ? 'bg-primary/20 text-primary shadow-sm'
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
-            <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
-            <span className="text-[10px] sm:text-xs ml-1">ACVP</span>
+            <Hash size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-xs ml-1">Hash</span>
           </Button>
-        )}
 
-        <Button
-          role="tab"
-          id="tab-logs"
-          aria-selected={activeTab === 'logs'}
-          aria-controls="playground-tabpanel"
-          onClick={() => handleTabChange('logs')}
-          variant="ghost"
-          size="sm"
+          <Button
+            role="tab"
+            id="tab-sign_verify"
+            aria-selected={activeTab === 'sign_verify'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('sign_verify')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'sign_verify'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            <FileSignature size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-xs ml-1">
+              <span className="sm:hidden">Sign</span>
+              <span className="hidden sm:inline">Sign &amp; Verify</span>
+            </span>
+          </Button>
+
+          {hsmMode && (
+            <>
+              <Button
+                role="tab"
+                id="tab-key_agree"
+                aria-selected={activeTab === 'key_agree'}
+                aria-controls="playground-tabpanel"
+                onClick={() => handleTabChange('key_agree')}
+                variant="ghost"
+                size="sm"
+                className={clsx(
+                  'whitespace-nowrap',
+                  activeTab === 'key_agree'
+                    ? 'bg-primary/20 text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                )}
+              >
+                <ArrowLeftRight size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-xs ml-1">
+                  <span className="sm:hidden">Agree</span>
+                  <span className="hidden sm:inline">Key Agree</span>
+                </span>
+              </Button>
+              <Button
+                role="tab"
+                id="tab-key_derive"
+                aria-selected={activeTab === 'key_derive'}
+                aria-controls="playground-tabpanel"
+                onClick={() => handleTabChange('key_derive')}
+                variant="ghost"
+                size="sm"
+                className={clsx(
+                  'whitespace-nowrap',
+                  activeTab === 'key_derive'
+                    ? 'bg-primary/20 text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                )}
+              >
+                <Filter size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-xs ml-1">KDF</span>
+              </Button>
+              <Button
+                role="tab"
+                id="tab-mechanisms"
+                aria-selected={activeTab === 'mechanisms'}
+                aria-controls="playground-tabpanel"
+                onClick={() => handleTabChange('mechanisms')}
+                variant="ghost"
+                size="sm"
+                className={clsx(
+                  'whitespace-nowrap',
+                  activeTab === 'mechanisms'
+                    ? 'bg-primary/20 text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                )}
+              >
+                <Layers size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-xs ml-1">
+                  <span className="sm:hidden">Mechs</span>
+                  <span className="hidden sm:inline">Mechanisms</span>
+                </span>
+              </Button>
+              {!isSimplifiedPersona && (
+                <Button
+                  role="tab"
+                  id="tab-acvp"
+                  aria-selected={activeTab === 'acvp'}
+                  aria-controls="playground-tabpanel"
+                  onClick={() => handleTabChange('acvp')}
+                  variant="ghost"
+                  size="sm"
+                  className={clsx(
+                    'whitespace-nowrap',
+                    activeTab === 'acvp'
+                      ? 'bg-primary/20 text-primary shadow-sm'
+                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                  )}
+                >
+                  <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
+                  <span className="text-xs ml-1">ACVP</span>
+                </Button>
+              )}
+            </>
+          )}
+
+          {!hsmMode && !isSimplifiedPersona && (
+            <Button
+              role="tab"
+              id="tab-acvp"
+              aria-selected={activeTab === 'acvp'}
+              aria-controls="playground-tabpanel"
+              onClick={() => handleTabChange('acvp')}
+              variant="ghost"
+              size="sm"
+              className={clsx(
+                'whitespace-nowrap',
+                activeTab === 'acvp'
+                  ? 'bg-primary/20 text-primary shadow-sm'
+                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+              )}
+            >
+              <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-xs ml-1">ACVP</span>
+            </Button>
+          )}
+
+          <Button
+            role="tab"
+            id="tab-logs"
+            aria-selected={activeTab === 'logs'}
+            aria-controls="playground-tabpanel"
+            onClick={() => handleTabChange('logs')}
+            variant="ghost"
+            size="sm"
+            className={clsx(
+              'whitespace-nowrap',
+              activeTab === 'logs'
+                ? 'bg-primary/20 text-primary shadow-sm'
+                : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            )}
+          >
+            {hsmMode ? (
+              <>
+                <Cpu size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-xs ml-1">
+                  <span className="sm:hidden">P11</span>
+                  <span className="hidden sm:inline">PKCS#11 Log</span>
+                </span>
+              </>
+            ) : (
+              <>
+                <FileText size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-xs ml-1">Logs</span>
+              </>
+            )}
+          </Button>
+        </div>
+        <div
           className={clsx(
-            'whitespace-nowrap',
-            activeTab === 'logs'
-              ? 'bg-primary/20 text-primary shadow-sm'
-              : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+            'pointer-events-none absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-muted to-transparent rounded-r-xl transition-opacity duration-200 sm:hidden',
+            showTabFade ? 'opacity-100' : 'opacity-0'
           )}
-        >
-          {hsmMode ? (
-            <>
-              <Cpu size={16} className="shrink-0" aria-hidden="true" />{' '}
-              <span className="text-[10px] sm:text-xs ml-1">
-                <span className="sm:hidden">P11</span>
-                <span className="hidden sm:inline">PKCS#11 Log</span>
-              </span>
-            </>
-          ) : (
-            <>
-              <FileText size={16} className="shrink-0" aria-hidden="true" />{' '}
-              <span className="text-[10px] sm:text-xs ml-1">Logs</span>
-            </>
-          )}
-        </Button>
+          aria-hidden="true"
+        />
       </div>
 
       {/* Content Area */}

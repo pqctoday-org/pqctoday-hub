@@ -11,7 +11,7 @@ def trim(im):
     return im
 
 # Use the best refined AI logo
-img = Image.open('/Users/ericamador/.gemini/antigravity/brain/6f1dcd55-f204-45f6-b0ac-1ab2b74b92a9/logo_variant_sextant_final_polish_1774418120316.png')
+img = Image.open('/Users/ericamador/.gemini/antigravity/brain/6f1dcd55-f204-45f6-b0ac-1ab2b74b92a9/logo_white_bg_variant_2_1774419533487.png')
 
 # 1. Trim all wasted space perfectly
 cropped = trim(img)

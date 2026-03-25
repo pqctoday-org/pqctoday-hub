@@ -38,10 +38,10 @@ export const LogsTab = () => {
         <table className="w-full text-left border-collapse">
           <thead className="bg-muted/50 text-muted-foreground uppercase text-[10px] sticky top-0 backdrop-blur-md z-10">
             <tr>
-              <th className="p-3 font-bold w-20">Time</th>
+              <th className="p-3 font-bold w-20 hidden sm:table-cell">Time</th>
               <th className="p-3 font-bold w-24">Type</th>
               <th className="p-3 font-bold">Command</th>
-              <th className="p-3 font-bold">File</th>
+              <th className="p-3 font-bold hidden sm:table-cell">File</th>
               <th className="p-3 font-bold w-20 text-right">Duration</th>
             </tr>
           </thead>
@@ -55,7 +55,7 @@ export const LogsTab = () => {
             ) : (
               structuredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/50 transition-colors group">
-                  <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top">
+                  <td className="p-3 text-foreground/30 text-[10px] whitespace-nowrap align-top hidden sm:table-cell">
                     {log.timestamp}
                   </td>
                   <td className="p-3 text-xs font-medium text-foreground align-top">
@@ -67,7 +67,7 @@ export const LogsTab = () => {
                       <div className="text-[10px] text-foreground/40 mt-1">{log.details}</div>
                     )}
                   </td>
-                  <td className="p-3 text-xs text-muted-foreground align-top">
+                  <td className="p-3 text-xs text-muted-foreground align-top hidden sm:table-cell">
                     {log.fileName ? (
                       <div>
                         <div className="text-secondary font-medium">{log.fileName}</div>

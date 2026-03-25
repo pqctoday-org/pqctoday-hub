@@ -454,7 +454,7 @@ const KemOpsTabSoftware: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6 items-start">
           {/* ========== ENCAPSULATE COLUMN ========== */}
           <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/30 transition-colors flex flex-col">
             {/* Header */}
@@ -975,7 +975,7 @@ const KemOpsTabSoftware: React.FC = () => {
             Use the shared secret from above as the encryption/decryption key
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
           {/* Encrypt Data */}
           <div className="p-6 bg-card rounded-xl border border-border hover:border-primary/30 transition-colors flex flex-col">
             <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">

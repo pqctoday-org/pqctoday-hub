@@ -72,13 +72,13 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
           </div>
         </div>
 
-        <div className="p-4 bg-muted/40 flex gap-3 group min-h-[160px] relative">
+        <div className="p-4 bg-muted/40 flex gap-3 group min-h-[80px] sm:min-h-[160px] relative">
           <code className="text-primary flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
             $ {command}
           </code>
           <button
             onClick={() => navigator.clipboard.writeText(command)}
-            className="opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-muted rounded"
+            className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-muted rounded"
             title="Copy to clipboard"
           >
             <Copy size={14} />

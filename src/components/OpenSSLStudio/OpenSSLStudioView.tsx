@@ -7,6 +7,7 @@ import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
 import { Terminal, ChevronDown, ChevronUp, FileText, Monitor } from 'lucide-react'
+import clsx from 'clsx'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
@@ -70,6 +71,7 @@ function resolveCmd(param: string | null): OpenSSLCategory {
 export const OpenSSLStudioView = () => {
   const [searchParams] = useSearchParams()
   const [showTerminal, setShowTerminal] = useState(true)
+  const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     resolveCmd(searchParams.get('cmd'))
   )
@@ -95,10 +97,29 @@ export const OpenSSLStudioView = () => {
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
         {/* Left Pane: Workbench (Command Builder & Preview) */}
         <div className="col-span-12 lg:col-span-4 glass-panel flex flex-col overflow-hidden">
-          <div className="p-4 border-b border-border bg-muted">
+          <div
+            className="p-4 border-b border-border bg-muted flex items-center justify-between cursor-pointer lg:cursor-default"
+            onClick={() => setWorkbenchCollapsed(!workbenchCollapsed)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault()
+                setWorkbenchCollapsed(!workbenchCollapsed)
+              }
+            }}
+          >
             <h3 className="font-bold text-foreground flex items-center gap-2">Workbench</h3>
+            <span className="lg:hidden text-muted-foreground">
+              {workbenchCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+            </span>
           </div>
-          <div className="flex-1 overflow-y-auto custom-scrollbar">
+          <div
+            className={clsx(
+              'flex-1 overflow-y-auto custom-scrollbar',
+              workbenchCollapsed && 'hidden lg:block'
+            )}
+          >
             <Workbench category={category} setCategory={setCategory} />
           </div>
         </div>

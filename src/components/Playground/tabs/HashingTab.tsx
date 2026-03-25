@@ -68,7 +68,7 @@ export const HashingTab: React.FC = () => {
         )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
         {/* Input */}
         <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-primary/30 transition-colors">
           <div className="text-sm text-primary mb-4 font-bold uppercase tracking-wider flex items-center gap-2">

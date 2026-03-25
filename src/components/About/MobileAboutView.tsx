@@ -642,7 +642,7 @@ export const MobileAboutView = () => {
             >
               <p className="text-sm text-muted-foreground leading-relaxed mt-3">
                 Ask questions about post-quantum cryptography using our RAG-powered chatbot. It
-                searches ~3,830 curated knowledge chunks and uses Gemini 2.5 Flash to deliver
+                searches ~3,970 curated knowledge chunks and uses Gemini 2.5 Flash to deliver
                 grounded answers with deep links to relevant pages.
               </p>
             </motion.div>

@@ -163,16 +163,16 @@ export const WorkbenchFileManager: React.FC = () => {
 
   return (
     <div className="space-y-4 animate-fade-in">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
           File Manager
         </span>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <button
             className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('add-file-input')?.click()}
           >
-            <Plus size={14} /> Add File
+            <Plus size={14} /> <span className="hidden sm:inline">Add File</span>
             <input
               id="add-file-input"
               type="file"
@@ -238,7 +238,7 @@ export const WorkbenchFileManager: React.FC = () => {
               'Confirm Clear?'
             ) : (
               <>
-                <Trash2 size={14} /> Clear All
+                <Trash2 size={14} /> <span className="hidden sm:inline">Clear All</span>
               </>
             )}
           </button>
@@ -248,13 +248,13 @@ export const WorkbenchFileManager: React.FC = () => {
             className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 disabled:bg-muted disabled:text-muted-foreground border border-primary/40 disabled:border-border rounded text-xs font-medium text-primary disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             title="Backup all files to ZIP"
           >
-            <Archive size={14} /> Backup All
+            <Archive size={14} /> <span className="hidden sm:inline">Backup All</span>
           </button>
           <button
             className="px-3 py-1.5 bg-background hover:bg-accent border border-input rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('import-zip-input')?.click()}
           >
-            <Upload size={14} /> Import ZIP
+            <Upload size={14} /> <span className="hidden sm:inline">Import ZIP</span>
             <input
               id="import-zip-input"
               type="file"
@@ -275,7 +275,7 @@ export const WorkbenchFileManager: React.FC = () => {
           <table className="w-full text-left border-collapse">
             <thead className="bg-muted border-b border-border">
               <tr>
-                <th className="p-0">
+                <th className="p-0 hidden sm:table-cell">
                   <button
                     className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
@@ -320,7 +320,7 @@ export const WorkbenchFileManager: React.FC = () => {
                     Filename <ArrowUpDown size={12} />
                   </button>
                 </th>
-                <th className="p-0">
+                <th className="p-0 hidden sm:table-cell">
                   <button
                     className="w-full text-left p-3 text-xs font-bold text-muted-foreground uppercase tracking-wider cursor-pointer hover:bg-accent transition-colors flex items-center gap-2"
                     onClick={() => {
@@ -361,7 +361,7 @@ export const WorkbenchFileManager: React.FC = () => {
                     key={file.name}
                     className="border-b border-border hover:bg-accent/50 transition-colors"
                   >
-                    <td className="p-3 text-foreground/70 font-mono text-xs whitespace-nowrap">
+                    <td className="p-3 text-foreground/70 font-mono text-xs whitespace-nowrap hidden sm:table-cell">
                       {formatCompactDate(file.timestamp)}
                     </td>
                     <td className="p-2">
@@ -389,10 +389,10 @@ export const WorkbenchFileManager: React.FC = () => {
                         )
                       })()}
                     </td>
-                    <td className="p-2 text-foreground font-mono text-sm truncate max-w-[200px]">
+                    <td className="p-2 text-foreground font-mono text-sm truncate max-w-[120px] sm:max-w-[200px]">
                       {file.name}
                     </td>
-                    <td className="p-2 text-foreground/70 font-mono text-xs whitespace-nowrap">
+                    <td className="p-2 text-foreground/70 font-mono text-xs whitespace-nowrap hidden sm:table-cell">
                       {formatBytes(file.size)}
                     </td>
                     <td className="p-2 whitespace-nowrap">

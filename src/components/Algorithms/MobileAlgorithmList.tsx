@@ -14,7 +14,7 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
   }
 
   return (
-    <div className="flex flex-col gap-3 pb-8">
+    <div className="flex flex-col gap-2 pb-8">
       {data.map((algo, index) => (
         <div
           key={`${algo.classical}-${algo.function}-${index}`}
@@ -49,6 +49,16 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
               <div className="flex items-center gap-1 text-xs text-muted-foreground/60 font-mono">
                 <ArrowRight size={10} />
                 <span>{cleanName(algo.pqc)}</span>
+              </div>
+              <div className="flex items-center gap-1.5 mt-1 flex-wrap">
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted border border-border text-muted-foreground font-mono">
+                  {algo.function}
+                </span>
+                {algo.keySize && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted border border-border text-muted-foreground font-mono">
+                    {algo.keySize}
+                  </span>
+                )}
               </div>
             </div>
           </div>

@@ -23,7 +23,7 @@ export const DataTab: React.FC = () => {
         <Database size={18} className="text-accent" /> Data Management
       </h4>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-6">
         {/* Signing Section */}
         <div className="space-y-6">
           <h5 className="text-sm font-bold text-muted-foreground uppercase tracking-wider flex items-center gap-2">

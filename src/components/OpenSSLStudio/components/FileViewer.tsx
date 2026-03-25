@@ -270,7 +270,7 @@ export const FileViewer: React.FC = () => {
   return (
     <div
       ref={viewerRef}
-      className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-96 border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
+      className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-64 sm:h-96 border border-primary/30 shadow-[0_0_15px_rgba(var(--primary-rgb),0.1)]"
     >
       {/* Header */}
       <div className="p-3 border-b border-border bg-muted flex items-center justify-between">

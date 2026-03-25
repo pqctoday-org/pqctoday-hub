@@ -92,7 +92,7 @@ export const FileEditor = () => {
   if (!editingFile) return null
 
   return (
-    <div className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-96 border border-primary/30 shadow-glow-sm">
+    <div className="glass-panel flex flex-col overflow-hidden mb-6 animate-fade-in shrink-0 h-64 sm:h-96 border border-primary/30 shadow-glow-sm">
       {/* Header */}
       <div className="p-3 border-b border-border bg-muted flex items-center justify-between">
         <div className="flex items-center gap-3">

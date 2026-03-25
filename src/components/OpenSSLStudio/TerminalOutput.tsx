@@ -36,7 +36,7 @@ export const TerminalOutput = () => {
         <div className="flex items-center gap-2 bg-muted/20 p-1 rounded-lg">
           <label
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              'flex items-center gap-1.5 px-2 py-1.5 sm:py-1 rounded cursor-pointer transition-colors select-none',
               showStdout
                 ? 'bg-muted text-status-success'
                 : 'text-muted-foreground hover:text-foreground'
@@ -53,7 +53,7 @@ export const TerminalOutput = () => {
 
           <label
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              'flex items-center gap-1.5 px-2 py-1.5 sm:py-1 rounded cursor-pointer transition-colors select-none',
               showStderr
                 ? 'bg-muted text-status-error'
                 : 'text-muted-foreground hover:text-foreground'
@@ -70,7 +70,7 @@ export const TerminalOutput = () => {
 
           <label
             className={clsx(
-              'flex items-center gap-1.5 px-2 py-1 rounded cursor-pointer transition-colors select-none',
+              'flex items-center gap-1.5 px-2 py-1.5 sm:py-1 rounded cursor-pointer transition-colors select-none',
               showDebug
                 ? 'bg-muted text-status-info'
                 : 'text-muted-foreground hover:text-foreground'
@@ -106,18 +106,18 @@ export const TerminalOutput = () => {
         ) : (
           <table className="w-full text-left border-collapse table-fixed">
             <colgroup>
-              <col className="w-40" />
+              <col className="w-24 sm:w-40" />
               <col className="w-auto" />
             </colgroup>
             <tbody className="divide-y divide-border" data-testid="terminal-logs">
               {filteredLogs.map((log) => (
                 <tr key={log.id} className="hover:bg-muted/30 transition-colors">
-                  <td className="px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[10px] select-none border-r border-border">
+                  <td className="px-1.5 sm:px-3 py-1 text-foreground/30 align-top whitespace-nowrap font-mono text-[9px] sm:text-[10px] select-none border-r border-border">
                     [{log.timestamp}]
                   </td>
                   <td
                     className={clsx(
-                      'px-3 py-1 align-top font-mono leading-tight break-all whitespace-pre-wrap text-[11px]',
+                      'px-1.5 sm:px-3 py-1 align-top font-mono leading-tight break-all whitespace-pre-wrap text-[11px]',
                       log.type === 'error'
                         ? 'text-status-error'
                         : log.type === 'info'
