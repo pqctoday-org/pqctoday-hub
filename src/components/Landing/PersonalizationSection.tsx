@@ -188,7 +188,7 @@ const SelectionCard = ({
     onClick={onClick}
     onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && onClick()}
     aria-pressed={isActive}
-    className={`relative flex flex-col rounded-xl transition-all duration-200 cursor-pointer select-none p-3
+    className={`relative flex flex-col rounded-xl transition-all duration-200 cursor-pointer select-none p-3 min-h-[44px]
       ${
         isActive
           ? 'bg-primary/[0.08] border-2 border-primary shadow-sm'
@@ -613,12 +613,18 @@ export const PersonalizationSection = () => {
     }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const steps = [
-    { id: 'experience', label: 'Experience' },
-    { id: 'role', label: 'Role' },
-    { id: 'region', label: 'Region' },
-    { id: 'industry', label: 'Industry' },
-  ]
+  const steps =
+    selectedPersona === 'curious'
+      ? [
+          { id: 'experience', label: 'Experience' },
+          { id: 'role', label: 'Role' },
+        ]
+      : [
+          { id: 'experience', label: 'Experience' },
+          { id: 'role', label: 'Role' },
+          { id: 'region', label: 'Region' },
+          { id: 'industry', label: 'Industry' },
+        ]
 
   const suggestedPersona = inferPersonaFromAssessment({
     assessmentStatus,
@@ -634,8 +640,15 @@ export const PersonalizationSection = () => {
   const handlePersona = (id: PersonaId) => {
     const next = id === selectedPersona ? null : id
     setPersona(next)
-    // Auto-set experience level to 'curious' when Curious Explorer persona is selected
-    if (next === 'curious') setExperienceLevel('curious')
+    if (next === 'curious') {
+      // Auto-set experience level, region (Global), and industry (All) — then complete wizard
+      setExperienceLevel('curious')
+      setRegion('global')
+      setCountry('Global')
+      setIndustries([])
+      setAssessIndustry('')
+      setIsCompleted(true)
+    }
   }
 
   const handleRegion = (id: Region) => {
@@ -797,7 +810,7 @@ export const PersonalizationSection = () => {
                       <button
                         onClick={() => index <= currentStep && setCurrentStep(index)}
                         disabled={index > currentStep}
-                        className={`w-8 h-8 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
+                        className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
                           ${
                             isActive
                               ? 'bg-primary text-primary-foreground ring-4 ring-primary/20 scale-110'
@@ -954,7 +967,7 @@ export const PersonalizationSection = () => {
                           <Info size={12} /> How do industry filters work?
                         </button>
                       </div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                      <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                         <SelectionCard
                           isActive={selectedIndustries.length === 0}
                           onClick={() => {
@@ -990,21 +1003,21 @@ export const PersonalizationSection = () => {
                   variant="outline"
                   onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
                   disabled={currentStep === 0}
-                  className="px-8 rounded-full font-bold border-border/60 hover:border-border hover:bg-muted/50"
+                  className="flex-1 sm:flex-none px-8 rounded-full font-bold border-border/60 hover:border-border hover:bg-muted/50"
                 >
                   Back
                 </Button>
                 {currentStep === steps.length - 1 ? (
                   <Button
                     onClick={handleDone}
-                    className="px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                   >
                     Done
                   </Button>
                 ) : (
                   <Button
                     onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
-                    className="px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                   >
                     Next
                   </Button>

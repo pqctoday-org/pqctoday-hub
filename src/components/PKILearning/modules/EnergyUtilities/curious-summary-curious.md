@@ -1,0 +1,3 @@
+The computers that manage our electrical grid and power plants often stay in operation for decades in remote locations. A hacker could record the secure communications between these power grids today, saving the encrypted data until a powerful quantum computer allows them to decode it years from now.
+
+By studying this old decoded data, they could perfectly map out the power grid, finding its weaknesses to launch a devastating physical attack. To protect our critical infrastructure against this catastrophic scenario, utility companies must start installing massive Post-Quantum locks on their network communications today, well before quantum computers become a reality in the hands of bad actors.

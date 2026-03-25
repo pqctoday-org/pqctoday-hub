@@ -1,0 +1,3 @@
+Think of Post-Quantum Cryptography like needing two completely different types of secure envelopes to send a package.
+
+To securely send a secret code to a friend across the internet, you use a "KEM" (Key Encapsulation Mechanism). Think of this as a heavy-duty digital lockbox that safely hides and transports the secret without anyone peeking. But to prove that _you_ actually sent the lockbox and it isn't from an impostor, you must stamp it with a "DSA" (Digital Signature Algorithm)—an unbreakable, unique wax seal. Upgrading a network to Post-Quantum means simultaneously adopting both of these massive new tools to ensure data is both perfectly hidden and undeniably authentic.

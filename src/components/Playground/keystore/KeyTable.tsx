@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { Key as KeyIcon, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import clsx from 'clsx'
 import type { Key } from '../../../types'
+import { getKeySize, formatBytes } from './keySizeUtils'
 
 interface KeyTableProps {
   keyStore: Key[]
@@ -10,7 +11,7 @@ interface KeyTableProps {
   setSelectedKeyId: (id: string | null) => void
 }
 
-type SortColumn = 'name' | 'type' | 'algorithm' | 'id' | 'timestamp'
+type SortColumn = 'name' | 'type' | 'algorithm' | 'size' | 'id' | 'timestamp'
 type SortDirection = 'asc' | 'desc'
 
 export const KeyTable: React.FC<KeyTableProps> = ({
@@ -27,6 +28,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
     name: 250,
     type: 100,
     algorithm: 150,
+    size: 100,
     id: 300,
     timestamp: 180,
   })
@@ -102,6 +104,12 @@ export const KeyTable: React.FC<KeyTableProps> = ({
       return sortDirection === 'asc' ? aTime - bTime : bTime - aTime
     }
 
+    if (sortColumn === 'size') {
+      const aSize = getKeySize(a) ?? -1
+      const bSize = getKeySize(b) ?? -1
+      return sortDirection === 'asc' ? aSize - bSize : bSize - aSize
+    }
+
     // eslint-disable-next-line security/detect-object-injection
     const aValue = String(a[sortColumn]).toLowerCase()
     // eslint-disable-next-line security/detect-object-injection
@@ -113,38 +121,43 @@ export const KeyTable: React.FC<KeyTableProps> = ({
 
   return (
     <div className="flex-1 min-h-[300px] overflow-hidden rounded-xl border border-border bg-card flex flex-col">
-      <div className="overflow-auto flex-1 custom-scrollbar">
+      <div className="overflow-x-auto overflow-y-auto flex-1 custom-scrollbar">
         <table className="w-full text-left text-sm border-collapse table-fixed">
           <thead className="bg-muted text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md z-10">
             <tr>
-              {(['name', 'type', 'algorithm', 'id', 'timestamp'] as SortColumn[]).map((col) => (
-                <th
-                  key={col}
-                  className="p-0 relative select-none group"
-                  // eslint-disable-next-line security/detect-object-injection
-                  style={{ width: columnWidths[col] }}
-                >
-                  <button
-                    onClick={() => handleSort(col)}
-                    className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
+              {(['name', 'type', 'algorithm', 'size', 'id', 'timestamp'] as SortColumn[]).map(
+                (col) => (
+                  <th
+                    key={col}
+                    className={clsx(
+                      'p-0 relative select-none group',
+                      (col === 'id' || col === 'timestamp') && 'hidden md:table-cell'
+                    )}
+                    // eslint-disable-next-line security/detect-object-injection
+                    style={{ width: columnWidths[col] }}
                   >
-                    {col.charAt(0).toUpperCase() + col.slice(1)}
-                    {renderSortIcon(col)}
-                  </button>
-                  <div
-                    role="none"
-                    className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
-                    onMouseDown={(e) => startResize(e, col)}
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                </th>
-              ))}
+                    <button
+                      onClick={() => handleSort(col)}
+                      className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
+                    >
+                      {col.charAt(0).toUpperCase() + col.slice(1)}
+                      {renderSortIcon(col)}
+                    </button>
+                    <div
+                      role="none"
+                      className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+                      onMouseDown={(e) => startResize(e, col)}
+                      onClick={(e) => e.stopPropagation()}
+                    />
+                  </th>
+                )
+              )}
             </tr>
           </thead>
           <tbody className="divide-y divide-border/40">
             {sortedKeys.length === 0 ? (
               <tr>
-                <td colSpan={5} className="p-12 text-center text-foreground/30 italic">
+                <td colSpan={6} className="p-12 text-center text-foreground/30 italic">
                   <div className="flex flex-col items-center gap-3">
                     <KeyIcon size={32} className="opacity-20" />
                     No keys generated yet. Go to Settings to generate keys.
@@ -187,8 +200,16 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                     </span>
                   </td>
                   <td className="p-4 text-muted-foreground truncate">{key.algorithm}</td>
-                  <td className="p-4 font-mono text-xs text-muted-foreground truncate">{key.id}</td>
-                  <td className="p-4 text-xs text-muted-foreground truncate font-mono">
+                  <td className="p-4 font-mono text-xs text-muted-foreground text-right tabular-nums">
+                    {(() => {
+                      const size = getKeySize(key)
+                      return size !== null ? formatBytes(size) : '-'
+                    })()}
+                  </td>
+                  <td className="p-4 font-mono text-xs text-muted-foreground truncate hidden md:table-cell">
+                    {key.id}
+                  </td>
+                  <td className="p-4 text-xs text-muted-foreground truncate font-mono hidden md:table-cell">
                     {key.timestamp ? new Date(key.timestamp).toLocaleString() : '-'}
                   </td>
                 </tr>

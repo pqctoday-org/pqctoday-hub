@@ -1,0 +1,3 @@
+From smart thermostats to internet-connected hospital heart monitors, the world relies on billions of tiny devices constantly sending data to the cloud. Because these devices have very little memory and battery power, they use the smallest possible mathematical locks to save energy.
+
+Unfortunately, those small locks are the absolute easiest for a quantum computer to break. The technology world is currently in a desperate race to design incredibly sophisticated "Post-Quantum" locks that can provide maximum security against supercomputers while still fitting inside these tiny, low-power digital devices.

@@ -556,7 +556,9 @@ export const LibraryView: React.FC = () => {
 
           {viewMode === 'cards' && <SortControl value={sortBy} onChange={setSortBy} />}
 
-          <ViewToggle mode={viewMode} onChange={setViewMode} />
+          <div className="hidden md:block">
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+          </div>
         </div>
       </div>
 

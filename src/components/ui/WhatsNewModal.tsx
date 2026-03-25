@@ -348,7 +348,7 @@ export const WhatsNewModal = () => {
                 size="sm"
                 onClick={handleDismiss}
                 aria-label="Close what's new"
-                className="h-8 w-8 p-0 text-muted-foreground hover:text-foreground"
+                className="h-9 w-9 p-0 text-muted-foreground hover:text-foreground"
               >
                 <X size={16} />
               </Button>
@@ -371,13 +371,13 @@ export const WhatsNewModal = () => {
                       onClick={() => setShowPersonaInfo((prev) => !prev)}
                       aria-label={showPersonaInfo ? 'Hide filtering info' : 'How filtering works'}
                       className={clsx(
-                        'ml-0.5 transition-colors',
+                        'ml-0.5 p-1.5 -m-1 transition-colors rounded',
                         showPersonaInfo
                           ? 'text-primary'
                           : 'text-muted-foreground hover:text-foreground'
                       )}
                     >
-                      <Info size={12} />
+                      <Info size={14} />
                     </button>
                     {showCounts && (
                       <>

@@ -1,0 +1,3 @@
+The Operating System (OS)—like Windows, macOS, or Linux—is the vital core software that strictly manages absolutely everything on a computer. Deep inside its massive code, the OS relies entirely on digital signatures to securely verify and install critical updates from the manufacturer.
+
+Because a powerful quantum computer could eventually forge these fundamental signatures, a hacker could trick the OS into unknowingly installing a devastating virus disguised as an "official" system update. Tech giants are currently constantly rolling out massive, hidden upgrades to their core OS code to ensure these digital updates remain unconditionally trusted in the unpredictable Post-Quantum era.

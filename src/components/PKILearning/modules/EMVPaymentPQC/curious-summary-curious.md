@@ -1,0 +1,3 @@
+Every time you insert your credit card into a payment terminal, a hidden digital conversation takes place to verify the card isn't fake. This relies on extremely tight, efficient security math built directly into the card's tiny, constrained microchip.
+
+Because new Post-Quantum math requires significantly more processing power and storage space, trying to wedge it into a tiny credit card chip is an enormous challenge. It will take time to roll out slightly smaller quantum-proof methods (like Falcon). The entire payment industry is working carefully to identify these tiny alternatives to ensure future credit cards can still be processed instantly at the cash register without needing a massive, bulky computer.

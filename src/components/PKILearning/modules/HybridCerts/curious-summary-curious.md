@@ -1,0 +1,3 @@
+Moving the entire global internet to the new Post-Quantum security will easily take a decade. During this bumpy transition period, some older computers won't understand the new locks, and newer computers will demand the stronger protection.
+
+To bridge this massive gap, security engineers invented "Hybrid Certificates." These act like a universal digital ID badge that physically holds _two_ security locks on it at the exact same time: one standard mathematical lock for the older computers to understand, and one massive Post-Quantum lock to protect against future supercomputers. This allows totally different systems to interact securely without causing the internet to break.

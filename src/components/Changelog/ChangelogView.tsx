@@ -375,17 +375,17 @@ export const ChangelogView = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="relative space-y-4 sm:pl-8"
+        className="relative space-y-4 pl-6 sm:pl-8"
       >
         {/* Timeline spine */}
-        <div className="hidden sm:block absolute left-[14px] top-2 bottom-2 w-px bg-border/40" />
+        <div className="absolute left-[10px] sm:left-[14px] top-2 bottom-2 w-px bg-border/40" />
 
         {filteredVersions.map((v, idx) => (
           <div key={v.version} className="relative">
             {/* Version milestone dot */}
             <div
               className={clsx(
-                'hidden sm:block absolute top-[22px] -left-6 w-3 h-3 rounded-full ring-2 ring-background z-10',
+                'absolute top-[22px] -left-[18px] sm:-left-6 w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full ring-2 ring-background z-10',
                 idx === 0 ? 'bg-primary' : 'bg-border'
               )}
             />

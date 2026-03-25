@@ -148,6 +148,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const renderMenu = () => {
     if (!menuPos) return null
+    // Clamp left so menu stays within viewport
+    const menuWidth = Math.max(menuPos.minWidth, 200)
+    const clampedLeft = Math.min(menuPos.left, window.innerWidth - menuWidth - 8)
     return createPortal(
       <div
         ref={menuPortalRef}
@@ -157,8 +160,9 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         style={{
           position: 'fixed',
           top: menuPos.top,
-          left: menuPos.left,
+          left: Math.max(8, clampedLeft),
           minWidth: menuPos.minWidth,
+          maxWidth: 'calc(100vw - 16px)',
           zIndex: 9999,
         }}
         className="bg-popover border border-border rounded-lg shadow-xl overflow-hidden transform origin-top max-h-60 overflow-y-auto"

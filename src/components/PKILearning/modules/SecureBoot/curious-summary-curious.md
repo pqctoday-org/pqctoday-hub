@@ -1,0 +1,3 @@
+When you turn on a modern computer or smartphone, the very first thing it does is execute a "Secure Boot." It thoroughly checks a digital signature to mathematically guarantee that its core operating system wasn't secretly replaced by a highly destructive virus or spy software while the machine was turned off.
+
+Because a powerful quantum computer could eventually forge this digital signature, a hacker could potentially trick the computer into launching a malicious, invisible operating system. Computer manufacturers are urgently rushing to upgrade these deeply rooted start-up signatures to Post-Quantum math before quantum computers even exist.

@@ -1,0 +1,3 @@
+Executive business leaders don't need to understand complex cryptography math, but they absolutely must understand massive business risks. The mandatory transition to Post-Quantum security will easily cost millions of dollars and require years of careful, highly disruptive IT planning.
+
+If executives simply ignore this invisible threat, their companies risk devastating data breaches, crippling regulatory fines, and a massive loss of consumer trust. Understanding the business impact ensures that IT teams actually receive the necessary budget to protect the company's future before it's too late.

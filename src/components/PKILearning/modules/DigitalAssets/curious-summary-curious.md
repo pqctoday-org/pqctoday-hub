@@ -1,0 +1,3 @@
+Cryptocurrencies like Bitcoin and digital assets rely entirely on digital signatures to prove ownership. There is no central bank; math proves who owns what. If a quantum computer breaks this math, a hacker could forge any signature and instantly steal funds from any digital wallet, irreversibly draining the network.
+
+To survive, blockchains must plan a massive, coordinated upgrade to new Post-Quantum math to protect wallets before powerful quantum computers are built. Organizations holding massive amounts of digital assets must migrate their cold storage vaults securely to prevent Harvest Now, Forge Later attacks.

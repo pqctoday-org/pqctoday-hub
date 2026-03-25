@@ -42,7 +42,7 @@ export const EndorseButton: React.FC<EndorseButtonProps> = ({
         variant="ghost"
         size="sm"
         onClick={handleClick}
-        className={`inline-flex items-center gap-1.5 text-xs transition-colors ${
+        className={`inline-flex items-center gap-1.5 text-xs min-h-[44px] transition-colors ${
           endorsed
             ? 'text-primary bg-primary/15 hover:bg-primary/20'
             : 'text-primary hover:text-primary/80'
@@ -65,7 +65,7 @@ export const EndorseButton: React.FC<EndorseButtonProps> = ({
       variant="ghost"
       size="sm"
       onClick={handleClick}
-      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[36px] [@media(pointer:coarse)]:min-w-[36px] transition-colors rounded-lg ${
+      className={`p-1.5 h-auto min-h-0 [@media(pointer:coarse)]:min-h-[44px] [@media(pointer:coarse)]:min-w-[44px] transition-colors rounded-lg ${
         endorsed
           ? 'text-primary bg-primary/15 ring-1 ring-primary/30 hover:bg-primary/20'
           : 'text-primary hover:text-primary/80 hover:bg-primary/10'

@@ -44,13 +44,15 @@ const SortHeader = ({
   sk,
   sortKey,
   onSort,
+  className,
 }: {
   label: string
   sk: SortKey
   sortKey: SortKey
   onSort: (k: SortKey) => void
+  className?: string
 }) => (
-  <th className="text-left">
+  <th className={clsx('text-left', className)}>
     <button
       onClick={() => onSort(sk)}
       className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-3 px-4 w-full"
@@ -144,15 +146,33 @@ export const ModuleTable = ({
   })()
 
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
-      <table className="w-full text-sm">
+    <div className="rounded-xl border border-border overflow-hidden overflow-x-auto">
+      <table className="w-full text-sm min-w-[480px]">
         <thead className="bg-muted/30 border-b border-border">
           <tr>
             <th className="w-8 py-3 px-4" />
             <SortHeader label="Module" sk="title" sortKey={sortKey} onSort={handleSort} />
-            <SortHeader label="Track" sk="track" sortKey={sortKey} onSort={handleSort} />
-            <SortHeader label="Difficulty" sk="difficulty" sortKey={sortKey} onSort={handleSort} />
-            <SortHeader label="Duration" sk="duration" sortKey={sortKey} onSort={handleSort} />
+            <SortHeader
+              label="Track"
+              sk="track"
+              sortKey={sortKey}
+              onSort={handleSort}
+              className="hidden md:table-cell"
+            />
+            <SortHeader
+              label="Difficulty"
+              sk="difficulty"
+              sortKey={sortKey}
+              onSort={handleSort}
+              className="hidden md:table-cell"
+            />
+            <SortHeader
+              label="Duration"
+              sk="duration"
+              sortKey={sortKey}
+              onSort={handleSort}
+              className="hidden sm:table-cell"
+            />
             <SortHeader label="Status" sk="status" sortKey={sortKey} onSort={handleSort} />
             <th className="py-3 px-4 text-xs font-semibold text-muted-foreground text-right">
               Progress

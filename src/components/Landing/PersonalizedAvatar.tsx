@@ -9,6 +9,7 @@ import {
   Code,
   Cpu,
   Factory,
+  Globe,
   GraduationCap,
   HeartPulse,
   Landmark,
@@ -67,8 +68,8 @@ const INDUSTRY_SHORT: Record<string, string> = {
   Other: 'Other',
 }
 
-const REGION_CONFIG: Record<Region, { flag: string; label: string } | null> = {
-  global: null,
+const REGION_CONFIG: Record<Region, { flag: string | null; label: string }> = {
+  global: { flag: null, label: 'Global' },
   americas: { flag: '/flags/us.svg', label: 'Americas' },
   eu: { flag: '/flags/eu.svg', label: 'Europe' },
   apac: { flag: '/flags/au.svg', label: 'APAC' },
@@ -96,9 +97,10 @@ export const PersonalizedAvatar: React.FC<PersonalizedAvatarProps> = ({
   const primaryIndustry = industries[0]
   const IndIcon = primaryIndustry ? (INDUSTRY_ICONS[primaryIndustry] ?? Factory) : null
   const indShort = primaryIndustry ? (INDUSTRY_SHORT[primaryIndustry] ?? primaryIndustry) : null
+  const showAllIndustries = persona && industries.length === 0
   const regionCfg = region ? REGION_CONFIG[region] : null
 
-  const hasDetails = expCfg || IndIcon || regionCfg
+  const hasDetails = expCfg || IndIcon || showAllIndustries || regionCfg
 
   return (
     <div className="relative w-full max-w-[220px] mx-auto group">
@@ -143,7 +145,7 @@ export const PersonalizedAvatar: React.FC<PersonalizedAvatarProps> = ({
                 </motion.span>
               )}
 
-              {IndIcon && indShort && (
+              {(IndIcon && indShort) || showAllIndustries ? (
                 <motion.span
                   key="ind"
                   initial={{ scale: 0, opacity: 0 }}
@@ -151,10 +153,10 @@ export const PersonalizedAvatar: React.FC<PersonalizedAvatarProps> = ({
                   exit={{ scale: 0, opacity: 0 }}
                   className="inline-flex items-center gap-0.5 text-[9px] font-semibold px-1.5 py-0.5 rounded-full bg-background/80 border border-border/50 text-secondary"
                 >
-                  <IndIcon size={9} />
-                  {indShort}
+                  {IndIcon ? <IndIcon size={9} /> : <Layers size={9} />}
+                  {indShort ?? 'All'}
                 </motion.span>
-              )}
+              ) : null}
 
               {regionCfg && (
                 <motion.span
@@ -164,11 +166,15 @@ export const PersonalizedAvatar: React.FC<PersonalizedAvatarProps> = ({
                   exit={{ scale: 0, opacity: 0 }}
                   className="inline-flex items-center gap-0.5 text-[9px] font-bold tracking-wider px-1.5 py-0.5 rounded-full bg-accent/10 border border-accent/20 text-accent"
                 >
-                  <img
-                    src={regionCfg.flag}
-                    alt={regionCfg.label}
-                    className="w-3 h-2.5 object-cover rounded-[1px]"
-                  />
+                  {regionCfg.flag ? (
+                    <img
+                      src={regionCfg.flag}
+                      alt={regionCfg.label}
+                      className="w-3 h-2.5 object-cover rounded-[1px]"
+                    />
+                  ) : (
+                    <Globe size={9} />
+                  )}
                   {regionCfg.label}
                 </motion.span>
               )}

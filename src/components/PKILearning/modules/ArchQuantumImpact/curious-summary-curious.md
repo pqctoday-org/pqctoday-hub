@@ -1,0 +1,5 @@
+Think of a Security Architect like the master builder for a company's digital fortress. Currently, the "locks and keys" used to protect data are permanently cemented directly into the walls of the apps and websites. While this works fine today, it makes it incredibly difficult to change those locks when they eventually break.
+
+With the looming threat of incredibly powerful quantum computers breaking these traditional locks, companies have a massive problem. If the locks are hardcoded into every brick of the building, the only way to upgrade the security is to tear down the entire digital structure and rebuild it from scratch—a process that takes years and costs millions.
+
+To prevent this disaster, architects are introducing a concept called "Crypto-Agility." Instead of permanently cementing locks into the walls, they are building universal "lock sockets." This means that when a new, quantum-proof lock is invented, IT teams can simply pop out the old one and click the new one into place across the entire company in seconds, without having to rebuild any walls.

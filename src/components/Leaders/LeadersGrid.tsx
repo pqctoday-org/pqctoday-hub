@@ -11,6 +11,7 @@ import {
   Users,
   Award,
   ShieldX,
+  Info,
 } from 'lucide-react'
 
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -74,7 +75,7 @@ export const LeadersGrid = () => {
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
-  const { selectedIndustries } = usePersonaStore()
+  const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
@@ -330,6 +331,21 @@ export const LeadersGrid = () => {
         flagResourceType="Leaders"
       />
 
+      {/* Curious user intro context */}
+      {(selectedPersona === 'curious' || experienceLevel === 'curious') && (
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-secondary/20 bg-secondary/5 text-sm">
+          <Info size={16} className="text-secondary mt-0.5 shrink-0" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-foreground">Who are these people?</span>
+            <p className="text-muted-foreground text-xs">
+              These are the researchers, executives, and organizations leading the global transition
+              to quantum-safe cryptography. They set standards, build products, and shape government
+              policy. Use the filters above to explore by region, sector, or category.
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* Leader consent / removal CTAs */}
       <div className="flex flex-wrap items-center justify-center gap-3">
         <Button
@@ -457,7 +473,9 @@ export const LeadersGrid = () => {
             <SortControl value={sortBy} onChange={setSortBy} options={LEADER_SORT_OPTIONS} />
           )}
 
-          <ViewToggle mode={viewMode} onChange={setViewMode} />
+          <div className="hidden md:block">
+            <ViewToggle mode={viewMode} onChange={setViewMode} />
+          </div>
         </div>
       </div>
 

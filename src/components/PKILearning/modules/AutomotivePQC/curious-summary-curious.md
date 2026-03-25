@@ -1,0 +1,5 @@
+Modern cars aren't just engines and wheels anymore; they are essentially giant computers driving down the street. Just like your smartphone, the software running the car's engine, brakes, and steering needs regular digital updates. The car uses digital signatures to verify that an update is legitimately coming from the manufacturer and not a hacker.
+
+Since cars stay on the road for 15 to 20 years, the security math originally programmed into them is going to outlive its usefulness. In the near future, hackers with access to a powerful quantum computer could forge these digital signatures. This means a hacker could trick the vehicle into downloading a malicious update containing a virus, directly taking over the car's most critical safety systems.
+
+To stop this from happening, automakers are racing to install new Post-Quantum security directly into the physical computer chips of the vehicles _today_. This quantum-proof math ensures that the digital updates the car receives over its entire 20-year lifespan remain completely secure and untampered with.

@@ -1,0 +1,3 @@
+MACsec is a foundational technology that scrambles data as it travels over the physical ethernet cables inside a massive office building or high-security data center. This prevents corporate spies from simply plugging a rigged laptop into a lobby wall socket to read the company's private network traffic.
+
+However, the digital keys that lock this traffic are currently exchanged using math that is highly vulnerable to quantum computers. Hardware engineers are upgrading these incredibly fast network switches to use Post-Quantum key exchanges, ensuring the very cables inside the walls remain perfectly secure for the next few decades.

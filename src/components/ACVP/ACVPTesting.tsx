@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { FileJson, Play, CheckCircle, XCircle } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '../ui/button'
 import type { Key } from '../../types'
 import mlkemTestVectors from '../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../data/acvp/mldsa_test.json'
@@ -205,27 +206,21 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
   }
 
   return (
-    <div className="glass-panel p-6 h-[85vh] flex flex-col">
+    <div className="glass-panel p-3 md:p-6 min-h-[60vh] md:h-[85vh] flex flex-col">
       <div className="flex items-center justify-between mb-6 shrink-0">
         <h3 className="text-2xl font-bold flex items-center gap-2">
           <CheckCircle className="text-success" aria-hidden="true" />
           ACVP Automated Testing
         </h3>
         <div className="flex gap-3">
-          <button
-            onClick={importKeys}
-            className="btn-secondary flex items-center gap-2"
-            disabled={loading}
-          >
-            <FileJson size={18} /> Import Test Keys
-          </button>
-          <button
-            onClick={runTests}
-            className="btn-primary flex items-center gap-2"
-            disabled={loading}
-          >
-            <Play size={18} /> Run Validation Suite
-          </button>
+          <Button variant="secondary" onClick={importKeys} disabled={loading}>
+            <FileJson size={18} /> <span className="hidden sm:inline">Import Test Keys</span>
+            <span className="sm:hidden">Import</span>
+          </Button>
+          <Button variant="gradient" onClick={runTests} disabled={loading}>
+            <Play size={18} /> <span className="hidden sm:inline">Run Validation Suite</span>
+            <span className="sm:hidden">Run</span>
+          </Button>
         </div>
       </div>
 
@@ -233,8 +228,8 @@ export const ACVPTesting = ({ keyStore, setKeyStore }: ACVPTestingProps) => {
         {/* Results Column */}
         <div className="space-y-4 flex flex-col min-h-0">
           <h4 className="font-bold text-muted-foreground uppercase tracking-wider">Test Results</h4>
-          <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-y-auto custom-scrollbar">
-            <table className="w-full text-left text-sm">
+          <div className="bg-muted/30 border border-border rounded-lg overflow-hidden flex-1 overflow-x-auto overflow-y-auto custom-scrollbar">
+            <table className="w-full text-left text-sm min-w-[400px]">
               <thead className="bg-muted/30 text-muted-foreground uppercase text-xs sticky top-0 backdrop-blur-md">
                 <tr>
                   <th className="p-3 font-bold">Algorithm</th>

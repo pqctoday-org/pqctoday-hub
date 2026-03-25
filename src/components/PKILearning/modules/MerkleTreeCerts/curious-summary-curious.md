@@ -1,0 +1,3 @@
+A digital signature mathematically guarantees that a computer file hasn't been maliciously altered. While most of the world is transitioning to massive new Post-Quantum math for signatures, there is another highly trusted secure method called "Stateful Hash-Based Signatures" (like Merkle Trees).
+
+These rely on well-tested, older math, but they strictly require the computer to keep perfect, irreversible count of every single signature it has ever made. Because they are highly secure but difficult to manage, they are reserved strictly for vital background systems, like securely updating a server's absolute core firmware.

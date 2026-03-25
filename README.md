@@ -39,7 +39,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
     asymmetric keys, inspect wrapped blobs, and unwrap them back — all logged to the PKCS#11
     call log
   - **HSM Key Store**: session-scoped table of all PKCS#11-generated keys with handle, algorithm,
-    role, variant, and timestamp; expanded attribute inspector for `CKA_EXTRACTABLE`,
+    role, variant, size (FIPS 203/204 spec-accurate estimation), and timestamp; aggregate key
+    count and total byte size shown in the header; expanded attribute inspector for `CKA_EXTRACTABLE`,
     `CKA_SENSITIVE`, `CKA_LOCAL`, `CKA_ALWAYS_SENSITIVE`, `CKA_NEVER_EXTRACTABLE`,
     `CKA_ENCAPSULATE`, `CKA_DECAPSULATE`, `CKA_KEY_GEN_MECHANISM`, `CKA_PARAMETER_SET`;
     all key generation forms expose `CKA_EXTRACTABLE` and usage attribute toggles
@@ -63,6 +64,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
     SHA-256, RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256, ECDSA P-384, EdDSA (Ed25519),
     ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS 204); runs on both
     C++ and Rust engines in Dual Mode simultaneously
+  - **Key size display**: Software Key Store and HSM Key Registry both show per-key material
+    sizes (B/KB) with sortable Size column and aggregate totals in the header
+  - **Persona-aware simplification**: Curious and Executive personas see a streamlined Playground
+    with no HSM mode toggle and no ACVP tab
+  - **Responsive mobile layout**: abbreviated tab labels, responsive grids, touch-target-compliant
+    buttons (44px minimum), and viewport-clamped dropdowns
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
@@ -286,6 +293,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
   - **Security Stack Layer**: KMS, PKI, Crypto Libraries, Certificate Lifecycle, Secrets, IAM,
     Data Protection, CIAM — 42 products including OpenSSL, Bouncy Castle, HashiCorp Vault, Okta
+  - **Mobile migration phase selector**: `FilterDropdown` visible on mobile replacing the desktop
+    step rail that was hidden on small screens
   - **7-Step Migration Workflow**: Assess, Plan, Pilot, Implement, Test, Optimize, Measure
   - **Framework Mappings**: NIST, ETSI, and CISA guideline alignment
   - **Gap Analysis**: Coverage assessment with priority matrix
@@ -379,11 +388,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
     for the first time. Curated 9-module learning path (PQC 101 → Quantum Threats → Risk Management
     → Data Sensitivity → Compliance Strategy → Standards Bodies → Crypto Agility → Migration Program
     → Quiz), simplified AI chat language with a "Curious" badge, and beginner-friendly suggested
-    questions across all 6 pages
+    questions across all 6 pages; auto-completes onboarding wizard (Global region, all industries);
+    Playground hides HSM mode toggle and ACVP tab for streamlined experience
   - **"In Simple Terms" banner**: collapsible `CuriousSummaryBanner` shown at the top of every
     learning module when experience level is Curious — renders plain-language `curious-summary.md`
-    content (~8th-grade reading level, real-world analogies, ~200-350 words); gracefully absent if
-    a module has no summary file
+    content (~8th-grade reading level, real-world analogies, ~200-350 words); **Curious persona
+    variant**: dedicated `curious-summary-curious.md` with further simplified language and
+    persona-specific `gcp_*-curious.png` infographics for all 50 modules (generated via Gemini
+    1.5 Pro + Imagen 3.0); gracefully absent if a module has no summary file
   - **Visual tab**: dedicated Visual tab on all 48 modules rendering a 640×640 single-panel
     infographic and a fully rewritten "In Simple Terms" summary — conversational prose verified
     line-by-line against each module's source content, available at all experience levels;
@@ -461,7 +473,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
     model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
     tips to guide model selection
-  - Client-side RAG retrieval using MiniSearch over 3,957 content chunks from 22 data sources
+  - Client-side RAG retrieval using MiniSearch over 3,971 content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
   - **Document enrichment**: 260+ archived HTML/PDF documents enriched with 18 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
@@ -499,6 +511,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Compliance Landscape**: Interactive 2024–2036 deadline timeline with urgency color-coding
     (imminent/near-term/future), country filters, sort controls (Deadline / Name), and
     persona-aware pre-filtering
+  - **Mobile certification filtering**: cert type filter pills (All/FIPS/ACVP/CC) and progressive
+    "Load more" pagination on mobile viewports
+  - **Curious persona context banner**: standardization bodies vs. certification schemes vs.
+    compliance frameworks explained inline for non-technical users
   - Framework cards with PQC requirement indicators, enforcement body, website links, and
     cross-references to Library and Timeline; ViewToggle (grid / list) for layout preference
   - **My Frameworks bookmarking**: checkbox toggle on every card and table row — add frameworks
@@ -512,7 +528,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - ANSSI recommendations, BSI Technical Guidelines, ENISA PQC guidelines
   - Common Criteria certifications (CC/CCRA/EUCC), CMVP/ACVP validation
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository (326 entries)
+- **Standards Library**: Comprehensive PQC standards repository (327 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more
@@ -527,7 +543,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Detailed Threat Insights**: Popups with specific "Harvest Now, Decrypt Later" risks, vulnerable
     algorithms, PQC replacements, and primary source citations
   - Direct access to primary source references for each threat
-- **Transformation Leaders**: 68 consent-verified profiles of key PQC transition figures
+- **Transformation Leaders**: 71 consent-verified profiles of key PQC transition figures
 
 > 📋 See [REQUIREMENTS.md](REQUIREMENTS.md) for detailed specifications of each feature.
 

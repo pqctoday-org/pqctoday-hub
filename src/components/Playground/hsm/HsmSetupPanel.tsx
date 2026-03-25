@@ -319,7 +319,7 @@ export const HsmSetupPanel = () => {
                 key={tab}
                 variant="outline"
                 size="sm"
-                className="text-xs h-7"
+                className="text-xs h-9"
                 onClick={() => setActiveTab(tab)}
               >
                 {label}

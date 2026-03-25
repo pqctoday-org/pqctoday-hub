@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState, useRef, useEffect } from 'react'
 import type { LucideIcon } from 'lucide-react'
-import { MessageCircle } from 'lucide-react'
+import { MessageCircle, MoreHorizontal } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { SourcesButton } from '@/components/ui/SourcesButton'
 import { ShareButton } from '@/components/ui/ShareButton'
@@ -54,6 +55,20 @@ export const PageHeader = ({
   testId,
 }: PageHeaderProps) => {
   const openChat = useRightPanelStore((s) => s.open)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const mobileMenuRef = useRef<HTMLDivElement>(null)
+
+  // Close mobile menu on outside click
+  useEffect(() => {
+    if (!mobileMenuOpen) return
+    const handler = (e: MouseEvent) => {
+      if (!mobileMenuRef.current?.contains(e.target as Node)) setMobileMenuOpen(false)
+    }
+    document.addEventListener('mousedown', handler)
+    return () => document.removeEventListener('mousedown', handler)
+  }, [mobileMenuOpen])
+
+  const hasActions = dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
@@ -64,7 +79,9 @@ export const PageHeader = ({
       <p className="hidden lg:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
         {description}
       </p>
-      {(endorseUrl || flagUrl) && (
+
+      {/* Mobile/tablet action row — visible below lg */}
+      {hasActions && (
         <div className="flex lg:hidden justify-center items-center gap-2 mb-2">
           {endorseUrl && (
             <EndorseButton
@@ -82,9 +99,47 @@ export const PageHeader = ({
               variant="text"
             />
           )}
+          <div className="relative" ref={mobileMenuRef}>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setMobileMenuOpen((p) => !p)}
+              aria-label="More actions"
+              aria-expanded={mobileMenuOpen}
+              className="min-h-[44px] min-w-[44px] p-0"
+            >
+              <MoreHorizontal size={20} />
+            </Button>
+            {mobileMenuOpen && (
+              <div
+                className="absolute right-0 top-full mt-1 z-50 bg-popover border border-border rounded-lg shadow-xl p-2 flex flex-col gap-1 min-w-[180px]"
+                role="menu"
+              >
+                {viewType && <SourcesButton viewType={viewType} />}
+                {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
+                <GlossaryButton />
+                {onExport && <ExportButton onExport={onExport} />}
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setMobileMenuOpen(false)
+                    openChat('chat')
+                  }}
+                  className="w-full justify-start gap-2 min-h-[44px]"
+                  role="menuitem"
+                >
+                  <MessageCircle size={15} aria-hidden="true" />
+                  PQC Assistant
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       )}
-      {(dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl) && (
+
+      {/* Desktop action row — visible at lg+ */}
+      {hasActions && (
         <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
           {dataSource && <p>{dataSource}</p>}
           {viewType && <SourcesButton viewType={viewType} />}

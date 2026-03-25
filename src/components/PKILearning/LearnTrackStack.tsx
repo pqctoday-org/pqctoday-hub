@@ -297,7 +297,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       {meta.track}
                     </h4>
                     <p
-                      className={`text-xs hidden md:block mt-0.5 truncate transition-colors ${isHidden ? 'text-muted-foreground/30' : 'text-muted-foreground'}`}
+                      className={`text-xs mt-0.5 truncate transition-colors ${isHidden ? 'text-muted-foreground/30' : 'text-muted-foreground'}`}
                     >
                       {meta.description}
                     </p>
@@ -354,7 +354,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                 </div>
               </div>
 
-              {/* Mobile-only: module count + restore button + expand chevron */}
+              {/* Mobile-only: module count + quiz + restore button + expand chevron */}
               <div className="flex md:hidden items-center justify-between mt-1.5 gap-2">
                 <span className="text-xs text-muted-foreground/70 tabular-nums">
                   {filteredCount < totalCount
@@ -362,6 +362,20 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     : `${totalCount} modules`}
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
+                  {quizCategories.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        navigateToQuiz(quizCategories)
+                      }}
+                      className={`flex items-center gap-1 text-xs px-2.5 py-1 min-h-[36px] rounded-full border transition-colors
+                        ${trackColorBadge} border-current/30 hover:opacity-80`}
+                    >
+                      <ClipboardList size={11} aria-hidden="true" />
+                      Quiz
+                    </button>
+                  )}
                   {filteredCount < totalCount && (
                     <button
                       type="button"
@@ -369,7 +383,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                         e.stopPropagation()
                         onClearFilters?.()
                       }}
-                      className="text-xs px-2 py-0.5 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
+                      className="text-xs px-2.5 py-1 min-h-[36px] rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
                     >
                       Restore
                     </button>

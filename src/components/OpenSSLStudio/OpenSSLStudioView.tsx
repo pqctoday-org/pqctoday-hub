@@ -6,7 +6,7 @@ import { WorkbenchFileManager } from './components/WorkbenchFileManager'
 import { TerminalOutput } from './TerminalOutput'
 import { FileEditor } from './FileEditor'
 import { FileViewer } from './components/FileViewer'
-import { Terminal, ChevronDown, ChevronUp, FileText } from 'lucide-react'
+import { Terminal, ChevronDown, ChevronUp, FileText, Monitor } from 'lucide-react'
 import { LogsTab } from './LogsTab'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
@@ -85,6 +85,12 @@ export const OpenSSLStudioView = () => {
         shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.0 in Your Browser"
         shareText="Run real OpenSSL 3.6.0 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
       />
+
+      {/* Desktop recommended banner — visible below lg */}
+      <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+        <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
+        <span>Best experienced on desktop — scroll down for terminal and file manager.</span>
+      </div>
 
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
         {/* Left Pane: Workbench (Command Builder & Preview) */}

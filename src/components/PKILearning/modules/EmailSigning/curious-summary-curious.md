@@ -1,0 +1,3 @@
+When highly secure organizations send sensitive emails, they use complex math to lock the message and definitively prove the sender's identity. The current system relies on sending the 'key' to open the message securely hidden inside the email itself via a method called "key transport".
+
+Because quantum computers can easily pick this specific type of lock and steal the hidden key, the system is being completely overhauled. Instead of sending hidden keys inside emails, the new Post-Quantum method allows the sender and receiver to securely agree on a new, unbreakable shared password without ever actually sending it across the internet, protecting the most sensitive executive communications from future decryption.

@@ -1,0 +1,5 @@
+Around the world, different governments and regulatory agencies are making the transition to Post-Quantum security mandatory. However, they are all setting slightly different rules and deadlines. For example, some agencies require companies to fully transition to the new quantum-safe math by 2030, while others require companies to run old and new math at the same time ("hybrid mode") starting much sooner.
+
+If a global company fails to map out these conflicting rules, they could face enormous fines, lose government contracts, or be forced to abruptly halt their software deployments. They cannot just upgrade whenever they feel like it; they are bound by strict legal compliance deadlines.
+
+A successful strategy requires a map of every single cryptographic lock inside a company's infrastructure. By comparing this map against all the different global deadlines, a company can prioritize testing and upgrading their most critical systems well in advance, passing their audits smoothly before the governmental deadlines arrive.

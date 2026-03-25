@@ -1,0 +1,3 @@
+When you see the little padlock icon in your web browser, it means your computer and the website have securely agreed on a secret password to lock your connection. This process (the TLS handshake) currently relies on math that a quantum computer could easily break, allowing a hacker sitting in a coffee shop to listen in on your "secure" banking session.
+
+To stop this from happening, the entire structure of the internet is currently being upgraded. Browsers and web servers will soon officially adopt a new, Post-Quantum handshake, ensuring that everything you type into websites remains perfectly private from the moment you hit "Enter."

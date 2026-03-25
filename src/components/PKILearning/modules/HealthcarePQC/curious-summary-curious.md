@@ -1,0 +1,3 @@
+Your personal health records—including DNA data, medical history, and sensitive diagnoses—must legally remain strictly confidential for your entire lifetime. Unfortunately, bad actors are aggressively stealing huge amounts of encrypted healthcare data today.
+
+They can't read this stolen data yet, but they plan to hold onto it for years until they can use a powerful quantum computer to effortlessly unlock it. Healthcare providers must urgently adopt Post-Quantum encryption _today_ to protect sensitive patient records from this "Harvest Now, Decrypt Later" attack, ensuring your privacy isn't violated decades from now.

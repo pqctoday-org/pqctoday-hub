@@ -1,0 +1,3 @@
+Every company relies on ancient "legacy" applications to run critical, behind-the-scenes background tasks. These apps were never built with modern security in mind and their old digital locks are essentially hardcoded and rusted shut.
+
+Trying to force brand new, massive Post-Quantum locks into these ancient, fragile applications will often break them entirely. Because rewriting millions of lines of old code is incredibly expensive, IT teams are researching creative ways to "wrap" these old applications in a secure Post-Quantum bubble. This protects the legacy code from future attacks without having to touch the fragile programming inside.

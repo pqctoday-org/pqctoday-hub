@@ -249,7 +249,7 @@ const SupportBadge = ({ supported, note }: { supported: boolean; note: string })
 const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
   <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
     <div className="fixed inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
-    <div className="relative z-10 w-full max-w-3xl bg-card border border-border rounded-lg shadow-xl my-8">
+    <div className="relative z-10 w-full max-w-3xl bg-card border border-border rounded-lg shadow-xl my-4 sm:my-8">
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div>
           <h2 className="text-sm font-semibold text-foreground">
@@ -296,7 +296,7 @@ const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
               {m.keyConstraints}
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1">
                 <p className="text-[10px] font-semibold text-foreground/70">AWS CloudHSM</p>
                 <SupportBadge supported={m.aws.supported} note={m.aws.note} />

@@ -99,6 +99,7 @@ export const MainLayout = () => {
       label: 'Playground',
       icon: FlaskConical,
       hiddenOnMobile: true,
+      mobileMore: true,
       section: 'assess',
     },
     {
@@ -106,6 +107,7 @@ export const MainLayout = () => {
       label: 'OpenSSL Studio',
       icon: Activity,
       hiddenOnMobile: true,
+      mobileMore: true,
       section: 'assess',
     },
     // — Keep Up to Date —
@@ -253,7 +255,7 @@ export const MainLayout = () => {
                         }
                       >
                         <item.icon size={18} aria-hidden="true" className="lg:mr-2" />
-                        <span className="lg:hidden text-[9px] leading-none mt-0.5 truncate max-w-[40px] text-center">
+                        <span className="lg:hidden text-[10px] leading-none mt-0.5 truncate max-w-[44px] text-center">
                           {item.label}
                         </span>
                         <span className="hidden lg:inline">{item.label}</span>

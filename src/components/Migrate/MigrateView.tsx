@@ -21,6 +21,7 @@ import {
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
+import { MIGRATION_STEPS } from '../../data/migrationWorkflowData'
 import type { MigrationStep, SoftwareItem } from '../../types/MigrateTypes'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
@@ -462,6 +463,28 @@ export const MigrateView: React.FC = () => {
             <MigrationWorkflow onViewSoftware={handleViewSoftware} />
           </div>
         )}
+      </div>
+
+      {/* Mobile migration step selector — visible below md */}
+      <div className="md:hidden">
+        <FilterDropdown
+          label="Migration Phase"
+          items={MIGRATION_STEPS.map((s) => ({
+            id: s.id,
+            label: `${s.stepNumber}. ${s.shortTitle}`,
+          }))}
+          selectedId={stepFilter?.stepId ?? 'All'}
+          onSelect={(id) => {
+            if (id === 'All') {
+              setStepFilter(null)
+            } else {
+              const step = MIGRATION_STEPS.find((s) => s.id === id)
+              if (step) handleViewSoftware(step)
+            }
+          }}
+          defaultLabel="All Phases"
+          noContainer
+        />
       </div>
 
       {/* Industry filter banner (from ?industry= deep link) */}

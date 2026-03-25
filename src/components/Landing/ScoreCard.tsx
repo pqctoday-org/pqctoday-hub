@@ -6,6 +6,8 @@ import { ArrowRight, Flame, GraduationCap, Info } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
+import { usePersonaStore } from '@/store/usePersonaStore'
+import { PERSONAS } from '@/data/learningPersonas'
 import { AchievementBadgeGrid } from './AchievementBadgeGrid'
 
 const fadeUp = {
@@ -117,6 +119,13 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
 export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
   const result = useAwarenessScore()
   const [showScoring, setShowScoring] = useState(false)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  // eslint-disable-next-line security/detect-object-injection
+  const personaLabel = selectedPersona ? PERSONAS[selectedPersona]?.label : null
+  const personaModuleCount = selectedPersona
+    ? // eslint-disable-next-line security/detect-object-injection
+      PERSONAS[selectedPersona]?.pathItems.filter((item) => item.type === 'module').length
+    : null
 
   const { hasStarted, score, belt, nextBelt, pointsToNextBelt, cappedByThreshold, streak } = result
 
@@ -158,6 +167,12 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
             <div className="flex items-center justify-center sm:justify-start gap-2 mb-1">
               <p className="text-xs font-mono uppercase tracking-widest text-primary">
                 Learning Journey
+                {personaLabel && (
+                  <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
+                    {personaLabel} path
+                    {personaModuleCount ? ` (${personaModuleCount} modules)` : ''}
+                  </span>
+                )}
               </p>
               <span className="-m-2 p-2 block">
                 <Button
@@ -215,6 +230,11 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
           <div className="flex-1 min-w-0">
             <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-0.5">
               Learning Journey
+              {personaLabel && (
+                <span className="ml-2 normal-case tracking-normal text-secondary font-medium">
+                  {personaLabel} path{personaModuleCount ? ` (${personaModuleCount} modules)` : ''}
+                </span>
+              )}
             </p>
             <div className="flex items-baseline gap-2 flex-wrap">
               <span

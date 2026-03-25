@@ -40,6 +40,7 @@ import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
 import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
 import { logEvent } from '../../utils/analytics'
+import { usePersonaStore } from '../../store/usePersonaStore'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 
@@ -56,11 +57,23 @@ const PlaygroundContent = () => {
     useSettingsContext()
   const { keyStore, setKeyStore } = useKeyStoreContext()
   const { engineMode, setEngineMode, phase } = useHsmContext()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const isSimplifiedPersona = selectedPersona === 'curious' || selectedPersona === 'executive'
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   useEffect(() => {
     if (error) errorRef.current?.focus()
   }, [error])
+
+  // Reset HSM mode if persona changes to simplified while HSM is active
+  useEffect(() => {
+    if (isSimplifiedPersona && hsmMode) toggleHsmMode()
+  }, [isSimplifiedPersona]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Reset ACVP tab if persona changes to simplified while viewing it
+  useEffect(() => {
+    if (isSimplifiedPersona && activeTab === 'acvp') setActiveTab('keystore')
+  }, [isSimplifiedPersona, activeTab, setActiveTab])
 
   const handleTabChange = (tab: typeof activeTab) => {
     setActiveTab(tab)
@@ -73,93 +86,102 @@ const PlaygroundContent = () => {
   }
 
   return (
-    <Card className="p-6 h-[85vh] flex flex-col">
+    <Card className="p-3 md:p-6 min-h-[60vh] md:h-[85vh] flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between mb-4 shrink-0">
-        <h3 className="text-2xl font-bold flex items-center gap-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 shrink-0 gap-2">
+        <h3 className="text-xl md:text-2xl font-bold flex items-center gap-2">
           <Play className="text-secondary" aria-hidden="true" />
           Interactive Playground
         </h3>
 
-        {/* HSM mode toggle pill */}
-        <div className="flex items-center gap-2">
-          {hsmMode && (
-            <div className="flex items-center gap-4 mr-4 border-r border-border pr-4 bg-muted/50 px-3 py-1.5 rounded-full shadow-inner">
-              <span className="text-xs font-semibold text-muted-foreground mr-1">Engine:</span>
-              {(['cpp', 'rust', 'dual'] as const).map((mode) => (
-                <label
-                  key={mode}
-                  className={`flex items-center gap-1.5 text-xs ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
-                >
-                  <input
-                    type="radio"
-                    name="engineMode-global"
-                    value={mode}
-                    checked={engineMode === mode}
-                    onChange={() => {
-                      if (phase === 'idle') setEngineMode(mode)
-                    }}
-                    disabled={phase !== 'idle'}
-                    className="accent-primary w-3 h-3"
-                  />
-                  <span
-                    className={
-                      engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
-                    }
+        {/* HSM mode toggle pill — hidden for curious/executive personas */}
+        {!isSimplifiedPersona && (
+          <div className="flex items-center gap-2">
+            {hsmMode && (
+              <div className="flex items-center gap-2 sm:gap-4 mr-2 sm:mr-4 border-r border-border pr-2 sm:pr-4 bg-muted/50 px-2 sm:px-3 py-1.5 rounded-full shadow-inner">
+                <span className="text-xs font-semibold text-muted-foreground mr-1 hidden sm:inline">
+                  Engine:
+                </span>
+                {(['cpp', 'rust', 'dual'] as const).map((mode) => (
+                  <label
+                    key={mode}
+                    className={`flex items-center gap-1 sm:gap-1.5 text-xs min-h-[36px] ${phase === 'idle' ? 'cursor-pointer hover:text-primary' : 'opacity-60 cursor-not-allowed'}`}
                   >
-                    {mode === 'cpp' && 'C++'}
-                    {mode === 'rust' && 'Rust'}
-                    {mode === 'dual' && 'Dual Parity'}
-                  </span>
-                </label>
-              ))}
-            </div>
-          )}
-          <span
-            className={clsx(
-              'text-xs',
-              !hsmMode ? 'text-foreground font-medium' : 'text-muted-foreground'
+                    <input
+                      type="radio"
+                      name="engineMode-global"
+                      value={mode}
+                      checked={engineMode === mode}
+                      onChange={() => {
+                        if (phase === 'idle') setEngineMode(mode)
+                      }}
+                      disabled={phase !== 'idle'}
+                      className="accent-primary w-3 h-3"
+                    />
+                    <span
+                      className={
+                        engineMode === mode ? 'text-primary font-bold' : 'text-muted-foreground'
+                      }
+                    >
+                      {mode === 'cpp' && 'C++'}
+                      {mode === 'rust' && 'Rust'}
+                      {mode === 'dual' && (
+                        <>
+                          <span className="hidden sm:inline">Dual Parity</span>
+                          <span className="sm:hidden">Dual</span>
+                        </>
+                      )}
+                    </span>
+                  </label>
+                ))}
+              </div>
             )}
-          >
-            Software
-          </span>
-          <button
-            role="switch"
-            aria-checked={hsmMode}
-            aria-label="Toggle HSM mode"
-            onClick={handleToggleHsmMode}
-            className={clsx(
-              'relative w-11 h-6 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none',
-              hsmMode ? 'bg-primary' : 'bg-muted border border-border'
-            )}
-          >
             <span
               className={clsx(
-                'absolute top-1 left-1 w-4 h-4 rounded-full bg-background shadow transition-transform',
-                hsmMode ? 'translate-x-5' : ''
+                'text-xs',
+                !hsmMode ? 'text-foreground font-medium' : 'text-muted-foreground'
               )}
-            />
-          </button>
-          <span
-            className={clsx(
-              'text-xs',
-              hsmMode ? 'text-primary font-medium' : 'text-muted-foreground'
-            )}
-          >
-            PKCS#11 HSM
-          </span>
-          {hsmMode && (
-            <button
-              onClick={() => setShowMethodologyModal(true)}
-              className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
-              aria-label="View PKCS#11 test methodology"
             >
-              <Construction size={11} />
-              WIP
-              <FlaskConical size={11} />
+              Software
+            </span>
+            <button
+              role="switch"
+              aria-checked={hsmMode}
+              aria-label="Toggle HSM mode"
+              onClick={handleToggleHsmMode}
+              className={clsx(
+                'relative w-11 h-6 rounded-full transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none',
+                hsmMode ? 'bg-primary' : 'bg-muted border border-border'
+              )}
+            >
+              <span
+                className={clsx(
+                  'absolute top-1 left-1 w-4 h-4 rounded-full bg-background shadow transition-transform',
+                  hsmMode ? 'translate-x-5' : ''
+                )}
+              />
             </button>
-          )}
-        </div>
+            <span
+              className={clsx(
+                'text-xs',
+                hsmMode ? 'text-primary font-medium' : 'text-muted-foreground'
+              )}
+            >
+              PKCS#11 HSM
+            </span>
+            {hsmMode && (
+              <button
+                onClick={() => setShowMethodologyModal(true)}
+                className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+                aria-label="View PKCS#11 test methodology"
+              >
+                <Construction size={11} />
+                WIP
+                <FlaskConical size={11} />
+              </button>
+            )}
+          </div>
+        )}
       </div>
 
       {showMethodologyModal && (
@@ -168,7 +190,7 @@ const PlaygroundContent = () => {
 
       {/* Last log entry strip */}
       {lastLogEntry && !hsmMode && (
-        <div className="flex items-center gap-4 text-xs font-mono bg-muted px-3 py-1.5 rounded-lg border border-border animate-fade-in mb-4 shrink-0">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4 text-xs font-mono bg-muted px-3 py-1.5 rounded-lg border border-border animate-fade-in mb-4 shrink-0">
           <span className="text-muted-foreground">{lastLogEntry.operation}</span>
           <span className="text-foreground/50">|</span>
           <span className="text-accent max-w-[200px] truncate" title={lastLogEntry.result}>
@@ -226,8 +248,20 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <KeyIcon size={16} className="mr-2" aria-hidden="true" />
-          {hsmMode ? 'HSM Keys' : `Key Store (${keyStore.length})`}
+          <KeyIcon size={16} className="shrink-0" aria-hidden="true" />
+          <span className="text-[10px] sm:text-xs ml-1">
+            {hsmMode ? (
+              <>
+                <span className="sm:hidden">Keys</span>
+                <span className="hidden sm:inline">HSM Keys</span>
+              </>
+            ) : (
+              <>
+                <span className="sm:hidden">Keys</span>
+                <span className="hidden sm:inline">Key Store ({keyStore.length})</span>
+              </>
+            )}
+          </span>
         </Button>
         <Button
           role="tab"
@@ -244,7 +278,8 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Database size={16} className="mr-2" aria-hidden="true" /> Data
+          <Database size={16} className="shrink-0" aria-hidden="true" />{' '}
+          <span className="text-[10px] sm:text-xs ml-1">Data</span>
         </Button>
         <Button
           role="tab"
@@ -261,7 +296,11 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Activity size={16} className="mr-2" aria-hidden="true" /> KEM &amp; Encrypt
+          <Activity size={16} className="shrink-0" aria-hidden="true" />{' '}
+          <span className="text-[10px] sm:text-xs ml-1">
+            <span className="sm:hidden">KEM</span>
+            <span className="hidden sm:inline">KEM &amp; Encrypt</span>
+          </span>
         </Button>
 
         <Button
@@ -279,7 +318,11 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Lock size={16} className="mr-2" aria-hidden="true" /> Sym Encrypt
+          <Lock size={16} className="shrink-0" aria-hidden="true" />{' '}
+          <span className="text-[10px] sm:text-xs ml-1">
+            <span className="sm:hidden">Sym</span>
+            <span className="hidden sm:inline">Sym Encrypt</span>
+          </span>
         </Button>
         {hsmMode && (
           <Button
@@ -297,7 +340,11 @@ const PlaygroundContent = () => {
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
-            <Layers size={16} className="mr-2" aria-hidden="true" /> Wrap / Unwrap
+            <Layers size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-[10px] sm:text-xs ml-1">
+              <span className="sm:hidden">Wrap</span>
+              <span className="hidden sm:inline">Wrap / Unwrap</span>
+            </span>
           </Button>
         )}
         <Button
@@ -315,7 +362,8 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <Hash size={16} className="mr-2" aria-hidden="true" /> Hashing
+          <Hash size={16} className="shrink-0" aria-hidden="true" />{' '}
+          <span className="text-[10px] sm:text-xs ml-1">Hash</span>
         </Button>
 
         <Button
@@ -333,7 +381,11 @@ const PlaygroundContent = () => {
               : 'text-muted-foreground hover:text-foreground hover:bg-accent'
           )}
         >
-          <FileSignature size={16} className="mr-2" aria-hidden="true" /> Sign &amp; Verify
+          <FileSignature size={16} className="shrink-0" aria-hidden="true" />{' '}
+          <span className="text-[10px] sm:text-xs ml-1">
+            <span className="sm:hidden">Sign</span>
+            <span className="hidden sm:inline">Sign &amp; Verify</span>
+          </span>
         </Button>
 
         {hsmMode && (
@@ -353,7 +405,11 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <ArrowLeftRight size={16} className="mr-2" aria-hidden="true" /> Key Agree
+              <ArrowLeftRight size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-[10px] sm:text-xs ml-1">
+                <span className="sm:hidden">Agree</span>
+                <span className="hidden sm:inline">Key Agree</span>
+              </span>
             </Button>
             <Button
               role="tab"
@@ -370,7 +426,8 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <Filter size={16} className="mr-2" aria-hidden="true" /> KDF
+              <Filter size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-[10px] sm:text-xs ml-1">KDF</span>
             </Button>
             <Button
               role="tab"
@@ -387,29 +444,36 @@ const PlaygroundContent = () => {
                   : 'text-muted-foreground hover:text-foreground hover:bg-accent'
               )}
             >
-              <Layers size={16} className="mr-2" aria-hidden="true" /> Mechanisms
+              <Layers size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-[10px] sm:text-xs ml-1">
+                <span className="sm:hidden">Mechs</span>
+                <span className="hidden sm:inline">Mechanisms</span>
+              </span>
             </Button>
-            <Button
-              role="tab"
-              id="tab-acvp"
-              aria-selected={activeTab === 'acvp'}
-              aria-controls="playground-tabpanel"
-              onClick={() => handleTabChange('acvp')}
-              variant="ghost"
-              size="sm"
-              className={clsx(
-                'whitespace-nowrap',
-                activeTab === 'acvp'
-                  ? 'bg-primary/20 text-primary shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-              )}
-            >
-              <ShieldCheck size={16} className="mr-2" aria-hidden="true" /> ACVP
-            </Button>
+            {!isSimplifiedPersona && (
+              <Button
+                role="tab"
+                id="tab-acvp"
+                aria-selected={activeTab === 'acvp'}
+                aria-controls="playground-tabpanel"
+                onClick={() => handleTabChange('acvp')}
+                variant="ghost"
+                size="sm"
+                className={clsx(
+                  'whitespace-nowrap',
+                  activeTab === 'acvp'
+                    ? 'bg-primary/20 text-primary shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-accent'
+                )}
+              >
+                <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
+                <span className="text-[10px] sm:text-xs ml-1">ACVP</span>
+              </Button>
+            )}
           </>
         )}
 
-        {!hsmMode && (
+        {!hsmMode && !isSimplifiedPersona && (
           <Button
             role="tab"
             id="tab-acvp"
@@ -425,7 +489,8 @@ const PlaygroundContent = () => {
                 : 'text-muted-foreground hover:text-foreground hover:bg-accent'
             )}
           >
-            <ShieldCheck size={16} className="mr-2" aria-hidden="true" /> ACVP
+            <ShieldCheck size={16} className="shrink-0" aria-hidden="true" />{' '}
+            <span className="text-[10px] sm:text-xs ml-1">ACVP</span>
           </Button>
         )}
 
@@ -446,11 +511,16 @@ const PlaygroundContent = () => {
         >
           {hsmMode ? (
             <>
-              <Cpu size={16} className="mr-2" aria-hidden="true" /> PKCS#11 Log
+              <Cpu size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-[10px] sm:text-xs ml-1">
+                <span className="sm:hidden">P11</span>
+                <span className="hidden sm:inline">PKCS#11 Log</span>
+              </span>
             </>
           ) : (
             <>
-              <FileText size={16} className="mr-2" aria-hidden="true" /> Logs
+              <FileText size={16} className="shrink-0" aria-hidden="true" />{' '}
+              <span className="text-[10px] sm:text-xs ml-1">Logs</span>
             </>
           )}
         </Button>
@@ -461,7 +531,7 @@ const PlaygroundContent = () => {
         role="tabpanel"
         id="playground-tabpanel"
         aria-labelledby={`tab-${activeTab}`}
-        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-6 relative"
+        className="flex-1 overflow-y-auto custom-scrollbar min-h-0 bg-card rounded-xl border border-border p-3 md:p-6 relative"
       >
         {activeTab === 'data' && <DataTab />}
         {activeTab === 'kem_ops' && <KemOpsTab />}
@@ -474,12 +544,12 @@ const PlaygroundContent = () => {
         {activeTab === 'mechanisms' && hsmMode && <HsmMechanismPanel />}
         {activeTab === 'keystore' && <KeyStoreTab />}
         {activeTab === 'logs' && <LogsTab />}
-        {activeTab === 'acvp' && !hsmMode && (
+        {activeTab === 'acvp' && !hsmMode && !isSimplifiedPersona && (
           <div className="h-full">
             <ACVPTesting keyStore={keyStore} setKeyStore={setKeyStore} />
           </div>
         )}
-        {activeTab === 'acvp' && hsmMode && (
+        {activeTab === 'acvp' && hsmMode && !isSimplifiedPersona && (
           <div className="h-full">
             <HsmAcvpTesting />
           </div>

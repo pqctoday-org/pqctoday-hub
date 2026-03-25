@@ -174,7 +174,7 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
                 , making agreement a meaningful independence check.
               </p>
 
-              <div className="grid grid-cols-2 gap-3 mt-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
                 <div className="glass-panel p-3 rounded-lg space-y-1">
                   <p className="text-xs font-bold text-foreground">C++ Engine</p>
                   <p className="text-xs">SoftHSMv3 WASM</p>

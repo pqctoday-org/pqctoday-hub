@@ -185,7 +185,7 @@ export const HsmKeyAgreementPanel = () => {
                     setCurve(c)
                     reset()
                   }}
-                  className={`flex-1 text-xs rounded-lg px-2 py-1.5 border transition-colors ${
+                  className={`flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] border transition-colors ${
                     curve === c
                       ? 'bg-primary/20 border-primary text-primary'
                       : 'bg-muted border-border text-muted-foreground hover:text-foreground'
@@ -250,7 +250,7 @@ export const HsmKeyAgreementPanel = () => {
         </div>
 
         {/* Key generation buttons */}
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-2">
             <p className="text-xs font-medium text-foreground">Alice</p>
             <Button

@@ -214,7 +214,7 @@ export const ComplianceView = () => {
   const initialFilter = searchParams.get('q') ?? undefined
   const certParam = searchParams.get('cert') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
-  const { selectedIndustries, selectedRegion } = usePersonaStore()
+  const { selectedIndustries, selectedRegion, selectedPersona, experienceLevel } = usePersonaStore()
   const myFrameworks = useComplianceSelectionStore((s) => s.myFrameworks)
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
 
@@ -291,6 +291,25 @@ export const ComplianceView = () => {
         shareText="Explore PQC compliance: standardization bodies, certification programs (FIPS 140-3, ACVP, Common Criteria), and regulatory frameworks."
         onExport={handleExportCsv}
       />
+
+      {/* Curious user intro context */}
+      {(selectedPersona === 'curious' || experienceLevel === 'curious') && (
+        <div className="flex items-start gap-3 p-3 rounded-lg border border-secondary/20 bg-secondary/5 text-sm">
+          <Info size={16} className="text-secondary mt-0.5 shrink-0" />
+          <div className="space-y-0.5">
+            <span className="font-semibold text-foreground">New to compliance?</span>
+            <p className="text-muted-foreground text-xs">
+              This page tracks who sets the rules for quantum-safe cryptography.{' '}
+              <span className="font-medium text-foreground">Standardization bodies</span> define the
+              algorithms, <span className="font-medium text-foreground">certification schemes</span>{' '}
+              test that products implement them correctly, and{' '}
+              <span className="font-medium text-foreground">compliance frameworks</span> are the
+              laws and regulations that require organizations to adopt them. Start with the
+              Standards tab to see the big picture.
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Persona/industry context hint */}
       {complianceHint && complianceHintLabel && (

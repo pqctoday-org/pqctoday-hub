@@ -165,7 +165,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       className={clsx(
-                        'px-2.5 py-1 rounded-full text-[11px] font-semibold capitalize transition-colors border',
+                        'px-2.5 py-1 min-h-[36px] rounded-full text-[11px] font-semibold capitalize transition-colors border',
                         activeCategory === cat
                           ? 'bg-primary/10 text-primary border-primary/30'
                           : 'text-muted-foreground border-border hover:border-primary/20'
@@ -183,7 +183,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       key={letter}
                       onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
                       className={clsx(
-                        'w-6 h-6 rounded text-[10px] font-bold transition-colors',
+                        'w-9 h-9 rounded text-xs font-bold transition-colors',
                         activeLetter === letter
                           ? 'bg-primary text-black'
                           : 'text-muted-foreground hover:bg-muted/50'

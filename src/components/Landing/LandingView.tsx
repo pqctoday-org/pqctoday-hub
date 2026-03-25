@@ -675,7 +675,7 @@ export const LandingView = () => {
                             {step.description}
                           </p>
                           <div className="flex items-center justify-between mt-3">
-                            <div className="hidden sm:flex flex-wrap gap-1">
+                            <div className="flex flex-wrap gap-1">
                               {step.paths.map((p) => (
                                 <span
                                   key={p}

@@ -1,0 +1,3 @@
+Whenever you log into an enterprise network, a central digital authority issues an invisible "Identity Certificate" proving that you are who you say you are. This entire system relies on a mathematical chain of trust that extends all the way back to a single, ultra-secure "Root Identity" held by the company.
+
+If a hacker with a quantum computer breaks the math protecting that single Root Identity, the entire house of cards immediately collapses. The hacker could flawlessly forge an Identity Certificate for anyone—impersonating the CEO, the system administrator, or a trusted software service, gaining total control over the network.

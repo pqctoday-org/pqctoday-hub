@@ -4,6 +4,45 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.54.0] - 2026-03-24
+
+### Added
+
+- **Curious persona variant content system**: 50 dedicated `curious-summary-curious.md` files and 53 `gcp_*-curious.png` infographic images generated via Gemini 1.5 Pro + Google Imagen 3.0 for the Curious Explorer persona. `CuriousSummaryBanner` selects the persona-specific variant when active, with `onError` fallback to standard images. New `scripts/generate-curious-assets.mjs` generation pipeline and `e2e/curious-variants.spec.ts` E2E test. [persona:curious]
+- **Curious persona context banners**: Compliance page explains standardization bodies vs. certification schemes vs. compliance frameworks; Leaders page explains who the leaders are — both shown inline for curious/beginner users. [persona:curious] [view:/compliance] [view:/leaders]
+- **Key size display in Key Store & HSM Key Registry**: New "Size" column with sortability in both software and HSM key tables. HSM uses FIPS 203/204 spec-accurate estimation for ML-KEM, ML-DSA, and SLH-DSA key material sizes. Headers show aggregate key count and total byte size (e.g., "12 keys . 34.2 KB"). New `keySizeUtils.ts` utility module. [persona:developer] [view:/playground]
+- **Mobile compliance filtering & Load More**: Cert type filter pills (All/FIPS/ACVP/CC) and progressive "Load more" pagination on mobile viewports replacing the fixed 50-record cap. [view:/compliance]
+- **Mobile migration phase selector**: `FilterDropdown` visible below `md` breakpoint for selecting migration phases on mobile, replacing the desktop step rail hidden on small screens. [view:/migrate]
+- **ScoreCard persona path display**: Learning Journey scorecard now shows persona label and module count (e.g., "Developer path (24 modules)"). [view:/]
+- **PageHeader mobile actions menu**: Three-dot "More" button consolidating Sources, Share, Glossary, Export, and PQC Assistant actions into a dropdown for mobile/tablet viewports. [persona:all]
+- **PWA 1024x1024 icon**: New largest PWA icon added to precache and web manifest. [persona:all]
+
+### Changed
+
+- **Curious persona auto-completes onboarding**: Selecting "Curious Explorer" in the persona picker skips Region and Industry steps (sets Global region, empty industries, marks completed). Avatar shows "Global" with Globe icon and "All" with Layers icon when no specific region/industry is selected. [persona:curious] [view:/]
+- **Persona-aware Playground simplification**: HSM mode toggle (Software/PKCS#11 switch + engine mode radio buttons) and ACVP tab hidden for Curious and Executive personas. Auto-resets if persona changes to simplified while active. [persona:curious] [persona:executive] [view:/playground]
+- **Playground unified mobile layout**: Removed separate `MobilePlaygroundView` — main `InteractivePlayground` now serves all viewport sizes with responsive padding, abbreviated tab labels (KEM, Sign, P11), scaled text, and responsive engine mode radio labels. [view:/playground]
+- **Comprehensive mobile responsiveness pass**: Touch targets increased to 44px minimum (EndorseButton, FlagButton, WhatsNewModal, Glossary, PersonalizationSection, HsmKdfPanel, HsmKeyAgreementPanel, HsmSetupPanel). Table columns hidden on mobile (KeyTable ID/Timestamp, HsmKeyTable Handle/Generated, ModuleTable Track/Difficulty/Duration). Grids switch to single-column on mobile (HsmKdfPanel, HsmKeyAgreementPanel, HsmTestMethodologyModal, KeyWrapPanel). [persona:all]
+- **FilterDropdown viewport clamping**: Portal-rendered dropdown menu clamps `left` position to keep within viewport bounds. [persona:all]
+- **InlineTooltip viewport clamping**: Tooltip clamps horizontally to prevent overflow at viewport edges. [persona:all]
+- **Landing page route chips visible on mobile**: Removed `hidden sm:flex` from journey step route chips. [view:/]
+- **Learn track descriptions visible on mobile**: Track descriptions and Quiz button now shown on mobile. [view:/learn]
+- **Leaders/Library ViewToggle hidden on mobile**: Saves horizontal space on small screens. [view:/leaders] [view:/library]
+- **Mobile nav labels enlarged**: `text-[9px]` → `text-[10px]`, max width `40px → 44px`. Playground and OpenSSL Studio moved to mobile "More" menu. [persona:all]
+- **OpenSSL Studio desktop recommendation**: "Best experienced on desktop" banner visible below `lg` breakpoint. [view:/openssl]
+- **Changelog timeline visible on mobile**: Timeline spine and milestone dots now render on mobile with smaller sizes. [view:/changelog]
+- **ACVP Testing mobile improvements**: Raw `<button>` elements replaced with `<Button>` component; labels abbreviate on mobile; results table horizontally scrollable. [view:/playground]
+- **App icons regenerated**: All favicon/PWA icons regenerated with updated logo — smaller file sizes across all sizes. [persona:all]
+
+### Fixed
+
+- **Ops persona missing Compliance nav path**: Added `/compliance` to the `ops` persona's `PERSONA_NAV_PATHS` — was missing, causing compliance page to be dimmed/inaccessible for ops users. [persona:ops]
+
+### Data
+
+- **Leaders updated** (`leaders_03242026.csv`, 71 leaders): +1 leader vs previous version. `leaders_03212026.csv` archived. [data]
+- **RAG corpus regenerated** (`public/data/rag-corpus.json`): 3,971 chunks (was 3,963, +8). [data]
+
 ## [2.53.0] - 2026-03-24
 
 ### Changed

@@ -1,0 +1,3 @@
+While Post-Quantum Cryptography uses massively complex _math_ to stop quantum computers, a completely different technology called "Quantum Key Distribution" (QKD) actually uses the strange, unbreakable laws of _physics_.
+
+QKD literally shoots single particles of light (photons) through long fiber optic cables to create a shared secret password between two buildings. Due to the bizarre rules of quantum mechanics, if a hacker tries to "look" at the light particles while they are traveling through the cable, the particles change instantly. This automatically alters the password and undeniably alerts the security team to the spy's presence.

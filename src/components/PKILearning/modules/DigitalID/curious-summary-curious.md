@@ -1,0 +1,3 @@
+New digital identity wallets allow citizens to prove who they are using their smartphones. These apps use digital signatures to officially bind a person's identity to their device, acting like an unbreakable digital passport.
+
+If a future hacker uses a quantum computer to break these signatures, they could perfectly forge someone else's identity, leading to massive, untraceable fraud. Because these identities will be used for everything from banking to voting, governments must upgrade the backbone of these digital ID systems to Post-Quantum security from the very start. This ensures that fake digital identities can never be mathematically created, even by computers decades from now.

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ChevronDown, ChevronUp, Lightbulb } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
@@ -11,7 +11,13 @@ import { applyGlossaryToChildren } from '@/utils/parseGlossary'
  * Eagerly load all curious-summary.md files at bundle time.
  * Keyed by relative path like '../modules/Module1-Introduction/curious-summary.md'.
  */
-const curiousSummaries = import.meta.glob('../modules/*/curious-summary.md', {
+const standardSummaries = import.meta.glob('../modules/*/curious-summary.md', {
+  query: '?raw',
+  import: 'default',
+  eager: true,
+}) as Record<string, string>
+
+const curiousVariantSummaries = import.meta.glob('../modules/*/curious-summary-curious.md', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -98,14 +104,23 @@ const DIR_TO_MODULE_ID: Record<string, string> = {
 }
 
 /** Build a moduleId → markdown content lookup from the glob results */
-const contentByModuleId: Record<string, string> = {}
-for (const [filePath, content] of Object.entries(curiousSummaries)) {
+const standardContentByModuleId: Record<string, string> = {}
+for (const [filePath, content] of Object.entries(standardSummaries)) {
   // Extract dir name: '../modules/FooBar/curious-summary.md' → 'FooBar'
   const match = filePath.match(/\/modules\/([^/]+)\/curious-summary\.md$/)
   if (!match) continue
   const dirName = match[1]
   const moduleId = DIR_TO_MODULE_ID[dirName] ?? dirName.toLowerCase() // eslint-disable-line security/detect-object-injection
-  contentByModuleId[moduleId] = content // eslint-disable-line security/detect-object-injection
+  standardContentByModuleId[moduleId] = content // eslint-disable-line security/detect-object-injection
+}
+
+const curiousContentByModuleId: Record<string, string> = {}
+for (const [filePath, content] of Object.entries(curiousVariantSummaries)) {
+  const match = filePath.match(/\/modules\/([^/]+)\/curious-summary-curious\.md$/)
+  if (!match) continue
+  const dirName = match[1]
+  const moduleId = DIR_TO_MODULE_ID[dirName] ?? dirName.toLowerCase() // eslint-disable-line security/detect-object-injection
+  curiousContentByModuleId[moduleId] = content // eslint-disable-line security/detect-object-injection
 }
 
 interface CuriousSummaryBannerProps {
@@ -126,9 +141,28 @@ export const CuriousSummaryBanner = ({
   const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
   const [expanded, setExpanded] = useState(true)
 
+  const idealImgSrc = isCuriousMode
+    ? `/images/infographics/gcp_${moduleId}-curious.png`
+    : `/images/infographics/gcp_${moduleId}.png`
+
+  const [imgSrc, setImgSrc] = useState(idealImgSrc)
+
+  useEffect(() => {
+    setImgSrc(idealImgSrc)
+  }, [idealImgSrc])
+
+  const handleImgError = () => {
+    if (imgSrc.includes('-curious.png')) {
+      // Fallback to standard infographic if curious variant is missing
+      setImgSrc(`/images/infographics/gcp_${moduleId}.png`)
+    }
+  }
+
   if (!isCuriousMode && !isFullPage) return null
 
-  const content = contentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
+  const content = isCuriousMode
+    ? curiousContentByModuleId[moduleId] || standardContentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
+    : standardContentByModuleId[moduleId] // eslint-disable-line security/detect-object-injection
   if (!content) return null
 
   // Strip the H1 title — we render our own heading
@@ -177,16 +211,17 @@ export const CuriousSummaryBanner = ({
               <TabsContent value="infographic" className="mt-0">
                 <div className="w-full bg-muted/30 rounded-lg border border-border p-2 sm:p-3 flex flex-col items-center">
                   <a
-                    href={`/images/infographics/gcp_${moduleId}.png`}
+                    href={imgSrc}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="block"
                     title="Tap to view full size"
                   >
                     <img
-                      src={`/images/infographics/gcp_${moduleId}.png?v=conversational_v2`}
+                      src={`${imgSrc}?v=conversational_v2`}
                       alt={altText}
                       loading="lazy"
+                      onError={handleImgError}
                       className="w-full h-auto max-h-[60vh] object-contain rounded-md shadow-md cursor-zoom-in"
                     />
                   </a>
@@ -222,16 +257,17 @@ export const CuriousSummaryBanner = ({
             <div className="flex flex-col">
               <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center">
                 <a
-                  href={`/images/infographics/gcp_${moduleId}.png`}
+                  href={imgSrc}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="block w-full"
                   title="Click to view full size"
                 >
                   <img
-                    src={`/images/infographics/gcp_${moduleId}.png?v=conversational_v2`}
+                    src={`${imgSrc}?v=conversational_v2`}
                     alt={altText}
                     loading="lazy"
+                    onError={handleImgError}
                     className="w-full h-auto max-h-[70vh] object-contain rounded-md shadow-md cursor-zoom-in"
                   />
                 </a>

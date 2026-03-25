@@ -37,10 +37,13 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
     if (triggerRef.current) {
       const rect = triggerRef.current.getBoundingClientRect()
       const centerX = rect.left + rect.width / 2
+      // Clamp horizontally: tooltip is 288px (w-72), centered via translateX(-50%)
+      const halfW = 144
+      const clampedX = Math.max(halfW + 8, Math.min(centerX, window.innerWidth - halfW - 8))
       if (window.innerHeight - rect.bottom >= 220) {
-        setTooltipStyle({ top: rect.bottom + 6, left: centerX })
+        setTooltipStyle({ top: rect.bottom + 6, left: clampedX })
       } else {
-        setTooltipStyle({ bottom: window.innerHeight - rect.top + 6, left: centerX })
+        setTooltipStyle({ bottom: window.innerHeight - rect.top + 6, left: clampedX })
       }
     }
     setIsOpen(true)

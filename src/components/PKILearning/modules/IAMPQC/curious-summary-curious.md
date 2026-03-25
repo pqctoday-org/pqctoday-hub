@@ -1,0 +1,3 @@
+Identity and Access Management (IAM) systems are the ultimate digital bouncers of a huge corporate network, strictly deciding who is allowed to view sensitive files and who gets instantly booted out.
+
+They rely entirely on digital signatures to securely verify an employee's identity. If a quantum computer breaks these underlying signatures, a hacker could flawlessly forge a perfect identity badge, bypassing the digital bouncers completely. IAM systems must be extensively upgraded to evaluate massively complex Post-Quantum signatures so that user permissions remain completely secure and strictly enforced.

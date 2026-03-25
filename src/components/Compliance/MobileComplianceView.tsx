@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Search, ShieldCheck, Database } from 'lucide-react'
 import { Input } from '../ui/input'
+import { Button } from '../ui/button'
 import type { ComplianceRecord } from './types'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 import clsx from 'clsx'
@@ -12,13 +13,27 @@ interface MobileComplianceViewProps {
 
 const MOBILE_PAGE_SIZE = 50
 
+const CERT_TYPE_FILTERS = [
+  { id: 'All', label: 'All' },
+  { id: 'FIPS 140-3', label: 'FIPS' },
+  { id: 'ACVP', label: 'ACVP' },
+  { id: 'Common Criteria', label: 'CC' },
+] as const
+
+type CertTypeFilter = (typeof CERT_TYPE_FILTERS)[number]['id']
+
 export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data }) => {
   const [filterText, setFilterText] = useState('')
   const [pqcOnly, setPqcOnly] = useState(false)
+  const [certType, setCertType] = useState<CertTypeFilter>('All')
+  const [visibleCount, setVisibleCount] = useState(MOBILE_PAGE_SIZE)
   const [selectedRecord, setSelectedRecord] = useState<ComplianceRecord | null>(null)
 
-  const filteredData = useMemo(() => {
+  const allFiltered = useMemo(() => {
     let result = data
+    if (certType !== 'All') {
+      result = result.filter((r) => r.type === certType)
+    }
     if (filterText) {
       const q = filterText.toLowerCase()
       result = result.filter(
@@ -37,8 +52,13 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data
           r.pqcCoverage !== 'Pending Check...'
       )
     }
-    return result.slice(0, MOBILE_PAGE_SIZE)
-  }, [data, filterText, pqcOnly])
+    return result
+  }, [data, filterText, pqcOnly, certType])
+
+  const filteredData = useMemo(
+    () => allFiltered.slice(0, visibleCount),
+    [allFiltered, visibleCount]
+  )
 
   return (
     <div className="space-y-4">
@@ -53,7 +73,25 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data
             className="pl-9"
           />
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
+          {CERT_TYPE_FILTERS.map((ct) => (
+            <button
+              key={ct.id}
+              type="button"
+              onClick={() => {
+                setCertType(ct.id)
+                setVisibleCount(MOBILE_PAGE_SIZE)
+              }}
+              className={clsx(
+                'px-3 py-1.5 min-h-[44px] rounded-full border text-xs font-medium transition-all',
+                certType === ct.id
+                  ? 'border-primary/30 bg-primary/10 text-primary'
+                  : 'border-border bg-card text-muted-foreground'
+              )}
+            >
+              {ct.label}
+            </button>
+          ))}
           <button
             type="button"
             onClick={() => setPqcOnly((v) => !v)}
@@ -72,9 +110,9 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data
 
       {/* Results count */}
       <p className="text-xs text-muted-foreground">
-        {filteredData.length === MOBILE_PAGE_SIZE && data.length > MOBILE_PAGE_SIZE
-          ? `Showing first ${MOBILE_PAGE_SIZE} of ${data.length} — refine search to see more`
-          : `${filteredData.length} of ${data.length} records`}
+        {filteredData.length < allFiltered.length
+          ? `Showing ${filteredData.length} of ${allFiltered.length} records`
+          : `${allFiltered.length} record${allFiltered.length !== 1 ? 's' : ''}`}
       </p>
 
       {/* Cards */}
@@ -136,6 +174,15 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data
           </button>
         ))}
       </div>
+
+      {/* Load more */}
+      {filteredData.length < allFiltered.length && (
+        <div className="flex justify-center pt-2">
+          <Button variant="outline" onClick={() => setVisibleCount((c) => c + MOBILE_PAGE_SIZE)}>
+            Load more ({allFiltered.length - filteredData.length} remaining)
+          </Button>
+        </div>
+      )}
 
       {filteredData.length === 0 && (
         <div className="py-12 text-center text-muted-foreground text-sm">

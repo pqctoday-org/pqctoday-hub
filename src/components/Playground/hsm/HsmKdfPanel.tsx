@@ -162,7 +162,7 @@ const Pbkdf2Panel = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Iterations</p>
             <input
@@ -354,7 +354,7 @@ const HkdfPanel = () => {
           />
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF Hash</p>
             <FilterDropdown
@@ -572,7 +572,7 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
             <FilterDropdown
@@ -665,7 +665,7 @@ export const HsmKdfPanel = () => {
             <button
               key={m.id}
               onClick={() => setMode(m.id)}
-              className={`flex-1 text-xs rounded-lg px-2 py-1.5 transition-colors ${
+              className={`flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] transition-colors ${
                 mode === m.id
                   ? 'bg-primary/20 text-primary font-medium shadow-sm'
                   : 'text-muted-foreground hover:text-foreground'
