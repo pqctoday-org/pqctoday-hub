@@ -225,7 +225,7 @@ export const ModelWeightVault: React.FC = () => {
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">{deployProfile.name}</h4>
         <p className="text-sm text-foreground/80">{deployProfile.description}</p>
-        <div className="grid grid-cols-2 gap-3 mt-3 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3 text-xs">
           <div>
             <span className="text-muted-foreground">Key Storage: </span>
             <span className="text-foreground">{deployProfile.keyStorageLocation}</span>

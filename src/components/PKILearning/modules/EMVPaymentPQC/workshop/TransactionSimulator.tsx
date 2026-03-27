@@ -134,7 +134,7 @@ export const TransactionSimulator: React.FC = () => {
       </div>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="glass-panel p-3 text-center">
           <Zap size={18} className="mx-auto text-primary mb-1" />
           <div className="text-xl font-bold text-foreground">{flow.steps.length}</div>

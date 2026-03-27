@@ -206,7 +206,7 @@ const RsaPanel = () => {
           </label>
         </div>
         {handles && (
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             <HsmResultRow label="pub handle" value={`h=${handles.pub}`} />
             <HsmResultRow label="priv handle" value={`h=${handles.priv}`} />
           </div>
@@ -517,7 +517,7 @@ const EcdsaPanel = () => {
           </label>
         </div>
         {handles && (
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             <HsmResultRow label="pub handle" value={`h=${handles.pub}`} />
             <HsmResultRow label="priv handle" value={`h=${handles.priv}`} />
           </div>
@@ -768,7 +768,7 @@ const EddsaPanel = () => {
           </label>
         </div>
         {handles && (
-          <div className="grid grid-cols-2 gap-1">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
             <HsmResultRow label="pub handle" value={`h=${handles.pub}`} />
             <HsmResultRow label="priv handle" value={`h=${handles.priv}`} />
           </div>

@@ -94,7 +94,7 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
       </div>
 
       {/* Common Options */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-3">
           <label htmlFor="kdf-keylen" className="text-xs text-muted-foreground block">
             Output Length (bytes)
@@ -246,7 +246,7 @@ export const KdfConfig: React.FC<KdfConfigProps> = ({
 
         {/* Scrypt Options */}
         {kdfAlgo === 'SCRYPT' && (
-          <div className="grid grid-cols-3 gap-2 mb-4">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
             <div className="space-y-3">
               <label htmlFor="kdf-n" className="text-xs text-muted-foreground block">
                 N (Cost)

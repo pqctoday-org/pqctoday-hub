@@ -75,7 +75,7 @@ export const ExportControlClassifier: React.FC = () => {
           <h3 className="text-sm font-bold text-foreground">{product.productType}</h3>
         </div>
         <p className="text-xs text-muted-foreground">{product.description}</p>
-        <div className="grid grid-cols-2 gap-2 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
           <div>
             <span className="text-muted-foreground">Regime:</span>{' '}
             <span className="font-bold text-foreground">{product.regime.toUpperCase()}</span>

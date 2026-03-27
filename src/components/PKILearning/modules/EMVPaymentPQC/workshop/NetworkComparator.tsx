@@ -270,7 +270,7 @@ export const NetworkComparator: React.FC = () => {
       </div>
 
       {/* Summary stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="glass-panel p-4 text-center">
           <CreditCard size={20} className="mx-auto text-primary mb-1" />
           <div className="text-2xl font-bold text-foreground">{totalCards}</div>

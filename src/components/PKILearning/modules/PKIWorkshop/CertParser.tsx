@@ -476,7 +476,7 @@ AL9... (truncated for brevity) ...
             placeholder="Paste PEM content here..."
           />
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button
               onClick={handleParse}
               disabled={isParsing || !certInput}

@@ -77,7 +77,7 @@ export const AvionicsProtocolAnalyzer: React.FC = () => {
         <div className="glass-panel p-4 space-y-3">
           <h3 className="text-sm font-bold text-foreground">{protocol.name}</h3>
           <p className="text-xs text-muted-foreground">{protocol.description}</p>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             <div>
               <span className="text-muted-foreground">Max Payload:</span>{' '}
               <span className="font-bold text-foreground">{protocol.maxPayloadBytes} bytes</span>

@@ -88,7 +88,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-foreground">{POLICY_RULES.length}</div>
           <div className="text-xs text-muted-foreground">Total Policies</div>

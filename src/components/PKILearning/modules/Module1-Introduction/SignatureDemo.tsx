@@ -286,7 +286,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </div>
 
           {/* Properties table */}
-          <div className="grid grid-cols-2 gap-3 pt-2 border-t border-border">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2 border-t border-border">
             <div className="text-xs space-y-1.5">
               <p className="font-semibold text-muted-foreground mb-2">{classicalSig.algoLabel}</p>
               <div className="flex justify-between">

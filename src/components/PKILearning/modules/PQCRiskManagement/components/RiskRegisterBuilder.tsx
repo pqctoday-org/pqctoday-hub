@@ -285,7 +285,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                 </div>
 
                 {/* Likelihood & Impact */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                   <div>
                     <span className="block text-xs font-medium text-muted-foreground mb-1">
                       Likelihood (1-5)

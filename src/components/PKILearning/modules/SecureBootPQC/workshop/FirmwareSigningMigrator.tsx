@@ -376,7 +376,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
             </p>
 
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs mb-3">
                 <div>
                   <span className="text-muted-foreground">Firmware: </span>
                   <span className="text-foreground font-mono">{MOCK_MANIFEST.firmwareName}</span>
@@ -402,7 +402,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
                     Current Signing Configuration (Quantum-Vulnerable)
                   </span>
                 </div>
-                <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
                   <div>
                     <span className="text-muted-foreground">Key ID: </span>
                     <span className="font-mono text-status-error">

@@ -119,7 +119,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
       </div>
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="glass-panel p-3 text-center">
           <Cpu size={20} className="mx-auto text-primary mb-1" />
           <div className="text-2xl font-bold text-foreground">{stats.totalECUs}</div>

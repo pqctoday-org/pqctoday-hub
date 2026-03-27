@@ -433,7 +433,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
             </div>
 
             {/* Key size comparison */}
-            <div className="mt-3 grid grid-cols-2 gap-3">
+            <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div className="text-center p-2 bg-muted/20 rounded border border-border">
                 <div className="text-[10px] text-muted-foreground mb-0.5">
                   {pqcMode ? 'PQC Public Key' : 'Classical Public Key'}

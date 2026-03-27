@@ -248,7 +248,7 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
                   {ac.generation}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-1 text-muted-foreground">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 text-muted-foreground">
                 <div>
                   Bus: <span className="text-foreground">{ac.avionicsBus}</span>
                 </div>

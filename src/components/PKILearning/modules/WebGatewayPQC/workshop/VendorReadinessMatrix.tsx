@@ -209,7 +209,7 @@ export const VendorReadinessMatrix: React.FC = () => {
           {/* Readiness Score */}
           <div className="glass-panel p-6 text-center">
             <div
-              className={`text-5xl font-bold ${
+              className={`text-3xl md:text-5xl font-bold ${
                 readinessScore >= 80
                   ? 'text-status-success'
                   : readinessScore >= 50

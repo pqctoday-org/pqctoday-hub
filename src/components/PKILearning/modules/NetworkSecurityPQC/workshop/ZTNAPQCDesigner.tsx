@@ -39,7 +39,7 @@ function RiskScore({ score }: { score: number }) {
   const label = score <= 30 ? 'Low Risk' : score <= 60 ? 'Moderate Risk' : 'High Risk'
   return (
     <div className="text-center">
-      <div className={`text-4xl font-bold ${color}`}>{score}</div>
+      <div className={`text-2xl sm:text-4xl font-bold ${color}`}>{score}</div>
       <div className={`text-xs font-bold ${color}`}>{label}</div>
       <div className="text-[10px] text-muted-foreground mt-1">Transition Risk Score</div>
     </div>
@@ -196,7 +196,7 @@ export const ZTNAPQCDesigner: React.FC = () => {
         </div>
         <div className="glass-panel p-4 text-center">
           <div
-            className={`text-4xl font-bold ${readinessScore >= 80 ? 'text-status-success' : readinessScore >= 50 ? 'text-status-warning' : 'text-status-error'}`}
+            className={`text-2xl sm:text-4xl font-bold ${readinessScore >= 80 ? 'text-status-success' : readinessScore >= 50 ? 'text-status-warning' : 'text-status-error'}`}
           >
             {readinessScore}%
           </div>

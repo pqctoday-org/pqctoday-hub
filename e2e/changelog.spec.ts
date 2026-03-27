@@ -98,7 +98,7 @@ test.describe("What's New Toast", () => {
     await page.reload()
 
     // Wait for toast to appear (has 1s delay)
-    await expect(page.getByRole('alertdialog')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
     await expect(page.getByRole('heading', { name: "What's New" })).toBeVisible()
   })
 
@@ -114,13 +114,13 @@ test.describe("What's New Toast", () => {
     await page.reload()
 
     // Wait for toast
-    await expect(page.getByRole('alertdialog')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
 
     // Click dismiss button
     await page.getByRole('button', { name: 'Dismiss notification' }).click()
 
     // Toast should disappear
-    await expect(page.getByRole('alertdialog')).not.toBeVisible()
+    await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
   test('toast does not reappear after dismissal', async ({ page }) => {
@@ -135,9 +135,9 @@ test.describe("What's New Toast", () => {
     await page.reload()
 
     // Wait for and dismiss toast
-    await expect(page.getByRole('alertdialog')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
     await page.getByRole('button', { name: 'Dismiss notification' }).click()
-    await expect(page.getByRole('alertdialog')).not.toBeVisible()
+    await expect(page.getByRole('dialog')).not.toBeVisible()
 
     // Reload page
     await page.reload()
@@ -146,7 +146,7 @@ test.describe("What's New Toast", () => {
     await page.waitForFunction(() => new Promise((r) => setTimeout(r, 1500)))
 
     // Toast should not appear again
-    await expect(page.getByRole('alertdialog')).not.toBeVisible()
+    await expect(page.getByRole('dialog')).not.toBeVisible()
   })
 
   test('View Changelog button navigates to changelog', async ({ page }) => {
@@ -161,7 +161,7 @@ test.describe("What's New Toast", () => {
     await page.reload()
 
     // Wait for toast
-    await expect(page.getByRole('alertdialog')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
 
     // Click View Changelog
     await page.getByRole('link', { name: 'View Changelog' }).click()

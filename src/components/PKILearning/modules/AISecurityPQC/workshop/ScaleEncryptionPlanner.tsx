@@ -270,7 +270,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
                   </div>
                 </div>
                 <p className="text-xs text-foreground/80">{tech.description}</p>
-                <div className="grid grid-cols-2 gap-3 mt-2 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2 text-xs">
                   <div>
                     <span className="text-muted-foreground">Performance: </span>
                     <span className="text-foreground">{tech.performanceOverhead}</span>

@@ -213,7 +213,7 @@ export const SecurityLevelDegradation: React.FC<SecurityLevelDegradationProps> =
 
           {/* Details */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="grid grid-cols-2 gap-3 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
               <div>
                 <span className="text-muted-foreground">Algorithm Type:</span>
                 <span className="ml-2 font-medium capitalize">{algorithmData.category}</span>

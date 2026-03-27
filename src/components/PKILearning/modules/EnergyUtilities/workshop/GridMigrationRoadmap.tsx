@@ -260,7 +260,7 @@ function PhaseDetailCard({
           {/* Cost by Utility Size */}
           <div>
             <p className="text-xs font-bold text-foreground mb-1">Estimated Cost by Size</p>
-            <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-center">
               {(
                 [
                   { key: 'small' as const, label: 'Small' },

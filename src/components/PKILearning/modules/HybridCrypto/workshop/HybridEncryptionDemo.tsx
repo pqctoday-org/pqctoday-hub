@@ -480,7 +480,7 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
                   <p className="text-xs text-destructive">{pqcKemResult.error}</p>
                 ) : (
                   <>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <div className="text-center">
                         <div className="text-lg font-bold text-foreground">
                           {pqcKemResult.keyGenMs.toFixed(0)}
@@ -561,7 +561,7 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
                   <p className="text-xs text-destructive">{hybridKemResult.error}</p>
                 ) : (
                   <>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                       <div className="text-center">
                         <div className="text-lg font-bold text-foreground">
                           {hybridKemResult.keyGenMs.toFixed(0)}
@@ -745,7 +745,7 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
                   <p className="text-xs text-destructive">{result.error}</p>
                 ) : (
                   <>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                       <div className="text-center">
                         <div className="text-lg font-bold text-foreground">
                           {result.keyGenMs.toFixed(0)}

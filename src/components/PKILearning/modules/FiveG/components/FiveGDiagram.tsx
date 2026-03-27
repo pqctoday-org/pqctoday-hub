@@ -21,7 +21,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
         ${usimActive ? 'border-primary bg-primary/10 shadow-glow' : 'border-border bg-card/40'}
       `}
       >
-        <div className="text-4xl mb-2">📱</div>
+        <div className="text-2xl sm:text-4xl mb-2">📱</div>
         <div className="font-bold text-center">USIM</div>
         <div className="text-xs text-muted-foreground mt-1">UE Side</div>
       </div>
@@ -87,7 +87,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
         ${hnActive ? 'border-secondary bg-secondary/10 shadow-[0_0_20px_hsl(var(--secondary)/0.3)]' : 'border-border bg-card/40'}
       `}
       >
-        <div className="text-4xl mb-2">☁️</div>
+        <div className="text-2xl sm:text-4xl mb-2">☁️</div>
         <div className="font-bold text-center">Home Network</div>
         <div className="text-xs text-muted-foreground mt-1">UDM / SIDF</div>
       </div>

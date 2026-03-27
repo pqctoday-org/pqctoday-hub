@@ -116,7 +116,7 @@ export const ZeroTrustIdentityArchitect: React.FC = () => {
       {/* Summary Timeline Bar */}
       <div className="glass-panel p-4">
         <div className="text-xs font-bold text-foreground mb-3">Migration Timeline Overview</div>
-        <div className="grid grid-cols-4 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {ZERO_TRUST_MIGRATION_YEARS.map((year) => (
             <div
               key={year}

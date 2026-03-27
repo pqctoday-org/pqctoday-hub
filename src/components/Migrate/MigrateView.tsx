@@ -54,7 +54,7 @@ export const MigrateView: React.FC = () => {
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
   const persona = usePersonaStore((s) => s.selectedPersona)
   const preferredLayers = persona ? (PERSONA_MIGRATE_LAYERS[persona] ?? []) : [] // eslint-disable-line security/detect-object-injection
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
 
@@ -62,7 +62,16 @@ export const MigrateView: React.FC = () => {
     stepNumber: number
     stepTitle: string
     stepId: string
-  } | null>(null)
+  } | null>(() => {
+    const step = searchParams.get('step')
+    if (step) {
+      const found = MIGRATION_STEPS.find((s) => s.id === step)
+      return found
+        ? { stepNumber: found.stepNumber, stepTitle: found.title, stepId: found.id }
+        : null
+    }
+    return null
+  })
 
   // Support ?industry= deep link from Report
   const [industryFilter, setIndustryFilter] = useState<string | null>(
@@ -107,8 +116,47 @@ export const MigrateView: React.FC = () => {
     if (industry !== null) {
       setIndustryFilter(industry)
     }
+    const stepParam = searchParams.get('step')
+    if (stepParam !== null) {
+      const found = MIGRATION_STEPS.find((s) => s.id === stepParam)
+      if (found) {
+        setStepFilter({ stepNumber: found.stepNumber, stepTitle: found.title, stepId: found.id })
+      } else {
+        setStepFilter(null)
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
+
+  const syncFiltersToUrl = useCallback(
+    (overrides: { q?: string; industry?: string | null; step?: string | null; layer?: string }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          const q = overrides.q !== undefined ? overrides.q : filterText
+          const ind = overrides.industry !== undefined ? overrides.industry : industryFilter
+          const stp = overrides.step !== undefined ? overrides.step : (stepFilter?.stepId ?? null)
+          const lyr = overrides.layer !== undefined ? overrides.layer : activeLayer
+
+          if (q) next.set('q', q)
+          else next.delete('q')
+
+          if (ind) next.set('industry', ind)
+          else next.delete('industry')
+
+          if (stp) next.set('step', stp)
+          else next.delete('step')
+
+          if (lyr && lyr !== 'All') next.set('layer', lyr)
+          else next.delete('layer')
+
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [filterText, industryFilter, stepFilter, activeLayer, setSearchParams]
+  )
 
   const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
   const activeTab = activeSubCategory
@@ -139,9 +187,10 @@ export const MigrateView: React.FC = () => {
   const debouncedSetFilter = useCallback(
     debounce((value: string) => {
       setFilterText(value)
+      syncFiltersToUrl({ q: value })
       if (value) logMigrateAction('Search', value)
     }, 200),
-    []
+    [syncFiltersToUrl]
   )
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -442,11 +491,12 @@ export const MigrateView: React.FC = () => {
         stepTitle: step.title,
         stepId: step.id,
       })
+      syncFiltersToUrl({ step: step.id })
       setActiveSubCategory('All')
       logMigrateAction('View Related Software', step.title)
       // No scroll needed — stack is above the fold; user selects a layer to see step products
     },
-    [setActiveSubCategory]
+    [setActiveSubCategory, syncFiltersToUrl]
   )
 
   if (!softwareData || softwareData.length === 0) {
@@ -501,6 +551,7 @@ export const MigrateView: React.FC = () => {
           onSelect={(id) => {
             if (id === 'All') {
               setStepFilter(null)
+              syncFiltersToUrl({ step: null })
             } else {
               const step = MIGRATION_STEPS.find((s) => s.id === id)
               if (step) handleViewSoftware(step)
@@ -519,7 +570,10 @@ export const MigrateView: React.FC = () => {
           </span>
           <Button
             variant="link"
-            onClick={() => setIndustryFilter(null)}
+            onClick={() => {
+              setIndustryFilter(null)
+              syncFiltersToUrl({ industry: null })
+            }}
             className="ml-auto flex items-center gap-1"
             aria-label="Clear industry filter"
           >
@@ -541,7 +595,10 @@ export const MigrateView: React.FC = () => {
           </span>
           <Button
             variant="link"
-            onClick={() => setStepFilter(null)}
+            onClick={() => {
+              setStepFilter(null)
+              syncFiltersToUrl({ step: null })
+            }}
             className="ml-auto flex items-center gap-1"
             aria-label="Clear step filter"
           >
@@ -561,6 +618,7 @@ export const MigrateView: React.FC = () => {
             onSelect={(id) => {
               setActiveLayer(id)
               setFlatCategoryFilter('All')
+              syncFiltersToUrl({ layer: id })
               logMigrateAction('Filter Layer', id)
             }}
             defaultLabel="All Layers"

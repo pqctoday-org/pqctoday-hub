@@ -152,7 +152,7 @@ function AssetPriorityRow({ scored, rank }: { scored: ScoredAsset; rank: number 
           </div>
 
           {/* Compliance + Effort */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <h5 className="text-xs font-bold text-foreground mb-1">Primary Mandate</h5>
               {primaryMandate ? (

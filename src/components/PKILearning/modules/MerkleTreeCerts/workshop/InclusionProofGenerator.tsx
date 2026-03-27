@@ -355,7 +355,7 @@ export const InclusionProofGenerator: React.FC = () => {
               </div>
 
               {/* Size comparison */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="bg-success/10 rounded-lg p-3 border border-success/20 text-center">
                   <div className="text-lg font-bold text-success">
                     {formatBytes(proof.proofSizeBytes)}

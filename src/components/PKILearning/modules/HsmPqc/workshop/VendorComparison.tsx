@@ -62,7 +62,7 @@ export const VendorComparison: React.FC = () => {
       <VendorCoverageNotice migrateLayer="Hardware" className="mb-2" />
 
       {/* Summary Stats */}
-      <div className="grid grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-foreground">{stats.total}</div>
           <div className="text-xs text-muted-foreground">Total Vendors</div>

@@ -141,7 +141,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
                       <div className="font-semibold text-xs text-foreground mb-1 flex items-center gap-1">
                         <BarChart3 size={12} className="text-primary" /> TCO Estimate
                       </div>
-                      <div className="grid grid-cols-3 gap-1 text-xs">
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-1 text-xs">
                         {(['year1', 'year3', 'year5'] as const).map((yr) => (
                           <div key={yr} className="text-center">
                             <div className="text-muted-foreground">

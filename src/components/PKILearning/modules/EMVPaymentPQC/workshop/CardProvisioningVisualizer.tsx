@@ -267,7 +267,7 @@ export const CardProvisioningVisualizer: React.FC = () => {
               </ol>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <h5 className="text-xs font-medium text-status-success mb-1">Strengths</h5>
                 <ul className="text-xs text-muted-foreground space-y-0.5 list-disc list-inside">

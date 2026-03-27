@@ -337,7 +337,7 @@ const CapacityTab: React.FC = () => {
               onChange={(e) => setCertCount(Number(e.target.value))}
               className="w-full accent-primary"
             />
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
                 <div className="text-muted-foreground">etcd (Classical)</div>
                 <div className="font-bold text-foreground">{etcdClassical.toFixed(2)} MB</div>
@@ -363,7 +363,7 @@ const CapacityTab: React.FC = () => {
               onChange={(e) => setSignsPerDay(Number(e.target.value))}
               className="w-full accent-primary"
             />
-            <div className="grid grid-cols-2 gap-2 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
               <div className="bg-muted/50 rounded p-2 border border-border">
                 <div className="text-muted-foreground">Bandwidth (Classical)</div>
                 <div className="font-bold text-foreground">

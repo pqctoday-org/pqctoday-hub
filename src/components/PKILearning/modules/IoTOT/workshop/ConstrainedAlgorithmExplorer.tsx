@@ -131,7 +131,7 @@ function DeviceInfoCard({ device }: { device: DeviceClass }) {
         <div className="text-xs text-muted-foreground">RFC 7228</div>
       </div>
       <p className="text-xs text-muted-foreground mb-2">{device.description}</p>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div>
           <div className="text-[10px] text-muted-foreground">RAM</div>
           <div className="text-sm font-bold font-mono text-foreground">{device.ramKB} KB</div>
@@ -235,7 +235,7 @@ function AlgorithmRow({
       </div>
 
       {/* Sizes */}
-      <div className="grid grid-cols-2 gap-2 text-[10px]">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px]">
         <div>
           <span className="text-muted-foreground">Public Key: </span>
           <span className="font-mono text-foreground">{publicKeyBytes.toLocaleString()} B</span>

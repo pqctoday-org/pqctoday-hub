@@ -458,7 +458,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="glass-panel p-3 text-center">
             <div className="text-2xl font-bold text-status-error">{criticalVectors}</div>
             <div className="text-xs text-muted-foreground">Critical Vectors</div>

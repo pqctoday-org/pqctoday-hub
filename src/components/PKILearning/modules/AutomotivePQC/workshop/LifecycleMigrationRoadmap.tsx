@@ -446,7 +446,7 @@ const HSMTierCard: React.FC<{ tier: AutomotiveHSMTier }> = ({ tier }) => (
       </div>
     </div>
 
-    <div className="grid grid-cols-2 gap-x-4 gap-y-2 text-xs">
+    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs">
       <div>
         <span className="text-muted-foreground">Standard</span>
         <div className="font-mono text-foreground">{tier.standard}</div>

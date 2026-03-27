@@ -63,7 +63,11 @@ const Step9OrgScale = () => {
 
       <div className="space-y-2">
         <h4 className="text-sm font-semibold text-foreground">Systems using cryptography</h4>
-        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Number of systems">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+          role="radiogroup"
+          aria-label="Number of systems"
+        >
           {systemOptions.map((opt) => (
             <Button
               key={opt.value}
@@ -86,7 +90,11 @@ const Step9OrgScale = () => {
 
       <div className="space-y-2">
         <h4 className="text-sm font-semibold text-foreground">Engineering team size</h4>
-        <div className="grid grid-cols-2 gap-2" role="radiogroup" aria-label="Team size">
+        <div
+          className="grid grid-cols-1 sm:grid-cols-2 gap-2"
+          role="radiogroup"
+          aria-label="Team size"
+        >
           {teamOptions.map((opt) => (
             <Button
               key={opt.value}

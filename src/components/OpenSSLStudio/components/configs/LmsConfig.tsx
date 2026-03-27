@@ -426,7 +426,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           </div>
 
           {/* Custom Parameters */}
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             <div>
               <span className="text-xs text-muted-foreground block mb-1">
                 LMS Algorithm (Height)

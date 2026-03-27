@@ -78,7 +78,7 @@ export const VendorMigrationMatrix: React.FC = () => {
       <VendorCoverageNotice migrateLayer="Network" className="mb-2" />
 
       {/* Readiness Summary */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="glass-panel p-4 text-center">
           <div className="text-2xl font-bold text-status-success">{readinessBreakdown.ga}</div>
           <div className="text-[10px] text-muted-foreground">GA Support</div>
@@ -275,7 +275,7 @@ export const VendorMigrationMatrix: React.FC = () => {
                   {pqcLabel.label}
                 </span>
               </div>
-              <div className="grid grid-cols-2 gap-2 text-[10px] mb-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-[10px] mb-3">
                 <div className="flex items-center gap-1">
                   <SupportStatusIcon status={vendor.tlsInspectionPQC as SupportStatusKey} />
                   <span className="text-muted-foreground">TLS Inspect</span>

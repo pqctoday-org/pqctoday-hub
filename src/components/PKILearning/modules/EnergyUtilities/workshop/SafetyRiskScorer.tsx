@@ -177,7 +177,7 @@ function ComparisonPanel({
         <Shield size={16} className="text-primary" />
         Scenario Comparison
       </h4>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {sides.map(({ result, scenario }) => {
           const colors = riskLevelColor(result.riskLevel)
           return (
@@ -588,7 +588,7 @@ export const SafetyRiskScorer: React.FC<SafetyRiskScorerProps> = ({
                     <p className="text-[10px] font-bold uppercase text-muted-foreground mb-1">
                       Compound Risk Score
                     </p>
-                    <p className={`text-5xl font-bold font-mono ${colors.text}`}>
+                    <p className={`text-3xl md:text-5xl font-bold font-mono ${colors.text}`}>
                       {currentResult.compoundRiskScore}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">/100</p>

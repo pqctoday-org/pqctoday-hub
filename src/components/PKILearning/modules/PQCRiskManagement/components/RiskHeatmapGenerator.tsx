@@ -207,7 +207,7 @@ function TreatmentSelector({
 
       {/* Residual risk overrides for "mitigate" */}
       {decision?.strategy === 'mitigate' && (
-        <div className="grid grid-cols-2 gap-3 p-3 bg-muted/30 rounded-lg border border-border">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-3 bg-muted/30 rounded-lg border border-border">
           <div>
             <span className="block text-xs font-medium text-muted-foreground mb-1">
               Post-mitigation Likelihood

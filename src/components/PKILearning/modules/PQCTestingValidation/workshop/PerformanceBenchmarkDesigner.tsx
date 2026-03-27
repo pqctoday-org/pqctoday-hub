@@ -222,7 +222,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
           <Zap size={13} className="text-primary" />
           <span className="text-xs font-semibold text-foreground">Sustained Throughput Impact</span>
         </div>
-        <div className="grid grid-cols-3 gap-3 text-center text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-center text-xs">
           {ALG_SETS.map((alg) => {
             const pct = BENCHMARK_DATA[alg][networkProfile].throughputPct
             const info = ALGORITHM_SET_LABELS[alg]

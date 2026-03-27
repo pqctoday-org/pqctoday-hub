@@ -252,8 +252,8 @@ test.describe('PQC Assistant Chatbot', () => {
     await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
 
     // Verify messages are visible
-    await expect(page.getByText('Test message')).toBeVisible({ timeout: 5000 })
-    await expect(page.getByText('Test response')).toBeVisible()
+    await expect(page.getByText('Test message').first()).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Test response').first()).toBeVisible()
 
     // Clear messages — inline confirm requires two clicks
     await page.getByRole('button', { name: 'Clear conversation' }).click()
@@ -327,7 +327,7 @@ test.describe('PQC Assistant Chatbot', () => {
     await input.press('Enter')
 
     // User message should appear
-    await expect(page.getByText('Testing enter key')).toBeVisible()
+    await expect(page.getByText('Testing enter key').first()).toBeVisible()
   })
 
   test('page context shows in header', async ({ page }) => {

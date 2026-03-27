@@ -145,7 +145,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
               {/* Type selector */}
               <div className="space-y-1.5">
                 <div className="text-xs font-semibold text-foreground">Type:</div>
-                <div className="grid grid-cols-2 gap-1">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
                   {TYPE_OPTIONS.map((opt) => {
                     const isSelected = result.selectedType === opt.id
                     const showFeedback = isSubmitted

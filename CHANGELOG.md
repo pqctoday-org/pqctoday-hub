@@ -4,6 +4,30 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.57.0] - 2026-03-27
+
+### Added
+
+- **Migrate URL sync for all filters**: All active filters in the Migrate view — search query (`?q=`), industry (`?industry=`), migration step (`?step=`), and layer (`?layer=`) — are now synced to the URL in real time. `?step=` deep link restores the selected migration step on page load. [view:/migrate]
+
+### Changed
+
+- **Comprehensive mobile responsiveness pass — 70+ components**: All `grid-cols-2` and `grid-cols-3` layouts converted to `grid-cols-1 sm:grid-cols-2` / `grid-cols-1 sm:grid-cols-3` across PKI Learning workshop components (51 files), About, Algorithms Comparison, Assess wizard, MainLayout nav "More" menu, HsmClassicalSignPanel (RSA/ECDSA/EdDSA), and OpenSSL Studio configs. [persona:all]
+- **`generate-curious-assets.mjs` — Gemini model upgrade**: Switched from `gemini-1.5-pro-002` to `gemini-2.0-flash` for faster, lower-cost generation. Added `DIR_TO_MODULE_ID` mapping covering all 50 learning modules and structured `MODULE_QUADRANTS` definitions per module for consistent 4-panel infographic titles. [infra]
+- **Curious infographic filenames corrected**: Deleted 5 legacy filenames (`gcp_hardwaresecuritymodules-curious.png`, `gcp_identitymgmtcerts-curious.png`, `gcp_networkprotocols-curious.png`, `gcp_quantumkeydistribution-curious.png`, `gcp_webgatewaypqc-curious.png`) and regenerated with correct kebab-case module IDs (`gcp_qkd-curious.png`, `gcp_web-gateway-pqc-curious.png`). [persona:curious]
+- **RAG corpus regenerated**: Updated `public/data/rag-corpus.json` to reflect latest content. [data]
+
+### Fixed
+
+- **E2E test suite updated to match current UI** (8 spec files):
+  - `changelog.spec.ts`: WhatsNew toast selector changed from `alertdialog` → `dialog`
+  - `compliance-data.spec.ts` / `compliance-sorting.spec.ts`: Tab renamed `All Records` → `Cert Records`; page heading updated to `Standardization, Compliance and Certification`
+  - `chatbot-persona.spec.ts`: Version storage shape updated (`isFirstVisit: false, version: 2`); assessment storage key corrected to `pqc-assessment`; context suggestion text checks updated to actual question text
+  - `chatbot.spec.ts`: Added `.first()` to `getByText` locators to avoid strict mode errors
+  - `about.spec.ts`: Updated bio text match; added `{ exact: true }` for SBOM heading
+  - `deep-links.spec.ts`: OpenSSL Studio heading uses `getByRole('heading')` instead of `getByText`
+  - `assess.spec.ts`: Wizard step title checks use `locator('visible=true')` to handle off-screen DOM
+
 ## [2.56.0] - 2026-03-27
 
 ### Added

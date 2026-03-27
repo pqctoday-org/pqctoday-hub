@@ -42,29 +42,31 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
             Associations (SAs) through a two-phase handshake: <strong>IKE_SA_INIT</strong> for key
             exchange and <strong>IKE_AUTH</strong> for identity verification.
           </p>
-          <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <div className="space-y-3 text-center">
-              <div className="grid grid-cols-3 gap-2 items-center">
-                <div className="text-right text-xs font-bold text-primary">Initiator</div>
-                <div className="text-xs text-muted-foreground">&mdash; Phase 1 &mdash;</div>
-                <div className="text-left text-xs font-bold text-secondary">Responder</div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 items-center">
-                <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
-                  SA, KE, Ni &rarr;
+          <div className="overflow-x-auto">
+            <div className="bg-muted/50 rounded-lg p-4 border border-border min-w-[300px]">
+              <div className="space-y-3 text-center">
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div className="text-right text-xs font-bold text-primary">Initiator</div>
+                  <div className="text-xs text-muted-foreground">&mdash; Phase 1 &mdash;</div>
+                  <div className="text-left text-xs font-bold text-secondary">Responder</div>
                 </div>
-                <div className="text-xs text-muted-foreground">IKE_SA_INIT</div>
-                <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
-                  &larr; SA, KE, Nr
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
+                    SA, KE, Ni &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground">IKE_SA_INIT</div>
+                  <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
+                    &larr; SA, KE, Nr
+                  </div>
                 </div>
-              </div>
-              <div className="grid grid-cols-3 gap-2 items-center">
-                <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
-                  SK&#123;IDi, AUTH&#125; &rarr;
-                </div>
-                <div className="text-xs text-muted-foreground">IKE_AUTH</div>
-                <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
-                  &larr; SK&#123;IDr, AUTH&#125;
+                <div className="grid grid-cols-3 gap-2 items-center">
+                  <div className="p-2 rounded bg-primary/10 text-primary text-xs font-bold">
+                    SK&#123;IDi, AUTH&#125; &rarr;
+                  </div>
+                  <div className="text-xs text-muted-foreground">IKE_AUTH</div>
+                  <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
+                    &larr; SK&#123;IDr, AUTH&#125;
+                  </div>
                 </div>
               </div>
             </div>

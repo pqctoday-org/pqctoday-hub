@@ -2,11 +2,23 @@
 import { test, expect } from '@playwright/test'
 
 test.describe('Compliance Table Sorting', () => {
+  test.beforeEach(async ({ page }) => {
+    // Suppress WhatsNew toast
+    await page.addInitScript(() => {
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0', isFirstVisit: false }, version: 2 })
+      )
+    })
+  })
+
   test('should sort by Product Name', async ({ page }) => {
     // Go to compliance page
     await page.goto('/compliance')
-    // Switch to table tab
-    await page.getByText('All Records').click()
+    // Switch to Cert Records tab where the table lives
+    const allTab = page.getByText('Cert Records')
+    await expect(allTab).toBeVisible({ timeout: 10000 })
+    await allTab.click({ force: true })
 
     // Wait for table to load
     await page.waitForSelector('table tbody tr')
@@ -36,7 +48,9 @@ test.describe('Compliance Table Sorting', () => {
   test('should sort by Date', async ({ page }) => {
     await page.goto('/compliance')
     // Switch to table tab
-    await page.getByText('All Records').click()
+    const allTab = page.getByText('Cert Records')
+    await expect(allTab).toBeVisible({ timeout: 10000 })
+    await allTab.click({ force: true })
     await page.waitForSelector('table tbody tr')
 
     // Default might be desc, click to toggle

@@ -42,7 +42,7 @@ test.describe('PQC Risk Assessment (/assess)', () => {
     await page.getByRole('button', { name: /Quick/ }).click()
     const titles = ['Industry', 'Country', 'Crypto', 'Sensitivity', 'Compliance', 'Migration']
     for (const title of titles) {
-      await expect(page.getByText(title).first()).toBeVisible()
+      await expect(page.getByText(title).locator('visible=true').first()).toBeVisible()
     }
   })
 

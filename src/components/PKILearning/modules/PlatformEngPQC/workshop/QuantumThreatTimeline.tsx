@@ -125,7 +125,7 @@ export const QuantumThreatTimeline: React.FC = () => {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <div className="glass-panel p-3 text-center">
           <div className="text-2xl font-bold text-status-error">{stats.atRisk}</div>
           <div className="text-xs text-muted-foreground">HNDL At-Risk Assets</div>

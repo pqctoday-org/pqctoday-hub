@@ -343,7 +343,7 @@ export const PatientPrivacyMapper: React.FC = () => {
 
       {/* ── Selection Summary ───────────────────────────────────────────────── */}
       {aggregateStats && (
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="glass-panel p-3 text-center">
             <p className="text-2xl font-bold text-primary">{aggregateStats.avgRetention}y</p>
             <p className="text-[10px] text-muted-foreground">Avg True Retention</p>

@@ -76,7 +76,7 @@ export const InteropTestMatrix: React.FC = () => {
       </div>
 
       {/* Summary counts */}
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {(['compatible', 'partial', 'incompatible', 'untested'] as CompatStatus[]).map((s) => {
           const cfg = STATUS_CONFIG[s]
           return (

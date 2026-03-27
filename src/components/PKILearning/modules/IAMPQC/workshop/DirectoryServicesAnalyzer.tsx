@@ -161,7 +161,9 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
             </div>
           </div>
           <div className="text-right">
-            <div className={`text-4xl font-bold ${hndlStyle.color}`}>{service.hndlScore}</div>
+            <div className={`text-2xl sm:text-4xl font-bold ${hndlStyle.color}`}>
+              {service.hndlScore}
+            </div>
             <div className="text-[10px] text-muted-foreground">/ 10 HNDL score</div>
           </div>
         </div>

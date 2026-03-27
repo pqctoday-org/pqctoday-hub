@@ -11,10 +11,12 @@ test.describe('Compliance Data View', () => {
 
   test('should load the compliance page and display the table', async ({ page }) => {
     // Check for header - Use strict locator or role
-    await expect(page.getByRole('heading', { name: 'Compliance & Certification' })).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Standardization, Compliance and Certification' })
+    ).toBeVisible()
 
-    // The default tab is "landscape" which doesn't have a table. Switch to "All Records"
-    const allTab = page.getByText('All Records')
+    // The default tab is "standards" which doesn't have a table. Switch to "Cert Records"
+    const allTab = page.getByText('Cert Records')
     await expect(allTab).toBeVisible({ timeout: 10000 })
     await allTab.click({ force: true })
 
@@ -31,8 +33,8 @@ test.describe('Compliance Data View', () => {
   })
 
   test('should allow switching tabs and filtering data with pagination', async ({ page }) => {
-    // The default tab is "landscape" which doesn't have a table. Switch to "All Records"
-    const allTab = page.getByText('All Records')
+    // The default tab is "standards" which doesn't have a table. Switch to "Cert Records"
+    const allTab = page.getByText('Cert Records')
     await expect(allTab).toBeVisible({ timeout: 10000 })
     await allTab.click({ force: true })
     await expect(allTab).toHaveAttribute('data-state', 'active')
@@ -62,8 +64,8 @@ test.describe('Compliance Data View', () => {
   })
 
   test('should search and filter results including pagination feedback', async ({ page }) => {
-    // The default tab is "landscape" which doesn't have a table. Switch to "All Records"
-    const allTab = page.getByText('All Records')
+    // The default tab is "standards" which doesn't have a table. Switch to "Cert Records"
+    const allTab = page.getByText('Cert Records')
     await expect(allTab).toBeVisible({ timeout: 10000 })
     await allTab.click({ force: true })
 

@@ -102,7 +102,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
         <p className="text-sm text-muted-foreground mb-2">{title} — Overall Score</p>
-        <p className={`text-5xl font-bold ${getScoreColor(weightedTotal, colorScale)}`}>
+        <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal, colorScale)}`}>
           {weightedTotal}
         </p>
         <p className="text-sm text-muted-foreground mt-1">/100</p>

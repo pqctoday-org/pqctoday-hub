@@ -42,7 +42,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'pqc-version-storage',
-        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 1 })
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0', isFirstVisit: false }, version: 2 })
       )
     })
 
@@ -85,13 +85,17 @@ test.describe('PQC Assistant — Persona & Context', () => {
     // Start on algorithms page
     await page.goto('/algorithms')
     await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
-    await expect(page.getByText('— Algorithms')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Compare ML-KEM-768 and ML-KEM-1024 performance')).toBeVisible({
+      timeout: 5000,
+    })
 
     // Close, navigate, reopen
     await page.keyboard.press('Escape')
     await page.goto('/timeline')
     await page.getByRole('button', { name: 'Open PQC Assistant' }).last().click()
-    await expect(page.getByText('— Timeline')).toBeVisible({ timeout: 5000 })
+    await expect(page.getByText('Which countries mandate PQC migration by 2030?')).toBeVisible({
+      timeout: 5000,
+    })
   })
 
   test('suggested questions differ between pages', async ({ page }) => {
@@ -166,7 +170,7 @@ test.describe('PQC Assistant — Persona & Context', () => {
     // Seed assessment as complete
     await page.addInitScript(() => {
       window.localStorage.setItem(
-        'pqc-assessment-storage',
+        'pqc-assessment',
         JSON.stringify({
           state: {
             assessmentStatus: 'complete',
@@ -250,7 +254,9 @@ test.describe('PQC Assistant — Persona & Context', () => {
     if (await followUpButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await followUpButton.click()
       // User message should appear from the follow-up
-      await expect(page.getByText('What are ML-KEM security levels?')).toBeVisible()
+      await expect(
+        page.locator('p').filter({ hasText: 'What are ML-KEM security levels?' })
+      ).toBeVisible()
     }
   })
 })

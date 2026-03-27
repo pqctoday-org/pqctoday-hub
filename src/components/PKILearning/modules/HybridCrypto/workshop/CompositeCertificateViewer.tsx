@@ -296,7 +296,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                   ) : (
                     <>
                       {/* Timing */}
-                      <div className="grid grid-cols-2 gap-3">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="text-center bg-muted/50 rounded-lg p-3">
                           <div className="text-lg font-bold text-foreground">
                             {result.keyGenMs.toFixed(0)}

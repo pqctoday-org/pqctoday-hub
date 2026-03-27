@@ -536,7 +536,7 @@ const PerformanceView = ({ algorithms, highlightAlgorithms }: DetailViewProps) =
                   </span>
                 )}
               </div>
-              <div className="grid grid-cols-3 gap-2 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
                 <div>
                   <span className="text-muted-foreground block">KeyGen</span>
                   <span

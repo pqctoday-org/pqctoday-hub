@@ -320,7 +320,7 @@ export const QuantumThreatMigration: React.FC = () => {
         <div className="text-sm font-bold text-foreground mb-3">Migration Priority Matrix</div>
         <div className="relative border border-border rounded-lg overflow-hidden">
           {/* 2x2 grid */}
-          <div className="grid grid-cols-2 min-h-[280px]">
+          <div className="grid grid-cols-1 sm:grid-cols-2 min-h-[280px]">
             {/* Top-left: Migrate Now (high severity, low effort) */}
             <div className="bg-status-error/10 border-r border-b border-border p-3 relative">
               <span className="text-[10px] font-bold text-status-error">Migrate Now</span>

@@ -216,7 +216,7 @@ export const ActivePQCScanner: React.FC = () => {
       {scanned && !scanning && (
         <div className="space-y-4">
           {/* Summary */}
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div className="p-3 rounded-lg border border-destructive/30 bg-destructive/5 text-center">
               <div className="text-2xl font-bold text-destructive">{criticalCount}</div>
               <div className="text-xs text-muted-foreground">Critical / High Risk</div>
@@ -277,7 +277,7 @@ export const ActivePQCScanner: React.FC = () => {
                     </div>
 
                     {/* Crypto details */}
-                    <div className="grid grid-cols-2 gap-x-4 gap-y-1 mb-3 text-xs font-mono">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 mb-3 text-xs font-mono">
                       <span className="text-muted-foreground">TLS/protocol:</span>
                       <span className="text-foreground/80">{r.tlsVersion}</span>
                       <span className="text-muted-foreground">Key exchange:</span>

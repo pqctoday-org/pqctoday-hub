@@ -123,93 +123,95 @@ export const IKEv2HandshakeSimulator: React.FC<IKEv2HandshakeSimulatorProps> = (
       )}
 
       {/* 2-Column Handshake Visualization */}
-      <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-start">
-        {/* Initiator Column */}
-        <div>
-          <div className="text-center mb-4">
-            <div className="inline-block px-4 py-2 rounded-lg bg-primary/10 border border-primary/30">
-              <span className="text-sm font-bold text-primary">Initiator</span>
+      <div className="overflow-x-auto">
+        <div className="grid grid-cols-[1fr_auto_1fr] gap-4 items-start min-w-[480px]">
+          {/* Initiator Column */}
+          <div>
+            <div className="text-center mb-4">
+              <div className="inline-block px-4 py-2 rounded-lg bg-primary/10 border border-primary/30">
+                <span className="text-sm font-bold text-primary">Initiator</span>
+              </div>
             </div>
-          </div>
-          <div className="space-y-3">
-            {steps.map((step, idx) =>
-              step.direction === 'right' ? (
-                <div
-                  key={step.label}
-                  className={`transition-all duration-300 ${
-                    idx <= currentStep ? 'opacity-100' : 'opacity-30'
-                  }`}
-                >
-                  <div className="text-xs font-bold text-foreground mb-2">{step.label}</div>
-                  <div className="space-y-1.5">
-                    {step.message.payloads.map((payload, pIdx) => (
-                      <PayloadCard
-                        key={`${step.label}-${pIdx}`}
-                        payload={payload}
-                        index={pIdx}
-                        highlighted={idx === currentStep}
-                      />
-                    ))}
+            <div className="space-y-3">
+              {steps.map((step, idx) =>
+                step.direction === 'right' ? (
+                  <div
+                    key={step.label}
+                    className={`transition-all duration-300 ${
+                      idx <= currentStep ? 'opacity-100' : 'opacity-30'
+                    }`}
+                  >
+                    <div className="text-xs font-bold text-foreground mb-2">{step.label}</div>
+                    <div className="space-y-1.5">
+                      {step.message.payloads.map((payload, pIdx) => (
+                        <PayloadCard
+                          key={`${step.label}-${pIdx}`}
+                          payload={payload}
+                          index={pIdx}
+                          highlighted={idx === currentStep}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div key={step.label} className="h-4" />
-              )
-            )}
-          </div>
-        </div>
-
-        {/* Center Arrow Column */}
-        <div className="flex flex-col items-center gap-3 pt-14">
-          {steps.map((step, idx) => (
-            <div
-              key={step.label}
-              className={`flex items-center transition-all duration-300 ${
-                idx <= currentStep ? 'opacity-100' : 'opacity-20'
-              }`}
-              style={{ minHeight: '60px' }}
-            >
-              {step.direction === 'right' ? (
-                <ArrowRight size={20} className="text-primary" />
-              ) : (
-                <ArrowLeft size={20} className="text-secondary" />
+                ) : (
+                  <div key={step.label} className="h-4" />
+                )
               )}
             </div>
-          ))}
-        </div>
-
-        {/* Responder Column */}
-        <div>
-          <div className="text-center mb-4">
-            <div className="inline-block px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/30">
-              <span className="text-sm font-bold text-secondary">Responder</span>
-            </div>
           </div>
-          <div className="space-y-3">
-            {steps.map((step, idx) =>
-              step.direction === 'left' ? (
-                <div
-                  key={step.label}
-                  className={`transition-all duration-300 ${
-                    idx <= currentStep ? 'opacity-100' : 'opacity-30'
-                  }`}
-                >
-                  <div className="text-xs font-bold text-foreground mb-2">{step.label}</div>
-                  <div className="space-y-1.5">
-                    {step.message.payloads.map((payload, pIdx) => (
-                      <PayloadCard
-                        key={`${step.label}-${pIdx}`}
-                        payload={payload}
-                        index={pIdx}
-                        highlighted={idx === currentStep}
-                      />
-                    ))}
+
+          {/* Center Arrow Column */}
+          <div className="flex flex-col items-center gap-3 pt-14">
+            {steps.map((step, idx) => (
+              <div
+                key={step.label}
+                className={`flex items-center transition-all duration-300 ${
+                  idx <= currentStep ? 'opacity-100' : 'opacity-20'
+                }`}
+                style={{ minHeight: '60px' }}
+              >
+                {step.direction === 'right' ? (
+                  <ArrowRight size={20} className="text-primary" />
+                ) : (
+                  <ArrowLeft size={20} className="text-secondary" />
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Responder Column */}
+          <div>
+            <div className="text-center mb-4">
+              <div className="inline-block px-4 py-2 rounded-lg bg-secondary/10 border border-secondary/30">
+                <span className="text-sm font-bold text-secondary">Responder</span>
+              </div>
+            </div>
+            <div className="space-y-3">
+              {steps.map((step, idx) =>
+                step.direction === 'left' ? (
+                  <div
+                    key={step.label}
+                    className={`transition-all duration-300 ${
+                      idx <= currentStep ? 'opacity-100' : 'opacity-30'
+                    }`}
+                  >
+                    <div className="text-xs font-bold text-foreground mb-2">{step.label}</div>
+                    <div className="space-y-1.5">
+                      {step.message.payloads.map((payload, pIdx) => (
+                        <PayloadCard
+                          key={`${step.label}-${pIdx}`}
+                          payload={payload}
+                          index={pIdx}
+                          highlighted={idx === currentStep}
+                        />
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <div key={step.label} className="h-4" />
-              )
-            )}
+                ) : (
+                  <div key={step.label} className="h-4" />
+                )
+              )}
+            </div>
           </div>
         </div>
       </div>

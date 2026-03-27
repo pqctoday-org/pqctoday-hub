@@ -82,7 +82,7 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
           <Trophy className="text-primary" size={32} />
         </div>
         <h2 className="text-2xl md:text-3xl font-bold mb-2 text-gradient">Quiz Complete</h2>
-        <div className={clsx('text-5xl md:text-6xl font-bold my-4', scoreColor)}>
+        <div className={clsx('text-3xl md:text-5xl lg:text-6xl font-bold my-4', scoreColor)}>
           {summary.overall.percentage}%
         </div>
 

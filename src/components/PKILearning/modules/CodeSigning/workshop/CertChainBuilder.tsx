@@ -152,7 +152,7 @@ export const CertChainBuilder: React.FC = () => {
                       {template.algorithm}
                     </span>
                   </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs text-muted-foreground">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-muted-foreground">
                     <div>
                       <strong>Subject:</strong> {template.subject}
                     </div>

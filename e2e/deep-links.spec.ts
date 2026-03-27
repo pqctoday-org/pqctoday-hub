@@ -245,21 +245,21 @@ test.describe('OpenSSL Studio deep links', () => {
   test('selects category via ?cmd=enc', async ({ page }) => {
     await page.goto('/openssl?cmd=enc')
 
-    await expect(page.getByText('OpenSSL Studio').first()).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'OpenSSL Studio' })).toBeVisible()
   })
 
   test('resolves alias ?cmd=keygen to genpkey', async ({ page }) => {
     await page.goto('/openssl?cmd=keygen')
 
     // keygen is an alias for genpkey — page should load successfully
-    await expect(page.getByText('OpenSSL Studio').first()).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'OpenSSL Studio' })).toBeVisible()
   })
 
   test('invalid ?cmd=bogus falls back to default', async ({ page }) => {
     await page.goto('/openssl?cmd=bogus')
 
     // Falls back to genpkey (default) — page loads normally
-    await expect(page.getByText('OpenSSL Studio').first()).toBeVisible()
+    await expect(page.getByRole('heading', { name: 'OpenSSL Studio' })).toBeVisible()
   })
 })
 

@@ -273,7 +273,9 @@ export const VendorScorecardBuilder: React.FC = () => {
       {/* Overall score */}
       <div className="glass-panel p-6 text-center">
         <p className="text-sm text-muted-foreground mb-2">Vendor PQC Readiness — Overall Score</p>
-        <p className={`text-5xl font-bold ${getScoreColor(weightedTotal)}`}>{weightedTotal}</p>
+        <p className={`text-3xl md:text-5xl font-bold ${getScoreColor(weightedTotal)}`}>
+          {weightedTotal}
+        </p>
         <p className="text-sm text-muted-foreground mt-1">/100</p>
       </div>
 

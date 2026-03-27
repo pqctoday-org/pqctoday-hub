@@ -515,7 +515,7 @@ export const MobileAboutView = () => {
                   <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-2">
                     Our founding principles
                   </h3>
-                  <div className="grid grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
                     {PRINCIPLES.map(({ label, icon: Icon, text }) => (
                       <div key={label} className="bg-card p-3">
                         <div className="flex items-center gap-1.5 mb-1">
@@ -609,7 +609,7 @@ export const MobileAboutView = () => {
           <span className="text-3xl font-bold text-gradient">2,200+</span>
           <p className="text-xs text-muted-foreground mt-1">curated records across 10 datasets</p>
         </div>
-        <div className="grid grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {DATA_FOUNDATION.map((s) => (
             <div
               key={s.label}
