@@ -192,7 +192,7 @@ const PlaygroundContent = () => {
             {hsmMode && (
               <button
                 onClick={() => setShowMethodologyModal(true)}
-                className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-500 border border-amber-500/30 hover:bg-amber-500/20 transition-colors"
+                className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
                 aria-label="View PKCS#11 test methodology"
               >
                 <Construction size={11} />

@@ -60,9 +60,9 @@ function renderPqcBadge(support: string) {
   let badgeClass: string
   if (lower.startsWith('yes')) {
     badgeClass = 'bg-status-success text-status-success'
-  } else if (lower.startsWith('limited')) {
+  } else if (lower.startsWith('partial') || lower.startsWith('limited')) {
     badgeClass = 'bg-status-warning text-status-warning'
-  } else if (lower.startsWith('planned')) {
+  } else if (lower.startsWith('planned') || lower.startsWith('in progress')) {
     badgeClass = 'bg-primary/10 text-primary border-primary/20'
   } else {
     badgeClass = 'bg-destructive/10 text-destructive border-destructive/20'

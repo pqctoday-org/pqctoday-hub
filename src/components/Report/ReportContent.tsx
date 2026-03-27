@@ -772,7 +772,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                   {/* Header */}
                   <div className="text-center">
                     <div className="flex items-center justify-center gap-1.5">
-                      <p className="text-sm text-muted-foreground print:text-gray-600">
+                      <p className="text-sm text-muted-foreground print:text-muted-foreground">
                         Generated on {generatedDate}
                       </p>
                       <Button
@@ -889,7 +889,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
                         })}
                       </p>
                     )}
-                    <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
+                    <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
                       {result.personaNarrative ?? result.narrative}
                     </p>
                   </CollapsibleSection>

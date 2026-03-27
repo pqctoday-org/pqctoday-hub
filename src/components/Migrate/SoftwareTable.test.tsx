@@ -54,9 +54,23 @@ describe('SoftwareTable', () => {
       expect(badge.className).toContain('text-status-warning')
     })
 
+    it('renders warning badge for "Partial" support', () => {
+      render(<SoftwareTable data={[makeItem({ pqcSupport: 'Partial (via OpenSSL TLS)' })]} />)
+      const badge = screen.getByText('Partial (via OpenSSL TLS)')
+      expect(badge.className).toContain('bg-status-warning')
+      expect(badge.className).toContain('text-status-warning')
+    })
+
     it('renders primary badge for "Planned" support', () => {
       render(<SoftwareTable data={[makeItem({ pqcSupport: 'Planned (in progress)' })]} />)
       const badge = screen.getByText('Planned (in progress)')
+      expect(badge.className).toContain('text-primary')
+      expect(badge.className).toContain('bg-primary/10')
+    })
+
+    it('renders primary badge for "In Progress" support', () => {
+      render(<SoftwareTable data={[makeItem({ pqcSupport: 'In Progress' })]} />)
+      const badge = screen.getByText('In Progress')
       expect(badge.className).toContain('text-primary')
       expect(badge.className).toContain('bg-primary/10')
     })

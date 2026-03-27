@@ -770,9 +770,11 @@ export const PersonalizationSection = () => {
               region={selectedRegion}
               industries={selectedIndustries}
             />
-            <div className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 pointer-events-none">
-              <Pencil size={16} className="text-white" />
-              <span className="text-white text-[10px] font-bold uppercase tracking-wide">Edit</span>
+            <div className="absolute inset-0 rounded-2xl bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center gap-1 pointer-events-none">
+              <Pencil size={16} className="text-foreground" />
+              <span className="text-foreground text-[10px] font-bold uppercase tracking-wide">
+                Edit
+              </span>
             </div>
           </button>
 

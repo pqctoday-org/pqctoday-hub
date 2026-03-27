@@ -52,7 +52,7 @@ const LEADER_SORT_OPTIONS: { id: LeaderSortOption; label: string }[] = [
 ]
 
 export const LeadersGrid = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [selectedRegion, setSelectedRegion] = useState<string>(() => {
     return searchParams.get('region') ?? 'All'
   })
@@ -63,42 +63,100 @@ export const LeadersGrid = () => {
     const sector = searchParams.get('sector')
     return sector && ['Public', 'Private', 'Academic'].includes(sector) ? sector : 'All'
   })
-  const [activeCategory, setActiveCategory] = useState('All')
+  const [activeCategory, setActiveCategory] = useState(() => searchParams.get('cat') ?? 'All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
   const [highlightedLeader, setHighlightedLeader] = useState<string | null>(() =>
     searchParams.get('leader')
   )
   const [notFoundMessage, setNotFoundMessage] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<ViewMode>('cards')
-  const [sortBy, setSortBy] = useState<LeaderSortOption>('name')
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
+  )
+  const [sortBy, setSortBy] = useState<LeaderSortOption>(
+    () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
+  )
   const [selectedLeader, setSelectedLeader] = useState<Leader | null>(null)
   const [isConsentModalOpen, setIsConsentModalOpen] = useState(false)
   const [isRemovalModalOpen, setIsRemovalModalOpen] = useState(false)
   const gridRef = useRef<HTMLDivElement>(null)
   const { selectedIndustries, selectedPersona, experienceLevel } = usePersonaStore()
 
-  // Sync URL params on same-route navigations (e.g. chatbot deep links)
+  /** Write all filter state back to URL. Call with overrides for the value that just changed.
+   *  Uses replace:true to avoid history spam. Functional setSearchParams preserves ?leader=. */
+  const syncFiltersToUrl = useCallback(
+    (overrides: {
+      region?: string
+      country?: string
+      sector?: string
+      q?: string
+      cat?: string
+      sort?: LeaderSortOption
+      view?: ViewMode
+    }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev) // preserves ?leader= if present
+          const region = overrides.region ?? selectedRegion
+          const country = overrides.country ?? selectedCountry
+          const sector = overrides.sector ?? selectedSector
+          const q = overrides.q ?? searchQuery
+          const cat = overrides.cat ?? activeCategory
+          const sort = overrides.sort ?? sortBy
+          const view = overrides.view ?? viewMode
+
+          if (region !== 'All') next.set('region', region)
+          else next.delete('region')
+          if (country !== 'All') next.set('country', country)
+          else next.delete('country')
+          if (sector !== 'All') next.set('sector', sector)
+          else next.delete('sector')
+          if (q) next.set('q', q)
+          else next.delete('q')
+          if (cat !== 'All') next.set('cat', cat)
+          else next.delete('cat')
+          if (sort !== 'name') next.set('sort', sort)
+          else next.delete('sort')
+          if (view !== 'cards') next.set('view', view)
+          else next.delete('view')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [
+      selectedRegion,
+      selectedCountry,
+      selectedSector,
+      searchQuery,
+      activeCategory,
+      sortBy,
+      viewMode,
+      setSearchParams,
+    ]
+  )
+
+  // Sync all URL params on same-route navigations (e.g. chatbot deep links).
+  // Functional setters prevent cascade loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
-    const q = searchParams.get('q')
-    if (q !== null) setSearchQuery(q) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
+    const nextQ = searchParams.get('q') ?? ''
+    const nextSector = searchParams.get('sector') ?? 'All'
+    const nextRegion = searchParams.get('region') ?? 'All'
+    const nextCountry = searchParams.get('country') ?? 'All'
+    const nextCat = searchParams.get('cat') ?? 'All'
+    const nextSort = (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
+    const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
+    const nextLeader = searchParams.get('leader')
 
-    const sector = searchParams.get('sector')
-    if (sector && ['Public', 'Private', 'Academic'].includes(sector)) {
-      setSelectedSector(sector)
-    }
-
-    const region = searchParams.get('region')
-    if (region) setSelectedRegion(region)
-
-    const country = searchParams.get('country')
-    if (country) {
-      setSelectedCountry(country)
-    }
-
-    const leader = searchParams.get('leader')
-    if (leader) {
-      setHighlightedLeader(leader)
-    }
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
+    setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
+    setSelectedSector((prev) => (prev !== nextSector ? nextSector : prev))
+    setSelectedRegion((prev) => (prev !== nextRegion ? nextRegion : prev))
+    setSelectedCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
+    setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
+    setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
+    setViewMode((prev) => (prev !== nextView ? nextView : prev))
+    // ?leader= handled by the scroll-to effect below
+    if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
   }, [searchParams])
 
   // Scroll to highlighted leader after render
@@ -287,6 +345,7 @@ export const LeadersGrid = () => {
 
   const handleCategorySelect = (category: string) => {
     setActiveCategory(category)
+    syncFiltersToUrl({ cat: category })
     logEvent('Leaders', 'Filter Category', category)
   }
 
@@ -405,6 +464,7 @@ export const LeadersGrid = () => {
               selectedId={selectedSector}
               onSelect={(id) => {
                 setSelectedSector(id)
+                syncFiltersToUrl({ sector: id })
                 logEvent('Leaders', 'Filter Sector', id)
               }}
               defaultLabel="Sector"
@@ -421,6 +481,7 @@ export const LeadersGrid = () => {
               onSelect={(id) => {
                 setSelectedRegion(id)
                 setSelectedCountry('All')
+                syncFiltersToUrl({ region: id, country: 'All' })
                 logEvent('Leaders', 'Filter Region', id)
               }}
               defaultLabel="Region"
@@ -436,6 +497,7 @@ export const LeadersGrid = () => {
               selectedId={selectedCountry}
               onSelect={(id) => {
                 setSelectedCountry(id)
+                syncFiltersToUrl({ country: id })
                 logEvent('Leaders', 'Filter Country', id)
               }}
               defaultLabel="Country"
@@ -461,6 +523,7 @@ export const LeadersGrid = () => {
               value={searchQuery}
               onChange={(e) => {
                 setSearchQuery(e.target.value)
+                syncFiltersToUrl({ q: e.target.value })
                 if (e.target.value.length > 2) {
                   logEvent('Leaders', 'Search', e.target.value)
                 }
@@ -470,11 +533,24 @@ export const LeadersGrid = () => {
           </div>
 
           {viewMode === 'cards' && (
-            <SortControl value={sortBy} onChange={setSortBy} options={LEADER_SORT_OPTIONS} />
+            <SortControl
+              value={sortBy}
+              onChange={(s) => {
+                setSortBy(s)
+                syncFiltersToUrl({ sort: s })
+              }}
+              options={LEADER_SORT_OPTIONS}
+            />
           )}
 
           <div className="hidden md:block">
-            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <ViewToggle
+              mode={viewMode}
+              onChange={(mode) => {
+                setViewMode(mode)
+                syncFiltersToUrl({ view: mode })
+              }}
+            />
           </div>
         </div>
       </div>

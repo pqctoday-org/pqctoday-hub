@@ -201,7 +201,7 @@ export const MainLayout = () => {
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
           <nav
-            className="flex flex-row flex-nowrap items-center justify-between w-full lg:w-auto gap-1 lg:gap-2 overflow-x-auto no-scrollbar"
+            className="flex flex-row flex-nowrap items-center justify-between w-full lg:w-auto gap-1 lg:gap-2 overflow-x-auto"
             role="navigation"
             aria-label="Main navigation"
           >
@@ -280,7 +280,7 @@ export const MainLayout = () => {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-[69] bg-black/40 lg:hidden"
+            className="fixed inset-0 z-[69] bg-black/60 lg:hidden"
             onClick={() => setMoreMenuOpen(false)}
             aria-hidden="true"
           />

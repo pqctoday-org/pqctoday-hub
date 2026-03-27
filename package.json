@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.55.0",
+  "version": "2.56.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -49,7 +49,10 @@
     "enrich:docs:dry": "python3 scripts/enrich-public-docs.py --dry-run",
     "enrich:timeline": "python3 scripts/enrich-timeline-haiku.py",
     "enrich:timeline:dry": "python3 scripts/enrich-timeline-haiku.py --dry-run",
-    "notebooklm": "npx tsx scripts/generate-notebooklm.ts"
+    "notebooklm": "npx tsx scripts/generate-notebooklm.ts",
+    "validate:data": "tsx scripts/validate-data-integrity.ts",
+    "validate:data:json": "tsx scripts/validate-data-integrity.ts --json",
+    "validate:data:verbose": "tsx scripts/validate-data-integrity.ts --verbose"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3"
@@ -60,6 +63,7 @@
     "@noble/hashes": "^2.0.1",
     "@oqs/liboqs-js": "^0.15.1",
     "@pqctoday/softhsm-wasm": "file:./src/vendor/softhsm-wasm",
+    "@react-oauth/google": "^0.13.4",
     "@scure/base": "^2.0.0",
     "@scure/bip32": "^2.0.1",
     "@scure/bip39": "^2.0.1",

@@ -175,7 +175,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
   }
 
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300">
+    <div className="glass-panel p-6 print:border print:border-border">
       <Button
         variant="ghost"
         onClick={() => setOpen((o) => !o)}
@@ -302,8 +302,10 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                             'text-xs',
                             item.pqcSupport.toLowerCase().startsWith('yes')
                               ? 'text-success'
-                              : item.pqcSupport.toLowerCase().startsWith('limited') ||
-                                  item.pqcSupport.toLowerCase().startsWith('planned')
+                              : item.pqcSupport.toLowerCase().startsWith('partial') ||
+                                  item.pqcSupport.toLowerCase().startsWith('limited') ||
+                                  item.pqcSupport.toLowerCase().startsWith('planned') ||
+                                  item.pqcSupport.toLowerCase().startsWith('in progress')
                                 ? 'text-warning'
                                 : 'text-muted-foreground'
                           )}

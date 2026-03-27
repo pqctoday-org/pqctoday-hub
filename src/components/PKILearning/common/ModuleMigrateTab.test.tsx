@@ -104,7 +104,7 @@ describe('ModuleMigrateTab', () => {
     renderTab('tls-basics')
     expect(screen.getByText('PQC')).toBeInTheDocument()
     expect(screen.getByText('Planned')).toBeInTheDocument()
-    expect(screen.getByText('Limited')).toBeInTheDocument()
+    expect(screen.getByText('Partial')).toBeInTheDocument()
   })
 
   it('renders FIPS badge for Validated and Partial, not for No', () => {

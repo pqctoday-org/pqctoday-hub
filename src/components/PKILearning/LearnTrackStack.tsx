@@ -140,45 +140,45 @@ const TRACK_META: {
     icon: Network,
     description:
       'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security, PQC testing & validation',
-    colorClass: 'from-sky-500/20 to-indigo-500/10 border-sky-500/30',
-    activeClass: 'bg-card border-sky-500/60',
+    colorClass: 'from-info/20 to-info/10 border-info/30',
+    activeClass: 'bg-card border-info/60',
   },
   {
     track: 'Hardware Infrastructure',
     icon: Cpu,
     description: 'HSMs, KMS, QKD, secure boot & firmware, confidential computing & TEEs',
-    colorClass: 'from-amber-500/20 to-orange-400/10 border-amber-500/30',
-    activeClass: 'bg-card border-amber-500/60',
+    colorClass: 'from-warning/20 to-warning/10 border-warning/30',
+    activeClass: 'bg-card border-warning/60',
   },
   {
     track: 'Software Infrastructure',
     icon: Server,
     description:
       'PKI, secrets management, stateful sigs, Merkle tree certs, crypto APIs, database encryption, OS PQC',
-    colorClass: 'from-amber-400/15 to-yellow-400/10 border-amber-400/30',
-    activeClass: 'bg-card border-amber-400/60',
+    colorClass: 'from-warning/15 to-warning/8 border-warning/25',
+    activeClass: 'bg-card border-warning/50',
   },
   {
     track: 'Applications',
     icon: Layers,
     description: 'Digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
-    colorClass: 'from-emerald-500/20 to-teal-500/10 border-emerald-500/30',
-    activeClass: 'bg-card border-emerald-500/60',
+    colorClass: 'from-success/20 to-success/10 border-success/30',
+    activeClass: 'bg-card border-success/60',
   },
   {
     track: 'Executive',
     icon: Briefcase,
     description: 'Risk management, business case, governance, compliance, vendor risk, migration',
-    colorClass: 'from-rose-500/20 to-red-500/10 border-rose-500/30',
-    activeClass: 'bg-card border-rose-500/60',
+    colorClass: 'from-destructive/20 to-destructive/10 border-destructive/30',
+    activeClass: 'bg-card border-destructive/60',
   },
   {
     track: 'Industries',
     icon: Factory,
     description:
       'Digital assets, 5G, energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC',
-    colorClass: 'from-orange-500/20 to-amber-400/10 border-orange-500/30',
-    activeClass: 'bg-card border-orange-500/60',
+    colorClass: 'from-tertiary/20 to-tertiary/10 border-tertiary/30',
+    activeClass: 'bg-card border-tertiary/60',
   },
 ]
 

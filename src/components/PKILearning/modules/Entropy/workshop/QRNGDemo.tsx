@@ -117,14 +117,15 @@ export const QRNGDemo: React.FC = () => {
       {/* Explanation Header */}
       <div className="glass-panel p-4 space-y-2">
         <p className="text-sm text-foreground leading-relaxed">
-          This step compares pre-fetched quantum random data from the ANU Quantum Random Number
-          Generator with locally generated random data from your browser's TRNG (via Web Crypto
-          API).
+          This step compares a reference high-quality random sample with locally generated random
+          data from your browser&apos;s CSPRNG (via Web Crypto API).
         </p>
         <p className="text-xs text-muted-foreground leading-relaxed">
-          <span className="font-medium text-foreground">Note:</span> QRNG data was pre-fetched from
-          the ANU QRNG service (qrng.anu.edu.au). The ANU QRNG generates true random numbers by
-          measuring quantum fluctuations of the vacuum.
+          <span className="font-medium text-foreground">Note:</span> The QRNG sample is a
+          cryptographically secure random reference generated via Node.js{' '}
+          <code className="font-mono text-primary">crypto.randomBytes()</code>. In a production QRNG
+          setup, this data would come from a quantum source such as the ANU QRNG (qrng.anu.edu.au),
+          which measures vacuum fluctuations.
         </p>
       </div>
 
@@ -158,7 +159,7 @@ export const QRNGDemo: React.FC = () => {
             <h4 className="text-sm font-semibold text-foreground">QRNG (Quantum)</h4>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
-            Pre-fetched from ANU
+            Reference random sample
           </span>
           <pre className="font-mono text-xs text-foreground bg-muted/30 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
             {formatHex(qrngSample)}
@@ -166,18 +167,18 @@ export const QRNGDemo: React.FC = () => {
           <FrequencyHistogram data={qrngSample} />
         </div>
 
-        {/* TRNG Card */}
+        {/* CSPRNG Card */}
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center gap-2">
             <Cpu size={18} className="text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">TRNG (Hardware)</h4>
+            <h4 className="text-sm font-semibold text-foreground">CSPRNG (OS Entropy)</h4>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
             Browser Web Crypto API
           </span>
           <Button variant="outline" size="sm" onClick={handleGenerateTRNG}>
             <Play size={14} className="mr-1.5" />
-            Generate TRNG
+            Generate CSPRNG
           </Button>
           {trngData ? (
             <>
@@ -202,7 +203,7 @@ export const QRNGDemo: React.FC = () => {
             <BitMatrixGrid data={qrngSample} compact />
           </div>
           <div className="glass-panel p-4">
-            <p className="text-xs font-medium text-foreground mb-2">TRNG Bit Structure</p>
+            <p className="text-xs font-medium text-foreground mb-2">CSPRNG Bit Structure</p>
             <BitMatrixGrid data={trngData} compact />
           </div>
         </div>
@@ -216,7 +217,7 @@ export const QRNGDemo: React.FC = () => {
             <LagPlot data={qrngSample} size={180} />
           </div>
           <div className="glass-panel p-4">
-            <p className="text-xs font-medium text-foreground mb-2">TRNG Autocorrelation</p>
+            <p className="text-xs font-medium text-foreground mb-2">CSPRNG Autocorrelation</p>
             <LagPlot data={trngData} size={180} />
           </div>
         </div>
@@ -244,9 +245,11 @@ export const QRNGDemo: React.FC = () => {
                   </th>
                   <th className="text-center py-2 px-2 text-muted-foreground font-medium">QRNG</th>
                   <th className="text-right py-2 px-3 text-muted-foreground font-medium">
-                    TRNG Value
+                    CSPRNG Value
                   </th>
-                  <th className="text-center py-2 pl-2 text-muted-foreground font-medium">TRNG</th>
+                  <th className="text-center py-2 pl-2 text-muted-foreground font-medium">
+                    CSPRNG
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -286,16 +289,17 @@ export const QRNGDemo: React.FC = () => {
       {/* Educational Callout */}
       <div className="glass-panel p-4 space-y-2 border-t border-border">
         <p className="text-sm text-foreground leading-relaxed">
-          Both TRNG and QRNG produce high-quality randomness that passes statistical tests.
+          Both CSPRNG and QRNG produce high-quality randomness that passes statistical tests.
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          The fundamental difference is the physical source: TRNG uses classical thermal/electrical
-          noise, while QRNG uses quantum mechanical phenomena.
+          The fundamental difference is the entropy source: a CSPRNG like Web Crypto API uses a DRBG
+          seeded from OS entropy (hardware TRNG), while a QRNG derives randomness directly from
+          quantum mechanical phenomena (photon detection, vacuum fluctuations).
         </p>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          <span className="font-medium text-foreground">For PQC:</span> TRNG is already quantum-safe
-          (it doesn't rely on computational hardness). QRNG adds defense-in-depth by deriving
-          randomness from quantum physics.
+          <span className="font-medium text-foreground">For PQC:</span> Hardware TRNGs are already
+          quantum-safe (they don&apos;t rely on computational hardness). QRNG adds defense-in-depth
+          by providing an independent entropy source grounded in quantum physics.
         </p>
       </div>
     </div>

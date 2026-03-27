@@ -64,7 +64,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
             onClick={() => setQuantumOverlay(!quantumOverlay)}
           >
             <div
-              className={`w-4 h-4 rounded-full bg-white absolute top-0.5 transition-transform ${
+              className={`w-4 h-4 rounded-full bg-foreground absolute top-0.5 transition-transform ${
                 quantumOverlay ? 'translate-x-5' : 'translate-x-0.5'
               }`}
             />

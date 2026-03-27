@@ -2,6 +2,7 @@
 import type { SoftwareItem } from '../types/MigrateTypes'
 import { compareDatasets, type ItemStatus } from '../utils/dataComparison'
 import { loadLatestCSV } from './csvUtils'
+import { vendorMap } from './vendorData'
 
 // Glob import to find all matching CSV files
 const modules = import.meta.glob('./quantum_safe_cryptographic_software_reference_*.csv', {
@@ -33,6 +34,7 @@ interface RawSoftwareItem {
   last_verified_date: string
   migration_phases: string
   learning_modules: string
+  vendor_id?: string
 }
 
 const {
@@ -65,6 +67,7 @@ const {
     lastVerifiedDate: row.last_verified_date,
     migrationPhases: row.migration_phases || '',
     learningModules: row.learning_modules || '',
+    vendorId: row.vendor_id || '',
   }),
   true // withPrevious for status badges
 )
@@ -80,6 +83,17 @@ export const softwareData: SoftwareItem[] = currentItems.map((item) => ({
   ...item,
   status: statusMap.get(item.softwareName),
 }))
+
+// Compute productCount for each vendor
+softwareData.forEach((item) => {
+  if (item.vendorId && vendorMap.has(item.vendorId)) {
+    const vendor = vendorMap.get(item.vendorId)!
+    vendor.productCount = (vendor.productCount ?? 0) + 1
+  }
+})
+
+// Re-export vendorMap with computed productCounts
+export { vendorMap }
 
 export function getMigrateItemsForModule(moduleId: string): SoftwareItem[] {
   return softwareData.filter((item) => {

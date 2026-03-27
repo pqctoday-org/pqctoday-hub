@@ -819,9 +819,9 @@ enrichment_method: ollama-qwen3:14b
 
 ---
 
-## draft-ietf-pquip-hybrid-signature-spectrums-06
+## draft-ietf-pquip-hybrid-signature-spectrums-07
 
-- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-06
+- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
 - **Title**: Hybrid signature spectrums
 - **Authors**: IETF PQUIP
 - **Publication Date**: 2024-03-01
@@ -841,9 +841,9 @@ enrichment_method: ollama-qwen3:14b
 
 ---
 
-## draft-ietf-uta-pqc-app-00
+## draft-ietf-uta-pqc-app-01
 
-- **Reference ID**: draft-ietf-uta-pqc-app-00
+- **Reference ID**: draft-ietf-uta-pqc-app-01
 - **Title**: Post-Quantum Cryptography Recommendations for TLS-based Applications
 - **Authors**: IETF UTA
 - **Publication Date**: 2025-09-18
@@ -885,9 +885,9 @@ enrichment_method: ollama-qwen3:14b
 
 ---
 
-## draft-wang-ipsecme-kem-auth-ikev2-01
+## draft-wang-ipsecme-kem-auth-ikev2-03
 
-- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-01
+- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-03
 - **Title**: KEM based Authentication for IKEv2 with Post-quantum Security
 - **Authors**: IETF Individual Submission
 - **Publication Date**: 2025-03-03

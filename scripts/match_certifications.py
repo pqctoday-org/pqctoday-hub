@@ -91,7 +91,7 @@ MATCH_RULES = [
     ("Apple codesign", _v("apple"), ["corecrypto"]),
     # ── Cisco (product-specific FIPS modules) ────────────────────────────
     ("Cisco ASA (Adaptive Security Appliance)", _v("cisco"), ["adaptive security"]),
-    ("Cisco IOS XE PQC", _v("cisco"), ["fips provider", "ios"]),
+    ("Cisco IOS XE PQC", _v("cisco"), ["fips provider", "ios", "ic2m"]),
     ("Cisco Meraki MX (Cloud-Managed Firewall)", _v("cisco"), ["fips provider"]),
     ("Cisco Secure Client (AnyConnect)", _v("cisco"), ["fips provider", "anyconnect", "secure client"]),
     # ── Oracle (Oracle Linux crypto modules) ─────────────────────────────
@@ -162,9 +162,63 @@ MATCH_RULES = [
     ("PQCryptoLib-Core", _vp("pqshield", "pqcryptolib"), ["pqcryptolib-core", "pqcryptolib"]),
     ("PQMicroLib-Core", _vp("pqshield", "pqmicrolib"), ["pqmicrolib-core", "pqmicrolib"]),
     # ── Check Point ──────────────────────────────────────────────────────
-    ("Check Point Quantum", _vp("check point", "quantum"), ["check point"]),
+    ("Check Point Quantum", _vp("check point", "quantum"), ["quantum security gateway", "harmony"]),
     # ── wolfSSL ──────────────────────────────────────────────────────────
     ("wolfSSL", _v("wolfssl"), ["wolfssl", "wolfcrypt"]),
+    # ── Microsoft (CNG Cryptographic Primitives) ──────────────────────────
+    ("Microsoft SymCrypt", _v("microsoft"), ["cryptographic primitives", "symcrypt"]),
+    ("Microsoft AD CS", _v("microsoft"), ["cryptographic primitives"]),
+    ("Microsoft Entra ID", _v("microsoft"), ["cryptographic primitives"]),
+    ("Microsoft Entra Verified ID", _v("microsoft"), ["cryptographic primitives"]),
+    ("Microsoft SignTool", _v("microsoft"), ["cryptographic primitives", "code integrity"]),
+    ("Microsoft Outlook S/MIME", _v("microsoft"), ["cryptographic primitives"]),
+    ("Windows Server 2025", _v("microsoft"), ["cryptographic primitives", "kernel mode"]),
+    ("Windows Secure Boot", _v("microsoft"), ["code integrity", "boot manager"]),
+    ("BitLocker (Windows)", _v("microsoft"), ["bitlocker", "cryptographic primitives"]),
+    (".NET System.Security.Cryptography", _v("microsoft"), ["cryptographic primitives"]),
+    ("SQL Server TDE/Always Encrypted", _v("microsoft"), ["cryptographic primitives"]),
+    ("Azure Key Vault", _v("microsoft"), ["cryptographic primitives", "azure"]),
+    ("Azure DevOps", _v("microsoft"), ["cryptographic primitives"]),
+    # ── Apple (additional corecrypto products) ──────────────────────────
+    ("iOS 26 / macOS 26", _v("apple"), ["corecrypto"]),
+    ("FileVault (macOS)", _v("apple"), ["corecrypto"]),
+    # ── Google (additional BoringCrypto products) ───────────────────────
+    ("BoringSSL", _v("google"), ["boringcrypto"]),
+    ("Go stdlib crypto/mlkem", _v("google"), ["boringcrypto"]),
+    # ── Fortinet ────────────────────────────────────────────────────────
+    ("Fortinet FortiOS", _v("fortinet"), ["fortigate", "forticlient"]),
+    ("Fortinet FortiGate (FortiOS)", _v("fortinet"), ["fortigate", "forticlient"]),
+    # ── Palo Alto Networks ──────────────────────────────────────────────
+    ("Palo Alto PAN-OS", _v("palo alto"), ["pan-os"]),
+    ("Palo Alto GlobalProtect", _v("palo alto"), ["globalprotect"]),
+    # ── Juniper (additional product lines) ──────────────────────────────
+    ("Juniper Junos OS", _v("juniper"), ["juniper fips provider", "juniper kernel", "juniper openssl", "junos"]),
+    ("Juniper SRX Series Firewalls", _v("juniper"), ["juniper", "srx"]),
+    # ── F5 ──────────────────────────────────────────────────────────────
+    ("F5 BIG-IP", _v("f5"), ["big-ip", "cryptographic module"]),
+    # ── DigiCert ────────────────────────────────────────────────────────
+    ("DigiCert SigningHub", _v("digicert"), ["mocana"]),
+    ("DigiCert Software Trust Manager", _v("digicert"), ["mocana"]),
+    ("DigiCert Trust Lifecycle Manager", _v("digicert"), ["mocana"]),
+    # ── Yubico ──────────────────────────────────────────────────────────
+    ("Yubico YubiHSM 2", _v("yubico"), ["yubihsm"]),
+    # ── Wind River ──────────────────────────────────────────────────────
+    ("Wind River VxWorks", _v("wind river"), ["wind river"]),
+    # ── SAP ─────────────────────────────────────────────────────────────
+    ("SAP Cryptographic Library", _v("sap"), ["commoncryptolib", "sap"]),
+    # ── SUSE ────────────────────────────────────────────────────────────
+    ("SUSE Linux Enterprise Server (SLES)", _v("suse"), ["suse linux enterprise"]),
+    # ── Senetas ─────────────────────────────────────────────────────────
+    ("Senetas CN7000 Series", _v("senetas"), ["cn series", "ce crypto"]),
+    # ── Okta ────────────────────────────────────────────────────────────
+    ("Okta Workforce Identity", _v("okta"), ["okta"]),
+    ("Okta Integration Network", _v("okta"), ["okta"]),
+    # ── Canonical / Ubuntu ──────────────────────────────────────────────
+    ("Ubuntu 24.04 LTS", _v("canonical"), ["ubuntu"]),
+    # ── wolfSSL (additional) ────────────────────────────────────────────
+    ("wolfBoot", _v("wolfssl"), ["wolfcrypt"]),
+    # ── Atalla (already upgraded, add explicit match) ───────────────────
+    ("Atalla AT1000e", _v("utimaco"), ["atalla"]),
     # ── SEALSQ (placeholder — no cert match) ─────────────────────────────
     ("SEALSQ Quantum Shield", lambda v, p: False, []),
 ]

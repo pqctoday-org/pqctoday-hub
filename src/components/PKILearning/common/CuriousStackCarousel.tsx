@@ -88,7 +88,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({ modu
               disabled={isCompleted}
               className={`px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-2 ${
                 isCompleted
-                  ? 'bg-green-500/20 text-green-500 dark:text-green-400 cursor-default border border-green-500/30'
+                  ? 'bg-status-success/20 text-status-success cursor-default border border-status-success/30'
                   : 'bg-primary/10 text-primary hover:bg-primary/20 border border-primary/20 cursor-pointer'
               }`}
             >

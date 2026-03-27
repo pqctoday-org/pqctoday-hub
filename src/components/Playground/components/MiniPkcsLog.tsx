@@ -30,17 +30,17 @@ export const MiniPkcsLog = () => {
             <span className="text-muted-foreground shrink-0 w-16">{entry.timestamp}</span>
 
             {entry.engineName === 'rust' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 shrink-0">
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-warning/20 text-warning shrink-0">
                 Rust
               </span>
             )}
             {entry.engineName === 'cpp' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 shrink-0">
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
                 C++
               </span>
             )}
             {entry.engineName === 'dual' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-purple-500/20 text-purple-400 shrink-0">
+              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-secondary/20 text-secondary shrink-0">
                 Dual
               </span>
             )}

@@ -157,7 +157,7 @@ export const MigrationRoadmap: React.FC<MigrationRoadmapProps> = ({
   const currentYear = new Date().getFullYear()
 
   return (
-    <div className="glass-panel p-6 print:border print:border-gray-300 print:break-inside-auto">
+    <div className="glass-panel p-6 print:border print:border-border print:break-inside-auto">
       <div className="flex items-center justify-between w-full print:hidden gap-2">
         <Button
           variant="ghost"

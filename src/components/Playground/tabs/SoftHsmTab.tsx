@@ -413,12 +413,12 @@ const HsmCallLog = () => {
             <div key={e.id} className="flex items-baseline gap-2 text-xs font-mono">
               <span className="text-muted-foreground shrink-0 w-16">{e.timestamp}</span>
               {e.engineName === 'rust' && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-orange-500/20 text-orange-400 shrink-0">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-warning/20 text-warning shrink-0">
                   Rust
                 </span>
               )}
               {e.engineName === 'cpp' && (
-                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 shrink-0">
+                <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
                   C++
                 </span>
               )}
@@ -997,7 +997,7 @@ const SoftHsmTabBrowser = () => {
               [ {engineMode === 'rust' || engineMode === 'dual' ? 'x' : ' '} ] Rust Engine
             </span>
             {engineMode === 'dual' && (
-              <span className="text-xs text-orange-400 font-bold">✓ Cross-Check Mode</span>
+              <span className="text-xs text-warning font-bold">✓ Cross-Check Mode</span>
             )}
           </div>
         </div>

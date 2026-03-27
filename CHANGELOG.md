@@ -4,6 +4,34 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.56.0] - 2026-03-27
+
+### Added
+
+- **Google Drive cloud sync**: Optional backup & restore of all app progress to the user's Google Drive `appDataFolder` (hidden from file list). New `CloudSyncService`, `useCloudSyncStore`, `GoogleAuthContext`, and `useSyncEffect` hook. Access token stored in browser memory only — never sent to any server. Scope: `drive.appdata` (least-privileged). [view:/] [view:/about]
+- **Google Drive Sync privacy terms on About page**: Dedicated panel explaining exactly what data is synced, what is excluded (API keys), and how to revoke access. Anchored at `#cloud-sync-privacy`. [view:/about]
+- **Google Drive Sync card on home page**: Backup & Restore grid shows a Connect / Connected card when `VITE_GOOGLE_CLIENT_ID` is configured, with live sync status and sign-out affordance. [view:/]
+- **New vendor catalog** (`vendorData.ts`): Structured vendor data source for future vendor-related features. [data]
+
+### Changed
+
+- **LinkToUsButton moved to bottom of About page**: The "Link to Us" card was removed from the home page Backup & Restore section and placed at the bottom of the About page (after the Legal panel), where it fits more naturally alongside community and outreach content. [view:/] [view:/about]
+- **Navigation horizontal scrollbar restored**: Removed `no-scrollbar` from the nav element — the CSS utility introduced in v2.55.0 had silently activated the class and hidden the scrollbar, making right-side nav icons inaccessible without a visible scroll affordance. [infra]
+- **Mobile nav backdrop opacity**: More menu backdrop darkened from `bg-black/40` to `bg-black/60` for better contrast. [infra]
+- **Backup & Restore grid layout**: Columns changed from `grid-cols-1 sm:grid-cols-3` to `grid-cols-1 sm:grid-cols-2 lg:grid-cols-4` to accommodate the new cloud sync card. [view:/]
+
+### Data
+
+- **Library CSV updated** (`library_03252026.csv`): Replaces `library_03132026_r3.csv`. [data:library]
+- **Leaders CSV updated** (`leaders_03252026.csv`): Replaces `leaders_03222026.csv`. [data:leaders]
+- **Certification xref CSV updated** (`migrate_certification_xref_03252026.csv`): Replaces `migrate_certification_xref_03212026.csv`. [data:migrate]
+- **Vendor reference CSV updated** (`vendors_03262026_r3.csv`): New vendor catalog CSV. [data:migrate]
+- **Quantum-safe software reference updated** (`quantum_safe_cryptographic_software_reference_03262026_r2.csv`). [data:migrate]
+
+### Fixed
+
+- **Nav scrollbar hidden by v2.55.0 CSS**: `no-scrollbar` class was present on the nav since a pre-2.55 commit but had no effect until the CSS utility was defined in v2.55.0, unexpectedly hiding the scrollbar and trapping right-side icons off-screen. [infra]
+
 ## [2.55.0] - 2026-03-24
 
 ### Added

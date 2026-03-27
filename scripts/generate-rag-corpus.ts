@@ -2248,7 +2248,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Timeline Page — Global PQC Migration Milestones',
       content:
-        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.",
+        "Timeline Page Overview\n\nThe Timeline page displays a Gantt chart of global PQC migration milestones for 50+ countries from 2024 to 2035. Events are categorized into 10 phase types: Discovery (cryptographic inventory), Testing (pilot deployments), POC (proof of concept), Migration (live deployment), Standardization (new PQC standards), Guidance (advisories), Policy (regulations enacted), Regulation (compliance enforcement), Research (ongoing development), and Deadline (hard cutoff dates).\n\nEvent categories: Milestones (singular achievements like a standard publication) and Phases (multi-year transitions like a country's migration period).\n\nFilter by: text search, country selection, phase type, event type, and region (Americas, EMEA, Asia-Pacific, Global/International). When a specific country is selected, a DocumentTable appears below the Gantt chart showing detailed entries with organization, phase badge, type, title, period, description, and source link.\n\nKey deadlines: Australia 2030 (most aggressive), Canada 2026/2031/2035, UK 2028 (3-phase), Czech Republic 2027 (first EU-specific), EU 2030/2035, Israel 2025, Taiwan 2027, Germany 2030 (QUANTITY initiative), G7 2034 (financial sector), CNSA 2.0 2030 exclusive/2035 full.\n\nURL filter parameters:\n- ?region=<region> — filter by region: americas | eu | apac | global (omit for All Regions)\n- ?country=<countryName> — filter to a specific country (e.g., /timeline?country=United+States); when present, region defaults to All\n- ?q=<text> — search/filter within the Gantt chart\n\nExample links: /timeline?region=eu (EU countries only), /timeline?country=Germany (Germany timeline only), /timeline?region=apac&country=Japan (Japan within APAC view), /timeline?q=FIPS (search for FIPS events).",
       category: 'page-guide',
       metadata: { page: 'timeline' },
       deepLink: '/timeline',
@@ -2270,7 +2270,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Library Page — Standards, RFCs & Reference Documents',
       content:
-        'Library Page Overview\n\nThe Library catalogs 100+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 16 categories (Standards, RFCs, Compliance, Protocols, PKI/Certificates, Firmware & Code Signing, etc.) and filterable by organization (NIST, IETF, ETSI, NSA, ANSSI, BSI, ASD, CCCS) and industry (Government, Finance, Telecom, Healthcare, Technology).\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies. Use ?ref= to deep-link (e.g., /library?ref=FIPS-203).',
+        'Library Page Overview\n\nThe Library catalogs 100+ technical standards, RFCs, and reference documents for PQC. Documents are organized across 16 categories (Standards, RFCs, Compliance, Protocols, PKI/Certificates, Firmware & Code Signing, etc.) and filterable by organization (NIST, IETF, ETSI, NSA, ANSSI, BSI, ASD, CCCS) and industry (Government, Finance, Telecom, Healthcare, Technology).\n\nKey standards: FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA), NIST IR 8547 (transition guidance, deprecate 2030/disallow 2035), SP 800-208 (LMS/XMSS).\n\nRecent RFCs: RFC 9629 (KEM in CMS), RFC 9708 (HSS/LMS in CMS), RFC 9802 (HSS/XMSS in X.509), RFC 9814 (SLH-DSA in CMS), RFC 9881/9882 (ML-DSA in X.509 and CMS), RFC 8784 (PQC PSK for IKEv2).\n\nRegional standards: ETSI TS 103 744 (EU hybrid KEM), BSI TR-02102 (Germany), ANSSI Position Paper (France hybrid mandate), CCCS ITSM.40.001 (Canada), ASD ISM-1917 (Australia).\n\nCross-reference system: Library documents link to compliance frameworks (via libraryRefs), timeline events (via timelineRefs), and inter-document dependencies.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?ref=<referenceId> — open a specific document detail panel (e.g., /library?ref=FIPS-203)\n- ?cat=<category> — filter by category: Digital Signature | KEM | PKI Certificate Management | Protocols | General Recommendations\n- ?org=<organization> — filter by standardization body: NIST, IETF, ETSI, 3GPP, ENISA, NSA, CISA/NSA, ANSSI France, BSI Germany, UK NCSC, CCCS Canada, ASD Australia, CA/Browser Forum, Cloud Security Alliance, CRYPTREC Japan, Open Quantum Safe\n- ?ind=<industry> — filter by industry: Finance & Banking | Government & Defense | Healthcare | Telecommunications | Technology | Energy & Utilities | Education\n- ?sort=<order> — sort: newest (default) | name | referenceId | urgency\n- ?view=<mode> — layout: cards (default) | table\n\nExample shareable links: /library?cat=KEM&org=NIST (NIST KEM standards), /library?cat=Digital+Signature&sort=urgency (signature docs by urgency), /library?ind=Finance+%26+Banking&cat=Protocols (finance protocol standards), /library?ref=FIPS-203&cat=KEM (open ML-KEM doc with KEM filter active).',
       category: 'page-guide',
       metadata: { page: 'library' },
       deepLink: '/library',
@@ -2281,7 +2281,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Threats Page — Industry-Specific Quantum Risk Dashboard',
       content:
-        'Threats Page Overview\n\nThe Threats dashboard shows 80+ quantum threat scenarios across 20 industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, and Water/Wastewater.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, and related learning modules.\n\nFilter by industry using ?industry= (e.g., /threats?industry=finance) or open specific threats with ?id= (e.g., /threats?id=FIN-001).',
+        'Threats Page Overview\n\nThe Threats dashboard shows 80+ quantum threat scenarios across 20 industries: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, and Water/Wastewater.\n\nThreat severity levels: Critical (immediate action required), High (1–3 year timeline), Medium-High, Medium, and Low.\n\nKey concepts:\n- HNDL (Harvest Now, Decrypt Later): Adversaries intercept and store encrypted data today to decrypt when quantum computers arrive. Primary near-term threat.\n- HNFL (Harvest Now, Forge Later): Adversaries plan to forge digital signatures (code signing, certificates, legal documents) once quantum computers break ECDSA/RSA.\n- CRQC (Cryptographically Relevant Quantum Computer): Global Risk Institute 2024 estimates 19–34% probability within 10 years.\n\nEach threat entry includes: threat ID, industry, detailed description, criticality level, crypto at risk, PQC replacement recommendation, regulation/source, confidence percentage, and related learning modules.\n\nURL filter parameters (all combinable):\n- ?id=<threatId> — open a specific threat detail (e.g., /threats?id=FIN-001)\n- ?industry=<name> — filter by industry; comma-join for multi-industry (e.g., /threats?industry=Finance,Healthcare); valid values: Aerospace, Automotive, Cloud Computing, Cryptocurrency/Blockchain, Cross-Industry, Energy/Critical Infrastructure, Financial Services, Government/Defense, Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card, Rail/Transit, Retail, Supply Chain, Telecommunications, Water/Wastewater\n- ?criticality=<level> — filter by severity: Critical | High | Medium-High | Medium | Low\n- ?q=<text> — search across threat descriptions, crypto at risk, and PQC recommendations\n- ?sort=<field> — sort column: industry (default) | threatId | criticality\n- ?dir=<order> — sort direction: asc (default) | desc\n\nExample links: /threats?industry=Financial+Services&criticality=Critical (critical finance threats), /threats?industry=Healthcare,Government%2FDefense&sort=threatId (multi-industry sorted by ID), /threats?id=FIN-001 (open specific threat), /threats?q=HNDL&criticality=High (high-severity HNDL threats).',
       category: 'page-guide',
       metadata: { page: 'threats' },
       deepLink: '/threats',
@@ -2325,7 +2325,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Leaders Page — Global PQC Visionaries & Organizations',
       content:
-        'Leaders Page Overview\n\nThe Leaders page profiles 100+ global PQC leaders — visionaries, algorithm inventors, government officials, and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nFilter by: country (15+ countries), sector (Public/Private/Academic), and text search across name, organization, and bio. Use ?leader= to highlight a specific person, ?country= for country filter, ?sector= for sector filter.',
+        'Leaders Page Overview\n\nThe Leaders page profiles 100+ global PQC leaders — visionaries, algorithm inventors, government officials, and organizations driving post-quantum cryptography adoption and standardization.\n\nLeader categories:\n- Government Leaders: NIST (Dustin Moody, Lily Chen), NCSC UK (Ollie Whitehouse), ANSSI France (Vincent Strubel), BSI Germany (Claudia Plattner), ENISA, CISA\n- Algorithm Inventors: Vadim Lyubashevsky (ML-KEM/ML-DSA at IBM), Léo Ducas (Kyber/Dilithium at CWI/Leiden)\n- Industry Vendors: SandboxAQ (Jack Hidary), PQShield, CryptoNext, QuSecure; HSM vendors (Thales, Entrust, Utimaco); PKI vendors (DigiCert, ISARA)\n- Standards Bodies: IETF (PQUIP, LAMPS), ETSI QSC, PQC Alliance\n- Industry Adopters: Google, AWS (Panos Kampanakis), Cloudflare (Bas Westerbaan — 38%+ HTTPS PQC-protected), Signal, Vodafone, IBM, JPMorgan Chase\n- Academic Researchers: Universities conducting PQC cryptanalysis and lattice cryptography research\n\nURL filter parameters (all combinable):\n- ?leader=<name> — scroll to and highlight a specific person (e.g., /leaders?leader=Dustin+Moody)\n- ?region=<region> — filter by region: americas | eu | apac (omit for All)\n- ?country=<country> — filter by country (scoped by region when both are set)\n- ?sector=<sector> — filter by sector: Public | Private | Academic\n- ?cat=<category> — filter by leader category: Government Leaders | Algorithm Inventors | Industry Vendors | Standards Bodies | Industry Adopters | Academic Researchers\n- ?q=<text> — search across name, organization, and bio\n- ?sort=<order> — sort leaders: name (default) | country | category\n- ?view=<mode> — layout: cards (default) | table\n\nExample links: /leaders?sector=Public&region=eu (European government leaders), /leaders?cat=Algorithm+Inventors&sort=country (algorithm inventors by country), /leaders?q=NIST&sector=Public (NIST public sector leaders), /leaders?leader=Dustin+Moody (highlight Dustin Moody), /leaders?cat=Industry+Adopters&view=table (adopters in table view).',
       category: 'page-guide',
       metadata: { page: 'leaders' },
       deepLink: '/leaders',
@@ -2482,6 +2482,66 @@ function enrichWithCrossReferences(corpus: RAGChunk[]): number {
 }
 
 // ---------------------------------------------------------------------------
+// Module Q&A processor
+// ---------------------------------------------------------------------------
+
+function processModuleQA(): RAGChunk[] {
+  const qaDir = path.join(DATA_DIR, 'module-qa')
+  if (!fs.existsSync(qaDir)) return []
+
+  // Find latest combined CSV
+  const files = fs
+    .readdirSync(qaDir)
+    .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
+    .sort()
+    .reverse()
+
+  if (files.length === 0) return []
+
+  const csvPath = path.join(qaDir, files[0])
+  const raw = fs.readFileSync(csvPath, 'utf-8')
+  const parsed = Papa.parse(raw, { header: true, skipEmptyLines: true })
+  const rows = parsed.data as Array<Record<string, string>>
+
+  const chunks: RAGChunk[] = []
+
+  for (const r of rows) {
+    const questionId = r.question_id?.trim()
+    const moduleId = r.module_id?.trim()
+    const question = r.question?.trim()
+    const answer = r.answer?.trim()
+
+    if (!questionId || !question || !answer) continue
+
+    const contentParts = [
+      `Q: ${question}`,
+      `A: ${answer}`,
+      moduleId ? `Module: ${moduleId}` : '',
+      r.library_refs ? `References: ${r.library_refs}` : '',
+      r.algorithm_refs ? `Algorithms: ${r.algorithm_refs}` : '',
+      r.compliance_refs ? `Compliance: ${r.compliance_refs}` : '',
+    ].filter(Boolean)
+
+    chunks.push({
+      id: `qa-${questionId}`,
+      source: 'module-qa',
+      title: question,
+      content: contentParts.join('\n'),
+      category: 'learning-qa',
+      metadata: {
+        moduleId: moduleId || '',
+        difficulty: r.difficulty || '',
+        roles: r.applicable_roles || '',
+        contentType: r.content_type || '',
+      },
+      deepLink: moduleId ? `/learn/${moduleId}` : undefined,
+    })
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Main
 // ---------------------------------------------------------------------------
 
@@ -2521,6 +2581,7 @@ async function main() {
     { name: 'Page Guides', fn: processPageGuides },
     { name: 'NotebookLM App Guides', fn: processNotebookLM },
     { name: 'Changelog', fn: processChangelog },
+    { name: 'Module Q&A', fn: processModuleQA },
   ]
 
   const corpus: RAGChunk[] = []
@@ -2564,6 +2625,7 @@ async function main() {
     'guided-tour': 0.85,
     softhsmv3: 1.0,
     changelog: 0.6,
+    'module-qa': 1.1,
   }
   for (const chunk of corpus) {
     const basePriority = SOURCE_PRIORITY[chunk.source] ?? 1.0

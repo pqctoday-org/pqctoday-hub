@@ -199,42 +199,106 @@ function findByRef(
 }
 
 export const LibraryView: React.FC = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
-  const [activeCategory, setActiveCategory] = useState<string>('All')
-  const [activeOrg, setActiveOrg] = useState<string>('All')
-  const [activeIndustry, setActiveIndustry] = useState<string>(storeIndustry ?? 'All')
+  const [activeCategory, setActiveCategory] = useState<string>(
+    () => searchParams.get('cat') ?? 'All'
+  )
+  const [activeOrg, setActiveOrg] = useState<string>(() => searchParams.get('org') ?? 'All')
+  const [activeIndustry, setActiveIndustry] = useState<string>(
+    () => searchParams.get('ind') ?? storeIndustry ?? 'All'
+  )
   const [filterText, setFilterText] = useState(() => searchParams.get('q') ?? '')
   const [inputValue, setInputValue] = useState(() => searchParams.get('q') ?? '')
-  const [viewMode, setViewMode] = useState<ViewMode>('cards')
-  const [sortBy, setSortBy] = useState<SortOption>('newest')
+  const [viewMode, setViewMode] = useState<ViewMode>(
+    () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
+  )
+  const [sortBy, setSortBy] = useState<SortOption>(
+    () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
+  )
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(() => {
     const ref = searchParams.get('ref')
     return ref ? findByRef(libraryData, ref) : null
   })
 
-  // Sync ?q= and ?ref= params on same-route navigations (e.g. chatbot deep links)
+  // Sync all filter params on same-route navigations (e.g. chatbot deep links, back/forward).
+  // Functional setters prevent infinite loops: React bails out when the returned value equals
+  // current state, so the setSearchParams → searchParams → useEffect cycle terminates.
   useEffect(() => {
     const ref = searchParams.get('ref')
     if (ref) {
       const found = findByRef(libraryData, ref)
       if (found) setSelectedItem(found)
-      return // ?ref= takes priority over ?q=
+      return // ?ref= takes priority — don't touch filter state
     }
-    const q = searchParams.get('q')
-    if (q !== null) {
-      setFilterText(q)
-      setInputValue(q)
-    }
-  }, [searchParams])
+
+    const nextCat = searchParams.get('cat') ?? 'All'
+    const nextOrg = searchParams.get('org') ?? 'All'
+    const nextInd = searchParams.get('ind') ?? storeIndustry ?? 'All'
+    const nextQ = searchParams.get('q') ?? ''
+    const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
+    const nextSort = (searchParams.get('sort') as SortOption | null) ?? 'newest'
+
+    setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
+    setActiveOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
+    setActiveIndustry((prev) => (prev !== nextInd ? nextInd : prev))
+    setFilterText((prev) => (prev !== nextQ ? nextQ : prev))
+    setInputValue((prev) => (prev !== nextQ ? nextQ : prev))
+    setViewMode((prev) => (prev !== nextView ? nextView : prev))
+    setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
+  }, [searchParams, storeIndustry])
+
+  /** Write all current filter state back to the URL. Call with overrides for the value that
+   *  just changed so the URL reflects it immediately without waiting for a state flush.
+   *  Uses replace:true to avoid polluting browser history on rapid filter changes.
+   *  Functional setSearchParams form preserves any existing ?ref= param naturally. */
+  const syncFiltersToUrl = useCallback(
+    (overrides: {
+      cat?: string
+      org?: string
+      ind?: string
+      q?: string
+      view?: ViewMode
+      sort?: SortOption
+    }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          const cat = overrides.cat ?? activeCategory
+          const org = overrides.org ?? activeOrg
+          const ind = overrides.ind ?? activeIndustry
+          const q = overrides.q ?? filterText
+          const view = overrides.view ?? viewMode
+          const sort = overrides.sort ?? sortBy
+
+          if (cat !== 'All') next.set('cat', cat)
+          else next.delete('cat')
+          if (org !== 'All') next.set('org', org)
+          else next.delete('org')
+          if (ind !== 'All') next.set('ind', ind)
+          else next.delete('ind')
+          if (q) next.set('q', q)
+          else next.delete('q')
+          if (view !== 'cards') next.set('view', view)
+          else next.delete('view')
+          if (sort !== 'newest') next.set('sort', sort)
+          else next.delete('sort')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [activeCategory, activeOrg, activeIndustry, filterText, viewMode, sortBy, setSearchParams]
+  )
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSetFilter = useCallback(
     debounce((value: string) => {
       setFilterText(value)
+      syncFiltersToUrl({ q: value })
       if (value) logLibrarySearch(value)
     }, 200),
-    []
+    [syncFiltersToUrl]
   )
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -244,6 +308,7 @@ export const LibraryView: React.FC = () => {
 
   const handleCategorySelect = (category: string) => {
     setActiveCategory(category)
+    syncFiltersToUrl({ cat: category })
     logEvent('Library', 'Filter Category', category)
   }
 
@@ -513,6 +578,7 @@ export const LibraryView: React.FC = () => {
               selectedId={activeOrg}
               onSelect={(org) => {
                 setActiveOrg(org)
+                syncFiltersToUrl({ org })
                 logEvent('Library', 'Filter Org', org)
               }}
               defaultLabel="Organization"
@@ -528,6 +594,7 @@ export const LibraryView: React.FC = () => {
               selectedId={activeIndustry}
               onSelect={(ind) => {
                 setActiveIndustry(ind)
+                syncFiltersToUrl({ ind })
                 logEvent('Library', 'Filter Industry', ind)
               }}
               defaultLabel="Industry"
@@ -554,10 +621,24 @@ export const LibraryView: React.FC = () => {
             />
           </div>
 
-          {viewMode === 'cards' && <SortControl value={sortBy} onChange={setSortBy} />}
+          {viewMode === 'cards' && (
+            <SortControl
+              value={sortBy}
+              onChange={(s) => {
+                setSortBy(s)
+                syncFiltersToUrl({ sort: s })
+              }}
+            />
+          )}
 
           <div className="hidden md:block">
-            <ViewToggle mode={viewMode} onChange={setViewMode} />
+            <ViewToggle
+              mode={viewMode}
+              onChange={(mode) => {
+                setViewMode(mode)
+                syncFiltersToUrl({ view: mode })
+              }}
+            />
           </div>
         </div>
       </div>

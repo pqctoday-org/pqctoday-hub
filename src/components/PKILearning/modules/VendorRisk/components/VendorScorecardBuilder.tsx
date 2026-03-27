@@ -35,7 +35,7 @@ const DIMENSIONS: Dimension[] = [
     weight: 0.25,
     autoDetect: (item) => {
       const s = (item.pqcSupport || '').toLowerCase()
-      return s.startsWith('yes') || s.startsWith('limited')
+      return s.startsWith('yes') || s.startsWith('partial') || s.startsWith('limited')
     },
   },
   {

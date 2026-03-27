@@ -1145,9 +1145,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-pquip-hybrid-signature-spectrums-06
+## draft-ietf-pquip-hybrid-signature-spectrums-07
 
-- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-06
+- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
 - **Title**: Hybrid signature spectrums
 - **Authors**: IETF PQUIP
 - **Publication Date**: 2024-03-01
@@ -1175,9 +1175,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-uta-pqc-app-00
+## draft-ietf-uta-pqc-app-01
 
-- **Reference ID**: draft-ietf-uta-pqc-app-00
+- **Reference ID**: draft-ietf-uta-pqc-app-01
 - **Title**: Post-Quantum Cryptography Recommendations for TLS-based Applications
 - **Authors**: IETF UTA
 - **Publication Date**: 2025-09-18
@@ -1235,9 +1235,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-wang-ipsecme-kem-auth-ikev2-01
+## draft-wang-ipsecme-kem-auth-ikev2-03
 
-- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-01
+- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-03
 - **Title**: KEM based Authentication for IKEv2 with Post-quantum Security
 - **Authors**: IETF Individual Submission
 - **Publication Date**: 2025-03-03
@@ -2525,9 +2525,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-cose-falcon-03
+## draft-ietf-cose-falcon-04
 
-- **Reference ID**: draft-ietf-cose-falcon-03
+- **Reference ID**: draft-ietf-cose-falcon-04
 - **Title**: FN-DSA for JOSE and COSE
 - **Authors**: IETF COSE WG
 - **Publication Date**: 2025-10-12
@@ -2855,9 +2855,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-sfluhrer-ipsecme-ikev2-mldsa-00
+## draft-sfluhrer-ipsecme-ikev2-mldsa-01
 
-- **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-00
+- **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-01
 - **Title**: Post-quantum Digital Signatures with ML-DSA in IKEv2
 - **Authors**: IETF IPSECME WG
 - **Publication Date**: 2025-01-01
@@ -2885,9 +2885,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-tls-mldsa-01
+## draft-ietf-tls-mldsa-02
 
-- **Reference ID**: draft-ietf-tls-mldsa-01
+- **Reference ID**: draft-ietf-tls-mldsa-02
 - **Title**: ML-DSA for TLS 1.3
 - **Authors**: IETF TLS WG
 - **Publication Date**: 2025-01-01
@@ -6245,9 +6245,9 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## NIST-SP-800-57-Pt1-R5
+## NIST-SP-800-57-Pt1-R6
 
-- **Reference ID**: NIST-SP-800-57-Pt1-R5
+- **Reference ID**: NIST-SP-800-57-Pt1-R6
 - **Title**: Recommendation for Key Management: Part 1 – General (Revision 5)
 - **Authors**: NIST
 - **Publication Date**: 2020-05-04

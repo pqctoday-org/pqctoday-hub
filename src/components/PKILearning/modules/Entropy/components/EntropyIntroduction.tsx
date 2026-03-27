@@ -148,14 +148,19 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
           <Cog size={20} /> DRBG Mechanisms (SP 800-90A)
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-4">
-          SP 800-90A Rev. 1 (2015) defines approved DRBG mechanisms using symmetric primitives. All
-          are quantum-safe — Grover's algorithm at most halves the effective key length, which is
+          SP 800-90A defines approved DRBG mechanisms using symmetric primitives. All are
+          quantum-safe — Grover's algorithm at most halves the effective key length, which is
           addressed by using 256-bit keys to achieve PQC Security Categories 3 and 5.
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-          {DRBG_MECHANISMS.map((mech) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
+          {DRBG_MECHANISMS.filter((m) => m.name !== 'XOF_DRBG').map((mech) => (
             <div key={mech.name} className="bg-muted/50 rounded-lg p-3 border border-border">
-              <div className="text-sm font-bold text-primary mb-1">{mech.name}</div>
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-sm font-bold text-primary">{mech.name}</span>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
+                  Rev. 1
+                </span>
+              </div>
               <div className="text-xs text-muted-foreground mb-1">
                 <span className="font-medium text-foreground/70">Basis:</span> {mech.basis}
               </div>
@@ -166,10 +171,32 @@ export const EntropyIntroduction: React.FC<EntropyIntroductionProps> = ({
             </div>
           ))}
         </div>
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 mb-3">
+          <div className="flex items-center gap-2 mb-2">
+            <span className="text-sm font-bold text-primary">
+              {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.name}
+            </span>
+            <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
+              New in Rev. 2 (2024)
+            </span>
+          </div>
+          <div className="text-xs text-muted-foreground mb-1">
+            <span className="font-medium text-foreground/70">Basis:</span>{' '}
+            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.basis}
+          </div>
+          <p className="text-xs text-muted-foreground mb-2">
+            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.description}
+          </p>
+          <p className="text-xs text-success/80">
+            <span className="font-medium">Strengths:</span>{' '}
+            {DRBG_MECHANISMS.find((m) => m.name === 'XOF_DRBG')?.strengths}
+          </p>
+        </div>
         <p className="text-xs text-muted-foreground">
-          <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 2 removes
-          deprecated TDES and SHA-1, and adds <strong>XOF_DRBG (SHAKE-based)</strong>, which
-          synergizes perfectly with the SHAKE-heavy PQC algorithms (ML-KEM, ML-DSA).
+          <span className="font-medium text-foreground/70">Note:</span> SP 800-90A Rev. 1 (2015)
+          defined CTR, Hash, and HMAC DRBGs. Rev. 2 (2024) removes deprecated TDES and SHA-1, and
+          adds <strong>XOF_DRBG (SHAKE-based)</strong>, which synergizes perfectly with the
+          SHAKE-heavy PQC algorithms (ML-KEM, ML-DSA).
         </p>
       </section>
 

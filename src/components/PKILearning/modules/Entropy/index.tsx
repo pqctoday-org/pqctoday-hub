@@ -1,7 +1,17 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Dice5, BarChart3, ShieldCheck, Atom, Combine } from 'lucide-react'
+import {
+  Trash2,
+  Dice5,
+  BarChart3,
+  ShieldCheck,
+  Atom,
+  Combine,
+  ArrowLeft,
+  ArrowRight,
+  Check,
+} from 'lucide-react'
 import { EntropyIntroduction } from './components/EntropyIntroduction'
 import { EntropyExercises, type WorkshopConfig } from './components/EntropyExercises'
 import { RandomGenerationDemo } from './workshop/RandomGenerationDemo'
@@ -9,6 +19,7 @@ import { EntropyTestingDemo } from './workshop/EntropyTestingDemo'
 import { ESVWalkthroughDemo } from './workshop/ESVWalkthroughDemo'
 import { QRNGDemo } from './workshop/QRNGDemo'
 import { SourceCombiningDemo } from './workshop/SourceCombiningDemo'
+import { Button } from '@/components/ui/button'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -156,13 +167,10 @@ export const EntropyModule: React.FC = () => {
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-              >
-                <Trash2 size={16} />
+              <Button variant="destructive" size="sm" onClick={handleReset}>
+                <Trash2 size={16} className="mr-2" />
                 Reset
-              </button>
+              </Button>
             </div>
 
             {/* Part Progress Steps */}
@@ -173,10 +181,11 @@ export const EntropyModule: React.FC = () => {
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
                       key={part.id}
+                      variant="ghost"
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-2 h-auto py-2 px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
                         className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
@@ -193,7 +202,7 @@ export const EntropyModule: React.FC = () => {
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -223,27 +232,33 @@ export const EntropyModule: React.FC = () => {
 
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
+              <Button
+                variant="outline"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+                className="min-h-[44px]"
               >
-                &larr; Previous Step
-              </button>
+                <ArrowLeft size={16} className="mr-2" />
+                Previous Step
+              </Button>
               {currentPart === PARTS.length - 1 ? (
-                <button
+                <Button
+                  variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="min-h-[44px]"
                 >
-                  Complete Module ✓
-                </button>
+                  <Check size={16} className="mr-2" />
+                  Complete Module
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="min-h-[44px]"
                 >
-                  Next Step &rarr;
-                </button>
+                  Next Step
+                  <ArrowRight size={16} className="ml-2" />
+                </Button>
               )}
             </div>
           </div>

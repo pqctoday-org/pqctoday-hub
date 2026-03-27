@@ -173,7 +173,7 @@ export const CuriousSummaryBanner = ({
   return (
     <div
       className={
-        isFullPage ? 'w-full' : 'glass-panel border-l-4 border-l-amber-500/50 mb-3 overflow-hidden'
+        isFullPage ? 'w-full' : 'glass-panel border-l-4 border-l-warning/50 mb-3 overflow-hidden'
       }
     >
       {!isFullPage && (
@@ -182,7 +182,7 @@ export const CuriousSummaryBanner = ({
           onClick={() => setExpanded((e) => !e)}
           className="flex items-center justify-between w-full px-4 py-3 text-left"
         >
-          <span className="flex items-center gap-2 text-sm font-semibold text-amber-600 dark:text-amber-400">
+          <span className="flex items-center gap-2 text-sm font-semibold text-warning">
             <Lightbulb size={16} className="shrink-0" />
             In Simple Terms
           </span>
@@ -280,7 +280,7 @@ export const CuriousSummaryBanner = ({
             {/* Right Column: In Simple Terms Text (with Tooltips automatically rendered) */}
             <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
               <h3 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2 mt-0 flex items-center gap-2">
-                <Lightbulb size={20} className="text-amber-500" />
+                <Lightbulb size={20} className="text-warning" />
                 In Simple Terms
               </h3>
               <ReactMarkdown

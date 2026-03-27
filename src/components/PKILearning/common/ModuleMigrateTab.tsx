@@ -18,9 +18,14 @@ function renderPqcBadge(support: string) {
   if (lower.startsWith('yes')) {
     badgeClass = 'bg-status-success text-status-success'
     label = 'PQC'
-  } else if (lower.startsWith('limited') || lower.startsWith('planned')) {
+  } else if (
+    lower.startsWith('partial') ||
+    lower.startsWith('limited') ||
+    lower.startsWith('planned') ||
+    lower.startsWith('in progress')
+  ) {
     badgeClass = 'bg-status-warning text-status-warning'
-    label = lower.startsWith('planned') ? 'Planned' : 'Limited'
+    label = lower.startsWith('planned') || lower.startsWith('in progress') ? 'Planned' : 'Partial'
   } else {
     badgeClass = 'bg-muted/50 text-muted-foreground'
     label = 'No PQC'

@@ -98,7 +98,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             <button
               type="button"
               onClick={() => moduleId && markAllLearnSectionsComplete(moduleId)}
-              className="px-6 py-3 min-h-[44px] bg-status-success text-white font-bold rounded-lg hover:bg-status-success/90 transition-colors"
+              className="px-6 py-3 min-h-[44px] bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
             >
               ✓ Mark as Read
             </button>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { softwareData, softwareMetadata } from '../../data/migrateData'
+import { softwareData, softwareMetadata, vendorMap } from '../../data/migrateData'
 import { useSearchParams } from 'react-router-dom'
 
 import { SoftwareTable } from './SoftwareTable'
@@ -89,6 +89,7 @@ export const MigrateView: React.FC = () => {
 
   // Local state for flat-mode filters
   const [flatCategoryFilter, setFlatCategoryFilter] = useState('All')
+  const [vendorFilter, setVendorFilter] = useState('All')
   const [sortBy, setSortBy] = useState<MigrateSortOption>('name')
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
@@ -166,6 +167,8 @@ export const MigrateView: React.FC = () => {
             const q = industryFilter.toLowerCase()
             if (!item.targetIndustries?.toLowerCase().includes(q)) return false
           }
+          // Vendor filter
+          if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -184,7 +187,7 @@ export const MigrateView: React.FC = () => {
       },
       {} as Record<string, (typeof softwareData)[number][]>
     )
-  }, [stepFilter, filterText, industryFilter])
+  }, [stepFilter, filterText, industryFilter, vendorFilter])
 
   // Layer product counts (for badges on collapsed layer rows)
   const layerProductCounts = useMemo(
@@ -295,6 +298,8 @@ export const MigrateView: React.FC = () => {
       if (flatCategoryFilter !== 'All') {
         if (item.categoryName !== flatCategoryFilter) return false
       }
+      // Vendor filter
+      if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
       // Search filter
       if (filterText) {
         const q = filterText.toLowerCase()
@@ -309,7 +314,7 @@ export const MigrateView: React.FC = () => {
       }
       return true
     })
-  }, [stepFilter, industryFilter, activeLayer, flatCategoryFilter, filterText])
+  }, [stepFilter, industryFilter, activeLayer, flatCategoryFilter, filterText, vendorFilter])
 
   // Unique categories for the flat-mode category dropdown (scoped to selected layer)
   const flatCategories = useMemo(() => {
@@ -342,7 +347,14 @@ export const MigrateView: React.FC = () => {
     if (sortBy === 'name') {
       items.sort((a, b) => a.softwareName.localeCompare(b.softwareName))
     } else if (sortBy === 'pqcSupport') {
-      const order: Record<string, number> = { yes: 0, limited: 1, planned: 2, no: 3 }
+      const order: Record<string, number> = {
+        yes: 0,
+        partial: 1,
+        limited: 1,
+        in: 2,
+        planned: 2,
+        no: 3,
+      }
       items.sort((a, b) => {
         const aKey = Object.keys(order).find((k) => a.pqcSupport?.toLowerCase().startsWith(k))
         const bKey = Object.keys(order).find((k) => b.pqcSupport?.toLowerCase().startsWith(k))
@@ -395,6 +407,18 @@ export const MigrateView: React.FC = () => {
     () => flatCategories.map((cat) => ({ id: cat, label: cat })),
     [flatCategories]
   )
+
+  // Vendor filter dropdown items (sorted alphabetically, showing product counts)
+  const vendorFilterItems = useMemo(() => {
+    const items = Array.from(vendorMap.values())
+      .filter((vendor) => (vendor.productCount ?? 0) > 0)
+      .sort((a, b) => a.vendorDisplayName.localeCompare(b.vendorDisplayName))
+      .map((vendor) => ({
+        id: vendor.vendorId,
+        label: `${vendor.vendorDisplayName} (${vendor.productCount ?? 0})`,
+      }))
+    return items
+  }, [])
 
   // Visible product count for flat modes
   // When a search is active, hidden items are surfaced (search bypasses hide filter), so count all matches
@@ -558,6 +582,22 @@ export const MigrateView: React.FC = () => {
           </div>
         )}
 
+        {/* Vendor dropdown — all modes */}
+        {vendorFilterItems.length > 0 && (
+          <div>
+            <FilterDropdown
+              items={vendorFilterItems}
+              selectedId={vendorFilter}
+              onSelect={(id) => {
+                setVendorFilter(id)
+                logMigrateAction('Filter Vendor', id)
+              }}
+              defaultLabel="All Vendors"
+              searchable
+            />
+          </div>
+        )}
+
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">
           <Search
@@ -648,6 +688,7 @@ export const MigrateView: React.FC = () => {
               layerProductKeys={layerProductKeys}
               onRestoreLayer={(keys) => restoreLayerProducts(keys)}
               layerSelectedCounts={layerSelectedCounts}
+              hideEmptyLayers={vendorFilter !== 'All'}
               expandedContent={
                 activeInfrastructureLayer !== 'All' ? (
                   activeLayerTableData.length > 0 ? (

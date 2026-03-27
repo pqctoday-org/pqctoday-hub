@@ -112,10 +112,12 @@ export const HsmAcvpTesting = () => {
     crossCheckModuleRef,
     engineMode,
     hSessionRef,
+    slotRef,
     phase,
     addHsmLog,
     addHsmKey,
     clearHsmKeys,
+    clearHsmLog,
   } = useHsmContext()
 
   const addLog = (msg: string) =>
@@ -139,6 +141,7 @@ export const HsmAcvpTesting = () => {
     setResults([])
     setLogs([])
     clearHsmKeys()
+    clearHsmLog()
     addLog('Starting ACVP Validation Suite via PKCS#11...')
 
     const newResults: TestResult[] = []
@@ -166,19 +169,21 @@ export const HsmAcvpTesting = () => {
       M: SoftHSMModule
       name: string
       hSession: number
+      slot: number
       mechs: Set<number>
     }> = []
     if (engineMode === 'cpp') {
-      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, mechs: new Set() })
+      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, slot: 0, mechs: new Set() })
     } else if (engineMode === 'rust') {
-      engines.push({ M: moduleRef.current, name: 'Rust', hSession: 0, mechs: new Set() })
+      engines.push({ M: moduleRef.current, name: 'Rust', hSession: 0, slot: 0, mechs: new Set() })
     } else if (engineMode === 'dual') {
-      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, mechs: new Set() })
+      engines.push({ M: moduleRef.current, name: 'C++', hSession: 0, slot: 0, mechs: new Set() })
       if (crossCheckModuleRef.current) {
         engines.push({
           M: crossCheckModuleRef.current,
           name: 'Rust',
           hSession: 0,
+          slot: 0,
           mechs: new Set(),
         })
       }
@@ -196,11 +201,12 @@ export const HsmAcvpTesting = () => {
         }
         hsm_initialize(engine.M, ACVP_GLOBAL_SEED)
         const slot = hsm_getFirstSlot(engine.M)
-        hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
-        engine.hSession = hsm_openUserSession(engine.M, slot, '12345678', 'user1234')
+        const initSlot = hsm_initToken(engine.M, slot, '12345678', 'ACVP_Token')
+        engine.slot = initSlot
+        engine.hSession = hsm_openUserSession(engine.M, initSlot, '12345678', 'user1234')
         // Probe supported mechanisms so we can skip unsupported tests gracefully
         try {
-          engine.mechs = new Set(hsm_getMechanismList(engine.M, slot))
+          engine.mechs = new Set(hsm_getMechanismList(engine.M, initSlot))
         } catch {
           // If mechanism probing fails, leave empty — tests will run and fail individually
         }
@@ -1577,6 +1583,14 @@ export const HsmAcvpTesting = () => {
       // ACVP session stays alive — keys remain as live session objects
       // so C_GetAttributeValue works when inspecting via the eye icon.
       // Next ACVP run resets everything via clearHsmKeys() + finalize at top of runTests().
+      // Re-anchor HsmContext refs so Mechanism Discovery + other panels remain functional.
+      const primary = engines[0] ?? null
+      if (primary) {
+        slotRef.current = primary.slot
+        if (primary.hSession !== 0) {
+          hSessionRef.current = primary.hSession
+        }
+      }
       setResults(newResults)
       setLoading(false)
       addLog('Validation Suite Completed.')

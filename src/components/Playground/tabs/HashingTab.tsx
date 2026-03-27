@@ -96,7 +96,7 @@ export const HashingTab: React.FC = () => {
         </div>
 
         {/* Output */}
-        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-emerald-500/30 transition-colors">
+        <div className="p-6 bg-muted/20 rounded-xl border border-border hover:border-accent/30 transition-colors">
           <div className="text-sm text-accent mb-4 font-bold uppercase tracking-wider flex items-center gap-2">
             <Hash size={16} /> Hash Output
           </div>

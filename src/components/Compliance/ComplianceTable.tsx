@@ -506,7 +506,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           <div className="absolute inset-0 z-50 bg-black/60 backdrop-blur-[1px] flex items-center justify-center flex-col gap-3">
             <RefreshCw size={32} className="animate-spin text-primary" />
             <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-medium text-white">
+              <span className="text-sm font-medium text-foreground">
                 {isRefreshing ? 'Refreshing Data...' : 'Filtering Records...'}
               </span>
               <span className="text-xs text-muted-foreground">

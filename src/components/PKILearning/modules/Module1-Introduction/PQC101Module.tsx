@@ -738,7 +738,7 @@ export const PQC101Module: React.FC = () => {
         {currentStep === steps.length - 1 ? (
           <button
             onClick={handleFinalComplete}
-            className="px-6 py-2 bg-status-success text-white font-bold rounded-lg hover:bg-status-success/90 transition-colors"
+            className="px-6 py-2 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
             ✓ Complete Module
           </button>

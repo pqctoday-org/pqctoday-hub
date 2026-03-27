@@ -359,9 +359,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   link. Includes all report sections: Risk Score gauge, Category Breakdown, HNDL/HNFL risk windows,
   Algorithm Migration priorities, Recommended Actions, Migration Roadmap (with MigrationToolkit
   product suggestions), and Threat Landscape. Contextual info buttons on all 11 report sections
-  explain methodology, data sources, and interpretation guidance. Google Drive cloud sync enables
-  uploading/downloading full-app progress snapshots to the Drive `appDataFolder` (hidden from the
-  user's file list, access-token stored in-memory only).
+  explain methodology, data sources, and interpretation guidance.
+- **Google Drive cloud sync** (optional, home page Backup & Restore section): backs up and restores
+  all app progress to the user's Google Drive `appDataFolder` (hidden from file list). Access token
+  stored in browser memory only; scope is `drive.appdata` (least-privileged). API keys are
+  explicitly excluded from the sync payload. Privacy terms documented on the About page
+  (`#cloud-sync-privacy`).
 - **Business Center** (`/business`): GRC command center integrating assessment results, compliance
   framework selections, and learning progress into a unified dashboard. Live risk scores, compliance
   tracking, vendor posture analysis, and prioritized next steps. Artifact management for creating,
@@ -456,7 +459,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   public information, and may contain inaccuracies. Persisted per major app version via
   `useDisclaimerStore`. `TransparencyBanner` on the landing page links to the `/about#transparency`
   anchor. About page includes a dedicated "Transparency & Disclaimer" section with animated WIP
-  badge and contact links.
+  badge and contact links. A **"Link to Us"** card at the bottom of the About page provides
+  deep-link sharing snippets for community outreach. A **Google Drive Sync privacy terms** panel
+  (`#cloud-sync-privacy`) explains exactly what data the optional sync feature stores and how to
+  revoke access.
 - **What's New Modal**: Persona-aware, filterable notification modal showing app updates and
   data changes since the user's last visit. Auto-opens for returning users with unseen changes;
   filters by persona and industry; shows deep-linked new/updated items from library, migrate,

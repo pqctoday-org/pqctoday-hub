@@ -26,6 +26,8 @@ interface InfrastructureStackProps {
   layerProductKeys?: Partial<Record<InfrastructureLayerType, string[]>>
   /** Count of "My Products" selected per layer */
   layerSelectedCounts?: Partial<Record<InfrastructureLayerType, number>>
+  /** When true, layers with 0 products are hidden (useful when a vendor filter is active) */
+  hideEmptyLayers?: boolean
 }
 
 export const LAYERS = [
@@ -35,9 +37,9 @@ export const LAYERS = [
     icon: Cloud,
     description:
       'Cloud KMS, Cloud HSM, Encryption Gateways, Crypto Agility, KMS, IAM, Crypto Discovery, Digital Identity',
-    color: 'from-blue-500/20 to-cyan-500/20',
-    borderColor: 'border-blue-500/50',
-    activeColor: 'bg-card border-blue-400 shadow-[0_0_15px_rgba(59,130,246,0.5)]',
+    color: 'from-primary/20 to-info/20',
+    borderColor: 'border-primary/50',
+    activeColor: 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]',
     iconColor: 'text-primary',
   },
   {
@@ -46,9 +48,9 @@ export const LAYERS = [
     icon: Network,
     description:
       'VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation',
-    color: 'from-sky-500/20 to-indigo-500/20',
-    borderColor: 'border-sky-500/50',
-    activeColor: 'bg-card border-sky-400 shadow-[0_0_15px_rgba(14,165,233,0.5)]',
+    color: 'from-info/20 to-primary/20',
+    borderColor: 'border-info/50',
+    activeColor: 'bg-card border-info shadow-[0_0_15px_hsl(var(--info)/0.5)]',
     iconColor: 'text-primary',
   },
   {
@@ -57,9 +59,9 @@ export const LAYERS = [
     icon: Laptop,
     description:
       'TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Signatures, Code Signing, API Security, Crypto & PQC Libraries, Blockchain, Payment, Remote Access, Disk Encryption, CI/CD, Digital Identity, 5G',
-    color: 'from-purple-500/20 to-pink-500/20',
-    borderColor: 'border-purple-500/50',
-    activeColor: 'bg-card border-purple-400 shadow-[0_0_15px_rgba(168,85,247,0.5)]',
+    color: 'from-secondary/20 to-secondary/10',
+    borderColor: 'border-secondary/50',
+    activeColor: 'bg-card border-secondary shadow-[0_0_15px_hsl(var(--secondary)/0.5)]',
     iconColor: 'text-secondary',
   },
   {
@@ -67,9 +69,9 @@ export const LAYERS = [
     label: 'Database',
     icon: Database,
     description: 'Database Encryption Software',
-    color: 'from-emerald-500/20 to-teal-500/20',
-    borderColor: 'border-emerald-500/50',
-    activeColor: 'bg-card border-emerald-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]',
+    color: 'from-success/20 to-accent/20',
+    borderColor: 'border-success/50',
+    activeColor: 'bg-card border-success shadow-[0_0_15px_hsl(var(--success)/0.5)]',
     iconColor: 'text-accent',
   },
   {
@@ -78,9 +80,9 @@ export const LAYERS = [
     icon: ShieldCheck,
     description:
       'KMS, PKI, Crypto & PQC Libraries, CLM, Secrets, IAM, CIAM, Data Protection, Crypto Discovery, TLS/SSL, Digital Identity',
-    color: 'from-rose-500/20 to-red-500/20',
-    borderColor: 'border-rose-500/50',
-    activeColor: 'bg-card border-rose-400 shadow-[0_0_15px_rgba(244,63,94,0.5)]',
+    color: 'from-destructive/20 to-destructive/10',
+    borderColor: 'border-destructive/50',
+    activeColor: 'bg-card border-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]',
     iconColor: 'text-destructive',
   },
   {
@@ -89,8 +91,8 @@ export const LAYERS = [
     icon: Monitor,
     description: 'Operating Systems, Network OS, Disk & File Encryption',
     color: 'from-warning/20 to-warning/10',
-    borderColor: 'border-orange-500/50',
-    activeColor: 'bg-card border-orange-400 shadow-[0_0_15px_rgba(249,115,22,0.5)]',
+    borderColor: 'border-warning/50',
+    activeColor: 'bg-card border-warning shadow-[0_0_15px_hsl(var(--warning)/0.5)]',
     iconColor: 'text-warning',
   },
   {
@@ -99,9 +101,10 @@ export const LAYERS = [
     icon: Server,
     description:
       'HSMs, Smart Cards, Secure Boot, Semiconductors, QRNG, QKD, Confidential Computing, 5G & Telecom',
-    color: 'from-slate-500/20 to-gray-400/20',
-    borderColor: 'border-slate-500/50',
-    activeColor: 'bg-card border-slate-400 shadow-[0_0_15px_rgba(100,116,139,0.5)]',
+    color: 'from-muted/20 to-muted/10',
+    borderColor: 'border-muted-foreground/50',
+    activeColor:
+      'bg-card border-muted-foreground shadow-[0_0_15px_hsl(var(--muted-foreground)/0.5)]',
     iconColor: 'text-muted-foreground',
   },
 ]
@@ -118,6 +121,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   onRestoreLayer,
   layerProductKeys,
   layerSelectedCounts,
+  hideEmptyLayers,
 }) => {
   const handleSelect = (layerId: InfrastructureLayerType) => {
     // Toggle off if clicking the already active layer
@@ -143,7 +147,10 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
         {/* Connection Line */}
         <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
 
-        {LAYERS.map((layer, index) => {
+        {LAYERS.filter((layer) => {
+          if (!hideEmptyLayers) return true
+          return (layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0
+        }).map((layer, index) => {
           const isActive = activeLayer === layer.id
           const isFaded = activeLayer !== 'All' && !isActive
           const IconInfo = layer.icon

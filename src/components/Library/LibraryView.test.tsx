@@ -4,9 +4,12 @@ import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
 
-// Mock react-router-dom — component uses useSearchParams for deep linking
+// Mock react-router-dom — component uses useSearchParams for deep linking.
+// Use a stable reference so the useEffect([searchParams]) dep doesn't fire on every render.
+const mockSearchParams = new URLSearchParams()
+const mockSetSearchParams = vi.fn()
 vi.mock('react-router-dom', () => ({
-  useSearchParams: () => [new URLSearchParams(), vi.fn()],
+  useSearchParams: () => [mockSearchParams, mockSetSearchParams],
 }))
 
 // Mock framer-motion to avoid animation issues in tests

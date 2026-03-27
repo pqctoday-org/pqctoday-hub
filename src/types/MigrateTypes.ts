@@ -1,4 +1,25 @@
 // SPDX-License-Identifier: GPL-3.0-only
+export interface Vendor {
+  vendorId: string
+  vendorName: string
+  vendorDisplayName: string
+  website: string
+  vendorType: string
+  entityCategory:
+    | 'Commercial Vendor'
+    | 'Open Source Foundation'
+    | 'Open Source Community'
+    | 'Hybrid Commercial/Community'
+    | 'Blockchain Protocol'
+    | 'Government / Standards Body'
+    | 'Research Project'
+    | 'SaaS Platform'
+  hqCountry: string
+  pqcCommitment: 'Active' | 'Partial' | 'Announced' | 'None' | 'Unknown'
+  lastVerifiedDate: string
+  productCount?: number
+}
+
 export interface SoftwareItem {
   softwareName: string
   categoryId: string
@@ -22,6 +43,7 @@ export interface SoftwareItem {
   lastVerifiedDate: string
   migrationPhases: string
   learningModules: string
+  vendorId?: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

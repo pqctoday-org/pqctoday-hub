@@ -1081,9 +1081,9 @@ documents_processed: 163
 
 ---
 
-## NIST-SP-800-57-Pt1-R5
+## NIST-SP-800-57-Pt1-R6
 
-- **Reference ID**: NIST-SP-800-57-Pt1-R5
+- **Reference ID**: NIST-SP-800-57-Pt1-R6
 - **Title**: Recommendation for Key Management: Part 1 – General (Revision 5)
 - **Authors**: NIST
 - **Publication Date**: 2020-05-04
@@ -1581,9 +1581,9 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-cose-falcon-03
+## draft-ietf-cose-falcon-04
 
-- **Reference ID**: draft-ietf-cose-falcon-03
+- **Reference ID**: draft-ietf-cose-falcon-04
 - **Title**: FN-DSA for JOSE and COSE
 - **Authors**: IETF COSE WG
 - **Publication Date**: 2025-10-12
@@ -1692,9 +1692,9 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-lamps-pq-composite-sigs-14
+## draft-ietf-lamps-pq-composite-sigs-15
 
-- **Reference ID**: draft-ietf-lamps-pq-composite-sigs-14
+- **Reference ID**: draft-ietf-lamps-pq-composite-sigs-15
 - **Title**: Composite ML-DSA for Use in X.509 PKI and CMS
 - **Authors**: IETF LAMPS
 - **Publication Date**: 2023-03-02
@@ -1755,9 +1755,9 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-pquip-hybrid-signature-spectrums-06
+## draft-ietf-pquip-hybrid-signature-spectrums-07
 
-- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-06
+- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
 - **Title**: Hybrid signature spectrums
 - **Authors**: IETF PQUIP
 - **Publication Date**: 2024-03-01
@@ -1847,9 +1847,9 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-tls-mldsa-01
+## draft-ietf-tls-mldsa-02
 
-- **Reference ID**: draft-ietf-tls-mldsa-01
+- **Reference ID**: draft-ietf-tls-mldsa-02
 - **Title**: ML-DSA for TLS 1.3
 - **Authors**: IETF TLS WG
 - **Publication Date**: 2025-01-01
@@ -1893,9 +1893,9 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-uta-pqc-app-00
+## draft-ietf-uta-pqc-app-01
 
-- **Reference ID**: draft-ietf-uta-pqc-app-00
+- **Reference ID**: draft-ietf-uta-pqc-app-01
 - **Title**: Post-Quantum Cryptography Recommendations for TLS-based Applications
 - **Authors**: IETF UTA
 - **Publication Date**: 2025-09-18
@@ -1962,9 +1962,9 @@ documents_processed: 163
 
 ---
 
-## draft-wang-ipsecme-kem-auth-ikev2-01
+## draft-wang-ipsecme-kem-auth-ikev2-03
 
-- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-01
+- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-03
 - **Title**: KEM based Authentication for IKEv2 with Post-quantum Security
 - **Authors**: IETF Individual Submission
 - **Publication Date**: 2025-03-03
@@ -3218,9 +3218,9 @@ documents_processed: 163
 
 ---
 
-## draft-sfluhrer-ipsecme-ikev2-mldsa-00
+## draft-sfluhrer-ipsecme-ikev2-mldsa-01
 
-- **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-00
+- **Reference ID**: draft-sfluhrer-ipsecme-ikev2-mldsa-01
 - **Title**: Post-quantum Digital Signatures with ML-DSA in IKEv2
 - **Authors**: IETF IPSECME WG
 - **Publication Date**: 2025-01-01
@@ -3372,94 +3372,6 @@ documents_processed: 163
 
 ---
 
-## ANSSI-BSI-QKD-Position-Paper
-
-- **Reference ID**: ANSSI-BSI-QKD-Position-Paper
-- **Title**: ANSSI and BSI Joint Position on Quantum Key Distribution
-- **Authors**: ANSSI France; BSI Germany
-- **Publication Date**: 2021-06-01
-- **Last Updated**: 2021-06-01
-- **Document Status**: Position Paper
-- **Main Topic**: Joint position paper from French (ANSSI) and German (BSI) cybersecurity agencies expressing skepticism about QKD as a security-critical infrastructure solution. Identifies significant practical limitations of QKD including hardware trust issues, high implementation costs, short range without trusted relays, and lack of strong security proofs for implementations. Recommends PQC algorithms over QKD for most government and critical infrastructure use cases, while noting QKD may complement PQC in specific high-security scenarios.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, hybrid algorithms (recommended over QKD)
-- **Quantum Threats Addressed**: CRQC threats to key distribution
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: Regions: France; Germany; European Union; Bodies: ANSSI, BSI
-- **Leaders Contributions Mentioned**: ANSSI and BSI cryptography experts
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: QKD, TLS, IPsec, key exchange
-- **Infrastructure Layers**: Network Security, Key Management, Critical Infrastructure
-- **Standardization Bodies**: ANSSI, BSI, ETSI
-- **Compliance Frameworks Referenced**: ANSSI RGS, BSI TR-02102
-
----
-
-## Singapore-QRI-2025
-
-- **Reference ID**: Singapore-QRI-2025
-- **Title**: Quantum Readiness Index - Draft for Public Consultation (Oct 2025)
-- **Authors**: CSA Singapore
-- **Publication Date**: 2025-10-01
-- **Last Updated**: 2025-10-01
-- **Document Status**: Draft for Public Consultation
-- **Main Topic**: Singapore's Quantum Readiness Index (QRI) framework providing a maturity model for organizations to self-assess their quantum-safe cryptography readiness. Defines readiness levels across five dimensions: awareness, asset inventory, risk assessment, migration planning, and implementation. Intended for Singapore critical information infrastructure operators, financial institutions, and government agencies to benchmark progress and report annually to CSA Singapore.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: 2025-2030 phased readiness targets; annual QRI reporting from 2026
-- **Applicable Regions / Bodies**: Regions: Singapore; APAC; Bodies: CSA Singapore
-- **Leaders Contributions Mentioned**: CSA Singapore
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, SSH
-- **Infrastructure Layers**: Enterprise IT, Government IT, Financial Services
-- **Standardization Bodies**: CSA, NIST, IETF
-- **Compliance Frameworks Referenced**: Singapore Cybersecurity Act, MAS TRM
-
----
-
-## Singapore-QSH-2025
-
-- **Reference ID**: Singapore-QSH-2025
-- **Title**: Quantum-Safe Handbook - Draft for Public Consultation (Oct 2025)
-- **Authors**: CSA Singapore
-- **Publication Date**: 2025-10-01
-- **Last Updated**: 2025-10-01
-- **Document Status**: Draft for Public Consultation
-- **Main Topic**: Updated Singapore Quantum-Safe Handbook (October 2025 public consultation draft) providing comprehensive guidance for organizations transitioning to quantum-safe cryptography. Expands on the June 2024 version with updated algorithm guidance reflecting final NIST PQC standards (ML-KEM, ML-DSA, SLH-DSA), enhanced migration roadmap, case studies, and sector-specific guidance for financial services, telecommunications, and government agencies.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, hybrid algorithms
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: Updated 2025-2030 phased migration milestones; sector-specific deadlines
-- **Applicable Regions / Bodies**: Regions: Singapore; APAC; Bodies: CSA Singapore, IMDA
-- **Leaders Contributions Mentioned**: CSA Singapore, IMDA
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, SSH, IPsec
-- **Infrastructure Layers**: Enterprise IT, Government IT, Financial Services, Critical Infrastructure
-- **Standardization Bodies**: CSA, NIST, IETF
-- **Compliance Frameworks Referenced**: Singapore Cybersecurity Act, MAS TRM, Cyber Trust Mark
-
----
-
-## HKMA-Fintech-2030-PQC
-
-- **Reference ID**: HKMA-Fintech-2030-PQC
-- **Title**: HKMA Fintech Promotion Blueprint 2025 - Quantum Security
-- **Authors**: HKMA (Hong Kong Monetary Authority)
-- **Publication Date**: 2025-01-01
-- **Last Updated**: 2025-01-01
-- **Document Status**: Strategy Report
-- **Main Topic**: Hong Kong Monetary Authority fintech and quantum security strategy document outlining HKMA's approach to quantum-safe cryptography for Hong Kong's financial sector. Covers quantum risk assessment requirements for licensed banks, timeline for PQC migration in financial messaging infrastructure, and cross-border quantum-safe communication experiments with Singapore MAS. Sets expectations for Hong Kong financial institutions to complete PQC readiness assessment by 2027.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: PQC readiness assessment required by 2027; phased migration through 2030
-- **Applicable Regions / Bodies**: Regions: Hong Kong; APAC; Bodies: HKMA, MAS Singapore, BIS
-- **Leaders Contributions Mentioned**: HKMA fintech team
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, financial messaging (SWIFT)
-- **Infrastructure Layers**: Financial Services, Payment Systems, Network Security
-- **Standardization Bodies**: HKMA, BIS, NIST
-- **Compliance Frameworks Referenced**: HKMA Technology Risk Management, Basel III (technology risk)
-
----
-
 ## OMB-M-23-02
 
 - **Reference ID**: OMB-M-23-02
@@ -3482,9 +3394,9 @@ documents_processed: 163
 
 ---
 
-## MAS-Quantum-Advisory-2024
+## SG-MAS-Quantum-Advisory-2024
 
-- **Reference ID**: MAS-Quantum-Advisory-2024
+- **Reference ID**: SG-MAS-Quantum-Advisory-2024
 - **Title**: MAS Technology Risk and Resilience (TCRS) Quantum Advisory
 - **Authors**: MAS (Monetary Authority of Singapore)
 - **Publication Date**: 2024-01-01
@@ -3523,72 +3435,6 @@ documents_processed: 163
 - **Infrastructure Layers**: Government IT, National Security Systems, Critical Infrastructure, Defence
 - **Standardization Bodies**: NIST, NSA, CISA, OMB
 - **Compliance Frameworks Referenced**: FISMA, CNSA 2.0, NSM-8, FedRAMP, Federal Information Security
-
----
-
-## Five-Eyes-PQC-Joint-Statement
-
-- **Reference ID**: Five-Eyes-PQC-Joint-Statement
-- **Title**: Preparing Critical Infrastructure for Post-Quantum Cryptography: Five Eyes Joint Statement
-- **Authors**: CISA; NSA; NCSC UK; NCSC Canada; ASD Australia; GCSB New Zealand
-- **Publication Date**: 2023-08-21
-- **Last Updated**: 2023-08-21
-- **Document Status**: Joint Advisory
-- **Main Topic**: Joint advisory from Five Eyes alliance cybersecurity agencies (US CISA/NSA, UK NCSC, Canadian CCCS, Australian ASD, and New Zealand GCSB) calling on critical infrastructure owners and operators to prepare for post-quantum cryptography. Identifies the harvest-now-decrypt-later threat as immediate, provides practical guidance for beginning PQC migration, and recommends NIST PQC algorithm adoption. Represents unprecedented multilateral coordination on PQC migration policy for allied nations' critical infrastructure.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL), nation-state quantum adversaries
-- **Migration Timeline Info**: Immediate action required for long-lived sensitive data; full transition aligned with national timelines (2035 US; 2030 UK partial)
-- **Applicable Regions / Bodies**: Regions: United States; United Kingdom; Canada; Australia; New Zealand; Bodies: CISA, NSA, NCSC, CCCS, ASD, GCSB
-- **Leaders Contributions Mentioned**: CISA Director, NSA Cybersecurity Directorate
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, SSH, IPsec, OT protocols
-- **Infrastructure Layers**: Critical Infrastructure, Government IT, OT/ICS/SCADA, Defence
-- **Standardization Bodies**: NIST, NCSC, ASD
-- **Compliance Frameworks Referenced**: NIST Cybersecurity Framework, IEC 62443, FISMA
-
----
-
-## PQC-Country-Initiatives-2025
-
-- **Reference ID**: PQC-Country-Initiatives-2025
-- **Title**: Post-Quantum Government Initiatives by Country and Region (March 2025)
-- **Authors**: Various (compiled survey)
-- **Publication Date**: 2025-03-02
-- **Last Updated**: 2025-03-02
-- **Document Status**: Reference Report
-- **Main Topic**: Comprehensive survey of post-quantum cryptography government initiatives, policies, and migration programs across countries and regions as of March 2025. Covers national PQC roadmaps, regulatory requirements, funding programs, and implementation status for major economies including the US, EU member states, UK, Canada, Australia, Japan, Singapore, South Korea, China, and emerging markets. Serves as a reference for organizations tracking regulatory requirements across multiple jurisdictions.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA (referenced across jurisdictions)
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: Multiple jurisdiction timelines covered: US 2035, EU 2030, UK 2035, Singapore 2030, Japan 2030
-- **Applicable Regions / Bodies**: Regions: Global; Bodies: Multiple national cybersecurity agencies
-- **Leaders Contributions Mentioned**: Multiple government agency representatives
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: TLS, PKI, SSH (referenced across jurisdictions)
-- **Infrastructure Layers**: Government IT, Critical Infrastructure
-- **Standardization Bodies**: NIST, ETSI, CRYPTREC, BSI, ANSSI, CSA
-- **Compliance Frameworks Referenced**: Multiple national frameworks
-
----
-
-## CISA-PQC-Migration-Strategy
-
-- **Reference ID**: CISA-PQC-Migration-Strategy
-- **Title**: Strategy for Migrating to Automated PQC Discovery and Inventory Tools
-- **Authors**: CISA (Cybersecurity and Infrastructure Security Agency)
-- **Publication Date**: 2024-01-01
-- **Last Updated**: 2024-01-01
-- **Document Status**: Strategy Document
-- **Main Topic**: CISA strategy document addressing the challenge of cryptographic discovery and inventory at scale for federal agencies and critical infrastructure operators migrating to PQC. Outlines an automated approach for identifying quantum-vulnerable cryptographic implementations across enterprise networks, defining criteria for PQC migration prioritization, and establishing operational workflows for continuous cryptographic visibility. Directly supports OMB M-23-02 inventory requirements and NSM-10 migration directives.
-- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
-- **Quantum Threats Addressed**: CRQC, Harvest Now Decrypt Later (HNDL)
-- **Migration Timeline Info**: Supports OMB M-23-02 deadlines; continuous inventory as ongoing operational requirement
-- **Applicable Regions / Bodies**: Regions: United States; Bodies: CISA, NSA, OMB
-- **Leaders Contributions Mentioned**: CISA Cybersecurity Division
-- **PQC Products Mentioned**: Automated cryptographic discovery tools (generic category)
-- **Protocols Covered**: TLS, SSH, PKI, IPsec
-- **Infrastructure Layers**: Enterprise IT, Federal IT, Critical Infrastructure, OT/ICS/SCADA
-- **Standardization Bodies**: NIST, CISA
-- **Compliance Frameworks Referenced**: FISMA, OMB M-23-02, NSM-10, FedRAMP
 
 ---
 

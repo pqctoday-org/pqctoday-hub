@@ -45,7 +45,7 @@ const NOISE_MODEL_BLOCKS = [
 ]
 
 const CONDITIONING_FUNCTIONS = [
-  { name: 'HMAC', detail: 'HMAC-SHA-256 — keyed hash for extract-then-expand' },
+  { name: 'HMAC', detail: 'HMAC-SHA-256 — keyed hash for entropy compression and conditioning' },
   {
     name: 'Hash (SHA-256)',
     detail: 'Approved hash-based conditioning per SP 800-90B Section 3.1.5',

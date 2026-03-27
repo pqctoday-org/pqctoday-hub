@@ -149,7 +149,7 @@ export const RiskScoreSection = ({
           })}
         </p>
       )}
-      <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-gray-600">
+      <p className="text-sm text-muted-foreground text-center mt-4 leading-relaxed print:text-muted-foreground">
         {result.personaNarrative ?? result.narrative}
       </p>
     </CollapsibleSection>

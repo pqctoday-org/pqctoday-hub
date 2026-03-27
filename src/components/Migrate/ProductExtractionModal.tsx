@@ -100,7 +100,9 @@ function PqcSupportBadge({ value }: { value: string }) {
   let badgeClass: string
   if (lower.startsWith('yes')) {
     badgeClass = TAG_STYLES.success
-  } else if (lower.startsWith('planned')) {
+  } else if (lower.startsWith('partial') || lower.startsWith('limited')) {
+    badgeClass = TAG_STYLES.warning
+  } else if (lower.startsWith('planned') || lower.startsWith('in progress')) {
     badgeClass = TAG_STYLES.warning
   } else if (lower.startsWith('no')) {
     badgeClass = TAG_STYLES.destructive

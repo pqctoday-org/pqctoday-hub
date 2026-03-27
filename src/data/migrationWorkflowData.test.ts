@@ -116,7 +116,7 @@ describe('computeGapAnalysis', () => {
     const gaps = computeGapAnalysis()
     const cryptoLibs = gaps.find((g) => g.categoryId === 'CSC-001')
     if (cryptoLibs) {
-      expect(cryptoLibs.urgencyScore).toBe(88.5)
+      expect(cryptoLibs.urgencyScore).toBe(59)
     }
   })
 
@@ -125,7 +125,7 @@ describe('computeGapAnalysis', () => {
     const vpn = gaps.find((g) => g.categoryId === 'CSC-010')
     if (vpn) {
       expect(vpn.pqcPriority).toBe('High')
-      expect(vpn.recommendedTimeline).toBe('2026-Q1')
+      expect(vpn.recommendedTimeline).toBe('2026-Q3')
     }
   })
 })

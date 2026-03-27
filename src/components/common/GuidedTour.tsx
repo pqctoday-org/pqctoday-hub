@@ -407,7 +407,7 @@ export const GuidedTour: React.FC = () => {
   // ── Shared layout helpers (inlined to avoid static-components lint error) ──
 
   const overlay = (
-    <div className="fixed inset-0 z-50 bg-black/50" onClick={dismiss} aria-hidden="true" />
+    <div className="fixed inset-0 z-50 bg-black/60" onClick={dismiss} aria-hidden="true" />
   )
 
   const wrapCard = (children: React.ReactNode) => (

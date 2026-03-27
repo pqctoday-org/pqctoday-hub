@@ -297,7 +297,7 @@ export const SourceCombiningDemo: React.FC = () => {
             Generate Source A (TRNG)
           </Button>
           <span className="text-xs text-muted-foreground">
-            Source B (QRNG) is pre-loaded from ANU quantum random data
+            Source B (QRNG) is a pre-loaded reference random sample
           </span>
         </div>
 

@@ -102,13 +102,13 @@ export const ExecutiveView: React.FC = () => {
             <BarChart3 className="text-primary" size={28} />
           </div>
         </div>
-        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2 print:text-black print:text-2xl">
+        <h1 className="text-3xl md:text-4xl font-bold text-gradient mb-2 print:text-foreground print:text-2xl">
           PQC Readiness Summary
         </h1>
-        <p className="text-muted-foreground print:text-gray-600">
+        <p className="text-muted-foreground print:text-muted-foreground">
           Executive overview of your organization&apos;s post-quantum cryptography readiness
         </p>
-        <p className="text-xs text-muted-foreground mt-1 print:text-gray-500">
+        <p className="text-xs text-muted-foreground mt-1 print:text-muted-foreground">
           Generated{' '}
           {new Date().toLocaleDateString('en-US', {
             year: 'numeric',
@@ -134,7 +134,7 @@ export const ExecutiveView: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.05 }}
-          className="glass-panel p-6 mb-8 print:border print:border-gray-300 print:mb-4"
+          className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
         >
           <div className="flex items-center justify-between flex-wrap gap-4">
             <div className="flex items-center gap-4">
@@ -275,13 +275,13 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-gray-300 print:mb-4"
+        className="glass-panel p-6 mb-8 border-l-4 border-l-warning print:border print:border-border print:mb-4"
       >
         <h2 className="text-lg font-bold text-foreground mb-3 flex items-center gap-2">
           <AlertTriangle className="text-warning" size={20} />
           Risk Summary
         </h2>
-        <p className="text-sm text-muted-foreground leading-relaxed print:text-gray-600">
+        <p className="text-sm text-muted-foreground leading-relaxed print:text-muted-foreground">
           {metrics.riskNarrative}
         </p>
       </motion.div>
@@ -291,7 +291,7 @@ export const ExecutiveView: React.FC = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
-        className="glass-panel p-6 mb-8 print:border print:border-gray-300 print:mb-4"
+        className="glass-panel p-6 mb-8 print:border print:border-border print:mb-4"
       >
         <h2 className="text-lg font-bold text-foreground mb-4">
           {lastResult ? 'Recommended Actions' : 'Top Priority Actions'}

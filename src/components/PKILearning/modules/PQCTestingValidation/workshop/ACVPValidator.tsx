@@ -253,7 +253,7 @@ export const ACVPValidator: React.FC = () => {
         {/* Console / Status Terminal */}
         <div
           ref={consoleRef}
-          className="bg-black/95 border border-border/50 p-4 rounded-md font-mono text-[10px] sm:text-xs text-[#00ff00]/90 h-64 overflow-y-auto space-y-1 relative shadow-inner"
+          className="bg-black/95 border border-border/50 p-4 rounded-md font-mono text-[10px] sm:text-xs text-status-success/90 h-64 overflow-y-auto space-y-1 relative shadow-inner"
         >
           {status === 'idle' && (
             <div className="text-muted-foreground">
@@ -275,25 +275,28 @@ export const ACVPValidator: React.FC = () => {
               <div className="text-primary">
                 [wasm-bridge] Initializing rust_crypto_backend::ACVPHarness...
               </div>
-              <div className="border-b border-white/20 my-2 w-full" />
+              <div className="border-b border-border my-2 w-full" />
             </>
           )}
           {(status === 'running' || status === 'generating' || status === 'done') && (
             <>
               {logs.map((log, i) => (
-                <div key={i} className="text-[#00ff00]/70 pl-2 border-l-2 border-[#00ff00]/30">
+                <div
+                  key={i}
+                  className="text-status-success/70 pl-2 border-l-2 border-status-success/30"
+                >
                   {log}
                 </div>
               ))}
-              <div className="border-t border-white/20 mt-2 mb-2 w-full" />
-              <div className="flex items-center justify-between text-white/80">
+              <div className="border-t border-border mt-2 mb-2 w-full" />
+              <div className="flex items-center justify-between text-foreground/80">
                 <span>[runner] Executing KAT vectors...</span>
                 <span>
                   {Math.floor(progress)}% [{Math.floor((progress / 100) * activeAlg.vectorCount)} /{' '}
                   {activeAlg.vectorCount}]
                 </span>
               </div>
-              <div className="w-full bg-white/10 h-1.5 mt-1 rounded-full overflow-hidden">
+              <div className="w-full bg-muted h-1.5 mt-1 rounded-full overflow-hidden">
                 <div
                   className="bg-primary h-full transition-all duration-100 ease-linear"
                   style={{ width: `${progress}%` }}
@@ -311,13 +314,14 @@ export const ACVPValidator: React.FC = () => {
           )}
           {status === 'done' && (
             <>
-              <div className="flex items-center gap-2 text-[#00ff00] font-bold mt-2">
+              <div className="flex items-center gap-2 text-status-success font-bold mt-2">
                 <CheckCircle size={14} />
                 SUCCESS: SoftHSMv3 ({activeAlg.name}) achieved FIPS 140-3 100% vector parity.
               </div>
-              <div className="text-muted-foreground mt-1 bg-white/5 p-2 rounded">
-                Generated response file: <span className="text-white">{selectedAlg}_test.rsp</span>{' '}
-                written to virtual FS.
+              <div className="text-muted-foreground mt-1 bg-muted/50 p-2 rounded">
+                Generated response file:{' '}
+                <span className="text-foreground">{selectedAlg}_test.rsp</span> written to virtual
+                FS.
               </div>
             </>
           )}

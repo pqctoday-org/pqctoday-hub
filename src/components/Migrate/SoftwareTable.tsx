@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
+import { vendorMap } from '../../data/migrateData'
 import { getProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
@@ -350,6 +351,19 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   <span className="text-foreground">{item.lastVerifiedDate}</span>
                                 </p>
                                 <p>Source Type: {item.sourceType}</p>
+                                {item.vendorId && vendorMap.has(item.vendorId) && (
+                                  <p>
+                                    Vendor:{' '}
+                                    <a
+                                      href={vendorMap.get(item.vendorId)!.website}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-foreground hover:text-primary transition-colors"
+                                    >
+                                      {vendorMap.get(item.vendorId)!.vendorDisplayName}
+                                    </a>
+                                  </p>
+                                )}
                               </div>
                             </div>
 

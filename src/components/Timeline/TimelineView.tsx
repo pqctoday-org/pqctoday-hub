@@ -25,38 +25,64 @@ const REGION_LABELS: Record<string, string> = {
 
 export const TimelineView = () => {
   useWorkflowPhaseTracker('timeline')
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
 
-  // Region filter — preset from persona preference
+  // Region filter — preset from URL ?region= or persona preference
   const [regionFilter, setRegionFilter] = useState<string>(() => {
-    // URL ?country= deep-link → don't preset region
-    const countryParam = new URLSearchParams(window.location.search).get('country')
-    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) return 'All'
-    const region = usePersonaStore.getState().selectedRegion
-    return region ?? 'All'
+    if (searchParams.get('country')) return 'All' // country deep-link → don't preset region
+    return searchParams.get('region') ?? usePersonaStore.getState().selectedRegion ?? 'All'
   })
 
   // Country filter — preset from URL ?country= param if present
   const [countryFilter, setCountryFilter] = useState<string>(() => {
-    const countryParam = new URLSearchParams(window.location.search).get('country')
+    const countryParam = searchParams.get('country')
     if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
       return countryParam
     }
     return 'All'
   })
 
+  /** Write region + country filters back to URL. */
+  const syncFiltersToUrl = useCallback(
+    (overrides: { region?: string; country?: string }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          const region = overrides.region ?? regionFilter
+          const country = overrides.country ?? countryFilter
+
+          if (region !== 'All') next.set('region', region)
+          else next.delete('region')
+          if (country !== 'All') next.set('country', country)
+          else next.delete('country')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [regionFilter, countryFilter, setSearchParams]
+  )
+
   // Changing region resets country selection
   const handleRegionChange = (region: string) => {
     setRegionFilter(region)
     setCountryFilter('All')
+    syncFiltersToUrl({ region, country: 'All' })
   }
 
-  // Sync ?country= param on same-route navigations (e.g. chatbot deep links)
+  const handleCountrySelect = (country: string) => {
+    setCountryFilter(country)
+    syncFiltersToUrl({ country })
+  }
+
+  // Sync ?region= and ?country= params on same-route navigations (e.g. chatbot deep links).
+  // Functional setters prevent cascade loops.
   useEffect(() => {
-    const countryParam = searchParams.get('country')
-    if (countryParam && timelineData?.some((d) => d.countryName === countryParam)) {
-      setCountryFilter(countryParam) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
-    }
+    const nextCountry = searchParams.get('country') ?? 'All'
+    const nextRegion = searchParams.get('region') ?? 'All'
+    // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
+    setCountryFilter((prev) => (prev !== nextCountry ? nextCountry : prev))
+    setRegionFilter((prev) => (prev !== nextRegion ? nextRegion : prev))
   }, [searchParams])
 
   // Always call hooks first (React rules)
@@ -193,7 +219,7 @@ export const TimelineView = () => {
             onRegionSelect={handleRegionChange}
             regionItems={regionItems}
             selectedCountry={countryFilter}
-            onCountrySelect={setCountryFilter}
+            onCountrySelect={handleCountrySelect}
             countryItems={countryItems}
             initialFilter={searchParams.get('q') ?? undefined}
           />
@@ -217,7 +243,7 @@ export const TimelineView = () => {
               <FilterDropdown
                 items={countryItems}
                 selectedId={countryFilter}
-                onSelect={setCountryFilter}
+                onSelect={handleCountrySelect}
                 defaultLabel="Country"
                 noContainer
                 opaque

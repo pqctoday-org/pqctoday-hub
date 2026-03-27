@@ -199,7 +199,7 @@ function detectConflicts(
 function ProductPreviewCard({ product }: { product: SoftwareItem }) {
   const support = product.pqcSupport.toLowerCase()
   const isFullPqc = support.startsWith('yes')
-  const isLimited = support.startsWith('limited')
+  const isLimited = support.startsWith('partial') || support.startsWith('limited')
 
   const fipsLower = (product.fipsValidated || '').toLowerCase()
   const isFips = fipsLower.includes('fips 140') || fipsLower.includes('fips 203')
@@ -364,7 +364,12 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
       const fwIndustries = new Set(fw.industries.map((i) => i.toLowerCase()))
       const matching = softwareData.filter((p) => {
         const support = p.pqcSupport.toLowerCase()
-        if (!support.startsWith('yes') && !support.startsWith('limited')) return false
+        if (
+          !support.startsWith('yes') &&
+          !support.startsWith('partial') &&
+          !support.startsWith('limited')
+        )
+          return false
         const pIndustries = p.targetIndustries.split(';').map((i) => i.trim().toLowerCase())
         return pIndustries.some((pi) => fwIndustries.has(pi) || pi === 'global')
       })

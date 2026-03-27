@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Search,
   AlertTriangle,
@@ -60,15 +60,17 @@ import { MobileThreatsList } from './MobileThreatsList'
 // Threat Detail Dialog Component - Moved outside to ./ThreatDetailDialog.tsx
 
 export const ThreatsDashboard: React.FC = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const { selectedIndustries: storeIndustries, selectedPersona } = usePersonaStore()
 
   const initialIndustries = useMemo(() => {
     const param = searchParams.get('industry')
-    // URL param takes precedence (single industry)
+    // URL param takes precedence — supports comma-separated multi-industry
     if (param) {
-      const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
-      return match ? [match.industry] : []
+      return param.split(',').flatMap((p) => {
+        const match = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
+        return match ? [match.industry] : []
+      })
     }
     // Map all home-page selected industries through the threats name mapping
     return (
@@ -80,10 +82,16 @@ export const ThreatsDashboard: React.FC = () => {
   }, [searchParams, storeIndustries])
 
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>(initialIndustries)
-  const [selectedCriticality, setSelectedCriticality] = useState<string>('All')
-  const [searchQuery, setSearchQuery] = useState('')
-  const [sortField, setSortField] = useState<SortField>('industry')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
+  const [selectedCriticality, setSelectedCriticality] = useState<string>(
+    () => searchParams.get('criticality') ?? 'All'
+  )
+  const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') ?? '')
+  const [sortField, setSortField] = useState<SortField>(
+    () => (searchParams.get('sort') as SortField | null) ?? 'industry'
+  )
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    () => (searchParams.get('dir') as SortDirection | null) ?? 'asc'
+  )
   const [selectedThreat, setSelectedThreat] = useState<ThreatItem | null>(() => {
     const idParam = searchParams.get('id')
     if (idParam) {
@@ -92,19 +100,80 @@ export const ThreatsDashboard: React.FC = () => {
     return null
   })
 
-  // Sync ?industry= and ?id= params on same-route navigations (e.g. chatbot deep links)
+  // Sync all filter params on same-route navigations (e.g. chatbot deep links).
+  // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
   useEffect(() => {
-    const param = searchParams.get('industry')
-    if (param) {
-      const match = threatsData.find((d) => d.industry.toLowerCase() === param.toLowerCase())
-      if (match) setSelectedIndustries([match.industry]) // eslint-disable-line react-hooks/set-state-in-effect -- URL is external state
-    }
+    const indParam = searchParams.get('industry')
     const idParam = searchParams.get('id')
+    const nextCrit = searchParams.get('criticality') ?? 'All'
+    const nextQ = searchParams.get('q') ?? ''
+    const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
+    const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
+
+    if (indParam) {
+      const matches = indParam.split(',').flatMap((p) => {
+        const m = threatsData.find((d) => d.industry.toLowerCase() === p.trim().toLowerCase())
+        return m ? [m.industry] : []
+      })
+      if (matches.length > 0)
+        // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
+        setSelectedIndustries((prev) =>
+          JSON.stringify(prev) !== JSON.stringify(matches) ? matches : prev
+        )
+    }
     if (idParam) {
       const found = threatsData.find((t) => t.threatId === idParam)
       if (found) setSelectedThreat(found)
     }
+    setSelectedCriticality((prev) => (prev !== nextCrit ? nextCrit : prev))
+    setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
+    setSortField((prev) => (prev !== nextSort ? nextSort : prev))
+    setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
   }, [searchParams])
+
+  /** Write all current filter state back to URL. Call with overrides for the value that just
+   *  changed so the URL reflects it immediately. Uses replace:true to avoid history spam. */
+  const syncFiltersToUrl = useCallback(
+    (overrides: {
+      industry?: string[]
+      criticality?: string
+      q?: string
+      sort?: SortField
+      dir?: SortDirection
+    }) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          const inds = overrides.industry ?? selectedIndustries
+          const crit = overrides.criticality ?? selectedCriticality
+          const q = overrides.q ?? searchQuery
+          const sort = overrides.sort ?? sortField
+          const dir = overrides.dir ?? sortDirection
+
+          if (inds.length > 0) next.set('industry', inds.join(','))
+          else next.delete('industry')
+          if (crit !== 'All') next.set('criticality', crit)
+          else next.delete('criticality')
+          if (q) next.set('q', q)
+          else next.delete('q')
+          if (sort !== 'industry') next.set('sort', sort)
+          else next.delete('sort')
+          if (dir !== 'asc') next.set('dir', dir)
+          else next.delete('dir')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [
+      selectedIndustries,
+      selectedCriticality,
+      searchQuery,
+      sortField,
+      sortDirection,
+      setSearchParams,
+    ]
+  )
 
   // Extract unique industries for filter
   const industryItems = useMemo(() => {
@@ -140,10 +209,13 @@ export const ThreatsDashboard: React.FC = () => {
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
-      setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc')
+      const newDir: SortDirection = sortDirection === 'asc' ? 'desc' : 'asc'
+      setSortDirection(newDir)
+      syncFiltersToUrl({ dir: newDir })
     } else {
       setSortField(field)
       setSortDirection('asc')
+      syncFiltersToUrl({ sort: field, dir: 'asc' })
     }
   }
 
@@ -286,6 +358,7 @@ export const ThreatsDashboard: React.FC = () => {
               multiSelectedIds={selectedIndustries}
               onMultiSelect={(ids) => {
                 setSelectedIndustries(ids)
+                syncFiltersToUrl({ industry: ids })
                 logEvent('Threats', 'Filter Industry', ids.join(','))
               }}
               defaultLabel="Industry"
@@ -302,6 +375,7 @@ export const ThreatsDashboard: React.FC = () => {
               selectedId={selectedCriticality}
               onSelect={(id) => {
                 setSelectedCriticality(id)
+                syncFiltersToUrl({ criticality: id })
                 logEvent('Threats', 'Filter Criticality', id)
               }}
               defaultLabel="Criticality"
@@ -323,7 +397,10 @@ export const ThreatsDashboard: React.FC = () => {
             type="text"
             placeholder="Search threats..."
             value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
+            onChange={(e) => {
+              setSearchQuery(e.target.value)
+              syncFiltersToUrl({ q: e.target.value })
+            }}
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>

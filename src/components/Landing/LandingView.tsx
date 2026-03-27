@@ -18,7 +18,12 @@ import {
   Compass,
   AlertTriangle,
   Check,
+  Cloud,
+  CloudOff,
+  Loader2,
+  LogOut,
 } from 'lucide-react'
+// LogOut intentionally kept for sign-out button
 import { Button } from '../ui/button'
 import { loadPQCAlgorithmsData } from '@/data/pqcAlgorithmsData'
 import { usePersonaStore } from '@/store/usePersonaStore'
@@ -32,8 +37,8 @@ import { MODULE_CATALOG } from '@/components/PKILearning/moduleData'
 import { PersonalizationSection } from './PersonalizationSection'
 import { PQCExplainer } from './PQCExplainer'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
-import { LinkToUsButton } from '../ui/LinkToUsButton'
 import { TransparencyBanner } from './TransparencyBanner'
+import { useGoogleAuth } from '@/contexts/GoogleAuthContext'
 
 const MODULE_COUNT = Object.keys(MODULE_CATALOG).filter((k) => k !== 'quiz').length
 
@@ -327,6 +332,7 @@ const SECTION_HEADING: Record<string, { title: string; sub: string }> = {
 
 export const LandingView = () => {
   const { selectedPersona } = usePersonaStore()
+  const { signIn, signOut, isSignedIn, syncStatus, lastSyncedAt, isConfigured } = useGoogleAuth()
   // eslint-disable-next-line security/detect-object-injection
   const recommendedPaths = selectedPersona ? PERSONA_RECOMMENDED_PATHS[selectedPersona] : []
   const { workflowActive, startWorkflow } = useMigrationWorkflowStore()
@@ -718,7 +724,7 @@ export const LandingView = () => {
           <Save size={20} className="text-primary" />
           Backup &amp; Restore
         </h3>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
           <motion.button
             type="button"
             variants={fadeUp}
@@ -789,14 +795,86 @@ export const LandingView = () => {
             </div>
           </motion.button>
 
-          <motion.div
-            variants={fadeUp}
-            initial="hidden"
-            whileInView="visible"
-            viewport={{ once: true }}
-          >
-            <LinkToUsButton variant="card" />
-          </motion.div>
+          {/* Google Drive Cloud Sync */}
+          {isConfigured && (
+            <motion.div
+              variants={fadeUp}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true }}
+            >
+              {isSignedIn ? (
+                <div className="glass-panel p-3 flex flex-col gap-2 h-full border-primary/20">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                      {syncStatus === 'syncing' ? (
+                        <Loader2 size={18} aria-hidden="true" className="animate-spin" />
+                      ) : syncStatus === 'error' ? (
+                        <CloudOff size={18} aria-hidden="true" className="text-status-error" />
+                      ) : (
+                        <Cloud size={18} aria-hidden="true" />
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <h4 className="text-sm font-semibold text-foreground">Google Drive Sync</h4>
+                      <p className="text-xs text-muted-foreground leading-snug">Connected</p>
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground leading-snug">
+                    {syncStatus === 'syncing'
+                      ? 'Syncing…'
+                      : syncStatus === 'error'
+                        ? 'Sync failed — will retry on next change'
+                        : syncStatus === 'success' && lastSyncedAt
+                          ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
+                          : 'Auto-sync active — changes save to your Drive'}
+                  </p>
+                  <div className="mt-1 bg-muted/30 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/30">
+                    <strong>Multiple devices?</strong> Work on one device at a time. Always refresh
+                    when switching to pull your latest save.
+                  </div>
+                  <button
+                    type="button"
+                    onClick={signOut}
+                    className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
+                  >
+                    <LogOut size={12} aria-hidden="true" />
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={signIn}
+                  className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
+                  aria-label="Sign in with Google to sync progress to Google Drive"
+                >
+                  <div className="p-2 rounded-lg bg-primary/10 text-primary shrink-0">
+                    <Cloud size={18} aria-hidden="true" />
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                      Sync to Google Drive
+                      <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
+                        WIP
+                      </span>
+                    </h4>
+                    <p className="text-xs text-muted-foreground leading-snug">
+                      Auto-save your progress to your Google Drive and access it from any device.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/60 leading-snug mt-1">
+                      Google shows your account info for your protection — PQC Today does not
+                      receive or store it.
+                    </p>
+                    <div className="mt-2 bg-muted/40 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/40">
+                      <strong>Multiple devices?</strong> Work on one device at a time. Always
+                      refresh when switching to pull your latest save.
+                    </div>
+                  </div>
+                </button>
+              )}
+            </motion.div>
+          )}
         </div>
       </section>
     </div>
