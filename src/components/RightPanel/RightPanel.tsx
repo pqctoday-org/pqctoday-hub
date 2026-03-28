@@ -44,7 +44,7 @@ export const RightPanel: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm print:hidden"
+            className="fixed inset-0 z-panel bg-black/60 backdrop-blur-sm print:hidden"
             onClick={close}
           />
 
@@ -54,7 +54,7 @@ export const RightPanel: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
+            className="fixed right-0 top-0 bottom-0 z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
             role="dialog"
             aria-label={
               activeTab === 'chat'

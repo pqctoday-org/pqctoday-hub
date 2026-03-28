@@ -19,7 +19,7 @@ import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 
 export function AlgorithmsView() {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const highlightAlgorithms = useMemo(() => {
     const raw = searchParams.get('highlight')
     if (!raw) return undefined
@@ -29,6 +29,19 @@ export function AlgorithmsView() {
         .map((s) => s.trim())
         .filter(Boolean)
     )
+  }, [searchParams])
+
+  const [activeTab, setActiveTab] = useState<'transition' | 'detailed'>(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'transition' || tab === 'detailed') return tab
+    return searchParams.get('highlight') ? 'detailed' : 'transition'
+  })
+
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab === 'transition' || tab === 'detailed') {
+      setActiveTab((prev) => (prev !== tab ? tab : prev))
+    }
   }, [searchParams])
 
   const [metadata, setMetadata] = useState<{ filename: string; date: Date | null } | null>(null)
@@ -88,7 +101,22 @@ export function AlgorithmsView() {
 
       {/* View Tabs */}
       {!isLoading && (
-        <Tabs defaultValue={highlightAlgorithms ? 'detailed' : 'transition'}>
+        <Tabs
+          value={activeTab}
+          onValueChange={(t) => {
+            const tab = t as 'transition' | 'detailed'
+            setActiveTab(tab)
+            setSearchParams(
+              (prev) => {
+                const next = new URLSearchParams(prev)
+                if (tab !== 'transition') next.set('tab', tab)
+                else next.delete('tab')
+                return next
+              },
+              { replace: true }
+            )
+          }}
+        >
           <TabsList className="mb-6 bg-muted/50 border border-border">
             <TabsTrigger value="transition" className="flex items-center gap-2">
               <ArrowRight size={18} />

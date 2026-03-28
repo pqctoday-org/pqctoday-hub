@@ -84,7 +84,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
             role="dialog"
             aria-modal="true"
             aria-labelledby="wip-modal-title"
-            className="fixed inset-0 flex items-center justify-center z-[51] p-4 pointer-events-none"
+            className="fixed inset-0 flex items-center justify-center z-wip-badge p-4 pointer-events-none"
           >
             <div className="glass-panel p-6 max-w-md w-full space-y-5 pointer-events-auto">
               {/* Header */}

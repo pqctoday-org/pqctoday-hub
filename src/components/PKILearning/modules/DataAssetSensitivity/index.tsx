@@ -22,6 +22,7 @@ import {
   type DataAsset,
   type ScoredAsset,
 } from './data/sensitivityConstants'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'data-asset-sensitivity'
 
@@ -178,7 +179,9 @@ export const DataAssetSensitivityModule: React.FC = () => {
 
         {/* ── Learn Tab ─────────────────────────────────────────────────── */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <DataAssetIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* ── Workshop Tab ──────────────────────────────────────────────── */}

@@ -85,7 +85,7 @@ export function AchievementToast() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 left-4 right-4 md:right-auto md:left-6 z-[99] max-w-xs print:hidden"
+          className="fixed bottom-6 left-4 right-4 md:right-auto md:left-6 z-toast max-w-xs print:hidden"
           role="status"
           aria-live="polite"
           aria-label={`Achievement unlocked: ${achievement.title}`}

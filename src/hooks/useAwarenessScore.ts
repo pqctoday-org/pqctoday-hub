@@ -144,13 +144,21 @@ export interface TrackProgress {
   percentComplete: number
 }
 
+export interface ThresholdGate {
+  message: string
+  hint?: string
+}
+
 export interface AwarenessScoreResult {
   hasStarted: boolean
   score: number
   belt: BeltRank
   nextBelt: BeltRank | null
   pointsToNextBelt: number
+  /** @deprecated Use thresholdGates instead */
   cappedByThreshold: string | null
+  /** All unmet threshold gates blocking the next belt, with actionable hints */
+  thresholdGates: ThresholdGate[]
   breakdown: {
     knowledge: DimensionScore
     breadth: DimensionScore
@@ -217,6 +225,7 @@ export function useAwarenessScore(): AwarenessScoreResult {
         nextBelt: BELT_RANKS[1],
         pointsToNextBelt: BELT_RANKS[1].minScore,
         cappedByThreshold: null,
+        thresholdGates: [],
         breakdown: {
           knowledge: {
             raw: 0,
@@ -374,6 +383,7 @@ export function useAwarenessScore(): AwarenessScoreResult {
 
     let earnedBelt = BELT_RANKS[0]
     let cappedByThreshold: string | null = null
+    const thresholdGates: ThresholdGate[] = []
 
     for (const belt of BELT_RANKS) {
       if (score < belt.minScore) break
@@ -388,23 +398,45 @@ export function useAwarenessScore(): AwarenessScoreResult {
       if (quizOk && stepsOk && artifactsOk && timeOk && streakOk) {
         earnedBelt = belt
       } else {
-        // Identify the first unmet threshold for the next belt
-        if (!cappedByThreshold) {
-          if (!quizOk) {
-            const needed = hasCumulative
-              ? Math.ceil((t.minQuizPct / 100) * totalPersonaQuestions) - personaCorrectCount
-              : Math.ceil(t.minQuizPct - quizOverall)
-            cappedByThreshold = hasCumulative
-              ? `Need ${needed} more correct question${needed > 1 ? 's' : ''} for ${belt.name}`
-              : `Need ${needed}% more on the quiz for ${belt.name}`
-          } else if (!stepsOk)
-            cappedByThreshold = `Need ${Math.ceil((t.minStepsPct / 100) * personaTotalSteps) - totalCompletedSteps} more steps for ${belt.name}`
-          else if (!artifactsOk)
-            cappedByThreshold = `Need ${t.minArtifacts - artifactCount} more artifact${t.minArtifacts - artifactCount > 1 ? 's' : ''} for ${belt.name}`
-          else if (!timeOk)
-            cappedByThreshold = `Need ${Math.ceil(t.minTimeMinutes - totalMinutes)} more min learning for ${belt.name}`
-          else if (!streakOk)
-            cappedByThreshold = `Need a ${t.minStreak}-day streak for ${belt.name}`
+        // Collect ALL unmet thresholds for this belt
+        if (!quizOk) {
+          const needed = hasCumulative
+            ? Math.ceil((t.minQuizPct / 100) * totalPersonaQuestions) - personaCorrectCount
+            : Math.ceil(t.minQuizPct - quizOverall)
+          const msg = hasCumulative
+            ? `Need ${needed} more correct question${needed > 1 ? 's' : ''} for ${belt.name}`
+            : `Need ${needed}% more on the quiz for ${belt.name}`
+          thresholdGates.push({ message: msg, hint: 'Take the quiz from your learning path' })
+        }
+        if (!stepsOk) {
+          const needed = Math.ceil((t.minStepsPct / 100) * personaTotalSteps) - totalCompletedSteps
+          thresholdGates.push({
+            message: `Need ${needed} more step${needed > 1 ? 's' : ''} for ${belt.name}`,
+            hint: 'Complete workshop steps in your learning modules',
+          })
+        }
+        if (!artifactsOk) {
+          const needed = t.minArtifacts - artifactCount
+          thresholdGates.push({
+            message: `Need ${needed} more artifact${needed > 1 ? 's' : ''} for ${belt.name}`,
+            hint: 'Generate keys, certificates, or documents in PKI Workshop or Playground',
+          })
+        }
+        if (!timeOk) {
+          thresholdGates.push({
+            message: `Need ${Math.ceil(t.minTimeMinutes - totalMinutes)} more min learning for ${belt.name}`,
+            hint: 'Spend more time in learning modules',
+          })
+        }
+        if (!streakOk) {
+          thresholdGates.push({
+            message: `Need a ${t.minStreak}-day streak for ${belt.name}`,
+            hint: 'Visit daily to build your streak',
+          })
+        }
+        // Keep backward compat: first gate as the legacy string
+        if (thresholdGates.length > 0) {
+          cappedByThreshold = thresholdGates[0].message
         }
         break
       }
@@ -452,6 +484,7 @@ export function useAwarenessScore(): AwarenessScoreResult {
       nextBelt,
       pointsToNextBelt,
       cappedByThreshold,
+      thresholdGates,
       breakdown: {
         knowledge: {
           raw: Math.round(knowledgeRaw),

@@ -1,9 +1,10 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ArrowLeft, ArrowRight } from 'lucide-react'
-import { MODULE_CATALOG, MODULE_TRACKS, MODULE_TO_TRACK } from '../moduleData'
+import { MODULE_CATALOG, WORKSHOP_STEPS } from '../moduleData'
 import { CuriousSummaryBanner } from './CuriousSummaryBanner'
 import { useModuleStore } from '@/store/useModuleStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { PERSONAS } from '@/data/learningPersonas'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
@@ -17,32 +18,45 @@ interface CuriousModuleViewProps {
 export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }) => {
   const navigate = useNavigate()
   const moduleMeta = MODULE_CATALOG[moduleId] // eslint-disable-line security/detect-object-injection
-  const { updateModuleProgress, modules } = useModuleStore()
+  const { updateModuleProgress, markStepComplete, modules } = useModuleStore()
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const isCompleted = modules[moduleId]?.status === 'completed'
 
+  // Mark module as reviewed AND credit all workshop steps for belt progression
+  const markModuleReviewed = useCallback(
+    (id: string) => {
+      updateModuleProgress(id, { status: 'completed' })
+      const steps = WORKSHOP_STEPS[id] // eslint-disable-line security/detect-object-injection
+      if (steps) {
+        for (const step of steps) {
+          markStepComplete(id, step.id)
+        }
+      }
+    },
+    [updateModuleProgress, markStepComplete]
+  )
+
   const handleMarkReviewed = () => {
-    updateModuleProgress(moduleId, { status: 'completed' })
+    markModuleReviewed(moduleId)
   }
 
-  // Find next/prev in the same track
+  // Find next/prev using persona path ordering (fall back to curious path)
   const { prevModuleId, nextModuleId } = useMemo(() => {
-    const trackName = MODULE_TO_TRACK[moduleId] // eslint-disable-line security/detect-object-injection
-    if (!trackName) return { prevModuleId: null, nextModuleId: null }
-    const trackObj = MODULE_TRACKS.find((t) => t.track === trackName)
-    if (!trackObj) return { prevModuleId: null, nextModuleId: null }
-
-    const idx = trackObj.modules.findIndex((m) => m.id === moduleId)
+    const personaKey = selectedPersona ?? 'curious'
+    const persona = PERSONAS[personaKey] // eslint-disable-line security/detect-object-injection
+    const path = persona?.recommendedPath ?? PERSONAS.curious.recommendedPath
+    const idx = path.indexOf(moduleId)
+    if (idx === -1) return { prevModuleId: null, nextModuleId: null }
     return {
-      prevModuleId: idx > 0 ? trackObj.modules[idx - 1].id : null,
-      nextModuleId:
-        idx < trackObj.modules.length - 1 && idx !== -1 ? trackObj.modules[idx + 1].id : null,
+      prevModuleId: idx > 0 ? path[idx - 1] : null,
+      nextModuleId: idx < path.length - 1 ? path[idx + 1] : null,
     }
-  }, [moduleId])
+  }, [moduleId, selectedPersona])
 
   // Mark this module as completed when they click Next.
   // For Curious persona, we just view the summary.
   const handleNext = () => {
-    updateModuleProgress(moduleId, { status: 'completed' })
+    markModuleReviewed(moduleId)
     if (nextModuleId) {
       navigate(`/learn/${nextModuleId}`)
     } else {
@@ -132,7 +146,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
             onClick={handleNext}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 bg-accent text-accent-foreground font-semibold rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
           >
-            Finish Track
+            Finish Path
           </button>
         )}
       </div>

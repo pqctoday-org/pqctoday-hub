@@ -15,6 +15,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = '5g-security'
 
@@ -149,7 +150,9 @@ export const FiveGModule: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <FiveGIntroduction onNavigateToSimulate={navigateToSimulate} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Visual Tab */}

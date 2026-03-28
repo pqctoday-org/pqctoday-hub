@@ -2,7 +2,9 @@
 import { useRef, useState } from 'react'
 import { Info, Lock } from 'lucide-react'
 import { useAchievementStore } from '@/store/useAchievementStore'
+import { usePersonaStore } from '@/store/usePersonaStore'
 import { ACHIEVEMENT_CATALOG, ACHIEVEMENT_COUNT } from '@/data/achievementCatalog'
+import { PERSONA_EXCLUDED_ACHIEVEMENTS } from '@/data/personaConfig'
 import { achievementIconMap } from '@/data/achievementIcons'
 import type { AchievementCategory, AchievementRarity } from '@/types/AchievementTypes'
 
@@ -65,9 +67,12 @@ function CategoryInfoButton({ category }: { category: AchievementCategory }) {
 
 export function AchievementBadgeGrid() {
   const unlocked = useAchievementStore((s) => s.unlocked)
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const [tooltip, setTooltip] = useState<string | null>(null)
 
   const unlockedIds = new Set(unlocked.map((u) => u.id))
+  // eslint-disable-next-line security/detect-object-injection
+  const excludedIds = new Set(selectedPersona ? PERSONA_EXCLUDED_ACHIEVEMENTS[selectedPersona] : [])
   const earnedCount = unlocked.length
 
   if (earnedCount === 0) return null
@@ -104,6 +109,7 @@ export function AchievementBadgeGrid() {
                 {achievements.map((achievement) => {
                   const isEarned = unlockedIds.has(achievement.id)
                   const isSecret = achievement.secret && !isEarned
+                  const isExcluded = excludedIds.has(achievement.id) && !isEarned
                   const IconComponent = isSecret ? Lock : achievementIconMap[achievement.icon]
 
                   return (
@@ -114,7 +120,9 @@ export function AchievementBadgeGrid() {
                         setTooltip(
                           isSecret
                             ? `${achievement.id}: ???`
-                            : `${achievement.title}: ${achievement.description}`
+                            : isExcluded
+                              ? `${achievement.title}: Not available for this path`
+                              : `${achievement.title}: ${achievement.description}`
                         )
                       }
                       onMouseLeave={() => setTooltip(null)}
@@ -123,10 +131,16 @@ export function AchievementBadgeGrid() {
                         className={`p-1 rounded transition-all ${
                           isEarned
                             ? `bg-primary/15 ${RARITY_RING[achievement.rarity]}`
-                            : 'opacity-25'
+                            : isExcluded
+                              ? 'opacity-10'
+                              : 'opacity-25'
                         }`}
                         title={
-                          isSecret ? '???' : `${achievement.title}: ${achievement.description}`
+                          isSecret
+                            ? '???'
+                            : isExcluded
+                              ? `${achievement.title}: Not available for this path`
+                              : `${achievement.title}: ${achievement.description}`
                         }
                       >
                         {IconComponent && (

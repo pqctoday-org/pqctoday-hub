@@ -16,6 +16,7 @@ export type EntityType =
   | 'algorithm'
   | 'track'
   | 'persona'
+  | 'vendor'
 
 export type RelationshipType =
   | 'library-depends-on'
@@ -34,6 +35,14 @@ export type RelationshipType =
   | 'module-in-track'
   | 'persona-recommends'
   | 'threat-targets-algorithm'
+  | 'module-qa-references'
+  | 'vendor-produces'
+  | 'vendor-country'
+  | 'leader-references-library'
+  | 'certification-validates-algorithm'
+  | 'software-implements-algorithm'
+  | 'compliance-applies-to-country'
+  | 'algorithm-replaces'
 
 export interface GraphNode {
   id: string

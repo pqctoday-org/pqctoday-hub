@@ -57,7 +57,7 @@ export function AirplaneModeToast() {
           initial={{ opacity: 0, y: 50 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 50 }}
-          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-[80] print:hidden"
+          className="fixed bottom-20 left-1/2 -translate-x-1/2 z-airplane-toast print:hidden"
         >
           <div className="glass-panel rounded-xl px-4 py-3 shadow-lg border border-border flex items-center gap-3 max-w-sm">
             {toast.icon === 'plane' ? (

@@ -16,6 +16,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
 import { CustodyArchitectureFlow } from './flows/CustodyArchitectureFlow'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'digital-assets'
 
@@ -159,7 +160,9 @@ export const DigitalAssetsModule: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <BlockchainCryptoIntroduction onNavigateToWorkshop={() => navigateToWorkshop()} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Workshop Tab */}

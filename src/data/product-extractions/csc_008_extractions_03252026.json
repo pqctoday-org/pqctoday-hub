@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Gmail / Google Workspace",
+    "category": "Email Encryption Software",
+    "product_name": "Gmail / Google Workspace",
+    "product_brief": "AI-powered, secure, and easy to use email trusted by billions of people and businesses.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"enterprise-grade security,\" \"security-by-design cloud infrastructure,\" and blocking spam/phishing/malware, but contains no explicit mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-based SaaS (Google's secure, resilient global infrastructure)",
+    "infrastructure_layer": "Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Commercial\" plans and \"Contact sales\")",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Computer, phone, watch, tablet; Cloud (Google Workspace)",
+    "target_industries": "Financial Services, Healthcare and Life Sciences, Retail, Manufacturing, Government and Public Sector, Professional Services, Technology, Education, Nonprofits",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filename provided: Gmail___Google_Workspace.html)"
+  }
+]

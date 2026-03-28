@@ -380,6 +380,61 @@ const CKF_SESSION_FLAGS: Array<{ bit: number; name: string; description?: string
   { bit: 0x0004, name: 'CKF_SERIAL_SESSION', description: 'Serial session (required by PKCS#11)' },
 ]
 
+// CKR_ return value descriptions (for PkcsLogPanel error display)
+export const CKR_TABLE: Record<number, { name: string; description: string; hint?: string }> = {
+  0x00: { name: 'CKR_OK', description: 'Operation succeeded' },
+  0x01: { name: 'CKR_CANCEL', description: 'Operation was cancelled' },
+  0x02: { name: 'CKR_HOST_MEMORY', description: 'Insufficient host memory', hint: 'Try a smaller key size or free browser memory' },
+  0x03: { name: 'CKR_SLOT_ID_INVALID', description: 'Slot ID does not exist', hint: 'Initialize the module first via C_Initialize' },
+  0x05: { name: 'CKR_GENERAL_ERROR', description: 'Unspecified internal error', hint: 'Re-initialize the module and retry' },
+  0x06: { name: 'CKR_FUNCTION_FAILED', description: 'Function failed for an internal reason', hint: 'Check the PKCS#11 log for preceding calls that may have left bad state' },
+  0x07: { name: 'CKR_ARGUMENTS_BAD', description: 'Invalid arguments passed to the function', hint: 'Verify all parameters: handles, buffers, and template attributes' },
+  0x10: { name: 'CKR_ATTRIBUTE_READ_ONLY', description: 'Attribute cannot be modified', hint: 'This attribute was set at key creation and is immutable' },
+  0x11: { name: 'CKR_ATTRIBUTE_SENSITIVE', description: 'Attribute cannot be read (sensitive)', hint: 'The key has CKA_SENSITIVE=true — extracting its value is not allowed' },
+  0x12: { name: 'CKR_ATTRIBUTE_TYPE_INVALID', description: 'Unknown or unsupported attribute type', hint: 'Check that the CKA_* type is supported by this mechanism' },
+  0x13: { name: 'CKR_ATTRIBUTE_VALUE_INVALID', description: 'Attribute value is out of range or malformed', hint: 'Verify the attribute value matches the expected type and constraints' },
+  0x1b: { name: 'CKR_ACTION_PROHIBITED', description: 'Action not allowed by token policy' },
+  0x20: { name: 'CKR_DATA_INVALID', description: 'Input data is invalid for this operation' },
+  0x21: { name: 'CKR_DATA_LEN_RANGE', description: 'Input data length is outside allowed range', hint: 'Check minimum/maximum data length for this mechanism' },
+  0x40: { name: 'CKR_ENCRYPTED_DATA_INVALID', description: 'Ciphertext is corrupted or invalid' },
+  0x41: { name: 'CKR_ENCRYPTED_DATA_LEN_RANGE', description: 'Ciphertext length is outside allowed range' },
+  0x42: { name: 'CKR_AEAD_DECRYPT_FAILED', description: 'AEAD authentication tag verification failed', hint: 'The ciphertext was modified or the wrong key/IV was used' },
+  0x54: { name: 'CKR_FUNCTION_NOT_SUPPORTED', description: 'This PKCS#11 function is not implemented', hint: 'The HSM module does not support this operation' },
+  0x60: { name: 'CKR_KEY_HANDLE_INVALID', description: 'Key handle does not exist or has been destroyed', hint: 'Generate a new key or check the key store' },
+  0x62: { name: 'CKR_KEY_SIZE_RANGE', description: 'Key size is outside the allowed range for this mechanism', hint: 'Check CKA_VALUE_LEN against the mechanism\'s supported key sizes' },
+  0x63: { name: 'CKR_KEY_TYPE_INCONSISTENT', description: 'Key type does not match the mechanism', hint: 'Use a key type that matches the algorithm (e.g., CKK_AES for AES mechanisms)' },
+  0x68: { name: 'CKR_KEY_FUNCTION_NOT_PERMITTED', description: 'Key attributes do not permit this operation', hint: 'Check CKA_ENCRYPT, CKA_DECRYPT, CKA_SIGN, CKA_VERIFY, CKA_WRAP, CKA_UNWRAP flags on the key' },
+  0x6a: { name: 'CKR_KEY_UNEXTRACTABLE', description: 'Key has CKA_EXTRACTABLE=false', hint: 'Generate a new key with CKA_EXTRACTABLE=true if you need to export it' },
+  0x70: { name: 'CKR_MECHANISM_INVALID', description: 'Mechanism is not supported by this token', hint: 'Check supported mechanisms via C_GetMechanismList' },
+  0x71: { name: 'CKR_MECHANISM_PARAM_INVALID', description: 'Mechanism parameters are invalid', hint: 'Verify the parameter struct matches what the mechanism expects' },
+  0x82: { name: 'CKR_OBJECT_HANDLE_INVALID', description: 'Object handle does not exist' },
+  0x90: { name: 'CKR_OPERATION_ACTIVE', description: 'An operation is already active on this session', hint: 'Finalize or cancel the current operation before starting a new one' },
+  0x91: { name: 'CKR_OPERATION_NOT_INITIALIZED', description: 'No operation was initialized', hint: 'Call the Init function (e.g., C_SignInit) before the operation function' },
+  0xa0: { name: 'CKR_PIN_INCORRECT', description: 'PIN is wrong', hint: 'Use the correct user PIN (default: "1234" for this HSM emulator)' },
+  0xa1: { name: 'CKR_PIN_INVALID', description: 'PIN format is invalid' },
+  0xb0: { name: 'CKR_SESSION_CLOSED', description: 'Session has been closed', hint: 'Open a new session with C_OpenSession' },
+  0xb3: { name: 'CKR_SESSION_HANDLE_INVALID', description: 'Session handle does not exist', hint: 'Open a new session or verify the handle from C_OpenSession' },
+  0xb5: { name: 'CKR_SESSION_READ_ONLY', description: 'Session is read-only but a write operation was attempted', hint: 'Open a R/W session with CKF_RW_SESSION flag' },
+  0xc0: { name: 'CKR_SIGNATURE_INVALID', description: 'Signature verification failed', hint: 'The data, key, or signature may have been modified' },
+  0xc1: { name: 'CKR_SIGNATURE_LEN_RANGE', description: 'Signature length is outside allowed range' },
+  0xd0: { name: 'CKR_TEMPLATE_INCOMPLETE', description: 'Required attributes are missing from the template', hint: 'Add all required CKA_* attributes for this object type' },
+  0xd1: { name: 'CKR_TEMPLATE_INCONSISTENT', description: 'Template attributes conflict with each other' },
+  0xe0: { name: 'CKR_TOKEN_NOT_PRESENT', description: 'Token is not present in the slot', hint: 'Initialize the module first' },
+  0x100: { name: 'CKR_USER_ALREADY_LOGGED_IN', description: 'A user is already logged in to this session' },
+  0x101: { name: 'CKR_USER_NOT_LOGGED_IN', description: 'Login required before this operation', hint: 'Call C_Login with CKU_USER and your PIN' },
+  0x150: { name: 'CKR_BUFFER_TOO_SMALL', description: 'Output buffer is too small for the result', hint: 'This is normal for two-pass calls — the first call returns the required size' },
+  0x190: { name: 'CKR_CRYPTOKI_NOT_INITIALIZED', description: 'C_Initialize has not been called', hint: 'Call C_Initialize before any other PKCS#11 function' },
+  0x191: { name: 'CKR_CRYPTOKI_ALREADY_INITIALIZED', description: 'C_Initialize was already called' },
+  0x200: { name: 'CKR_FUNCTION_REJECTED', description: 'Function was rejected by policy' },
+}
+
+/** Look up a CKR_* return value. Returns name, description, and optional remediation hint. */
+export const lookupCkr = (rv: number): { name: string; description: string; hint?: string } => {
+  const entry = CKR_TABLE[rv]
+  if (entry) return entry
+  return { name: `CKR_UNKNOWN (0x${rv.toString(16).padStart(8, '0')})`, description: 'Unknown return value' }
+}
+
 // ── Private helpers ───────────────────────────────────────────────────────────
 
 /** Safely read a 32-bit little-endian integer from WASM heap. Returns null on failure. */

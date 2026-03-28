@@ -13,6 +13,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'pqc-business-case'
 
@@ -174,7 +175,9 @@ export const PQCBusinessCaseModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <Introduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         <TabsContent value="visual">

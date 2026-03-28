@@ -23,7 +23,10 @@ interface InlineTooltipProps {
 
 type TooltipStyle = { top: number; left: number } | { bottom: number; left: number }
 
-export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) => {
+export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: string } = ({
+  term,
+  children,
+}) => {
   const [isOpen, setIsOpen] = useState(false)
   const [tooltipStyle, setTooltipStyle] = useState<TooltipStyle | null>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
@@ -133,3 +136,5 @@ export const InlineTooltip: React.FC<InlineTooltipProps> = ({ term, children }) 
     </>
   )
 }
+
+InlineTooltip.displayName = 'InlineTooltip'

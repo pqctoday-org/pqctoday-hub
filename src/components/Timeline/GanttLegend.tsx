@@ -42,7 +42,7 @@ export const GanttLegend = ({ className = '' }: GanttLegendProps) => {
                       boxShadow: `inset 0 0 10px ${colors.glow}`,
                     }}
                   >
-                    <span className="text-xs font-bold text-foreground drop-shadow-md">
+                    <span className="text-xs font-bold text-white drop-shadow-md">
                       {phase}
                     </span>
                   </td>

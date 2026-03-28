@@ -28,6 +28,7 @@ import { Button } from '../ui/button'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { DisclaimerModal } from '../ui/DisclaimerModal'
 import { AchievementToast } from '../ui/AchievementToast'
+import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 
 import { GuidedTour } from '../common/GuidedTour'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
@@ -149,7 +150,7 @@ export const MainLayout = () => {
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:fixed focus:z-[100] focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:p-4 focus:rounded-md focus:ring-2 focus:ring-primary focus:shadow-lg print:hidden"
+        className="sr-only focus:not-sr-only focus:fixed focus:z-overlay focus:top-4 focus:left-4 focus:bg-background focus:text-foreground focus:p-4 focus:rounded-md focus:ring-2 focus:ring-primary focus:shadow-lg print:hidden"
       >
         Skip to main content
       </a>
@@ -280,7 +281,7 @@ export const MainLayout = () => {
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-[69] bg-black/60 lg:hidden"
+            className="fixed inset-0 z-nav-backdrop bg-black/60 lg:hidden"
             onClick={() => setMoreMenuOpen(false)}
             aria-hidden="true"
           />
@@ -289,7 +290,7 @@ export const MainLayout = () => {
             role="dialog"
             aria-modal="true"
             aria-label="More navigation"
-            className="fixed inset-x-0 bottom-0 z-[70] lg:hidden bg-card border-t border-border rounded-t-2xl p-4 shadow-2xl"
+            className="fixed inset-x-0 bottom-0 z-nav lg:hidden bg-card border-t border-border rounded-t-2xl p-4 shadow-2xl"
           >
             <div className="flex items-center justify-between mb-4">
               <span className="text-sm font-medium text-foreground">More</span>
@@ -421,7 +422,7 @@ export const MainLayout = () => {
             Terms of Service
           </Link>
         </p>
-        <p className="mt-1 text-xs opacity-70">
+        <p className="mt-1 text-xs text-muted-foreground">
           Content may be inaccurate. Please verify information independently. Report inaccuracies in{' '}
           <a
             href="https://github.com/pqctoday/pqc-timeline-app/discussions"
@@ -449,6 +450,9 @@ export const MainLayout = () => {
 
       {/* Achievement Toast Notification */}
       <AchievementToast />
+
+      {/* Phase Completion Toast */}
+      <PhaseCompletionToast />
 
       {/* First-visit Guided Tour */}
       <GuidedTour />

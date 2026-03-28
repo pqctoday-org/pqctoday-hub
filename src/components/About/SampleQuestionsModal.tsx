@@ -56,10 +56,10 @@ export const SampleQuestionsModal = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[70]"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-modal"
           />
 
-          <div className="fixed inset-0 z-[70] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-modal flex items-center justify-center p-4">
             <motion.div
               ref={focusTrapRef}
               role="dialog"

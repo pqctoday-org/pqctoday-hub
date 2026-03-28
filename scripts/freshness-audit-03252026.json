@@ -1,0 +1,626 @@
+{
+  "summary": {
+    "audit_date": "2026-03-25T23:03:28.043013",
+    "source_csv": "library_03232026.csv",
+    "total_checked": 37,
+    "stale": 16,
+    "current": 18,
+    "check_failed": 3,
+    "by_status": {
+      "EXPIRED": 8,
+      "CURRENT": 18,
+      "NEWER_REVISION": 8,
+      "CHECK_FAILED": 3
+    },
+    "by_priority": {
+      "high": 0,
+      "medium": 8,
+      "low": 11,
+      "none": 18
+    }
+  },
+  "results": [
+    {
+      "base_name": "draft-ietf-tls-hybrid-design",
+      "our_rev": 16,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 16,
+        "expires": "2026-03-11T19:40:11Z"
+      },
+      "reference_id": "draft-ietf-tls-hybrid-design-16",
+      "category": "ietf_draft",
+      "document_title": "Hybrid key exchange in TLS 1.3",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/",
+      "our_last_update": "2025-09-07",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-ietf-tls-ecdhe-mlkem",
+      "our_rev": 4,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 4,
+        "expires": "2026-08-12T21:50:15Z"
+      },
+      "reference_id": "draft-ietf-tls-ecdhe-mlkem-04",
+      "category": "ietf_draft",
+      "document_title": "Post-quantum hybrid ECDHE-MLKEM Key Agreement for TLSv1.3",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-tls-ecdhe-mlkem/",
+      "our_last_update": "2026-02-08",
+      "our_status": "Internet-Draft (Standards Track)"
+    },
+    {
+      "base_name": "draft-ietf-tls-mlkem",
+      "our_rev": 7,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 7,
+        "expires": "2026-08-16T18:35:36Z"
+      },
+      "reference_id": "draft-ietf-tls-mlkem-07",
+      "category": "ietf_draft",
+      "document_title": "ML-KEM Post-Quantum Key Agreement for TLS 1.3",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mlkem/",
+      "our_last_update": "2026-02-12",
+      "our_status": "Internet-Draft (Revised I-D Needed)"
+    },
+    {
+      "base_name": "draft-ietf-ipsecme-ikev2-mlkem",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 5,
+        "expires": "2026-09-16T01:20:38Z"
+      },
+      "reference_id": "draft-ietf-ipsecme-ikev2-mlkem",
+      "category": "ietf_draft",
+      "document_title": "Post-quantum Hybrid Key Exchange with ML-KEM in IKEv2",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-ipsecme-ikev2-mlkem/",
+      "our_last_update": "2025-09-29",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-yang-tls-hybrid-sm2-mlkem",
+      "our_rev": 3,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 3,
+        "expires": "2026-05-19T03:18:45Z"
+      },
+      "reference_id": "draft-yang-tls-hybrid-sm2-mlkem-03",
+      "category": "ietf_draft",
+      "document_title": "Hybrid Post-quantum Key Exchange SM2-MLKEM for TLSv1.3",
+      "download_url": "https://datatracker.ietf.org/doc/draft-yang-tls-hybrid-sm2-mlkem/",
+      "our_last_update": "2025-11-15",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-ietf-lamps-kyber-certificates",
+      "our_rev": 11,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 11,
+        "expires": "2026-01-23T19:19:04Z"
+      },
+      "reference_id": "draft-ietf-lamps-kyber-certificates-11",
+      "category": "ietf_draft",
+      "document_title": "Internet X.509 PKI \u2014 Algorithm Identifiers for ML-KEM",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-kyber-certificates/",
+      "our_last_update": "2025-07-22",
+      "our_status": "Internet-Draft (RFC Ed Queue, AUTH48)"
+    },
+    {
+      "base_name": "draft-ietf-lamps-pq-composite-kem",
+      "our_rev": 12,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 12,
+        "expires": "2026-07-12T04:50:29Z"
+      },
+      "reference_id": "draft-ietf-lamps-pq-composite-kem-12",
+      "category": "ietf_draft",
+      "document_title": "Composite ML-KEM for Use in X.509 PKI and CMS",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-kem/",
+      "our_last_update": "2026-01-08",
+      "our_status": "Internet-Draft (In WG Last Call)"
+    },
+    {
+      "base_name": "draft-ietf-lamps-pq-composite-sigs",
+      "our_rev": 15,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 15,
+        "expires": "2026-08-28T14:55:55Z"
+      },
+      "reference_id": "draft-ietf-lamps-pq-composite-sigs-15",
+      "category": "ietf_draft",
+      "document_title": "Composite ML-DSA for Use in X.509 PKI and CMS",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-pq-composite-sigs/",
+      "our_last_update": "2026-02-24",
+      "our_status": "Internet-Draft (In IETF Last Call)"
+    },
+    {
+      "base_name": "draft-ietf-lamps-cms-kyber",
+      "our_rev": 13,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 13,
+        "expires": "2026-03-27T14:00:13Z"
+      },
+      "reference_id": "draft-ietf-lamps-cms-kyber-13",
+      "category": "ietf_draft",
+      "document_title": "Use of ML-KEM in the Cryptographic Message Syntax (CMS)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-cms-kyber/",
+      "our_last_update": "2025-09-23",
+      "our_status": "RFC 9936 Pending (AUTH48)"
+    },
+    {
+      "base_name": "draft-ietf-openpgp-pqc",
+      "our_rev": 17,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 17,
+        "expires": "2026-07-17T10:22:32Z"
+      },
+      "reference_id": "draft-ietf-openpgp-pqc-17",
+      "category": "ietf_draft",
+      "document_title": "Post-Quantum Cryptography in OpenPGP",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-openpgp-pqc/",
+      "our_last_update": "2026-01-13",
+      "our_status": "Internet-Draft (Submitted to IESG)"
+    },
+    {
+      "base_name": "draft-ietf-pquip-pqc-engineers",
+      "our_rev": 14,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 14,
+        "expires": "2026-02-27T04:56:58Z"
+      },
+      "reference_id": "draft-ietf-pquip-pqc-engineers-14",
+      "category": "ietf_draft",
+      "document_title": "Post-Quantum Cryptography for Engineers",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-pqc-engineers/",
+      "our_last_update": "2025-08-26",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-ietf-pquip-hybrid-signature-spectrums",
+      "our_rev": 6,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 7,
+        "rev_diff": 1,
+        "expires": "2025-12-22T16:08:49Z"
+      },
+      "action": "Draft draft-ietf-pquip-hybrid-signature-spectrums has newer revision: -07 (ours: -06). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-pquip-hybrid-signature-spectrums-06",
+      "category": "ietf_draft",
+      "document_title": "Hybrid signature spectrums",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-hybrid-signature-spectrums/",
+      "our_last_update": "2025-01-15",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-ietf-uta-pqc-app",
+      "our_rev": 0,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 1,
+        "rev_diff": 1,
+        "expires": "2026-08-28T13:34:03Z"
+      },
+      "action": "Draft draft-ietf-uta-pqc-app has newer revision: -01 (ours: -00). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-uta-pqc-app-00",
+      "category": "ietf_draft",
+      "document_title": "Post-Quantum Cryptography Recommendations for TLS-based Applications",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-uta-pqc-app/",
+      "our_last_update": "2025-09-18",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-kwiatkowski-pquip-pqc-migration",
+      "our_rev": 0,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 0,
+        "expires": "2026-01-21T10:11:10Z"
+      },
+      "reference_id": "draft-kwiatkowski-pquip-pqc-migration-00",
+      "category": "ietf_draft",
+      "document_title": "Guidance for migration to Post-Quantum Cryptography",
+      "download_url": "https://datatracker.ietf.org/doc/draft-kwiatkowski-pquip-pqc-migration/",
+      "our_last_update": "2025-07-20",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-wang-ipsecme-kem-auth-ikev2",
+      "our_rev": 1,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 3,
+        "rev_diff": 2,
+        "expires": "2026-09-03T14:48:37Z"
+      },
+      "action": "Draft draft-wang-ipsecme-kem-auth-ikev2 has newer revision: -03 (ours: -01). Update reference_id suffix and re-download.",
+      "reference_id": "draft-wang-ipsecme-kem-auth-ikev2-01",
+      "category": "ietf_draft",
+      "document_title": "KEM based Authentication for IKEv2 with Post-quantum Security",
+      "download_url": "https://datatracker.ietf.org/doc/draft-wang-ipsecme-kem-auth-ikev2/",
+      "our_last_update": "2025-07-07",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-wang-ipsecme-hybrid-kem-ikev2-frodo",
+      "our_rev": 3,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 3,
+        "expires": "2026-06-27T10:43:43Z"
+      },
+      "reference_id": "draft-wang-ipsecme-hybrid-kem-ikev2-frodo-03",
+      "category": "ietf_draft",
+      "document_title": "Post-quantum Hybrid Key Exchange in IKEv2 with FrodoKEM",
+      "download_url": "https://datatracker.ietf.org/doc/draft-wang-ipsecme-hybrid-kem-ikev2-frodo/",
+      "our_last_update": "2026-01-12",
+      "our_status": "Internet-Draft (Call for WG Adoption)"
+    },
+    {
+      "base_name": "draft-turner-lamps-cms-fn-dsa",
+      "our_rev": 0,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 0,
+        "expires": "2026-05-08T13:46:49Z"
+      },
+      "reference_id": "draft-turner-lamps-cms-fn-dsa-00",
+      "category": "ietf_draft",
+      "document_title": "Use of the FN-DSA Signature Algorithm in the Cryptographic Message Syntax (CMS)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-turner-lamps-cms-fn-dsa/",
+      "our_last_update": "2025-11-04",
+      "our_status": "Internet-Draft (Individual Submission)"
+    },
+    {
+      "base_name": "draft-ietf-cose-falcon",
+      "our_rev": 3,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 4,
+        "rev_diff": 1,
+        "expires": "2026-09-16T16:35:56Z"
+      },
+      "action": "Draft draft-ietf-cose-falcon has newer revision: -04 (ours: -03). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-cose-falcon-03",
+      "category": "ietf_draft",
+      "document_title": "FN-DSA for JOSE and COSE",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-cose-falcon/",
+      "our_last_update": "2025-10-12",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-kampanakis-curdle-ssh-pq-ke",
+      "our_rev": null,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 5,
+        "expires": "2025-06-08T18:21:26Z"
+      },
+      "reference_id": "draft-kampanakis-curdle-ssh-pq-ke",
+      "category": "ietf_draft",
+      "document_title": "Post-Quantum Key Exchange for SSH using ML-KEM",
+      "download_url": "https://datatracker.ietf.org/doc/draft-kampanakis-curdle-ssh-pq-ke/",
+      "our_last_update": "2024-07-15",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-josefsson-ntruprime-ssh",
+      "our_rev": null,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 3,
+        "expires": "2025-02-18T10:42:44Z"
+      },
+      "reference_id": "draft-josefsson-ntruprime-ssh",
+      "category": "ietf_draft",
+      "document_title": "NTRU Prime Key Agreement for SSH",
+      "download_url": "https://datatracker.ietf.org/doc/draft-josefsson-ntruprime-ssh/",
+      "our_last_update": "2022-01-01",
+      "our_status": "Internet-Draft (Individual Submission)"
+    },
+    {
+      "base_name": "draft-ietf-pquip-hbs-state",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 4,
+        "expires": "2026-08-31T18:35:06Z"
+      },
+      "reference_id": "draft-ietf-pquip-hbs-state",
+      "category": "ietf_draft",
+      "document_title": "Hash-based Signatures: State and Backup Management",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-hbs-state/",
+      "our_last_update": "2026-02-24",
+      "our_status": "In IESG Review"
+    },
+    {
+      "base_name": "draft-sfluhrer-ipsecme-ikev2-mldsa",
+      "our_rev": 0,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 1,
+        "rev_diff": 1,
+        "expires": "2026-01-29T12:21:36Z"
+      },
+      "action": "Draft draft-sfluhrer-ipsecme-ikev2-mldsa has newer revision: -01 (ours: -00). Update reference_id suffix and re-download.",
+      "reference_id": "draft-sfluhrer-ipsecme-ikev2-mldsa-00",
+      "category": "ietf_draft",
+      "document_title": "Post-quantum Digital Signatures with ML-DSA in IKEv2",
+      "download_url": "https://datatracker.ietf.org/doc/draft-sfluhrer-ipsecme-ikev2-mldsa/",
+      "our_last_update": "2025-01-01",
+      "our_status": "Internet-Draft (Individual Submission)"
+    },
+    {
+      "base_name": "draft-ietf-tls-mldsa",
+      "our_rev": 1,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 2,
+        "rev_diff": 1,
+        "expires": "2026-09-23T20:47:10Z"
+      },
+      "action": "Draft draft-ietf-tls-mldsa has newer revision: -02 (ours: -01). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-tls-mldsa-01",
+      "category": "ietf_draft",
+      "document_title": "ML-DSA for TLS 1.3",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-tls-mldsa/",
+      "our_last_update": "2025-09-26",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "status": "CHECK_FAILED",
+      "reason": "HTTP Error 404: Not Found",
+      "priority": "low",
+      "details": {
+        "base_name": "IETF-MTC-Draft-09"
+      },
+      "reference_id": "IETF-MTC-Draft-09",
+      "category": "ietf_draft",
+      "document_title": "Merkle Tree Certificates for TLS (draft-ietf-plants-merkle-tree-certs-01)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/",
+      "our_last_update": "2026-02-18",
+      "our_status": "Internet-Draft (IETF PLANTS WG)"
+    },
+    {
+      "base_name": "draft-ietf-jose-pqc-kem",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 5,
+        "expires": "2026-06-12T07:32:40Z"
+      },
+      "reference_id": "draft-ietf-jose-pqc-kem",
+      "category": "ietf_draft",
+      "document_title": "Use of Post-Quantum Key Encapsulation Mechanisms in JOSE",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-kem/",
+      "our_last_update": "2025-11-01",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "status": "CHECK_FAILED",
+      "reason": "HTTP Error 404: Not Found",
+      "priority": "low",
+      "details": {
+        "base_name": "draft-ietf-jose-pqc-algorithms"
+      },
+      "reference_id": "draft-ietf-jose-pqc-algorithms",
+      "category": "ietf_draft",
+      "document_title": "Use of Post-Quantum Algorithms in JOSE",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-jose-pqc-algorithms/",
+      "our_last_update": "2026-01-01",
+      "our_status": "Internet-Draft"
+    },
+    {
+      "base_name": "draft-bonnell-lamps-chameleon-certs",
+      "our_rev": 7,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 7,
+        "expires": "2026-04-21T07:06:56Z"
+      },
+      "reference_id": "draft-bonnell-lamps-chameleon-certs-07",
+      "category": "ietf_draft",
+      "document_title": "A Mechanism for Encoding Differences in Paired Certificates (Chameleon Certs)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-bonnell-lamps-chameleon-certs/",
+      "our_last_update": "2025-10-18",
+      "our_status": "Active Internet-Draft"
+    },
+    {
+      "base_name": "draft-ietf-jose-pq-composite-sigs",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 1,
+        "expires": "2026-08-31T15:05:37Z"
+      },
+      "reference_id": "draft-ietf-jose-pq-composite-sigs",
+      "category": "ietf_draft",
+      "document_title": "PQ/T Hybrid Composite Signatures for JOSE and COSE",
+      "download_url": "https://www.ietf.org/archive/id/draft-ietf-jose-pq-composite-sigs-01.html",
+      "our_last_update": "2025-01-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-cose-dilithium",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 11,
+        "expires": "2026-05-19T19:34:31Z"
+      },
+      "reference_id": "draft-ietf-cose-dilithium",
+      "category": "ietf_draft",
+      "document_title": "ML-DSA for JOSE and COSE",
+      "download_url": "https://www.ietf.org/archive/id/draft-ietf-cose-dilithium-11.html",
+      "our_last_update": "2024-05-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-lamps-cert-binding-for-multi-auth",
+      "our_rev": null,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 6,
+        "expires": "2025-06-13T19:57:37Z"
+      },
+      "reference_id": "draft-ietf-lamps-cert-binding-for-multi-auth",
+      "category": "ietf_draft",
+      "document_title": "X.509 Certificate Extension for Binding to Multiple Authentication Algorithms",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-lamps-cert-binding-for-multi-auth/",
+      "our_last_update": "2024-05-01",
+      "our_status": "Published"
+    },
+    {
+      "status": "CHECK_FAILED",
+      "reason": "HTTP Error 404: Not Found",
+      "priority": "low",
+      "details": {
+        "base_name": "draft-ietf-tls-merkle-tree-certs"
+      },
+      "reference_id": "draft-ietf-tls-merkle-tree-certs",
+      "category": "ietf_draft",
+      "document_title": "Merkle Tree Certificates for TLS",
+      "download_url": "https://www.ietf.org/archive/id/draft-ietf-plants-merkle-tree-certs-02.html",
+      "our_last_update": "2025-01-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-plants-merkle-tree-certs",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 2,
+        "expires": "2026-09-03T18:02:56Z"
+      },
+      "reference_id": "draft-ietf-plants-merkle-tree-certs",
+      "category": "ietf_draft",
+      "document_title": "Merkle Tree Certificates",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/",
+      "our_last_update": "2024-06-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-plants-merkle-tree-certs",
+      "our_rev": 0,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 2,
+        "rev_diff": 2,
+        "expires": "2026-09-03T18:02:56Z"
+      },
+      "action": "Draft draft-ietf-plants-merkle-tree-certs has newer revision: -02 (ours: -00). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-plants-merkle-tree-certs-00",
+      "category": "ietf_draft",
+      "document_title": "Merkle Tree Certificates (version 00)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/00/",
+      "our_last_update": "2023-01-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-plants-merkle-tree-certs",
+      "our_rev": 1,
+      "status": "NEWER_REVISION",
+      "priority": "medium",
+      "details": {
+        "latest_rev": 2,
+        "rev_diff": 1,
+        "expires": "2026-09-03T18:02:56Z"
+      },
+      "action": "Draft draft-ietf-plants-merkle-tree-certs has newer revision: -02 (ours: -01). Update reference_id suffix and re-download.",
+      "reference_id": "draft-ietf-plants-merkle-tree-certs-01",
+      "category": "ietf_draft",
+      "document_title": "Merkle Tree Certificates (version 01)",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-plants-merkle-tree-certs/01/",
+      "our_last_update": "2023-05-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-sfluhrer-ssh-mldsa",
+      "our_rev": null,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 5,
+        "expires": "2026-08-08T19:32:19Z"
+      },
+      "reference_id": "draft-sfluhrer-ssh-mldsa",
+      "category": "ietf_draft",
+      "document_title": "SSH Support of ML-DSA",
+      "download_url": "https://www.ietf.org/archive/id/draft-sfluhrer-ssh-mldsa-05.html",
+      "our_last_update": "2024-05-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-sfluhrer-ipsecme-ikev2-mldsa",
+      "our_rev": null,
+      "status": "EXPIRED",
+      "priority": "low",
+      "details": {
+        "latest_rev": 1,
+        "expires": "2026-01-29T12:21:36Z"
+      },
+      "reference_id": "draft-sfluhrer-ipsecme-ikev2-mldsa",
+      "category": "ietf_draft",
+      "document_title": "IKEv2 Support of ML-DSA",
+      "download_url": "https://www.ietf.org/archive/id/draft-sfluhrer-ipsecme-ikev2-mldsa-01.html",
+      "our_last_update": "2024-05-01",
+      "our_status": "Published"
+    },
+    {
+      "base_name": "draft-ietf-pquip-pqc-hsm-constrained",
+      "our_rev": 3,
+      "status": "CURRENT",
+      "priority": "none",
+      "details": {
+        "latest_rev": 3,
+        "expires": "2026-07-30T08:59:28Z"
+      },
+      "reference_id": "draft-ietf-pquip-pqc-hsm-constrained-03",
+      "category": "ietf_draft",
+      "document_title": "Adapting Constrained Devices for Post-Quantum Cryptography",
+      "download_url": "https://datatracker.ietf.org/doc/draft-ietf-pquip-pqc-hsm-constrained/",
+      "our_last_update": "2026-01-26",
+      "our_status": "Internet-Draft"
+    }
+  ]
+}

@@ -143,7 +143,7 @@ const ComplianceRow = ({
               id={`pqc-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showPqcTooltip
                   ? 'opacity-100 pointer-events-auto'
@@ -205,7 +205,7 @@ const ComplianceRow = ({
               id={`classical-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showClassicalTooltip
                   ? 'opacity-100 pointer-events-auto'

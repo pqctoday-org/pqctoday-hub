@@ -15,6 +15,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'iam-pqc'
 
@@ -144,7 +145,9 @@ export const IAMPQCModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <IAMPQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         <TabsContent value="visual">

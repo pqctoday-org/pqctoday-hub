@@ -140,7 +140,7 @@ export const PageHeader = ({
 
       {/* Desktop action row — visible at lg+ */}
       {hasActions && (
-        <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground/60 font-mono">
+        <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
           {dataSource && <p>{dataSource}</p>}
           {viewType && <SourcesButton viewType={viewType} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}

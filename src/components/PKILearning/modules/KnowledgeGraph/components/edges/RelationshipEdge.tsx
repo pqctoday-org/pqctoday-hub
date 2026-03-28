@@ -49,6 +49,44 @@ const EDGE_STYLES: Record<
     strokeDasharray: '3 2',
     strokeWidth: 2,
   },
+  'module-qa-references': {
+    stroke: 'hsl(var(--info))',
+    strokeDasharray: '4 2',
+    strokeWidth: 1.5,
+  },
+  'vendor-produces': {
+    stroke: 'hsl(var(--success))',
+    strokeWidth: 1.5,
+  },
+  'vendor-country': {
+    stroke: 'hsl(var(--accent))',
+    strokeDasharray: '3 2',
+    strokeWidth: 1,
+  },
+  'leader-references-library': {
+    stroke: 'hsl(var(--accent))',
+    strokeDasharray: '4 2',
+    strokeWidth: 1.5,
+  },
+  'certification-validates-algorithm': {
+    stroke: 'hsl(var(--warning))',
+    strokeDasharray: '3 2',
+    strokeWidth: 1.5,
+  },
+  'software-implements-algorithm': {
+    stroke: 'hsl(var(--success))',
+    strokeDasharray: '4 2',
+    strokeWidth: 1.5,
+  },
+  'compliance-applies-to-country': {
+    stroke: 'hsl(var(--secondary))',
+    strokeWidth: 1.5,
+  },
+  'algorithm-replaces': {
+    stroke: 'hsl(var(--accent))',
+    strokeDasharray: '6 3',
+    strokeWidth: 2,
+  },
 }
 
 function RelationshipEdgeComponent({

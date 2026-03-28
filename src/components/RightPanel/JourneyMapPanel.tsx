@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Map, Compass } from 'lucide-react'
+import { Map, Compass, Sparkles } from 'lucide-react'
 import { useJourneyMap } from '@/hooks/useJourneyMap'
 import { useAwarenessScore } from '@/hooks/useAwarenessScore'
 import { useHistoryStore } from '@/store/useHistoryStore'
@@ -31,6 +31,7 @@ function BeltHeader() {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
+  const close = useRightPanelStore((s) => s.close)
 
   // eslint-disable-next-line security/detect-object-injection
   const personaLabel = selectedPersona ? PERSONAS[selectedPersona].label : null
@@ -92,6 +93,20 @@ function BeltHeader() {
           </div>
         </div>
       )}
+
+      {/* Subtle graduation hint for Curious users at Orange+ */}
+      {selectedPersona === 'curious' &&
+        hasStarted &&
+        (belt.name === 'Orange Belt' || belt.name === 'Green Belt' || belt.name === 'Blue Belt') && (
+          <Link
+            to="/"
+            onClick={close}
+            className="flex items-center gap-1 text-[10px] text-primary hover:underline mt-1"
+          >
+            <Sparkles size={10} />
+            Ready to specialize? Pick a role path
+          </Link>
+        )}
     </div>
   )
 }

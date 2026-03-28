@@ -9,7 +9,7 @@ The Executive Quantum Impact module equips C-suite leaders, CISOs, and board mem
 - **Harvest Now, Decrypt Later (HNDL)** — adversaries are recording encrypted traffic today to decrypt once a cryptographically relevant quantum computer (CRQC) arrives; data with long confidentiality requirements (health records, IP, state secrets) is already at risk regardless of the CRQC timeline; the HNDL window is the number of years remaining data must stay confidential minus years until a CRQC is available
 - **Mosca's Theorem** — if (shelf life of data) + (time to migrate) > (time to CRQC), the organization is at risk; executives should use this formula to prioritize which systems to migrate first based on data lifetime and remediation complexity
 - **CNSA 2.0 Deadlines** — NSA mandates: software/firmware signing and networking equipment (preferred 2025–2026, exclusive 2030), operating systems and web browsers/cloud/servers (exclusive 2033), complete deprecation of classical asymmetric cryptography by 2035; non-compliance for defense contractors carries contract termination risk
-- **EU Regulatory Mandates** — EU Coordinated PQC Roadmap (v1.1, June 2025) sets 2030 and 2035 milestones; eIDAS 2.0 requires PQC-capable EUDI wallets by December 2026; DORA (enforcement January 2025) requires financial sector digital resilience including crypto agility
+- **EU Regulatory Mandates** — EU Coordinated PQC Roadmap (v1.1, June 2025) sets 2030 and 2035 milestones; eIDAS 2.0 mandates EUDI wallet availability by December 2026, but PQC readiness for EUDI wallets follows the EU PQC roadmap (2030 for high-risk systems, 2035 full transition) — wallet deployment and PQC capability are separate timelines; DORA (enforcement January 2025) requires financial sector digital resilience including crypto agility
 - **Board Liability (SEC Cyber Disclosure Rules)** — SEC rules effective December 2023 require material cybersecurity risk disclosure within 4 days of discovery; quantum risk to long-lived data may qualify as a material risk requiring proactive disclosure; CISO and board members face personal liability for failure to disclose known risks
 - **Vendor & Supply Chain Exposure** — PQC readiness of software and hardware suppliers directly extends or limits an organization's own migration timeline; a vendor with no PQC roadmap becomes a blocking dependency; third-party risk assessments must include PQC criteria
 - **Competitive Disadvantage** — early PQC movers gain customer trust signals, procurement advantages in regulated sectors (government, defense, financial services), and reduced migration pressure as CRQC timelines tighten; laggards face emergency migration costs and reputational damage
@@ -32,7 +32,7 @@ The workshop has 3 interactive steps:
 - EO 14306 (Presidential order sustaining PQC migration, June 2025)
 - EU Coordinated Implementation Roadmap for PQC (v1.1, June 2025)
 - DORA (EU Digital Operational Resilience Act, enforcement January 2025)
-- eIDAS 2.0 (EU Digital Identity framework, mandatory EUDI Wallets December 2026)
+- eIDAS 2.0 (EU Digital Identity framework, mandatory EUDI Wallet availability December 2026; PQC readiness follows EU PQC roadmap — not required by December 2026)
 - SEC Cybersecurity Disclosure Rules (December 2023)
 - FAIR (Factor Analysis of Information Risk) — breach cost quantification methodology
 

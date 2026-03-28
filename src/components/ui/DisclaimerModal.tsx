@@ -42,7 +42,7 @@ export function DisclaimerModal() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-[110] p-4 print:hidden safe-bottom"
+      className="fixed inset-x-0 bottom-0 z-disclaimer p-4 print:hidden safe-bottom"
       role="alert"
       aria-labelledby="disclaimer-title"
     >

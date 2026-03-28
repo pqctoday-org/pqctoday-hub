@@ -7,7 +7,6 @@ import {
   ExternalLink,
   Loader2,
   CheckCircle,
-  AlertCircle,
   AlertTriangle,
   Info,
   Plane,
@@ -496,14 +495,9 @@ export const ProviderSetup: React.FC = () => {
                 className="w-full bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
                 autoComplete="off"
                 aria-label="Gemini API key"
+                id="provider-gemini-api-key"
+                error={validationState === 'error' ? errorMsg : undefined}
               />
-
-              {validationState === 'error' && (
-                <div className="flex items-center gap-2 text-sm text-status-error">
-                  <AlertCircle size={14} />
-                  {errorMsg}
-                </div>
-              )}
 
               {validationState === 'success' && (
                 <div className="flex items-center gap-2 text-sm text-status-success">

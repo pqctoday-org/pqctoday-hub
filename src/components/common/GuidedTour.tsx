@@ -411,7 +411,7 @@ export const GuidedTour: React.FC = () => {
   )
 
   const wrapCard = (children: React.ReactNode) => (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-6 pointer-events-none">
+    <div className="fixed inset-0 z-tour flex items-center justify-center p-6 pointer-events-none">
       <AnimatePresence mode="wait">{children}</AnimatePresence>
     </div>
   )

@@ -17,6 +17,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'vpn-ssh-pqc'
 
@@ -154,7 +155,9 @@ export const VPNSSHModule: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <VPNSSHIntroduction onNavigateToSimulate={navigateToSimulate} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Visual Tab */}

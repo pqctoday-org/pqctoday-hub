@@ -16,6 +16,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'healthcare-pqc'
 
@@ -148,7 +149,9 @@ export const HealthcarePQCModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <HealthcarePQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         <TabsContent value="visual">

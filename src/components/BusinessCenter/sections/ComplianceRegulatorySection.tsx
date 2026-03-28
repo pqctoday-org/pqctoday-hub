@@ -51,9 +51,14 @@ export function ComplianceRegulatorySection({
   onViewArtifact,
   onEditArtifact,
   onDeleteArtifact,
+  onRenameArtifact,
+  typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
-  const artifacts = metrics.artifactsByPillar.compliance
+  const allArtifacts = metrics.artifactsByPillar.compliance
+  const artifacts = typeFilter && typeFilter !== 'all'
+    ? allArtifacts.filter((d) => d.type === typeFilter)
+    : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.compliance
   const sourceModules = PILLAR_SOURCE_MODULES.compliance
   const existingTypes = new Set(artifacts.map((a) => a.type))
@@ -117,6 +122,7 @@ export function ComplianceRegulatorySection({
                   onView={onViewArtifact}
                   onEdit={onEditArtifact}
                   onDelete={onDeleteArtifact}
+                  onRename={onRenameArtifact}
                 />
               ))}
               {pillarTypes

@@ -133,8 +133,17 @@ function SectionHeader({ icon, title, description, learnLabel, learnTo }: Sectio
 
 type MobileSection = 'standards' | 'technical' | 'certification' | 'compliance' | 'records'
 
-function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[] }) {
-  const [section, setSection] = useState<MobileSection>('standards')
+function MobileViewToggle({
+  data,
+  activeSection,
+  onSectionChange,
+}: {
+  data: import('./types').ComplianceRecord[]
+  activeSection: MobileSection
+  onSectionChange: (section: MobileSection) => void
+}) {
+  const section = activeSection
+  const setSection = onSectionChange
 
   const standardsFrameworks = useMemo(
     () => complianceFrameworks.filter((f) => f.bodyType === 'standardization_body'),
@@ -210,7 +219,7 @@ function MobileViewToggle({ data }: { data: import('./types').ComplianceRecord[]
 
 export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const initialFilter = searchParams.get('q') ?? undefined
   const certParam = searchParams.get('cert') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
@@ -272,8 +281,33 @@ export const ComplianceView = () => {
     downloadCsv(csv, csvFilename('pqc-compliance'))
   }, [data])
 
-  // Default tab: 'records' when cert record linked; industry/region hint section; otherwise 'standards'
-  const defaultTab = certParam ? 'records' : (complianceHint?.section ?? 'standards')
+  // Active tab — URL param takes priority; fall back to cert/hint/default logic for initial load
+  const [activeTab, setActiveTab] = useState<MobileSection>(() => {
+    const tab = searchParams.get('tab') as MobileSection | null
+    if (tab) return tab
+    return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
+  })
+
+  // Sync URL → state on back/forward navigation
+  useEffect(() => {
+    const tab = searchParams.get('tab') as MobileSection | null
+    if (tab) setActiveTab((prev) => (prev !== tab ? tab : prev))
+  }, [searchParams])
+
+  const syncTab = useCallback(
+    (tab: MobileSection) => {
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          if (tab !== 'standards') next.set('tab', tab)
+          else next.delete('tab')
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -327,15 +361,27 @@ export const ComplianceView = () => {
 
       {/* Mobile: 3-section toggle */}
       <div className="md:hidden">
-        <MobileViewToggle data={data} />
+        <MobileViewToggle
+          data={data}
+          activeSection={activeTab}
+          onSectionChange={(s) => {
+            setActiveTab(s)
+            syncTab(s)
+          }}
+        />
       </div>
 
       {/* Desktop: 3-tab layout */}
       <div className="hidden md:block">
         <Tabs
-          defaultValue={defaultTab}
+          value={activeTab}
           className="w-full"
-          onValueChange={(tab) => logComplianceFilter('Tab', tab)}
+          onValueChange={(tab) => {
+            const t = tab as MobileSection
+            setActiveTab(t)
+            syncTab(t)
+            logComplianceFilter('Tab', tab)
+          }}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border">
             <TabsTrigger value="standards" className="flex items-center gap-1.5">

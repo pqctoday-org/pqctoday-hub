@@ -10,7 +10,7 @@ Intermediate-level module (75 min, 5 workshop steps) covering post-quantum crypt
   - Fingerprint (512-byte template, irreplaceable — unique ridge patterns, recommend ML-KEM-768 + ML-DSA-65)
   - Iris (256-byte template, irreplaceable — stable for life, unique per person, ML-KEM-768 + ML-DSA-65)
   - Facial Geometry (2,048-byte template, partially replaceable with difficulty — angle/aging variants, ML-KEM-768 + ML-DSA-65)
-  - Voiceprint (4,096-byte template, easily re-enrolled — voice can change and be re-captured, ML-KEM-768 + ML-DSA-44)
+  - Voiceprint (4,096-byte template, irreplaceable — voice patterns change gradually with age but remain matchable for 20+ years; compromised voiceprints enable long-term spoofing of voice-authenticated medical commands, ML-KEM-768 + ML-DSA-44)
   - DNA-SNP profile (5 MB genomic data, truly irreplaceable — single lifetime record, highest risk, ML-KEM-1024 + ML-DSA-87)
   - Retinal scan (384-byte template, irreplaceable — vessel patterns are stable and unique, ML-KEM-768 + ML-DSA-65)
 - **Pharmaceutical IP and HNDL risk windows**: Drug compound structures (20-year patent protection — active development data encrypted today is HNDL-exposed during critical patent window), clinical trial data (15-year confidentiality obligation, FDA 21 CFR Part 11 audit requirement — signed audit trails must be non-repudiable for 15 years), genomic research datasets (75-year exposure window for participant-linked data — the longest HNDL window in any industry vertical)

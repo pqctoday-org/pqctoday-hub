@@ -1,0 +1,4 @@
+
+> pqc-timeline-app@2.57.0 lint
+> eslint --no-error-on-unmatched-pattern src scripts e2e *.ts *.js *.cjs
+

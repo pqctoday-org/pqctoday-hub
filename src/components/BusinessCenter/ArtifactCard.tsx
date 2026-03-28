@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import { useState, useRef, useEffect } from 'react'
 import { FileText, Eye, Pencil, Trash2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
-const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
+export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'roi-model': 'ROI Model',
   'risk-register': 'Risk Register',
   'raci-matrix': 'RACI Matrix',
@@ -35,9 +36,33 @@ export interface ArtifactCardProps {
   onView: (doc: ExecutiveDocument) => void
   onEdit: (doc: ExecutiveDocument) => void
   onDelete: (doc: ExecutiveDocument) => void
+  onRename?: (id: string, newTitle: string) => void
 }
 
-export function ArtifactCard({ document, pillar, onView, onEdit, onDelete }: ArtifactCardProps) {
+export function ArtifactCard({
+  document,
+  pillar,
+  onView,
+  onEdit,
+  onDelete,
+  onRename,
+}: ArtifactCardProps) {
+  const [isRenaming, setIsRenaming] = useState(false)
+  const [renameValue, setRenameValue] = useState(document.title)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (isRenaming) inputRef.current?.select()
+  }, [isRenaming])
+
+  const commitRename = () => {
+    const trimmed = renameValue.trim()
+    if (trimmed && trimmed !== document.title && onRename) {
+      onRename(document.id, trimmed)
+    }
+    setIsRenaming(false)
+  }
+
   const typeLabel = TYPE_LABELS[document.type] ?? document.type
   const badgeColor = pillar
     ? (PILLAR_COLORS[pillar] ?? 'bg-muted text-muted-foreground')
@@ -53,7 +78,33 @@ export function ArtifactCard({ document, pillar, onView, onEdit, onDelete }: Art
       <FileText size={16} className="text-muted-foreground shrink-0 mt-0.5" />
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
-          <span className="text-sm font-medium text-foreground truncate">{document.title}</span>
+          {isRenaming ? (
+            <input
+              ref={inputRef}
+              className="text-sm font-medium text-foreground bg-muted border border-input rounded px-1.5 py-0.5 w-full outline-none focus:ring-2 focus:ring-primary"
+              value={renameValue}
+              onChange={(e) => setRenameValue(e.target.value)}
+              onBlur={commitRename}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') commitRename()
+                if (e.key === 'Escape') {
+                  setRenameValue(document.title)
+                  setIsRenaming(false)
+                }
+              }}
+            />
+          ) : (
+            <span
+              className="text-sm font-medium text-foreground truncate cursor-text hover:underline decoration-dashed underline-offset-2"
+              onClick={() => {
+                setRenameValue(document.title)
+                setIsRenaming(true)
+              }}
+              title="Click to rename"
+            >
+              {document.title}
+            </span>
+          )}
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             {typeLabel}
           </span>

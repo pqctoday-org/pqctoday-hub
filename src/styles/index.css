@@ -55,6 +55,20 @@
   --color-file-csr-foreground: hsl(var(--file-csr-foreground));
 
   --font-family-sans: Inter, system-ui, sans-serif;
+
+  /* Z-index scale — centralised stacking order */
+  --z-index-wip-badge: 51;
+  --z-index-panel: 60;
+  --z-index-tour: 60;
+  --z-index-nav-backdrop: 69;
+  --z-index-nav: 70;
+  --z-index-modal: 70;
+  --z-index-airplane-toast: 80;
+  --z-index-toast: 99;
+  --z-index-overlay: 100;
+  --z-index-dialog: 101;
+  --z-index-disclaimer: 110;
+  --z-index-tooltip: 9999;
 }
 
 @layer base {
@@ -133,7 +147,7 @@
     --tertiary: 270 95% 65%;
     --tertiary-foreground: 210 40% 98%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215 16% 35%;
     --accent: 153 60% 45%;
     --accent-foreground: 210 40% 98%;
     --destructive: 0 84.2% 60.2%;
@@ -162,17 +176,17 @@
     --file-csr-foreground: 215.4 16.3% 46.9%;
     /* Matches --muted-foreground */
 
-    /* Timeline Phases (HSL channels) */
-    --phase-discovery: 217 91% 60%;
-    --phase-testing: 263 90% 76%;
-    --phase-poc: 28 96% 61%;
-    --phase-migration: 149 67% 52%;
-    --phase-standardization: 186 85% 53%;
-    --phase-guidance: 48 96% 53%;
-    --phase-policy: 24 6% 65%;
-    --phase-regulation: 0 84% 60%;
-    --phase-research: 258 90% 66%;
-    --phase-deadline: 0 84% 60%;
+    /* Timeline Phases (HSL channels) — WCAG AA 4.5:1 against white (#fff) */
+    --phase-discovery: 217 75% 35%;
+    --phase-testing: 263 50% 38%;
+    --phase-poc: 28 65% 35%;
+    --phase-migration: 149 55% 26%;
+    --phase-standardization: 186 65% 26%;
+    --phase-guidance: 48 60% 28%;
+    --phase-policy: 24 6% 35%;
+    --phase-regulation: 0 55% 36%;
+    --phase-research: 258 50% 38%;
+    --phase-deadline: 0 55% 36%;
   }
 
   /* Dark Mode Overrides */
@@ -213,17 +227,17 @@
     --file-csr: 270 85% 75%;
     --file-csr-foreground: 270 85% 95%;
 
-    /* Timeline Phases (Dark Mode - Slightly Brighter/Saturated) */
-    --phase-discovery: 217 91% 65%;
-    --phase-testing: 263 90% 80%;
-    --phase-poc: 28 96% 65%;
-    --phase-migration: 149 67% 55%;
-    --phase-standardization: 186 85% 58%;
-    --phase-guidance: 48 96% 58%;
-    --phase-policy: 24 6% 70%;
-    --phase-regulation: 0 84% 65%;
-    --phase-research: 258 90% 70%;
-    --phase-deadline: 0 84% 65%;
+    /* Timeline Phases (Dark Mode) — WCAG AA 4.5:1 against --background (~L7%) */
+    --phase-discovery: 217 91% 68%;
+    --phase-testing: 263 80% 75%;
+    --phase-poc: 28 90% 68%;
+    --phase-migration: 149 60% 60%;
+    --phase-standardization: 186 80% 62%;
+    --phase-guidance: 48 85% 62%;
+    --phase-policy: 24 6% 72%;
+    --phase-regulation: 0 75% 68%;
+    --phase-research: 258 80% 72%;
+    --phase-deadline: 0 75% 68%;
   }
 
   /* On screen: render as transparent block so report content is visible.
@@ -330,7 +344,7 @@
       --tertiary: 270 95% 65%;
       --tertiary-foreground: 210 40% 98%;
       --muted: 210 40% 96.1%;
-      --muted-foreground: 215.4 16.3% 46.9%;
+      --muted-foreground: 215 16% 35%;
       --accent: 153 60% 45%;
       --accent-foreground: 210 40% 98%;
       --destructive: 0 84.2% 60.2%;

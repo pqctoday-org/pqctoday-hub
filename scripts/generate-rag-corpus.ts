@@ -95,6 +95,138 @@ export function encodeParam(s: string): string {
   return encodeURIComponent(s.trim())
 }
 
+/**
+ * Assign a source-authority priority (float) to a library document chunk.
+ * Used by processLibrary() and processDocumentEnrichments() to score each chunk
+ * individually based on document type, so higher-authority documents outrank
+ * vendor whitepapers for authoritative queries (e.g. "What is ML-KEM?").
+ *
+ * Scale mirrors SOURCE_PRIORITY but extends upward for top-tier authorities:
+ *   1.4  — NIST FIPS standards (FIPS 203/204/205/206)
+ *   1.3  — Final RFCs (IETF standards track)
+ *   1.2  — NIST SP / NIST IR / NSA / CISA advisories
+ *   1.15 — Regional government standards (ANSSI, BSI, ASD, CCCS, NCSC, EU)
+ *   1.1  — International standards (ETSI, ISO/IEC, OASIS, 3GPP, ITU)
+ *   1.05 — Industry standards bodies (CA/B Forum, ASC X9, GRI, IETF drafts)
+ *   1.0  — General standards / unclassified
+ *   0.95 — Vendor/industry whitepapers, trade reports
+ */
+export function getLibraryPriority(refId: string, docType: string, authors: string): number {
+  const r = refId.toUpperCase()
+  const t = docType.toUpperCase()
+  const a = authors.toUpperCase()
+
+  // Tier 10 — NIST FIPS standards
+  // ref IDs use both "FIPS 203" (space) and "FIPS-207-HQC" (hyphen) forms
+  if (
+    r.startsWith('FIPS ') ||
+    r.startsWith('FIPS-') ||
+    r.startsWith('NIST-FIPS') ||
+    t.includes('FEDERAL STANDARD') ||
+    t.includes('FIPS PUBLICATION') ||
+    t === 'FIPS'
+  ) {
+    return 1.4
+  }
+
+  // Tier 9 — Final RFCs (not drafts)
+  // ref IDs: "RFC-9629", "RFC 8446" (hyphen and space forms)
+  if (
+    (r.startsWith('RFC-') || r.startsWith('RFC ') || t === 'RFC' || t.includes('REQUEST FOR COMMENTS')) &&
+    !r.includes('DRAFT') &&
+    !t.includes('DRAFT')
+  ) {
+    return 1.3
+  }
+
+  // Tier 8 — NIST SP / NIST IR / NSA / CISA
+  // ref IDs use both hyphen and space forms: "NIST-SP-800-208" and "NIST SP 800-208"
+  if (
+    r.startsWith('NIST-SP-') ||
+    r.startsWith('NIST-IR-') ||
+    r.startsWith('NIST SP ') ||
+    r.startsWith('NIST IR ') ||
+    r.startsWith('NIST CSWP ') ||
+    r.startsWith('NIST NCCOE') ||
+    r.startsWith('NIST NCCoE') ||
+    t.includes('NIST SPECIAL PUBLICATION') ||
+    t.includes('NIST INTERNAL REPORT') ||
+    t.includes('NIST IR') ||
+    t === 'NIST SP'
+  ) {
+    return 1.2
+  }
+  if (
+    r.startsWith('NSA-') ||
+    r.startsWith('NSA ') ||
+    r.startsWith('CISA-') ||
+    r.startsWith('CNSA-') ||
+    (a.includes('NSA') && !r.startsWith('RFC-') && !r.startsWith('RFC ')) ||
+    (a.includes('CISA') && !r.startsWith('RFC-') && !r.startsWith('RFC '))
+  ) {
+    return 1.2
+  }
+
+  // Tier 7 — Regional government standards & mandates
+  if (
+    r.startsWith('ANSSI-') ||
+    r.startsWith('BSI-') ||
+    r.startsWith('ASD-') ||
+    r.startsWith('CCCS-') ||
+    r.startsWith('NCSC-') ||
+    r.startsWith('CRYPTREC-') ||
+    r.startsWith('EU-') ||
+    r.startsWith('ENISA-') ||
+    r.startsWith('KPQC-') ||
+    r.startsWith('OSCCA-')
+  ) {
+    return 1.15
+  }
+
+  // Tier 6 — International standards bodies (ETSI, ISO/IEC, OASIS, 3GPP, ITU)
+  if (
+    r.startsWith('ETSI-') ||
+    r.startsWith('ISO-') ||
+    r.startsWith('IEC-') ||
+    r.startsWith('OASIS-') ||
+    r.startsWith('3GPP-') ||
+    r.startsWith('ITU-') ||
+    t.includes('EUROPEAN STANDARD') ||
+    t.includes('INTERNATIONAL STANDARD')
+  ) {
+    return 1.1
+  }
+
+  // Tier 5 — Industry standards & IETF drafts
+  if (
+    r.startsWith('CAB-') ||
+    r.startsWith('ASC-X9-') ||
+    r.startsWith('IETF-DRAFT-') ||
+    r.startsWith('DRAFT-') ||
+    r.startsWith('GRI-') ||
+    r.startsWith('PQCA-') ||
+    r.startsWith('ISA-') ||
+    t.includes('INTERNET-DRAFT') ||
+    t.includes('IETF DRAFT')
+  ) {
+    return 1.05
+  }
+
+  // Tier 4 — Vendor / industry whitepapers / trade reports
+  if (
+    r.startsWith('WEF-') ||
+    r.startsWith('IBG-') ||
+    t.includes('WHITEPAPER') ||
+    t.includes('WHITE PAPER') ||
+    t.includes('INDUSTRY REPORT') ||
+    t.includes('TRADE REPORT')
+  ) {
+    return 0.95
+  }
+
+  return 1.0
+}
+
 /** Slugify an algorithm name for ?highlight= parameter */
 export function algoSlug(name: string): string {
   return name
@@ -395,6 +527,7 @@ function processLibrary(): RAGChunk[] {
         algorithmFamily: sanitize(algorithmFamily),
       },
       ...(sanitize(refId) ? { deepLink: `/library?ref=${encodeParam(refId)}` } : {}),
+      priority: getLibraryPriority(sanitize(refId), sanitize(docType), sanitize(authors)),
     })
   }
 
@@ -1634,7 +1767,7 @@ function processPlaygroundGuide(): RAGChunk[] {
       source: 'playground-guide',
       title: 'Playground — Key Generation',
       content:
-        'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM.',
+        'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM. Use ?tab= to deep-link to a specific playground tab: ?tab=kem_ops (KEM operations), ?tab=sign_verify (digital signatures), ?tab=symmetric (AES/symmetric), ?tab=hashing (hash functions), ?tab=data (data tab), ?tab=keystore (key manager, default), ?tab=logs (operation log), ?tab=acvp (ACVP testing), ?tab=softhsm (SoftHSM HSM emulation). Combine with ?algo= for a fully pre-configured link (e.g., /playground?tab=kem_ops&algo=ML-KEM-768).',
       category: 'playground',
       metadata: { feature: 'keygen' },
       deepLink: '/playground',
@@ -2149,6 +2282,13 @@ function processDocumentEnrichments(): RAGChunk[] {
           contentParts.push(`${key}: ${val}`)
       }
 
+      // For library enrichments, inherit authority-based priority from the ref ID
+      // (doc type not available here, but ref ID alone covers most cases)
+      const enrichPriority =
+        collection === 'library'
+          ? getLibraryPriority(sanitize(refId), fields['Document Status'] ?? '', fields['Authors'] ?? '')
+          : undefined
+
       chunks.push({
         id: `doc-enrichment-${sanitize(refId)}`,
         source: 'document-enrichment',
@@ -2156,6 +2296,7 @@ function processDocumentEnrichments(): RAGChunk[] {
         content: contentParts.join('\n'),
         category: 'document-enrichment',
         metadata: { refId: sanitize(refId), collection },
+        ...(enrichPriority !== undefined ? { priority: enrichPriority } : {}),
         ...(collection === 'library' && refId
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
@@ -2259,7 +2400,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Algorithms Page — Transition Guide & Detailed Comparison',
       content:
-        "Algorithms Page Overview\n\nThe Algorithms page has two tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 45+ algorithms side by side.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nUse ?highlight= to deep-link to specific algorithms (e.g., /algorithms?highlight=ML-KEM-768).",
+        "Algorithms Page Overview\n\nThe Algorithms page has two tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 45+ algorithms side by side.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?highlight= to highlight specific algorithms (e.g., /algorithms?highlight=ML-KEM-768); ?tab=transition (default) or ?tab=detailed to open a specific view directly (e.g., /algorithms?tab=detailed to go straight to the full comparison table).",
       category: 'page-guide',
       metadata: { page: 'algorithms' },
       deepLink: '/algorithms',
@@ -2292,7 +2433,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Compliance Page — Regulatory Frameworks & Deadline Tracking',
       content:
-        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.',
+        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.\n\nURL deep links: ?tab=standards (default, standardization bodies) | ?tab=technical (technical standards) | ?tab=certification (FIPS/ACVP/CC schemes) | ?tab=compliance (regulatory frameworks) | ?tab=records (FIPS/ACVP/CC product certification records); ?cert=<recordId> opens a specific certification record directly (e.g., /compliance?cert=FIPS-140-3-A123&tab=records); ?q=<text> filters certification records.',
       category: 'page-guide',
       metadata: { page: 'compliance' },
       deepLink: '/compliance',
@@ -2303,7 +2444,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Migrate Page — 7-Phase Framework & Software Catalog',
       content:
-        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 230+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nFilter by: industry (?industry=), infrastructure layer (?layer=), text search (?q=), and migration phase.',
+        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 230+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?q=<text> — text search across product names, descriptions, PQC support status\n- ?industry=<name> — filter by target industry\n- ?layer=<id> — infrastructure layer (e.g., CSC-001 through CSC-061)\n- ?step=<id> — migration phase filter\n- ?cat=<category> — product category within the selected layer\n- ?vendor=<vendorId> — filter by vendor\n- ?sort=<field> — sort order: name (default) | pqcSupport | pqcMigrationPriority | fipsValidated\n- ?mode=<view> — display mode: stack (default, layered infrastructure view) | cards | table\n- ?subcat=<name> — sub-category filter within the active layer',
       category: 'page-guide',
       metadata: { page: 'migrate' },
       deepLink: '/migrate',
@@ -2628,7 +2769,9 @@ async function main() {
     'module-qa': 1.1,
   }
   for (const chunk of corpus) {
-    const basePriority = SOURCE_PRIORITY[chunk.source] ?? 1.0
+    // Respect per-chunk authority priority set by processLibrary() / processDocumentEnrichments();
+    // fall back to source-type default for all other sources.
+    const basePriority = chunk.priority ?? SOURCE_PRIORITY[chunk.source] ?? 1.0
     // Workshop step chunks with step-level deep links get a bump
     const stepBump = chunk.deepLink?.includes('step=') ? 0.1 : 0
     chunk.priority = +(basePriority + stepBump).toFixed(2)

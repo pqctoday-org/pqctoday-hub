@@ -2,12 +2,12 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { ArrowRight, Flame, GraduationCap, Info } from 'lucide-react'
+import { ArrowRight, Flame, GraduationCap, Info, Sparkles } from 'lucide-react'
 import { Button } from '../ui/button'
 import { ScoringModal } from './ScoringModal'
 import { useAwarenessScore, BELT_RANKS, type BeltRank } from '@/hooks/useAwarenessScore'
 import { usePersonaStore } from '@/store/usePersonaStore'
-import { PERSONAS } from '@/data/learningPersonas'
+import { PERSONAS, type PersonaId } from '@/data/learningPersonas'
 import { AchievementBadgeGrid } from './AchievementBadgeGrid'
 
 const fadeUp = {
@@ -114,6 +114,56 @@ function BeltLadder({ currentBelt }: { currentBelt: BeltRank }) {
   )
 }
 
+// ── Graduate CTA — shown when Curious users hit Orange/Green belt ────────────
+
+const GRADUATE_PERSONAS: { id: PersonaId; pitch: string }[] = [
+  { id: 'executive', pitch: 'Risk governance & compliance' },
+  { id: 'developer', pitch: 'Hands-on protocol integration' },
+  { id: 'architect', pitch: 'Infrastructure & key management' },
+  { id: 'ops', pitch: 'Deploy & operate PQC at scale' },
+  { id: 'researcher', pitch: 'Comprehensive deep dive' },
+]
+
+function GraduateCTA() {
+  const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const setPersona = usePersonaStore((s) => s.setPersona)
+  const { belt } = useAwarenessScore()
+
+  const showGraduate =
+    selectedPersona === 'curious' &&
+    (belt.name === 'Orange Belt' || belt.name === 'Green Belt' || belt.name === 'Blue Belt')
+
+  if (!showGraduate) return null
+
+  return (
+    <div className="mt-4 p-4 glass-panel border-primary/20 bg-primary/5 rounded-xl space-y-3">
+      <div className="flex items-center gap-2">
+        <Sparkles size={16} className="text-primary shrink-0" />
+        <p className="text-sm font-semibold text-foreground">Ready to specialize?</p>
+      </div>
+      <p className="text-xs text-muted-foreground leading-relaxed">
+        You&apos;ve built a solid foundation. Choose a role-specific path to unlock deeper modules,
+        more artifacts, and continue your belt progression.
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {GRADUATE_PERSONAS.map(({ id, pitch }) => (
+          <button
+            key={id}
+            onClick={() => setPersona(id)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors text-left group"
+          >
+            <span className="text-xs font-medium text-foreground group-hover:text-primary transition-colors">
+              {/* eslint-disable-next-line security/detect-object-injection */}
+              {PERSONAS[id].label}
+            </span>
+            <span className="text-[10px] text-muted-foreground hidden sm:inline">{pitch}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 // ── ScoreCard ────────────────────────────────────────────────────────────────
 
 export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
@@ -127,7 +177,7 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
       PERSONAS[selectedPersona]?.pathItems.filter((item) => item.type === 'module').length
     : null
 
-  const { hasStarted, score, belt, nextBelt, pointsToNextBelt, cappedByThreshold, streak } = result
+  const { hasStarted, score, belt, nextBelt, pointsToNextBelt, thresholdGates, streak } = result
 
   const scoringModal = (
     <ScoringModal
@@ -285,23 +335,33 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
         {/* Achievement badges */}
         <AchievementBadgeGrid />
 
-        {/* Threshold cap hint + CTA */}
-        <div className="mt-4 flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            {cappedByThreshold && (
-              <p className="text-xs text-muted-foreground">
-                <span className="font-medium text-foreground">Next belt unlock: </span>
-                {cappedByThreshold}
-              </p>
+        {/* Threshold gates checklist + CTA */}
+        <div className="mt-4 flex items-start justify-between gap-3">
+          <div className="min-w-0 space-y-1">
+            {thresholdGates.length > 0 && (
+              <>
+                <p className="text-xs font-medium text-foreground">Next belt unlock:</p>
+                {thresholdGates.map((gate, i) => (
+                  <p key={i} className="text-xs text-muted-foreground leading-relaxed">
+                    {gate.message}
+                    {gate.hint && (
+                      <span className="text-muted-foreground/60"> — {gate.hint}</span>
+                    )}
+                  </p>
+                ))}
+              </>
             )}
           </div>
-          <Link to="/learn" className="shrink-0">
+          <Link to="/learn" className="shrink-0 mt-0.5">
             <Button variant="outline" size="sm">
               Continue Learning
               <ArrowRight size={14} className="ml-1.5" />
             </Button>
           </Link>
         </div>
+
+        {/* Graduate CTA for Curious users at Orange/Green belt */}
+        <GraduateCTA />
       </div>
       {scoringModal}
     </>
