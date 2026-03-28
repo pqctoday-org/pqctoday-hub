@@ -52,7 +52,7 @@ The application is divided into the following main modules. Detailed requirement
    - Deep linking via `?cmd=` query parameter with aliases (keygen→genpkey, cert→x509, sign→dgst)
    - ShareButton and GlossaryButton in desktop header
 9. **[Compliance Module](requirements/Compliance_Module_Requirements.md)**: Real-time compliance tracking and standards monitoring.
-   - NIST FIPS document tracking (203, 204, 205), ANSSI recommendations, Common Criteria certifications
+   - NIST FIPS document tracking (203, 204, 205, and delayed 206 draft), ANSSI recommendations, Common Criteria certifications
    - Compliance Landscape Dashboard tab with industry-specific hints
    - Automated data scraping at build time; SourcesButton, ShareButton, GlossaryButton in header
    - Industry-aware filtering: frameworks filtered to match selected industry
