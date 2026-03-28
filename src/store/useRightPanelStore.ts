@@ -40,7 +40,7 @@ export const useRightPanelStore = create<RightPanelState>()(
     }),
     {
       name: 'pqc-right-panel',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({
         activeTab: state.activeTab,
@@ -55,6 +55,10 @@ export const useRightPanelStore = create<RightPanelState>()(
           ) {
             state.activeTab = 'chat'
           }
+        }
+        if (version < 2) {
+          // v1 → v2: 'bookmarks' is now a valid tab; no data migration needed
+          // Existing persisted values (chat/history/graph) remain valid
         }
         return state
       },

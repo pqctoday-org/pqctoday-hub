@@ -61,7 +61,7 @@ describe('TimelineView', () => {
     it('renders the description on desktop', () => {
       render(<TimelineView />)
       expect(
-        screen.getByText(/Compare Post-Quantum Cryptography migration roadmaps/)
+        screen.getAllByText(/Compare Post-Quantum Cryptography migration roadmaps/)[0]
       ).toBeInTheDocument()
     })
 
@@ -116,9 +116,11 @@ describe('TimelineView', () => {
 
     it('hides description on mobile', () => {
       render(<TimelineView />)
-      const description = screen.queryByText(/Compare Post-Quantum Cryptography migration roadmaps/)
-      // Description has 'hidden lg:block' class, so it exists but is hidden
-      expect(description).toBeInTheDocument()
+      const descriptions = screen.getAllByText(
+        /Compare Post-Quantum Cryptography migration roadmaps/
+      )
+      // Both mobile (md:hidden) and desktop (hidden md:block) versions exist in DOM
+      expect(descriptions.length).toBeGreaterThan(0)
     })
 
     it('renders mobile timeline list on mobile', () => {

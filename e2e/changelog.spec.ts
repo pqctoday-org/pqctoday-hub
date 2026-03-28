@@ -83,16 +83,24 @@ test.describe('Changelog View', () => {
 })
 
 test.describe("What's New Toast", () => {
-  test('toast appears on first visit', async ({ page }) => {
-    // Clear localStorage to simulate first visit
-    await page.goto('/')
+  const seedOldVersion = async (page: import('@playwright/test').Page) => {
     await page.evaluate(() => {
       localStorage.clear()
       localStorage.setItem(
         'pqc-disclaimer-storage',
         JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 1 })
       )
+      localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '1.0.0', isFirstVisit: false }, version: 2 })
+      )
     })
+  }
+
+  test('toast appears on version update', async ({ page }) => {
+    // Simulate visit from an older version
+    await page.goto('/')
+    await seedOldVersion(page)
 
     // Reload page to trigger toast
     await page.reload()
@@ -104,20 +112,14 @@ test.describe("What's New Toast", () => {
 
   test('toast can be dismissed', async ({ page }) => {
     await page.goto('/')
-    await page.evaluate(() => {
-      localStorage.clear()
-      localStorage.setItem(
-        'pqc-disclaimer-storage',
-        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 1 })
-      )
-    })
+    await seedOldVersion(page)
     await page.reload()
 
     // Wait for toast
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
 
     // Click dismiss button
-    await page.getByRole('button', { name: 'Dismiss notification' }).click()
+    await page.getByRole('button', { name: 'Got it' }).click()
 
     // Toast should disappear
     await expect(page.getByRole('dialog')).not.toBeVisible()
@@ -125,18 +127,12 @@ test.describe("What's New Toast", () => {
 
   test('toast does not reappear after dismissal', async ({ page }) => {
     await page.goto('/')
-    await page.evaluate(() => {
-      localStorage.clear()
-      localStorage.setItem(
-        'pqc-disclaimer-storage',
-        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 1 })
-      )
-    })
+    await seedOldVersion(page)
     await page.reload()
 
     // Wait for and dismiss toast
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
-    await page.getByRole('button', { name: 'Dismiss notification' }).click()
+    await page.getByRole('button', { name: 'Got it' }).click()
     await expect(page.getByRole('dialog')).not.toBeVisible()
 
     // Reload page
@@ -151,20 +147,14 @@ test.describe("What's New Toast", () => {
 
   test('View Changelog button navigates to changelog', async ({ page }) => {
     await page.goto('/')
-    await page.evaluate(() => {
-      localStorage.clear()
-      localStorage.setItem(
-        'pqc-disclaimer-storage',
-        JSON.stringify({ state: { acknowledgedMajorVersion: 99 }, version: 1 })
-      )
-    })
+    await seedOldVersion(page)
     await page.reload()
 
     // Wait for toast
     await expect(page.getByRole('dialog')).toBeVisible({ timeout: 5000 })
 
     // Click View Changelog
-    await page.getByRole('link', { name: 'View Changelog' }).click()
+    await page.getByRole('button', { name: 'View Full Changelog' }).click()
 
     // Should navigate to changelog
     await expect(page).toHaveURL('/changelog')

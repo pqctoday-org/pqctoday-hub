@@ -53,7 +53,9 @@ describe('AlgorithmsView', () => {
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Migration from classical to post-quantum/i)).toBeInTheDocument()
+      expect(
+        screen.getAllByText(/Migration from classical to post-quantum/i)[0]
+      ).toBeInTheDocument()
     })
 
     it('displays metadata', () => {

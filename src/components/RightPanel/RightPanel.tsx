@@ -11,6 +11,10 @@ const HistoryPanel = React.lazy(() =>
 
 const GraphPanel = React.lazy(() => import('./GraphPanel').then((m) => ({ default: m.GraphPanel })))
 
+const BookmarksPanel = React.lazy(() =>
+  import('./BookmarksPanel').then((m) => ({ default: m.BookmarksPanel }))
+)
+
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close } = useRightPanelStore()
 
@@ -61,7 +65,9 @@ export const RightPanel: React.FC = () => {
                 ? 'PQC Assistant'
                 : activeTab === 'history'
                   ? 'Journey History'
-                  : 'Knowledge Graph'
+                  : activeTab === 'bookmarks'
+                    ? 'Bookmarks'
+                    : 'Knowledge Graph'
             }
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
@@ -89,6 +95,17 @@ export const RightPanel: React.FC = () => {
                 }
               >
                 <GraphPanel />
+              </React.Suspense>
+            )}
+            {activeTab === 'bookmarks' && (
+              <React.Suspense
+                fallback={
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                }
+              >
+                <BookmarksPanel />
               </React.Suspense>
             )}
           </motion.div>

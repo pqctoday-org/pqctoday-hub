@@ -18,7 +18,6 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
-import { loadCSV } from './data-loader.js'
 
 const ROOT = path.resolve(process.cwd())
 const QA_DIR = path.join(ROOT, 'src', 'data', 'module-qa')
@@ -67,7 +66,13 @@ function makeCheck(
   }
 }
 
-function finding(csv: string, row: number | null, field: string, value: string, message: string): Finding {
+function finding(
+  csv: string,
+  row: number | null,
+  field: string,
+  value: string,
+  message: string
+): Finding {
   return { csv, row, field, value, message }
 }
 
@@ -97,8 +102,9 @@ function parseCSVLine(line: string): string[] {
 
 function loadQARows(): { rows: QARow[]; file: string } | null {
   if (!fs.existsSync(QA_DIR)) return null
-  const files = fs.readdirSync(QA_DIR)
-    .filter(f => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
+  const files = fs
+    .readdirSync(QA_DIR)
+    .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
     .sort()
     .reverse()
   if (files.length === 0) return null
@@ -115,7 +121,9 @@ function loadQARows(): { rows: QARow[]; file: string } | null {
     if (!line) continue
     const values = parseCSVLine(line)
     const row: Record<string, string> = {}
-    headers.forEach((h, idx) => { row[h] = values[idx] || '' })
+    headers.forEach((h, idx) => {
+      row[h] = values[idx] || ''
+    })
     rows.push(row as QARow)
   }
   return { rows, file: files[0] }
@@ -147,7 +155,7 @@ function checkFipsMapping(qaRows: QARow[], qaFile: string, al: Allowlists): Chec
       // Check if the answer ALSO mentions a DIFFERENT PQC algorithm near this FIPS ref
       // "FIPS 203" should co-occur with "ML-KEM", NOT "ML-DSA"
       const allPqcAlgos = Object.keys(al.algorithm_to_fips)
-      const mentionedAlgos = allPqcAlgos.filter(algo => text.includes(algo))
+      const mentionedAlgos = allPqcAlgos.filter((algo) => text.includes(algo))
 
       for (const mentioned of mentionedAlgos) {
         const mentionedFips = al.algorithm_to_fips[mentioned]
@@ -157,21 +165,28 @@ function checkFipsMapping(qaRows: QARow[], qaFile: string, al: Allowlists): Chec
         // Only flag if the CORRECT algorithm for this FIPS is NOT also mentioned
         if (!mentionedAlgos.includes(expectedAlgo)) {
           // The correct algorithm (e.g., ML-KEM for FIPS 203) is missing, but a wrong one is present
-          findings.push(finding(
-            qaFile, i + 2, 'answer',
-            row.question_id,
-            `FIPS ${fipsNum} (${expectedAlgo}) mentioned but only ${mentioned} found in text — ` +
-            `possible misattribution (expected ${expectedAlgo})`
-          ))
+          findings.push(
+            finding(
+              qaFile,
+              i + 2,
+              'answer',
+              row.question_id,
+              `FIPS ${fipsNum} (${expectedAlgo}) mentioned but only ${mentioned} found in text — ` +
+                `possible misattribution (expected ${expectedAlgo})`
+            )
+          )
           break // One finding per FIPS number per row
         }
       }
     }
   }
 
-  return makeCheck('QA-F1',
+  return makeCheck(
+    'QA-F1',
     'FIPS-to-algorithm mapping accuracy: FIPS numbers must co-occur with correct PQC algorithm',
-    'ERROR', findings)
+    'ERROR',
+    findings
+  )
 }
 
 // ── QA-F2: Date claim plausibility ────────────────────────────────────────
@@ -180,7 +195,8 @@ function checkDatePlausibility(qaRows: QARow[], qaFile: string): CheckResult {
   const findings: Finding[] = []
   // Match patterns like "in 2024", "by 2030", "finalized 2024", "published in August 2024"
   // Negative lookbehind for RFC/SP/FIPS/NIST document numbers to avoid "in RFC 7519" → year 7519
-  const datePattern = /\b(in|by|before|after|since|finalized|published|released|standardized|deprecated|required)\s+(?:\w+\s+)?(\d{4})\b/gi
+  const datePattern =
+    /\b(in|by|before|after|since|finalized|published|released|standardized|deprecated|required)\s+(?:\w+\s+)?(\d{4})\b/gi
   const rfcLikePattern = /\b(?:RFC|FIPS|SP|IR|TR|ISO|IEC|NIST|ANSI|ETSI)\s+(\d{3,5})\b/gi
 
   for (let i = 0; i < qaRows.length; i++) {
@@ -204,23 +220,36 @@ function checkDatePlausibility(qaRows: QARow[], qaFile: string): CheckResult {
 
       const year = parseInt(yearStr)
       if (year < 2000) {
-        findings.push(finding(
-          qaFile, i + 2, 'answer', row.question_id,
-          `Implausible year ${year} in PQC context: "${match[0]}"`
-        ))
+        findings.push(
+          finding(
+            qaFile,
+            i + 2,
+            'answer',
+            row.question_id,
+            `Implausible year ${year} in PQC context: "${match[0]}"`
+          )
+        )
       }
       if (year > 2045) {
-        findings.push(finding(
-          qaFile, i + 2, 'answer', row.question_id,
-          `Unlikely future year ${year}: "${match[0]}"`
-        ))
+        findings.push(
+          finding(
+            qaFile,
+            i + 2,
+            'answer',
+            row.question_id,
+            `Unlikely future year ${year}: "${match[0]}"`
+          )
+        )
       }
     }
   }
 
-  return makeCheck('QA-F2',
+  return makeCheck(
+    'QA-F2',
     'Date claim plausibility: years mentioned in answers must be within reasonable PQC range (2000-2040)',
-    'WARNING', findings)
+    'WARNING',
+    findings
+  )
 }
 
 // ── QA-F3: Security level consistency ─────────────────────────────────────
@@ -231,7 +260,8 @@ function checkSecurityLevels(qaRows: QARow[], qaFile: string, al: Allowlists): C
   // Split on sentence/clause delimiters to avoid cross-matching in multi-algo text.
   // Exclude "SLSA Level" (supply-chain maturity, not NIST security).
   const algoRe = /\b((?:ML-KEM|ML-DSA|SLH-DSA|FN-DSA)-\d+[sf]?)\b/g
-  const levelRe = /(?<!SLSA\s|requiring\s)\b(?:NIST\s+)?(?:security\s+)?[Ll]evel\s+(\d)\b(?!\s+compliance)/g
+  const levelRe =
+    /(?<!SLSA\s|requiring\s)\b(?:NIST\s+)?(?:security\s+)?[Ll]evel\s+(\d)\b(?!\s+compliance)/g
 
   for (let i = 0; i < qaRows.length; i++) {
     const row = qaRows[i]
@@ -257,19 +287,31 @@ function checkSecurityLevels(qaRows: QARow[], qaFile: string, al: Allowlists): C
       // (avoids false positives from multi-algo comparisons)
       if (algos.length === 1 && levels.length === 1) {
         const expectedLevel = al.security_level_map[algos[0]]
-        if (expectedLevel !== undefined && typeof expectedLevel === 'number' && expectedLevel !== levels[0]) {
-          findings.push(finding(
-            qaFile, i + 2, 'answer', row.question_id,
-            `${algos[0]} claims Level ${levels[0]} but algorithm CSV says Level ${expectedLevel}`
-          ))
+        if (
+          expectedLevel !== undefined &&
+          typeof expectedLevel === 'number' &&
+          expectedLevel !== levels[0]
+        ) {
+          findings.push(
+            finding(
+              qaFile,
+              i + 2,
+              'answer',
+              row.question_id,
+              `${algos[0]} claims Level ${levels[0]} but algorithm CSV says Level ${expectedLevel}`
+            )
+          )
         }
       }
     }
   }
 
-  return makeCheck('QA-F3',
+  return makeCheck(
+    'QA-F3',
     'Security level consistency: algorithm parameter sets must match NIST security levels from algorithm CSV',
-    'ERROR', findings)
+    'ERROR',
+    findings
+  )
 }
 
 // ── QA-F4: Key/signature size accuracy ────────────────────────────────────
@@ -290,7 +332,7 @@ function checkSizeAccuracy(qaRows: QARow[], qaFile: string, al: Allowlists): Che
     const row = qaRows[i]
     // Split on comparison phrases to avoid matching sizes from a different algorithm in a comparison
     const segments = row.answer.split(/\bcompared to\b|\bversus\b|\bvs\.?\b|\bwhile\b|\bwhereas\b/i)
-    const text = segments[0] || row.answer  // Only check the first segment (the subject algorithm's context)
+    const text = segments[0] || row.answer // Only check the first segment (the subject algorithm's context)
 
     // Public key size check
     sizePatterns[0].lastIndex = 0
@@ -306,10 +348,15 @@ function checkSizeAccuracy(qaRows: QARow[], qaFile: string, al: Allowlists): Che
           const claimed = parseInt(claimedSize)
           const exp = parseInt(expectedPK)
           if (!isNaN(claimed) && !isNaN(exp) && Math.abs(claimed - exp) / exp > 0.15) {
-            findings.push(finding(
-              qaFile, i + 2, 'answer', row.question_id,
-              `${algo} public key claimed ${claimedSize} bytes, algorithm CSV says ${expectedPK}`
-            ))
+            findings.push(
+              finding(
+                qaFile,
+                i + 2,
+                'answer',
+                row.question_id,
+                `${algo} public key claimed ${claimedSize} bytes, algorithm CSV says ${expectedPK}`
+              )
+            )
           }
         }
       }
@@ -327,19 +374,27 @@ function checkSizeAccuracy(qaRows: QARow[], qaFile: string, al: Allowlists): Che
           const claimed = parseInt(claimedSize)
           const exp = parseInt(expectedSig)
           if (!isNaN(claimed) && !isNaN(exp) && Math.abs(claimed - exp) / exp > 0.15) {
-            findings.push(finding(
-              qaFile, i + 2, 'answer', row.question_id,
-              `${algo} signature/ciphertext claimed ${claimedSize} bytes, algorithm CSV says ${expectedSig}`
-            ))
+            findings.push(
+              finding(
+                qaFile,
+                i + 2,
+                'answer',
+                row.question_id,
+                `${algo} signature/ciphertext claimed ${claimedSize} bytes, algorithm CSV says ${expectedSig}`
+              )
+            )
           }
         }
       }
     }
   }
 
-  return makeCheck('QA-F4',
+  return makeCheck(
+    'QA-F4',
     'Key/signature size accuracy: byte sizes mentioned in answers verified against algorithm CSV',
-    'WARNING', findings)
+    'WARNING',
+    findings
+  )
 }
 
 // ── QA-F5: Enrichment dimension health ────────────────────────────────────
@@ -351,34 +406,52 @@ function checkEnrichmentHealth(): CheckResult {
   }
 
   const DIMENSION_FIELDS = [
-    'PQC Algorithms Covered', 'Quantum Threats Addressed', 'Migration Timeline Info',
-    'Applicable Regions / Bodies', 'Leaders Contributions Mentioned', 'PQC Products Mentioned',
-    'Protocols Covered', 'Infrastructure Layers', 'Standardization Bodies',
-    'Compliance Frameworks Referenced', 'Classical Algorithms Referenced', 'Key Takeaways',
-    'Security Levels & Parameters', 'Hybrid & Transition Approaches',
-    'Performance & Size Data', 'Target Audience', 'Implementation Prerequisites',
+    'PQC Algorithms Covered',
+    'Quantum Threats Addressed',
+    'Migration Timeline Info',
+    'Applicable Regions / Bodies',
+    'Leaders Contributions Mentioned',
+    'PQC Products Mentioned',
+    'Protocols Covered',
+    'Infrastructure Layers',
+    'Standardization Bodies',
+    'Compliance Frameworks Referenced',
+    'Classical Algorithms Referenced',
+    'Key Takeaways',
+    'Security Levels & Parameters',
+    'Hybrid & Transition Approaches',
+    'Performance & Size Data',
+    'Target Audience',
+    'Implementation Prerequisites',
     'Relevant PQC Today Features',
   ]
-  const NONE_VALUES = new Set(['None detected', 'Not specified', 'See document for details.', 'See document'])
+  const NONE_VALUES = new Set([
+    'None detected',
+    'Not specified',
+    'See document for details.',
+    'See document',
+  ])
   // Threshold is higher for non-library collections: industry threat docs legitimately
   // have many "None detected" for PQC-specific dimensions (algorithms, parameters, etc.)
   const getThreshold = (file: string) => {
-    if (file.startsWith('library_')) return 0.7  // library: flag at 70%
-    return 0.85  // timeline/threats: only flag near-total blanks (85%)
+    if (file.startsWith('library_')) return 0.7 // library: flag at 70%
+    return 0.85 // timeline/threats: only flag near-total blanks (85%)
   }
 
   // Only check the LATEST library enrichment file — older files may use different
   // dimension field names, causing false positives. Threats/timeline have legitimately
   // high "None detected" ratios for PQC-specific dimensions.
-  const allLibraryFiles = fs.readdirSync(ENRICHMENT_DIR)
-    .filter(f => f.endsWith('.md') && f.startsWith('library_doc_enrichments_'))
+  const allLibraryFiles = fs
+    .readdirSync(ENRICHMENT_DIR)
+    .filter((f) => f.endsWith('.md') && f.startsWith('library_doc_enrichments_'))
     .sort()
-  const enrichFiles = allLibraryFiles.length > 0 ? [allLibraryFiles[allLibraryFiles.length - 1]] : []
+  const enrichFiles =
+    allLibraryFiles.length > 0 ? [allLibraryFiles[allLibraryFiles.length - 1]] : []
 
   for (const file of enrichFiles) {
     const threshold = getThreshold(file)
     const content = fs.readFileSync(path.join(ENRICHMENT_DIR, file), 'utf-8')
-    const sections = content.split('\n## ').filter(s => s.trim())
+    const sections = content.split('\n## ').filter((s) => s.trim())
 
     for (const section of sections) {
       const lines = section.trim().split('\n')
@@ -401,22 +474,31 @@ function checkEnrichmentHealth(): CheckResult {
         }
       }
 
-      if (totalDims >= 5) { // Only flag entries that have at least 5 scored dimensions
+      if (totalDims >= 5) {
+        // Only flag entries that have at least 5 scored dimensions
         const ratio = noneDims / totalDims
         if (ratio > threshold) {
-          findings.push(finding(
-            file, null, 'dimensions', entryId,
-            `${noneDims}/${totalDims} dimensions are "None detected" (${(ratio * 100).toFixed(0)}%) — ` +
-            `likely bad source document (threshold: ${(threshold * 100).toFixed(0)}%)`
-          ))
+          findings.push(
+            finding(
+              file,
+              null,
+              'dimensions',
+              entryId,
+              `${noneDims}/${totalDims} dimensions are "None detected" (${(ratio * 100).toFixed(0)}%) — ` +
+                `likely bad source document (threshold: ${(threshold * 100).toFixed(0)}%)`
+            )
+          )
         }
       }
     }
   }
 
-  return makeCheck('QA-F5',
+  return makeCheck(
+    'QA-F5',
     'Enrichment dimension health: flag entries where >60% of dimensions are "None detected"',
-    'WARNING', findings)
+    'WARNING',
+    findings
+  )
 }
 
 // ── QA-F6: Non-PQC standard claims ───────────────────────────────────────
@@ -425,7 +507,15 @@ function checkNonPqcClaims(qaRows: QARow[], qaFile: string, al: Allowlists): Che
   const findings: Finding[] = []
 
   // PQC algorithm names that should NOT appear alongside non-PQC standards
-  const pqcAlgoNames = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'FN-DSA', 'FrodoKEM', 'HQC', 'Classic-McEliece']
+  const pqcAlgoNames = [
+    'ML-KEM',
+    'ML-DSA',
+    'SLH-DSA',
+    'FN-DSA',
+    'FrodoKEM',
+    'HQC',
+    'Classic-McEliece',
+  ]
 
   for (let i = 0; i < qaRows.length; i++) {
     const row = qaRows[i]
@@ -438,27 +528,38 @@ function checkNonPqcClaims(qaRows: QARow[], qaFile: string, al: Allowlists): Che
       for (const pqcAlgo of pqcAlgoNames) {
         if (!text.includes(pqcAlgo)) continue
 
-        // Look for direct attribution patterns
-        const attributionPatterns = [
-          new RegExp(`${escapeRegex(standard)}[^.]*?\\b${escapeRegex(pqcAlgo)}\\b`, 'i'),
-          new RegExp(`${escapeRegex(pqcAlgo)}[^.]*?\\b${escapeRegex(standard)}\\b`, 'i'),
-        ]
-
         // Check if they co-occur in the same sentence
         const sentences = text.split(/[.!?]+/)
         for (const sentence of sentences) {
           if (sentence.includes(standard) && sentence.includes(pqcAlgo)) {
             // Check if this is a comparison/contrast (legitimate) or a misattribution
-            const contrastWords = ['unlike', 'compared to', 'whereas', 'before', 'replace',
-              'transition from', 'upgrade from', 'migrate from', 'does not', 'no longer',
-              'did not', 'predecessor', 'classical']
-            const isContrast = contrastWords.some(w => sentence.toLowerCase().includes(w))
+            const contrastWords = [
+              'unlike',
+              'compared to',
+              'whereas',
+              'before',
+              'replace',
+              'transition from',
+              'upgrade from',
+              'migrate from',
+              'does not',
+              'no longer',
+              'did not',
+              'predecessor',
+              'classical',
+            ]
+            const isContrast = contrastWords.some((w) => sentence.toLowerCase().includes(w))
             if (!isContrast) {
-              findings.push(finding(
-                qaFile, i + 2, 'answer', row.question_id,
-                `PQC algorithm "${pqcAlgo}" appears in same sentence as non-PQC standard "${standard}" ` +
-                `(${description}) without contrast language — possible misattribution`
-              ))
+              findings.push(
+                finding(
+                  qaFile,
+                  i + 2,
+                  'answer',
+                  row.question_id,
+                  `PQC algorithm "${pqcAlgo}" appears in same sentence as non-PQC standard "${standard}" ` +
+                    `(${description}) without contrast language — possible misattribution`
+                )
+              )
               break
             }
           }
@@ -467,13 +568,12 @@ function checkNonPqcClaims(qaRows: QARow[], qaFile: string, al: Allowlists): Che
     }
   }
 
-  return makeCheck('QA-F6',
+  return makeCheck(
+    'QA-F6',
     'Non-PQC standard claims: PQC algorithms must not be attributed to pre-PQC standards',
-    'ERROR', findings)
-}
-
-function escapeRegex(s: string): string {
-  return s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+    'ERROR',
+    findings
+  )
 }
 
 // ── Main runner ──────────────────────────────────────────────────────────
@@ -484,14 +584,23 @@ export function runContentAccuracyChecks(): CheckResult[] {
   // Load allowlists
   const al = loadAllowlists()
   if (!al) {
-    results.push(makeCheck('QA-F-SKIP', 'fact_allowlists.json not found — run generate-fact-allowlists.py first', 'WARNING', []))
+    results.push(
+      makeCheck(
+        'QA-F-SKIP',
+        'fact_allowlists.json not found — run generate-fact-allowlists.py first',
+        'WARNING',
+        []
+      )
+    )
     return results
   }
 
   // Load QA data
   const qaData = loadQARows()
   if (!qaData || qaData.rows.length === 0) {
-    results.push(makeCheck('QA-F-SKIP', 'No Q&A data found — skipping content accuracy checks', 'INFO', []))
+    results.push(
+      makeCheck('QA-F-SKIP', 'No Q&A data found — skipping content accuracy checks', 'INFO', [])
+    )
     return results
   }
 

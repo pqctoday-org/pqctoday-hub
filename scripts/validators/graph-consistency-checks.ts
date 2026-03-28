@@ -13,7 +13,7 @@
 import fs from 'fs'
 import path from 'path'
 import type { CheckResult, Finding, Severity } from './types.js'
-import { loadCSV, findLatestCSV, readCSV, splitSemicolon } from './data-loader.js'
+import { loadCSV, readCSV, splitSemicolon } from './data-loader.js'
 
 const ROOT = path.resolve(process.cwd())
 const DATA_DIR = path.join(ROOT, 'src', 'data')
@@ -50,24 +50,66 @@ const ALGORITHM_CANONICAL: { pattern: RegExp; canonical: string }[] = [
 ]
 
 const ALGORITHM_SKIP = new Set([
-  'n/a', 'n/a (certificate framework)', 'various', 'various pqc families',
-  'all', 'all pqc families', '',
+  'n/a',
+  'n/a (certificate framework)',
+  'various',
+  'various pqc families',
+  'all',
+  'all pqc families',
+  '',
 ])
 
 const MODULE_IDS = new Set([
-  'pqc-101', 'quantum-threats', 'hybrid-crypto', 'crypto-agility', 'tls-basics',
-  'vpn-ssh-pqc', 'email-signing', 'pki-workshop', 'kms-pqc', 'hsm-pqc',
-  'stateful-signatures', 'digital-assets', '5g-security', 'digital-id',
-  'entropy-randomness', 'merkle-tree-certs', 'qkd', 'code-signing',
-  'api-security-jwt', 'crypto-dev-apis', 'web-gateway-pqc', 'iot-ot-pqc',
-  'pqc-risk-management', 'pqc-business-case', 'pqc-governance', 'vendor-risk',
-  'migration-program', 'compliance-strategy', 'data-asset-sensitivity',
-  'standards-bodies', 'confidential-computing', 'database-encryption-pqc',
-  'energy-utilities-pqc', 'emv-payment-pqc', 'ai-security-pqc',
-  'platform-eng-pqc', 'healthcare-pqc', 'aerospace-pqc', 'automotive-pqc',
-  'exec-quantum-impact', 'dev-quantum-impact', 'arch-quantum-impact',
-  'ops-quantum-impact', 'research-quantum-impact', 'secrets-management-pqc',
-  'network-security-pqc', 'pqc-testing-validation', 'iam-pqc', 'secure-boot-pqc', 'os-pqc',
+  'pqc-101',
+  'quantum-threats',
+  'hybrid-crypto',
+  'crypto-agility',
+  'tls-basics',
+  'vpn-ssh-pqc',
+  'email-signing',
+  'pki-workshop',
+  'kms-pqc',
+  'hsm-pqc',
+  'stateful-signatures',
+  'digital-assets',
+  '5g-security',
+  'digital-id',
+  'entropy-randomness',
+  'merkle-tree-certs',
+  'qkd',
+  'code-signing',
+  'api-security-jwt',
+  'crypto-dev-apis',
+  'web-gateway-pqc',
+  'iot-ot-pqc',
+  'pqc-risk-management',
+  'pqc-business-case',
+  'pqc-governance',
+  'vendor-risk',
+  'migration-program',
+  'compliance-strategy',
+  'data-asset-sensitivity',
+  'standards-bodies',
+  'confidential-computing',
+  'database-encryption-pqc',
+  'energy-utilities-pqc',
+  'emv-payment-pqc',
+  'ai-security-pqc',
+  'platform-eng-pqc',
+  'healthcare-pqc',
+  'aerospace-pqc',
+  'automotive-pqc',
+  'exec-quantum-impact',
+  'dev-quantum-impact',
+  'arch-quantum-impact',
+  'ops-quantum-impact',
+  'research-quantum-impact',
+  'secrets-management-pqc',
+  'network-security-pqc',
+  'pqc-testing-validation',
+  'iam-pqc',
+  'secure-boot-pqc',
+  'os-pqc',
 ])
 
 const SPECIAL_MODULE_IDS = new Set(['quiz', 'assess'])
@@ -100,7 +142,10 @@ function extractAlgorithmFamilies(text: string): string[] {
 
 function splitPipe(val: string): string[] {
   if (!val) return []
-  return val.split('|').map(s => s.trim()).filter(Boolean)
+  return val
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 function makeCheck(
@@ -127,8 +172,9 @@ function loadModuleQaCombined(): { rows: Record<string, string>[]; file: string 
   const qaDir = path.join(DATA_DIR, 'module-qa')
   if (!fs.existsSync(qaDir)) return { rows: [], file: '' }
 
-  const files = fs.readdirSync(qaDir)
-    .filter(f => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
+  const files = fs
+    .readdirSync(qaDir)
+    .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
     .sort()
     .reverse()
 
@@ -152,23 +198,16 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
   const vendors = loadCSV('vendors_')
   const certXref = loadCSV('migrate_certification_xref_')
   const quiz = loadCSV('pqcquiz_')
-  const authSources = loadCSV('pqc_authoritative_sources_reference_')
   const algTransitions = loadCSV('algorithms_transitions_')
   const timeline = loadCSV('timeline_')
   const { rows: qaRows, file: qaFile } = loadModuleQaCombined()
 
   // ── Build ID lookup sets ───────────────────────────────────────────────
 
-  const libraryIds = new Set(library.rows.map(r => r.reference_id).filter(Boolean))
-  const complianceIds = new Set(compliance.rows.map(r => r.id).filter(Boolean))
-  const threatIds = new Set(threats.rows.map(r => r.threat_id).filter(Boolean))
-  const softwareNames = new Set(migrate.rows.map(r => r.software_name).filter(Boolean))
-  const vendorIds = new Set(vendors.rows.map(r => r.vendor_id).filter(Boolean))
-  const leaderNames = new Set(leaders.rows.map(r => r.Name).filter(Boolean))
-  const leaderNamesLower = new Set(leaders.rows.map(r => r.Name?.toLowerCase()).filter(Boolean))
-  const countryNames = new Set(timeline.rows.map(r => r.Country).filter(Boolean))
-  const timelineTitlesLower = new Set(timeline.rows.map(r => r.Title?.toLowerCase()).filter(Boolean))
-  const quizCategories = new Set(quiz.rows.map(r => r.category).filter(Boolean))
+  const libraryIds = new Set(library.rows.map((r) => r.reference_id).filter(Boolean))
+  const vendorIds = new Set(vendors.rows.map((r) => r.vendor_id).filter(Boolean))
+  const countryNames = new Set(timeline.rows.map((r) => r.Country).filter(Boolean))
+  const quizCategories = new Set(quiz.rows.map((r) => r.category).filter(Boolean))
 
   // ── GC-1: Orphaned Entity Detection ────────────────────────────────────
 
@@ -199,22 +238,29 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     }
     // library.algorithmFamily (has outgoing edge)
     for (const r of library.rows) {
-      if (extractAlgorithmFamilies(r.algorithm_family).length > 0) libraryReferenced.add(r.reference_id)
+      if (extractAlgorithmFamilies(r.algorithm_family).length > 0)
+        libraryReferenced.add(r.reference_id)
     }
     // QA libraryRefs
     for (const r of qaRows) {
       for (const ref of splitSemicolon(r.library_refs)) libraryReferenced.add(ref)
     }
 
-    const libraryOrphans = library.rows.filter(r => !libraryReferenced.has(r.reference_id))
-    orphanStats.push({ type: 'library', total: library.rows.length, orphaned: libraryOrphans.length, ids: libraryOrphans.slice(0, 15).map(r => r.reference_id) })
+    const libraryOrphans = library.rows.filter((r) => !libraryReferenced.has(r.reference_id))
+    orphanStats.push({
+      type: 'library',
+      total: library.rows.length,
+      orphaned: libraryOrphans.length,
+      ids: libraryOrphans.slice(0, 15).map((r) => r.reference_id),
+    })
 
     // Software orphans: no vendorId, no learningModules, no certifications, no pqcSupport algorithms
     const softwareReferenced = new Set<string>()
     for (const r of migrate.rows) {
       if (r.vendor_id && vendorIds.has(r.vendor_id)) softwareReferenced.add(r.software_name)
       if (splitSemicolon(r.learning_modules).length > 0) softwareReferenced.add(r.software_name)
-      if (extractAlgorithmFamilies(r.pqc_support).length > 0) softwareReferenced.add(r.software_name)
+      if (extractAlgorithmFamilies(r.pqc_support).length > 0)
+        softwareReferenced.add(r.software_name)
     }
     for (const r of certXref.rows) {
       softwareReferenced.add(r.software_name)
@@ -222,8 +268,13 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of qaRows) {
       for (const ref of splitSemicolon(r.migrate_refs)) softwareReferenced.add(ref)
     }
-    const swOrphans = migrate.rows.filter(r => !softwareReferenced.has(r.software_name))
-    orphanStats.push({ type: 'software', total: migrate.rows.length, orphaned: swOrphans.length, ids: swOrphans.slice(0, 15).map(r => r.software_name) })
+    const swOrphans = migrate.rows.filter((r) => !softwareReferenced.has(r.software_name))
+    orphanStats.push({
+      type: 'software',
+      total: migrate.rows.length,
+      orphaned: swOrphans.length,
+      ids: swOrphans.slice(0, 15).map((r) => r.software_name),
+    })
 
     // Leader orphans: no keyResourceUrl and no country match
     const leaderReferenced = new Set<string>()
@@ -234,16 +285,28 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of qaRows) {
       for (const ref of splitSemicolon(r.leader_refs)) leaderReferenced.add(ref)
     }
-    const leaderOrphans = leaders.rows.filter(r => !leaderReferenced.has(r.Name))
-    orphanStats.push({ type: 'leader', total: leaders.rows.length, orphaned: leaderOrphans.length, ids: leaderOrphans.slice(0, 15).map(r => r.Name) })
+    const leaderOrphans = leaders.rows.filter((r) => !leaderReferenced.has(r.Name))
+    orphanStats.push({
+      type: 'leader',
+      total: leaders.rows.length,
+      orphaned: leaderOrphans.length,
+      ids: leaderOrphans.slice(0, 15).map((r) => r.Name),
+    })
 
     // Vendor orphans: no software links to them
     const vendorReferenced = new Set<string>()
     for (const r of migrate.rows) {
       if (r.vendor_id) vendorReferenced.add(r.vendor_id)
     }
-    const vendorOrphans = vendors.rows.filter(r => r.vendor_id !== 'VND-000' && !vendorReferenced.has(r.vendor_id))
-    orphanStats.push({ type: 'vendor', total: vendors.rows.length - 1, orphaned: vendorOrphans.length, ids: vendorOrphans.slice(0, 15).map(r => `${r.vendor_id} (${r.vendor_display_name})`) })
+    const vendorOrphans = vendors.rows.filter(
+      (r) => r.vendor_id !== 'VND-000' && !vendorReferenced.has(r.vendor_id)
+    )
+    orphanStats.push({
+      type: 'vendor',
+      total: vendors.rows.length - 1,
+      orphaned: vendorOrphans.length,
+      ids: vendorOrphans.slice(0, 15).map((r) => `${r.vendor_id} (${r.vendor_display_name})`),
+    })
 
     // Threat orphans: no relatedModules, no algorithm extraction
     const threatReferenced = new Set<string>()
@@ -255,8 +318,13 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of qaRows) {
       for (const ref of splitSemicolon(r.threat_refs)) threatReferenced.add(ref)
     }
-    const threatOrphans = threats.rows.filter(r => !threatReferenced.has(r.threat_id))
-    orphanStats.push({ type: 'threat', total: threats.rows.length, orphaned: threatOrphans.length, ids: threatOrphans.slice(0, 15).map(r => r.threat_id) })
+    const threatOrphans = threats.rows.filter((r) => !threatReferenced.has(r.threat_id))
+    orphanStats.push({
+      type: 'threat',
+      total: threats.rows.length,
+      orphaned: threatOrphans.length,
+      ids: threatOrphans.slice(0, 15).map((r) => r.threat_id),
+    })
 
     // Compliance orphans
     const complianceReferenced = new Set<string>()
@@ -268,8 +336,13 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     for (const r of qaRows) {
       for (const ref of splitSemicolon(r.compliance_refs)) complianceReferenced.add(ref)
     }
-    const compOrphans = compliance.rows.filter(r => !complianceReferenced.has(r.id))
-    orphanStats.push({ type: 'compliance', total: compliance.rows.length, orphaned: compOrphans.length, ids: compOrphans.slice(0, 15).map(r => r.id) })
+    const compOrphans = compliance.rows.filter((r) => !complianceReferenced.has(r.id))
+    orphanStats.push({
+      type: 'compliance',
+      total: compliance.rows.length,
+      orphaned: compOrphans.length,
+      ids: compOrphans.slice(0, 15).map((r) => r.id),
+    })
 
     for (const s of orphanStats) {
       if (s.orphaned > 0) {
@@ -283,18 +356,29 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-1', 'Orphaned entity detection — entities with zero graph edges', 'graph', null, 'WARNING', findings))
+    results.push(
+      makeCheck(
+        'GC-1',
+        'Orphaned entity detection — entities with zero graph edges',
+        'graph',
+        null,
+        'WARNING',
+        findings
+      )
+    )
 
     // Build markdown
-    const mdTable = orphanStats.map(s => {
-      const cov = s.total > 0 ? ((s.total - s.orphaned) / s.total * 100).toFixed(1) : '0.0'
-      return `| ${s.type} | ${s.total} | ${s.orphaned} | ${cov}% |`
-    }).join('\n')
+    const mdTable = orphanStats
+      .map((s) => {
+        const cov = s.total > 0 ? (((s.total - s.orphaned) / s.total) * 100).toFixed(1) : '0.0'
+        return `| ${s.type} | ${s.total} | ${s.orphaned} | ${cov}% |`
+      })
+      .join('\n')
 
     let md = `## GC-1: Orphaned Entity Detection\n\n| Type | Total | Orphaned | Coverage |\n| ---- | ----- | -------- | -------- |\n${mdTable}\n`
     for (const s of orphanStats) {
       if (s.orphaned > 0) {
-        md += `\n**${s.type} orphans** (${s.orphaned}): ${s.ids.map(id => `\`${id}\``).join(', ')}${s.orphaned > 15 ? ` (+${s.orphaned - 15} more)` : ''}\n`
+        md += `\n**${s.type} orphans** (${s.orphaned}): ${s.ids.map((id) => `\`${id}\``).join(', ')}${s.orphaned > 15 ? ` (+${s.orphaned - 15} more)` : ''}\n`
       }
     }
     mdSections.push(md)
@@ -311,29 +395,38 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       const types: string[] = []
 
       // library.moduleIds
-      if (library.rows.some(r => splitSemicolon(r.module_ids).includes(modId))) types.push('library-teaches')
+      if (library.rows.some((r) => splitSemicolon(r.module_ids).includes(modId)))
+        types.push('library-teaches')
 
       // threats.relatedModules
-      if (threats.rows.some(r => splitPipe(r.related_modules).includes(modId))) types.push('threat-teaches')
+      if (threats.rows.some((r) => splitPipe(r.related_modules).includes(modId)))
+        types.push('threat-teaches')
 
       // migrate.learningModules
-      if (migrate.rows.some(r => splitSemicolon(r.learning_modules).includes(modId))) types.push('software-teaches')
+      if (migrate.rows.some((r) => splitSemicolon(r.learning_modules).includes(modId)))
+        types.push('software-teaches')
 
       // quiz category mapping
-      const quizMapped = Object.entries(QUIZ_CATEGORY_TO_MODULE).some(([, mapped]) => mapped === modId)
+      const quizMapped = Object.entries(QUIZ_CATEGORY_TO_MODULE).some(
+        ([, mapped]) => mapped === modId
+      )
       const quizDirect = quizCategories.has(modId)
       if (quizMapped || quizDirect) types.push('quiz-teaches')
 
       // moduleQa cross-refs (any non-empty ref)
-      const qaForModule = qaRows.filter(r => r.module_id === modId)
-      if (qaForModule.some(r =>
-        splitSemicolon(r.library_refs).length > 0 ||
-        splitSemicolon(r.threat_refs).length > 0 ||
-        splitSemicolon(r.compliance_refs).length > 0 ||
-        splitSemicolon(r.migrate_refs).length > 0 ||
-        splitSemicolon(r.algorithm_refs).length > 0 ||
-        splitSemicolon(r.leader_refs).length > 0
-      )) types.push('module-qa-references')
+      const qaForModule = qaRows.filter((r) => r.module_id === modId)
+      if (
+        qaForModule.some(
+          (r) =>
+            splitSemicolon(r.library_refs).length > 0 ||
+            splitSemicolon(r.threat_refs).length > 0 ||
+            splitSemicolon(r.compliance_refs).length > 0 ||
+            splitSemicolon(r.migrate_refs).length > 0 ||
+            splitSemicolon(r.algorithm_refs).length > 0 ||
+            splitSemicolon(r.leader_refs).length > 0
+        )
+      )
+        types.push('module-qa-references')
 
       // glossary relatedModule (regex scan)
       // Simplified: check glossaryData.ts for the module id
@@ -347,7 +440,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     }
 
     moduleScores.sort((a, b) => a.score - b.score)
-    const underConnected = moduleScores.filter(m => m.score < 3)
+    const underConnected = moduleScores.filter((m) => m.score < 3)
 
     for (const m of underConnected) {
       findings.push({
@@ -359,12 +452,23 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
-    results.push(makeCheck('GC-2', 'Module connectivity score — modules with < 3 edge types', 'modules', null, 'INFO', findings))
+    results.push(
+      makeCheck(
+        'GC-2',
+        'Module connectivity score — modules with < 3 edge types',
+        'modules',
+        null,
+        'INFO',
+        findings
+      )
+    )
 
-    const mdTable = moduleScores.map(m =>
-      `| ${m.id} | ${m.score} | ${m.types.join(', ') || '(none)'} |`
-    ).join('\n')
-    mdSections.push(`## GC-2: Module Connectivity Score\n\n| Module | Score | Connection Types |\n| ------ | ----- | ---------------- |\n${mdTable}\n`)
+    const mdTable = moduleScores
+      .map((m) => `| ${m.id} | ${m.score} | ${m.types.join(', ') || '(none)'} |`)
+      .join('\n')
+    mdSections.push(
+      `## GC-2: Module Connectivity Score\n\n| Module | Score | Connection Types |\n| ------ | ----- | ---------------- |\n${mdTable}\n`
+    )
   }
 
   // ── GC-3: Algorithm Canonicalization Consistency ────────────────────────
@@ -422,15 +526,28 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
-    results.push(makeCheck('GC-3', 'Algorithm canonicalization consistency across sources', 'algorithms', null, 'WARNING', findings))
+    results.push(
+      makeCheck(
+        'GC-3',
+        'Algorithm canonicalization consistency across sources',
+        'algorithms',
+        null,
+        'WARNING',
+        findings
+      )
+    )
 
     const mdTable = Array.from(algoSources.entries())
       .sort((a, b) => a[1].size - b[1].size)
-      .map(([family, sources]) => `| ${family} | ${sources.size} | ${Array.from(sources).join(', ')} |`)
+      .map(
+        ([family, sources]) => `| ${family} | ${sources.size} | ${Array.from(sources).join(', ')} |`
+      )
       .join('\n')
     let md = `## GC-3: Algorithm Canonicalization Consistency\n\n| Algorithm | Sources | Source List |\n| --------- | ------- | ----------- |\n${mdTable}\n`
     if (unmatchedAlgo.size > 0) {
-      md += `\n**Unmatched values**: ${Array.from(unmatchedAlgo).map(v => `\`${v}\``).join(', ')}\n`
+      md += `\n**Unmatched values**: ${Array.from(unmatchedAlgo)
+        .map((v) => `\`${v}\``)
+        .join(', ')}\n`
     }
     mdSections.push(md)
   }
@@ -451,7 +568,9 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       if (r.hq_country) referencedCountries.add(r.hq_country)
     }
 
-    const missingCountries = Array.from(referencedCountries).filter(c => !countryNames.has(c)).sort()
+    const missingCountries = Array.from(referencedCountries)
+      .filter((c) => !countryNames.has(c))
+      .sort()
 
     for (const c of missingCountries) {
       findings.push({
@@ -463,13 +582,24 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
-    results.push(makeCheck('GC-4', 'Country node coverage — countries referenced but missing from timeline', 'timeline', 'compliance/leaders/vendors', 'WARNING', findings))
+    results.push(
+      makeCheck(
+        'GC-4',
+        'Country node coverage — countries referenced but missing from timeline',
+        'timeline',
+        'compliance/leaders/vendors',
+        'WARNING',
+        findings
+      )
+    )
 
-    mdSections.push(`## GC-4: Country Node Coverage Gaps\n\n${
-      missingCountries.length === 0
-        ? 'All referenced countries exist in timeline data.'
-        : `**Missing countries** (${missingCountries.length}): ${missingCountries.map(c => `\`${c}\``).join(', ')}\n\nThese appear in compliance/leaders/vendors but not in timeline CSV, so no country node is created in the graph.`
-    }\n`)
+    mdSections.push(
+      `## GC-4: Country Node Coverage Gaps\n\n${
+        missingCountries.length === 0
+          ? 'All referenced countries exist in timeline data.'
+          : `**Missing countries** (${missingCountries.length}): ${missingCountries.map((c) => `\`${c}\``).join(', ')}\n\nThese appear in compliance/leaders/vendors but not in timeline CSV, so no country node is created in the graph.`
+      }\n`
+    )
   }
 
   // ── GC-5: Vendor ↔ Software Cardinality ────────────────────────────────
@@ -489,7 +619,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     // Vendors with 0 products
     const emptyVendors = Array.from(vendorProductCount.entries()).filter(([, count]) => count === 0)
     for (const [vid] of emptyVendors) {
-      const vendor = vendors.rows.find(r => r.vendor_id === vid)
+      const vendor = vendors.rows.find((r) => r.vendor_id === vid)
       findings.push({
         csv: 'vendors',
         row: null,
@@ -512,18 +642,36 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-5', 'Vendor ↔ Software cardinality — orphan vendors and invalid vendor_ids', 'vendors', 'migrate', 'INFO', findings))
+    results.push(
+      makeCheck(
+        'GC-5',
+        'Vendor ↔ Software cardinality — orphan vendors and invalid vendor_ids',
+        'vendors',
+        'migrate',
+        'INFO',
+        findings
+      )
+    )
 
-    mdSections.push(`## GC-5: Vendor ↔ Software Cardinality\n\n- **Vendors with 0 products**: ${emptyVendors.length}\n- **Software with invalid vendor_id**: ${findings.filter(f => f.csv === 'migrate').length}\n${
-      emptyVendors.length > 0 ? `\n**Empty vendors**: ${emptyVendors.slice(0, 20).map(([vid]) => `\`${vid}\``).join(', ')}${emptyVendors.length > 20 ? ` (+${emptyVendors.length - 20} more)` : ''}\n` : ''
-    }`)
+    mdSections.push(
+      `## GC-5: Vendor ↔ Software Cardinality\n\n- **Vendors with 0 products**: ${emptyVendors.length}\n- **Software with invalid vendor_id**: ${findings.filter((f) => f.csv === 'migrate').length}\n${
+        emptyVendors.length > 0
+          ? `\n**Empty vendors**: ${emptyVendors
+              .slice(0, 20)
+              .map(([vid]) => `\`${vid}\``)
+              .join(
+                ', '
+              )}${emptyVendors.length > 20 ? ` (+${emptyVendors.length - 20} more)` : ''}\n`
+          : ''
+      }`
+    )
   }
 
   // ── GC-6: Q&A Module Coverage ──────────────────────────────────────────
 
   {
     const findings: Finding[] = []
-    const qaModuleIds = new Set(qaRows.map(r => r.module_id).filter(Boolean))
+    const qaModuleIds = new Set(qaRows.map((r) => r.module_id).filter(Boolean))
 
     // Modules missing from QA
     const missingModules: string[] = []
@@ -543,7 +691,9 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     }
 
     // QA rows with unknown module_id
-    const orphanQaModules = Array.from(qaModuleIds).filter(id => !MODULE_IDS.has(id) && !SPECIAL_MODULE_IDS.has(id))
+    const orphanQaModules = Array.from(qaModuleIds).filter(
+      (id) => !MODULE_IDS.has(id) && !SPECIAL_MODULE_IDS.has(id)
+    )
     for (const modId of orphanQaModules) {
       findings.push({
         csv: qaFile || 'module_qa_combined',
@@ -554,17 +704,33 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
-    results.push(makeCheck('GC-6', 'Q&A module coverage — modules missing Q&A data', 'module-qa', 'MODULE_CATALOG', 'WARNING', findings))
+    results.push(
+      makeCheck(
+        'GC-6',
+        'Q&A module coverage — modules missing Q&A data',
+        'module-qa',
+        'MODULE_CATALOG',
+        'WARNING',
+        findings
+      )
+    )
 
     // Per-module Q&A count for markdown
     const qaCounts = new Map<string, number>()
     for (const r of qaRows) {
       qaCounts.set(r.module_id, (qaCounts.get(r.module_id) ?? 0) + 1)
     }
-    const mdTable = Array.from(MODULE_IDS).filter(id => !SPECIAL_MODULE_IDS.has(id)).sort()
-      .map(id => `| ${id} | ${qaCounts.get(id) ?? 0} | ${(qaCounts.get(id) ?? 0) === 0 ? 'MISSING' : 'OK'} |`)
+    const mdTable = Array.from(MODULE_IDS)
+      .filter((id) => !SPECIAL_MODULE_IDS.has(id))
+      .sort()
+      .map(
+        (id) =>
+          `| ${id} | ${qaCounts.get(id) ?? 0} | ${(qaCounts.get(id) ?? 0) === 0 ? 'MISSING' : 'OK'} |`
+      )
       .join('\n')
-    mdSections.push(`## GC-6: Q&A Module Coverage\n\n- **Total Q&A rows**: ${qaRows.length}\n- **Modules with Q&A**: ${qaModuleIds.size}\n- **Missing**: ${missingModules.length}\n\n| Module | Q&A Rows | Status |\n| ------ | -------- | ------ |\n${mdTable}\n`)
+    mdSections.push(
+      `## GC-6: Q&A Module Coverage\n\n- **Total Q&A rows**: ${qaRows.length}\n- **Modules with Q&A**: ${qaModuleIds.size}\n- **Missing**: ${missingModules.length}\n\n| Module | Q&A Rows | Status |\n| ------ | -------- | ------ |\n${mdTable}\n`
+    )
   }
 
   // ── GC-7: Leader → Library Reference Validity ──────────────────────────
@@ -592,17 +758,33 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-7', 'Leader → Library reference validity — lost leader-references-library edges', 'leaders', 'library', 'WARNING', findings))
-    mdSections.push(`## GC-7: Leader → Library Reference Validity\n\n- **Total refs**: ${totalRefs}\n- **Valid**: ${validRefs}\n- **Invalid (lost edges)**: ${totalRefs - validRefs}\n${
-      findings.length > 0 ? `\n**Broken references**:\n${findings.slice(0, 20).map(f => `- ${f.message}`).join('\n')}${findings.length > 20 ? `\n- (+${findings.length - 20} more)` : ''}\n` : ''
-    }`)
+    results.push(
+      makeCheck(
+        'GC-7',
+        'Leader → Library reference validity — lost leader-references-library edges',
+        'leaders',
+        'library',
+        'WARNING',
+        findings
+      )
+    )
+    mdSections.push(
+      `## GC-7: Leader → Library Reference Validity\n\n- **Total refs**: ${totalRefs}\n- **Valid**: ${validRefs}\n- **Invalid (lost edges)**: ${totalRefs - validRefs}\n${
+        findings.length > 0
+          ? `\n**Broken references**:\n${findings
+              .slice(0, 20)
+              .map((f) => `- ${f.message}`)
+              .join('\n')}${findings.length > 20 ? `\n- (+${findings.length - 20} more)` : ''}\n`
+          : ''
+      }`
+    )
   }
 
   // ── GC-8: Algorithm Transition Completeness ────────────────────────────
 
   {
     const findings: Finding[] = []
-    let totalTransitions = algTransitions.rows.length
+    const totalTransitions = algTransitions.rows.length
     let matchedBoth = 0
 
     for (const r of algTransitions.rows) {
@@ -612,7 +794,8 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
         matchedBoth++
       } else {
         const issues: string[] = []
-        if (classical.length === 0) issues.push(`classical "${r['Classical Algorithm']}" → no match`)
+        if (classical.length === 0)
+          issues.push(`classical "${r['Classical Algorithm']}" → no match`)
         if (pqc.length === 0) issues.push(`pqc "${r['PQC Replacement']}" → no match`)
         findings.push({
           csv: algTransitions.file,
@@ -624,8 +807,19 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-8', 'Algorithm transition completeness — transitions with unmatched sides', 'algorithm_transitions', null, 'INFO', findings))
-    mdSections.push(`## GC-8: Algorithm Transition Completeness\n\n- **Total transitions**: ${totalTransitions}\n- **Both sides matched**: ${matchedBoth}\n- **Incomplete**: ${totalTransitions - matchedBoth}\n`)
+    results.push(
+      makeCheck(
+        'GC-8',
+        'Algorithm transition completeness — transitions with unmatched sides',
+        'algorithm_transitions',
+        null,
+        'INFO',
+        findings
+      )
+    )
+    mdSections.push(
+      `## GC-8: Algorithm Transition Completeness\n\n- **Total transitions**: ${totalTransitions}\n- **Both sides matched**: ${matchedBoth}\n- **Incomplete**: ${totalTransitions - matchedBoth}\n`
+    )
   }
 
   // ── GC-9: Dependency Cycle Detection ───────────────────────────────────
@@ -634,7 +828,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     const findings: Finding[] = []
     const depGraph = new Map<string, string[]>()
     for (const r of library.rows) {
-      const deps = splitSemicolon(r.dependencies).filter(d => d !== r.reference_id)
+      const deps = splitSemicolon(r.dependencies).filter((d) => d !== r.reference_id)
       if (deps.length > 0) depGraph.set(r.reference_id, deps)
     }
 
@@ -672,12 +866,16 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       })
     }
 
-    results.push(makeCheck('GC-9', 'Library dependency cycle detection', 'library', null, 'WARNING', findings))
-    mdSections.push(`## GC-9: Dependency Cycle Detection\n\n${
-      cycles.length === 0
-        ? 'No dependency cycles found.'
-        : `**${cycles.length} cycle(s) detected**:\n${cycles.map(c => `- ${c.join(' → ')}`).join('\n')}\n`
-    }`)
+    results.push(
+      makeCheck('GC-9', 'Library dependency cycle detection', 'library', null, 'WARNING', findings)
+    )
+    mdSections.push(
+      `## GC-9: Dependency Cycle Detection\n\n${
+        cycles.length === 0
+          ? 'No dependency cycles found.'
+          : `**${cycles.length} cycle(s) detected**:\n${cycles.map((c) => `- ${c.join(' → ')}`).join('\n')}\n`
+      }`
+    )
   }
 
   // ── GC-10: Certification → Algorithm Edge Gaps ─────────────────────────
@@ -701,9 +899,21 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-10', 'Certification → Algorithm edge gaps — certs with no algorithm edges', 'certXref', 'algorithms', 'INFO', findings))
-    const pct = certXref.rows.length > 0 ? (withAlgo / certXref.rows.length * 100).toFixed(1) : '0.0'
-    mdSections.push(`## GC-10: Certification → Algorithm Edge Gaps\n\n- **Total certifications**: ${certXref.rows.length}\n- **With algorithm edges**: ${withAlgo} (${pct}%)\n- **No match**: ${certXref.rows.length - withAlgo}\n`)
+    results.push(
+      makeCheck(
+        'GC-10',
+        'Certification → Algorithm edge gaps — certs with no algorithm edges',
+        'certXref',
+        'algorithms',
+        'INFO',
+        findings
+      )
+    )
+    const pct =
+      certXref.rows.length > 0 ? ((withAlgo / certXref.rows.length) * 100).toFixed(1) : '0.0'
+    mdSections.push(
+      `## GC-10: Certification → Algorithm Edge Gaps\n\n- **Total certifications**: ${certXref.rows.length}\n- **With algorithm edges**: ${withAlgo} (${pct}%)\n- **No match**: ${certXref.rows.length - withAlgo}\n`
+    )
   }
 
   // ── GC-11: Software → Algorithm Edge Gaps ──────────────────────────────
@@ -731,9 +941,20 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
       }
     }
 
-    results.push(makeCheck('GC-11', 'Software → Algorithm edge gaps — "Yes" PQC support with no algorithm match', 'migrate', 'algorithms', 'INFO', findings))
-    const pct = yesTotal > 0 ? (yesWithAlgo / yesTotal * 100).toFixed(1) : '0.0'
-    mdSections.push(`## GC-11: Software → Algorithm Edge Gaps\n\n- **Software with "Yes" PQC support**: ${yesTotal}\n- **With algorithm edges**: ${yesWithAlgo} (${pct}%)\n- **"Yes" but no match**: ${yesTotal - yesWithAlgo}\n`)
+    results.push(
+      makeCheck(
+        'GC-11',
+        'Software → Algorithm edge gaps — "Yes" PQC support with no algorithm match',
+        'migrate',
+        'algorithms',
+        'INFO',
+        findings
+      )
+    )
+    const pct = yesTotal > 0 ? ((yesWithAlgo / yesTotal) * 100).toFixed(1) : '0.0'
+    mdSections.push(
+      `## GC-11: Software → Algorithm Edge Gaps\n\n- **Software with "Yes" PQC support**: ${yesTotal}\n- **With algorithm edges**: ${yesWithAlgo} (${pct}%)\n- **"Yes" but no match**: ${yesTotal - yesWithAlgo}\n`
+    )
   }
 
   // ── GC-12: Graph Stats Summary ─────────────────────────────────────────
@@ -742,15 +963,111 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     const entityCounts: { type: string; records: number; withEdges: number }[] = []
 
     // Count "records with at least one edge" per type using the referenced sets from GC-1
-    const libraryConnected = library.rows.length - (results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'library')?.value.split('/')[0] ? parseInt(results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'library')?.value.split('/')[0] ?? '0') : 0)
-    entityCounts.push({ type: 'library', records: library.rows.length, withEdges: libraryConnected })
-    entityCounts.push({ type: 'compliance', records: compliance.rows.length, withEdges: compliance.rows.length - (results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'compliance')?.value.split('/')[0] ? parseInt(results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'compliance')?.value.split('/')[0] ?? '0') : 0) })
-    entityCounts.push({ type: 'threat', records: threats.rows.length, withEdges: threats.rows.length - (results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'threat')?.value.split('/')[0] ? parseInt(results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'threat')?.value.split('/')[0] ?? '0') : 0) })
-    entityCounts.push({ type: 'software', records: migrate.rows.length, withEdges: migrate.rows.length - (results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'software')?.value.split('/')[0] ? parseInt(results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'software')?.value.split('/')[0] ?? '0') : 0) })
-    entityCounts.push({ type: 'leader', records: leaders.rows.length, withEdges: leaders.rows.length - (results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'leader')?.value.split('/')[0] ? parseInt(results.find(r => r.id === 'GC-1')?.findings.find(f => f.csv === 'leader')?.value.split('/')[0] ?? '0') : 0) })
-    entityCounts.push({ type: 'vendor', records: vendors.rows.length - 1, withEdges: (vendors.rows.length - 1) - vendorIds.size + new Set(migrate.rows.map(r => r.vendor_id).filter(Boolean)).size })
-    entityCounts.push({ type: 'certification', records: certXref.rows.length, withEdges: certXref.rows.length })
-    entityCounts.push({ type: 'timeline', records: timeline.rows.length, withEdges: timeline.rows.length })
+    const libraryConnected =
+      library.rows.length -
+      (results
+        .find((r) => r.id === 'GC-1')
+        ?.findings.find((f) => f.csv === 'library')
+        ?.value.split('/')[0]
+        ? parseInt(
+            results
+              .find((r) => r.id === 'GC-1')
+              ?.findings.find((f) => f.csv === 'library')
+              ?.value.split('/')[0] ?? '0'
+          )
+        : 0)
+    entityCounts.push({
+      type: 'library',
+      records: library.rows.length,
+      withEdges: libraryConnected,
+    })
+    entityCounts.push({
+      type: 'compliance',
+      records: compliance.rows.length,
+      withEdges:
+        compliance.rows.length -
+        (results
+          .find((r) => r.id === 'GC-1')
+          ?.findings.find((f) => f.csv === 'compliance')
+          ?.value.split('/')[0]
+          ? parseInt(
+              results
+                .find((r) => r.id === 'GC-1')
+                ?.findings.find((f) => f.csv === 'compliance')
+                ?.value.split('/')[0] ?? '0'
+            )
+          : 0),
+    })
+    entityCounts.push({
+      type: 'threat',
+      records: threats.rows.length,
+      withEdges:
+        threats.rows.length -
+        (results
+          .find((r) => r.id === 'GC-1')
+          ?.findings.find((f) => f.csv === 'threat')
+          ?.value.split('/')[0]
+          ? parseInt(
+              results
+                .find((r) => r.id === 'GC-1')
+                ?.findings.find((f) => f.csv === 'threat')
+                ?.value.split('/')[0] ?? '0'
+            )
+          : 0),
+    })
+    entityCounts.push({
+      type: 'software',
+      records: migrate.rows.length,
+      withEdges:
+        migrate.rows.length -
+        (results
+          .find((r) => r.id === 'GC-1')
+          ?.findings.find((f) => f.csv === 'software')
+          ?.value.split('/')[0]
+          ? parseInt(
+              results
+                .find((r) => r.id === 'GC-1')
+                ?.findings.find((f) => f.csv === 'software')
+                ?.value.split('/')[0] ?? '0'
+            )
+          : 0),
+    })
+    entityCounts.push({
+      type: 'leader',
+      records: leaders.rows.length,
+      withEdges:
+        leaders.rows.length -
+        (results
+          .find((r) => r.id === 'GC-1')
+          ?.findings.find((f) => f.csv === 'leader')
+          ?.value.split('/')[0]
+          ? parseInt(
+              results
+                .find((r) => r.id === 'GC-1')
+                ?.findings.find((f) => f.csv === 'leader')
+                ?.value.split('/')[0] ?? '0'
+            )
+          : 0),
+    })
+    entityCounts.push({
+      type: 'vendor',
+      records: vendors.rows.length - 1,
+      withEdges:
+        vendors.rows.length -
+        1 -
+        vendorIds.size +
+        new Set(migrate.rows.map((r) => r.vendor_id).filter(Boolean)).size,
+    })
+    entityCounts.push({
+      type: 'certification',
+      records: certXref.rows.length,
+      withEdges: certXref.rows.length,
+    })
+    entityCounts.push({
+      type: 'timeline',
+      records: timeline.rows.length,
+      withEdges: timeline.rows.length,
+    })
     entityCounts.push({ type: 'module', records: MODULE_IDS.size, withEdges: MODULE_IDS.size })
     entityCounts.push({ type: 'glossary', records: 0, withEdges: 0 }) // placeholder — TS file
 
@@ -759,32 +1076,65 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
 
     // Edge count estimates
     const edgeEstimates: { type: string; count: number }[] = []
-    edgeEstimates.push({ type: 'library-depends-on', count: library.rows.reduce((s, r) => s + splitSemicolon(r.dependencies).length, 0) })
-    edgeEstimates.push({ type: 'library-teaches', count: library.rows.reduce((s, r) => s + splitSemicolon(r.module_ids).length, 0) })
-    edgeEstimates.push({ type: 'compliance-references', count: compliance.rows.reduce((s, r) => s + splitSemicolon(r.library_refs).length, 0) })
-    edgeEstimates.push({ type: 'compliance-applies-to-country', count: compliance.rows.reduce((s, r) => s + splitSemicolon(r.countries).length, 0) })
-    edgeEstimates.push({ type: 'threat-teaches', count: threats.rows.reduce((s, r) => s + splitPipe(r.related_modules).length, 0) })
-    edgeEstimates.push({ type: 'software-teaches', count: migrate.rows.reduce((s, r) => s + splitSemicolon(r.learning_modules).length, 0) })
+    edgeEstimates.push({
+      type: 'library-depends-on',
+      count: library.rows.reduce((s, r) => s + splitSemicolon(r.dependencies).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'library-teaches',
+      count: library.rows.reduce((s, r) => s + splitSemicolon(r.module_ids).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'compliance-references',
+      count: compliance.rows.reduce((s, r) => s + splitSemicolon(r.library_refs).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'compliance-applies-to-country',
+      count: compliance.rows.reduce((s, r) => s + splitSemicolon(r.countries).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'threat-teaches',
+      count: threats.rows.reduce((s, r) => s + splitPipe(r.related_modules).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'software-teaches',
+      count: migrate.rows.reduce((s, r) => s + splitSemicolon(r.learning_modules).length, 0),
+    })
     edgeEstimates.push({ type: 'software-certified', count: certXref.rows.length })
-    edgeEstimates.push({ type: 'vendor-produces', count: migrate.rows.filter(r => r.vendor_id && vendorIds.has(r.vendor_id)).length })
-    edgeEstimates.push({ type: 'leader-references-library', count: leaders.rows.reduce((s, r) => s + splitSemicolon(r.KeyResourceUrl).length, 0) })
-    edgeEstimates.push({ type: 'leader-country', count: leaders.rows.filter(r => countryNames.has(r.Country)).length })
+    edgeEstimates.push({
+      type: 'vendor-produces',
+      count: migrate.rows.filter((r) => r.vendor_id && vendorIds.has(r.vendor_id)).length,
+    })
+    edgeEstimates.push({
+      type: 'leader-references-library',
+      count: leaders.rows.reduce((s, r) => s + splitSemicolon(r.KeyResourceUrl).length, 0),
+    })
+    edgeEstimates.push({
+      type: 'leader-country',
+      count: leaders.rows.filter((r) => countryNames.has(r.Country)).length,
+    })
 
     const totalEdges = edgeEstimates.reduce((s, e) => s + e.count, 0)
 
     // This check always passes — it's just a summary
     results.push(makeCheck('GC-12', 'Graph stats summary', 'graph', null, 'INFO', []))
 
-    const entityTable = entityCounts.filter(e => e.records > 0).map(e => {
-      const pct = e.records > 0 ? (e.withEdges / e.records * 100).toFixed(1) : '0.0'
-      return `| ${e.type} | ${e.records} | ${e.withEdges} | ${pct}% |`
-    }).join('\n')
+    const entityTable = entityCounts
+      .filter((e) => e.records > 0)
+      .map((e) => {
+        const pct = e.records > 0 ? ((e.withEdges / e.records) * 100).toFixed(1) : '0.0'
+        return `| ${e.type} | ${e.records} | ${e.withEdges} | ${pct}% |`
+      })
+      .join('\n')
 
-    const edgeTable = edgeEstimates.filter(e => e.count > 0).map(e =>
-      `| ${e.type} | ${e.count} |`
-    ).join('\n')
+    const edgeTable = edgeEstimates
+      .filter((e) => e.count > 0)
+      .map((e) => `| ${e.type} | ${e.count} |`)
+      .join('\n')
 
-    mdSections.push(`## GC-12: Graph Stats Summary\n\n### Entity Coverage\n\n| Type | Records | With Edges | Coverage |\n| ---- | ------- | ---------- | -------- |\n${entityTable}\n\n**Total**: ${totalRecords} records, ${totalConnected} connected (${totalRecords > 0 ? (totalConnected / totalRecords * 100).toFixed(1) : 0}%)\n\n### Edge Estimates\n\n| Relationship Type | Est. Edges |\n| ----------------- | ---------- |\n${edgeTable}\n\n**Total estimated edges**: ${totalEdges}\n`)
+    mdSections.push(
+      `## GC-12: Graph Stats Summary\n\n### Entity Coverage\n\n| Type | Records | With Edges | Coverage |\n| ---- | ------- | ---------- | -------- |\n${entityTable}\n\n**Total**: ${totalRecords} records, ${totalConnected} connected (${totalRecords > 0 ? ((totalConnected / totalRecords) * 100).toFixed(1) : 0}%)\n\n### Edge Estimates\n\n| Relationship Type | Est. Edges |\n| ----------------- | ---------- |\n${edgeTable}\n\n**Total estimated edges**: ${totalEdges}\n`
+    )
   }
 
   // ── Build Markdown Report ──────────────────────────────────────────────
@@ -792,10 +1142,10 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
   const today = new Date()
   const dateStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`
 
-  const errors = results.filter(r => r.status === 'FAIL' && r.severity === 'ERROR').length
-  const warnings = results.filter(r => r.status === 'FAIL' && r.severity === 'WARNING').length
-  const info = results.filter(r => r.status === 'FAIL' && r.severity === 'INFO').length
-  const passed = results.filter(r => r.status === 'PASS').length
+  const errors = results.filter((r) => r.status === 'FAIL' && r.severity === 'ERROR').length
+  const warnings = results.filter((r) => r.status === 'FAIL' && r.severity === 'WARNING').length
+  const info = results.filter((r) => r.status === 'FAIL' && r.severity === 'INFO').length
+  const passed = results.filter((r) => r.status === 'PASS').length
 
   const markdownReport = [
     `# Graph Consistency Report — ${dateStr}`,
@@ -805,7 +1155,10 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
     `- **Checks run**: ${results.length}`,
     `- **Errors**: ${errors} | **Warnings**: ${warnings} | **Info**: ${info} | **Passed**: ${passed}`,
     '',
-    ...results.map(r => `- **${r.id}** ${r.description}: ${r.status === 'PASS' ? 'PASS' : `${r.severity} (${r.findings.length} findings)`}`),
+    ...results.map(
+      (r) =>
+        `- **${r.id}** ${r.description}: ${r.status === 'PASS' ? 'PASS' : `${r.severity} (${r.findings.length} findings)`}`
+    ),
     '',
     ...mdSections,
   ].join('\n')

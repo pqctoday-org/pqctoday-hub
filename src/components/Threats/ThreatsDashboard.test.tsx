@@ -120,7 +120,7 @@ describe('ThreatsDashboard', () => {
       </MemoryRouter>
     )
     expect(screen.getByText('Quantum Threats')).toBeInTheDocument()
-    expect(screen.getByText(/Detailed analysis of quantum threats/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Detailed analysis of quantum threats/)[0]).toBeInTheDocument()
   })
 
   it('renders the table with data', () => {

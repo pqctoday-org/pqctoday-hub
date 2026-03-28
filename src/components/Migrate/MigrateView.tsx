@@ -13,11 +13,11 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Search,
   X,
-  ArrowRightLeft,
   ChevronDown,
   ChevronUp,
   PackageSearch,
   EyeOff,
+  ArrowRightLeft,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -34,6 +34,8 @@ import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
 import { Button } from '../ui/button'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
+import { ComparisonPanel } from './ComparisonPanel'
+import { StickyCompareBar } from './StickyCompareBar'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -96,8 +98,38 @@ export const MigrateView: React.FC = () => {
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
 
+  // Comparison state — separate from "My Products" workflow selection
+  const MAX_COMPARE = 3
+  const [compareKeys, setCompareKeys] = useState<string[]>([])
+  const [showComparisonPanel, setShowComparisonPanel] = useState(false)
+  const comparisonPanelRef = useRef<HTMLDivElement>(null)
+
+  const handleToggleCompare = useCallback((key: string) => {
+    setCompareKeys((prev) => {
+      if (prev.includes(key)) return prev.filter((k) => k !== key)
+      if (prev.length >= MAX_COMPARE) return prev
+      return [...prev, key]
+    })
+  }, [])
+
+  const maxCompareReached = compareKeys.length >= MAX_COMPARE
+  const compareSet = useMemo(() => new Set(compareKeys), [compareKeys])
+
+  const comparisonProducts = useMemo(
+    () =>
+      compareKeys
+        .map((key) => {
+          const [name] = key.split('::')
+          return softwareData.find((s) => s.softwareName === name)
+        })
+        .filter((s): s is SoftwareItem => !!s),
+    [compareKeys] // softwareData is a module-level constant — safe to exclude
+  )
+
   // Local state for flat-mode filters — initialized from URL params for deep linking
-  const [flatCategoryFilter, setFlatCategoryFilter] = useState(() => searchParams.get('cat') ?? 'All')
+  const [flatCategoryFilter, setFlatCategoryFilter] = useState(
+    () => searchParams.get('cat') ?? 'All'
+  )
   const [vendorFilter, setVendorFilter] = useState(() => searchParams.get('vendor') ?? 'All')
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
@@ -217,7 +249,8 @@ export const MigrateView: React.FC = () => {
   const urlLayerParam = searchParams.get('layer')
   const urlSubcatParam = searchParams.get('subcat')
   const urlModeParam = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
-  const effectiveLayer = urlLayerParam && LAYERS.some((l) => l.id === urlLayerParam) ? urlLayerParam : activeLayer
+  const effectiveLayer =
+    urlLayerParam && LAYERS.some((l) => l.id === urlLayerParam) ? urlLayerParam : activeLayer
   const effectiveSubCategory = urlSubcatParam ?? activeSubCategory
   const effectiveViewMode = urlModeParam ?? viewMode
 
@@ -225,6 +258,7 @@ export const MigrateView: React.FC = () => {
   const activeTab = effectiveSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
+  const isStackAllView = effectiveViewMode === 'stack' && activeInfrastructureLayer === 'All'
 
   // Fire a history event when the product selection changes meaningfully (debounced)
   const prevProductCountRef = useRef(myProducts.length)
@@ -535,7 +569,8 @@ export const MigrateView: React.FC = () => {
   // Visible product count for flat modes
   // When a search is active, hidden items are surfaced (search bypasses hide filter), so count all matches
   const flatVisibleCount = useMemo(() => {
-    const items: SoftwareItem[] = effectiveViewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
+    const items: SoftwareItem[] =
+      effectiveViewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
     if (filterText) return items.length
     return hiddenSet.size > 0
       ? items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
@@ -741,7 +776,13 @@ export const MigrateView: React.FC = () => {
 
         {/* Sort — cards mode + always on mobile */}
         <div className={effectiveViewMode !== 'cards' ? 'md:hidden' : ''}>
-          <MigrateSortControl value={sortBy} onChange={(s) => { setSortBy(s); syncFiltersToUrl({ sort: s }) }} />
+          <MigrateSortControl
+            value={sortBy}
+            onChange={(s) => {
+              setSortBy(s)
+              syncFiltersToUrl({ sort: s })
+            }}
+          />
         </div>
 
         {/* Restore hidden — when any products are hidden */}
@@ -759,12 +800,20 @@ export const MigrateView: React.FC = () => {
 
         {/* View toggle — desktop only (mobile always shows cards) */}
         <div className="hidden md:block">
-          <MigrateViewToggle mode={effectiveViewMode} onChange={(m) => { setViewMode(m); syncFiltersToUrl({ mode: m }) }} />
+          <MigrateViewToggle
+            mode={effectiveViewMode}
+            onChange={(m) => {
+              setViewMode(m)
+              syncFiltersToUrl({ mode: m })
+            }}
+          />
         </div>
       </div>
 
       {/* Results count — flat modes + always on mobile */}
-      <p className={`text-xs text-muted-foreground ${effectiveViewMode === 'stack' ? 'md:hidden' : ''}`}>
+      <p
+        className={`text-xs text-muted-foreground ${effectiveViewMode === 'stack' ? 'md:hidden' : ''}`}
+      >
         {flatVisibleCount === softwareData.length ? (
           <>
             {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
@@ -789,6 +838,9 @@ export const MigrateView: React.FC = () => {
             onHideProduct={hideProduct}
             selectedProducts={myProductsSet}
             onToggleProduct={toggleMyProduct}
+            compareProducts={compareSet}
+            onToggleCompare={handleToggleCompare}
+            maxCompareReached={maxCompareReached}
           />
         </div>
 
@@ -824,6 +876,9 @@ export const MigrateView: React.FC = () => {
                       onHideProduct={hideProduct}
                       selectedProducts={myProductsSet}
                       onToggleProduct={toggleMyProduct}
+                      compareProducts={compareSet}
+                      onToggleCompare={handleToggleCompare}
+                      maxCompareReached={maxCompareReached}
                     />
                   ) : (
                     <EmptyState
@@ -843,6 +898,9 @@ export const MigrateView: React.FC = () => {
               onHideProduct={hideProduct}
               selectedProducts={myProductsSet}
               onToggleProduct={toggleMyProduct}
+              compareProducts={compareSet}
+              onToggleCompare={handleToggleCompare}
+              maxCompareReached={maxCompareReached}
             />
           )}
 
@@ -856,6 +914,9 @@ export const MigrateView: React.FC = () => {
                 onHideProduct={hideProduct}
                 selectedProducts={myProductsSet}
                 onToggleProduct={toggleMyProduct}
+                compareProducts={compareSet}
+                onToggleCompare={handleToggleCompare}
+                maxCompareReached={maxCompareReached}
               />
             ) : (
               <EmptyState
@@ -864,7 +925,38 @@ export const MigrateView: React.FC = () => {
               />
             ))}
         </div>
+
+        {/* Comparison panel — shown inline when triggered from sticky bar */}
+        {showComparisonPanel && comparisonProducts.length >= 2 && (
+          <div ref={comparisonPanelRef} className="mt-4 pb-20">
+            <ComparisonPanel
+              products={comparisonProducts}
+              onClose={() => setShowComparisonPanel(false)}
+            />
+          </div>
+        )}
       </div>
+
+      {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
+      <StickyCompareBar
+        compareKeys={compareKeys}
+        onRemove={handleToggleCompare}
+        onClearAll={() => {
+          setCompareKeys([])
+          setShowComparisonPanel(false)
+        }}
+        onCompare={() => {
+          setShowComparisonPanel(true)
+          requestAnimationFrame(() =>
+            comparisonPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          )
+        }}
+        showBrowseHint={isStackAllView}
+        onBrowseAll={() => {
+          setViewMode('table')
+          syncFiltersToUrl({ mode: 'table' })
+        }}
+      />
     </div>
   )
 }

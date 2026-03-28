@@ -12,6 +12,29 @@ import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
 
+/**
+ * Provenance chain for a RAG chunk — enables tracing any answer back to its source.
+ * Populated at generation time; consumed by citation verification and debugging tools.
+ */
+interface RAGChunkProvenance {
+  /** Filename of the CSV that produced this chunk (e.g. "library_03272026.csv") */
+  csvFile?: string
+  /** 1-indexed row in that CSV (matches spreadsheet row numbers) */
+  csvRow?: number
+  /** Enrichment markdown file supplying additional dimensions (library / timeline / threats) */
+  enrichmentFile?: string
+  /** Relative path to source document on disk (e.g. "public/library/FIPS_203.pdf") */
+  sourceDocFile?: string
+  /** ISO date string derived from the source CSV filename date tag */
+  lastUpdated?: string
+  /**
+   * 3-5 key passages (<=200 chars each) extracted from the source document.
+   * Selected by TF-IDF scoring; ordered by document position (char_offset).
+   * Enables tracing any claim back to a specific passage in the source.
+   */
+  sourcePassages?: string[]
+}
+
 interface RAGChunk {
   id: string
   source: string
@@ -21,15 +44,44 @@ interface RAGChunk {
   metadata: Record<string, string>
   deepLink?: string
   priority?: number
+  provenance?: RAGChunkProvenance
 }
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data')
+const SCRIPTS_DIR = path.join(process.cwd(), 'scripts')
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data')
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'rag-corpus.json')
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Load the latest source-passages-*.json produced by extract-source-passages.py.
+ * Returns a Map<refId, string[]> of passage texts, or an empty map if not found.
+ */
+function loadSourcePassages(): Map<string, string[]> {
+  const files = fs
+    .readdirSync(SCRIPTS_DIR)
+    .filter((f) => f.startsWith('source-passages-') && f.endsWith('.json'))
+    .sort()
+    .reverse()
+  if (files.length === 0) return new Map()
+  try {
+    const raw = fs.readFileSync(path.join(SCRIPTS_DIR, files[0]), 'utf-8')
+    const data = JSON.parse(raw) as { passages?: Record<string, { text: string }[]> }
+    const map = new Map<string, string[]>()
+    for (const [refId, passages] of Object.entries(data.passages ?? {})) {
+      map.set(
+        refId,
+        passages.map((p) => p.text)
+      )
+    }
+    return map
+  } catch {
+    return new Map()
+  }
+}
 
 /** Find the latest versioned CSV file matching a prefix pattern.
  *  Handles revision suffixes: prefix_MMDDYYYY.csv, prefix_MMDDYYYY_r1.csv, etc.
@@ -48,6 +100,18 @@ function findLatestCSV(prefix: string): string | null {
 
   withDates.sort((a, b) => b.date - a.date || b.rev - a.rev)
   return path.join(DATA_DIR, withDates[0].file)
+}
+
+/**
+ * Extract ISO date string from a versioned CSV filename.
+ * "library_03272026.csv" → "2026-03-27"
+ * Returns undefined if no date tag found.
+ */
+function csvFileDate(filePath: string): string | undefined {
+  const m = path.basename(filePath).match(/(\d{2})(\d{2})(\d{4})(?:_r\d+)?\.csv$/)
+  if (!m) return undefined
+  const [, mm, dd, yyyy] = m
+  return `${yyyy}-${mm}-${dd}`
 }
 
 /** Read and parse a CSV file. Returns array of string arrays (rows). */
@@ -130,9 +194,13 @@ export function getLibraryPriority(refId: string, docType: string, authors: stri
   }
 
   // Tier 9 — Final RFCs (not drafts)
-  // ref IDs: "RFC-9629", "RFC 8446" (hyphen and space forms)
+  // ref IDs: "RFC-9629", "RFC 8446", "IETF RFC 8391" (all forms)
   if (
-    (r.startsWith('RFC-') || r.startsWith('RFC ') || t === 'RFC' || t.includes('REQUEST FOR COMMENTS')) &&
+    (r.startsWith('RFC-') ||
+      r.startsWith('RFC ') ||
+      r.startsWith('IETF RFC ') ||
+      t === 'RFC' ||
+      t.includes('REQUEST FOR COMMENTS')) &&
     !r.includes('DRAFT') &&
     !t.includes('DRAFT')
   ) {
@@ -148,7 +216,7 @@ export function getLibraryPriority(refId: string, docType: string, authors: stri
     r.startsWith('NIST IR ') ||
     r.startsWith('NIST CSWP ') ||
     r.startsWith('NIST NCCOE') ||
-    r.startsWith('NIST NCCoE') ||
+    r.startsWith('NIST NCCOE') ||
     t.includes('NIST SPECIAL PUBLICATION') ||
     t.includes('NIST INTERNAL REPORT') ||
     t.includes('NIST IR') ||
@@ -161,38 +229,61 @@ export function getLibraryPriority(refId: string, docType: string, authors: stri
     r.startsWith('NSA ') ||
     r.startsWith('CISA-') ||
     r.startsWith('CNSA-') ||
-    (a.includes('NSA') && !r.startsWith('RFC-') && !r.startsWith('RFC ')) ||
-    (a.includes('CISA') && !r.startsWith('RFC-') && !r.startsWith('RFC '))
+    r.startsWith('US-NSA-') ||
+    (a.includes('NSA') && !r.startsWith('RFC') && !r.startsWith('IETF')) ||
+    (a.includes('CISA') && !r.startsWith('RFC') && !r.startsWith('IETF'))
   ) {
     return 1.2
   }
 
   // Tier 7 — Regional government standards & mandates
+  // Handles both "ANSSI-PQC-Position-2022" (hyphen) and "ANSSI PQC Position Paper" (space)
   if (
     r.startsWith('ANSSI-') ||
+    r.startsWith('ANSSI ') ||
     r.startsWith('BSI-') ||
+    r.startsWith('BSI ') ||
+    r.startsWith('BSI TR') ||
     r.startsWith('ASD-') ||
+    r.startsWith('AU-ASD-') ||
     r.startsWith('CCCS-') ||
     r.startsWith('NCSC-') ||
     r.startsWith('CRYPTREC-') ||
     r.startsWith('EU-') ||
     r.startsWith('ENISA-') ||
     r.startsWith('KPQC-') ||
-    r.startsWith('OSCCA-')
+    r.startsWith('OSCCA-') ||
+    r.startsWith('SG-MAS-') ||
+    r.startsWith('UK NCSC') ||
+    r.startsWith('UK-NCSC') ||
+    r.startsWith('AUSTRALIA ') ||
+    a.includes('ANSSI') ||
+    a.includes('BSI GERMANY') ||
+    a.includes('BSI;') ||
+    (a.includes('ASD') && a.includes('AUSTRALIA')) ||
+    a.includes('UK NCSC') ||
+    a.includes('CCCS') ||
+    a.includes('CRYPTREC')
   ) {
     return 1.15
   }
 
   // Tier 6 — International standards bodies (ETSI, ISO/IEC, OASIS, 3GPP, ITU)
+  // Handles "ETSI-TS-104-015" (hyphen) and "ETSI TS 103 744" (space) and "ISO/IEC 14888-4" (slash)
   if (
     r.startsWith('ETSI-') ||
+    r.startsWith('ETSI ') ||
     r.startsWith('ISO-') ||
+    r.startsWith('ISO/IEC') ||
+    r.startsWith('ISO ') ||
     r.startsWith('IEC-') ||
     r.startsWith('OASIS-') ||
     r.startsWith('3GPP-') ||
     r.startsWith('ITU-') ||
     t.includes('EUROPEAN STANDARD') ||
-    t.includes('INTERNATIONAL STANDARD')
+    t.includes('INTERNATIONAL STANDARD') ||
+    a.includes('ISO/IEC JTC') ||
+    a.includes('ETSI')
   ) {
     return 1.1
   }
@@ -342,9 +433,21 @@ function processTimeline(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  const csvFile = path.basename(file)
+  const lastUpdated = csvFileDate(file)
 
   // Load timeline enrichments once for all rows
   const enrichLookup = loadEnrichmentFields('timeline')
+  const enrichmentFileName = (() => {
+    const dir = path.join(DATA_DIR, 'doc-enrichments')
+    if (!fs.existsSync(dir)) return undefined
+    const f = fs
+      .readdirSync(dir)
+      .filter((n) => n.startsWith('timeline_doc_enrichments_') && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+    return f ?? undefined
+  })()
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
@@ -434,6 +537,12 @@ function processTimeline(): RAGChunk[] {
         ...enrichMetadata,
       },
       deepLink,
+      provenance: {
+        csvFile,
+        csvRow: i + 1,
+        ...(enrichmentFileName ? { enrichmentFile: enrichmentFileName } : {}),
+        ...(lastUpdated ? { lastUpdated } : {}),
+      },
     })
   }
 
@@ -446,9 +555,22 @@ function processLibrary(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  const csvFile = path.basename(file)
+  const lastUpdated = csvFileDate(file)
 
   // Load merged enrichment fields once for all library documents
   const enrichLookup = loadEnrichmentFields('library')
+  const passagesMap = loadSourcePassages()
+  const enrichmentFileName = (() => {
+    const dir = path.join(DATA_DIR, 'doc-enrichments')
+    if (!fs.existsSync(dir)) return undefined
+    const f = fs
+      .readdirSync(dir)
+      .filter((n) => n.startsWith('library_doc_enrichments_') && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+    return f ?? undefined
+  })()
 
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
@@ -464,14 +586,21 @@ function processLibrary(): RAGChunk[] {
       description,
       docType,
       industries,
-      authors,
+      authors, // col 10: dependencies
       ,
       regionScope,
       algorithmFamily,
-      securityLevels,
+      securityLevels, // col 14: ProtocolOrToolImpact
+      // col 15: ToolchainSupport
       ,
       ,
-      migrationUrgency,
+      migrationUrgency, // col 17: change_status
+      // col 18: manual_category
+      // col 19: downloadable
+      ,
+      ,
+      ,
+      localFile, // col 20: local_file
     ] = row
 
     const contentLines = [
@@ -528,6 +657,16 @@ function processLibrary(): RAGChunk[] {
       },
       ...(sanitize(refId) ? { deepLink: `/library?ref=${encodeParam(refId)}` } : {}),
       priority: getLibraryPriority(sanitize(refId), sanitize(docType), sanitize(authors)),
+      provenance: {
+        csvFile,
+        csvRow: i + 1,
+        ...(enrichmentFileName ? { enrichmentFile: enrichmentFileName } : {}),
+        ...(sanitize(localFile) ? { sourceDocFile: sanitize(localFile) } : {}),
+        ...(lastUpdated ? { lastUpdated } : {}),
+        ...(passagesMap.has(sanitize(refId))
+          ? { sourcePassages: passagesMap.get(sanitize(refId)) }
+          : {}),
+      },
     })
   }
 
@@ -2239,6 +2378,14 @@ function processDocumentEnrichments(): RAGChunk[] {
     const enrichLookup = loadEnrichmentFields(collection)
     if (enrichLookup.size === 0) continue
 
+    // Resolve the latest enrichment file for provenance (entries may span multiple files,
+    // but the latest is the canonical reference for citation purposes)
+    const latestEnrichFile = fs
+      .readdirSync(enrichmentsDir)
+      .filter((n) => n.startsWith(`${collection}_doc_enrichments_`) && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+
     for (const [refId, fields] of enrichLookup) {
       const title = fields['Title'] || refId
       if (title === '---') continue
@@ -2286,7 +2433,11 @@ function processDocumentEnrichments(): RAGChunk[] {
       // (doc type not available here, but ref ID alone covers most cases)
       const enrichPriority =
         collection === 'library'
-          ? getLibraryPriority(sanitize(refId), fields['Document Status'] ?? '', fields['Authors'] ?? '')
+          ? getLibraryPriority(
+              sanitize(refId),
+              fields['Document Status'] ?? '',
+              fields['Authors'] ?? ''
+            )
           : undefined
 
       chunks.push({
@@ -2297,6 +2448,9 @@ function processDocumentEnrichments(): RAGChunk[] {
         category: 'document-enrichment',
         metadata: { refId: sanitize(refId), collection },
         ...(enrichPriority !== undefined ? { priority: enrichPriority } : {}),
+        provenance: {
+          ...(latestEnrichFile ? { enrichmentFile: latestEnrichFile } : {}),
+        },
         ...(collection === 'library' && refId
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
@@ -2639,14 +2793,20 @@ function processModuleQA(): RAGChunk[] {
 
   if (files.length === 0) return []
 
-  const csvPath = path.join(qaDir, files[0])
+  const csvFileName = files[0]
+  const csvPath = path.join(qaDir, csvFileName)
   const raw = fs.readFileSync(csvPath, 'utf-8')
   const parsed = Papa.parse(raw, { header: true, skipEmptyLines: true })
   const rows = parsed.data as Array<Record<string, string>>
+  const qaLastUpdated =
+    csvFileDate(csvFileName.replace('.csv', '') + '.csv') ??
+    csvFileName.match(/(\d{4}-\d{2}-\d{2})/)?.[1]
 
   const chunks: RAGChunk[] = []
+  let rowIdx = 1 // 1-indexed (header = row 1)
 
   for (const r of rows) {
+    rowIdx++
     const questionId = r.question_id?.trim()
     const moduleId = r.module_id?.trim()
     const question = r.question?.trim()
@@ -2663,6 +2823,9 @@ function processModuleQA(): RAGChunk[] {
       r.compliance_refs ? `Compliance: ${r.compliance_refs}` : '',
     ].filter(Boolean)
 
+    // source_citations field carries programmatic provenance set by generate-module-qa-ollama.py
+    const sourceCitations = r.source_citations?.trim()
+
     chunks.push({
       id: `qa-${questionId}`,
       source: 'module-qa',
@@ -2674,8 +2837,14 @@ function processModuleQA(): RAGChunk[] {
         difficulty: r.difficulty || '',
         roles: r.applicable_roles || '',
         contentType: r.content_type || '',
+        ...(sourceCitations ? { sourceCitations } : {}),
       },
       deepLink: moduleId ? `/learn/${moduleId}` : undefined,
+      provenance: {
+        csvFile: csvFileName,
+        csvRow: rowIdx,
+        ...(qaLastUpdated ? { lastUpdated: qaLastUpdated } : {}),
+      },
     })
   }
 

@@ -31,6 +31,7 @@ import { AchievementToast } from '../ui/AchievementToast'
 import { PhaseCompletionToast } from '../ui/PhaseCompletionToast'
 
 import { GuidedTour } from '../common/GuidedTour'
+import { Breadcrumb } from '../common/Breadcrumb'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { PageAccuracyFeedback } from '../ui/PageAccuracyFeedback'
@@ -409,6 +410,7 @@ export const MainLayout = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.3 }}
           >
+            <Breadcrumb />
             <Outlet />
           </motion.div>
         </React.Suspense>
@@ -448,11 +450,14 @@ export const MainLayout = () => {
       {/* First-visit disclaimer — must acknowledge before using the app */}
       <DisclaimerModal />
 
-      {/* Achievement Toast Notification */}
-      <AchievementToast />
+      {/* Toast notifications — aria-live so screen readers announce them */}
+      <div aria-live="polite" aria-label="Notifications" aria-atomic="false">
+        {/* Achievement Toast Notification */}
+        <AchievementToast />
 
-      {/* Phase Completion Toast */}
-      <PhaseCompletionToast />
+        {/* Phase Completion Toast */}
+        <PhaseCompletionToast />
+      </div>
 
       {/* First-visit Guided Tour */}
       <GuidedTour />

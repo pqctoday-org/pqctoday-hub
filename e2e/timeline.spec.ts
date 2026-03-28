@@ -69,7 +69,7 @@ test.describe('Timeline View', () => {
 
   test('renders deadlines as milestones (flags)', async ({ page }) => {
     // Check for the presence of Flag icons, which indicate milestones (including Deadlines)
-    const flags = page.locator('svg.lucide-flag')
+    const flags = page.getByTestId('milestone-flag')
     await expect(flags.first()).toBeVisible()
   })
 
@@ -92,7 +92,10 @@ test.describe('Timeline View', () => {
 
   test('country selector updates view', async ({ page }) => {
     // Wait for the country selector button to be visible (it contains "Country" text by default)
-    const countryButton = page.getByRole('button').filter({ hasText: 'Country' })
+    const countryButton = page
+      .locator('div[data-testid="desktop-view-container"]')
+      .getByRole('button')
+      .filter({ hasText: 'Country' })
     await countryButton.waitFor({ state: 'visible', timeout: 10000 })
 
     // Select a specific country
@@ -111,7 +114,20 @@ test.describe('Timeline View', () => {
   test('displays new DoD memorandum entry for US', async ({ page }) => {
     // Wait for the timeline to load and show US
     await expect(page.getByText('United States').first()).toBeVisible({ timeout: 15000 })
-    
+
+    // Select US to open the Document Table
+    const countryButton = page
+      .locator('div[data-testid="desktop-view-container"]')
+      .getByRole('button')
+      .filter({ hasText: 'Country' })
+    await countryButton.click()
+    await page.getByRole('listbox').waitFor({ state: 'visible' })
+    await page.getByRole('option', { name: 'United States', exact: true }).click()
+
+    // Debug check: what is rendered in the document table?
+    const documentTableHtml = await page.locator('table').allInnerTexts()
+    console.log('Document Table contents:', documentTableHtml)
+
     // Check for the new entry we added during the audit
     await expect(page.getByText('DoD PQC Migration Memorandum').first()).toBeVisible()
   })

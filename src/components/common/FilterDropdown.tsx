@@ -116,12 +116,17 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   // Close dropdown on scroll so the portal menu doesn't float away from its anchor.
   // Skip for searchable dropdowns — keyboard open on mobile triggers a scroll event
-  // which would immediately close the menu before the user can type.
+  // Small delay prevents immediate close if Playwright or focus causes an automatic scroll.
   useEffect(() => {
     if (!isOpen || searchable) return
     const handleScroll = () => setIsOpen(false)
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    return () => window.removeEventListener('scroll', handleScroll)
+    const timeoutId = setTimeout(() => {
+      window.addEventListener('scroll', handleScroll, { passive: true })
+    }, 100)
+    return () => {
+      clearTimeout(timeoutId)
+      window.removeEventListener('scroll', handleScroll)
+    }
   }, [isOpen, searchable])
 
   // Reset search and focus input when dropdown opens

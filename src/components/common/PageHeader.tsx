@@ -76,13 +76,18 @@ export const PageHeader = ({
         <Icon className="w-5 h-5 md:w-9 md:h-9 text-primary shrink-0" aria-hidden="true" />
         {title}
       </h2>
-      <p className="hidden lg:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
+      {/* Mobile: compact single-line description */}
+      <p className="md:hidden text-xs text-muted-foreground max-w-xl mx-auto mb-2 line-clamp-2 px-4">
+        {description}
+      </p>
+      {/* Tablet+: full description */}
+      <p className="hidden md:block text-sm md:text-base text-muted-foreground max-w-2xl mx-auto mb-4">
         {description}
       </p>
 
-      {/* Mobile/tablet action row — visible below lg */}
+      {/* Mobile-only action row — 3-dot menu on small screens */}
       {hasActions && (
-        <div className="flex lg:hidden justify-center items-center gap-2 mb-2">
+        <div className="flex md:hidden justify-center items-center gap-2 mb-2">
           {endorseUrl && (
             <EndorseButton
               endorseUrl={endorseUrl}
@@ -138,9 +143,9 @@ export const PageHeader = ({
         </div>
       )}
 
-      {/* Desktop action row — visible at lg+ */}
+      {/* Tablet + desktop action row — visible at md+ */}
       {hasActions && (
-        <div className="hidden lg:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
+        <div className="hidden md:flex justify-center items-center gap-3 text-[10px] md:text-xs text-muted-foreground font-mono">
           {dataSource && <p>{dataSource}</p>}
           {viewType && <SourcesButton viewType={viewType} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}

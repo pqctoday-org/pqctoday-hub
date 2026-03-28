@@ -67,6 +67,10 @@ test.describe('5G SUCI Validation', () => {
     // 1. Navigate
     await page.goto('/learn/5g-security')
 
+    await expect(
+      page.getByRole('heading', { name: '5G Security Architecture', exact: true })
+    ).toBeVisible({ timeout: 30000 })
+
     // 2. Inject Test Vectors via Console
     await page.evaluate((vectors) => {
       // @ts-ignore
@@ -77,15 +81,7 @@ test.describe('5G SUCI Validation', () => {
     }, TEST_VECTORS)
 
     // Wait for Workshop button to be ready before clicking
-    try {
-      await expect(page.locator('button:has-text("Workshop")')).toBeVisible({ timeout: 10000 })
-    } catch(e) {
-      const buttons = await page.evaluate(() => Array.from(document.querySelectorAll('button')).map(b => b.textContent));
-      console.log('Available buttons:', buttons);
-      const text = await page.evaluate(() => document.body.innerText);
-      console.log('Body Text:', text.slice(0, 1000));
-      throw e;
-    }
+    await expect(page.locator('button:has-text("Workshop")')).toBeVisible({ timeout: 15000 })
     await page.locator('button:has-text("Workshop")').click()
     // 3. Select Profile A
     await page.click('button[data-testid="profile-a-btn"]')

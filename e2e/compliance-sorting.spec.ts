@@ -16,8 +16,13 @@ test.describe('Compliance Table Sorting', () => {
     // Go to compliance page
     await page.goto('/compliance')
     // Switch to Cert Records tab where the table lives
-    const allTab = page.getByText('Cert Records')
-    await expect(allTab).toBeVisible({ timeout: 10000 })
+    const allTab = page.getByRole('tab', { name: 'Cert Records' })
+    try {
+      await expect(allTab).toBeVisible({ timeout: 10000 })
+    } catch (e) {
+      console.log('DOM dump:', await page.content())
+      throw e
+    }
     await allTab.click({ force: true })
 
     // Wait for table to load
@@ -48,7 +53,7 @@ test.describe('Compliance Table Sorting', () => {
   test('should sort by Date', async ({ page }) => {
     await page.goto('/compliance')
     // Switch to table tab
-    const allTab = page.getByText('Cert Records')
+    const allTab = page.getByRole('tab', { name: 'Cert Records' })
     await expect(allTab).toBeVisible({ timeout: 10000 })
     await allTab.click({ force: true })
     await page.waitForSelector('table tbody tr')

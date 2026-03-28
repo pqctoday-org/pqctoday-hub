@@ -129,7 +129,7 @@ export const TimelineView = () => {
 
     // If a region is selected, only show countries in that region
     let countries: string[]
-    if (regionFilter !== 'All') {
+    if (regionFilter !== 'All' && regionFilter !== 'global') {
       const regionCountries = new Set(
         REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP] ?? []
       )

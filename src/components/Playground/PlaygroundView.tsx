@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { InteractivePlayground } from './InteractivePlayground'
-import { MobilePlaygroundView } from './MobilePlaygroundView'
+import { MobilePlaygroundOps } from './MobilePlaygroundOps'
 import { FlaskConical } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 
@@ -14,9 +14,9 @@ export const PlaygroundView = () => {
         shareTitle="PQC Playground — Test ML-KEM & ML-DSA in Your Browser"
         shareText="Run real post-quantum cryptographic operations in your browser — key generation, encapsulation, signing with ML-KEM and ML-DSA via WASM."
       />
-      {/* Mobile: informational view */}
+      {/* Mobile: reduced interactive experience (KEM + Sign) */}
       <div className="lg:hidden">
-        <MobilePlaygroundView />
+        <MobilePlaygroundOps />
       </div>
       {/* Desktop: full interactive playground */}
       <div className="hidden lg:block">

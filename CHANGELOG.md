@@ -4,6 +4,38 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.59.0] - 2026-03-28
+
+### Added
+
+- **Bookmarks system**: Save and manage Library documents and Migrate products for quick access. Bookmark icons in `LibraryTreeTable` and `SoftwareTable`; all bookmarks accessible via a new **Bookmarks tab** in the Right Panel. Export bookmarks as JSON or CSV. Persisted in localStorage via `useBookmarkStore`. [view:/library] [view:/migrate]
+- **Product comparison panel** (`Migrate`): Compare up to 3 catalog products side-by-side. Scale icon in every product row/card queues products; sticky bottom bar shows the queue with remove chips and a "Compare" button that scrolls to an inline comparison table. Works in Stack, Cards, and Table views. [view:/migrate]
+- **Breadcrumb navigation**: Auto-generated breadcrumb trail for nested routes (e.g., `/learn/quantum-basics`). Rendered above page content in `MainLayout`; hidden at top-level routes. [infra]
+- **Mobile Playground** (`MobilePlaygroundOps`): Replaces the old static `MobilePlaygroundView` with an interactive ML-KEM + ML-DSA experience on mobile — real WASM-powered KEM encapsulation/decapsulation and signing/verification on small screens. [view:/playground]
+- **CI: content-integrity job** (`ci.yml`): New `content-integrity` workflow job runs after `build-and-test`. Executes `validate-data-integrity.ts` and gates on ERROR-severity findings (QA-F1, QA-F3, QA-F6, N23-C, N23-D). Separate steps for content accuracy, enrichment quality, and graph consistency. Uploads `reports/integrity.json` as a CI artifact. [infra:ci]
+
+### Changed
+
+- **PageHeader mobile description**: Description `<p>` is now visible at `md` breakpoint (was `lg`). A compact single-line `line-clamp-2` version is shown on mobile (`md:hidden`); full description shown at `md:block`. Action row breakpoints updated to match (`lg` → `md`). [infra]
+- **FilterDropdown scroll-close delay**: Added 100ms debounce before attaching the window scroll listener. Prevents the dropdown from immediately closing in environments (Playwright, mobile keyboard open) where a scroll event fires synchronously on open. [infra]
+- **Timeline regionFilter**: `'global'` region value now treated the same as `'All'` — no country-level filtering applied when the region is `'global'`. [view:/timeline]
+- **Toast container ARIA**: Removed `role="region"` from the toast notification wrapper (`MainLayout`); `aria-live="polite"` alone is correct for non-landmark announcement regions. [infra:a11y]
+- **`useRightPanelStore` version bump** (v1 → v2): Adds `'bookmarks'` as a valid `RightPanelTab`; existing persisted tab values remain valid. [infra]
+
+### Data
+
+- **Timeline CSV updated** (`timeline_03272026.csv`): Events refreshed with current status data. [data:timeline]
+- **Library CSV updated** (`library_03282026.csv`): Latest library records. [data:library]
+- **Compliance CSV updated** (`compliance_03282026.csv`): Updated compliance framework records. [data:compliance]
+- **Algorithm reference CSV added** (`pqc_complete_algorithm_reference_03282026.csv`): New comprehensive PQC algorithm reference dataset. [data]
+- **RAG corpus updated** (`public/data/rag-corpus.json`): Regenerated to reflect latest content and enrichments. [data]
+
+## [2.58.0] - 2026-03-28
+
+### Data
+
+- **Compliance framework CSV updated** (`compliance_03282026.csv`): Replaces `compliance_03212026.csv`. Corrected website URLs for 3 records: `DORA` → EIOPA primary DORA page; `ENISA` → enisa.europa.eu root; `BOI-PQC` → removed unstable CMS-hash PDF link. Confirmed `NIST` FIPS 206 draft status and `NIST-IR-8547` IPD URL remain accurate. [data:compliance]
+
 ## [2.57.0] - 2026-03-27
 
 ### Added

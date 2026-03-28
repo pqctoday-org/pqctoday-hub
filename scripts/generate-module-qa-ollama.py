@@ -1254,6 +1254,45 @@ def enrich_with_crossrefs(qa_row: dict, refs: dict, matchers: dict) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Phase 4.5: Programmatic source citations
+# ---------------------------------------------------------------------------
+
+def build_programmatic_citations(row: dict, module_id: str) -> str:
+    """Replace LLM-generated source_citations with deterministic, machine-readable ones.
+
+    Built entirely from the cross-reference columns populated in Phase 4
+    (library_refs, algorithm_refs, compliance_refs) — zero LLM involvement.
+
+    Format: pipe-delimited citation tokens
+      library:FIPS-203|library:NIST-IR-8547|algorithm:ML-KEM-768|module:pqc-101/rag-summary.md
+
+    This gives the provenance chain: answer → Q&A row → library ref_id → CSV row → source doc.
+    Phase 5.5 may append [FLAGGED: ...] to this string for verification failures.
+    """
+    citations: list[str] = []
+
+    # Library refs — highest authority, always list first
+    for lib_id in row.get('library_refs', '').split(';'):
+        if lib_id.strip():
+            citations.append(f'library:{lib_id.strip()}')
+
+    # Algorithm refs
+    for algo in row.get('algorithm_refs', '').split(';'):
+        if algo.strip():
+            citations.append(f'algorithm:{algo.strip()}')
+
+    # Compliance framework refs
+    for cref in row.get('compliance_refs', '').split(';'):
+        if cref.strip():
+            citations.append(f'compliance:{cref.strip()}')
+
+    # Module rag-summary — always present as the educational source
+    citations.append(f'module:{module_id}/rag-summary.md')
+
+    return '|'.join(citations)
+
+
+# ---------------------------------------------------------------------------
 # Phase 5: Assertion generation
 # ---------------------------------------------------------------------------
 
@@ -1560,6 +1599,9 @@ def main():
 
             # Phase 4: Cross-reference enrichment
             enrich_with_crossrefs(row, refs, matchers)
+
+            # Phase 4.5: Build programmatic source citations (replaces LLM-generated)
+            row['source_citations'] = build_programmatic_citations(row, module_id)
 
             # Phase 5: Generate consistency assertions
             row['consistency_assertions'] = generate_assertions(row)

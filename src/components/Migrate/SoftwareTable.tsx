@@ -14,6 +14,8 @@ import {
   CheckSquare,
   Square,
   Sparkles,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -23,6 +25,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 
 interface SoftwareTableProps {
@@ -34,6 +37,12 @@ interface SoftwareTableProps {
   selectedProducts?: Set<string>
   /** Toggle a product's "My Products" selection */
   onToggleProduct?: (key: string) => void
+  /** Keys of products added to the comparison panel */
+  compareProducts?: Set<string>
+  /** Toggle a product's compare selection */
+  onToggleCompare?: (key: string) => void
+  /** True when 3 compare slots are full */
+  maxCompareReached?: boolean
 }
 
 type SortDirection = 'asc' | 'desc' | null
@@ -46,7 +55,12 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   onHideProduct,
   selectedProducts,
   onToggleProduct,
+  compareProducts,
+  onToggleCompare,
+  maxCompareReached,
 }) => {
+  const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
+  const migrateBookmarkSet = useMemo(() => new Set(migrateBookmarks), [migrateBookmarks])
   const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
     defaultSort || { key: 'softwareName', direction: 'asc' }
@@ -105,7 +119,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   )
 
   const hasSelection = !!(selectedProducts && onToggleProduct)
-  const totalCols = hasSelection ? 9 : 8 // checkbox? + hide + expand + 6 data columns
+  const hasCompare = !!(compareProducts && onToggleCompare)
+  const totalCols = (hasSelection ? 1 : 0) + (hasCompare ? 1 : 0) + 9 // my? + compare? + hide + bookmark + expand + 6 data columns
 
   return (
     <div className="glass-panel overflow-hidden">
@@ -117,6 +132,14 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
           </caption>
           <thead>
             <tr className="border-b border-border bg-muted/20">
+              {hasCompare && (
+                <th
+                  scope="col"
+                  className="p-2 w-8 text-center text-xs text-muted-foreground font-medium"
+                >
+                  <span className="sr-only">Compare</span>⚖
+                </th>
+              )}
               {hasSelection && (
                 <th
                   scope="col"
@@ -127,6 +150,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
               )}
               <th scope="col" className="p-4 w-8">
                 <span className="sr-only">Hide</span>
+              </th>
+              <th scope="col" className="p-4 w-8">
+                <span className="sr-only">Bookmark</span>
               </th>
               <th scope="col" className="p-4 w-10">
                 <span className="sr-only">Expand</span>
@@ -171,6 +197,39 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     className="border-b border-border hover:bg-muted/50 transition-colors cursor-pointer"
                     onClick={() => toggleExpand(key)}
                   >
+                    {hasCompare && (
+                      <td className="p-2 w-8 text-center">
+                        <button
+                          type="button"
+                          aria-label={
+                            compareProducts!.has(key)
+                              ? 'Remove from comparison'
+                              : 'Add to comparison'
+                          }
+                          title={
+                            maxCompareReached && !compareProducts!.has(key)
+                              ? 'Max 3 reached'
+                              : undefined
+                          }
+                          disabled={maxCompareReached && !compareProducts!.has(key)}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onToggleCompare!(key)
+                          }}
+                          className={`p-1 rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+                            compareProducts!.has(key)
+                              ? 'text-secondary hover:text-secondary/80'
+                              : 'text-muted-foreground/40 hover:text-secondary'
+                          }`}
+                        >
+                          {compareProducts!.has(key) ? (
+                            <CheckSquare size={16} />
+                          ) : (
+                            <Square size={16} />
+                          )}
+                        </button>
+                      </td>
+                    )}
                     {hasSelection && (
                       <td className="p-2 w-8 text-center">
                         <button
@@ -212,6 +271,30 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                           <EyeOff size={14} />
                         </button>
                       )}
+                    </td>
+                    <td className="p-2 w-8">
+                      <button
+                        type="button"
+                        aria-label={
+                          migrateBookmarkSet.has(item.softwareName)
+                            ? `Remove ${item.softwareName} bookmark`
+                            : `Bookmark ${item.softwareName}`
+                        }
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleMigrateBookmark(item.softwareName)
+                        }}
+                        className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
+                      >
+                        {migrateBookmarkSet.has(item.softwareName) ? (
+                          <BookmarkCheck size={14} className="text-primary" />
+                        ) : (
+                          <Bookmark
+                            size={14}
+                            className="text-muted-foreground/40 hover:text-primary"
+                          />
+                        )}
+                      </button>
                     </td>
                     <td className="p-4">
                       <button

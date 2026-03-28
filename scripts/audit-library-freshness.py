@@ -7,7 +7,8 @@ Checks each library CSV record for freshness by querying source APIs
 and performs HTTP HEAD checks on remaining sources.
 
 Outputs:
-  - freshness-audit-MMDDYYYY.json  (structured results)
+  - freshness-audit-MMDDYYYY.json      (structured results)
+  - re-enrichment-queue.json           (records needing re-enrichment)
   - Console summary grouped by priority
 
 Usage:
@@ -15,6 +16,7 @@ Usage:
   python3 scripts/audit-library-freshness.py --dry-run      # preview classification only
   python3 scripts/audit-library-freshness.py --category ietf # check only one category
   python3 scripts/audit-library-freshness.py --limit 10      # limit per category
+  python3 scripts/audit-library-freshness.py --queue-only    # only generate re-enrichment queue
 """
 
 import csv
@@ -33,8 +35,23 @@ from urllib.request import Request, urlopen
 # ─── Constants ───────────────────────────────────────────────────────────────
 ROOT = Path(__file__).resolve().parent.parent
 DATA_DIR = ROOT / "src" / "data"
+ENRICHMENT_DIR = DATA_DIR / "doc-enrichments"
 OUTPUT_DIR = ROOT / "scripts"
 TODAY = datetime.now().strftime("%m%d%Y")
+
+# Re-enrichment trigger thresholds
+ENRICHMENT_MAX_AGE_DAYS = 90   # Flag if enrichment is older than this
+SKIP_LIST_RETRY_DAYS = 30      # Retry skip-list entries older than this
+
+# Known bad source sentinel strings (source quality gate — mirrors T1.1)
+BAD_SOURCE_SENTINELS = [
+    "page not found", "404", "site maintenance", "maintenance mode",
+    "access denied", "unavailable", "403 forbidden",
+]
+# Bad source file size heuristics
+BAD_SOURCE_MIN_CHARS = 100     # Extracted text must be >= this
+BAD_SOURCE_JS_STUB_SIZE = 5120  # File < 5KB and < 50 chars extracted → JS stub
+BAD_SOURCE_WORD_HTML_SIZE = 1_048_576  # File > 1MB and < 100 chars → Word HTML
 
 USER_AGENT = (
     "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
@@ -629,6 +646,301 @@ def check_other(rec):
     return result
 
 
+# ─── Re-enrichment Queue ─────────────────────────────────────────────────────
+def parse_date_from_filename(filename):
+    """Extract YYYY-MM-DD from a versioned filename like library_doc_enrichments_03262026.md."""
+    m = re.search(r"_(\d{2})(\d{2})(\d{4})", filename)
+    if m:
+        month, day, year = m.group(1), m.group(2), m.group(3)
+        return f"{year}-{month}-{day}"
+    return None
+
+
+def load_enriched_ref_ids():
+    """
+    Scan all enrichment MD files and return a dict:
+      { ref_id: { "file": "library_doc_enrichments_MMDDYYYY.md", "date": "YYYY-MM-DD" } }
+    Keeps the LATEST enrichment date for each ref_id across all files.
+    """
+    enriched = {}
+    if not ENRICHMENT_DIR.exists():
+        return enriched
+
+    for md_file in sorted(ENRICHMENT_DIR.glob("*_doc_enrichments_*.md")):
+        file_date = parse_date_from_filename(md_file.name)
+        if not file_date:
+            continue
+        try:
+            content = md_file.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        # Each section starts with "## REF_ID"
+        for m in re.finditer(r"^## (.+)$", content, re.MULTILINE):
+            ref_id = m.group(1).strip()
+            existing = enriched.get(ref_id)
+            if not existing or file_date > existing["date"]:
+                enriched[ref_id] = {"file": md_file.name, "date": file_date}
+
+    return enriched
+
+
+def load_skip_list(collection="library"):
+    """Load the skip-list JSON for a collection. Returns { url: { refId, reason, date } }."""
+    skip_path = ROOT / "public" / collection / "skip-list.json"
+    if not skip_path.exists():
+        return {}
+    try:
+        with open(skip_path) as f:
+            return json.load(f)
+    except (json.JSONDecodeError, OSError):
+        return {}
+
+
+def check_local_source_quality(local_file):
+    """
+    Check a local source file for known bad-source patterns.
+    Returns (is_bad: bool, reason: str).
+    Mirrors the T1.1 quality gate logic.
+    """
+    if not local_file:
+        return False, ""
+    path = ROOT / local_file
+    if not path.exists():
+        return False, ""
+
+    try:
+        file_size = path.stat().st_size
+        # Read first 2KB as text for sentinel checks
+        raw = path.read_bytes()
+        try:
+            text = raw[:2000].decode("utf-8", errors="replace").lower()
+        except Exception:
+            return False, ""
+
+        # Strip HTML tags for char count estimation
+        plain = re.sub(r"<[^>]+>", " ", text)
+        plain = re.sub(r"\s+", " ", plain).strip()
+
+        # Sentinel string check (first 500 chars of plain text)
+        for sentinel in BAD_SOURCE_SENTINELS:
+            if sentinel in plain[:500]:
+                return True, f"sentinel:'{sentinel}'"
+
+        # JS-rendered stub: small file + very little extracted text
+        if file_size < BAD_SOURCE_JS_STUB_SIZE and len(plain) < 50:
+            return True, f"js-stub:{file_size}B/{len(plain)}chars"
+
+        # Word-exported HTML: large file + almost no extractable text
+        if file_size > BAD_SOURCE_WORD_HTML_SIZE and len(plain) < 100:
+            return True, f"word-html:{file_size}B/{len(plain)}chars"
+
+    except OSError:
+        pass
+
+    return False, ""
+
+
+def build_re_enrichment_queue(records, freshness_results):
+    """
+    Build a prioritised re-enrichment queue from three trigger sources:
+      1. STALE_SOURCE  — freshness check found the upstream source has been updated
+                          since the last enrichment date
+      2. BAD_SOURCE    — local source file has known quality issues (T1.1 patterns)
+      3. OLD_ENRICHMENT — enrichment was generated more than ENRICHMENT_MAX_AGE_DAYS ago
+      4. SKIP_LIST_RETRY — entry in skip-list is older than SKIP_LIST_RETRY_DAYS (retry)
+      5. NOT_ENRICHED  — record has a local source file but no enrichment entry at all
+
+    Returns list of queue entries sorted by priority (high → low).
+    """
+    today_dt = datetime.now().date()
+
+    # Build lookup: ref_id → freshness result
+    freshness_map = {r["reference_id"]: r for r in freshness_results}
+
+    # Load enrichment index
+    enriched = load_enriched_ref_ids()
+
+    # Load skip-lists
+    library_skip = load_skip_list("library")
+    timeline_skip = load_skip_list("timeline")
+    threats_skip = load_skip_list("threats")
+
+    # Merge all skip entries, keyed by refId
+    skip_by_ref = {}
+    for skip_dict in (library_skip, timeline_skip, threats_skip):
+        for url, entry in skip_dict.items():
+            ref = entry.get("refId") or entry.get("reference_id", "")
+            if ref:
+                existing = skip_by_ref.get(ref)
+                if not existing or entry.get("date", "") > existing.get("date", ""):
+                    skip_by_ref[ref] = {**entry, "url": url}
+
+    queue = []
+
+    # ── Trigger 4: Skip-list retry ────────────────────────────────────────────
+    for ref_id, entry in skip_by_ref.items():
+        reason = entry.get("reason", "")
+        if reason in ("paywall", "forbidden"):
+            continue  # These are permanent blocks — don't retry
+        date_str = entry.get("date", "")
+        if not date_str:
+            continue
+        try:
+            entry_dt = datetime.fromisoformat(date_str.replace("Z", "+00:00")).date()
+        except (ValueError, TypeError):
+            continue
+        age_days = (today_dt - entry_dt).days
+        if age_days >= SKIP_LIST_RETRY_DAYS:
+            queue.append({
+                "reference_id": ref_id,
+                "trigger": "SKIP_LIST_RETRY",
+                "priority": "medium",
+                "reason": f"Skip-list entry is {age_days} days old (reason: {reason}); retry download",
+                "skip_reason": reason,
+                "skip_date": date_str,
+                "skip_url": entry.get("url", ""),
+                "enrichment_file": enriched.get(ref_id, {}).get("file"),
+                "enrichment_date": enriched.get(ref_id, {}).get("date"),
+                "action": f"Retry downloading {ref_id} — skip-list entry expired ({age_days}d old).",
+            })
+
+    # ── Per-record triggers ───────────────────────────────────────────────────
+    for rec in records:
+        ref_id = rec["reference_id"]
+        local_file = rec.get("local_file", "")
+        enrichment = enriched.get(ref_id)
+
+        # Trigger 2: Bad source
+        is_bad, bad_reason = check_local_source_quality(local_file)
+        if is_bad:
+            queue.append({
+                "reference_id": ref_id,
+                "trigger": "BAD_SOURCE",
+                "priority": "high",
+                "reason": f"Local source file has quality issues: {bad_reason}",
+                "local_file": local_file,
+                "enrichment_file": enrichment["file"] if enrichment else None,
+                "enrichment_date": enrichment["date"] if enrichment else None,
+                "action": (
+                    f"Re-download {ref_id} source file — current copy is unusable ({bad_reason}). "
+                    f"Then re-enrich."
+                ),
+            })
+            continue  # Bad source subsumes all other triggers for this record
+
+        # Trigger 5: Has local file but no enrichment
+        if local_file and not enrichment:
+            path = ROOT / local_file
+            if path.exists():
+                queue.append({
+                    "reference_id": ref_id,
+                    "trigger": "NOT_ENRICHED",
+                    "priority": "medium",
+                    "reason": "Record has a local source file but no enrichment entry found",
+                    "local_file": local_file,
+                    "enrichment_file": None,
+                    "enrichment_date": None,
+                    "action": f"Run enrich-docs-ollama.py for {ref_id} — never enriched.",
+                })
+            continue
+
+        if not enrichment:
+            continue  # No enrichment, no local file → nothing to trigger
+
+        enrichment_date_str = enrichment["date"]
+        try:
+            enrichment_dt = datetime.fromisoformat(enrichment_date_str).date()
+        except (ValueError, TypeError):
+            enrichment_dt = None
+
+        # Trigger 3: Old enrichment
+        if enrichment_dt:
+            age_days = (today_dt - enrichment_dt).days
+            if age_days > ENRICHMENT_MAX_AGE_DAYS:
+                queue.append({
+                    "reference_id": ref_id,
+                    "trigger": "OLD_ENRICHMENT",
+                    "priority": "low",
+                    "reason": f"Enrichment is {age_days} days old (threshold: {ENRICHMENT_MAX_AGE_DAYS}d)",
+                    "local_file": local_file,
+                    "enrichment_file": enrichment["file"],
+                    "enrichment_date": enrichment_date_str,
+                    "enrichment_age_days": age_days,
+                    "action": f"Re-enrich {ref_id} — enrichment from {enrichment_date_str} is stale.",
+                })
+
+        # Trigger 1: Stale source (freshness check found upstream update since enrichment)
+        freshness = freshness_map.get(ref_id)
+        if freshness and freshness.get("status") not in (
+            "CURRENT", "SKIP", "CHECK_FAILED", "ERROR", "NO_URL", "ACCESS_DENIED", "UNREACHABLE"
+        ):
+            upstream_priority = freshness.get("priority", "none")
+            if upstream_priority in ("high", "medium"):
+                # Only trigger re-enrichment if upstream is newer than our enrichment
+                source_updated = False
+                upstream_date = None
+
+                # Extract the upstream date from details
+                details = freshness.get("details", {})
+                for date_key in ("api_pub_date", "api_date", "latest_commit_date", "release_date"):
+                    d = details.get(date_key)
+                    if d:
+                        upstream_date = str(d)[:10]  # YYYY-MM-DD
+                        break
+
+                if upstream_date and enrichment_dt:
+                    source_updated = upstream_date > enrichment_date_str
+                elif not enrichment_dt:
+                    source_updated = True  # No enrichment date → treat as stale
+
+                if source_updated or not upstream_date:
+                    queue.append({
+                        "reference_id": ref_id,
+                        "trigger": "STALE_SOURCE",
+                        "priority": "high" if upstream_priority == "high" else "medium",
+                        "reason": (
+                            f"Upstream source updated ({freshness['status']}) "
+                            f"since enrichment ({enrichment_date_str})"
+                        ),
+                        "local_file": local_file,
+                        "freshness_status": freshness["status"],
+                        "upstream_date": upstream_date,
+                        "enrichment_file": enrichment["file"],
+                        "enrichment_date": enrichment_date_str,
+                        "action": freshness.get("action", f"Re-download {ref_id} then re-enrich."),
+                    })
+
+    # Sort: high first, then medium, then low; within tier: alphabetical by ref_id
+    priority_order = {"high": 0, "medium": 1, "low": 2}
+    queue.sort(key=lambda x: (priority_order.get(x["priority"], 3), x["reference_id"]))
+
+    return queue
+
+
+def write_re_enrichment_queue(queue, all_records_count, audit_date):
+    """Write re-enrichment-queue.json to OUTPUT_DIR."""
+    output = {
+        "generated": audit_date,
+        "total_records_scanned": all_records_count,
+        "queue_size": len(queue),
+        "by_trigger": {},
+        "by_priority": {"high": 0, "medium": 0, "low": 0},
+        "queue": queue,
+    }
+
+    for entry in queue:
+        t = entry["trigger"]
+        p = entry["priority"]
+        output["by_trigger"][t] = output["by_trigger"].get(t, 0) + 1
+        output["by_priority"][p] = output["by_priority"].get(p, 0) + 1
+
+    queue_path = OUTPUT_DIR / "re-enrichment-queue.json"
+    with open(queue_path, "w") as f:
+        json.dump(output, f, indent=2, default=str)
+
+    return queue_path
+
+
 # ─── Main Orchestrator ───────────────────────────────────────────────────────
 CHECKERS = {
     "ietf_draft": check_ietf_draft,
@@ -768,6 +1080,11 @@ def run_audit(csv_path, dry_run=False, category_filter=None, limit=None):
         json.dump(report, f, indent=2, default=str)
     print(f"Report written to {output_path}")
 
+    # Build and write re-enrichment queue
+    queue = build_re_enrichment_queue(records, all_results)
+    queue_path = write_re_enrichment_queue(queue, len(records), summary["audit_date"])
+    print(f"Re-enrichment queue written to {queue_path} ({len(queue)} entries)")
+
     # Console summary
     print("\n" + "=" * 70)
     print("FRESHNESS AUDIT SUMMARY")
@@ -798,6 +1115,17 @@ def run_audit(csv_path, dry_run=False, category_filter=None, limit=None):
                     print(f"    {k}: {v}")
             print()
 
+    # Print re-enrichment queue summary
+    if queue:
+        print("\n── RE-ENRICHMENT QUEUE ──")
+        for trigger in ("BAD_SOURCE", "STALE_SOURCE", "NOT_ENRICHED", "OLD_ENRICHMENT", "SKIP_LIST_RETRY"):
+            items = [e for e in queue if e["trigger"] == trigger]
+            if items:
+                print(f"  {trigger}: {len(items)}")
+        print(f"  TOTAL: {len(queue)} records queued for re-enrichment")
+        print(f"  → See {queue_path}")
+        print()
+
     return report
 
 
@@ -810,6 +1138,8 @@ if __name__ == "__main__":
     parser.add_argument("--category", choices=list(CHECKERS.keys()),
                         help="Check only one category")
     parser.add_argument("--limit", type=int, help="Limit records per category")
+    parser.add_argument("--queue-only", action="store_true",
+                        help="Build re-enrichment queue from enrichment files only (no API calls)")
     args = parser.parse_args()
 
     csv_path = find_latest_csv("library")
@@ -818,4 +1148,20 @@ if __name__ == "__main__":
         sys.exit(1)
 
     print(f"Using CSV: {csv_path}")
-    run_audit(csv_path, dry_run=args.dry_run, category_filter=args.category, limit=args.limit)
+
+    if args.queue_only:
+        records = load_library_csv(csv_path)
+        print(f"Loaded {len(records)} records from {csv_path.name}")
+        print("Building re-enrichment queue (no freshness API calls)...")
+        queue = build_re_enrichment_queue(records, [])
+        queue_path = write_re_enrichment_queue(queue, len(records), datetime.now().isoformat())
+
+        print(f"\n── RE-ENRICHMENT QUEUE ──")
+        for trigger in ("BAD_SOURCE", "STALE_SOURCE", "NOT_ENRICHED", "OLD_ENRICHMENT", "SKIP_LIST_RETRY"):
+            items = [e for e in queue if e["trigger"] == trigger]
+            if items:
+                print(f"  {trigger}: {len(items)}")
+        print(f"  TOTAL: {len(queue)} records queued for re-enrichment")
+        print(f"\nQueue written to: {queue_path}")
+    else:
+        run_audit(csv_path, dry_run=args.dry_run, category_filter=args.category, limit=args.limit)
