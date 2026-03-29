@@ -174,6 +174,7 @@ export const TimelineView = () => {
     <div data-testid="timeline-view-root">
       <PageHeader
         icon={Globe}
+        pageId="timeline"
         title="Global Migration Timeline"
         description="Compare Post-Quantum Cryptography migration roadmaps across nations. Track phases from discovery to full migration and key regulatory milestones."
         dataSource={

@@ -43,9 +43,11 @@ export const TLSComparisonTable: React.FC = () => {
               <th className="px-3 py-2 text-left font-bold border-r border-border">Server CA</th>
               <th className="px-3 py-2 text-left font-bold border-r border-border">Key Exchange</th>
               <th className="px-3 py-2 text-left font-bold border-r border-border">Cipher</th>
+              <th className="px-3 py-2 text-center font-bold border-r border-border">RTT</th>
               <th className="px-3 py-2 text-right font-bold border-r border-border">Total Data</th>
               <th className="px-3 py-2 text-right font-bold border-r border-border">Handshake</th>
-              <th className="px-3 py-2 text-right font-bold">App Data</th>
+              <th className="px-3 py-2 text-right font-bold border-r border-border">App Data</th>
+              <th className="px-3 py-2 text-right font-bold">vs #1</th>
             </tr>
           </thead>
           <tbody>
@@ -91,13 +93,44 @@ export const TLSComparisonTable: React.FC = () => {
                   </span>
                 </td>
                 <td className="px-3 py-2 font-mono border-r border-border">{run.cipher}</td>
+                <td className="px-3 py-2 text-center font-mono border-r border-border">
+                  <span className={run.hrrDetected ? 'text-status-warning font-bold' : ''}>
+                    {run.roundTrips ?? 1}
+                    {run.hrrDetected ? ' (HRR)' : ''}
+                  </span>
+                </td>
                 <td className="px-3 py-2 text-right font-mono font-bold border-r border-border">
                   {(run.totalBytes / 1024).toFixed(2)} KB
                 </td>
                 <td className="px-3 py-2 text-right font-mono border-r border-border">
                   {(run.handshakeBytes / 1024).toFixed(2)} KB
                 </td>
-                <td className="px-3 py-2 text-right font-mono">{run.appDataBytes} B</td>
+                <td className="px-3 py-2 text-right font-mono border-r border-border">
+                  {run.appDataBytes} B
+                </td>
+                <td className="px-3 py-2 text-right font-mono">
+                  {idx === 0 ? (
+                    <span className="text-muted-foreground">base</span>
+                  ) : runHistory[0].handshakeBytes > 0 ? (
+                    <span
+                      className={
+                        run.handshakeBytes > runHistory[0].handshakeBytes
+                          ? 'text-status-warning font-bold'
+                          : 'text-status-success'
+                      }
+                    >
+                      {run.handshakeBytes >= runHistory[0].handshakeBytes ? '+' : ''}
+                      {(
+                        ((run.handshakeBytes - runHistory[0].handshakeBytes) /
+                          runHistory[0].handshakeBytes) *
+                        100
+                      ).toFixed(0)}
+                      %
+                    </span>
+                  ) : (
+                    '—'
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

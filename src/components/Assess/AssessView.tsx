@@ -152,6 +152,7 @@ export const AssessView: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         icon={ClipboardCheck}
+        pageId="assess"
         title="PQC Risk Assessment"
         description="Answer a few questions to get a personalized quantum risk score, migration priorities, and actionable recommendations for your organization."
         dataSource={

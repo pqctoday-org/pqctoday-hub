@@ -38,24 +38,30 @@ export function Breadcrumb() {
   return (
     <nav
       aria-label="Breadcrumb"
-      className="flex items-center gap-1 text-xs text-muted-foreground mb-3 print:hidden"
+      className="flex items-center gap-1 text-xs text-muted-foreground mb-3 print:hidden overflow-hidden"
     >
       <Link
         to="/"
-        className="flex items-center hover:text-foreground transition-colors"
+        className="flex items-center hover:text-foreground transition-colors shrink-0"
         aria-label="Home"
       >
         <Home size={12} aria-hidden="true" />
       </Link>
       {crumbs.map((crumb, i) => (
-        <span key={crumb.path} className="flex items-center gap-1">
+        <span key={crumb.path} className="flex items-center gap-1 min-w-0 shrink">
           <ChevronRight size={10} className="text-muted-foreground/40" aria-hidden="true" />
           {i === crumbs.length - 1 ? (
-            <span className="text-foreground" aria-current="page">
+            <span
+              className="text-foreground max-w-[150px] md:max-w-none truncate min-w-0"
+              aria-current="page"
+            >
               {crumb.label}
             </span>
           ) : (
-            <Link to={crumb.path} className="hover:text-foreground transition-colors">
+            <Link
+              to={crumb.path}
+              className="hover:text-foreground transition-colors max-w-[120px] md:max-w-none truncate min-w-0"
+            >
               {crumb.label}
             </Link>
           )}

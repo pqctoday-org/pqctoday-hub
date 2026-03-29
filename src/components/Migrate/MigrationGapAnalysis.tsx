@@ -46,6 +46,12 @@ export const MigrationGapAnalysis: React.FC<MigrationGapAnalysisProps> = ({ gaps
     <div className="border border-border rounded-lg overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && isExpanded) {
+            e.preventDefault()
+            setIsExpanded(false)
+          }
+        }}
         className="w-full flex items-center justify-between p-3 sm:p-4 bg-card hover:bg-muted/30 transition-colors cursor-pointer"
         aria-expanded={isExpanded}
       >

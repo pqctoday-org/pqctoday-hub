@@ -62,38 +62,10 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const resizeStartX = useRef<number>(0)
   const resizeStartWidth = useRef<number>(0)
   const [activeTab, setActiveTab] = useState<
-    | 'data'
-    | 'kem_ops'
-    | 'sign_verify'
-    | 'keystore'
-    | 'logs'
-    | 'acvp'
-    | 'symmetric'
-    | 'hashing'
-    | 'softhsm'
-    | 'key_agree'
-    | 'key_derive'
-    | 'key_wrap'
-    | 'classical_sign'
-    | 'mechanisms'
+    'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
   >(() => {
     const tab = new URLSearchParams(window.location.search).get('tab')
-    const valid = [
-      'data',
-      'kem_ops',
-      'sign_verify',
-      'keystore',
-      'logs',
-      'acvp',
-      'symmetric',
-      'hashing',
-      'softhsm',
-      'key_agree',
-      'key_derive',
-      'key_wrap',
-      'classical_sign',
-      'mechanisms',
-    ]
+    const valid = ['data', 'kem_ops', 'sign_verify', 'keystore', 'logs', 'symmetric', 'hashing']
     if (tab && valid.includes(tab))
       return tab as
         | 'data'
@@ -101,23 +73,11 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
         | 'sign_verify'
         | 'keystore'
         | 'logs'
-        | 'acvp'
         | 'symmetric'
         | 'hashing'
-        | 'softhsm'
-        | 'key_agree'
-        | 'key_derive'
-        | 'key_wrap'
-        | 'classical_sign'
-        | 'mechanisms'
     return 'keystore'
   })
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
-  const [hsmMode, setHsmMode] = useState(false)
-  const toggleHsmMode = useCallback(() => {
-    setHsmMode((m) => !m)
-    setActiveTab('keystore')
-  }, [])
 
   // --- Helpers (stable callbacks) ---
   const handleAlgorithmChange = useCallback((newAlgorithm: string) => {
@@ -280,9 +240,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       setActiveTab,
       addLog,
       clearLogs,
-      hsmMode,
-      setHsmMode,
-      toggleHsmMode,
     }),
     [
       algorithm,
@@ -305,8 +262,6 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
       handleAlgorithmChange,
       addLog,
       clearLogs,
-      hsmMode,
-      toggleHsmMode,
     ]
   )
 

@@ -1,6 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Server, Monitor, Database, Laptop, Cloud, ShieldCheck, Network } from 'lucide-react'
+import {
+  Server,
+  Monitor,
+  Database,
+  Laptop,
+  Cloud,
+  ShieldCheck,
+  Network,
+  ChevronUp,
+} from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'
 
 export type InfrastructureLayerType =
@@ -159,6 +168,12 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
             <button
               key={layer.id}
               onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
+              onKeyDown={(e) => {
+                if (e.key === 'Escape' && isActive) {
+                  e.preventDefault()
+                  onSelectLayer('All')
+                }
+              }}
               className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
                 transition-all duration-300 ease-in-out cursor-pointer
@@ -283,12 +298,14 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
                   <button
                     type="button"
+                    aria-label="Collapse expanded infrastructure layer"
                     onClick={(e) => {
                       e.stopPropagation()
                       onSelectLayer('All')
                     }}
-                    className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors"
+                    className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors flex items-center justify-center gap-1.5"
                   >
+                    <ChevronUp size={14} />
                     Collapse layer
                   </button>
                 </div>

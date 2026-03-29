@@ -237,6 +237,7 @@ export const ReportView: React.FC = () => {
     <div className="animate-fade-in">
       <PageHeader
         icon={FileBarChart}
+        pageId="report"
         title="PQC Assessment Report"
         description="Your personalized post-quantum cryptography risk report with scores, priorities, and recommendations."
         shareTitle="PQC Assessment Report — Post-Quantum Cryptography Risk Analysis"

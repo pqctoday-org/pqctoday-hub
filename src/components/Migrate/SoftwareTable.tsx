@@ -4,6 +4,7 @@ import type { SoftwareItem } from '../../types/MigrateTypes'
 import {
   ChevronRight,
   ChevronDown,
+  ChevronUp,
   ExternalLink,
   ArrowUpDown,
   ArrowUp,
@@ -43,6 +44,10 @@ interface SoftwareTableProps {
   onToggleCompare?: (key: string) => void
   /** True when 3 compare slots are full */
   maxCompareReached?: boolean
+  /** Controlled expanded row IDs — when provided, parent owns the state */
+  expandedIds?: Set<string>
+  /** Callback when a row is toggled — required when expandedIds is controlled */
+  onToggleExpand?: (id: string) => void
 }
 
 type SortDirection = 'asc' | 'desc' | null
@@ -58,10 +63,13 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   compareProducts,
   onToggleCompare,
   maxCompareReached,
+  expandedIds: controlledExpandedIds,
+  onToggleExpand,
 }) => {
   const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
   const migrateBookmarkSet = useMemo(() => new Set(migrateBookmarks), [migrateBookmarks])
-  const [expandedIds, setExpandedIds] = useState<Set<string>>(new Set())
+  const [localExpandedIds, setLocalExpandedIds] = useState<Set<string>>(new Set())
+  const expandedIds = controlledExpandedIds ?? localExpandedIds
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
     defaultSort || { key: 'softwareName', direction: 'asc' }
   )
@@ -70,13 +78,17 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
 
   const toggleExpand = (id: string) => {
-    const newExpanded = new Set(expandedIds)
+    if (onToggleExpand) {
+      onToggleExpand(id)
+      return
+    }
+    const newExpanded = new Set(localExpandedIds)
     if (newExpanded.has(id)) {
       newExpanded.delete(id)
     } else {
       newExpanded.add(id)
     }
-    setExpandedIds(newExpanded)
+    setLocalExpandedIds(newExpanded)
   }
 
   const handleSort = (key: SortKey) => {
@@ -382,7 +394,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                   {isExpanded && (
                     <tr className="bg-muted/10 border-b border-border">
                       <td colSpan={totalCols} className="p-0">
-                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
+                        <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm animate-fade-in">
                           <div>
                             <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
                               <Info size={14} /> Description
@@ -575,6 +587,18 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             </div>
                           </div>
                         </div>
+                        <button
+                          type="button"
+                          aria-label={`Collapse ${item.softwareName}`}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            toggleExpand(key)
+                          }}
+                          className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <ChevronUp size={14} />
+                          Collapse
+                        </button>
                       </td>
                     </tr>
                   )}

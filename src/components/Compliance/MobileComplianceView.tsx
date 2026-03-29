@@ -3,6 +3,7 @@ import React, { useState, useMemo } from 'react'
 import { Search, ShieldCheck, Database } from 'lucide-react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { Skeleton } from '../ui/skeleton'
 import type { ComplianceRecord } from './types'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
 import clsx from 'clsx'
@@ -15,6 +16,8 @@ interface MobileComplianceViewProps {
   /** Controlled cert type sub-tab (maps to rtab URL param) */
   certType?: CertTypeFilter
   onCertTypeChange?: (ct: CertTypeFilter) => void
+  /** Show skeleton loading state */
+  loading?: boolean
 }
 
 const MOBILE_PAGE_SIZE = 50
@@ -34,6 +37,7 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({
   onFilterTextChange,
   certType: certTypeProp,
   onCertTypeChange,
+  loading,
 }) => {
   const [localFilterText, setLocalFilterText] = useState('')
   const [pqcOnly, setPqcOnly] = useState(false)
@@ -76,6 +80,16 @@ export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({
     () => allFiltered.slice(0, visibleCount),
     [allFiltered, visibleCount]
   )
+
+  if (loading) {
+    return (
+      <div className="space-y-3">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-20 w-full rounded-lg" />
+        ))}
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-4">

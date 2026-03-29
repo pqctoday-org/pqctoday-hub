@@ -4,10 +4,19 @@
  * Provides KEM + Sign & Verify tabs via scroll-snap carousel with WASM capability check.
  */
 import { useState, useRef, useEffect, useCallback, lazy, Suspense } from 'react'
-import { AlertTriangle, Key, FileSignature, ChevronUp, ChevronDown, Monitor } from 'lucide-react'
+import {
+  AlertTriangle,
+  Key,
+  FileSignature,
+  FlaskConical,
+  ChevronUp,
+  ChevronDown,
+  Monitor,
+} from 'lucide-react'
 import { PlaygroundProvider } from './PlaygroundProvider'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
+import { WorkshopToolsTab } from './tabs/WorkshopToolsTab'
 import { PkcsLogPanel } from './components/PkcsLogPanel'
 import { Button } from '../ui/button'
 
@@ -20,6 +29,7 @@ type CapabilityStatus = 'checking' | 'supported' | 'unsupported' | 'dismissed'
 const TABS = [
   { id: 'kem', label: 'KEM', icon: Key },
   { id: 'sign', label: 'Sign & Verify', icon: FileSignature },
+  { id: 'workshop', label: 'Workshop', icon: FlaskConical },
 ] as const
 
 type TabId = (typeof TABS)[number]['id']
@@ -121,6 +131,9 @@ function MobileOpsContent() {
         </div>
         <div className="snap-center shrink-0 w-full overflow-y-auto p-3">
           <SignVerifyTab />
+        </div>
+        <div className="snap-center shrink-0 w-full overflow-y-auto p-3">
+          <WorkshopToolsTab />
         </div>
       </div>
 

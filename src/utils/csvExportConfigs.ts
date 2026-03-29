@@ -42,6 +42,7 @@ export const LIBRARY_CSV_COLUMNS: CsvColumnConfig<LibraryItem>[] = [
 export const ALGORITHM_CSV_COLUMNS: CsvColumnConfig<AlgorithmDetail>[] = [
   { header: 'Name', accessor: (i) => i.name },
   { header: 'Family', accessor: (i) => i.family },
+  { header: 'Cryptographic Family', accessor: (i) => i.cryptoFamily },
   { header: 'Type', accessor: (i) => i.type },
   { header: 'Security Level', accessor: (i) => i.securityLevel },
   { header: 'AES Equivalent', accessor: (i) => i.aesEquivalent },

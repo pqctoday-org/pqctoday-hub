@@ -13,8 +13,8 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Search,
   X,
+  ChevronRight,
   ChevronDown,
-  ChevronUp,
   PackageSearch,
   EyeOff,
   ArrowRightLeft,
@@ -98,6 +98,17 @@ export const MigrateView: React.FC = () => {
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
 
+  // Shared expanded-row state — survives layer/filter switches
+  const [tableExpandedIds, setTableExpandedIds] = useState<Set<string>>(new Set())
+  const handleToggleTableExpand = useCallback((id: string) => {
+    setTableExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(id)) next.delete(id)
+      else next.add(id)
+      return next
+    })
+  }, [])
+
   // Comparison state — separate from "My Products" workflow selection
   const MAX_COMPARE = 3
   const [compareKeys, setCompareKeys] = useState<string[]>([])
@@ -125,6 +136,13 @@ export const MigrateView: React.FC = () => {
         .filter((s): s is SoftwareItem => !!s),
     [compareKeys] // softwareData is a module-level constant — safe to exclude
   )
+
+  // Auto-hide comparison panel when products drop below the minimum
+  useEffect(() => {
+    if (comparisonProducts.length < 2 && showComparisonPanel) {
+      setShowComparisonPanel(false)
+    }
+  }, [comparisonProducts.length, showComparisonPanel])
 
   // Local state for flat-mode filters — initialized from URL params for deep linking
   const [flatCategoryFilter, setFlatCategoryFilter] = useState(
@@ -602,9 +620,10 @@ export const MigrateView: React.FC = () => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className={`space-y-8 ${compareKeys.length > 0 ? 'pb-20' : ''}`}>
       <PageHeader
         icon={ArrowRightLeft}
+        pageId="migrate"
         title="PQC Migration Guide"
         description="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance."
         dataSource={
@@ -627,11 +646,11 @@ export const MigrateView: React.FC = () => {
           aria-expanded={!workflowCollapsed}
           aria-controls="migration-workflow-hero"
         >
-          {workflowCollapsed ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+          {workflowCollapsed ? <ChevronRight size={16} /> : <ChevronDown size={16} />}
           {workflowCollapsed ? 'Show Migration Framework' : 'Hide Migration Framework'}
         </Button>
         {!workflowCollapsed && (
-          <div id="migration-workflow-hero">
+          <div id="migration-workflow-hero" className="animate-fade-in">
             <MigrationWorkflow onViewSoftware={handleViewSoftware} />
           </div>
         )}
@@ -832,6 +851,26 @@ export const MigrateView: React.FC = () => {
       <div className="py-4">
         {/* Mobile: always show card grid */}
         <div className="md:hidden">
+          {activeInfrastructureLayer !== 'All' && (
+            <div className="flex items-center justify-between gap-2 mb-3 px-3 py-2 text-xs bg-primary/10 border border-primary/20 rounded-md animate-fade-in">
+              <span className="text-primary font-medium">
+                Layer:{' '}
+                {LAYERS.find((l) => l.id === activeInfrastructureLayer)?.label ??
+                  activeInfrastructureLayer}
+              </span>
+              <button
+                type="button"
+                aria-label="Clear layer filter"
+                onClick={() => {
+                  setActiveLayer('All')
+                  syncFiltersToUrl({ layer: 'All' })
+                }}
+                className="p-0.5 rounded hover:bg-primary/20 text-primary transition-colors"
+              >
+                <X size={14} />
+              </button>
+            </div>
+          )}
           <SoftwareCardGrid
             items={sortedFlatProducts}
             hiddenProducts={filterText ? undefined : hiddenSet}
@@ -879,6 +918,8 @@ export const MigrateView: React.FC = () => {
                       compareProducts={compareSet}
                       onToggleCompare={handleToggleCompare}
                       maxCompareReached={maxCompareReached}
+                      expandedIds={tableExpandedIds}
+                      onToggleExpand={handleToggleTableExpand}
                     />
                   ) : (
                     <EmptyState
@@ -915,6 +956,8 @@ export const MigrateView: React.FC = () => {
                 selectedProducts={myProductsSet}
                 onToggleProduct={toggleMyProduct}
                 compareProducts={compareSet}
+                expandedIds={tableExpandedIds}
+                onToggleExpand={handleToggleTableExpand}
                 onToggleCompare={handleToggleCompare}
                 maxCompareReached={maxCompareReached}
               />

@@ -1,6 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useMemo } from 'react'
-import { LayoutDashboard, ClipboardCheck, ShieldCheck, BookOpen, Download, Filter } from 'lucide-react'
+import {
+  LayoutDashboard,
+  ClipboardCheck,
+  ShieldCheck,
+  BookOpen,
+  Download,
+  Filter,
+} from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
@@ -100,11 +107,11 @@ export function BusinessCenterView() {
   // All artifacts flat list (for ZIP export + filter count)
   const allArtifacts = useMemo(
     () => Object.values(metrics.artifactsByPillar ?? {}).flat(),
-    [metrics.artifactsByPillar],
+    [metrics.artifactsByPillar]
   )
   const filteredArtifacts = useMemo(
     () => (typeFilter === 'all' ? allArtifacts : allArtifacts.filter((d) => d.type === typeFilter)),
-    [allArtifacts, typeFilter],
+    [allArtifacts, typeFilter]
   )
 
   const handleViewArtifact = useCallback((doc: ExecutiveDocument) => {
@@ -132,7 +139,7 @@ export function BusinessCenterView() {
     (id: string, newTitle: string) => {
       updateExecutiveDocument(id, { title: newTitle })
     },
-    [updateExecutiveDocument],
+    [updateExecutiveDocument]
   )
 
   const handleExportZip = useCallback(async () => {
@@ -163,6 +170,7 @@ export function BusinessCenterView() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
       <PageHeader
         icon={LayoutDashboard}
+        pageId="business-center"
         title="Business Center"
         description="Your PQC readiness command center — risk, compliance, governance, and next steps."
         shareTitle="PQC Business Center — Quantum Readiness Command Center"

@@ -3,8 +3,6 @@ import React from 'react'
 import { KeyStoreView } from '../KeyStoreView'
 import { useSettingsContext, type ClassicalAlgorithm } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
-import { TokenSetupPanel } from '../components/TokenSetupPanel'
-import { HsmKeyTable } from '../keystore/HsmKeyTable'
 
 export const KeyStoreTab: React.FC = () => {
   const {
@@ -16,7 +14,6 @@ export const KeyStoreTab: React.FC = () => {
     handleAlgorithmChange,
     classicalAlgorithm,
     setClassicalAlgorithm,
-    hsmMode,
   } = useSettingsContext()
 
   const {
@@ -28,15 +25,6 @@ export const KeyStoreTab: React.FC = () => {
     backupAllKeys,
     restoreKeys,
   } = useKeyStoreContext()
-
-  if (hsmMode) {
-    return (
-      <div className="space-y-4">
-        <TokenSetupPanel />
-        <HsmKeyTable />
-      </div>
-    )
-  }
 
   return (
     <KeyStoreView

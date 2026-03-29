@@ -12,7 +12,11 @@ import { useJourneyMap } from '@/hooks/useJourneyMap'
 export function PhaseCompletionToast() {
   const { phases, hasPersona } = useJourneyMap()
   const prevCompletedRef = useRef<Set<string>>(new Set())
-  const [toast, setToast] = useState<{ label: string; nextLabel?: string; nextRoute?: string } | null>(null)
+  const [toast, setToast] = useState<{
+    label: string
+    nextLabel?: string
+    nextRoute?: string
+  } | null>(null)
   const [isVisible, setIsVisible] = useState(false)
 
   // Detect newly completed phases
@@ -39,6 +43,7 @@ export function PhaseCompletionToast() {
         const phaseIdx = phases.indexOf(phase)
         const nextPhase = phases[phaseIdx + 1]
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setToast({
           label: phase.label,
           nextLabel: nextPhase?.label,
@@ -75,6 +80,8 @@ export function PhaseCompletionToast() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
+          role="status"
+          aria-live="polite"
           className="fixed bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg"
         >
           <button

@@ -36,6 +36,8 @@ import {
   Eye,
   Heart,
   Info,
+  Cloud,
+  Link2,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -143,7 +145,7 @@ const SBOM_GROUPS = [
   {
     label: 'Cryptography & PQC',
     items: [
-      'OpenSSL WASM 3.6.0',
+      'OpenSSL WASM 3.6.1',
       'liboqs-js v0.15.1',
       '@noble/*',
       '@scure/*',
@@ -342,6 +344,7 @@ export const MobileAboutView = () => {
   const [isSbomOpen, setIsSbomOpen] = useState(false)
   const [isSecurityAuditOpen, setIsSecurityAuditOpen] = useState(false)
   const [isLicenseOpen, setIsLicenseOpen] = useState(false)
+  const [isCloudSyncOpen, setIsCloudSyncOpen] = useState(false)
 
   return (
     <div className="flex flex-col gap-6 pb-8">
@@ -851,6 +854,105 @@ export const MobileAboutView = () => {
         </AnimatePresence>
       </motion.div>
 
+      {/* Google Drive Sync — Privacy Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.16 }}
+        className="glass-panel p-4"
+      >
+        <button
+          onClick={() => setIsCloudSyncOpen(!isCloudSyncOpen)}
+          className="flex items-center gap-3 w-full text-left cursor-pointer"
+        >
+          <div className="p-2 rounded-full bg-primary/10 text-primary shrink-0">
+            <Cloud size={20} />
+          </div>
+          <div className="flex-1">
+            <h2 className="text-lg font-semibold">Google Drive Sync</h2>
+            <p className="text-xs text-muted-foreground">Privacy Terms</p>
+          </div>
+          <ChevronDown
+            size={16}
+            className={clsx(
+              'text-muted-foreground transition-transform duration-200 shrink-0',
+              isCloudSyncOpen && 'rotate-180'
+            )}
+          />
+        </button>
+        <AnimatePresence>
+          {isCloudSyncOpen && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="overflow-hidden"
+            >
+              <div className="mt-3 text-sm text-muted-foreground space-y-2.5">
+                <p>
+                  The optional <strong className="text-foreground">Sync to Google Drive</strong>{' '}
+                  feature allows you to back up and restore your progress across devices.
+                </p>
+                <ul className="space-y-2 list-none pl-0">
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">No personal data is collected.</strong> We
+                      do not request your name, email, or profile picture.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">Your data stays in your account.</strong>{' '}
+                      All progress is saved to a hidden file in{' '}
+                      <strong className="text-foreground">your own Google Drive</strong> — not on
+                      any server we own or control.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">No identity is transmitted.</strong> The
+                      Google access token is stored only in browser memory and never sent to our
+                      servers.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">No API keys are synced.</strong> Your
+                      Gemini or other AI provider API keys are excluded from the sync payload.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">Full user control.</strong> Sign out any
+                      time. Delete the sync file via Google Drive settings &rarr; Manage apps &rarr;
+                      PQC Today &rarr; Delete hidden app data.
+                    </span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-status-success mt-1 shrink-0">&#9679;</span>
+                    <span>
+                      <strong className="text-foreground">This feature is optional.</strong> The app
+                      works fully without signing in.
+                    </span>
+                  </li>
+                </ul>
+                <p className="text-xs text-muted-foreground/70 pt-2 border-t border-border/40">
+                  Scope requested:{' '}
+                  <code className="font-mono text-primary text-xs">drive.appdata</code> — the
+                  least-privileged Drive scope. It cannot read or modify your regular Drive files.
+                </p>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
+
       {/* Community Card */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
@@ -1117,11 +1219,102 @@ export const MobileAboutView = () => {
               transition={{ duration: 0.3 }}
               className="overflow-hidden"
             >
-              <p className="text-sm text-muted-foreground leading-relaxed mt-3">
-                Ask questions about post-quantum cryptography using our RAG-powered chatbot. It
-                searches ~3,970 curated knowledge chunks and uses Gemini 2.5 Flash to deliver
-                grounded answers with deep links to relevant pages.
-              </p>
+              <div className="mt-3 space-y-3">
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  The PQC Assistant chatbot uses{' '}
+                  <strong className="text-foreground">Retrieval-Augmented Generation (RAG)</strong>{' '}
+                  to deliver grounded, sourced answers about post-quantum cryptography. It searches
+                  ~3,970 curated knowledge chunks — covering algorithms, standards, threats,
+                  compliance certifications, migration products, leaders, and learning modules —
+                  retrieves the 10–20 most relevant passages, and injects them as context into a{' '}
+                  <strong className="text-foreground">Gemini 2.5 Flash</strong> prompt.
+                </p>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  To use the PQC Assistant, provide your own{' '}
+                  <a
+                    href="https://aistudio.google.com/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline"
+                  >
+                    Google AI Studio API key
+                  </a>
+                  . Your key is stored only in your browser&apos;s localStorage and is never sent to
+                  any server other than Google&apos;s Gemini API.
+                </p>
+                <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-status-warning/10 border border-status-warning/30">
+                  <ShieldAlert className="text-status-warning mt-0.5 shrink-0" size={14} />
+                  <p className="text-xs text-muted-foreground">
+                    <strong className="text-foreground">Data routing notice:</strong> Your query
+                    text and retrieved context chunks are sent to{' '}
+                    <strong className="text-foreground">Google&apos;s servers</strong> for
+                    processing. Do not include sensitive or personal information.{' '}
+                    <a
+                      href="https://ai.google.dev/gemini-api/terms"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:underline"
+                    >
+                      Google AI Studio terms
+                    </a>{' '}
+                    apply.
+                  </p>
+                </div>
+
+                {/* Capability Cards */}
+                <div className="grid grid-cols-1 gap-2.5">
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-muted/20 border border-border">
+                    <Database className="text-primary mt-0.5 shrink-0" size={16} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Grounded Answers</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Responses cite specific data from the platform&apos;s curated corpus —
+                        algorithm specs, NIST standards, threat scenarios, compliance certs, and
+                        more.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-muted/20 border border-border">
+                    <Link2 className="text-primary mt-0.5 shrink-0" size={16} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">Deep Linking</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Answers include clickable links that navigate directly to the relevant page
+                        — a specific algorithm, cert record, learning module, or workshop tab.
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-2.5 p-2.5 rounded-lg bg-muted/20 border border-border">
+                    <Sparkles className="text-primary mt-0.5 shrink-0" size={16} />
+                    <div>
+                      <p className="text-sm font-semibold text-foreground">PQC Domain Expertise</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">
+                        Gemini Flash supplements RAG context with broad PQC knowledge from its
+                        training data for topics not fully covered in the corpus.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Limitations */}
+                <div>
+                  <h3 className="text-xs font-semibold text-muted-foreground mb-1.5">
+                    Limitations
+                  </h3>
+                  <ul className="space-y-1 text-xs text-muted-foreground list-disc list-inside">
+                    <li>
+                      Knowledge bounded by curated corpus (~3,970 chunks) — niche or very recent
+                      topics may lack coverage
+                    </li>
+                    <li>Requires a user-provided Gemini API key (BYOK)</li>
+                    <li>Read-only Q&A — cannot perform actions</li>
+                    <li>
+                      General LLM caveats apply — may occasionally hallucinate details outside its
+                      context window
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -1246,6 +1439,21 @@ export const MobileAboutView = () => {
             </motion.div>
           )}
         </AnimatePresence>
+      </motion.div>
+
+      {/* AI Technology Acknowledgment */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.26 }}
+        className="glass-panel p-4 text-center"
+      >
+        <h3 className="text-sm font-semibold mb-1.5">AI Technology Acknowledgment</h3>
+        <p className="text-xs text-muted-foreground">
+          This site is developed, documented, validated and deployed using advanced AI technologies
+          including Google Antigravity, ChatGPT, Claude AI, Perplexity, and Gemini Pro. While the
+          presented information has been manually curated, it may still contain inaccuracies.
+        </p>
       </motion.div>
 
       {/* Connect Section */}

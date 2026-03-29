@@ -3,12 +3,8 @@ import React from 'react'
 import { FileText, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from '../contexts/SettingsContext'
-import { PkcsLogPanel } from '../components/PkcsLogPanel'
 
 export const LogsTab: React.FC = () => {
-  const { hsmMode } = useSettingsContext()
-  if (hsmMode) return <PkcsLogPanel />
-
   return <LogsTabSoftware />
 }
 

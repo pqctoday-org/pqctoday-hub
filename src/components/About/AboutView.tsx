@@ -1155,7 +1155,7 @@ export function AboutView() {
                           <span className="text-xs text-muted-foreground/40 font-mono">
                             Apache-2.0
                           </span>
-                          <span className="text-xs text-muted-foreground/60">v3.6.0</span>
+                          <span className="text-xs text-muted-foreground/60">v3.6.1</span>
                         </div>
                       </li>
                       <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">

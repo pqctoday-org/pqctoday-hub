@@ -137,12 +137,14 @@ type MobileSection = 'standards' | 'technical' | 'certification' | 'compliance' 
 
 function MobileViewToggle({
   data,
+  loading,
   activeSection,
   onSectionChange,
   landscapeProps,
   mobileRecordProps,
 }: {
   data: import('./types').ComplianceRecord[]
+  loading?: boolean
   activeSection: MobileSection
   onSectionChange: (section: MobileSection) => void
   landscapeProps: {
@@ -252,6 +254,7 @@ function MobileViewToggle({
       {section === 'records' && (
         <MobileComplianceView
           data={data}
+          loading={loading}
           filterText={mobileRecordProps.filterText}
           onFilterTextChange={mobileRecordProps.onFilterTextChange}
           certType={mobileRecordProps.certType as 'All' | 'FIPS 140-3' | 'ACVP' | 'Common Criteria'}
@@ -718,6 +721,7 @@ export const ComplianceView = () => {
     <div className="space-y-6 animate-fade-in">
       <PageHeader
         icon={ShieldCheck}
+        pageId="compliance"
         title="Standardization, Compliance and Certification"
         description="Explore the three pillars of PQC compliance: standardization bodies that define the algorithms, certification bodies that validate implementations, and compliance frameworks that mandate adoption."
         dataSource={
@@ -768,6 +772,7 @@ export const ComplianceView = () => {
       <div className="md:hidden">
         <MobileViewToggle
           data={data}
+          loading={loading}
           activeSection={activeTab}
           onSectionChange={handleTabChange}
           landscapeProps={{

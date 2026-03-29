@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { motion } from 'framer-motion'
-import { loadAlgorithmsData, type AlgorithmTransition } from '../../data/algorithmsData'
+import { type AlgorithmTransition } from '../../data/algorithmsData'
 import { loadPQCAlgorithmsData, type AlgorithmDetail } from '../../data/pqcAlgorithmsData'
 import {
   Shield,
@@ -13,6 +13,7 @@ import {
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
+  Scale,
 } from 'lucide-react'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import clsx from 'clsx'
@@ -24,30 +25,35 @@ type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
 type SortDirection = 'asc' | 'desc' | null
 
 interface AlgorithmComparisonProps {
-  /** Set of classical algorithm names to visually highlight (from assess cross-link) */
   highlightAlgorithms?: Set<string>
+  filteredData: AlgorithmTransition[]
+  compareSet: Set<string>
+  compareType: 'KEM' | 'Signature' | null
+  maxCompareReached: boolean
+  onToggleCompare: (name: string) => void
 }
 
 export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   highlightAlgorithms,
+  filteredData,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
 }) => {
-  // Data loading state
-  const [algorithmsData, setAlgorithmsData] = useState<AlgorithmTransition[]>([])
   const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
 
-  // Load data on mount
   useEffect(() => {
-    Promise.all([loadAlgorithmsData(), loadPQCAlgorithmsData()])
-      .then(([transitions, details]) => {
-        setAlgorithmsData(transitions)
+    loadPQCAlgorithmsData()
+      .then((details) => {
         const map = new Map<string, AlgorithmDetail>()
         details.forEach((d) => map.set(d.name.toLowerCase(), d))
         setPqcDetailMap(map)
         setIsLoading(false)
       })
       .catch((error) => {
-        console.error('Failed to load algorithms data:', error)
+        console.error('Failed to load PQC details:', error)
         setIsLoading(false)
       })
   }, [])
@@ -71,8 +77,8 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 
   // Sort the data
   const sortedData = useMemo(() => {
-    if (!sortColumn || !sortDirection) return algorithmsData
-    return [...algorithmsData].sort((a, b) => {
+    if (!sortColumn || !sortDirection) return filteredData
+    return [...filteredData].sort((a, b) => {
       let aValue: string = ''
       let bValue: string = ''
 
@@ -102,7 +108,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
       const comparison = aValue.localeCompare(bValue, undefined, { numeric: true })
       return sortDirection === 'asc' ? comparison : -comparison
     })
-  }, [algorithmsData, sortColumn, sortDirection])
+  }, [filteredData, sortColumn, sortDirection])
 
   // Handle sort click
   const handleSort = (column: SortColumn) => {
@@ -327,9 +333,18 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           algo.classical.toLowerCase().includes(h.toLowerCase()) ||
                           h.toLowerCase().includes(algo.classical.toLowerCase())
                       )
-                    const pqcDetail = pqcDetailMap.get(
-                      algo.pqc.split(/[,/]/)[0].trim().toLowerCase()
-                    )
+                    const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
+                    const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
+                    const isCompared = compareSet.has(pqcName)
+                    const canCompare =
+                      isCompared ||
+                      (!maxCompareReached &&
+                        (compareType === null ||
+                          compareType === (algo.function === 'Signature' ? 'Signature' : 'KEM')))
+                    const isComparableFunction =
+                      algo.function === 'Signature' ||
+                      algo.function === 'Encryption/KEM' ||
+                      algo.function === 'Hybrid KEM'
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
@@ -348,6 +363,32 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <td className="px-4 py-3" style={{ width: `${columnWidths.function}px` }}>
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
+                            {isComparableFunction && (
+                              <button
+                                type="button"
+                                onClick={() => onToggleCompare(pqcName)}
+                                disabled={!canCompare && !isCompared}
+                                title={
+                                  isCompared
+                                    ? 'Remove from comparison'
+                                    : !canCompare
+                                      ? maxCompareReached
+                                        ? 'Max 3 reached'
+                                        : 'Clear to switch type'
+                                      : 'Add to comparison'
+                                }
+                                className={clsx(
+                                  'shrink-0 p-1 rounded transition-colors',
+                                  isCompared
+                                    ? 'text-secondary bg-secondary/10'
+                                    : canCompare
+                                      ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
+                                      : 'text-muted-foreground/30 cursor-not-allowed'
+                                )}
+                              >
+                                <Scale size={14} />
+                              </button>
+                            )}
                             {algo.function.includes('Signature') ? (
                               <FileSignature size={24} className="flex-shrink-0" />
                             ) : algo.function === 'Hash' ? (

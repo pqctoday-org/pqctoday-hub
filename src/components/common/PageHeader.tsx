@@ -6,11 +6,13 @@ import { Button } from '@/components/ui/button'
 import { SourcesButton } from '@/components/ui/SourcesButton'
 import { ShareButton } from '@/components/ui/ShareButton'
 import { GlossaryButton } from '@/components/ui/GlossaryButton'
+import { UserManualButton } from '@/components/ui/UserManualButton'
 import { ExportButton } from '@/components/ui/ExportButton'
 import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ViewType } from '@/data/authoritativeSourcesData'
+import type { PageId } from '@/data/userManualData'
 
 interface PageHeaderProps {
   icon: LucideIcon
@@ -30,6 +32,8 @@ interface PageHeaderProps {
   flagUrl?: string
   flagLabel?: string
   flagResourceType?: string
+  /** When provided, renders a page-specific Guide button */
+  pageId?: PageId
   testId?: string
 }
 
@@ -52,6 +56,7 @@ export const PageHeader = ({
   flagUrl,
   flagLabel,
   flagResourceType,
+  pageId,
   testId,
 }: PageHeaderProps) => {
   const openChat = useRightPanelStore((s) => s.open)
@@ -68,7 +73,8 @@ export const PageHeader = ({
     return () => document.removeEventListener('mousedown', handler)
   }, [mobileMenuOpen])
 
-  const hasActions = dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl
+  const hasActions =
+    dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl || pageId
 
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
@@ -123,6 +129,7 @@ export const PageHeader = ({
                 {viewType && <SourcesButton viewType={viewType} />}
                 {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
                 <GlossaryButton />
+                {pageId && <UserManualButton pageId={pageId} />}
                 {onExport && <ExportButton onExport={onExport} />}
                 <Button
                   variant="ghost"
@@ -150,6 +157,7 @@ export const PageHeader = ({
           {viewType && <SourcesButton viewType={viewType} />}
           {shareTitle && <ShareButton title={shareTitle} text={shareText} />}
           <GlossaryButton />
+          {pageId && <UserManualButton pageId={pageId} />}
           {onExport && <ExportButton onExport={onExport} />}
           {endorseUrl && (
             <EndorseButton

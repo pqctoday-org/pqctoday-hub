@@ -47,6 +47,8 @@ export interface TLSRunRecord {
   handshakeBytes: number
   appDataBytes: number
   success: boolean
+  roundTrips?: number
+  hrrDetected?: boolean
 }
 
 interface TLSStore {

@@ -30,9 +30,29 @@ const AlgorithmsView = lazyWithRetry(() =>
     default: module.AlgorithmsView,
   }))
 )
+const PlaygroundShell = lazyWithRetry(() =>
+  import('./components/Playground/PlaygroundShell').then((module) => ({
+    default: module.PlaygroundShell,
+  }))
+)
+const PlaygroundWorkshop = lazyWithRetry(() =>
+  import('./components/Playground/PlaygroundWorkshop').then((module) => ({
+    default: module.PlaygroundWorkshop,
+  }))
+)
 const PlaygroundView = lazyWithRetry(() =>
   import('./components/Playground/PlaygroundView').then((module) => ({
     default: module.PlaygroundView,
+  }))
+)
+const HsmPlayground = lazyWithRetry(() =>
+  import('./components/Playground/HsmPlayground').then((module) => ({
+    default: module.HsmPlayground,
+  }))
+)
+const PlaygroundToolRoute = lazyWithRetry(() =>
+  import('./components/Playground/PlaygroundToolRoute').then((module) => ({
+    default: module.PlaygroundToolRoute,
   }))
 )
 const OpenSSLStudioView = lazyWithRetry(() =>
@@ -191,10 +211,15 @@ function App() {
               path="/playground"
               element={
                 <ErrorBoundary>
-                  <PlaygroundView />
+                  <PlaygroundShell />
                 </ErrorBoundary>
               }
-            />
+            >
+              <Route index element={<PlaygroundWorkshop />} />
+              <Route path="interactive" element={<PlaygroundView />} />
+              <Route path="hsm" element={<HsmPlayground />} />
+              <Route path=":toolId" element={<PlaygroundToolRoute />} />
+            </Route>
             <Route
               path="/openssl"
               element={

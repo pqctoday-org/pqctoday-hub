@@ -13,6 +13,11 @@ import {
   Radio,
   TreePine,
   ExternalLink,
+  RefreshCw,
+  Hash,
+  FileSearch,
+  EyeOff,
+  Minimize2,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
@@ -26,6 +31,25 @@ interface TLSIntroductionProps {
 export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSimulate }) => {
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Learning Objectives & Prerequisites */}
+      <section className="glass-panel p-6 border-l-4 border-l-primary/50">
+        <h2 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">
+          Before You Start
+        </h2>
+        <p className="text-xs text-muted-foreground mb-3">
+          <strong>Prerequisites:</strong> Familiarity with public-key cryptography (asymmetric keys,
+          digital signatures, certificates) and basic HTTPS concepts.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <strong>After completing this module, you will be able to:</strong>
+        </p>
+        <ol className="text-xs text-muted-foreground list-decimal list-inside space-y-1 mt-1">
+          <li>Explain the TLS 1.3 handshake and how it differs from TLS 1.2</li>
+          <li>Compare overhead of classical, hybrid, and PQC TLS configurations quantitatively</li>
+          <li>Configure a web server for hybrid PQC TLS key exchange</li>
+        </ol>
+      </section>
+
       {/* What is TLS 1.3? */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -51,7 +75,12 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             <div className="text-sm font-bold text-primary mb-1">Added</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>Mandatory ECDHE forward secrecy</li>
-              <li>0-RTT early data (optional)</li>
+              <li>
+                0-RTT early data (optional){' '}
+                <span className="text-status-warning font-normal">
+                  — vulnerable to replay attacks; servers must mitigate (RFC 8446 §8)
+                </span>
+              </li>
               <li>Encrypted handshake messages</li>
             </ul>
           </div>
@@ -209,6 +238,53 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         <p className="text-xs text-muted-foreground mt-2">
           These exact secrets are visible in the Simulate tab after running a handshake.
         </p>
+        <div className="mt-4 bg-muted/50 rounded-lg p-3 border border-border">
+          <h4 className="text-xs font-bold text-foreground mb-1">Session Resumption &amp; PSK</h4>
+          <p className="text-xs text-muted-foreground">
+            After a successful handshake, the server issues a{' '}
+            <InlineTooltip term="PSK">Pre-Shared Key (PSK)</InlineTooltip> ticket. On reconnection,
+            the client presents this PSK, which feeds into the Early Secret stage — enabling a
+            faster resumed handshake and optionally 0-RTT early data. In a full handshake with no
+            prior session, the PSK input is zero.
+          </p>
+        </div>
+      </section>
+
+      {/* HelloRetryRequest */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <RefreshCw size={20} /> HelloRetryRequest (HRR)
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-3">
+          If the server does not support any of the key exchange groups offered in the client&apos;s
+          initial ClientHello, it responds with a <strong>HelloRetryRequest</strong> instead of a
+          ServerHello. This tells the client to retry with a different key share. The result is a
+          2-RTT handshake instead of the standard 1-RTT.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">When Does HRR Happen?</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>Client offers X25519 only, server requires ML-KEM</li>
+              <li>Client offers ML-KEM-768, server wants ML-KEM-1024</li>
+              <li>Client&apos;s key_share group doesn&apos;t match any server preference</li>
+            </ul>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-xs font-bold text-foreground mb-1">PQC Migration Impact</div>
+            <ul className="text-xs text-muted-foreground space-y-1">
+              <li>During PQC rollout, mismatched groups are common</li>
+              <li>
+                Hybrid groups (X25519MLKEM768) minimize HRR — classical clients still match X25519
+              </li>
+              <li>HRR adds latency but never breaks the connection</li>
+            </ul>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          In the simulator, try configuring the client with only ML-KEM-1024 and the server with
+          only X25519 to observe a group negotiation mismatch.
+        </p>
       </section>
 
       {/* PQC in TLS */}
@@ -227,12 +303,26 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           <InlineTooltip term="Lattice-Based Cryptography">lattice-based</InlineTooltip> KEMs
           (ML-KEM) and signatures (<InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip>).
         </p>
-        <p className="text-foreground/80 leading-relaxed mb-4">
+        <p className="text-foreground/80 leading-relaxed mb-3">
           The trade-off: PQC algorithms have larger keys and ciphertexts, increasing handshake
           overhead. For example, ML-KEM-768 public keys are ~1,184 bytes vs 32 bytes for X25519. The
           hybrid approach (e.g., X25519MLKEM768) provides quantum resistance while maintaining
           classical security as a fallback.
         </p>
+        <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
+          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+            <Hash size={12} /> SLH-DSA: Hash-Based Alternative (FIPS 205)
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip> (formerly SPHINCS+) is a
+            hash-based signature scheme standardized alongside ML-DSA. It relies on hash function
+            security rather than lattice problems, providing{' '}
+            <strong>cryptographic diversity</strong>— if lattices are broken, SLH-DSA remains
+            secure. The trade-off is significantly larger signatures (~7.9 KB for SLH-DSA-SHA2-128s
+            vs ~2.4 KB for ML-DSA-44). Both are available in the simulator&apos;s signature
+            algorithm options.
+          </p>
+        </div>
         <button
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
@@ -241,17 +331,49 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         </button>
       </section>
 
-      {/* Merkle Tree Certificates */}
+      {/* Certificate Overhead Mitigations */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <TreePine size={20} /> Merkle Tree Certificates: Scaling PQC for HTTPS
+          <TreePine size={20} /> Scaling PQC for HTTPS
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
           PQC signatures are significantly larger than classical ones — an ML-DSA certificate chain
           can add several kilobytes to every TLS handshake. For the web, where billions of
-          connections happen daily, this overhead is a serious scalability concern. Google&apos;s{' '}
-          <strong>Merkle Tree Certificates (MTC)</strong> program (announced February 2026) proposes
-          a solution.
+          connections happen daily, this overhead is a serious scalability concern. The ecosystem is
+          deploying multiple mitigations.
+        </p>
+
+        {/* Certificate Compression */}
+        <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
+          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+            <Minimize2 size={12} /> TLS Certificate Compression (RFC 8879)
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            Already supported by major browsers, TLS certificate compression can reduce PQC
+            certificate overhead by 30-60%. Certificates are compressed with Zlib or Brotli before
+            transmission and decompressed by the peer. This is a practical short-term mitigation
+            available today while more advanced solutions are being built.
+          </p>
+        </div>
+
+        {/* Certificate Transparency context */}
+        <div className="bg-muted/50 rounded-lg p-3 border border-border mb-4">
+          <h4 className="text-xs font-bold text-foreground mb-1 flex items-center gap-1.5">
+            <FileSearch size={12} /> Certificate Transparency (RFC 9162)
+          </h4>
+          <p className="text-xs text-muted-foreground">
+            Certificate Transparency (CT) requires CAs to log all issued certificates in publicly
+            auditable append-only logs. Browsers verify that certificates appear in CT logs,
+            preventing misissued certificates from going undetected. Understanding CT is essential
+            context for Merkle Tree Certificates, which leverage this same log infrastructure.
+          </p>
+        </div>
+
+        {/* MTC */}
+        <h3 className="text-sm font-bold text-foreground mb-2">Merkle Tree Certificates (MTC)</h3>
+        <p className="text-foreground/80 text-sm leading-relaxed mb-3">
+          Google&apos;s <strong>MTC</strong> program (announced February 2026) goes further than
+          compression — it replaces entire certificate chains with compact Merkle proofs.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -260,8 +382,8 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             </div>
             <p className="text-xs text-muted-foreground">
               Traditional TLS uses a chain of X.509 certificates, each containing a public key and a
-              signature from the issuing CA. With PQC signatures (~2.4 KB for ML-DSA-65), a typical
-              2-certificate chain adds ~5 KB+ to the handshake — a substantial bandwidth increase.
+              signature from the issuing CA. With PQC signatures (~3.3 KB for ML-DSA-65), a typical
+              2-certificate chain adds ~7 KB+ to the handshake — a substantial bandwidth increase.
             </p>
           </div>
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -310,6 +432,27 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
         >
           Google Security Blog: Quantum-safe HTTPS <ExternalLink size={11} />
         </a>
+      </section>
+
+      {/* Encrypted Client Hello */}
+      <section className="glass-panel p-6">
+        <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
+          <EyeOff size={20} /> Encrypted Client Hello (ECH)
+        </h2>
+        <p className="text-foreground/80 leading-relaxed mb-3">
+          PQC protects the <em>content</em> of TLS connections from quantum attack, but the initial
+          ClientHello — including the{' '}
+          <InlineTooltip term="SNI">Server Name Indication (SNI)</InlineTooltip> — is sent in
+          plaintext, revealing <em>which site</em> a user is connecting to. Encrypted Client Hello
+          (ECH) solves this by encrypting the ClientHello using a key published in DNS.
+        </p>
+        <div className="bg-muted/50 rounded-lg p-3 border border-border">
+          <p className="text-xs text-muted-foreground">
+            Major browsers are deploying ECH alongside hybrid PQC key exchange (X25519MLKEM768).
+            Together, they protect both the metadata (who you connect to) and the content (what you
+            exchange) against current and future adversaries.
+          </p>
+        </div>
       </section>
 
       {/* Related Resources */}

@@ -4,6 +4,7 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { UserManualButton } from '../ui/UserManualButton'
 import { ShareButton } from '../ui/ShareButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -332,6 +333,7 @@ export const PKILearningView: React.FC = () => {
           )}
           {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
           <GlossaryButton />
+          <UserManualButton pageId="learn" />
         </div>
       </div>
 

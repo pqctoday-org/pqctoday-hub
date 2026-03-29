@@ -95,6 +95,9 @@ vi.mock('../ui/ShareButton', () => ({
 vi.mock('../ui/GlossaryButton', () => ({
   GlossaryButton: () => <button>Glossary</button>,
 }))
+vi.mock('../ui/UserManualButton', () => ({
+  UserManualButton: () => <button>Guide</button>,
+}))
 
 describe('ComplianceView', () => {
   it('renders the page title', () => {

@@ -313,6 +313,7 @@ export const ThreatsDashboard: React.FC = () => {
     <div>
       <PageHeader
         icon={AlertTriangle}
+        pageId="threats"
         title="Quantum Threats"
         description="Detailed analysis of quantum threats across industries, including criticality, at-risk cryptography, and PQC replacements."
         dataSource={`${threatsMetadata?.filename ?? 'quantum_threats_hsm_industries.csv'} • Updated: ${threatsMetadata?.lastUpdate?.toLocaleDateString() ?? 'Unknown'}`}
@@ -591,7 +592,10 @@ export const ThreatsDashboard: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => { setSelectedThreat(item); syncFiltersToUrl({ id: item.threatId }) }}
+                        onClick={() => {
+                          setSelectedThreat(item)
+                          syncFiltersToUrl({ id: item.threatId })
+                        }}
                         className="bg-primary/10 text-primary rounded-full hover:bg-primary/20"
                         aria-label="View Details"
                       >
@@ -615,7 +619,13 @@ export const ThreatsDashboard: React.FC = () => {
       {/* End desktop wrapper */}
       <AnimatePresence>
         {selectedThreat && (
-          <ThreatDetailDialog threat={selectedThreat} onClose={() => { setSelectedThreat(null); syncFiltersToUrl({ id: null }) }} />
+          <ThreatDetailDialog
+            threat={selectedThreat}
+            onClose={() => {
+              setSelectedThreat(null)
+              syncFiltersToUrl({ id: null })
+            }}
+          />
         )}
       </AnimatePresence>
     </div>

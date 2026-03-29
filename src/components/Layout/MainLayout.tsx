@@ -3,7 +3,6 @@ import React from 'react'
 import { Outlet, NavLink, Link, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Activity,
   Shield,
   Globe,
   Users,
@@ -104,14 +103,6 @@ export const MainLayout = () => {
       mobileMore: true,
       section: 'assess',
     },
-    {
-      path: '/openssl',
-      label: 'OpenSSL Studio',
-      icon: Activity,
-      hiddenOnMobile: true,
-      mobileMore: true,
-      section: 'assess',
-    },
     // — Keep Up to Date —
     { path: '/threats', label: 'Threats', icon: AlertTriangle, section: 'current' },
     { path: '/library', label: 'Library', icon: BookOpen, section: 'current' },
@@ -125,6 +116,9 @@ export const MainLayout = () => {
     },
     { path: '/about', label: 'About', icon: Info, hiddenOnMobile: true, mobileMore: true },
   ]
+
+  // Abbreviated labels for mobile bottom nav (only override labels that are too long)
+  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time' }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
 
@@ -241,8 +235,8 @@ export const MainLayout = () => {
                         }
                       >
                         <item.icon size={18} aria-hidden="true" className="lg:mr-2" />
-                        <span className="lg:hidden text-[10px] leading-none mt-0.5 truncate max-w-[44px] text-center">
-                          {item.label}
+                        <span className="lg:hidden text-[11px] leading-tight mt-0.5 truncate max-w-[56px] text-center">
+                          {SHORT_LABELS[item.label] ?? item.label}
                         </span>
                         <span className="hidden lg:inline">{item.label}</span>
                       </Button>
@@ -269,7 +263,7 @@ export const MainLayout = () => {
                   }
                 >
                   <MoreHorizontal size={18} aria-hidden="true" />
-                  <span className="text-[9px] leading-none mt-0.5">More</span>
+                  <span className="text-[11px] leading-tight mt-0.5">More</span>
                 </Button>
               </div>
             )}

@@ -296,7 +296,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
 
             {/* Footer */}
             <div className="p-3 border-t bg-muted/30 text-[10px] text-muted-foreground flex justify-between">
-              <span>Powered by OpenSSL 3.6.0 (WASM)</span>
+              <span>Powered by OpenSSL 3.6.1 (WASM)</span>
               <span className="font-mono">{pem.length} bytes loaded</span>
             </div>
           </motion.div>

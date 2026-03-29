@@ -4,6 +4,7 @@ import { loadLatestCSVAsync, parseIntOrNull } from './csvUtils'
 export interface AlgorithmDetail {
   family: string
   name: string
+  cryptoFamily: string
   securityLevel: number | null
   aesEquivalent: string
   publicKeySize: number
@@ -20,6 +21,7 @@ export interface AlgorithmDetail {
   type:
     | 'KEM'
     | 'Signature'
+    | 'Hybrid KEM'
     | 'Classical KEM'
     | 'Classical Sig'
     | 'Classical Symmetric'
@@ -29,6 +31,7 @@ export interface AlgorithmDetail {
 interface RawAlgorithmRow {
   'Algorithm Family': string
   Algorithm: string
+  'Cryptographic Family': string
   'NIST Security Level': string
   'AES Equivalent': string
   'Public Key (bytes)': string
@@ -85,6 +88,7 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
     (row) => ({
       family: row['Algorithm Family'],
       name: row['Algorithm'],
+      cryptoFamily: row['Cryptographic Family'] || '',
       securityLevel: parseIntOrNull(row['NIST Security Level']),
       aesEquivalent: row['AES Equivalent'],
       publicKeySize: parseInt(row['Public Key (bytes)'], 10),
@@ -111,6 +115,10 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
 // Helper functions for categorization
 export function isPQC(algo: AlgorithmDetail): boolean {
   return algo.family === 'KEM' || algo.family === 'Signature'
+}
+
+export function isHybrid(algo: AlgorithmDetail): boolean {
+  return algo.family === 'Hybrid KEM'
 }
 
 export function isClassical(algo: AlgorithmDetail): boolean {
@@ -149,4 +157,33 @@ export function getPerformanceColor(category: 'Fast' | 'Moderate' | 'Slow'): str
   if (category === 'Fast') return 'bg-success/10 text-success border-success/30'
   if (category === 'Moderate') return 'bg-warning/10 text-warning border-warning/30'
   return 'bg-destructive/10 text-destructive border-destructive/30'
+}
+
+export function getCryptoFamilyColor(family: string): string {
+  switch (family) {
+    case 'Lattice':
+      return 'bg-primary/10 text-primary border-primary/30'
+    case 'Code-based':
+      return 'bg-accent/10 text-accent border-accent/30'
+    case 'Hash-based':
+      return 'bg-success/10 text-success border-success/30'
+    case 'Hybrid':
+      return 'bg-warning/10 text-warning border-warning/30'
+    case 'Classical':
+      return 'bg-muted/50 text-muted-foreground border-border'
+    default:
+      return 'bg-muted/50 text-muted-foreground border-border'
+  }
+}
+
+/** Determine the functional group of an algorithm: 'KEM' or 'Signature' */
+export function getFunctionGroup(
+  algo: AlgorithmDetail
+): 'KEM' | 'Signature' | 'Hash' | 'Symmetric' | null {
+  if (algo.family === 'KEM' || algo.family === 'Classical KEM' || algo.family === 'Hybrid KEM')
+    return 'KEM'
+  if (algo.family === 'Signature' || algo.family === 'Classical Sig') return 'Signature'
+  if (algo.family === 'Classical Hash') return 'Hash'
+  if (algo.family === 'Classical Symmetric') return 'Symmetric'
+  return null
 }

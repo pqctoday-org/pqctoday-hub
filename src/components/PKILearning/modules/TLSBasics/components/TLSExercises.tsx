@@ -43,7 +43,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       badge: 'Classical',
       badgeColor: 'bg-primary/20 text-primary border-primary/50',
       observe:
-        'Observe the baseline handshake size (~4 KB) and the negotiated cipher suite. Note the RSA signature in the CertificateVerify message.',
+        'Record the baseline handshake byte count (~4 KB) — you will compare it against every subsequent scenario. Note the RSA signature in the CertificateVerify message.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
@@ -109,7 +109,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
       badge: 'Hybrid',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'Notice the increased handshake size from the larger ML-KEM key share (~1.2 KB). The Key Exchange badge in results will show "Hybrid".',
+        'Record the handshake bytes and check the "vs #1" column in the Comparison Table — this shows the percentage increase from the ML-KEM key share (~1.2 KB). The Key Exchange badge will show the hybrid group name.',
       apply: () => {
         setClientConfig({
           cipherSuites: ['TLS_AES_256_GCM_SHA384'],
@@ -197,6 +197,105 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
             caPem: DEFAULT_ROOT_CA,
           },
           verifyClient: true,
+        })
+      },
+    },
+    {
+      id: 'pqc-mtls',
+      title: '6. PQC Mutual TLS (ML-DSA-87 + Hybrid)',
+      description:
+        'The worst-case PQC overhead scenario: mutual authentication with ML-DSA-87 certificates on both sides, combined with X25519MLKEM768 hybrid key exchange.',
+      badge: 'Full PQC mTLS',
+      badgeColor: 'bg-success/20 text-success border-success/50',
+      observe:
+        'Compare total bytes with Scenario 5 (RSA mTLS) — both sides now send large PQC certificates and signatures, roughly doubling the PQC certificate overhead. Record the handshake bytes for the Comparison Table.',
+      apply: () => {
+        setClientConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['X25519MLKEM768'],
+          signatureAlgorithms: ['mldsa87'],
+          certificates: {
+            certPem: DEFAULT_MLDSA87_CLIENT_CERT,
+            keyPem: DEFAULT_MLDSA87_CLIENT_KEY,
+            caPem: DEFAULT_MLDSA87_ROOT_CA,
+          },
+        })
+        setServerConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['X25519MLKEM768'],
+          signatureAlgorithms: ['mldsa87'],
+          certificates: {
+            certPem: DEFAULT_MLDSA87_SERVER_CERT,
+            keyPem: DEFAULT_MLDSA87_SERVER_KEY,
+            caPem: DEFAULT_MLDSA87_ROOT_CA,
+          },
+          verifyClient: true,
+        })
+      },
+    },
+    {
+      id: 'hrr-classical',
+      title: '7. HelloRetryRequest — Classical Group Mismatch',
+      description:
+        'Trigger a HelloRetryRequest by giving the client only P-384 while the server only accepts X25519. The server will ask the client to retry with a compatible group, adding an extra round trip.',
+      badge: 'HRR',
+      badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+      observe:
+        'Look for the "HRR" badge and the 2-RTT indicator in results. The extra round trip means a second ClientHello with a new key_share — check the "vs #1" column in the Comparison Table to see the exact byte overhead. Compare Wire Data sizes between this run and Scenario 1.',
+      apply: () => {
+        setClientConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['P-384'],
+          signatureAlgorithms: ['rsa_pss_rsae_sha256', 'ecdsa_secp256r1_sha256'],
+          certificates: {
+            certPem: DEFAULT_CLIENT_CERT,
+            keyPem: DEFAULT_CLIENT_KEY,
+            caPem: DEFAULT_ROOT_CA,
+          },
+        })
+        setServerConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['X25519'],
+          signatureAlgorithms: ['rsa_pss_rsae_sha256', 'ecdsa_secp256r1_sha256'],
+          certificates: {
+            certPem: DEFAULT_SERVER_CERT,
+            keyPem: DEFAULT_SERVER_KEY,
+            caPem: DEFAULT_ROOT_CA,
+          },
+          verifyClient: false,
+        })
+      },
+    },
+    {
+      id: 'hrr-pqc',
+      title: '8. HelloRetryRequest — PQC Group Mismatch',
+      description:
+        'Simulate a PQC migration scenario: the client offers only ML-KEM-1024 but the server only supports X25519MLKEM768. The server sends a HelloRetryRequest, forcing the client to retry with the hybrid group.',
+      badge: 'HRR + PQC',
+      badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
+      observe:
+        'This is a realistic PQC migration scenario. Compare the handshake bytes with Scenario 4 (Full PQC, 1-RTT) — the HRR adds a second ClientHello carrying a ~1.5 KB ML-KEM key_share. The Comparison Table shows the combined cost of PQC signatures + PQC key exchange + extra round trip. Hybrid groups (X25519MLKEM768) avoid this mismatch by supporting both classical and PQC peers.',
+      apply: () => {
+        setClientConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['ML-KEM-1024'],
+          signatureAlgorithms: ['mldsa87', 'rsa_pss_rsae_sha256'],
+          certificates: {
+            certPem: DEFAULT_MLDSA87_CLIENT_CERT,
+            keyPem: DEFAULT_MLDSA87_CLIENT_KEY,
+            caPem: DEFAULT_MLDSA87_ROOT_CA,
+          },
+        })
+        setServerConfig({
+          cipherSuites: ['TLS_AES_256_GCM_SHA384'],
+          groups: ['X25519MLKEM768'],
+          signatureAlgorithms: ['mldsa87', 'rsa_pss_rsae_sha256'],
+          certificates: {
+            certPem: DEFAULT_MLDSA87_SERVER_CERT,
+            keyPem: DEFAULT_MLDSA87_SERVER_KEY,
+            caPem: DEFAULT_MLDSA87_ROOT_CA,
+          },
+          verifyClient: false,
         })
       },
     },

@@ -43,6 +43,12 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
     <div className="relative" ref={ref}>
       <button
         onClick={() => setIsOpen(!isOpen)}
+        onKeyDown={(e) => {
+          if (e.key === 'Escape' && isOpen) {
+            e.preventDefault()
+            setIsOpen(false)
+          }
+        }}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"

@@ -35,5 +35,5 @@ The workshop is a live TLS handshake simulator with the following features:
 - RFC 8446 (TLS 1.3)
 - FIPS 203 (ML-KEM)
 - FIPS 204 (ML-DSA)
-- RFC 9180 (Hybrid Public Key Encryption)
 - draft-ietf-tls-mlkem (ML-KEM for TLS 1.3)
+- RFC 8879 (TLS Certificate Compression)

@@ -53,3 +53,29 @@ export async function loadAlgorithmsData(): Promise<AlgorithmTransition[]> {
 
 // Re-export for consumers that use these helpers
 export { getDateFromFilename, getRevisionFromFilename }
+
+/** Derive cryptographic family from a PQC Replacement name in transitions CSV */
+export function getCryptoFamilyFromPQCName(pqcName: string): string {
+  const n = pqcName.toLowerCase()
+  if (
+    n.startsWith('ml-kem') ||
+    n.startsWith('frodokem') ||
+    n.startsWith('ml-dsa') ||
+    n.startsWith('fn-dsa')
+  )
+    return 'Lattice'
+  if (n.startsWith('hqc') || n.startsWith('classic-mceliece')) return 'Code-based'
+  if (n.startsWith('slh-dsa') || n.startsWith('lms') || n.startsWith('xmss')) return 'Hash-based'
+  if (n.includes('mlkem') && (n.startsWith('x25519') || n.startsWith('secp'))) return 'Hybrid'
+  if (n.startsWith('sha3') || n.startsWith('hmac-sha') || n.startsWith('aes')) return 'N/A'
+  return 'N/A'
+}
+
+/** Derive function group from transition's function field */
+export function getTransitionFunctionGroup(
+  fn: AlgorithmTransition['function']
+): 'KEM' | 'Signature' | null {
+  if (fn === 'Encryption/KEM' || fn === 'Hybrid KEM') return 'KEM'
+  if (fn === 'Signature') return 'Signature'
+  return null
+}

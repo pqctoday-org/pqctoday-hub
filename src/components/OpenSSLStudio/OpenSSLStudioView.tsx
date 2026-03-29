@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
@@ -68,46 +68,58 @@ function resolveCmd(param: string | null): OpenSSLCategory {
   return CMD_ALIASES[lower] ?? 'genpkey'
 }
 
-export const OpenSSLStudioView = () => {
+interface OpenSSLStudioViewProps {
+  /** When true, hides PageHeader and desktop banner; uses local state instead of URL params. */
+  embedded?: boolean
+}
+
+export const OpenSSLStudioView: React.FC<OpenSSLStudioViewProps> = ({ embedded }) => {
   const [searchParams, setSearchParams] = useSearchParams()
   const [showTerminal, setShowTerminal] = useState(true)
   const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
-    resolveCmd(searchParams.get('cmd'))
+    embedded ? 'genpkey' : resolveCmd(searchParams.get('cmd'))
   )
   const { editingFile, activeTab } = useOpenSSLStore()
 
   const handleCategoryChange = useCallback(
     (cat: OpenSSLCategory) => {
       setCategory(cat)
-      setSearchParams(
-        (prev) => {
-          const next = new URLSearchParams(prev)
-          next.set('cmd', cat)
-          return next
-        },
-        { replace: true }
-      )
+      if (!embedded) {
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev)
+            next.set('cmd', cat)
+            return next
+          },
+          { replace: true }
+        )
+      }
     },
-    [setSearchParams]
+    [embedded, setSearchParams]
   )
 
   return (
     <div className="h-full flex flex-col animate-fade-in">
-      <PageHeader
-        icon={Terminal}
-        title="OpenSSL Studio"
-        description="Interactive OpenSSL v3.6.0 environment running entirely in your browser via WebAssembly."
-        viewType="Library"
-        shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.0 in Your Browser"
-        shareText="Run real OpenSSL 3.6.0 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
-      />
+      {!embedded && (
+        <PageHeader
+          icon={Terminal}
+          pageId="openssl-studio"
+          title="OpenSSL Studio"
+          description="Interactive OpenSSL v3.6.1 environment running entirely in your browser via WebAssembly."
+          viewType="Library"
+          shareTitle="OpenSSL Studio — Interactive OpenSSL v3.6.1 in Your Browser"
+          shareText="Run real OpenSSL 3.6.1 commands — key generation, certificates, KEM, PQC — entirely in your browser via WebAssembly."
+        />
+      )}
 
-      {/* Desktop recommended banner — visible below lg */}
-      <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
-        <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
-        <span>Best experienced on desktop — scroll down for terminal and file manager.</span>
-      </div>
+      {/* Desktop recommended banner — visible below lg, hidden when embedded */}
+      {!embedded && (
+        <div className="lg:hidden glass-panel p-3 mb-4 flex items-center gap-2 text-sm text-muted-foreground">
+          <Monitor size={16} className="shrink-0 text-primary" aria-hidden="true" />
+          <span>Best experienced on desktop — scroll down for terminal and file manager.</span>
+        </div>
+      )}
 
       <div className="flex-1 grid grid-cols-12 gap-6 min-h-0">
         {/* Left Pane: Workbench (Command Builder & Preview) */}

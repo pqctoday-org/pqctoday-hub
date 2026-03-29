@@ -179,20 +179,24 @@ const KeyAttrModal = ({
         <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
           Identity
         </p>
-        <table className="w-full text-xs font-mono border-collapse">
+        <table className="w-full table-fixed text-xs font-mono border-collapse">
           <tbody>
             <tr className="border-b border-border/40">
-              <td className="py-1.5 pr-4 text-muted-foreground w-40">CKA_CLASS</td>
-              <td className="py-1.5 text-foreground">{fmtUlong(attrs.ckClass, CKO_NAMES)}</td>
+              <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
+              <td className="py-1.5 text-foreground break-all">
+                {fmtUlong(attrs.ckClass, CKO_NAMES)}
+              </td>
             </tr>
             <tr className="border-b border-border/40">
               <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
-              <td className="py-1.5 text-foreground">{fmtUlong(attrs.ckKeyType, CKK_NAMES)}</td>
+              <td className="py-1.5 text-foreground break-all">
+                {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
+              </td>
             </tr>
             {attrs.ckKeyGenMechanism !== null && (
               <tr className="border-b border-border/40">
                 <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
-                <td className="py-1.5 text-foreground">
+                <td className="py-1.5 text-foreground break-all">
                   {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
                 </td>
               </tr>
@@ -200,7 +204,7 @@ const KeyAttrModal = ({
             {attrs.ckParameterSet !== null && (
               <tr className="border-b border-border/40">
                 <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
-                <td className="py-1.5 text-foreground">
+                <td className="py-1.5 text-foreground break-all">
                   {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
                 </td>
               </tr>
@@ -214,8 +218,8 @@ const KeyAttrModal = ({
             {attrs.ckCheckValue && (
               <tr className="border-b border-border/40">
                 <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
-                <td className="py-1.5 text-status-success font-bold font-mono">
-                  {Array.from(attrs.ckCheckValue)
+                <td className="py-1.5 text-status-success font-bold font-mono break-all">
+                  {Array.from(attrs.ckCheckValue.slice(0, 3))
                     .map((b) => b.toString(16).padStart(2, '0'))
                     .join('')
                     .toUpperCase()}

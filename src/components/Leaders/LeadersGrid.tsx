@@ -355,6 +355,7 @@ export const LeadersGrid = () => {
     <div className="space-y-6">
       <PageHeader
         icon={Users}
+        pageId="leaders"
         title="Transformation Leaders"
         description="Visionaries and organizations driving the global transition to Post-Quantum Cryptography."
         dataSource={

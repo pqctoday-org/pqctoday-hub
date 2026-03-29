@@ -5,11 +5,10 @@ import { DataInput } from '../DataInput'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { HASH_METHODS } from '../hooks/useHashingOperations'
-import { HsmHashingPanel } from '../hsm/HsmHashingPanel'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 export const HashingTab: React.FC = () => {
-  const { loading, hsmMode } = useSettingsContext()
+  const { loading } = useSettingsContext()
   const {
     selectedHashMethod,
     setSelectedHashMethod,
@@ -19,8 +18,6 @@ export const HashingTab: React.FC = () => {
     setHashOutput,
     runOperation,
   } = useOperationsContext()
-
-  if (hsmMode) return <HsmHashingPanel />
 
   const selectedMethod = HASH_METHODS.find((m) => m.id === selectedHashMethod)
 

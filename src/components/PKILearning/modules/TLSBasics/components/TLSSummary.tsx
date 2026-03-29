@@ -40,6 +40,13 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
     }
   })
 
+  // Detect HelloRetryRequest
+  const hrrEvent = events.find(
+    (e) => e.event === 'hello_retry' || e.event === 'hello_retry_summary'
+  )
+  const roundTrips = events.find((e) => e.event === 'round_trips')
+  const isHRR = !!hrrEvent
+
   // Classify key exchange
   const isHybrid =
     keyExchange &&
@@ -124,6 +131,13 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
               {mTLSEnabled && (
                 <p className="mt-1 text-primary">
                   Mutual TLS was enabled — both client and server authenticated with certificates.
+                </p>
+              )}
+              {isHRR && (
+                <p className="mt-1 text-status-warning">
+                  HelloRetryRequest occurred — the server requested a different key exchange group,
+                  adding an extra round trip ({roundTrips?.details || '2'}-RTT instead of 1-RTT).
+                  This happens during PQC migration when client and server group preferences differ.
                 </p>
               )}
             </>

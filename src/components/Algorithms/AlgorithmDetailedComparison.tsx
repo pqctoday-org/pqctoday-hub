@@ -1,48 +1,30 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import {
-  loadPQCAlgorithmsData,
   type AlgorithmDetail,
-  isPQC,
   getPerformanceCategory,
   getPerformanceColor,
   getSecurityLevelColor,
+  getFunctionGroup,
 } from '../../data/pqcAlgorithmsData'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Shield,
   Zap,
   HardDrive,
   TrendingUp,
-  Filter,
   Info,
-  Search,
   ArrowUpDown,
   ArrowUp,
   ArrowDown,
   SearchX,
+  Scale,
 } from 'lucide-react'
 import clsx from 'clsx'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
-
-const TYPE_ITEMS = [
-  { id: 'All', label: 'All Algorithms' },
-  { id: 'pqc', label: 'PQC Only' },
-  { id: 'classical', label: 'Classical Only' },
-]
-
-const LEVEL_ITEMS = [
-  { id: 'All', label: 'All Levels' },
-  { id: '1', label: 'Level 1' },
-  { id: '2', label: 'Level 2' },
-  { id: '3', label: 'Level 3' },
-  { id: '4', label: 'Level 4' },
-  { id: '5', label: 'Level 5' },
-]
 
 function getPerformanceMultiplier(cycles: string): number {
   if (cycles === 'Baseline' || cycles.includes('Baseline')) return 1
@@ -54,126 +36,24 @@ function getPerformanceMultiplier(cycles: string): number {
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
   onInfoOpen?: () => void
+  filteredAlgorithms: AlgorithmDetail[]
+  compareSet: Set<string>
+  compareType: 'KEM' | 'Signature' | null
+  maxCompareReached: boolean
+  onToggleCompare: (name: string) => void
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
   highlightAlgorithms,
   onInfoOpen,
+  filteredAlgorithms,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
 }) => {
-  const [algorithms, setAlgorithms] = useState<AlgorithmDetail[]>([])
-  const [isLoading, setIsLoading] = useState(true)
-  const [filterType, setFilterType] = useState('All')
-  const [filterSecurityLevel, setFilterSecurityLevel] = useState('All')
-  const [searchQuery, setSearchQuery] = useState('')
-
-  useEffect(() => {
-    loadPQCAlgorithmsData()
-      .then((data) => {
-        setAlgorithms(data)
-        setIsLoading(false)
-      })
-      .catch((error) => {
-        console.error('Failed to load PQC algorithms data:', error)
-        setIsLoading(false)
-      })
-  }, [])
-
-  const filteredAlgorithms = useMemo(() => {
-    return algorithms.filter((algo) => {
-      if (filterType === 'pqc' && !isPQC(algo)) return false
-      if (filterType === 'classical' && isPQC(algo)) return false
-      if (filterSecurityLevel !== 'All' && algo.securityLevel !== parseInt(filterSecurityLevel))
-        return false
-      if (searchQuery) {
-        const q = searchQuery.toLowerCase()
-        if (
-          !algo.name.toLowerCase().includes(q) &&
-          !algo.family.toLowerCase().includes(q) &&
-          !algo.fipsStandard.toLowerCase().includes(q)
-        )
-          return false
-      }
-      return true
-    })
-  }, [algorithms, filterType, filterSecurityLevel, searchQuery])
-
-  const availableLevels = useMemo(() => {
-    const typeFiltered = algorithms.filter((algo) => {
-      if (filterType === 'pqc' && !isPQC(algo)) return false
-      if (filterType === 'classical' && isPQC(algo)) return false
-      return true
-    })
-    const levels = new Set(typeFiltered.map((a) => a.securityLevel).filter(Boolean))
-    return LEVEL_ITEMS.filter((item) => item.id === 'All' || levels.has(parseInt(item.id)))
-  }, [algorithms, filterType])
-
-  const handleTypeChange = (id: string) => {
-    setFilterType(id)
-    setFilterSecurityLevel('All')
-  }
-
-  if (isLoading) {
-    return (
-      <div className="glass-panel p-12 flex items-center justify-center">
-        <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-          <p className="text-muted-foreground">Loading algorithm data...</p>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="space-y-6">
-      {/* Filters */}
-      <div className="glass-panel p-3 md:p-4">
-        <div className="flex flex-col md:flex-row md:items-center gap-3">
-          <div className="flex items-center gap-2">
-            <Filter size={18} className="text-muted-foreground" />
-            <span className="text-sm font-medium text-muted-foreground">Filters:</span>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-2">
-            <FilterDropdown
-              items={TYPE_ITEMS}
-              selectedId={filterType}
-              onSelect={handleTypeChange}
-              label="Type"
-              defaultLabel="All Algorithms"
-              noContainer
-            />
-
-            <FilterDropdown
-              items={availableLevels}
-              selectedId={filterSecurityLevel}
-              onSelect={setFilterSecurityLevel}
-              label="Security"
-              defaultLabel="All Levels"
-              defaultIcon={<Shield size={16} className="text-primary" />}
-              noContainer
-            />
-          </div>
-
-          <div className="relative flex-1 min-w-[180px] md:max-w-xs">
-            <Search
-              size={16}
-              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            />
-            <input
-              type="text"
-              placeholder="Search algorithms..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-3 py-2 text-sm rounded-lg bg-muted/30 border border-border text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-            />
-          </div>
-
-          <div className="text-sm text-muted-foreground md:ml-auto whitespace-nowrap">
-            Showing {filteredAlgorithms.length} of {algorithms.length} algorithms
-          </div>
-        </div>
-      </div>
-
       {/* Tabs */}
       <Tabs defaultValue="performance">
         <div className="flex items-center gap-2 mb-4">
@@ -217,6 +97,10 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             <PerformanceView
               algorithms={filteredAlgorithms}
               highlightAlgorithms={highlightAlgorithms}
+              compareSet={compareSet}
+              compareType={compareType}
+              maxCompareReached={maxCompareReached}
+              onToggleCompare={onToggleCompare}
             />
           </motion.div>
         </TabsContent>
@@ -230,6 +114,10 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             <SecurityView
               algorithms={filteredAlgorithms}
               highlightAlgorithms={highlightAlgorithms}
+              compareSet={compareSet}
+              compareType={compareType}
+              maxCompareReached={maxCompareReached}
+              onToggleCompare={onToggleCompare}
             />
           </motion.div>
         </TabsContent>
@@ -240,7 +128,14 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <SizesView algorithms={filteredAlgorithms} highlightAlgorithms={highlightAlgorithms} />
+            <SizesView
+              algorithms={filteredAlgorithms}
+              highlightAlgorithms={highlightAlgorithms}
+              compareSet={compareSet}
+              compareType={compareType}
+              maxCompareReached={maxCompareReached}
+              onToggleCompare={onToggleCompare}
+            />
           </motion.div>
         </TabsContent>
 
@@ -253,6 +148,10 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             <UseCasesView
               algorithms={filteredAlgorithms}
               highlightAlgorithms={highlightAlgorithms}
+              compareSet={compareSet}
+              compareType={compareType}
+              maxCompareReached={maxCompareReached}
+              onToggleCompare={onToggleCompare}
             />
           </motion.div>
         </TabsContent>
@@ -274,6 +173,10 @@ const EmptyState = () => (
 interface DetailViewProps {
   algorithms: AlgorithmDetail[]
   highlightAlgorithms?: Set<string>
+  compareSet?: Set<string>
+  compareType?: 'KEM' | 'Signature' | null
+  maxCompareReached?: boolean
+  onToggleCompare?: (name: string) => void
 }
 
 function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean {
@@ -286,7 +189,14 @@ function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean
 }
 
 // Performance View Component
-const PerformanceView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
+const PerformanceView = ({
+  algorithms,
+  highlightAlgorithms,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
+}: DetailViewProps) => {
   const [sortField, setSortField] = useState<SortField>('name')
   const [sortDir, setSortDir] = useState<SortDir>('asc')
 
@@ -402,6 +312,13 @@ const PerformanceView = ({ algorithms, highlightAlgorithms }: DetailViewProps) =
               const signPerf = getPerformanceCategory(algo.signEncapsCycles)
               const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
               const highlighted = isHighlighted(algo, highlightAlgorithms)
+              const isCompared = compareSet?.has(algo.name) ?? false
+              const algoGroup = getFunctionGroup(algo)
+              const canToggle =
+                isCompared ||
+                (!maxCompareReached &&
+                  (compareType === null || compareType === algoGroup) &&
+                  (algoGroup === 'KEM' || algoGroup === 'Signature'))
 
               return (
                 <tr
@@ -416,18 +333,46 @@ const PerformanceView = ({ algorithms, highlightAlgorithms }: DetailViewProps) =
                   )}
                 >
                   <td className="p-4">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-semibold text-foreground">{algo.name}</span>
-                      {algo.securityLevel && (
-                        <span
+                    <div className="flex items-start gap-2">
+                      {onToggleCompare && (algoGroup === 'KEM' || algoGroup === 'Signature') && (
+                        <button
+                          type="button"
+                          onClick={() => onToggleCompare(algo.name)}
+                          disabled={!canToggle && !isCompared}
+                          title={
+                            isCompared
+                              ? 'Remove from comparison'
+                              : !canToggle
+                                ? maxCompareReached
+                                  ? 'Max 3 reached'
+                                  : 'Clear to switch type'
+                                : 'Add to comparison'
+                          }
                           className={clsx(
-                            'text-xs px-2 py-0.5 rounded border w-fit',
-                            getSecurityLevelColor(algo.securityLevel)
+                            'shrink-0 p-1 mt-0.5 rounded transition-colors',
+                            isCompared
+                              ? 'text-secondary bg-secondary/10'
+                              : canToggle
+                                ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
+                                : 'text-muted-foreground/30 cursor-not-allowed'
                           )}
                         >
-                          Level {algo.securityLevel}
-                        </span>
+                          <Scale size={14} />
+                        </button>
                       )}
+                      <div className="flex flex-col gap-1">
+                        <span className="font-semibold text-foreground">{algo.name}</span>
+                        {algo.securityLevel && (
+                          <span
+                            className={clsx(
+                              'text-xs px-2 py-0.5 rounded border w-fit',
+                              getSecurityLevelColor(algo.securityLevel)
+                            )}
+                          >
+                            Level {algo.securityLevel}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="p-4 text-sm text-muted-foreground">{algo.family}</td>

@@ -96,7 +96,6 @@ describe('MainLayout', () => {
       expect(within(nav).getByRole('button', { name: /library view/i })).toBeInTheDocument()
       expect(within(nav).getByRole('button', { name: /learn view/i })).toBeInTheDocument()
       expect(within(nav).getByRole('button', { name: /playground view/i })).toBeInTheDocument()
-      expect(within(nav).getByRole('button', { name: /openssl studio view/i })).toBeInTheDocument()
       expect(within(nav).getByRole('button', { name: /threats view/i })).toBeInTheDocument()
       expect(within(nav).getByRole('button', { name: /about view/i })).toBeInTheDocument()
     })
@@ -198,11 +197,9 @@ describe('MainLayout', () => {
 
       // These items should have 'hidden lg:block' class on mobile
       const playgroundButton = screen.queryByRole('button', { name: /playground view/i })
-      const opensslButton = screen.queryByRole('button', { name: /openssl studio view/i })
 
       // They exist in DOM but are hidden on mobile
       expect(playgroundButton).toBeInTheDocument()
-      expect(opensslButton).toBeInTheDocument()
     })
 
     it('renders the outlet content on mobile', () => {

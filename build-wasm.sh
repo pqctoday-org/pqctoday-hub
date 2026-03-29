@@ -1,9 +1,9 @@
 #!/bin/bash
 set -e
 
-echo "Starting OpenSSL WASM Build (Retry)..."
+echo "Starting OpenSSL WASM Build (3.6.1 + HRR detection)..."
 
-cd openssl-3.6.0-src
+cd openssl-3.6.1-src
 
 # Clean previous build
 echo "Cleaning..."

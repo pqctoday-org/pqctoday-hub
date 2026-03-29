@@ -60,6 +60,7 @@ import {
   hsm_hmac,
   hsm_generateHMACKey,
   hsm_extractKeyValue,
+  hsm_extractECPoint,
   hsm_ecdhDerive,
   hsm_hkdf,
   CKM_SHA256,
@@ -246,12 +247,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           // ── Live HSM Mode: Extract public key for USIM provisioning ──
           const M = hsm.moduleRef.current
           const hSession = hsm.hSessionRef.current
-          const pubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
           const pubHex = Array.from(pubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
           result =
-            `[PKCS#11] C_GetAttributeValue(CKA_VALUE) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n` +
+            `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n` +
             `  Public key bytes: ${pubBytes.length}\n` +
             `  Key (hex): ${pubHex.slice(0, 64)}...\n` +
             `\nHN public key extracted from SoftHSM3 → provisioned to USIM.`
@@ -269,9 +270,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           // ── Live HSM Mode: Read back public key ──
           const M = hsm.moduleRef.current
           const hSession = hsm.hSessionRef.current
-          const pubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
           result =
-            `[PKCS#11] C_GetAttributeValue(CKA_VALUE) — key retrieved from HSM\n` +
+            `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) — key retrieved from HSM\n` +
             `  Public key size: ${pubBytes.length} bytes\n` +
             `  Profile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n` +
             `\nUE retrieved HN public key from USIM (HSM-backed).`
@@ -293,7 +294,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
           hsmHandlesRef.current.ephPubHandle = pubHandle
           hsmHandlesRef.current.ephPrivHandle = privHandle
-          const ephPubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+          const ephPubBytes = hsm_extractECPoint(M, hSession, pubHandle)
           const ephPubHex = Array.from(ephPubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
@@ -328,7 +329,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           // ── Live HSM Mode: ECDH key agreement via PKCS#11 ──
           const M = hsm.moduleRef.current
           const hSession = hsm.hSessionRef.current
-          const hnPubBytes = hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle)
+          const hnPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
           const derivedHandle = hsm_ecdhDerive(
             M,
             hSession,

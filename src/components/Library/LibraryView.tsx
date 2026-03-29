@@ -528,6 +528,7 @@ export const LibraryView: React.FC = () => {
     <div className="space-y-6">
       <PageHeader
         icon={BookOpen}
+        pageId="library"
         title="PQC Library"
         description="Explore the latest Post-Quantum Cryptography standards, drafts, and related documents."
         dataSource={

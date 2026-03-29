@@ -1,0 +1,89 @@
+// SPDX-License-Identifier: GPL-3.0-only
+import { X, Scale, ArrowRightLeft } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+
+interface AlgorithmCompareBarProps {
+  compareKeys: string[]
+  baselineName: string | null
+  onRemove: (key: string) => void
+  onClearAll: () => void
+  onCompare: () => void
+}
+
+const MAX = 3
+
+export function AlgorithmCompareBar({
+  compareKeys,
+  baselineName,
+  onRemove,
+  onClearAll,
+  onCompare,
+}: AlgorithmCompareBarProps) {
+  if (compareKeys.length === 0) return null
+
+  const canCompare = compareKeys.length >= 2
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-[var(--z-index-panel)] bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
+        <Scale size={15} className="text-secondary shrink-0" />
+        <span className="text-sm font-medium text-foreground shrink-0">Compare:</span>
+
+        {/* Baseline chip (locked) */}
+        {baselineName && (
+          <span className="flex items-center gap-1 text-xs bg-muted text-foreground border border-primary/50 rounded-full px-2.5 py-0.5">
+            <span className="text-[10px] font-semibold text-primary uppercase">Baseline</span>
+            <span className="truncate max-w-[100px]">{baselineName}</span>
+          </span>
+        )}
+
+        {/* User-selected chips */}
+        <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
+          {compareKeys.map((name) => (
+            <span
+              key={name}
+              className="flex items-center gap-1 text-xs bg-secondary/10 text-foreground border border-secondary/20 rounded-full px-2.5 py-0.5"
+            >
+              <span className="truncate max-w-[120px]">{name}</span>
+              <button
+                type="button"
+                onClick={() => onRemove(name)}
+                aria-label={`Remove ${name} from comparison`}
+                className="text-muted-foreground hover:text-foreground shrink-0"
+              >
+                <X size={10} />
+              </button>
+            </span>
+          ))}
+          {Array.from({ length: MAX - compareKeys.length }).map((_, i) => (
+            <span
+              key={`slot-${i}`}
+              className="text-xs text-muted-foreground border border-dashed border-border rounded-full px-3 py-0.5 select-none"
+            >
+              + add
+            </span>
+          ))}
+        </div>
+
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onClearAll}
+          className="text-muted-foreground shrink-0"
+        >
+          Clear
+        </Button>
+        <Button
+          variant="gradient"
+          size="sm"
+          disabled={!canCompare}
+          onClick={onCompare}
+          className="gap-1.5 shrink-0"
+        >
+          <ArrowRightLeft size={14} />
+          Compare ({compareKeys.length})
+        </Button>
+      </div>
+    </div>
+  )
+}

@@ -110,7 +110,7 @@ export const MobilePlaygroundView = () => {
       <div className="glass-panel p-4 space-y-2">
         <h4 className="text-sm font-semibold text-foreground">Powered By</h4>
         <div className="flex flex-wrap gap-2">
-          {['OpenSSL 3.6.0 WASM', 'liboqs', 'PKCS#11 v3.2', 'Web Crypto API'].map((tech) => (
+          {['OpenSSL 3.6.1 WASM', 'liboqs', 'PKCS#11 v3.2', 'Web Crypto API'].map((tech) => (
             <span
               key={tech}
               className="px-2.5 py-1 rounded-full bg-muted/50 border border-border text-xs text-muted-foreground"

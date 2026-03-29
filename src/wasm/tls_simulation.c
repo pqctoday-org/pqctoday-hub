@@ -28,6 +28,10 @@ static const char *current_side = "system"; // Global context for callbacks
 // Ex data index to store SSL side identifier
 static int ssl_side_ex_data_idx = -1;
 
+// HRR detection: count ClientHello messages per simulation
+static int client_hello_count = 0;
+static int hrr_detected = 0;
+
 // Helper to translate X509 verification errors to clear educational messages
 const char *get_cert_verify_explanation(int verify_err) {
   switch (verify_err) {
@@ -346,6 +350,50 @@ size_t trace_callback(const char *buffer, size_t count, int category, int cmd,
   return count;
 }
 
+// MSG CALLBACK — detects individual handshake messages including HRR
+void msg_callback(int write_p, int version, int content_type,
+                  const void *buf, size_t len, SSL *ssl, void *arg) {
+  // Only process handshake messages (content_type 22)
+  if (content_type != SSL3_RT_HANDSHAKE || len < 1)
+    return;
+
+  const char *side = "system";
+  if (ssl_side_ex_data_idx >= 0) {
+    side = (const char *)SSL_get_ex_data(ssl, ssl_side_ex_data_idx);
+    if (!side)
+      side = "system";
+  }
+
+  unsigned char msg_type = ((const unsigned char *)buf)[0];
+
+  // Track ClientHello sends from the client side
+  // msg_type 1 = ClientHello, write_p = 1 means sending
+  if (msg_type == 1 && write_p && strcmp(side, "client") == 0) {
+    client_hello_count++;
+    if (client_hello_count == 1) {
+      log_event("client", "handshake_msg", "ClientHello sent (initial)");
+    } else if (client_hello_count == 2) {
+      hrr_detected = 1;
+      log_event("client", "hello_retry",
+                "HelloRetryRequest: Server requested different key exchange "
+                "group. Client sending second ClientHello with updated "
+                "key_share. Handshake is now 2-RTT instead of 1-RTT.");
+    }
+  }
+
+  // Detect ServerHello (msg_type 2) received by client
+  // In TLS 1.3, HelloRetryRequest is a ServerHello with a special random
+  // OpenSSL state machine handles this internally; we detect it via the
+  // client_hello_count (if a second ClientHello follows, HRR happened)
+  if (msg_type == 2 && !write_p && strcmp(side, "client") == 0) {
+    if (client_hello_count == 1 && !hrr_detected) {
+      // First ServerHello — could be HRR or real ServerHello
+      // We'll know after the next message (if client sends another CH)
+      log_event("client", "handshake_msg", "ServerHello received");
+    }
+  }
+}
+
 // INFO CALLBACK - logs TLS handshake state transitions
 void info_callback(const SSL *ssl, int where, int ret) {
   const char *side = "system";
@@ -427,6 +475,8 @@ char *execute_tls_simulation(const char *client_conf_path,
   int ret = 0;
 
   reset_log();
+  client_hello_count = 0;
+  hrr_detected = 0;
 
   // 1. Initialize Contexts
   c_ctx = SSL_CTX_new(TLS_client_method());
@@ -511,6 +561,10 @@ char *execute_tls_simulation(const char *client_conf_path,
   // Setup Info Callbacks for handshake state logging
   SSL_set_info_callback(c_ssl, info_callback);
   SSL_set_info_callback(s_ssl, info_callback);
+
+  // Setup Message Callback for HRR detection
+  SSL_CTX_set_msg_callback(c_ctx, msg_callback);
+  SSL_CTX_set_msg_callback(s_ctx, msg_callback);
 
   // Setup Keylogging
   SSL_CTX_set_keylog_callback(c_ctx, keylog_callback);
@@ -614,6 +668,16 @@ char *execute_tls_simulation(const char *client_conf_path,
       char msg[128];
       snprintf(msg, sizeof(msg), "Negotiated: %s", SSL_get_cipher_name(c_ssl));
       log_event("connection", "established", msg);
+
+      // Log HRR status and round-trip count
+      if (hrr_detected) {
+        log_event("connection", "hello_retry_summary",
+                  "HelloRetryRequest occurred: handshake used 2-RTT (group "
+                  "mismatch between initial ClientHello and server preference)");
+        log_event("connection", "round_trips", "2");
+      } else {
+        log_event("connection", "round_trips", "1");
+      }
 
       // Log the negotiated key exchange group (X25519, P-256, ML-KEM, Hybrid,
       // etc.)

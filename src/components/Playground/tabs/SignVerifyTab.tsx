@@ -451,7 +451,7 @@ const HsmSignPanel: React.FC = () => {
 
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
-const HsmSignCombinedPanel: React.FC = () => {
+export const HsmSignCombinedPanel: React.FC = () => {
   const { isReady } = useHsmContext()
   const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>('pqc')
   return (
@@ -484,8 +484,6 @@ const HsmSignCombinedPanel: React.FC = () => {
 // ── Software Sign Tab ─────────────────────────────────────────────────────────
 
 export const SignVerifyTab: React.FC = () => {
-  const { hsmMode } = useSettingsContext()
-  if (hsmMode) return <HsmSignCombinedPanel />
   return <SignVerifyTabSoftware />
 }
 
@@ -597,20 +595,34 @@ const SignVerifyTabSoftware: React.FC = () => {
                 }
 
                 return (
-                  <div className="mb-4 p-3 bg-muted rounded border border-border text-xs text-muted-foreground space-y-1">
-                    <div className="flex justify-between">
-                      <span>Algorithm:</span>
-                      <span className="text-foreground font-mono">{key.algorithm}</span>
+                  <>
+                    <div className="mb-4 p-3 bg-muted rounded border border-border text-xs text-muted-foreground space-y-1">
+                      <div className="flex justify-between">
+                        <span>Algorithm:</span>
+                        <span className="text-foreground font-mono">{key.algorithm}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Scheme:</span>
+                        <span className="text-foreground font-mono">{scheme}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Hash Function:</span>
+                        <span className="text-foreground font-mono">{hash}</span>
+                      </div>
                     </div>
-                    <div className="flex justify-between">
-                      <span>Scheme:</span>
-                      <span className="text-foreground font-mono">{scheme}</span>
-                    </div>
-                    <div className="flex justify-between">
-                      <span>Hash Function:</span>
-                      <span className="text-foreground font-mono">{hash}</span>
-                    </div>
-                  </div>
+                    {key.algorithm.startsWith('LMS-') && (
+                      <div className="mb-4 p-3 rounded border border-status-warning/40 bg-status-warning/10 text-xs text-status-warning space-y-1">
+                        <p className="font-semibold">
+                          Stateful signature — key updates after each sign
+                        </p>
+                        <p className="text-status-warning/80">
+                          LMS private keys are one-time-use: each signature advances the key state.
+                          Re-using a key state breaks security (NIST SP 800-208). The updated key is
+                          saved back to the key store automatically.
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )
               })()}
 

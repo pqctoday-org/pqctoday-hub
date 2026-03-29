@@ -77,8 +77,8 @@ server {
     # TLS 1.3 only — disables older protocol versions
     ssl_protocols TLSv1.3;
 
-    # Classical key exchange groups
-    ssl_ecdh_curve X25519:P-256;
+    # Classical key exchange groups (ssl_conf_command preferred for OpenSSL 3.x)
+    ssl_conf_command Groups X25519:P-256;
 
     # Certificate and key paths
     ssl_certificate     /etc/nginx/ssl/server.crt;
@@ -101,10 +101,10 @@ server {
     # TLS 1.3 only — disables older protocol versions
     ssl_protocols TLSv1.3;
 
-    # Hybrid PQC + classical key exchange
+    # Hybrid PQC + classical key exchange (ssl_conf_command preferred for OpenSSL 3.x)
     # X25519MLKEM768: combines ML-KEM-768 with X25519 for quantum + classical security
     # Falls back to X25519 and P-256 for non-PQC clients
-    ssl_ecdh_curve X25519MLKEM768:X25519:P-256;
+    ssl_conf_command Groups X25519MLKEM768:X25519:P-256;
 
     # Certificate and key paths
     ssl_certificate     /etc/nginx/ssl/server.crt;
@@ -127,11 +127,11 @@ server {
     # TLS 1.3 only — disables older protocol versions
     ssl_protocols TLSv1.3;
 
-    # Pure PQC key exchange — no classical fallback
+    # Pure PQC key exchange — no classical fallback (ssl_conf_command preferred for OpenSSL 3.x)
     # MLKEM768: NIST FIPS 203 ML-KEM at 128-bit security level
     # MLKEM1024: NIST FIPS 203 ML-KEM at 192-bit security level
     # WARNING: clients without PQC support will fail to connect
-    ssl_ecdh_curve MLKEM768:MLKEM1024;
+    ssl_conf_command Groups MLKEM768:MLKEM1024;
 
     # Certificate and key paths
     ssl_certificate     /etc/nginx/ssl/server.crt;
@@ -225,8 +225,8 @@ function generateHAProxyConfig(mode: string): string {
       header +
       `
 global
-    # Use TLS 1.3 cipher suites
-    ssl-default-bind-ciphers TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
+    # TLS 1.3 cipher suites (HAProxy 2.9+ uses -ciphersuites for TLS 1.3)
+    ssl-default-bind-ciphersuites TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
 
     # Classical key exchange curves
     ssl-default-bind-curves X25519:P-256
@@ -248,8 +248,8 @@ backend app_servers
       header +
       `
 global
-    # Use TLS 1.3 cipher suites
-    ssl-default-bind-ciphers TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
+    # TLS 1.3 cipher suites (HAProxy 2.9+ uses -ciphersuites for TLS 1.3)
+    ssl-default-bind-ciphersuites TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
 
     # Hybrid PQC + classical key exchange curves
     # X25519MLKEM768: ML-KEM-768 combined with X25519
@@ -273,8 +273,8 @@ backend app_servers
     header +
     `
 global
-    # Use TLS 1.3 cipher suites
-    ssl-default-bind-ciphers TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
+    # TLS 1.3 cipher suites (HAProxy 2.9+ uses -ciphersuites for TLS 1.3)
+    ssl-default-bind-ciphersuites TLS_AES_256_GCM_SHA384:TLS_CHACHA20_POLY1305_SHA256:TLS_AES_128_GCM_SHA256
 
     # Pure PQC key exchange — no classical fallback
     # MLKEM768: FIPS 203 ML-KEM at 128-bit security level

@@ -140,7 +140,7 @@ export interface RPMPackage {
 
 export const MOCK_RPM_PACKAGE: RPMPackage = {
   name: 'openssl-libs',
-  version: '3.6.0',
+  version: '3.6.1',
   release: '1.el10',
   arch: 'x86_64',
   files: [

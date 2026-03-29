@@ -109,6 +109,13 @@ export const TLSNegotiationResults: React.FC = () => {
       ? getCaTypeFromPem(serverConfig.certificates.caPem)
       : 'N/A'
 
+    // Detect HRR from trace events
+    const hrrOccurred = events.some(
+      (e) => e.event === 'hello_retry' || e.event === 'hello_retry_summary'
+    )
+    const rttEvent = events.find((e) => e.event === 'round_trips')
+    const rtt = rttEvent ? parseInt(rttEvent.details, 10) || 1 : 1
+
     addRunToHistory({
       cipher: negotiatedCipher || 'Unknown',
       keyExchange,
@@ -121,6 +128,8 @@ export const TLSNegotiationResults: React.FC = () => {
       handshakeBytes,
       appDataBytes,
       success: isSuccess ?? false,
+      roundTrips: rtt,
+      hrrDetected: hrrOccurred,
     })
   }, [results, clientConfig, serverConfig, addRunToHistory])
 
@@ -155,6 +164,13 @@ export const TLSNegotiationResults: React.FC = () => {
   const isSuccess =
     (results.status === 'success' || connectionEvent) && !errorEvent && results.status !== 'failed'
   const negotiatedCipher = connectionEvent?.details?.match(/Negotiated: (.+)/)?.[1]
+
+  // Detect HelloRetryRequest
+  const hrrEvent = events.find(
+    (e) => e.event === 'hello_retry' || e.event === 'hello_retry_summary'
+  )
+  const roundTripsEvent = events.find((e) => e.event === 'round_trips')
+  const roundTrips = roundTripsEvent?.details || '1'
 
   // Calculate Protocol Overhead from crypto traces
   // Parse "dec XXX" from crypto_trace_state events to get total bytes
@@ -243,6 +259,16 @@ export const TLSNegotiationResults: React.FC = () => {
                   })()}
                 </span>
               )}
+              <span
+                className={clsx(
+                  'font-mono px-3 py-1 rounded border',
+                  hrrEvent
+                    ? 'bg-status-warning/20 border-status-warning/50 text-status-warning font-bold'
+                    : 'bg-background/50 border-border/50'
+                )}
+              >
+                {roundTrips}-RTT{hrrEvent ? ' (HRR)' : ''}
+              </span>
             </div>
           )}
         </div>

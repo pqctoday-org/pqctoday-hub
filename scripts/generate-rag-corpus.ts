@@ -591,15 +591,15 @@ function processLibrary(): RAGChunk[] {
       regionScope,
       algorithmFamily,
       securityLevels, // col 14: ProtocolOrToolImpact
+      ,
+      ,
       // col 15: ToolchainSupport
-      ,
-      ,
       migrationUrgency, // col 17: change_status
+      ,
+      ,
+      ,
       // col 18: manual_category
       // col 19: downloadable
-      ,
-      ,
-      ,
       localFile, // col 20: local_file
     ] = row
 
@@ -682,11 +682,12 @@ function processAlgorithms(): RAGChunk[] {
 
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
-    if (row.length < 15) continue
+    if (row.length < 16) continue
 
     const [
       family,
       name,
+      cryptoFamily,
       securityLevel,
       aesEquiv,
       pubKeySize,
@@ -705,6 +706,7 @@ function processAlgorithms(): RAGChunk[] {
     const content = [
       `Algorithm: ${sanitize(name)}`,
       `Family: ${sanitize(family)}`,
+      sanitize(cryptoFamily) ? `Cryptographic Family: ${sanitize(cryptoFamily)}` : '',
       `Security Level: ${sanitize(securityLevel)} (AES equivalent: ${sanitize(aesEquiv)})`,
       `Public Key Size: ${sanitize(pubKeySize)} bytes | Private Key Size: ${sanitize(privKeySize)} bytes`,
       sanitize(sigCipherSize) ? `Signature/Ciphertext Size: ${sanitize(sigCipherSize)} bytes` : '',
@@ -2521,6 +2523,52 @@ function processChangelog(): RAGChunk[] {
 }
 
 // ---------------------------------------------------------------------------
+// User Manual guides (per-page contextual help from userManualData.ts)
+// ---------------------------------------------------------------------------
+
+async function processUserManuals(): Promise<RAGChunk[]> {
+  const { pageManuals } = await import('../src/data/userManualData')
+
+  const deepLinks: Record<string, string> = {
+    timeline: '/timeline',
+    algorithms: '/algorithms',
+    library: '/library',
+    playground: '/playground',
+    'openssl-studio': '/openssl',
+    threats: '/threats',
+    leaders: '/leaders',
+    compliance: '/compliance',
+    migrate: '/migrate',
+    assess: '/assess',
+    report: '/report',
+    'business-center': '/business',
+    learn: '/learn',
+  }
+
+  const chunks: RAGChunk[] = []
+
+  for (const [pageId, manual] of Object.entries(pageManuals)) {
+    const sectionText = manual.sections.map((s) => `${s.heading}: ${s.body}`).join('\n\n')
+    const tipsText =
+      manual.tips && manual.tips.length > 0
+        ? '\n\nTips:\n' + manual.tips.map((t) => `- ${t}`).join('\n')
+        : ''
+
+    chunks.push({
+      id: `user-manual-${pageId}`,
+      source: 'user-manual',
+      title: `${manual.title} — User Guide`,
+      content: `${manual.title}\n\n${manual.summary}\n\n${sectionText}${tipsText}`,
+      category: 'user-manual',
+      metadata: { pageId },
+      deepLink: deepLinks[pageId] ?? `/${pageId}`,
+    })
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Page-level guides (non-learn pages)
 // ---------------------------------------------------------------------------
 
@@ -2889,6 +2937,7 @@ async function main() {
     { name: 'Certification Xref', fn: processCertificationXref },
     { name: 'Document Enrichments', fn: processDocumentEnrichments },
     { name: 'Page Guides', fn: processPageGuides },
+    { name: 'User Manuals', fn: processUserManuals },
     { name: 'NotebookLM App Guides', fn: processNotebookLM },
     { name: 'Changelog', fn: processChangelog },
     { name: 'Module Q&A', fn: processModuleQA },
@@ -2934,6 +2983,7 @@ async function main() {
     'right-panel': 0.95,
     'guided-tour': 0.85,
     softhsmv3: 1.0,
+    'user-manual': 1.0,
     changelog: 0.6,
     'module-qa': 1.1,
   }
