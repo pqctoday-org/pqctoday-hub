@@ -57,7 +57,7 @@ const PERSONA_HERO_CTA: Record<
 > = {
   executive: {
     primary: { label: 'Start the Journey', path: '/learn' },
-    secondary: { label: 'Jump to Risk Assessment', path: '/assess' },
+    secondary: { label: 'Open Business Center', path: '/business' },
   },
   developer: {
     primary: { label: 'Start the Journey', path: '/learn' },

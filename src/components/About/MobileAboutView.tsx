@@ -1,26 +1,27 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
+import {
+  MISSION_TAGS,
+  PRINCIPLES,
+  NOT_ITEMS,
+  DATA_FOUNDATION,
+  DISCUSSIONS_BASE,
+  DISCUSSIONS,
+  CRYPTO_BUFF_SITES,
+  CRYPTO_BUFF_BOOKS,
+} from './aboutData'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
-  Users,
-  Globe,
+  FileText,
   Lock,
   BrainCircuit,
   Database,
   Sparkles,
   BarChart2,
   MessageSquare,
-  Lightbulb,
-  HelpCircle,
-  Cpu,
-  BookOpen,
-  Trophy,
-  FileText,
-  CalendarDays,
   ShieldAlert,
   ShieldCheck,
-  Package,
   Shield,
   GithubIcon,
   Handshake,
@@ -31,13 +32,12 @@ import {
   Construction,
   Wrench,
   Linkedin,
-  Stamp,
-  Scale,
-  Eye,
-  Heart,
   Info,
   Cloud,
   Link2,
+  Globe,
+  BookOpen,
+  Users,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { CareerJourneyModal } from './CareerJourneyModal'
@@ -47,82 +47,6 @@ import type { Workgroup } from './workgroupData'
 import { useTheme } from '../../hooks/useTheme'
 import { getCurrentVersion, useVersionStore } from '../../store/useVersionStore'
 import { LinkToUsButton } from '../ui/LinkToUsButton'
-
-const MISSION_TAGS = [
-  '48 learning modules',
-  '14-step risk assessment',
-  '385+ migration catalog',
-  'PKCS#11 v3.2 simulator',
-  'FIPS 203 / 204 / 205',
-  'AI assistant — runs locally',
-  '5G SUCI simulation',
-  'Zero data collected',
-]
-
-const PRINCIPLES = [
-  {
-    label: 'Worldwide',
-    icon: Globe,
-    text: 'Not US-centric. NIST, ETSI, GSMA, ANSSI, ASD — all regulatory frameworks treated equally.',
-  },
-  {
-    label: 'Transparent',
-    icon: Eye,
-    text: 'Open source. GitHub-governed. Every correction, contribution, and decision is publicly auditable.',
-  },
-  {
-    label: 'Neutral',
-    icon: Scale,
-    text: 'No vendor relationships. No commercial bias. We do not take sides — we provide data so you can.',
-  },
-  {
-    label: 'Private by design',
-    icon: Lock,
-    text: 'No registration. No data collection. Processing runs on your device. We never know you visited.',
-  },
-  {
-    label: 'Free at the core',
-    icon: Heart,
-    text: 'Access to knowledge must not be gated. The community edition is free. Always.',
-  },
-  {
-    label: 'Community governed',
-    icon: Users,
-    text: 'PQC practitioners set the roadmap. The platform serves the community, not the other way around.',
-  },
-]
-
-const NOT_ITEMS = [
-  {
-    label: 'Not a vendor',
-    text: 'We have no commercial relationships with HSM, cloud, or security vendors. Our content is not for sale.',
-  },
-  {
-    label: 'Not a standards body',
-    text: 'We reference and empower NIST, ETSI, ANSSI, and GSMA. We do not replace them.',
-  },
-  {
-    label: 'Not a surveillance platform',
-    text: 'We collect zero user data. We do not know who you are. We never will.',
-  },
-  {
-    label: 'Not US-only',
-    text: 'The quantum transition is a global challenge. Our platform is designed for every regulatory environment.',
-  },
-]
-
-const DATA_FOUNDATION = [
-  { label: 'Timeline Events', value: '203', sub: '80+ orgs, 50+ countries' },
-  { label: 'Library Resources', value: '325', sub: '30+ standards bodies' },
-  { label: 'Algorithm Reference', value: '46', sub: 'FIPS 203/204/205/206' },
-  { label: 'Compliance Frameworks', value: '91', sub: 'NIST, ACVP, CC, ANSSI' },
-  { label: 'Migrate Products', value: '385', sub: '7 infrastructure layers' },
-  { label: 'Threat Landscape', value: '79', sub: '8+ industry sectors' },
-  { label: 'Industry Leaders', value: '181', sub: 'Public, Private, Academic' },
-  { label: 'Quiz Questions', value: '820', sub: 'All PQC topic areas' },
-  { label: 'Authoritative Sources', value: '88', sub: 'Gov, Academic, Industry' },
-  { label: 'Learning Modules', value: '48', sub: '2,400+ min of content' },
-]
 
 const SBOM_GROUPS = [
   {
@@ -165,166 +89,6 @@ const SBOM_GROUPS = [
   {
     label: 'Rust WASM',
     items: ['ml-kem', 'ml-dsa', 'slh-dsa', 'wasm-bindgen', 'ed25519-dalek', 'x25519-dalek'],
-  },
-]
-
-const DISCUSSIONS_BASE = 'https://github.com/pqctoday/pqc-timeline-app/discussions/'
-const DISCUSSIONS = [
-  {
-    number: 108,
-    icon: Users,
-    label: 'Contribute',
-    description: 'I need your help to improve pqctoday.com',
-  },
-  {
-    number: 109,
-    icon: Globe,
-    label: 'PQC News',
-    description: 'Share general information about PQC',
-  },
-  { number: 110, icon: Lightbulb, label: 'Ideas', description: 'Post your ideas for improvements' },
-  { number: 111, icon: HelpCircle, label: 'Q&A', description: 'Ask questions — answered ASAP' },
-  { number: 113, icon: Cpu, label: 'Algorithms', description: 'Update or add a new algorithm' },
-  {
-    number: 115,
-    icon: BookOpen,
-    label: 'Learn Modules',
-    description: 'Update or add a new learning module',
-  },
-  { number: 116, icon: Trophy, label: 'Leaders', description: 'Update or add a new leader' },
-  {
-    number: 117,
-    icon: FileText,
-    label: 'References',
-    description: 'Update or add a reference document',
-  },
-  {
-    number: 118,
-    icon: CalendarDays,
-    label: 'Timeline',
-    description: 'Change or add a new timeline',
-  },
-  { number: 119, icon: ShieldAlert, label: 'Threats', description: 'Change or add a new threat' },
-  { number: 120, icon: Package, label: 'Products', description: 'Change or add a new product' },
-  {
-    number: 0,
-    icon: Stamp,
-    label: 'Library Endorsements',
-    description: 'Endorse a library resource for relevance and accuracy',
-    url: 'https://github.com/pqctoday/pqc-timeline-app/discussions/categories/library-resource-endorsement',
-  },
-]
-
-const CRYPTO_BUFF_SITES = [
-  {
-    label: 'NIST Post-Quantum Cryptography',
-    description:
-      'Official NIST PQC standardization project — FIPS 203/204/205 standards, submissions, and status updates',
-    url: 'https://csrc.nist.gov/projects/post-quantum-cryptography',
-  },
-  {
-    label: 'Open Quantum Safe (OQS)',
-    description:
-      'Open-source PQC library (liboqs) and OpenSSL/BoringSSL integrations — reference implementations',
-    url: 'https://openquantumsafe.org',
-  },
-  {
-    label: 'IACR ePrint Archive',
-    description: 'Preprint server for cryptography research — where PQC papers appear first',
-    url: 'https://eprint.iacr.org',
-  },
-  {
-    label: 'A Security Site — PQC',
-    description:
-      'Prof. Bill Buchanan OBE — extensive PQC algorithm references and interactive labs',
-    url: 'https://asecuritysite.com/pqc',
-  },
-  {
-    label: 'cr.yp.to — Daniel J. Bernstein',
-    description:
-      'Co-creator of SPHINCS+/SLH-DSA and NTRU contributor — papers, software, and PQC commentary',
-    url: 'https://cr.yp.to',
-  },
-  {
-    label: 'Cryptographic Engineering — Matthew Green',
-    description:
-      'Johns Hopkins professor — accessible deep dives on PQC, protocol security, and crypto policy',
-    url: 'https://blog.cryptographyengineering.com',
-  },
-  {
-    label: 'Schneier on Security',
-    description: "Bruce Schneier's blog — crypto policy, applied security, and PQC commentary",
-    url: 'https://www.schneier.com',
-  },
-  {
-    label: 'Stanford Cryptography Group',
-    description: "Dan Boneh's research group — papers, courses, and applied crypto projects",
-    url: 'https://crypto.stanford.edu',
-  },
-  {
-    label: 'Cryptography I — Dan Boneh (Coursera)',
-    description: "The gold-standard free online cryptography course by Stanford's Dan Boneh",
-    url: 'https://www.coursera.org/learn/crypto',
-  },
-  {
-    label: 'MIT OpenCourseWare — Cryptography',
-    description: 'Free MIT lecture notes and problem sets for cryptography courses',
-    url: 'https://ocw.mit.edu',
-  },
-]
-
-const CRYPTO_BUFF_BOOKS = [
-  {
-    title: 'Post-Quantum Cryptography',
-    author: 'Daniel J. Bernstein, Johannes Buchmann & Erik Dahmen',
-    description:
-      'The foundational PQC textbook — lattice, code-based, hash-based, and multivariate algorithm families',
-    url: 'https://link.springer.com/book/10.1007/978-3-540-88702-7',
-  },
-  {
-    title: 'An Introduction to Mathematical Cryptography',
-    author: 'Jeffrey Hoffstein, Jill Pipher & Joseph H. Silverman',
-    description:
-      'Lattice-based crypto foundations (the math behind ML-KEM and ML-DSA) — by the creators of NTRU',
-    url: 'https://link.springer.com/book/10.1007/978-1-4939-1711-2',
-  },
-  {
-    title: 'A Graduate Course in Applied Cryptography',
-    author: 'Dan Boneh & Victor Shoup',
-    description:
-      'Comprehensive and free — provable security, public-key encryption, and signature schemes',
-    url: 'https://toc.cryptobook.us',
-  },
-  {
-    title: 'Real World Cryptography',
-    author: 'David Wong',
-    description:
-      'Hands-on guide to modern crypto primitives, protocols, and their real-world application',
-    url: 'https://www.manning.com/books/real-world-cryptography',
-  },
-  {
-    title: 'Serious Cryptography',
-    author: 'Jean-Philippe Aumasson',
-    description: 'Practical guide to modern encryption — symmetric, asymmetric, and protocols',
-    url: 'https://nostarch.com/seriouscrypto',
-  },
-  {
-    title: 'Applied Cryptography',
-    author: 'Bruce Schneier',
-    description: 'The classic reference on cryptographic protocols, algorithms, and source code',
-    url: 'https://www.schneier.com/books/applied-cryptography/',
-  },
-  {
-    title: 'The Code Book',
-    author: 'Simon Singh',
-    description: 'The history of codes and ciphers — from Caesar to quantum cryptography',
-    url: 'https://simonsingh.net/books/the-code-book/',
-  },
-  {
-    title: 'Self-Sovereign Identity',
-    author: 'Alex Preukschat & Drummond Reed',
-    description: 'Decentralized digital identity architecture, VCs, DIDs, and trust frameworks',
-    url: 'https://www.manning.com/books/self-sovereign-identity',
   },
 ]
 
@@ -465,10 +229,10 @@ export const MobileAboutView = () => {
           <h2 className="text-lg font-semibold">Our Mission</h2>
         </div>
         <p className="text-sm text-muted-foreground leading-relaxed">
-          PQC Today brings together 48 learning modules across 8 tracks &mdash; including role
-          guides, industry verticals, and hands-on crypto labs &mdash; 820 quiz questions, a risk
-          assessment wizard, migration planning tools, and global compliance tracking &mdash; tuned
-          to your role as a developer, architect, operations professional, executive, or researcher.
+          PQC Today brings together 48 learning modules across 8 tracks, 14 interactive business
+          planning tools, 820 quiz questions, a risk assessment wizard, migration planning tools,
+          and global compliance tracking &mdash; tuned to your role as a developer, architect,
+          operations professional, executive, or researcher.
         </p>
 
         {/* "Read full vision" toggle */}
@@ -527,10 +291,9 @@ export const MobileAboutView = () => {
                     Our founding principles
                   </h3>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-px bg-border border border-border rounded-xl overflow-hidden">
-                    {PRINCIPLES.map(({ label, icon: Icon, text }) => (
+                    {PRINCIPLES.map(({ label, text }) => (
                       <div key={label} className="bg-card p-3">
                         <div className="flex items-center gap-1.5 mb-1">
-                          <Icon size={12} className="text-primary shrink-0" />
                           <p className="text-[10px] font-medium uppercase tracking-wider text-primary">
                             {label}
                           </p>
@@ -623,13 +386,13 @@ export const MobileAboutView = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {DATA_FOUNDATION.map((s) => (
             <div
-              key={s.label}
+              key={s.dataset}
               className="p-2 rounded-lg border border-border bg-muted/30 text-center"
             >
-              <div className="text-sm font-bold text-foreground">{s.value}</div>
-              <div className="text-xs text-muted-foreground leading-tight">{s.label}</div>
+              <div className="text-sm font-bold text-foreground">{s.records}</div>
+              <div className="text-xs text-muted-foreground leading-tight">{s.dataset}</div>
               <div className="text-[10px] text-muted-foreground/60 mt-0.5 leading-tight">
-                {s.sub}
+                {s.sources}
               </div>
             </div>
           ))}

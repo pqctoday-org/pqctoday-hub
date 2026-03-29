@@ -48,9 +48,9 @@ export const PERSONA_NAV_PATHS: Record<PersonaId, string[] | null> = {
  * Top 3 landing page feature card paths to badge as "Recommended" per persona.
  */
 export const PERSONA_RECOMMENDED_PATHS: Record<PersonaId, string[]> = {
-  executive: ['/learn', '/assess', '/compliance', '/timeline'],
+  executive: ['/learn', '/assess', '/business', '/compliance'],
   developer: ['/learn', '/algorithms', '/playground', '/openssl'],
-  architect: ['/learn', '/timeline', '/assess', '/compliance'],
+  architect: ['/learn', '/timeline', '/assess', '/business'],
   researcher: ['/learn', '/algorithms', '/playground', '/library'],
   ops: ['/learn', '/migrate', '/openssl', '/assess'],
   curious: ['/learn', '/timeline', '/assess', '/threats'],
@@ -403,9 +403,9 @@ export interface ReportCTA {
 
 export const PERSONA_REPORT_CTAS: Record<PersonaId, ReportCTA[]> = {
   executive: [
+    { label: 'Open Business Center', path: '/business', icon: 'BarChart3' },
     { label: 'Share with your board', path: '', icon: 'Share2', isShareAction: true },
     { label: 'View compliance deadlines', path: '/compliance', icon: 'Calendar' },
-    { label: 'Start learning path', path: '/learn', icon: 'BookOpen' },
   ],
   developer: [
     { label: 'Try algorithms in Playground', path: '/playground', icon: 'FlaskConical' },
@@ -449,6 +449,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
   executive: [
     { afterPhase: 'exec-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'exec-cp-3', route: '/compliance', label: 'Check Compliance Deadlines' },
+    { afterPhase: 'exec-cp-4', route: '/business', label: 'Explore Business Tools' },
     { afterPhase: 'exec-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
   developer: [
