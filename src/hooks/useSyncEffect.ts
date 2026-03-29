@@ -18,6 +18,7 @@ import { useDisclaimerStore } from '@/store/useDisclaimerStore'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { useHSMMode } from '@/store/useHSMMode'
 import { useChatStore } from '@/store/useChatStore'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import {
   fetchFromDrive,
   writeToDrive,
@@ -55,6 +56,7 @@ function collectStores(): Record<string, unknown> {
     disclaimerStore: useDisclaimerStore.getState(),
     airplaneModeStore: useAirplaneModeStore.getState(),
     hsmMode: useHSMMode.getState(),
+    bookmarkStore: useBookmarkStore.getState(),
     chatStore: chatSafe,
     cloudSyncStore: {
       enabled: useCloudSyncStore.getState().enabled,
@@ -97,6 +99,7 @@ function restoreStores(stores: Record<string, unknown>) {
   safeRestore(useDisclaimerStore as unknown as AnyStore, stores['disclaimerStore'])
   safeRestore(useAirplaneModeStore as unknown as AnyStore, stores['airplaneModeStore'])
   safeRestore(useHSMMode as unknown as AnyStore, stores['hsmMode'])
+  safeRestore(useBookmarkStore as unknown as AnyStore, stores['bookmarkStore'])
 
   // Restore chat store but preserve the existing apiKey — never overwrite with synced data
   const existingApiKey = useChatStore.getState().apiKey
@@ -255,6 +258,7 @@ export function useSyncEffect() {
       useDisclaimerStore,
       useAirplaneModeStore,
       useHSMMode,
+      useBookmarkStore,
       useChatStore,
     ] as const
 
