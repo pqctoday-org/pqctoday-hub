@@ -92,8 +92,9 @@ export const MainLayout = () => {
       label: 'Business Center',
       icon: LayoutDashboard,
       section: 'assess',
-      hiddenOnMobile: true,
-      mobileMore: true,
+      // Visible on mobile for executive/architect; hidden for others
+      hiddenOnMobile: !(selectedPersona === 'executive' || selectedPersona === 'architect'),
+      mobileMore: selectedPersona !== 'executive' && selectedPersona !== 'architect',
     },
     {
       path: '/playground',
@@ -118,7 +119,7 @@ export const MainLayout = () => {
   ]
 
   // Abbreviated labels for mobile bottom nav (only override labels that are too long)
-  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time' }
+  const SHORT_LABELS: Record<string, string> = { Timeline: 'Time', 'Business Center': 'Biz' }
 
   const [moreMenuOpen, setMoreMenuOpen] = React.useState(false)
 

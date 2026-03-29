@@ -197,22 +197,22 @@ export function ArtifactDrawer({ document, mode, onClose, onModeChange }: Artifa
               })}
             </p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {mode === 'view' && BuilderComponent && (
               <Button variant="outline" size="sm" onClick={() => onModeChange('edit')}>
-                <Pencil size={14} className="mr-1" />
-                Edit
+                <Pencil size={14} />
+                <span className="hidden sm:inline ml-1">Edit</span>
               </Button>
             )}
             {mode === 'edit' && (
               <Button variant="outline" size="sm" onClick={() => onModeChange('view')}>
-                <Eye size={14} className="mr-1" />
-                View
+                <Eye size={14} />
+                <span className="hidden sm:inline ml-1">View</span>
               </Button>
             )}
             <Button variant="ghost" size="sm" onClick={handleExportMarkdown}>
-              <Download size={14} className="mr-1" />
-              Export
+              <Download size={14} />
+              <span className="hidden sm:inline ml-1">Export</span>
             </Button>
             <Button variant="ghost" size="sm" className="h-8 w-8 p-0" onClick={onClose}>
               <X size={16} />

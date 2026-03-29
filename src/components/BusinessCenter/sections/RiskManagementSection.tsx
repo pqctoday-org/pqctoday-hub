@@ -113,7 +113,9 @@ function CategoryBar({ label, score }: { label: string; score: number }) {
 
   return (
     <div className="flex items-center gap-3">
-      <span className="text-xs text-muted-foreground w-36 shrink-0 text-right">{label}</span>
+      <span className="text-xs text-muted-foreground w-20 sm:w-36 shrink-0 text-right truncate">
+        {label}
+      </span>
       <div className="flex-1 h-2 rounded-full bg-muted overflow-hidden">
         <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
       </div>
@@ -159,9 +161,10 @@ export function RiskManagementSection({
   }
 
   const allArtifacts = metrics.artifactsByPillar.risk
-  const artifacts = typeFilter && typeFilter !== 'all'
-    ? allArtifacts.filter((d) => d.type === typeFilter)
-    : allArtifacts
+  const artifacts =
+    typeFilter && typeFilter !== 'all'
+      ? allArtifacts.filter((d) => d.type === typeFilter)
+      : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.risk
   const sourceModules = PILLAR_SOURCE_MODULES.risk
   const existingTypes = new Set(artifacts.map((a) => a.type))
