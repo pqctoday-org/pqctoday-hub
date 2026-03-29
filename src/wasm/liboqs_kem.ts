@@ -59,13 +59,16 @@ const getInstance = async (algorithmName: string): Promise<MLKEMInstance> => {
       case 'HQC-256':
         createAlgo = createHQC256
         break
-      // FrodoKEM
+      // FrodoKEM (accept both canonical short name and full -AES name)
+      case 'FrodoKEM-640':
       case 'FrodoKEM-640-AES':
         createAlgo = createFrodoKEM640AES
         break
+      case 'FrodoKEM-976':
       case 'FrodoKEM-976-AES':
         createAlgo = createFrodoKEM976AES
         break
+      case 'FrodoKEM-1344':
       case 'FrodoKEM-1344-AES':
         createAlgo = createFrodoKEM1344AES
         break

@@ -4,6 +4,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.65.2] - 2026-03-29
+
+### Fixed
+
+- **FrodoKEM benchmark crash**: Resolver passed `FrodoKEM-640` but liboqs WASM expected `FrodoKEM-640-AES` — added fallthrough alias cases in `liboqs_kem.ts` [view:/algorithms]
+- **secp256k1 benchmark crash**: Was routed to WebCrypto which doesn't support secp256k1 — added new `noble` engine using `@noble/curves/secp256k1.js` [view:/algorithms]
+- **Ed448 benchmark wrong algorithm**: Was calling `generateEd25519KeyPair()` instead of Ed448 — removed from benchmarkable set (no portable browser engine) [view:/algorithms]
+- **X448 benchmark wrong algorithm**: Was calling `generateX25519KeyPair()` instead of X448 — removed from benchmarkable set (no portable browser engine) [view:/algorithms]
+- **DH (Diffie-Hellman) benchmark crash**: No handler existed in WebCrypto benchmark — removed from benchmarkable set [view:/algorithms]
+- **Missing algorithm registry entries**: Added `ECDSA P-521` and `ECDH P-521` to `ALGORITHM_REGISTRY` for consistency with engine resolver [infra]
+
 ## [2.65.1] - 2026-03-29
 
 ### Added

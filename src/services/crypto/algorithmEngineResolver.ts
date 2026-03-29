@@ -8,7 +8,7 @@
  * softhsmv3 covers all except: FN-DSA, HQC, Classic-McEliece, FrodoKEM, LMS, XMSS
  */
 
-export type CryptoEngine = 'softhsm' | 'liboqs' | 'webcrypto'
+export type CryptoEngine = 'softhsm' | 'liboqs' | 'webcrypto' | 'noble'
 
 export interface BenchmarkResult {
   engine: CryptoEngine
@@ -39,23 +39,14 @@ const LIBOQS_ONLY = new Set([
 
 const LMS_ALGOS = new Set(['LMS-SHA256 (H20/W8)', 'XMSS-SHA2_20'])
 
-const WEBCRYPTO_SIGS = new Set([
-  'ECDSA P-256',
-  'ECDSA P-384',
-  'ECDSA P-521',
-  'Ed25519',
-  'Ed448',
-  'secp256k1',
-])
+const WEBCRYPTO_SIGS = new Set(['ECDSA P-256', 'ECDSA P-384', 'ECDSA P-521', 'Ed25519'])
 
-const WEBCRYPTO_KEMS = new Set([
-  'ECDH P-256',
-  'ECDH P-384',
-  'ECDH P-521',
-  'X25519',
-  'X448',
-  'DH (Diffie-Hellman)',
-])
+const WEBCRYPTO_KEMS = new Set(['ECDH P-256', 'ECDH P-384', 'ECDH P-521', 'X25519'])
+
+const NOBLE_SIGS = new Set(['secp256k1'])
+
+// Algorithms with no portable browser engine available
+const NOT_BENCHMARKABLE = new Set(['Ed448', 'X448', 'DH (Diffie-Hellman)'])
 
 const RSA_ALGOS = new Set(['RSA-2048', 'RSA-3072', 'RSA-4096'])
 
@@ -65,6 +56,7 @@ export function resolveEngine(algoName: string): CryptoEngine | null {
   if (LIBOQS_ONLY.has(algoName)) return 'liboqs'
   if (LMS_ALGOS.has(algoName)) return null // LmsService not wired for benchmarking yet
   if (HYBRID_KEMS.has(algoName)) return null // No standalone benchmark for hybrids
+  if (NOT_BENCHMARKABLE.has(algoName)) return null // No portable browser engine
   // SLH-DSA → liboqs (simpler API than PKCS#11 for benchmarking)
   if (algoName.startsWith('SLH-DSA')) return 'liboqs'
   // ML-KEM, ML-DSA → softhsmv3
@@ -72,6 +64,7 @@ export function resolveEngine(algoName: string): CryptoEngine | null {
   if (RSA_ALGOS.has(algoName)) return 'webcrypto'
   if (WEBCRYPTO_SIGS.has(algoName)) return 'webcrypto'
   if (WEBCRYPTO_KEMS.has(algoName)) return 'webcrypto'
+  if (NOBLE_SIGS.has(algoName)) return 'noble'
   return null
 }
 
@@ -83,6 +76,8 @@ export function getEngineLabel(engine: CryptoEngine): string {
       return 'liboqs'
     case 'webcrypto':
       return 'WebCrypto'
+    case 'noble':
+      return '@noble'
   }
 }
 
@@ -395,6 +390,46 @@ async function benchmarkWebCrypto(algoName: string): Promise<BenchmarkResult> {
   throw new Error(`No WebCrypto support for ${algoName}`)
 }
 
+async function benchmarkNoble(algoName: string): Promise<BenchmarkResult> {
+  if (algoName === 'secp256k1') {
+    const { secp256k1 } = await import('@noble/curves/secp256k1.js')
+    const { sha256 } = await import('@noble/hashes/sha2.js')
+
+    let privKey: Uint8Array
+    let pubKey: Uint8Array
+    const keyGenMs = timeMs(() => {
+      privKey = secp256k1.utils.randomSecretKey()
+      pubKey = secp256k1.getPublicKey(privKey)
+    })
+
+    const msg = new Uint8Array(32)
+    crypto.getRandomValues(msg)
+    const msgHash = sha256(msg)
+
+    let sigBytes: Uint8Array
+    const signEncapsMs = timeMs(() => {
+      sigBytes = secp256k1.sign(msgHash, privKey!).toCompactRawBytes()
+    })
+
+    const verifyDecapsMs = timeMs(() => {
+      secp256k1.verify(sigBytes!, msgHash, pubKey!)
+    })
+
+    return {
+      engine: 'noble',
+      keyGenMs,
+      signEncapsMs,
+      verifyDecapsMs,
+      publicKeyBytes: pubKey!.length,
+      privateKeyBytes: privKey!.length,
+      sigCiphertextBytes: sigBytes!.length,
+      sharedSecretBytes: null,
+    }
+  }
+
+  throw new Error(`No @noble support for ${algoName}`)
+}
+
 // ── Public API ──
 
 export async function runBenchmark(algoName: string): Promise<BenchmarkResult> {
@@ -408,5 +443,7 @@ export async function runBenchmark(algoName: string): Promise<BenchmarkResult> {
       return benchmarkLiboqs(algoName)
     case 'webcrypto':
       return benchmarkWebCrypto(algoName)
+    case 'noble':
+      return benchmarkNoble(algoName)
   }
 }

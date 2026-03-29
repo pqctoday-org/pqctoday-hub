@@ -392,6 +392,15 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     securityLevel: null,
     fipsStandard: 'FIPS 186',
   },
+  'ECDSA P-521': {
+    name: 'ECDSA P-521',
+    family: 'Classical Sig',
+    publicKeyBytes: 132,
+    privateKeyBytes: 66,
+    signatureOrCiphertextBytes: 132,
+    securityLevel: null,
+    fipsStandard: 'FIPS 186',
+  },
   Ed25519: {
     name: 'Ed25519',
     family: 'Classical Sig',
@@ -430,6 +439,16 @@ export const ALGORITHM_REGISTRY: Record<string, AlgorithmProps> = {
     signatureOrCiphertextBytes: 0,
     securityLevel: null,
     fipsStandard: null,
+  },
+  'ECDH P-521': {
+    name: 'ECDH P-521',
+    family: 'Classical KEM',
+    publicKeyBytes: 132,
+    privateKeyBytes: 66,
+    sharedSecretBytes: 66,
+    signatureOrCiphertextBytes: 0,
+    securityLevel: null,
+    fipsStandard: 'SP 800-56A',
   },
 }
 
