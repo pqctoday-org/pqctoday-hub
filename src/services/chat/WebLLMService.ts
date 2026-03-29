@@ -326,10 +326,18 @@ export async function* streamResponse(
   const ragCharBudget = Math.round(totalChars * 0.45)
   const maxHistoryMsgs = Math.min(6, Math.max(2, Math.floor(safeContextWindow / 2048)))
   const maxResponseTokens = Math.min(2048, Math.round(safeContextWindow * 0.2))
-  const maxInventory = Math.min(20, Math.max(5, Math.floor(safeContextWindow / 512)))
+  const maxInventory = Math.min(25, Math.max(8, Math.floor(safeContextWindow / 400)))
+
+  // Priority-sort chunks so the most authoritative and linkable survive truncation.
+  // Retrieval order is preserved for equal-priority chunks via stable sort.
+  const prioritizedChunks = [...contextChunks].sort((a, b) => {
+    const aPri = (a.priority ?? 1) * (a.deepLink ? 1.2 : 1)
+    const bPri = (b.priority ?? 1) * (b.deepLink ? 1.2 : 1)
+    return bPri - aPri
+  })
 
   const systemPrompt = buildLocalSystemPrompt(
-    contextChunks,
+    prioritizedChunks,
     pageContext,
     ragCharBudget,
     maxInventory

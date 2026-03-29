@@ -75,7 +75,7 @@ describe('usePageContext', () => {
         wrapper: createWrapper('/threats'),
       })
       expect(result.current.page).toBe('Threat Landscape')
-      expect(result.current.relevantSources).toEqual(['threats', 'glossary'])
+      expect(result.current.relevantSources).toEqual(['threats', 'glossary', 'document-enrichment'])
     })
 
     it('maps /library to Library page', () => {
@@ -83,7 +83,11 @@ describe('usePageContext', () => {
         wrapper: createWrapper('/library'),
       })
       expect(result.current.page).toBe('Library')
-      expect(result.current.relevantSources).toEqual(['library', 'authoritative-sources'])
+      expect(result.current.relevantSources).toEqual([
+        'library',
+        'authoritative-sources',
+        'document-enrichment',
+      ])
     })
 
     it('maps /leaders to Leaders page', () => {
@@ -99,7 +103,11 @@ describe('usePageContext', () => {
         wrapper: createWrapper('/compliance'),
       })
       expect(result.current.page).toBe('Compliance')
-      expect(result.current.relevantSources).toEqual(['compliance', 'certifications'])
+      expect(result.current.relevantSources).toEqual([
+        'compliance',
+        'certifications',
+        'document-enrichment',
+      ])
     })
 
     it('maps /migrate to Migrate Catalog page', () => {
@@ -127,7 +135,13 @@ describe('usePageContext', () => {
         wrapper: createWrapper('/playground'),
       })
       expect(result.current.page).toBe('Playground')
-      expect(result.current.relevantSources).toEqual(['algorithms', 'glossary', 'modules'])
+      expect(result.current.relevantSources).toEqual([
+        'algorithms',
+        'glossary',
+        'modules',
+        'playground-guide',
+        'softhsmv3',
+      ])
     })
 
     it('maps /openssl to OpenSSL Studio page', () => {
@@ -135,7 +149,7 @@ describe('usePageContext', () => {
         wrapper: createWrapper('/openssl'),
       })
       expect(result.current.page).toBe('OpenSSL Studio')
-      expect(result.current.relevantSources).toEqual(['algorithms', 'modules'])
+      expect(result.current.relevantSources).toEqual(['algorithms', 'modules', 'openssl-guide'])
     })
 
     it('maps /learn to Learn page', () => {
@@ -146,6 +160,7 @@ describe('usePageContext', () => {
       expect(result.current.relevantSources).toEqual([
         'modules',
         'module-content',
+        'module-summaries',
         'glossary',
         'quiz',
       ])
@@ -468,6 +483,7 @@ describe('usePageContext', () => {
       expect(result.current.relevantSources).toEqual([
         'modules',
         'module-content',
+        'module-summaries',
         'glossary',
         'quiz',
       ])

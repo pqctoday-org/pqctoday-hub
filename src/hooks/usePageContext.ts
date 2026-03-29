@@ -29,6 +29,15 @@ export interface PageContext {
 }
 
 const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
+  '/business': {
+    page: 'Business Center',
+    relevantSources: ['business-center', 'assessment', 'compliance', 'threats', 'priority-matrix'],
+    suggestedQuestions: [
+      'What business planning tools are available?',
+      'How do I calculate ROI for PQC migration?',
+      'Help me build a board pitch for PQC investment',
+    ],
+  },
   '/algorithms': {
     page: 'Algorithms',
     relevantSources: ['algorithms', 'transitions', 'glossary'],
@@ -49,7 +58,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/threats': {
     page: 'Threat Landscape',
-    relevantSources: ['threats', 'glossary'],
+    relevantSources: ['threats', 'glossary', 'document-enrichment'],
     suggestedQuestions: [
       'Which industries face the highest HNDL risk?',
       "How does Shor's algorithm threaten RSA?",
@@ -58,7 +67,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/library': {
     page: 'Library',
-    relevantSources: ['library', 'authoritative-sources'],
+    relevantSources: ['library', 'authoritative-sources', 'document-enrichment'],
     suggestedQuestions: [
       'What are the key NIST PQC standards?',
       'Show me documents about ML-KEM',
@@ -75,7 +84,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/compliance': {
     page: 'Compliance',
-    relevantSources: ['compliance', 'certifications'],
+    relevantSources: ['compliance', 'certifications', 'document-enrichment'],
     suggestedQuestions: [
       'What FIPS 140-3 validated modules support PQC?',
       'Which compliance frameworks require PQC adoption?',
@@ -110,7 +119,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/playground': {
     page: 'Playground',
-    relevantSources: ['algorithms', 'glossary', 'modules'],
+    relevantSources: ['algorithms', 'glossary', 'modules', 'playground-guide', 'softhsmv3'],
     suggestedQuestions: [
       'Generate an ML-KEM keypair — what are the sizes?',
       "What's the signature size of ML-DSA-65?",
@@ -119,7 +128,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/openssl': {
     page: 'OpenSSL Studio',
-    relevantSources: ['algorithms', 'modules'],
+    relevantSources: ['algorithms', 'modules', 'openssl-guide'],
     suggestedQuestions: [
       'Which OpenSSL commands support PQC algorithms?',
       'How do I generate ML-KEM keys with OpenSSL?',
@@ -127,7 +136,7 @@ const PAGE_CONTEXTS: Record<string, Omit<PageContext, 'moduleId'>> = {
   },
   '/learn': {
     page: 'Learn',
-    relevantSources: ['modules', 'module-content', 'glossary', 'quiz'],
+    relevantSources: ['modules', 'module-content', 'module-summaries', 'glossary', 'quiz'],
     suggestedQuestions: [
       'What learning modules are available?',
       'Where should I start learning about PQC?',

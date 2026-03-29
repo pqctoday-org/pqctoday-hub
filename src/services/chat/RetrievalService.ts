@@ -42,7 +42,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'document-enrichment': 1.2,
   },
   comparison: { algorithms: 2, transitions: 3, glossary: 1.5 },
-  catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5 },
+  catalog_lookup: { migrate: 3, certifications: 2, 'priority-matrix': 1.5, 'business-center': 1.5 },
   recommendation: {
     assessment: 2,
     'priority-matrix': 2,
@@ -50,6 +50,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     migrate: 1.5,
     documentation: 1.5,
     'document-enrichment': 1.3,
+    'business-center': 1.5,
   },
   country_query: {
     timeline: 3,
@@ -63,9 +64,10 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     'document-enrichment': 2,
     compliance: 1.5,
     glossary: 1.2,
+    'authoritative-sources': 1.5,
   },
   whats_new: { changelog: 3, 'app-guide': 1.5 },
-  general: { leaders: 1.5 },
+  general: { leaders: 1.5, threats: 1.5 },
 }
 
 /**
@@ -84,24 +86,32 @@ const PERSONA_BOOSTS: Record<string, Record<string, number>> = {
     compliance: 1.3,
     timeline: 1.3,
     'priority-matrix': 1.3,
+    'business-center': 2,
+    leaders: 1.3,
   },
   architect: {
     'module-content': 1.3,
     algorithms: 1.3,
     migrate: 1.3,
     transitions: 1.2,
+    'business-center': 1.5,
   },
   researcher: {
     library: 1.5,
     'document-enrichment': 1.4,
     algorithms: 1.3,
     'authoritative-sources': 1.3,
+    glossary: 1.4,
   },
   ops: {
     migrate: 1.5,
     certifications: 1.3,
     'module-content': 1.2,
     compliance: 1.2,
+  },
+  curious: {
+    glossary: 1.3,
+    'module-curious': 1.5,
   },
 }
 
@@ -380,6 +390,24 @@ const QUERY_EXPANSIONS: Record<string, string[]> = {
   israeli: ['Israel', 'Israeli PQC', 'Bank of Israel'],
   italian: ['Italy', 'Italian PQC', 'ACN'],
   swedish: ['Sweden', 'Swedish PQC'],
+
+  // Business center / GRC tools
+  business: ['business center', 'GRC', 'governance', 'ROI', 'business case'],
+  'business center': ['GRC', 'ROI calculator', 'board pitch', 'RACI', 'policy template'],
+  roi: ['ROI calculator', 'business case', 'cost analysis', 'business center'],
+  grc: ['governance', 'risk', 'compliance', 'business center', 'audit'],
+  governance: ['RACI', 'policy', 'KPI', 'governance', 'business center'],
+  'board pitch': ['board pitch', 'executive briefing', 'business case', 'business center'],
+  'vendor scorecard': ['vendor scorecard', 'vendor risk', 'supply chain', 'business center'],
+  raci: ['RACI', 'roles', 'responsibility', 'governance', 'business center'],
+  'policy template': ['policy template', 'cryptographic policy', 'governance', 'business center'],
+  'contract clause': ['contract clause', 'vendor risk', 'supply chain', 'business center'],
+  kpi: ['KPI', 'dashboard', 'metrics', 'business center'],
+  'roadmap builder': ['roadmap builder', 'migration roadmap', 'business center'],
+  'deployment playbook': ['deployment playbook', 'migration', 'rollout', 'business center'],
+  playbook: ['deployment playbook', 'migration', 'rollout', 'business center'],
+  stakeholder: ['stakeholder communication', 'board pitch', 'business center'],
+  'audit readiness': ['audit readiness', 'compliance', 'checklist', 'business center'],
 
   // Site authorship / identity queries
   author: ['Eric Amador', 'pqctoday', 'creator', 'maintainer'],

@@ -33,6 +33,19 @@ const SECURITY_LEVELS: Record<string, number> = {
   'ML-DSA-87': 5,
   'FN-DSA-512': 1,
   'FN-DSA-1024': 5,
+  // SLH-DSA parameter sets (SHA2/SHAKE × 128/192/256 × s/f)
+  'SLH-DSA-SHA2-128S': 1,
+  'SLH-DSA-SHA2-128F': 1,
+  'SLH-DSA-SHAKE-128S': 1,
+  'SLH-DSA-SHAKE-128F': 1,
+  'SLH-DSA-SHA2-192S': 3,
+  'SLH-DSA-SHA2-192F': 3,
+  'SLH-DSA-SHAKE-192S': 3,
+  'SLH-DSA-SHAKE-192F': 3,
+  'SLH-DSA-SHA2-256S': 5,
+  'SLH-DSA-SHA2-256F': 5,
+  'SLH-DSA-SHAKE-256S': 5,
+  'SLH-DSA-SHAKE-256F': 5,
 }
 
 /** Known publication dates for key standards (month + year only for matching) */
@@ -126,9 +139,9 @@ function checkFipsAttribution(text: string, violations: FactViolation[]): void {
 
 /** Check security level claims for algorithm variants */
 function checkSecurityLevels(text: string, violations: FactViolation[]): void {
-  // Match "ML-KEM-768 provides Level 5" or "ML-DSA-44 (Level 1)" etc.
+  // Match "ML-KEM-768 provides Level 5" or "SLH-DSA-SHA2-128s (Level 1)" etc.
   const pattern =
-    /\b(ML-KEM-(?:512|768|1024)|ML-DSA-(?:44|65|87)|FN-DSA-(?:512|1024))\b[^.]{0,40}\b(?:Level|level|NIST\s+(?:security\s+)?level)\s*(\d)\b/gi
+    /\b(ML-KEM-(?:512|768|1024)|ML-DSA-(?:44|65|87)|FN-DSA-(?:512|1024)|SLH-DSA-(?:SHA2|SHAKE)-(?:128|192|256)[SF])\b[^.]{0,40}\b(?:Level|level|NIST\s+(?:security\s+)?level)\s*(\d)\b/gi
 
   let match: RegExpExecArray | null
   while ((match = pattern.exec(text)) !== null) {

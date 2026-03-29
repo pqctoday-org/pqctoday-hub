@@ -90,7 +90,7 @@ export function useChatSend() {
         industry: pageContext.industry,
         region: pageContext.region,
       }
-      const cached = getCached(trimmed, pageContext.page, personaDims)
+      const cached = getCached(trimmed, pageContext.page, personaDims, provider ?? undefined)
       if (cached) {
         logChatCacheHit(pageContext.page)
         const cachedMessage: ChatMessage = {
@@ -268,10 +268,21 @@ export function useChatSend() {
 
         // Check if response references entities not found in RAG context
         const grounding = checkGrounding(cleanContent, chunks)
-        const finalContent = grounding.hasWarning
+        let finalContent = grounding.hasWarning
           ? cleanContent.trimEnd() +
             '\n\n> **Accuracy notice:** This response may reference items not verified in the PQC Today database. Please cross-check specific names, dates, or claims against the source pages linked above.'
           : cleanContent
+
+        // Graceful degradation hint for local mode: suggest Flash for thin answers
+        if (
+          provider === 'local' &&
+          finalContent.length < 200 &&
+          ['comparison', 'catalog_lookup', 'recommendation'].includes(classifyIntent(trimmed))
+        ) {
+          finalContent =
+            finalContent.trimEnd() +
+            '\n\n> *For more detailed answers, try Flash mode which can reference more sources.*'
+        }
 
         // Finalize message
         const assistantMessage: ChatMessage = {
@@ -290,7 +301,8 @@ export function useChatSend() {
           trimmed,
           pageContext.page,
           { content: finalContent, sourceIds, sourceRefs, followUps },
-          personaDims
+          personaDims,
+          provider ?? undefined
         )
       } catch (err) {
         if (err instanceof Error && err.name === 'AbortError') {

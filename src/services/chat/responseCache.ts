@@ -21,10 +21,16 @@ const TTL_MS = 5 * 60 * 1000 // 5 minutes
 
 const cache = new Map<string, CacheEntry>()
 
-function cacheKey(query: string, page: string, dims?: PersonaDimensions): string {
+function cacheKey(
+  query: string,
+  page: string,
+  dims?: PersonaDimensions,
+  provider?: string
+): string {
   return JSON.stringify([
     query.trim().toLowerCase(),
     page,
+    provider ?? 'gemini',
     dims?.persona ?? null,
     dims?.experienceLevel ?? null,
     dims?.industry ?? null,
@@ -35,9 +41,10 @@ function cacheKey(query: string, page: string, dims?: PersonaDimensions): string
 export function getCached(
   query: string,
   page: string,
-  dims?: PersonaDimensions
+  dims?: PersonaDimensions,
+  provider?: string
 ): CacheEntry | null {
-  const key = cacheKey(query, page, dims)
+  const key = cacheKey(query, page, dims, provider)
   const entry = cache.get(key)
   if (!entry) return null
   if (Date.now() - entry.timestamp > TTL_MS) {
@@ -54,9 +61,10 @@ export function setCache(
   query: string,
   page: string,
   entry: Omit<CacheEntry, 'timestamp'>,
-  dims?: PersonaDimensions
+  dims?: PersonaDimensions,
+  provider?: string
 ): void {
-  const key = cacheKey(query, page, dims)
+  const key = cacheKey(query, page, dims, provider)
 
   // Evict least-recently-used (first key in Map = oldest accessed) if at capacity
   if (cache.size >= MAX_ENTRIES && !cache.has(key)) {
