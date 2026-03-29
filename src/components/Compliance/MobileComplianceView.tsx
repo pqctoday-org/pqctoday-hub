@@ -9,6 +9,12 @@ import clsx from 'clsx'
 
 interface MobileComplianceViewProps {
   data: ComplianceRecord[]
+  /** Controlled search text (from URL) */
+  filterText?: string
+  onFilterTextChange?: (text: string) => void
+  /** Controlled cert type sub-tab (maps to rtab URL param) */
+  certType?: CertTypeFilter
+  onCertTypeChange?: (ct: CertTypeFilter) => void
 }
 
 const MOBILE_PAGE_SIZE = 50
@@ -20,13 +26,24 @@ const CERT_TYPE_FILTERS = [
   { id: 'Common Criteria', label: 'CC' },
 ] as const
 
-type CertTypeFilter = (typeof CERT_TYPE_FILTERS)[number]['id']
+export type CertTypeFilter = (typeof CERT_TYPE_FILTERS)[number]['id']
 
-export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({ data }) => {
-  const [filterText, setFilterText] = useState('')
+export const MobileComplianceView: React.FC<MobileComplianceViewProps> = ({
+  data,
+  filterText: filterTextProp,
+  onFilterTextChange,
+  certType: certTypeProp,
+  onCertTypeChange,
+}) => {
+  const [localFilterText, setLocalFilterText] = useState('')
   const [pqcOnly, setPqcOnly] = useState(false)
-  const [certType, setCertType] = useState<CertTypeFilter>('All')
+  const [localCertType, setLocalCertType] = useState<CertTypeFilter>('All')
   const [visibleCount, setVisibleCount] = useState(MOBILE_PAGE_SIZE)
+
+  const filterText = filterTextProp ?? localFilterText
+  const setFilterText = onFilterTextChange ?? setLocalFilterText
+  const certType = certTypeProp ?? localCertType
+  const setCertType = onCertTypeChange ?? setLocalCertType
   const [selectedRecord, setSelectedRecord] = useState<ComplianceRecord | null>(null)
 
   const allFiltered = useMemo(() => {

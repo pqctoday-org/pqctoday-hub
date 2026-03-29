@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "MissionCryptoLifecyclePlanner",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "f5bcf4f98290397b7f0ef23ca15e30790ae4bf57e449b3131b5a26cc66a73de827f75e61df8dc80fbdd15f412ac9f84b8d43e1da65fa4fb32f182cbc432a5ba1"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "24b3be1223b18feeb79a04da8664710323c6e76f3b54d7f0392aefc911ee9abba28d957711cad363118457c0340f20934d3715eee5e45945b675279aa2eae7d2"
+    }
+  ]
+}

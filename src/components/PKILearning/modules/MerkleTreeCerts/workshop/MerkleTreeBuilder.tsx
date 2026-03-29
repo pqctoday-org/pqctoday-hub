@@ -5,6 +5,40 @@ import { Input } from '@/components/ui/input'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildMerkleTree, type MerkleNode, type CertLeaf } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const MERKLE_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'merkle-leaf-hash',
+    useCase: 'Merkle leaf node hash (SHA-256)',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 0 },
+  },
+  {
+    id: 'merkle-internal-hash',
+    useCase: 'Merkle internal node hash (SHA-256)',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 1 },
+  },
+  {
+    id: 'merkle-root-hash',
+    useCase: 'Merkle root computation (SHA-256)',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 2 },
+  },
+  {
+    id: 'merkle-tree-sign',
+    useCase: 'Tree root certificate signing (SLH-DSA)',
+    standard: 'FIPS 205',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
+    kind: { type: 'slhdsa-functional', variant: 'SHA2-128s' },
+    message: 'Merkle tree root certificate hash for RFC PLANTS batch signing',
+  },
+]
 
 const SPEED_OPTIONS = [
   { label: 'Slow', ms: 800 },
@@ -366,6 +400,12 @@ export const MerkleTreeBuilder: React.FC = () => {
           </p>
         </div>
       )}
+
+      <KatValidationPanel
+        specs={MERKLE_KAT_SPECS}
+        label="Merkle Tree Certificates Known Answer Tests"
+        authorityNote="FIPS 180-4 · FIPS 205"
+      />
     </div>
   )
 }

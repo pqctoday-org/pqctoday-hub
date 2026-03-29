@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "ExportControlClassifier",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "7b4a14f99ceec16ce660dcfc27e3842604a5bcf37ca8152f6f2e7252800f1cebf59b44d405f3162d43730151ed89811a23a32b0384d3af42134bcf8142a2aa2f"
+    },
+    {
+      "id": "mldsa87-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "5f61c43e927c3b19312b2a05e77a0e26edd1101a4d99b1481098bec4d096e07d0a4343547290a648d63bb31414fef7f4475c6c2cdfdd845897c122fd90eb38a6"
+    }
+  ]
+}

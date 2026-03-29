@@ -1,0 +1,29 @@
+{
+  "kat_id": "KAT-INTEROPT-146",
+  "step": "step_1_execution",
+  "authoritative_source": "NIST SP 800-38D",
+  "reference_details": {
+    "standard": "https://csrc.nist.gov/pubs/sp/800/38/d/final",
+    "algorithm": "AES-256-GCM",
+    "protocol": "InteropTestMatrix step_1_execution",
+    "key_size": "AES-256"
+  },
+  "requires_keys": ["genericpqc-01-pub", "genericpqc-01-priv"],
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "ivLen": 96,
+      "tagLen": 128,
+      "direction": "decrypt",
+      "tests": [
+        {
+          "key": "51ec7461158bebc9a7845d0abbaf8e414a08a89bdb723d7178c0756db561872b",
+          "iv": "e2fa0b34db87fdbda55fddac",
+          "pt": "4145532d3235362d47434d2041435650206578747261207465737420766563746f7220666f72206d6f64756c652d7370656369666963204b415420646966666572656e74696174696f6e",
+          "ct": "1066e01d97daecfbffa1c5617a1ed258d9d66c5bbecb47d6b04eb18848d445abb51b3b5b5bed895edcc79401674ec00ff5452c091b8546ed9ce695f2f155254db619e90aef7177f8a725",
+          "tag": "01d836326b9d3f4bbf26d25afc5066af"
+        }
+      ]
+    }
+  ]
+}

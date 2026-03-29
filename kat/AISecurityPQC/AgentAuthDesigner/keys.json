@@ -1,0 +1,22 @@
+{
+  "module": "AISecurityPQC",
+  "use_case": "AgentAuthDesigner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "d8d9e43d8746c9135fcc2dc70183a530223c529b561216c467449e30a0683153"
+    },
+    {
+      "id": "aes256gcm-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "1eae207011a86c5b32227b3036605572c95eb93e7dc975dd290d3911ef9c0ebb"
+    }
+  ]
+}

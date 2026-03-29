@@ -1,0 +1,22 @@
+{
+  "module": "HsmPqc",
+  "use_case": "Pkcs11Simulator",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "20f378703dacbed2dadc0ef6d2d1c258cb5990f9b1389b4de453bc8544f42afc"
+    },
+    {
+      "id": "aes256gcm-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "97a2d3dc0e5df8079d4e9c2766643690d048a2275a9057c23f90cb7e139f8ecd"
+    }
+  ]
+}

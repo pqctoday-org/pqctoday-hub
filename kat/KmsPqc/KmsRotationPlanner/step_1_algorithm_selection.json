@@ -1,0 +1,24 @@
+{
+  "kat_id": "KAT-KMSROTAT-125",
+  "step": "step_1_algorithm_selection",
+  "authoritative_source": "RFC 3394",
+  "reference_details": {
+    "standard": "https://www.rfc-editor.org/rfc/rfc3394",
+    "algorithm": "AES-256-KW",
+    "protocol": "KmsRotationPlanner step_1_algorithm_selection",
+    "key_size": "AES-256"
+  },
+  "requires_keys": ["genericpqc-01-pub", "genericpqc-01-priv"],
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "tests": [
+        {
+          "kek": "000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f",
+          "keyData": "00112233445566778899aabbccddeeff000102030405060708090a0b0c0d0e0f",
+          "wrapped": "28c9f404c4b810f4cbccb35cfb87f8263f5786e2d80ed326cbc7f0e71a99f43bfb988b9b7a02dd21"
+        }
+      ]
+    }
+  ]
+}

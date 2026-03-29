@@ -1,0 +1,22 @@
+{
+  "module": "NetworkSecurityPQC",
+  "use_case": "TLSInspectionLab",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256ctr-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "c11a355cdc16c9d264701d0297428d10fcf375cd28809141624c7f8637587a36"
+    },
+    {
+      "id": "aes256ctr-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "6776af3c805d6a3259beb78ddb1d7dd7cc632fcc375f932c2ddab399e082276a"
+    }
+  ]
+}

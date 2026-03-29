@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "InteropTestMatrix",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "0307ed4741394ac3df25364222193cf7a68a53a78febe74f879ea5af6c037255"
+    },
+    {
+      "id": "aes256gcm-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "b368a47c6ab0d395c01b7738a013e643f3402aea41601b4c03b21a5b6d539a5a"
+    }
+  ]
+}

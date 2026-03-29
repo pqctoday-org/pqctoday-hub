@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "LanguageEcosystemComparator",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "19a7e51b74d399f8fdf76a2bee8186d09e99b3727bbb13d28ec4987ab4b3d1dcdb8903ef3867c66264f722fd834bcd15870c7f0669c64df44df420f044680ecf"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "009839a04a36cf8af4fa526eae577626de72c7ca5fd2340fe8a490e164bab34926db57f061de2edfbe9c907a07fcde8b9b3c638c9c0f361e706854da3c0b88f5"
+    }
+  ]
+}

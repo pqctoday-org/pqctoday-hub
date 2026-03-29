@@ -1,0 +1,22 @@
+{
+  "module": "EnergyUtilities",
+  "use_case": "GridMigrationRoadmap",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "aab5944dcb8750145ba0a36d3f2a53e4cebecddd615a829b293996c2f5a95e55fa0059b1106d1323a7db3e6f64087e195bad771f861fa477099344b47aceb317"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "12f83a8819b047859fcc59936a7eaeafc8fcb0bc1db4bb434504e079d419b1d4b91cd3d470fbcc30ae75e533a3bf2b227827199e54f208fdb577350785fd9b54"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "EnergyUtilities",
+  "use_case": "ProtocolSecurityAnalyzer",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "b5d81cbd7d55990ecedcb09a939cd142c7cb7a1e44a0ff45ff17b82b45bfbc29"
+    },
+    {
+      "id": "aes256gcm-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "2d64e05ab96751f667792084900887c798f2d52c031ad83fc05e78ed022b1fc2"
+    }
+  ]
+}

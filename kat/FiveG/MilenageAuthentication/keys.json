@@ -1,0 +1,22 @@
+{
+  "module": "FiveG",
+  "use_case": "MilenageAuthentication",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "b5ab949205e0334f3c93d42d7b7e99ccc9115f65d15f9e9a3b613545b1d718a129683807faabec1d68d91b23e3ef02d0a2b6a495d09ec2ae27a8a76805cc67cd"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "6e9296db2741584194a9e92fd1c6f1cc425012859b6bf9a71f641efaf79e810c4dad6f58d7d0d921882996d02a6082197c52027ef1e5e9e93a402bd00dbbcbd5"
+    }
+  ]
+}

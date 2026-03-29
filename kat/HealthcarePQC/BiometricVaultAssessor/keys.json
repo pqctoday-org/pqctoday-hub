@@ -1,0 +1,22 @@
+{
+  "module": "HealthcarePQC",
+  "use_case": "BiometricVaultAssessor",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-1024",
+  "keys": [
+    {
+      "id": "mlkem1024-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "cf98015d42520cd5a8b33d43dcc24e3922be83d0e73e7f23618ef8f73087334cc1ee6c22a9f5e8a5b7af0b9728dba6b90ee3431314c3d134dfe962b9a7b904d5"
+    },
+    {
+      "id": "mlkem1024-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "f1f0e3e09d25e141c039144216f1597637a148c580e5a23ea740147ecf0a1c5a282547275477b54001716f7a61fd79762e9f411f3c6a63807d8526ca60ac0187"
+    }
+  ]
+}

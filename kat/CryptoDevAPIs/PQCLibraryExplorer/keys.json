@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "PQCLibraryExplorer",
+  "key_type": "CKK_EC_EDWARDS",
+  "parameter_set": "Ed25519",
+  "keys": [
+    {
+      "id": "eddsa-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "15b0ac78ca17700bd47239aad952b8989d7a8401486fb154f92aceba6850319c"
+    },
+    {
+      "id": "eddsa-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "fe76fc268605742d37a6cab5584d1ce5a713205be0a693a4bee86bc098777ae8"
+    }
+  ]
+}

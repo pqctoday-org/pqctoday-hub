@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Let's Encrypt",
+    "category": "Public Key Infrastructure (PKI) Software",
+    "product_name": "Boulder",
+    "product_brief": "An ACME-based certificate authority written in Go that runs Let's Encrypt.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It focuses on standard ACME protocol implementation.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "Not stated (Document mentions \"private key material\" and certificates generally but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Not stated (Document mentions components talk to a Storage Authority for persistent copies of objects and uses MariaDB/S3, but does not describe the specific key hierarchy, HSM usage, or custody model).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Microservices-based CA with gRPC inter-component communication; includes Web Front Ends, Registration Authority, Validation Authority, Certificate Authority, Storage Authority, Publisher, and CRL Updater.",
+    "infrastructure_layer": "Application, Cloud (via Docker deployment)",
+    "license_type": "Open Source",
+    "license": "MPL-2.0",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-25 (Last Updated timestamp in repository metadata)",
+    "fips_validated": "No",
+    "primary_platforms": "Docker, Linux (implied by Go/Docker environment), MariaDB, S3",
+    "target_industries": "Web PKI, Certificate Authorities",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/letsencrypt/boulder"
+  }
+]

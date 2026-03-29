@@ -97,97 +97,189 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
         </div>
       </section>
 
-      {/* Section 2: Three Certificate Format Approaches */}
+      {/* Section 2: Certificate Format Approaches */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
           <div className="p-2 rounded-lg bg-secondary/10">
             <Layers size={24} className="text-secondary" />
           </div>
-          <h2 className="text-xl font-bold text-gradient">Three Certificate Format Approaches</h2>
+          <h2 className="text-xl font-bold text-gradient">Certificate Format Approaches</h2>
         </div>
         <div className="space-y-4 text-sm text-foreground/80">
           <p>
-            There are three distinct X.509 certificate formats for PQC deployment — each with
-            different standardization status and trade-offs:
+            There are six distinct X.509 certificate formats for PQC deployment, split into two
+            groups by backward compatibility:
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {/* Pure PQC */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-success">Pure PQC</h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
-                  Published
-                </span>
+
+          {/* Row 1: No backward compatibility */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              PQC-only &mdash; no legacy fallback
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Pure PQC (ML-DSA) */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-success">Pure PQC (ML-DSA)</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    Published
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-muted-foreground">{`Certificate {`}</div>
+                  <div className="text-success pl-3">{`algorithm: id-ml-dsa-65`}</div>
+                  <div className="text-success pl-3">{`  OID: 2.16.840.1.101.3.4.3.18`}</div>
+                  <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key`}</div>
+                  <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig`}</div>
+                  <div className="text-muted-foreground">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Standard single-algorithm X.509 using a lattice-based PQC signature. ML-DSA OIDs
+                  are standardized in <strong>RFC 9881</strong>. Quantum-safe but requires all
+                  verifiers to support ML-DSA.
+                </p>
               </div>
-              <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
-                <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-success pl-3">{`algorithm: id-ml-dsa-65`}</div>
-                <div className="text-success pl-3">{`  OID: 2.16.840.1.101.3.4.3.18`}</div>
-                <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key`}</div>
-                <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig`}</div>
-                <div className="text-muted-foreground">{`}`}</div>
+              {/* Pure PQC (SLH-DSA) */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-success">Pure PQC (SLH-DSA)</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    Published
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-muted-foreground">{`Certificate {`}</div>
+                  <div className="text-success pl-3">{`algorithm: id-slh-dsa-sha2-128s`}</div>
+                  <div className="text-success pl-3">{`  OID: 2.16.840.1.101.3.4.3.20`}</div>
+                  <div className="text-foreground pl-3">{`publicKey: SLH-DSA-128s-key`}</div>
+                  <div className="text-foreground pl-3">{`signature: SLH-DSA-128s-sig (7856 B)`}</div>
+                  <div className="text-muted-foreground">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Hash-based signature (SPHINCS+) with no lattice assumptions. OIDs in{' '}
+                  <strong>RFC 9909</strong>. <InlineTooltip term="ANSSI">ANSSI</InlineTooltip>{' '}
+                  allows standalone SLH-DSA without hybrid &mdash; security relies only on hash
+                  function properties. Larger signatures (~7.9 KB) are the trade-off.
+                </p>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Standard single-algorithm X.509 using a PQC signature. ML-DSA OIDs are standardized
-                in <strong>RFC 9881</strong>; SLH-DSA OIDs in <strong>RFC 9909</strong>; LMS/XMSS
-                OIDs in <strong>RFC 9802</strong>. Quantum-safe but requires all verifiers to
-                support the PQC algorithm.
-              </p>
-            </div>
-            {/* Composite */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-primary">Composite (Dual-Algorithm)</h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
-                  Draft
-                </span>
+              {/* Composite */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-primary">Composite (Dual-Algorithm)</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                    Draft
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-muted-foreground">{`Certificate {`}</div>
+                  <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256`}</div>
+                  <div className="text-primary pl-3">{`  OID: 1.3.6.1.5.5.7.6.45`}</div>
+                  <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key || ECDSA-key`}</div>
+                  <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig || ECDSA-sig`}</div>
+                  <div className="text-muted-foreground">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  A single composite OID identifies the algorithm pair. Both signatures must verify.
+                  Defined in <strong>draft-ietf-lamps-pq-composite-sigs</strong>. Strongest security
+                  model &mdash; prevents downgrade attacks. Not backward-compatible with legacy
+                  validators.
+                </p>
               </div>
-              <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
-                <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-primary pl-3">{`algorithm: id-MLDSA65-ECDSA-P256`}</div>
-                <div className="text-primary pl-3">{`  OID: 1.3.6.1.5.5.7.6.45`}</div>
-                <div className="text-foreground pl-3">{`publicKey: ML-DSA-65-key || ECDSA-key`}</div>
-                <div className="text-foreground pl-3">{`signature: ML-DSA-65-sig || ECDSA-sig`}</div>
-                <div className="text-muted-foreground">{`}`}</div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                A single composite OID identifies the algorithm pair. Both signatures must verify.
-                Defined in <strong>draft-ietf-lamps-pq-composite-sigs</strong>. Not yet in OpenSSL
-                production builds — requires both signatures to verify.
-              </p>
-            </div>
-            {/* Parallel/Concatenated */}
-            <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
-              <div className="flex items-center justify-between mb-2">
-                <h3 className="text-sm font-bold text-secondary">Parallel (Alt-Sig)</h3>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border font-bold">
-                  Informational
-                </span>
-              </div>
-              <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
-                <div className="text-muted-foreground">{`Certificate {`}</div>
-                <div className="text-secondary pl-3">{`algorithm: ecdsa-with-SHA256`}</div>
-                <div className="text-foreground pl-3">{`extensions {`}</div>
-                <div className="text-foreground pl-6">{`AltPubKey (2.5.29.72): ML-DSA-65`}</div>
-                <div className="text-foreground pl-6">{`AltSigAlg (2.5.29.73): ML-DSA-65`}</div>
-                <div className="text-foreground pl-6">{`AltSigValue (2.5.29.74): ML-DSA-sig`}</div>
-                <div className="text-foreground pl-3">{`}`}</div>
-                <div className="text-muted-foreground">{`}`}</div>
-              </div>
-              <p className="text-xs text-muted-foreground">
-                Classical primary signature with PQC key/sig in X.509 extension fields (OIDs
-                2.5.29.72/73/74). Legacy verifiers validate the classical ECDSA sig and ignore
-                extensions; PQC-aware verifiers check both. Either direction is valid, but
-                classical-primary is typical for backward compatibility.
-              </p>
             </div>
           </div>
+
+          {/* Row 2: Backward compatible */}
+          <div>
+            <h3 className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+              Hybrid with legacy fallback
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* Alt-Sig / Catalyst */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-secondary">Alt-Sig / Catalyst</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                    Draft
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-muted-foreground">{`Certificate {`}</div>
+                  <div className="text-secondary pl-3">{`algorithm: ecdsa-with-SHA256`}</div>
+                  <div className="text-foreground pl-3">{`extensions {`}</div>
+                  <div className="text-foreground pl-6">{`AltPubKey (2.5.29.72): ML-DSA-65`}</div>
+                  <div className="text-foreground pl-6">{`AltSigAlg (2.5.29.73): ML-DSA-65`}</div>
+                  <div className="text-foreground pl-6">{`AltSigValue (2.5.29.74): ML-DSA-sig`}</div>
+                  <div className="text-foreground pl-3">{`}`}</div>
+                  <div className="text-muted-foreground">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  A single classical cert with PQC key and signature in X.509 extensions. Legacy
+                  verifiers ignore the extensions; PQC-aware verifiers check both. Defined in{' '}
+                  <strong>draft-ietf-lamps-cert-binding-for-multi-auth</strong>.
+                </p>
+              </div>
+              {/* Related Certificates (RFC 9763) */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-primary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-primary">Related Certs (RFC 9763)</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 font-bold">
+                    Published
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-warning">{`Cert A (Classical) {`}</div>
+                  <div className="text-foreground pl-3">{`algorithm: ecdsa-with-SHA256`}</div>
+                  <div className="text-primary pl-3">{`ext: sha256(CertB) → binding`}</div>
+                  <div className="text-warning">{`}`}</div>
+                  <div className="text-success">{`Cert B (PQC) {`}</div>
+                  <div className="text-foreground pl-3">{`algorithm: ML-DSA-65`}</div>
+                  <div className="text-primary pl-3">{`ext: sha256(CertA) → binding`}</div>
+                  <div className="text-success">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  Two separate independent certificates bound by a hash in a{' '}
+                  <code className="text-[10px]">RelatedCertificate</code> extension. Each
+                  certificate is independently valid. Legacy systems validate the classical cert;
+                  PQC-aware systems verify both and check the binding hash.
+                </p>
+              </div>
+              {/* Chameleon Certificates */}
+              <div className="bg-muted/50 rounded-lg p-4 border border-secondary/20">
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-sm font-bold text-secondary">Chameleon</h3>
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-warning/10 text-warning border border-warning/20 font-bold">
+                    Draft
+                  </span>
+                </div>
+                <div className="font-mono text-[10px] bg-background p-3 rounded mb-3 border border-border">
+                  <div className="text-muted-foreground">{`Certificate (PQC primary) {`}</div>
+                  <div className="text-success pl-3">{`algorithm: ML-DSA-65`}</div>
+                  <div className="text-foreground pl-3">{`ext: DeltaCertDescriptor {`}</div>
+                  <div className="text-warning pl-6">{`sig: ecdsa-with-SHA256`}</div>
+                  <div className="text-warning pl-6">{`pubKey: EC P-256`}</div>
+                  <div className="text-warning pl-6">{`sigValue: ECDSA sig`}</div>
+                  <div className="text-foreground pl-3">{`}`}</div>
+                  <div className="text-muted-foreground">{`}`}</div>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                  One certificate with a{' '}
+                  <code className="text-[10px]">DeltaCertificateDescriptor</code> extension encoding
+                  the differences needed to reconstruct a partner cert. More space-efficient than
+                  Related Certs. Backed by DigiCert and Entrust ({' '}
+                  <strong>draft-bonnell-lamps-chameleon-certs</strong>).
+                </p>
+              </div>
+            </div>
+          </div>
+
           <p className="text-xs text-muted-foreground">
-            <strong>Deployment guidance:</strong> Pure PQC is ready today (RFC 9881 OIDs in OpenSSL
-            3.x). Composite requires both parties to support the draft spec — ideal for closed PKI
-            environments. Parallel works with legacy verifiers but adds X.509 extension complexity.
-            ANSSI explicitly permits pure hash-based (
-            <InlineTooltip term="SLH-DSA">SLH-DSA</InlineTooltip>, LMS) as standalone alternatives.
+            <strong>Deployment guidance:</strong> Pure PQC (ML-DSA) is ready today (RFC 9881 OIDs in
+            OpenSSL 3.x). Pure SLH-DSA is also ready (RFC 9909) and ANSSI-approved as standalone.
+            Composite requires both parties to support the draft spec &mdash; ideal for closed PKI.
+            Alt-Sig and Chameleon work with legacy verifiers via extensions. Related Certs (RFC
+            9763) provides full backward compatibility with two independent certificates. Upcoming:
+            FN-DSA (FIPS 206) will add compact lattice-based signatures; composite KEM (ML-KEM+ECDH)
+            will enable hybrid key encapsulation in S/MIME.
           </p>
         </div>
       </section>

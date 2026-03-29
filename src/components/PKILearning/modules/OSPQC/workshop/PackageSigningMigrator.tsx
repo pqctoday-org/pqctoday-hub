@@ -12,6 +12,33 @@ import {
 } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PACKAGE_FORMATS } from '../data/osConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const OSPQC_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'os-pkg-sign',
+    useCase: 'OS package signing (ML-DSA-65)',
+    standard: 'FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'RPM header digest: Name=openssl-3.5,Arch=x86_64,SHA256=c4a2b3...',
+  },
+  {
+    id: 'os-ssh-kem',
+    useCase: 'SSH key exchange (ML-KEM-768)',
+    standard: 'FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'os-kernel-hash',
+    useCase: 'Kernel module integrity hash',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 1 },
+  },
+]
 
 type PackageType = 'rpm' | 'deb'
 
@@ -475,6 +502,12 @@ export const PackageSigningMigrator: React.FC = () => {
           ))}
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={OSPQC_KAT_SPECS}
+        label="OS PQC Known Answer Tests"
+        authorityNote="FIPS 203 · FIPS 204 · FIPS 180-4"
+      />
     </div>
   )
 }

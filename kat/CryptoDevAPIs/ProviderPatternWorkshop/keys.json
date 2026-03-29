@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "ProviderPatternWorkshop",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-08-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "791f0b8618a89e3290145827c106b826be6e57d97576bb668585cb244ef1d2e7"
+    },
+    {
+      "id": "ecdsap256-08-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "8ccc99d2acf8483ff642515c9842e6230b117e289054c11130e89a5ae43ba813"
+    }
+  ]
+}

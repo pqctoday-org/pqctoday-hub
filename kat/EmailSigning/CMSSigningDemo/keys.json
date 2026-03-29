@@ -1,0 +1,22 @@
+{
+  "module": "EmailSigning",
+  "use_case": "CMSSigningDemo",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "982aab816965c836f2f0619064aa0b0f65cac2ba9735c344d9c64e1a02403b3de386ba65fe6ec9283eb09cd0ae533b0484cae06b2fd9b75022572ba078180e4d"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "8993bc3f7baad31522195b416f8024a15d9a770544957e63718f6e39d42ca450a8ae8076e78824ca0eb42622d7b5dfce25b0726b1b4c3c5814d976eb12fd4797"
+    }
+  ]
+}

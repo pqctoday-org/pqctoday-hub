@@ -1,0 +1,22 @@
+{
+  "module": "Entropy",
+  "use_case": "QRNGDemo",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-512",
+  "keys": [
+    {
+      "id": "hmacsha512-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-512",
+      "value": "db84e2a8da5f56a3597d1546f62790a4babd412b2361689c38cdf4fd1bc28f72f7a170678c9d85ce6fdc9ad9447ed868b8f1ef32ec7cf7b44e098a0ba9267228"
+    },
+    {
+      "id": "hmacsha512-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-512",
+      "value": "08ff056aedee269d491d7c9dbec5e9bf45b1e0e038e503385622ac5983d3b0b87fb761fc20f5c38ab6f78681e161fc7ee25f711e546cfa04f9f997d515f4869a"
+    }
+  ]
+}

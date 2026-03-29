@@ -1,0 +1,22 @@
+{
+  "module": "DatabaseEncryptionPQC",
+  "use_case": "QueryableEncryptionLab",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "8667af302779cd5759980a539e21f153bb904a9ccfe691191e608cdf42539fd4"
+    },
+    {
+      "id": "aes256gcm-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "63d974f2d96bc09ffce0179228258089e9fa4a9a7b5aaca664719d2364d4794a"
+    }
+  ]
+}

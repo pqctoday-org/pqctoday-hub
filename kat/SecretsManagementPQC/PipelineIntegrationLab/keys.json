@@ -1,0 +1,22 @@
+{
+  "module": "SecretsManagementPQC",
+  "use_case": "PipelineIntegrationLab",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "a62ce4826a98c8f6848a876157c8d4b84ac3c233d418570e30871fe737feb95900c7573b4d45561cb972b25f7a96278ef2883c40b457a00196f81a2e69a1b0f5"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "4c6a00b1f730ab47a74a5898387c99eb62421f990acd811a668f8db9aa8bfda00fd55d4f3921cf89a0b3aafb0d75d83b9be1b6b39cff6c2990556a08fc391fb9"
+    }
+  ]
+}

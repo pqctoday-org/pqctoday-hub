@@ -16,6 +16,7 @@ import { AlgorithmComparisonTable } from './AlgorithmComparisonTable'
 import { KeyGenWorkshop } from './KeyGenWorkshop'
 import { SignatureDemo } from './SignatureDemo'
 import { PQC101Exercises, type WorkshopConfig } from './PQC101Exercises'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'pqc-101'
 
@@ -156,6 +157,7 @@ export const Module1: React.FC = () => {
         {/* Learn Tab (Hidden in Curious Mode) */}
         {!isCuriousMode && (
           <TabsContent value="learn">
+            <GlossaryAutoWrap>
             <PQC101Module />
             <div className="mt-6 flex justify-end">
               <button
@@ -165,6 +167,7 @@ export const Module1: React.FC = () => {
                 Go to Workshop &rarr;
               </button>
             </div>
+            </GlossaryAutoWrap>
           </TabsContent>
         )}
 

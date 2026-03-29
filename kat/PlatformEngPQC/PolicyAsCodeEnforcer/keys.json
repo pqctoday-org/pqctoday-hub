@@ -1,0 +1,22 @@
+{
+  "module": "PlatformEngPQC",
+  "use_case": "PolicyAsCodeEnforcer",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "19c5d0fccda3c41102fa731d5c4fbc5e685f3e0baf4954d2934a5b9b75f09629"
+    },
+    {
+      "id": "sha256-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "c2c6222566a58f365b1c58abb8b839948475bd487b53c9a3993437ff6957cfb2"
+    }
+  ]
+}

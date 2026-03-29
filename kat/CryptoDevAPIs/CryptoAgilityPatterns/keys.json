@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "CryptoAgilityPatterns",
+  "key_type": "CKK_EC_EDWARDS",
+  "parameter_set": "Ed25519",
+  "keys": [
+    {
+      "id": "eddsa-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "b4853b638a30e4ec30562eeaf6155b9e9f4aebecb77495905288b84d1011b52d"
+    },
+    {
+      "id": "eddsa-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "d2ca5c8056a51ce568e436e8ffaababf46b17d168e3e81841bf080af932802d1"
+    }
+  ]
+}

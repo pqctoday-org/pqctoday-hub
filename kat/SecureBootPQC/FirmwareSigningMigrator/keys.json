@@ -1,0 +1,22 @@
+{
+  "module": "SecureBootPQC",
+  "use_case": "FirmwareSigningMigrator",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "1bbb8d361603d8036bd257b2864f5f5a4130d07062b4433f8d11bd687b421a19937ed9c8faad952b9b08af2fb32198bf3089ec96349f39d7bcf562c23bcdf052"
+    },
+    {
+      "id": "mldsa87-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "fcea736f15b49e5d960e7bfa7b1ef99a724c1ece9c2f9dffc9c45fe68eb9c2a59a6e49e20beb5550a5e7c9a1bcaaa41e16ea11b75ebb2669c2ef713a3f1ad436"
+    }
+  ]
+}

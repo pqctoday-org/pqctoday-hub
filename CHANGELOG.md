@@ -4,6 +4,74 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.64.0] - 2026-03-29
+
+### Added
+
+- **Real DER certificate generation for all 6 hybrid formats**: Replaced simulated certificate generation (separate component certs) with structurally correct X.509 certificates built via `@peculiar/asn1-schema` and signed via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`). All ASN.1 encoding is schema-validated — no hand-rolled DER. [view:/learn/hybrid-crypto]
+  - **Composite** (OID `1.3.6.1.5.5.7.6.45`): Real `CompositeSignatureValue ::= SEQUENCE SIZE (2) OF BIT STRING` per draft-ietf-lamps-pq-composite-sigs-15 §6
+  - **Alt-Sig / Catalyst**: Real extensions `2.5.29.72` (SubjectAltPublicKeyInfo), `2.5.29.73` (AltSignatureAlgorithm), `2.5.29.74` (AltSignatureValue) per ITU-T X.509 (2019) §9.8
+  - **Related Certificates** (OID `1.3.6.1.5.5.7.1.36`): Two-pass bidirectional binding per RFC 9763 — each cert contains SHA-256 hash of its partner
+  - **Chameleon** (OID `2.16.840.1.114027.80.6.1`): Real `DeltaCertificateDescriptor` extension per draft-bonnell-lamps-chameleon-certs-07 §4
+  - **Pure ML-DSA-65** and **Pure SLH-DSA-128s**: Now generated via SoftHSM instead of OpenSSL WASM/liboqs
+- **@peculiar/asn1-schema v2.6.0** + **@peculiar/asn1-x509 v2.6.1** + **@peculiar/asn1-x509-post-quantum v2.6.1**: New dependencies for standards-compliant ASN.1 DER encoding of X.509 certificates. Added to SBOM. [infra]
+- **SoftHSM byte-level signing wrappers**: `hsm_signBytesMLDSA`, `hsm_signBytesECDSA`, `hsm_signBytesSLHDSA` — accept raw `Uint8Array` for signing TBS certificate DER blobs directly via PKCS#11. [infra]
+- **Auto-initializing SoftHSM singleton**: `HybridCryptoService` initializes SoftHSM on demand (`C_Initialize` → `C_InitToken` → `C_OpenSession` → `C_Login`) — no React context dependency, no fallback to liboqs/Web Crypto. [view:/learn/hybrid-crypto]
+
+### Fixed
+
+- **RFC 9763 OID corrected**: `1.3.6.1.5.5.7.1.35` → `1.3.6.1.5.5.7.1.36` (id-pe 36) per RFC 9763 Appendix A. Fixed in constants.ts, derParser.ts, glossaryData.ts. [view:/learn/hybrid-crypto]
+- **Vite strict build fixes**: `Uint8Array.buffer` cast to `ArrayBuffer` for `@peculiar/asn1-schema` compatibility (Vite `tsc -b` enforces `SharedArrayBuffer` exclusion). Removed unused `Time` import and stale chameleon handler references. [infra]
+
+## [2.63.0] - 2026-03-29
+
+### Added
+
+- **Alt-Sig / Catalyst certificate format**: Added as a distinct 6th certificate format in the Hybrid Cryptography module. Alt-Sig (draft-ietf-lamps-cert-binding-for-multi-auth) embeds a PQC key and signature in X.509 extensions (2.5.29.72/73/74) within a single classical cert — previously conflated with Related Certificates (RFC 9763), which is a fundamentally different mechanism using two separate paired certs. [view:/learn/hybrid-crypto]
+- **Pure SLH-DSA learn card**: The learn section now explains all six certificate format approaches in two rows: PQC-only (ML-DSA, SLH-DSA, Composite) and hybrid-with-legacy-fallback (Alt-Sig, Related Certs, Chameleon). Previously only showed 3 of 6 formats. [view:/learn/hybrid-crypto]
+- **SLH-DSA IETF reference certificate** (RFC 9909 Appendix C.3): Embedded real 8,241-byte SLH-DSA-SHA2-128s self-signed certificate from the RFC specification as the 5th test vector in the Certificate Inspector. OID 2.16.840.1.101.3.4.3.20. [view:/learn/hybrid-crypto]
+- **Alt-Sig workshop generation**: Workshop Step 4 now generates all 6 certificate formats including Alt-Sig (ECDSA primary + ML-DSA-65 extension content). [view:/learn/hybrid-crypto]
+- **Alt-Sig glossary entry**: New "Alt-Sig Certificate" term with OIDs 2.5.29.72/73/74, correctly attributed as the "Catalyst" approach (NSA). [view:/learn/hybrid-crypto]
+
+### Fixed
+
+- **Alt-Sig ≠ RFC 9763 factual error**: The IETF test vector `ietf-catalyst-ecdsa-p256-mldsa44` was incorrectly mapped to `formatId: 'related-certs'` — now correctly maps to `formatId: 'alt-sig'`. The glossary entry for Related Certificate no longer says "Also known as the NSA catalyst approach" (that's Alt-Sig). [view:/learn/hybrid-crypto]
+- **Certificate format counting inconsistency**: Removed all hardcoded counts ("Three", "Four", "Five") across 8 files. The learn section said "Three", the workshop said "Four", content.ts said "Five", but there are actually 6 distinct formats. Headings now omit numbers to prevent future drift. [view:/learn/hybrid-crypto]
+- **Q&A CSV primary/PQC reversal** (Q8, Q13): Answers incorrectly described Alt-Sig as having a "primary PQC signature with classical in extensions" — corrected to "primary classical signature with PQC key/signature in extensions". [data:module-qa]
+- **HybridCertInspector badge handler**: Added missing `'related-certs'` case to `certTypeBadge()` switch statement — prevents undefined return if an RFC 9763 test vector is added in the future. [view:/learn/hybrid-crypto]
+
+## [2.59.0] - 2026-03-28
+
+### Added
+
+- **Bookmarks system**: Save and manage Library documents and Migrate products for quick access. Bookmark icons in `LibraryTreeTable` and `SoftwareTable`; all bookmarks accessible via a new **Bookmarks tab** in the Right Panel. Export bookmarks as JSON or CSV. Persisted in localStorage via `useBookmarkStore`. [view:/library] [view:/migrate]
+- **Product comparison panel** (`Migrate`): Compare up to 3 catalog products side-by-side. Scale icon in every product row/card queues products; sticky bottom bar shows the queue with remove chips and a "Compare" button that scrolls to an inline comparison table. Works in Stack, Cards, and Table views. [view:/migrate]
+- **Breadcrumb navigation**: Auto-generated breadcrumb trail for nested routes (e.g., `/learn/quantum-basics`). Rendered above page content in `MainLayout`; hidden at top-level routes. [infra]
+- **Mobile Playground** (`MobilePlaygroundOps`): Replaces the old static `MobilePlaygroundView` with an interactive ML-KEM + ML-DSA experience on mobile — real WASM-powered KEM encapsulation/decapsulation and signing/verification on small screens. [view:/playground]
+- **CI: content-integrity job** (`ci.yml`): New `content-integrity` workflow job runs after `build-and-test`. Executes `validate-data-integrity.ts` and gates on ERROR-severity findings (QA-F1, QA-F3, QA-F6, N23-C, N23-D). Separate steps for content accuracy, enrichment quality, and graph consistency. Uploads `reports/integrity.json` as a CI artifact. [infra:ci]
+
+### Changed
+
+- **PageHeader mobile description**: Description `<p>` is now visible at `md` breakpoint (was `lg`). A compact single-line `line-clamp-2` version is shown on mobile (`md:hidden`); full description shown at `md:block`. Action row breakpoints updated to match (`lg` → `md`). [infra]
+- **FilterDropdown scroll-close delay**: Added 100ms debounce before attaching the window scroll listener. Prevents the dropdown from immediately closing in environments (Playwright, mobile keyboard open) where a scroll event fires synchronously on open. [infra]
+- **Timeline regionFilter**: `'global'` region value now treated the same as `'All'` — no country-level filtering applied when the region is `'global'`. [view:/timeline]
+- **Toast container ARIA**: Removed `role="region"` from the toast notification wrapper (`MainLayout`); `aria-live="polite"` alone is correct for non-landmark announcement regions. [infra:a11y]
+- **`useRightPanelStore` version bump** (v1 → v2): Adds `'bookmarks'` as a valid `RightPanelTab`; existing persisted tab values remain valid. [infra]
+
+### Data
+
+- **Timeline CSV updated** (`timeline_03272026.csv`): Events refreshed with current status data. [data:timeline]
+- **Library CSV updated** (`library_03282026.csv`): Latest library records. [data:library]
+- **Compliance CSV updated** (`compliance_03282026.csv`): Updated compliance framework records. [data:compliance]
+- **Algorithm reference CSV added** (`pqc_complete_algorithm_reference_03282026.csv`): New comprehensive PQC algorithm reference dataset. [data]
+- **RAG corpus updated** (`public/data/rag-corpus.json`): Regenerated to reflect latest content and enrichments. [data]
+
+## [2.58.0] - 2026-03-28
+
+### Data
+
+- **Compliance framework CSV updated** (`compliance_03282026.csv`): Replaces `compliance_03212026.csv`. Corrected website URLs for 3 records: `DORA` → EIOPA primary DORA page; `ENISA` → enisa.europa.eu root; `BOI-PQC` → removed unstable CMS-hash PDF link. Confirmed `NIST` FIPS 206 draft status and `NIST-IR-8547` IPD URL remain accurate. [data:compliance]
+
 ## [2.57.0] - 2026-03-27
 
 ### Added

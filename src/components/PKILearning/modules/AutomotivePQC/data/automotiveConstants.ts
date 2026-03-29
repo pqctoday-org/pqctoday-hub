@@ -48,6 +48,8 @@ export type VehicleLifecyclePhase = 'production' | 'road-life' | 'end-of-life'
 
 export type RegulationRegion = 'eu' | 'us' | 'china' | 'japan' | 'korea'
 
+export type RegulationConfidence = 'published' | 'in-development' | 'projected'
+
 // ---------------------------------------------------------------------------
 // Sensor Types
 // ---------------------------------------------------------------------------

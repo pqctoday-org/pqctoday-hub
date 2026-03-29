@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Red Hat OpenShift",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "Red Hat OpenShift",
+    "product_brief": "The developer and operations friendly Kubernetes distro.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions SSH keys generally but does not specify algorithms like ECDSA, Ed25519, etc.)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Kubernetes distro / Container Orchestration",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Open Source/Commercial (Text shows Apache-2.0 for repositories and mentions Enterprise solutions)",
+    "license": "Apache-2.0 (for repositories), Commercial (for Enterprise solutions)",
+    "latest_version": "Not stated (Text mentions \"OpenShift 3 and 4\" in documentation context, but no specific latest version number)",
+    "release_date": "Not stated (Repository update dates are Mar 28, 2026, but these are commit updates, not product release dates)",
+    "fips_validated": "No mention",
+    "primary_platforms": "Kubernetes, Cloud (AWS, Azure, GCP implied by \"Cloud\" context in prompt but not explicitly listed as supported providers in text; text mentions \"openshift.com\")",
+    "target_industries": "Healthcare, Financial services, Manufacturing, Government",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://openshift.com"
+  }
+]

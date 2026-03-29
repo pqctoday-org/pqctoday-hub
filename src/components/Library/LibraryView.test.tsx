@@ -131,7 +131,7 @@ describe('LibraryView', () => {
     it('renders the description', () => {
       render(<LibraryView />)
       expect(
-        screen.getByText(/Explore the latest Post-Quantum Cryptography standards/i)
+        screen.getAllByText(/Explore the latest Post-Quantum Cryptography standards/i)[0]
       ).toBeInTheDocument()
     })
 

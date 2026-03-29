@@ -1,0 +1,22 @@
+{
+  "module": "DatabaseEncryptionPQC",
+  "use_case": "BYOKKeyDesigner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "8d61f67d17d0ae23afcdee4bf5615150ea9c4e8403d0332a6c37c1e15bf0af0f"
+    },
+    {
+      "id": "aes256gcm-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "33a409ca79145d3f6aa5a1fc328fd68b41143a856c08ed4ac531e15cbe1197ea"
+    }
+  ]
+}

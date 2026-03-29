@@ -1,0 +1,22 @@
+{
+  "module": "HealthcarePQC",
+  "use_case": "PatientPrivacyMapper",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-1024",
+  "keys": [
+    {
+      "id": "mlkem1024-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "c6b6386cb176130fe3d439f7e2f55c53dc1ebdebcd2a250222852459d23b36c68613a975a9c7a9b95703fe845eed070b04cca285399dd837435854bfb4cb7328"
+    },
+    {
+      "id": "mlkem1024-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "25e111d5abc32fdd0e89da8aa0d4bee822e4d9d9a4fa9b5512403682969a852b22e902102b0160f6b60ab6b1e32324fb06eeda239c6188467b37c6b7eda0b9fa"
+    }
+  ]
+}

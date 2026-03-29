@@ -1,0 +1,22 @@
+{
+  "module": "Entropy",
+  "use_case": "SourceCombiningDemo",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-256",
+  "keys": [
+    {
+      "id": "hmacsha256-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "10559a4d765ede304d8f5cbbfc94b122538027cb8e1dbc1ef3548ff9bfdf9ee9"
+    },
+    {
+      "id": "hmacsha256-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "efc1d55d05b64c603f94310ce8ce2639c3ff95272bc06348b99edc1a33cb725b"
+    }
+  ]
+}

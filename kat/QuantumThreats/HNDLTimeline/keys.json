@@ -1,0 +1,22 @@
+{
+  "module": "QuantumThreats",
+  "use_case": "HNDLTimeline",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "13264fd4b7e46f0fd7b88c7d1415bf615bf6f4cd46d0a3e790c6c3c0b0c9e759cda0c97611692c937323b6fc2f92a03b6106c5b1ba5274f76d7dcc1fb015e5e3"
+    },
+    {
+      "id": "mldsa65-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "bb09fb4af8f01a1ba136c01d818352a01e832e7922fe4cf7b7df01fb1dbce18ee5363d337b9cd96c46e2836464c9b81bab024667fd6153f371235ffae9f92ebb"
+    }
+  ]
+}

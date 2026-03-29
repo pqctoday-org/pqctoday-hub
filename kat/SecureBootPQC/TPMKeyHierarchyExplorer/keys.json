@@ -1,0 +1,22 @@
+{
+  "module": "SecureBootPQC",
+  "use_case": "TPMKeyHierarchyExplorer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "55b08b69bbad8593d58057b2f120071180ef4d776b0849ff063e2decd52f2029fc91fb5524b7139acf6958879e7f04a3753b8abb7f2fa9e4f74f1fa06a409a11"
+    },
+    {
+      "id": "mldsa87-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "dde82506e0ec70fab16fef707f31553223bd984c93f50eb63dfdf5e88c5a864fcd8ce5cdd19b0b90e3107b8e8dc8d6f1bdd1426c2fd173bb7ccf5ed92f44e1d0"
+    }
+  ]
+}

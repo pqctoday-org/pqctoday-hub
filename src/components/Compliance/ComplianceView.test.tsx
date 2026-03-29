@@ -112,7 +112,9 @@ describe('ComplianceView', () => {
         <ComplianceView />
       </MemoryRouter>
     )
-    expect(screen.getByText(/Explore the three pillars of PQC compliance/)).toBeInTheDocument()
+    expect(
+      screen.getAllByText(/Explore the three pillars of PQC compliance/)[0]
+    ).toBeInTheDocument()
   })
 
   it('renders the Sources and Glossary buttons in the header', () => {

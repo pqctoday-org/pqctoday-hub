@@ -16,6 +16,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'quantum-threats'
 
@@ -155,7 +156,9 @@ export const QuantumThreatsModule: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <QuantumThreatsIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Workshop Tab */}

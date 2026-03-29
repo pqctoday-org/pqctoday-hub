@@ -16,6 +16,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'digital-id'
 
@@ -219,8 +220,10 @@ export const DigitalIDModule: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
           <OverviewComponent onNavigateTo={(_stepId) => navigateToWorkshop()} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Workshop Tab */}

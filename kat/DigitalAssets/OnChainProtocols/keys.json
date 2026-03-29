@@ -1,0 +1,22 @@
+{
+  "module": "DigitalAssets",
+  "use_case": "OnChainProtocols",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "7046d9e180535de729a103c5e4d96b1e667ce9bf61911866ba9246c88a6450221f5febaa35250890b531983ec5030e42abb020a818494993f70181f4ee2e32c1"
+    },
+    {
+      "id": "mldsa87-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "4a9e4d3be0b892716d5c4ccc790c9932bd44cc0f56595a23a34d3410b6b15c578ebc68ea6526a2987a1d320933a8e2b0ec4cd37cfbd251322cf7455cdaf4bcf7"
+    }
+  ]
+}

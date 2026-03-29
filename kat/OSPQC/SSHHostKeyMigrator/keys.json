@@ -1,0 +1,22 @@
+{
+  "module": "OSPQC",
+  "use_case": "SSHHostKeyMigrator",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "8ab60befa29d2812ba370b720e1706501199ef40495dbdd9ec64276e312004f8bb394489eda42ce94dc0e78fdcfbe0cb11b7545fdf83cd30e638d9e12281e011"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "88b876e3461c4aedc714895294fc09b46b1af10a7a91a1fdf384fbaddf9532e73ae30b6e536e031e4571025e2946e23b3648b4d079e04a2ecd287914373e6849"
+    }
+  ]
+}

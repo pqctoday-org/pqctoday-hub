@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useRef, useEffect, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Play,
   Database,
@@ -11,6 +12,8 @@ import {
   ShieldCheck,
   AlertCircle,
   Hash,
+  X,
+  Sparkles,
   Cpu,
   ArrowLeftRight,
   Filter,
@@ -58,8 +61,29 @@ const PlaygroundContent = () => {
   const { keyStore, setKeyStore } = useKeyStoreContext()
   const { engineMode, setEngineMode, phase } = useHsmContext()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const [, setSearchParams] = useSearchParams()
+
+  // Sync activeTab → URL whenever it changes (covers direct setActiveTab calls too, e.g. toggleHsmMode)
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (activeTab !== 'keystore') next.set('tab', activeTab)
+        else next.delete('tab')
+        return next
+      },
+      { replace: true }
+    )
+  }, [activeTab, setSearchParams])
   const isSimplifiedPersona = selectedPersona === 'curious' || selectedPersona === 'executive'
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
+  const [showQuickStart, setShowQuickStart] = useState(() => {
+    try {
+      return sessionStorage.getItem('pqc-playground-qs-dismissed') !== '1'
+    } catch {
+      return true
+    }
+  })
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
   const [showTabFade, setShowTabFade] = useState(false)
@@ -229,6 +253,52 @@ const PlaygroundContent = () => {
           >
             {lastLogEntry.executionTime.toFixed(2)} ms
           </span>
+        </div>
+      )}
+
+      {/* Quick Start banner — dismissible, session-persisted */}
+      {showQuickStart && (
+        <div className="relative bg-primary/10 border border-primary/20 rounded-xl p-3 md:p-4 mb-4 shrink-0 animate-fade-in">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="absolute top-2 right-2 h-6 w-6 p-0"
+            aria-label="Dismiss quick start"
+            onClick={() => {
+              setShowQuickStart(false)
+              try { sessionStorage.setItem('pqc-playground-qs-dismissed', '1') } catch { /* ignore */ }
+            }}
+          >
+            <X size={14} />
+          </Button>
+          <div className="flex items-start gap-3 pr-6">
+            <Sparkles size={18} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+            <div className="space-y-1.5">
+              <p className="text-sm font-semibold text-foreground">Quick Start</p>
+              <p className="text-xs text-muted-foreground leading-relaxed">
+                {hsmMode ? (
+                  <>
+                    Try the <strong>HSM Playground</strong> in dual-mode: generate an ML-DSA keypair on the{' '}
+                    <strong>Sign &amp; Verify</strong> tab, sign a message with the C++ engine, then
+                    cross-verify with the Rust engine — proving real interoperability between two
+                    independent PKCS#11 implementations.
+                  </>
+                ) : (
+                  <>
+                    Start with the <strong>Key Store</strong> tab to generate a key pair, then switch to{' '}
+                    <strong>Sign &amp; Verify</strong> to create and verify a digital signature. The log
+                    panel at the bottom shows every PKCS#11 call in real time.
+                  </>
+                )}
+              </p>
+              {!hsmMode && !isSimplifiedPersona && (
+                <p className="text-xs text-muted-foreground/80">
+                  Enable <strong>HSM Mode</strong> (top right) for dual-engine cross-check with real
+                  PKCS#11 v3.2 operations.
+                </p>
+              )}
+            </div>
+          </div>
         </div>
       )}
 

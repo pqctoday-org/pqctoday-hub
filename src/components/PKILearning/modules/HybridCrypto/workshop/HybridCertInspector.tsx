@@ -203,6 +203,8 @@ function certTypeBadge(certType: IETFCertVector['certType']) {
       return 'bg-success/10 text-success border-success/20'
     case 'pure-pqc':
       return 'bg-success/10 text-success border-success/20'
+    case 'related-certs':
+      return 'bg-primary/10 text-primary border-primary/20'
   }
 }
 

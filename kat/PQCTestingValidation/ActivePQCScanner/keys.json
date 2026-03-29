@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "ActivePQCScanner",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "bcc56f20ec9654101e8b02ecc404f41f0eda7912f95ad020a6b0f6a542b67983ac7dab3109ec209f869a42e3c3d08f3b212aa6c52a1a148e5ffc7e37398b9a39"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "4155e51da0ebef62a28449e99ce29eda279f3fb1daa17f063b381840759f8c7ce0356d3665082092eb28fc59ed717ee87b63804c78d8a632cc1fb09c27aae915"
+    }
+  ]
+}

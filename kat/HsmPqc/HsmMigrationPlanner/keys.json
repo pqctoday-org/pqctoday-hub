@@ -1,0 +1,22 @@
+{
+  "module": "HsmPqc",
+  "use_case": "HsmMigrationPlanner",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "eff21bd0666cb88a4088968b399a203a76b98aea81f34baf81525f5564b5088c5585b29aaf5235f552da425c036cbde52f567728843e5cfdec2c2ec0da3db9e6"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "4953d9e80a88f6bc1be4589152d5c3ac080aae24d2fed7f73e1b2195e369c33b1e3edb6349dc8f7faee2398da9c2506a09e42a011f88033d984cf8c845a32a81"
+    }
+  ]
+}

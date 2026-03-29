@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "MigrationDecisionLab",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "54079a57ae2b29d791de727409172ab18aa93a5301d0e318a76f40bc624ab25e"
+    },
+    {
+      "id": "ecdsap256-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "8f1d3ef41599de51f25e64babd1720381d41e5bf5fbaf6ea2a251ab210f48ded"
+    }
+  ]
+}

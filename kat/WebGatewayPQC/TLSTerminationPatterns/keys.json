@@ -1,0 +1,22 @@
+{
+  "module": "WebGatewayPQC",
+  "use_case": "TLSTerminationPatterns",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e532f56b70d50c85cae9db3612c42a43d1b3d13eda3850d906957084bf144d62"
+    },
+    {
+      "id": "aes256gcm-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "54befd5f37df23886cb2e4f41286e9d8e2ff14357fcff097b1f1399aa98c8708"
+    }
+  ]
+}

@@ -16,6 +16,7 @@ import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'hybrid-crypto'
 
@@ -41,7 +42,7 @@ const PARTS = [
   {
     id: 'hybrid-formats',
     title: 'Step 4: Hybrid Formats',
-    description: 'Generate and compare all four hybrid X.509 certificate approaches.',
+    description: 'Generate and compare hybrid X.509 certificate approaches.',
     icon: Layers,
   },
   {
@@ -147,7 +148,9 @@ export const HybridCryptoModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
-          <HybridCryptoIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          <GlossaryAutoWrap>
+            <HybridCryptoIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         <TabsContent value="visual">

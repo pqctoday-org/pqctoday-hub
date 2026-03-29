@@ -1,0 +1,447 @@
+{
+  "_meta": {
+    "generated_from": {
+      "algorithm_csv": "pqc_complete_algorithm_reference_03052026.csv",
+      "library_csv": "library_03272026.csv"
+    },
+    "description": "Programmatic fact allowlists for content accuracy validation. Auto-generated — do not edit manually."
+  },
+  "fips_to_algorithm": {
+    "203": "ML-KEM",
+    "204": "ML-DSA",
+    "205": "SLH-DSA"
+  },
+  "fips_all_variants": {
+    "203": [
+      "ML-KEM"
+    ],
+    "204": [
+      "ML-DSA"
+    ],
+    "205": [
+      "SLH-DSA"
+    ]
+  },
+  "algorithm_to_fips": {
+    "ML-KEM": "203",
+    "ML-DSA": "204",
+    "SLH-DSA": "205"
+  },
+  "canonical_algorithm_names": [
+    "Classic-McEliece",
+    "Classic-McEliece-348864",
+    "Classic-McEliece-460896",
+    "Classic-McEliece-8192128",
+    "DH (Diffie-Hellman)",
+    "ECDH P",
+    "ECDH P-256",
+    "ECDH P-384",
+    "ECDH P-521",
+    "ECDSA P",
+    "ECDSA P-256",
+    "ECDSA P-384",
+    "ECDSA P-521",
+    "Ed25519",
+    "Ed448",
+    "FN-DSA",
+    "FN-DSA-1024",
+    "FN-DSA-512",
+    "FrodoKEM",
+    "FrodoKEM-1344",
+    "FrodoKEM-640",
+    "FrodoKEM-976",
+    "HQC",
+    "HQC-128",
+    "HQC-192",
+    "HQC-256",
+    "LMS-SHA256 (H20/W8)",
+    "ML-DSA",
+    "ML-DSA-44",
+    "ML-DSA-65",
+    "ML-DSA-87",
+    "ML-KEM",
+    "ML-KEM-1024",
+    "ML-KEM-512",
+    "ML-KEM-768",
+    "RSA",
+    "RSA-2048",
+    "RSA-3072",
+    "RSA-4096",
+    "SLH-DSA",
+    "SLH-DSA-SHA2-128f",
+    "SLH-DSA-SHA2-128s",
+    "SLH-DSA-SHA2-192f",
+    "SLH-DSA-SHA2-192s",
+    "SLH-DSA-SHA2-256f",
+    "SLH-DSA-SHA2-256s",
+    "SLH-DSA-SHAKE-128f",
+    "SLH-DSA-SHAKE-128s",
+    "SLH-DSA-SHAKE-192f",
+    "SLH-DSA-SHAKE-192s",
+    "SLH-DSA-SHAKE-256f",
+    "SLH-DSA-SHAKE-256s",
+    "X25519",
+    "X448",
+    "XMSS-SHA2_20",
+    "secp256k1"
+  ],
+  "security_level_map": {
+    "ML-KEM-512": 1,
+    "ML-KEM-768": 3,
+    "ML-KEM-1024": 5,
+    "FrodoKEM-640": 1,
+    "FrodoKEM-976": 3,
+    "FrodoKEM-1344": 5,
+    "HQC-128": 1,
+    "HQC-192": 3,
+    "HQC-256": 5,
+    "Classic-McEliece-348864": 1,
+    "Classic-McEliece-460896": 3,
+    "Classic-McEliece-8192128": 5,
+    "ML-DSA-44": 2,
+    "ML-DSA-65": 3,
+    "ML-DSA-87": 5,
+    "FN-DSA-512": 1,
+    "FN-DSA-1024": 5,
+    "SLH-DSA-SHA2-128s": 1,
+    "SLH-DSA-SHAKE-128s": 1,
+    "SLH-DSA-SHA2-128f": 1,
+    "SLH-DSA-SHAKE-128f": 1,
+    "SLH-DSA-SHA2-192s": 3,
+    "SLH-DSA-SHAKE-192s": 3,
+    "SLH-DSA-SHA2-192f": 3,
+    "SLH-DSA-SHAKE-192f": 3,
+    "SLH-DSA-SHA2-256s": 5,
+    "SLH-DSA-SHAKE-256s": 5,
+    "SLH-DSA-SHA2-256f": 5,
+    "SLH-DSA-SHAKE-256f": 5
+  },
+  "size_map": {
+    "ML-KEM-512": {
+      "Public Key (bytes)": "800",
+      "Private Key (bytes)": "1632",
+      "Signature/Ciphertext (bytes)": "768",
+      "Shared Secret (bytes)": "32"
+    },
+    "ML-KEM-768": {
+      "Public Key (bytes)": "1184",
+      "Private Key (bytes)": "2400",
+      "Signature/Ciphertext (bytes)": "1088",
+      "Shared Secret (bytes)": "32"
+    },
+    "ML-KEM-1024": {
+      "Public Key (bytes)": "1568",
+      "Private Key (bytes)": "3168",
+      "Signature/Ciphertext (bytes)": "1568",
+      "Shared Secret (bytes)": "32"
+    },
+    "FrodoKEM-640": {
+      "Public Key (bytes)": "9616",
+      "Private Key (bytes)": "19888",
+      "Signature/Ciphertext (bytes)": "9752",
+      "Shared Secret (bytes)": "16"
+    },
+    "FrodoKEM-976": {
+      "Public Key (bytes)": "15632",
+      "Private Key (bytes)": "31296",
+      "Signature/Ciphertext (bytes)": "15792",
+      "Shared Secret (bytes)": "24"
+    },
+    "FrodoKEM-1344": {
+      "Public Key (bytes)": "21520",
+      "Private Key (bytes)": "43088",
+      "Signature/Ciphertext (bytes)": "21696",
+      "Shared Secret (bytes)": "32"
+    },
+    "HQC-128": {
+      "Public Key (bytes)": "2249",
+      "Private Key (bytes)": "2305",
+      "Signature/Ciphertext (bytes)": "4433",
+      "Shared Secret (bytes)": "64"
+    },
+    "HQC-192": {
+      "Public Key (bytes)": "4522",
+      "Private Key (bytes)": "4586",
+      "Signature/Ciphertext (bytes)": "8978",
+      "Shared Secret (bytes)": "64"
+    },
+    "HQC-256": {
+      "Public Key (bytes)": "7245",
+      "Private Key (bytes)": "7317",
+      "Signature/Ciphertext (bytes)": "14421",
+      "Shared Secret (bytes)": "64"
+    },
+    "Classic-McEliece-348864": {
+      "Public Key (bytes)": "261120",
+      "Private Key (bytes)": "6492",
+      "Signature/Ciphertext (bytes)": "96",
+      "Shared Secret (bytes)": "32"
+    },
+    "Classic-McEliece-460896": {
+      "Public Key (bytes)": "524160",
+      "Private Key (bytes)": "13608",
+      "Signature/Ciphertext (bytes)": "156",
+      "Shared Secret (bytes)": "32"
+    },
+    "Classic-McEliece-8192128": {
+      "Public Key (bytes)": "1357824",
+      "Private Key (bytes)": "14120",
+      "Signature/Ciphertext (bytes)": "208",
+      "Shared Secret (bytes)": "32"
+    },
+    "ML-DSA-44": {
+      "Public Key (bytes)": "1312",
+      "Private Key (bytes)": "2560",
+      "Signature/Ciphertext (bytes)": "2420"
+    },
+    "ML-DSA-65": {
+      "Public Key (bytes)": "1952",
+      "Private Key (bytes)": "4032",
+      "Signature/Ciphertext (bytes)": "3309"
+    },
+    "ML-DSA-87": {
+      "Public Key (bytes)": "2592",
+      "Private Key (bytes)": "4896",
+      "Signature/Ciphertext (bytes)": "4627"
+    },
+    "FN-DSA-512": {
+      "Public Key (bytes)": "897",
+      "Private Key (bytes)": "1281",
+      "Signature/Ciphertext (bytes)": "666"
+    },
+    "FN-DSA-1024": {
+      "Public Key (bytes)": "1793",
+      "Private Key (bytes)": "2305",
+      "Signature/Ciphertext (bytes)": "1280"
+    },
+    "SLH-DSA-SHA2-128s": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "7856"
+    },
+    "SLH-DSA-SHAKE-128s": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "7856"
+    },
+    "SLH-DSA-SHA2-128f": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "17088"
+    },
+    "SLH-DSA-SHAKE-128f": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "17088"
+    },
+    "SLH-DSA-SHA2-192s": {
+      "Public Key (bytes)": "48",
+      "Private Key (bytes)": "96",
+      "Signature/Ciphertext (bytes)": "16224"
+    },
+    "SLH-DSA-SHAKE-192s": {
+      "Public Key (bytes)": "48",
+      "Private Key (bytes)": "96",
+      "Signature/Ciphertext (bytes)": "16224"
+    },
+    "SLH-DSA-SHA2-192f": {
+      "Public Key (bytes)": "48",
+      "Private Key (bytes)": "96",
+      "Signature/Ciphertext (bytes)": "35664"
+    },
+    "SLH-DSA-SHAKE-192f": {
+      "Public Key (bytes)": "48",
+      "Private Key (bytes)": "96",
+      "Signature/Ciphertext (bytes)": "35664"
+    },
+    "SLH-DSA-SHA2-256s": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "128",
+      "Signature/Ciphertext (bytes)": "29792"
+    },
+    "SLH-DSA-SHAKE-256s": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "128",
+      "Signature/Ciphertext (bytes)": "29792"
+    },
+    "SLH-DSA-SHA2-256f": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "128",
+      "Signature/Ciphertext (bytes)": "49856"
+    },
+    "SLH-DSA-SHAKE-256f": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "128",
+      "Signature/Ciphertext (bytes)": "49856"
+    },
+    "LMS-SHA256 (H20/W8)": {
+      "Public Key (bytes)": "60",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "1776"
+    },
+    "XMSS-SHA2_20": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "2573",
+      "Signature/Ciphertext (bytes)": "2820"
+    },
+    "RSA-2048": {
+      "Public Key (bytes)": "270",
+      "Private Key (bytes)": "1190",
+      "Signature/Ciphertext (bytes)": "256",
+      "Shared Secret (bytes)": "256"
+    },
+    "RSA-3072": {
+      "Public Key (bytes)": "398",
+      "Private Key (bytes)": "1770",
+      "Signature/Ciphertext (bytes)": "384",
+      "Shared Secret (bytes)": "384"
+    },
+    "RSA-4096": {
+      "Public Key (bytes)": "526",
+      "Private Key (bytes)": "2350",
+      "Signature/Ciphertext (bytes)": "512",
+      "Shared Secret (bytes)": "512"
+    },
+    "ECDH P-256": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "32",
+      "Shared Secret (bytes)": "32"
+    },
+    "ECDH P-384": {
+      "Public Key (bytes)": "96",
+      "Private Key (bytes)": "48",
+      "Shared Secret (bytes)": "48"
+    },
+    "ECDH P-521": {
+      "Public Key (bytes)": "132",
+      "Private Key (bytes)": "66",
+      "Shared Secret (bytes)": "66"
+    },
+    "X25519": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "32",
+      "Shared Secret (bytes)": "32"
+    },
+    "X448": {
+      "Public Key (bytes)": "56",
+      "Private Key (bytes)": "56",
+      "Shared Secret (bytes)": "56"
+    },
+    "ECDSA P-256": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "32",
+      "Signature/Ciphertext (bytes)": "64"
+    },
+    "ECDSA P-384": {
+      "Public Key (bytes)": "96",
+      "Private Key (bytes)": "48",
+      "Signature/Ciphertext (bytes)": "96"
+    },
+    "ECDSA P-521": {
+      "Public Key (bytes)": "132",
+      "Private Key (bytes)": "66",
+      "Signature/Ciphertext (bytes)": "132"
+    },
+    "Ed25519": {
+      "Public Key (bytes)": "32",
+      "Private Key (bytes)": "64",
+      "Signature/Ciphertext (bytes)": "64"
+    },
+    "Ed448": {
+      "Public Key (bytes)": "57",
+      "Private Key (bytes)": "114",
+      "Signature/Ciphertext (bytes)": "114"
+    },
+    "DH (Diffie-Hellman)": {
+      "Public Key (bytes)": "256",
+      "Private Key (bytes)": "256",
+      "Shared Secret (bytes)": "256"
+    },
+    "secp256k1": {
+      "Public Key (bytes)": "64",
+      "Private Key (bytes)": "32",
+      "Signature/Ciphertext (bytes)": "64"
+    }
+  },
+  "non_pqc_standards": {
+    "RFC 8446": "TLS 1.3 (2018) — does NOT include PQC algorithms",
+    "RFC 5246": "TLS 1.2 (2008) — does NOT include PQC algorithms",
+    "RFC 4346": "TLS 1.1 (2006) — does NOT include PQC algorithms",
+    "FIPS 186": "Digital Signature Standard (classical ECDSA/RSA/DSA) — NOT PQC",
+    "SP 800-56A": "Key agreement (classical ECDH) — NOT PQC",
+    "SP 800-56B": "Key transport (classical RSA) — NOT PQC"
+  },
+  "key_dates": {
+    "FIPS 203 finalized": "2024-08-13",
+    "FIPS 204 finalized": "2024-08-13",
+    "FIPS 205 finalized": "2024-08-13",
+    "CNSA 2.0 published": "2022-09-07",
+    "NIST PQC Round 3 winners announced": "2022-07-05",
+    "NIST PQC competition started": "2016-12-20"
+  },
+  "rfc_numbers": [
+    "3394",
+    "4251",
+    "4253",
+    "4301",
+    "4303",
+    "4556",
+    "4880",
+    "5083",
+    "5280",
+    "5480",
+    "5652",
+    "5656",
+    "6749",
+    "6962",
+    "6979",
+    "7228",
+    "7250",
+    "7296",
+    "7515",
+    "7516",
+    "7517",
+    "7518",
+    "7519",
+    "7662",
+    "8017",
+    "8032",
+    "8391",
+    "8446",
+    "8551",
+    "8554",
+    "8555",
+    "8709",
+    "8725",
+    "8731",
+    "8784",
+    "8879",
+    "9019",
+    "9052",
+    "9147",
+    "9162",
+    "9180",
+    "9258",
+    "9370",
+    "9420",
+    "9449",
+    "9580",
+    "9593",
+    "9629",
+    "9690",
+    "9700",
+    "9701",
+    "9708",
+    "9763",
+    "9794",
+    "9802",
+    "9810",
+    "9814",
+    "9847",
+    "9858",
+    "9881",
+    "9882",
+    "9901",
+    "9909"
+  ]
+}

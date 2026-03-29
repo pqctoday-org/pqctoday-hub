@@ -126,6 +126,8 @@ export interface SectionArtifactCallbacks {
   onViewArtifact: (doc: ExecutiveDocument) => void
   onEditArtifact: (doc: ExecutiveDocument) => void
   onDeleteArtifact: (doc: ExecutiveDocument) => void
+  onRenameArtifact?: (id: string, newTitle: string) => void
+  typeFilter?: string
 }
 
 export function RiskManagementSection({
@@ -133,6 +135,8 @@ export function RiskManagementSection({
   onViewArtifact,
   onEditArtifact,
   onDeleteArtifact,
+  onRenameArtifact,
+  typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
   const [, setRoiSummary] = useState<ROISummary | null>(null)
@@ -154,7 +158,10 @@ export function RiskManagementSection({
     )
   }
 
-  const artifacts = metrics.artifactsByPillar.risk
+  const allArtifacts = metrics.artifactsByPillar.risk
+  const artifacts = typeFilter && typeFilter !== 'all'
+    ? allArtifacts.filter((d) => d.type === typeFilter)
+    : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.risk
   const sourceModules = PILLAR_SOURCE_MODULES.risk
   const existingTypes = new Set(artifacts.map((a) => a.type))
@@ -249,6 +256,7 @@ export function RiskManagementSection({
                 onView={onViewArtifact}
                 onEdit={onEditArtifact}
                 onDelete={onDeleteArtifact}
+                onRename={onRenameArtifact}
               />
             ))}
             {pillarTypes

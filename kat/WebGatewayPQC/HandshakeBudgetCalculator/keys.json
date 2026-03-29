@@ -1,0 +1,22 @@
+{
+  "module": "WebGatewayPQC",
+  "use_case": "HandshakeBudgetCalculator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "1c902bf615300bf50f11f669e3ebb821ff5737828d07416d0e27f538234b1163a663273b5fb4c1ce506395f6202acfbe42cfcd2a10d46555afa5ccb673674a46"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "c74ed6698730684cf4aee3c07f73d3a8d209dbe960ef0b7950ee73f36cf5d64954e63f99e44ba33e45b086bf223b983c54a9a955124d2b92d5aa1a264e0e0228"
+    }
+  ]
+}

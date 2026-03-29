@@ -3,6 +3,41 @@ import React, { useState } from 'react'
 import { ArrowRight, Info } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VAULT_TRANSIT_SCENARIOS } from '../data/secretsConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const SECRETS_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'secrets-transit-encrypt',
+    useCase: 'Vault transit encryption (AES-256-GCM)',
+    standard: 'SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'vault:transit/encrypt/pqc-key-v1:ciphertext=vault:v1:8SDd...',
+  },
+  {
+    id: 'secrets-envelope-kem',
+    useCase: 'Secret envelope key transport (ML-KEM-768)',
+    standard: 'FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'secrets-rotation-hmac',
+    useCase: 'Rotation trigger HMAC integrity',
+    standard: 'FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
+  },
+  {
+    id: 'secrets-unseal-pbkdf2',
+    useCase: 'Vault unseal key derivation (PBKDF2)',
+    standard: 'NIST SP 800-132',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
+    kind: { type: 'pbkdf2-derive', prf: 'SHA-256' },
+  },
+]
 
 const SCENARIO_ITEMS = VAULT_TRANSIT_SCENARIOS.map((s) => ({
   id: s.id,
@@ -282,6 +317,12 @@ export const VaultPQCSimulator: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={SECRETS_KAT_SPECS}
+        label="Secrets Management PQC Known Answer Tests"
+        authorityNote="SP 800-38D · FIPS 203 · FIPS 198-1"
+      />
     </div>
   )
 }

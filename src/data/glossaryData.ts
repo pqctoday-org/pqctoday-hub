@@ -1044,9 +1044,19 @@ export const glossaryTerms: GlossaryTerm[] = [
     term: 'Related Certificate',
     acronym: 'RFC 9763',
     definition:
-      'A binding mechanism (RFC 9763) that links two independent X.509 certificates — one classical, one PQC — to the same end entity via a SHA-256 hash. Also known as the NSA "catalyst" approach. Legacy systems only process the classical cert; PQC-aware verifiers check the binding.',
+      "A binding mechanism (RFC 9763) that links two independent X.509 certificates — one classical, one PQC — to the same end entity via a SHA-256 hash in a RelatedCertificate extension. Legacy systems only process the classical cert; PQC-aware verifiers check both and verify the binding hash. Distinct from Alt-Sig, which embeds a PQC signature inside a single certificate's extensions.",
     technicalNote:
-      'The RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.35) carries a hash of the related cert and a pointer. Each certificate is individually valid, enabling backward compatibility — unlike composite certificates which require composite OID support.',
+      'The RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36) carries a hash of the related cert and a pointer. Each certificate is individually valid, enabling backward compatibility — unlike composite certificates which require composite OID support.',
+    relatedModule: '/learn/hybrid-crypto',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Alt-Sig Certificate',
+    definition:
+      'A single classical X.509 certificate with PQC key and signature embedded in X.509 extensions: SubjectAltPublicKeyInfo (2.5.29.72), AltSignatureAlgorithm (2.5.29.73), and AltSignatureValue (2.5.29.74). Informally called the "Catalyst" approach (NSA). Legacy validators ignore the unknown extensions; PQC-aware verifiers check both signatures.',
+    technicalNote:
+      'Defined in draft-ietf-lamps-cert-binding-for-multi-auth. Distinct from Related Certificates (RFC 9763), which uses two separate certificates bound by a hash. Alt-Sig keeps everything in one certificate.',
     relatedModule: '/learn/hybrid-crypto',
     complexity: 'intermediate',
     category: 'concept',

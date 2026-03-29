@@ -1,13 +1,53 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
-import * as LIBOQS_SIG from '@/wasm/liboqs_sig'
+import type { SoftHSMModule } from '@/wasm/softhsm'
+import {
+  getSoftHSMCppModule,
+  hsm_initToken,
+  hsm_openUserSession,
+  hsm_generateMLDSAKeyPair,
+  hsm_generateECKeyPair,
+  hsm_generateSLHDSAKeyPair,
+  hsm_extractKeyValue,
+  hsm_extractECPoint,
+  hsm_signBytesMLDSA,
+  hsm_signBytesECDSA,
+  hsm_signBytesSLHDSA,
+} from '@/wasm/softhsm'
 import {
   buildSelfSignedX509,
+  buildCompositeCert,
+  buildAltSigCert,
+  buildRelatedCertPair as buildRelatedCertPairDER,
+  buildChameleonCert,
   derToPem,
-  SLH_DSA_SHA2_128S_OID,
   buildParsedText,
+  SLH_DSA_SHA2_128S_OID,
+  ML_DSA_65_OID,
+  type SignerFn,
 } from './certBuilder'
+
+// ---------------------------------------------------------------------------
+// SoftHSM singleton for certificate signing — auto-initializes on first use
+// ---------------------------------------------------------------------------
+let _hsmPromise: Promise<{ M: SoftHSMModule; hSession: number }> | null = null
+
+async function getHsmForSigning(): Promise<{ M: SoftHSMModule; hSession: number }> {
+  if (!_hsmPromise) {
+    _hsmPromise = (async () => {
+      const M = await getSoftHSMCppModule()
+      M._C_Initialize(0)
+      const slot = hsm_initToken(M, 0, '12345678', 'CertBuilder')
+      const hSession = hsm_openUserSession(M, slot, '12345678', 'certpin1')
+      return { M, hSession }
+    })().catch((e) => {
+      _hsmPromise = null // allow retry on failure
+      throw e
+    })
+  }
+  return _hsmPromise
+}
 
 export interface KeyGenResult {
   algorithm: string
@@ -592,10 +632,226 @@ export class HybridCryptoService {
       }
     }
   }
+  // -----------------------------------------------------------------------
+  // Real certificate generation methods (software mode: liboqs + Web Crypto)
+  // -----------------------------------------------------------------------
+
   /**
-   * Generates a real self-signed X.509 certificate for SLH-DSA-128s using liboqs.
-   * OpenSSL WASM does not support SLH-DSA key generation, so this method bypasses it
-   * and builds a valid DER-encoded certificate directly with a pure-TypeScript ASN.1 builder.
+   * Generate an ECDSA P-256 key pair + signer function via SoftHSM PKCS#11.
+   * C_GenerateKeyPair → CKA_EC_POINT for public key, C_Sign for signature.
+   */
+  private async generateECKeyPairForCert(): Promise<{
+    publicKeyRaw: Uint8Array
+    signerFn: SignerFn
+  }> {
+    const { M, hSession } = await getHsmForSigning()
+    const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+    const ecPoint = hsm_extractECPoint(M, hSession, pubHandle)
+    // CKA_EC_POINT is DER OCTET STRING wrapping the uncompressed point — strip the DER header
+    const rawPub = ecPoint.length === 67 ? ecPoint.slice(2) : ecPoint // 04 41 04...
+    const signerFn: SignerFn = async (tbs: Uint8Array) => {
+      return hsm_signBytesECDSA(M, hSession, privHandle, tbs)
+    }
+    return { publicKeyRaw: rawPub, signerFn }
+  }
+
+  /**
+   * Generate an ML-DSA-65 key pair + signer function via SoftHSM PKCS#11.
+   * C_GenerateKeyPair → CKA_VALUE for public key, C_MessageSign for signature.
+   */
+  private async generateMLDSAKeyPairForCert(): Promise<{
+    publicKey: Uint8Array
+    signerFn: SignerFn
+  }> {
+    const { M, hSession } = await getHsmForSigning()
+    const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+    const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
+    const signerFn: SignerFn = async (tbs: Uint8Array) => {
+      return hsm_signBytesMLDSA(M, hSession, privHandle, tbs)
+    }
+    return { publicKey, signerFn }
+  }
+
+  /**
+   * Pure PQC certificate: ML-DSA-65 (RFC 9881).
+   * Real DER-encoded X.509 with correct OID 2.16.840.1.101.3.4.3.18.
+   */
+  async generatePurePQCCertMLDSA(subject: string): Promise<CertResult> {
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const { publicKey, signerFn } = await this.generateMLDSAKeyPairForCert()
+      const derBytes = await buildSelfSignedX509(publicKey, signerFn, ML_DSA_65_OID, subject)
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'ML-DSA-65 certificate generation failed',
+      }
+    }
+  }
+
+  /**
+   * Composite certificate: ML-DSA-65 + ECDSA P-256 (draft-ietf-lamps-pq-composite-sigs-15).
+   * Real DER-encoded X.509 with composite OID 1.3.6.1.5.5.7.6.45.
+   * Both signatures over the same TBS bytes.
+   */
+  async generateCompositeCert(subject: string): Promise<CertResult> {
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const ec = await this.generateECKeyPairForCert()
+      const mldsa = await this.generateMLDSAKeyPairForCert()
+
+      const derBytes = await buildCompositeCert(
+        ec.publicKeyRaw,
+        mldsa.publicKey,
+        ec.signerFn,
+        mldsa.signerFn,
+        subject
+      )
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Composite certificate generation failed',
+      }
+    }
+  }
+
+  /**
+   * Alt-Sig / Catalyst certificate (ITU-T X.509 §9.8).
+   * ECDSA primary with ML-DSA-65 in extensions 2.5.29.72/73/74.
+   */
+  async generateAltSigCert(subject: string): Promise<CertResult> {
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const ec = await this.generateECKeyPairForCert()
+      const mldsa = await this.generateMLDSAKeyPairForCert()
+
+      const derBytes = await buildAltSigCert(
+        ec.publicKeyRaw,
+        ec.signerFn,
+        mldsa.publicKey,
+        mldsa.signerFn,
+        subject
+      )
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Alt-Sig certificate generation failed',
+      }
+    }
+  }
+
+  /**
+   * Related Certificates (RFC 9763) with two-pass bidirectional binding.
+   * Each cert contains RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36)
+   * with SHA-256 hash of the partner cert.
+   */
+  async generateRelatedCertPairReal(subject: string): Promise<{
+    classical: CertResult
+    pqc: CertResult
+    bindingHash: string
+    totalMs: number
+    error?: string
+  }> {
+    const start = performance.now()
+    const empty: CertResult = { pem: '', parsed: '', timingMs: 0 }
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const ec = await this.generateECKeyPairForCert()
+      const mldsa = await this.generateMLDSAKeyPairForCert()
+
+      const result = await buildRelatedCertPairDER(
+        ec.publicKeyRaw,
+        ec.signerFn,
+        mldsa.publicKey,
+        mldsa.signerFn,
+        subject
+      )
+
+      const classicalSubject = subject.replace(/CN=([^/]+)/, 'CN=$1 (Classical)')
+      const pqcSubject = subject.replace(/CN=([^/]+)/, 'CN=$1 (PQC)')
+
+      return {
+        classical: {
+          pem: derToPem(result.certA, 'CERTIFICATE'),
+          parsed: buildParsedText(result.certA, classicalSubject, notBefore, notAfter),
+          timingMs: performance.now() - start,
+        },
+        pqc: {
+          pem: derToPem(result.certB, 'CERTIFICATE'),
+          parsed: buildParsedText(result.certB, pqcSubject, notBefore, notAfter),
+          timingMs: performance.now() - start,
+        },
+        bindingHash: result.bindingHashA,
+        totalMs: performance.now() - start,
+      }
+    } catch (e) {
+      return {
+        classical: empty,
+        pqc: empty,
+        bindingHash: '',
+        totalMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Related cert pair generation failed',
+      }
+    }
+  }
+
+  /**
+   * Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07).
+   * ML-DSA-65 primary with DeltaCertificateDescriptor extension containing ECDSA delta.
+   */
+  async generateChameleonCert(subject: string): Promise<CertResult> {
+    const start = performance.now()
+    const notBefore = new Date()
+    const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
+    try {
+      const mldsa = await this.generateMLDSAKeyPairForCert()
+      const ec = await this.generateECKeyPairForCert()
+
+      const derBytes = await buildChameleonCert(
+        mldsa.publicKey,
+        mldsa.signerFn,
+        ec.publicKeyRaw,
+        ec.signerFn,
+        subject
+      )
+      const pem = derToPem(derBytes, 'CERTIFICATE')
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      return { pem, parsed, timingMs: performance.now() - start }
+    } catch (e) {
+      return {
+        pem: '',
+        parsed: '',
+        timingMs: performance.now() - start,
+        error: e instanceof Error ? e.message : 'Chameleon certificate generation failed',
+      }
+    }
+  }
+
+  /**
+   * Generates a real self-signed X.509 certificate for SLH-DSA-128s via SoftHSM PKCS#11.
+   * C_GenerateKeyPair(CKM_SLH_DSA_KEY_PAIR_GEN) + C_MessageSign(CKM_SLH_DSA).
    *
    * @param subject OpenSSL slash-format DN e.g. `/CN=.../O=.../OU=...`
    */
@@ -604,11 +860,13 @@ export class HybridCryptoService {
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const { publicKey, secretKey } = await LIBOQS_SIG.generateKey({ name: 'SLH-DSA-SHA2-128s' })
+      const { M, hSession } = await getHsmForSigning()
+      const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
+      const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
 
       const derBytes = await buildSelfSignedX509(
         publicKey,
-        (tbs) => LIBOQS_SIG.sign(tbs, secretKey, 'SLH-DSA-SHA2-128s'),
+        async (tbs) => hsm_signBytesSLHDSA(M, hSession, privHandle, tbs),
         SLH_DSA_SHA2_128S_OID,
         subject
       )

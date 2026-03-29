@@ -1,0 +1,22 @@
+{
+  "module": "CryptoAgility",
+  "use_case": "CBOMScanner",
+  "key_type": "CKK_SLH_DSA",
+  "parameter_set": "SLH-DSA-SHA2-128s",
+  "keys": [
+    {
+      "id": "slhdsasha2128s-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_SLH_DSA",
+      "CKA_PARAMETER_SET": "SLH-DSA-SHA2-128s",
+      "value": "935042c3a93cd688f96e30b773e13603b21d2bb9b3f242db2cffea20fae82ddc399fe1c844ba16f88cbfb4ab887a628c7e71fdf44c1c8dc4e999fe5aa3452075"
+    },
+    {
+      "id": "slhdsasha2128s-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_SLH_DSA",
+      "CKA_PARAMETER_SET": "SLH-DSA-SHA2-128s",
+      "value": "0d569afd8fe1a8a2072b12000c2fa0c36de369ee6776d56756d5d7dc6eadd430dada8c5fc6b49ed325e36bb19ca04f520448d2ec1948beb17c742d0c1dee0ef4"
+    }
+  ]
+}

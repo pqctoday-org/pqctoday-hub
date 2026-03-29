@@ -1,0 +1,29 @@
+{
+  "algorithm": "ECDSA",
+  "mode": "sigVer",
+  "source": "Generated via Node.js crypto (OpenSSL backend), ECDSA P-521 with SHA-512",
+  "testGroups": [
+    {
+      "curve": "P-521",
+      "hashAlg": "SHA-512",
+      "tests": [
+        {
+          "qx": "0168a9b6eacaa3bc1026626f00d291ee82579fbbb8845a4b4934139a6e4c58b9fbc349bc0f88cfb6e3c96a3a0c371893000c57624653ac3e60b2bc4d1bfff2f1ec77",
+          "qy": "016fd6d55459e5d8028d7030ef42c766bed7c5d206eb65daae9f8d7345216440f94dedf9e1b2b6fea7725b71ccb50f047f1517501901962dde717a4b038f589aae5f",
+          "msg": "ACVP ECDSA P-521 SigVer test vector",
+          "r": "00cb30a0844ec945dbc0ad98026d93f3f149f697aa2e3e76bf44eb251af93adcea9c6a8724136ad9f93f5ae5d6f8c8fdbb89db9664cd18e7c399f3ff67f5fc0df1f6",
+          "s": "01a45389340df164754708b6597df1d88adb3cf4ac00fd95a3929ce1a80a874d0b7218cfa34bc676baf1e6a4d309d63a41ed41e176a0a82f56d4c6e8cf5856059ecf",
+          "testPassed": true
+        },
+        {
+          "qx": "0168a9b6eacaa3bc1026626f00d291ee82579fbbb8845a4b4934139a6e4c58b9fbc349bc0f88cfb6e3c96a3a0c371893000c57624653ac3e60b2bc4d1bfff2f1ec77",
+          "qy": "016fd6d55459e5d8028d7030ef42c766bed7c5d206eb65daae9f8d7345216440f94dedf9e1b2b6fea7725b71ccb50f047f1517501901962dde717a4b038f589aae5f",
+          "msg": "454344534120502d3532312041435650206578747261207465737420766563746f7220666f722073696756657220646966666572656e74696174696f6e",
+          "r": "01989f3f7ee0d7dbfce18fbee48648f4a417d1f58efba05aab60e07b272e6a5b44d156f873d70101d482cc6725563cdab06173eb30425ca907b0b616887d51044c06",
+          "s": "00882ca929be445c4769f98f5e469dda2a855fdeca03b1d041c3e5ba6b4082c4014e327c775f682771ec700e9259f6d6c34e8112e92ce8311266b1af82878e2ac218",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

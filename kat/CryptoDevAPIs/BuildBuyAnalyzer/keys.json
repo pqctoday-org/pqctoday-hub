@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "BuildBuyAnalyzer",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "86b42067cf70d2ebb308d7a2007ff16c051cd1ef21a14b1664c8600b6029a9f6"
+    },
+    {
+      "id": "ecdsap256-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "f15e1a9f517fb22ff2fe00f560582cfb3ff75c9f5398bf7bd63850f0335f5025"
+    }
+  ]
+}

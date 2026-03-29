@@ -1,0 +1,22 @@
+{
+  "module": "DatabaseEncryptionPQC",
+  "use_case": "EncryptionLayerMapper",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "79cc8f6f4f45f141f49e2974c82b6e18170897fab62923b8513c7354f571812e9714996243617bd159000d68c140758c31b0b3769c3d04bcd98316324a245bd6"
+    },
+    {
+      "id": "mlkem768-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "bf8479e6875a6bcc6f2fad147c803a8d9dbaa110deb6b0634d1858361cd86ffe3bf87eb3c2ff3634b41e33871dc1fff9d9ca2c87203fed5cbc8a8835e2300f1d"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "EnvelopeEncryptionDemo",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "14f4754bf2c0da416c616b3690bdf438977d68a813c9729e868d73491b9f8592c582d11b487f7917a3f6486d9fdf9f9f9e74322af6faaa4f1bfde70dd02befef"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "dcd0aff1f461fca7f093e7e1f8a2938cf747ea22b72544df3dcd3902c5901e6005257d814673ed392826ac02dc1bee7537129511e7f66fd84409335e5b713957"
+    }
+  ]
+}

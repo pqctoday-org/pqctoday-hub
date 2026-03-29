@@ -1,0 +1,22 @@
+{
+  "module": "EMVPaymentPQC",
+  "use_case": "MigrationRiskMatrix",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "0ed332958c9678bc89822131ab693a232b1dfaca086601426112df6a9cec2d43"
+    },
+    {
+      "id": "ecdsap256-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "2570fe3d274c605e4fffba2f372c0b6e1864cdca4f258810a6583e8b5aa513cd"
+    }
+  ]
+}

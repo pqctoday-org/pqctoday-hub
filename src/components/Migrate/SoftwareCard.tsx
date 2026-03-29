@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { ExternalLink, EyeOff, CheckSquare, Square } from 'lucide-react'
+import { ExternalLink, EyeOff, CheckSquare, Square, Scale } from 'lucide-react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
 import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
@@ -15,6 +15,9 @@ interface SoftwareCardProps {
   onHide?: (key: string) => void
   isSelected?: boolean
   onToggleSelect?: (key: string) => void
+  isCompared?: boolean
+  onToggleCompare?: (key: string) => void
+  maxCompareReached?: boolean
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
@@ -30,6 +33,9 @@ export const SoftwareCard = ({
   onHide,
   isSelected,
   onToggleSelect,
+  isCompared,
+  onToggleCompare,
+  maxCompareReached,
 }: SoftwareCardProps) => {
   const key = `${item.softwareName}::${item.categoryId}`
 
@@ -153,6 +159,22 @@ export const SoftwareCard = ({
           question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
         />
 
+        {onToggleCompare && (
+          <button
+            type="button"
+            aria-label={isCompared ? 'Remove from comparison' : 'Add to comparison'}
+            title={maxCompareReached && !isCompared ? 'Max 3 reached' : undefined}
+            disabled={maxCompareReached && !isCompared}
+            onClick={() => onToggleCompare(key)}
+            className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
+              isCompared
+                ? 'text-secondary bg-secondary/10'
+                : 'text-muted-foreground/40 hover:text-secondary hover:bg-secondary/10'
+            }`}
+          >
+            <Scale size={16} />
+          </button>
+        )}
         {onToggleSelect && (
           <button
             type="button"

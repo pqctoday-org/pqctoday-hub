@@ -1,0 +1,22 @@
+{
+  "module": "AISecurityPQC",
+  "use_case": "DataAuthenticityVerifier",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "c4f8a645ffbbff2b370db021e886c5ebae9e69f76cb2f94f41170d5ae6072586fbbbc4b9c562d5929e6a81694ded9e2699a6a110ca2f3bd7565f1450d8932be8"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "795f709ae1d384109bdc732b5758650dc4249583ad7e074335b7e57efda963a2d5b02ea9a2cdc12e504f23b7ef17fea63ef971d1e558b0f3c623934b5b2e94d0"
+    }
+  ]
+}

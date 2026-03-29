@@ -461,7 +461,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
   architect: [
     { afterPhase: 'arch-cp-2', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'arch-cp-2', route: '/compliance', label: 'Check Compliance Deadlines' },
-    { afterPhase: 'arch-cp-3', route: '/playground', label: 'Try the Playground' },
+    { afterPhase: 'arch-cp-3b', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'arch-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
   researcher: [
@@ -475,7 +475,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
     { afterPhase: 'ops-cp-3', route: '/playground', label: 'Try the Playground' },
     { afterPhase: 'ops-cp-3', route: '/assess', label: 'Run Risk Assessment' },
     { afterPhase: 'ops-cp-3', route: '/playground', label: 'Run ACVP Tests' },
-    { afterPhase: 'ops-cp-4', route: '/migrate', label: 'Browse Migration Catalog' },
+    { afterPhase: 'ops-cp-4a', route: '/migrate', label: 'Browse Migration Catalog' },
   ],
   curious: [
     { afterPhase: 'curious-cp-2', route: '/assess', label: 'Take Assessment' },
@@ -546,4 +546,19 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
   researcher: [],
   ops: ['PKI Certificate Management', 'Protocols', 'General Recommendations'],
   curious: ['General Recommendations'],
+}
+
+// ── Achievement exclusions: achievements structurally unreachable per persona ──
+
+/**
+ * Achievements that are not achievable for a given persona because the
+ * required feature or artifact type is not in their learning path or nav.
+ */
+export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
+  executive: ['playground-first', 'first-cert', 'first-key', 'five-keys'],
+  developer: ['first-exec-doc'],
+  architect: ['first-exec-doc'],
+  researcher: [], // all paths available
+  ops: ['first-exec-doc'],
+  curious: ['playground-first', 'first-cert', 'first-key', 'five-keys'],
 }

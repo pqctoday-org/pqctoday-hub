@@ -1,0 +1,22 @@
+{
+  "module": "IoTOT",
+  "use_case": "SCADAMigrationPlanner",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "df688c1fe6f1e12a4455c4e1c009481f5e011c0160a103f38e3388d8f2abb4427ab9faccd8e7b13c694b22073c0a577d4c77f688651d140fb6d8b401fc95c6b5"
+    },
+    {
+      "id": "mldsa44-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "f2656076f15779c9c46e1496a92d2b8485b4e6da5b22783e7b9ece78b278e9803c05605095f14fa6dc59aeaefc9306f58a69aa9c67085cebb63157881c2f6926"
+    }
+  ]
+}

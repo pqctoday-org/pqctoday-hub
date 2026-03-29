@@ -57,6 +57,8 @@ export function VendorSupplyChainSection({
   onViewArtifact,
   onEditArtifact,
   onDeleteArtifact,
+  onRenameArtifact,
+  typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
   const hasVendorData =
@@ -65,7 +67,10 @@ export function VendorSupplyChainSection({
     metrics.assessmentStatus !== 'not-started'
   const hasAssessedLayers = metrics.infraLayerCoverage.some((lc) => lc.assessed)
   const depInfo = DEPENDENCY_LABELS[metrics.vendorDependency]
-  const artifacts = metrics.artifactsByPillar.vendor
+  const allArtifacts = metrics.artifactsByPillar.vendor
+  const artifacts = typeFilter && typeFilter !== 'all'
+    ? allArtifacts.filter((d) => d.type === typeFilter)
+    : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.vendor
   const sourceModules = PILLAR_SOURCE_MODULES.vendor
   const existingTypes = new Set(artifacts.map((a) => a.type))
@@ -212,6 +217,7 @@ export function VendorSupplyChainSection({
                 onView={onViewArtifact}
                 onEdit={onEditArtifact}
                 onDelete={onDeleteArtifact}
+                onRename={onRenameArtifact}
               />
             ))}
             {pillarTypes

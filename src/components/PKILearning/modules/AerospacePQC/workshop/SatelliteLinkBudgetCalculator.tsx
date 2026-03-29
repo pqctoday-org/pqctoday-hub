@@ -9,6 +9,35 @@ import {
   SOLAR_ACTIVITY_MULTIPLIER,
 } from '../data/orbitData'
 import type { SolarActivity } from '../data/aerospaceConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const AEROSPACE_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'aero-sat-sigver',
+    useCase: 'Satellite telemetry authentication (ML-DSA-87)',
+    standard: 'CNSA 2.0 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+  {
+    id: 'aero-command-sign',
+    useCase: 'Command uplink signing (ML-DSA-87)',
+    standard: 'CCSDS 352.0-B-2 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 87 },
+    message: 'CCSDS telemetry frame: APID=0x1A3,seqCount=42,dataLen=256',
+  },
+  {
+    id: 'aero-link-kem',
+    useCase: 'Space-ground link key establishment',
+    standard: 'CNSA 2.0 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+]
 
 const orbitItems = ORBIT_PROFILES.map((o) => ({ id: o.id, label: o.name }))
 const bandItems = [
@@ -312,6 +341,12 @@ export const SatelliteLinkBudgetCalculator: React.FC = () => {
           )}
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={AEROSPACE_KAT_SPECS}
+        label="Aerospace PQC Known Answer Tests"
+        authorityNote="CNSA 2.0 · CCSDS 352.0-B-2 · FIPS 203/204"
+      />
     </div>
   )
 }

@@ -1,0 +1,22 @@
+{
+  "module": "FiveG",
+  "use_case": "SUCIPrivacyProtection",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "d275b21e22f106f3561b809d98e7c8a6e0e84a0e6557ed6f9c39bc151d715c6229eef58ebe621f81482d677f431c9e962da27f3e9044d8a2ad1650475e227f3c"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "68d400081d4a8c66ece4c7bbe4aeee1de4bb4db9941cbd451c3044ff64707b7e224867d27560c1bcaeaa1dcfadef9400f8a864cf66ae639ec8d5429699d75fd3"
+    }
+  ]
+}

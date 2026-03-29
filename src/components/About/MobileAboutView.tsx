@@ -142,7 +142,15 @@ const SBOM_GROUPS = [
   },
   {
     label: 'Cryptography & PQC',
-    items: ['OpenSSL WASM 3.6.0', 'liboqs-js v0.15.1', '@noble/*', '@scure/*', 'softhsmv3'],
+    items: [
+      'OpenSSL WASM 3.6.0',
+      'liboqs-js v0.15.1',
+      '@noble/*',
+      '@scure/*',
+      '@peculiar/asn1-schema',
+      '@peculiar/asn1-x509',
+      'softhsmv3',
+    ],
   },
   {
     label: 'State & DX',

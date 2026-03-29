@@ -1,11 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useCallback } from 'react'
-import { LayoutDashboard, ClipboardCheck, ShieldCheck, BookOpen } from 'lucide-react'
+import { useState, useCallback, useMemo } from 'react'
+import { LayoutDashboard, ClipboardCheck, ShieldCheck, BookOpen, Download, Filter } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import JSZip from 'jszip'
 import { PageHeader } from '@/components/common/PageHeader'
 import { Button } from '@/components/ui/button'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useBusinessMetrics } from './hooks/useBusinessMetrics'
+import { TYPE_LABELS } from './ArtifactCard'
 import { RiskManagementSection } from './sections/RiskManagementSection'
 import { ComplianceRegulatorySection } from './sections/ComplianceRegulatorySection'
 import { GovernancePolicySection } from './sections/GovernancePolicySection'
@@ -13,7 +16,7 @@ import { VendorSupplyChainSection } from './sections/VendorSupplyChainSection'
 import { ActionItemsSection } from './sections/ActionItemsSection'
 import { CompactLearningBar } from './CompactLearningBar'
 import { ArtifactDrawer, type DrawerMode } from './ArtifactDrawer'
-import type { ExecutiveDocument } from '@/services/storage/types'
+import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
 
 function WelcomeState() {
   const navigate = useNavigate()
@@ -77,13 +80,32 @@ function ContextBanner({
   )
 }
 
+const TYPE_FILTER_ITEMS = [
+  { id: 'all', label: 'All Types' },
+  ...Object.entries(TYPE_LABELS).map(([id, label]) => ({ id, label })),
+]
+
 export function BusinessCenterView() {
   const metrics = useBusinessMetrics()
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
+  const updateExecutiveDocument = useModuleStore((s) => s.updateExecutiveDocument)
+
+  // Filter state
+  const [typeFilter, setTypeFilter] = useState('all')
 
   // Drawer state
   const [drawerDoc, setDrawerDoc] = useState<ExecutiveDocument | null>(null)
   const [drawerMode, setDrawerMode] = useState<DrawerMode>('view')
+
+  // All artifacts flat list (for ZIP export + filter count)
+  const allArtifacts = useMemo(
+    () => Object.values(metrics.artifactsByPillar ?? {}).flat(),
+    [metrics.artifactsByPillar],
+  )
+  const filteredArtifacts = useMemo(
+    () => (typeFilter === 'all' ? allArtifacts : allArtifacts.filter((d) => d.type === typeFilter)),
+    [allArtifacts, typeFilter],
+  )
 
   const handleViewArtifact = useCallback((doc: ExecutiveDocument) => {
     setDrawerDoc(doc)
@@ -106,10 +128,35 @@ export function BusinessCenterView() {
     setDrawerDoc(null)
   }, [])
 
+  const handleRenameArtifact = useCallback(
+    (id: string, newTitle: string) => {
+      updateExecutiveDocument(id, { title: newTitle })
+    },
+    [updateExecutiveDocument],
+  )
+
+  const handleExportZip = useCallback(async () => {
+    if (filteredArtifacts.length === 0) return
+    const zip = new JSZip()
+    for (const doc of filteredArtifacts) {
+      const safeName = doc.title.replace(/[^a-z0-9_\- ]/gi, '').replace(/\s+/g, '_')
+      zip.file(`${safeName}.md`, doc.data)
+    }
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = 'pqc-artifacts.zip'
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [filteredArtifacts])
+
   const artifactCallbacks = {
     onViewArtifact: handleViewArtifact,
     onEditArtifact: handleEditArtifact,
     onDeleteArtifact: handleDeleteArtifact,
+    onRenameArtifact: handleRenameArtifact,
+    typeFilter: typeFilter as ExecutiveDocumentType | 'all',
   }
 
   return (
@@ -127,6 +174,33 @@ export function BusinessCenterView() {
         country={metrics.country}
         completedAt={metrics.completedAt}
       />
+
+      {/* Filter + Export bar */}
+      {!metrics.isFullyEmpty && allArtifacts.length > 0 && (
+        <div className="flex flex-wrap items-center gap-3 mb-6">
+          <Filter size={14} className="text-muted-foreground shrink-0" />
+          <FilterDropdown
+            items={TYPE_FILTER_ITEMS}
+            selectedId={typeFilter}
+            onSelect={setTypeFilter}
+            label="Filter by type"
+            noContainer
+          />
+          <span className="text-xs text-muted-foreground">
+            {filteredArtifacts.length} artifact{filteredArtifacts.length !== 1 ? 's' : ''}
+          </span>
+          <Button
+            variant="outline"
+            size="sm"
+            className="ml-auto gap-1.5"
+            onClick={handleExportZip}
+            disabled={filteredArtifacts.length === 0}
+          >
+            <Download size={14} />
+            Export ZIP
+          </Button>
+        </div>
+      )}
 
       {/* Page-level empty state */}
       {metrics.isFullyEmpty ? (

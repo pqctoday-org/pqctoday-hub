@@ -10,7 +10,7 @@ The PQC Risk Management module teaches CISOs and security leaders how to identif
 - **Risk Register Construction** — systematic cataloging of cryptographic assets with fields for asset name, current algorithm, threat vector, likelihood (1-5), impact (1-5), and mitigation strategy; auto-calculates risk scores
 - **Risk Heatmap** — 5×5 likelihood-by-impact grid that visually plots risk register entries, color-coded by severity (Critical, High, Medium, Low)
 - **HNDL Exposure Window** — calculates how many years of harvested encrypted data could be decrypted based on data retention periods and estimated CRQC arrival date
-- **Threat Vectors** — six categories: HNDL interception, direct decryption, signature forgery, key compromise, protocol downgrade, supply chain insertion
+- **Threat Vectors** — six categories used in the risk register: Harvest Now, Decrypt Later (HNDL); Shor's Algorithm (Key Exchange/Signing); Grover's Algorithm (Symmetric Weakening); Signature Forgery (Code Signing/Certs); Identity Impersonation (TLS/Auth); Supply Chain Attack (Firmware/Updates)
 - **Risk Scoring** — Likelihood × Impact matrix producing four severity bands: Critical (20-25), High (12-19), Medium (6-11), Low (1-5)
 
 ## Workshop / Interactive Activities

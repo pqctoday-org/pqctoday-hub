@@ -1,0 +1,22 @@
+{
+  "module": "IAMPQC",
+  "use_case": "IAMCryptoInventory",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "cc8f55f09a931da99dc4b302f983b36c15180b6c71b02050a4e95f6485759a6a0966b2bb0e357c60e283c0cc0961e7c88e3d8c339166b697dcb7667aa5120326"
+    },
+    {
+      "id": "mldsa87-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "dc346e3a11e4b63448a1d2ab72ca65b199d2f8c40aca9971f028c3bdf3053684821d9a2e631618ce1959120a8a9eff48676efc5e1bff198cec8c9b2907407a3c"
+    }
+  ]
+}

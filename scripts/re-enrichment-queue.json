@@ -1,0 +1,45 @@
+{
+  "generated": "2026-03-28T08:03:42.376124",
+  "total_records_scanned": 327,
+  "queue_size": 3,
+  "by_trigger": {
+    "BAD_SOURCE": 3
+  },
+  "by_priority": {
+    "high": 3,
+    "medium": 0,
+    "low": 0
+  },
+  "queue": [
+    {
+      "reference_id": "CA-TBS-SPIN-PQC-2025",
+      "trigger": "BAD_SOURCE",
+      "priority": "high",
+      "reason": "Local source file has quality issues: sentinel:'404'",
+      "local_file": "public/library/CA-TBS-SPIN-PQC-2025.html",
+      "enrichment_file": "library_doc_enrichments_03042026.md",
+      "enrichment_date": "2026-03-04",
+      "action": "Re-download CA-TBS-SPIN-PQC-2025 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
+    },
+    {
+      "reference_id": "ETSI-TR-103-965",
+      "trigger": "BAD_SOURCE",
+      "priority": "high",
+      "reason": "Local source file has quality issues: sentinel:'404'",
+      "local_file": "public/library/ETSI-TR-103-965.pdf",
+      "enrichment_file": "library_doc_enrichments_03132026.md",
+      "enrichment_date": "2026-03-13",
+      "action": "Re-download ETSI-TR-103-965 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
+    },
+    {
+      "reference_id": "WH-PQC-Report-2024",
+      "trigger": "BAD_SOURCE",
+      "priority": "high",
+      "reason": "Local source file has quality issues: sentinel:'404'",
+      "local_file": "public/library/WH-PQC-Report-2024.pdf",
+      "enrichment_file": "library_doc_enrichments_03042026.md",
+      "enrichment_date": "2026-03-04",
+      "action": "Re-download WH-PQC-Report-2024 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
+    }
+  ]
+}

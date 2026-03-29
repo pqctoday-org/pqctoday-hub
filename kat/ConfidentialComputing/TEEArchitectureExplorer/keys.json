@@ -1,0 +1,22 @@
+{
+  "module": "ConfidentialComputing",
+  "use_case": "TEEArchitectureExplorer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "81d92ee77b36dc1784b4ac5b51d8bd7563dc2e178383c070e7512a701a8bbd3c8ca604b7dc4ab0d3fcfe88c603fb009ed4a56079b4e8867439b4b31b79e0fd94"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "96389fcc39a8b5451957ddaa64321697809ca3aabae8b0a28ca65b00e9c98ce99633539dd77379213c7e02066ee05b6831fb23fe34c5bef1e21ddf213ae3d865"
+    }
+  ]
+}

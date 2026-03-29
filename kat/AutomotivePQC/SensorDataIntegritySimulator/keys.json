@@ -1,0 +1,22 @@
+{
+  "module": "AutomotivePQC",
+  "use_case": "SensorDataIntegritySimulator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "fc83e0e544ced9bc3c2d54ecf02fcfddc8e5013790beba374c1fdebe194651c7f82abead6883bb1bf2dea92e01bbcf547b93d042c9ca2acf96931f72ed7dd465"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "a9c4b4125965776cb0abac42609b772d0d343e6c8474cefe9b704d7a62a89b5291f3f7d930672d4e30a06da71609dcd1637aa4db0a90bd2126eff56e00bf9785"
+    }
+  ]
+}

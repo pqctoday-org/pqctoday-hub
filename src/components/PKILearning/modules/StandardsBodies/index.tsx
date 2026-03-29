@@ -19,6 +19,7 @@ import type { ClassifyResult } from './components/BodyClassifier'
 import type { ChainAnswers } from './components/StandardsCertChain'
 import type { GridSelection } from './components/CoverageGrid'
 import type { ScenarioAnswer } from './components/ScenarioChallenge'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'standards-bodies'
 
@@ -207,7 +208,9 @@ export const StandardsBodiesModule: React.FC = () => {
         </TabsList>
 
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <Introduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         <TabsContent value="visual">

@@ -76,7 +76,42 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     | 'key_wrap'
     | 'classical_sign'
     | 'mechanisms'
-  >('keystore')
+  >(() => {
+    const tab = new URLSearchParams(window.location.search).get('tab')
+    const valid = [
+      'data',
+      'kem_ops',
+      'sign_verify',
+      'keystore',
+      'logs',
+      'acvp',
+      'symmetric',
+      'hashing',
+      'softhsm',
+      'key_agree',
+      'key_derive',
+      'key_wrap',
+      'classical_sign',
+      'mechanisms',
+    ]
+    if (tab && valid.includes(tab))
+      return tab as
+        | 'data'
+        | 'kem_ops'
+        | 'sign_verify'
+        | 'keystore'
+        | 'logs'
+        | 'acvp'
+        | 'symmetric'
+        | 'hashing'
+        | 'softhsm'
+        | 'key_agree'
+        | 'key_derive'
+        | 'key_wrap'
+        | 'classical_sign'
+        | 'mechanisms'
+    return 'keystore'
+  })
   const [classicalAlgorithm, setClassicalAlgorithm] = useState<ClassicalAlgorithm>('RSA-2048')
   const [hsmMode, setHsmMode] = useState(false)
   const toggleHsmMode = useCallback(() => {

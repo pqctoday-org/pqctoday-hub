@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "TVLALeakageAnalyzer",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "ffb82e55bbe9d5707d240e797b4be8db72b55850ff16ece6d55b8fa39f3cdfd7"
+    },
+    {
+      "id": "aes256gcm-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "9f172933fc0c5ae753b42273e05bb726e0e05304d8b260e800ac76b97c499a16"
+    }
+  ]
+}

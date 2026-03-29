@@ -17,6 +17,7 @@ import type {
   DecodedAttribute,
 } from '../../../wasm/pkcs11Inspect'
 import type { Pkcs11LogEntry } from '../../../wasm/softhsm'
+import { lookupCkr } from '../../../wasm/pkcs11Inspect'
 
 // ── Inspect sub-components ────────────────────────────────────────────────────
 
@@ -201,6 +202,15 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
         <span className="text-muted-foreground shrink-0">[{entry.ms}ms]</span>
       </div>
       {expanded && entry.inspect && <InspectPanel inspect={entry.inspect} />}
+      {!entry.ok && (() => {
+        const ckr = lookupCkr(parseInt(entry.rvHex, 16) || 0)
+        return (
+          <div className="ml-8 mb-1 text-[10px] leading-relaxed">
+            <span className="text-status-error">{ckr.description}</span>
+            {ckr.hint && <span className="text-muted-foreground ml-1.5">— {ckr.hint}</span>}
+          </div>
+        )
+      })()}
     </div>
   )
 }

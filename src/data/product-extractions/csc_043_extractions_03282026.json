@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "IBM MQ",
+    "category": "Data Security & Protection",
+    "product_name": "IBM MQ",
+    "product_brief": "An exactly once delivery messaging solution with enterprise-wide security and cloud-native resiliency.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document mentions \"advanced messaging security,\" \"end-to-end encryption,\" and \"integrity checks\" but does not explicitly state support for Post-Quantum Cryptography (PQC) algorithms or hybrid modes.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Public and private clouds, containers, virtual machines, appliances, mainframes",
+    "target_industries": "Banking and finance, Government and federal, Travel and transportation, Automotive and manufacturing",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated"
+  }
+]

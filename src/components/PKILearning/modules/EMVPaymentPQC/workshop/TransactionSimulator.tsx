@@ -21,6 +21,41 @@ import {
   type TransactionMode,
   type TransactionFlowStep,
 } from '../data/emvConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const EMV_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'emv-txn-sign',
+    useCase: 'EMV transaction authorization (ML-DSA-44)',
+    standard: 'EMVCo + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 44 },
+    message: 'EMV ARQC: amount=99.50,currency=840,merchant=PQC_STORE,ATC=0042',
+  },
+  {
+    id: 'emv-card-ecdsa',
+    useCase: 'Card authentication (ECDSA P-256)',
+    standard: 'FIPS 186-5 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-sigver', curve: 'P-256' },
+  },
+  {
+    id: 'emv-session-encrypt',
+    useCase: 'Session key encryption (AES-256-GCM)',
+    standard: 'SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'EMV session: terminalId=T001,merchantId=M42,amount=99.50',
+  },
+  {
+    id: 'emv-arpc-cmac',
+    useCase: 'ARPC message authentication (AES-CMAC)',
+    standard: 'EMVCo Book 2 + NIST SP 800-38B',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/b/final',
+    kind: { type: 'aescmac-verify' },
+  },
+]
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -331,6 +366,12 @@ export const TransactionSimulator: React.FC = () => {
           })}
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={EMV_KAT_SPECS}
+        label="EMV Payment PQC Known Answer Tests"
+        authorityNote="EMVCo · FIPS 204 · FIPS 186-5 · SP 800-38D"
+      />
     </div>
   )
 }

@@ -18,6 +18,50 @@ import {
   CKM_ECDSA_SHA256,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const IAM_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'iam-oidc-sign',
+    useCase: 'OIDC ID token signing (ML-DSA-65)',
+    standard: 'OpenID Connect + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message:
+      '{"iss":"https://idp.example","sub":"user@example","aud":"api.example","exp":1735776000}',
+  },
+  {
+    id: 'iam-saml-sigver',
+    useCase: 'SAML assertion verification (ML-DSA-87)',
+    standard: 'SAML 2.0 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+  {
+    id: 'iam-token-hmac',
+    useCase: 'Session token HMAC integrity',
+    standard: 'FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
+  },
+  {
+    id: 'iam-token-hmac-gen',
+    useCase: 'Session token HMAC generation',
+    standard: 'FIPS 198-1',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/198-1/final',
+    kind: { type: 'hmac-generate', hashAlg: 'SHA-256' },
+  },
+  {
+    id: 'iam-password-pbkdf2',
+    useCase: 'Password hash derivation (PBKDF2)',
+    standard: 'NIST SP 800-132',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
+    kind: { type: 'pbkdf2-derive', prf: 'SHA-256' },
+  },
+]
 
 const ALGORITHM_OPTIONS = Object.entries(SIGNATURE_SIZE_DATA).map(([id, data]) => ({
   id,
@@ -492,6 +536,12 @@ export const TokenMigrationLab: React.FC = () => {
           Generated keys are for educational purposes only.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={IAM_KAT_SPECS}
+        label="IAM PQC Known Answer Tests"
+        authorityNote="OpenID Connect · SAML 2.0 · FIPS 204 · FIPS 198-1"
+      />
     </div>
   )
 }

@@ -1,5 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { VehicleLifecyclePhase, RegulationRegion } from './automotiveConstants'
+import type {
+  VehicleLifecyclePhase,
+  RegulationRegion,
+  RegulationConfidence,
+} from './automotiveConstants'
 
 // ---------------------------------------------------------------------------
 // Vehicle Lifecycle Phases with HSM Role
@@ -207,6 +211,7 @@ export interface AutomotiveComplianceMilestone {
   quarter: string
   description: string
   pqcRelevance: 'direct' | 'indirect' | 'informational'
+  confidence: RegulationConfidence
   affectedSystems: string[]
 }
 
@@ -220,6 +225,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     quarter: 'Q3',
     description: 'Cybersecurity Management System mandatory for new vehicle type approvals in EU.',
     pqcRelevance: 'indirect',
+    confidence: 'published',
     affectedSystems: ['All ECUs', 'OTA infrastructure', 'Telematics'],
   },
   {
@@ -231,6 +237,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     quarter: 'Q3',
     description: 'Software Update Management System mandatory — secure OTA process required.',
     pqcRelevance: 'indirect',
+    confidence: 'published',
     affectedSystems: ['OTA gateway', 'Firmware signing', 'Update verification'],
   },
   {
@@ -242,6 +249,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     quarter: 'Q3',
     description: 'All new vehicles sold in EU must comply, not just new type approvals.',
     pqcRelevance: 'indirect',
+    confidence: 'published',
     affectedSystems: ['All vehicles in production'],
   },
   {
@@ -253,6 +261,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     quarter: 'Q3',
     description: 'Full vehicle cybersecurity lifecycle standard — production to decommission.',
     pqcRelevance: 'direct',
+    confidence: 'published',
     affectedSystems: ['All ECUs', 'Supply chain', 'Key management'],
   },
   {
@@ -262,8 +271,10 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     region: 'us',
     year: 2025,
     quarter: 'Q4',
-    description: 'V2X security standard adds ML-KEM and ML-DSA support for post-quantum readiness.',
+    description:
+      'V2X security standard adds ML-KEM and ML-DSA support for post-quantum readiness. Amendment P1609.2/D1.2 in development; ratification expected Q4 2025–Q2 2026.',
     pqcRelevance: 'direct',
+    confidence: 'in-development',
     affectedSystems: ['V2X module', 'V2X PKI/SCMS', 'Roadside units'],
   },
   {
@@ -276,6 +287,7 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     description:
       'All firmware/software signing must use LMS, XMSS, or ML-DSA by 2030. (Note: 2025 was set as a preference target).',
     pqcRelevance: 'direct',
+    confidence: 'published',
     affectedSystems: ['ECU firmware signing', 'OTA infrastructure', 'Secure boot'],
   },
   {
@@ -287,41 +299,46 @@ export const AUTOMOTIVE_COMPLIANCE_MILESTONES: AutomotiveComplianceMilestone[] =
     quarter: 'Q4',
     description: 'All cryptographic operations must use PQC algorithms exclusively.',
     pqcRelevance: 'direct',
+    confidence: 'published',
     affectedSystems: ['All vehicle crypto', 'Supply chain', 'Backend infrastructure'],
   },
   {
     id: 'china-gbt-pqc',
-    name: 'China GB/T PQC Standard Release',
+    name: 'China GB/T PQC Standard Release (Projected)',
     authority: 'TC 260 / OSCCA',
     region: 'china',
     year: 2026,
     quarter: 'Q4',
     description:
-      'National PQC standard expected — will drive PQC requirements for vehicles sold in China.',
+      'National PQC standard anticipated based on government roadmap signals — no official timeline published. Will drive PQC requirements for vehicles sold in China.',
     pqcRelevance: 'direct',
+    confidence: 'projected',
     affectedSystems: ['All vehicles for China market', 'SM2 → national PQC migration'],
   },
   {
     id: 'japan-nisc-pqc',
-    name: 'Japan NISC PQC Guidelines',
+    name: 'Japan NISC PQC Guidelines (Projected)',
     authority: 'NISC',
     region: 'japan',
     year: 2026,
     quarter: 'Q2',
     description:
-      'Cybersecurity guidelines for critical infrastructure including connected vehicles.',
+      'Cybersecurity guidelines for critical infrastructure including connected vehicles. No official timeline published; date is an estimate based on Japan CRYPTREC activity.',
     pqcRelevance: 'indirect',
+    confidence: 'projected',
     affectedSystems: ['Connected vehicle services', 'V2I infrastructure'],
   },
   {
     id: 'tisax-v7',
-    name: 'TISAX v7 (Expected PQC Criteria)',
+    name: 'TISAX v7 (Projected PQC Criteria)',
     authority: 'VDA / ENX',
     region: 'eu',
     year: 2027,
     quarter: 'Q1',
-    description: 'Automotive supply chain assessment expected to add PQC readiness criteria.',
+    description:
+      'Automotive supply chain assessment anticipated to add PQC readiness criteria. VDA has not published a v7 roadmap; current version is TISAX v6 (2023).',
     pqcRelevance: 'direct',
+    confidence: 'projected',
     affectedSystems: ['Tier-1/Tier-2 supplier crypto', 'Key management', 'Code signing'],
   },
 ]

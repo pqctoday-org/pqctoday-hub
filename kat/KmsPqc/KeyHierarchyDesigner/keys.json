@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "KeyHierarchyDesigner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256kw-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "987a1191fea905f51e717632c2f63871e625ff12723287bd6087e97339707611"
+    },
+    {
+      "id": "aes256kw-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "d894a6605f06a7b005cc9e9cc6bafa5d57d9ed54ab9549896fe48315a3c689d7"
+    }
+  ]
+}

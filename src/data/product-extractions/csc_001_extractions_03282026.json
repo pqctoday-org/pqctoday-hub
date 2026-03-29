@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "IBM z/OS Cryptographic Services (ICSF)",
+    "category": "Cryptographic Libraries",
+    "product_name": "IBM z/OS Cryptographic Services (ICSF)",
+    "product_brief": "Hardware-based cryptographic services on IBM Z mainframes supporting quantum-safe algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-DSA and ML-KEM (formerly CRYSTALS-Dilithium and CRYSTALS-Kyber) via ICSF CCA and PKCS #11 services on IBM z17, z16, and z15. Includes key generation, encryption, digital signatures (Pure and Pre-hash modes), and hybrid key exchange.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-DSA, ML-KEM, AES 256-bit, CRYSTALS-Dilithium, CRYSTALS-Kyber",
+    "key_management_model": "Hardware-backed key storage within IBM Z cryptographic components; supports Trusted Key Entry and generation via ICSF CCA/PKCS #11.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (IBM Z cryptographic hardware components)",
+    "infrastructure_layer": "Hardware, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary (IBM Corp.)",
+    "latest_version": "Second Edition (December 2025)",
+    "release_date": "2025-12-22",
+    "fips_validated": "Not stated",
+    "primary_platforms": "IBM z/OS, IBM z17, IBM z16, IBM z15",
+    "target_industries": "Enterprise (implied by IBM Z context), Finance, Government",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Migration from CRYSTALS-Dilithium and CRYSTALS-Kyber to ML-DSA and ML-KEM; includes discovery, risk assessment, and migration steps.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (Pure and Pre-hash), CRYSTALS-Dilithium",
+    "authoritative_source_url": "Not stated"
+  }
+]

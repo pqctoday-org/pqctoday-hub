@@ -1,0 +1,22 @@
+{
+  "module": "CodeSigning",
+  "use_case": "BinarySigning",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "9de5ccc0360aa4ec06040a6e58cd5a6b57cd6ed040c9ea9897d1c576fc5b657a7094a98ed3a91e781894331acd0042158c318d394f7514501ac9a5cad32bc368"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "fa9770ad70e93b03ec2ae351ac3b870eac3dba2bc9f4934f4eaeaf75b6de7b430a589421bb68b14b84f512457f2d4680a1266c22793405e5e80250df307b0475"
+    }
+  ]
+}

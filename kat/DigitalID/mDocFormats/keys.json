@@ -1,0 +1,22 @@
+{
+  "module": "DigitalID",
+  "use_case": "mDocFormats",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "0086d3f87d3516e11db33a24fd8fbe9b05fb9f2f4aba9a25d3c63e07a40c59020e2d30f9f3b75f3ed7f3ed83e8b4b470b2b3967ba7165f4bc54a3c2976562071"
+    },
+    {
+      "id": "mldsa65-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "d7d1a85c98db62e3f1bb775320914dd1fa7611c75156ede2165970dd559431c23f9b46449575aac8530ab7c25fdf032bfcfb81f07e3ed06fd5162b4c79400bbb"
+    }
+  ]
+}

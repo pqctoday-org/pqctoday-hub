@@ -28,6 +28,7 @@ import {
   type UtilityProfile,
   type SafetyRiskResult,
 } from './data/energyConstants'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'energy-utilities-pqc'
 
@@ -189,7 +190,9 @@ export const EnergyUtilitiesModule: React.FC = () => {
 
         {/* ── Learn Tab ───────────────────────────────────────────────── */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <EnergyUtilitiesIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* ── Workshop Tab ────────────────────────────────────────────── */}

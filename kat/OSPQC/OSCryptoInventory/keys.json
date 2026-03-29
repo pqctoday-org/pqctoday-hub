@@ -1,0 +1,22 @@
+{
+  "module": "OSPQC",
+  "use_case": "OSCryptoInventory",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "cbcdc4f34554d582bd86fdf5fb0b9b0332cfa3a1d62ab28abcf8d18e533da4b8fb661ad2d0fcc00b3f865f3ee118b0d36ae18ae628cfb7218a3e218b3b01ea23"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "08053a03cd321966b33076c578647fb4ee0a0b38b9bef986c5286ef3866162d7d4052cd7e5a82720de89b9c70550d0b62fc17ca890a4113a8d745e960cd21768"
+    }
+  ]
+}

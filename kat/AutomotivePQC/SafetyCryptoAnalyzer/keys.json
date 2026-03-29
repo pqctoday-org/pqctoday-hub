@@ -1,0 +1,22 @@
+{
+  "module": "AutomotivePQC",
+  "use_case": "SafetyCryptoAnalyzer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "fb25bb6a67c76b305040c2f20d0b988499a25999b0f73b71cf2d0660c1fa0c10eec5617fa4deb3a6480ffda392c5d0b3b28a0588726715f3f0fc4679ddc4e656"
+    },
+    {
+      "id": "mldsa44-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "92f10a6eeda79c170383f97371beafb70451c71aee1410085e1e6e0adffbdfdb3cc5d53cf12625b20d4b0aa68c309088f344cb8851c63a9a93a347a3e2e7fb1c"
+    }
+  ]
+}

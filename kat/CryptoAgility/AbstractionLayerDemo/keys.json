@@ -1,0 +1,22 @@
+{
+  "module": "CryptoAgility",
+  "use_case": "AbstractionLayerDemo",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "b0d81175103df1842eb26c5e964aa40ce555cd6cd003f5c97c303daff7f030ef3854ef85c24277416d4631cb2480cfd6a182c6bbff0909b5ec282fdd7abc1db7"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "8ff38f07eedf83749f19c6f90e30975bdad907815cd49b62857fc65c71af12a0c6128000dfb16153f01dcdd3b2a006b4c71e25b2f1363769ba311c777bb2da61"
+    }
+  ]
+}

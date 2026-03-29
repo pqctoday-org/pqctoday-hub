@@ -1,0 +1,22 @@
+{
+  "module": "HealthcarePQC",
+  "use_case": "HospitalMigrationPlanner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "a7ef5663e5ae6f59dcd7e91e049f7e6069d6ef4689e8e3bcde5db9d240441d37"
+    },
+    {
+      "id": "aes256gcm-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "29548089abc9a13735c8a45947a885c475427660053b9247e0a1c69a14660ae8"
+    }
+  ]
+}

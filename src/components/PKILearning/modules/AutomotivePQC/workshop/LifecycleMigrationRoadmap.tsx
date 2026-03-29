@@ -411,6 +411,16 @@ const RegulatoryTimeline: React.FC<{
                     {style.label}
                   </span>
                   <span className="text-[10px] text-muted-foreground">{m.authority}</span>
+                  {m.confidence === 'projected' && (
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-status-warning/20 text-status-warning">
+                      Projected
+                    </span>
+                  )}
+                  {m.confidence === 'in-development' && (
+                    <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-status-info/20 text-status-info">
+                      In Development
+                    </span>
+                  )}
                 </div>
                 <h5 className="text-sm font-semibold text-foreground">{m.name}</h5>
                 <p className="text-xs text-muted-foreground mt-1">{m.description}</p>

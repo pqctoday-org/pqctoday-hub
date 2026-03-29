@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "FleetInteroperabilityMatrix",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "be69896076f8cf26093e2e4f5d8e0a93a8b87bd01fa398c210f47ceb5c1af1e8207d2042e78344c4f44c19ac90edb728af2fe4cae31c1d2e5cba82490f2b6f27"
+    },
+    {
+      "id": "mldsa87-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "a56f63225ec5d1881d114decb587f2c4ba83dbcf30c92a5681c2ce2b33292cfc89870974bee414f6c25dd5d9e963a639472b50ff65b073eeab51eb4987b5f47b"
+    }
+  ]
+}

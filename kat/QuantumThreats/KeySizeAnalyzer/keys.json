@@ -1,0 +1,22 @@
+{
+  "module": "QuantumThreats",
+  "use_case": "KeySizeAnalyzer",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "d8aabaec7bc2422f5838de513c9d418349cb2ce62f4fee42392427e8cd73b6fd"
+    },
+    {
+      "id": "ecdsap256-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "9e11e035e1a35b9f7a3b7faa162a362503f9dfc2caca51a5daf8a4eec2a95952"
+    }
+  ]
+}

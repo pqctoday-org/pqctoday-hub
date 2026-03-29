@@ -1,0 +1,22 @@
+{
+  "module": "WebGatewayPQC",
+  "use_case": "CertRotationPlanner",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "cf79383e9fb4bbf6242c93cd38cdb3c76e00b5aeaad31b6be66b2adf6ddc8fa79800f33bdf3c15ee2fb23d41d535c2a3ce182c677cef1f5f5f77a83799126709"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "51fa3b239f27abce0e2f5c01f950305a65a30c9829595cc2ed3a61f329ae4394aeabcec467946ec1784b666794d2f7e5a3fca4c134bdfce390ee2b7249f80388"
+    }
+  ]
+}

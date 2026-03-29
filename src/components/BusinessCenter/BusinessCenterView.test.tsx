@@ -212,7 +212,7 @@ describe('BusinessCenterView', () => {
   it('renders page header with title and description', () => {
     renderView()
     expect(screen.getByText('Business Center')).toBeInTheDocument()
-    expect(screen.getByText(/Your PQC readiness command center/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Your PQC readiness command center/)[0]).toBeInTheDocument()
   })
 
   it('shows welcome state when fully empty', () => {

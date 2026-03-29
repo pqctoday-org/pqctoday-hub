@@ -1,0 +1,22 @@
+{
+  "module": "CodeSigning",
+  "use_case": "SigstoreFlow",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "fefd363cb4c2ddc7fadd847507b5cc4a94ea8889ad925cf1cde8453ada1a5ef19f16196cd0e5895e6324ae5e251d91c96952e142cd5e5dd8408ca7e9f51b0083"
+    },
+    {
+      "id": "mldsa87-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "fba9c38bd8954c724fdffcbb0ebf34712f2c27106a0d8e04db068e7e9537f7a466bed5d95c13292ce19a3b7aba12919f6ddaa4d892bbb5ecc172613a8d2c7de8"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "OSPQC",
+  "use_case": "SystemTLSConfigurator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "e0fe39dee734ee9e655c41db20a1807e3d0e252e2e79be63f3cca36c818c7eaf47efffc6fb75e64795d34043f7e2d368ed6010688983b42115ad49e72942d6b9"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "b6fe52af36d11b9d9279b6dea140b97c023cbd02d0e8f0eff0eeaa16621c2b89189bf2ab5a287f37b6ab61d445f146a49048a5326af111261f87667e3e0d1520"
+    }
+  ]
+}

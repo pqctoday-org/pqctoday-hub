@@ -12,6 +12,29 @@ import fs from 'fs'
 import path from 'path'
 import Papa from 'papaparse'
 
+/**
+ * Provenance chain for a RAG chunk — enables tracing any answer back to its source.
+ * Populated at generation time; consumed by citation verification and debugging tools.
+ */
+interface RAGChunkProvenance {
+  /** Filename of the CSV that produced this chunk (e.g. "library_03272026.csv") */
+  csvFile?: string
+  /** 1-indexed row in that CSV (matches spreadsheet row numbers) */
+  csvRow?: number
+  /** Enrichment markdown file supplying additional dimensions (library / timeline / threats) */
+  enrichmentFile?: string
+  /** Relative path to source document on disk (e.g. "public/library/FIPS_203.pdf") */
+  sourceDocFile?: string
+  /** ISO date string derived from the source CSV filename date tag */
+  lastUpdated?: string
+  /**
+   * 3-5 key passages (<=200 chars each) extracted from the source document.
+   * Selected by TF-IDF scoring; ordered by document position (char_offset).
+   * Enables tracing any claim back to a specific passage in the source.
+   */
+  sourcePassages?: string[]
+}
+
 interface RAGChunk {
   id: string
   source: string
@@ -21,15 +44,44 @@ interface RAGChunk {
   metadata: Record<string, string>
   deepLink?: string
   priority?: number
+  provenance?: RAGChunkProvenance
 }
 
 const DATA_DIR = path.join(process.cwd(), 'src', 'data')
+const SCRIPTS_DIR = path.join(process.cwd(), 'scripts')
 const OUTPUT_DIR = path.join(process.cwd(), 'public', 'data')
 const OUTPUT_FILE = path.join(OUTPUT_DIR, 'rag-corpus.json')
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
+
+/**
+ * Load the latest source-passages-*.json produced by extract-source-passages.py.
+ * Returns a Map<refId, string[]> of passage texts, or an empty map if not found.
+ */
+function loadSourcePassages(): Map<string, string[]> {
+  const files = fs
+    .readdirSync(SCRIPTS_DIR)
+    .filter((f) => f.startsWith('source-passages-') && f.endsWith('.json'))
+    .sort()
+    .reverse()
+  if (files.length === 0) return new Map()
+  try {
+    const raw = fs.readFileSync(path.join(SCRIPTS_DIR, files[0]), 'utf-8')
+    const data = JSON.parse(raw) as { passages?: Record<string, { text: string }[]> }
+    const map = new Map<string, string[]>()
+    for (const [refId, passages] of Object.entries(data.passages ?? {})) {
+      map.set(
+        refId,
+        passages.map((p) => p.text)
+      )
+    }
+    return map
+  } catch {
+    return new Map()
+  }
+}
 
 /** Find the latest versioned CSV file matching a prefix pattern.
  *  Handles revision suffixes: prefix_MMDDYYYY.csv, prefix_MMDDYYYY_r1.csv, etc.
@@ -48,6 +100,18 @@ function findLatestCSV(prefix: string): string | null {
 
   withDates.sort((a, b) => b.date - a.date || b.rev - a.rev)
   return path.join(DATA_DIR, withDates[0].file)
+}
+
+/**
+ * Extract ISO date string from a versioned CSV filename.
+ * "library_03272026.csv" → "2026-03-27"
+ * Returns undefined if no date tag found.
+ */
+function csvFileDate(filePath: string): string | undefined {
+  const m = path.basename(filePath).match(/(\d{2})(\d{2})(\d{4})(?:_r\d+)?\.csv$/)
+  if (!m) return undefined
+  const [, mm, dd, yyyy] = m
+  return `${yyyy}-${mm}-${dd}`
 }
 
 /** Read and parse a CSV file. Returns array of string arrays (rows). */
@@ -93,6 +157,165 @@ function findLibraryRef(text: string): string | undefined {
 /** URL-encode a parameter value for deep links */
 export function encodeParam(s: string): string {
   return encodeURIComponent(s.trim())
+}
+
+/**
+ * Assign a source-authority priority (float) to a library document chunk.
+ * Used by processLibrary() and processDocumentEnrichments() to score each chunk
+ * individually based on document type, so higher-authority documents outrank
+ * vendor whitepapers for authoritative queries (e.g. "What is ML-KEM?").
+ *
+ * Scale mirrors SOURCE_PRIORITY but extends upward for top-tier authorities:
+ *   1.4  — NIST FIPS standards (FIPS 203/204/205/206)
+ *   1.3  — Final RFCs (IETF standards track)
+ *   1.2  — NIST SP / NIST IR / NSA / CISA advisories
+ *   1.15 — Regional government standards (ANSSI, BSI, ASD, CCCS, NCSC, EU)
+ *   1.1  — International standards (ETSI, ISO/IEC, OASIS, 3GPP, ITU)
+ *   1.05 — Industry standards bodies (CA/B Forum, ASC X9, GRI, IETF drafts)
+ *   1.0  — General standards / unclassified
+ *   0.95 — Vendor/industry whitepapers, trade reports
+ */
+export function getLibraryPriority(refId: string, docType: string, authors: string): number {
+  const r = refId.toUpperCase()
+  const t = docType.toUpperCase()
+  const a = authors.toUpperCase()
+
+  // Tier 10 — NIST FIPS standards
+  // ref IDs use both "FIPS 203" (space) and "FIPS-207-HQC" (hyphen) forms
+  if (
+    r.startsWith('FIPS ') ||
+    r.startsWith('FIPS-') ||
+    r.startsWith('NIST-FIPS') ||
+    t.includes('FEDERAL STANDARD') ||
+    t.includes('FIPS PUBLICATION') ||
+    t === 'FIPS'
+  ) {
+    return 1.4
+  }
+
+  // Tier 9 — Final RFCs (not drafts)
+  // ref IDs: "RFC-9629", "RFC 8446", "IETF RFC 8391" (all forms)
+  if (
+    (r.startsWith('RFC-') ||
+      r.startsWith('RFC ') ||
+      r.startsWith('IETF RFC ') ||
+      t === 'RFC' ||
+      t.includes('REQUEST FOR COMMENTS')) &&
+    !r.includes('DRAFT') &&
+    !t.includes('DRAFT')
+  ) {
+    return 1.3
+  }
+
+  // Tier 8 — NIST SP / NIST IR / NSA / CISA
+  // ref IDs use both hyphen and space forms: "NIST-SP-800-208" and "NIST SP 800-208"
+  if (
+    r.startsWith('NIST-SP-') ||
+    r.startsWith('NIST-IR-') ||
+    r.startsWith('NIST SP ') ||
+    r.startsWith('NIST IR ') ||
+    r.startsWith('NIST CSWP ') ||
+    r.startsWith('NIST NCCOE') ||
+    r.startsWith('NIST NCCOE') ||
+    t.includes('NIST SPECIAL PUBLICATION') ||
+    t.includes('NIST INTERNAL REPORT') ||
+    t.includes('NIST IR') ||
+    t === 'NIST SP'
+  ) {
+    return 1.2
+  }
+  if (
+    r.startsWith('NSA-') ||
+    r.startsWith('NSA ') ||
+    r.startsWith('CISA-') ||
+    r.startsWith('CNSA-') ||
+    r.startsWith('US-NSA-') ||
+    (a.includes('NSA') && !r.startsWith('RFC') && !r.startsWith('IETF')) ||
+    (a.includes('CISA') && !r.startsWith('RFC') && !r.startsWith('IETF'))
+  ) {
+    return 1.2
+  }
+
+  // Tier 7 — Regional government standards & mandates
+  // Handles both "ANSSI-PQC-Position-2022" (hyphen) and "ANSSI PQC Position Paper" (space)
+  if (
+    r.startsWith('ANSSI-') ||
+    r.startsWith('ANSSI ') ||
+    r.startsWith('BSI-') ||
+    r.startsWith('BSI ') ||
+    r.startsWith('BSI TR') ||
+    r.startsWith('ASD-') ||
+    r.startsWith('AU-ASD-') ||
+    r.startsWith('CCCS-') ||
+    r.startsWith('NCSC-') ||
+    r.startsWith('CRYPTREC-') ||
+    r.startsWith('EU-') ||
+    r.startsWith('ENISA-') ||
+    r.startsWith('KPQC-') ||
+    r.startsWith('OSCCA-') ||
+    r.startsWith('SG-MAS-') ||
+    r.startsWith('UK NCSC') ||
+    r.startsWith('UK-NCSC') ||
+    r.startsWith('AUSTRALIA ') ||
+    a.includes('ANSSI') ||
+    a.includes('BSI GERMANY') ||
+    a.includes('BSI;') ||
+    (a.includes('ASD') && a.includes('AUSTRALIA')) ||
+    a.includes('UK NCSC') ||
+    a.includes('CCCS') ||
+    a.includes('CRYPTREC')
+  ) {
+    return 1.15
+  }
+
+  // Tier 6 — International standards bodies (ETSI, ISO/IEC, OASIS, 3GPP, ITU)
+  // Handles "ETSI-TS-104-015" (hyphen) and "ETSI TS 103 744" (space) and "ISO/IEC 14888-4" (slash)
+  if (
+    r.startsWith('ETSI-') ||
+    r.startsWith('ETSI ') ||
+    r.startsWith('ISO-') ||
+    r.startsWith('ISO/IEC') ||
+    r.startsWith('ISO ') ||
+    r.startsWith('IEC-') ||
+    r.startsWith('OASIS-') ||
+    r.startsWith('3GPP-') ||
+    r.startsWith('ITU-') ||
+    t.includes('EUROPEAN STANDARD') ||
+    t.includes('INTERNATIONAL STANDARD') ||
+    a.includes('ISO/IEC JTC') ||
+    a.includes('ETSI')
+  ) {
+    return 1.1
+  }
+
+  // Tier 5 — Industry standards & IETF drafts
+  if (
+    r.startsWith('CAB-') ||
+    r.startsWith('ASC-X9-') ||
+    r.startsWith('IETF-DRAFT-') ||
+    r.startsWith('DRAFT-') ||
+    r.startsWith('GRI-') ||
+    r.startsWith('PQCA-') ||
+    r.startsWith('ISA-') ||
+    t.includes('INTERNET-DRAFT') ||
+    t.includes('IETF DRAFT')
+  ) {
+    return 1.05
+  }
+
+  // Tier 4 — Vendor / industry whitepapers / trade reports
+  if (
+    r.startsWith('WEF-') ||
+    r.startsWith('IBG-') ||
+    t.includes('WHITEPAPER') ||
+    t.includes('WHITE PAPER') ||
+    t.includes('INDUSTRY REPORT') ||
+    t.includes('TRADE REPORT')
+  ) {
+    return 0.95
+  }
+
+  return 1.0
 }
 
 /** Slugify an algorithm name for ?highlight= parameter */
@@ -210,9 +433,21 @@ function processTimeline(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  const csvFile = path.basename(file)
+  const lastUpdated = csvFileDate(file)
 
   // Load timeline enrichments once for all rows
   const enrichLookup = loadEnrichmentFields('timeline')
+  const enrichmentFileName = (() => {
+    const dir = path.join(DATA_DIR, 'doc-enrichments')
+    if (!fs.existsSync(dir)) return undefined
+    const f = fs
+      .readdirSync(dir)
+      .filter((n) => n.startsWith('timeline_doc_enrichments_') && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+    return f ?? undefined
+  })()
 
   // Skip header row
   for (let i = 1; i < rows.length; i++) {
@@ -302,6 +537,12 @@ function processTimeline(): RAGChunk[] {
         ...enrichMetadata,
       },
       deepLink,
+      provenance: {
+        csvFile,
+        csvRow: i + 1,
+        ...(enrichmentFileName ? { enrichmentFile: enrichmentFileName } : {}),
+        ...(lastUpdated ? { lastUpdated } : {}),
+      },
     })
   }
 
@@ -314,9 +555,22 @@ function processLibrary(): RAGChunk[] {
 
   const rows = readCSV(file)
   const chunks: RAGChunk[] = []
+  const csvFile = path.basename(file)
+  const lastUpdated = csvFileDate(file)
 
   // Load merged enrichment fields once for all library documents
   const enrichLookup = loadEnrichmentFields('library')
+  const passagesMap = loadSourcePassages()
+  const enrichmentFileName = (() => {
+    const dir = path.join(DATA_DIR, 'doc-enrichments')
+    if (!fs.existsSync(dir)) return undefined
+    const f = fs
+      .readdirSync(dir)
+      .filter((n) => n.startsWith('library_doc_enrichments_') && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+    return f ?? undefined
+  })()
 
   for (let i = 1; i < rows.length; i++) {
     const row = rows[i]
@@ -332,14 +586,21 @@ function processLibrary(): RAGChunk[] {
       description,
       docType,
       industries,
-      authors,
+      authors, // col 10: dependencies
       ,
       regionScope,
       algorithmFamily,
-      securityLevels,
+      securityLevels, // col 14: ProtocolOrToolImpact
+      // col 15: ToolchainSupport
       ,
       ,
-      migrationUrgency,
+      migrationUrgency, // col 17: change_status
+      // col 18: manual_category
+      // col 19: downloadable
+      ,
+      ,
+      ,
+      localFile, // col 20: local_file
     ] = row
 
     const contentLines = [
@@ -395,6 +656,17 @@ function processLibrary(): RAGChunk[] {
         algorithmFamily: sanitize(algorithmFamily),
       },
       ...(sanitize(refId) ? { deepLink: `/library?ref=${encodeParam(refId)}` } : {}),
+      priority: getLibraryPriority(sanitize(refId), sanitize(docType), sanitize(authors)),
+      provenance: {
+        csvFile,
+        csvRow: i + 1,
+        ...(enrichmentFileName ? { enrichmentFile: enrichmentFileName } : {}),
+        ...(sanitize(localFile) ? { sourceDocFile: sanitize(localFile) } : {}),
+        ...(lastUpdated ? { lastUpdated } : {}),
+        ...(passagesMap.has(sanitize(refId))
+          ? { sourcePassages: passagesMap.get(sanitize(refId)) }
+          : {}),
+      },
     })
   }
 
@@ -1634,7 +1906,7 @@ function processPlaygroundGuide(): RAGChunk[] {
       source: 'playground-guide',
       title: 'Playground — Key Generation',
       content:
-        'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM.',
+        'Key Generation in the PQC Playground\n\nSelect any algorithm to generate a keypair instantly in your browser. The playground shows public key size, private key size, and generation time for each algorithm. Compare PQC key sizes with classical equivalents — ML-KEM-768 public keys are 1,184 bytes vs RSA-2048 at 256 bytes, while ML-DSA-65 public keys are 1,952 bytes vs ECDSA P-256 at 64 bytes. Use the algorithm selector dropdown to switch between algorithms, or use the URL parameter: /playground?algo=ML-KEM. Use ?tab= to deep-link to a specific playground tab: ?tab=kem_ops (KEM operations), ?tab=sign_verify (digital signatures), ?tab=symmetric (AES/symmetric), ?tab=hashing (hash functions), ?tab=data (data tab), ?tab=keystore (key manager, default), ?tab=logs (operation log), ?tab=acvp (ACVP testing), ?tab=softhsm (SoftHSM HSM emulation). Combine with ?algo= for a fully pre-configured link (e.g., /playground?tab=kem_ops&algo=ML-KEM-768).',
       category: 'playground',
       metadata: { feature: 'keygen' },
       deepLink: '/playground',
@@ -2106,6 +2378,14 @@ function processDocumentEnrichments(): RAGChunk[] {
     const enrichLookup = loadEnrichmentFields(collection)
     if (enrichLookup.size === 0) continue
 
+    // Resolve the latest enrichment file for provenance (entries may span multiple files,
+    // but the latest is the canonical reference for citation purposes)
+    const latestEnrichFile = fs
+      .readdirSync(enrichmentsDir)
+      .filter((n) => n.startsWith(`${collection}_doc_enrichments_`) && n.endsWith('.md'))
+      .sort()
+      .reverse()[0]
+
     for (const [refId, fields] of enrichLookup) {
       const title = fields['Title'] || refId
       if (title === '---') continue
@@ -2149,6 +2429,17 @@ function processDocumentEnrichments(): RAGChunk[] {
           contentParts.push(`${key}: ${val}`)
       }
 
+      // For library enrichments, inherit authority-based priority from the ref ID
+      // (doc type not available here, but ref ID alone covers most cases)
+      const enrichPriority =
+        collection === 'library'
+          ? getLibraryPriority(
+              sanitize(refId),
+              fields['Document Status'] ?? '',
+              fields['Authors'] ?? ''
+            )
+          : undefined
+
       chunks.push({
         id: `doc-enrichment-${sanitize(refId)}`,
         source: 'document-enrichment',
@@ -2156,6 +2447,10 @@ function processDocumentEnrichments(): RAGChunk[] {
         content: contentParts.join('\n'),
         category: 'document-enrichment',
         metadata: { refId: sanitize(refId), collection },
+        ...(enrichPriority !== undefined ? { priority: enrichPriority } : {}),
+        provenance: {
+          ...(latestEnrichFile ? { enrichmentFile: latestEnrichFile } : {}),
+        },
         ...(collection === 'library' && refId
           ? { deepLink: `/library?ref=${encodeParam(refId)}` }
           : collection === 'threats' && refId
@@ -2259,7 +2554,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Algorithms Page — Transition Guide & Detailed Comparison',
       content:
-        "Algorithms Page Overview\n\nThe Algorithms page has two tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 45+ algorithms side by side.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nUse ?highlight= to deep-link to specific algorithms (e.g., /algorithms?highlight=ML-KEM-768).",
+        "Algorithms Page Overview\n\nThe Algorithms page has two tabs: Transition Guide (default) shows classical → PQC migration paths (e.g., RSA-2048 → ML-KEM-768 + ML-DSA-65), and Detailed Comparison provides full specs for 45+ algorithms side by side.\n\nPQC algorithm families: ML-KEM (FIPS 203, lattice-based KEM — 512/768/1024 parameter sets), ML-DSA (FIPS 204, lattice-based signatures — 44/65/87), SLH-DSA (FIPS 205, stateless hash-based signatures — 12 variants), FN-DSA (FIPS 206, compact lattice signatures — 512/1024), HQC (code-based KEM, NIST Round 4 backup), FrodoKEM (conservative LWE, not standardized), Classic McEliece (large keys, impractical), LMS/XMSS (SP 800-208, stateful hash-based, firmware signing).\n\nClassical algorithms shown as deprecated: RSA (all sizes), ECDSA (P-256/384/521), ECDH (X25519/X448), EdDSA — all vulnerable to Shor's algorithm.\n\nNIST Security Levels: L1 (AES-128), L2 (SHA-256 collision), L3 (AES-192), L4 (SHA-384 collision), L5 (AES-256). Data per algorithm: security level, AES equivalent, public/private key sizes, signature/ciphertext size, performance benchmarks, stack RAM, FIPS status, use case notes.\n\nURL deep links: ?highlight= to highlight specific algorithms (e.g., /algorithms?highlight=ML-KEM-768); ?tab=transition (default) or ?tab=detailed to open a specific view directly (e.g., /algorithms?tab=detailed to go straight to the full comparison table).",
       category: 'page-guide',
       metadata: { page: 'algorithms' },
       deepLink: '/algorithms',
@@ -2292,7 +2587,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Compliance Page — Regulatory Frameworks & Deadline Tracking',
       content:
-        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.',
+        'Compliance Page Overview\n\nThe Compliance page tracks 48+ regulatory frameworks, certifications, and mandates affecting PQC migration.\n\nFramework types:\n- Cryptographic Module Validation: FIPS 140-3 (US/CMVP), KCMVP (Korea)\n- Algorithm Validation: ACVP (NIST test vectors)\n- International Evaluation: Common Criteria (ISO/IEC 15408), EUCC v2.0\n- Government Mandates: CNSA 2.0 (NSA), ASD ISM (Australia), CCCS (Canada), NCSC (UK), NZISM (NZ)\n- EU Regulations: EU Recommendation 2024/1101, eIDAS 2.0 (digital identity wallets 2027+), DORA (financial resilience, enforced Jan 2025), NIS2 (transposition Oct 2024)\n- Regional Standards: ANSSI (France, phased 2025–2030), BSI TR-02102 (Germany), CRYPTREC (Japan), KpqC (Korea, 2029/2035), OSCCA NGCC (China)\n- Industry-Specific: PCI-DSS (payments), HIPAA (healthcare), GSMA NG.116 (mobile 2026–2028), NERC-CIP (power grid), IEC 62443 (industrial), DO-326A (aviation), ISO/SAE 21434 (automotive)\n\nCNSA 2.0 key deadlines: software/firmware signing preferred 2025, exclusive 2030; networking equipment preferred 2026; NSS acquisitions exclusive 2027; web/cloud exclusive 2033; full transition 2035.\n\nEach framework entry shows: ID, description, industries affected, countries/regions, PQC required status, deadline, enforcement body, and cross-references to Library standards and Timeline events.\n\nURL deep links: ?tab=standards (default, standardization bodies) | ?tab=technical (technical standards) | ?tab=certification (FIPS/ACVP/CC schemes) | ?tab=compliance (regulatory frameworks) | ?tab=records (FIPS/ACVP/CC product certification records); ?cert=<recordId> opens a specific certification record directly (e.g., /compliance?cert=FIPS-140-3-A123&tab=records); ?q=<text> filters certification records.',
       category: 'page-guide',
       metadata: { page: 'compliance' },
       deepLink: '/compliance',
@@ -2303,7 +2598,7 @@ function processPageGuides(): RAGChunk[] {
       source: 'documentation',
       title: 'Migrate Page — 7-Phase Framework & Software Catalog',
       content:
-        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 230+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nFilter by: industry (?industry=), infrastructure layer (?layer=), text search (?q=), and migration phase.',
+        'Migrate Page Overview\n\nThe Migrate page provides a 7-phase PQC migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance:\n1. Assess — Build Cryptographic Bill of Materials (CBOM), identify quantum-vulnerable algorithms\n2. Plan — Classify data by confidentiality lifetime, map regulatory deadlines, create migration priority matrix\n3. Prepare — Select PQC libraries (OpenSSL 3.5+, AWS-LC, BoringSSL), upgrade HSM firmware, engage vendor roadmaps\n4. Test — Pilot hybrid TLS/SSH with ML-KEM + X25519, test VPN PQC tunnels, measure performance impact\n5. Migrate — Deploy hybrid certificates, migrate code signing to ML-DSA/SLH-DSA, update key management\n6. Launch — Complete disk/database encryption migration, update secure boot chains, re-encrypt archived data (HNDL counter-measures)\n7. Ramp Up — Deploy continuous crypto monitoring, deprecate legacy algorithms, optimize performance\n\nSoftware catalog: 230+ PQC-ready products organized across 7 infrastructure layers (Operating Systems, Databases, VPN/Network, Code Signing, Cryptographic Libraries, Devices/IoT, Other) plus Web Browsers (Chrome, Edge, Firefox, Safari with ML-KEM TLS 1.3).\n\nThree-tier FIPS badge system: Validated (green, FIPS 140-3), Partial (amber, FedRAMP/WebTrust/FIPS-mode claims), No (gray). Certification cross-reference links products to FIPS/ACVP/Common Criteria certifications.\n\nURL filter parameters (all combinable, produce shareable links):\n- ?q=<text> — text search across product names, descriptions, PQC support status\n- ?industry=<name> — filter by target industry\n- ?layer=<id> — infrastructure layer (e.g., CSC-001 through CSC-061)\n- ?step=<id> — migration phase filter\n- ?cat=<category> — product category within the selected layer\n- ?vendor=<vendorId> — filter by vendor\n- ?sort=<field> — sort order: name (default) | pqcSupport | pqcMigrationPriority | fipsValidated\n- ?mode=<view> — display mode: stack (default, layered infrastructure view) | cards | table\n- ?subcat=<name> — sub-category filter within the active layer',
       category: 'page-guide',
       metadata: { page: 'migrate' },
       deepLink: '/migrate',
@@ -2498,14 +2793,20 @@ function processModuleQA(): RAGChunk[] {
 
   if (files.length === 0) return []
 
-  const csvPath = path.join(qaDir, files[0])
+  const csvFileName = files[0]
+  const csvPath = path.join(qaDir, csvFileName)
   const raw = fs.readFileSync(csvPath, 'utf-8')
   const parsed = Papa.parse(raw, { header: true, skipEmptyLines: true })
   const rows = parsed.data as Array<Record<string, string>>
+  const qaLastUpdated =
+    csvFileDate(csvFileName.replace('.csv', '') + '.csv') ??
+    csvFileName.match(/(\d{4}-\d{2}-\d{2})/)?.[1]
 
   const chunks: RAGChunk[] = []
+  let rowIdx = 1 // 1-indexed (header = row 1)
 
   for (const r of rows) {
+    rowIdx++
     const questionId = r.question_id?.trim()
     const moduleId = r.module_id?.trim()
     const question = r.question?.trim()
@@ -2522,6 +2823,9 @@ function processModuleQA(): RAGChunk[] {
       r.compliance_refs ? `Compliance: ${r.compliance_refs}` : '',
     ].filter(Boolean)
 
+    // source_citations field carries programmatic provenance set by generate-module-qa-ollama.py
+    const sourceCitations = r.source_citations?.trim()
+
     chunks.push({
       id: `qa-${questionId}`,
       source: 'module-qa',
@@ -2533,8 +2837,14 @@ function processModuleQA(): RAGChunk[] {
         difficulty: r.difficulty || '',
         roles: r.applicable_roles || '',
         contentType: r.content_type || '',
+        ...(sourceCitations ? { sourceCitations } : {}),
       },
       deepLink: moduleId ? `/learn/${moduleId}` : undefined,
+      provenance: {
+        csvFile: csvFileName,
+        csvRow: rowIdx,
+        ...(qaLastUpdated ? { lastUpdated: qaLastUpdated } : {}),
+      },
     })
   }
 
@@ -2628,7 +2938,9 @@ async function main() {
     'module-qa': 1.1,
   }
   for (const chunk of corpus) {
-    const basePriority = SOURCE_PRIORITY[chunk.source] ?? 1.0
+    // Respect per-chunk authority priority set by processLibrary() / processDocumentEnrichments();
+    // fall back to source-type default for all other sources.
+    const basePriority = chunk.priority ?? SOURCE_PRIORITY[chunk.source] ?? 1.0
     // Workshop step chunks with step-level deep links get a bump
     const stepBump = chunk.deepLink?.includes('step=') ? 0.1 : 0
     chunk.priority = +(basePriority + stepBump).toFixed(2)

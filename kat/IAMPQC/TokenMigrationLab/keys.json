@@ -1,0 +1,22 @@
+{
+  "module": "IAMPQC",
+  "use_case": "TokenMigrationLab",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-256",
+  "keys": [
+    {
+      "id": "hmacsha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "9faea1c148c72228ff7c8b392206f3d5d59170008812f65374ebaa94c5c001b2"
+    },
+    {
+      "id": "hmacsha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "d789607d094c7780cde88b2e7a0b102326949aeff2347dd061c05081dd0b33ef"
+    }
+  ]
+}

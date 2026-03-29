@@ -1,0 +1,22 @@
+{
+  "module": "StatefulSignatures",
+  "use_case": "SLHDSALiveDemo",
+  "key_type": "CKK_SLH_DSA",
+  "parameter_set": "SLH-DSA-SHA2-128s",
+  "keys": [
+    {
+      "id": "slhdsasha2128s-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_SLH_DSA",
+      "CKA_PARAMETER_SET": "SLH-DSA-SHA2-128s",
+      "value": "9b3744969db669ed1a81628e44ff34c17dc788d7680dfc5333fd0d8c40e1ca455877f0270534ee13740feca88d02b04840b2297f72a7e208230c26ae6387c00e"
+    },
+    {
+      "id": "slhdsasha2128s-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_SLH_DSA",
+      "CKA_PARAMETER_SET": "SLH-DSA-SHA2-128s",
+      "value": "11111b3ee163eb7f7f1763adb72c32d958ef47b4565844720382d5ce33feb84f1321994c2bc4fcef2f37c1731b04b13e5f59593d9f34b11a911ce6f6a99e68e2"
+    }
+  ]
+}

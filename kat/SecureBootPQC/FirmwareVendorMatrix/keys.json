@@ -1,0 +1,22 @@
+{
+  "module": "SecureBootPQC",
+  "use_case": "FirmwareVendorMatrix",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "4dff19b0371e56333576c24650a14fe06317ce4dab1cb3304fb367aaf638914b"
+    },
+    {
+      "id": "sha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "dd45f40209d521aac0fc31f42773917813184b329c1f86f79c1fa48cef3af841"
+    }
+  ]
+}

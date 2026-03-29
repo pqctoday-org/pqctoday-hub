@@ -1,0 +1,22 @@
+{
+  "module": "EMVPaymentPQC",
+  "use_case": "TransactionSimulator",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "05cbf18106e79d69a3a71cc917d067dffffadace0acd9a99ec456444cc22d829"
+    },
+    {
+      "id": "aes256gcm-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "5bfec35ceb830b81fd7950e22046f675ffaa668481dcb62a2e3b7af48a2ad250"
+    }
+  ]
+}

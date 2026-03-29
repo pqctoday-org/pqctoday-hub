@@ -1,0 +1,22 @@
+{
+  "module": "ConfidentialComputing",
+  "use_case": "AttestationWorkshop",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "33d410e836049dcb51a89eeebc004a5316f4408fba0b22d2997649a7dfdab20a16e7ca0083e2e159b859f500c3ec8a8e94ba07ff8430226b55f7bc3e5ab07e6a"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "a15cf57dba5370e1e00d56b267e52ea8997d7720454de0e5a29b84d3fd06ec9ab8a05de1b7dd11062204276339f9299792040de57f90c2dd42bc8a16055a2cd9"
+    }
+  ]
+}

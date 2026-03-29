@@ -18,6 +18,7 @@ import { CertSigner } from './CertSigner'
 import { CertParser } from './CertParser'
 import { CRLGenerator } from './CRLGenerator'
 import { MTCComparison } from './MTCComparison'
+import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 
 const MODULE_ID = 'pki-workshop'
 
@@ -162,7 +163,9 @@ export const PKIWorkshop: React.FC = () => {
 
         {/* Learn Tab */}
         <TabsContent value="learn">
+          <GlossaryAutoWrap>
           <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+          </GlossaryAutoWrap>
         </TabsContent>
 
         {/* Workshop Tab */}

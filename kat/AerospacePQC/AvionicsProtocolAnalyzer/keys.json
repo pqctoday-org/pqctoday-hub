@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "AvionicsProtocolAnalyzer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "c988e8ca673186f30e1df2044ba303e76d8e1e08187512eba8a6cbb9af83adf392cc1e9609d0f301eabf14fc106f7bb1f1ec9b488466bf39c5c76eb72dcf7a82"
+    },
+    {
+      "id": "mldsa87-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "98b181a9983ab97b9c88ca0a94982ff25743dbedd8b2ebfa235783cc82386bdc405613dff2a2db060418bf1660fd40fe7324dacd89f8e52fabb5311b920e172c"
+    }
+  ]
+}

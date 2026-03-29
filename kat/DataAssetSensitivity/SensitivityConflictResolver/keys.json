@@ -1,0 +1,22 @@
+{
+  "module": "DataAssetSensitivity",
+  "use_case": "SensitivityConflictResolver",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-1024",
+  "keys": [
+    {
+      "id": "mlkem1024-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "acf9ed4480f4542f291743805b4a694c2d8e6ebb18676dae8bd5d0838a11bc53e3e487bf973fc107e1ceed7831a6e33b8c5f772285d054e8700607cf5b10f56d"
+    },
+    {
+      "id": "mlkem1024-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "06a51cbf78a3b6c44583f0b694c00e22d399987c6fc055cfb41141c52280a1c24adad90e42b92086629edc2efafb0084ab173783f17f1428193a2b70908ce79f"
+    }
+  ]
+}

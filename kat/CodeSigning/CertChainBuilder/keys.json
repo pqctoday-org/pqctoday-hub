@@ -1,0 +1,22 @@
+{
+  "module": "CodeSigning",
+  "use_case": "CertChainBuilder",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "6903fdd75a04140b424218436d1982eeaba7f7d611fc589da3fd98eab9aa3769bb4ccba127859adbcb27a3fad7922a7b47e99c430d83e6d8cc4350737a4c969d"
+    },
+    {
+      "id": "mldsa87-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "b1380ed83a7172b8571b6d89d1afd4a32ffb4b71d6e65fca4943c085e5a4c0934199d33a000b76d0e08a819eee1dbfc7c552509c859c3a2cd18dfd17a4b5990d"
+    }
+  ]
+}

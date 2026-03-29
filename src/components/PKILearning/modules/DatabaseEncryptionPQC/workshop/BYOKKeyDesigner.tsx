@@ -2,6 +2,32 @@
 import React, { useState } from 'react'
 import { KeyRound, ShieldCheck, CheckCircle, XCircle } from 'lucide-react'
 import { BYOK_ARCHITECTURES } from '../data/databaseConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const DBENC_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'dbenc-tde-decrypt',
+    useCase: 'TDE tablespace decryption (AES-256-GCM)',
+    standard: 'SP 800-38D ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-decrypt' },
+  },
+  {
+    id: 'dbenc-dek-wrap',
+    useCase: 'Column DEK key wrapping (AES-256-KW)',
+    standard: 'RFC 3394 ACVP',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
+    kind: { type: 'aeskw-wrap' },
+  },
+  {
+    id: 'dbenc-byok-kem',
+    useCase: 'BYOK key transport (ML-KEM-768)',
+    standard: 'FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+]
 
 export const BYOKKeyDesigner: React.FC = () => {
   const [selectedPatternId, setSelectedPatternId] = useState<string>('provider-managed')
@@ -244,6 +270,12 @@ export const BYOKKeyDesigner: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={DBENC_KAT_SPECS}
+        label="Database Encryption PQC Known Answer Tests"
+        authorityNote="SP 800-38D · RFC 3394 · FIPS 203"
+      />
     </div>
   )
 }

@@ -18,6 +18,34 @@ import type {
   SecuritySuite,
 } from '../data/energyConstants'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const ENERGY_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'energy-goose-sign',
+    useCase: 'IEC 61850 GOOSE message signing (ML-DSA-65)',
+    standard: 'IEC 62351 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'IEC 61850 GOOSE: stNum=17,sqNum=3241,datSet=GooseCBRef',
+  },
+  {
+    id: 'energy-meter-encrypt',
+    useCase: 'Smart meter key protection (AES-256-GCM)',
+    standard: 'NERC CIP + SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'DNP3 SAv6 auth frame: CSQ=0x8A7B,userNum=1,keyWrapAlg=AES-256',
+  },
+  {
+    id: 'energy-firmware-hash',
+    useCase: 'IED firmware integrity hash',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash' },
+  },
+]
 
 interface SmartMeterKeyManagerProps {
   config: SmartMeterFleetConfig
@@ -512,6 +540,12 @@ export const SmartMeterKeyManager: React.FC<SmartMeterKeyManagerProps> = ({
           Mark Step Complete
         </Button>
       </div>
+
+      <KatValidationPanel
+        specs={ENERGY_KAT_SPECS}
+        label="Energy & Utilities PQC Known Answer Tests"
+        authorityNote="IEC 62351 · NERC CIP · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

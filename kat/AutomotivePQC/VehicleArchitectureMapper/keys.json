@@ -1,0 +1,22 @@
+{
+  "module": "AutomotivePQC",
+  "use_case": "VehicleArchitectureMapper",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "21c607a7994f7ed5750c090e2cd1d1a1c6897ca4ef6c10070171de2b11f6cd21"
+    },
+    {
+      "id": "aes256gcm-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e718c5eb0b5ecfc002287efb7fad3c58f7f64b6a012e6af4c5e0d80db197c1bf"
+    }
+  ]
+}

@@ -4,12 +4,14 @@ import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'
 import { Dashboard } from './Dashboard'
 import { ArrowLeft } from 'lucide-react'
 import { GlossaryButton } from '../ui/GlossaryButton'
+import { ShareButton } from '../ui/ShareButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
+import { NextModuleCTA } from './NextModuleCTA'
 import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG } from './moduleData'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -322,6 +324,10 @@ export const PKILearningView: React.FC = () => {
                 resourceLabel={moduleMeta.title}
                 resourceType="Learn Module"
               />
+              <ShareButton
+                title={moduleMeta.title}
+                text={`Learn about ${moduleMeta.title} — PQC Timeline`}
+              />
             </>
           )}
           {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
@@ -411,6 +417,7 @@ export const PKILearningView: React.FC = () => {
               </Routes>
             </Suspense>
           )}
+          {showSidebar && !isCuriousMode && <NextModuleCTA moduleId={moduleId} />}
           {showSidebar && !isCuriousMode && (
             <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
               Learning module content can be inaccurate. Please double-check its information. Report

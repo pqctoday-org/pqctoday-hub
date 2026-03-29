@@ -1,0 +1,22 @@
+{
+  "module": "AutomotivePQC",
+  "use_case": "LifecycleMigrationRoadmap",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "6ed537260d4d65462bdb3eb71642e19cf85244beaff0f0c78ad8782af02515fd3f0cde5a1102e21b4fb931184a29bb8fb04f37c5471a1e28e2e3ee30e8a034f3"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "72f95444147abddafb853d861c5d2e314751607e1333dda10368bbe8fb728c2629a78f4a29861a86575196519827af73c92185caba72be4f9c64f4925f38307b"
+    }
+  ]
+}

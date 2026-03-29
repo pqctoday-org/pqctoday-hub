@@ -18,6 +18,7 @@ import {
   Cpu,
   Layers,
   UserCircle,
+  Building2,
 } from 'lucide-react'
 import type { EntityType } from '../../data/graphTypes'
 
@@ -109,6 +110,12 @@ const ENTITY_CONFIG: Record<
     bg: 'bg-tertiary/10',
     border: 'border-tertiary/30',
     text: 'text-tertiary',
+  },
+  vendor: {
+    icon: Building2,
+    bg: 'bg-status-success/10',
+    border: 'border-status-success/30',
+    text: 'text-status-success',
   },
 }
 

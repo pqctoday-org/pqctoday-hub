@@ -1,0 +1,22 @@
+{
+  "module": "PlatformEngPQC",
+  "use_case": "PipelineCryptoInventory",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "d89c2fc928805732cd81790b2bc3e603590eb58fef6f2245fb1fb6eb329bbf89"
+    },
+    {
+      "id": "ecdsap256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "ec89872b30da938de9c2a6f2ec86f290ea793fd462366d391cdcba3e36707d14"
+    }
+  ]
+}

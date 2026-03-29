@@ -111,7 +111,7 @@ describe('LeadersGrid', () => {
   it('renders the header and description', () => {
     render(<LeadersGrid />)
     expect(screen.getByText('Transformation Leaders')).toBeInTheDocument()
-    expect(screen.getByText(/Visionaries and organizations/)).toBeInTheDocument()
+    expect(screen.getAllByText(/Visionaries and organizations/)[0]).toBeInTheDocument()
   })
 
   it('renders a grid of leaders', () => {

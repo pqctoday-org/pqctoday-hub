@@ -25,6 +25,7 @@ const TYPE_LABELS: Record<EntityType, string> = {
   algorithm: 'Algorithms',
   track: 'Learning Tracks',
   persona: 'Learning Personas',
+  vendor: 'Vendors',
 }
 
 export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLegendProps) {

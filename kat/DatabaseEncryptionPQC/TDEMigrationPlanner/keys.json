@@ -1,0 +1,22 @@
+{
+  "module": "DatabaseEncryptionPQC",
+  "use_case": "TDEMigrationPlanner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256kw-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e6a37e532c10619af92dec71e2e835ba75015eb82ad7c96b9c23c0a5559ebb12"
+    },
+    {
+      "id": "aes256kw-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "5fb2e9282e274a2b1aa8f9ff852b79987ec6446f51f3afb83de3e8fbde886fe9"
+    }
+  ]
+}

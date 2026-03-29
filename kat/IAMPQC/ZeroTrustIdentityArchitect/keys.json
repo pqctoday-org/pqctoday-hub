@@ -1,0 +1,22 @@
+{
+  "module": "IAMPQC",
+  "use_case": "ZeroTrustIdentityArchitect",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "926a23ae8f8485b782113173d87b9b2c2a76fe30a8543de6afa45f58e8316b86fba952b8654e7931f478a4630621b30c9d80971670e4cc01015581abb7f08e06"
+    },
+    {
+      "id": "mldsa87-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "cab35cea7380c95d51368263ec1a0c3034409437f1aa3bf719f8b4fe386b802341a8eeed0a384b32be7d39e3b85dbea570802d36e2dd147e521a0572f0832092"
+    }
+  ]
+}

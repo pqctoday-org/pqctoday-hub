@@ -1,0 +1,22 @@
+{
+  "module": "PlatformEngPQC",
+  "use_case": "QuantumThreatTimeline",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "ca328f191ef0696983ef4b300131677d9993364265e6c904b303cbe68470cf07"
+    },
+    {
+      "id": "ecdsap256-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "6625aea404332ebac5375b5d7dc60755d7d74a8055a0d54b1e3a7af6a27628dc"
+    }
+  ]
+}

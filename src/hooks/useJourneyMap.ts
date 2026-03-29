@@ -8,11 +8,18 @@ import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore
 import { useMigrationWorkflowStore } from '@/store/useMigrationWorkflowStore'
 import { PERSONAS } from '@/data/learningPersonas'
 import { PERSONA_MILESTONES } from '@/data/personaConfig'
+import { quizQuestions } from '@/data/quizDataLoader'
 import {
   MODULE_CATALOG,
   MODULE_STEP_COUNTS,
   MODULE_TO_TRACK,
 } from '@/components/PKILearning/moduleData'
+
+// Pre-compute question ID → category mapping for checkpoint completion tracking
+const questionCategoryMap = new Map<string, string>()
+for (const q of quizQuestions) {
+  questionCategoryMap.set(q.id, q.category)
+}
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -94,6 +101,7 @@ export function useJourneyMap(): JourneyMapResult {
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const modules = useModuleStore((s) => s.modules)
   const artifacts = useModuleStore((s) => s.artifacts)
+  const quizMastery = useModuleStore((s) => s.quizMastery)
   const assessmentStatus = useAssessmentStore((s) => s.assessmentStatus)
   const myFrameworkCount = useComplianceSelectionStore((s) => s.myFrameworks.length)
   const migrationStarted = useMigrationWorkflowStore((s) => s.startedAt !== null)
@@ -127,6 +135,14 @@ export function useJourneyMap(): JourneyMapResult {
       artifacts.certificates.length +
       artifacts.csrs.length +
       (artifacts.executiveDocuments?.length ?? 0)
+
+    // Build set of quiz categories the user has answered correctly
+    const correctIds = quizMastery?.correctQuestionIds ?? []
+    const answeredCategories = new Set<string>()
+    for (const qId of correctIds) {
+      const cat = questionCategoryMap.get(qId)
+      if (cat) answeredCategories.add(cat)
+    }
 
     // ── Build learning phases from pathItems ────────────────────────────────
     const phases: JourneyPhase[] = []
@@ -162,12 +178,14 @@ export function useJourneyMap(): JourneyMapResult {
         })
       } else if (item.type === 'checkpoint') {
         // Checkpoint creates a quiz item at the end of the current phase,
-        // then closes the phase
+        // then closes the phase. Mark as completed if user has answered
+        // questions in at least one of the checkpoint's categories.
+        const hasAnsweredCheckpoint = item.categories.some((cat) => answeredCategories.has(cat))
         const checkpointItem: JourneyItem = {
           id: item.id,
           label: `Quiz: ${item.label}`,
           type: 'checkpoint-quiz',
-          status: 'available', // checkpoints are always navigable
+          status: hasAnsweredCheckpoint ? 'completed' : 'available',
           route: `/learn/quiz?categories=${item.categories.join(',')}`,
         }
         currentItems.push(checkpointItem)
@@ -276,5 +294,5 @@ export function useJourneyMap(): JourneyMapResult {
       outsidePath,
       hasPersona: true,
     }
-  }, [selectedPersona, modules, artifacts, assessmentStatus, myFrameworkCount, migrationStarted])
+  }, [selectedPersona, modules, artifacts, quizMastery, assessmentStatus, myFrameworkCount, migrationStarted])
 }

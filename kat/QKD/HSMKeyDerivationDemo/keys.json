@@ -1,0 +1,22 @@
+{
+  "module": "QKD",
+  "use_case": "HSMKeyDerivationDemo",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-256",
+  "keys": [
+    {
+      "id": "hmacsha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "95a691cf34a58b62fc7d997087c3cd4fc65be73c5d58cacf626ee9fa1baecde5"
+    },
+    {
+      "id": "hmacsha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "28ecff5223d64fb9a3c37143c38d60f7bb3758d7c29f5399890e4df447f61c6f"
+    }
+  ]
+}

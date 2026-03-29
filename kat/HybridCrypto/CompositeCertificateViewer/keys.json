@@ -1,0 +1,22 @@
+{
+  "module": "HybridCrypto",
+  "use_case": "CompositeCertificateViewer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "7587aac401fb8388c0e4379b8fae92870980c816175a439e740c7e3ab1c83fa12151177f4c7c812ab443c58ce7144bb46f1ea28feff40245cb3b6ff9098c1931"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "f4cb2bac8d5aa98a27e2cfbf7820c004defe6ff085237e855a8266ac928b0e794711fda4bb65c52a2124cc7964432503da18eea87c5e5953ceb621056d8a09cb"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "KmsRotationPlanner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256kw-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "c22c7e7fcfe8f932a333c5c0ec63b0f33ef3e771c699894a8c6ee9fdceb878ee"
+    },
+    {
+      "id": "aes256kw-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "cb65c6da70b9566fad69c03ac704bc8f4294645cb908581805a2eeb8b45ee547"
+    }
+  ]
+}

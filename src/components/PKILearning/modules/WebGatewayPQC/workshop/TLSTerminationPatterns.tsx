@@ -4,6 +4,34 @@ import React, { useState, useMemo } from 'react'
 import { Eye, EyeOff, Lock, Unlock, ArrowRight, ToggleLeft, ToggleRight } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TERMINATION_PATTERNS, type TerminationPattern } from '../data/gatewayData'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const GATEWAY_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'gw-cert-sign',
+    useCase: 'CDN edge certificate signing (ML-DSA-65)',
+    standard: 'FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'CDN edge certificate: CN=cdn.pqc.example,SAN=*.pqc.example',
+  },
+  {
+    id: 'gw-tls-kem',
+    useCase: 'Gateway TLS key exchange (ML-KEM-768)',
+    standard: 'FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'gw-api-encrypt',
+    useCase: 'API gateway request encryption',
+    standard: 'SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'API gateway request: X-PQC-Policy=enforce,method=POST,path=/v1/data',
+  },
+]
 
 type CryptoMode = 'classical' | 'pqc-hybrid'
 
@@ -271,6 +299,12 @@ export const TLSTerminationPatterns: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={GATEWAY_KAT_SPECS}
+        label="Web Gateway PQC Known Answer Tests"
+        authorityNote="FIPS 203 · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

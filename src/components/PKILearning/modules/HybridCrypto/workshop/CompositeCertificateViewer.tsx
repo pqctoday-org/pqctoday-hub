@@ -194,8 +194,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Certificate Format Comparison</h3>
         <p className="text-sm text-muted-foreground">
-          Generate and inspect the three X.509 certificate format approaches for PQC deployment.
-          Compare structure, OIDs, sizes, and standardization status.
+          Generate and inspect the X.509 certificate format approaches for PQC deployment. Compare
+          structure, OIDs, sizes, and standardization status.
         </p>
       </div>
 
@@ -209,7 +209,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
               : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
           }`}
         >
-          Generate All Three
+          Generate All
         </button>
         {CERT_ALGORITHMS.map((algo) => (
           <button
@@ -240,7 +240,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
         ) : (
           <>
             <Play size={18} fill="currentColor" />
-            Generate{selectedAlgorithm === 'all' ? ' All Three' : ' Certificate'}
+            Generate{selectedAlgorithm === 'all' ? ' All' : ' Certificate'}
           </>
         )}
       </button>

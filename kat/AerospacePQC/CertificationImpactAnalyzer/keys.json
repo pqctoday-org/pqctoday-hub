@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "CertificationImpactAnalyzer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "5ae9567f74da25177a8d97e62bd608a7ddd5faab619be516e6dc9dc6347c4e00940748955de5573bf1597ba5cb62335bd50a7f6fd855ffb5c9dbfb1820586719"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "713587254573fb6669f15aaeced06a2e61e65696c271f454d9c868836d8a62eb87732aabd92ce5c6a4a950d0643f27267d4205e0e5c0d75a3527c7e2fe606d29"
+    }
+  ]
+}

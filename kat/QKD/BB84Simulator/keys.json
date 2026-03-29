@@ -1,0 +1,22 @@
+{
+  "module": "QKD",
+  "use_case": "BB84Simulator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "def2167c436ee202e85a4f06ca1d3c738847b3b3ad322e5cab10cd827911dcc01709894aad8867a55f0295efbd13780dba5c34a393e02a507444730ebe8963dd"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "d149e2993e21f821d604469e29392ecc6438d6e90f07866aabaaedf4b694b262b33e0438294c9cc65a0beea3c161df120297357b0bb0a42af8b2edc971b78afa"
+    }
+  ]
+}

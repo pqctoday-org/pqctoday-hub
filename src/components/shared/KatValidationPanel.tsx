@@ -156,12 +156,7 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                       {r.status}
                     </span>
                   </td>
-                  <td
-                    className="px-3 py-2 text-muted-foreground max-w-[220px] truncate"
-                    title={r.details}
-                  >
-                    {r.details}
-                  </td>
+                  <td className="px-3 py-2 text-muted-foreground">{r.details}</td>
                 </tr>
               ))}
             </tbody>

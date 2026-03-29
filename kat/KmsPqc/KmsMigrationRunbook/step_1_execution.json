@@ -1,0 +1,29 @@
+{
+  "kat_id": "KAT-KMSMIGRA-124",
+  "step": "step_1_execution",
+  "authoritative_source": "NIST SP 800-38D",
+  "reference_details": {
+    "standard": "https://csrc.nist.gov/pubs/sp/800/38/d/final",
+    "algorithm": "AES-256-GCM",
+    "protocol": "KmsMigrationRunbook step_1_execution",
+    "key_size": "AES-256"
+  },
+  "requires_keys": ["genericpqc-01-pub", "genericpqc-01-priv"],
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "ivLen": 96,
+      "tagLen": 128,
+      "direction": "decrypt",
+      "tests": [
+        {
+          "key": "36a4ed7db4d78d522c39b52bdee527b4c8ce09b474c8687225b4bd6aa13e8e75",
+          "iv": "da4c7d646411c4c7c1a0b110",
+          "pt": "4145532d3235362d47434d2041435650206578747261207465737420766563746f7220666f72206d6f64756c652d7370656369666963204b415420646966666572656e74696174696f6e",
+          "ct": "a62ce7f35358268ac9fb8e5f1406933da2c3211790748a77378169506a1b96f9abd98f6bbccc094df4524523747a7244682536c576a1be343c639ea28710853de270c352c67dccac4c12",
+          "tag": "6c4fb2ce62bcba137f251381bc379764"
+        }
+      ]
+    }
+  ]
+}

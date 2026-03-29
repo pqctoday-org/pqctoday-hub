@@ -1,0 +1,22 @@
+{
+  "module": "APISecurityJWT",
+  "use_case": "JWTInspector",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-256",
+  "keys": [
+    {
+      "id": "hmacsha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "67fcf3c01ac8c165887a331a05e08d19748d3df60cb2fb3981a00805ebf253d6"
+    },
+    {
+      "id": "hmacsha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "cae4b06ecc8c0f5acbcd6dcca2739469a4c0b37e124302c0d00f36ad7b5d6448"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "EMVPaymentPQC",
+  "use_case": "TokenizationExplorer",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "7df0eb680784aaceee7016b99717b7a8ca238c1590b87693301e70b556a2b3c0"
+    },
+    {
+      "id": "ecdsap256-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "b1386e8a5d1be93664253df9b4afe25e439cc32fb5958d4abe719d348ee0b14c"
+    }
+  ]
+}

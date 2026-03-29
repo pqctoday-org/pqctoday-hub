@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { Workbench } from './Workbench'
 import { WorkbenchFileManager } from './components/WorkbenchFileManager'
@@ -69,13 +69,28 @@ function resolveCmd(param: string | null): OpenSSLCategory {
 }
 
 export const OpenSSLStudioView = () => {
-  const [searchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [showTerminal, setShowTerminal] = useState(true)
   const [workbenchCollapsed, setWorkbenchCollapsed] = useState(false)
   const [category, setCategory] = useState<OpenSSLCategory>(() =>
     resolveCmd(searchParams.get('cmd'))
   )
   const { editingFile, activeTab } = useOpenSSLStore()
+
+  const handleCategoryChange = useCallback(
+    (cat: OpenSSLCategory) => {
+      setCategory(cat)
+      setSearchParams(
+        (prev) => {
+          const next = new URLSearchParams(prev)
+          next.set('cmd', cat)
+          return next
+        },
+        { replace: true }
+      )
+    },
+    [setSearchParams]
+  )
 
   return (
     <div className="h-full flex flex-col animate-fade-in">
@@ -120,7 +135,7 @@ export const OpenSSLStudioView = () => {
               workbenchCollapsed && 'hidden lg:block'
             )}
           >
-            <Workbench category={category} setCategory={setCategory} />
+            <Workbench category={category} setCategory={handleCategoryChange} />
           </div>
         </div>
 

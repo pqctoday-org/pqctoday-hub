@@ -1,0 +1,22 @@
+{
+  "module": "ConfidentialComputing",
+  "use_case": "QuantumThreatMigration",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "6aef903c29679f73d216ce55e2cb6499ffae62b673a95abbd1b24ff4dba3a584"
+    },
+    {
+      "id": "sha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "e7ab14c1c70fa043873cb82a16cb5a1953a7145f4cc33e66c4430c04d910661d"
+    }
+  ]
+}

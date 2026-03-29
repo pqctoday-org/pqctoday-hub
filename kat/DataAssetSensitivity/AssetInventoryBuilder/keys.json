@@ -1,0 +1,22 @@
+{
+  "module": "DataAssetSensitivity",
+  "use_case": "AssetInventoryBuilder",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-1024",
+  "keys": [
+    {
+      "id": "mlkem1024-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "fadf8fd1c8d921c746d9cfe5e11440b6524b7ce617302fc9b00f8849a527fb4cc8d1d5d6dc26b77f9a9f9bb2b95804d31b934b4c3abe5540a9d67c85fa144559"
+    },
+    {
+      "id": "mlkem1024-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-1024",
+      "value": "0cb3c1357546eba322fcce763deb70de63105895942516579e08c168497a96db11b4b88fb0acf59971bc767ac8a0f67849bcde3de3c3fdab3b5e86e027b63965"
+    }
+  ]
+}

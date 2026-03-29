@@ -1,0 +1,22 @@
+{
+  "module": "QKD",
+  "use_case": "ProtocolIntegrationDemo",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "d96237647220c8c318f610888c28f990daaea7985c356bd759adc582428a557dc05ca521ba4a7a9b71484aba665a257d2d21420daec6da1fd51ee82854581f3d"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "0bb57ea1d4289e71dc9996412042a429c6df45c2bbca5244a623f61beb0049608525c93cd0b474fa33f9e8faddf49209f2d59581e3b91ef2c9b032714472a3cd"
+    }
+  ]
+}

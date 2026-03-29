@@ -1,0 +1,22 @@
+{
+  "module": "IoTOT",
+  "use_case": "ConstrainedAlgorithmExplorer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "a0494ae4d5bc8b37600a23e7ba92096cfe7b14f8512bf27106aaf2db989d206eb4308991be41701db8e0438b54cbdcf6764bb4e021b4486b97e8264e90b97deb"
+    },
+    {
+      "id": "mldsa44-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "a07b0491d7eac155cd33299b8fbfe63c8e3b1ac5bd53aa34947ea01c7adf0549fd0f80aba9da0dfb3d36beef7ff23af7f1974c76c16f4582a36c1a604b8040b4"
+    }
+  ]
+}

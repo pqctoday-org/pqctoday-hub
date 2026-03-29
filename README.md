@@ -68,6 +68,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     sizes (B/KB) with sortable Size column and aggregate totals in the header
   - **Persona-aware simplification**: Curious and Executive personas see a streamlined Playground
     with no HSM mode toggle and no ACVP tab
+  - **Mobile Playground** (`MobilePlaygroundOps`): Interactive ML-KEM + ML-DSA experience on
+    mobile — real WASM-powered KEM encapsulation/decapsulation and signing/verification on small
+    screens (not just informational)
   - **Responsive mobile layout**: abbreviated tab labels, responsive grids, touch-target-compliant
     buttons (44px minimum), and viewport-clamped dropdowns
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
@@ -122,9 +125,15 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Hybrid Cryptography** (5-step workshop):
     - Explores key generation, KEM encapsulation, and signatures with hybrid algorithms
     - Hybrid CA Setup: configure and generate classical (ECDSA) and PQC (ML-DSA-65) root CAs
-    - Hybrid Cert Formats: side-by-side comparison of all four X.509 hybrid approaches — Pure PQC,
-      Composite (draft-ietf-lamps), Related Certificates (RFC 9763), and Chameleon Certificates
-    - Hybrid Cert Inspector: DER structure viewer with IETF Hackathon reference certificates
+    - Hybrid Cert Formats: generates **real DER-encoded certificates** for all six X.509
+      approaches — Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite
+      (draft-ietf-lamps-pq-composite-sigs-15, OID 1.3.6.1.5.5.7.6.45), Alt-Sig / Catalyst
+      (ITU-T X.509 §9.8, extensions 2.5.29.72-74), Related Certificates (RFC 9763, two-pass
+      bidirectional binding), and Chameleon (draft-bonnell-lamps-chameleon-certs-07,
+      DeltaCertificateDescriptor). ASN.1 encoding via `@peculiar/asn1-schema`; all signing
+      via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`)
+    - Hybrid Cert Inspector: DER structure viewer with five IETF/RFC reference certificates
+      including real SLH-DSA cert from RFC 9909 Appendix C.3
   - **Crypto Agility & Architecture**:
     - Three macro-architecture patterns: Provider Model (JCA/OpenSSL provider abstraction),
       Service Mesh / Sidecar Proxy (mTLS offloaded to Envoy/Istio), External KMS / HSM
@@ -310,6 +319,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Three View Modes**: Stack (infrastructure layers), Cards (responsive grid with sort), and Table
     (sortable columns) with persistent view toggle. Four sort options: Name, PQC Support, Migration
     Priority, FIPS Status
+  - **Product Comparison**: Compare up to 3 catalog products side-by-side — queue products via the
+    Scale icon on any row or card; a sticky bottom bar shows the queue and triggers an inline
+    comparison table (PQC Support, FIPS, License, Priority, Platforms, Capability, Version)
   - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
     layer with search; selected layer and sub-category persist across sessions
 - **PQC Risk Assessment** (`/assess`): Comprehensive 14-step quantum risk evaluation wizard
@@ -431,6 +443,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   modules, quiz performance, and cross-page engagement; badges organized by category (Foundation,
   Deep Dive, Industry, Strategy, Practice) and displayed on the landing page
 - **Right Panel** (slide-out, accessible via panel icon in nav):
+  - **Bookmarks**: Save Library documents (by `referenceId`) and Migrate products (by name) for
+    quick access. Bookmark icon on every Library row and Migrate table row; Bookmarks tab in the
+    Right Panel lists all saved items with deep-links and one-click JSON/CSV export.
+    Persisted via `useBookmarkStore` (localStorage).
   - **Knowledge Graph**: Explore (force-directed graph of all PQC concepts and modules),
     Coverage (bar chart of quiz/module coverage per category), Pathways (recommended learning
     sequences per persona), and **Mindmap** (visual overview of the PQC learning landscape,

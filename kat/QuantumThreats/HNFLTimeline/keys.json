@@ -1,0 +1,22 @@
+{
+  "module": "QuantumThreats",
+  "use_case": "HNFLTimeline",
+  "key_type": "CKK_RSA",
+  "parameter_set": "RSA-2048",
+  "keys": [
+    {
+      "id": "rsa2048pss-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_RSA",
+      "CKA_PARAMETER_SET": "RSA-2048",
+      "value": "84674eb3d8f8a240d46b21d17bf3c81b7768fa9d28d72b627d74eeab7b9d329c4a215d8372422527d35ad9ad6abd24bb7f92541e85f7683ef6ffdd1f03e39437"
+    },
+    {
+      "id": "rsa2048pss-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_RSA",
+      "CKA_PARAMETER_SET": "RSA-2048",
+      "value": "5a8155091bbe36114a3d700987fb8a9baa222841e8ba0643f681a793342a8cbc1c561069c618168ca01928b60a6ad6a6315748f8a6cd15d3611b69647b0fafcd"
+    }
+  ]
+}

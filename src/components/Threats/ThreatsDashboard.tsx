@@ -140,6 +140,7 @@ export const ThreatsDashboard: React.FC = () => {
       q?: string
       sort?: SortField
       dir?: SortDirection
+      id?: string | null
     }) => {
       setSearchParams(
         (prev) => {
@@ -149,6 +150,7 @@ export const ThreatsDashboard: React.FC = () => {
           const q = overrides.q ?? searchQuery
           const sort = overrides.sort ?? sortField
           const dir = overrides.dir ?? sortDirection
+          const id = overrides.id !== undefined ? overrides.id : (selectedThreat?.threatId ?? null)
 
           if (inds.length > 0) next.set('industry', inds.join(','))
           else next.delete('industry')
@@ -160,6 +162,8 @@ export const ThreatsDashboard: React.FC = () => {
           else next.delete('sort')
           if (dir !== 'asc') next.set('dir', dir)
           else next.delete('dir')
+          if (id) next.set('id', id)
+          else next.delete('id')
           return next
         },
         { replace: true }
@@ -171,6 +175,7 @@ export const ThreatsDashboard: React.FC = () => {
       searchQuery,
       sortField,
       sortDirection,
+      selectedThreat,
       setSearchParams,
     ]
   )
@@ -586,7 +591,7 @@ export const ThreatsDashboard: React.FC = () => {
                       <Button
                         variant="ghost"
                         size="icon"
-                        onClick={() => setSelectedThreat(item)}
+                        onClick={() => { setSelectedThreat(item); syncFiltersToUrl({ id: item.threatId }) }}
                         className="bg-primary/10 text-primary rounded-full hover:bg-primary/20"
                         aria-label="View Details"
                       >
@@ -610,7 +615,7 @@ export const ThreatsDashboard: React.FC = () => {
       {/* End desktop wrapper */}
       <AnimatePresence>
         {selectedThreat && (
-          <ThreatDetailDialog threat={selectedThreat} onClose={() => setSelectedThreat(null)} />
+          <ThreatDetailDialog threat={selectedThreat} onClose={() => { setSelectedThreat(null); syncFiltersToUrl({ id: null }) }} />
         )}
       </AnimatePresence>
     </div>

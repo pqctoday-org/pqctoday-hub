@@ -1,0 +1,22 @@
+{
+  "module": "StatefulSignatures",
+  "use_case": "StateManagementVisualizer",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "8607d851774a49d9c935268f7201f9c7e9af5b03a89b0edbc0162e0cdafd3308"
+    },
+    {
+      "id": "sha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "54aa84598ba7c4fe749e4c3429e64495346814d12040ea23ae5675f8d0e32c52"
+    }
+  ]
+}

@@ -179,7 +179,7 @@ export interface BusProfile {
 export const BUS_PROFILES: BusProfile[] = [
   {
     id: 'can',
-    name: 'CAN 2.0B',
+    name: 'CAN 2.0B (ISO 11898-1)',
     maxBandwidthMbps: 0.5,
     maxPayloadBytes: 8,
     authenticationSupport: 'None native; SecOC (AUTOSAR) adds CMAC truncated to 24-64 bits',
@@ -189,7 +189,7 @@ export const BUS_PROFILES: BusProfile[] = [
   },
   {
     id: 'can-fd',
-    name: 'CAN FD',
+    name: 'CAN FD (ISO 11898-1:2015)',
     maxBandwidthMbps: 5,
     maxPayloadBytes: 64,
     authenticationSupport: 'SecOC with CMAC; CAN XL (future) up to 2048 bytes',
@@ -209,7 +209,7 @@ export const BUS_PROFILES: BusProfile[] = [
   },
   {
     id: 'flexray',
-    name: 'FlexRay',
+    name: 'FlexRay (ISO 10681)',
     maxBandwidthMbps: 10,
     maxPayloadBytes: 254,
     authenticationSupport: 'Optional frame-level authentication',
@@ -219,7 +219,7 @@ export const BUS_PROFILES: BusProfile[] = [
   },
   {
     id: 'automotive-ethernet',
-    name: 'Automotive Ethernet (100BASE-T1/1000BASE-T1)',
+    name: 'Automotive Ethernet (IEEE 802.3 100BASE-T1/1000BASE-T1)',
     maxBandwidthMbps: 1000,
     maxPayloadBytes: 1500,
     authenticationSupport: 'MACsec (IEEE 802.1AE), TLS/DTLS, IPsec',
@@ -259,7 +259,7 @@ export const VEHICLE_TYPES: VehicleTypeConfig[] = [
     id: 'suv',
     name: 'SUV / Crossover',
     totalECUs: 30,
-    autonomyLevel: 'L2+ (Highway Pilot)',
+    autonomyLevel: 'L3 (Conditional — Highway)',
     typicalLifeYears: 18,
     otaCapable: true,
     v2xRequired: false,
@@ -269,7 +269,7 @@ export const VEHICLE_TYPES: VehicleTypeConfig[] = [
     id: 'commercial-truck',
     name: 'Commercial Truck',
     totalECUs: 26,
-    autonomyLevel: 'L4 (Highway Platooning)',
+    autonomyLevel: 'L4 (Highway — Emerging)',
     typicalLifeYears: 20,
     otaCapable: true,
     v2xRequired: true,
@@ -279,10 +279,65 @@ export const VEHICLE_TYPES: VehicleTypeConfig[] = [
     id: 'autonomous-shuttle',
     name: 'Autonomous Shuttle',
     totalECUs: 28,
-    autonomyLevel: 'L4/L5 (Full Autonomy)',
+    autonomyLevel: 'L4 (Geofenced Urban)',
     typicalLifeYears: 12,
     otaCapable: true,
     v2xRequired: true,
     primaryUseCase: 'Urban mobility',
+  },
+]
+
+// ---------------------------------------------------------------------------
+// SAE J3016 Autonomy Level Reference (2021 revision)
+// ---------------------------------------------------------------------------
+
+export interface SAELevel {
+  level: string
+  name: string
+  description: string
+  driverRole: string
+}
+
+export const SAE_LEVELS: SAELevel[] = [
+  {
+    level: 'L0',
+    name: 'No Driving Automation',
+    description: 'Driver performs all driving tasks.',
+    driverRole: 'Full control at all times',
+  },
+  {
+    level: 'L1',
+    name: 'Driver Assistance',
+    description:
+      'System controls steering OR speed, not both. Examples: adaptive cruise control, lane centering.',
+    driverRole: 'Must monitor and control the other axis',
+  },
+  {
+    level: 'L2',
+    name: 'Partial Driving Automation',
+    description:
+      'System controls both steering and speed simultaneously. Driver must supervise at all times. Examples: Tesla Autopilot, GM Super Cruise.',
+    driverRole: 'Must supervise and intervene immediately',
+  },
+  {
+    level: 'L3',
+    name: 'Conditional Driving Automation',
+    description:
+      'System handles all driving in specific conditions (e.g., highway < 60 km/h). Driver must respond to takeover requests within ~10 seconds. Example: Mercedes DRIVE PILOT.',
+    driverRole: 'Fallback-ready; responds to takeover requests',
+  },
+  {
+    level: 'L4',
+    name: 'High Driving Automation',
+    description:
+      'System handles all driving within a defined operational design domain (ODD) — e.g., geofenced urban area, highway corridor. No human fallback required within the ODD. Examples: Waymo robotaxi, truck platooning lead vehicle.',
+    driverRole: 'Not required within the ODD',
+  },
+  {
+    level: 'L5',
+    name: 'Full Driving Automation',
+    description:
+      'System handles all driving in all conditions, everywhere. No operational design domain restrictions. No production vehicles exist at this level as of 2026.',
+    driverRole: 'Not required — no steering wheel necessary',
   },
 ]

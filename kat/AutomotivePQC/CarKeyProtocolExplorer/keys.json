@@ -1,0 +1,22 @@
+{
+  "module": "AutomotivePQC",
+  "use_case": "CarKeyProtocolExplorer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "c84b70e2172e71a74a8b0029079859a204a014d85e84b0cef62f8a66aa2cd05f5b0eb596c97fb42928a389078b46a5ca91112324587dab5509a7cd024bd33a84"
+    },
+    {
+      "id": "mldsa44-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "a64c889ab3b3a5fcb5dc433d6ff427c12e9de2c8166cac9148e95b66b6f09c4d793682d4a153a854e4b3c6c529c24411aee60c077a7ad702e29162896d66fd59"
+    }
+  ]
+}

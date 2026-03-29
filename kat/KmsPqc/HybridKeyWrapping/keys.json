@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "HybridKeyWrapping",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "aa1c2e9bb7a60d5564f790c3e450b8494a816a24687c9ca2bd0407ebda436e0b"
+    },
+    {
+      "id": "aes256gcm-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e55f1bff8ae0c17772ac8941c1ce1fd83a52bbfae3a190fb6418b75ffda0af92"
+    }
+  ]
+}

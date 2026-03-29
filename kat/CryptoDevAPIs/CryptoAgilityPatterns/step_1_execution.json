@@ -1,0 +1,25 @@
+{
+  "kat_id": "KAT-CRYPTOAG-053",
+  "step": "step_1_execution",
+  "authoritative_source": "RFC 8032",
+  "reference_details": {
+    "standard": "https://www.rfc-editor.org/rfc/rfc8032",
+    "algorithm": "EdDSA",
+    "protocol": "CryptoAgilityPatterns step_1_execution",
+    "key_size": "Ed25519"
+  },
+  "requires_keys": ["genericpqc-01-pub", "genericpqc-01-priv"],
+  "testGroups": [
+    {
+      "curve": "Ed25519",
+      "tests": [
+        {
+          "pk": "732144a00bfd9e32232066d2b8d39661dd66cbeda36bcb6088a77fc123fcd772",
+          "msg": "456444534120456432353531392041435650205369675665722074657374",
+          "signature": "be76a69e7473441b363f0e3d75eb5ec9c9e041cbbaae36d2d1c6225d24a3f714a5bdeefe3ed250f766d5cc188515ae55b218235ba6d87747e44d094dc77ddf06",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

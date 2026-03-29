@@ -1,0 +1,22 @@
+{
+  "module": "EnergyUtilities",
+  "use_case": "SmartMeterKeyManager",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "ac1c70430dbae9eada4c722c0e807816397554f3d9ece90694e4472d3aef2a6c48754e7439247b6eca4f7f46d8e14f2cec907038e486bc852799ae0aa11faaec"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "3fd8829acfe7886137f67e7649a5051a1c264f0ac9dd04cdf132ae432ffa2485d18f49f9d2ef80a958f739aa8887da7aeb5c754d66b2608395d31e7ff694a177"
+    }
+  ]
+}

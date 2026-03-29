@@ -1,0 +1,22 @@
+{
+  "module": "EnergyUtilities",
+  "use_case": "SubstationMigrationPlanner",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e515cc8f10f694f8071f3e520d4fbf0f8459dd80ca3e94ca8075562e6ea2a7e7"
+    },
+    {
+      "id": "aes256gcm-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "0a15c34e7dceead65af525380401d8506537793ad8eeedbca874b57105572313"
+    }
+  ]
+}

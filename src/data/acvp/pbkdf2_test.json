@@ -1,0 +1,58 @@
+{
+  "algorithm": "PBKDF2",
+  "source": "Generated via Node.js crypto (OpenSSL backend), PBKDF2-HMAC-SHA256 and PBKDF2-HMAC-SHA512",
+  "testGroups": [
+    {
+      "prf": "HMAC-SHA256",
+      "keyLen": 256,
+      "tests": [
+        {
+          "tcId": 1,
+          "password": "70617373776f7264",
+          "salt": "73616c74",
+          "iterations": 1,
+          "dkLen": 32,
+          "dk": "120FB6CFFCF8B32C43E7225256C4F837A86548C92CCC35480805987CB70BE17B"
+        },
+        {
+          "tcId": 2,
+          "password": "70617373776f7264",
+          "salt": "73616c74",
+          "iterations": 4096,
+          "dkLen": 32,
+          "dk": "C5E478D59288C841AA530DB6845C4C8D962893A001CE4E11A4963873AA98134A"
+        },
+        {
+          "tcId": 3,
+          "password": "70617373776f726450415353574f524470617373776f7264",
+          "salt": "73616c7453414c5473616c7453414c5473616c7453414c5473616c7453414c5473616c74",
+          "iterations": 4096,
+          "dkLen": 40,
+          "dk": "348C89DBCBD32B2F32D814B8116E84CF2B17347EBC1800181C4E2A1FB8DD53E1C635518C7DAC47E9"
+        }
+      ]
+    },
+    {
+      "prf": "HMAC-SHA512",
+      "keyLen": 512,
+      "tests": [
+        {
+          "tcId": 4,
+          "password": "70617373776f7264",
+          "salt": "73616c74",
+          "iterations": 1,
+          "dkLen": 64,
+          "dk": "867F70CF1ADE02CFF3752599A3A53DC4AF34C7A669815AE5D513554E1C8CF252C02D470A285A0501BAD999BFE943C08F050235D7D68B1DA55E63F73B60A57FCE"
+        },
+        {
+          "tcId": 5,
+          "password": "70617373776f7264",
+          "salt": "73616c74",
+          "iterations": 4096,
+          "dkLen": 64,
+          "dk": "D197B1B33DB0143E018B12F3D1D1479E6CDEBDCC97C5C0F87F6902E072F457B5143F30602641B3D55CD335988CB36B84376060ECD532E039B742A239434AF2D5"
+        }
+      ]
+    }
+  ]
+}

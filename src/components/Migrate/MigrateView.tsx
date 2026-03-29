@@ -13,11 +13,11 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import {
   Search,
   X,
-  ArrowRightLeft,
   ChevronDown,
   ChevronUp,
   PackageSearch,
   EyeOff,
+  ArrowRightLeft,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -34,6 +34,8 @@ import { PERSONA_MIGRATE_LAYERS } from '@/data/personaConfig'
 import { Button } from '../ui/button'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
+import { ComparisonPanel } from './ComparisonPanel'
+import { StickyCompareBar } from './StickyCompareBar'
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -96,10 +98,42 @@ export const MigrateView: React.FC = () => {
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
 
-  // Local state for flat-mode filters
-  const [flatCategoryFilter, setFlatCategoryFilter] = useState('All')
-  const [vendorFilter, setVendorFilter] = useState('All')
-  const [sortBy, setSortBy] = useState<MigrateSortOption>('name')
+  // Comparison state — separate from "My Products" workflow selection
+  const MAX_COMPARE = 3
+  const [compareKeys, setCompareKeys] = useState<string[]>([])
+  const [showComparisonPanel, setShowComparisonPanel] = useState(false)
+  const comparisonPanelRef = useRef<HTMLDivElement>(null)
+
+  const handleToggleCompare = useCallback((key: string) => {
+    setCompareKeys((prev) => {
+      if (prev.includes(key)) return prev.filter((k) => k !== key)
+      if (prev.length >= MAX_COMPARE) return prev
+      return [...prev, key]
+    })
+  }, [])
+
+  const maxCompareReached = compareKeys.length >= MAX_COMPARE
+  const compareSet = useMemo(() => new Set(compareKeys), [compareKeys])
+
+  const comparisonProducts = useMemo(
+    () =>
+      compareKeys
+        .map((key) => {
+          const [name] = key.split('::')
+          return softwareData.find((s) => s.softwareName === name)
+        })
+        .filter((s): s is SoftwareItem => !!s),
+    [compareKeys] // softwareData is a module-level constant — safe to exclude
+  )
+
+  // Local state for flat-mode filters — initialized from URL params for deep linking
+  const [flatCategoryFilter, setFlatCategoryFilter] = useState(
+    () => searchParams.get('cat') ?? 'All'
+  )
+  const [vendorFilter, setVendorFilter] = useState(() => searchParams.get('vendor') ?? 'All')
+  const [sortBy, setSortBy] = useState<MigrateSortOption>(
+    () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
+  )
 
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
@@ -125,11 +159,31 @@ export const MigrateView: React.FC = () => {
         setStepFilter(null)
       }
     }
+    const cat = searchParams.get('cat')
+    if (cat !== null) setFlatCategoryFilter((prev) => (prev !== cat ? cat : prev))
+    const vendor = searchParams.get('vendor')
+    if (vendor !== null) setVendorFilter((prev) => (prev !== vendor ? vendor : prev))
+    const sort = searchParams.get('sort') as MigrateSortOption | null
+    if (sort !== null) setSortBy((prev) => (prev !== sort ? sort : prev))
+    const mode = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
+    if (mode !== null) setViewMode(mode)
+    const subcat = searchParams.get('subcat')
+    if (subcat !== null) setActiveSubCategory(subcat)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
   const syncFiltersToUrl = useCallback(
-    (overrides: { q?: string; industry?: string | null; step?: string | null; layer?: string }) => {
+    (overrides: {
+      q?: string
+      industry?: string | null
+      step?: string | null
+      layer?: string
+      cat?: string
+      vendor?: string
+      sort?: MigrateSortOption
+      mode?: 'stack' | 'cards' | 'table'
+      subcat?: string
+    }) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
@@ -137,6 +191,11 @@ export const MigrateView: React.FC = () => {
           const ind = overrides.industry !== undefined ? overrides.industry : industryFilter
           const stp = overrides.step !== undefined ? overrides.step : (stepFilter?.stepId ?? null)
           const lyr = overrides.layer !== undefined ? overrides.layer : activeLayer
+          const cat = overrides.cat !== undefined ? overrides.cat : flatCategoryFilter
+          const vendor = overrides.vendor !== undefined ? overrides.vendor : vendorFilter
+          const sort = overrides.sort !== undefined ? overrides.sort : sortBy
+          const mode = overrides.mode !== undefined ? overrides.mode : viewMode
+          const subcat = overrides.subcat !== undefined ? overrides.subcat : activeSubCategory
 
           if (q) next.set('q', q)
           else next.delete('q')
@@ -150,18 +209,56 @@ export const MigrateView: React.FC = () => {
           if (lyr && lyr !== 'All') next.set('layer', lyr)
           else next.delete('layer')
 
+          if (cat !== 'All') next.set('cat', cat)
+          else next.delete('cat')
+
+          if (vendor !== 'All') next.set('vendor', vendor)
+          else next.delete('vendor')
+
+          if (sort !== 'name') next.set('sort', sort)
+          else next.delete('sort')
+
+          if (mode !== 'stack') next.set('mode', mode)
+          else next.delete('mode')
+
+          if (subcat !== 'All') next.set('subcat', subcat)
+          else next.delete('subcat')
+
           return next
         },
         { replace: true }
       )
     },
-    [filterText, industryFilter, stepFilter, activeLayer, setSearchParams]
+    [
+      filterText,
+      industryFilter,
+      stepFilter,
+      activeLayer,
+      flatCategoryFilter,
+      vendorFilter,
+      sortBy,
+      viewMode,
+      activeSubCategory,
+      setSearchParams,
+    ]
   )
 
-  const activeInfrastructureLayer = activeLayer as InfrastructureLayerType
-  const activeTab = activeSubCategory
+  // Synchronous URL overrides — prevents first-render flash when URL params differ from
+  // persisted Zustand store values. These are used for rendering only; store setters are
+  // still called in the useEffect above so the store converges after first render.
+  const urlLayerParam = searchParams.get('layer')
+  const urlSubcatParam = searchParams.get('subcat')
+  const urlModeParam = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
+  const effectiveLayer =
+    urlLayerParam && LAYERS.some((l) => l.id === urlLayerParam) ? urlLayerParam : activeLayer
+  const effectiveSubCategory = urlSubcatParam ?? activeSubCategory
+  const effectiveViewMode = urlModeParam ?? viewMode
+
+  const activeInfrastructureLayer = effectiveLayer as InfrastructureLayerType
+  const activeTab = effectiveSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
+  const isStackAllView = effectiveViewMode === 'stack' && activeInfrastructureLayer === 'All'
 
   // Fire a history event when the product selection changes meaningfully (debounced)
   const prevProductCountRef = useRef(myProducts.length)
@@ -339,9 +436,9 @@ export const MigrateView: React.FC = () => {
         if (!item.targetIndustries?.toLowerCase().includes(q)) return false
       }
       // Layer filter (from dropdown in flat modes)
-      if (activeLayer !== 'All') {
+      if (effectiveLayer !== 'All') {
         const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
-        if (!itemLayers.includes(activeLayer)) return false
+        if (!itemLayers.includes(effectiveLayer)) return false
       }
       // Category filter (from dropdown in flat modes)
       if (flatCategoryFilter !== 'All') {
@@ -363,15 +460,15 @@ export const MigrateView: React.FC = () => {
       }
       return true
     })
-  }, [stepFilter, industryFilter, activeLayer, flatCategoryFilter, filterText, vendorFilter])
+  }, [stepFilter, industryFilter, effectiveLayer, flatCategoryFilter, filterText, vendorFilter])
 
   // Unique categories for the flat-mode category dropdown (scoped to selected layer)
   const flatCategories = useMemo(() => {
     const sourceData =
-      activeLayer !== 'All'
+      effectiveLayer !== 'All'
         ? softwareData.filter((item) => {
             const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
-            return layers.includes(activeLayer)
+            return layers.includes(effectiveLayer)
           })
         : softwareData
     const cats = new Set<string>()
@@ -379,7 +476,7 @@ export const MigrateView: React.FC = () => {
       if (item.categoryName) cats.add(item.categoryName)
     })
     return Array.from(cats).sort()
-  }, [activeLayer])
+  }, [effectiveLayer])
 
   // Reset flat category filter when layer changes and category no longer exists
   useEffect(() => {
@@ -472,12 +569,13 @@ export const MigrateView: React.FC = () => {
   // Visible product count for flat modes
   // When a search is active, hidden items are surfaced (search bypasses hide filter), so count all matches
   const flatVisibleCount = useMemo(() => {
-    const items: SoftwareItem[] = viewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
+    const items: SoftwareItem[] =
+      effectiveViewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
     if (filterText) return items.length
     return hiddenSet.size > 0
       ? items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
       : items.length
-  }, [viewMode, sortedFlatProducts, allFilteredProducts, hiddenSet, filterText])
+  }, [effectiveViewMode, sortedFlatProducts, allFilteredProducts, hiddenSet, filterText])
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
@@ -611,10 +709,10 @@ export const MigrateView: React.FC = () => {
       {/* Filter control band */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-2">
         {/* Layer dropdown — flat modes + always on mobile (mobile always shows cards) */}
-        <div className={viewMode === 'stack' ? 'md:hidden' : ''}>
+        <div className={effectiveViewMode === 'stack' ? 'md:hidden' : ''}>
           <FilterDropdown
             items={layerFilterItems}
-            selectedId={activeLayer === 'All' ? 'All' : activeLayer}
+            selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
             onSelect={(id) => {
               setActiveLayer(id)
               setFlatCategoryFilter('All')
@@ -627,12 +725,13 @@ export const MigrateView: React.FC = () => {
 
         {/* Category dropdown — flat modes + always on mobile, scoped to selected layer */}
         {flatCategories.length > 1 && (
-          <div className={viewMode === 'stack' ? 'md:hidden' : ''}>
+          <div className={effectiveViewMode === 'stack' ? 'md:hidden' : ''}>
             <FilterDropdown
               items={categoryFilterItems}
               selectedId={flatCategoryFilter}
               onSelect={(id) => {
                 setFlatCategoryFilter(id)
+                syncFiltersToUrl({ cat: id })
                 logMigrateAction('Filter Category', id)
               }}
               defaultLabel="All Categories"
@@ -648,6 +747,7 @@ export const MigrateView: React.FC = () => {
               selectedId={vendorFilter}
               onSelect={(id) => {
                 setVendorFilter(id)
+                syncFiltersToUrl({ vendor: id })
                 logMigrateAction('Filter Vendor', id)
               }}
               defaultLabel="All Vendors"
@@ -675,8 +775,14 @@ export const MigrateView: React.FC = () => {
         </div>
 
         {/* Sort — cards mode + always on mobile */}
-        <div className={viewMode !== 'cards' ? 'md:hidden' : ''}>
-          <MigrateSortControl value={sortBy} onChange={setSortBy} />
+        <div className={effectiveViewMode !== 'cards' ? 'md:hidden' : ''}>
+          <MigrateSortControl
+            value={sortBy}
+            onChange={(s) => {
+              setSortBy(s)
+              syncFiltersToUrl({ sort: s })
+            }}
+          />
         </div>
 
         {/* Restore hidden — when any products are hidden */}
@@ -694,12 +800,20 @@ export const MigrateView: React.FC = () => {
 
         {/* View toggle — desktop only (mobile always shows cards) */}
         <div className="hidden md:block">
-          <MigrateViewToggle mode={viewMode} onChange={setViewMode} />
+          <MigrateViewToggle
+            mode={effectiveViewMode}
+            onChange={(m) => {
+              setViewMode(m)
+              syncFiltersToUrl({ mode: m })
+            }}
+          />
         </div>
       </div>
 
       {/* Results count — flat modes + always on mobile */}
-      <p className={`text-xs text-muted-foreground ${viewMode === 'stack' ? 'md:hidden' : ''}`}>
+      <p
+        className={`text-xs text-muted-foreground ${effectiveViewMode === 'stack' ? 'md:hidden' : ''}`}
+      >
         {flatVisibleCount === softwareData.length ? (
           <>
             {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
@@ -708,8 +822,8 @@ export const MigrateView: React.FC = () => {
           <>
             {flatVisibleCount} of {softwareData.length} product
             {softwareData.length !== 1 ? 's' : ''}
-            {activeLayer !== 'All' &&
-              ` in ${LAYERS.find((l) => l.id === activeLayer)?.label ?? activeLayer}`}
+            {effectiveLayer !== 'All' &&
+              ` in ${LAYERS.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
           </>
         )}
       </p>
@@ -724,12 +838,15 @@ export const MigrateView: React.FC = () => {
             onHideProduct={hideProduct}
             selectedProducts={myProductsSet}
             onToggleProduct={toggleMyProduct}
+            compareProducts={compareSet}
+            onToggleCompare={handleToggleCompare}
+            maxCompareReached={maxCompareReached}
           />
         </div>
 
         {/* Desktop: mode-specific rendering */}
         <div className="hidden md:block">
-          {viewMode === 'stack' && (
+          {effectiveViewMode === 'stack' && (
             <InfrastructureStack
               activeLayer={activeInfrastructureLayer}
               onSelectLayer={(layer) => {
@@ -739,6 +856,7 @@ export const MigrateView: React.FC = () => {
               activeSubCategory={activeTab}
               onSelectSubCategory={(cat) => {
                 setActiveSubCategory(cat)
+                syncFiltersToUrl({ subcat: cat })
                 logMigrateAction('Filter Category', cat)
               }}
               layerProductCounts={layerProductCounts}
@@ -758,6 +876,9 @@ export const MigrateView: React.FC = () => {
                       onHideProduct={hideProduct}
                       selectedProducts={myProductsSet}
                       onToggleProduct={toggleMyProduct}
+                      compareProducts={compareSet}
+                      onToggleCompare={handleToggleCompare}
+                      maxCompareReached={maxCompareReached}
                     />
                   ) : (
                     <EmptyState
@@ -770,26 +891,32 @@ export const MigrateView: React.FC = () => {
             />
           )}
 
-          {viewMode === 'cards' && (
+          {effectiveViewMode === 'cards' && (
             <SoftwareCardGrid
               items={sortedFlatProducts}
               hiddenProducts={filterText ? undefined : hiddenSet}
               onHideProduct={hideProduct}
               selectedProducts={myProductsSet}
               onToggleProduct={toggleMyProduct}
+              compareProducts={compareSet}
+              onToggleCompare={handleToggleCompare}
+              maxCompareReached={maxCompareReached}
             />
           )}
 
-          {viewMode === 'table' &&
+          {effectiveViewMode === 'table' &&
             (allFilteredProducts.length > 0 ? (
               <SoftwareTable
-                key={`flat-table-${activeLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
+                key={`flat-table-${effectiveLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
                 data={allFilteredProducts}
                 defaultSort={{ key: 'softwareName', direction: 'asc' }}
                 hiddenProducts={filterText ? undefined : hiddenSet}
                 onHideProduct={hideProduct}
                 selectedProducts={myProductsSet}
                 onToggleProduct={toggleMyProduct}
+                compareProducts={compareSet}
+                onToggleCompare={handleToggleCompare}
+                maxCompareReached={maxCompareReached}
               />
             ) : (
               <EmptyState
@@ -798,7 +925,38 @@ export const MigrateView: React.FC = () => {
               />
             ))}
         </div>
+
+        {/* Comparison panel — shown inline when triggered from sticky bar */}
+        {showComparisonPanel && comparisonProducts.length >= 2 && (
+          <div ref={comparisonPanelRef} className="mt-4 pb-20">
+            <ComparisonPanel
+              products={comparisonProducts}
+              onClose={() => setShowComparisonPanel(false)}
+            />
+          </div>
+        )}
       </div>
+
+      {/* Sticky compare bar — fixed bottom, visible whenever ≥1 product is queued */}
+      <StickyCompareBar
+        compareKeys={compareKeys}
+        onRemove={handleToggleCompare}
+        onClearAll={() => {
+          setCompareKeys([])
+          setShowComparisonPanel(false)
+        }}
+        onCompare={() => {
+          setShowComparisonPanel(true)
+          requestAnimationFrame(() =>
+            comparisonPanelRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+          )
+        }}
+        showBrowseHint={isStackAllView}
+        onBrowseAll={() => {
+          setViewMode('table')
+          syncFiltersToUrl({ mode: 'table' })
+        }}
+      />
     </div>
   )
 }

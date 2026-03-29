@@ -1,0 +1,22 @@
+{
+  "module": "ConfidentialComputing",
+  "use_case": "EncryptionMechanisms",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "5c6d5a436f634c88c5cbea8040f1aa16efc1e9d3c7f7022f4970972f733958f3d55e74e6dd2b616c0786b0c25ba9ba2e2c8356f9e7b11141a8f693d9d8343c3c"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "591595e241d94f5d2bcbccf804363b363c482304f1e7b57391a3bfc85784afecc056771c554996200f2864dfcc5c72a9d446f6247873b4afce78d16f6d958ef3"
+    }
+  ]
+}

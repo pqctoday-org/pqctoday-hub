@@ -1,0 +1,22 @@
+{
+  "module": "IoTOT",
+  "use_case": "DTLSHandshakeVisualizer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "0efb2c5e4c63ce91d5b70deab739d5dd0c116d1e1630d462fc3709aa61085fc0cf7df5f6d810ab7f68547d9480417826883628791e15a23e141c5c661b767388"
+    },
+    {
+      "id": "mlkem768-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "8301e4b0922307516aafe3060c539c9c00f695b50f890b4bddcbbcec347c6d773a3e9d6a988eefa1fb6f9a00641eb9e2e8f3efb6e1e2da1d8d73d8b6f78307c4"
+    }
+  ]
+}

@@ -8,6 +8,47 @@ import {
   type FIPSStatus,
   type PerformanceTier,
 } from '../data/pqcLibraryData'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const DEVAPI_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'devapi-pqc-sign',
+    useCase: 'PQC library signing (ML-DSA-65)',
+    standard: 'FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'API request signature: method=POST,path=/v1/sign,timestamp=1735689600',
+  },
+  {
+    id: 'devapi-ecdsa-verify',
+    useCase: 'Classical ECDSA P-256 verification',
+    standard: 'FIPS 186-5 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-sigver', curve: 'P-256' },
+  },
+  {
+    id: 'devapi-eddsa-verify',
+    useCase: 'EdDSA Ed25519 verification',
+    standard: 'RFC 8032 ACVP',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
+    kind: { type: 'eddsa-sigver' },
+  },
+  {
+    id: 'devapi-sha3-256',
+    useCase: 'SHA3-256 post-quantum hash API',
+    standard: 'FIPS 202',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/202/final',
+    kind: { type: 'sha3-256-hash', testIndex: 1 },
+  },
+  {
+    id: 'devapi-sha512',
+    useCase: 'SHA-512 high-security hash API',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha512-hash', testIndex: 1 },
+  },
+]
 
 type FIPSFilter = 'All' | FIPSStatus
 type PerfFilter = 'All' | PerformanceTier
@@ -379,6 +420,12 @@ export const PQCLibraryExplorer: React.FC = () => {
           />
         ))}
       </div>
+
+      <KatValidationPanel
+        specs={DEVAPI_KAT_SPECS}
+        label="Crypto Dev APIs Known Answer Tests"
+        authorityNote="FIPS 204 · FIPS 186-5 · RFC 8032"
+      />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Bot, Clock, Network, X } from 'lucide-react'
+import { Bot, Clock, Network, Bookmark, X } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 
@@ -15,6 +15,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
     { id: 'chat', label: 'Assistant', icon: Bot },
     { id: 'history', label: 'Journey', icon: Clock },
     { id: 'graph', label: 'Graph', icon: Network },
+    { id: 'bookmarks', label: 'Bookmarks', icon: Bookmark },
   ]
 
   return (

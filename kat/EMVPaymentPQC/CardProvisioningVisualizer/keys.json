@@ -1,0 +1,22 @@
+{
+  "module": "EMVPaymentPQC",
+  "use_case": "CardProvisioningVisualizer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "620f08509be8cea7b8f7a67c0d341b21ee7e984d379541a4bce20e505052ee2d22a77a975aba713d7cef73e1659e26252c30535eae8c705369b2766dec976974"
+    },
+    {
+      "id": "mldsa44-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "c330d6802b94e7411f65fdfc5ffd3a6c9d8d336771264d82645bb6d111614d425fb0d431f6369a383f236457da5149dbba8994e3dd86e044124ad62225b9c959"
+    }
+  ]
+}

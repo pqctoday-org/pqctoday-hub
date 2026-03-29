@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.57.0",
+  "version": "2.64.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -52,7 +52,10 @@
     "notebooklm": "npx tsx scripts/generate-notebooklm.ts",
     "validate:data": "tsx scripts/validate-data-integrity.ts",
     "validate:data:json": "tsx scripts/validate-data-integrity.ts --json",
-    "validate:data:verbose": "tsx scripts/validate-data-integrity.ts --verbose"
+    "validate:data:verbose": "tsx scripts/validate-data-integrity.ts --verbose",
+    "check:urls": "tsx scripts/check-url-liveness.ts",
+    "check:urls:verbose": "tsx scripts/check-url-liveness.ts --verbose",
+    "check:urls:json": "tsx scripts/check-url-liveness.ts --json"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3"
@@ -62,6 +65,9 @@
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
     "@oqs/liboqs-js": "^0.15.1",
+    "@peculiar/asn1-schema": "^2.6.0",
+    "@peculiar/asn1-x509": "^2.6.1",
+    "@peculiar/asn1-x509-post-quantum": "^2.6.1",
     "@pqctoday/softhsm-wasm": "file:./src/vendor/softhsm-wasm",
     "@react-oauth/google": "^0.13.4",
     "@scure/base": "^2.0.0",

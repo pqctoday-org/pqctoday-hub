@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import clsx from 'clsx'
 import type { LibraryItem } from '../../data/libraryData'
 import {
@@ -12,12 +12,15 @@ import {
   Eye,
   Info,
   Sparkles,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 import { StatusBadge } from '../common/StatusBadge'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 
 interface LibraryTreeTableProps {
@@ -54,6 +57,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   defaultSort,
   defaultExpandAll = false,
 }) => {
+  const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
+  const libraryBookmarkSet = useMemo(() => new Set(libraryBookmarks), [libraryBookmarks])
   const [expandedIds, setExpandedIds] = useState<Set<string>>(() => {
     if (defaultExpandAll) {
       return getAllExpandedIds(data)
@@ -233,6 +238,25 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   </button>
                 )
               })()}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  toggleLibraryBookmark(item.referenceId)
+                }}
+                className="p-1 rounded hover:bg-muted/50 transition-colors"
+                aria-label={
+                  libraryBookmarkSet.has(item.referenceId)
+                    ? `Remove ${item.referenceId} bookmark`
+                    : `Bookmark ${item.referenceId}`
+                }
+                title={libraryBookmarkSet.has(item.referenceId) ? 'Remove bookmark' : 'Bookmark'}
+              >
+                {libraryBookmarkSet.has(item.referenceId) ? (
+                  <BookmarkCheck size={16} className="text-primary" />
+                ) : (
+                  <Bookmark size={16} className="text-muted-foreground" />
+                )}
+              </button>
               <EndorseButton
                 endorseUrl={buildLibraryEndorsementUrl(item)}
                 resourceLabel={item.referenceId}

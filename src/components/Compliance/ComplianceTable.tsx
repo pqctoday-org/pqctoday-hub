@@ -26,12 +26,32 @@ interface ComplianceTableProps {
   isRefreshing?: boolean
   lastUpdated?: Date | null
   onEnrich?: (r: ComplianceRecord) => void
+  /** @deprecated Use filterText prop for controlled mode */
   initialFilter?: string
+  /** @deprecated Use selectedRecordId prop for controlled mode */
   initialSelectedId?: string
+  /** Controlled filter state (lifted to ComplianceView for URL sync) */
+  filterText?: string
+  pqcFilters?: string[]
+  categoryFilters?: string[]
+  sourceFilters?: string[]
+  vendorFilters?: string[]
+  sortColumn?: SortColumn
+  sortDirection?: SortDirection
+  currentPage?: number
+  selectedRecordId?: string
+  onFilterTextChange?: (text: string) => void
+  onPqcFiltersChange?: (filters: string[]) => void
+  onCategoryFiltersChange?: (filters: string[]) => void
+  onSourceFiltersChange?: (filters: string[]) => void
+  onVendorFiltersChange?: (filters: string[]) => void
+  onSortColumnChange?: (col: SortColumn) => void
+  onSortDirectionChange?: (dir: SortDirection) => void
+  onCurrentPageChange?: (page: number) => void
 }
 
-type SortDirection = 'asc' | 'desc'
-type SortColumn = keyof ComplianceRecord
+export type SortDirection = 'asc' | 'desc'
+export type SortColumn = keyof ComplianceRecord
 
 const PQC_ALGOS = ['ML-KEM', 'ML-DSA', 'SLH-DSA', 'LMS', 'XMSS', 'HSS', 'FN-DSA', 'Falcon']
 
@@ -143,7 +163,7 @@ const ComplianceRow = ({
               id={`pqc-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showPqcTooltip
                   ? 'opacity-100 pointer-events-auto'
@@ -205,7 +225,7 @@ const ComplianceRow = ({
               id={`classical-tooltip-${index}`}
               role="tooltip"
               className={clsx(
-                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-[100] transition-opacity whitespace-normal',
+                'absolute left-1/2 -translate-x-1/2 max-w-[min(256px,calc(100vw-32px))] w-64 p-2 bg-popover border border-border rounded shadow-xl text-xs text-center z-overlay transition-opacity whitespace-normal',
                 index < 2 ? 'top-full mt-2' : 'bottom-full mb-2',
                 showClassicalTooltip
                   ? 'opacity-100 pointer-events-auto'
@@ -255,21 +275,60 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onEnrich,
   initialFilter,
   initialSelectedId,
+  filterText: filterTextProp,
+  pqcFilters: pqcFiltersProp,
+  categoryFilters: categoryFiltersProp,
+  sourceFilters: sourceFiltersProp,
+  vendorFilters: vendorFiltersProp,
+  sortColumn: sortColumnProp,
+  sortDirection: sortDirectionProp,
+  currentPage: currentPageProp,
+  selectedRecordId,
+  onFilterTextChange,
+  onPqcFiltersChange,
+  onCategoryFiltersChange,
+  onSourceFiltersChange,
+  onVendorFiltersChange,
+  onSortColumnChange,
+  onSortDirectionChange,
+  onCurrentPageChange,
 }) => {
-  const [filterText, setFilterText] = useState(initialFilter ?? '')
-  const [pqcFilters, setPqcFilters] = useState<string[]>([])
-  const [categoryFilters, setCategoryFilters] = useState<string[]>([])
-  const [sourceFilters, setSourceFilters] = useState<string[]>([])
-  const [vendorFilters, setVendorFilters] = useState<string[]>([])
+  // Local state fallbacks (used when not in controlled mode)
+  const [localFilterText, setLocalFilterText] = useState(initialFilter ?? '')
+  const [localPqcFilters, setLocalPqcFilters] = useState<string[]>([])
+  const [localCategoryFilters, setLocalCategoryFilters] = useState<string[]>([])
+  const [localSourceFilters, setLocalSourceFilters] = useState<string[]>([])
+  const [localVendorFilters, setLocalVendorFilters] = useState<string[]>([])
+  const [localSortColumn, setLocalSortColumn] = useState<SortColumn>('date')
+  const [localSortDirection, setLocalSortDirection] = useState<SortDirection>('desc')
+  const [localCurrentPage, setLocalCurrentPage] = useState(1)
+
+  // Resolve controlled vs local
+  const filterText = filterTextProp ?? localFilterText
+  const pqcFilters = pqcFiltersProp ?? localPqcFilters
+  const categoryFilters = categoryFiltersProp ?? localCategoryFilters
+  const sourceFilters = sourceFiltersProp ?? localSourceFilters
+  const vendorFilters = vendorFiltersProp ?? localVendorFilters
+  const sortColumn = sortColumnProp ?? localSortColumn
+  const sortDirection = sortDirectionProp ?? localSortDirection
+  const currentPage = currentPageProp ?? localCurrentPage
+  const autoOpenId = selectedRecordId ?? initialSelectedId
+
+  const setFilterText = onFilterTextChange ?? setLocalFilterText
+  const setPqcFilters = onPqcFiltersChange ?? ((f: string[]) => setLocalPqcFilters(f))
+  const setCategoryFilters =
+    onCategoryFiltersChange ?? ((f: string[]) => setLocalCategoryFilters(f))
+  const setSourceFilters = onSourceFiltersChange ?? ((f: string[]) => setLocalSourceFilters(f))
+  const setVendorFilters = onVendorFiltersChange ?? ((f: string[]) => setLocalVendorFilters(f))
+  const setSortColumn = onSortColumnChange ?? setLocalSortColumn
+  const setSortDirection = onSortDirectionChange ?? setLocalSortDirection
+  const setCurrentPage = onCurrentPageChange ?? setLocalCurrentPage
 
   const [showFilterMenu, setShowFilterMenu] = useState(false)
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [showSourceMenu, setShowSourceMenu] = useState(false)
   const [showVendorMenu, setShowVendorMenu] = useState(false)
   const [vendorSearch, setVendorSearch] = useState('')
-  const [sortColumn, setSortColumn] = useState<SortColumn>('date')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
-  const [currentPage, setCurrentPage] = useState(1)
   const ITEMS_PER_PAGE = 50
 
   const handleSort = (column: SortColumn) => {
@@ -281,18 +340,17 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     }
   }
 
-  // Reset to page 1 when filters change
+  // Debounced active filters for visual feedback
   const [isFiltering, setIsFiltering] = useState(false)
   const [activeFilters, setActiveFilters] = useState({
-    text: '',
-    pqc: [] as string[],
-    category: [] as string[],
-    source: [] as string[],
-    vendor: [] as string[],
+    text: filterText,
+    pqc: pqcFilters,
+    category: categoryFilters,
+    source: sourceFilters,
+    vendor: vendorFilters,
     vendorSearch: '',
   })
 
-  // Sync external state to internal activeFilters with a small delay to show loader
   React.useEffect(() => {
     setIsFiltering(true)
     const timer = setTimeout(() => {
@@ -304,37 +362,49 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         vendor: vendorFilters,
         vendorSearch: vendorSearch,
       })
-      setCurrentPage(1)
+      if (!onCurrentPageChange) setLocalCurrentPage(1)
       setIsFiltering(false)
-    }, 400) // 400ms delay for visual feedback
+    }, 400)
     return () => clearTimeout(timer)
-  }, [filterText, pqcFilters, categoryFilters, sourceFilters, vendorFilters, vendorSearch])
+  }, [
+    filterText,
+    pqcFilters,
+    categoryFilters,
+    sourceFilters,
+    vendorFilters,
+    vendorSearch,
+    onCurrentPageChange,
+  ])
 
   const handleTogglePqcFilter = (filter: string) => {
-    setPqcFilters((prev) =>
-      prev.includes(filter) ? prev.filter((f) => f !== filter) : [...prev, filter]
-    )
+    const next = pqcFilters.includes(filter)
+      ? pqcFilters.filter((f) => f !== filter)
+      : [...pqcFilters, filter]
+    setPqcFilters(next)
     setCurrentPage(1)
   }
 
   const handleToggleCategoryFilter = (category: string) => {
-    setCategoryFilters((prev) =>
-      prev.includes(category) ? prev.filter((c) => c !== category) : [...prev, category]
-    )
+    const next = categoryFilters.includes(category)
+      ? categoryFilters.filter((c) => c !== category)
+      : [...categoryFilters, category]
+    setCategoryFilters(next)
     setCurrentPage(1)
   }
 
   const handleToggleSourceFilter = (src: string) => {
-    setSourceFilters((prev) =>
-      prev.includes(src) ? prev.filter((s) => s !== src) : [...prev, src]
-    )
+    const next = sourceFilters.includes(src)
+      ? sourceFilters.filter((s) => s !== src)
+      : [...sourceFilters, src]
+    setSourceFilters(next)
     setCurrentPage(1)
   }
 
   const handleToggleVendorFilter = (vendor: string) => {
-    setVendorFilters((prev) =>
-      prev.includes(vendor) ? prev.filter((v) => v !== vendor) : [...prev, vendor]
-    )
+    const next = vendorFilters.includes(vendor)
+      ? vendorFilters.filter((v) => v !== vendor)
+      : [...vendorFilters, vendor]
+    setVendorFilters(next)
     setCurrentPage(1)
   }
 
@@ -936,7 +1006,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                   record={record}
                   index={index}
                   onEnrich={onEnrich}
-                  autoOpen={record.id === initialSelectedId}
+                  autoOpen={record.id === autoOpenId}
                 />
               ))}
               {filteredAndSortedData.length === 0 && (
@@ -965,7 +1035,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
               disabled={currentPage === 1}
               className="bg-card/50 border-input"
             >
@@ -977,7 +1047,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             <Button
               variant="outline"
               size="sm"
-              onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+              onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
               disabled={currentPage === totalPages}
               className="bg-card/50 border-input"
             >

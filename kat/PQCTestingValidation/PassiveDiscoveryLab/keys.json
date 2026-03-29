@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "PassiveDiscoveryLab",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "f1921713de90a744e6464e46834ac8881bfd9c695eb4df6a80d07089655f76b872c20a4138670dbbdc863c5fcd4dd195cfbc53d19fbafc844a1e24e68ceb13f3"
+    },
+    {
+      "id": "mldsa65-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "58cd2882a24c1607af037e59a3c04f15e3e7571673e87b1edc1f05ea531fd016b46329c169fb57515922ab015ca36fc2404f04152c738735e4776ce89c1a71b9"
+    }
+  ]
+}

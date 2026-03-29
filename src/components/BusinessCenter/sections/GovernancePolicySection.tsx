@@ -25,9 +25,14 @@ export function GovernancePolicySection({
   onViewArtifact,
   onEditArtifact,
   onDeleteArtifact,
+  onRenameArtifact,
+  typeFilter,
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
-  const artifacts = metrics.artifactsByPillar.governance
+  const allArtifacts = metrics.artifactsByPillar.governance
+  const artifacts = typeFilter && typeFilter !== 'all'
+    ? allArtifacts.filter((d) => d.type === typeFilter)
+    : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.governance
   const sourceModules = PILLAR_SOURCE_MODULES.governance
   const existingTypes = new Set(artifacts.map((a) => a.type))
@@ -80,6 +85,7 @@ export function GovernancePolicySection({
                   onView={onViewArtifact}
                   onEdit={onEditArtifact}
                   onDelete={onDeleteArtifact}
+                  onRename={onRenameArtifact}
                 />
               ))}
               {pillarTypes

@@ -1,0 +1,22 @@
+{
+  "module": "NetworkSecurityPQC",
+  "use_case": "IDSSignatureUpdater",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "526ad2c5644626237b23afdb1db543a616778bb69137d9e62cc40db10fa7b3df1f4b17281eedfb40440bb66db50c925430b749189a8a0d8b31fcfb959f15a0a6"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "603561f5eb5f37cfac8286e256c4904bc64867d0a3077778d05e21ced39e49d7198eb10253a696c07c7be318508b7e22c5998568be551727a6a78a934c26ebf9"
+    }
+  ]
+}

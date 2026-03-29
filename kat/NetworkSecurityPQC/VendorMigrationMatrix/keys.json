@@ -1,0 +1,22 @@
+{
+  "module": "NetworkSecurityPQC",
+  "use_case": "VendorMigrationMatrix",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "4af79a14f6618784453ffd9a0a8e5a0fe78aeb45e2fc741b43b984b03e257d7fbbc1ca8fdfae0403771a9bfc56c945dfda2bb26fdd40c4f8d3d7c6b705d9fc65"
+    },
+    {
+      "id": "mlkem768-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "84cd6d6a7df1ededd86c62c50febad8f64fe91d71518b17836970412e354b0c92cb0eb5eb7a60f874dfe94d77a6d10987adc9e2da167582a770344bf8f678de6"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "SecureBootPQC",
+  "use_case": "SecureBootChainAnalyzer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "db418379bd451e1a0e6307031963d48f349b619dd2839ffe75f01828ed9968adc72b7f821ec7cba142fbbc87545592957d7e613fbd2e4f02212407a73e39cbbd"
+    },
+    {
+      "id": "mldsa87-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "68eff41ea4ea6ac6ea02bb7dfb2fbb28e55b12c89ca8389986767d31d0488c9e7aa9bed844ade8a264ce51d51289c39dd316e7a0cbccafa85ad27570160f902e"
+    }
+  ]
+}

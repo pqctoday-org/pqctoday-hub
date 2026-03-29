@@ -12,6 +12,9 @@ import { quizQuestions } from '@/data/quizDataLoader'
 import { authoritativeSources } from '@/data/authoritativeSourcesData'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_TO_TRACK } from '@/components/PKILearning/moduleData'
 import { PERSONAS } from '@/data/learningPersonas'
+import { moduleQaCrossRefs } from '@/data/moduleQaData'
+import { vendors } from '@/data/vendorData'
+import { algorithmsData as algorithmTransitions } from '@/data/algorithmsData'
 import type {
   EntityType,
   RelationshipType,
@@ -241,6 +244,34 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     }
   }
 
+  // Ensure country nodes exist for leaders and vendors (not just timeline)
+  for (const leader of leadersData) {
+    if (!leader.country) continue
+    const cid = makeNodeId('country', leader.country)
+    if (!nodes.has(cid)) {
+      addNode(nodes, {
+        id: cid,
+        entityType: 'country',
+        label: leader.country,
+        metadata: {},
+        connectionCount: 0,
+      })
+    }
+  }
+  for (const vendor of vendors) {
+    if (!vendor.hqCountry || vendor.vendorId === 'VND-000') continue
+    const cid = makeNodeId('country', vendor.hqCountry)
+    if (!nodes.has(cid)) {
+      addNode(nodes, {
+        id: cid,
+        entityType: 'country',
+        label: vendor.hqCountry,
+        metadata: {},
+        connectionCount: 0,
+      })
+    }
+  }
+
   // Threats
   for (const threat of threatsData) {
     addNode(nodes, {
@@ -299,6 +330,22 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     // software → certification edge
     const swId = makeNodeId('software', cert.softwareName)
     addEdge(edges, edgeSet, nodes, 'software-certified', swId, certNodeId, 'certified by')
+
+    // certification → algorithm (pqcAlgorithms field)
+    for (const family of extractAlgorithmFamilies(cert.pqcAlgorithms)) {
+      const algoNodeId = makeNodeId('algorithm', slugify(family))
+      if (!nodes.has(algoNodeId)) {
+        addNode(nodes, {
+          id: algoNodeId,
+          entityType: 'algorithm',
+          label: family,
+          description: 'Validated by certifications',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+      addEdge(edges, edgeSet, nodes, 'certification-validates-algorithm', certNodeId, algoNodeId, 'validates')
+    }
   }
 
   // Leaders
@@ -321,6 +368,21 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     const countryId = makeNodeId('country', leader.country)
     if (nodes.has(countryId)) {
       addEdge(edges, edgeSet, nodes, 'leader-country', makeNodeId('leader', leader.id), countryId)
+    }
+
+    // leader → library (keyResourceUrl — library referenceId values)
+    if (leader.keyResourceUrl?.length) {
+      for (const ref of leader.keyResourceUrl) {
+        addEdge(
+          edges,
+          edgeSet,
+          nodes,
+          'leader-references-library',
+          makeNodeId('leader', leader.id),
+          makeNodeId('library', ref),
+          'references'
+        )
+      }
     }
   }
 
@@ -419,6 +481,25 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     })
   }
 
+  // Vendors
+  for (const vendor of vendors) {
+    if (!vendor.vendorId || vendor.vendorId === 'VND-000') continue
+    addNode(nodes, {
+      id: makeNodeId('vendor', vendor.vendorId),
+      entityType: 'vendor',
+      label: vendor.vendorDisplayName,
+      description: `${vendor.vendorName} — ${vendor.entityCategory}`,
+      metadata: {
+        country: vendor.hqCountry,
+        type: vendor.vendorType,
+        category: vendor.entityCategory,
+        pqcCommitment: vendor.pqcCommitment,
+        productCount: vendor.productCount ?? 0,
+      },
+      connectionCount: 0,
+    })
+  }
+
   // ── 2. Create edges from relationship fields ──
 
   // library → library (dependencies)
@@ -507,6 +588,22 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     }
   }
 
+  // compliance → country (countries array)
+  for (const fw of complianceFrameworks) {
+    if (!fw.countries?.length) continue
+    for (const country of fw.countries) {
+      if (!country) continue
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'compliance-applies-to-country',
+        makeNodeId('compliance', fw.id),
+        makeNodeId('country', country)
+      )
+    }
+  }
+
   // threat → module (relatedModules)
   for (const threat of threatsData) {
     if (!threat.relatedModules?.length) continue
@@ -523,18 +620,48 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     }
   }
 
-  // glossary → module (relatedModule)
+  // glossary → module/entity (relatedModule)
+  // /learn/X           → module node
+  // /library?ref=X     → specific library node
+  // /algorithms        → algorithm node matched by term name
+  // /threats           → threat node matched by term name
+  // /migrate, /compliance, /timeline, /library, /playground, /openssl → no single entity anchor; skip
   for (const term of glossaryTerms) {
     if (!term.relatedModule) continue
-    const modId = term.relatedModule.replace('/learn/', '')
-    addEdge(
-      edges,
-      edgeSet,
-      nodes,
-      'glossary-teaches',
-      makeNodeId('glossary', term.term),
-      makeNodeId('module', modId)
-    )
+    const route = term.relatedModule
+    const glossaryNodeId = makeNodeId('glossary', term.term)
+
+    if (route.startsWith('/learn/')) {
+      const modId = route.replace('/learn/', '')
+      addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, makeNodeId('module', modId))
+    } else if (route.startsWith('/library?ref=')) {
+      const refId = decodeURIComponent(route.replace('/library?ref=', ''))
+      addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, makeNodeId('library', refId))
+    } else if (route === '/algorithms') {
+      // Exact match first, then substring fallback
+      const exactId = makeNodeId('algorithm', term.term)
+      if (nodes.has(exactId)) {
+        addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, exactId)
+      } else {
+        for (const [nid, node] of nodes) {
+          if (node.entityType === 'algorithm' && node.label.toLowerCase().includes(term.term.toLowerCase())) {
+            addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, nid)
+            break
+          }
+        }
+      }
+    } else if (route === '/threats') {
+      for (const [nid, node] of nodes) {
+        if (
+          node.entityType === 'threat' &&
+          (node.label.toLowerCase().includes(term.term.toLowerCase()) ||
+            (node.description ?? '').toLowerCase().includes(term.term.toLowerCase()))
+        ) {
+          addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, nid)
+          break
+        }
+      }
+    }
   }
 
   // quiz (by category) → module
@@ -566,6 +693,48 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
         makeNodeId('software', sw.softwareName),
         makeNodeId('module', modId)
       )
+    }
+  }
+
+  // vendor → software (via vendorId on softwareData)
+  for (const sw of softwareData) {
+    if (!sw.vendorId) continue
+    addEdge(
+      edges,
+      edgeSet,
+      nodes,
+      'vendor-produces',
+      makeNodeId('vendor', sw.vendorId),
+      makeNodeId('software', sw.softwareName),
+      'produces'
+    )
+  }
+
+  // vendor → country
+  for (const vendor of vendors) {
+    if (!vendor.vendorId || vendor.vendorId === 'VND-000' || !vendor.hqCountry) continue
+    const countryId = makeNodeId('country', vendor.hqCountry)
+    if (nodes.has(countryId)) {
+      addEdge(edges, edgeSet, nodes, 'vendor-country', makeNodeId('vendor', vendor.vendorId), countryId)
+    }
+  }
+
+  // software → algorithm (via pqcSupport field)
+  for (const sw of softwareData) {
+    if (!sw.pqcSupport) continue
+    for (const family of extractAlgorithmFamilies(sw.pqcSupport)) {
+      const algoNodeId = makeNodeId('algorithm', slugify(family))
+      if (!nodes.has(algoNodeId)) {
+        addNode(nodes, {
+          id: algoNodeId,
+          entityType: 'algorithm',
+          label: family,
+          description: 'Implemented by software products',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+      addEdge(edges, edgeSet, nodes, 'software-implements-algorithm', makeNodeId('software', sw.softwareName), algoNodeId, 'implements')
     }
   }
 
@@ -633,6 +802,43 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     }
   }
 
+  // module → * edges (QA cross-references from module_qa_combined CSV)
+  for (const qa of moduleQaCrossRefs) {
+    const moduleNodeId = makeNodeId('module', qa.moduleId)
+    if (!nodes.has(moduleNodeId)) continue
+
+    for (const ref of qa.libraryRefs) {
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('library', ref), 'references')
+    }
+    for (const ref of qa.complianceRefs) {
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('compliance', ref), 'references')
+    }
+    for (const ref of qa.threatRefs) {
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('threat', ref), 'references')
+    }
+    for (const ref of qa.leaderRefs) {
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('leader', ref), 'references')
+    }
+    for (const ref of qa.migrateRefs) {
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('software', ref), 'references')
+    }
+    for (const ref of qa.algorithmRefs) {
+      const algoSlug = slugify(ref)
+      const algoNodeId = makeNodeId('algorithm', algoSlug)
+      if (!nodes.has(algoNodeId)) {
+        addNode(nodes, {
+          id: algoNodeId,
+          entityType: 'algorithm',
+          label: ref,
+          description: 'Referenced by module Q&A',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, algoNodeId, 'references')
+    }
+  }
+
   // threat → algorithm edges (cryptoAtRisk and pqcReplacement fields)
   for (const threat of threatsData) {
     const threatNodeId = makeNodeId('threat', threat.threatId)
@@ -683,6 +889,41 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
         algoNodeId,
         'replaced by'
       )
+    }
+  }
+
+  // algorithm transitions (classical → PQC replacement chains)
+  for (const transition of algorithmTransitions) {
+    const classicalFamilies = extractAlgorithmFamilies(transition.classical)
+    const pqcFamilies = extractAlgorithmFamilies(transition.pqc)
+
+    for (const classical of classicalFamilies) {
+      const classicalNodeId = makeNodeId('algorithm', slugify(classical))
+      if (!nodes.has(classicalNodeId)) {
+        addNode(nodes, {
+          id: classicalNodeId,
+          entityType: 'algorithm',
+          label: classical,
+          description: 'Classical algorithm being replaced',
+          metadata: { libraryCount: 0 },
+          connectionCount: 0,
+        })
+      }
+
+      for (const pqc of pqcFamilies) {
+        const pqcNodeId = makeNodeId('algorithm', slugify(pqc))
+        if (!nodes.has(pqcNodeId)) {
+          addNode(nodes, {
+            id: pqcNodeId,
+            entityType: 'algorithm',
+            label: pqc,
+            description: 'PQC replacement algorithm',
+            metadata: { libraryCount: 0 },
+            connectionCount: 0,
+          })
+        }
+        addEdge(edges, edgeSet, nodes, 'algorithm-replaces', pqcNodeId, classicalNodeId, 'replaces')
+      }
     }
   }
 

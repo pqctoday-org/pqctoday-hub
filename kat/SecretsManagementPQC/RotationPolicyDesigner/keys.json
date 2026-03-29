@@ -1,0 +1,22 @@
+{
+  "module": "SecretsManagementPQC",
+  "use_case": "RotationPolicyDesigner",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "HMAC-SHA-256",
+  "keys": [
+    {
+      "id": "hmacsha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "e4a9fc45c401b3b96d6bc5c80d75cd05b182b8a02fe7454d9f28d931ec0a7954"
+    },
+    {
+      "id": "hmacsha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "HMAC-SHA-256",
+      "value": "9573ad43ad467c4fe07c68c9b9cdc71333ba7886b80be5a009cd7d6a8c5bb689"
+    }
+  ]
+}

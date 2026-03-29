@@ -1,0 +1,22 @@
+{
+  "module": "SecretsManagementPQC",
+  "use_case": "SecretsArchitectureMapper",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "6b3d3ac17cc475726cd913d434524f8965877b344ce3bbeee24ad92cf81d2e7a"
+    },
+    {
+      "id": "aes256gcm-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "8619b6f610f6a8e045d8f38fa0cdf55af63a0b8ce1e4a71f6a383fac4536fbd7"
+    }
+  ]
+}

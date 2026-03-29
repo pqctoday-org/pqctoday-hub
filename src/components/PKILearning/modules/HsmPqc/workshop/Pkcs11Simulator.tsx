@@ -30,6 +30,40 @@ import {
   hsm_getMechanismList,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const HSMPQC_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'hsm-mldsa-sign',
+    useCase: 'PKCS#11 ML-DSA mechanism test (ML-DSA-65)',
+    standard: 'PKCS#11 v3.2 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'PKCS#11 C_Sign: CKM_ML_DSA mechanism test vector',
+  },
+  {
+    id: 'hsm-mlkem-kem',
+    useCase: 'PKCS#11 ML-KEM mechanism test (ML-KEM-768)',
+    standard: 'PKCS#11 v3.2 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'hsm-aesgcm-decrypt',
+    useCase: 'PKCS#11 AES-GCM mechanism test',
+    standard: 'PKCS#11 v3.2 + SP 800-38D ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-decrypt' },
+  },
+  {
+    id: 'hsm-aeskw-wrap',
+    useCase: 'PKCS#11 AES key wrap mechanism test',
+    standard: 'PKCS#11 v3.2 + RFC 3394 ACVP',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
+    kind: { type: 'aeskw-wrap' },
+  },
+]
 
 // ── Per-step live state ───────────────────────────────────────────────────────
 
@@ -655,6 +689,12 @@ export const Pkcs11Simulator: React.FC = () => {
           hardware security module. For educational purposes only.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={HSMPQC_KAT_SPECS}
+        label="HSM PQC Known Answer Tests"
+        authorityNote="PKCS#11 v3.2 · FIPS 203 · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

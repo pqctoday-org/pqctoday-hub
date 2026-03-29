@@ -27,6 +27,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Map all cryptographic assets across your system topology — protocol endpoints, key stores, certificate chains, and embedded crypto.',
       curious:
         'Ask your IT team to make a list of all the encryption your organization uses — think of it as checking all the locks on your doors before getting new ones.',
+      ops: 'Run an infrastructure discovery scan to identify all active certificates, TLS endpoints, and key stores.',
+      researcher: 'Systematically catalog cryptographic implementations to analyze the attack surface area across dependencies.',
     },
   },
   {
@@ -41,6 +43,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Map all systems consuming cryptographic services — direct and transitive — to scope the migration effort.',
       curious:
         'Find out which of your computer systems use encryption that needs upgrading — your IT team can help.',
+      ops: 'Audit production environments to locate services currently negotiating quantum-vulnerable protocols.',
+      researcher: 'Identify all instances of vulnerable algorithms within the operational environment to build an empirical risk model.',
     },
   },
   {
@@ -52,6 +56,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Audit the data sensitivity levels your code handles — PII, financial, and health data in long-lived stores drive HNDL risk.',
       curious:
         'Figure out which of your important data (customer records, financial info, health data) needs the strongest protection from future quantum computers.',
+      ops: 'Ensure storage and backup policies map to data sensitivity classifications aligned with HNDL risk.',
+      researcher: 'Analyze data schemas to categorize information assets according to their Harvest-Now-Decrypt-Later exploitability.',
     },
   },
   {
@@ -65,6 +71,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Design a crypto abstraction layer that supports algorithm negotiation and hybrid schemes across the infrastructure.',
       curious:
         'Make your encryption systems flexible so they can be updated to new methods in the future — like installing modular locks that can be rekeyed.',
+      ops: 'Deploy configuration-driven cryptographic proxies and terminate TLS at agile gateways.',
+      researcher: 'Implement cryptographic abstraction interfaces to facilitate comparative algorithm testing without system disruption.',
     },
   },
   {
@@ -78,6 +86,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Conduct architecture review workshops focused on PQC migration patterns and hybrid deployment strategies.',
       curious:
         'Start learning about quantum computing threats and share what you learn with your team — awareness is the first step.',
+      ops: 'Train deployment teams and NOC on identifying and managing PQC-related incidents and configuration changes.',
+      researcher: 'Publish internal analyses and organize technical deep-dives on the mechanics of PQC algorithms.',
     },
   },
   {
@@ -91,6 +101,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Evaluate PQC-ready libraries for compatibility with your infrastructure topology, HSM integrations, and deployment pipeline.',
       curious:
         'Ask your technology team to start looking at new encryption tools that are designed to resist quantum computers.',
+      ops: 'Test operational deployment and patching of PQC-ready binaries and containers in lower environments.',
+      researcher: 'Conduct rigorous functional and side-channel testing of available PQC cryptographic provider implementations.',
     },
   },
   {
@@ -104,6 +116,8 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Plan TLS migration as a phased rollout: hybrid ML-KEM + X25519 at edge gateways first, then propagate to internal service mesh.',
       curious:
         'Upgrade the encryption on your websites and online services to use quantum-safe methods — this protects data being sent over the internet.',
+      ops: 'Update proxy and load balancer configurations to negotiate hybrid ML-KEM key exchanges across external endpoints.',
+      researcher: 'Monitor and benchmark handshake latency differences when transitioning TLS termination to hybrid ML-KEM.',
     },
   },
   {
@@ -113,6 +127,9 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Engage your HSM vendor about PQC firmware upgrade timelines and budget — HSMs are typically the highest-cost migration item.',
       architect:
         'Evaluate HSM vendor PQC firmware roadmap and plan trust root migration sequence — HSMs constrain the entire certificate chain.',
+      curious: 'Check if the specialized hardware storing your most critical passwords can be upgraded to resist quantum attacks.',
+      ops: 'Plan maintenance windows for HSM firmware flashes and validate key ceremony procedures for PQC keys.',
+      researcher: 'Analyze cryptographic boundaries and firmware release notes for standards-compliant PQC stateful signature modes.',
     },
   },
   {
@@ -124,6 +141,9 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Implement hybrid PQC encryption (ML-KEM + AES) for data-at-rest in your highest-sensitivity data stores.',
       architect:
         'Design a hybrid PQC encryption layer for data-at-rest that integrates with your KMS topology and key rotation policies.',
+      curious: 'Begin double-locking your stored sensitive files using both traditional and new quantum-safe methods.',
+      ops: 'Roll out encryption-at-rest using hybrid key hierarchies across databases and block storage.',
+      researcher: 'Investigate the feasibility and overhead of KEM combiners for static data archives.',
     },
   },
   {
@@ -133,6 +153,9 @@ export const ACTION_REFRAMINGS: ActionReframing[] = [
         'Request PQC migration roadmaps from your SaaS and SDK vendors — their timelines may constrain your own migration schedule.',
       developer:
         'Check your vendor SDKs and SaaS APIs for PQC support — file feature requests and track their migration roadmaps.',
+      curious: 'Ask the external software companies you rely on when they plan to upgrade their security to be quantum-safe.',
+      ops: 'Map all external vendor API integrations and monitor their endpoints for PQC negotiation capabilities.',
+      researcher: 'Review SaaS provider transparency reports regarding their cryptographic transitions and evaluate their timeline viability.',
     },
   },
 ]
@@ -144,9 +167,6 @@ export const PERSONA_UNKNOWN_WEIGHTS: Record<
   executive: { agility: 0.8, infra: 0.7, compliance: 1.0, migration: 0.8 },
   developer: { agility: 1.0, infra: 0.9, compliance: 0.8, migration: 0.9 },
   architect: { agility: 1.0, infra: 1.0, compliance: 0.9, migration: 1.0 },
-  pki: { agility: 1.0, infra: 1.0, compliance: 1.0, migration: 1.0 },
-  product: { agility: 0.8, infra: 0.8, compliance: 0.9, migration: 0.9 },
-  leadership: { agility: 0.7, infra: 0.7, compliance: 1.0, migration: 0.8 },
   researcher: { agility: 0.85, infra: 0.8, compliance: 0.75, migration: 0.85 },
   ops: { agility: 0.9, infra: 1.0, compliance: 0.85, migration: 1.0 },
   curious: { agility: 0.7, infra: 0.7, compliance: 0.8, migration: 0.7 },
@@ -406,6 +426,35 @@ function generateResearcherNarrative(
   return parts.filter(Boolean).join(' ')
 }
 
+function generateOpsNarrative(
+  input: AssessmentInput,
+  riskScore: number,
+  riskLevel: string,
+  vulnerableCount: number
+): string {
+  const parts: string[] = []
+  parts.push(
+    `Your operational infrastructure has a ${riskLevel} quantum vulnerability score (${riskScore}/100) — ${vulnerableCount > 0 ? `${vulnerableCount} deployed algorithm${vulnerableCount > 1 ? 's' : ''} require${vulnerableCount === 1 ? 's' : ''} mitigation.` : 'your infrastructure relies on PQC-compatible primitives.'}`
+  )
+  if (input.infrastructure?.some((i) => i.includes('HSM'))) {
+    parts.push(
+      'Hardware Security Modules represent long-lead migration dependencies. Prioritize firmware updates to enable hybrid certificate deployments.'
+    )
+  }
+  const statusMsg: Record<string, string> = {
+    started:
+      'Infrastructure migration is actively rolling out — continue to monitor TLS handshake performance and backward compatibility.',
+    planning:
+      'Rollout planning is in progress — validate network configuration scripts and HSM capabilities before large-scale deployment.',
+    'not-started':
+      'No infrastructure migration started — initiate a network scan to map active TLS configurations and certificate lifecycles.',
+    unknown:
+      'Deployment status is unclear — conduct an infrastructure discovery sweep to catalog cryptographic service endpoints.',
+  }
+  parts.push(statusMsg[input.migrationStatus] ?? '')
+  return parts.filter(Boolean).join(' ')
+}
+
 function generateCuriousNarrative(
   input: AssessmentInput,
   riskScore: number,
@@ -486,6 +535,8 @@ export function generatePersonaNarrative(
         hnfl,
         pqcFrameworkCount
       )
+    case 'ops':
+      return generateOpsNarrative(input, riskScore, riskLevel, vulnerableCount)
     case 'curious':
       return generateCuriousNarrative(input, riskScore, riskLevel, hndl)
     default:

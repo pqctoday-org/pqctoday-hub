@@ -1,0 +1,22 @@
+{
+  "module": "PlatformEngPQC",
+  "use_case": "ContainerSigningMigration",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "cd519f35015b94a54452f5db8c033d05fd227a7fb64b6f77f7c683276af7c0a83b5437ba6c700ecc1ded298ba3c84f49e4d1b77af6bfbf2f8c7621da92aabb5e"
+    },
+    {
+      "id": "mldsa65-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "c2993eaeff2564140f475d25b3c7e1275b2da6645bfd73eae98babe9a4b33f83114d983fbd16a4681d6630ee1771793dacdea3200c18f560d5bb97b61f7c48de"
+    }
+  ]
+}

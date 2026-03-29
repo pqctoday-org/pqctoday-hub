@@ -1,0 +1,22 @@
+{
+  "module": "APISecurityJWT",
+  "use_case": "TokenSizeAnalyzer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "188baa3a5c03b8f8680101e0f367a8ddfa47b214a05183747f56ed9be0b1f193cab9eee106e292015ba4f7d0374c52d0cf3e84ee222e6a7e668ddbd4e73a91aa"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "27455efc2189b11ee352157615cdc64099169970185e01c9e94e84257fc1252ab4dc8660dcfbd6e4f0de1dd07688f7105bbd332f1543dc269e7c17e714a4dc7d"
+    }
+  ]
+}

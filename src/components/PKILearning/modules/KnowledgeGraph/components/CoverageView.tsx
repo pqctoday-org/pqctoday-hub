@@ -39,6 +39,7 @@ const TYPE_LABELS: Record<EntityType, string> = {
   algorithm: 'Algorithms',
   track: 'Learning Tracks',
   persona: 'Learning Personas',
+  vendor: 'Vendors',
 }
 
 const RELATIONSHIP_LABELS: Record<string, string> = {
@@ -58,6 +59,14 @@ const RELATIONSHIP_LABELS: Record<string, string> = {
   'module-in-track': 'Module in Track',
   'persona-recommends': 'Persona Recommends',
   'threat-targets-algorithm': 'Threat Targets Algorithm',
+  'module-qa-references': 'Module Q&A References',
+  'vendor-produces': 'Vendor Produces',
+  'vendor-country': 'Vendor by Country',
+  'leader-references-library': 'Leader References Library',
+  'certification-validates-algorithm': 'Certification Validates Algorithm',
+  'software-implements-algorithm': 'Software Implements Algorithm',
+  'compliance-applies-to-country': 'Compliance Applies to Country',
+  'algorithm-replaces': 'Algorithm Replaces',
 }
 
 function buildClusterGraph(graph: KnowledgeGraph): {

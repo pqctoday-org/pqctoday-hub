@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { Key, ExternalLink, Loader2, CheckCircle, AlertCircle } from 'lucide-react'
+import { Key, ExternalLink, Loader2, CheckCircle } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { useChatStore } from '@/store/useChatStore'
@@ -73,14 +73,9 @@ export const ApiKeySetup: React.FC = () => {
             className="w-full bg-muted/30 border-border rounded-lg px-4 py-2.5 text-sm focus:border-primary/50 text-foreground placeholder:text-muted-foreground"
             autoComplete="off"
             aria-label="Gemini API key"
+            id="gemini-api-key"
+            error={validationState === 'error' ? errorMsg : undefined}
           />
-
-          {validationState === 'error' && (
-            <div className="flex items-center gap-2 text-sm text-status-error">
-              <AlertCircle size={14} />
-              {errorMsg}
-            </div>
-          )}
 
           {validationState === 'success' && (
             <div className="flex items-center gap-2 text-sm text-status-success">

@@ -157,7 +157,7 @@ const OID_LABELS: Record<string, string> = {
   // Chameleon delta extension (draft-bonnell-lamps-chameleon-certs)
   '2.16.840.1.114027.80.6.1': 'DeltaCertificateDescriptor (chameleon)',
   // Related certs (RFC 9763)
-  '1.3.6.1.5.5.7.1.35': 'RelatedCertificate (RFC 9763)',
+  '1.3.6.1.5.5.7.1.36': 'RelatedCertificate (RFC 9763)',
 }
 
 export function oidToLabel(oid: string): string {

@@ -10,17 +10,21 @@ test.describe('About View', () => {
   test('displays project bio', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'About PQC Today' })).toBeVisible()
     await expect(
-      page.getByText('PQC Today is an open-source, community-driven platform').first()
+      page.getByText('PQCToday is a neutral, community-governed platform').first()
     ).toBeVisible()
   })
 
   test('displays SBOM', async ({ page }) => {
-    await expect(page.getByText('Software Bill of Materials', { exact: true })).toBeVisible()
+    const sbomHeading = page.getByRole('heading', { name: 'Software Bill of Materials (SBOM)' })
+    await expect(sbomHeading).toBeVisible()
+
+    // Click to expand the collapsible SBOM section
+    await sbomHeading.click()
 
     // Scope to the SBOM container to avoid matching navigation elements
     const sbomSection = page
       .locator('.glass-panel')
-      .filter({ hasText: 'Software Bill of Materials' })
+      .filter({ hasText: 'Software Bill of Materials (SBOM)' })
     await expect(sbomSection.getByText(/OpenSSL/)).toBeVisible()
     await expect(sbomSection.getByText(/v3\.\d+\.\d+/).first()).toBeVisible()
   })

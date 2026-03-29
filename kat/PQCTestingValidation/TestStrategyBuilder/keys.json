@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "TestStrategyBuilder",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-07-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "42496e5038b7d30b6e343c0774378f95f83e02043e54637c8a65c52d092b47b93eb5b35c8b352edd3ba2eedec81a0cf60cfe63ef49c19584bd3448923e2a22c9"
+    },
+    {
+      "id": "mldsa65-07-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "b4175561bdd7abf1f8d44f6d271a916bb996f50207e419b977906f7e2c5f19bfeec9969f53e27f66c6f2b34947d8a61e0130b8ac690f3e0ece93fa8add3bba03"
+    }
+  ]
+}

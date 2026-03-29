@@ -1,0 +1,22 @@
+{
+  "module": "HybridCrypto",
+  "use_case": "HybridEncryptionDemo",
+  "key_type": "CKK_EC_EDWARDS",
+  "parameter_set": "Ed25519",
+  "keys": [
+    {
+      "id": "eddsa-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "5abfd88e79ce01bbe6dea90e831305c9928e0e552c73f07bfc501a3570d1873e"
+    },
+    {
+      "id": "eddsa-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC_EDWARDS",
+      "CKA_PARAMETER_SET": "Ed25519",
+      "value": "ec9b97f30fa2cc046bb11beffbc7a78d16f8ba58f7354062dbc4ec60e420a862"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "DataAssetSensitivity",
+  "use_case": "ClassificationChallenge",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-512",
+  "keys": [
+    {
+      "id": "mlkem512-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "28e79d34602179831da3110d8cb03eb77f5aa18f5172e0a8c020a8d93a97003f7cba4300de456ae19134fe4dfd777f715af3c8af251c92e9965cf5e1550bec32"
+    },
+    {
+      "id": "mlkem512-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "fd982ddb17c24f2835f3d48ba72ffb91e69b1c90da063697dbccb13b9ab628731cfe828501bd3d4aae4464e08a5e65879785ed2ee74f1262491b0887ab06db43"
+    }
+  ]
+}

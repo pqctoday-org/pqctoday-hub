@@ -1,0 +1,22 @@
+{
+  "module": "AISecurityPQC",
+  "use_case": "DataProtectionAnalyzer",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "bf740ccfbb26107ac8f2c89dc0fbb9ee40184632b90fe12f4bacda15ceaa3e59"
+    },
+    {
+      "id": "aes256gcm-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "65e8581b327067fc3c967a604738219cb6902ca1c7425006655752018df13d93"
+    }
+  ]
+}

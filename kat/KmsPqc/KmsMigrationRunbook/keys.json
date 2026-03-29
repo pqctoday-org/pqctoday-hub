@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "KmsMigrationRunbook",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256gcm-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "98e5a8189d2e72160721f8953d448e0a76a61cd60a9242a5a96ce5041a559ef3"
+    },
+    {
+      "id": "aes256gcm-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "90cfd82aa5af84bbe5154d8ef76176487a45163cb1b5370ac793c7f1a0d3a7a4"
+    }
+  ]
+}

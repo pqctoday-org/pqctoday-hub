@@ -1,0 +1,22 @@
+{
+  "module": "EMVPaymentPQC",
+  "use_case": "POSCryptoAnalyzer",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-44",
+  "keys": [
+    {
+      "id": "mldsa44-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "6c2b2f2772e057b6207c21c4b98b587e5505b547d445602dd0b2a62f52c762c19bd7f9b6fe99e3ec9de2811605f20da0ee492f7fa20f94c87b6a25231e3e9f74"
+    },
+    {
+      "id": "mldsa44-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-44",
+      "value": "d5fbce3dec14c084671d68f8e1496a1b6f72bca87a7cb16ed2ae053dcfa10d9b2fc3160b0e7ac3ff4054993698980b2c0d1b3d6d3554270c7aec20d5405aa390"
+    }
+  ]
+}

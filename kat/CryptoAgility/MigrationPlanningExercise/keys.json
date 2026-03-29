@@ -1,0 +1,22 @@
+{
+  "module": "CryptoAgility",
+  "use_case": "MigrationPlanningExercise",
+  "key_type": "CKK_EC",
+  "parameter_set": "P-256",
+  "keys": [
+    {
+      "id": "ecdsap256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "a31472d1f09dfd2027e930375a650110a48d50653f5a9f674695631d97be2eef"
+    },
+    {
+      "id": "ecdsap256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_EC",
+      "CKA_PARAMETER_SET": "P-256",
+      "value": "710704c903c868838bd6d73eaa4a7b4f8dddb1bd84633d48cdc4678d59a5ec0e"
+    }
+  ]
+}

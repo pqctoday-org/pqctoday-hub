@@ -1,0 +1,22 @@
+{
+  "module": "DatabaseEncryptionPQC",
+  "use_case": "DatabaseMigrationReadiness",
+  "key_type": "CKK_AES",
+  "parameter_set": "AES-256",
+  "keys": [
+    {
+      "id": "aes256kw-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "171b1da7d7dd5e10969668fc7af27529b23ff5f4090773b2417a8833640a1954"
+    },
+    {
+      "id": "aes256kw-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_AES",
+      "CKA_PARAMETER_SET": "AES-256",
+      "value": "e344e12be8cef8406e84d2cd66dcd9c1d8f487dc075a8fed03d5cc924796eeb7"
+    }
+  ]
+}

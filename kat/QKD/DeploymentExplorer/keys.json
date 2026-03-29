@@ -1,0 +1,22 @@
+{
+  "module": "QKD",
+  "use_case": "DeploymentExplorer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "109e3ab14244879859f1866f9d2269e556fd862aaa27b1da93fb23f663cf06fc159dccfa5fe2fa81ef23fca90664c16a717b3b432d4e4325c959e597ed17463f"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "e1eb3d8d11d8554b7cf686a1b8f4e82c176de5978589eba1a0b1ef47d1276969cc4f1eb6880b76bd6b37202d94b874ed5f13b9aa11bb0c90d524c877e6ab3cde"
+    }
+  ]
+}

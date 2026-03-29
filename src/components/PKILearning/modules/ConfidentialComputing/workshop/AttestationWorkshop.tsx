@@ -15,6 +15,40 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
 import { ATTESTATION_FLOWS } from '../data/attestationData'
 import { ACTOR_LABELS, ACTOR_COLORS } from '../data/ccConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const CC_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'cc-attestation-sign',
+    useCase: 'TEE attestation quote signing (ML-DSA-65)',
+    standard: 'TCG DICE + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'SGX attestation quote: MRENCLAVE=4a7b3c,MRSIGNER=9c2d1e,ISV_SVN=3',
+  },
+  {
+    id: 'cc-enclave-kem',
+    useCase: 'Enclave key provisioning (ML-KEM-768)',
+    standard: 'TCG DICE + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'cc-measurement-hash',
+    useCase: 'Enclave measurement integrity',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 2 },
+  },
+  {
+    id: 'cc-sealing-kwp',
+    useCase: 'Enclave sealing key wrap (AES-KWP)',
+    standard: 'RFC 5649 + SP 800-38F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5649',
+    kind: { type: 'aes-kwp-wrap' },
+  },
+]
 
 export const AttestationWorkshop: React.FC = () => {
   const [selectedFlowId, setSelectedFlowId] = useState(ATTESTATION_FLOWS[0].id)
@@ -370,6 +404,12 @@ export const AttestationWorkshop: React.FC = () => {
           standards.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={CC_KAT_SPECS}
+        label="Confidential Computing Known Answer Tests"
+        authorityNote="TCG DICE · FIPS 203 · FIPS 204"
+      />
     </div>
   )
 }

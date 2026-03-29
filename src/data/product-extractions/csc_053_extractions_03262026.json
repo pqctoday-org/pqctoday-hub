@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Bitwarden",
+    "category": "Secrets Management",
+    "product_name": "Bitwarden",
+    "product_brief": "Open source security solutions for individuals, teams, and business organizations including Password Manager, Secrets Manager, and passkey innovations.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or migration plans. It mentions \"passkey innovations\" but does not specify the underlying cryptographic primitives for passkeys or PQC readiness.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source/Commercial",
+    "license": "GPL-3.0 (mentioned for specific repositories like renovate-config, self-host, ios); Commercial license implied for business features but not explicitly named in text.",
+    "latest_version": "Unknown",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Web, browser extension, desktop, cli, Android, iOS",
+    "target_industries": "Enterprises, Small and medium teams, Startups, Nonprofits, Healthcare, Financial services, Manufacturing, Government",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://bitwarden.com"
+  }
+]

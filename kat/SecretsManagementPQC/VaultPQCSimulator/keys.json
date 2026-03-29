@@ -1,0 +1,22 @@
+{
+  "module": "SecretsManagementPQC",
+  "use_case": "VaultPQCSimulator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "8c95a0b6c62625f0f702c75137f3b53f69ae40edc9a938df0e3dd78dad7247205ec31f05f2cec0ced883837ad1686aef6eca986f370b3cc0fe62b7b7bc19414a"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "7b52da24634dddf00ad099e33e0ac031615a217b25a1b4ba2b7fba0992f720a8f9077e8c00edaea0499e998bce672051875e8abc6401f4ad186b5a0bf956eaf2"
+    }
+  ]
+}

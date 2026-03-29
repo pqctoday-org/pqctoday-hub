@@ -33,6 +33,13 @@ const DIGITAL_ASSETS_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 87 },
   },
+  {
+    id: 'da-bip39-pbkdf2',
+    useCase: 'BIP-39 mnemonic key derivation (PBKDF2)',
+    standard: 'BIP-39 + NIST SP 800-132',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
+    kind: { type: 'pbkdf2-derive', prf: 'SHA-512' },
+  },
 ]
 
 interface PQCMigrationFlowProps {

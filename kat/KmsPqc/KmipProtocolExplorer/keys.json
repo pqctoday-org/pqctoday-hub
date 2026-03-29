@@ -1,0 +1,22 @@
+{
+  "module": "KmsPqc",
+  "use_case": "KmipProtocolExplorer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "5d84fff5f9697e3eb11b8d667ae4e30d5e09bf985296a0fe5623d91798b2343a9e4abe401a802b510554c6a327fc48efc9c94c5a4c6e3fab33cf065c6869f37a"
+    },
+    {
+      "id": "mlkem768-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "c0fbfd3d19b02baf0578fc290301a852262638dbda3cee68c6b7e6bc9bdbef4d7d8cf5a85f7757ea0e7dbce1d248ea71de6db0e03c126b33325fab2aa961cf1e"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "CryptoDevAPIs",
+  "use_case": "PQCSupportMatrix",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-07-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "daa7163bfb2ecf74fa7673f19c4f60ed9c757c6b468aae1bfa6f5124b34fd0b6b2f94c8920b7ccebe3ca2c5c0aecd994ddeee80db384518d46ca92b8541d3673"
+    },
+    {
+      "id": "mldsa65-07-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "e035db0294f1b7a743b37d25f511bbaca330d5456c271f46c3ee4789f39a143e9716366daa892833da95033f0794b1079ecade0200cbaab0bc281ff18a32b31c"
+    }
+  ]
+}

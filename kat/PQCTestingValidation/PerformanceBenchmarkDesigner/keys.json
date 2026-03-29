@@ -1,0 +1,22 @@
+{
+  "module": "PQCTestingValidation",
+  "use_case": "PerformanceBenchmarkDesigner",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "8d263156f08957b876d970ab9684c77c00a16fc2c27e12a48589f789f63f466f21e86bfe0384d57686a66889d47c94f7cb33042a0101f7fd0f12de4c478d2099"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "2f8518df1c3d4994d2bb5f8385c343459e4118da305dd55689dc929e2f08cc19efce79ad574698ed1926567eb7eeb4cf3a307014a3b694996d0f6cb8a66252db"
+    }
+  ]
+}

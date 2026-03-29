@@ -1,0 +1,22 @@
+{
+  "module": "PlatformEngPQC",
+  "use_case": "CryptoPostureMonitor",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "b0df7cc52f9d56583c0fd84afc0347fe267470e744b61d1eb7ca57084d7f091c"
+    },
+    {
+      "id": "sha256-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "f2515433d1ca4f315d20d1f861e49ddd7b15f8dbd57f33b505ae163beabbc880"
+    }
+  ]
+}

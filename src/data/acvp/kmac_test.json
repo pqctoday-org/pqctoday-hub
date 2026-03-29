@@ -1,0 +1,32 @@
+{
+  "algorithm": "KMAC",
+  "source": "NIST SP 800-185 KMAC test vectors (Samples #1 and #4)",
+  "testGroups": [
+    {
+      "variant": "KMAC256",
+      "macLen": 512,
+      "tests": [
+        {
+          "tcId": 1,
+          "key": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+          "msg": "00010203",
+          "customization": "4d7920546167676564204170706c69636174696f6e",
+          "mac": "20C570C31346F703C9AC36C61C03CB64C3970D0CFC787E9B79599D273A68D2F7F69D4CC3DE9D104A351689F27CF6F5951F0103F33F4F24871071145F460000"
+        }
+      ]
+    },
+    {
+      "variant": "KMAC128",
+      "macLen": 256,
+      "tests": [
+        {
+          "tcId": 1,
+          "key": "404142434445464748494a4b4c4d4e4f505152535455565758595a5b5c5d5e5f",
+          "msg": "00010203",
+          "customization": "",
+          "mac": "E5780B0D3EA6F7D3A429C5706AA43A00FADBD7D49628839E3187243F456EE14E"
+        }
+      ]
+    }
+  ]
+}

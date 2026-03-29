@@ -1,0 +1,22 @@
+{
+  "module": "IoTOT",
+  "use_case": "CertChainBloatAnalyzer",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-512",
+  "keys": [
+    {
+      "id": "mlkem512-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "d816e16e4bc37f9d75994c0670932f433fb08f5cc239be9669eecd14342fd9bfa6124712c1b4a31d4c960a8b6f8ceb91d7e3a3c932959aced3c93c8c1ee60aa3"
+    },
+    {
+      "id": "mlkem512-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "e0278f84b80035355ccb4da2f9d6948cd85e3e0d043c7a03890ffffd8c1af1a39563f4e2d891248b6e9d3df447abe02fa74217aa07b1f9cf9472a2a5f4cb2e34"
+    }
+  ]
+}

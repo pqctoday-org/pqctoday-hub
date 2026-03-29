@@ -1,0 +1,22 @@
+{
+  "module": "TLSBasics",
+  "use_case": "TLSConfigGenerator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "dc1c8ce8ca2da2d1033bd5c0481c51df11f098f3d6bc6a64dabd63babc108383fa22e58babf8f18080a5b171154c62974e17e6187dee03d2cf46762ca8caf558"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "73b01024bd3bc215b5a17c3508ad5541a2fb757649f8d878dbe037d8a38f64f57b5beb4c7075c53283eecb726094fc61f8b692b7092a2675e77dfe22713cb92d"
+    }
+  ]
+}

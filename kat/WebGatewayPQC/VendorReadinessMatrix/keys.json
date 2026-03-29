@@ -1,0 +1,22 @@
+{
+  "module": "WebGatewayPQC",
+  "use_case": "VendorReadinessMatrix",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "cf27412bc99d872472e82ce9cad2f0d9b0509803269f5bdf7c670ea5f0c83483ca7f4436fa226060fd1dcc0b3eca8e7e6e3a88a39abc9f55d6c7243ffd922270"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "5b575f7f99ceb15644fe55950957173275657eee5c79a3c6fd4eac2d3c2ca4e74efd2d586895f26da0d7e508552a0621e56cd7c71d998e0b49d163341d7f2637"
+    }
+  ]
+}

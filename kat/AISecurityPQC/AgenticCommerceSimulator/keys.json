@@ -1,0 +1,22 @@
+{
+  "module": "AISecurityPQC",
+  "use_case": "AgenticCommerceSimulator",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "5ded81753e6c223486071607de78502012b3308585b6b963888d10b6ea90b020"
+    },
+    {
+      "id": "sha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "65bbddecd081c062823c6b669ebbf999ffded5bd47d0e3f35168a265d4e231b8"
+    }
+  ]
+}

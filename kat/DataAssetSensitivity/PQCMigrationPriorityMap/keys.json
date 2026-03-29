@@ -1,0 +1,22 @@
+{
+  "module": "DataAssetSensitivity",
+  "use_case": "PQCMigrationPriorityMap",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "c694b30d2e7bfd21e1e7431a41a153dbbabe75a8f1ecc91fc47b282436de18a1"
+    },
+    {
+      "id": "sha256-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "72312dd6f53f5ce5356dfe8c4d9cdbe0d75b42b83c289d29fd9ae69b5c887e5c"
+    }
+  ]
+}

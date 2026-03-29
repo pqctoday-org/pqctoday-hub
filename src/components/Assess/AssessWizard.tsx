@@ -328,52 +328,54 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
         onClose={() => setInfoModalStep(null)}
       />
 
-      {/* Navigation */}
-      {!canProceed() && !isGenerating && (
-        <p role="alert" className="text-xs text-status-warning text-center mt-4">
-          Please complete the required selection to continue.
-        </p>
-      )}
-      <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
-        <Button
-          variant="outline"
-          onClick={() => setStep(Math.max(0, currentStep - 1))}
-          disabled={currentStep === 0}
-          className="gap-1"
-        >
-          <ChevronLeft size={16} />
-          Previous
-        </Button>
+      {/* Navigation — sticky on mobile so buttons are always visible */}
+      <div className="sticky bottom-0 mt-4 -mx-4 px-4 pb-4 pt-2 md:relative md:mx-0 md:px-0 md:pb-0 md:pt-0 bg-background/95 backdrop-blur-sm md:bg-transparent md:backdrop-blur-none border-t border-border/50 md:border-0 safe-bottom">
+        {!canProceed() && !isGenerating && (
+          <p role="alert" className="text-xs text-status-warning text-center mb-2">
+            Please complete the required selection to continue.
+          </p>
+        )}
+        <div className="flex flex-wrap justify-between items-center gap-2">
+          <Button
+            variant="outline"
+            onClick={() => setStep(Math.max(0, currentStep - 1))}
+            disabled={currentStep === 0}
+            className="gap-1"
+          >
+            <ChevronLeft size={16} />
+            Previous
+          </Button>
 
-        <Button
-          variant="ghost"
-          onClick={reset}
-          className="text-xs min-h-[44px] text-muted-foreground hover:text-destructive"
-          title="Clear all answers and start over"
-        >
-          <RotateCcw size={13} />
-          Reset
-        </Button>
+          <Button
+            variant="ghost"
+            onClick={reset}
+            className="text-xs min-h-[44px] text-muted-foreground hover:text-destructive"
+            title="Clear all answers and start over"
+          >
+            <RotateCcw size={13} />
+            Reset
+          </Button>
 
-        <Button
-          onClick={handleNext}
-          disabled={!canProceed() || isGenerating}
-          className="gap-1 font-bold"
-        >
-          {isGenerating ? (
-            <>
-              <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
-              Generating...
-            </>
-          ) : currentStep === steps.length - 1 ? (
-            'Generate Report'
-          ) : (
-            <>
-              Next
-              <ChevronRight size={16} />
-            </>
-          )}
-        </Button>
+          <Button
+            onClick={handleNext}
+            disabled={!canProceed() || isGenerating}
+            className="gap-1 font-bold"
+          >
+            {isGenerating ? (
+              <>
+                <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                Generating...
+              </>
+            ) : currentStep === steps.length - 1 ? (
+              'Generate Report'
+            ) : (
+              <>
+                Next
+                <ChevronRight size={16} />
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   )

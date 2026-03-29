@@ -43,6 +43,13 @@ const CODE_SIGNING_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
+  {
+    id: 'cs-digest-multipart',
+    useCase: 'Large binary digest (multi-part SHA-256)',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'digest-multipart', hashAlg: 'SHA-256' },
+  },
 ]
 
 type AlgorithmName = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'

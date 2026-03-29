@@ -38,6 +38,20 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
+  {
+    id: '5g-suci-ecdh',
+    useCase: 'SUCI Profile A ECIES key agreement',
+    standard: '3GPP TS 33.501 + NIST SP 800-56A',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
+    kind: { type: 'ecdh-derive', curve: 'P-256' },
+  },
+  {
+    id: '5g-nas-hkdf',
+    useCase: 'NAS key derivation (HKDF-SHA256)',
+    standard: '3GPP TS 33.501 + RFC 5869',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
+    kind: { type: 'hkdf-derive' },
+  },
 ]
 import {
   hsm_generateECKeyPair,

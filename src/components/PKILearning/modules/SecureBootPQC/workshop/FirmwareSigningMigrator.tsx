@@ -23,6 +23,41 @@ import {
   CKM_SHA256,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const SECBOOT_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'secboot-uefi-sigver',
+    useCase: 'UEFI Secure Boot db verification (ML-DSA-87)',
+    standard: 'UEFI 2.10 + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 87 },
+  },
+  {
+    id: 'secboot-firmware-sign',
+    useCase: 'Firmware image signing (ML-DSA-87)',
+    standard: 'UEFI 2.10 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 87 },
+    message: 'UEFI Secure Boot db entry: CN=PQC-SecureBoot-2026,EKU=codeSigning',
+  },
+  {
+    id: 'secboot-measurement-hash',
+    useCase: 'PCR measurement hash (SHA-256)',
+    standard: 'TPM 2.0 + FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 1 },
+  },
+  {
+    id: 'secboot-firmware-digest',
+    useCase: 'Firmware image digest (multi-part SHA-512)',
+    standard: 'UEFI 2.10 + FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'digest-multipart', hashAlg: 'SHA-512' },
+  },
+]
 
 type WizardStep = 0 | 1 | 2 | 3
 
@@ -857,6 +892,12 @@ export const FirmwareSigningMigrator: React.FC = () => {
           Generated keys are for educational purposes only.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={SECBOOT_KAT_SPECS}
+        label="Secure Boot PQC Known Answer Tests"
+        authorityNote="UEFI 2.10 · TPM 2.0 · FIPS 204 · FIPS 180-4"
+      />
     </div>
   )
 }

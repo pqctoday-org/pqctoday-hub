@@ -1,0 +1,22 @@
+{
+  "module": "HybridCrypto",
+  "use_case": "HybridCertFormats",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-03-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "065d6a3ad2f3aedce2315c7910de48ad7d6794454d6c0c3f56b6d90b10de33011209b628185aac887394b66f65342fdeb9e62a97454bb29b8618b0f8f2da6983"
+    },
+    {
+      "id": "mldsa65-03-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "490cb07dfb762533e178a7c4b50c23841d4abc54cf95542108567970ea40633bbdd3af682da68bd3170ed86cbc00aed11b55cb301c6c22558917f42a398350f8"
+    }
+  ]
+}

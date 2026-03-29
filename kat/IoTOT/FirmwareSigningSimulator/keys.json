@@ -1,0 +1,22 @@
+{
+  "module": "IoTOT",
+  "use_case": "FirmwareSigningSimulator",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-512",
+  "keys": [
+    {
+      "id": "mlkem512-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "c32747171d6544e867ef9b1a0a951553cd26ede4a1d69fd47d2574ed9dacbf93b1fd397b5ec20465b8c3b98c1c44e86e5fd338ba3a02c03355b20288dbfe5c7b"
+    },
+    {
+      "id": "mlkem512-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-512",
+      "value": "6376805738c2cb25f4ec364abd2b6123ad21662edae897cd834e728fbd1d4827df6bfbfa0f324602b547c41cfea2ea4e827fa8fc3025cd42726649b71086768b"
+    }
+  ]
+}

@@ -3,6 +3,56 @@ import React, { useState } from 'react'
 import { Loader2, Play, BarChart3 } from 'lucide-react'
 import { HYBRID_ALGORITHMS } from '../constants'
 import { hybridCryptoService, type KeyGenResult } from '../services/HybridCryptoService'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const HYBRID_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'hybrid-mlkem-roundtrip',
+    useCase: 'ML-KEM-768 key encapsulation',
+    standard: 'RFC 9843 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'hybrid-eddsa-classical',
+    useCase: 'Ed25519 classical signature component',
+    standard: 'RFC 8032',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
+    kind: { type: 'eddsa-functional' },
+    message: 'X25519+ML-KEM-768 composite cert subject: CN=hybrid.pqc.example',
+  },
+  {
+    id: 'hybrid-mldsa-pqc',
+    useCase: 'ML-DSA-65 PQC signature component',
+    standard: 'RFC 9843 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'Composite signature: classical=Ed25519,pqc=ML-DSA-65,format=CompositeML-DSA',
+  },
+  {
+    id: 'hybrid-ecdsa-classical',
+    useCase: 'ECDSA P-256 classical signature component',
+    standard: 'FIPS 186-5',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-functional', curve: 'P-256' },
+    message: 'ECDSA P-256 component of hybrid CompositeML-DSA certificate',
+  },
+  {
+    id: 'hybrid-ecdh-classical',
+    useCase: 'Classical ECDH P-256 key agreement',
+    standard: 'NIST SP 800-56A',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
+    kind: { type: 'ecdh-derive', curve: 'P-256' },
+  },
+  {
+    id: 'hybrid-sha384-hash',
+    useCase: 'SHA-384 intermediate hash for hybrid binding',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha384-hash', testIndex: 1 },
+  },
+]
 
 interface HybridKeyGenerationProps {
   initialCategory?: 'kem' | 'signature'
@@ -329,6 +379,12 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
           )}
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={HYBRID_KAT_SPECS}
+        label="Hybrid Crypto Known Answer Tests"
+        authorityNote="RFC 9843 · FIPS 203 · FIPS 204 · RFC 8032"
+      />
     </div>
   )
 }

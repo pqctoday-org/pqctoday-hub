@@ -4,7 +4,7 @@ import { injectAxe, checkA11y } from 'axe-playwright'
 
 test.describe('Timeline View', () => {
   test.beforeEach(async ({ page }) => {
-    // Seed localStorage to bypass WelcomeRedirect
+    // Seed localStorage to bypass WelcomeRedirect + suppress WhatsNew toast
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'theme-storage-v1',
@@ -13,6 +13,15 @@ test.describe('Timeline View', () => {
           version: 0,
         })
       )
+      window.localStorage.setItem(
+        'pqc-version-storage',
+        JSON.stringify({ state: { lastSeenVersion: '99.0.0' }, version: 0 })
+      )
+      window.localStorage.setItem(
+        'pqc-disclaimer-v1',
+        JSON.stringify({ state: { hasAccepted: true }, version: 0 })
+      )
+      window.localStorage.setItem('pqc-tour-completed', 'true')
     })
 
     await page.goto('/')
@@ -60,7 +69,7 @@ test.describe('Timeline View', () => {
 
   test('renders deadlines as milestones (flags)', async ({ page }) => {
     // Check for the presence of Flag icons, which indicate milestones (including Deadlines)
-    const flags = page.locator('svg.lucide-flag')
+    const flags = page.getByTestId('milestone-flag')
     await expect(flags.first()).toBeVisible()
   })
 
@@ -83,7 +92,10 @@ test.describe('Timeline View', () => {
 
   test('country selector updates view', async ({ page }) => {
     // Wait for the country selector button to be visible (it contains "Country" text by default)
-    const countryButton = page.getByRole('button').filter({ hasText: 'Country' })
+    const countryButton = page
+      .locator('div[data-testid="desktop-view-container"]')
+      .getByRole('button')
+      .filter({ hasText: 'Country' })
     await countryButton.waitFor({ state: 'visible', timeout: 10000 })
 
     // Select a specific country
@@ -99,13 +111,34 @@ test.describe('Timeline View', () => {
     await expect(page.locator('table').getByText('United States').first()).not.toBeVisible()
   })
 
+  test('displays new DoD memorandum entry for US', async ({ page }) => {
+    // Wait for the timeline to load and show US
+    await expect(page.getByText('United States').first()).toBeVisible({ timeout: 15000 })
+
+    // Select US to open the Document Table
+    const countryButton = page
+      .locator('div[data-testid="desktop-view-container"]')
+      .getByRole('button')
+      .filter({ hasText: 'Country' })
+    await countryButton.click()
+    await page.getByRole('listbox').waitFor({ state: 'visible' })
+    await page.getByRole('option', { name: 'United States', exact: true }).click()
+
+    // Debug check: what is rendered in the document table?
+    const documentTableHtml = await page.locator('table').allInnerTexts()
+    console.log('Document Table contents:', documentTableHtml)
+
+    // Check for the new entry we added during the audit
+    await expect(page.getByText('DoD PQC Migration Memorandum').first()).toBeVisible()
+  })
+
   test('passes accessibility audit (desktop)', async ({ page }) => {
     // Wait for timeline to fully load
     await expect(page.getByRole('columnheader', { name: 'Country' })).toBeVisible()
     await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
 
     // Run axe accessibility audit
-    // Note: color-contrast disabled — 124 nodes fail due to phase color palette; tracked as separate fix
+    // Note: color-contrast disabled — phase colors fixed but primary/warning/muted-foreground have app-wide contrast issues tracked separately
     await injectAxe(page)
     await checkA11y(
       page,
@@ -131,7 +164,7 @@ test.describe('Timeline View', () => {
     await expect(page.getByText('Start', { exact: true })).toBeVisible()
 
     // Run accessibility audit with popover open
-    // Note: color-contrast disabled — phase color palette needs dedicated review
+    // Note: color-contrast disabled — phase colors fixed but app-wide contrast issues tracked separately
     await injectAxe(page)
     await checkA11y(
       page,
@@ -157,7 +190,7 @@ test.describe('Timeline View', () => {
     await expect(page.getByText('Loading...')).not.toBeVisible({ timeout: 10000 })
 
     // Run accessibility audit on mobile
-    // Note: color-contrast disabled — phase color palette needs dedicated review
+    // Note: color-contrast disabled — phase colors fixed but app-wide contrast issues tracked separately
     // Note: scrollable-region-focusable disabled — horizontal-scroll gantt on mobile; tracked separately
     await injectAxe(page)
     await checkA11y(

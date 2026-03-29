@@ -1,0 +1,22 @@
+{
+  "module": "AerospacePQC",
+  "use_case": "SatelliteLinkBudgetCalculator",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-06-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "79fe7f126890eee33f140717c2ca2ddf128c24e0ada9aac57b5500406b81eee8ef2b2c48f59aca6bd6d0705714ad72939a00749ff61de429e847a7473324b7cb"
+    },
+    {
+      "id": "mldsa87-06-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "2c57a8b61c62d34fe4e7db3fad4d6cbccf26be99d333319fdf2a1f51e16366e0c1bf63d94ade2e5a11fe07bdc0566ecaca97807c3fc07cb40e5dc1845a7833a3"
+    }
+  ]
+}

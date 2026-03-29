@@ -1,0 +1,22 @@
+{
+  "module": "ConfidentialComputing",
+  "use_case": "TEEHSMTrustedChannel",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-05-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "d66c0f42cc822b36019c04f8bd1d1c3cd158c1839686e68ec27976f7adbda9b49d107f99573514aab4e047ed85a88e21620f40c1b49e53388d6bcd110d554e3a"
+    },
+    {
+      "id": "mlkem768-05-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "590a61f9db38068783d3dacc7cb199323ff747c9dc610fa5b9d7fb0a1dcc80e20fbf422f85d942728e54b10221e90e79fb86bf654c6d36bc2770374a893c40aa"
+    }
+  ]
+}

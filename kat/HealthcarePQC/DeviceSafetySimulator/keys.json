@@ -1,0 +1,22 @@
+{
+  "module": "HealthcarePQC",
+  "use_case": "DeviceSafetySimulator",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-65",
+  "keys": [
+    {
+      "id": "mldsa65-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "42b194b316e86cb7f09ee8b26ff5e7c6619a3a974fd04f37ef184a81b9fa453f3c41e7b7d75795c4af250d179337cdce4b981c36aceb500712c985b0cde64299"
+    },
+    {
+      "id": "mldsa65-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-65",
+      "value": "33acc5ffd9eb74c03c931e2bbbaf61dc5c9759ea9ccd1f05a8dcb45d2c1464bf3ee7d6fbffb027e30883fc066b1168a5d4833a0a963362b64b03f5d9b949503b"
+    }
+  ]
+}

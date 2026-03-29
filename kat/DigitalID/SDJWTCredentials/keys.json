@@ -1,0 +1,22 @@
+{
+  "module": "DigitalID",
+  "use_case": "SDJWTCredentials",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "84bf1bea4d35e1923aacb1d672f5c94ff267784d4ebae084207a7d452a02825de651790e70c9f40461db2ff8d7b0e83baebc346177b5fc8fc85e34fcb29da28e"
+    },
+    {
+      "id": "mlkem768-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "2c89fa3b5aa27d5c4d2ad8224772fd6b5108afc40574e94253a3a228fcb68fe5e59f7fa00717dd5656bceb7af443b639a7ee4aa7155b4e545b7468bd5c42a379"
+    }
+  ]
+}

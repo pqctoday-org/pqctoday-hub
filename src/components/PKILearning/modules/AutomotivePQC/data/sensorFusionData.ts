@@ -86,13 +86,13 @@ export const SENSOR_PROFILES: SensorProfile[] = [
   {
     id: 'v2x',
     name: 'V2X Messages (BSM/CAM)',
-    dataRateMBps: 0.5,
+    dataRateMBps: 0.003,
     messageFrequencyHz: 10,
-    messageSizeBytes: 500,
+    messageSizeBytes: 300,
     latencyBudgetMs: 100,
     currentAuth: 'ECDSA P-256 (IEEE 1609.2)',
     description:
-      'Basic Safety Messages (BSM) and Cooperative Awareness Messages (CAM) broadcast to nearby vehicles and infrastructure.',
+      'Basic Safety Messages (BSM, ~300 bytes) broadcast 10 Hz per vehicle. Per-vehicle rate is ~3 KB/s; in dense traffic (100+ vehicles in range), aggregate received V2X traffic can reach 0.3–0.5 MB/s.',
     quantumThreat:
       'Quantum forgery of V2X signatures enables fake safety alerts, ghost vehicles, or traffic manipulation.',
   },
@@ -100,6 +100,12 @@ export const SENSOR_PROFILES: SensorProfile[] = [
 
 // ---------------------------------------------------------------------------
 // Signing Algorithm Throughput (automotive-grade SoC benchmarks)
+//
+// Benchmarks: ARM Cortex-A72 @ 2 GHz with hardware NEON, unless noted.
+// Real automotive ECUs (Cortex-R52 @ 400 MHz, Infineon Aurix TC3xx): expect
+// 5–20× slower due to lower clock, no SIMD, cache limitations, and ISR jitter.
+// FN-DSA-512 and LMS timings are estimated from reference implementations —
+// not validated on production automotive silicon.
 // ---------------------------------------------------------------------------
 
 export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
@@ -125,7 +131,7 @@ export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
     publicKeyBytes: 1952,
   },
   {
-    algorithm: 'FN-DSA-512',
+    algorithm: 'FN-DSA-512 (estimated)',
     signingTimeMs: 2.0,
     verificationTimeMs: 0.15,
     signatureBytes: 666,
@@ -139,7 +145,7 @@ export const ALGORITHM_THROUGHPUT: AlgorithmThroughput[] = [
     publicKeyBytes: 32,
   },
   {
-    algorithm: 'LMS (H10/W4)',
+    algorithm: 'LMS (H10/W4, pre-computed)',
     signingTimeMs: 0.1,
     verificationTimeMs: 0.05,
     signatureBytes: 2156,

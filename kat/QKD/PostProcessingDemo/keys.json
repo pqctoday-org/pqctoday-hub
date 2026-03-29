@@ -1,0 +1,22 @@
+{
+  "module": "QKD",
+  "use_case": "PostProcessingDemo",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "b0735dec44e538a96b084dba330a0fad8c94546d3e655e62e43b5dd461ab14a45a38e8955bb62f05559b2c08e1fb9eeee8e669eaed8b12e006fe250a2403542d"
+    },
+    {
+      "id": "mlkem768-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "385e46d3154ee72f8aab624ff47639093f438130ae41257e168625d42dc0dbe3840a589c33d485de1f85cfa32ea5df9cd4ff53b466d804f9e7d0e6658fb27d44"
+    }
+  ]
+}

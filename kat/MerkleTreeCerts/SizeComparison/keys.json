@@ -1,0 +1,22 @@
+{
+  "module": "MerkleTreeCerts",
+  "use_case": "SizeComparison",
+  "key_type": "CKK_GENERIC_SECRET",
+  "parameter_set": "SHA-256",
+  "keys": [
+    {
+      "id": "sha256-04-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "15c0083fd2cfa7734f4d643da7d5fd0dd2761b3020565cf99c7d17d050ae1f73"
+    },
+    {
+      "id": "sha256-04-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_GENERIC_SECRET",
+      "CKA_PARAMETER_SET": "SHA-256",
+      "value": "369504596295400a3ea247bdca7cef0c07ee698089b9e8159eed88e9f6e268b9"
+    }
+  ]
+}

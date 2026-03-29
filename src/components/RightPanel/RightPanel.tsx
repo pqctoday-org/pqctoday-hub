@@ -11,6 +11,10 @@ const HistoryPanel = React.lazy(() =>
 
 const GraphPanel = React.lazy(() => import('./GraphPanel').then((m) => ({ default: m.GraphPanel })))
 
+const BookmarksPanel = React.lazy(() =>
+  import('./BookmarksPanel').then((m) => ({ default: m.BookmarksPanel }))
+)
+
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close } = useRightPanelStore()
 
@@ -44,7 +48,7 @@ export const RightPanel: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-sm print:hidden"
+            className="fixed inset-0 z-panel bg-black/60 backdrop-blur-sm print:hidden"
             onClick={close}
           />
 
@@ -54,14 +58,16 @@ export const RightPanel: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-[60] w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
+            className="fixed right-0 top-0 bottom-0 z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
             role="dialog"
             aria-label={
               activeTab === 'chat'
                 ? 'PQC Assistant'
                 : activeTab === 'history'
                   ? 'Journey History'
-                  : 'Knowledge Graph'
+                  : activeTab === 'bookmarks'
+                    ? 'Bookmarks'
+                    : 'Knowledge Graph'
             }
             aria-modal="true"
             onClick={(e) => e.stopPropagation()}
@@ -89,6 +95,17 @@ export const RightPanel: React.FC = () => {
                 }
               >
                 <GraphPanel />
+              </React.Suspense>
+            )}
+            {activeTab === 'bookmarks' && (
+              <React.Suspense
+                fallback={
+                  <div className="flex-1 flex items-center justify-center">
+                    <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                  </div>
+                }
+              >
+                <BookmarksPanel />
               </React.Suspense>
             )}
           </motion.div>

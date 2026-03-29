@@ -1,0 +1,22 @@
+{
+  "module": "APISecurityJWT",
+  "use_case": "JWEEncryption",
+  "key_type": "CKK_ML_KEM",
+  "parameter_set": "ML-KEM-768",
+  "keys": [
+    {
+      "id": "mlkem768-02-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "a5a965efd74b408a8506a378035852ae75b16b07881c5dc6da39bc64cae4ca9e06e4beb7b28f68a9ade6db60f4a2f0b08710483b7c4bb9be88287b8a0828d226"
+    },
+    {
+      "id": "mlkem768-02-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_KEM",
+      "CKA_PARAMETER_SET": "ML-KEM-768",
+      "value": "b2aad12fc8fbca4f7f9ecad39d6389525e35412e0bf29b6e4a9f1d8d3f7915f9c72018e5be69ab70ef91ad8876ba0e27ae7ac6b1ee075f7f93fe1a63da528d4b"
+    }
+  ]
+}

@@ -1,0 +1,22 @@
+{
+  "module": "SecureBootPQC",
+  "use_case": "AttestationFlowDesigner",
+  "key_type": "CKK_ML_DSA",
+  "parameter_set": "ML-DSA-87",
+  "keys": [
+    {
+      "id": "mldsa87-01-pub",
+      "CKA_CLASS": "CKO_PUBLIC_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "f55669046b019c40a6d6d043ad7f4bb397b1738636fc48afba8ab11873d575854a724112064f9a4321c77babe20356d2a1975217a4a2fdc3f243dffd9480d6f6"
+    },
+    {
+      "id": "mldsa87-01-priv",
+      "CKA_CLASS": "CKO_PRIVATE_KEY",
+      "CKA_KEY_TYPE": "CKK_ML_DSA",
+      "CKA_PARAMETER_SET": "ML-DSA-87",
+      "value": "f4346e065bbf7e54026476cacec060f639d75ca7906524c4778b9be2a169c1a83bb350b659a0c1df6f07344b283db606edbe25a81940bcc023db8ee5d810e0df"
+    }
+  ]
+}
