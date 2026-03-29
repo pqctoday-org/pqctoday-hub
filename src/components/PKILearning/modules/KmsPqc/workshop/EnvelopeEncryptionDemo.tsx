@@ -14,6 +14,33 @@ import {
   hsm_aesWrapKey,
   hsm_extractKeyValue,
 } from '@/wasm/softhsm'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const KMS_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'kms-envelope-kem',
+    useCase: 'Envelope encryption key transport (ML-KEM-768)',
+    standard: 'SP 800-57 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'kms-dek-encrypt',
+    useCase: 'DEK encryption (AES-256-GCM)',
+    standard: 'SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'KMS envelope header: keyId=arn:kms:pqc/key-001,context=prod-db',
+  },
+  {
+    id: 'kms-kek-wrap',
+    useCase: 'KEK key wrapping (AES-256-KW)',
+    standard: 'RFC 3394 ACVP',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
+    kind: { type: 'aeskw-wrap' },
+  },
+]
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -437,6 +464,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           )}
         </button>
       </div>
+
+      <KatValidationPanel
+        specs={KMS_KAT_SPECS}
+        label="KMS PQC Known Answer Tests"
+        authorityNote="SP 800-57 · FIPS 203 · SP 800-38D · RFC 3394"
+      />
     </div>
   )
 }

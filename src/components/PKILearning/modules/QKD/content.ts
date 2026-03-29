@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the QKD module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -27,6 +26,11 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      'QKD vs PQC: QKD provides information-theoretic security from physics; PQC provides computational security from quantum-hard mathematical problems; QKD requires dedicated quantum channels while PQC runs on standard networks.',
+    workshopSummary:
+      'BB84 Protocol Simulator: Visual simulation with configurable Eve interception slider and adjustable qubit count; observe basis matching, sifted key generation, and QBER calculation. Post-Processing: Error correction, privacy amplification, and hybrid key derivation from raw QKD output. Global Deployments Explorer: Interactive database of worldwide QKD deployments including satellite and terrestrial networks with adoption trends.',
+    relatedStandards:
+      'NIST IR 8301 (Transition to Post-Quantum Cryptography). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA). NIST SP 800-108 (KDF in Counter Mode). ETSI QKD standards (GS QKD series). EuroQCI initiative (pan-European quantum communication infrastructure). BB84 protocol (Bennett & Brassard, 1984)',
   },
 }

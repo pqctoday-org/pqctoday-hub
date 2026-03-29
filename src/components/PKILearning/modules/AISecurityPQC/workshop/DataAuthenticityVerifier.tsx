@@ -10,6 +10,35 @@ import {
   MANIFEST_SIGNING_PROFILES,
 } from '../data/dataAuthenticityData'
 import { DATASET_RISK_COLORS, PRIVACY_MATURITY_COLORS } from '../data/aiSecurityConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'ai-model-sigver',
+    useCase: 'AI model weight authenticity (ML-DSA-65)',
+    standard: 'NIST AI RMF + FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'AI model weight hash: SHA-256(resnet50-v2.onnx)=7f3a9b2c4d...',
+  },
+  {
+    id: 'ai-agent-encrypt',
+    useCase: 'Agent credential envelope encryption',
+    standard: 'SP 800-38D + NIST AI RMF',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'Agent credential token: iss=pqc-ai-platform,sub=agent-7b3f,exp=1735689600',
+  },
+  {
+    id: 'ai-data-integrity',
+    useCase: 'Training data integrity hash',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 1 },
+  },
+]
 
 const SCENARIO_ITEMS = DATASET_SCENARIOS.map((s) => ({ id: s.id, label: s.name }))
 const SIGNING_ITEMS = MANIFEST_SIGNING_PROFILES.map((p) => ({ id: p.id, label: p.algorithm }))
@@ -269,6 +298,12 @@ export const DataAuthenticityVerifier: React.FC = () => {
           </div>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={AI_SECURITY_KAT_SPECS}
+        label="AI Security PQC Known Answer Tests"
+        authorityNote="NIST AI RMF · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

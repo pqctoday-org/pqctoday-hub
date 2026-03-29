@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the DatabaseEncryptionPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -41,6 +40,9 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      'ID: database-encryption-pqc. Track: Infrastructure. Level: Intermediate. Duration: 75 min. Workshop Steps: 5. This module covers quantum-safe migration for database encryption layers, TDE key management, BYOK/HYOK architecture, queryable encryption compatibility, and regulatory compliance for enterprise database fleets. ---',
+    keyConcepts:
+      "AES-256 is quantum-safe: Grover's algorithm reduces effective bits from 256 to 128 — still above the 112-bit security minimum. No data file re-encryption needed. DEK wrapping is the PQC target: RSA-OAEP and ECDH used to wrap DEKs must be replaced with ML-KEM-1024. ML-KEM-1024 key sizes: Public key: 1,568 bytes (vs 256 bytes RSA-2048). Ciphertext: 1,568 bytes. ~6× metadata overhead per DEK — negligible for multi-TB databases.",
   },
 }

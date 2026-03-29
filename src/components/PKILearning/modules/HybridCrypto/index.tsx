@@ -42,7 +42,7 @@ const PARTS = [
   {
     id: 'hybrid-formats',
     title: 'Step 4: Hybrid Formats',
-    description: 'Generate and compare all four hybrid X.509 certificate approaches.',
+    description: 'Generate and compare hybrid X.509 certificate approaches.',
     icon: Layers,
   },
   {
@@ -149,7 +149,7 @@ export const HybridCryptoModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <HybridCryptoIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <HybridCryptoIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

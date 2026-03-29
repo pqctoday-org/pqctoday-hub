@@ -142,6 +142,53 @@ export const HybridCertFormats: React.FC = () => {
             error: hasError ? ecCert.error || pqcCert.error : undefined,
           },
         }))
+      } else if (formatId === 'alt-sig') {
+        // Alt-Sig: generate classical cert (primary) + PQC cert (represents alt-sig extensions)
+        const ecKey = await hybridCryptoService.generateKey('EC', 'altsig_ec_key.pem')
+        const ecCert = ecKey.error
+          ? ({ pem: '', parsed: '', timingMs: 0, error: ecKey.error } as CertResult)
+          : await hybridCryptoService.generateSelfSignedCert(
+              'altsig_ec_key.pem',
+              'altsig_ec_cert.pem',
+              '/CN=Alt-Sig Primary (ECDSA)/O=PQC Today/OU=Hybrid Certificate Sandbox',
+              ecKey.fileData
+            )
+
+        const pqcKey = await hybridCryptoService.generateKey('ML-DSA-65', 'altsig_pqc_key.pem')
+        const pqcCert = pqcKey.error
+          ? ({ pem: '', parsed: '', timingMs: 0, error: pqcKey.error } as CertResult)
+          : await hybridCryptoService.generateSelfSignedCert(
+              'altsig_pqc_key.pem',
+              'altsig_pqc_cert.pem',
+              '/CN=Alt-Sig Extension Content (ML-DSA-65)/O=PQC Today/OU=Hybrid Certificate Sandbox',
+              pqcKey.fileData
+            )
+
+        const hasError = ecCert.error || pqcCert.error
+        setResults((prev) => ({
+          ...prev,
+          [formatId]: {
+            formatId,
+            certs: hasError
+              ? []
+              : [
+                  {
+                    label: 'Primary Certificate: ECDSA P-256 (with alt-sig extensions)',
+                    pem: ecCert.pem,
+                    parsed: ecCert.parsed,
+                    type: 'classical',
+                  },
+                  {
+                    label: 'Alt-Sig Content: ML-DSA-65 key + signature (in extensions)',
+                    pem: pqcCert.pem,
+                    parsed: pqcCert.parsed,
+                    type: 'pqc',
+                  },
+                ],
+            timingMs: performance.now() - start,
+            error: hasError ? ecCert.error || pqcCert.error : undefined,
+          },
+        }))
       } else if (formatId === 'related-certs') {
         const relResult = await hybridCryptoService.generateRelatedCertPair()
         setResults((prev) => ({
@@ -246,11 +293,11 @@ export const HybridCertFormats: React.FC = () => {
   return (
     <div className="space-y-6">
       <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Four Hybrid Certificate Formats</h3>
+        <h3 className="text-lg font-bold text-foreground mb-2">Hybrid Certificate Formats</h3>
         <p className="text-sm text-muted-foreground">
-          Generate and compare the four X.509 hybrid certificate approaches. Each format combines
-          classical and PQC algorithms differently, with distinct trade-offs for backward
-          compatibility, standardization, and security properties.
+          Generate and compare X.509 hybrid certificate approaches. Each format combines classical
+          and PQC algorithms differently, with distinct trade-offs for backward compatibility,
+          standardization, and security properties.
         </p>
       </div>
 
@@ -268,7 +315,7 @@ export const HybridCertFormats: React.FC = () => {
         ) : (
           <>
             <Play size={18} fill="currentColor" />
-            Generate All Four Formats
+            Generate All Formats
           </>
         )}
       </button>

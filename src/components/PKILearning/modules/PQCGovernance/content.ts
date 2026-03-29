@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the PQCGovernance module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -51,7 +50,14 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      'The PQC Governance & Policy module teaches executives how to establish organizational governance structures for post-quantum cryptography migration. It covers RACI matrix construction for PQC program roles, cryptographic policy generation with compliance-aligned templates, KPI dashboard design for tracking migration progress, and escalation frameworks for conflict resolution.',
+    keyConcepts:
+      'RACI Matrix — Responsible, Accountable, Consulted, Informed assignment matrix mapping 10 migration activities (crypto inventory, risk assessment, vendor assessment, algorithm selection, testing, deployment, monitoring, training & awareness, compliance auditing, stakeholder communications) across 6 organizational roles. Includes validation that warns when activities lack an Accountable assignment.',
+    workshopSummary:
+      'The workshop has 3 interactive steps: RACI Matrix Builder — interactive 10×6 matrix with color-coded click-to-cycle cells (click cycles: empty → R → A → C → I → empty); includes validation warning for missing Accountable assignments, legend, export to Markdown, and save to learning portfolio as an executive document.',
+    relatedStandards:
+      'OMB M-23-02 (Migrating to Post-Quantum Cryptography). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NIST SP 800-53 (Security and Privacy Controls). FIPS 203 (ML-KEM), FIPS 204 (ML-DSA), FIPS 205 (SLH-DSA), FIPS 206 (FN-DSA, draft). ISO 27001 (Information Security Management Systems). COBIT (Control Objectives for Information and Related Technologies)',
   },
 }
 

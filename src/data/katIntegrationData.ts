@@ -11,6 +11,7 @@ export interface KatIntegration {
   learningModuleId: string
   useCaseValidated: string
   integrationStatus: 'Planned' | 'Active' | 'Testing'
+  keysJsonPath: string
 }
 
 interface RawKatRow {
@@ -23,6 +24,7 @@ interface RawKatRow {
   learning_module_id: string
   use_case_validated: string
   integration_status: string
+  keys_json_path: string
 }
 
 const modules = import.meta.glob('../../kat/kat_*.csv', {
@@ -44,6 +46,7 @@ const { data: allKatIntegrations, metadata: parsedMetadata } = loadLatestCSV<
   learningModuleId: row.learning_module_id,
   useCaseValidated: row.use_case_validated,
   integrationStatus: (row.integration_status as KatIntegration['integrationStatus']) ?? 'Planned',
+  keysJsonPath: row.keys_json_path ?? '',
 }))
 
 /** All KAT integration cross-references mapping KATs to Learning Modules. */

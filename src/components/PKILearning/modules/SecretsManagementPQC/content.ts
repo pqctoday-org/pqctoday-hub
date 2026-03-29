@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the SecretsManagementPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -35,7 +34,12 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      'Covers PQC migration for secrets management platforms (HashiCorp Vault, AWS Secrets Manager, Azure Key Vault, GCP Secret Manager, Delinea Secret Server). Addresses secret classification by HNDL risk, automated rotation with PQC keys, cloud provider roadmaps, and Kubernetes/CI-CD pipeline integration.',
+    keyConcepts:
+      'Secret types vs encryption keys: what PQC protects. Harvest-now-decrypt-later (HNDL) risk for long-lived credentials. HashiCorp Vault transit engine PQC upgrade path (ML-KEM-768, ML-DSA-65). Dynamic secrets and TTL-based rotation with PQC. AWS Secrets Manager / Azure Key Vault / GCP Secret Manager PQC timelines. Kubernetes secrets encryption-at-rest with ML-KEM (via KMS plugin). External Secrets Operator and SPIFFE/SPIRE integration. CI/CD OIDC + ML-DSA short-lived certificate patterns.',
+    relatedStandards:
+      'NIST SP 800-57 Part 1 Rev. 5 (Key Management Recommendations). NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms — ML-KEM). FIPS 204 (ML-DSA, Module-Lattice-Based Digital Signature Standard). FIPS 203 (ML-KEM, Module-Lattice-Based Key-Encapsulation Mechanism). HashiCorp Vault Transit Secrets Engine documentation. HashiCorp Vault Database Secrets Engine documentation. CIS Kubernetes Benchmark v1.9 (etcd encryption-at-rest, section 1.2.33).',
   },
 }
 

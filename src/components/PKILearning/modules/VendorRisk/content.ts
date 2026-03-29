@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the VendorRisk module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -27,7 +26,14 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      "The Vendor & Supply Chain Risk module teaches executives how to assess, score, and manage cryptographic risk across their vendor ecosystem. It covers PQC readiness scorecards with six weighted dimensions, contract clause generation for quantum-safe procurement, and supply chain risk matrix visualization across infrastructure layers. The module integrates live data from the app's migration catalog to auto-score FIPS validation status and vendor PQC readiness.",
+    keyConcepts:
+      'Vendor PQC Scorecard — six weighted dimensions: PQC Algorithm Support (25%), FIPS 140-3 Validation (20%), Published PQC Roadmap (15%), Crypto Agility (15%), SBOM/CBOM Delivery (10%), Hybrid Mode Support (15%).',
+    workshopSummary:
+      'The workshop has 3 interactive steps: Vendor Scorecard Builder — interactive scorecard with 6 weighted slider dimensions; FIPS validation auto-scored from migration catalog data; saves assessment as executive document. Contract Clause Generator — 5-section artifact builder producing legal-style contract articles (PQC Timeline, FIPS Validation, CBOM Delivery, Crypto Change Notification, Audit Rights) with customizable parameters.',
+    relatedStandards:
+      'NIST SP 800-161 (Cybersecurity Supply Chain Risk Management). NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). CycloneDX CBOM Specification. FIPS 140-3 (Security Requirements for Cryptographic Modules)',
   },
 }
 

@@ -6,6 +6,34 @@ import { ASIL_COLORS, ASIL_LABELS, FAIL_MODE_LABELS } from '../data/automotiveCo
 import { AUTOMOTIVE_FUNCTIONS, ASIL_CRYPTO_REQUIREMENTS } from '../data/safetyCryptoData'
 import type { AutomotiveFunctionProfile } from '../data/safetyCryptoData'
 import { ALGORITHM_THROUGHPUT } from '../data/sensorFusionData'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const AUTOMOTIVE_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'auto-v2x-sigver',
+    useCase: 'V2X Basic Safety Message signing (ML-DSA-44)',
+    standard: 'IEEE 1609.2 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 44 },
+    message: 'IEEE 1609.2 BSM: msgCount=42,tempId=0xA7B3,latitude=37.7749,longitude=-122.4194',
+  },
+  {
+    id: 'auto-carkey-kem',
+    useCase: 'Digital car key auth (ML-KEM-768)',
+    standard: 'CCC Digital Key 3.0 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'auto-ota-encrypt',
+    useCase: 'OTA firmware manifest encryption',
+    standard: 'UNECE WP.29 R155 + SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'OTA firmware manifest: version=3.2.1,targetECU=TCU,digest=8c4f...',
+  },
+]
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -349,6 +377,12 @@ export const SafetyCryptoAnalyzer: React.FC = () => {
 
       {/* ASIL Requirements Summary */}
       <ASILRequirementsTable />
+
+      <KatValidationPanel
+        specs={AUTOMOTIVE_KAT_SPECS}
+        label="Automotive PQC Known Answer Tests"
+        authorityNote="IEEE 1609.2 · CCC DK 3.0 · UNECE R155"
+      />
     </div>
   )
 }

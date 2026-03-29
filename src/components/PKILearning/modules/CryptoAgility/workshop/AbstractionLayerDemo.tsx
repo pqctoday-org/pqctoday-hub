@@ -7,6 +7,35 @@ import {
   APP_CODE_SAMPLE,
   ANTI_PATTERNS,
 } from '../data/architecturePatterns'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const AGILITY_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'agility-mldsa-primary',
+    useCase: 'Primary PQC algorithm (ML-DSA-65)',
+    standard: 'CNSA 2.0 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'CryptoAgility migration test: algorithm=ML-DSA-65,epoch=2026',
+  },
+  {
+    id: 'agility-slhdsa-fallback',
+    useCase: 'Hash-based fallback (SLH-DSA-SHA2-128s)',
+    standard: 'FIPS 205',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
+    kind: { type: 'slhdsa-functional', variant: 'SHA2-128s' },
+    message: 'CryptoAgility fallback test: algorithm=SLH-DSA-SHA2-128s,epoch=2026',
+  },
+  {
+    id: 'agility-classical-ecdsa',
+    useCase: 'Classical baseline (ECDSA P-256)',
+    standard: 'FIPS 186-5 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-functional', curve: 'P-256' },
+    message: 'CryptoAgility classical baseline: algorithm=ECDSA-P256',
+  },
+]
 
 interface AbstractionLayerDemoProps {
   initialBackend?: string
@@ -194,6 +223,12 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
           ))}
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={AGILITY_KAT_SPECS}
+        label="Crypto Agility Known Answer Tests"
+        authorityNote="CNSA 2.0 · FIPS 204 · FIPS 205 · FIPS 186-5"
+      />
     </div>
   )
 }

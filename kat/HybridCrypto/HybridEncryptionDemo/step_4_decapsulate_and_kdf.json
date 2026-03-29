@@ -1,21 +1,23 @@
 {
   "kat_id": "KAT-KEM-2003",
   "step": "step_4_decapsulate_and_kdf",
-  "authoritative_source": "IETF TLSwg DRAFT",
+  "authoritative_source": "RFC 8032",
   "reference_details": {
-    "standard": "https://datatracker.ietf.org/doc/draft-ietf-tls-hybrid-design/",
-    "algorithm": "HKDF",
-    "protocol": "Dual Shared Secret Derivation",
-    "key_size": "HKDF"
+    "standard": "https://www.rfc-editor.org/rfc/rfc8032",
+    "algorithm": "EdDSA",
+    "protocol": "HybridEncryptionDemo step_4_decapsulate_and_kdf",
+    "key_size": "Ed25519"
   },
   "requires_keys": ["hkdf-01-secret"],
   "testGroups": [
     {
-      "macLen": 256,
+      "curve": "Ed25519",
       "tests": [
         {
-          "msg": "4143565020484d41432d534841323536204b4154207465737420776974682033322d62797465206b6579",
-          "mac": "6eb8359fb18f2b34c8d82fafdf960b095bc32782cf6819f5a09c17ca8913406e"
+          "pk": "5634391bd9f30daabc7764d4a4cbcd1279b23f61f6bba33d90209955760b084a",
+          "msg": "456444534120456432353531392041435650206578747261207465737420766563746f7220666f72206d6f64756c65204b415420646966666572656e74696174696f6e",
+          "signature": "1be4ad1a21038fd14b8b3b0940e06f3f877cecec07e05e7ec8e7d8edc188b13e3250fe5f6259b53bb40ced8e60e7dd71b9239d06ebd3181041a8e269d059970f",
+          "testPassed": true
         }
       ]
     }

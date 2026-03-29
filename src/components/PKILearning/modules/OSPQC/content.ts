@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the OSPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -36,7 +35,10 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      'Linux CryptoAPI and Windows CNG PQC migration. System-wide TLS policy: OpenSSL, GnuTLS, SCHANNEL. SSH host key migration to ML-DSA-65. Package signing (RPM/DEB) with ML-DSA. FIPS mode compatibility with PQC algorithms',
+    workshopSummary:
+      'OS Crypto Inventory. System TLS Configurator. SSH Host Key Migrator. Package Signing Migrator. FIPS Compatibility Checker',
   },
 }
 

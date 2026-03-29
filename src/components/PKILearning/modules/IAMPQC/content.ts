@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the IAMPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
@@ -45,7 +44,10 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      'JWT, SAML, OIDC token signing migration to ML-DSA (FIPS 204). Active Directory, LDAP, Kerberos quantum vulnerabilities and HNDL risk scores. IAM vendor roadmaps: Okta, Microsoft Entra, PingFederate, ForgeRock, CyberArk, HashiCorp Vault, Keycloak. Zero trust identity architecture with PQC across five pillars. Harvest Now, Decrypt Later (HNDL) risk for Kerberos tickets, SAML assertions, and JWT refresh tokens',
+    workshopSummary:
+      'IAM Crypto Inventory — audit 8 components by quantum risk level and migration priority. Token Migration Lab — compare RS256/ES256 vs ML-DSA-44/65/87 signature sizes and header changes. Directory Services Analyzer — AD/LDAP/Azure AD HNDL risk scoring and attack scenario analysis. Vendor Readiness Scorer — score IAM vendors across token signing, MFA, API security, roadmap dimensions. Zero Trust Identity Architect — assign migration years to 5 identity pillars and generate a phased roadmap',
   },
 }
 

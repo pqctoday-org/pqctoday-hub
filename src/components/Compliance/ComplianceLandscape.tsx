@@ -115,7 +115,7 @@ function industryChip(industry: string): string {
 
 // ── Sort helpers ─────────────────────────────────────────────────────────
 
-type FrameworkSortOption = 'name' | 'deadline'
+export type FrameworkSortOption = 'name' | 'deadline'
 
 const FRAMEWORK_SORT_OPTIONS: { id: FrameworkSortOption; label: string }[] = [
   { id: 'deadline', label: 'Deadline ↑' },
@@ -556,11 +556,34 @@ interface ComplianceLandscapeProps {
   frameworks?: ComplianceFramework[]
   /** Whether to render the deadline timeline bar. Defaults to true. */
   showDeadlineTimeline?: boolean
+  /** Controlled filter state (lifted to ComplianceView for URL sync) */
+  orgFilter?: string
+  industryFilter?: string
+  searchText?: string
+  searchInputValue?: string
+  sortBy?: FrameworkSortOption
+  viewMode?: ViewMode
+  onOrgFilterChange?: (org: string) => void
+  onIndustryFilterChange?: (ind: string) => void
+  onSearchTextChange?: (text: string) => void
+  onSortByChange?: (sort: FrameworkSortOption) => void
+  onViewModeChange?: (mode: ViewMode) => void
 }
 
 export function ComplianceLandscape({
   frameworks: frameworksProp,
   showDeadlineTimeline = true,
+  orgFilter: orgFilterProp,
+  industryFilter: industryFilterProp,
+  searchText: searchTextProp,
+  searchInputValue: searchInputValueProp,
+  sortBy: sortByProp,
+  viewMode: viewModeProp,
+  onOrgFilterChange,
+  onIndustryFilterChange,
+  onSearchTextChange,
+  onSortByChange,
+  onViewModeChange,
 }: ComplianceLandscapeProps = {}) {
   const sourceFrameworks = frameworksProp ?? complianceFrameworks
   const { selectedIndustries } = usePersonaStore()
@@ -568,12 +591,25 @@ export function ComplianceLandscape({
   const showOnlyMine = useComplianceSelectionStore((s) => s.showOnlyMine)
   const setShowOnlyMine = useComplianceSelectionStore((s) => s.setShowOnlyMine)
 
-  // Filter state
-  const [orgFilter, setOrgFilter] = useState<string>('All')
-  const [industryFilter, setIndustryFilter] = useState<string>(selectedIndustries[0] ?? 'All')
-  const [searchText, setSearchText] = useState<string>('')
-  const [sortBy, setSortBy] = useState<FrameworkSortOption>('deadline')
-  const [viewMode, setViewMode] = useState<ViewMode>('cards')
+  // Filter state — controlled from parent when props provided, local fallback otherwise
+  const [localOrg, setLocalOrg] = useState<string>('All')
+  const [localIndustry, setLocalIndustry] = useState<string>(selectedIndustries[0] ?? 'All')
+  const [localSearch, setLocalSearch] = useState<string>('')
+  const [localSort, setLocalSort] = useState<FrameworkSortOption>('deadline')
+  const [localView, setLocalView] = useState<ViewMode>('cards')
+
+  const orgFilter = orgFilterProp ?? localOrg
+  const industryFilter = industryFilterProp ?? localIndustry
+  const searchInputVal = searchInputValueProp ?? localSearch
+  const searchFilterText = searchTextProp ?? localSearch
+  const sortBy = sortByProp ?? localSort
+  const viewMode = viewModeProp ?? localView
+
+  const setOrgFilter = onOrgFilterChange ?? setLocalOrg
+  const setIndustryFilter = onIndustryFilterChange ?? setLocalIndustry
+  const setSearchText = onSearchTextChange ?? setLocalSearch
+  const setSortBy = onSortByChange ?? setLocalSort
+  const setViewMode = onViewModeChange ?? setLocalView
 
   // Organization options — derived from enforcementBody field
   const orgItems = useMemo(() => {
@@ -606,8 +642,8 @@ export function ComplianceLandscape({
     if (industryFilter !== 'All') {
       result = result.filter((fw) => fw.industries.includes(industryFilter))
     }
-    if (searchText.trim()) {
-      const q = searchText.toLowerCase()
+    if (searchFilterText.trim()) {
+      const q = searchFilterText.toLowerCase()
       result = result.filter(
         (fw) =>
           fw.label.toLowerCase().includes(q) ||
@@ -620,7 +656,15 @@ export function ComplianceLandscape({
     }
 
     return sortFrameworks(result, sortBy)
-  }, [sourceFrameworks, orgFilter, industryFilter, searchText, sortBy, showOnlyMine, myFrameworks])
+  }, [
+    sourceFrameworks,
+    orgFilter,
+    industryFilter,
+    searchFilterText,
+    sortBy,
+    showOnlyMine,
+    myFrameworks,
+  ])
 
   // Stats
   const pqcCount = displayedFrameworks.filter((f) => f.requiresPQC).length
@@ -690,7 +734,7 @@ export function ComplianceLandscape({
             type="text"
             placeholder="Search standards..."
             aria-label="Search compliance entries"
-            value={searchText}
+            value={searchInputVal}
             onChange={(e) => setSearchText(e.target.value)}
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-8 pr-4 py-1.5 text-xs focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />

@@ -176,7 +176,7 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
         </h3>
         <p className="text-sm text-muted-foreground">
           Generate a classical (ECDSA P-256) and a PQC (ML-DSA-65) root CA. These CAs will be used
-          in the next steps to demonstrate the four hybrid certificate formats.
+          in the next steps to demonstrate the hybrid certificate formats.
         </p>
       </div>
 
@@ -214,9 +214,8 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
         <div className="bg-muted/50 rounded-lg p-4 border border-success/20">
           <p className="text-xs text-muted-foreground">
             <strong className="text-success">Both CAs ready.</strong> You now have the key material
-            needed to explore all four hybrid certificate approaches in the next step. The classical
-            CA represents your existing PKI; the PQC CA represents a quantum-resistant root of
-            trust.
+            needed to explore all hybrid certificate approaches in the next step. The classical CA
+            represents your existing PKI; the PQC CA represents a quantum-resistant root of trust.
           </p>
         </div>
       )}

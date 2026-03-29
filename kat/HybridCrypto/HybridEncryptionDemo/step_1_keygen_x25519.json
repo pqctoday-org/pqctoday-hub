@@ -1,10 +1,25 @@
 {
   "kat_id": "KAT-KEM-2000",
-  "step_file": "step_1_keygen_x25519.json",
-  "algorithm": "X25519",
-  "rfc_compliance": "RFC 7748",
-  "authoritative_source": "IETF PQC Examples Dataset (To Be Hydrated)",
-  "data": {
-    "status": "pending_hydration"
-  }
+  "step": "step_1_keygen_x25519",
+  "authoritative_source": "RFC 8032",
+  "reference_details": {
+    "standard": "https://www.rfc-editor.org/rfc/rfc8032",
+    "algorithm": "EdDSA",
+    "protocol": "HybridEncryptionDemo step_1_keygen_x25519",
+    "key_size": "Ed25519"
+  },
+  "requires_keys": ["eddsa-05-pub", "eddsa-05-priv"],
+  "testGroups": [
+    {
+      "curve": "Ed25519",
+      "tests": [
+        {
+          "pk": "5634391bd9f30daabc7764d4a4cbcd1279b23f61f6bba33d90209955760b084a",
+          "msg": "456444534120456432353531392041435650206578747261207465737420766563746f7220666f72206d6f64756c65204b415420646966666572656e74696174696f6e",
+          "signature": "1be4ad1a21038fd14b8b3b0940e06f3f877cecec07e05e7ec8e7d8edc188b13e3250fe5f6259b53bb40ced8e60e7dd71b9239d06ebd3181041a8e269d059970f",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
 }

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the QuantumThreats module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
@@ -52,6 +51,13 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      "The Quantum Threats module provides an in-depth technical explanation of how quantum computers threaten current cryptographic systems. It covers the physics of qubits and superposition, explains Shor's algorithm (which breaks RSA and ECC) and Grover's algorithm (which weakens AES and SHA), presents CRQC timeline projections from multiple agencies, and details both the HNDL (Harvest Now, Decrypt Later) and HNFL (Harvest Now, Forge Later) attack models.",
+    keyConcepts:
+      "Qubits and superposition — quantum bits exist in a combination of 0 and 1 simultaneously; entanglement correlates qubits so N qubits can process 2^N states in parallel. Shor's Algorithm — solves integer factorization (RSA) and discrete logarithm (ECC/DH) in polynomial time O(n^3); RSA-2048 requires approximately 4,098 logical qubits; P-256 requires approximately 2,330 logical qubits.",
+    workshopSummary:
+      'The workshop has 5 interactive steps: Security Level Degradation — visualize how quantum attacks reduce the effective security level of classical algorithms, with configurable algorithm selection. Algorithm Vulnerability Matrix — comprehensive comparison grid of all algorithms versus quantum attack types. Key Size Analyzer — side-by-side comparison of two algorithms showing key sizes, ciphertext sizes, and security parameters.',
+    relatedStandards:
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0. BSI Technical Recommendations (Germany). ANSSI Guidance on Post-Quantum Cryptography (France). Global Risk Institute Quantum Threat Timeline',
   },
 }

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Hybrid Cryptography module teaches how to combine classical and post-quantum algorithms for defense in depth during the quantum transition period. It covers why hybrid approaches are recommended (or mandated) by agencies like ANSSI and NIST, explains three X.509 certificate format approaches (pure PQC, composite dual-algorithm, and parallel/alt-sig), details hybrid KEM construction (X25519MLKEM768), and describes composite signature structures. The module addresses the fundamental dilemma that PQC algorithms are newer and less battle-tested than classical ones, yet HNDL threats make waiting dangerous.
+The Hybrid Cryptography module teaches how to combine classical and post-quantum algorithms for defense in depth during the quantum transition period. It covers why hybrid approaches are recommended (or mandated) by agencies like ANSSI and NIST, explains six X.509 certificate format approaches (pure PQC ML-DSA, pure PQC SLH-DSA, composite dual-algorithm, alt-sig/catalyst, related certificates, and chameleon), details hybrid KEM construction (X25519MLKEM768), and describes composite signature structures. The module addresses the fundamental dilemma that PQC algorithms are newer and less battle-tested than classical ones, yet HNDL threats make waiting dangerous.
 
 ## Key Concepts
 
@@ -11,10 +11,13 @@ The Hybrid Cryptography module teaches how to combine classical and post-quantum
 - **NIST SP 800-227** recommends hybrid key exchange for TLS and other protocols during the transition
 - **CNSA 2.0** (NSA) mandates PQC adoption for national security systems by 2030, with hybrid key exchange required during the transition window
 - **RFC 9794** standardizes terminology for hybrid schemes — "composite" (single OID, both-must-verify) vs "non-composite" (parallel independent algorithms); establishes "PQ/T" (Post-Quantum / Traditional) naming
-- **Three certificate format approaches**:
-  - **Pure PQC** — standard single-algorithm X.509 using PQC signatures; ML-DSA OIDs standardized in RFC 9881, SLH-DSA in RFC 9909, LMS/XMSS in RFC 9802; ready today in OpenSSL 3.x
-  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs (v15 as of Feb 2026); strongest security model
-  - **Parallel (alt-sig)** — PQC primary signature with classical key/signature in X.509 extensions (OIDs 2.5.29.73/74); maximizes backward compatibility
+- **Six certificate format approaches**:
+  - **Pure PQC (ML-DSA)** — standard single-algorithm X.509 using ML-DSA signatures; OIDs standardized in RFC 9881; ready today in OpenSSL 3.x
+  - **Pure PQC (SLH-DSA)** — hash-based signature X.509 certificates; OIDs in RFC 9909; ANSSI allows standalone use without hybrid
+  - **Composite (dual-algorithm)** — single composite OID identifies the algorithm pair; both signatures must verify; defined in draft-ietf-lamps-pq-composite-sigs; strongest security model
+  - **Alt-Sig / Catalyst** — classical primary cert with PQC key and signature in X.509 extensions (SubjectAltPublicKeyInfo 2.5.29.72, AltSignatureAlgorithm 2.5.29.73, AltSignatureValue 2.5.29.74); legacy verifiers ignore extensions; defined in draft-ietf-lamps-cert-binding-for-multi-auth
+  - **Related Certificates (RFC 9763)** — two separate independent certificates bound by a SHA-256 hash in a RelatedCertificate extension; each certificate is independently valid; full backward compatibility
+  - **Chameleon Certificates** — single cert with a DeltaCertificateDescriptor extension encoding differences to reconstruct a partner cert; more space-efficient than related certs; defined in draft-bonnell-lamps-chameleon-certs
 - **X25519MLKEM768** — the leading hybrid KEM combining Curve25519 ECDH with ML-KEM-768; already deployed in Chrome, Cloudflare, and AWS; combined shared secret derived via KDF(X25519_ss || ML-KEM_ss)
 - **Other hybrid KEM variants**: SecP256r1MLKEM768 (P-256 + ML-KEM-768, FIPS-approved classical curve), SecP384r1MLKEM1024 (P-384 + ML-KEM-1024, NIST Level 5)
 - **Composite signatures** combine ML-DSA with ECDSA or Ed25519 in a single operation; both must verify; single OID simplifies handling; prevents downgrade attacks
@@ -28,7 +31,7 @@ The workshop has 5 hands-on steps:
 1. **Hybrid Key Generation** — generate and compare classical, pure PQC, and hybrid key pairs, observing key size differences across categories
 2. **Hybrid Encryption and Signing Demo** — perform KEM encapsulation and digital signature operations in hybrid mode, comparing classical and PQC outputs
 3. **Hybrid CA Setup** — set up a hybrid certificate authority with both classical and PQC keys
-4. **Hybrid Certificate Formats** — generate and compare four X.509 hybrid approaches: Pure PQC (ML-DSA-65), Composite (ML-DSA-65 + ECDSA), Related Certs (RFC 9763), and Chameleon Certificates
+4. **Hybrid Certificate Formats** — generate and compare six X.509 approaches: Pure PQC (ML-DSA-65), Pure PQC (SLH-DSA-128s), Composite (ML-DSA-65 + ECDSA), Alt-Sig/Catalyst (ECDSA primary + ML-DSA extensions), Related Certs (RFC 9763), and Chameleon Certificates
 5. **Certificate Inspector** — deep-dive into generated certificates with Tree, Raw, and Size views; also inspect real IETF Hackathon reference certificates from the pqc-certificates test vector repository
 
 ## IETF Reference Certificates
@@ -36,7 +39,7 @@ The workshop has 5 hands-on steps:
 The Certificate Inspector (Step 5) includes a toggle to view real DER-encoded hybrid certificates from the IETF Hackathon pqc-certificates repository (r5). Four test vectors are embedded:
 
 - **Composite (MLDSA65-ECDSA-P256-SHA512)** — OID 1.3.6.1.5.5.7.6.45, generated by Bouncy Castle; demonstrates composite OID backward incompatibility (OpenSSL shows "UNKNOWN")
-- **Catalyst (ECDSA-P256 + ML-DSA-44 alt-sig)** — generated by Bouncy Castle; uses alt-sig extensions 2.5.29.72 (SubjectAltPublicKeyInfo), 2.5.29.73 (AltSignatureAlgorithm), 2.5.29.74 (AltSignatureValue)
+- **Alt-Sig / Catalyst (ECDSA-P256 + ML-DSA-44 alt-sig)** — generated by Bouncy Castle; uses alt-sig extensions 2.5.29.72 (SubjectAltPublicKeyInfo), 2.5.29.73 (AltSignatureAlgorithm), 2.5.29.74 (AltSignatureValue); classical primary with PQC in extensions
 - **Pure ML-DSA-65** — OID 2.16.840.1.101.3.4.3.18, generated by OpenSSL 3.5; reference for FIPS 204 cert format
 - **Chameleon (ECDSA-P256 outer + ML-DSA-44 delta)** — generated by Bouncy Castle; uses DeltaCertificateDescriptor extension 2.16.840.1.114027.80.6.1
 
@@ -47,7 +50,7 @@ The Certificate Inspector (Step 5) includes a toggle to view real DER-encoded hy
 - RFC 9909 (SLH-DSA stateless hash-based signature OIDs in X.509)
 - RFC 9763 (Related Certificates for PKI)
 - draft-ietf-lamps-pq-composite-sigs (Composite Signatures)
-- draft-ietf-lamps-cert-binding-for-multi-auth (Catalyst / alt-sig)
+- draft-ietf-lamps-cert-binding-for-multi-auth (Alt-Sig / Catalyst)
 - draft-bonnell-lamps-chameleon-certs (Chameleon Certificates)
 - RFC 9794 (Terminology for Post-Quantum Traditional Hybrid Schemes)
 - NIST SP 800-227 (Recommendations for Key-Encapsulation Mechanisms)

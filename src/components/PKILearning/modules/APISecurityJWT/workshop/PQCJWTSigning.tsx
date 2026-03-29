@@ -3,6 +3,34 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { PenLine, Key, CheckCircle, Copy, Check } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'
 import { createJWTHeader, createJWTPayload, simulateBase64url, simulateHexBytes } from '../jwtUtils'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const JWT_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'jwt-pqc-sigver',
+    useCase: 'PQC JWT access token signing (ML-DSA-65)',
+    standard: 'RFC 9500 + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: '{"sub":"1234567890","name":"PQC User","iat":1735689600,"alg":"ML-DSA-65"}',
+  },
+  {
+    id: 'jwt-kem-exchange',
+    useCase: 'JWE key agreement (ML-KEM-768)',
+    standard: 'FIPS 203 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'jwt-hmac-integrity',
+    useCase: 'HMAC token integrity check',
+    standard: 'FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
+  },
+]
 
 type SigningAlgorithm = 'ES256' | 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'
 
@@ -341,6 +369,12 @@ export const PQCJWTSigning: React.FC = () => {
           to use for validation.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={JWT_KAT_SPECS}
+        label="API Security JWT Known Answer Tests"
+        authorityNote="RFC 9500 · FIPS 203 · FIPS 204"
+      />
     </div>
   )
 }

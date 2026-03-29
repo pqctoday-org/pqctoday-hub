@@ -49,7 +49,7 @@ export const content: ModuleContent = {
     nistRecommendation:
       'NIST SP 800-227 recommends hybrid key exchange during the transition period to maintain backward compatibility while adding quantum resistance.',
     certFormatExplain:
-      'Five certificate approaches exist for hybrid: Pure PQC, Composite (single cert with both algorithms), Parallel/Alt-Sig (two signatures in one cert), Related Certificates (paired certs), and Chameleon (backward-compatible).',
+      'Six certificate approaches exist for PQC X.509: Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite (single OID, both-must-verify), Alt-Sig/Catalyst (PQC in extensions), Related Certificates (paired certs with binding hash, RFC 9763), and Chameleon (delta extension, draft-bonnell).',
     compositeSigSize: '3,381 bytes',
     altSigSize: '2,017 bytes',
   },

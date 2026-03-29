@@ -12,6 +12,33 @@ import {
   type ScoredAsset,
   type ScoringWeights,
 } from '../data/sensitivityConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const DATASENS_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'datasens-critical-kem',
+    useCase: 'Critical-tier key encapsulation (ML-KEM-1024)',
+    standard: 'CNSA 2.0 + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 1024 },
+  },
+  {
+    id: 'datasens-low-kem',
+    useCase: 'Low-tier key encapsulation (ML-KEM-512)',
+    standard: 'FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 512 },
+  },
+  {
+    id: 'datasens-classification-hash',
+    useCase: 'Data classification record hash',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 2 },
+  },
+]
 
 interface SensitivityScoringEngineProps {
   assets: DataAsset[]
@@ -394,6 +421,12 @@ export const SensitivityScoringEngine: React.FC<SensitivityScoringEngineProps> =
           <AssetScoreRow key={s.id} scored={s} rank={i + 1} weights={weights} />
         ))}
       </div>
+
+      <KatValidationPanel
+        specs={DATASENS_KAT_SPECS}
+        label="Data Asset Sensitivity Known Answer Tests"
+        authorityNote="CNSA 2.0 · FIPS 203 · FIPS 180-4"
+      />
     </div>
   )
 }

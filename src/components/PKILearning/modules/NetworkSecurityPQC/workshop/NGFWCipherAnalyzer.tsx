@@ -4,6 +4,33 @@ import { Shield, AlertTriangle, CheckCircle, Cpu, Zap, Info } from 'lucide-react
 import { CIPHER_SUITES, HARDWARE_TIERS } from '../data/networkConstants'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const NETSEC_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'netsec-tls-kem',
+    useCase: 'TLS 1.3 key exchange (ML-KEM-768)',
+    standard: 'RFC 8446 + FIPS 203',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'netsec-ids-sign',
+    useCase: 'IDS rule signature integrity (ML-DSA-65)',
+    standard: 'FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'IDS rule payload: alert tcp any any -> any 443 (content:"ClientHello";sid:1000001)',
+  },
+  {
+    id: 'netsec-traffic-encrypt',
+    useCase: 'Inspection tunnel encryption (AES-256-CTR)',
+    standard: 'SP 800-38A ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/a/final',
+    kind: { type: 'aesctr-roundtrip' },
+  },
+]
 
 type CipherMode = 'classical' | 'hybrid' | 'pqc'
 
@@ -408,6 +435,12 @@ export const NGFWCipherAnalyzer: React.FC = () => {
           </table>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={NETSEC_KAT_SPECS}
+        label="Network Security PQC Known Answer Tests"
+        authorityNote="RFC 8446 · FIPS 203 · FIPS 204 · SP 800-38A"
+      />
     </div>
   )
 }

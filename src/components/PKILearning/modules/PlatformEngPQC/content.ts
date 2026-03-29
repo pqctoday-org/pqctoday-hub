@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the PlatformEngPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -47,7 +46,12 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      'Identify every cryptographic primitive embedded in a CI/CD pipeline from source control to runtime. Understand why HNDL (Harvest-Now-Decrypt-Later) makes TLS key exchange the most critical migration priority. Migrate container image signing from ECDSA P-256 to ML-DSA-65 via cosign or Notation. Write OPA/Kyverno policies that block quantum-vulnerable algorithm identifiers at admission time. Monitor crypto posture using Prometheus exporters, SIEM queries, and capacity planning data.',
+    keyConcepts:
+      '### Algorithm Sizes (container signing and TLS). ECDSA P-256 signature: 64 bytes. ML-DSA-44 signature: 2,420 bytes (38×). ML-DSA-65 signature: 3,309 bytes (52×). SLH-DSA-128f signature: 17,088 bytes (67×). ECDSA P-256 X.509 cert: 800 bytes. ML-DSA-65 X.509 cert: 5,800 bytes (7.25×). TLS 1.3 handshake (classical): 4,096 bytes. TLS 1.3 handshake (PQC): 18,432 bytes (4.5×). TLS handshake latency P99: 12ms (classical) → 28ms (PQC, +133%). ### IaC Quantum-Vulnerable Defaults.',
+    workshopSummary:
+      '### Step 1: Pipeline Crypto Inventory. 6 CI/CD pipeline stages: Source Control, CI/CD Build, Artifact Signing, Container Registry, Kubernetes Deploy, Runtime & Service Mesh. 17 crypto assets across stages with HNDL exposure ratings and PQC replacements.',
   },
 }
 

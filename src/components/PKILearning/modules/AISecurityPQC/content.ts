@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the AISecurityPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -30,6 +29,11 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      'Quantum threats to AI data pipelines (HNDL on training data, data poisoning via forged signatures). Model collapse from AI-generated training data contamination. Cryptographic data provenance (C2PA content credentials, hash chains, watermark detection). Model weight protection (encryption at rest/transit/use, ML-DSA model signing). AI agent authentication (machine identity, delegation tokens, credential lifecycles).',
+    workshopSummary:
+      'Data Protection Analyzer — Audit AI pipeline crypto operations for quantum vulnerabilities. Data Authenticity Verifier — Configure verification layers, visualize model collapse, compare signing overheads. Model Weight Vault — Configure model encryption/signing, compare classical vs PQC overhead. Agent Auth Designer — Design delegation chains with PQC credentials. Agentic Commerce Simulator — Step through agent transaction flows with quantum overlay.',
+    relatedStandards:
+      'FIPS 203 (ML-KEM) — key encapsulation for data and model encryption. FIPS 204 (ML-DSA) — digital signatures for data provenance, model signing, agent credentials. C2PA (Coalition for Content Provenance and Authenticity) — content credentials standard. RFC 8446 (TLS 1.3) — transport security for AI API endpoints. NIST AI RMF — AI risk management framework',
   },
 }

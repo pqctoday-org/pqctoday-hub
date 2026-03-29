@@ -8,6 +8,35 @@ import {
   type HealthcareDataCategory,
   type HealthcareDataProfile,
 } from '../data/healthcareConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const HEALTHCARE_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'hc-phi-kem',
+    useCase: 'PHI encryption key transport (ML-KEM-1024)',
+    standard: 'HIPAA + FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 1024 },
+  },
+  {
+    id: 'hc-fhir-sign',
+    useCase: 'FHIR resource bundle signing (ML-DSA-65)',
+    standard: 'HIPAA + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'FHIR Patient/123: resourceType=Patient,family=Doe,given=Jane,birthDate=1990-01-15',
+  },
+  {
+    id: 'hc-record-encrypt',
+    useCase: 'HL7 ADT message encryption',
+    standard: 'HIPAA + SP 800-38D',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-functional' },
+    message: 'HL7 ADT^A01: PID|1||MRN123456^^^Hospital^MR||Doe^Jane||19900115|F',
+  },
+]
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 
@@ -535,6 +564,12 @@ export const PatientPrivacyMapper: React.FC = () => {
           Select at least one data category above to see the privacy timeline analysis.
         </div>
       )}
+
+      <KatValidationPanel
+        specs={HEALTHCARE_KAT_SPECS}
+        label="Healthcare PQC Known Answer Tests"
+        authorityNote="HIPAA · FIPS 203 · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

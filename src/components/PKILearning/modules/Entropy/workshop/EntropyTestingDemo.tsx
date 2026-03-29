@@ -23,6 +23,41 @@ import { BitMatrixGrid } from '../components/BitMatrixGrid'
 import { LagPlot } from '../components/LagPlot'
 import { BitFlipExperiment } from '../components/BitFlipExperiment'
 import { StreamingEntropyMonitor } from '../components/StreamingEntropyMonitor'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const ENTROPY_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'entropy-sha256-empty',
+    useCase: 'SHA-256 conditioning (empty input)',
+    standard: 'SP 800-90B + FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 0 },
+  },
+  {
+    id: 'entropy-sha256-abc',
+    useCase: 'SHA-256 conditioning (3-byte input)',
+    standard: 'SP 800-90B + FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 1 },
+  },
+  {
+    id: 'entropy-hmac256-health',
+    useCase: 'HMAC-SHA-256 health test',
+    standard: 'SP 800-90B + FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
+  },
+  {
+    id: 'entropy-hmac512-health',
+    useCase: 'HMAC-SHA-512 health test',
+    standard: 'SP 800-90B + FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-512',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-512' },
+  },
+]
 
 type SampleType = 'good' | 'bad-zeros' | 'bad-pattern' | 'bad-increment'
 type TestingMode = 'static' | 'bitflip' | 'streaming'
@@ -399,6 +434,12 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
           </p>
         </div>
       </div>
+
+      <KatValidationPanel
+        specs={ENTROPY_KAT_SPECS}
+        label="Entropy Testing Known Answer Tests"
+        authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
+      />
     </div>
   )
 }

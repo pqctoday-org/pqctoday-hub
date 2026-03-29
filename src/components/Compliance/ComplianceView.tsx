@@ -2,8 +2,8 @@
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
-import { ComplianceTable } from './ComplianceTable'
-import { ComplianceLandscape } from './ComplianceLandscape'
+import { ComplianceTable, type SortColumn, type SortDirection } from './ComplianceTable'
+import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
 import { MobileComplianceView } from './MobileComplianceView'
 import { useComplianceRefresh } from './services'
 import {
@@ -25,6 +25,8 @@ import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { complianceFrameworks, complianceMetadata } from '@/data/complianceData'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
 import { useHistoryStore } from '@/store/useHistoryStore'
+import { type ViewMode } from '@/components/Library/ViewToggle'
+import debounce from 'lodash/debounce'
 
 // Maps industry → recommended top-level section + sub-hint
 const INDUSTRY_COMPLIANCE_HINT: Record<
@@ -137,10 +139,31 @@ function MobileViewToggle({
   data,
   activeSection,
   onSectionChange,
+  landscapeProps,
+  mobileRecordProps,
 }: {
   data: import('./types').ComplianceRecord[]
   activeSection: MobileSection
   onSectionChange: (section: MobileSection) => void
+  landscapeProps: {
+    orgFilter: string
+    industryFilter: string
+    searchText: string
+    searchInputValue: string
+    sortBy: FrameworkSortOption
+    viewMode: ViewMode
+    onOrgFilterChange: (org: string) => void
+    onIndustryFilterChange: (ind: string) => void
+    onSearchTextChange: (text: string) => void
+    onSortByChange: (sort: FrameworkSortOption) => void
+    onViewModeChange: (mode: ViewMode) => void
+  }
+  mobileRecordProps: {
+    filterText: string
+    onFilterTextChange: (text: string) => void
+    certType: string
+    onCertTypeChange: (ct: string) => void
+  }
 }) {
   const section = activeSection
   const setSection = onSectionChange
@@ -199,18 +222,42 @@ function MobileViewToggle({
         </button>
       </div>
       {section === 'standards' && (
-        <ComplianceLandscape frameworks={standardsFrameworks} showDeadlineTimeline={false} />
+        <ComplianceLandscape
+          frameworks={standardsFrameworks}
+          showDeadlineTimeline={false}
+          {...landscapeProps}
+        />
       )}
       {section === 'technical' && (
-        <ComplianceLandscape frameworks={technicalStandards} showDeadlineTimeline={false} />
+        <ComplianceLandscape
+          frameworks={technicalStandards}
+          showDeadlineTimeline={false}
+          {...landscapeProps}
+        />
       )}
       {section === 'certification' && (
-        <ComplianceLandscape frameworks={certificationFrameworks} showDeadlineTimeline={false} />
+        <ComplianceLandscape
+          frameworks={certificationFrameworks}
+          showDeadlineTimeline={false}
+          {...landscapeProps}
+        />
       )}
       {section === 'compliance' && (
-        <ComplianceLandscape frameworks={complianceOnlyFrameworks} showDeadlineTimeline={true} />
+        <ComplianceLandscape
+          frameworks={complianceOnlyFrameworks}
+          showDeadlineTimeline={true}
+          {...landscapeProps}
+        />
       )}
-      {section === 'records' && <MobileComplianceView data={data} />}
+      {section === 'records' && (
+        <MobileComplianceView
+          data={data}
+          filterText={mobileRecordProps.filterText}
+          onFilterTextChange={mobileRecordProps.onFilterTextChange}
+          certType={mobileRecordProps.certType as 'All' | 'FIPS 140-3' | 'ACVP' | 'Common Criteria'}
+          onCertTypeChange={mobileRecordProps.onCertTypeChange}
+        />
+      )}
     </div>
   )
 }
@@ -220,7 +267,6 @@ function MobileViewToggle({
 export const ComplianceView = () => {
   useWorkflowPhaseTracker('comply')
   const [searchParams, setSearchParams] = useSearchParams()
-  const initialFilter = searchParams.get('q') ?? undefined
   const certParam = searchParams.get('cert') ?? undefined
   const { data, loading, refresh, lastUpdated, enrichRecord } = useComplianceRefresh()
   const { selectedIndustries, selectedRegion, selectedPersona, experienceLevel } = usePersonaStore()
@@ -281,32 +327,391 @@ export const ComplianceView = () => {
     downloadCsv(csv, csvFilename('pqc-compliance'))
   }, [data])
 
-  // Active tab — URL param takes priority; fall back to cert/hint/default logic for initial load
+  // ── URL-synced filter state ──────────────────────────────────────────
+
+  const isLandscapeTab = (tab: MobileSection) =>
+    tab === 'standards' || tab === 'technical' || tab === 'certification' || tab === 'compliance'
+
+  // Active tab
   const [activeTab, setActiveTab] = useState<MobileSection>(() => {
     const tab = searchParams.get('tab') as MobileSection | null
     if (tab) return tab
     return (certParam ? 'records' : (complianceHint?.section ?? 'standards')) as MobileSection
   })
 
-  // Sync URL → state on back/forward navigation
-  useEffect(() => {
-    const tab = searchParams.get('tab') as MobileSection | null
-    if (tab) setActiveTab((prev) => (prev !== tab ? tab : prev))
-  }, [searchParams])
+  // Landscape filter state
+  const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
+  const [lsIndustry, setLsIndustry] = useState(
+    () => searchParams.get('ind') ?? selectedIndustries[0] ?? 'All'
+  )
+  const [lsSearch, setLsSearch] = useState(() => searchParams.get('q') ?? '')
+  const [lsSearchInput, setLsSearchInput] = useState(() => searchParams.get('q') ?? '')
+  const [lsSort, setLsSort] = useState<FrameworkSortOption>(
+    () => (searchParams.get('sort') as FrameworkSortOption | null) ?? 'deadline'
+  )
+  const [lsView, setLsView] = useState<ViewMode>(
+    () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
+  )
 
-  const syncTab = useCallback(
-    (tab: MobileSection) => {
+  // Records filter state
+  const [rtab, setRtab] = useState(() => searchParams.get('rtab') ?? 'all')
+  const [recSearch, setRecSearch] = useState(() => {
+    const tab = searchParams.get('tab') as MobileSection | null
+    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
+  })
+  const [recSearchInput, setRecSearchInput] = useState(() => {
+    const tab = searchParams.get('tab') as MobileSection | null
+    return tab === 'records' ? (searchParams.get('q') ?? '') : ''
+  })
+  const [recPqc, setRecPqc] = useState<string[]>(
+    () => searchParams.get('pqc')?.split(',').filter(Boolean) ?? []
+  )
+  const [recCat, setRecCat] = useState<string[]>(
+    () => searchParams.get('cat')?.split(',').filter(Boolean) ?? []
+  )
+  const [recSrc, setRecSrc] = useState<string[]>(
+    () => searchParams.get('src')?.split(',').filter(Boolean) ?? []
+  )
+  const [recVendor, setRecVendor] = useState<string[]>(
+    () => searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
+  )
+  const [recSortCol, setRecSortCol] = useState<SortColumn>(
+    () => (searchParams.get('sort') as SortColumn | null) ?? 'date'
+  )
+  const [recSortDir, setRecSortDir] = useState<SortDirection>(
+    () => (searchParams.get('dir') as SortDirection | null) ?? 'desc'
+  )
+  const [recPage, setRecPage] = useState(() => parseInt(searchParams.get('page') ?? '1', 10) || 1)
+  const [recCertId, setRecCertId] = useState<string | undefined>(
+    () => searchParams.get('cert') ?? undefined
+  )
+
+  // ── syncFiltersToUrl — write current state to URL ────────────────────
+
+  const syncFiltersToUrl = useCallback(
+    (overrides: {
+      tab?: MobileSection
+      org?: string
+      ind?: string
+      q?: string
+      sort?: string
+      view?: ViewMode
+      rtab?: string
+      rq?: string
+      pqc?: string[]
+      cat?: string[]
+      src?: string[]
+      vendor?: string[]
+      rsort?: string
+      dir?: SortDirection
+      page?: number
+      cert?: string
+    }) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
+          const tab = overrides.tab ?? activeTab
+
+          // Tab param
           if (tab !== 'standards') next.set('tab', tab)
           else next.delete('tab')
+
+          // Clear all filter params then set contextual ones
+          for (const key of [
+            'org',
+            'ind',
+            'q',
+            'sort',
+            'view',
+            'rtab',
+            'pqc',
+            'cat',
+            'src',
+            'vendor',
+            'dir',
+            'page',
+            'cert',
+          ]) {
+            next.delete(key)
+          }
+
+          if (isLandscapeTab(tab)) {
+            const org = overrides.org ?? lsOrg
+            const ind = overrides.ind ?? lsIndustry
+            const q = overrides.q ?? lsSearch
+            const sort = overrides.sort ?? lsSort
+            const view = overrides.view ?? lsView
+
+            if (org !== 'All') next.set('org', org)
+            if (ind !== 'All') next.set('ind', ind)
+            if (q) next.set('q', q)
+            if (sort !== 'deadline') next.set('sort', sort)
+            if (view !== 'cards') next.set('view', view)
+          } else {
+            const rt = overrides.rtab ?? rtab
+            const q = overrides.rq ?? recSearch
+            const pqc = overrides.pqc ?? recPqc
+            const cat = overrides.cat ?? recCat
+            const src = overrides.src ?? recSrc
+            const vendor = overrides.vendor ?? recVendor
+            const sort = overrides.rsort ?? recSortCol
+            const dir = overrides.dir ?? recSortDir
+            const page = overrides.page ?? recPage
+            const cert = overrides.cert ?? recCertId
+
+            if (rt !== 'all') next.set('rtab', rt)
+            if (q) next.set('q', q)
+            if (pqc.length > 0) next.set('pqc', pqc.join(','))
+            if (cat.length > 0) next.set('cat', cat.join(','))
+            if (src.length > 0) next.set('src', src.join(','))
+            if (vendor.length > 0) next.set('vendor', vendor.join(','))
+            if (sort !== 'date') next.set('sort', sort)
+            if (dir !== 'desc') next.set('dir', dir)
+            if (page > 1) next.set('page', String(page))
+            if (cert) next.set('cert', cert)
+          }
+
           return next
         },
         { replace: true }
       )
     },
-    [setSearchParams]
+    [
+      activeTab,
+      lsOrg,
+      lsIndustry,
+      lsSearch,
+      lsSort,
+      lsView,
+      rtab,
+      recSearch,
+      recPqc,
+      recCat,
+      recSrc,
+      recVendor,
+      recSortCol,
+      recSortDir,
+      recPage,
+      recCertId,
+      setSearchParams,
+    ]
+  )
+
+  // ── URL → state sync (back/forward navigation) ──────────────────────
+
+  useEffect(() => {
+    const tab = (searchParams.get('tab') as MobileSection | null) ?? 'standards'
+    setActiveTab((prev) => (prev !== tab ? tab : prev))
+
+    if (isLandscapeTab(tab)) {
+      const nextOrg = searchParams.get('org') ?? 'All'
+      const nextInd = searchParams.get('ind') ?? selectedIndustries[0] ?? 'All'
+      const nextQ = searchParams.get('q') ?? ''
+      const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
+      const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'
+
+      setLsOrg((prev) => (prev !== nextOrg ? nextOrg : prev))
+      setLsIndustry((prev) => (prev !== nextInd ? nextInd : prev))
+      setLsSearch((prev) => (prev !== nextQ ? nextQ : prev))
+      setLsSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
+      setLsSort((prev) => (prev !== nextSort ? nextSort : prev))
+      setLsView((prev) => (prev !== nextView ? nextView : prev))
+    } else {
+      const nextRtab = searchParams.get('rtab') ?? 'all'
+      const nextQ = searchParams.get('q') ?? ''
+      const nextPqc = searchParams.get('pqc')?.split(',').filter(Boolean) ?? []
+      const nextCat = searchParams.get('cat')?.split(',').filter(Boolean) ?? []
+      const nextSrc = searchParams.get('src')?.split(',').filter(Boolean) ?? []
+      const nextVendor = searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
+      const nextSort = (searchParams.get('sort') as SortColumn) ?? 'date'
+      const nextDir = (searchParams.get('dir') as SortDirection) ?? 'desc'
+      const nextPage = parseInt(searchParams.get('page') ?? '1', 10) || 1
+
+      setRtab((prev) => (prev !== nextRtab ? nextRtab : prev))
+      setRecSearch((prev) => (prev !== nextQ ? nextQ : prev))
+      setRecSearchInput((prev) => (prev !== nextQ ? nextQ : prev))
+      setRecPqc((prev) => (JSON.stringify(prev) !== JSON.stringify(nextPqc) ? nextPqc : prev))
+      setRecCat((prev) => (JSON.stringify(prev) !== JSON.stringify(nextCat) ? nextCat : prev))
+      setRecSrc((prev) => (JSON.stringify(prev) !== JSON.stringify(nextSrc) ? nextSrc : prev))
+      setRecVendor((prev) =>
+        JSON.stringify(prev) !== JSON.stringify(nextVendor) ? nextVendor : prev
+      )
+      setRecSortCol((prev) => (prev !== nextSort ? nextSort : prev))
+      setRecSortDir((prev) => (prev !== nextDir ? nextDir : prev))
+      setRecPage((prev) => (prev !== nextPage ? nextPage : prev))
+      const nextCert = searchParams.get('cert') ?? undefined
+      setRecCertId((prev) => (prev !== nextCert ? nextCert : prev))
+    }
+  }, [searchParams, selectedIndustries])
+
+  // ── Debounced search ─────────────────────────────────────────────────
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedLsSearch = useCallback(
+    debounce((value: string) => {
+      setLsSearch(value)
+      syncFiltersToUrl({ q: value })
+    }, 200),
+    [syncFiltersToUrl]
+  )
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const debouncedRecSearch = useCallback(
+    debounce((value: string) => {
+      setRecSearch(value)
+      setRecPage(1)
+      syncFiltersToUrl({ rq: value, page: 1 })
+    }, 200),
+    [syncFiltersToUrl]
+  )
+
+  // ── Landscape handlers ───────────────────────────────────────────────
+
+  const handleLsOrgChange = useCallback(
+    (org: string) => {
+      setLsOrg(org)
+      syncFiltersToUrl({ org })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsIndustryChange = useCallback(
+    (ind: string) => {
+      setLsIndustry(ind)
+      syncFiltersToUrl({ ind })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsSearchChange = useCallback(
+    (text: string) => {
+      setLsSearchInput(text)
+      debouncedLsSearch(text)
+    },
+    [debouncedLsSearch]
+  )
+
+  const handleLsSortChange = useCallback(
+    (sort: FrameworkSortOption) => {
+      setLsSort(sort)
+      syncFiltersToUrl({ sort })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleLsViewChange = useCallback(
+    (mode: ViewMode) => {
+      setLsView(mode)
+      syncFiltersToUrl({ view: mode })
+    },
+    [syncFiltersToUrl]
+  )
+
+  // ── Records handlers ─────────────────────────────────────────────────
+
+  const handleRecSearchChange = useCallback(
+    (text: string) => {
+      setRecSearchInput(text)
+      debouncedRecSearch(text)
+    },
+    [debouncedRecSearch]
+  )
+
+  const handleRecPqcChange = useCallback(
+    (filters: string[]) => {
+      setRecPqc(filters)
+      setRecPage(1)
+      syncFiltersToUrl({ pqc: filters, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecCatChange = useCallback(
+    (filters: string[]) => {
+      setRecCat(filters)
+      setRecPage(1)
+      syncFiltersToUrl({ cat: filters, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecSrcChange = useCallback(
+    (filters: string[]) => {
+      setRecSrc(filters)
+      setRecPage(1)
+      syncFiltersToUrl({ src: filters, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecVendorChange = useCallback(
+    (filters: string[]) => {
+      setRecVendor(filters)
+      setRecPage(1)
+      syncFiltersToUrl({ vendor: filters, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecSortColChange = useCallback(
+    (col: SortColumn) => {
+      setRecSortCol(col)
+      syncFiltersToUrl({ rsort: col })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecSortDirChange = useCallback(
+    (dir: SortDirection) => {
+      setRecSortDir(dir)
+      syncFiltersToUrl({ dir })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecPageChange = useCallback(
+    (page: number) => {
+      setRecPage(page)
+      syncFiltersToUrl({ page })
+    },
+    [syncFiltersToUrl]
+  )
+
+  // ── Tab handlers ─────────────────────────────────────────────────────
+
+  const handleTabChange = useCallback(
+    (tab: MobileSection) => {
+      setActiveTab(tab)
+      syncFiltersToUrl({ tab })
+      logComplianceFilter('Tab', tab)
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRtabChange = useCallback(
+    (value: string) => {
+      setRtab(value)
+      syncFiltersToUrl({ rtab: value })
+    },
+    [syncFiltersToUrl]
+  )
+
+  // Mobile cert type ↔ rtab mapping
+  const mobileCertType =
+    rtab === 'all'
+      ? 'All'
+      : rtab === 'fips'
+        ? 'FIPS 140-3'
+        : rtab === 'acvp'
+          ? 'ACVP'
+          : 'Common Criteria'
+  const handleMobileCertTypeChange = useCallback(
+    (ct: string) => {
+      const rt = ct === 'All' ? 'all' : ct === 'FIPS 140-3' ? 'fips' : ct === 'ACVP' ? 'acvp' : 'cc'
+      setRtab(rt)
+      syncFiltersToUrl({ rtab: rt })
+    },
+    [syncFiltersToUrl]
   )
 
   return (
@@ -364,9 +769,25 @@ export const ComplianceView = () => {
         <MobileViewToggle
           data={data}
           activeSection={activeTab}
-          onSectionChange={(s) => {
-            setActiveTab(s)
-            syncTab(s)
+          onSectionChange={handleTabChange}
+          landscapeProps={{
+            orgFilter: lsOrg,
+            industryFilter: lsIndustry,
+            searchText: lsSearch,
+            searchInputValue: lsSearchInput,
+            sortBy: lsSort,
+            viewMode: lsView,
+            onOrgFilterChange: handleLsOrgChange,
+            onIndustryFilterChange: handleLsIndustryChange,
+            onSearchTextChange: handleLsSearchChange,
+            onSortByChange: handleLsSortChange,
+            onViewModeChange: handleLsViewChange,
+          }}
+          mobileRecordProps={{
+            filterText: recSearchInput,
+            onFilterTextChange: handleRecSearchChange,
+            certType: mobileCertType,
+            onCertTypeChange: handleMobileCertTypeChange,
           }}
         />
       </div>
@@ -376,12 +797,7 @@ export const ComplianceView = () => {
         <Tabs
           value={activeTab}
           className="w-full"
-          onValueChange={(tab) => {
-            const t = tab as MobileSection
-            setActiveTab(t)
-            syncTab(t)
-            logComplianceFilter('Tab', tab)
-          }}
+          onValueChange={(tab) => handleTabChange(tab as MobileSection)}
         >
           <TabsList className="mb-4 bg-muted/50 border border-border">
             <TabsTrigger value="standards" className="flex items-center gap-1.5">
@@ -415,7 +831,21 @@ export const ComplianceView = () => {
               learnLabel="Explore in Learn module"
               learnTo="/learn/standards-bodies?step=2"
             />
-            <ComplianceLandscape frameworks={standardsFrameworks} showDeadlineTimeline={false} />
+            <ComplianceLandscape
+              frameworks={standardsFrameworks}
+              showDeadlineTimeline={false}
+              orgFilter={lsOrg}
+              industryFilter={lsIndustry}
+              searchText={lsSearch}
+              searchInputValue={lsSearchInput}
+              sortBy={lsSort}
+              viewMode={lsView}
+              onOrgFilterChange={handleLsOrgChange}
+              onIndustryFilterChange={handleLsIndustryChange}
+              onSearchTextChange={handleLsSearchChange}
+              onSortByChange={handleLsSortChange}
+              onViewModeChange={handleLsViewChange}
+            />
           </TabsContent>
 
           {/* ── Tab 2: Technical Standards ── */}
@@ -427,7 +857,21 @@ export const ComplianceView = () => {
               learnLabel="Explore in Learn module"
               learnTo="/learn/standards-bodies?step=2"
             />
-            <ComplianceLandscape frameworks={technicalStandards} showDeadlineTimeline={false} />
+            <ComplianceLandscape
+              frameworks={technicalStandards}
+              showDeadlineTimeline={false}
+              orgFilter={lsOrg}
+              industryFilter={lsIndustry}
+              searchText={lsSearch}
+              searchInputValue={lsSearchInput}
+              sortBy={lsSort}
+              viewMode={lsView}
+              onOrgFilterChange={handleLsOrgChange}
+              onIndustryFilterChange={handleLsIndustryChange}
+              onSearchTextChange={handleLsSearchChange}
+              onSortByChange={handleLsSortChange}
+              onViewModeChange={handleLsViewChange}
+            />
           </TabsContent>
 
           {/* ── Tab 3: Certification Schemes ── */}
@@ -442,6 +886,17 @@ export const ComplianceView = () => {
             <ComplianceLandscape
               frameworks={certificationFrameworks}
               showDeadlineTimeline={false}
+              orgFilter={lsOrg}
+              industryFilter={lsIndustry}
+              searchText={lsSearch}
+              searchInputValue={lsSearchInput}
+              sortBy={lsSort}
+              viewMode={lsView}
+              onOrgFilterChange={handleLsOrgChange}
+              onIndustryFilterChange={handleLsIndustryChange}
+              onSearchTextChange={handleLsSearchChange}
+              onSortByChange={handleLsSortChange}
+              onViewModeChange={handleLsViewChange}
             />
           </TabsContent>
 
@@ -457,10 +912,21 @@ export const ComplianceView = () => {
             <ComplianceLandscape
               frameworks={complianceOnlyFrameworks}
               showDeadlineTimeline={true}
+              orgFilter={lsOrg}
+              industryFilter={lsIndustry}
+              searchText={lsSearch}
+              searchInputValue={lsSearchInput}
+              sortBy={lsSort}
+              viewMode={lsView}
+              onOrgFilterChange={handleLsOrgChange}
+              onIndustryFilterChange={handleLsIndustryChange}
+              onSearchTextChange={handleLsSearchChange}
+              onSortByChange={handleLsSortChange}
+              onViewModeChange={handleLsViewChange}
             />
           </TabsContent>
 
-          {/* ── Tab 4: Cert Records ── */}
+          {/* ── Tab 5: Cert Records ── */}
           <TabsContent value="records" className="mt-0 space-y-4">
             <SectionHeader
               icon={<GlobeLock size={20} className="text-primary" />}
@@ -469,7 +935,7 @@ export const ComplianceView = () => {
               learnLabel="Understand the cert chain"
               learnTo="/learn/standards-bodies?step=2"
             />
-            <Tabs defaultValue="all" className="w-full">
+            <Tabs value={rtab} onValueChange={handleRtabChange} className="w-full">
               <TabsList className="mb-4 bg-muted/50 border border-border">
                 <TabsTrigger value="all">All Records</TabsTrigger>
                 <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
@@ -483,8 +949,23 @@ export const ComplianceView = () => {
                   isRefreshing={loading}
                   lastUpdated={lastUpdated}
                   onEnrich={enrichRecord}
-                  initialFilter={initialFilter}
-                  initialSelectedId={certParam}
+                  filterText={recSearchInput}
+                  pqcFilters={recPqc}
+                  categoryFilters={recCat}
+                  sourceFilters={recSrc}
+                  vendorFilters={recVendor}
+                  sortColumn={recSortCol}
+                  sortDirection={recSortDir}
+                  currentPage={recPage}
+                  selectedRecordId={certParam}
+                  onFilterTextChange={handleRecSearchChange}
+                  onPqcFiltersChange={handleRecPqcChange}
+                  onCategoryFiltersChange={handleRecCatChange}
+                  onSourceFiltersChange={handleRecSrcChange}
+                  onVendorFiltersChange={handleRecVendorChange}
+                  onSortColumnChange={handleRecSortColChange}
+                  onSortDirectionChange={handleRecSortDirChange}
+                  onCurrentPageChange={handleRecPageChange}
                 />
               </TabsContent>
               <TabsContent value="fips" className="mt-0">
@@ -494,6 +975,22 @@ export const ComplianceView = () => {
                   isRefreshing={loading}
                   lastUpdated={lastUpdated}
                   onEnrich={enrichRecord}
+                  filterText={recSearchInput}
+                  pqcFilters={recPqc}
+                  categoryFilters={recCat}
+                  sourceFilters={recSrc}
+                  vendorFilters={recVendor}
+                  sortColumn={recSortCol}
+                  sortDirection={recSortDir}
+                  currentPage={recPage}
+                  onFilterTextChange={handleRecSearchChange}
+                  onPqcFiltersChange={handleRecPqcChange}
+                  onCategoryFiltersChange={handleRecCatChange}
+                  onSourceFiltersChange={handleRecSrcChange}
+                  onVendorFiltersChange={handleRecVendorChange}
+                  onSortColumnChange={handleRecSortColChange}
+                  onSortDirectionChange={handleRecSortDirChange}
+                  onCurrentPageChange={handleRecPageChange}
                 />
               </TabsContent>
               <TabsContent value="acvp" className="mt-0">
@@ -503,6 +1000,22 @@ export const ComplianceView = () => {
                   isRefreshing={loading}
                   lastUpdated={lastUpdated}
                   onEnrich={enrichRecord}
+                  filterText={recSearchInput}
+                  pqcFilters={recPqc}
+                  categoryFilters={recCat}
+                  sourceFilters={recSrc}
+                  vendorFilters={recVendor}
+                  sortColumn={recSortCol}
+                  sortDirection={recSortDir}
+                  currentPage={recPage}
+                  onFilterTextChange={handleRecSearchChange}
+                  onPqcFiltersChange={handleRecPqcChange}
+                  onCategoryFiltersChange={handleRecCatChange}
+                  onSourceFiltersChange={handleRecSrcChange}
+                  onVendorFiltersChange={handleRecVendorChange}
+                  onSortColumnChange={handleRecSortColChange}
+                  onSortDirectionChange={handleRecSortDirChange}
+                  onCurrentPageChange={handleRecPageChange}
                 />
               </TabsContent>
               <TabsContent value="cc" className="mt-0">
@@ -512,6 +1025,22 @@ export const ComplianceView = () => {
                   isRefreshing={loading}
                   lastUpdated={lastUpdated}
                   onEnrich={enrichRecord}
+                  filterText={recSearchInput}
+                  pqcFilters={recPqc}
+                  categoryFilters={recCat}
+                  sourceFilters={recSrc}
+                  vendorFilters={recVendor}
+                  sortColumn={recSortCol}
+                  sortDirection={recSortDir}
+                  currentPage={recPage}
+                  onFilterTextChange={handleRecSearchChange}
+                  onPqcFiltersChange={handleRecPqcChange}
+                  onCategoryFiltersChange={handleRecCatChange}
+                  onSourceFiltersChange={handleRecSrcChange}
+                  onVendorFiltersChange={handleRecVendorChange}
+                  onSortColumnChange={handleRecSortColChange}
+                  onSortDirectionChange={handleRecSortDirChange}
+                  onCurrentPageChange={handleRecPageChange}
                 />
               </TabsContent>
             </Tabs>

@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the StandardsBodies module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -41,6 +40,9 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      "Slug: standards-bodies. Difficulty: Intermediate. Estimated Time: 60 minutes. Track: Strategy. This module teaches learners how to distinguish between standards bodies (which _define_ algorithms and protocols), certification bodies (which _validate_ implementations), and compliance frameworks / regulatory agencies (which _mandate_ usage). It covers 12 key organizations globally and regionally, and directly connects to the app's /compliance and /migrate pages. ---",
+    keyConcepts:
+      'NIST vs CMVP: NIST wrote the standard; CMVP certifies implementations against it. ETSI TS vs ETSI TR: TS = normative ("shall"), TR = informational guidance. ANSSI\'s unique position: Requires hybrid PQC (classical + PQC) for sensitive systems; permits standalone SLH-DSA. CCRA vs EUCC: CCRA is the global 31-nation scheme; EUCC is the EU-specific harmonized adaptation managed by ENISA. IETF vs NIST: NIST defines algorithms; IETF integrates them into Internet protocols (TLS, CMS, SSH).',
   },
 }

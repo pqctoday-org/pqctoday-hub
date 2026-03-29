@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the SecureBootPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -38,7 +37,10 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      'UEFI Secure Boot key hierarchy (PK/KEK/db) migration to ML-DSA-65. Firmware signing with post-quantum algorithms. TPM 2.0 path to post-quantum attestation. Vendor roadmaps: AMI, Insyde, EDK2, Dell, HPE. Hardware supply chain integrity at scale',
+    workshopSummary:
+      'Secure Boot Chain Analyzer. Firmware Signing Migrator. TPM Key Hierarchy Explorer. Firmware Vendor Matrix. Attestation Flow Designer',
   },
 }
 

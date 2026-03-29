@@ -10,6 +10,42 @@ import mldsaTest from '@/data/acvp/mldsa_test.json'
 import aesCbcTest from '@/data/acvp/aescbc_test.json'
 import sha256Test from '@/data/acvp/sha256_test.json'
 import ecdsaTest from '@/data/acvp/ecdsa_p384_test.json'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const TESTING_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'test-mldsa-acvp',
+    useCase: 'ML-DSA ACVP SigVer validation',
+    standard: 'FIPS 204 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-DSA-sigGen-FIPS204',
+    kind: { type: 'mldsa-sigver', variant: 65 },
+  },
+  {
+    id: 'test-mlkem-acvp',
+    useCase: 'ML-KEM ACVP encapDecap validation',
+    standard: 'FIPS 203 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+  {
+    id: 'test-aesgcm-acvp',
+    useCase: 'AES-GCM ACVP decryption validation',
+    standard: 'SP 800-38D ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/d/final',
+    kind: { type: 'aesgcm-decrypt' },
+  },
+  {
+    id: 'test-hmac-acvp',
+    useCase: 'HMAC-SHA-256 ACVP MAC validation',
+    standard: 'FIPS 198-1 ACVP',
+    referenceUrl:
+      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
+  },
+]
 
 type AlgorithmFamily = 'mlkem' | 'mldsa' | 'aescbc' | 'sha256' | 'ecdsap384'
 
@@ -379,6 +415,12 @@ export const ACVPValidator: React.FC = () => {
           a <code className="text-[10px]">.rsp</code> file for NIST to verify.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={TESTING_KAT_SPECS}
+        label="PQC Testing & Validation Known Answer Tests"
+        authorityNote="NIST ACVP · FIPS 203 · FIPS 204 · SP 800-38D"
+      />
     </div>
   )
 }

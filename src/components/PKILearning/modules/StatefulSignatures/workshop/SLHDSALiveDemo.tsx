@@ -27,6 +27,34 @@ import {
   type SLHDSAPreHash,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const STATEFUL_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'stateful-slhdsa-128s',
+    useCase: 'SLH-DSA-SHA2-128s signing',
+    standard: 'FIPS 205',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
+    kind: { type: 'slhdsa-functional', variant: 'SHA2-128s' },
+    message: 'Firmware image hash for stateful signature scheme validation',
+  },
+  {
+    id: 'stateful-slhdsa-256s',
+    useCase: 'SLH-DSA-SHA2-256s signing (Level 5)',
+    standard: 'FIPS 205',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
+    kind: { type: 'slhdsa-functional', variant: 'SHA2-256s' },
+    message: 'Code signing digest for XMSS-equivalent stateful hash-based scheme',
+  },
+  {
+    id: 'stateful-hash-base',
+    useCase: 'Hash function baseline (SHA-256)',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash' },
+  },
+]
 
 // ── SLH-DSA parameter set data (FIPS 205 / PKCS#11 v3.2) ──────────────────
 
@@ -581,6 +609,12 @@ export const SLHDSALiveDemo: React.FC = () => {
           Generated keys are for educational purposes only.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={STATEFUL_KAT_SPECS}
+        label="Stateful Signatures Known Answer Tests"
+        authorityNote="FIPS 205 · FIPS 180-4"
+      />
     </div>
   )
 }

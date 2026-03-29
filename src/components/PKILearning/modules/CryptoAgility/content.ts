@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the CryptoAgility module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -41,6 +40,13 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    overview:
+      "The Crypto Agility module teaches how to design systems that can rapidly swap cryptographic algorithms, protocols, and implementations without significant code or infrastructure changes. Crypto agility is NIST's top recommendation for PQC transition preparedness.",
+    keyConcepts:
+      'Crypto agility is the ability to rapidly switch cryptographic algorithms, protocols, and implementations without significant application code changes. Three dimensions of agility: Algorithm agility — swap algorithms (RSA to ML-KEM) via configuration, not code rewrites. Protocol agility — support multiple protocol versions simultaneously (TLS 1.2/1.3, hybrid key exchange). Implementation agility — switch between crypto providers (OpenSSL, BoringSSL, AWS-LC) without application changes.',
+    workshopSummary:
+      'The workshop has 3 interactive steps: Abstraction Layer Demo — interactive demonstration of how algorithm-agnostic APIs enable instant backend swaps; select different crypto providers and see how the same API calls produce results from different algorithm implementations. CBOM Scanner — scan a sample enterprise architecture to discover and catalog all quantum-vulnerable cryptographic algorithms in use; produces a CycloneDX-format CBOM with risk assessments.',
+    relatedStandards:
+      'NIST IR 8547 (Transition to Post-Quantum Cryptography Standards). NSA CNSA 2.0 (Commercial National Security Algorithm Suite 2.0). CISA Post-Quantum Cryptography Initiative. CycloneDX CBOM Specification. NIST SP 800-227',
   },
 }

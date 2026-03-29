@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the NetworkSecurityPQC module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
@@ -41,7 +40,12 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      'PQC impact on TLS inspection and DPI (certificate buffer overflows, latency overhead, hardware offload gaps). NGFW cipher policy migration to ML-KEM/ML-DSA hybrid and pure-PQC modes. TLS intercept proxy behavior with PQC certificate chains (ML-DSA-65, hybrid ECDSA+ML-DSA). IDS/IPS signature updates for PQC traffic detection (hybrid KEM handshakes, cert size anomalies, downgrade attacks).',
+    workshopSummary:
+      'NGFW Cipher Analyzer — cipher policy comparison (classical/hybrid/pure PQC), hardware tier impact, cert size and latency metrics. TLS Inspection Lab — pass-through vs full inspection simulation, PQC cert chain sizes, inspection feasibility matrix. IDS Signature Updater — PQC-aware rule categories, false positive rate analysis, detection coverage balancing. Vendor Migration Matrix — interactive filtering by ML-KEM/ML-DSA support, TLS inspection, hardware offload, readiness status.',
+    relatedStandards:
+      'NIST SP 800-227: Key Encapsulation Mechanisms (ML-KEM in TLS). NIST SP 800-207A: Zero Trust Architecture and PQC. RFC 9370: Multiple Key Exchanges in IKEv2 (hybrid KEM for IPsec). CNSA 2.0: Hybrid by 2026, exclusively PQC by 2033 for NSS environments. NIST IR 8547: Classical crypto deprecation timeline (2030/2035)',
   },
 }
 

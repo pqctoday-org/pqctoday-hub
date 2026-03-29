@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Structured content for the APISecurityJWT module.
- * AUTO-GENERATED SKELETON — review and refine manually.
  */
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { getAlgorithm } from '@/data/algorithmProperties'
@@ -39,7 +38,12 @@ export const content: ModuleContent = {
   ],
 
   narratives: {
-    // TODO: Extract narrative text from JSX components
+    keyConcepts:
+      "JWT/JWS/JWE fundamentals: JWT compact serialization (RFC 7519), JWS signing (RFC 7515), JWE encryption (RFC 7516); three-part structure of base64url-encoded header, payload, and signature. Quantum vulnerability of current JWT algorithms: RS256, ES256, EdDSA all broken by Shor's algorithm; ECDH-ES key agreement equally vulnerable; HMAC-based algorithms (HS256) remain quantum-safe but require shared secrets.",
+    workshopSummary:
+      'JWT Inspector: Decode and inspect JWT structure with algorithm vulnerability analysis; paste any JWT to see header, payload, and signature breakdown. PQC JWT Signing: Sign and verify JWTs with ML-DSA algorithms interactively; compare output sizes across security levels. Hybrid JWT: Create backwards-compatible JWTs with dual classical + PQC signatures for migration scenarios. JWE Encryption: Encrypt JWT payloads using ML-KEM key agreement with AES-GCM content encryption.',
+    relatedStandards:
+      'RFC 7519 (JWT), RFC 7515 (JWS), RFC 7516 (JWE), RFC 7518 (JWA). IETF draft-ietf-jose-pqc (PQC algorithms for JOSE). FIPS 203 (ML-KEM) and FIPS 204 (ML-DSA). OAuth 2.0 (RFC 6749), OpenID Connect Core 1.0. RFC 9449 (DPoP - Demonstrating Proof of Possession)',
   },
 }
 

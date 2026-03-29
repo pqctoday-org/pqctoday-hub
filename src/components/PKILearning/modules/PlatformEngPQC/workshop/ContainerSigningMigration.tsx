@@ -11,6 +11,34 @@ import {
   ALGORITHM_LABELS,
   type PQCReadiness,
 } from '../data/platformEngConstants'
+import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import type { KatTestSpec } from '@/utils/katRunner'
+
+const PLATFORM_KAT_SPECS: KatTestSpec[] = [
+  {
+    id: 'platform-container-sign',
+    useCase: 'Container image signing (ML-DSA-65)',
+    standard: 'SLSA + FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 65 },
+    message: 'OCI image digest: sha256:a1b2c3d4e5f6@sha256:7890abcdef01',
+  },
+  {
+    id: 'platform-artifact-hash',
+    useCase: 'Build artifact integrity hash',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha256-hash', testIndex: 2 },
+  },
+  {
+    id: 'platform-classical-ecdsa',
+    useCase: 'Legacy ECDSA P-256 attestation',
+    standard: 'FIPS 186-5',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/186-5/final',
+    kind: { type: 'ecdsa-functional', curve: 'P-256' },
+    message: 'Sigstore bundle: logIndex=42,integratedTime=1735689600',
+  },
+]
 
 type ReadinessFilter = 'All' | PQCReadiness
 
@@ -301,6 +329,12 @@ export const ContainerSigningMigration: React.FC = () => {
           support (2026). Avoid DCT (Docker Content Trust) — Notary v1 has no PQC roadmap.
         </p>
       </div>
+
+      <KatValidationPanel
+        specs={PLATFORM_KAT_SPECS}
+        label="Platform Engineering PQC Known Answer Tests"
+        authorityNote="SLSA · FIPS 204 · FIPS 180-4 · FIPS 186-5"
+      />
     </div>
   )
 }

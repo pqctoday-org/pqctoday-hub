@@ -26,7 +26,14 @@ DRY_RUN = '--dry-run' in sys.argv
 VERBOSE = '--verbose' in sys.argv
 
 BASE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-QA_FILE = os.path.join(BASE, 'src/data/module-qa/module_qa_combined_03272026.csv')
+def find_latest(directory, prefix):
+    """Find the latest file matching prefix in directory."""
+    import glob
+    files = sorted(glob.glob(os.path.join(directory, f'{prefix}*2026*.csv')))
+    return files[-1] if files else None
+
+QA_DIR = os.path.join(BASE, 'src/data/module-qa')
+QA_FILE = find_latest(QA_DIR, 'module_qa_combined_') or os.path.join(QA_DIR, 'module_qa_combined_03282026.csv')
 
 
 def load_library_refs():
@@ -204,8 +211,16 @@ def backfill_row(row, lib_patterns, algo_patterns, compliance_names):
             'FIPS 140': 'FIPS 140',
             'SOC 2': 'SOC 2',
             'ISO 27001': 'ISO 27001',
+            'ISO 27002': 'ISO 27001',
+            'ISO 27005': 'ISO 27001',
+            'ISO 27017': 'ISO 27001',
+            'ISO 27018': 'ISO 27001',
+            'ISO 27701': 'ISO 27001',
+            'ISO 26262': 'ISO 26262',
+            'ISO 21434': 'ISO/SAE 21434',
             'PCI DSS': 'PCI DSS',
             'PCI-DSS': 'PCI DSS',
+            'PCI PIN': 'PCI DSS',
             'HIPAA': 'HIPAA',
             'FedRAMP': 'FedRAMP',
             'GDPR': 'GDPR',
@@ -215,6 +230,27 @@ def backfill_row(row, lib_patterns, algo_patterns, compliance_names):
             'CISA': 'CISA',
             'NSA': 'NSA',
             'EAL': 'Common Criteria',
+            'DORA': 'DORA',
+            'NIS2': 'NIS2',
+            'NIS 2': 'NIS2',
+            'NERC CIP': 'NERC CIP',
+            'IEC 62351': 'IEC 62351',
+            'IEC 62443': 'IEC 62443',
+            'UNECE R155': 'UNECE R155',
+            'UNECE R156': 'UNECE R156',
+            'SOX': 'SOX',
+            'NIST SP 800-53': 'NIST',
+            'SP 800-53': 'NIST',
+            'NIST SP 800-171': 'NIST',
+            'NIST RMF': 'NIST',
+            'NIST CSF': 'NIST',
+            'CMMC': 'CMMC',
+            'ITAR': 'ITAR',
+            'ENISA': 'ENISA',
+            'MAS TRM': 'MAS',
+            'ACSC': 'ACSC',
+            'KISA': 'KISA',
+            'AICPA': 'SOC 2',
         }
         text_lower = text.lower()
         for keyword, ref in comp_keywords.items():
@@ -294,8 +330,10 @@ def main():
     if DRY_RUN:
         print(f'\n[DRY RUN] No file written. Re-run without --dry-run to write.')
     else:
-        # Write output
-        output_file = QA_FILE.replace('03272026', '03282026')
+        # Write output — always write to today's date
+        from datetime import datetime
+        today = datetime.now().strftime('%m%d%Y')
+        output_file = os.path.join(QA_DIR, f'module_qa_combined_{today}.csv')
         with open(output_file, 'w', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=fieldnames)
             writer.writeheader()

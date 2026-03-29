@@ -89,6 +89,7 @@ export type HybridFormatId =
   | 'pure-pqc'
   | 'pure-pqc-slh'
   | 'composite'
+  | 'alt-sig'
   | 'related-certs'
   | 'chameleon'
 
@@ -214,6 +215,51 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     pqcAlg: 'ML-DSA-65',
   },
   {
+    id: 'alt-sig',
+    label: 'Alt-Sig / Catalyst (ECDSA + ML-DSA)',
+    shortLabel: 'Alt-Sig',
+    approach: 'PQC in X.509 extensions',
+    standard: 'draft-ietf-lamps-cert-binding-for-multi-auth',
+    standardUrl: 'https://datatracker.ietf.org/doc/draft-ietf-lamps-cert-binding-for-multi-auth/',
+    oids: ['2.5.29.72', '2.5.29.73', '2.5.29.74'],
+    status: 'Active Draft',
+    statusColor: 'warning',
+    quantumSafe: true,
+    legacyCompat: true,
+    description:
+      'A single classical certificate with PQC key and signature embedded in X.509 extension fields. Legacy verifiers process only the classical signature; PQC-aware verifiers check both.',
+    structureLines: [
+      { text: 'Certificate ::= SEQUENCE {', color: 'foreground', indent: 0 },
+      { text: 'tbsCertificate {', color: 'muted', indent: 1 },
+      { text: 'subjectPublicKeyInfo  EC P-256 (classical)', color: 'warning', indent: 2 },
+      { text: 'extensions {', color: 'muted', indent: 2 },
+      {
+        text: 'SubjectAltPublicKeyInfo (2.5.29.72): ML-DSA-65 key',
+        color: 'success',
+        indent: 3,
+      },
+      {
+        text: 'AltSignatureAlgorithm  (2.5.29.73): ML-DSA-65',
+        color: 'success',
+        indent: 3,
+      },
+      {
+        text: 'AltSignatureValue      (2.5.29.74): ML-DSA-65 sig',
+        color: 'success',
+        indent: 3,
+      },
+      { text: '}', color: 'muted', indent: 2 },
+      { text: '}', color: 'muted', indent: 1 },
+      { text: 'signatureAlgorithm  ecdsa-with-SHA256', color: 'warning', indent: 1 },
+      { text: 'signatureValue      ECDSA signature', color: 'warning', indent: 1 },
+      { text: '}', color: 'foreground', indent: 0 },
+    ],
+    educationalNote:
+      'Alt-Sig (informally called "Catalyst" by the NSA) embeds a PQC public key and signature inside a classical certificate\'s X.509 extensions. Legacy validators ignore the unknown extensions and process only the classical ECDSA signature. PQC-aware verifiers check both signatures. This differs from Related Certificates (RFC 9763), which uses two separate independent certificates bound by a hash.',
+    classicalAlg: 'EC',
+    pqcAlg: 'ML-DSA-65',
+  },
+  {
     id: 'related-certs',
     label: 'Related Certificates (RFC 9763)',
     shortLabel: 'Related',
@@ -247,7 +293,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'RFC 9763 (Related Certificates) — informally known as the "catalyst" approach (NSA). Each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. This provides backward compatibility without modifying existing PKI infrastructure.',
+      "RFC 9763 (Related Certificates) pairs two fully independent certificates — one classical, one PQC — bound by a SHA-256 hash in a RelatedCertificate extension. Each certificate is independently valid. Legacy systems validate the classical cert; PQC-aware systems verify both and check the binding hash. Unlike Alt-Sig (which embeds a secondary signature inside one certificate's extensions), Related Certificates keeps both certificates completely separate.",
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
