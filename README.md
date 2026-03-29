@@ -296,7 +296,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     infrastructure layer with PQC support badge, FIPS badge, ACVP/CC certification chips,
     license info, and a deep-link to the full Migrate catalog entry
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 385+ verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 394 verified PQC-relevant product entries across 7 infrastructure layers
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).
@@ -399,7 +399,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
       with manual override tracking), Deployment Playbook (6-phase checklist: prep → hybrid →
       canary → rollout → validation → rollback)
     - All tools export to Markdown, save to executive document portfolio, and include GA4 event tracking
-- **PQC Glossary**: Global floating glossary with 200+ PQC terms
+    - **WAI-ARIA keyboard navigation**: ArrowLeft/Right cycles tabs, Home/End jump to first/last
+      across the Business Center shell
+- **PQC Glossary**: Global floating glossary with 503 PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)
   - Cross-references to learning modules
@@ -513,9 +515,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
     model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
     tips to guide model selection
-  - Client-side RAG retrieval using MiniSearch over 3,971 content chunks from 22 data sources
+  - Client-side RAG retrieval using MiniSearch over 5,192 content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
-  - **Document enrichment**: 260+ archived HTML/PDF documents enriched with 18 structured
+  - **Document enrichment**: 1,100+ archived HTML/PDF documents enriched with 18 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
     etc.) and fed into the RAG corpus
   - **Entity inventory**: Extracted entity list injected into the system prompt to prevent
@@ -539,6 +541,10 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Follow-up suggestions**: Entity-aware follow-up question chips after each response
   - **Multi-turn context**: Conversation history (last 3 queries) improves retrieval for follow-up
     questions
+  - **Provider-aware response caching**: Flash and Local modes maintain independent caches;
+    local mode gracefully suggests Flash when answers are thin for complex intents
+  - **SLH-DSA fact verification**: 16 SLH-DSA parameter set variants (SHA2 + SHAKE, 128/192/256-bit)
+    added to the security level validation engine
   - **40 golden query tests**: Regression suite covering definitions, comparisons, catalog lookups,
     country queries, recommendations, and cross-intent queries
   - **Detail-view AI buttons**: Context-aware `Ask Assistant` buttons embedded in all seven detail
@@ -568,14 +574,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - ANSSI recommendations, BSI Technical Guidelines, ENISA PQC guidelines
   - Common Criteria certifications (CC/CCRA/EUCC), CMVP/ACVP validation
   - Automated data scraping and visualization
-- **Standards Library**: Comprehensive PQC standards repository (327 entries)
+- **Standards Library**: Comprehensive PQC standards repository (336 entries)
   - NIST FIPS documents (203, 204, 205)
   - Protocol specifications (TLS, SSH, IKEv2)
   - Government guidance: ANSSI, NATO, NSA CNSA 2.0, UK NCSC, G7, CISA, GSMA, SG MAS, AU ASD, and more
   - **Dynamic Tree Visualization**: Interactive dependency hierarchy (Standards → Profiles → Guidelines)
   - **Advanced Filtering**: Organization-based scoping (NIST, IETF, ETSI, ISO, etc.) and category grouping
 - **Quantum Threat Impacts**: Industry-specific quantum threat analysis
-  - **80 threats across 20 industries**: Aerospace/Aviation, Automotive, Cloud Computing,
+  - **79 threats across 20 industries**: Aerospace/Aviation, Automotive, Cloud Computing,
     Cryptocurrency/Blockchain, Energy/Critical Infrastructure, Financial Services, Government/Defense,
     Healthcare, Insurance, IoT, IT/Software, Legal/eSignature, Media/DRM, Payment Card Industry,
     Rail/Transit, Retail/E-Commerce, Supply Chain/Logistics, Telecommunications, and Water/Wastewater
@@ -599,7 +605,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - `@scure/bip32`, `@scure/bip39`, `@scure/base` for HD wallet
   - `micro-eth-signer` for Ethereum transactions
   - `ed25519-hd-key` for Solana key derivation
-- **Styling**: Tailwind CSS 4.2.0 with custom design system and CSS variables
+- **Styling**: Tailwind CSS 4.2.2 with custom design system and CSS variables
 - **State Management**: Zustand for module state and persistence
 - **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)
 - **UI/UX**: Framer Motion (animations), React Markdown (documentation)
@@ -709,7 +715,7 @@ The application is structured into several key components:
 - **`src/components/common/Glossary.tsx`**: Global floating PQC glossary panel.
 - **`src/components/common/GuidedTour.tsx`**: Interactive first-visit onboarding tour.
 - **`src/services/crypto/OpenSSLService.ts`**: Primary cryptographic service wrapping OpenSSL WASM operations.
-- **`src/store`**: Zustand state stores for theme, learning progress, assessment wizard, TLS simulation, version tracking, persona, compliance selection, endorsements, and disclaimer (all persisted to localStorage).
+- **`src/store`**: Zustand state stores for theme, learning progress, assessment (proxy delegating to form + result sub-stores), TLS simulation, version tracking, persona, compliance selection, endorsements, bookmarks, and disclaimer (all persisted to localStorage).
 - **`src/data`**: Static data layer — TypeScript data files, versioned CSV files (timelines, leaders, library, software references), X.509 certificate profiles, and ACVP test vectors. `csvUtils.ts` provides a shared date-stamped / revision-sorted CSV loader used by all data modules.
 - **`src/utils`**: Utility functions for data conversion and common operations.
 
@@ -780,7 +786,7 @@ The application is structured into several key components:
 │   ├── hooks/               # Custom React hooks
 │   ├── lib/                 # Utility libraries and helpers
 │   ├── services/            # OpenSSL service and WASM integration
-│   ├── store/               # Zustand state management stores (6 persisted stores)
+│   ├── store/               # Zustand state management stores (20+ stores)
 │   ├── styles/              # Global CSS and design system
 │   ├── test/                # Test setup and utilities
 │   ├── types/               # Module-specific type definitions
