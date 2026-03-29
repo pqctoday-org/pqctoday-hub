@@ -13,15 +13,14 @@ test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
     })
 
     // Navigate to playground
-    await page.goto('/playground')
+    await page.goto('/playground/hsm')
     await page.reload() // Force reload to ensure fresh WASM
   })
 
   test('should execute the ACVP validation suite across the token', async ({ page }) => {
     test.setTimeout(90000)
 
-    // 1. Enable Dual HSM Mode
-    await page.getByRole('switch', { name: 'Toggle HSM mode' }).click()
+    // 1. Setup Token
     await page.locator('input[value="dual"]').click()
 
     // 2. Token Setup
@@ -35,7 +34,7 @@ test.describe('Playground - SoftHSMv3 ACVP Testing', () => {
     await expect(page.getByText(/Session Open/i).first()).toBeVisible({ timeout: 15000 })
 
     // 3. Navigate to ACVP Tab
-    await page.locator('#tab-acvp').click()
+    await page.getByRole('tab', { name: 'ACVP' }).click()
     await expect(page.getByText(/SoftHSMv3 FIPS Validation Mode/i)).toBeVisible()
 
     // 4. Execute Tests

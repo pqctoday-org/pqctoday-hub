@@ -7,17 +7,17 @@ test.describe('ML-DSA Playground (Refactor Verification)', () => {
     page.on('console', (msg) => console.log(`[Browser Console] ${msg.type()}: ${msg.text()}`))
 
     // Navigate to the playground
-    await page.goto('/playground')
+    await page.goto('/playground/interactive')
     await page.reload() // Force reload to ensure fresh WASM
   })
 
   test('should generate keys, sign, and verify using ML-DSA (OpenSSL)', async ({ page }) => {
     // 1. Navigate to Key Store Tab
-    await page.getByRole('button', { name: 'Key Store' }).click()
+    await page.getByRole('tab', { name: 'Key Store' }).click()
 
     // 2. Select ML-DSA-65 (NIST Level 3)
-    // The select box handles both Algorithm and Key Size based on the value
-    await page.selectOption('#keystore-key-size', '65')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'ML-DSA-65' }).click()
 
     // 3. Generate Keys
     const generateButton = page.getByRole('button', { name: 'Generate Keys' })
@@ -28,11 +28,11 @@ test.describe('ML-DSA Playground (Refactor Verification)', () => {
     await expect(page.getByRole('table')).toContainText('65')
 
     // 4. Navigate to Sign & Verify Tab
-    await page.getByRole('button', { name: 'Sign & Verify' }).click()
+    await page.getByRole('tab', { name: 'Sign & Verify' }).click()
 
     // 5. Select the Private Key for Signing (Left side)
-    const signKeySelect = page.locator('select').first()
-    await signKeySelect.selectOption({ index: 1 })
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option').nth(1).click()
 
     // 6. Enter a message (Optional, as default might be empty or existing)
     const messageInput = page.getByPlaceholder('Enter message to sign...')
@@ -48,8 +48,8 @@ test.describe('ML-DSA Playground (Refactor Verification)', () => {
     const signatureHex = await signatureOutput.inputValue()
 
     // 8. Select the Public Key for Verification (Right side)
-    const verifyKeySelect = page.locator('select').nth(1)
-    await verifyKeySelect.selectOption({ index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
 
     // 9. Verify Signature Input (Right side) matches Output
     const verifySigInput = page.getByPlaceholder('No Signature (Run Sign first or paste one)')

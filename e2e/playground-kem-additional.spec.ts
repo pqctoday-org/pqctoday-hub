@@ -3,20 +3,15 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/')
-    await page.getByRole('button', { name: 'Playground view' }).click()
-    // Wait for Playground to load
-    await expect(
-      page.getByRole('heading', { name: /Interactive Playground/i, level: 2 })
-    ).toBeVisible()
-
+    await page.goto('/playground/interactive')
     // Navigate to Key Store to generate keys
-    await page.getByRole('button', { name: /Key Store/i }).click()
+    await page.getByRole('tab', { name: /Key Store/i }).click()
   })
 
   test('should perform FrodoKEM-640-AES encapsulation and decapsulation', async ({ page }) => {
     // Generate FrodoKEM-640-AES key pair
-    await page.selectOption('select#keystore-key-size', 'FrodoKEM-640-AES')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /FrodoKEM-640-AES/ }).click()
     await page.click('button:has-text("Generate Keys")')
 
     // Wait for key generation to complete
@@ -25,13 +20,18 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Ensure hybrid mode is OFF
     await page.uncheck('input#hybrid-mode-check-enc')
 
     // Select FrodoKEM key for encapsulation
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-640-AES/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -48,7 +48,12 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     await expect(sharedSecretOutput).not.toHaveValue('')
 
     // Select FrodoKEM private key for decapsulation
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-640-AES/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -59,7 +64,8 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
 
   test('should perform HQC-128 encapsulation and decapsulation', async ({ page }) => {
     // Generate HQC-128 key pair
-    await page.selectOption('select#keystore-key-size', 'HQC-128')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /HQC-128/ }).click()
     await page.click('button:has-text("Generate Keys")')
 
     // Wait for key generation to complete
@@ -68,13 +74,18 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Ensure hybrid mode is OFF
     await page.uncheck('input#hybrid-mode-check-enc')
 
     // Select HQC key for encapsulation
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /HQC-128/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -91,7 +102,12 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     await expect(sharedSecretOutput).not.toHaveValue('')
 
     // Select HQC private key for decapsulation
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /HQC-128/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -104,7 +120,8 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     page,
   }) => {
     // Generate Classic McEliece key pair
-    await page.selectOption('select#keystore-key-size', 'Classic-McEliece-348864')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /Classic McEliece 348864/ }).click()
     await page.click('button:has-text("Generate Keys")')
 
     // Wait for key generation to complete (McEliece can be slow)
@@ -113,13 +130,18 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Ensure hybrid mode is OFF
     await page.uncheck('input#hybrid-mode-check-enc')
 
     // Select McEliece key for encapsulation
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /McEliece/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -136,7 +158,12 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     await expect(sharedSecretOutput).not.toHaveValue('')
 
     // Select McEliece private key for decapsulation
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /McEliece/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -147,28 +174,40 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
 
   test('should perform hybrid KEM with FrodoKEM + X25519', async ({ page }) => {
     // Generate FrodoKEM key pair
-    await page.selectOption('select#keystore-key-size', 'FrodoKEM-640-AES')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /FrodoKEM-640-AES/ }).click()
     await page.click('button:has-text("Generate Keys")')
     await expect(page.getByRole('table').getByText('FrodoKEM-640-AES').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Generate Classical Key (X25519)
-    await page.selectOption('select#classical-algo-select', 'X25519')
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option', { name: /X25519/ }).click()
     await page.click('button:has-text("Generate Classical Keys")')
     await expect(page.getByRole('table').getByText('X25519').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Enable Hybrid Mode
     await page.check('input#hybrid-mode-check-enc')
 
     // Select FrodoKEM (PQC) and X25519 (Classical) for encapsulation
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-640-AES/ })
+      .evaluate((el) => (el as HTMLElement).click())
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /X25519/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -186,8 +225,18 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     await expect(page.locator('text=HKDF-Extract (SHA-256)')).toBeVisible()
 
     // Select keys for decapsulation
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
-    await page.selectOption('select#dec-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(3).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-640-AES/ })
+      .evaluate((el) => (el as HTMLElement).click())
+    await page.getByTestId('filter-dropdown').nth(4).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /X25519/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -202,26 +251,38 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
 
   test('should perform hybrid KEM with HQC-192 + P-256', async ({ page }) => {
     // Generate HQC-192 key pair
-    await page.selectOption('select#keystore-key-size', 'HQC-192')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /HQC-192/ }).click()
     await page.click('button:has-text("Generate Keys")')
     await expect(page.getByRole('table').getByText('HQC-192').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Generate Classical Key (P-256)
-    await page.selectOption('select#classical-algo-select', 'P-256')
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option', { name: 'P-256 ECDH (NIST)' }).click()
     await page.click('button:has-text("Generate Classical Keys")')
     await expect(page.getByRole('table').getByText('P-256').first()).toBeVisible({ timeout: 10000 })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Enable Hybrid Mode
     await page.check('input#hybrid-mode-check-enc')
 
     // Select HQC (PQC) and P-256 (Classical) for encapsulation
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /HQC-192/ })
+      .evaluate((el) => (el as HTMLElement).click())
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /P-256/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -232,8 +293,18 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     await expect(page.locator('text=Combination Process')).toBeVisible()
 
     // Select keys for decapsulation
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
-    await page.selectOption('select#dec-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(3).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /HQC-192/ })
+      .evaluate((el) => (el as HTMLElement).click())
+    await page.getByTestId('filter-dropdown').nth(4).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /P-256/ })
+      .evaluate((el) => (el as HTMLElement).click())
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -246,29 +317,42 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     // Test with FrodoKEM-640 (16-byte secret) vs FrodoKEM-1344 (32-byte secret)
 
     // Generate FrodoKEM-640-AES
-    await page.selectOption('select#keystore-key-size', 'FrodoKEM-640-AES')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /FrodoKEM-640-AES/ }).click()
     await page.click('button:has-text("Generate Keys")')
     await expect(page.getByRole('table').getByText('FrodoKEM-640-AES').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Generate Classical Key (X25519) for Hybrid Mode coverage
-    await page.selectOption('select#classical-algo-select', 'X25519')
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option', { name: /X25519/ }).click()
     await page.click('button:has-text("Generate Classical Keys")')
     await expect(page.getByRole('table').getByText('X25519').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Enable Hybrid Mode explicitly
     await page.check('input#hybrid-mode-check-enc')
-    await page.selectOption('select#hybrid-kombiner-select', 'concat-hkdf')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'HKDF-Extract (Normalized)' }).last().click()
 
     // Select keys and run
-    await page.selectOption('select#enc-primary-key-select', { index: 1 }) // FrodoKEM-640
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 }) // X25519
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-640-AES/ })
+      .evaluate((el) => (el as HTMLElement).click()) // FrodoKEM-640
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /X25519/ })
+      .evaluate((el) => (el as HTMLElement).click()) // X25519
     await page.click('button:has-text("Run Encapsulate")')
 
     // Wait for the secret to matches the expected length (64 hex chars = 32 bytes)
@@ -279,29 +363,36 @@ test.describe('Playground KEM Operations - Additional PQC Algorithms', () => {
     const secret640 = await secretInput640.inputValue()
 
     // Go back to Key Store
-    await page.getByRole('button', { name: /Key Store/i }).click()
+    await page.getByRole('tab', { name: /Key Store/i }).click()
 
     // Generate FrodoKEM-1344-AES
-    await page.selectOption('select#keystore-key-size', 'FrodoKEM-1344-AES')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: /FrodoKEM-1344-AES/ }).click()
     await page.click('button:has-text("Generate Keys")')
     await expect(page.getByRole('table').getByText('FrodoKEM-1344-AES').first()).toBeVisible({
       timeout: 10000,
     })
 
     // Back to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
 
     // Re-enable HKDF to ensure consistent behavior
     await page.check('input#hybrid-mode-check-enc')
-    await page.selectOption('select#hybrid-kombiner-select', 'concat-hkdf')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'HKDF-Extract (Normalized)' }).last().click()
 
-    // Select new key (FrodoKEM-1344)
-    const options = await page.locator('select#enc-primary-key-select option').allInnerTexts()
-    const targetIndex = options.findIndex((text) => text.includes('FrodoKEM-1344'))
-    if (targetIndex === -1) throw new Error('FrodoKEM-1344 key option not found')
-
-    await page.selectOption('select#enc-primary-key-select', { index: targetIndex })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 }) // X25519
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /FrodoKEM-1344/ })
+      .evaluate((el) => (el as HTMLElement).click())
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page
+      .getByRole('listbox')
+      .last()
+      .getByRole('option', { name: /X25519/ })
+      .evaluate((el) => (el as HTMLElement).click())
     await page.click('button:has-text("Run Encapsulate")')
 
     // Wait for Ciphertext first to confirm operation completed

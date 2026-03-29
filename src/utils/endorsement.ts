@@ -20,6 +20,7 @@ export type EndorsementCategory =
   | 'learn-module-endorsement'
   | 'timeline-endorsement'
   | 'library-resource-endorsement'
+  | 'pqc-tool-endorsement'
 
 interface EndorsementParams {
   category: EndorsementCategory

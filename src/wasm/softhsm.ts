@@ -2991,7 +2991,9 @@ export const hsm_importAESKey = (
   wrap = true,
   unwrap = true,
   derive = true,
-  extractable = true
+  extractable = true,
+  sign = false,
+  verify = false
 ): number => {
   const keyPtr = M._malloc(keyBytes.length)
   M.HEAPU8.set(keyBytes, keyPtr)
@@ -3007,14 +3009,16 @@ export const hsm_importAESKey = (
     { type: CKA_WRAP, boolVal: wrap },
     { type: CKA_UNWRAP, boolVal: unwrap },
     { type: CKA_DERIVE, boolVal: derive },
+    { type: CKA_SIGN, boolVal: sign },
+    { type: CKA_VERIFY, boolVal: verify },
     { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
   ])
   const hKeyPtr = allocUlong(M)
   try {
-    checkRV(M._C_CreateObject(hSession, tpl.ptr, 11, hKeyPtr), 'C_CreateObject(Import AES)')
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 13, hKeyPtr), 'C_CreateObject(Import AES)')
     return readUlong(M, hKeyPtr)
   } finally {
-    freeTemplate(M, tpl, 11)
+    freeTemplate(M, tpl, 13)
     M._free(hKeyPtr)
     M._free(keyPtr)
   }

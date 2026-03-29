@@ -8,6 +8,7 @@ import {
   AlertTriangle,
   Loader2,
   Shuffle,
+  TreePine,
 } from 'lucide-react'
 import {
   buildMerkleTree,
@@ -24,8 +25,17 @@ function hexComplement(char: string): string {
   return (15 - parseInt(char, 16)).toString(16)
 }
 
+type PathNodeType = 'selected' | 'computed' | 'provided' | 'root'
+interface PathAnnotation {
+  type: PathNodeType
+  order: number
+  label: string
+}
+
+const circledNumbers = ['\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465']
+
 export const ProofVerifier: React.FC = () => {
-  const [, setLevels] = useState<MerkleNode[][] | null>(null)
+  const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [originalProof, setOriginalProof] = useState<InclusionProof | null>(null)
   const [editableProof, setEditableProof] = useState<InclusionProof | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
@@ -158,6 +168,54 @@ export const ProofVerifier: React.FC = () => {
     return verificationResult.usedOriginal ? originalProof : editableProof
   }, [verificationResult, editableProof, originalProof])
 
+  // Per-node annotations: selected, provided, computed, root
+  const pathAnnotations = useMemo(() => {
+    if (!originalProof || !levels) return new Map<string, PathAnnotation>()
+    const annotations = new Map<string, PathAnnotation>()
+
+    annotations.set(`0-${originalProof.leafIndex}`, {
+      type: 'selected',
+      order: 0,
+      label: 'Cert 3',
+    })
+
+    let idx = originalProof.leafIndex
+    for (let lvl = 0; lvl < originalProof.siblings.length; lvl++) {
+      const siblingIdx = idx % 2 === 0 ? idx + 1 : idx - 1
+      const parentIdx = Math.floor(idx / 2)
+
+      annotations.set(`${lvl}-${siblingIdx}`, {
+        type: 'provided',
+        order: lvl + 1,
+        label: `Sibling ${lvl + 1}`,
+      })
+
+      const isRoot = lvl + 1 === levels.length - 1
+      if (lvl + 1 < levels.length) {
+        annotations.set(`${lvl + 1}-${parentIdx}`, {
+          type: isRoot ? 'root' : 'computed',
+          order: lvl + 1,
+          label: isRoot ? 'Root' : `Step ${lvl + 1}`,
+        })
+      }
+
+      idx = parentIdx
+    }
+
+    return annotations
+  }, [originalProof, levels])
+
+  // Original hashes of tampered siblings (for tree color override)
+  const tamperedSiblingHashes = useMemo(() => {
+    if (!originalProof || tamperedPositions.size === 0) return new Set<string>()
+    const tampered = new Set<string>()
+    for (const key of tamperedPositions.keys()) {
+      const sibIdx = parseInt(key.split('-')[0], 10)
+      tampered.add(originalProof.siblings[sibIdx].hash)
+    }
+    return tampered
+  }, [originalProof, tamperedPositions])
+
   return (
     <div className="space-y-6">
       <div>
@@ -274,6 +332,157 @@ export const ProofVerifier: React.FC = () => {
               </div>
             </div>
           </div>
+
+          {/* Tree visualization */}
+          {levels && (
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <div className="flex items-center gap-2 mb-2">
+                <TreePine size={14} className="text-primary" />
+                <h4 className="text-sm font-bold text-foreground">Authentication Path in Tree</h4>
+              </div>
+              <p className="text-[10px] text-muted-foreground mb-3">
+                Cert 3 is the selected leaf. The highlighted siblings are the hashes you must
+                provide to recompute the root. Tampered nodes appear in red.
+              </p>
+
+              {/* Legend */}
+              <div className="flex flex-wrap gap-3 text-[10px] mb-3">
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-primary/30 border-2 border-primary inline-block" />
+                  Selected leaf
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-warning/20 border-2 border-dashed border-warning inline-block" />
+                  Provided sibling
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-success/20 border-2 border-success inline-block" />
+                  Computed parent
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="w-3 h-3 rounded bg-accent/20 border-2 border-double border-accent inline-block" />
+                  Verified root
+                </span>
+                {tamperCount > 0 && (
+                  <span className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded bg-destructive/30 border-2 border-destructive inline-block" />
+                    Tampered
+                  </span>
+                )}
+              </div>
+
+              <div className="overflow-x-auto">
+                <div className="space-y-3 min-w-fit">
+                  {[...levels].reverse().map((level, reversedIdx) => {
+                    const levelIdx = levels.length - 1 - reversedIdx
+                    const isRootLevel = levelIdx === levels.length - 1
+                    const isLeaf = levelIdx === 0
+                    return (
+                      <div key={levelIdx}>
+                        <div className="text-[10px] text-muted-foreground mb-1">
+                          {isRootLevel ? 'Root' : isLeaf ? 'Leaves' : `Level ${levelIdx}`}
+                        </div>
+                        <div className="flex justify-center gap-1 flex-wrap">
+                          {level.map((node) => {
+                            const annotation = pathAnnotations.get(`${levelIdx}-${node.index}`)
+                            const isTampered =
+                              annotation?.type === 'provided' &&
+                              tamperedSiblingHashes.has(node.hash)
+
+                            let borderClass = ''
+                            if (isTampered) {
+                              borderClass =
+                                'bg-destructive/20 text-destructive border-2 border-destructive shadow-md'
+                            } else if (annotation) {
+                              if (annotation.type === 'selected') {
+                                borderClass =
+                                  'bg-primary/30 text-primary border-2 border-primary ring-2 ring-primary'
+                              } else if (annotation.type === 'provided') {
+                                borderClass =
+                                  'bg-warning/15 text-warning border-2 border-dashed border-warning shadow-md'
+                              } else if (annotation.type === 'computed') {
+                                borderClass =
+                                  'bg-success/20 text-success border-2 border-success shadow-md'
+                              } else if (annotation.type === 'root') {
+                                if (verificationResult) {
+                                  borderClass = verificationResult.valid
+                                    ? 'bg-success/20 text-success border-[3px] border-double border-success shadow-lg'
+                                    : 'bg-destructive/20 text-destructive border-[3px] border-double border-destructive shadow-lg'
+                                } else {
+                                  borderClass =
+                                    'bg-accent/20 text-accent border-[3px] border-double border-accent shadow-lg'
+                                }
+                              }
+                            } else if (isRootLevel) {
+                              borderClass = 'bg-accent/20 text-accent border-accent/50'
+                            } else {
+                              borderClass = 'bg-muted text-muted-foreground border-border'
+                            }
+
+                            return (
+                              <div
+                                key={`${levelIdx}-${node.index}`}
+                                className={`relative px-2 py-1.5 rounded text-[10px] font-mono border ${borderClass}`}
+                              >
+                                {annotation && (
+                                  <span
+                                    className={`absolute -top-2 -right-2 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${
+                                      isTampered
+                                        ? 'bg-destructive text-white'
+                                        : annotation.type === 'selected'
+                                          ? 'bg-primary text-black'
+                                          : annotation.type === 'provided'
+                                            ? 'bg-warning text-black'
+                                            : annotation.type === 'root'
+                                              ? 'bg-accent text-black'
+                                              : 'bg-success text-black'
+                                    }`}
+                                    title={annotation.label}
+                                  >
+                                    {annotation.order < circledNumbers.length
+                                      ? circledNumbers[annotation.order]
+                                      : annotation.order}
+                                  </span>
+                                )}
+                                <div className="text-[9px] text-muted-foreground mb-0.5">
+                                  {node.label}
+                                </div>
+                                <div>{truncateHash(node.hash, 6)}</div>
+                                {isLeaf && node.index < certs.length && (
+                                  <div className="text-[8px] mt-0.5 text-muted-foreground">
+                                    {certs[node.index].subject}
+                                  </div>
+                                )}
+                                {annotation && annotation.type !== 'selected' && (
+                                  <div
+                                    className={`text-[8px] mt-0.5 font-bold ${
+                                      isTampered
+                                        ? 'text-destructive'
+                                        : annotation.type === 'provided'
+                                          ? 'text-warning'
+                                          : annotation.type === 'root'
+                                            ? verificationResult
+                                              ? verificationResult.valid
+                                                ? 'text-success'
+                                                : 'text-destructive'
+                                              : 'text-accent'
+                                            : 'text-success'
+                                    }`}
+                                  >
+                                    {isTampered ? 'Tampered' : annotation.label}
+                                  </div>
+                                )}
+                              </div>
+                            )
+                          })}
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-3">

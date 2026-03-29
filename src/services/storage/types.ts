@@ -51,6 +51,8 @@ export type ExecutiveDocumentType =
   | 'stakeholder-comms'
   | 'kpi-tracker'
   | 'risk-treatment-plan'
+  | 'crqc-scenario'
+  | 'supply-chain-matrix'
 
 export interface ExecutiveDocument {
   id: string

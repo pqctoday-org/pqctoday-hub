@@ -3,33 +3,36 @@ import { test, expect } from '@playwright/test'
 
 test.describe('ML-KEM Playground', () => {
   test.beforeEach(async ({ page }) => {
-    await page.goto('/playground')
+    await page.goto('/playground/interactive')
     // Navigate to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
   })
 
   test.beforeEach(async ({ page }) => {
     // Ensure keys exist for every test to avoid dependency on order
-    await page.getByRole('button', { name: 'Key Store' }).click()
+    await page.getByRole('tab', { name: 'Key Store' }).click()
 
     // Generate PQC Key (ML-KEM-768)
-    await page.selectOption('#keystore-key-size', '768')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'ML-KEM-768' }).click()
     await page.getByRole('button', { name: 'Generate Keys' }).click()
     // Wait for key to appear
     await expect(page.getByRole('table')).toContainText('ML-KEM')
 
     // Generate Classical Key (X25519)
-    await page.selectOption('select#classical-algo-select', 'X25519')
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option', { name: 'X25519' }).click()
     await page.click('button:has-text("Generate Classical Keys")')
     await expect(page.getByRole('table')).toContainText('X25519')
 
     // Navigate back to KEM tab
-    await page.getByRole('button', { name: 'KEM & Encrypt' }).click()
+    await page.getByRole('tab', { name: 'KEM & Encrypt' }).click()
   })
 
   test('should perform classical KEM encapsulation and decapsulation', async ({ page }) => {
     // Step 1: Select Keys (Left side - Encapsulate)
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
 
     // Step 2: Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -43,7 +46,8 @@ test.describe('ML-KEM Playground', () => {
     await expect(sharedSecretOutput).not.toHaveValue('')
 
     // Step 1: Select Keys (Right side - Decapsulate)
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
 
     // Step 2: Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -67,8 +71,10 @@ test.describe('ML-KEM Playground', () => {
     await expect(page.locator('text=Secondary Public Key (Classical)')).toBeVisible()
 
     // Step 1: Select Keys (Left side)
-    await page.selectOption('select#enc-primary-key-select', { index: 1 }) // PQC
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 }) // Classical
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
 
     // Verify right side is empty before encapsulation
     // Verify right side is empty before encapsulation
@@ -108,8 +114,10 @@ test.describe('ML-KEM Playground', () => {
     expect(recoveredSecretsCount).toBe(0)
 
     // Step 1: Select Keys (Right side)
-    await page.selectOption('select#dec-primary-key-select', { index: 1 }) // PQC
-    await page.selectOption('select#dec-secondary-key-select', { index: 1 }) // Classical
+    await page.getByTestId('filter-dropdown').nth(3).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(4).click()
+    await page.getByRole('option').nth(1).click()
 
     // Step 2: Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')
@@ -143,11 +151,14 @@ test.describe('ML-KEM Playground', () => {
     await page.check('input#hybrid-mode-check-enc')
 
     // Select keys
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
 
     // Test with HKDF (default)
-    await page.selectOption('select#hybrid-kombiner-select', 'concat-hkdf')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'HKDF-Extract (Normalized)' }).click()
     await page.click('button:has-text("Run Encapsulate")')
 
     // Verify HKDF indicator appears
@@ -160,7 +171,8 @@ test.describe('ML-KEM Playground', () => {
       .inputValue()
 
     // Switch to Raw mode
-    await page.selectOption('select#hybrid-kombiner-select', 'concat')
+    await page.getByTestId('filter-dropdown').first().click()
+    await page.getByRole('option', { name: 'Raw (No Normalization)' }).click()
     await page.click('button:has-text("Run Encapsulate")')
 
     // Verify no HKDF indicator
@@ -183,10 +195,15 @@ test.describe('ML-KEM Playground', () => {
     await page.check('input#hybrid-mode-check-enc')
 
     // Select keys on both sides
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 })
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
-    await page.selectOption('select#dec-secondary-key-select', { index: 1 })
+    // Select keys on both sides
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(3).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(4).click()
+    await page.getByRole('option').nth(1).click()
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -231,8 +248,10 @@ test.describe('ML-KEM Playground', () => {
     expect(step3Count).toBeGreaterThanOrEqual(2)
 
     // Select keys and run operations
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
-    await page.selectOption('select#enc-secondary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
     await page.click('button:has-text("Run Encapsulate")')
 
     // Verify Step 4A appears (hybrid mode)
@@ -248,7 +267,8 @@ test.describe('ML-KEM Playground', () => {
     await page.uncheck('input#hybrid-mode-check-enc')
 
     // Select single key
-    await page.selectOption('select#enc-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(1).click()
+    await page.getByRole('option').nth(1).click()
 
     // Run Encapsulate
     await page.click('button:has-text("Run Encapsulate")')
@@ -265,7 +285,8 @@ test.describe('ML-KEM Playground', () => {
     expect(step4Count).toBeGreaterThan(0)
 
     // Select key on right side
-    await page.selectOption('select#dec-primary-key-select', { index: 1 })
+    await page.getByTestId('filter-dropdown').nth(2).click()
+    await page.getByRole('option').nth(1).click()
 
     // Run Decapsulate
     await page.click('button:has-text("Run Decapsulate")')

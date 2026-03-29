@@ -43,9 +43,25 @@ export interface SettingsContextType {
   handleAlgorithmChange: (newAlgorithm: string) => void
 
   // UI State
-  activeTab: 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
+  activeTab:
+    | 'data'
+    | 'kem_ops'
+    | 'sign_verify'
+    | 'keystore'
+    | 'logs'
+    | 'symmetric'
+    | 'key_wrap'
+    | 'hashing'
   setActiveTab: (
-    tab: 'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
+    tab:
+      | 'data'
+      | 'kem_ops'
+      | 'sign_verify'
+      | 'keystore'
+      | 'logs'
+      | 'symmetric'
+      | 'key_wrap'
+      | 'hashing'
   ) => void
   loading: boolean
   setLoading: (loading: boolean) => void

@@ -74,8 +74,9 @@ export const CERT_METADATA_BYTES = 200
 
 /**
  * MTC inclusion proof size for a batch of ~4.4 million certificates.
- * Per draft-ietf-plants-merkle-tree-certs: 23 sibling hashes × 32 bytes = 736 bytes.
- * (Tree depth 23 for batches of this size; no rounding required.)
+ * Per draft-ietf-plants-merkle-tree-certs-02 Section 6.4: 23 sibling hashes × 32 bytes = 736 bytes.
+ * The 4.4M figure is a projection for short-lived certs (7-day lifetime, large CA like Let's Encrypt
+ * with 558M active certs reissued every 126 hours). Current actual rate is ~444K/hour across all CAs.
  */
 export const MTC_INCLUSION_PROOF_BYTES = 736
 
@@ -104,12 +105,28 @@ export function traditionalChainSize(algo: AlgorithmSizes): number {
 }
 
 /**
- * Calculate MTC-based TLS handshake authentication size.
+ * Estimated cosigner signature overhead in a standalone certificate.
+ * Per draft-ietf-plants-merkle-tree-certs-02 Section 6.2, standalone certs carry
+ * cosignatures from the CA and external cosigners. Cosigner signatures use Ed25519
+ * (64 bytes each). Typical policy: 2 external cosigners → ~128 bytes of cosignatures.
+ * This is a conservative minimum; actual overhead depends on relying party requirements.
+ */
+export const COSIGNER_SIGNATURE_OVERHEAD_BYTES = 128
+
+/**
+ * Calculate standalone MTC TLS handshake authentication size.
  *
- * Components: 1 root signature + 1 root public key + inclusion proof + cert metadata × 1
+ * Components: 1 CA signature + 1 CA public key + cosigner signatures + inclusion proof + metadata
+ * Per Section 6.2, standalone certs carry sufficient cosignatures to meet relying party requirements.
  */
 export function mtcChainSize(algo: AlgorithmSizes): number {
-  return algo.signatureBytes + algo.publicKeyBytes + MTC_INCLUSION_PROOF_BYTES + CERT_METADATA_BYTES
+  return (
+    algo.signatureBytes +
+    algo.publicKeyBytes +
+    COSIGNER_SIGNATURE_OVERHEAD_BYTES +
+    MTC_INCLUSION_PROOF_BYTES +
+    CERT_METADATA_BYTES
+  )
 }
 
 /** Breakdown for display in the size comparison table */
@@ -135,8 +152,9 @@ export function getSizeBreakdown(algo: AlgorithmSizes, proofBytes?: number): Siz
     { component: 'Certificate metadata (×3)', bytes: CERT_METADATA_BYTES * 3 },
   ]
   const mtc = [
-    { component: 'Root signature (batch)', bytes: algo.signatureBytes },
-    { component: 'Root public key', bytes: algo.publicKeyBytes },
+    { component: 'CA signature (batch)', bytes: algo.signatureBytes },
+    { component: 'CA public key', bytes: algo.publicKeyBytes },
+    { component: 'Cosigner signatures (≥2)', bytes: COSIGNER_SIGNATURE_OVERHEAD_BYTES },
     { component: 'Inclusion proof', bytes: proof },
     { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
   ]

@@ -8,7 +8,7 @@ Massive PQC signatures break constrained internet clients, degrade connection se
 
 ### The Key Takeaway
 
-Merkle Tree Certificates offer a massive size reduction—up to 62% savings for ML-DSA chains. By moving to inclusion proofs and hash recomputation, MTCs provide a viable, standardized (IETF PLANTS) path to deploying PQC certificates on the public internet without destroying performance.
+Merkle Tree Certificates offer a massive size reduction—61% with standalone certificates (which carry cosignatures) and up to 92% with landmark certificates (which carry no signatures at all). By moving to inclusion proofs and hash recomputation, MTCs provide a viable, standardized (IETF PLANTS) path to deploying PQC certificates on the public internet without destroying performance.
 
 ### What's Happening
 

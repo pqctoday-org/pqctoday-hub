@@ -21,6 +21,8 @@ export const TYPE_LABELS: Record<ExecutiveDocumentType, string> = {
   'stakeholder-comms': 'Stakeholder Comms',
   'kpi-tracker': 'KPI Tracker',
   'risk-treatment-plan': 'Risk Treatment Plan',
+  'crqc-scenario': 'CRQC Scenario',
+  'supply-chain-matrix': 'Supply Chain Matrix',
 }
 
 const PILLAR_COLORS: Record<string, string> = {

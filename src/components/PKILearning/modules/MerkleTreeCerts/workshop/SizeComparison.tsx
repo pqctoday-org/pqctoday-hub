@@ -13,7 +13,7 @@ const BATCH_MARKS = [
   { exp: 12, label: 'Small CA (4K)' },
   { exp: 16, label: 'Mid CA (65K)' },
   { exp: 20, label: 'Large CA (1M)' },
-  { exp: 23, label: 'Production (~4.4M)' },
+  { exp: 23, label: 'Projected (~4.4M)' },
   { exp: 24, label: 'Max (16.7M)' },
 ]
 
@@ -160,7 +160,7 @@ export const SizeComparison: React.FC = () => {
 
         {/* MTC */}
         <div className="bg-success/5 rounded-lg p-4 border border-success/20">
-          <h4 className="text-sm font-bold text-success mb-3">Merkle Tree Certificate</h4>
+          <h4 className="text-sm font-bold text-success mb-3">Standalone MTC</h4>
           <div className="space-y-2">
             {breakdown.mtc.map((item, i) => (
               <div key={i}>

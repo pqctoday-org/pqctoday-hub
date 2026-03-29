@@ -5,6 +5,9 @@ import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -23,6 +26,8 @@ export const PlaygroundToolRoute = () => {
     ? ONBACK_COMPONENTS[toolId!]
     : TOOL_COMPONENTS[toolId!]
 
+  const resourceDetails = `**Tool:** ${tool.name}\n**Category:** ${tool.category}`
+
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-3">
@@ -33,6 +38,34 @@ export const PlaygroundToolRoute = () => {
         <span className="text-sm text-muted-foreground">
           {tool.category} / {tool.name}
         </span>
+        <div className="ml-auto flex items-center gap-1">
+          <EndorseButton
+            endorseUrl={buildEndorsementUrl({
+              category: 'pqc-tool-endorsement',
+              title: `Endorse: ${tool.name}`,
+              resourceType: 'Playground Tool',
+              resourceId: tool.id,
+              resourceDetails,
+              pageUrl: `/playground/${tool.id}`,
+            })}
+            resourceLabel={tool.id}
+            resourceType="playground-tool"
+            variant="icon"
+          />
+          <FlagButton
+            flagUrl={buildFlagUrl({
+              category: 'pqc-tool-endorsement',
+              title: `Flag: ${tool.name}`,
+              resourceType: 'Playground Tool',
+              resourceId: tool.id,
+              resourceDetails,
+              pageUrl: `/playground/${tool.id}`,
+            })}
+            resourceLabel={tool.id}
+            resourceType="playground-tool"
+            variant="icon"
+          />
+        </div>
       </div>
 
       <Suspense

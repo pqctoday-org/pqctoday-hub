@@ -44,10 +44,16 @@ const EXECUTIVE_MODULES = [
 // ── Pillar → Artifact type mapping ────────────────────────────────────────
 
 export const PILLAR_ARTIFACT_TYPES: Record<string, ExecutiveDocumentType[]> = {
-  risk: ['risk-register', 'risk-treatment-plan', 'roi-model', 'board-deck'],
+  risk: ['risk-register', 'risk-treatment-plan', 'roi-model', 'board-deck', 'crqc-scenario'],
   compliance: ['audit-checklist', 'compliance-timeline', 'compliance-checklist'],
   governance: ['raci-matrix', 'policy-draft', 'kpi-dashboard', 'stakeholder-comms'],
-  vendor: ['vendor-scorecard', 'contract-clause', 'migration-roadmap', 'kpi-tracker'],
+  vendor: [
+    'vendor-scorecard',
+    'contract-clause',
+    'migration-roadmap',
+    'kpi-tracker',
+    'supply-chain-matrix',
+  ],
 }
 
 /** Module IDs that produce artifacts for each pillar (for "Build in…" placeholder links) */

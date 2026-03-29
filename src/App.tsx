@@ -97,9 +97,24 @@ const AssessView = lazyWithRetry(() =>
 const ReportView = lazyWithRetry(() =>
   import('./components/Report/ReportView').then((module) => ({ default: module.ReportView }))
 )
+const BusinessCenterShell = lazyWithRetry(() =>
+  import('./components/BusinessCenter/BusinessCenterShell').then((module) => ({
+    default: module.BusinessCenterShell,
+  }))
+)
 const BusinessCenterView = lazyWithRetry(() =>
   import('./components/BusinessCenter/BusinessCenterView').then((module) => ({
     default: module.BusinessCenterView,
+  }))
+)
+const BusinessToolsGrid = lazyWithRetry(() =>
+  import('./components/BusinessCenter/BusinessToolsGrid').then((module) => ({
+    default: module.BusinessToolsGrid,
+  }))
+)
+const BusinessToolRoute = lazyWithRetry(() =>
+  import('./components/BusinessCenter/BusinessToolRoute').then((module) => ({
+    default: module.BusinessToolRoute,
   }))
 )
 const FAQPage = lazyWithRetry(() =>
@@ -296,10 +311,14 @@ function App() {
               path="/business"
               element={
                 <ErrorBoundary>
-                  <BusinessCenterView />
+                  <BusinessCenterShell />
                 </ErrorBoundary>
               }
-            />
+            >
+              <Route index element={<BusinessCenterView />} />
+              <Route path="tools" element={<BusinessToolsGrid />} />
+              <Route path="tools/:toolId" element={<BusinessToolRoute />} />
+            </Route>
             <Route
               path="/faq"
               element={

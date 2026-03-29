@@ -12,7 +12,7 @@ test.describe('Playground - PKCS#11 HSM Mode Operations', () => {
     })
 
     // Navigate to playground
-    await page.goto('/playground')
+    await page.goto('/playground/hsm')
     await page.reload() // Force reload to ensure fresh WASM
   })
 
@@ -21,11 +21,7 @@ test.describe('Playground - PKCS#11 HSM Mode Operations', () => {
   }) => {
     test.setTimeout(90000)
 
-    // 1. Enable HSM Mode
-    const hsmSwitch = page.getByRole('switch', { name: 'Toggle HSM mode' })
-    await hsmSwitch.click()
-
-    // 2. Token Setup (in HSM Keys tab)
+    // 2. Token Setup
     await page.getByRole('button', { name: /Initialize HSM/i }).click()
     await expect(page.getByText(/Initialized/i)).toBeVisible({ timeout: 15000 })
 
@@ -65,8 +61,7 @@ test.describe('Playground - PKCS#11 HSM Mode Operations', () => {
   test('should perform ML-KEM Key Encapsulation in HSM Mode', async ({ page }) => {
     test.setTimeout(90000)
 
-    // 1. Enable HSM Mode and Setup Token
-    await page.getByRole('switch', { name: 'Toggle HSM mode' }).click()
+    // 1. Setup Token
     await page.getByRole('button', { name: /Initialize HSM/i }).click()
     await expect(page.getByText(/Initialized/i)).toBeVisible()
     await page.getByRole('button', { name: /Create Token/i }).click()
@@ -104,8 +99,7 @@ test.describe('Playground - PKCS#11 HSM Mode Operations', () => {
   test('should perform ML-DSA Signing and Verification in HSM Mode', async ({ page }) => {
     test.setTimeout(90000)
 
-    // 1. Enable HSM Mode and Setup Token
-    await page.getByRole('switch', { name: 'Toggle HSM mode' }).click()
+    // 1. Setup Token
     await page.getByRole('button', { name: /Initialize HSM/i }).click()
     await expect(page.getByText(/Initialized/i)).toBeVisible()
     await page.getByRole('button', { name: /Create Token/i }).click()

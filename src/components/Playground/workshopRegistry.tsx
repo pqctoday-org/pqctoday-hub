@@ -202,12 +202,24 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'source-combining',
     name: 'Source Combining',
-    description: 'XOR + HMAC + HKDF entropy source combining pipeline',
+    description:
+      'SP 800-90C source combining: XOR, Hash, HMAC, Concat + HKDF/Hash_df/AES-CMAC conditioning via SoftHSMv3',
     category: 'Entropy & Random',
-    algorithms: ['HMAC-SHA256', 'HKDF', 'XOR'],
+    algorithms: ['SHA-256', 'HMAC-SHA-256', 'HKDF', 'AES-CMAC', 'XOR', 'Hash_df'],
     icon: Dice5,
     moduleLink: '/learn/entropy-randomness',
-    keywords: ['source combining', 'xor', 'hmac', 'hkdf', 'conditioning', 'entropy pool'],
+    keywords: [
+      'source combining',
+      'xor',
+      'hmac',
+      'hkdf',
+      'hash_df',
+      'aes-cmac',
+      'conditioning',
+      'entropy pool',
+      'sp 800-90c',
+      'rbg',
+    ],
     difficulty: 'advanced',
     recommendedPersonas: ['researcher', 'architect', 'developer'],
   },
@@ -382,8 +394,8 @@ export const CATEGORIES = [
   'HSM / PKCS#11',
   'Entropy & Random',
   'Certificates & Proofs',
-  'Protocol Simulations',
   'Blockchain & Digital Assets',
+  'Protocol Simulations',
 ]
 
 // ---------------------------------------------------------------------------

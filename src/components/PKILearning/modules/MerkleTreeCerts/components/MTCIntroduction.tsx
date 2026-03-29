@@ -12,6 +12,7 @@ import {
   Lock,
   ChevronDown,
   Layers,
+  Eye,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -82,8 +83,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div>
               <div className="text-sm font-bold text-foreground">Batch Certificates</div>
               <p className="text-xs text-muted-foreground">
-                The Merkle Tree CA (MTCA) collects thousands of certificate assertions and places
-                them as leaves in a binary hash tree. Each leaf is{' '}
+                The Merkle Tree CA collects thousands of certificate assertions and places them as
+                leaves in a binary hash tree. Each leaf is{' '}
                 <strong>SHA-256(0x00 || cert&nbsp;data)</strong>; internal nodes use{' '}
                 <strong>SHA-256(0x01 || left || right)</strong>. The domain-separation prefixes
                 (0x00 / 0x01) prevent leaf hashes from ever being confused with internal node
@@ -136,7 +137,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
 
         {/* ASCII-style tree diagram */}
         <div className="bg-muted/50 rounded-lg p-4 border border-border font-mono text-xs overflow-x-auto">
-          <div className="text-center text-primary font-bold mb-1">Root Hash (signed by MTCA)</div>
+          <div className="text-center text-primary font-bold mb-1">Root Hash (signed by CA)</div>
           <div className="text-center text-muted-foreground mb-1">
             &darr;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&darr;
           </div>
@@ -162,71 +163,112 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           <Shield size={20} /> MTC Architecture
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          The MTC ecosystem defines three key roles, similar to existing Certificate Transparency
-          (CT) infrastructure but redesigned for batch efficiency:
+          The MTC ecosystem defines five key roles (per <em>draft-ietf-plants-merkle-tree-certs</em>{' '}
+          Section 2.1), redesigned from Certificate Transparency for batch efficiency:
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
           <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
-            <div className="text-sm font-bold text-primary mb-1">MTCA (CA)</div>
+            <div className="text-sm font-bold text-primary mb-1">Certification Authority (CA)</div>
             <p className="text-xs text-muted-foreground">
-              Operates the issuance log, builds the Merkle tree, signs subtrees, requests
-              cosignatures from external witnesses, and assembles certificates with inclusion
-              proofs.
+              Maintains the issuance log, builds the Merkle tree, signs checkpoints and subtrees,
+              requests cosignatures, and assembles certificates with inclusion proofs. The CA
+              certifies information by <em>logging</em> it, inverting the CT model.
             </p>
           </div>
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
-            <div className="text-sm font-bold text-success mb-1">Transparency Service</div>
+            <div className="text-sm font-bold text-success mb-1">Cosigner</div>
             <p className="text-xs text-muted-foreground">
-              Serves the per-certificate log to monitors and relying parties. Analogous to CT logs
-              &mdash; each certificate is an individual log entry &mdash; but signing is per-batch:
-              one cosigner signature covers a subtree of millions of entries.
+              Signs views of the issuance log to assert correct operation. Cosigners verify the log
+              is append-only, optionally mirror its contents, and cosign checkpoints and subtrees.
+              One cosigner signature covers a subtree of millions of entries.
             </p>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
-            <div className="text-sm font-bold text-warning mb-1">
-              Authenticating Parties (TLS Servers)
-            </div>
+            <div className="text-sm font-bold text-warning mb-1">Authenticating Party</div>
             <p className="text-xs text-muted-foreground">
               TLS servers that receive their certificate assertion + inclusion proof from the CA and
-              present them during the TLS handshake for client verification.
+              present them during the TLS handshake. Sends the Certificate and CertificateVerify
+              messages.
+            </p>
+          </div>
+          <div className="bg-accent/5 rounded-lg p-3 border border-accent/20">
+            <div className="text-sm font-bold text-accent mb-1">Relying Party</div>
+            <p className="text-xs text-muted-foreground">
+              The client that verifies certificates. Maintains trusted subtrees, cosigner
+              requirements, and revoked index ranges. For landmark certificates, relying parties
+              pre-sync trusted subtrees in the background.
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <div className="text-sm font-bold text-foreground flex items-center gap-1 mb-1">
+              <Eye size={14} /> Monitor
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Watches the issuance log for certificates of interest, analogous to CT monitors.
+              Ensures the CA is operated correctly and entries are publicly visible.
             </p>
           </div>
         </div>
       </section>
 
-      {/* Section 4: Tradeoffs */}
+      {/* Section 4: Certificate Types & Tradeoffs */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
-          <Scale size={20} /> Tradeoffs
+          <Scale size={20} /> Certificate Types &amp; Tradeoffs
         </h2>
         <p className="text-foreground/80 leading-relaxed mb-3">
-          MTCs offer significant size savings, but they introduce new requirements:
+          The spec defines two certificate types. Authenticating parties SHOULD deploy both and
+          select based on client capabilities:
         </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+          <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
+            <div className="text-sm font-bold text-primary mb-1">Standalone Certificate</div>
+            <p className="text-xs text-muted-foreground">
+              Contains an inclusion proof <em>plus</em> cosignatures from the CA and external
+              cosigners. Works without any predistributed state &mdash; the relying party verifies
+              signatures at connection time. Can be issued with minimal processing delay.
+            </p>
+          </div>
+          <div className="bg-success/5 rounded-lg p-3 border border-success/20">
+            <div className="text-sm font-bold text-success mb-1">Landmark Certificate</div>
+            <p className="text-xs text-muted-foreground">
+              Contains an inclusion proof to a predistributed landmark subtree and{' '}
+              <strong>no signatures</strong>. Relying parties pre-sync trusted landmark subtrees in
+              the background. Maximal size savings but requires an up-to-date client.
+            </p>
+          </div>
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-success/5 rounded-lg p-3 border border-success/20">
-            <div className="text-sm font-bold text-success mb-2">Advantages</div>
+            <div className="text-sm font-bold text-success mb-2">Advantages (both types)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
-              <li>&bull; Massive size reduction (62&ndash;64% for ML-DSA)</li>
+              <li>
+                &bull; Massive size reduction (62&ndash;64% standalone, 92% landmark for ML-DSA)
+              </li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>
-              <li>&bull; Inherent certificate transparency (batch = public log)</li>
+              <li>&bull; Inherent certificate transparency (issuance log = public record)</li>
             </ul>
           </div>
           <div className="bg-warning/5 rounded-lg p-3 border border-warning/20">
             <div className="text-sm font-bold text-warning mb-2">Considerations</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
-                &bull; Clients must sync signed subtrees periodically (background, out-of-band)
-              </li>
-              <li>&bull; Not suitable for fully offline verification scenarios</li>
-              <li>
-                &bull; Revocation uses <strong>Revocation by Index</strong>: relying parties
-                maintain index-range exclusion lists checked at verification time
+                &bull; <strong>Landmark only:</strong> clients must pre-sync trusted subtrees
+                periodically; not suitable for offline or intermittently-connected devices
               </li>
               <li>
-                &bull; Trust requires a <strong>cosigner quorum</strong> &mdash; relying parties
-                accept a subtree only after a configured set of external witnesses co-sign it,
+                &bull; Revocation uses <strong>Revocation by Index</strong> (Section 7.5): relying
+                parties maintain revoked ranges of indices checked at verification time
+              </li>
+              <li>
+                &bull; Trust requires meeting <strong>cosigner requirements</strong> &mdash; relying
+                parties accept a subtree only after a configured set of cosigners have signed it,
                 preventing a compromised CA from silently misissu&shy;ing
+              </li>
+              <li>
+                &bull; <strong>Standalone only:</strong> certificates carry multiple cosignatures,
+                adding some bytes beyond the inclusion proof
               </li>
             </ul>
           </div>
@@ -241,7 +283,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           aria-expanded={showSignatureless}
         >
           <h2 className="text-xl font-bold text-gradient flex items-center gap-2">
-            <Layers size={20} /> Advanced: Signatureless Certificates &amp; Landmarks
+            <Layers size={20} /> Deep Dive: Landmark Certificates
           </h2>
           <ChevronDown
             size={20}
@@ -251,29 +293,29 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
         {showSignatureless && (
           <div className="px-6 pb-6 space-y-4">
             <p className="text-foreground/80 leading-relaxed">
-              The spec defines a more aggressive optimization beyond standard MTC:{' '}
-              <strong>signatureless certificates</strong> carry <em>zero</em> embedded signatures.
-              Instead of embedding a CA cosignature in every certificate, relying parties pre-sync
-              large hourly &ldquo;landmark&rdquo; subtrees out-of-band, then verify inclusion proofs
-              against their cached landmark root &mdash; no signature transmitted in the TLS
-              handshake at all.
+              Landmark certificates carry <em>zero</em> embedded signatures. Instead of embedding
+              cosignatures, relying parties periodically pre-sync &ldquo;landmark&rdquo; subtrees
+              out-of-band (the spec suggests allocating landmarks at regular intervals, e.g. every
+              hour), then verify inclusion proofs against their cached landmark root &mdash; no
+              signature transmitted in the TLS handshake at all.
             </p>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <div className="text-xs font-bold text-primary mb-1">1. Landmark issuance</div>
+                <div className="text-xs font-bold text-primary mb-1">1. Landmark allocation</div>
                 <p className="text-xs text-muted-foreground">
-                  The MTCA mints large batches on a regular schedule (e.g., every hour), covering
-                  millions of certificates. The resulting Merkle subtree root is the{' '}
-                  <strong>landmark</strong>, signed once by the CA and cosigners.
+                  Periodically (e.g., every hour), the CA designates its latest checkpoint tree size
+                  as a landmark. With projected short-lived certificate issuance rates (~4.4M
+                  certs/hour for a large CA), each landmark subtree spans millions of entries.
                 </p>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
                 <div className="text-xs font-bold text-success mb-1">2. Background pre-sync</div>
                 <p className="text-xs text-muted-foreground">
-                  Browsers and OS clients periodically download and cache signed landmark subtrees
-                  from the Transparency Service &mdash; similar to certificate revocation syncs
-                  today. No online step required during the TLS handshake.
+                  Browsers and OS clients periodically download and cache trusted landmark subtrees,
+                  with cosignatures checked against relying party requirements &mdash; similar to
+                  certificate revocation syncs today. No online step required during the TLS
+                  handshake.
                 </p>
               </div>
               <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -311,17 +353,17 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                     <td className="text-right py-2 pl-2 text-muted-foreground">baseline</td>
                   </tr>
                   <tr className="border-b border-border/50">
-                    <td className="py-2 pr-3 font-medium text-foreground">Full MTC</td>
-                    <td className="text-right py-2 px-2 font-mono">3,732 B</td>
+                    <td className="py-2 pr-3 font-medium text-foreground">Standalone MTC</td>
+                    <td className="text-right py-2 px-2 font-mono">3,860 B</td>
                     <td className="text-right py-2 px-2 font-mono">736 B</td>
                     <td className="text-right py-2 px-2 font-mono text-primary font-bold">
-                      4,668 B
+                      4,796 B
                     </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">62%</td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">61%</td>
                   </tr>
                   <tr>
                     <td className="py-2 pr-3 font-medium text-foreground">
-                      Signatureless MTC <span className="text-[10px] text-success">(landmark)</span>
+                      Landmark MTC <span className="text-[10px] text-success">(no signatures)</span>
                     </td>
                     <td className="text-right py-2 px-2 font-mono text-success font-bold">0 B</td>
                     <td className="text-right py-2 px-2 font-mono">736 B</td>
@@ -332,8 +374,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               </table>
               <p className="text-[10px] text-muted-foreground mt-2">
                 Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 4 SCTs (476 B) + metadata (600
-                B). Full MTC: 1 sig (2,420 B) + 1 key (1,312 B) + 736 B proof + 200 B metadata.
-                Signatureless: 736 B proof + 200 B metadata only — client has landmark cached.
+                B). Standalone: 1 CA sig (2,420 B) + 1 key (1,312 B) + cosigner sigs (~128 B) + 736
+                B proof + 200 B metadata. Landmark: 736 B proof + 200 B metadata only &mdash; client
+                has trusted subtree cached. Cosigner overhead is policy-dependent (minimum shown).
               </p>
             </div>
 
@@ -371,6 +414,9 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               </li>
               <li>
                 &bull; February 2026: <code>draft-ietf-plants-merkle-tree-certs-01</code> published
+              </li>
+              <li>
+                &bull; March 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
               </li>
             </ul>
           </div>
