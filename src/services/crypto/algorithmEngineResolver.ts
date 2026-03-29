@@ -408,7 +408,7 @@ async function benchmarkNoble(algoName: string): Promise<BenchmarkResult> {
 
     let sigBytes: Uint8Array
     const signEncapsMs = timeMs(() => {
-      sigBytes = secp256k1.sign(msgHash, privKey!).toCompactRawBytes()
+      sigBytes = secp256k1.sign(msgHash, privKey!)
     })
 
     const verifyDecapsMs = timeMs(() => {
