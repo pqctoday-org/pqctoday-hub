@@ -17,6 +17,7 @@ export type HistoryEventType =
   | 'streak_milestone'
   | 'migrate_product_selection'
   | 'compliance_framework_selection'
+  | 'page_view'
 
 export interface HistoryEvent {
   id: string

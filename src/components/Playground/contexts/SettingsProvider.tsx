@@ -62,7 +62,7 @@ export const SettingsProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   const resizeStartX = useRef<number>(0)
   const resizeStartWidth = useRef<number>(0)
   const [activeTab, setActiveTab] = useState<
-    'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'hashing'
+    'data' | 'kem_ops' | 'sign_verify' | 'keystore' | 'logs' | 'symmetric' | 'key_wrap' | 'hashing'
   >(() => {
     const tab = new URLSearchParams(window.location.search).get('tab')
     const valid = ['data', 'kem_ops', 'sign_verify', 'keystore', 'logs', 'symmetric', 'hashing']
