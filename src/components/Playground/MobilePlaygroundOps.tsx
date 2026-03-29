@@ -145,7 +145,7 @@ function MobileOpsContent() {
 }
 
 export const MobilePlaygroundOps = () => {
-  const [status] = useState<CapabilityStatus>(() => {
+  const [status, setStatus] = useState<CapabilityStatus>(() => {
     const hasSharedArrayBuffer = typeof SharedArrayBuffer !== 'undefined'
     const deviceMemory = (navigator as { deviceMemory?: number }).deviceMemory
     const lowMemory = deviceMemory !== undefined && deviceMemory < 2

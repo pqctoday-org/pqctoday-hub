@@ -85,9 +85,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             Modern vehicles are among the most complex distributed computing systems in production
             today. A premium vehicle contains 100&ndash;150 Electronic Control Units (
             <InlineTooltip term="ECU">ECUs</InlineTooltip>) communicating over multiple bus
-            technologies, each with distinct bandwidth, latency, and security profiles. The
-            cryptographic requirements span from real-time safety-critical signing (brake-by-wire
-            commands in &lt;1 ms) to bulk data protection (
+            technologies; of these, 24&ndash;30 are security-relevant &mdash; the focus of PQC
+            migration planning. The cryptographic requirements span from real-time safety-critical
+            signing (brake-by-wire commands in &lt;1 ms) to bulk data protection (
             <InlineTooltip term="OTA Updates">OTA</InlineTooltip> firmware packages of several
             gigabytes).
           </p>
@@ -98,8 +98,9 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             (BSMs) 10 times per second, each signed with ECDSA P-256. A future{' '}
             <InlineTooltip term="CRQC">CRQC</InlineTooltip> could forge BSMs to cause phantom
             braking or mask real obstacles &mdash; a direct safety-of-life threat. Transitioning V2X
-            to PQC signatures is complicated by the 300-byte BSM payload budget and strict 100 ms
-            end-to-end latency requirement.
+            to PQC signatures is complicated by the size of PQC signatures (2,420 bytes for
+            ML-DSA-44) relative to the ~300-byte BSM payload, and the strict 100 ms end-to-end
+            latency requirement.
           </p>
 
           <p>
@@ -175,6 +176,41 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
         </div>
       </CollapsibleSection>
 
+      {/* -- SAE J3016 Reference ------------------------------------------------ */}
+      <div className="glass-panel p-4 border-l-4 border-primary/50">
+        <h4 className="text-sm font-semibold text-foreground mb-2 flex items-center gap-2">
+          <AlertTriangle size={14} className="text-primary" />
+          SAE J3016 Autonomy Levels (2021)
+        </h4>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-2 text-xs">
+          <div className="bg-muted/30 rounded p-2">
+            <span className="font-mono font-bold text-primary">L0&ndash;L2</span>
+            <span className="text-muted-foreground ml-1">
+              Driver performs or supervises all driving. L2 controls steering + speed but driver
+              must monitor at all times.
+            </span>
+          </div>
+          <div className="bg-muted/30 rounded p-2">
+            <span className="font-mono font-bold text-primary">L3</span>
+            <span className="text-muted-foreground ml-1">
+              Conditional: system drives in specific conditions (e.g., highway). Driver must respond
+              to takeover requests (~10 s).
+            </span>
+          </div>
+          <div className="bg-muted/30 rounded p-2">
+            <span className="font-mono font-bold text-primary">L4</span>
+            <span className="text-muted-foreground ml-1">
+              High: system drives within a geofenced ODD. No human fallback required. L5 (all
+              conditions) does not yet exist in production.
+            </span>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-2">
+          Higher autonomy levels increase quantum attack surface: more ECDSA-authenticated sensor
+          paths, mandatory V2X, and no human fallback if signatures are forged by a CRQC.
+        </p>
+      </div>
+
       {/* -- Section 2: Autonomous Driving Data Integrity ---------------------- */}
       <CollapsibleSection
         title="Autonomous Driving Data Integrity"
@@ -192,12 +228,14 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </p>
 
           <p>
-            The <strong>Harvest Now, Decrypt Later</strong> threat is especially severe for
-            autonomous driving datasets. Training data collected today &mdash; including detailed 3D
-            maps of military installations, government facilities, and critical infrastructure
-            &mdash; will remain valuable to adversaries for decades. HD map providers (HERE, TomTom,
-            Google) transmit map updates over TLS with ECDH key exchange; a CRQC could decrypt
-            harvested map data exposing sensitive geospatial intelligence.
+            The <strong>Harvest Now, Decrypt Later</strong> (HNDL) threat is especially severe for
+            autonomous driving datasets. Within the projected 10&ndash;20 year CRQC arrival window,
+            training data collected today &mdash; including detailed 3D maps of military
+            installations, government facilities, and critical infrastructure &mdash; could become
+            decryptable. HD map providers (HERE, TomTom, Google) transmit map updates over TLS with
+            ECDH key exchange; a CRQC could decrypt harvested map data exposing sensitive geospatial
+            intelligence. Given OEM data retention of 5&ndash;10 years, vehicles shipped
+            2024&ndash;2030 face non-zero HNDL risk.
           </p>
 
           <div className="overflow-x-auto">
@@ -416,9 +454,10 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
             For ASIL C/D functions like steer-by-wire and brake-by-wire, PQC verification must
             complete within a single control loop iteration (typically 5&ndash;10 ms). Software-only{' '}
             <InlineTooltip term="ML-DSA">ML-DSA</InlineTooltip> verification on an automotive-grade
-            ARM Cortex-R52 takes approximately 2&ndash;4 ms &mdash; leaving dangerously little
-            margin for jitter. Hardware-accelerated PQC (via dedicated crypto coprocessors or FPGA
-            fabric) can reduce this to &lt;0.5 ms but adds BOM cost and silicon area.
+            ARM Cortex-A72 (2 GHz) takes approximately 2&ndash;4 ms; on a more constrained
+            Cortex-R52 (400 MHz) expect 5&ndash;15 ms &mdash; potentially exceeding the timing
+            budget. Hardware-accelerated PQC (via dedicated crypto coprocessors or FPGA fabric) can
+            reduce this to &lt;0.5 ms but adds BOM cost and silicon area.
           </p>
 
           <p>
@@ -1224,6 +1263,60 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
           </Link>
         </div>
       </section>
+      {/* -- Standards & Further Reading ---------------------------------------- */}
+      <CollapsibleSection
+        title="Standards & Further Reading"
+        icon={<ShieldCheck size={24} className="text-primary" />}
+      >
+        <div className="space-y-3 text-xs text-muted-foreground">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="space-y-1.5">
+              <h5 className="text-sm font-semibold text-foreground">Safety &amp; Cybersecurity</h5>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>ISO 26262:2018 &mdash; Functional Safety for Road Vehicles (ASIL A&ndash;D)</li>
+                <li>ISO/SAE 21434:2021 &mdash; Road Vehicles Cybersecurity Engineering</li>
+                <li>ISO 21448 (SOTIF) &mdash; Safety of the Intended Functionality</li>
+                <li>
+                  SAE J3016:2021 &mdash; Levels of Driving Automation (L0&ndash;L5 classification)
+                </li>
+                <li>SAE J3101 &mdash; Hardware-Protected Security for Ground Vehicles</li>
+              </ul>
+            </div>
+            <div className="space-y-1.5">
+              <h5 className="text-sm font-semibold text-foreground">Regulations</h5>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>UNECE WP.29 R155 &mdash; Cybersecurity Management System (CSMS)</li>
+                <li>UNECE WP.29 R156 &mdash; Software Update Management System (SUMS)</li>
+                <li>NSA CNSA 2.0 Suite (March 2022) &mdash; PQC transition deadlines</li>
+              </ul>
+            </div>
+            <div className="space-y-1.5">
+              <h5 className="text-sm font-semibold text-foreground">In-Vehicle Networks</h5>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>ISO 11898-1:2015 / -2:2016 &mdash; CAN &amp; CAN FD</li>
+                <li>ISO 11898-2:2024 &mdash; CAN XL (up to 2,048 bytes)</li>
+                <li>ISO 10681:2010 &mdash; FlexRay communication</li>
+                <li>IEEE 802.3 100BASE-T1/1000BASE-T1 &mdash; Automotive Ethernet</li>
+                <li>AUTOSAR SecOC &mdash; Secure Onboard Communication</li>
+              </ul>
+            </div>
+            <div className="space-y-1.5">
+              <h5 className="text-sm font-semibold text-foreground">
+                PQC Standards &amp; Protocols
+              </h5>
+              <ul className="space-y-1 list-disc list-inside">
+                <li>FIPS 203 (ML-KEM) &mdash; Key encapsulation</li>
+                <li>FIPS 204 (ML-DSA) &mdash; Digital signatures</li>
+                <li>FIPS 205 (SLH-DSA) &mdash; Stateless hash-based signatures</li>
+                <li>IEEE 1609.2 &mdash; V2X Security Services (PQC amendment in development)</li>
+                <li>CCC Digital Key 3.0 &mdash; Car Connectivity Consortium</li>
+                <li>ISO 14443 &mdash; NFC proximity card standard (car key transport)</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </CollapsibleSection>
+
       <VendorCoverageNotice migrateLayer="Application" />
 
       {/* -- Reading Complete + Workshop CTA ----------------------------------- */}
