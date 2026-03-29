@@ -47,6 +47,15 @@ export const useAssessmentStore = Object.assign(
     return (selector ? selector(combinedState) : combinedState) as T
   },
   {
+    // Forward subscribe so useSyncEffect can watch for changes
+    subscribe: (cb: () => void) => {
+      const unsub1 = useAssessmentFormStore.subscribe(cb)
+      const unsub2 = useAssessmentResultStore.subscribe(cb)
+      return () => {
+        unsub1()
+        unsub2()
+      }
+    },
     // Enable state extraction for outside-react scopes (e.g. UnifiedStorageService)
     getState: (): AssessmentState => {
       const form = useAssessmentFormStore.getState()
