@@ -1,0 +1,10 @@
+{
+  "kat_id": "KAT-MERKLETR-128",
+  "step": "step_2_leaf_hash_0x00",
+  "algorithm": "SHA-256 (LMS internals)",
+  "authoritative_source": "NIST FIPS Validated Vectors (To Be Populated via CLI)",
+  "data": {
+    "input": "...",
+    "expected_output": "..."
+  }
+}

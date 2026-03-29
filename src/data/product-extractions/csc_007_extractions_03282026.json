@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "IBM Db2",
+    "category": "Database Encryption Software",
+    "product_name": "IBM Db2",
+    "product_brief": "AI-powered autonomous database delivering scalability, real-time analytics, and multicloud support.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text mentions \"security\" and \"built-in governance\" generally but contains no explicit mention of Post-Quantum Cryptography (PQC), PQC algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "12.1.4",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "IBM Cloud, AWS, Azure, Red Hat OpenShift, Kubernetes, On-premises",
+    "target_industries": "Enterprise, Finance, Healthcare, Banking",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown"
+  }
+]

@@ -1,0 +1,24 @@
+{
+  "kat_id": "KAT-DA-2004",
+  "step": "step_2_solana_ed25519_sign_tx",
+  "authoritative_source": "Solana",
+  "reference_details": {
+    "standard": "https://solana.com/",
+    "algorithm": "Ed25519",
+    "protocol": "Solana Ed25519 Sign Tx",
+    "key_size": "Ed25519"
+  },
+  "requires_keys": [],
+  "testGroups": [
+    {
+      "curve": "Ed25519",
+      "tests": [
+        {
+          "msg": "456444534120456432353531392041435650205369675665722074657374",
+          "signature": "be76a69e7473441b363f0e3d75eb5ec9c9e041cbbaae36d2d1c6225d24a3f714a5bdeefe3ed250f766d5cc188515ae55b218235ba6d87747e44d094dc77ddf06",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

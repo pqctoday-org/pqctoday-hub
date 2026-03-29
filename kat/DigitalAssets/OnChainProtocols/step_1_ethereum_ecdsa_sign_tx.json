@@ -1,0 +1,26 @@
+{
+  "kat_id": "KAT-DA-2003",
+  "step": "step_1_ethereum_ecdsa_sign_tx",
+  "authoritative_source": "EIP",
+  "reference_details": {
+    "standard": "https://eips.ethereum.org/",
+    "algorithm": "ECDSA",
+    "protocol": "Ethereum ECDSA Sign Tx",
+    "key_size": "ECDSA"
+  },
+  "requires_keys": ["ecdsa-01-pub"],
+  "testGroups": [
+    {
+      "curve": "P-256",
+      "hashAlg": "SHA-256",
+      "tests": [
+        {
+          "msg": "ACVP ECDSA P-256 SigVer test vector",
+          "r": "ce567dd7d2fad3cce860d50e79d1a8d4473fb946e8eda251480a8c37c0dd703a",
+          "s": "895358d335518537c9e45b43d3705d985030ae8215e2e06e21e5973e0e3c638b",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Cisco IOS XR",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XR",
+    "product_brief": "A modern, trustworthy Network Operating System built on Linux for service provider networks.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text discusses \"Quantum Security & Networking\" in a general educational context (defining qubits, superposition) but does not state that Cisco IOS XR currently implements, supports, or has plans for Post-Quantum Cryptography algorithms. No specific PQC algorithms or migration status are mentioned for the product.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"keys and certificates\" generally but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Hardware root of trust using a Cisco Trust Anchor Module (TAm) which houses keys and certificates rooted to Cisco; validates bootloader/kernel signatures and enforces IMA appraisal checks.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Linux-based kernel architecture (WindRiver Linux 9, kernel 4.8.28); control plane runs natively on the host; supports containers (LXC, Docker).",
+    "infrastructure_layer": "Network, OS",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Release 7 (mentioned as \"With Release 7 of IOS XR\"); also references Release 6.x.",
+    "release_date": "Not stated (Document copyright is 2026, but no specific release date for the software version is provided).",
+    "fips_validated": "No",
+    "primary_platforms": "Cisco 8000 series, NCS 540/560, NCS 5000/5500/5700, ASR 9000, XRd, XRv9000, qualified third-party hardware.",
+    "target_industries": "Service Providers (SPs), Web-scale networks.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated"
+  }
+]

@@ -1,0 +1,26 @@
+{
+  "kat_id": "KAT-DA-2001",
+  "step": "step_1_bip32_secp256k1_derivation",
+  "authoritative_source": "BIP32",
+  "reference_details": {
+    "standard": "https://github.com/bitcoin/bips/blob/master/bip-0032.mediawiki",
+    "algorithm": "BIP32/secp256k1",
+    "protocol": "BIP32 SECP256K1 Derivation",
+    "key_size": "BIP32/secp256k1"
+  },
+  "requires_keys": ["bip32secp256k1-01-pub"],
+  "testGroups": [
+    {
+      "curve": "P-256",
+      "hashAlg": "SHA-256",
+      "tests": [
+        {
+          "msg": "ACVP ECDSA P-256 SigVer test vector",
+          "r": "ce567dd7d2fad3cce860d50e79d1a8d4473fb946e8eda251480a8c37c0dd703a",
+          "s": "895358d335518537c9e45b43d3705d985030ae8215e2e06e21e5973e0e3c638b",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

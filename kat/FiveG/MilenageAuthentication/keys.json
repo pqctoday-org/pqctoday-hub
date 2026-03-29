@@ -1,0 +1,33 @@
+{
+  "use_case": "FiveG/MilenageAuthentication",
+  "keys": [
+    {
+      "key_id": "aes128maccalculation-01-secret",
+      "key_type": "secret_key",
+      "key_value": "feffe9928665731c6d6a8f9467308308feffe9928665731c6d6a8f9467308308",
+      "attributes": {
+        "CKA_CLASS": "CKO_SECRET_KEY",
+        "CKA_KEY_TYPE": "CKK_AES",
+        "CKA_MILENAGE": true,
+        "CKA_ENCRYPT": true,
+        "CKA_DECRYPT": true,
+        "CKA_EXTRACTABLE": false,
+        "CKA_TOKEN": false
+      }
+    },
+    {
+      "key_id": "aes128-01-secret",
+      "key_type": "secret_key",
+      "key_value": "feffe9928665731c6d6a8f9467308308feffe9928665731c6d6a8f9467308308",
+      "attributes": {
+        "CKA_CLASS": "CKO_SECRET_KEY",
+        "CKA_KEY_TYPE": "CKK_AES",
+        "CKA_MILENAGE": true,
+        "CKA_ENCRYPT": true,
+        "CKA_DECRYPT": true,
+        "CKA_EXTRACTABLE": false,
+        "CKA_TOKEN": false
+      }
+    }
+  ]
+}

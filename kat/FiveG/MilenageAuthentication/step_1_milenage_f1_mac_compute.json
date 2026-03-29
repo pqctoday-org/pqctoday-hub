@@ -1,0 +1,28 @@
+{
+  "kat_id": "KAT-5G-1001",
+  "step": "step_1_milenage_f1_mac_compute",
+  "authoritative_source": "3GPP TS 33.501",
+  "reference_details": {
+    "standard": "https://www.3gpp.org/",
+    "algorithm": "AES-128 MAC calculation",
+    "protocol": "Milenage F1 MAC Compute",
+    "key_size": "AES-128 MAC calculation"
+  },
+  "requires_keys": ["aes128maccalculation-01-secret"],
+  "testGroups": [
+    {
+      "keyLen": 256,
+      "ivLen": 96,
+      "tagLen": 128,
+      "direction": "decrypt",
+      "tests": [
+        {
+          "iv": "cafebabefacedbaddecaf888",
+          "pt": "d9313225f88406e5a55909c5aff5269a86a7a9531534f7da2e4c303d8a318a721c3c0c95956809532fcf0e2449a6b525b16aedf5aa0de657ba637b39",
+          "ct": "522dc1f099567d07f47f37a32a84427d643a8cdcbfe5c0c97598a2bd2555d1aa8cb08e48590dbb3da7b08b1056828838c5f61e6393ba7a0abcc9f662",
+          "tag": "eb9f796c8d356fc31a8433884b696f4f"
+        }
+      ]
+    }
+  ]
+}

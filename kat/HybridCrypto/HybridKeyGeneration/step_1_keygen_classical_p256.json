@@ -1,0 +1,26 @@
+{
+  "kat_id": "KAT-HYB-1005",
+  "step": "step_1_keygen_classical_p256",
+  "authoritative_source": "IETF LAMPS DRAFT",
+  "reference_details": {
+    "standard": "https://datatracker.ietf.org/doc/FIPS 186-4/",
+    "algorithm": "ECDSA-P256",
+    "protocol": "Classical KeyGen",
+    "key_size": "ECDSA-P256"
+  },
+  "requires_keys": ["ecdsap256-01-pub"],
+  "testGroups": [
+    {
+      "curve": "P-256",
+      "hashAlg": "SHA-256",
+      "tests": [
+        {
+          "msg": "ACVP ECDSA P-256 SigVer test vector",
+          "r": "ce567dd7d2fad3cce860d50e79d1a8d4473fb946e8eda251480a8c37c0dd703a",
+          "s": "895358d335518537c9e45b43d3705d985030ae8215e2e06e21e5973e0e3c638b",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

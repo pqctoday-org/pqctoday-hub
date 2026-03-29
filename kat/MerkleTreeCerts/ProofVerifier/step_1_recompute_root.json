@@ -1,0 +1,10 @@
+{
+  "kat_id": "KAT-PROOFVER-130",
+  "step": "step_1_recompute_root",
+  "algorithm": "SHA-256 (LMS internals)",
+  "authoritative_source": "NIST FIPS Validated Vectors (To Be Populated via CLI)",
+  "data": {
+    "input": "...",
+    "expected_output": "..."
+  }
+}

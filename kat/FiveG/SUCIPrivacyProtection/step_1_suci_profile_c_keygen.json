@@ -1,0 +1,26 @@
+{
+  "kat_id": "KAT-5G-1003",
+  "step": "step_1_suci_profile_c_keygen",
+  "authoritative_source": "3GPP TS 33.501",
+  "reference_details": {
+    "standard": "https://www.3gpp.org/",
+    "algorithm": "Classical ECIES fallback",
+    "protocol": "SUCI Profile C Keygen",
+    "key_size": "Classical ECIES fallback"
+  },
+  "requires_keys": ["classicaleciesfallback-01-pub", "classicaleciesfallback-01-priv"],
+  "testGroups": [
+    {
+      "curve": "P-256",
+      "hashAlg": "SHA-256",
+      "tests": [
+        {
+          "msg": "ACVP ECDSA P-256 SigVer test vector",
+          "r": "ce567dd7d2fad3cce860d50e79d1a8d4473fb946e8eda251480a8c37c0dd703a",
+          "s": "895358d335518537c9e45b43d3705d985030ae8215e2e06e21e5973e0e3c638b",
+          "testPassed": true
+        }
+      ]
+    }
+  ]
+}

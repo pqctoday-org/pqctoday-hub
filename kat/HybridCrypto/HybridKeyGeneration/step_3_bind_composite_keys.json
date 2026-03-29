@@ -1,0 +1,11 @@
+{
+  "kat_id": "KAT-HYB-1007",
+  "step_file": "step_3_bind_composite_keys.json",
+  "algorithm": "Bind-Format",
+  "rfc_compliance": "draft-ietf-lamps-pq-composite-keys",
+  "authoritative_source": "IETF PQC Examples Dataset (To Be Hydrated)",
+  "data": {
+    "encoded_cert_asn1": "...",
+    "extracted_pqc_signature": "..."
+  }
+}

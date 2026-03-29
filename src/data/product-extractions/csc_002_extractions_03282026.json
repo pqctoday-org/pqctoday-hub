@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Crypto4A QxEDGE",
+    "category": "HSM & Hardware Security",
+    "product_name": "Crypto4A QxEDGE (specifically the Quantum-Assured Security Module or QASM™)",
+    "product_brief": "A hardware security module designed with post-quantum cryptographic principles embedded into its roots of trust and internal architecture.",
+    "pqc_support": "Yes (with details: Hybrid approach using traditional ECC and NIST-approved HSS for RoT, FW updates, attestation, and inter-HSM communications)",
+    "pqc_capability_description": "Implements a hybridized approach combining traditional ECDSA P-384 and NIST-approved HSS (Hierarchical Signature System). Uses PQC for firmware signing, secure boot validation, attestation keys, backup encryption, inter-HSM communication, access authentication, and logging integrity. Leverages proprietary Classic McEliece for inter-HSM transfers where standardized options were unavailable. Designed for crypto-agility to adopt future certified PQC algorithms via FW updates.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ECDSA P-384, HSS (Hierarchical Signature System), AES-256-GCM, Classic McEliece",
+    "key_management_model": "HSM-backed with immutable Roots of Trust (RoT) provisioned during manufacturing; private keys for RoT stored offline in manufacturing HSMs; hybrid traditional and PQC keying material.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based hardware security module with field-reprogrammable hardware engines and quantum-ready firmware updates.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (implied by \"proprietary solutions\" and commercial context, specific license name not stated)",
+    "latest_version": "Not stated",
+    "release_date": "2026-01 (Publication date of the whitepaper; product release date not explicitly stated)",
+    "fips_validated": "FIPS 140-3 Level 3 compliant for traditional cryptography; PQC capabilities are not currently required for this validation level but are implemented via hybrid design.",
+    "primary_platforms": "Not stated (Hardware appliance form factor implied)",
+    "target_industries": "Digital sovereignty, critical infrastructure, government, enterprise (implied by \"national importance\" and \"digital trust\")",
+    "regulatory_status": "Designed to comply with FIPS certification requirements; references NIST guidance and IETF draft standards.",
+    "pqc_roadmap_details": "Advocates adoption of certified/standardized quantum-safe approaches as they become available; utilizes crypto-agility and FW update capabilities to evolve from proprietary solutions (e.g., Classic McEliece) to standardized algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA P-384, HSS (Hierarchical Signature System), Classic McEliece (for key agreement/transfers)",
+    "authoritative_source_url": "Not stated"
+  }
+]

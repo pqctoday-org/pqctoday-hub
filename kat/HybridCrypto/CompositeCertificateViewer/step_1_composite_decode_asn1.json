@@ -1,0 +1,11 @@
+{
+  "kat_id": "KAT-HYB-1003",
+  "step_file": "step_1_composite_decode_asn1.json",
+  "algorithm": "ASN1",
+  "rfc_compliance": "draft-ietf-lamps-pq-composite-sigs",
+  "authoritative_source": "IETF PQC Examples Dataset (To Be Hydrated)",
+  "data": {
+    "encoded_cert_asn1": "...",
+    "extracted_pqc_signature": "..."
+  }
+}
