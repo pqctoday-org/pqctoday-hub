@@ -281,6 +281,16 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   onKeyDown={(e) => e.stopPropagation()}
                 >
                   <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation()
+                      onSelectLayer('All')
+                    }}
+                    className="mt-3 w-full py-2 text-xs text-muted-foreground hover:text-foreground border border-border/40 rounded-lg hover:bg-background/50 transition-colors"
+                  >
+                    Collapse layer
+                  </button>
                 </div>
               )}
             </button>
