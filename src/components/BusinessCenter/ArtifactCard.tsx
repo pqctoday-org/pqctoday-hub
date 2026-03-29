@@ -94,8 +94,9 @@ export function ArtifactCard({
               }}
             />
           ) : (
-            <span
-              className="text-sm font-medium text-foreground truncate cursor-text hover:underline decoration-dashed underline-offset-2"
+            <button
+              type="button"
+              className="text-sm font-medium text-foreground truncate cursor-text hover:underline decoration-dashed underline-offset-2 bg-transparent border-none p-0 text-left"
               onClick={() => {
                 setRenameValue(document.title)
                 setIsRenaming(true)
@@ -103,7 +104,7 @@ export function ArtifactCard({
               title="Click to rename"
             >
               {document.title}
-            </span>
+            </button>
           )}
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             {typeLabel}
