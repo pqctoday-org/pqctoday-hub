@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 ### Fixed
 
 - **RFC 9763 OID corrected**: `1.3.6.1.5.5.7.1.35` → `1.3.6.1.5.5.7.1.36` (id-pe 36) per RFC 9763 Appendix A. Fixed in constants.ts, derParser.ts, glossaryData.ts. [view:/learn/hybrid-crypto]
+- **Vite strict build fixes**: `Uint8Array.buffer` cast to `ArrayBuffer` for `@peculiar/asn1-schema` compatibility (Vite `tsc -b` enforces `SharedArrayBuffer` exclusion). Removed unused `Time` import and stale chameleon handler references. [infra]
 
 ## [2.63.0] - 2026-03-29
 
