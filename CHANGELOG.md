@@ -4,6 +4,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.63.0] - 2026-03-29
+
+### Added
+
+- **Alt-Sig / Catalyst certificate format**: Added as a distinct 6th certificate format in the Hybrid Cryptography module. Alt-Sig (draft-ietf-lamps-cert-binding-for-multi-auth) embeds a PQC key and signature in X.509 extensions (2.5.29.72/73/74) within a single classical cert — previously conflated with Related Certificates (RFC 9763), which is a fundamentally different mechanism using two separate paired certs. [view:/learn/hybrid-crypto]
+- **Pure SLH-DSA learn card**: The learn section now explains all six certificate format approaches in two rows: PQC-only (ML-DSA, SLH-DSA, Composite) and hybrid-with-legacy-fallback (Alt-Sig, Related Certs, Chameleon). Previously only showed 3 of 6 formats. [view:/learn/hybrid-crypto]
+- **SLH-DSA IETF reference certificate** (RFC 9909 Appendix C.3): Embedded real 8,241-byte SLH-DSA-SHA2-128s self-signed certificate from the RFC specification as the 5th test vector in the Certificate Inspector. OID 2.16.840.1.101.3.4.3.20. [view:/learn/hybrid-crypto]
+- **Alt-Sig workshop generation**: Workshop Step 4 now generates all 6 certificate formats including Alt-Sig (ECDSA primary + ML-DSA-65 extension content). [view:/learn/hybrid-crypto]
+- **Alt-Sig glossary entry**: New "Alt-Sig Certificate" term with OIDs 2.5.29.72/73/74, correctly attributed as the "Catalyst" approach (NSA). [view:/learn/hybrid-crypto]
+
+### Fixed
+
+- **Alt-Sig ≠ RFC 9763 factual error**: The IETF test vector `ietf-catalyst-ecdsa-p256-mldsa44` was incorrectly mapped to `formatId: 'related-certs'` — now correctly maps to `formatId: 'alt-sig'`. The glossary entry for Related Certificate no longer says "Also known as the NSA catalyst approach" (that's Alt-Sig). [view:/learn/hybrid-crypto]
+- **Certificate format counting inconsistency**: Removed all hardcoded counts ("Three", "Four", "Five") across 8 files. The learn section said "Three", the workshop said "Four", content.ts said "Five", but there are actually 6 distinct formats. Headings now omit numbers to prevent future drift. [view:/learn/hybrid-crypto]
+- **Q&A CSV primary/PQC reversal** (Q8, Q13): Answers incorrectly described Alt-Sig as having a "primary PQC signature with classical in extensions" — corrected to "primary classical signature with PQC key/signature in extensions". [data:module-qa]
+- **HybridCertInspector badge handler**: Added missing `'related-certs'` case to `certTypeBadge()` switch statement — prevents undefined return if an RFC 9763 test vector is added in the future. [view:/learn/hybrid-crypto]
+
 ## [2.59.0] - 2026-03-28
 
 ### Added

@@ -125,9 +125,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Hybrid Cryptography** (5-step workshop):
     - Explores key generation, KEM encapsulation, and signatures with hybrid algorithms
     - Hybrid CA Setup: configure and generate classical (ECDSA) and PQC (ML-DSA-65) root CAs
-    - Hybrid Cert Formats: side-by-side comparison of all four X.509 hybrid approaches — Pure PQC,
-      Composite (draft-ietf-lamps), Related Certificates (RFC 9763), and Chameleon Certificates
-    - Hybrid Cert Inspector: DER structure viewer with IETF Hackathon reference certificates
+    - Hybrid Cert Formats: side-by-side comparison of six X.509 certificate approaches — Pure PQC
+      (ML-DSA), Pure PQC (SLH-DSA), Composite (draft-ietf-lamps-pq-composite-sigs), Alt-Sig /
+      Catalyst (draft-ietf-lamps-cert-binding-for-multi-auth), Related Certificates (RFC 9763),
+      and Chameleon Certificates (draft-bonnell-lamps-chameleon-certs)
+    - Hybrid Cert Inspector: DER structure viewer with five IETF/RFC reference certificates
+      including real SLH-DSA cert from RFC 9909 Appendix C.3
   - **Crypto Agility & Architecture**:
     - Three macro-architecture patterns: Provider Model (JCA/OpenSSL provider abstraction),
       Service Mesh / Sidecar Proxy (mTLS offloaded to Envoy/Istio), External KMS / HSM

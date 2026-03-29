@@ -354,7 +354,7 @@ describe('runKAT', () => {
         spec({ type: 'mlkem-decap', variant: 768 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/SS\[\d+B\]/)
+      expect(result.details).toContain('shared secret matches ACVP expected value')
     })
 
     it('returns fail when shared secret does not match', async () => {
@@ -429,7 +429,7 @@ describe('runKAT', () => {
         spec({ type: 'mlkem-encap-roundtrip', variant: 768 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('ct=')
+      expect(result.details).toContain('both shared secrets match')
     })
 
     it('returns fail when encap and decap shared secrets differ', async () => {
@@ -465,7 +465,7 @@ describe('runKAT', () => {
         spec({ type: 'mldsa-sigver', variant: 65 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('Verified sig')
+      expect(result.details).toContain('verified ACVP reference signature')
     })
 
     it('returns fail when signature verification fails', async () => {
@@ -526,7 +526,7 @@ describe('runKAT', () => {
         spec({ type: 'mldsa-functional', variant: 65 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/sig\[\d+B\]/)
+      expect(result.details).toContain('signature verified successfully')
     })
 
     it('returns fail when round-trip verification fails', async () => {
@@ -625,7 +625,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesgcm-decrypt' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/pt\[\d+B\]/)
+      expect(result.details).toContain('plaintext matches expected value')
     })
 
     it('returns fail when decrypted plaintext does not match', async () => {
@@ -657,7 +657,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aescbc-decrypt' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/pt\[\d+B\]/)
+      expect(result.details).toContain('plaintext matches expected value')
     })
 
     it('returns fail when decrypted plaintext does not match', async () => {
@@ -692,7 +692,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesCtrDecrypt).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesctr-roundtrip' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('round-trip OK')
+      expect(result.details).toContain('plaintext matches original')
     })
 
     it('returns fail when ciphertext does not match expected', async () => {
@@ -734,7 +734,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesWrapKey).mockReturnValue(new Uint8Array(2))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aeskw-wrap' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/wrapped\[\d+B\]/)
+      expect(result.details).toContain('ciphertext matches ACVP expected value')
     })
 
     it('returns fail when wrapped output does not match', async () => {
@@ -776,7 +776,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_aesDecrypt).mockReturnValue(new Uint8Array(ptBytes))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'aesgcm-functional' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('round-trip OK')
+      expect(result.details).toContain('plaintext matches original')
     })
 
     it('returns fail when round-trip plaintext does not match', async () => {
@@ -820,7 +820,7 @@ describe('runKAT', () => {
         spec({ type: 'hmac-verify', hashAlg: 'SHA-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('HMAC-SHA-256')
+      expect(result.details).toContain('matches ACVP expected value')
     })
 
     it('returns fail when HMAC verification fails', async () => {
@@ -883,7 +883,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_digest).mockReturnValue(new Uint8Array(1))
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'sha256-hash' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/SHA-256\[\d+B\]/)
+      expect(result.details).toContain('digest matches ACVP expected value')
     })
 
     it('returns fail when digest does not match', async () => {
@@ -919,7 +919,7 @@ describe('runKAT', () => {
         spec({ type: 'ecdsa-sigver', curve: 'P-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('ECDSA-P-256')
+      expect(result.details).toContain('verified ACVP reference signature')
     })
 
     it('returns fail when P-256 signature verification fails', async () => {
@@ -972,7 +972,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_eddsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'eddsa-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('Ed25519')
+      expect(result.details).toContain('verified ACVP reference Ed25519 signature')
     })
 
     it('returns fail when Ed25519 signature verification fails', async () => {
@@ -1004,7 +1004,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_rsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'rsapss-sigver' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toContain('RSA-2048-PSS')
+      expect(result.details).toContain('verified ACVP reference RSA-PSS signature')
     })
 
     it('returns fail when RSA-PSS signature verification fails', async () => {
@@ -1040,7 +1040,7 @@ describe('runKAT', () => {
         spec({ type: 'ecdsa-functional', curve: 'P-256' })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/ECDSA-P-256 sig\[\d+B\]/)
+      expect(result.details).toContain('signature verified successfully')
     })
 
     it('returns fail when P-256 round-trip verification fails', async () => {
@@ -1093,7 +1093,7 @@ describe('runKAT', () => {
       vi.mocked(softhsm.hsm_eddsaVerify).mockReturnValue(true)
       const result = await runKAT(FAKE_MODULE, FAKE_SESSION, spec({ type: 'eddsa-functional' }))
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/Ed25519 sig\[\d+B\]/)
+      expect(result.details).toContain('Ed25519 signature verified successfully')
     })
 
     it('returns fail when Ed25519 round-trip verification fails', async () => {
@@ -1129,7 +1129,7 @@ describe('runKAT', () => {
         spec({ type: 'rsa-functional', bits: 2048 })
       )
       expect(result.status).toBe('pass')
-      expect(result.details).toMatch(/RSA-2048-PSS sig\[\d+B\]/)
+      expect(result.details).toContain('RSA-PSS signature verified successfully')
     })
 
     it('returns fail when RSA-PSS round-trip verification fails', async () => {

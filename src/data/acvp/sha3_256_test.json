@@ -1,0 +1,30 @@
+{
+  "vsId": 7,
+  "algorithm": "SHA3-256",
+  "mode": "hash",
+  "revision": "1.0",
+  "isSample": true,
+  "testGroups": [
+    {
+      "tgId": 1,
+      "testType": "AFT",
+      "tests": [
+        {
+          "tcId": 1,
+          "msg": "",
+          "md": "A7FFC6F8BF1ED76651C14756A061D662F580FF4DE43B49FA82D80A4B80F8434A"
+        },
+        {
+          "tcId": 2,
+          "msg": "616263",
+          "md": "3A985DA74FE225B2045C172D6BD390BD855F086E3E9D525B46BFE24511431532"
+        },
+        {
+          "tcId": 3,
+          "msg": "6162636462636465636465666465666765666768666768696768696A68696A6B696A6B6C6A6B6C6D6B6C6D6E6C6D6E6F6D6E6F706E6F7071",
+          "md": "41C0DBA2A9D6240849100376A8235E2C82E1B9998A999E21DB32DD97496D3376"
+        }
+      ]
+    }
+  ]
+}
