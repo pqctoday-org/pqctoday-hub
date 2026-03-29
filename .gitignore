@@ -191,6 +191,7 @@ docs/refactoring-guide.md
 docs/newstoread-*
 docs/repomanagement.md
 docs/design-document*
+docs/pqctoday-investor*
 
 # LLM enrichment scripts
 scripts/enrich-*.py

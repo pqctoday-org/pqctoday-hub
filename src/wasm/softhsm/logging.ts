@@ -1,4 +1,5 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { buildInspect } from '../pkcs11Inspect'
 
 // ── PKCS#11 call log ─────────────────────────────────────────────────────────
 
@@ -12,7 +13,7 @@ export interface Pkcs11LogEntry {
   ms: number
   ok: boolean
   engineName?: string
-  inspect?: import('./pkcs11Inspect').Pkcs11LogInspect
+  inspect?: import('../pkcs11Inspect').Pkcs11LogInspect
 }
 
 let _logId = 0

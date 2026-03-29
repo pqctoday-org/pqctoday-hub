@@ -1,4 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { ecCurveOID } from './classical'
 import {
   CKA_CLASS,

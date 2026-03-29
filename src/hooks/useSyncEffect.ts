@@ -263,7 +263,7 @@ export function useSyncEffect() {
     ] as const
 
     const unsubs = stores.map((store) =>
-      store.subscribe(() => {
+      (store as unknown as { subscribe: (cb: () => void) => () => void }).subscribe(() => {
         if (debounceRef.current) clearTimeout(debounceRef.current)
         debounceRef.current = setTimeout(() => {
           doSync(accessToken, driveFileId)

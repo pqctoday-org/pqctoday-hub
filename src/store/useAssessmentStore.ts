@@ -25,7 +25,7 @@ export interface AssessmentState
  * requiring refactors elsewhere.
  */
 export const useAssessmentStore = Object.assign(
-  (selector?: (state: AssessmentState) => unknown) => {
+  <T = AssessmentState>(selector?: (state: AssessmentState) => T): T => {
     const form = useAssessmentFormStore()
     const result = useAssessmentResultStore()
 
@@ -44,7 +44,7 @@ export const useAssessmentStore = Object.assign(
       },
     }
 
-    return selector ? selector(combinedState) : combinedState
+    return (selector ? selector(combinedState) : combinedState) as T
   },
   {
     // Enable state extraction for outside-react scopes (e.g. UnifiedStorageService)

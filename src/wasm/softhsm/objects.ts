@@ -1,4 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_ALWAYS_SENSITIVE,
   CKA_CLASS,

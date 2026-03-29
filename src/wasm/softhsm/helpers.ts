@@ -1,4 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKD_NULL,
   CKG_MGF1_SHA256_NEW,

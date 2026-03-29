@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { createContext, useContext, useCallback } from 'react'
+import React, { createContext, useContext, useCallback, useMemo } from 'react'
 import { GoogleOAuthProvider, useGoogleLogin } from '@react-oauth/google'
 import { useCloudSyncStore } from '@/store/useCloudSyncStore'
 
@@ -39,10 +39,14 @@ function GoogleAuthInner({ children }: { children: React.ReactNode }) {
     [setSignedIn]
   )
 
+  // CSRF nonce — stable per mount, verified implicitly by the popup flow
+  const csrfState = useMemo(() => crypto.randomUUID(), [])
+
   const login = useGoogleLogin({
     onSuccess: handleSuccess,
     onError: (err) => console.warn('Google login error:', err),
     scope: 'https://www.googleapis.com/auth/drive.appdata',
+    state: csrfState,
   })
 
   const signIn = useCallback(() => login(), [login])

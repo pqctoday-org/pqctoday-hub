@@ -38,16 +38,17 @@ describe('AlgorithmsView', () => {
       global.innerHeight = 768
     })
 
-    it('renders the main heading', () => {
+    it('renders the main heading', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
       expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      await screen.findByTestId('algorithm-comparison')
     })
 
-    it('renders the description', () => {
+    it('renders the description', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
@@ -56,15 +57,16 @@ describe('AlgorithmsView', () => {
       expect(
         screen.getAllByText(/Migration from classical to post-quantum/i)[0]
       ).toBeInTheDocument()
+      await screen.findByTestId('algorithm-comparison')
     })
 
-    it('displays metadata', () => {
+    it('displays metadata', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
-      expect(screen.getByText(/Data Sources:/i)).toBeInTheDocument()
+      expect(await screen.findByText(/Data Sources:/i)).toBeInTheDocument()
     })
 
     it('renders view tabs', async () => {
@@ -115,13 +117,14 @@ describe('AlgorithmsView', () => {
       global.innerHeight = 667
     })
 
-    it('renders on mobile', () => {
+    it('renders on mobile', async () => {
       render(
         <MemoryRouter>
           <AlgorithmsView />
         </MemoryRouter>
       )
       expect(screen.getByText(/Post-Quantum Cryptography Algorithms/i)).toBeInTheDocument()
+      await screen.findByTestId('algorithm-comparison')
     })
 
     it('renders tabs on mobile', async () => {
@@ -165,7 +168,7 @@ describe('AlgorithmsView', () => {
   })
 
   describe('Layout structure', () => {
-    it('renders with proper container classes', () => {
+    it('renders with proper container classes', async () => {
       const { container } = render(
         <MemoryRouter>
           <AlgorithmsView />
@@ -175,6 +178,7 @@ describe('AlgorithmsView', () => {
       // eslint-disable-next-line testing-library/no-node-access
       const mainDiv = container.firstChild as HTMLElement
       expect(mainDiv).toBeInTheDocument()
+      await screen.findByTestId('algorithm-comparison')
     })
   })
 })

@@ -17,3 +17,4 @@ openssl-3.6.0-src.bak/
 openssl-3.6.1-src/
 validate_errors.json
 pure_errors.json
+scripts/split_*

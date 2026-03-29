@@ -1,4 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKF_RW_SESSION,
   CKF_SERIAL_SESSION,

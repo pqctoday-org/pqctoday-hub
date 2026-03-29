@@ -1,4 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_CLASS,
   CKA_DECAPSULATE,

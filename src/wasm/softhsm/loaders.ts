@@ -1,5 +1,4 @@
-import type { type SoftHSMModule } from '@pqctoday/softhsm-wasm'
-import type { _WASM_VERSION } from '../pkcs11Inspect'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 // ── Singleton loaders ────────────────────────────────────────────────────────
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
