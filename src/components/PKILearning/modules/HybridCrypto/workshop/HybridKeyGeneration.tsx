@@ -38,6 +38,20 @@ const HYBRID_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'ecdsa-functional', curve: 'P-256' },
     message: 'ECDSA P-256 component of hybrid CompositeML-DSA certificate',
   },
+  {
+    id: 'hybrid-ecdh-classical',
+    useCase: 'Classical ECDH P-256 key agreement',
+    standard: 'NIST SP 800-56A',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
+    kind: { type: 'ecdh-derive', curve: 'P-256' },
+  },
+  {
+    id: 'hybrid-sha384-hash',
+    useCase: 'SHA-384 intermediate hash for hybrid binding',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha384-hash', testIndex: 1 },
+  },
 ]
 
 interface HybridKeyGenerationProps {

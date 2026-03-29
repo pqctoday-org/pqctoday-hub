@@ -92,15 +92,15 @@ import {
   hsm_rsaSign,
   hsm_rsaVerify,
   // Gap-fill HSM functions
-  // hsm_aesCmac,
-  // hsm_hmac,
-  // hsm_digestMultiPart,
-  // hsm_ecdhDerive,
+  hsm_aesCmac,
+  hsm_hmac,
+  hsm_digestMultiPart,
+  hsm_ecdhDerive,
   hsm_extractECPoint,
-  // hsm_pbkdf2,
-  // hsm_hkdf,
-  // hsm_importGenericSecret,
-  // hsm_aesWrapKeyKwp,
+  hsm_pbkdf2,
+  hsm_hkdf,
+  hsm_importGenericSecret,
+  hsm_aesWrapKeyKwp,
   hsm_createObject,
   writeBytes,
   CKO_SECRET_KEY,
@@ -118,13 +118,12 @@ import {
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
   CKM_SHA256_RSA_PKCS_PSS,
-  // CKM_SHA384,
-  // CKM_SHA512,
-  // CKM_SHA3_256,
-  // CKM_SHA3_512,
-  // CKM_AES_CMAC,
-  // CKP_PKCS5_PBKD2_HMAC_SHA256,
-  // CKP_PKCS5_PBKD2_HMAC_SHA512,
+  CKM_SHA384,
+  CKM_SHA512,
+  CKM_SHA3_256,
+  CKM_SHA3_512,
+  CKP_PKCS5_PBKD2_HMAC_SHA256,
+  CKP_PKCS5_PBKD2_HMAC_SHA512,
 } from '../wasm/softhsm'
 import type { SoftHSMModule } from '../wasm/softhsm'
 
@@ -1219,15 +1218,7 @@ async function runAESKWPWrapKAT(
   // Wrap with KWP
   const wrapped = hsm_aesWrapKeyKwp(M, hSession, kekHandle, dataHandle)
 
-  // Unwrap back — template for future C_UnwrapKey integration
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const unwrapTemplate = [
-    { type: 0x00, ulongVal: 0x04 }, // CKA_CLASS = CKO_SECRET_KEY
-    { type: 0x100, ulongVal: 0x1f }, // CKA_KEY_TYPE = CKK_AES
-    { type: 0x162, boolVal: true }, // CKA_EXTRACTABLE
-  ]
-
-  // Verify wrapped output is non-empty and different from plaintext
+  // Verify wrapped output is non-empty and longer than plaintext (includes AIV + padding)
   if (wrapped.length === 0) {
     return { status: 'fail', details: 'AES-KWP produced empty wrapped output' }
   }

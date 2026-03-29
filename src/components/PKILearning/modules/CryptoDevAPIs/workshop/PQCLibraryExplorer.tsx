@@ -34,6 +34,20 @@ const DEVAPI_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc8032',
     kind: { type: 'eddsa-sigver' },
   },
+  {
+    id: 'devapi-sha3-256',
+    useCase: 'SHA3-256 post-quantum hash API',
+    standard: 'FIPS 202',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/202/final',
+    kind: { type: 'sha3-256-hash', testIndex: 1 },
+  },
+  {
+    id: 'devapi-sha512',
+    useCase: 'SHA-512 high-security hash API',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha512-hash', testIndex: 1 },
+  },
 ]
 
 type FIPSFilter = 'All' | FIPSStatus

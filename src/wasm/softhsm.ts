@@ -1401,6 +1401,117 @@ export const hsm_sign = (
   }
 }
 
+/**
+ * ML-DSA sign raw bytes (for X.509 TBS certificate signing).
+ * Same as hsm_sign but accepts Uint8Array directly instead of string.
+ */
+export const hsm_signBytesMLDSA = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  data: Uint8Array
+): Uint8Array => {
+  const mech = M._malloc(12)
+  M.setValue(mech, CKM_ML_DSA, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const msgPtr = writeBytes(M, data)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+
+  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(ML-DSA,bytes)')
+  try {
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, data.length, 0, sigLenPtr),
+      'C_SignMessage(ML-DSA,len)'
+    )
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, data.length, sigPtr, sigLenPtr),
+      'C_SignMessage(ML-DSA,bytes)'
+    )
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
+/**
+ * SLH-DSA sign raw bytes (for X.509 TBS certificate signing).
+ * Same as hsm_slhdsaSign but accepts Uint8Array directly instead of string.
+ */
+export const hsm_signBytesSLHDSA = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  data: Uint8Array
+): Uint8Array => {
+  const mech = buildMech(M, CKM_SLH_DSA)
+  const msgPtr = writeBytes(M, data)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+
+  checkRV(M._C_MessageSignInit(hSession, mech, privHandle), 'C_MessageSignInit(SLH-DSA,bytes)')
+  try {
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, data.length, 0, sigLenPtr),
+      'C_SignMessage(SLH-DSA,len)'
+    )
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(
+      M._C_SignMessage(hSession, 0, 0, msgPtr, data.length, sigPtr, sigLenPtr),
+      'C_SignMessage(SLH-DSA,bytes)'
+    )
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._C_MessageSignFinal(hSession, 0, 0, 0, 0)
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
+/**
+ * ECDSA sign raw bytes (for X.509 TBS certificate signing).
+ * Same as hsm_ecdsaSign but accepts Uint8Array directly instead of string.
+ */
+export const hsm_signBytesECDSA = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  data: Uint8Array,
+  mechType: number = CKM_ECDSA_SHA256
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, data)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(ECDSA,bytes)')
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr), 'C_Sign(ECDSA,bytes,len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr), 'C_Sign(ECDSA,bytes)')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
+  }
+}
+
 /** C_MessageVerifyInit(ML-DSA) + C_VerifyMessage + C_MessageVerifyFinal → boolean (PKCS#11 v3.2) */
 export const hsm_verify = (
   M: SoftHSMModule,

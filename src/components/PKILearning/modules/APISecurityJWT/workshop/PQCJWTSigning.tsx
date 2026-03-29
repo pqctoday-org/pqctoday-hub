@@ -30,6 +30,13 @@ const JWT_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
     kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
+  {
+    id: 'jwt-hmac-generate',
+    useCase: 'JWT HS256 MAC generation',
+    standard: 'RFC 7519 + FIPS 198-1',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/198-1/final',
+    kind: { type: 'hmac-generate', hashAlg: 'SHA-256' },
+  },
 ]
 
 type SigningAlgorithm = 'ES256' | 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87'

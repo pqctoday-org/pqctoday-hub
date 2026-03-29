@@ -45,6 +45,27 @@ const TESTING_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
     kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
+  {
+    id: 'test-sha384-acvp',
+    useCase: 'SHA-384 ACVP hash validation',
+    standard: 'FIPS 180-4 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'sha384-hash', testIndex: 1 },
+  },
+  {
+    id: 'test-sha3-256-acvp',
+    useCase: 'SHA3-256 ACVP hash validation',
+    standard: 'FIPS 202 ACVP',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/202/final',
+    kind: { type: 'sha3-256-hash', testIndex: 1 },
+  },
+  {
+    id: 'test-multipart-digest',
+    useCase: 'Multi-part SHA-256 digest validation',
+    standard: 'FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'digest-multipart', hashAlg: 'SHA-256' },
+  },
 ]
 
 type AlgorithmFamily = 'mlkem' | 'mldsa' | 'aescbc' | 'sha256' | 'ecdsap384'

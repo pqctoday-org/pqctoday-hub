@@ -125,10 +125,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Hybrid Cryptography** (5-step workshop):
     - Explores key generation, KEM encapsulation, and signatures with hybrid algorithms
     - Hybrid CA Setup: configure and generate classical (ECDSA) and PQC (ML-DSA-65) root CAs
-    - Hybrid Cert Formats: side-by-side comparison of six X.509 certificate approaches — Pure PQC
-      (ML-DSA), Pure PQC (SLH-DSA), Composite (draft-ietf-lamps-pq-composite-sigs), Alt-Sig /
-      Catalyst (draft-ietf-lamps-cert-binding-for-multi-auth), Related Certificates (RFC 9763),
-      and Chameleon Certificates (draft-bonnell-lamps-chameleon-certs)
+    - Hybrid Cert Formats: generates **real DER-encoded certificates** for all six X.509
+      approaches — Pure PQC (ML-DSA, RFC 9881), Pure PQC (SLH-DSA, RFC 9909), Composite
+      (draft-ietf-lamps-pq-composite-sigs-15, OID 1.3.6.1.5.5.7.6.45), Alt-Sig / Catalyst
+      (ITU-T X.509 §9.8, extensions 2.5.29.72-74), Related Certificates (RFC 9763, two-pass
+      bidirectional binding), and Chameleon (draft-bonnell-lamps-chameleon-certs-07,
+      DeltaCertificateDescriptor). ASN.1 encoding via `@peculiar/asn1-schema`; all signing
+      via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`)
     - Hybrid Cert Inspector: DER structure viewer with five IETF/RFC reference certificates
       including real SLH-DSA cert from RFC 9909 Appendix C.3
   - **Crypto Agility & Architecture**:

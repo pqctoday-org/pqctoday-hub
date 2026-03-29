@@ -30,6 +30,13 @@ const NETSEC_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/a/final',
     kind: { type: 'aesctr-roundtrip' },
   },
+  {
+    id: 'netsec-hmac-integrity',
+    useCase: 'Firewall rule HMAC integrity generation',
+    standard: 'FIPS 198-1',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/198-1/final',
+    kind: { type: 'hmac-generate', hashAlg: 'SHA-256' },
+  },
 ]
 
 type CipherMode = 'classical' | 'hybrid' | 'pqc'

@@ -210,7 +210,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'Composite certificates bind both algorithms under a single OID and require both signatures to verify — if either signature fails, the certificate is rejected. However, legacy validators cannot process composite OIDs. OpenSSL 3.6.0 does not yet support composite OIDs natively; this demo generates component certs separately to illustrate the structure.',
+      'Composite certificates bind both algorithms under a single OID (1.3.6.1.5.5.7.6.45) and require both signatures to verify — if either fails, the certificate is rejected. This demo generates a real DER-encoded composite certificate with CompositePublicKey and CompositeSignatureValue per draft-ietf-lamps-pq-composite-sigs-15. Legacy validators cannot process composite OIDs.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },
@@ -266,7 +266,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     approach: 'Paired certificates with binding hash',
     standard: 'RFC 9763',
     standardUrl: 'https://datatracker.ietf.org/doc/rfc9763/',
-    oids: ['1.3.6.1.5.5.7.1.35'],
+    oids: ['1.3.6.1.5.5.7.1.36'],
     status: 'Published',
     statusColor: 'success',
     quantumSafe: true,
@@ -328,7 +328,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. Either direction is valid: the diagram shows a PQC-primary cert with classical deltas, but the IETF reference certificate (and typical backward-compatible deployment) uses classical (ECDSA) as the outer/primary cert with PQC in the delta extension. Legacy clients use the outer classical cert; PQC-aware clients reconstruct the primary from the delta.',
+      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. This demo generates a real DER-encoded chameleon cert with a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1) per draft-bonnell-lamps-chameleon-certs-07. The ML-DSA-65 primary cert carries an ECDSA delta that PQC-unaware clients can reconstruct.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

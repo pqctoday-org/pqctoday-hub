@@ -4,6 +4,24 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.64.0] - 2026-03-29
+
+### Added
+
+- **Real DER certificate generation for all 6 hybrid formats**: Replaced simulated certificate generation (separate component certs) with structurally correct X.509 certificates built via `@peculiar/asn1-schema` and signed via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`). All ASN.1 encoding is schema-validated — no hand-rolled DER. [view:/learn/hybrid-crypto]
+  - **Composite** (OID `1.3.6.1.5.5.7.6.45`): Real `CompositeSignatureValue ::= SEQUENCE SIZE (2) OF BIT STRING` per draft-ietf-lamps-pq-composite-sigs-15 §6
+  - **Alt-Sig / Catalyst**: Real extensions `2.5.29.72` (SubjectAltPublicKeyInfo), `2.5.29.73` (AltSignatureAlgorithm), `2.5.29.74` (AltSignatureValue) per ITU-T X.509 (2019) §9.8
+  - **Related Certificates** (OID `1.3.6.1.5.5.7.1.36`): Two-pass bidirectional binding per RFC 9763 — each cert contains SHA-256 hash of its partner
+  - **Chameleon** (OID `2.16.840.1.114027.80.6.1`): Real `DeltaCertificateDescriptor` extension per draft-bonnell-lamps-chameleon-certs-07 §4
+  - **Pure ML-DSA-65** and **Pure SLH-DSA-128s**: Now generated via SoftHSM instead of OpenSSL WASM/liboqs
+- **@peculiar/asn1-schema v2.6.0** + **@peculiar/asn1-x509 v2.6.1** + **@peculiar/asn1-x509-post-quantum v2.6.1**: New dependencies for standards-compliant ASN.1 DER encoding of X.509 certificates. Added to SBOM. [infra]
+- **SoftHSM byte-level signing wrappers**: `hsm_signBytesMLDSA`, `hsm_signBytesECDSA`, `hsm_signBytesSLHDSA` — accept raw `Uint8Array` for signing TBS certificate DER blobs directly via PKCS#11. [infra]
+- **Auto-initializing SoftHSM singleton**: `HybridCryptoService` initializes SoftHSM on demand (`C_Initialize` → `C_InitToken` → `C_OpenSession` → `C_Login`) — no React context dependency, no fallback to liboqs/Web Crypto. [view:/learn/hybrid-crypto]
+
+### Fixed
+
+- **RFC 9763 OID corrected**: `1.3.6.1.5.5.7.1.35` → `1.3.6.1.5.5.7.1.36` (id-pe 36) per RFC 9763 Appendix A. Fixed in constants.ts, derParser.ts, glossaryData.ts. [view:/learn/hybrid-crypto]
+
 ## [2.63.0] - 2026-03-29
 
 ### Added

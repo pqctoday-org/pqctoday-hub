@@ -30,6 +30,13 @@ const SECRETS_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
     kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
+  {
+    id: 'secrets-unseal-pbkdf2',
+    useCase: 'Vault unseal key derivation (PBKDF2)',
+    standard: 'NIST SP 800-132',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
+    kind: { type: 'pbkdf2-derive', prf: 'SHA-256' },
+  },
 ]
 
 const SCENARIO_ITEMS = VAULT_TRANSIT_SCENARIOS.map((s) => ({

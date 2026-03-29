@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.63.0",
+  "version": "2.64.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -65,6 +65,9 @@
     "@noble/curves": "^2.0.1",
     "@noble/hashes": "^2.0.1",
     "@oqs/liboqs-js": "^0.15.1",
+    "@peculiar/asn1-schema": "^2.6.0",
+    "@peculiar/asn1-x509": "^2.6.1",
+    "@peculiar/asn1-x509-post-quantum": "^2.6.1",
     "@pqctoday/softhsm-wasm": "file:./src/vendor/softhsm-wasm",
     "@react-oauth/google": "^0.13.4",
     "@scure/base": "^2.0.0",

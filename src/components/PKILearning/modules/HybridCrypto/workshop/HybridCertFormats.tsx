@@ -2,7 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, FileText, ExternalLink, Link2 } from 'lucide-react'
-import { hybridCryptoService, type CertResult } from '../services/HybridCryptoService'
+import { hybridCryptoService } from '../services/HybridCryptoService'
 import { HYBRID_CERT_FORMATS, type HybridFormatId } from '../constants'
 
 interface FormatResult {
@@ -28,12 +28,11 @@ export const HybridCertFormats: React.FC = () => {
   const generateFormat = useCallback(async (formatId: HybridFormatId) => {
     setGenerating(formatId)
     const start = performance.now()
+    const subject = '/CN=Hybrid Certificate Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
 
     try {
       if (formatId === 'pure-pqc-slh') {
-        // SLH-DSA-128s: OpenSSL WASM does not support this algorithm.
-        // Route through liboqs via the dedicated service method which builds
-        // a real DER-encoded X.509 certificate using the pure-TypeScript ASN.1 builder.
+        // SLH-DSA-128s: Real DER-encoded certificate via liboqs + ASN.1 builder (RFC 9909).
         const certResult = await hybridCryptoService.generateSelfSignedCertSLHDSA(
           '/CN=Pure PQC (SLH-DSA-128s) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
         )
@@ -58,139 +57,73 @@ export const HybridCertFormats: React.FC = () => {
         setGenerating(null)
         return
       } else if (formatId === 'pure-pqc') {
-        const keyResult = await hybridCryptoService.generateKey('ML-DSA-65', 'pure_pqc_key.pem')
-        if (keyResult.error) {
-          setResults((prev) => ({
-            ...prev,
-            [formatId]: {
-              formatId,
-              certs: [],
-              timingMs: performance.now() - start,
-              error: keyResult.error,
-            },
-          }))
-          setGenerating(null)
-          return
-        }
-
-        const certResult = await hybridCryptoService.generateSelfSignedCert(
-          'pure_pqc_key.pem',
-          'pure_pqc_cert.pem',
-          '/CN=Pure PQC (ML-DSA-65) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox',
-          keyResult.fileData
-        )
+        // Real ML-DSA-65 certificate (RFC 9881) via liboqs/SoftHSM + ASN.1 builder
+        const certResult = await hybridCryptoService.generatePurePQCCertMLDSA(subject)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
             formatId,
-            certs: [
-              {
-                label: 'ML-DSA-65 Certificate',
-                pem: certResult.pem,
-                parsed: certResult.parsed,
-                type: 'pqc',
-              },
-            ],
-            timingMs: performance.now() - start,
+            certs: certResult.error
+              ? []
+              : [
+                  {
+                    label: 'ML-DSA-65 Certificate (RFC 9881)',
+                    pem: certResult.pem,
+                    parsed: certResult.parsed,
+                    type: 'pqc',
+                  },
+                ],
+            timingMs: certResult.timingMs,
             error: certResult.error,
           },
         }))
       } else if (formatId === 'composite') {
-        // Generate both component certs
-        const ecKey = await hybridCryptoService.generateKey('EC', 'comp_ec_key.pem')
-        const ecCert = ecKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: ecKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'comp_ec_key.pem',
-              'comp_ec_cert.pem',
-              '/CN=Composite ECDSA Component/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              ecKey.fileData
-            )
-
-        const pqcKey = await hybridCryptoService.generateKey('ML-DSA-65', 'comp_pqc_key.pem')
-        const pqcCert = pqcKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: pqcKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'comp_pqc_key.pem',
-              'comp_pqc_cert.pem',
-              '/CN=Composite ML-DSA Component/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              pqcKey.fileData
-            )
-
-        const hasError = ecCert.error || pqcCert.error
+        // Real composite certificate (draft-ietf-lamps-pq-composite-sigs-15)
+        // Single cert with OID 1.3.6.1.5.5.7.6.45, both signatures over same TBS
+        const certResult = await hybridCryptoService.generateCompositeCert(subject)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
             formatId,
-            certs: hasError
+            certs: certResult.error
               ? []
               : [
                   {
-                    label: 'Component 1: ECDSA P-256 (Classical)',
-                    pem: ecCert.pem,
-                    parsed: ecCert.parsed,
-                    type: 'classical',
-                  },
-                  {
-                    label: 'Component 2: ML-DSA-65 (PQC)',
-                    pem: pqcCert.pem,
-                    parsed: pqcCert.parsed,
+                    label: 'Composite: MLDSA65-ECDSA-P256-SHA512',
+                    pem: certResult.pem,
+                    parsed: certResult.parsed,
                     type: 'pqc',
                   },
                 ],
-            timingMs: performance.now() - start,
-            error: hasError ? ecCert.error || pqcCert.error : undefined,
+            timingMs: certResult.timingMs,
+            error: certResult.error,
           },
         }))
       } else if (formatId === 'alt-sig') {
-        // Alt-Sig: generate classical cert (primary) + PQC cert (represents alt-sig extensions)
-        const ecKey = await hybridCryptoService.generateKey('EC', 'altsig_ec_key.pem')
-        const ecCert = ecKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: ecKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'altsig_ec_key.pem',
-              'altsig_ec_cert.pem',
-              '/CN=Alt-Sig Primary (ECDSA)/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              ecKey.fileData
-            )
-
-        const pqcKey = await hybridCryptoService.generateKey('ML-DSA-65', 'altsig_pqc_key.pem')
-        const pqcCert = pqcKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: pqcKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'altsig_pqc_key.pem',
-              'altsig_pqc_cert.pem',
-              '/CN=Alt-Sig Extension Content (ML-DSA-65)/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              pqcKey.fileData
-            )
-
-        const hasError = ecCert.error || pqcCert.error
+        // Real Alt-Sig certificate (ITU-T X.509 §9.8)
+        // Single ECDSA cert with ML-DSA-65 in extensions 2.5.29.72/73/74
+        const certResult = await hybridCryptoService.generateAltSigCert(subject)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
             formatId,
-            certs: hasError
+            certs: certResult.error
               ? []
               : [
                   {
-                    label: 'Primary Certificate: ECDSA P-256 (with alt-sig extensions)',
-                    pem: ecCert.pem,
-                    parsed: ecCert.parsed,
+                    label: 'Alt-Sig Certificate: ECDSA primary + ML-DSA-65 extensions',
+                    pem: certResult.pem,
+                    parsed: certResult.parsed,
                     type: 'classical',
                   },
-                  {
-                    label: 'Alt-Sig Content: ML-DSA-65 key + signature (in extensions)',
-                    pem: pqcCert.pem,
-                    parsed: pqcCert.parsed,
-                    type: 'pqc',
-                  },
                 ],
-            timingMs: performance.now() - start,
-            error: hasError ? ecCert.error || pqcCert.error : undefined,
+            timingMs: certResult.timingMs,
+            error: certResult.error,
           },
         }))
       } else if (formatId === 'related-certs') {
-        const relResult = await hybridCryptoService.generateRelatedCertPair()
+        // Real Related Certificates (RFC 9763) with bidirectional binding hash
+        const relResult = await hybridCryptoService.generateRelatedCertPairReal(subject)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -217,46 +150,21 @@ export const HybridCertFormats: React.FC = () => {
           },
         }))
       } else if (formatId === 'chameleon') {
-        // Chameleon: generate primary PQC cert + classical cert, show delta concept
-        const pqcKey = await hybridCryptoService.generateKey('ML-DSA-65', 'cham_pqc_key.pem')
-        const pqcCert = pqcKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: pqcKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'cham_pqc_key.pem',
-              'cham_pqc_cert.pem',
-              '/CN=Chameleon Primary (PQC)/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              pqcKey.fileData
-            )
-
-        const ecKey = await hybridCryptoService.generateKey('EC', 'cham_ec_key.pem')
-        const ecCert = ecKey.error
-          ? ({ pem: '', parsed: '', timingMs: 0, error: ecKey.error } as CertResult)
-          : await hybridCryptoService.generateSelfSignedCert(
-              'cham_ec_key.pem',
-              'cham_ec_cert.pem',
-              '/CN=Chameleon Reconstructed (Classical)/O=PQC Today/OU=Hybrid Certificate Sandbox',
-              ecKey.fileData
-            )
-
-        const hasError = pqcCert.error || ecCert.error
+        // Real Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07)
+        // ML-DSA-65 primary with DeltaCertificateDescriptor extension
+        const certResult = await hybridCryptoService.generateChameleonCert(subject)
         setResults((prev) => ({
           ...prev,
           [formatId]: {
             formatId,
-            certs: hasError
+            certs: certResult.error
               ? []
               : [
                   {
-                    label: 'Primary Certificate: ML-DSA-65 (transmitted)',
-                    pem: pqcCert.pem,
-                    parsed: pqcCert.parsed,
+                    label: 'Chameleon: ML-DSA-65 primary + ECDSA delta',
+                    pem: certResult.pem,
+                    parsed: certResult.parsed,
                     type: 'pqc',
-                  },
-                  {
-                    label: 'Reconstructed Certificate: ECDSA P-256 (from delta)',
-                    pem: ecCert.pem,
-                    parsed: ecCert.parsed,
-                    type: 'classical',
                   },
                 ],
             timingMs: performance.now() - start,

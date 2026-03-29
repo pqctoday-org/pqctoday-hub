@@ -40,6 +40,20 @@ const KMS_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://www.rfc-editor.org/rfc/rfc3394',
     kind: { type: 'aeskw-wrap' },
   },
+  {
+    id: 'kms-kek-hkdf',
+    useCase: 'KEK derivation from master (HKDF-SHA256)',
+    standard: 'SP 800-108 + RFC 5869',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
+    kind: { type: 'hkdf-derive' },
+  },
+  {
+    id: 'kms-kek-kwp',
+    useCase: 'KEK wrapping with padding (AES-KWP)',
+    standard: 'RFC 5649 + SP 800-38F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5649',
+    kind: { type: 'aes-kwp-wrap' },
+  },
 ]
 
 const LIVE_OPERATIONS = [

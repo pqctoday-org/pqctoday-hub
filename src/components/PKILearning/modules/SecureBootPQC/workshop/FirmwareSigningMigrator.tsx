@@ -50,6 +50,13 @@ const SECBOOT_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
     kind: { type: 'sha256-hash', testIndex: 1 },
   },
+  {
+    id: 'secboot-firmware-digest',
+    useCase: 'Firmware image digest (multi-part SHA-512)',
+    standard: 'UEFI 2.10 + FIPS 180-4',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    kind: { type: 'digest-multipart', hashAlg: 'SHA-512' },
+  },
 ]
 
 type WizardStep = 0 | 1 | 2 | 3

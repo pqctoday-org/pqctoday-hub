@@ -1224,6 +1224,29 @@ export function AboutView() {
                         </div>
                       </li>
                       <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                        <span className="text-muted-foreground">@peculiar/asn1-schema</span>
+                        <div className="flex flex-col items-end shrink-0">
+                          <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
+                          <span className="text-xs text-muted-foreground/60">v2.6.0</span>
+                        </div>
+                      </li>
+                      <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                        <span className="text-muted-foreground">@peculiar/asn1-x509</span>
+                        <div className="flex flex-col items-end shrink-0">
+                          <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
+                          <span className="text-xs text-muted-foreground/60">v2.6.1</span>
+                        </div>
+                      </li>
+                      <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                        <span className="text-muted-foreground">
+                          @peculiar/asn1-x509-post-quantum
+                        </span>
+                        <div className="flex flex-col items-end shrink-0">
+                          <span className="text-xs text-muted-foreground/40 font-mono">MIT</span>
+                          <span className="text-xs text-muted-foreground/60">v2.6.1</span>
+                        </div>
+                      </li>
+                      <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                         <a
                           href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.0"
                           target="_blank"

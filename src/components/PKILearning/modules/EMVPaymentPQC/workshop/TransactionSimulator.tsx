@@ -48,6 +48,13 @@ const EMV_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'aesgcm-functional' },
     message: 'EMV session: terminalId=T001,merchantId=M42,amount=99.50',
   },
+  {
+    id: 'emv-arpc-cmac',
+    useCase: 'ARPC message authentication (AES-CMAC)',
+    standard: 'EMVCo Book 2 + NIST SP 800-38B',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/b/final',
+    kind: { type: 'aescmac-verify' },
+  },
 ]
 
 // ---------------------------------------------------------------------------

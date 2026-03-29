@@ -41,6 +41,13 @@ const CC_KAT_SPECS: KatTestSpec[] = [
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
     kind: { type: 'sha256-hash', testIndex: 2 },
   },
+  {
+    id: 'cc-sealing-kwp',
+    useCase: 'Enclave sealing key wrap (AES-KWP)',
+    standard: 'RFC 5649 + SP 800-38F',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5649',
+    kind: { type: 'aes-kwp-wrap' },
+  },
 ]
 
 export const AttestationWorkshop: React.FC = () => {

@@ -47,6 +47,20 @@ const IAM_KAT_SPECS: KatTestSpec[] = [
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
     kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
+  {
+    id: 'iam-token-hmac-gen',
+    useCase: 'Session token HMAC generation',
+    standard: 'FIPS 198-1',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/198-1/final',
+    kind: { type: 'hmac-generate', hashAlg: 'SHA-256' },
+  },
+  {
+    id: 'iam-password-pbkdf2',
+    useCase: 'Password hash derivation (PBKDF2)',
+    standard: 'NIST SP 800-132',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/132/final',
+    kind: { type: 'pbkdf2-derive', prf: 'SHA-256' },
+  },
 ]
 
 const ALGORITHM_OPTIONS = Object.entries(SIGNATURE_SIZE_DATA).map(([id, data]) => ({

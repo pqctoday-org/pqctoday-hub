@@ -35,6 +35,22 @@ const AGILITY_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'ecdsa-functional', curve: 'P-256' },
     message: 'CryptoAgility classical baseline: algorithm=ECDSA-P256',
   },
+  {
+    id: 'agility-sha3-256',
+    useCase: 'SHA3-256 post-quantum hash alternative',
+    standard: 'FIPS 202',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/202/final',
+    kind: { type: 'sha3-256-hash', testIndex: 1 },
+    message: 'CryptoAgility: hash algorithm rotation test',
+  },
+  {
+    id: 'agility-sha3-512',
+    useCase: 'SHA3-512 post-quantum hash alternative',
+    standard: 'FIPS 202',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/202/final',
+    kind: { type: 'sha3-512-hash', testIndex: 1 },
+    message: 'CryptoAgility: hash algorithm rotation test (512-bit)',
+  },
 ]
 
 interface AbstractionLayerDemoProps {

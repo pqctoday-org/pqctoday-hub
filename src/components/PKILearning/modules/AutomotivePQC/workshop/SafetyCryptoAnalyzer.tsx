@@ -33,6 +33,13 @@ const AUTOMOTIVE_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'aesgcm-functional' },
     message: 'OTA firmware manifest: version=3.2.1,targetECU=TCU,digest=8c4f...',
   },
+  {
+    id: 'auto-secoc-cmac',
+    useCase: 'SecOC message authentication (AES-CMAC)',
+    standard: 'AUTOSAR SecOC + NIST SP 800-38B',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/38/b/final',
+    kind: { type: 'aescmac-verify' },
+  },
 ]
 
 // ---------------------------------------------------------------------------
