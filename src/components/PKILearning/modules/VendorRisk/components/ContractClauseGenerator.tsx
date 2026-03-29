@@ -4,6 +4,7 @@ import React, { useCallback } from 'react'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -21,14 +22,24 @@ const CONTRACT_SECTIONS: ArtifactSection[] = [
         options: [
           {
             value: '2025',
-            label: '2025 — CNSA 2.0 software/firmware signing (NSS)',
+            label: '2025 — CNSA 2.0 software/firmware preferred (NSS)',
           },
-          { value: '2027', label: '2027 — Internal target (between major standards deadlines)' },
+          {
+            value: '2027',
+            label: '2027 — CNSA 2.0 new networking equipment must support PQC',
+          },
           {
             value: '2030',
-            label: '2030 — CNSA 2.0 web/cloud/networking (NSS); NIST IR 8547 RSA/ECC deprecation',
+            label: '2030 — CNSA 2.0 all software exclusive; NIST IR 8547 RSA/ECC deprecation',
           },
-          { value: '2033', label: '2033 — CNSA 2.0 legacy NSS systems (final deadline)' },
+          {
+            value: '2033',
+            label: '2033 — CNSA 2.0 legacy networking equipment replacement',
+          },
+          {
+            value: '2035',
+            label: '2035 — CNSA 2.0 full enforcement (all NSS); NIST IR 8547 RSA/ECC disallowed',
+          },
         ],
       },
       {
@@ -349,6 +360,7 @@ function renderContractPreview(data: Record<string, Record<string, string | stri
 
 export const ContractClauseGenerator: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
+  const { industry, country } = useExecutiveModuleData()
 
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
@@ -369,9 +381,11 @@ export const ContractClauseGenerator: React.FC = () => {
     <div className="space-y-6">
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-sm text-foreground/80">
-          Build PQC-ready contract clauses for vendor agreements. Fill in each section with your
-          organization&apos;s requirements, then switch to <strong>Preview</strong> mode to see the
-          generated contract language. Export as Markdown for legal review.
+          Build PQC-ready contract clauses for vendor agreements
+          {industry ? ` tailored for the ${industry} sector` : ''}
+          {country ? ` (${country})` : ''}. Fill in each section with your organization&apos;s
+          requirements, then switch to <strong>Preview</strong> mode to see the generated contract
+          language. Export as Markdown for legal review.
         </p>
       </div>
 

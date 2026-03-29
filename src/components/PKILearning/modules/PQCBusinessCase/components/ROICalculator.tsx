@@ -38,7 +38,7 @@ export const ROICalculator: React.FC = () => {
     INDUSTRY_BREACH_BASELINES[data.industry] ?? INDUSTRY_BREACH_BASELINES['Other']
 
   const [assumptions, setAssumptions] = useState<ROIAssumptions>(() => ({
-    productsToMigrate: data.totalProducts,
+    productsToMigrate: Math.min(data.totalProducts, 50),
     costPerProduct: 75_000,
     quantumMultiplier: 2.5,
     breachProbability: 15,
@@ -202,7 +202,7 @@ export const ROICalculator: React.FC = () => {
               <input
                 id="roi-products"
                 type="range"
-                min={10}
+                min={1}
                 max={data.totalProducts}
                 step={1}
                 value={assumptions.productsToMigrate}
@@ -210,7 +210,7 @@ export const ROICalculator: React.FC = () => {
                 className="w-full accent-primary"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                <span>10</span>
+                <span>1</span>
                 <span className="text-sm font-mono text-primary">
                   {assumptions.productsToMigrate} of {data.totalProducts}
                 </span>
@@ -499,7 +499,10 @@ export const ROICalculator: React.FC = () => {
         title="PQC Migration ROI — Export"
         exportData={exportMarkdown}
         filename="pqc-roi-analysis"
-        formats={['markdown', 'csv']}
+        formats={['markdown']}
+        onExport={() => {
+          // Intentionally empty — ROI is export-only, no module store persistence needed
+        }}
       >
         <p className="text-sm text-muted-foreground">
           Export the ROI analysis above as a shareable document.

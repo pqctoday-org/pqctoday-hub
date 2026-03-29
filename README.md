@@ -381,6 +381,24 @@ Test your PQC readiness with this interactive web application visualizing the gl
   framework selections, and learning progress into a unified dashboard. Live risk scores, compliance
   tracking, vendor posture analysis, and prioritized next steps. Artifact management for creating,
   viewing, and editing executive documents.
+  - **14 Interactive Business Tools** (`/business/tools`): Persona-aware planning and governance
+    toolkit — all tools adapt to the user's industry, geography, and regulatory context
+    - **Risk & Strategy**: ROI Calculator (IBM breach baselines, quantum amplification), Board Pitch
+      Builder (section-by-section editor with assessment pre-population), CRQC Scenario Planner
+      (interactive CRQC year slider with algorithm impact, compliance deadlines, HNDL exposure)
+    - **Compliance & Audit**: Audit Readiness Checklist (30 items across 6 sections with NIST/CNSA/ISO
+      standards references, maturity tier scoring: Not Started → Optimized)
+    - **Governance & Policy**: RACI Builder (10 activities × 6 roles with multi-accountable validation),
+      Policy Template Generator (4 policy types with FIPS 203/204/205 algorithm lists), KPI Dashboard
+      Builder (6 weighted dimensions, auto-scored vendor readiness from catalog)
+    - **Vendor & Supply Chain**: Vendor Scorecard (product-level auto-detection from Migrate catalog),
+      Contract Clause Generator (5 articles with CNSA 2.0 milestones through 2035), Supply Chain Risk
+      Matrix (per-layer PQC/FIPS/hybrid breakdown with export)
+    - **Migration Planning**: Roadmap Builder (regulatory deadline overlay from Timeline data),
+      Stakeholder Comms Planner (4-tier message framework), KPI Tracker (live data integration
+      with manual override tracking), Deployment Playbook (6-phase checklist: prep → hybrid →
+      canary → rollout → validation → rollback)
+    - All tools export to Markdown, save to executive document portfolio, and include GA4 event tracking
 - **PQC Glossary**: Global floating glossary with 200+ PQC terms
   - Category filters, A-Z index, full-text search
   - Complexity badges (Beginner, Intermediate, Advanced)

@@ -2,6 +2,8 @@
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { Eye, Edit3 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
 import { ExportableArtifact } from './ExportableArtifact'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
@@ -159,17 +161,15 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
                       {field.label}
                     </label>
                     {field.type === 'text' && (
-                      <input
-                        type="text"
-                        className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
+                      <Input
                         placeholder={field.placeholder}
                         value={(formData[section.id]?.[field.id] as string) || ''}
                         onChange={(e) => updateField(section.id, field.id, e.target.value)}
                       />
                     )}
                     {field.type === 'textarea' && (
-                      <textarea
-                        className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[100px] resize-y"
+                      <Textarea
+                        className="min-h-[100px] resize-y"
                         placeholder={field.placeholder}
                         value={(formData[section.id]?.[field.id] as string) || ''}
                         onChange={(e) => updateField(section.id, field.id, e.target.value)}
@@ -223,7 +223,7 @@ export const ArtifactBuilder: React.FC<ArtifactBuilderProps> = ({
           title={title}
           exportData={exportMarkdown}
           filename={exportFilename}
-          formats={['markdown', 'json']}
+          formats={['markdown']}
           onExport={handleExport}
         >
           <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap font-mono text-sm text-foreground bg-muted/50 rounded-lg p-4 max-h-[600px] overflow-y-auto">

@@ -267,6 +267,13 @@ export const ROUTE_META: Record<string, RouteMeta> = {
     canonical: `${BASE_URL}/business`,
   },
 
+  '/business/tools': {
+    title: 'Business Tools — PQC Planning & Governance Toolkit | PQC Today',
+    description:
+      '14 interactive business planning tools for PQC migration — ROI calculators, RACI builders, vendor scorecards, roadmap planners, and compliance checklists.',
+    canonical: `${BASE_URL}/business/tools`,
+  },
+
   '/assess': {
     title: 'PQC Risk Assessment — Quantum Readiness Score for Your Organization | PQC Today',
     description:
@@ -849,6 +856,10 @@ export function getRouteMeta(pathname: string): RouteMeta {
   const normalized = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname
   // eslint-disable-next-line security/detect-object-injection
   if (Object.hasOwn(ROUTE_META, normalized)) return ROUTE_META[normalized]!
+
+  // Dynamic routes — fall back to parent route meta
+  if (normalized.startsWith('/business/tools/')) return ROUTE_META['/business/tools']!
+  if (normalized.startsWith('/learn/')) return ROUTE_META['/learn']!
 
   // Fallback to homepage
   return ROUTE_META['/']!

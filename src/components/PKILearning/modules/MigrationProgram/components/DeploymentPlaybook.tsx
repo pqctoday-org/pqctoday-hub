@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import React from 'react'
 import { OpsChecklist, type ChecklistSection } from '@/components/PKILearning/common/OpsChecklist'
 
 const sections: ChecklistSection[] = [
@@ -8,6 +9,11 @@ const sections: ChecklistSection[] = [
       {
         id: 'prep-feature-flags',
         label: 'Set up feature flags for PQC algorithm toggle',
+      },
+      {
+        id: 'prep-hybrid-config',
+        label: 'Configure hybrid classical+PQC mode (recommended before pure PQC)',
+        critical: true,
       },
       {
         id: 'prep-monitoring',
@@ -29,15 +35,41 @@ const sections: ChecklistSection[] = [
     ],
   },
   {
+    title: 'Hybrid Mode Deployment',
+    items: [
+      {
+        id: 'hybrid-tls-config',
+        label: 'Enable hybrid key exchange (e.g., X25519MLKEM768) in TLS config',
+      },
+      {
+        id: 'hybrid-backward-compat',
+        label: 'Verify backward compatibility — classical-only clients still connect',
+        critical: true,
+      },
+      {
+        id: 'hybrid-cert-chain',
+        label: 'Validate certificate chain with hybrid or dual certificates',
+      },
+      {
+        id: 'hybrid-perf-test',
+        label: 'Benchmark hybrid handshake latency (expect 2-5% increase)',
+      },
+      {
+        id: 'hybrid-interop',
+        label: 'Test interoperability with partner/vendor endpoints',
+      },
+    ],
+  },
+  {
     title: 'Canary Deployment',
     items: [
       {
         id: 'canary-route-1pct',
-        label: 'Route 1% of traffic through PQC-enabled endpoint',
+        label: 'Route 1% of traffic through PQC/hybrid-enabled endpoint',
       },
       {
         id: 'canary-latency',
-        label: 'Monitor latency impact (expect 2-5% increase for hybrid)',
+        label: 'Monitor latency impact against baseline',
       },
       {
         id: 'canary-error-rates',
@@ -80,11 +112,37 @@ const sections: ChecklistSection[] = [
     ],
   },
   {
+    title: 'Post-Deployment Validation',
+    items: [
+      {
+        id: 'post-cert-validation',
+        label: 'Verify PQC certificate chain validation end-to-end',
+        critical: true,
+      },
+      {
+        id: 'post-cipher-suites',
+        label: 'Confirm all cipher suites negotiating correctly (check via TLS scanner)',
+      },
+      {
+        id: 'post-compliance-scan',
+        label: 'Run compliance scan against CNSA 2.0 / FIPS requirements',
+      },
+      {
+        id: 'post-cmdb-update',
+        label: 'Update CMDB / asset inventory with new cryptographic configuration',
+      },
+      {
+        id: 'post-cbom-refresh',
+        label: 'Regenerate CBOM (Cryptographic Bill of Materials) for updated systems',
+      },
+    ],
+  },
+  {
     title: 'Rollback Procedures',
     items: [
       {
         id: 'rollback-toggle',
-        label: 'Toggle feature flag to disable PQC',
+        label: 'Toggle feature flag to disable PQC / revert to classical-only',
         critical: true,
       },
       {
@@ -111,7 +169,7 @@ export const DeploymentPlaybook: React.FC = () => {
   return (
     <OpsChecklist
       title="PQC Deployment Playbook"
-      description="Operational procedures for deploying PQC across production infrastructure"
+      description="Operational procedures for deploying PQC across production infrastructure — covering hybrid mode, canary testing, progressive rollout, validation, and rollback."
       sections={sections}
     />
   )

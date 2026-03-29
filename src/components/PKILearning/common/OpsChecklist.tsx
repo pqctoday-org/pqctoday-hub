@@ -125,9 +125,10 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
 
         return (
           <div key={section.title} className="border border-border rounded-lg overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => toggleSection(section.title)}
-              className="w-full flex items-center justify-between p-3 hover:bg-muted/50 transition-colors text-left"
+              className="w-full flex items-center justify-between p-3 h-auto rounded-none text-left"
               aria-expanded={isExpanded}
             >
               <div className="flex items-center gap-2">
@@ -141,7 +142,7 @@ export const OpsChecklist: React.FC<OpsChecklistProps> = ({ title, description, 
               <span className="text-xs text-muted-foreground">
                 {sectionChecked}/{section.items.length}
               </span>
-            </button>
+            </Button>
 
             {isExpanded && (
               <div className="border-t border-border p-3 space-y-2">

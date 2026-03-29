@@ -201,3 +201,16 @@ export const logChatOpened = () => {
 export const logAccuracyFeedback = (vote: 'accurate' | 'inaccurate', pagePath: string) => {
   logEvent('Accuracy', vote, pagePath)
 }
+
+// --- Business Center tracking ---
+
+export const logBusinessToolOpen = (toolId: string, toolName: string) => {
+  logEvent('Business', 'Tool Open', `${toolId}:${toolName}`)
+  addHistoryEvent('page_view', `Opened ${toolName}`, {
+    route: `/business/tools/${toolId}`,
+  })
+}
+
+export const logBusinessToolExport = (toolId: string, format: string) => {
+  logEvent('Business', 'Tool Export', `${toolId}:${format}`)
+}

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { Plus, X, ChevronDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
 import { ExportableArtifact } from './ExportableArtifact'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
@@ -28,6 +29,7 @@ interface TimelinePlannerProps {
   yearRange?: [number, number]
   categories?: string[]
   onMilestonesChange?: (milestones: Milestone[]) => void
+  onSelectedDeadlinesChange?: (deadlines: ExternalDeadline[]) => void
 }
 
 export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
@@ -37,6 +39,7 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
   yearRange = [2025, 2036],
   categories = ['Discovery', 'Planning', 'Migration', 'Validation', 'Completion'],
   onMilestonesChange,
+  onSelectedDeadlinesChange,
 }) => {
   const [milestones, setMilestones] = useState<Milestone[]>(initialMilestones)
   const [newLabel, setNewLabel] = useState('')
@@ -53,6 +56,11 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
     () => deadlines.filter((d) => selectedKeys.has(deadlineKey(d))),
     [deadlines, selectedKeys, deadlineKey]
   )
+
+  // Notify parent of selected deadlines changes
+  useEffect(() => {
+    onSelectedDeadlinesChange?.(visibleDeadlines)
+  }, [visibleDeadlines, onSelectedDeadlinesChange])
 
   const deadlinesBySource = useMemo(() => {
     const map = new Map<string, ExternalDeadline[]>()
@@ -288,10 +296,8 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
             >
               Milestone
             </label>
-            <input
+            <Input
               id="timeline-milestone"
-              type="text"
-              className="w-full px-3 py-2 rounded-lg border border-input bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50 text-sm"
               placeholder="e.g., Complete crypto inventory"
               value={newLabel}
               onChange={(e) => setNewLabel(e.target.value)}
@@ -337,13 +343,15 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
                   </span>
                 )}
               </div>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => removeMilestone(m.id)}
-                className="text-muted-foreground hover:text-status-error transition-colors"
+                className="text-muted-foreground hover:text-status-error h-auto p-1"
                 aria-label={`Remove ${m.label}`}
               >
                 <X size={14} />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -354,7 +362,7 @@ export const TimelinePlanner: React.FC<TimelinePlannerProps> = ({
         title="Timeline Export"
         exportData={exportMarkdown}
         filename="migration-timeline"
-        formats={['markdown', 'csv']}
+        formats={['markdown']}
       >
         <p className="text-sm text-muted-foreground">
           Export your timeline milestones and external deadlines.

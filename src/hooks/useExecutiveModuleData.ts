@@ -101,9 +101,9 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
 
       const fipsLower = (s.fipsValidated || '').toLowerCase()
       if (
-        fipsLower.includes('fips 140') ||
-        fipsLower.includes('fips 203') ||
-        fipsLower === 'validated'
+        fipsLower.startsWith('yes') ||
+        fipsLower === 'validated' ||
+        (fipsLower.includes('fips 140') && !fipsLower.startsWith('no'))
       ) {
         fipsValidatedCount++
       }

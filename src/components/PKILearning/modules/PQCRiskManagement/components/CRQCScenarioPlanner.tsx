@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useCallback } from 'react'
 import { Clock, AlertTriangle, ShieldAlert, ShieldCheck, Calendar, TrendingUp } from 'lucide-react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useModuleStore } from '@/store/useModuleStore'
+import { ExportableArtifact } from '../../../common/executive'
 
 interface AlgorithmImpact {
   name: string
@@ -99,14 +101,12 @@ const COMPLIANCE_DEADLINES = [
 export const CRQCScenarioPlanner: React.FC = () => {
   const [crqcYear, setCrqcYear] = useState(2035)
   const { migrationDeadlineYear, industry, country } = useExecutiveModuleData()
+  const { addExecutiveDocument } = useModuleStore()
 
   const currentYear = new Date().getFullYear()
 
   const affectedAlgorithms = useMemo(() => {
-    return ALGORITHMS.filter((algo) => {
-      if (algo.type === 'asymmetric') return true // all break at CRQC
-      return false
-    })
+    return ALGORITHMS.filter((algo) => algo.breakYear !== null)
   }, [])
 
   const safeAlgorithms = useMemo(() => {
@@ -135,6 +135,84 @@ export const CRQCScenarioPlanner: React.FC = () => {
         : urgencyLevel === 'medium'
           ? 'text-primary'
           : 'text-status-success'
+
+  const exportMarkdown = useMemo(() => {
+    let md = '# CRQC Scenario Analysis\n\n'
+    md += `**CRQC Arrival Year:** ${crqcYear}\n`
+    md += `**Years Remaining:** ${yearsRemaining}\n`
+    md += `**Urgency Level:** ${urgencyLevel.toUpperCase()}\n`
+    md += `**Generated:** ${new Date().toLocaleDateString()}\n\n`
+
+    md += '## Algorithms Broken\n\n'
+    md += '| Algorithm | Replacement | Notes |\n'
+    md += '|-----------|-------------|-------|\n'
+    for (const algo of affectedAlgorithms) {
+      md += `| ${algo.name} | ${algo.replacement} | ${algo.notes} |\n`
+    }
+    md += '\n'
+
+    md += '## Quantum-Safe Algorithms\n\n'
+    for (const algo of safeAlgorithms) {
+      md += `- **${algo.name}**: ${algo.notes}\n`
+    }
+    md += '\n'
+
+    md += '## Compliance Deadlines\n\n'
+    md += '| Framework | Year | Status |\n'
+    md += '|-----------|------|--------|\n'
+    for (const d of COMPLIANCE_DEADLINES) {
+      const isPast = d.year <= currentYear
+      const isBefore = d.year <= crqcYear
+      const status = d.advisory
+        ? 'Advisory'
+        : isPast
+          ? 'Already in effect'
+          : isBefore
+            ? `Before CRQC (${crqcYear - d.year}yr before)`
+            : `After CRQC (${d.year - crqcYear}yr after)`
+      md += `| ${d.framework} | ${d.year} | ${status} |\n`
+    }
+    md += '\n'
+
+    md += '## HNDL Exposure Window\n\n'
+    md += '| Retention | Valid Until | At Risk? |\n'
+    md += '|-----------|------------|----------|\n'
+    for (const years of [1, 3, 5, 7, 10, 15, 25]) {
+      const validUntil = currentYear + years
+      md += `| ${years} years | ${validUntil} | ${validUntil >= crqcYear ? 'AT RISK' : 'Safe'} |\n`
+    }
+    md += '\n'
+
+    if (industry || country) {
+      md += '## Assessment Context\n\n'
+      if (industry) md += `- **Industry:** ${industry}\n`
+      if (country) md += `- **Country:** ${country}\n`
+      if (migrationDeadlineYear) md += `- **Migration Deadline:** ${migrationDeadlineYear}\n`
+    }
+
+    return md
+  }, [
+    crqcYear,
+    yearsRemaining,
+    urgencyLevel,
+    affectedAlgorithms,
+    safeAlgorithms,
+    currentYear,
+    industry,
+    country,
+    migrationDeadlineYear,
+  ])
+
+  const handleExport = useCallback(() => {
+    addExecutiveDocument({
+      id: `crqc-scenario-${Date.now()}`,
+      moduleId: 'pqc-risk-management',
+      type: 'crqc-scenario',
+      title: `CRQC Scenario Analysis (${crqcYear})`,
+      data: exportMarkdown,
+      createdAt: Date.now(),
+    })
+  }, [addExecutiveDocument, crqcYear, exportMarkdown])
 
   const urgencyBgColor =
     urgencyLevel === 'critical'
@@ -165,12 +243,14 @@ export const CRQCScenarioPlanner: React.FC = () => {
             <span className="text-sm text-muted-foreground">2045</span>
           </div>
           <input
+            id="crqc-year"
             type="range"
             min={2028}
             max={2045}
             value={crqcYear}
             onChange={(e) => setCrqcYear(Number(e.target.value))}
             className="w-full accent-primary"
+            aria-label="CRQC arrival year"
           />
           <div className="flex items-center justify-center gap-2">
             <span className={`text-sm font-medium ${urgencyColor}`}>
@@ -232,7 +312,7 @@ export const CRQCScenarioPlanner: React.FC = () => {
         <div className="glass-panel p-4">
           <div className="flex items-center gap-2 mb-2">
             <Calendar size={16} className="text-status-warning" />
-            <span className="text-xs font-medium text-muted-foreground">Deadlines Missed</span>
+            <span className="text-xs font-medium text-muted-foreground">Pre-CRQC Deadlines</span>
           </div>
           <div className="text-2xl font-bold text-foreground">{missedDeadlines.length}</div>
           <p className="text-xs text-muted-foreground mt-1">
@@ -399,6 +479,19 @@ export const CRQCScenarioPlanner: React.FC = () => {
           </table>
         </div>
       </div>
+
+      {/* Export */}
+      <ExportableArtifact
+        title="CRQC Scenario — Export"
+        exportData={exportMarkdown}
+        filename="crqc-scenario-analysis"
+        formats={['markdown']}
+        onExport={handleExport}
+      >
+        <p className="text-sm text-muted-foreground">
+          Export this scenario analysis as a shareable document.
+        </p>
+      </ExportableArtifact>
     </div>
   )
 }

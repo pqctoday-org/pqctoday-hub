@@ -22,13 +22,22 @@ export const ExportableArtifact: React.FC<ExportableArtifactProps> = ({
 }) => {
   const [copied, setCopied] = React.useState(false)
   const savedRef = React.useRef(false)
+  const lastSavedDataRef = React.useRef<string>('')
+
+  // Reset savedRef when exportData changes so re-export saves updated content
+  React.useEffect(() => {
+    if (exportData !== lastSavedDataRef.current) {
+      savedRef.current = false
+    }
+  }, [exportData])
 
   const triggerSave = useCallback(() => {
     if (onExport && !savedRef.current) {
       savedRef.current = true
+      lastSavedDataRef.current = exportData
       onExport()
     }
-  }, [onExport])
+  }, [onExport, exportData])
 
   const handleCopy = useCallback(async () => {
     await navigator.clipboard.writeText(exportData)

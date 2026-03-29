@@ -86,6 +86,39 @@ export const KPITrackerTemplate: React.FC = () => {
     return initial
   })
 
+  // Track which dimensions the user has manually adjusted
+  const manuallySetRef = React.useRef<Set<string>>(new Set())
+
+  // Wrap setCurrentScores to track manual overrides
+  const handleScoreUpdate = React.useCallback((scores: Record<string, number>) => {
+    // Mark all changed dimensions as manually set
+    setCurrentScores((prev) => {
+      for (const key of Object.keys(scores)) {
+        if (scores[key] !== prev[key]) {
+          manuallySetRef.current.add(key)
+        }
+      }
+      return scores
+    })
+  }, [])
+
+  // Sync auto-scored dimensions when underlying data changes (unless user overrode)
+  React.useEffect(() => {
+    setCurrentScores((prev) => {
+      const next = { ...prev }
+      let changed = false
+      for (const d of dimensions) {
+        if (d.autoScore !== undefined && d.autoScore > 0 && !manuallySetRef.current.has(d.id)) {
+          if (next[d.id] !== d.autoScore) {
+            next[d.id] = d.autoScore
+            changed = true
+          }
+        }
+      }
+      return changed ? next : prev
+    })
+  }, [dimensions])
+
   const exportMarkdown = useMemo(() => {
     let md = '# PQC Migration KPI Tracker\n\n'
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
@@ -161,7 +194,7 @@ export const KPITrackerTemplate: React.FC = () => {
         description="Track progress across six key dimensions of your PQC migration program."
         dimensions={dimensions}
         colorScale="readiness"
-        onScoreChange={setCurrentScores}
+        onScoreChange={handleScoreUpdate}
         showExport={false}
         exportFilename="pqc-kpi-tracker"
       />
@@ -170,7 +203,7 @@ export const KPITrackerTemplate: React.FC = () => {
         title="KPI Tracker Export"
         exportData={exportMarkdown}
         filename="pqc-kpi-tracker"
-        formats={['markdown', 'csv']}
+        formats={['markdown']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">

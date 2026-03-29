@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
+import { useModuleStore } from '@/store/useModuleStore'
 import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { softwareData } from '@/data/migrateData'
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 import { Info, CheckSquare, Package, CheckCircle, ShieldAlert, GitMerge } from 'lucide-react'
+import { ExportableArtifact } from '../../../common/executive'
 
 function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
@@ -35,8 +37,11 @@ function renderPqcBadge(support: string) {
 
 function renderFipsBadge(status: string) {
   const lower = (status || '').toLowerCase()
-  const isFipsCertified = lower.includes('fips 140') || lower.includes('fips 203')
-  const isPartial = !isFipsCertified && lower.startsWith('yes')
+  const isFipsCertified =
+    lower.startsWith('yes') ||
+    lower === 'validated' ||
+    (lower.includes('fips 140') && !lower.startsWith('no'))
+  const isPartial = !isFipsCertified && lower.includes('partial')
 
   if (isFipsCertified) {
     return (
@@ -121,8 +126,9 @@ const LAYER_MAP = new Map(LAYERS.map((l) => [l.id, l]))
 
 export const SupplyChainRiskMatrix: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
-  const { vendorsByLayer, fipsValidatedCount, pqcReadyCount, totalProducts } =
+  const { vendorsByLayer, fipsValidatedCount, pqcReadyCount, totalProducts, industry, country } =
     useExecutiveModuleData(myProducts.length > 0 ? myProducts : undefined)
+  const { addExecutiveDocument } = useModuleStore()
 
   const selectedItems = useMemo(
     () => (myProducts.length > 0 ? resolveProductNames(myProducts) : []),
@@ -157,7 +163,11 @@ export const SupplyChainRiskMatrix: React.FC = () => {
       ).length
       const fipsValid = products.filter((p) => {
         const s = (p.fipsValidated || '').toLowerCase()
-        return s.includes('fips 140') || s.includes('fips 203') || s === 'validated'
+        return (
+          s.startsWith('yes') ||
+          s === 'validated' ||
+          (s.includes('fips 140') && !s.startsWith('no'))
+        )
       }).length
       const hybrid = products.filter((p) => {
         const desc = (p.pqcCapabilityDescription || '').toLowerCase()
@@ -181,6 +191,55 @@ export const SupplyChainRiskMatrix: React.FC = () => {
   const overallPqcPct = totalProducts > 0 ? Math.round((pqcReadyCount / totalProducts) * 100) : 0
   const overallFipsPct =
     totalProducts > 0 ? Math.round((fipsValidatedCount / totalProducts) * 100) : 0
+
+  const exportMarkdown = useMemo(() => {
+    let md = '# Supply Chain PQC Risk Matrix\n\n'
+    md += `**Generated:** ${new Date().toLocaleDateString()}\n`
+    if (industry) md += `**Industry:** ${industry}\n`
+    if (country) md += `**Country:** ${country}\n`
+    md += `**Products Analyzed:** ${totalProducts}\n\n`
+
+    md += '## Summary\n\n'
+    md += `| Metric | Value |\n|--------|-------|\n`
+    md += `| PQC Ready | ${overallPqcPct}% (${pqcReadyCount}/${totalProducts}) |\n`
+    md += `| FIPS Validated | ${overallFipsPct}% (${fipsValidatedCount}/${totalProducts}) |\n`
+    md += `| Infrastructure Layers | ${layerStats.length} |\n\n`
+
+    md += '## Layer Breakdown\n\n'
+    for (const stat of layerStats) {
+      const layerDef = LAYER_MAP.get(stat.layerId)
+      const label = layerDef?.label ?? stat.layerId
+      const gapCount = stat.total - stat.pqcReady
+      md += `### ${label} (${stat.total} products)\n\n`
+      md += `| Metric | Count | % |\n|--------|-------|---|\n`
+      md += `| PQC Ready | ${stat.pqcReady} | ${stat.total > 0 ? Math.round((stat.pqcReady / stat.total) * 100) : 0}% |\n`
+      md += `| FIPS Validated | ${stat.fipsValidated} | ${stat.total > 0 ? Math.round((stat.fipsValidated / stat.total) * 100) : 0}% |\n`
+      md += `| Hybrid Support | ${stat.hybridSupport} | ${stat.total > 0 ? Math.round((stat.hybridSupport / stat.total) * 100) : 0}% |\n`
+      md += `| PQC Gap | ${gapCount} | ${stat.total > 0 ? Math.round((gapCount / stat.total) * 100) : 0}% |\n\n`
+    }
+
+    return md
+  }, [
+    industry,
+    country,
+    totalProducts,
+    overallPqcPct,
+    pqcReadyCount,
+    overallFipsPct,
+    fipsValidatedCount,
+    layerStats,
+  ])
+
+  const handleExport = useCallback(() => {
+    addExecutiveDocument({
+      id: `supply-chain-matrix-${Date.now()}`,
+      moduleId: 'vendor-risk',
+      type: 'supply-chain-matrix',
+      title: `Supply Chain Risk Matrix (${overallPqcPct}% PQC Ready)`,
+      data: exportMarkdown,
+      createdAt: Date.now(),
+    })
+  }, [addExecutiveDocument, overallPqcPct, exportMarkdown])
 
   return (
     <div className="space-y-6">
@@ -313,6 +372,19 @@ export const SupplyChainRiskMatrix: React.FC = () => {
           </p>
         </div>
       </div>
+
+      {/* Export */}
+      <ExportableArtifact
+        title="Supply Chain Risk Matrix — Export"
+        exportData={exportMarkdown}
+        filename="supply-chain-risk-matrix"
+        formats={['markdown']}
+        onExport={handleExport}
+      >
+        <p className="text-sm text-muted-foreground">
+          Export the supply chain risk analysis as a shareable document.
+        </p>
+      </ExportableArtifact>
     </div>
   )
 }

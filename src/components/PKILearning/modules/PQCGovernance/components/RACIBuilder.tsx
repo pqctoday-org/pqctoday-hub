@@ -75,6 +75,14 @@ export const RACIBuilder: React.FC = () => {
     })
   }, [matrix])
 
+  const activitiesMultipleAccountable = useMemo(() => {
+    return ACTIVITIES.filter((activity) => {
+      const row = matrix[activity]
+      const accountableCount = ROLES.filter((role) => row?.[role] === 'A').length
+      return accountableCount > 1
+    })
+  }, [matrix])
+
   const handleCellChange = useCallback((activity: string, role: string, value: RACIValue) => {
     setMatrix((prev) => ({
       ...prev,
@@ -178,7 +186,7 @@ export const RACIBuilder: React.FC = () => {
         </table>
       </div>
 
-      {/* Validation Warning */}
+      {/* Validation Warnings */}
       {activitiesMissingAccountable.length > 0 && (
         <div className="flex items-start gap-2 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30 text-sm">
           <AlertTriangle size={16} className="text-status-warning shrink-0 mt-0.5" />
@@ -187,6 +195,18 @@ export const RACIBuilder: React.FC = () => {
             <p className="text-xs text-muted-foreground mt-0.5">
               Each activity should have exactly one &quot;A&quot; (Accountable). Missing:{' '}
               {activitiesMissingAccountable.join(', ')}.
+            </p>
+          </div>
+        </div>
+      )}
+      {activitiesMultipleAccountable.length > 0 && (
+        <div className="flex items-start gap-2 p-3 rounded-lg bg-status-error/10 border border-status-error/30 text-sm">
+          <AlertTriangle size={16} className="text-status-error shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium text-foreground">Multiple Accountable assignments</p>
+            <p className="text-xs text-muted-foreground mt-0.5">
+              RACI methodology requires exactly one &quot;A&quot; per activity. Multiple found:{' '}
+              {activitiesMultipleAccountable.join(', ')}.
             </p>
           </div>
         </div>

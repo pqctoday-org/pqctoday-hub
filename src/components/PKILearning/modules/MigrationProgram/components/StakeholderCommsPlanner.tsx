@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useCallback, useMemo } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
+import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '../../../common/executive'
 import type { ArtifactSection } from '../../../common/executive'
 
@@ -182,6 +183,7 @@ function renderCommsPreview(data: Record<string, Record<string, string | string[
 
 export const StakeholderCommsPlanner: React.FC = () => {
   const { addExecutiveDocument } = useModuleStore()
+  const { industry, country, migrationDeadlineYear } = useExecutiveModuleData()
 
   const handleExport = useCallback(
     (data: Record<string, Record<string, string | string[]>>) => {
@@ -204,7 +206,12 @@ export const StakeholderCommsPlanner: React.FC = () => {
     <div className="space-y-6">
       <div className="glass-panel p-4">
         <p className="text-sm text-muted-foreground">
-          Build a comprehensive stakeholder communication plan for your PQC migration program.
+          Build a comprehensive stakeholder communication plan for your PQC migration program
+          {industry ? ` in the ${industry} sector` : ''}
+          {country ? ` (${country})` : ''}.
+          {migrationDeadlineYear
+            ? ` Your earliest regulatory deadline is ${migrationDeadlineYear}.`
+            : ''}{' '}
           Complete each section below, then switch to Preview mode to see the formatted document.
           Export to save to your learning portfolio.
         </p>

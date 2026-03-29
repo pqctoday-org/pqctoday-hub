@@ -45,7 +45,9 @@ const DIMENSIONS: Dimension[] = [
     weight: 0.2,
     autoDetect: (item) => {
       const s = (item.fipsValidated || '').toLowerCase()
-      return s.includes('fips 140') || s.includes('fips 203') || s === 'validated'
+      return (
+        s.startsWith('yes') || s === 'validated' || (s.includes('fips 140') && !s.startsWith('no'))
+      )
     },
   },
   {
@@ -448,7 +450,7 @@ export const VendorScorecardBuilder: React.FC = () => {
         title="Vendor PQC Readiness — Export"
         exportData={exportMarkdown}
         filename="vendor-pqc-scorecard"
-        formats={['markdown', 'csv']}
+        formats={['markdown']}
       >
         <p className="text-sm text-muted-foreground">
           Export the scorecard above as a shareable document.

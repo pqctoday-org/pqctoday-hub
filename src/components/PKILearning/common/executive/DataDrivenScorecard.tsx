@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useMemo } from 'react'
+import React, { useState, useCallback, useMemo, useEffect } from 'react'
 import { ExportableArtifact } from './ExportableArtifact'
 
 export interface ScorecardDimension {
@@ -61,9 +61,38 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
     return initial
   })
 
+  // Track which dimensions the user has manually adjusted
+  const userOverriddenRef = React.useRef<Set<string>>(new Set())
+
+  // Sync auto-scored dimensions from props when they change (e.g., data loads after mount)
+  useEffect(() => {
+    setScores((prev) => {
+      const next = { ...prev }
+      let changed = false
+      for (const d of dimensions) {
+        // Only sync non-user-overridable dimensions, or user-overridable ones
+        // that the user hasn't manually touched
+        if (
+          d.autoScore !== undefined &&
+          d.autoScore > 0 &&
+          !userOverriddenRef.current.has(d.id) &&
+          next[d.id] !== d.autoScore
+        ) {
+          next[d.id] = d.autoScore
+          changed = true
+        }
+      }
+      if (changed) {
+        onScoreChange?.(next)
+      }
+      return changed ? next : prev
+    })
+  }, [dimensions, onScoreChange])
+
   const handleScoreChange = useCallback(
     (dimId: string, value: number) => {
       const clamped = Math.max(0, Math.min(100, value))
+      userOverriddenRef.current.add(dimId)
       setScores((prev) => {
         const updated = { ...prev, [dimId]: clamped }
         onScoreChange?.(updated)
@@ -158,7 +187,7 @@ export const DataDrivenScorecard: React.FC<DataDrivenScorecardProps> = ({
           title={`${title} — Export`}
           exportData={exportMarkdown}
           filename={exportFilename}
-          formats={['markdown', 'csv']}
+          formats={['markdown']}
         >
           <p className="text-sm text-muted-foreground">
             Export the scorecard above as a shareable document.

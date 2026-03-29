@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useRef, useEffect } from 'react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { DataDrivenScorecard } from '@/components/PKILearning/common/executive'
@@ -73,35 +73,47 @@ export const KPIDashboardBuilder: React.FC = () => {
     [vendorReadinessScore, execData.pqcReadyCount, execData.totalProducts]
   )
 
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    }
+  }, [])
+
   const handleScoreChange = useCallback(
     (scores: Record<string, number>) => {
-      // Auto-save on score changes — compute weighted total for the document
-      let weightedSum = 0
-      let totalWeight = 0
-      for (const d of dimensions) {
-        const score = scores[d.id] ?? 0
-        weightedSum += score * d.weight
-        totalWeight += d.weight
-      }
-      const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
+      // Debounce store saves — only persist after 500ms of inactivity
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+      saveTimerRef.current = setTimeout(() => {
+        let weightedSum = 0
+        let totalWeight = 0
+        for (const d of dimensions) {
+          const score = scores[d.id] ?? 0
+          weightedSum += score * d.weight
+          totalWeight += d.weight
+        }
+        const overall = totalWeight > 0 ? Math.round(weightedSum / totalWeight) : 0
 
-      let md = '# PQC Governance KPI Dashboard\n\n'
-      md += `**Overall Score: ${overall}/100**\n\n`
-      md += `Generated: ${new Date().toLocaleDateString()}\n\n`
-      md += '| KPI | Score | Weight |\n'
-      md += '|-----|-------|--------|\n'
-      for (const d of dimensions) {
-        md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(d.weight * 100)}% |\n`
-      }
+        let md = '# PQC Governance KPI Dashboard\n\n'
+        md += `**Overall Score: ${overall}/100**\n\n`
+        md += `Generated: ${new Date().toLocaleDateString()}\n\n`
+        md += '| KPI | Score | Weight |\n'
+        md += '|-----|-------|--------|\n'
+        for (const d of dimensions) {
+          md += `| ${d.label} | ${scores[d.id] ?? 0}/100 | ${Math.round(d.weight * 100)}% |\n`
+        }
 
-      addExecutiveDocument({
-        id: 'kpi-dashboard-pqc-governance',
-        moduleId: 'pqc-governance',
-        type: 'kpi-dashboard',
-        title: 'PQC Governance KPI Dashboard',
-        data: md,
-        createdAt: Date.now(),
-      })
+        addExecutiveDocument({
+          id: 'kpi-dashboard-pqc-governance',
+          moduleId: 'pqc-governance',
+          type: 'kpi-dashboard',
+          title: 'PQC Governance KPI Dashboard',
+          data: md,
+          createdAt: Date.now(),
+        })
+      }, 500)
     },
     [dimensions, addExecutiveDocument]
   )

@@ -4,6 +4,40 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.65.0] - 2026-03-29
+
+### Added
+
+- **CRQC Scenario Planner export**: Full markdown export with algorithm impact table, compliance deadlines, HNDL exposure window, and assessment context [view:/business/tools/crqc-scenario]
+- **Supply Chain Risk Matrix export**: Per-layer PQC/FIPS/hybrid breakdown with summary statistics and persona context [view:/business/tools/supply-chain-matrix]
+- **Audit Checklist Risk Assessment section**: New 6th section with 5 items covering HNDL risk assessment, data classification, crypto risk register, threat modeling, and risk acceptance [view:/business/tools/audit-checklist]
+- **Audit Checklist standards references**: All 30 items now include descriptions and authoritative references (NIST SP 800-30/57/131A, CNSA 2.0, FIPS 140-3/199/203-205, ISO 27001/27005, CISA CBOM, NIST IR 8547, NIST CSF 2.0) [view:/business/tools/audit-checklist]
+- **Audit Checklist maturity tiers**: Export includes per-section scoring and 5-level maturity rating (Not Started → Foundation → Developing → Established → Optimized) [view:/business/tools/audit-checklist]
+- **Deployment Playbook hybrid mode section**: New "Hybrid Mode Deployment" section (5 items) covering hybrid TLS config, backward compatibility, cert chain validation, performance benchmarking, and interop testing [view:/business/tools/deployment-playbook]
+- **Deployment Playbook post-deployment section**: New "Post-Deployment Validation" section (5 items) covering cert chain verification, cipher suite checks, compliance scan, CMDB update, and CBOM refresh [view:/business/tools/deployment-playbook]
+- **RACI Builder multi-Accountable validation**: Red warning when multiple roles are assigned "A" (Accountable) for the same activity [view:/business/tools/raci-builder]
+- **BusinessCenterShell arrow-key navigation**: Full WAI-ARIA keyboard navigation — ArrowLeft/Right cycles tabs, Home/End jump to first/last, roving tabIndex [view:/business]
+- **GA4 Business Center tracking**: `logBusinessToolOpen` and `logBusinessToolExport` event helpers; tool open tracked via BusinessToolRoute [infra]
+- **SEO fallback for dynamic routes**: `/business/tools/:toolId` and `/learn/:moduleId` now inherit parent route meta instead of falling back to homepage [infra]
+- **Persona awareness across all 14 tools**: All Business Center tools now adapt to the user's industry, geography, and regulatory context from assessment/persona stores [view:/business/tools]
+
+### Fixed
+
+- **ExportableArtifact re-export bug**: `savedRef` now resets when `exportData` changes, allowing updated content to be re-saved to the executive portfolio on subsequent exports [infra]
+- **FIPS 203 false-positive detection**: Tightened FIPS validation check across `useExecutiveModuleData`, `VendorScorecardBuilder`, and `SupplyChainRiskMatrix` — now requires `startsWith('yes')` instead of `includes('fips 203')` which matched negative contexts [view:/business/tools/vendor-scorecard]
+- **ROI Calculator unrealistic default**: Products to Migrate capped at `min(totalProducts, 50)` instead of full catalog (~375), slider min lowered from 10 to 1 [view:/business/tools/roi-calculator]
+- **CNSA 2.0 deadline labels**: Fixed 2025 ("preferred" not "signing"), 2030 ("all software exclusive"), 2033 ("networking equipment replacement"), added missing 2035 full enforcement milestone, fixed 2027 ("new networking equipment must support PQC" not "internal target") [view:/business/tools/contract-clause]
+- **KPI Tracker stale auto-scores**: Added `useEffect` + `manuallySetRef` to sync auto-scored dimensions when underlying data changes without clobbering user manual overrides [view:/business/tools/kpi-tracker]
+- **DataDrivenScorecard prop-to-state sync**: Auto-scored dimensions now sync from props when data loads after mount; `userOverriddenRef` prevents overwriting user adjustments [infra]
+- **KPI Dashboard debounce**: Store saves debounced to 500ms with cleanup on unmount to prevent state-update-on-unmounted-component [view:/business/tools/kpi-dashboard]
+- **Roadmap Builder export**: Export now respects user's deadline checkbox selections instead of including all deadlines [view:/business/tools/roadmap-builder]
+- **CRQC Scenario Planner filter logic**: Changed from `algo.type === 'asymmetric'` to `algo.breakYear !== null` for future-proof algorithm classification [view:/business/tools/crqc-scenario]
+- **CRQC slider accessibility**: Added `aria-label="CRQC arrival year"` and `id="crqc-year"` [view:/business/tools/crqc-scenario]
+- **Fake CSV/JSON exports removed**: Removed CSV format from 6 tools and JSON format from ArtifactBuilder that were downloading markdown content with wrong file extensions [infra]
+- **Shared component contracts**: Replaced raw `<input>`/`<textarea>`/`<button>` with `<Input>`/`<Textarea>`/`<Button>` components in TimelinePlanner, ArtifactBuilder, and OpsChecklist [infra]
+- **BusinessToolsGrid accessibility**: Added `aria-label` on search input, `aria-pressed` on filter pills [view:/business/tools]
+- **Audit Checklist references corrected**: `NIST SP 800-154` (never-finalized draft) → `NIST SP 800-30 Rev 1`; `NIST PQC Migration Guidance` (vague) → `NIST IR 8547` [view:/business/tools/audit-checklist]
+
 ## [2.64.0] - 2026-03-29
 
 ### Added

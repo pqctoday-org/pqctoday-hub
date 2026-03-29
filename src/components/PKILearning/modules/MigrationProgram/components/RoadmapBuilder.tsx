@@ -75,16 +75,17 @@ export const RoadmapBuilder: React.FC = () => {
   }, [countryDeadlines])
 
   const [currentMilestones, setCurrentMilestones] = React.useState<Milestone[]>(DEFAULT_MILESTONES)
+  const [selectedDeadlines, setSelectedDeadlines] = React.useState<ExternalDeadline[]>([])
 
   const exportMarkdown = useMemo(() => {
     let md = '# PQC Migration Roadmap\n\n'
     md += `Generated: ${new Date().toLocaleDateString()}\n\n`
 
-    if (externalDeadlines.length > 0) {
+    if (selectedDeadlines.length > 0) {
       md += '## External Regulatory Deadlines\n\n'
       md += '| Year | Deadline | Source |\n'
       md += '|------|----------|--------|\n'
-      for (const d of externalDeadlines) {
+      for (const d of selectedDeadlines) {
         md += `| ${d.year} | ${d.label} | ${d.source} |\n`
       }
       md += '\n'
@@ -111,7 +112,7 @@ export const RoadmapBuilder: React.FC = () => {
     }
 
     return md
-  }, [externalDeadlines, currentMilestones])
+  }, [selectedDeadlines, currentMilestones])
 
   const handleExport = useCallback(() => {
     addExecutiveDocument({
@@ -146,13 +147,14 @@ export const RoadmapBuilder: React.FC = () => {
         yearRange={[2025, Math.max(2036, new Date().getFullYear() + 10)] as [number, number]}
         categories={DEFAULT_CATEGORIES}
         onMilestonesChange={setCurrentMilestones}
+        onSelectedDeadlinesChange={setSelectedDeadlines}
       />
 
       <ExportableArtifact
         title="Roadmap Export"
         exportData={exportMarkdown}
         filename="pqc-migration-roadmap"
-        formats={['markdown', 'csv']}
+        formats={['markdown']}
         onExport={handleExport}
       >
         <p className="text-sm text-muted-foreground">
