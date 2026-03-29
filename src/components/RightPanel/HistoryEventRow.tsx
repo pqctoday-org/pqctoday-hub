@@ -17,6 +17,7 @@ import {
   Calendar,
   Layers,
   ShieldCheck,
+  Eye,
   type LucideIcon,
 } from 'lucide-react'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
@@ -40,6 +41,7 @@ const EVENT_CONFIG: Record<HistoryEventType, { icon: LucideIcon; color: string }
   streak_milestone: { icon: Flame, color: 'text-status-warning' },
   migrate_product_selection: { icon: Layers, color: 'text-primary' },
   compliance_framework_selection: { icon: ShieldCheck, color: 'text-primary' },
+  page_view: { icon: Eye, color: 'text-muted-foreground' },
 }
 
 interface HistoryEventRowProps {
