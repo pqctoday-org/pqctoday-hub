@@ -65,6 +65,25 @@ export const useAssessmentStore = Object.assign(
       }
     },
     // Enable store injection (e.g. UnifiedStorageService restore mechanism)
+    // Expose persist API so seedHistory / useSyncEffect can check hydration
+    persist: {
+      hasHydrated: () =>
+        useAssessmentFormStore.persist.hasHydrated() &&
+        useAssessmentResultStore.persist.hasHydrated(),
+      onFinishHydration: (fn: () => void) => {
+        // Fire callback once both sub-stores have hydrated
+        let remaining = 2
+        const check = () => {
+          remaining--
+          if (remaining === 0) fn()
+        }
+        if (useAssessmentFormStore.persist.hasHydrated()) check()
+        else useAssessmentFormStore.persist.onFinishHydration(check)
+        if (useAssessmentResultStore.persist.hasHydrated()) check()
+        else useAssessmentResultStore.persist.onFinishHydration(check)
+        return () => {} // cleanup stub
+      },
+    },
     setState: (partial: Partial<AssessmentState>) => {
       if (!partial) return
 
