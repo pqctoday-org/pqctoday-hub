@@ -167,8 +167,8 @@ export const HybridCertFormats: React.FC = () => {
                     type: 'pqc',
                   },
                 ],
-            timingMs: performance.now() - start,
-            error: hasError ? pqcCert.error || ecCert.error : undefined,
+            timingMs: certResult.timingMs,
+            error: certResult.error,
           },
         }))
       }

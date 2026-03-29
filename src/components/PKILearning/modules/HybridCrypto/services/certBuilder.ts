@@ -22,7 +22,6 @@ import {
   AlgorithmIdentifier,
   SubjectPublicKeyInfo,
   Validity,
-  Time,
   Name,
   RelativeDistinguishedName,
   AttributeTypeAndValue,
@@ -101,7 +100,7 @@ function buildECAlgId(): AlgorithmIdentifier {
   const oidBytes = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x03, 0x01, 0x07])
   return new AlgorithmIdentifier({
     algorithm: EC_PUBLIC_KEY_OID_STR,
-    parameters: oidBytes.buffer,
+    parameters: oidBytes.buffer as ArrayBuffer,
   })
 }
 
@@ -129,8 +128,8 @@ function buildValidity(): { validity: Validity; notBefore: Date; notAfter: Date 
   const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
   return {
     validity: new Validity({
-      notBefore: new Time({ utcTime: notBefore }),
-      notAfter: new Time({ utcTime: notAfter }),
+      notBefore,
+      notAfter,
     }),
     notBefore,
     notAfter,
@@ -140,7 +139,7 @@ function buildValidity(): { validity: Validity; notBefore: Date; notAfter: Date 
 function buildSPKI(algId: AlgorithmIdentifier, pubKeyBytes: Uint8Array): SubjectPublicKeyInfo {
   return new SubjectPublicKeyInfo({
     algorithm: algId,
-    subjectPublicKey: pubKeyBytes.buffer,
+    subjectPublicKey: pubKeyBytes.buffer as ArrayBuffer,
   })
 }
 
@@ -170,7 +169,7 @@ function buildCertificate(
   const cert = new Certificate({
     tbsCertificate: AsnConvert.parse(tbsDer, TBSCertificate),
     signatureAlgorithm: algId,
-    signatureValue: signatureBytes.buffer,
+    signatureValue: signatureBytes.buffer as ArrayBuffer,
   })
   return new Uint8Array(AsnConvert.serialize(cert))
 }
@@ -251,7 +250,7 @@ export async function buildCompositeCert(
   // SPKI wraps composite AlgId + composite key as BIT STRING
   const compositeSPKI = new SubjectPublicKeyInfo({
     algorithm: compositeAlgId,
-    subjectPublicKey: compositeKeyDer.buffer,
+    subjectPublicKey: compositeKeyDer.buffer as ArrayBuffer,
   })
 
   const tbs = new TBSCertificate({
@@ -280,7 +279,7 @@ export async function buildCompositeCert(
   const cert = new Certificate({
     tbsCertificate: AsnConvert.parse(AsnConvert.serialize(tbs), TBSCertificate),
     signatureAlgorithm: compositeAlgId,
-    signatureValue: compositeSignature.buffer,
+    signatureValue: compositeSignature.buffer as ArrayBuffer,
   })
   return new Uint8Array(AsnConvert.serialize(cert))
 }
@@ -332,7 +331,7 @@ export async function buildAltSigCert(
 
   // Extension 74: BIT STRING of alt signature
   const altSigBitString = buildDERBitString(altSigBytes)
-  const ext74 = buildExtension(ALT_SIG_VALUE_OID, false, altSigBitString.buffer)
+  const ext74 = buildExtension(ALT_SIG_VALUE_OID, false, altSigBitString.buffer as ArrayBuffer)
 
   // Step 3: Rebuild TBS with all 3 extensions
   const tbsFinal = new TBSCertificate({
@@ -385,13 +384,13 @@ export async function buildRelatedCertPair(
   const buildRelatedExt = (hashBytes: Uint8Array): Extension => {
     const sha256AlgId = new AlgorithmIdentifier({
       algorithm: SHA256_OID_STR,
-      parameters: new Uint8Array([0x05, 0x00]).buffer, // NULL
+      parameters: new Uint8Array([0x05, 0x00]).buffer as ArrayBuffer, // NULL
     })
     const sha256AlgIdDer = new Uint8Array(AsnConvert.serialize(sha256AlgId))
     // SEQUENCE { AlgorithmIdentifier, OCTET STRING(hash) }
     const octetStringHash = buildDEROctetString(hashBytes)
     const extValue = buildDERSequence([sha256AlgIdDer, octetStringHash])
-    return buildExtension(RELATED_CERT_OID, false, extValue.buffer)
+    return buildExtension(RELATED_CERT_OID, false, extValue.buffer as ArrayBuffer)
   }
 
   // Pass 1: Build Cert A (ECDSA) WITHOUT RelatedCertificate extension
@@ -410,7 +409,9 @@ export async function buildRelatedCertPair(
   const certA_draft = buildCertificate(tbsA_draft, ecAlgId, sigA_draft)
 
   // Pass 2: Hash draft Cert A → build Cert B with that hash
-  const hashA = new Uint8Array(await crypto.subtle.digest('SHA-256', certA_draft))
+  const hashA = new Uint8Array(
+    await crypto.subtle.digest('SHA-256', certA_draft.buffer as ArrayBuffer)
+  )
   const relatedExtB = buildRelatedExt(hashA)
 
   const tbsB = new TBSCertificate({
@@ -428,7 +429,7 @@ export async function buildRelatedCertPair(
   const certB = buildCertificate(tbsB, mldsaAlgId, sigB)
 
   // Pass 3: Hash Cert B → rebuild Cert A with hash of Cert B
-  const hashB = new Uint8Array(await crypto.subtle.digest('SHA-256', certB))
+  const hashB = new Uint8Array(await crypto.subtle.digest('SHA-256', certB.buffer as ArrayBuffer))
   const relatedExtA = buildRelatedExt(hashB)
 
   const tbsA = new TBSCertificate({
@@ -453,7 +454,9 @@ export async function buildRelatedCertPair(
   return {
     certA,
     certB,
-    bindingHashA: toHex(new Uint8Array(await crypto.subtle.digest('SHA-256', certA))),
+    bindingHashA: toHex(
+      new Uint8Array(await crypto.subtle.digest('SHA-256', certA.buffer as ArrayBuffer))
+    ),
     bindingHashB: toHex(hashB),
   }
 }
@@ -504,7 +507,7 @@ export async function buildChameleonCert(
   const deltaSigBitStr = buildDERBitString(deltaSig)
 
   const deltaDescriptor = buildDERSequence([serialDer, ctxExplicit0, ecSPKIDer, deltaSigBitStr])
-  const deltaExt = buildExtension(DELTA_CERT_DESC_OID, false, deltaDescriptor.buffer)
+  const deltaExt = buildExtension(DELTA_CERT_DESC_OID, false, deltaDescriptor.buffer as ArrayBuffer)
 
   // Primary certificate (ML-DSA-65) with DeltaCertificateDescriptor extension
   const primaryTbs = new TBSCertificate({
