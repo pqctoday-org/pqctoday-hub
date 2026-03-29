@@ -4,6 +4,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.65.1] - 2026-03-29
+
+### Added
+
+- **Google Drive Cloud Sync CSRF protection**: OAuth login now sends a `state` nonce parameter to prevent impersonation attacks (resolves GCP "Use secure flows" warning) [infra]
+- **GitHub Actions secret**: `VITE_GOOGLE_CLIENT_ID` added to `pqctoday/pqc-timeline-app` for production Cloud Sync builds [infra]
+
+### Fixed
+
+- **SoftHSM WASM imports**: Fixed invalid `type { type X }` syntax across 8 softhsm modules (classical, helpers, kdf, keywrap, objects, pqc, session, symmetric) [infra]
+- **SoftHSM loaders**: Removed unused `_WASM_VERSION` import [infra]
+- **SoftHSM logging**: Fixed `pkcs11Inspect` import path and added missing `buildInspect` import [infra]
+- **Assessment store types**: Generic type signature for selector function [infra]
+- **Cloud sync store subscribe**: Added type cast for Zustand store subscribe compatibility [infra]
+- **AlgorithmsView tests**: Added async/await for lazy-loaded content to prevent act() warnings [test]
+- **SbomSection**: Added missing `useState` import [infra]
+
 ## [2.65.0] - 2026-03-29
 
 ### Added
