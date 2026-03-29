@@ -138,7 +138,7 @@ export const HsmPqcModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <HsmPqcIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <HsmPqcIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -148,7 +148,7 @@ export const DatabaseEncryptionPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <DatabaseEncryptionIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <DatabaseEncryptionIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

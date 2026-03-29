@@ -72,12 +72,16 @@ const GlossarySpan = ({ entry, displayText }: { entry: GlossaryTerm; displayText
             <div className="flex items-center gap-2 mb-1.5">
               <span className="font-semibold text-foreground">{entry.term}</span>
               {entry.acronym && (
-                <span className="font-mono text-[10px] text-muted-foreground">({entry.acronym})</span>
+                <span className="font-mono text-[10px] text-muted-foreground">
+                  ({entry.acronym})
+                </span>
               )}
             </div>
             <p className="leading-relaxed text-muted-foreground">{entry.definition}</p>
             {entry.technicalNote && (
-              <p className="mt-1.5 leading-relaxed text-muted-foreground/70 italic">{entry.technicalNote}</p>
+              <p className="mt-1.5 leading-relaxed text-muted-foreground/70 italic">
+                {entry.technicalNote}
+              </p>
             )}
             {entry.relatedModule && (
               <Link

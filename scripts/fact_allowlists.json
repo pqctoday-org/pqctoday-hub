@@ -12,15 +12,9 @@
     "205": "SLH-DSA"
   },
   "fips_all_variants": {
-    "203": [
-      "ML-KEM"
-    ],
-    "204": [
-      "ML-DSA"
-    ],
-    "205": [
-      "SLH-DSA"
-    ]
+    "203": ["ML-KEM"],
+    "204": ["ML-DSA"],
+    "205": ["SLH-DSA"]
   },
   "algorithm_to_fips": {
     "ML-KEM": "203",

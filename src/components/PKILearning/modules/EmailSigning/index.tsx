@@ -134,7 +134,7 @@ export const EmailSigningModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <EmailSigningIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <EmailSigningIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

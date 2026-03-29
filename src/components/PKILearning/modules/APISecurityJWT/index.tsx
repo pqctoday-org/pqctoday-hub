@@ -145,7 +145,7 @@ export const APISecurityJWTModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <APISecurityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <APISecurityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -102,7 +102,8 @@ try {
     const dateTag = `${String(d.getMonth() + 1).padStart(2, '0')}${String(d.getDate()).padStart(2, '0')}${d.getFullYear()}`
     const reportPath = path.join(reportDir, `graph-consistency-${dateTag}.md`)
     fs.writeFileSync(reportPath, graphMarkdown)
-    if (!jsonMode) console.log(`\n📝 Graph consistency report: ${path.relative(process.cwd(), reportPath)}`)
+    if (!jsonMode)
+      console.log(`\n📝 Graph consistency report: ${path.relative(process.cwd(), reportPath)}`)
   }
 
   // ── Build report ────────────────────────────────────────────────────────
@@ -123,7 +124,6 @@ try {
     process.exit(0)
   }
   process.exit(report.summary.errors > 0 ? 1 : 0)
-
 } catch (err) {
   console.error('Script failure:', err)
   process.exit(2)

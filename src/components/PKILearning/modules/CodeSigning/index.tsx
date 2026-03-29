@@ -147,7 +147,7 @@ export const CodeSigningModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <CodeSigningIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <CodeSigningIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

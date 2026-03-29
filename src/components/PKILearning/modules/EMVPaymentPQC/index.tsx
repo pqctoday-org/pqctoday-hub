@@ -166,7 +166,7 @@ export const EMVPaymentPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <EMVPaymentIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <EMVPaymentIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

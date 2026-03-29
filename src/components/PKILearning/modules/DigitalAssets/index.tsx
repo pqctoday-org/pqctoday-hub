@@ -161,7 +161,7 @@ export const DigitalAssetsModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <BlockchainCryptoIntroduction onNavigateToWorkshop={() => navigateToWorkshop()} />
+            <BlockchainCryptoIntroduction onNavigateToWorkshop={() => navigateToWorkshop()} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -149,7 +149,7 @@ export const SecretsManagementPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <SecretsManagementIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <SecretsManagementIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

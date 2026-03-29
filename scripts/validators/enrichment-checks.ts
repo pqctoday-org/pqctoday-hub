@@ -20,7 +20,10 @@ const ENRICHMENT_SOURCES: EnrichmentSource[] = [
 
 const APPROVED_MODELS = ['qwen3.5:27b', 'ollama-qwen3.5:27b', 'manual-extraction', 'manual']
 
-export function runEnrichmentChecks(): { results: CheckResult[]; coverage: EnrichmentCoverageEntry[] } {
+export function runEnrichmentChecks(): {
+  results: CheckResult[]
+  coverage: EnrichmentCoverageEntry[]
+} {
   const results: CheckResult[] = []
   const coverage: EnrichmentCoverageEntry[] = []
 
@@ -32,30 +35,34 @@ export function runEnrichmentChecks(): { results: CheckResult[]; coverage: Enric
     let sourceIds: Set<string>
     if (source.idField === '__timeline_composite') {
       sourceIds = new Set(
-        csv.rows.map(r => {
-          const c = r.Country?.trim()
-          const o = r.OrgName?.trim()
-          const t = r.Title?.trim()
-          return c && o && t ? `${c}:${o} \u2014 ${t}` : null
-        }).filter((s): s is string => s !== null)
+        csv.rows
+          .map((r) => {
+            const c = r.Country?.trim()
+            const o = r.OrgName?.trim()
+            const t = r.Title?.trim()
+            return c && o && t ? `${c}:${o} \u2014 ${t}` : null
+          })
+          .filter((s): s is string => s !== null)
       )
       // Also add em-dash variant
       const altIds = new Set(
-        csv.rows.map(r => {
-          const c = r.Country?.trim()
-          const o = r.OrgName?.trim()
-          const t = r.Title?.trim()
-          return c && o && t ? `${c}:${o} — ${t}` : null
-        }).filter((s): s is string => s !== null)
+        csv.rows
+          .map((r) => {
+            const c = r.Country?.trim()
+            const o = r.OrgName?.trim()
+            const t = r.Title?.trim()
+            return c && o && t ? `${c}:${o} — ${t}` : null
+          })
+          .filter((s): s is string => s !== null)
       )
       for (const id of altIds) sourceIds.add(id)
     } else {
-      sourceIds = new Set(csv.rows.map(r => r[source.idField]).filter(Boolean))
+      sourceIds = new Set(csv.rows.map((r) => r[source.idField]).filter(Boolean))
     }
-    const enrichedIds = new Set([...allIds].filter(id => sourceIds.has(id)))
-    const unenrichedIds = [...sourceIds].filter(id => !allIds.has(id))
+    const enrichedIds = new Set([...allIds].filter((id) => sourceIds.has(id)))
+    const unenrichedIds = [...sourceIds].filter((id) => !allIds.has(id))
 
-    const fileMetas: EnrichmentFileMeta[] = files.map(f => ({
+    const fileMetas: EnrichmentFileMeta[] = files.map((f) => ({
       file: f.file,
       entries: f.entries.length,
       model: f.model,
@@ -85,14 +92,18 @@ export function runEnrichmentChecks(): { results: CheckResult[]; coverage: Enric
       const isHistorical = f.date && f.date < MANDATE_DATE
       if (!f.model) {
         findings.push({
-          csv: f.file, row: null, field: 'enrichment_method',
+          csv: f.file,
+          row: null,
+          field: 'enrichment_method',
           value: 'missing',
           message: `Enrichment file "${f.file}" has no model metadata — add frontmatter or comment header`,
         })
-      } else if (!APPROVED_MODELS.some(m => f.model!.includes(m))) {
+      } else if (!APPROVED_MODELS.some((m) => f.model!.includes(m))) {
         if (!isHistorical) hasRecentViolation = true
         findings.push({
-          csv: f.file, row: null, field: 'enrichment_method',
+          csv: f.file,
+          row: null,
+          field: 'enrichment_method',
           value: f.model,
           message: `Enrichment file "${f.file}" used model "${f.model}"${isHistorical ? ' (historical, pre-mandate)' : ' — must be qwen3.5:27b'}`,
         })

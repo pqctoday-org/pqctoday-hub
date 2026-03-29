@@ -30,9 +30,10 @@ export function GovernancePolicySection({
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
   const allArtifacts = metrics.artifactsByPillar.governance
-  const artifacts = typeFilter && typeFilter !== 'all'
-    ? allArtifacts.filter((d) => d.type === typeFilter)
-    : allArtifacts
+  const artifacts =
+    typeFilter && typeFilter !== 'all'
+      ? allArtifacts.filter((d) => d.type === typeFilter)
+      : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.governance
   const sourceModules = PILLAR_SOURCE_MODULES.governance
   const existingTypes = new Set(artifacts.map((a) => a.type))

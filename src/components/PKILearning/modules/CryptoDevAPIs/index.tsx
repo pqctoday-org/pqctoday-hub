@@ -186,7 +186,7 @@ export const CryptoDevAPIsModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <CryptoDevAPIsIntroduction />
+            <CryptoDevAPIsIntroduction />
           </GlossaryAutoWrap>
         </TabsContent>
 

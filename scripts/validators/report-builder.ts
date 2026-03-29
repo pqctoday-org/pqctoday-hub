@@ -3,8 +3,12 @@
  * Assembles the final IntegrityReport from all check results.
  */
 import type {
-  CheckResult, DataSourceMeta, IntegrityReport,
-  UrlCoverageEntry, LocalResourceEntry, EnrichmentCoverageEntry,
+  CheckResult,
+  DataSourceMeta,
+  IntegrityReport,
+  UrlCoverageEntry,
+  LocalResourceEntry,
+  EnrichmentCoverageEntry,
 } from './types.js'
 
 export function buildReport(
@@ -12,12 +16,14 @@ export function buildReport(
   dataSources: Record<string, DataSourceMeta>,
   urlCoverage: UrlCoverageEntry[],
   localResources: LocalResourceEntry[],
-  enrichments: EnrichmentCoverageEntry[],
+  enrichments: EnrichmentCoverageEntry[]
 ): IntegrityReport {
-  const errors = checkResults.filter(r => r.status === 'FAIL' && r.severity === 'ERROR').length
-  const warnings = checkResults.filter(r => r.status === 'FAIL' && r.severity === 'WARNING').length
-  const info = checkResults.filter(r => r.status === 'FAIL' && r.severity === 'INFO').length
-  const passed = checkResults.filter(r => r.status === 'PASS').length
+  const errors = checkResults.filter((r) => r.status === 'FAIL' && r.severity === 'ERROR').length
+  const warnings = checkResults.filter(
+    (r) => r.status === 'FAIL' && r.severity === 'WARNING'
+  ).length
+  const info = checkResults.filter((r) => r.status === 'FAIL' && r.severity === 'INFO').length
+  const passed = checkResults.filter((r) => r.status === 'PASS').length
 
   // Build coverage matrix — for each source, list its cross-validation partners
   const coverageMatrix: Record<string, string[]> = {}
@@ -41,7 +47,7 @@ export function buildReport(
     dataSources,
     summary: {
       totalChecks: checkResults.length,
-      checksRun: checkResults.filter(r => r.status !== 'SKIP').length,
+      checksRun: checkResults.filter((r) => r.status !== 'SKIP').length,
       errors,
       warnings,
       info,
@@ -67,18 +73,27 @@ export function printReport(report: IntegrityReport, verbose: boolean): void {
   // Data sources summary
   console.log('── Data Sources ────────────────────────────────────────────')
   const sourceEntries = Object.values(dataSources)
-  const maxKeyLen = Math.max(...sourceEntries.map(s => s.key.length))
+  const maxKeyLen = Math.max(...sourceEntries.map((s) => s.key.length))
   for (const s of sourceEntries) {
     const icon = s.status === 'current' ? '✓' : s.status === 'stale' ? '⚠' : '✗'
     const pad = ' '.repeat(maxKeyLen - s.key.length)
-    console.log(`  ${icon} ${s.key}${pad}  ${s.latestFile || 'N/A'}  (${s.recordCount} records, ${s.staleDays}d old)`)
+    console.log(
+      `  ${icon} ${s.key}${pad}  ${s.latestFile || 'N/A'}  (${s.recordCount} records, ${s.staleDays}d old)`
+    )
   }
   console.log()
 
   // Check results
   console.log('── Check Results ───────────────────────────────────────────')
   for (const r of checkResults) {
-    const icon = r.status === 'PASS' ? '✓' : r.severity === 'ERROR' ? '✗' : r.severity === 'WARNING' ? '⚠' : 'ℹ'
+    const icon =
+      r.status === 'PASS'
+        ? '✓'
+        : r.severity === 'ERROR'
+          ? '✗'
+          : r.severity === 'WARNING'
+            ? '⚠'
+            : 'ℹ'
     const count = r.findings.length > 0 ? ` (${r.findings.length} findings)` : ''
     console.log(`  ${icon} [${r.id}] ${r.description}${count}`)
 
@@ -103,7 +118,9 @@ export function printReport(report: IntegrityReport, verbose: boolean): void {
   // Enrichment coverage
   console.log('── Enrichment Coverage ─────────────────────────────────────')
   for (const e of enrichments) {
-    console.log(`  ${e.source}: ${e.enrichedRecords}/${e.sourceRecords} (${e.coverage}) — ${e.files.length} enrichment files`)
+    console.log(
+      `  ${e.source}: ${e.enrichedRecords}/${e.sourceRecords} (${e.coverage}) — ${e.files.length} enrichment files`
+    )
     if (verbose) {
       for (const f of e.files) {
         console.log(`    ${f.file}: ${f.entries} entries, model=${f.model || 'unknown'}`)

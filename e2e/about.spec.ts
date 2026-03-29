@@ -9,6 +9,9 @@ test.describe('About View', () => {
 
   test('displays project bio', async ({ page }) => {
     await expect(page.getByRole('heading', { name: 'About PQC Today' })).toBeVisible()
+
+    // Bio text is inside a collapsible section — expand it first
+    await page.getByRole('button', { name: /Read full vision/i }).click()
     await expect(
       page.getByText('PQCToday is a neutral, community-governed platform').first()
     ).toBeVisible()

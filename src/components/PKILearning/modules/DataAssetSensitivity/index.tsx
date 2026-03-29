@@ -180,7 +180,7 @@ export const DataAssetSensitivityModule: React.FC = () => {
         {/* ── Learn Tab ─────────────────────────────────────────────────── */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <DataAssetIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <DataAssetIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

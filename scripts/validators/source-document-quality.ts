@@ -37,11 +37,11 @@ const SENTINEL_STRINGS = [
 
 const MIN_HTML_TEXT_CHARS = 200
 const MIN_HTML_TEXT_RATIO = 0.15
-const JS_STUB_MAX_FILE_BYTES = 5120      // < 5KB file
-const JS_STUB_MAX_TEXT_CHARS = 50        // AND < 50 chars extracted → JS stub
-const WORD_HTML_MIN_FILE_BYTES = 1_048_576  // > 1MB
-const WORD_HTML_MAX_TEXT_CHARS = 100     // AND < 100 chars → Word-export HTML
-const MIN_PDF_BYTES = 10240              // < 10KB PDF = suspicious
+const JS_STUB_MAX_FILE_BYTES = 5120 // < 5KB file
+const JS_STUB_MAX_TEXT_CHARS = 50 // AND < 50 chars extracted → JS stub
+const WORD_HTML_MIN_FILE_BYTES = 1_048_576 // > 1MB
+const WORD_HTML_MAX_TEXT_CHARS = 100 // AND < 100 chars → Word-export HTML
+const MIN_PDF_BYTES = 10240 // < 10KB PDF = suspicious
 
 // ── HTML text extraction ─────────────────────────────────────────────────────
 
@@ -49,8 +49,12 @@ function stripHtmlTags(html: string): string {
   let text = html.replace(/<script[\s\S]*?<\/script>/gi, ' ')
   text = text.replace(/<style[\s\S]*?<\/style>/gi, ' ')
   text = text.replace(/<[^>]+>/g, ' ')
-  text = text.replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
-    .replace(/&amp;/g, '&').replace(/&quot;/g, '"')
+  text = text
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
   return text.replace(/\s+/g, ' ').trim()
 }
 
@@ -79,7 +83,9 @@ function checkHtmlFile(filePath: string): QualityIssue | null {
     return { reason: `JS-rendered stub: ${fileSize}B file, ${textLen} chars extracted` }
   }
   if (fileSize > WORD_HTML_MIN_FILE_BYTES && textLen < WORD_HTML_MAX_TEXT_CHARS) {
-    return { reason: `Word-exported HTML: ${(fileSize / 1024 / 1024).toFixed(1)}MB file, ${textLen} chars extracted` }
+    return {
+      reason: `Word-exported HTML: ${(fileSize / 1024 / 1024).toFixed(1)}MB file, ${textLen} chars extracted`,
+    }
   }
   if (textLen < MIN_HTML_TEXT_CHARS) {
     return { reason: `Insufficient text: ${textLen} chars extracted (min ${MIN_HTML_TEXT_CHARS})` }
@@ -146,7 +152,13 @@ function checkLibraryQuality(): CheckResult {
   const f: Finding[] = []
 
   if (!fs.existsSync(libDir)) {
-    return makeCheck('N22-library', 'Source document quality: public/library/', 'public/library/', 'WARNING', [])
+    return makeCheck(
+      'N22-library',
+      'Source document quality: public/library/',
+      'public/library/',
+      'WARNING',
+      []
+    )
   }
 
   // Build a map of filename → {id, isRequired}
@@ -164,8 +176,9 @@ function checkLibraryQuality(): CheckResult {
     if (downloadable === 'yes') requiredFiles.add(filename)
   }
 
-  const files = fs.readdirSync(libDir)
-    .filter(f => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
+  const files = fs
+    .readdirSync(libDir)
+    .filter((f) => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
 
   let checked = 0
   let issues = 0
@@ -201,7 +214,7 @@ function checkLibraryQuality(): CheckResult {
     `Source document quality: public/library/ (${checked} files, ${issues} issues)`,
     'public/library/',
     severity,
-    f,
+    f
   )
 }
 
@@ -211,11 +224,18 @@ function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
   const f: Finding[] = []
 
   if (!fs.existsSync(dir)) {
-    return makeCheck(`N22-${dirName}`, `Source document quality: public/${dirName}/`, `public/${dirName}/`, 'WARNING', [])
+    return makeCheck(
+      `N22-${dirName}`,
+      `Source document quality: public/${dirName}/`,
+      `public/${dirName}/`,
+      'WARNING',
+      []
+    )
   }
 
-  const files = fs.readdirSync(dir)
-    .filter(f => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
+  const files = fs
+    .readdirSync(dir)
+    .filter((f) => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
 
   let checked = 0
 
@@ -244,7 +264,7 @@ function checkDirectoryQuality(dirName: 'timeline' | 'threats'): CheckResult {
     `Source document quality: public/${dirName}/ (${checked} files, ${f.length} issues)`,
     `public/${dirName}/`,
     'WARNING',
-    f,
+    f
   )
 }
 

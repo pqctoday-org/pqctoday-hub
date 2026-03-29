@@ -176,7 +176,7 @@ export const ComplianceStrategyModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <Introduction onNavigateToWorkshop={navigateToWorkshop} />
+            <Introduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

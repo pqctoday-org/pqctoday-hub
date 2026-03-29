@@ -154,7 +154,7 @@ export const NetworkSecurityPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <NetworkSecurityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <NetworkSecurityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

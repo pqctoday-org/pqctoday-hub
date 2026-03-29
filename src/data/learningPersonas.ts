@@ -770,12 +770,7 @@ export const PERSONAS: Record<PersonaId, LearningPersona> = {
         type: 'checkpoint',
         id: 'ops-cp-4b',
         label: 'Fleet & Industry',
-        categories: [
-          'iot-ot-pqc',
-          'energy-utilities-pqc',
-          'ai-security-pqc',
-          'aerospace-pqc',
-        ],
+        categories: ['iot-ot-pqc', 'energy-utilities-pqc', 'ai-security-pqc', 'aerospace-pqc'],
       },
       { type: 'module', moduleId: 'quiz' },
     ],

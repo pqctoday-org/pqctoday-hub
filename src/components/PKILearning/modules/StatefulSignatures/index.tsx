@@ -143,7 +143,7 @@ export const StatefulSignaturesModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <StatefulSigsIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <StatefulSigsIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

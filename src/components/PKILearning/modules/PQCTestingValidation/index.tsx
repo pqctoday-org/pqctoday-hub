@@ -176,7 +176,7 @@ export const PQCTestingValidationModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <PQCTestingIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <PQCTestingIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

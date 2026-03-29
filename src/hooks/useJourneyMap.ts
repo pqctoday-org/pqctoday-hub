@@ -294,5 +294,13 @@ export function useJourneyMap(): JourneyMapResult {
       outsidePath,
       hasPersona: true,
     }
-  }, [selectedPersona, modules, artifacts, quizMastery, assessmentStatus, myFrameworkCount, migrationStarted])
+  }, [
+    selectedPersona,
+    modules,
+    artifacts,
+    quizMastery,
+    assessmentStatus,
+    myFrameworkCount,
+    migrationStarted,
+  ])
 }

@@ -56,9 +56,10 @@ export function ComplianceRegulatorySection({
 }: { metrics: BusinessMetrics } & SectionArtifactCallbacks) {
   const navigate = useNavigate()
   const allArtifacts = metrics.artifactsByPillar.compliance
-  const artifacts = typeFilter && typeFilter !== 'all'
-    ? allArtifacts.filter((d) => d.type === typeFilter)
-    : allArtifacts
+  const artifacts =
+    typeFilter && typeFilter !== 'all'
+      ? allArtifacts.filter((d) => d.type === typeFilter)
+      : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.compliance
   const sourceModules = PILLAR_SOURCE_MODULES.compliance
   const existingTypes = new Set(artifacts.map((a) => a.type))

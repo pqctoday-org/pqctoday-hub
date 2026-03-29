@@ -151,7 +151,7 @@ export const FiveGModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <FiveGIntroduction onNavigateToSimulate={navigateToSimulate} />
+            <FiveGIntroduction onNavigateToSimulate={navigateToSimulate} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -148,7 +148,7 @@ export const KmsPqcModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <KmsPqcIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <KmsPqcIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -150,7 +150,7 @@ export const HealthcarePQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <HealthcarePQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <HealthcarePQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

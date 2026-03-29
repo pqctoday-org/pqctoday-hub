@@ -68,9 +68,10 @@ export function VendorSupplyChainSection({
   const hasAssessedLayers = metrics.infraLayerCoverage.some((lc) => lc.assessed)
   const depInfo = DEPENDENCY_LABELS[metrics.vendorDependency]
   const allArtifacts = metrics.artifactsByPillar.vendor
-  const artifacts = typeFilter && typeFilter !== 'all'
-    ? allArtifacts.filter((d) => d.type === typeFilter)
-    : allArtifacts
+  const artifacts =
+    typeFilter && typeFilter !== 'all'
+      ? allArtifacts.filter((d) => d.type === typeFilter)
+      : allArtifacts
   const pillarTypes = PILLAR_ARTIFACT_TYPES.vendor
   const sourceModules = PILLAR_SOURCE_MODULES.vendor
   const existingTypes = new Set(artifacts.map((a) => a.type))

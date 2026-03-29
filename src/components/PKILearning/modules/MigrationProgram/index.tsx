@@ -175,7 +175,7 @@ export const MigrationProgramModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <Introduction onNavigateToWorkshop={navigateToWorkshop} />
+            <Introduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

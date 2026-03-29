@@ -155,17 +155,14 @@ export function DataTable<T>({
     return ids
   })
 
-  const toggleExpanded = useCallback(
-    (key: string) => {
-      setExpandedIds((prev) => {
-        const next = new Set(prev)
-        if (next.has(key)) next.delete(key)
-        else next.add(key)
-        return next
-      })
-    },
-    [],
-  )
+  const toggleExpanded = useCallback((key: string) => {
+    setExpandedIds((prev) => {
+      const next = new Set(prev)
+      if (next.has(key)) next.delete(key)
+      else next.add(key)
+      return next
+    })
+  }, [])
 
   // ── Sorted data ──
   const comparator = sortFn ?? defaultSortFn
@@ -187,7 +184,7 @@ export function DataTable<T>({
   // ── All columns (leading + data) ──
   const allColumns = useMemo(
     () => [...(leadingColumns ?? []), ...columns],
-    [leadingColumns, columns],
+    [leadingColumns, columns]
   )
 
   // ── Render sort icon ──
@@ -211,7 +208,7 @@ export function DataTable<T>({
             className={cn(
               'border-b border-border hover:bg-muted/50 transition-colors',
               onRowClick && 'cursor-pointer',
-              rowClassName?.(row),
+              rowClassName?.(row)
             )}
             onClick={() => onRowClick?.(row)}
           >
@@ -221,7 +218,7 @@ export function DataTable<T>({
                 className={cn(
                   'px-4 py-3 text-sm',
                   col.className,
-                  col.hiddenOnMobile && 'hidden md:table-cell',
+                  col.hiddenOnMobile && 'hidden md:table-cell'
                 )}
               >
                 {col.cell
@@ -244,7 +241,11 @@ export function DataTable<T>({
     })
 
   // ── Render tree rows (recursive) ──
-  const renderTreeRows = (items: T[], level = 0, visited = new Set<string>()): React.ReactNode[] => {
+  const renderTreeRows = (
+    items: T[],
+    level = 0,
+    visited = new Set<string>()
+  ): React.ReactNode[] => {
     if (!getChildren) return []
     const rows: React.ReactNode[] = []
 
@@ -268,7 +269,7 @@ export function DataTable<T>({
           className={cn(
             'border-b border-border hover:bg-muted/50 transition-colors',
             onRowClick && 'cursor-pointer',
-            rowClassName?.(item),
+            rowClassName?.(item)
           )}
           onClick={() => onRowClick?.(item)}
         >
@@ -278,7 +279,7 @@ export function DataTable<T>({
               className={cn(
                 'px-4 py-3 text-sm',
                 col.className,
-                col.hiddenOnMobile && 'hidden md:table-cell',
+                col.hiddenOnMobile && 'hidden md:table-cell'
               )}
               style={colIdx === 0 ? { paddingLeft: `${level * 20 + 16}px` } : undefined}
             >
@@ -309,7 +310,7 @@ export function DataTable<T>({
                   : null}
             </td>
           ))}
-        </tr>,
+        </tr>
       )
 
       if (hasChildren && isExpanded) {
@@ -360,17 +361,14 @@ export function DataTable<T>({
 
       {/* Table */}
       <div className="overflow-x-auto rounded-lg border border-border">
-        <table
-          id={id}
-          className="w-full text-sm"
-          role="table"
-          aria-label={ariaLabel}
-        >
+        <table id={id} className="w-full text-sm" role="table" aria-label={ariaLabel}>
           <thead>
-            <tr className={cn(
-              'border-b border-border bg-muted/50',
-              stickyHeader && 'sticky top-0 z-10 bg-muted',
-            )}>
+            <tr
+              className={cn(
+                'border-b border-border bg-muted/50',
+                stickyHeader && 'sticky top-0 z-10 bg-muted'
+              )}
+            >
               {allColumns.map((col) => {
                 const isSorted = sortConfig?.key === col.id
                 return (
@@ -380,7 +378,7 @@ export function DataTable<T>({
                       'px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase tracking-wider',
                       col.sortable && 'cursor-pointer select-none hover:text-foreground',
                       col.headerClassName,
-                      col.hiddenOnMobile && 'hidden md:table-cell',
+                      col.hiddenOnMobile && 'hidden md:table-cell'
                     )}
                     onClick={col.sortable ? () => handleSort(col.id) : undefined}
                     aria-sort={
@@ -402,7 +400,10 @@ export function DataTable<T>({
           {isEmpty ? (
             <tbody>
               <tr>
-                <td colSpan={allColumns.length} className="px-4 py-12 text-center text-muted-foreground">
+                <td
+                  colSpan={allColumns.length}
+                  className="px-4 py-12 text-center text-muted-foreground"
+                >
                   {emptyMessage}
                 </td>
               </tr>
@@ -455,7 +456,7 @@ export function DataTable<T>({
 export function makeExpandColumn<T>(
   getRowKey: (row: T) => string,
   expandedIds: Set<string>,
-  onToggle: (key: string) => void,
+  onToggle: (key: string) => void
 ): ColumnDef<T> {
   return {
     id: '__expand',

@@ -221,8 +221,8 @@ export const DigitalIDModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
-          <OverviewComponent onNavigateTo={(_stepId) => navigateToWorkshop()} />
+            {/* eslint-disable-next-line @typescript-eslint/no-unused-vars */}
+            <OverviewComponent onNavigateTo={(_stepId) => navigateToWorkshop()} />
           </GlossaryAutoWrap>
         </TabsContent>
 

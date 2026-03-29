@@ -138,7 +138,7 @@ export const CryptoAgilityModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <CryptoAgilityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <CryptoAgilityIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

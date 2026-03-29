@@ -146,7 +146,7 @@ export const IAMPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <IAMPQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <IAMPQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

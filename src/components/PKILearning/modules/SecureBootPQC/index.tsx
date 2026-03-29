@@ -151,7 +151,7 @@ export const SecureBootPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <SecureBootIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <SecureBootIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -17,7 +17,15 @@ export interface Finding {
 
 export interface CheckResult {
   id: string
-  category: 'cross-reference' | 'duplicate' | 'url-coverage' | 'local-resource' | 'enrichment' | 'freshness' | 'structure' | 'graph'
+  category:
+    | 'cross-reference'
+    | 'duplicate'
+    | 'url-coverage'
+    | 'local-resource'
+    | 'enrichment'
+    | 'freshness'
+    | 'structure'
+    | 'graph'
   description: string
   sourceA: string
   sourceB: string | null

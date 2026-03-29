@@ -15,13 +15,55 @@ interface UrlCheckConfig {
 }
 
 const URL_CONFIGS: UrlCheckConfig[] = [
-  { source: 'library', prefix: 'library_', idField: 'reference_id', urlFields: ['download_url'], anyOneSuffices: false },
-  { source: 'timeline', prefix: 'timeline_', idField: 'Title', urlFields: ['SourceUrl'], anyOneSuffices: false },
-  { source: 'compliance', prefix: 'compliance_', idField: 'id', urlFields: ['website'], anyOneSuffices: false },
-  { source: 'threats', prefix: 'quantum_threats_hsm_industries_', idField: 'threat_id', urlFields: ['source_url'], anyOneSuffices: false },
-  { source: 'leaders', prefix: 'leaders_', idField: 'Name', urlFields: ['WebsiteUrl', 'LinkedinUrl'], anyOneSuffices: true },
-  { source: 'migrate', prefix: 'quantum_safe_cryptographic_software_reference_', idField: 'software_name', urlFields: ['authoritative_source', 'repository_url'], anyOneSuffices: true },
-  { source: 'authoritative_sources', prefix: 'pqc_authoritative_sources_reference_', idField: 'Source_Name', urlFields: ['Primary_URL'], anyOneSuffices: false },
+  {
+    source: 'library',
+    prefix: 'library_',
+    idField: 'reference_id',
+    urlFields: ['download_url'],
+    anyOneSuffices: false,
+  },
+  {
+    source: 'timeline',
+    prefix: 'timeline_',
+    idField: 'Title',
+    urlFields: ['SourceUrl'],
+    anyOneSuffices: false,
+  },
+  {
+    source: 'compliance',
+    prefix: 'compliance_',
+    idField: 'id',
+    urlFields: ['website'],
+    anyOneSuffices: false,
+  },
+  {
+    source: 'threats',
+    prefix: 'quantum_threats_hsm_industries_',
+    idField: 'threat_id',
+    urlFields: ['source_url'],
+    anyOneSuffices: false,
+  },
+  {
+    source: 'leaders',
+    prefix: 'leaders_',
+    idField: 'Name',
+    urlFields: ['WebsiteUrl', 'LinkedinUrl'],
+    anyOneSuffices: true,
+  },
+  {
+    source: 'migrate',
+    prefix: 'quantum_safe_cryptographic_software_reference_',
+    idField: 'software_name',
+    urlFields: ['authoritative_source', 'repository_url'],
+    anyOneSuffices: true,
+  },
+  {
+    source: 'authoritative_sources',
+    prefix: 'pqc_authoritative_sources_reference_',
+    idField: 'Source_Name',
+    urlFields: ['Primary_URL'],
+    anyOneSuffices: false,
+  },
 ]
 
 export function runUrlCoverageChecks(): { results: CheckResult[]; coverage: UrlCoverageEntry[] } {
@@ -39,24 +81,30 @@ export function runUrlCoverageChecks(): { results: CheckResult[]; coverage: UrlC
 
     data.rows.forEach((row, i) => {
       const id = row[config.idField] || `row-${i + 2}`
-      const urls = config.urlFields.map(f => row[f]?.trim()).filter(Boolean)
+      const urls = config.urlFields.map((f) => row[f]?.trim()).filter(Boolean)
 
       if (config.anyOneSuffices) {
         if (urls.length === 0) {
           withoutUrl++
           missing.push({ id, field: config.urlFields.join(' | ') })
           findings.push({
-            csv: data.file, row: i + 2, field: config.urlFields.join('|'), value: '',
+            csv: data.file,
+            row: i + 2,
+            field: config.urlFields.join('|'),
+            value: '',
             message: `${config.source} "${id}" has no URL in any of: ${config.urlFields.join(', ')}`,
           })
         } else {
           // Check syntax of present URLs
-          const valid = urls.some(u => isValidUrl(u))
+          const valid = urls.some((u) => isValidUrl(u))
           if (valid) withUrl++
           else {
             withoutUrl++
             findings.push({
-              csv: data.file, row: i + 2, field: config.urlFields.join('|'), value: urls[0],
+              csv: data.file,
+              row: i + 2,
+              field: config.urlFields.join('|'),
+              value: urls[0],
               message: `${config.source} "${id}" has URLs but none are syntactically valid`,
             })
           }
@@ -69,7 +117,10 @@ export function runUrlCoverageChecks(): { results: CheckResult[]; coverage: UrlC
         } else if (!isValidUrl(url)) {
           withoutUrl++
           findings.push({
-            csv: data.file, row: i + 2, field: config.urlFields[0], value: url,
+            csv: data.file,
+            row: i + 2,
+            field: config.urlFields[0],
+            value: url,
             message: `${config.source} "${id}" has invalid URL: "${url}"`,
           })
         } else {

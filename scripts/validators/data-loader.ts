@@ -24,7 +24,9 @@ interface ParsedFile {
 function parseFilename(f: string): ParsedFile | null {
   const m = f.match(/(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/)
   if (!m) return null
-  const mm = m[1], dd = m[2], yyyy = m[3]
+  const mm = m[1],
+    dd = m[2],
+    yyyy = m[3]
   return {
     file: f,
     date: new Date(parseInt(yyyy), parseInt(mm) - 1, parseInt(dd)),
@@ -37,8 +39,11 @@ function parseFilename(f: string): ParsedFile | null {
  * Find the latest CSV file matching a prefix in src/data/.
  * Returns null if no file found.
  */
-export function findLatestCSV(prefix: string, dir = DATA_DIR): { path: string; date: string } | null {
-  const files = fs.readdirSync(dir).filter(f => f.startsWith(prefix) && f.endsWith('.csv'))
+export function findLatestCSV(
+  prefix: string,
+  dir = DATA_DIR
+): { path: string; date: string } | null {
+  const files = fs.readdirSync(dir).filter((f) => f.startsWith(prefix) && f.endsWith('.csv'))
   if (files.length === 0) return null
 
   const parsed = files.map(parseFilename).filter((p): p is ParsedFile => p !== null)
@@ -119,13 +124,17 @@ export interface EnrichmentFileInfo {
  * Load all enrichment files for a collection (library, timeline, threats).
  * Returns per-file metadata and a merged set of enriched IDs.
  */
-export function loadEnrichments(collection: string): { files: EnrichmentFileInfo[]; allIds: Set<string> } {
+export function loadEnrichments(collection: string): {
+  files: EnrichmentFileInfo[]
+  allIds: Set<string>
+} {
   const enrichDir = path.join(DATA_DIR, 'doc-enrichments')
   if (!fs.existsSync(enrichDir)) return { files: [], allIds: new Set() }
 
   const prefix = `${collection}_doc_enrichments_`
-  const mdFiles = fs.readdirSync(enrichDir)
-    .filter(f => f.startsWith(prefix) && f.endsWith('.md'))
+  const mdFiles = fs
+    .readdirSync(enrichDir)
+    .filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
     .sort()
 
   const allIds = new Set<string>()
@@ -147,9 +156,7 @@ export function loadEnrichments(collection: string): { files: EnrichmentFileInfo
 
     // Extract date from filename
     const dateMatch = f.match(/(\d{2})(\d{2})(\d{4})/)
-    const date = dateMatch
-      ? `${dateMatch[3]}-${dateMatch[1]}-${dateMatch[2]}`
-      : null
+    const date = dateMatch ? `${dateMatch[3]}-${dateMatch[1]}-${dateMatch[2]}` : null
 
     // Extract enrichment metadata from frontmatter or comment header
     let model: string | null = null
@@ -212,10 +219,12 @@ export function loadGlossary(): GlossaryEntry[] {
     const categoryMatch = block.match(/category:\s*'([^']+)'/)
 
     // Definition may span multiple lines with string concatenation
-    const defMatch = block.match(/definition:\s*\n?\s*'([^']*(?:'\s*\+\s*'[^']*)*)'/)
-      || block.match(/definition:\s*'([^']+)'/)
-    const noteMatch = block.match(/technicalNote:\s*\n?\s*'([^']*(?:'\s*\+\s*'[^']*)*)'/)
-      || block.match(/technicalNote:\s*'([^']+)'/)
+    const defMatch =
+      block.match(/definition:\s*\n?\s*'([^']*(?:'\s*\+\s*'[^']*)*)'/) ||
+      block.match(/definition:\s*'([^']+)'/)
+    const noteMatch =
+      block.match(/technicalNote:\s*\n?\s*'([^']*(?:'\s*\+\s*'[^']*)*)'/) ||
+      block.match(/technicalNote:\s*'([^']+)'/)
 
     entries.push({
       term: termMatch[1],
@@ -242,11 +251,10 @@ export function loadEnrichmentFields(collection: string): Map<string, Record<str
   if (!fs.existsSync(enrichDir)) return new Map()
 
   const prefix = `${collection}_doc_enrichments_`
-  const files = fs.readdirSync(enrichDir)
-    .filter(f => f.startsWith(prefix) && f.endsWith('.md'))
+  const files = fs.readdirSync(enrichDir).filter((f) => f.startsWith(prefix) && f.endsWith('.md'))
   if (files.length === 0) return new Map()
 
-  const withDates = files.map(f => {
+  const withDates = files.map((f) => {
     const match = f.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
     if (!match) return { file: f, date: 0, rev: 0 }
     const [, mm, dd, yyyy, , rev] = match
@@ -258,8 +266,11 @@ export function loadEnrichmentFields(collection: string): Map<string, Record<str
   const mergedSections = new Map<string, string>()
   for (const { file } of withDates) {
     const raw = fs.readFileSync(path.join(enrichDir, file), 'utf-8')
-    for (const section of raw.split(/\n(?=## )/).filter(s => s.trimStart().startsWith('## '))) {
-      const refId = section.split('\n')[0].replace(/^##\s*/, '').trim()
+    for (const section of raw.split(/\n(?=## )/).filter((s) => s.trimStart().startsWith('## '))) {
+      const refId = section
+        .split('\n')[0]
+        .replace(/^##\s*/, '')
+        .trim()
       if (refId && refId !== '---') mergedSections.set(refId, section)
     }
   }
@@ -286,7 +297,7 @@ export function loadProductExtractions(): Map<string, Array<Record<string, strin
   const extractDir = path.join(DATA_DIR, 'product-extractions')
   if (!fs.existsSync(extractDir)) return new Map()
 
-  const jsonFiles = fs.readdirSync(extractDir).filter(f => f.endsWith('.json'))
+  const jsonFiles = fs.readdirSync(extractDir).filter((f) => f.endsWith('.json'))
 
   // Group by CSC prefix, pick latest
   const byCsc = new Map<string, string[]>()
@@ -320,13 +331,27 @@ export function loadProductExtractions(): Map<string, Array<Record<string, strin
 // ── Module enrichment matching ───────────────────────────────────────────────
 
 export interface ModuleEnrichmentSet {
-  libraryEntries: Array<{ refId: string; fields: Record<string, string>; matchType: 'explicit' | 'keyword' }>
-  timelineEntries: Array<{ refId: string; fields: Record<string, string>; matchType: 'explicit' | 'keyword' }>
+  libraryEntries: Array<{
+    refId: string
+    fields: Record<string, string>
+    matchType: 'explicit' | 'keyword'
+  }>
+  timelineEntries: Array<{
+    refId: string
+    fields: Record<string, string>
+    matchType: 'explicit' | 'keyword'
+  }>
   productEntries: Array<{ name: string; fields: Record<string, string>; cscId: string }>
   glossaryEntries: GlossaryEntry[]
 }
 
-const SKIP_VALUES = new Set(['None detected', 'Not specified', 'See document for details.', 'N/A', 'None'])
+const SKIP_VALUES = new Set([
+  'None detected',
+  'Not specified',
+  'See document for details.',
+  'N/A',
+  'None',
+])
 
 /**
  * Build a per-module enrichment map matching enrichments to modules via:
@@ -361,7 +386,10 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
     if (!cscId || !modules) continue
     // Normalize CSC-NNN to csc_nnn for matching product extraction filenames
     const cscNorm = cscId.toLowerCase().replace('-', '_')
-    for (const mod of modules.split(';').map(s => s.trim()).filter(Boolean)) {
+    for (const mod of modules
+      .split(';')
+      .map((s) => s.trim())
+      .filter(Boolean)) {
       if (!cscToModules.has(cscNorm)) cscToModules.set(cscNorm, new Set())
       cscToModules.get(cscNorm)!.add(mod)
       if (!moduleToCscs.has(mod)) moduleToCscs.set(mod, new Set())
@@ -402,9 +430,9 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
   for (const [refId, fields] of libraryFields) {
     const features = fields['Relevant PQC Today Features'] || ''
     if (SKIP_VALUES.has(features)) continue
-    const mentions = features.split(/[;,]\s*/).map(s => s.trim().toLowerCase())
+    const mentions = features.split(/[;,]\s*/).map((s) => s.trim().toLowerCase())
     for (const mod of allModuleIds) {
-      if (mentions.some(m => m === mod || m.includes(mod))) {
+      if (mentions.some((m) => m === mod || m.includes(mod))) {
         result.get(mod)!.libraryEntries.push({ refId, fields, matchType: 'explicit' })
       }
     }
@@ -421,7 +449,7 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
       const set = result.get(mod)
       if (!set) continue
       // Avoid duplicates
-      if (!set.libraryEntries.some(e => e.refId === refId)) {
+      if (!set.libraryEntries.some((e) => e.refId === refId)) {
         set.libraryEntries.push({ refId, fields: enrichment, matchType: 'explicit' })
       }
     }
@@ -431,9 +459,9 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
   for (const [refId, fields] of timelineFields) {
     const features = fields['Relevant PQC Today Features'] || ''
     if (SKIP_VALUES.has(features)) continue
-    const mentions = features.split(/[;,]\s*/).map(s => s.trim().toLowerCase())
+    const mentions = features.split(/[;,]\s*/).map((s) => s.trim().toLowerCase())
     for (const mod of allModuleIds) {
-      if (mentions.some(m => m === mod || m.includes(mod))) {
+      if (mentions.some((m) => m === mod || m.includes(mod))) {
         result.get(mod)!.timelineEntries.push({ refId, fields, matchType: 'explicit' })
       }
     }
@@ -471,17 +499,26 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
 
 export function splitSemicolon(val: string | undefined): string[] {
   if (!val) return []
-  return val.split(';').map(s => s.trim()).filter(Boolean)
+  return val
+    .split(';')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export function splitPipe(val: string | undefined): string[] {
   if (!val) return []
-  return val.split('|').map(s => s.trim()).filter(Boolean)
+  return val
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export function splitComma(val: string | undefined): string[] {
   if (!val) return []
-  return val.split(',').map(s => s.trim()).filter(Boolean)
+  return val
+    .split(',')
+    .map((s) => s.trim())
+    .filter(Boolean)
 }
 
 export function isValidUrl(s: string): boolean {
@@ -498,7 +535,9 @@ export function isValidUrl(s: string): boolean {
 export function listFiles(dir: string): string[] {
   const p = path.join(ROOT, dir)
   if (!fs.existsSync(p)) return []
-  return fs.readdirSync(p).filter(f => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
+  return fs
+    .readdirSync(p)
+    .filter((f) => !f.startsWith('.') && f !== 'manifest.json' && f !== 'skip-list.json')
 }
 
 export function dirExists(dir: string): boolean {

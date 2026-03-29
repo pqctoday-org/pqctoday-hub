@@ -4,7 +4,14 @@
  * Tracks the latest file date for each data source and flags stale ones.
  */
 import type { CheckResult, DataSourceMeta, Finding, FreshnessStatus } from './types.js'
-import { findLatestCSV, loadCSV, loadStaticCSV, loadJSON, fileMtime, loadEnrichments } from './data-loader.js'
+import {
+  findLatestCSV,
+  loadCSV,
+  loadStaticCSV,
+  loadJSON,
+  fileMtime,
+  loadEnrichments,
+} from './data-loader.js'
 
 interface SourceConfig {
   key: string
@@ -28,7 +35,11 @@ const SOURCES: SourceConfig[] = [
   { key: 'algorithm_transitions', type: 'csv', prefix: 'algorithms_transitions_' },
   { key: 'assessment', type: 'csv', prefix: 'pqcassessment_' },
   { key: 'authoritative_sources', type: 'csv', prefix: 'pqc_authoritative_sources_reference_' },
-  { key: 'priority_matrix', type: 'static-csv', filename: 'pqc_software_category_priority_matrix.csv' },
+  {
+    key: 'priority_matrix',
+    type: 'static-csv',
+    filename: 'pqc_software_category_priority_matrix.csv',
+  },
   { key: 'compliance_data_json', type: 'json', relativePath: 'public/data/compliance-data.json' },
   { key: 'rag_corpus', type: 'json', relativePath: 'public/data/rag-corpus.json' },
   { key: 'glossary', type: 'ts-file', relativePath: 'src/data/glossaryData.ts' },
@@ -49,7 +60,10 @@ function freshnessStatus(staleDays: number, threshold: number): FreshnessStatus 
   return 'critical'
 }
 
-export function runFreshnessChecks(staleThreshold = 90): { results: CheckResult[]; dataSources: Record<string, DataSourceMeta> } {
+export function runFreshnessChecks(staleThreshold = 90): {
+  results: CheckResult[]
+  dataSources: Record<string, DataSourceMeta>
+} {
   const now = new Date()
   const timestamp = now.toISOString()
   const dataSources: Record<string, DataSourceMeta> = {}
@@ -85,7 +99,9 @@ export function runFreshnessChecks(staleThreshold = 90): { results: CheckResult[
         // For rag-corpus.json, try to get generatedAt from content
         if (src.key === 'rag_corpus') {
           try {
-            const corpus = loadJSON<{ chunkCount?: number; generatedAt?: string }>(src.relativePath!)
+            const corpus = loadJSON<{ chunkCount?: number; generatedAt?: string }>(
+              src.relativePath!
+            )
             if (corpus) {
               recordCount = corpus.chunkCount || 0
               if (corpus.generatedAt) {
@@ -93,12 +109,16 @@ export function runFreshnessChecks(staleThreshold = 90): { results: CheckResult[
                 fileDate = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
               }
             }
-          } catch { /* use mtime fallback */ }
+          } catch {
+            /* use mtime fallback */
+          }
         } else if (src.key === 'compliance_data_json') {
           try {
             const data = loadJSON<unknown[]>(src.relativePath!)
             if (data) recordCount = data.length
-          } catch { /* ok */ }
+          } catch {
+            /* ok */
+          }
         }
         break
       }
@@ -135,27 +155,39 @@ export function runFreshnessChecks(staleThreshold = 90): { results: CheckResult[
 
     if (status === 'critical') {
       findings.push({
-        csv: latestFile || src.key, row: null, field: 'fileDate', value: fileDate || 'unknown',
+        csv: latestFile || src.key,
+        row: null,
+        field: 'fileDate',
+        value: fileDate || 'unknown',
         message: `Data source "${src.key}" is critically stale (${staleDays} days old, threshold: ${staleThreshold * 2})`,
       })
     } else if (status === 'stale') {
       findings.push({
-        csv: latestFile || src.key, row: null, field: 'fileDate', value: fileDate || 'unknown',
+        csv: latestFile || src.key,
+        row: null,
+        field: 'fileDate',
+        value: fileDate || 'unknown',
         message: `Data source "${src.key}" is stale (${staleDays} days old, threshold: ${staleThreshold})`,
       })
     }
   }
 
-  const results: CheckResult[] = [{
-    id: 'N16-data-freshness',
-    category: 'freshness',
-    description: 'Per-source freshness tracking',
-    sourceA: 'all',
-    sourceB: null,
-    severity: findings.some(f => f.message.includes('critically')) ? 'ERROR' : findings.length > 0 ? 'WARNING' : 'INFO',
-    status: findings.length === 0 ? 'PASS' : 'FAIL',
-    findings,
-  }]
+  const results: CheckResult[] = [
+    {
+      id: 'N16-data-freshness',
+      category: 'freshness',
+      description: 'Per-source freshness tracking',
+      sourceA: 'all',
+      sourceB: null,
+      severity: findings.some((f) => f.message.includes('critically'))
+        ? 'ERROR'
+        : findings.length > 0
+          ? 'WARNING'
+          : 'INFO',
+      status: findings.length === 0 ? 'PASS' : 'FAIL',
+      findings,
+    },
+  ]
 
   return { results, dataSources }
 }

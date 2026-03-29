@@ -149,6 +149,12 @@ CLAUDE.md
 .claude/
 .cursorrules
 .agent/
+.agents/
+
+# One-off validator/factcheck outputs
+validate_errors.json
+pure_errors.json
+FACTCHECK_AI_SECURITY_PQC_QA.md
 
 # Requirements & planning
 requirements/
@@ -184,6 +190,7 @@ docs/learning-progress-enhancements.md
 docs/refactoring-guide.md
 docs/newstoread-*
 docs/repomanagement.md
+docs/design-document*
 
 # LLM enrichment scripts
 scripts/enrich-*.py

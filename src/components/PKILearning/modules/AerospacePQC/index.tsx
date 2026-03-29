@@ -159,7 +159,7 @@ export const AerospacePQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <AerospaceIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <AerospaceIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -156,7 +156,7 @@ export const VPNSSHModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <VPNSSHIntroduction onNavigateToSimulate={navigateToSimulate} />
+            <VPNSSHIntroduction onNavigateToSimulate={navigateToSimulate} />
           </GlossaryAutoWrap>
         </TabsContent>
 

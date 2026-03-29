@@ -140,7 +140,7 @@ export const MerkleTreeCertsModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <MTCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <MTCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

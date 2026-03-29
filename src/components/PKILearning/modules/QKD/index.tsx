@@ -150,7 +150,7 @@ export const QKDModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <QKDIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <QKDIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

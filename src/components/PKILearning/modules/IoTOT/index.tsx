@@ -146,7 +146,7 @@ export const IoTOTModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <IoTOTIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <IoTOTIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -164,7 +164,7 @@ export const PKIWorkshop: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

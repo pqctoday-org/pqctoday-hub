@@ -140,7 +140,7 @@ export const WebGatewayPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <WebGatewayIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <WebGatewayIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

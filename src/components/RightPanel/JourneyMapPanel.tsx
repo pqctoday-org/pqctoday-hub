@@ -97,7 +97,9 @@ function BeltHeader() {
       {/* Subtle graduation hint for Curious users at Orange+ */}
       {selectedPersona === 'curious' &&
         hasStarted &&
-        (belt.name === 'Orange Belt' || belt.name === 'Green Belt' || belt.name === 'Blue Belt') && (
+        (belt.name === 'Orange Belt' ||
+          belt.name === 'Green Belt' ||
+          belt.name === 'Blue Belt') && (
           <Link
             to="/"
             onClick={close}

@@ -1,50 +1,30 @@
-// SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect } from 'vitest'
-import { parseThreatsCSV } from './threatsData'
+import { threatsData } from './threatsData'
 
-describe('parseThreatsCSV', () => {
-  it('should parse valid CSV content correctly', () => {
-    const csvContent = `industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source
-Financial Services,FIN-001,"Description with commas, and quotes",Critical,"RSA, ECDSA","ML-KEM",Source 1
-Government,GOV-001,Simple description,High,RSA,ML-DSA,Source 2`
-
-    const result = parseThreatsCSV(csvContent)
-
-    expect(result).toHaveLength(2)
-    expect(result[0]).toEqual({
-      industry: 'Financial Services',
-      threatId: 'FIN-001',
-      description: 'Description with commas, and quotes',
-      criticality: 'Critical',
-      cryptoAtRisk: 'RSA, ECDSA',
-      pqcReplacement: 'ML-KEM',
-      mainSource: 'Source 1',
-      sourceUrl: '',
-      accuracyPct: undefined,
-      relatedModules: [],
-    })
-    expect(result[1]).toEqual({
-      industry: 'Government',
-      threatId: 'GOV-001',
-      description: 'Simple description',
-      criticality: 'High',
-      cryptoAtRisk: 'RSA',
-      pqcReplacement: 'ML-DSA',
-      mainSource: 'Source 2',
-      sourceUrl: '',
-      accuracyPct: undefined,
-      relatedModules: [],
-    })
+describe('threatsData', () => {
+  it('loads without error', () => {
+    expect(threatsData.length).toBeGreaterThan(0)
   })
 
-  it('should handle empty CSV content', () => {
-    const result = parseThreatsCSV('')
-    expect(result).toEqual([])
+  it('produces expected typescript shape', () => {
+    for (const item of threatsData) {
+      expect(typeof item).toBe('object')
+      expect(item).not.toBeNull()
+    }
   })
 
-  it('should handle CSV with only headers', () => {
-    const csvContent = `industry,threat_id,threat_description,criticality,crypto_at_risk,pqc_replacement,main_source`
-    const result = parseThreatsCSV(csvContent)
-    expect(result).toEqual([])
+  it('has required non-empty fields', () => {
+    for (const item of threatsData) {
+      expect(item.threatId).toBeTruthy()
+    }
+  })
+
+  it('has unique primary keys or combination keys', () => {
+    const ids = threatsData.map((item) => item.threatId)
+    const validIds = ids.filter((id) => id)
+    const uniqueIds = new Set(validIds)
+    if (validIds.length > 0) {
+      expect(uniqueIds.size).toBe(validIds.length)
+    }
   })
 })

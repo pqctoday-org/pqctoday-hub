@@ -157,7 +157,7 @@ export const QuantumThreatsModule: React.FC = () => {
         {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <QuantumThreatsIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <QuantumThreatsIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

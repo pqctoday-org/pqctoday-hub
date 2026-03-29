@@ -344,7 +344,15 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
           connectionCount: 0,
         })
       }
-      addEdge(edges, edgeSet, nodes, 'certification-validates-algorithm', certNodeId, algoNodeId, 'validates')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'certification-validates-algorithm',
+        certNodeId,
+        algoNodeId,
+        'validates'
+      )
     }
   }
 
@@ -633,10 +641,24 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
 
     if (route.startsWith('/learn/')) {
       const modId = route.replace('/learn/', '')
-      addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, makeNodeId('module', modId))
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'glossary-teaches',
+        glossaryNodeId,
+        makeNodeId('module', modId)
+      )
     } else if (route.startsWith('/library?ref=')) {
       const refId = decodeURIComponent(route.replace('/library?ref=', ''))
-      addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, makeNodeId('library', refId))
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'glossary-teaches',
+        glossaryNodeId,
+        makeNodeId('library', refId)
+      )
     } else if (route === '/algorithms') {
       // Exact match first, then substring fallback
       const exactId = makeNodeId('algorithm', term.term)
@@ -644,7 +666,10 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
         addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, exactId)
       } else {
         for (const [nid, node] of nodes) {
-          if (node.entityType === 'algorithm' && node.label.toLowerCase().includes(term.term.toLowerCase())) {
+          if (
+            node.entityType === 'algorithm' &&
+            node.label.toLowerCase().includes(term.term.toLowerCase())
+          ) {
             addEdge(edges, edgeSet, nodes, 'glossary-teaches', glossaryNodeId, nid)
             break
           }
@@ -715,7 +740,14 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     if (!vendor.vendorId || vendor.vendorId === 'VND-000' || !vendor.hqCountry) continue
     const countryId = makeNodeId('country', vendor.hqCountry)
     if (nodes.has(countryId)) {
-      addEdge(edges, edgeSet, nodes, 'vendor-country', makeNodeId('vendor', vendor.vendorId), countryId)
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'vendor-country',
+        makeNodeId('vendor', vendor.vendorId),
+        countryId
+      )
     }
   }
 
@@ -734,7 +766,15 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
           connectionCount: 0,
         })
       }
-      addEdge(edges, edgeSet, nodes, 'software-implements-algorithm', makeNodeId('software', sw.softwareName), algoNodeId, 'implements')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'software-implements-algorithm',
+        makeNodeId('software', sw.softwareName),
+        algoNodeId,
+        'implements'
+      )
     }
   }
 
@@ -808,19 +848,59 @@ export function buildKnowledgeGraph(): KnowledgeGraph {
     if (!nodes.has(moduleNodeId)) continue
 
     for (const ref of qa.libraryRefs) {
-      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('library', ref), 'references')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-qa-references',
+        moduleNodeId,
+        makeNodeId('library', ref),
+        'references'
+      )
     }
     for (const ref of qa.complianceRefs) {
-      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('compliance', ref), 'references')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-qa-references',
+        moduleNodeId,
+        makeNodeId('compliance', ref),
+        'references'
+      )
     }
     for (const ref of qa.threatRefs) {
-      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('threat', ref), 'references')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-qa-references',
+        moduleNodeId,
+        makeNodeId('threat', ref),
+        'references'
+      )
     }
     for (const ref of qa.leaderRefs) {
-      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('leader', ref), 'references')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-qa-references',
+        moduleNodeId,
+        makeNodeId('leader', ref),
+        'references'
+      )
     }
     for (const ref of qa.migrateRefs) {
-      addEdge(edges, edgeSet, nodes, 'module-qa-references', moduleNodeId, makeNodeId('software', ref), 'references')
+      addEdge(
+        edges,
+        edgeSet,
+        nodes,
+        'module-qa-references',
+        moduleNodeId,
+        makeNodeId('software', ref),
+        'references'
+      )
     }
     for (const ref of qa.algorithmRefs) {
       const algoSlug = slugify(ref)

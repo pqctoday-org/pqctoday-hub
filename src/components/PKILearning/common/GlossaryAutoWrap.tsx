@@ -10,6 +10,4 @@ interface Props {
  * with an interactive tooltip showing the definition. Skips elements already
  * wrapped in InlineTooltip to prevent double-wrapping.
  */
-export const GlossaryAutoWrap = ({ children }: Props) => (
-  <>{applyGlossaryToChildren(children)}</>
-)
+export const GlossaryAutoWrap = ({ children }: Props) => <>{applyGlossaryToChildren(children)}</>

@@ -18,25 +18,75 @@ const QA_DIR = path.join(ROOT, 'src', 'data', 'module-qa')
 // ── Reference constants ─────────────────────────────────────────────────────
 
 const MODULE_IDS = new Set([
-  'pqc-101', 'quantum-threats', 'hybrid-crypto', 'crypto-agility', 'tls-basics',
-  'vpn-ssh-pqc', 'email-signing', 'pki-workshop', 'kms-pqc', 'hsm-pqc',
-  'stateful-signatures', 'digital-assets', '5g-security', 'digital-id',
-  'entropy-randomness', 'merkle-tree-certs', 'qkd', 'code-signing',
-  'api-security-jwt', 'crypto-dev-apis', 'web-gateway-pqc', 'iot-ot-pqc',
-  'pqc-risk-management', 'pqc-business-case', 'pqc-governance', 'vendor-risk',
-  'migration-program', 'compliance-strategy', 'data-asset-sensitivity',
-  'standards-bodies', 'confidential-computing', 'database-encryption-pqc',
-  'energy-utilities-pqc', 'emv-payment-pqc', 'ai-security-pqc',
-  'platform-eng-pqc', 'healthcare-pqc', 'aerospace-pqc', 'automotive-pqc',
-  'exec-quantum-impact', 'dev-quantum-impact', 'arch-quantum-impact',
-  'ops-quantum-impact', 'research-quantum-impact', 'secrets-management-pqc',
-  'network-security-pqc', 'pqc-testing-validation', 'iam-pqc', 'secure-boot-pqc', 'os-pqc',
+  'pqc-101',
+  'quantum-threats',
+  'hybrid-crypto',
+  'crypto-agility',
+  'tls-basics',
+  'vpn-ssh-pqc',
+  'email-signing',
+  'pki-workshop',
+  'kms-pqc',
+  'hsm-pqc',
+  'stateful-signatures',
+  'digital-assets',
+  '5g-security',
+  'digital-id',
+  'entropy-randomness',
+  'merkle-tree-certs',
+  'qkd',
+  'code-signing',
+  'api-security-jwt',
+  'crypto-dev-apis',
+  'web-gateway-pqc',
+  'iot-ot-pqc',
+  'pqc-risk-management',
+  'pqc-business-case',
+  'pqc-governance',
+  'vendor-risk',
+  'migration-program',
+  'compliance-strategy',
+  'data-asset-sensitivity',
+  'standards-bodies',
+  'confidential-computing',
+  'database-encryption-pqc',
+  'energy-utilities-pqc',
+  'emv-payment-pqc',
+  'ai-security-pqc',
+  'platform-eng-pqc',
+  'healthcare-pqc',
+  'aerospace-pqc',
+  'automotive-pqc',
+  'exec-quantum-impact',
+  'dev-quantum-impact',
+  'arch-quantum-impact',
+  'ops-quantum-impact',
+  'research-quantum-impact',
+  'secrets-management-pqc',
+  'network-security-pqc',
+  'pqc-testing-validation',
+  'iam-pqc',
+  'secure-boot-pqc',
+  'os-pqc',
 ])
 
 const VALID_ROUTE_PREFIXES = [
-  '/', '/timeline', '/algorithms', '/library', '/learn', '/playground',
-  '/openssl', '/threats', '/leaders', '/compliance', '/changelog',
-  '/migrate', '/about', '/assess', '/report', '/business',
+  '/',
+  '/timeline',
+  '/algorithms',
+  '/library',
+  '/learn',
+  '/playground',
+  '/openssl',
+  '/threats',
+  '/leaders',
+  '/compliance',
+  '/changelog',
+  '/migrate',
+  '/about',
+  '/assess',
+  '/report',
+  '/business',
 ]
 
 // ── Helpers ─────────────────────────────────────────────────────────────────
@@ -62,14 +112,20 @@ function makeCheck(
   }
 }
 
-function finding(csv: string, row: number | null, field: string, value: string, message: string): Finding {
+function finding(
+  csv: string,
+  row: number | null,
+  field: string,
+  value: string,
+  message: string
+): Finding {
   return { csv, row, field, value, message }
 }
 
 function isValidRoute(p: string): boolean {
   // Strip query string for route validation
   const route = p.split('?')[0]
-  return VALID_ROUTE_PREFIXES.some(prefix => {
+  return VALID_ROUTE_PREFIXES.some((prefix) => {
     if (prefix === '/') return route === '/'
     return route === prefix || route.startsWith(prefix + '/')
   })
@@ -104,8 +160,9 @@ interface QARow {
 function findLatestQACSV(): { path: string; file: string } | null {
   if (!fs.existsSync(QA_DIR)) return null
 
-  const files = fs.readdirSync(QA_DIR)
-    .filter(f => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
+  const files = fs
+    .readdirSync(QA_DIR)
+    .filter((f) => f.startsWith('module_qa_combined_') && f.endsWith('.csv'))
     .sort()
     .reverse()
 
@@ -169,17 +226,33 @@ export function runQAConsistencyChecks(): CheckResult[] {
   // Find and load QA CSV
   const qaFile = findLatestQACSV()
   if (!qaFile) {
-    results.push(makeCheck('QA-SKIP', 'structure',
-      'No module_qa_combined_*.csv found — skipping QA checks',
-      'module-qa', null, 'INFO', []))
+    results.push(
+      makeCheck(
+        'QA-SKIP',
+        'structure',
+        'No module_qa_combined_*.csv found — skipping QA checks',
+        'module-qa',
+        null,
+        'INFO',
+        []
+      )
+    )
     return results
   }
 
   const qaRows = loadQACSV(qaFile.path)
   if (qaRows.length === 0) {
-    results.push(makeCheck('QA-SKIP', 'structure',
-      'module_qa_combined CSV is empty — skipping QA checks',
-      qaFile.file, null, 'INFO', []))
+    results.push(
+      makeCheck(
+        'QA-SKIP',
+        'structure',
+        'module_qa_combined CSV is empty — skipping QA checks',
+        qaFile.file,
+        null,
+        'INFO',
+        []
+      )
+    )
     return results
   }
 
@@ -191,15 +264,15 @@ export function runQAConsistencyChecks(): CheckResult[] {
   const leaders = loadCSV('leaders_')
   const compliance = loadCSV('compliance_')
 
-  const libraryIds = new Set(library.rows.map(r => r.reference_id).filter(Boolean))
-  const threatIds = new Set(threats.rows.map(r => r.threat_id).filter(Boolean))
+  const libraryIds = new Set(library.rows.map((r) => r.reference_id).filter(Boolean))
+  const threatIds = new Set(threats.rows.map((r) => r.threat_id).filter(Boolean))
   const algorithmNames = new Set([
-    ...algorithms.rows.map(r => r.Algorithm).filter(Boolean),
-    ...algorithms.rows.map(r => r['Algorithm Family']).filter(Boolean),
+    ...algorithms.rows.map((r) => r.Algorithm).filter(Boolean),
+    ...algorithms.rows.map((r) => r['Algorithm Family']).filter(Boolean),
   ])
-  const migrateNames = new Set(migrate.rows.map(r => r.software_name).filter(Boolean))
-  const leaderNames = new Set(leaders.rows.map(r => r.Name).filter(Boolean))
-  const complianceIds = new Set(compliance.rows.map(r => r.id).filter(Boolean))
+  const migrateNames = new Set(migrate.rows.map((r) => r.software_name).filter(Boolean))
+  const leaderNames = new Set(leaders.rows.map((r) => r.Name).filter(Boolean))
+  const complianceIds = new Set(compliance.rows.map((r) => r.id).filter(Boolean))
 
   // Load fact allowlists for semantic assertion validation
   let fipsToAlgorithm: Record<string, string> = {}
@@ -223,12 +296,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.library_refs)) {
         if (!libraryIds.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'library_refs', ref,
-            `QA "${row.question_id}": library ref "${ref}" not found in library CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'library_refs',
+              ref,
+              `QA "${row.question_id}": library ref "${ref}" not found in library CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C1', 'cross-reference',
-      'QA library_refs → library.reference_id', qaFile.file, library.file, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C1',
+        'cross-reference',
+        'QA library_refs → library.reference_id',
+        qaFile.file,
+        library.file,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -239,12 +328,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.threat_refs)) {
         if (!threatIds.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'threat_refs', ref,
-            `QA "${row.question_id}": threat ref "${ref}" not found in threats CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'threat_refs',
+              ref,
+              `QA "${row.question_id}": threat ref "${ref}" not found in threats CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C2', 'cross-reference',
-      'QA threat_refs → threats.threat_id', qaFile.file, threats.file, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C2',
+        'cross-reference',
+        'QA threat_refs → threats.threat_id',
+        qaFile.file,
+        threats.file,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -255,12 +360,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.algorithm_refs)) {
         if (!algorithmNames.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'algorithm_refs', ref,
-            `QA "${row.question_id}": algorithm "${ref}" not found in algorithm reference CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'algorithm_refs',
+              ref,
+              `QA "${row.question_id}": algorithm "${ref}" not found in algorithm reference CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C3', 'cross-reference',
-      'QA algorithm_refs → algorithm reference', qaFile.file, algorithms.file, 'WARNING', f))
+    results.push(
+      makeCheck(
+        'QA-C3',
+        'cross-reference',
+        'QA algorithm_refs → algorithm reference',
+        qaFile.file,
+        algorithms.file,
+        'WARNING',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -271,12 +392,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.migrate_refs)) {
         if (!migrateNames.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'migrate_refs', ref,
-            `QA "${row.question_id}": migrate ref "${ref}" not found in migrate CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'migrate_refs',
+              ref,
+              `QA "${row.question_id}": migrate ref "${ref}" not found in migrate CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C4', 'cross-reference',
-      'QA migrate_refs → migrate.software_name', qaFile.file, migrate.file, 'WARNING', f))
+    results.push(
+      makeCheck(
+        'QA-C4',
+        'cross-reference',
+        'QA migrate_refs → migrate.software_name',
+        qaFile.file,
+        migrate.file,
+        'WARNING',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -287,12 +424,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.leader_refs)) {
         if (!leaderNames.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'leader_refs', ref,
-            `QA "${row.question_id}": leader "${ref}" not found in leaders CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'leader_refs',
+              ref,
+              `QA "${row.question_id}": leader "${ref}" not found in leaders CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C5', 'cross-reference',
-      'QA leader_refs → leaders.Name', qaFile.file, leaders.file, 'WARNING', f))
+    results.push(
+      makeCheck(
+        'QA-C5',
+        'cross-reference',
+        'QA leader_refs → leaders.Name',
+        qaFile.file,
+        leaders.file,
+        'WARNING',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -303,12 +456,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const ref of splitSemicolon(row.compliance_refs)) {
         if (!complianceIds.has(ref))
-          f.push(finding(qaFile.file, i + 2, 'compliance_refs', ref,
-            `QA "${row.question_id}": compliance ref "${ref}" not found in compliance CSV`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'compliance_refs',
+              ref,
+              `QA "${row.question_id}": compliance ref "${ref}" not found in compliance CSV`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C6', 'cross-reference',
-      'QA compliance_refs → compliance.id', qaFile.file, compliance.file, 'WARNING', f))
+    results.push(
+      makeCheck(
+        'QA-C6',
+        'cross-reference',
+        'QA compliance_refs → compliance.id',
+        qaFile.file,
+        compliance.file,
+        'WARNING',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -319,12 +488,28 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       for (const link of splitSemicolon(row.deep_links)) {
         if (link && !isValidRoute(link))
-          f.push(finding(qaFile.file, i + 2, 'deep_links', link,
-            `QA "${row.question_id}": deep link "${link}" has invalid route`))
+          f.push(
+            finding(
+              qaFile.file,
+              i + 2,
+              'deep_links',
+              link,
+              `QA "${row.question_id}": deep link "${link}" has invalid route`
+            )
+          )
       }
     })
-    results.push(makeCheck('QA-C7', 'cross-reference',
-      'QA deep_links → valid routes', qaFile.file, null, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C7',
+        'cross-reference',
+        'QA deep_links → valid routes',
+        qaFile.file,
+        null,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -334,11 +519,27 @@ export function runQAConsistencyChecks(): CheckResult[] {
     const f: Finding[] = []
     qaRows.forEach((row, i) => {
       if (row.module_id && !MODULE_IDS.has(row.module_id))
-        f.push(finding(qaFile.file, i + 2, 'module_id', row.module_id,
-          `QA "${row.question_id}": module_id "${row.module_id}" is not a valid module`))
+        f.push(
+          finding(
+            qaFile.file,
+            i + 2,
+            'module_id',
+            row.module_id,
+            `QA "${row.question_id}": module_id "${row.module_id}" is not a valid module`
+          )
+        )
     })
-    results.push(makeCheck('QA-C8', 'structure',
-      'QA module_id → valid module IDs', qaFile.file, null, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C8',
+        'structure',
+        'QA module_id → valid module IDs',
+        qaFile.file,
+        null,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -349,11 +550,27 @@ export function runQAConsistencyChecks(): CheckResult[] {
     const idPattern = /^[a-z0-9-]+-(?:learn|workshop|both)-\d{3}$/
     qaRows.forEach((row, i) => {
       if (row.question_id && !idPattern.test(row.question_id))
-        f.push(finding(qaFile.file, i + 2, 'question_id', row.question_id,
-          `QA question_id "${row.question_id}" does not match format {module_id}-{type}-{NNN}`))
+        f.push(
+          finding(
+            qaFile.file,
+            i + 2,
+            'question_id',
+            row.question_id,
+            `QA question_id "${row.question_id}" does not match format {module_id}-{type}-{NNN}`
+          )
+        )
     })
-    results.push(makeCheck('QA-C9', 'structure',
-      'QA question_id format validation', qaFile.file, null, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C9',
+        'structure',
+        'QA question_id format validation',
+        qaFile.file,
+        null,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -365,14 +582,30 @@ export function runQAConsistencyChecks(): CheckResult[] {
     qaRows.forEach((row, i) => {
       const qid = row.question_id
       if (seen.has(qid)) {
-        f.push(finding(qaFile.file, i + 2, 'question_id', qid,
-          `Duplicate question_id "${qid}" (first seen at row ${seen.get(qid)})`))
+        f.push(
+          finding(
+            qaFile.file,
+            i + 2,
+            'question_id',
+            qid,
+            `Duplicate question_id "${qid}" (first seen at row ${seen.get(qid)})`
+          )
+        )
       } else {
         seen.set(qid, i + 2)
       }
     })
-    results.push(makeCheck('QA-C10', 'duplicate',
-      'No duplicate question_id values', qaFile.file, null, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-C10',
+        'duplicate',
+        'No duplicate question_id values',
+        qaFile.file,
+        null,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -395,16 +628,34 @@ export function runQAConsistencyChecks(): CheckResult[] {
           const [, refType, refValue] = existsMatch
           let valid = true
           switch (refType) {
-            case 'library_ref': valid = libraryIds.has(refValue); break
-            case 'threat_ref': valid = threatIds.has(refValue); break
-            case 'migrate_ref': valid = migrateNames.has(refValue); break
-            case 'leader_ref': valid = leaderNames.has(refValue); break
-            case 'compliance_ref': valid = complianceIds.has(refValue); break
-            default: continue // Unknown assertion type — skip
+            case 'library_ref':
+              valid = libraryIds.has(refValue)
+              break
+            case 'threat_ref':
+              valid = threatIds.has(refValue)
+              break
+            case 'migrate_ref':
+              valid = migrateNames.has(refValue)
+              break
+            case 'leader_ref':
+              valid = leaderNames.has(refValue)
+              break
+            case 'compliance_ref':
+              valid = complianceIds.has(refValue)
+              break
+            default:
+              continue // Unknown assertion type — skip
           }
           if (!valid) {
-            f.push(finding(qaFile.file, i + 2, 'consistency_assertions', trimmed,
-              `QA "${row.question_id}": assertion FAILED — ${refType} "${refValue}" does not exist`))
+            f.push(
+              finding(
+                qaFile.file,
+                i + 2,
+                'consistency_assertions',
+                trimmed,
+                `QA "${row.question_id}": assertion FAILED — ${refType} "${refValue}" does not exist`
+              )
+            )
           }
         } else if (inMatch) {
           const [, refType, refValue, targetCsv] = inMatch
@@ -413,8 +664,15 @@ export function runQAConsistencyChecks(): CheckResult[] {
             valid = algorithmNames.has(refValue)
           }
           if (!valid) {
-            f.push(finding(qaFile.file, i + 2, 'consistency_assertions', trimmed,
-              `QA "${row.question_id}": assertion FAILED — ${refType} "${refValue}" not in ${targetCsv}`))
+            f.push(
+              finding(
+                qaFile.file,
+                i + 2,
+                'consistency_assertions',
+                trimmed,
+                `QA "${row.question_id}": assertion FAILED — ${refType} "${refValue}" not in ${targetCsv}`
+              )
+            )
           }
         }
 
@@ -424,8 +682,15 @@ export function runQAConsistencyChecks(): CheckResult[] {
           const [, fipsNum, claimedAlgo] = fipsMapsToMatch
           const expectedAlgo = fipsToAlgorithm[fipsNum]
           if (expectedAlgo && claimedAlgo.trim() !== expectedAlgo) {
-            f.push(finding(qaFile.file, i + 2, 'consistency_assertions', trimmed,
-              `QA "${row.question_id}": FIPS ${fipsNum} mapped to "${claimedAlgo}" but should be "${expectedAlgo}"`))
+            f.push(
+              finding(
+                qaFile.file,
+                i + 2,
+                'consistency_assertions',
+                trimmed,
+                `QA "${row.question_id}": FIPS ${fipsNum} mapped to "${claimedAlgo}" but should be "${expectedAlgo}"`
+              )
+            )
           } else if (!expectedAlgo) {
             // Unknown FIPS — check if it's in algorithm CSV
             // Just skip unknown FIPS numbers (may be informational or future standards)
@@ -440,15 +705,31 @@ export function runQAConsistencyChecks(): CheckResult[] {
           const claimedLevel = parseInt(claimedLevelStr, 10)
           const expectedLevel = securityLevelMap[algo.trim()]
           if (expectedLevel !== undefined && Number(expectedLevel) !== claimedLevel) {
-            f.push(finding(qaFile.file, i + 2, 'consistency_assertions', trimmed,
-              `QA "${row.question_id}": ${algo} claimed at Level ${claimedLevel}, expected Level ${expectedLevel}`))
+            f.push(
+              finding(
+                qaFile.file,
+                i + 2,
+                'consistency_assertions',
+                trimmed,
+                `QA "${row.question_id}": ${algo} claimed at Level ${claimedLevel}, expected Level ${expectedLevel}`
+              )
+            )
           }
           continue
         }
       }
     })
-    results.push(makeCheck('QA-D1', 'cross-reference',
-      'QA consistency_assertions evaluation', qaFile.file, null, 'ERROR', f))
+    results.push(
+      makeCheck(
+        'QA-D1',
+        'cross-reference',
+        'QA consistency_assertions evaluation',
+        qaFile.file,
+        null,
+        'ERROR',
+        f
+      )
+    )
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -462,8 +743,18 @@ export function runQAConsistencyChecks(): CheckResult[] {
     const entityClaims = new Map<string, { moduleId: string; row: number; snippet: string }[]>()
 
     // Key standards that should have consistent descriptions across modules
-    const keyEntities = ['FIPS 203', 'FIPS 204', 'FIPS 205', 'ML-KEM', 'ML-DSA', 'SLH-DSA',
-      'CNSA 2.0', 'RFC 8446', 'RFC 9370', 'X25519MLKEM768']
+    const keyEntities = [
+      'FIPS 203',
+      'FIPS 204',
+      'FIPS 205',
+      'ML-KEM',
+      'ML-DSA',
+      'SLH-DSA',
+      'CNSA 2.0',
+      'RFC 8446',
+      'RFC 9370',
+      'X25519MLKEM768',
+    ]
 
     qaRows.forEach((row, i) => {
       const answer = row.answer || ''
@@ -472,7 +763,9 @@ export function runQAConsistencyChecks(): CheckResult[] {
           if (!entityClaims.has(entity)) entityClaims.set(entity, [])
           // Extract a snippet around the entity mention for comparison
           const idx = answer.indexOf(entity)
-          const snippet = answer.slice(Math.max(0, idx - 30), Math.min(answer.length, idx + entity.length + 80)).trim()
+          const snippet = answer
+            .slice(Math.max(0, idx - 30), Math.min(answer.length, idx + entity.length + 80))
+            .trim()
           entityClaims.get(entity)!.push({
             moduleId: row.module_id,
             row: i + 2,
@@ -484,17 +777,32 @@ export function runQAConsistencyChecks(): CheckResult[] {
 
     // Flag entities mentioned by many modules — for manual review
     for (const [entity, claims] of entityClaims) {
-      const uniqueModules = new Set(claims.map(c => c.moduleId))
+      const uniqueModules = new Set(claims.map((c) => c.moduleId))
       if (uniqueModules.size >= 5) {
         // This is informational — many modules reference this entity, worth spot-checking
-        f.push(finding(qaFile.file, 0, 'cross-module', entity,
-          `Entity "${entity}" referenced by ${uniqueModules.size} modules — verify consistency`))
+        f.push(
+          finding(
+            qaFile.file,
+            0,
+            'cross-module',
+            entity,
+            `Entity "${entity}" referenced by ${uniqueModules.size} modules — verify consistency`
+          )
+        )
       }
     }
 
-    results.push(makeCheck('QA-D2', 'cross-reference',
-      'Cross-module factual consistency (entities mentioned across modules)',
-      qaFile.file, null, 'INFO', f))
+    results.push(
+      makeCheck(
+        'QA-D2',
+        'cross-reference',
+        'Cross-module factual consistency (entities mentioned across modules)',
+        qaFile.file,
+        null,
+        'INFO',
+        f
+      )
+    )
   }
 
   return results

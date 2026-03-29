@@ -150,7 +150,7 @@ export const OSPQCModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <OSPQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <OSPQCIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

@@ -158,15 +158,15 @@ export const Module1: React.FC = () => {
         {!isCuriousMode && (
           <TabsContent value="learn">
             <GlossaryAutoWrap>
-            <PQC101Module />
-            <div className="mt-6 flex justify-end">
-              <button
-                onClick={navigateToWorkshop}
-                className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Go to Workshop &rarr;
-              </button>
-            </div>
+              <PQC101Module />
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={navigateToWorkshop}
+                  className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                >
+                  Go to Workshop &rarr;
+                </button>
+              </div>
             </GlossaryAutoWrap>
           </TabsContent>
         )}

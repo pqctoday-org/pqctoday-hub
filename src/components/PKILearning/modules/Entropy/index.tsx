@@ -159,7 +159,7 @@ export const EntropyModule: React.FC = () => {
 
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <EntropyIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <EntropyIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 

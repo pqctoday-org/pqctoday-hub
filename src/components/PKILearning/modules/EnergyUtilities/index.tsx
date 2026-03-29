@@ -191,7 +191,7 @@ export const EnergyUtilitiesModule: React.FC = () => {
         {/* ── Learn Tab ───────────────────────────────────────────────── */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
-          <EnergyUtilitiesIntroduction onNavigateToWorkshop={navigateToWorkshop} />
+            <EnergyUtilitiesIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 
