@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { useParams, useNavigate, Navigate } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -14,6 +15,10 @@ export const PlaygroundToolRoute = () => {
   const navigate = useNavigate()
 
   const tool = toolId ? WORKSHOP_TOOLS.find((t) => t.id === toolId) : null
+
+  useEffect(() => {
+    if (tool) useAchievementStore.getState().recordPlaygroundToolUsage(tool.id)
+  }, [tool])
 
   // Unknown toolId → back to workshop grid
   if (!tool) return <Navigate to="/playground" replace />

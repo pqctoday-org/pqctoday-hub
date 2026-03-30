@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { ExternalLink, EyeOff, CheckSquare, Square, Scale } from 'lucide-react'
+import {
+  ExternalLink,
+  EyeOff,
+  CheckSquare,
+  Square,
+  Scale,
+  Bookmark,
+  BookmarkCheck,
+} from 'lucide-react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
 import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
@@ -8,6 +16,8 @@ import { certsByProduct } from '../../data/certificationXrefData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 interface SoftwareCardProps {
   item: SoftwareItem
@@ -37,6 +47,8 @@ export const SoftwareCard = ({
   onToggleCompare,
   maxCompareReached,
 }: SoftwareCardProps) => {
+  const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
+  const isBookmarked = migrateBookmarks.includes(item.softwareName)
   const key = `${item.softwareName}::${item.categoryId}`
 
   // Find the primary layer (first in comma-separated list)
@@ -75,16 +87,36 @@ export const SoftwareCard = ({
           </span>
         )}
 
-        {onHide && (
+        <div className="ml-auto flex items-center">
           <button
             type="button"
-            aria-label="Hide this product"
-            onClick={() => onHide(key)}
-            className="ml-auto p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+            aria-label={
+              isBookmarked
+                ? `Remove ${item.softwareName} bookmark`
+                : `Bookmark ${item.softwareName}`
+            }
+            title={isBookmarked ? 'Remove bookmark' : 'Bookmark for quick access'}
+            onClick={() => toggleMigrateBookmark(item.softwareName)}
+            className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
           >
-            <EyeOff size={14} />
+            {isBookmarked ? (
+              <BookmarkCheck size={14} className="text-primary" />
+            ) : (
+              <Bookmark size={14} className="text-muted-foreground/40 hover:text-primary" />
+            )}
           </button>
-        )}
+          {onHide && (
+            <button
+              type="button"
+              aria-label="Hide this product"
+              title="Hide this product"
+              onClick={() => onHide(key)}
+              className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
+            >
+              <EyeOff size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Product name + version */}
@@ -98,6 +130,7 @@ export const SoftwareCard = ({
 
       {/* Badges row */}
       <div className="flex flex-wrap items-center gap-2 mb-3">
+        <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
         {renderPqcSupport(item.pqcSupport)}
         {renderFipsStatus(item.fipsValidated)}
         <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
@@ -163,7 +196,13 @@ export const SoftwareCard = ({
           <button
             type="button"
             aria-label={isCompared ? 'Remove from comparison' : 'Add to comparison'}
-            title={maxCompareReached && !isCompared ? 'Max 3 reached' : undefined}
+            title={
+              maxCompareReached && !isCompared
+                ? 'Max 3 reached'
+                : isCompared
+                  ? 'Remove from comparison'
+                  : 'Add to comparison'
+            }
             disabled={maxCompareReached && !isCompared}
             onClick={() => onToggleCompare(key)}
             className={`p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed ${
@@ -179,6 +218,7 @@ export const SoftwareCard = ({
           <button
             type="button"
             aria-label={isSelected ? 'Remove from My Products' : 'Add to My Products'}
+            title={isSelected ? 'Remove from My Products' : 'Add to My Products'}
             onClick={() => onToggleSelect(key)}
             className={`ml-auto p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors ${
               isSelected

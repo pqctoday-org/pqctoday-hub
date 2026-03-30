@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Calendar, Eye, ExternalLink, Info, Sparkles } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Calendar, Eye, ExternalLink, Info, Sparkles } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { StatusBadge } from '../common/StatusBadge'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import clsx from 'clsx'
 
 interface DocumentCardProps {
@@ -23,6 +25,8 @@ const URGENCY_COLORS: Record<string, string> = {
 }
 
 export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardProps) => {
+  const { libraryBookmarks, toggleLibraryBookmark } = useBookmarkStore()
+  const isBookmarked = libraryBookmarks.includes(item.referenceId)
   const isEnriched = !!libraryEnrichments[item.referenceId]
 
   return (
@@ -44,7 +48,8 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         {item.documentTitle}
       </h3>
 
-      <div className="flex items-center gap-2 mb-3">
+      <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <TrustScoreBadge resourceType="library" resourceId={item.referenceId} size="sm" />
         <span
           className={clsx(
             'inline-flex self-start items-center px-2 py-0.5 rounded text-xs font-bold uppercase tracking-wider',
@@ -124,6 +129,23 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
           </a>
         )}
         <div className="flex items-center gap-1 ml-auto">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleLibraryBookmark(item.referenceId)
+            }}
+            className="p-1 rounded hover:bg-muted/50 transition-colors"
+            aria-label={
+              isBookmarked ? `Remove ${item.referenceId} bookmark` : `Bookmark ${item.referenceId}`
+            }
+            title={isBookmarked ? 'Remove bookmark' : 'Bookmark'}
+          >
+            {isBookmarked ? (
+              <BookmarkCheck size={16} className="text-primary" />
+            ) : (
+              <Bookmark size={16} className="text-muted-foreground" />
+            )}
+          </button>
           <EndorseButton
             endorseUrl={buildLibraryEndorsementUrl(item)}
             resourceLabel={item.referenceId}

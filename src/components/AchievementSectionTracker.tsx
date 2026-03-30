@@ -15,6 +15,7 @@ const SECTION_MAP: Record<string, string> = {
   '/migrate': 'migrate',
   '/assess': 'assess',
   '/report': 'report',
+  '/business': 'business',
 }
 
 export function AchievementSectionTracker() {

@@ -95,6 +95,10 @@ interface RawTimelineRow {
   SourceUrl: string
   SourceDate: string
   Status: string
+  trusted_source_id: string
+  local_file: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 export function parseTimelineCSV(csvContent: string): CountryData[] {
@@ -153,6 +157,14 @@ export function parseTimelineCSV(csvContent: string): CountryData[] {
       sourceUrl: row.SourceUrl || '',
       sourceDate: row.SourceDate || '',
       status: row.Status?.trim(),
+      peerReviewed:
+        (row.peer_reviewed?.toLowerCase() as TimelineEvent['peerReviewed']) || undefined,
+      vettingBody: row.vetting_body
+        ? row.vetting_body
+            .split(';')
+            .map((s: string) => s.trim())
+            .filter(Boolean)
+        : undefined,
       // Populate denormalized fields
       orgName,
       orgFullName: row.OrgFullName || '',

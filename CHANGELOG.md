@@ -4,6 +4,33 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.65.3] - 2026-03-29
+
+### Added
+
+- **HSM/PKCS#11 tools audit**: Comprehensive review of all 9+1 workshop tools with ratings, overlap analysis, and prioritized recommendations [docs/audits/hsm-tools-review.md]
+- **Envelope encryption HKDF**: Wrapping key now derived from ML-KEM shared secret via real `hsm_hkdf(CKM_HKDF_DERIVE)` instead of generating a fresh AES key [view:/playground]
+- **SLH-DSA pre-hash mismatch indicator**: Warning shown when dropdown pre-hash selection differs from what was used during signing [view:/playground]
+- **PKCS#11 mechanism flag legend**: Step 8 of PKCS#11 Walkthrough now explains all CKF\_\* flags (CKF_SIGN, CKF_ENCAPSULATE, CKF_WRAP, etc.) with PKCS#11 v3.2 §5.12 reference [view:/playground]
+- **Code signing supply chain context**: New section explaining Sigstore, SBOM signing, and container image impact of ML-DSA migration [view:/playground]
+- **KDF tool broader framing**: SP 800-108 KDF tool now shows KEM, PSK, and PBKDF2 input scenarios alongside QKD, with updated registry description and keywords [view:/playground]
+- **Trust score badges**: TrustScoreBadge component integrated across Library, Compliance, Threats, Timeline, Algorithms, Leaders, and Migrate views [view:multiple]
+- **Achievement system expansion**: 9 new achievements (modules-5/10/25, tracks-3, quiz-hundred, playground-breadth-3/10, playground-hsm/hybrid, business-first/strategist/complete) with store v2 migration [view:/]
+- **Peer review & vetting fields**: Added peerReviewed and vettingBody fields to all 6 data loaders (compliance, leaders, library, migrate, threats, timeline) [data]
+- **Curious persona expansion**: Added 8 new modules and cp-4 checkpoint to curious learning path (280→680 min estimated) [view:/learn]
+
+### Fixed
+
+- **Google OAuth settings**: Added `include_granted_scopes`, `flow: 'implicit'`, `ux_mode: 'popup'` to fix Google consent flow [infra]
+- **Orphaned tool references**: Removed `pqc-comparison`, `qkd-postproc`, `provider-pattern` from WorkshopToolsTab lazy imports and PlaygroundWorkshop starterTools arrays [view:/playground]
+- **Quiz category merge**: Consolidated 'key-management' and 'kms-pqc' quiz categories into single entry [data]
+- **DocumentAnalysis route**: Fixed 'aerospace-space-pqc' → 'aerospace-pqc' typo [view:/library]
+
+### Removed
+
+- **3 workshop tools from Playground**: `pqc-comparison`, `qkd-postproc`, `provider-pattern` removed from Playground registry (remain accessible in their learning modules) [view:/playground]
+- **Old quiz CSV**: Deleted `pqcquiz_03212026.csv` (superseded by `pqcquiz_03292026.csv`) [data]
+
 ## [2.65.2] - 2026-03-29
 
 ### Fixed

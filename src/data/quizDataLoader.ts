@@ -221,16 +221,10 @@ const CATEGORY_CONFIG: Record<QuizCategory, { label: string; description: string
         'S/MIME, CMS SignedData/EnvelopedData, RFC 9629 KEMRecipientInfo, and PQC migration for email.',
       icon: 'Mail',
     },
-    'key-management': {
-      label: 'Key Management & HSM',
-      description:
-        'Key lifecycle (NIST SP 800-57), HSM FIPS 140-3, PKCS#11 operations, and PQC key rotation planning.',
-      icon: 'KeyRound',
-    },
     'kms-pqc': {
       label: 'KMS & PQC Key Management',
       description:
-        'Envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
+        'Key lifecycle (NIST SP 800-57), envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
       icon: 'KeyRound',
     },
     'hsm-pqc': {

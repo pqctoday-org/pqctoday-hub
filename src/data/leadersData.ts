@@ -15,6 +15,8 @@ export interface Leader {
   websiteUrl?: string
   linkedinUrl?: string
   keyResourceUrl?: string[]
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -30,6 +32,9 @@ interface RawLeaderRow {
   WebsiteUrl: string
   LinkedinUrl: string
   KeyResourceUrl: string
+  trusted_source_id: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 const modules = import.meta.glob('./leaders_*.csv', {
@@ -59,6 +64,8 @@ const {
     websiteUrl: row.WebsiteUrl,
     linkedinUrl: row.LinkedinUrl,
     keyResourceUrl: row.KeyResourceUrl ? splitSemicolon(row.KeyResourceUrl) : undefined,
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as Leader['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
   }),
   true // withPrevious for status badges
 )

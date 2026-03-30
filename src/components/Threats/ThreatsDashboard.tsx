@@ -30,6 +30,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { StatusBadge } from '../common/StatusBadge'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
@@ -503,6 +504,11 @@ export const ThreatsDashboard: React.FC = () => {
                       <div className="flex items-center gap-2">
                         {item.threatId}
                         <StatusBadge status={item.status} size="sm" />
+                        <TrustScoreBadge
+                          resourceType="threats"
+                          resourceId={item.threatId}
+                          size="sm"
+                        />
                       </div>
                     </td>
                     {/* Desktop Description */}

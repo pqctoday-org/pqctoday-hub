@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { LibraryDetailPopover } from './LibraryDetailPopover'
 import { StatusBadge } from '../common/StatusBadge'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
@@ -198,6 +199,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 </a>
               )}
               <StatusBadge status={item.status} size="sm" />
+              <TrustScoreBadge resourceType="library" resourceId={item.referenceId} size="sm" />
             </div>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">

@@ -8,6 +8,7 @@ import { BUSINESS_TOOLS, BUSINESS_TOOL_COMPONENTS } from './businessToolsRegistr
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { logBusinessToolOpen } from '@/utils/analytics'
 
 export const BusinessToolRoute = () => {
@@ -17,7 +18,10 @@ export const BusinessToolRoute = () => {
   const tool = toolId ? BUSINESS_TOOLS.find((t) => t.id === toolId) : null
 
   useEffect(() => {
-    if (tool) logBusinessToolOpen(tool.id, tool.name)
+    if (tool) {
+      logBusinessToolOpen(tool.id, tool.name)
+      useAchievementStore.getState().recordBusinessToolUsage(tool.id)
+    }
   }, [tool])
 
   if (!tool) return <Navigate to="/business/tools" replace />

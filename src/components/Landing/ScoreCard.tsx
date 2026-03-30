@@ -317,7 +317,11 @@ export function ScoreCard({ embedded = false }: { embedded?: boolean }) {
           {nextBelt && (
             <div className="text-right shrink-0">
               <p className="text-[10px] sm:text-xs text-muted-foreground">
-                {pointsToNextBelt} pts to
+                {pointsToNextBelt > 0
+                  ? `${pointsToNextBelt} pts to`
+                  : thresholdGates.length > 0
+                    ? 'Unlock'
+                    : '0 pts to'}
               </p>
               <p className="text-[10px] sm:text-xs font-medium text-foreground">{nextBelt.name}</p>
             </div>

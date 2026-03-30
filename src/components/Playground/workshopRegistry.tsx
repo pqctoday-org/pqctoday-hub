@@ -9,7 +9,6 @@ import {
   Hash,
   Dice5,
   FileSignature,
-  Layers,
   Radio,
   Bitcoin,
   Workflow,
@@ -139,24 +138,24 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'kdf-derivation',
     name: 'SP 800-108 KDF',
-    description: 'NIST SP 800-108 counter-mode key derivation with HMAC-SHA256',
+    description:
+      'NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys',
     category: 'HSM / PKCS#11',
-    algorithms: ['SP 800-108', 'HMAC-SHA256'],
+    algorithms: ['SP 800-108', 'HMAC-SHA256', 'PBKDF2', 'HKDF'],
     icon: KeyRound,
     moduleLink: '/learn/kms-pqc',
-    keywords: ['kdf', 'key derivation', 'sp 800-108', 'hmac', 'counter mode', 'kbkdf'],
-    difficulty: 'advanced',
-    recommendedPersonas: ['developer', 'architect', 'researcher'],
-  },
-  {
-    id: 'provider-pattern',
-    name: 'Crypto Provider Patterns',
-    description: 'Compare PKCS#11, JCA/JCE, OpenSSL, CNG crypto provider patterns',
-    category: 'HSM / PKCS#11',
-    algorithms: ['ML-DSA-65', 'PKCS#11'],
-    icon: Layers,
-    moduleLink: '/learn/crypto-dev-apis',
-    keywords: ['provider', 'jca', 'jce', 'openssl', 'cng', 'bouncy castle', 'api', 'mechanism'],
+    keywords: [
+      'kdf',
+      'key derivation',
+      'sp 800-108',
+      'hmac',
+      'counter mode',
+      'kbkdf',
+      'pbkdf2',
+      'hkdf',
+      'psk',
+      'kem',
+    ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
@@ -275,19 +274,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
   {
-    id: 'qkd-postproc',
-    name: 'QKD Post-Processing',
-    description:
-      'Classical simulation of BB84 quantum key distribution with SHA-256 privacy amplification',
-    category: 'Protocol Simulations',
-    algorithms: ['BB84', 'SHA-256', 'HKDF'],
-    icon: Radio,
-    moduleLink: '/learn/qkd',
-    keywords: ['qkd', 'bb84', 'quantum key distribution', 'privacy amplification', 'sifting'],
-    difficulty: 'intermediate',
-    recommendedPersonas: ['researcher', 'curious', 'architect'],
-  },
-  {
     id: 'suci-flow',
     name: '5G SUCI Construction',
     description: 'ECDH + HKDF + AES subscriber concealment for 5G networks',
@@ -301,18 +287,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
-  {
-    id: 'pqc-comparison',
-    name: 'PQC vs Classical',
-    description: 'Live secp256k1 ECDSA vs ML-DSA-65 signing comparison',
-    category: 'Blockchain & Digital Assets',
-    algorithms: ['secp256k1', 'ML-DSA-65'],
-    icon: Bitcoin,
-    moduleLink: '/learn/digital-assets',
-    keywords: ['pqc', 'classical', 'comparison', 'secp256k1', 'ml-dsa', 'ecdsa', 'blockchain'],
-    difficulty: 'beginner',
-    recommendedPersonas: ['developer', 'researcher', 'curious'],
-  },
   {
     id: 'bitcoin-flow',
     name: 'Bitcoin Transaction',
@@ -451,11 +425,6 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.HSMKeyDerivationDemo,
     }))
   ),
-  'provider-pattern': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/CryptoDevAPIs/workshop/ProviderPatternWorkshop').then(
-      (m) => ({ default: m.ProviderPatternWorkshop })
-    )
-  ),
   'rng-demo': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/Entropy/workshop/RandomGenerationDemo').then((m) => ({
       default: m.RandomGenerationDemo,
@@ -489,11 +458,6 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'hybrid-signing': lazyWithRetry(() =>
     import('@/components/Playground/workshop/HybridSigningDemo').then((m) => ({
       default: m.HybridSigningDemo,
-    }))
-  ),
-  'qkd-postproc': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/QKD/workshop/PostProcessingDemo').then((m) => ({
-      default: m.PostProcessingDemo,
     }))
   ),
   'openssl-studio': lazyWithRetry(() =>
@@ -530,13 +494,6 @@ export const ONBACK_COMPONENTS: Record<string, LazyComp> = {
         Record<string, React.ComponentType<{ onBack: () => void }>>
       >,
     'SuciFlow'
-  ),
-  'pqc-comparison': makeLazyWithOnBack(
-    () =>
-      import('@/components/PKILearning/modules/DigitalAssets/flows/PQCLiveComparisonFlow') as Promise<
-        Record<string, React.ComponentType<{ onBack: () => void }>>
-      >,
-    'PQCLiveComparisonFlow'
   ),
   'bitcoin-flow': makeLazyWithOnBack(
     () =>

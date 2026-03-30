@@ -25,6 +25,14 @@ import {
   Sparkles,
   Lock,
   ThumbsUp,
+  Briefcase,
+  BarChart3,
+  Building2,
+  Microscope,
+  Wrench,
+  BookOpen,
+  GraduationCap,
+  Award,
 } from 'lucide-react'
 import type { LucideIcon } from 'lucide-react'
 
@@ -54,4 +62,12 @@ export const achievementIconMap: Record<string, LucideIcon> = {
   Sparkles,
   Lock,
   ThumbsUp,
+  Briefcase,
+  BarChart3,
+  Building2,
+  Microscope,
+  Wrench,
+  BookOpen,
+  GraduationCap,
+  Award,
 }

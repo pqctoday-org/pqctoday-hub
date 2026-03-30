@@ -28,6 +28,8 @@ export function useAchievementChecker() {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
 
   const playgroundOpCount = useAchievementStore((s) => s.playgroundOpCount)
+  const playgroundToolsUsed = useAchievementStore((s) => s.playgroundToolsUsed)
+  const businessToolsUsed = useAchievementStore((s) => s.businessToolsUsed)
   const sectionsVisited = useAchievementStore((s) => s.sectionsVisited)
   const endorsementRecords = useEndorsementStore((s) => s.records)
   const unlocked = useAchievementStore((s) => s.unlocked)
@@ -115,6 +117,7 @@ export function useAchievementChecker() {
       modulesWithAllLearnSections,
       deepDiveModuleIds,
       playgroundOperationCount: playgroundOpCount,
+      playgroundToolsUsed: playgroundToolsUsed ?? [],
       chatMessageCount,
       assessmentCompleted: assessmentStatus === 'complete',
       complianceFrameworkCount: myFrameworks?.length ?? 0,
@@ -122,6 +125,7 @@ export function useAchievementChecker() {
       sectionsVisited: sectionsVisited ?? [],
       quizQuestionsCorrect: quizMastery?.correctQuestionIds?.length ?? 0,
       endorsementCount,
+      businessToolsUsed: businessToolsUsed ?? [],
     }
   }, [
     modules,
@@ -133,6 +137,8 @@ export function useAchievementChecker() {
     myFrameworks,
     myProducts,
     playgroundOpCount,
+    playgroundToolsUsed,
+    businessToolsUsed,
     sectionsVisited,
     endorsementRecords,
   ])

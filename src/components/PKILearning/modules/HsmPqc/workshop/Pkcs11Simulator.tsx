@@ -245,9 +245,23 @@ const runStep = async (
           .slice(0, 8)
           .map((m) => m.toString(16).padStart(8, '0'))
           .join(', 0x')}`,
+        '',
+        '  PQC Mechanism Flags:',
         '  ML-KEM (0x0000000f): CKF_GENERATE_KEY_PAIR | CKF_ENCAPSULATE | CKF_DECAPSULATE',
         '  ML-DSA (0x0000001c): CKF_GENERATE_KEY_PAIR | CKF_SIGN | CKF_VERIFY',
         '  SLH-DSA(0x0000002d): CKF_GENERATE_KEY_PAIR | CKF_SIGN | CKF_VERIFY',
+        '',
+        '  Flag Legend (PKCS#11 v3.2 §5.12):',
+        '  CKF_ENCRYPT / DECRYPT    — Symmetric or asymmetric data encryption',
+        '  CKF_SIGN / VERIFY        — Digital signature creation and validation',
+        '  CKF_GENERATE_KEY_PAIR    — Asymmetric key pair generation',
+        '  CKF_GENERATE             — Symmetric key generation',
+        '  CKF_WRAP / UNWRAP        — Key encryption for secure transport',
+        '  CKF_DERIVE               — Key derivation (KDF, ECDH, HKDF)',
+        '  CKF_ENCAPSULATE          — KEM encapsulation (FIPS 203, v3.2 only)',
+        '  CKF_DECAPSULATE          — KEM decapsulation (FIPS 203, v3.2 only)',
+        '  CKF_DIGEST               — Cryptographic hashing (SHA-2, SHA-3)',
+        '',
         '  Calls:  C_GetMechanismList + C_GetMechanismInfo (per mechanism)',
       ].join('\n')
     }

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo, Suspense, useCallback } from 'react'
+import React, { useState, useMemo, useEffect, Suspense, useCallback } from 'react'
 import {
   ArrowLeft,
   Search,
@@ -11,7 +11,6 @@ import {
   Hash,
   Dice5,
   FileSignature,
-  Layers,
   Radio,
   Bitcoin,
   Workflow,
@@ -21,6 +20,7 @@ import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Skeleton } from '@/components/ui/skeleton'
 import { EmptyState } from '@/components/ui/empty-state'
+import { useAchievementStore } from '@/store/useAchievementStore'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 
 // ---------------------------------------------------------------------------
@@ -130,16 +130,6 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
     moduleLink: '/learn/qkd',
     keywords: ['kdf', 'key derivation', 'sp 800-108', 'hmac', 'counter mode', 'kbkdf'],
   },
-  {
-    id: 'provider-pattern',
-    name: 'Crypto Provider Patterns',
-    description: 'Compare PKCS#11, JCA/JCE, OpenSSL, CNG crypto provider patterns',
-    category: 'HSM / PKCS#11',
-    algorithms: ['ML-DSA-65', 'PKCS#11'],
-    icon: Layers,
-    moduleLink: '/learn/crypto-dev-apis',
-    keywords: ['provider', 'jca', 'jce', 'openssl', 'cng', 'bouncy castle', 'api', 'mechanism'],
-  },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
   {
@@ -219,16 +209,6 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
   {
-    id: 'qkd-postproc',
-    name: 'QKD Post-Processing',
-    description: 'BB84 quantum key distribution with SHA-256 privacy amplification',
-    category: 'Protocol Simulations',
-    algorithms: ['BB84', 'SHA-256', 'HKDF'],
-    icon: Radio,
-    moduleLink: '/learn/qkd',
-    keywords: ['qkd', 'bb84', 'quantum key distribution', 'privacy amplification', 'sifting'],
-  },
-  {
     id: 'suci-flow',
     name: '5G SUCI Construction',
     description: 'ECDH + HKDF + AES subscriber concealment for 5G networks',
@@ -240,16 +220,6 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
-  {
-    id: 'pqc-comparison',
-    name: 'PQC vs Classical',
-    description: 'Live secp256k1 ECDSA vs ML-DSA-65 signing comparison',
-    category: 'Blockchain & Digital Assets',
-    algorithms: ['secp256k1', 'ML-DSA-65'],
-    icon: Bitcoin,
-    moduleLink: '/learn/digital-assets',
-    keywords: ['pqc', 'classical', 'comparison', 'secp256k1', 'ml-dsa', 'ecdsa', 'blockchain'],
-  },
   {
     id: 'bitcoin-flow',
     name: 'Bitcoin Transaction',
@@ -380,11 +350,6 @@ const TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.HSMKeyDerivationDemo,
     }))
   ),
-  'provider-pattern': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/CryptoDevAPIs/workshop/ProviderPatternWorkshop').then(
-      (m) => ({ default: m.ProviderPatternWorkshop })
-    )
-  ),
   'rng-demo': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/Entropy/workshop/RandomGenerationDemo').then((m) => ({
       default: m.RandomGenerationDemo,
@@ -413,11 +378,6 @@ const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'merkle-proof': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/ProofVerifier').then((m) => ({
       default: m.ProofVerifier,
-    }))
-  ),
-  'qkd-postproc': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/QKD/workshop/PostProcessingDemo').then((m) => ({
-      default: m.PostProcessingDemo,
     }))
   ),
   'openssl-studio': lazyWithRetry(() =>
@@ -456,13 +416,6 @@ const ONBACK_COMPONENTS: Record<string, LazyComp> = {
       >,
     'SuciFlow'
   ),
-  'pqc-comparison': makeLazyWithOnBack(
-    () =>
-      import('@/components/PKILearning/modules/DigitalAssets/flows/PQCLiveComparisonFlow') as Promise<
-        Record<string, React.ComponentType<{ onBack: () => void }>>
-      >,
-    'PQCLiveComparisonFlow'
-  ),
   'bitcoin-flow': makeLazyWithOnBack(
     () =>
       import('@/components/PKILearning/modules/DigitalAssets/flows/BitcoinFlow') as Promise<
@@ -493,6 +446,10 @@ const ONBACK_COMPONENTS: Record<string, LazyComp> = {
 export const WorkshopToolsTab: React.FC = () => {
   const [selectedToolId, setSelectedToolId] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
+
+  useEffect(() => {
+    if (selectedToolId) useAchievementStore.getState().recordPlaygroundToolUsage(selectedToolId)
+  }, [selectedToolId])
 
   const handleBack = useCallback(() => setSelectedToolId(null), [])
 

@@ -3,7 +3,7 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 import type { UnlockedAchievement } from '@/types/AchievementTypes'
 
-const ACHIEVEMENT_STORE_VERSION = 1
+const ACHIEVEMENT_STORE_VERSION = 2
 
 interface AchievementState {
   /** All unlocked achievements */
@@ -12,6 +12,8 @@ interface AchievementState {
   /** Persistent counters for data not tracked elsewhere */
   playgroundOpCount: number
   sectionsVisited: string[]
+  playgroundToolsUsed: string[]
+  businessToolsUsed: string[]
 
   /** Toast FIFO queue — IDs of achievements to show next */
   toastQueue: string[]
@@ -21,6 +23,8 @@ interface AchievementState {
   markSeen: (id: string) => void
   incrementPlaygroundOps: () => void
   recordSectionVisit: (section: string) => void
+  recordPlaygroundToolUsage: (toolId: string) => void
+  recordBusinessToolUsage: (toolId: string) => void
   dequeueToast: () => string | undefined
   resetAchievements: () => void
 }
@@ -31,6 +35,8 @@ export const useAchievementStore = create<AchievementState>()(
       unlocked: [],
       playgroundOpCount: 0,
       sectionsVisited: [],
+      playgroundToolsUsed: [],
+      businessToolsUsed: [],
       toastQueue: [],
 
       unlock: (id) => {
@@ -62,6 +68,20 @@ export const useAchievementStore = create<AchievementState>()(
             : [...state.sectionsVisited, section],
         })),
 
+      recordPlaygroundToolUsage: (toolId) =>
+        set((state) => ({
+          playgroundToolsUsed: state.playgroundToolsUsed.includes(toolId)
+            ? state.playgroundToolsUsed
+            : [...state.playgroundToolsUsed, toolId],
+        })),
+
+      recordBusinessToolUsage: (toolId) =>
+        set((state) => ({
+          businessToolsUsed: state.businessToolsUsed.includes(toolId)
+            ? state.businessToolsUsed
+            : [...state.businessToolsUsed, toolId],
+        })),
+
       dequeueToast: () => {
         const state = get()
         if (state.toastQueue.length === 0) return undefined
@@ -75,6 +95,8 @@ export const useAchievementStore = create<AchievementState>()(
           unlocked: [],
           playgroundOpCount: 0,
           sectionsVisited: [],
+          playgroundToolsUsed: [],
+          businessToolsUsed: [],
           toastQueue: [],
         }),
     }),
@@ -86,6 +108,8 @@ export const useAchievementStore = create<AchievementState>()(
         unlocked: state.unlocked,
         playgroundOpCount: state.playgroundOpCount,
         sectionsVisited: state.sectionsVisited,
+        playgroundToolsUsed: state.playgroundToolsUsed,
+        businessToolsUsed: state.businessToolsUsed,
         toastQueue: state.toastQueue,
       }),
       migrate: (persistedState: unknown) => {
@@ -94,6 +118,12 @@ export const useAchievementStore = create<AchievementState>()(
         state.playgroundOpCount =
           typeof state.playgroundOpCount === 'number' ? state.playgroundOpCount : 0
         state.sectionsVisited = Array.isArray(state.sectionsVisited) ? state.sectionsVisited : []
+        state.playgroundToolsUsed = Array.isArray(state.playgroundToolsUsed)
+          ? state.playgroundToolsUsed
+          : []
+        state.businessToolsUsed = Array.isArray(state.businessToolsUsed)
+          ? state.businessToolsUsed
+          : []
         state.toastQueue = Array.isArray(state.toastQueue) ? state.toastQueue : []
         return state as unknown as AchievementState
       },

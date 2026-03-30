@@ -13,6 +13,7 @@ import {
   getTimelineEnrichmentKey,
 } from '../../data/timelineEnrichmentData'
 import type { TimelineDocumentRow } from './TimelineDocumentDetailPopover'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 interface TimelineDocumentCardProps {
   row: TimelineDocumentRow
@@ -65,8 +66,13 @@ export const TimelineDocumentCard = ({
         {row.title}
       </h3>
 
-      {/* Phase + Type + Enriched badges */}
+      {/* Phase + Type + Trust + Enriched badges */}
       <div className="flex items-center gap-2 mb-3 flex-wrap">
+        <TrustScoreBadge
+          resourceType="timeline"
+          resourceId={getTimelineEnrichmentKey(row.countryName, row.org, row.title)}
+          size="sm"
+        />
         <span
           className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-black"
           style={{ backgroundColor: colors.start }}

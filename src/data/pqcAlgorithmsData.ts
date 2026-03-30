@@ -45,6 +45,9 @@ interface RawAlgorithmRow {
   'Optimization Target': string
   'FIPS Standard': string
   'Use Case Notes': string
+  trusted_source_id: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 // Import CSV data dynamically (lazy glob)

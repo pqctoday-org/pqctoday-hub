@@ -36,7 +36,7 @@ const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starter
     executive: {
       label: 'Executive / GRC',
       subtitle: 'Risk & governance focus',
-      starterTools: ['pqc-comparison', 'hybrid-certs', 'token-migration'],
+      starterTools: ['hybrid-certs', 'token-migration', 'envelope-encrypt'],
     },
     developer: {
       label: 'Developer / Engineer',
@@ -51,7 +51,7 @@ const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starter
     researcher: {
       label: 'Researcher / Academic',
       subtitle: 'Comprehensive deep dive',
-      starterTools: ['entropy-test', 'qkd-postproc', 'slh-dsa'],
+      starterTools: ['entropy-test', 'slh-dsa', 'kdf-derivation'],
     },
     ops: {
       label: 'IT Ops / DevOps',
@@ -61,7 +61,7 @@ const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starter
     curious: {
       label: 'Curious Explorer',
       subtitle: 'New to cryptography',
-      starterTools: ['qkd-postproc', 'qrng-demo', 'pqc-comparison'],
+      starterTools: ['qrng-demo', 'rng-demo', 'binary-signing'],
     },
   }
 
@@ -112,22 +112,9 @@ const CuriousStartHere = () => {
   const steps = [
     {
       n: 1,
-      id: 'pqc-comparison',
-      title: 'PQC vs Classical',
-      caption:
-        "See the difference between today's crypto and quantum-safe algorithms live in your browser.",
-    },
-    {
-      n: 2,
       id: 'qrng-demo',
       title: 'QRNG Demo',
       caption: 'Visualise how randomness underpins all cryptographic security.',
-    },
-    {
-      n: 3,
-      id: 'qkd-postproc',
-      title: 'QKD Post-Processing',
-      caption: 'Simulate the BB84 quantum key distribution protocol step by step.',
     },
   ]
   return (

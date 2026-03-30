@@ -82,7 +82,7 @@ const FEATURE_ROUTES_RAW: Record<string, string> = {
   'platform-eng-pqc': '/learn/platform-eng-pqc',
   'energy-utilities-pqc': '/learn/energy-utilities-pqc',
   'healthcare-pqc': '/learn/healthcare-pqc',
-  'aerospace-space-pqc': '/learn/aerospace-space-pqc',
+  'aerospace-pqc': '/learn/aerospace-pqc',
   'automotive-pqc': '/learn/automotive-pqc',
   'exec-quantum-impact': '/learn/exec-quantum-impact',
   'dev-quantum-impact': '/learn/dev-quantum-impact',

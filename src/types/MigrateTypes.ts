@@ -44,6 +44,8 @@ export interface SoftwareItem {
   migrationPhases: string
   learningModules: string
   vendorId?: string
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

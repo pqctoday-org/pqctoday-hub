@@ -175,10 +175,39 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Broader KDF context */}
+      <div className="glass-panel p-4">
+        <h4 className="text-sm font-bold text-foreground mb-2">
+          SP 800-108 Key Derivation — Beyond QKD
+        </h4>
+        <p className="text-xs text-muted-foreground mb-3">
+          NIST SP 800-108 counter-mode KDF is a universal primitive used wherever a master secret
+          must produce multiple purpose-specific keys. This demo uses QKD as the input source, but
+          the same KDF applies to:
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs text-muted-foreground">
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <span className="font-bold text-foreground block mb-1">KEM Shared Secrets</span>
+            ML-KEM encapsulation produces a 32-byte random secret. SP 800-108 derives encryption,
+            MAC, and IV keys with domain separation (label + context).
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <span className="font-bold text-foreground block mb-1">Pre-Shared Keys (PSK)</span>
+            TLS 1.3 external PSK or IPsec IKEv2 PSK imported into an HSM, then expanded via KBKDF to
+            produce per-session traffic keys.
+          </div>
+          <div className="bg-muted/50 rounded-lg p-3 border border-border">
+            <span className="font-bold text-foreground block mb-1">Password-Based (PBKDF2)</span>
+            CKM_PKCS5_PBKD2 derives key material from passwords. Often chained with SP 800-108 for
+            key hierarchy (master → KEK → DEK).
+          </div>
+        </div>
+      </div>
+
       {/* Header note */}
       <div className="bg-primary/5 border border-primary/20 rounded p-4">
         <p className="text-xs text-muted-foreground">
-          This demo follows the{' '}
+          <strong>QKD scenario below:</strong> This demo follows the{' '}
           <a
             href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/014/01.01.01_60/gs_qkd014v010101p.pdf"
             target="_blank"

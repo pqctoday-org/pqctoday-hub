@@ -577,6 +577,38 @@ export const BinarySigning: React.FC = () => {
         </div>
       </div>
 
+      {/* Supply chain context */}
+      <div className="glass-panel p-4">
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          Why Code Signing Matters for PQC Migration
+        </h4>
+        <div className="space-y-2 text-xs text-muted-foreground">
+          <p>
+            Code signing is a critical supply chain security control. A quantum adversary who breaks
+            classical signing keys (RSA, ECDSA) could forge signatures on malicious binaries,
+            compromising software update channels, package registries, and container images.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-3">
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <span className="font-bold text-foreground block mb-1">Sigstore / Rekor</span>
+              Transparency logs provide tamper-evident records of signing events. ML-DSA signatures
+              are 9-18x larger than RSA (38-72x vs ECDSA), impacting log storage and Merkle tree
+              sizes.
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <span className="font-bold text-foreground block mb-1">SBOM Signing</span>
+              Software Bill of Materials (SPDX, CycloneDX) must be signed for provenance. Larger
+              ML-DSA signatures increase SBOM bundle sizes and CI/CD artifact storage.
+            </div>
+            <div className="bg-muted/50 rounded-lg p-3 border border-border">
+              <span className="font-bold text-foreground block mb-1">Container Images</span>
+              OCI image signatures (cosign, Notary v2) embed in registry metadata. ML-DSA-65
+              signatures (3,309 B) vs ECDSA (64 B) affect manifest sizes and pull latency.
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">

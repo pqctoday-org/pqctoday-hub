@@ -47,6 +47,9 @@ function GoogleAuthInner({ children }: { children: React.ReactNode }) {
     onError: (err) => console.warn('Google login error:', err),
     scope: 'https://www.googleapis.com/auth/drive.appdata',
     state: csrfState,
+    include_granted_scopes: true,
+    flow: 'implicit',
+    ux_mode: 'popup',
   })
 
   const signIn = useCallback(() => login(), [login])

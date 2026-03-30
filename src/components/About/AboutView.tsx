@@ -12,6 +12,7 @@ import { LicenseSection } from './sections/LicenseSection'
 import { RagAiSection } from './sections/RagAiSection'
 import { CryptoBuffSection } from './sections/CryptoBuffSection'
 import { AppearanceSection } from './sections/AppearanceSection'
+import { TrustScoreMethodologySection } from './sections/TrustScoreMethodologySection'
 
 export function AboutView() {
   return (
@@ -22,6 +23,7 @@ export function AboutView() {
       <CloudSyncPrivacySection />
       <CommunitySection />
       <DataFoundationSection />
+      <TrustScoreMethodologySection />
       <SbomSection />
       <SecurityAuditSection />
       <DataPrivacySection />

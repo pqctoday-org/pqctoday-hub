@@ -35,6 +35,8 @@ interface RawSoftwareItem {
   migration_phases: string
   learning_modules: string
   vendor_id?: string
+  peer_reviewed?: string
+  vetting_body?: string
 }
 
 const {
@@ -68,6 +70,13 @@ const {
     migrationPhases: row.migration_phases || '',
     learningModules: row.learning_modules || '',
     vendorId: row.vendor_id || '',
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body
+      ? row.vetting_body
+          .split(';')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : undefined,
   }),
   true // withPrevious for status badges
 )

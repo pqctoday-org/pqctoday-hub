@@ -27,7 +27,8 @@ const RECENT_EVENT_TYPES = new Set<HistoryEventType>([
 // ── Compact Belt Header ──────────────────────────────────────────────────────
 
 function BeltHeader() {
-  const { hasStarted, score, belt, nextBelt, pointsToNextBelt } = useAwarenessScore()
+  const { hasStarted, score, belt, nextBelt, pointsToNextBelt, thresholdGates } =
+    useAwarenessScore()
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const selectedRegion = usePersonaStore((s) => s.selectedRegion)
   const selectedIndustries = usePersonaStore((s) => s.selectedIndustries)
@@ -82,7 +83,11 @@ function BeltHeader() {
         <div>
           <div className="flex justify-between text-[10px] text-muted-foreground mb-0.5">
             <span>
-              {pointsToNextBelt} pts to {nextBelt.name}
+              {pointsToNextBelt > 0
+                ? `${pointsToNextBelt} pts to ${nextBelt.name}`
+                : thresholdGates.length > 0
+                  ? `Unlock ${nextBelt.name}`
+                  : `0 pts to ${nextBelt.name}`}
             </span>
           </div>
           <div className="h-1 bg-muted rounded-full overflow-hidden">

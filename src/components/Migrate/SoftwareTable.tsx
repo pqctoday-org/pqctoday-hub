@@ -28,6 +28,7 @@ import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -148,6 +149,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                 <th
                   scope="col"
                   className="p-2 w-8 text-center text-xs text-muted-foreground font-medium"
+                  title="Compare up to 3 products side-by-side"
                 >
                   <span className="sr-only">Compare</span>⚖
                 </th>
@@ -156,14 +158,15 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                 <th
                   scope="col"
                   className="p-2 w-8 text-center text-xs text-muted-foreground font-medium"
+                  title="Mark products as yours for filtered views"
                 >
                   My
                 </th>
               )}
-              <th scope="col" className="p-4 w-8">
+              <th scope="col" className="p-4 w-8" title="Hide product from view">
                 <span className="sr-only">Hide</span>
               </th>
-              <th scope="col" className="p-4 w-8">
+              <th scope="col" className="p-4 w-8" title="Bookmark for quick access">
                 <span className="sr-only">Bookmark</span>
               </th>
               <th scope="col" className="p-4 w-10">
@@ -221,7 +224,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                           title={
                             maxCompareReached && !compareProducts!.has(key)
                               ? 'Max 3 reached'
-                              : undefined
+                              : compareProducts!.has(key)
+                                ? 'Remove from comparison'
+                                : 'Add to comparison'
                           }
                           disabled={maxCompareReached && !compareProducts!.has(key)}
                           onClick={(e) => {
@@ -251,6 +256,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               ? 'Remove from My Products'
                               : 'Add to My Products'
                           }
+                          title={
+                            selectedProducts.has(key)
+                              ? 'Remove from My Products'
+                              : 'Add to My Products'
+                          }
                           onClick={(e) => {
                             e.stopPropagation()
                             onToggleProduct(key)
@@ -274,6 +284,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                         <button
                           type="button"
                           aria-label="Hide this product"
+                          title="Hide this product"
                           onClick={(e) => {
                             e.stopPropagation()
                             onHideProduct(key)
@@ -291,6 +302,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                           migrateBookmarkSet.has(item.softwareName)
                             ? `Remove ${item.softwareName} bookmark`
                             : `Bookmark ${item.softwareName}`
+                        }
+                        title={
+                          migrateBookmarkSet.has(item.softwareName)
+                            ? 'Remove bookmark'
+                            : 'Bookmark for quick access'
                         }
                         onClick={(e) => {
                           e.stopPropagation()
@@ -367,6 +383,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 Enriched
                               </span>
                             )}
+                            <TrustScoreBadge
+                              resourceType="migrate"
+                              resourceId={item.softwareName}
+                              size="sm"
+                            />
                             <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
                           </div>
                           <span className="text-xs text-muted-foreground">

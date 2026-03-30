@@ -481,6 +481,7 @@ export const PERSONA_MILESTONES: Record<PersonaId, JourneyMilestoneConfig[]> = {
   curious: [
     { afterPhase: 'curious-cp-2', route: '/assess', label: 'Take Assessment' },
     { afterPhase: 'curious-cp-3', route: '/timeline', label: 'Explore Timeline' },
+    { afterPhase: 'curious-cp-4', route: '/threats', label: 'Explore Threat Landscape' },
   ],
 }
 
@@ -556,10 +557,31 @@ export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
  * required feature or artifact type is not in their learning path or nav.
  */
 export const PERSONA_EXCLUDED_ACHIEVEMENTS: Record<PersonaId, string[]> = {
-  executive: ['playground-first', 'first-cert', 'first-key', 'five-keys'],
-  developer: ['first-exec-doc'],
+  executive: [
+    'playground-first',
+    'playground-breadth-3',
+    'playground-breadth-10',
+    'playground-hsm',
+    'playground-hybrid',
+    'first-cert',
+    'first-key',
+    'five-keys',
+  ],
+  developer: ['first-exec-doc', 'business-first', 'business-strategist', 'business-complete'],
   architect: ['first-exec-doc'],
   researcher: [], // all paths available
   ops: ['first-exec-doc'],
-  curious: ['playground-first', 'first-cert', 'first-key', 'five-keys'],
+  curious: [
+    'playground-first',
+    'playground-breadth-3',
+    'playground-breadth-10',
+    'playground-hsm',
+    'playground-hybrid',
+    'first-cert',
+    'first-key',
+    'five-keys',
+    'business-first',
+    'business-strategist',
+    'business-complete',
+  ],
 }

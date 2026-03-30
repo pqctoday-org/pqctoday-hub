@@ -27,6 +27,8 @@ export interface LibraryItem {
   miscInfo?: string // Informal context terms with no library referenceId (e.g. algorithm family names, generic standards)
   children?: LibraryItem[]
   categories: string[] // Multi-category support
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -134,6 +136,8 @@ interface RawLibraryRow {
   local_file: string
   module_ids: string
   misc_info: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem {
@@ -164,6 +168,8 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     miscInfo: row.misc_info?.trim() || undefined,
     children: [],
     categories: [], // Will be populated below
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as LibraryItem['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories

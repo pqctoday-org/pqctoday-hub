@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 /** Achievement categories matching priority behaviors */
-export type AchievementCategory = 'consistency' | 'workshop-depth' | 'cross-feature'
+export type AchievementCategory = 'consistency' | 'workshop-depth' | 'cross-feature' | 'business'
 
 /** Rarity tiers drive visual styling (border glow, icon treatment) */
 export type AchievementRarity = 'common' | 'uncommon' | 'rare' | 'epic'
@@ -55,10 +55,14 @@ export interface ActivitySnapshot {
 
   // Cross-feature exploration
   playgroundOperationCount: number
+  playgroundToolsUsed: string[]
   chatMessageCount: number
   assessmentCompleted: boolean
   complianceFrameworkCount: number
   migrateProductCount: number
   sectionsVisited: string[]
   endorsementCount: number
+
+  // Business
+  businessToolsUsed: string[]
 }

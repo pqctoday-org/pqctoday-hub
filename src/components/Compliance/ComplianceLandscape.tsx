@@ -24,6 +24,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { ViewToggle, type ViewMode } from '@/components/Library/ViewToggle'
 import { useComplianceSelectionStore } from '@/store/useComplianceSelectionStore'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 // ── Deadline helpers ────────────────────────────────────────────────────
 
@@ -248,7 +249,8 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
         )}
         <div className="min-w-0 flex-1">
           <h4 className="font-semibold text-foreground text-sm leading-tight">{fw.label}</h4>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
+            <TrustScoreBadge resourceType="compliance" resourceId={fw.id} size="sm" />
             {fw.requiresPQC ? (
               <span className="text-xs text-status-success font-medium">Requires PQC</span>
             ) : (

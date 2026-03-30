@@ -24,6 +24,8 @@ export interface ComplianceFramework {
   timelineRefs: string[]
   bodyType: BodyType
   website?: string
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
 }
 
 // ── CSV loading (versioned filename pattern) ────────────────────────────
@@ -42,6 +44,8 @@ interface RawComplianceRow {
   timeline_refs: string
   body_type: string
   website: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 const modules = import.meta.glob('./compliance_*.csv', {
@@ -81,6 +85,9 @@ const { data: frameworks, metadata: parsedMetadata } = loadLatestCSV<
     timelineRefs: splitSemicolon(row.timeline_refs),
     bodyType,
     website: row.website?.trim() || undefined,
+    peerReviewed:
+      (row.peer_reviewed?.toLowerCase() as ComplianceFramework['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
   }
 })
 

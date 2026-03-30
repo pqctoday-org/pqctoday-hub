@@ -59,6 +59,7 @@ vi.mock('../../data/libraryEnrichmentData', () => ({
     },
   },
   hasSubstantiveEnrichment: () => true,
+  parseEnrichmentMarkdown: () => ({}),
 }))
 
 // Mock library data

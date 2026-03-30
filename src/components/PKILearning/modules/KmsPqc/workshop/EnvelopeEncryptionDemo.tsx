@@ -9,10 +9,14 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import {
   hsm_generateMLKEMKeyPair,
   hsm_generateAESKey,
+  hsm_importAESKey,
+  hsm_importGenericSecret,
   hsm_encapsulate,
   hsm_decapsulate,
   hsm_aesWrapKey,
   hsm_extractKeyValue,
+  hsm_hkdf,
+  CKM_SHA256_HMAC,
 } from '@/wasm/softhsm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
@@ -112,14 +116,33 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           ` → ciphertext=${ciphertextBytes.length} B, shared_secret=${secretBytes.length} B`
       )
 
-      // Step 4: Wrap the DEK (wrapping key simulates HKDF(shared_secret) in production)
-      const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
+      // Step 4: Derive wrapping key from KEM shared secret via HKDF
+      // Re-import the KEM secret as a derivable key (CKA_DERIVE=true)
+      const derivableHandle = hsm_importGenericSecret(M, hSession, secretBytes)
+      const envelopeInfo = new TextEncoder().encode('kms-envelope-v1')
+      const wrapKeyBytes = hsm_hkdf(
+        M,
+        hSession,
+        derivableHandle,
+        CKM_SHA256_HMAC,
+        true,
+        true,
+        undefined,
+        envelopeInfo,
+        32
+      )
+      addLine(
+        `HKDF: C_DeriveKey(CKM_HKDF_DERIVE, baseKey=shared_secret, info="kms-envelope-v1")` +
+          ` → ${wrapKeyBytes.length} B wrapping key`
+      )
+
+      // Step 4b: Import derived wrapping key and wrap the DEK
+      const wrapKeyHandle = hsm_importAESKey(M, hSession, wrapKeyBytes)
       const wrappedDek = hsm_aesWrapKey(M, hSession, wrapKeyHandle, dekHandle)
       addLine(
-        `Wrap: C_WrapKey(CKM_AES_KEY_WRAP, wrappingKey, dekHandle)` +
+        `Wrap: C_WrapKey(CKM_AES_KEY_WRAP, hkdfWrappingKey, dekHandle)` +
           ` → ${wrappedDek.length} B wrapped DEK`
       )
-      addLine(`      (In production: wrapping key = HKDF(shared_secret, "kms-envelope-v1"))`)
 
       // Step 5: Decapsulate — recover shared secret from KEM ciphertext
       const recoveredHandle = hsm_decapsulate(M, hSession, privHandle, ciphertextBytes, 768)

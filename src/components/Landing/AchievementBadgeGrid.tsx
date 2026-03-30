@@ -12,6 +12,7 @@ const CATEGORY_LABELS: Record<AchievementCategory, string> = {
   consistency: 'Consistency',
   'workshop-depth': 'Depth',
   'cross-feature': 'Exploration',
+  business: 'Business',
 }
 
 const CATEGORY_INFO: Record<AchievementCategory, string> = {
@@ -21,9 +22,16 @@ const CATEGORY_INFO: Record<AchievementCategory, string> = {
     'Complete workshop steps and modules, finish a full track, generate keys and certificates, spend 30+ min in a module, and answer quiz questions.',
   'cross-feature':
     'Use the Playground, chat with the PQC Assistant, complete an assessment, explore compliance frameworks, plan migrations, and visit 5+ sections.',
+  business:
+    'Use Business Center tools including ROI calculators, policy generators, audit checklists, and governance builders.',
 }
 
-const CATEGORY_ORDER: AchievementCategory[] = ['consistency', 'workshop-depth', 'cross-feature']
+const CATEGORY_ORDER: AchievementCategory[] = [
+  'consistency',
+  'workshop-depth',
+  'cross-feature',
+  'business',
+]
 
 const RARITY_RING: Record<AchievementRarity, string> = {
   common: '',

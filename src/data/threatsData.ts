@@ -14,6 +14,8 @@ export interface ThreatData {
   sourceUrl: string
   accuracyPct?: number
   relatedModules: string[]
+  peerReviewed?: 'yes' | 'no' | 'partial'
+  vettingBody?: string[]
   status?: 'New' | 'Updated'
 }
 
@@ -30,6 +32,10 @@ interface RawThreatRow {
   source_url: string
   accuracy_pct: string
   related_modules: string
+  trusted_source_id: string
+  local_file: string
+  peer_reviewed: string
+  vetting_body: string
 }
 
 const modules = import.meta.glob('./quantum_threats_hsm_industries_*.csv', {
@@ -51,6 +57,13 @@ function transformThreat(row: RawThreatRow): ThreatData {
     sourceUrl: row.source_url || '',
     accuracyPct: pct || undefined,
     relatedModules: splitPipe(row.related_modules),
+    peerReviewed: (row.peer_reviewed?.toLowerCase() as ThreatData['peerReviewed']) || undefined,
+    vettingBody: row.vetting_body
+      ? row.vetting_body
+          .split(';')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : undefined,
   }
 }
 

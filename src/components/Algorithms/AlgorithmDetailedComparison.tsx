@@ -22,6 +22,7 @@ import {
   Scale,
 } from 'lucide-react'
 import clsx from 'clsx'
+import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -361,7 +362,14 @@ const PerformanceView = ({
                         </button>
                       )}
                       <div className="flex flex-col gap-1">
-                        <span className="font-semibold text-foreground">{algo.name}</span>
+                        <div className="flex items-center gap-1.5">
+                          <span className="font-semibold text-foreground">{algo.name}</span>
+                          <TrustScoreBadge
+                            resourceType="algorithm"
+                            resourceId={algo.name}
+                            size="sm"
+                          />
+                        </div>
                         {algo.securityLevel && (
                           <span
                             className={clsx(

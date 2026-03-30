@@ -477,6 +477,12 @@ export const SLHDSALiveDemo: React.FC = () => {
                 '3. Verify Signature'
               )}
             </Button>
+            {signature && preHash !== signedPreHash && (
+              <span className="text-[10px] text-status-warning self-center">
+                Verify will use {signedPreHash || 'Pure'} (signed with), not {preHash || 'Pure'}{' '}
+                (currently selected)
+              </span>
+            )}
           </div>
 
           {/* Error display */}
