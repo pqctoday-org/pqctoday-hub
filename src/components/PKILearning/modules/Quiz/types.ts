@@ -21,7 +21,6 @@ export type QuizCategory =
   | 'vpn-ssh-pqc'
   | 'stateful-signatures'
   | 'email-signing'
-  | 'key-management'
   | 'kms-pqc'
   | 'hsm-pqc'
   | 'entropy-randomness'

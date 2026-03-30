@@ -49,7 +49,6 @@ function GoogleAuthInner({ children }: { children: React.ReactNode }) {
     state: csrfState,
     include_granted_scopes: true,
     flow: 'implicit',
-    ux_mode: 'popup',
   })
 
   const signIn = useCallback(() => login(), [login])
