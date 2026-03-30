@@ -14,6 +14,7 @@ import {
   hsm_decapsulate,
   hsm_hkdf,
   hsm_extractKeyValue,
+  hsm_importGenericSecret,
   CKM_SHA256_HMAC,
 } from '@/wasm/softhsm'
 
@@ -304,11 +305,13 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
       )
 
       // ── HKDF combine ─────────────────────────────────────────────────────
+      // Re-import ECDH secret as a derivable key (CKA_DERIVE=true)
+      const derivableECDH = hsm_importGenericSecret(M, hSession, aliceECDH)
       const info = new TextEncoder().encode('X-Wing-hybrid-KEM-v1')
       const hybridKey = hsm_hkdf(
         M,
         hSession,
-        aliceECDHHandle,
+        derivableECDH,
         CKM_SHA256_HMAC,
         true,
         true,
