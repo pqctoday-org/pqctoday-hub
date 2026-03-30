@@ -886,7 +886,7 @@ function processCompliance(): RAGChunk[] {
 }
 
 function processMigrateSoftware(): RAGChunk[] {
-  const file = findLatestCSV('quantum_safe_cryptographic_software_reference_')
+  const file = findLatestCSV('pqc_product_catalog_')
   if (!file) return []
 
   const records = readCSVWithHeaders(file)
