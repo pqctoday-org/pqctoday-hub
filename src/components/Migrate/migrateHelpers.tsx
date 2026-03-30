@@ -1,7 +1,40 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { CheckCircle, ExternalLink, ShieldAlert } from 'lucide-react'
+import { AlertTriangle, CheckCircle, ExternalLink, ShieldAlert } from 'lucide-react'
 import type { CertificationXref } from '../../types/MigrateTypes'
+
+/** Human-readable labels for machine-readable evidence flags in the CSV. */
+export const EVIDENCE_FLAG_LABELS: Record<string, string> = {
+  'pre-standard-date':
+    'Release predates FIPS 203/204/205 finalization (Aug 2024); may reference draft algorithms',
+  'fips-classical-only':
+    'FIPS 140-3 certification covers classical algorithms only; PQC not in scope',
+  'no-vendor-docs': 'No vendor documentation downloaded for independent verification',
+  'no-cert-backing':
+    'Claims PQC support but has no matching FIPS, ACVP, or Common Criteria certification',
+  'openssl-version-mismatch':
+    'Claimed OpenSSL version does not include the referenced PQC algorithms (ML-KEM added in 3.5)',
+}
+
+/** Compact evidence-flag warning list for expanded rows. */
+export const EvidenceWarnings: React.FC<{ flags?: string[] }> = ({ flags }) => {
+  if (!flags || flags.length === 0) return null
+  return (
+    <div className="mt-3 rounded-lg border border-status-warning/30 bg-status-warning/5 px-3 py-2">
+      <h4 className="mb-1 flex items-center gap-1.5 text-xs font-semibold text-status-warning">
+        <AlertTriangle size={12} /> Evidence Notices ({flags.length})
+      </h4>
+      <ul className="space-y-0.5 text-xs text-muted-foreground">
+        {flags.map((flag) => (
+          <li key={flag} className="flex items-start gap-1.5">
+            <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-status-warning" />
+            {EVIDENCE_FLAG_LABELS[flag] || flag}
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
 
 /** Three-tier FIPS badge: Validated (green), Partial (amber), No (gray) */
 export const renderFipsStatus = (status: string): React.ReactElement => {

@@ -4,6 +4,35 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.66.0] - 2026-03-30
+
+### Added
+
+- **Evidence flags column**: New `evidence_flags` field in migrate CSV with machine-readable warning codes (`pre-standard-date`, `fips-classical-only`, `no-cert-backing`, `no-vendor-docs`, `openssl-version-mismatch`) [data]
+- **Evidence warnings UI**: Expanded rows in SoftwareTable show evidence notices (AlertTriangle + flag labels); SoftwareCard shows warning badge count next to TrustScoreBadge [view:/migrate]
+- **Verification status filter**: New FilterDropdown in MigrateView for filtering by Verified / Partially Verified / Needs Verification [view:/migrate]
+- **Trust score evidence penalty**: Products with evidence flags receive -5 points per flag in composite trust score [data]
+- **CSV loader silent-failure guard**: `csvUtils.ts` now logs `console.error` with glob paths and regex when no CSV files match, preventing silent empty-data loads after file renames [infra]
+- **Product documentation downloads**: 25+ new vendor proof files (HTML/PDF) downloaded to `public/products/` for AWS KMS, PQShield, SafeLogic, leancrypto, SEALSQ, and others [data]
+
+### Changed
+
+- **Migrate CSV renamed**: `quantum_safe_cryptographic_software_reference_*` → `pqc_product_catalog_*`; loader glob and regex updated in `migrateData.ts` [data]
+- **415 products** (was 394): 21 new products added including Cisco Catalyst Center, DigiCert ONE, Fortinet FortiManager, and others [data]
+- **PQC accuracy audit**: 72 products web-searched and cross-referenced against vendor sources and ACVP/FIPS certifications [data]
+
+### Fixed
+
+- **21 products set to Unknown**: Products claiming PQC without local proof file or certification xref now honestly marked `Unknown` instead of asserting unverified claims [data]
+- **4 products upgraded**: Fortinet FortiGate-Rugged, Zscaler ZTE, AppViewX CERT+, Broadcom Avi already ship PQC — upgraded from Planned to Yes (with proof) [data]
+- **Node.js corrected**: Was "No (Awaiting OpenSSL upgrade)" — actually has ML-KEM + ML-DSA since v24.7 via OpenSSL 3.5 [data]
+- **Cisco IOS XE corrected**: Was "Yes (ML-KEM)" — native ML-KEM not shipped yet, downgraded to Partial [data]
+- **01 Quantum IronCAP corrected**: Was "Classic McEliece" — actually proprietary Goppa code-based variant [data]
+- **Algorithm name normalization**: CRYSTALS-Kyber → ML-KEM, CRYSTALS-Dilithium → ML-DSA across all product descriptions [data]
+- **FIPS scope clarification**: 14 products with classical-only FIPS certs now note "PQC not in FIPS scope" [data]
+- **OpenSSL version mismatches**: Fixed 5 products claiming ML-KEM via OpenSSL 3.2/3.3 (added in 3.5) [data]
+- **Pre-standard date flags**: 10 products with release dates before FIPS 203/204/205 finalization (Aug 2024) flagged [data]
+
 ## [2.65.3] - 2026-03-29
 
 ### Added

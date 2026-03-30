@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
 import {
+  AlertTriangle,
   ExternalLink,
   EyeOff,
   CheckSquare,
@@ -134,6 +135,14 @@ export const SoftwareCard = ({
         {renderPqcSupport(item.pqcSupport)}
         {renderFipsStatus(item.fipsValidated)}
         <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
+        {item.evidenceFlags && item.evidenceFlags.length > 0 && (
+          <span
+            title={`${item.evidenceFlags.length} evidence notice${item.evidenceFlags.length > 1 ? 's' : ''}`}
+            className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-status-warning/30 bg-status-warning/10 text-status-warning"
+          >
+            <AlertTriangle size={10} /> {item.evidenceFlags.length}
+          </span>
+        )}
       </div>
 
       {/* Metadata */}

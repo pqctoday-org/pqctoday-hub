@@ -149,6 +149,9 @@ export const MigrateView: React.FC = () => {
     () => searchParams.get('cat') ?? 'All'
   )
   const [vendorFilter, setVendorFilter] = useState(() => searchParams.get('vendor') ?? 'All')
+  const [verificationFilter, setVerificationFilter] = useState(
+    () => searchParams.get('verification') ?? 'All'
+  )
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
   )
@@ -198,6 +201,7 @@ export const MigrateView: React.FC = () => {
       layer?: string
       cat?: string
       vendor?: string
+      verification?: string
       sort?: MigrateSortOption
       mode?: 'stack' | 'cards' | 'table'
       subcat?: string
@@ -211,6 +215,8 @@ export const MigrateView: React.FC = () => {
           const lyr = overrides.layer !== undefined ? overrides.layer : activeLayer
           const cat = overrides.cat !== undefined ? overrides.cat : flatCategoryFilter
           const vendor = overrides.vendor !== undefined ? overrides.vendor : vendorFilter
+          const verification =
+            overrides.verification !== undefined ? overrides.verification : verificationFilter
           const sort = overrides.sort !== undefined ? overrides.sort : sortBy
           const mode = overrides.mode !== undefined ? overrides.mode : viewMode
           const subcat = overrides.subcat !== undefined ? overrides.subcat : activeSubCategory
@@ -233,6 +239,9 @@ export const MigrateView: React.FC = () => {
           if (vendor !== 'All') next.set('vendor', vendor)
           else next.delete('vendor')
 
+          if (verification !== 'All') next.set('verification', verification)
+          else next.delete('verification')
+
           if (sort !== 'name') next.set('sort', sort)
           else next.delete('sort')
 
@@ -254,6 +263,7 @@ export const MigrateView: React.FC = () => {
       activeLayer,
       flatCategoryFilter,
       vendorFilter,
+      verificationFilter,
       sortBy,
       viewMode,
       activeSubCategory,
@@ -333,6 +343,9 @@ export const MigrateView: React.FC = () => {
           }
           // Vendor filter
           if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
+          // Verification status filter
+          if (verificationFilter !== 'All' && item.verificationStatus !== verificationFilter)
+            return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -351,7 +364,7 @@ export const MigrateView: React.FC = () => {
       },
       {} as Record<string, (typeof softwareData)[number][]>
     )
-  }, [stepFilter, filterText, industryFilter, vendorFilter])
+  }, [stepFilter, filterText, industryFilter, vendorFilter, verificationFilter])
 
   // Layer product counts (for badges on collapsed layer rows)
   const layerProductCounts = useMemo(
@@ -464,6 +477,9 @@ export const MigrateView: React.FC = () => {
       }
       // Vendor filter
       if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
+      // Verification status filter
+      if (verificationFilter !== 'All' && item.verificationStatus !== verificationFilter)
+        return false
       // Search filter
       if (filterText) {
         const q = filterText.toLowerCase()
@@ -478,7 +494,15 @@ export const MigrateView: React.FC = () => {
       }
       return true
     })
-  }, [stepFilter, industryFilter, effectiveLayer, flatCategoryFilter, filterText, vendorFilter])
+  }, [
+    stepFilter,
+    industryFilter,
+    effectiveLayer,
+    flatCategoryFilter,
+    filterText,
+    vendorFilter,
+    verificationFilter,
+  ])
 
   // Unique categories for the flat-mode category dropdown (scoped to selected layer)
   const flatCategories = useMemo(() => {
@@ -582,6 +606,21 @@ export const MigrateView: React.FC = () => {
         label: `${vendor.vendorDisplayName} (${vendor.productCount ?? 0})`,
       }))
     return items
+  }, [])
+
+  // Verification status filter dropdown items
+  const verificationFilterItems = useMemo(() => {
+    const counts = new Map<string, number>()
+    for (const item of softwareData) {
+      const status = item.verificationStatus || 'Unknown'
+      counts.set(status, (counts.get(status) ?? 0) + 1)
+    }
+    return Array.from(counts.entries())
+      .sort((a, b) => b[1] - a[1])
+      .map(([status, count]) => ({
+        id: status,
+        label: `${status} (${count})`,
+      }))
   }, [])
 
   // Visible product count for flat modes
@@ -774,6 +813,20 @@ export const MigrateView: React.FC = () => {
             />
           </div>
         )}
+
+        {/* Verification status dropdown */}
+        <div>
+          <FilterDropdown
+            items={verificationFilterItems}
+            selectedId={verificationFilter}
+            onSelect={(id) => {
+              setVerificationFilter(id)
+              syncFiltersToUrl({ verification: id })
+              logMigrateAction('Filter Verification', id)
+            }}
+            defaultLabel="All Verification"
+          />
+        </div>
 
         {/* Search */}
         <div className="relative flex-1 min-w-[200px]">

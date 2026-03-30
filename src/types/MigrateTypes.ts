@@ -46,6 +46,7 @@ export interface SoftwareItem {
   vendorId?: string
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
+  evidenceFlags?: string[]
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

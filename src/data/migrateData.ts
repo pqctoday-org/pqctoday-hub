@@ -5,7 +5,7 @@ import { loadLatestCSV } from './csvUtils'
 import { vendorMap } from './vendorData'
 
 // Glob import to find all matching CSV files
-const modules = import.meta.glob('./quantum_safe_cryptographic_software_reference_*.csv', {
+const modules = import.meta.glob('./pqc_product_catalog_*.csv', {
   query: '?raw',
   import: 'default',
   eager: true,
@@ -35,8 +35,10 @@ interface RawSoftwareItem {
   migration_phases: string
   learning_modules: string
   vendor_id?: string
+  trusted_source_id?: string
   peer_reviewed?: string
   vetting_body?: string
+  evidence_flags?: string
 }
 
 const {
@@ -45,7 +47,7 @@ const {
   metadata,
 } = loadLatestCSV<RawSoftwareItem, SoftwareItem>(
   modules,
-  /reference_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
+  /catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
     softwareName: row.software_name,
     categoryId: row.category_id,
@@ -73,6 +75,12 @@ const {
     peerReviewed: (row.peer_reviewed?.toLowerCase() as SoftwareItem['peerReviewed']) || undefined,
     vettingBody: row.vetting_body
       ? row.vetting_body
+          .split(';')
+          .map((s: string) => s.trim())
+          .filter(Boolean)
+      : undefined,
+    evidenceFlags: row.evidence_flags
+      ? row.evidence_flags
           .split(';')
           .map((s: string) => s.trim())
           .filter(Boolean)

@@ -5,6 +5,7 @@
  */
 import type { TrustScore, ScoredResourceType, ScoringContext } from './types'
 import { computeTrustScore, type ResourceFields } from './engine'
+import { getTrustTier } from './weights'
 
 // Data imports — all synchronous / eagerly loaded
 import { trustedSources } from '../trustedSourcesData'
@@ -300,6 +301,7 @@ function computeAllScores(): Map<string, TrustScore> {
 
   // Migrate products
   for (const item of softwareData ?? []) {
+    const key = `migrate:${item.softwareName}`
     score('migrate', item.softwareName, {
       peerReviewed: item.peerReviewed,
       vettingBody: item.vettingBody,
@@ -308,6 +310,15 @@ function computeAllScores(): Map<string, TrustScore> {
       lastVerifiedDate: item.lastVerifiedDate,
       releaseDate: item.releaseDate,
     })
+    // Apply evidence-flag penalty — each flag reduces composite score by 5 points
+    if (item.evidenceFlags?.length) {
+      const ts = scores.get(key)
+      if (ts) {
+        const penalty = item.evidenceFlags.length * 5
+        ts.compositeScore = Math.max(0, ts.compositeScore - penalty)
+        ts.tier = getTrustTier(ts.compositeScore)
+      }
+    }
   }
 
   // Threats

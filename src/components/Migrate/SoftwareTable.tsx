@@ -27,7 +27,7 @@ import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { CertBadges, EvidenceWarnings, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 
 interface SoftwareTableProps {
@@ -424,7 +424,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               {item.pqcCapabilityDescription}
                             </p>
 
-                            <h4 className="font-semibold text-foreground mb-2">
+                            <EvidenceWarnings flags={item.evidenceFlags} />
+
+                            <h4 className="font-semibold text-foreground mb-2 mt-4">
                               Capability Details
                             </h4>
                             <div className="space-y-2">

@@ -45,6 +45,12 @@ export function loadLatestCSV<TRaw extends object, T>(
   const files = sortCSVFiles(modules, regex)
 
   if (files.length === 0) {
+    const paths = Object.keys(modules)
+    console.error(
+      `[csvUtils] No CSV files matched regex ${regex}.\n` +
+        `  Glob returned ${paths.length} path(s): ${paths.slice(0, 3).join(', ')}${paths.length > 3 ? '...' : ''}\n` +
+        `  This usually means the CSV was renamed. Update the glob pattern and regex in the calling loader.`
+    )
     return { data: [], previousData: null, metadata: null }
   }
 
