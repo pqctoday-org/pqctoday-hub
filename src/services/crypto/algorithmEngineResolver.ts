@@ -105,16 +105,34 @@ async function getHsmSession() {
 
 // ── Benchmark runners per engine ──
 
+/**
+ * Minimum timing window (ms). Browsers coarsen performance.now() to ~0.1-1ms
+ * (Spectre mitigation), so sub-millisecond ops read as 0ms. When the first
+ * single-shot run falls below this threshold we automatically re-run enough
+ * iterations to fill the window and return the per-op average.
+ */
+const MIN_BENCH_WINDOW_MS = 10
+
 function timeMs(fn: () => void): number {
   const t0 = performance.now()
   fn()
-  return performance.now() - t0
+  const elapsed = performance.now() - t0
+  if (elapsed >= MIN_BENCH_WINDOW_MS) return elapsed
+  const iters = Math.ceil(MIN_BENCH_WINDOW_MS / Math.max(elapsed, 0.1))
+  const t1 = performance.now()
+  for (let i = 0; i < iters; i++) fn()
+  return (performance.now() - t1) / iters
 }
 
 async function timeMsAsync(fn: () => Promise<void>): Promise<number> {
   const t0 = performance.now()
   await fn()
-  return performance.now() - t0
+  const elapsed = performance.now() - t0
+  if (elapsed >= MIN_BENCH_WINDOW_MS) return elapsed
+  const iters = Math.ceil(MIN_BENCH_WINDOW_MS / Math.max(elapsed, 0.1))
+  const t1 = performance.now()
+  for (let i = 0; i < iters; i++) await fn()
+  return (performance.now() - t1) / iters
 }
 
 async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
