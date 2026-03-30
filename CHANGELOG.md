@@ -21,9 +21,14 @@ All notable changes to this project will be documented in this file.
 
 ### Fixed
 
-- **Google OAuth settings**: Added `include_granted_scopes`, `flow: 'implicit'`, `ux_mode: 'popup'` to fix Google consent flow [infra]
+- **Hybrid KEM + ECDH HKDF**: ECDH-derived key lacked `CKA_DERIVE` — re-import via `hsm_importGenericSecret` before HKDF combine step [view:/playground]
+- **Envelope encryption HKDF**: Same `CKA_DERIVE` fix — wrapping key derived from KEM secret instead of fresh AES key [view:/playground]
+- **Google OAuth settings**: Added `include_granted_scopes` and `flow: 'implicit'` to fix Google consent flow [infra]
 - **Orphaned tool references**: Removed `pqc-comparison`, `qkd-postproc`, `provider-pattern` from WorkshopToolsTab lazy imports and PlaygroundWorkshop starterTools arrays [view:/playground]
-- **Quiz category merge**: Consolidated 'key-management' and 'kms-pqc' quiz categories into single entry [data]
+- **Quiz category type**: Removed 'key-management' from `QuizCategory` union (merged into 'kms-pqc') [data]
+- **Missing TrustScore components**: Added TrustScoreBadge, TrustScoreTooltip, TrustBadge, TrustScoreMethodologySection, trust score engine (8 dimensions) [view:multiple]
+- **Unused imports**: Removed unused `TrustScoreBadge` imports from LeaderCard and LeadersTable [infra]
+- **Test lint errors**: Replaced `any` with typed access in 8 data loader tests; replaced `container.querySelector` with Testing Library queries in TrustBadge test [test]
 - **DocumentAnalysis route**: Fixed 'aerospace-space-pqc' → 'aerospace-pqc' typo [view:/library]
 
 ### Removed
