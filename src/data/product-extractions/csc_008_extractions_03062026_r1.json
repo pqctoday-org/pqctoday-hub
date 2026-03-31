@@ -1,0 +1,93 @@
+[
+  {
+    "platform_name": "Proton Mail",
+    "category": "Email Encryption Software",
+    "product_name": "Proton Mail",
+    "product_brief": "Secure your communications with encrypted email.",
+    "pqc_support": "Planned (with details)",
+    "pqc_capability_description": "Proton is leading standardization of quantum-safe OpenPGP extensions using hybrid modes. Selected algorithms: CRYSTALS-Dilithium + Ed25519 for signatures; CRYSTALS-Kyber + X25519 for encryption. Work began in 2021 with BSI. Rollout planned before quantum threat materializes.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, Elliptic Curve Cryptography (ECC), Ed25519, X25519, CRYSTALS-Dilithium, CRYSTALS-Kyber",
+    "key_management_model": "OpenPGP-based asymmetric encryption; proposed draft standard for persistent symmetric keys derived from recipient passwords for re-encryption.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Classical + Post-Quantum)",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source/Commercial",
+    "license": "GPL-3.0, MIT, BSD-3-Clause (varies by repository)",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "Web, iOS, Android, Desktop (via Bridge)",
+    "target_industries": "General Public, Business, Privacy-conscious users",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Developing OpenPGP extension for post-quantum algorithms since 2021. Using lattice-based algorithms (CRYSTALS-Dilithium, CRYSTALS-Kyber) in hybrid mode with classical counterparts. Aiming to roll out before quantum computers become a threat.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Ed25519, CRYSTALS-Dilithium (planned/hybrid), RSA (current), Elliptic Curve Cryptography (current)",
+    "authoritative_source_url": "https://proton.me/mail",
+    "source_documents": [
+      {
+        "filename": "Proton_Mail.html",
+        "url": "https://proton.me/blog/post-quantum-encryption",
+        "label": "primary"
+      },
+      {
+        "filename": "Proton_Mail_repo.html",
+        "url": "https://github.com/ProtonMail",
+        "label": "repo"
+      },
+      {
+        "filename": "Proton_Mail_doc1.html",
+        "url": "https://proton.me/blog/post-quantum-encryption",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Proton_Mail_doc2.html",
+        "url": "https://proton.me/blog/post-quantum-encryption",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Proton_Mail_doc3.html",
+        "url": "https://proton.me/blog/post-quantum-encryption",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "GnuPG",
+    "category": "Email Encryption Software",
+    "product_name": "GnuPG (GNU Privacy Guard)",
+    "product_brief": "A complete and free implementation of the OpenPGP standard enabling encryption, signing, and key management.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography (PQC) algorithms, schemes, or migration plans. It only references the OpenPGP standard (RFC4880), S/MIME, and Secure Shell.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated (Document mentions support for OpenPGP, S/MIME, and SSH protocols but does not list specific underlying algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Versatile key management system with access modules for public key directories; supports storage in SQLite database via \"keyboxd\" daemon (since v2.3.0) or keyring.kbx file; private keys stored as separate files.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Application-layer command line tool with support for daemons (gpg-agent, dirmngr, keyboxd).",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "GPL-3.0",
+    "latest_version": "2.5 (stable version mentioned); 2.6 (mentioned in build instructions as a dependency context)",
+    "release_date": "Not stated (Last Updated: 2026-03-05T17:32:50Z refers to repository update, not software release date)",
+    "fips_validated": "No",
+    "primary_platforms": "Unix, Windows (via gnupg-w32 tarball), Apple OSX, Cygwin",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document confirms support for signing data and communication via OpenPGP/S/MIME/SSH but does not enumerate specific signature algorithms).",
+    "authoritative_source_url": "https://gnupg.org",
+    "source_documents": [
+      {
+        "filename": "GnuPG_repo.md",
+        "url": "https://github.com/gpg/gnupg",
+        "label": "repo"
+      },
+      {
+        "filename": "GnuPG_doc1.html",
+        "url": "https://lists.gnu.org/archive/html/info-gnu/2025-12/msg00008.html",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

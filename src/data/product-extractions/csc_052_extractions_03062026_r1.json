@@ -1,0 +1,131 @@
+[
+  {
+    "platform_name": "Intel TDX (Trust Domain Extensions)",
+    "category": "Confidential Computing",
+    "product_name": "Intel® Trust Domain Extensions (Intel® TDX)",
+    "product_brief": "Hardware-based trusted execution environment facilitating hardware-isolated virtual machines to protect sensitive data and applications.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or migration plans. It focuses on hardware isolation, memory encryption (Intel TME-MK), and attestation using ECDSA.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ECDSA (mentioned in context of \"Provisioning Certification Service for ECDSA Attestation\")",
+    "key_management_model": "Hardware-based trusted execution environment; keys protected via hardware-isolated virtual machines (Trust Domains) and memory encryption (Intel TME-MK); specific key injection or storage architecture details not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware-based Trusted Execution Environment (TEE); CPU-measured module running in Secure Arbitration Mode (SEAM); supports Trust Domains (TD) as hardware-isolated VMs.",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Open Source/Commercial",
+    "license": "GPL-2.0 (for the `intel/tdx` repository source code); Commercial availability via cloud providers.",
+    "latest_version": "2.0 (mentioned as \"Intel TDX version 2.0 extends Intel TDX to support Trusted Execution Environment for device I/O\"); also mentions incompatibilities between v1.0 and v1.5.",
+    "release_date": "Not stated (Document dates range from 2021 to February 2026, but no specific product release date is provided).",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Alibaba Cloud, Microsoft Azure, Google Cloud, Intel® Developer Cloud; 4th Generation Intel® Xeon® Scalable Processors.",
+    "target_industries": "Data Security and IP Protection, Privacy and Compliance, Data Sovereignty, Confidential AI.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (for attestation provisioning); other signature schemes not explicitly listed.",
+    "authoritative_source_url": "https://github.com/intel/tdx",
+    "source_documents": [
+      {
+        "filename": "Intel_TDX__Trust_Domain_Extensions_.html",
+        "url": "https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Intel_TDX__Trust_Domain_Extensions__repo.md",
+        "url": "https://github.com/intel/tdx",
+        "label": "repo"
+      },
+      {
+        "filename": "Intel_TDX__Trust_Domain_Extensions__doc1.html",
+        "url": "https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Intel_TDX__Trust_Domain_Extensions__doc2.html",
+        "url": "https://www.intel.com/content/www/us/en/developer/tools/trust-domain-extensions/overview.html",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "AMD SEV-SNP (Secure Encrypted Virtualization)",
+    "category": "Confidential Computing",
+    "product_name": "AMD Secure Encrypted Virtualization (SEV) / AMD SEV-SNP",
+    "product_brief": "An extension to the AMD-V architecture supporting encrypted virtual machines under KVM control.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography, PQC algorithms, or migration plans. It focuses on memory encryption for VMs using standard symmetric and asymmetric cryptography inherent to the AMD-V architecture.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated (Document mentions \"unique encryption key\" and \"encrypted guests data\" but does not specify algorithm names like AES, RSA, or ECDSA).",
+    "key_management_model": "Each encrypted VM is associated with a unique encryption key; only the guest has access to the unencrypted version. Key injection methods are not explicitly detailed beyond the requirement for OVMF and kernel support.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware-based virtualization extension (AMD-V) enabling encrypted VMs via KVM/QEMU.",
+    "infrastructure_layer": "Hardware, Cloud (via hypervisor support), Security Stack",
+    "license_type": "Open Source",
+    "license": "MIT",
+    "latest_version": "Not stated (Document lists minimum required versions for dependencies: kernel >= 4.16/5.11, libvirt >= 4.5, qemu >= 2.12/6.00).",
+    "release_date": "2026-03-03 (Last Updated timestamp in repository metadata)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "SLES-15, RHEL-8, Fedora-28, Fedora-29, Ubuntu-18.04, openSUSE-Tumbleweed; requires AMD processors with SEV support.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/AMDESE/AMDSEV",
+    "source_documents": [
+      {
+        "filename": "AMD_SEV-SNP__Secure_Encrypted_Virtualization__repo.md",
+        "url": "https://github.com/AMDESE/AMDSEV",
+        "label": "repo"
+      },
+      {
+        "filename": "AMD_SEV-SNP__Secure_Encrypted_Virtualization__doc1.pdf",
+        "url": "https://www.amd.com/en/developer/sev.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "ARM Confidential Compute Architecture (CCA)",
+    "category": "Confidential Computing",
+    "product_name": "Arm Confidential Compute Architecture (CCA)",
+    "product_brief": "Hardware-based trusted execution environments using Realm Management Extension to isolate AI models and data.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography, PQC algorithms, or migration plans. It focuses on confidential computing via hardware isolation (Realms) rather than specific cryptographic algorithm updates for quantum resistance.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Hardware-based trusted execution environments; keys and data are isolated in \"Realms\" protected by the Realm Management Extension (RME).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware-based trusted execution environment (TEE) utilizing Armv9-A with Realm Management Extension (RME).",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary / Open Source components",
+    "license": "Arm architecture specifications are licensed by partners; reference software (TF-RMM, TF-A Monitor) is available at TrustedFirmware.org.",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Armv9-A CPUs with Realm Management Extension (RME); supports Mobile, PC, Datacenter, and Automotive via Lumex, Neoverse, and Zena CSS.",
+    "target_industries": "AI, Healthcare, Financial Services, Industrial Systems, Cloud Computing, Automotive, IoT.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.arm.com (inferred from text context \"Arm Global Headquarters\" and domain references, though specific product URL not explicitly listed as a single link).",
+    "source_documents": [
+      {
+        "filename": "ARM_Confidential_Compute_Architecture__CCA_.html",
+        "url": "https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture",
+        "label": "primary"
+      },
+      {
+        "filename": "ARM_Confidential_Compute_Architecture__CCA__doc1.html",
+        "url": "https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "ARM_Confidential_Compute_Architecture__CCA__doc2.html",
+        "url": "https://www.arm.com/architecture/security-features/arm-confidential-compute-architecture",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

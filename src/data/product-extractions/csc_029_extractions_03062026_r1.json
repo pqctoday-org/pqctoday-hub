@@ -1,0 +1,45 @@
+[
+  {
+    "platform_name": "Thales payShield 10K",
+    "category": "Payment Cryptography Systems",
+    "product_name": "Thales payShield 10K",
+    "product_brief": "Fifth generation payment HSM delivering security functionality for transaction processing, data protection, and credential issuing.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document mentions a general \"Quantum\" section advising enterprises to plan for post-quantum readiness and offers a risk assessment, but it does not state that the payShield 10K product itself supports PQC algorithms or has a specific PQC implementation.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions support for EMV, PIN functions, and payment brands but does not list specific cryptographic primitives like ECDSA or RSA).",
+    "key_management_model": "HSM-backed (Hardware Security Module)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "HSM-based",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "payShield 10K (Fifth generation)",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated (Document lists FIPS 140-2 and FIPS 140-3 under general compliance but does not explicitly state the validation status for this specific product).",
+    "primary_platforms": "Payment ecosystem (issuers, service providers, acquirers, processors, payment networks)",
+    "target_industries": "Financial Services, Payment & Transactions",
+    "regulatory_status": "Addresses requirements from EMVCo, PCI SSC, GlobalPlatform, Multos, ANSI, and global/regional payment brands.",
+    "pqc_roadmap_details": "Not stated (General advice to plan for PQC readiness is provided, but no specific roadmap or algorithm choices for the product are mentioned).",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "Thales_payShield_10K.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules/payment-hsms/payshield-10k",
+        "label": "primary"
+      },
+      {
+        "filename": "Thales_payShield_10K_doc1.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules/payment-hsms/payshield-10k",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Thales_payShield_10K_doc2.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules/payment-hsms/payshield-10k",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

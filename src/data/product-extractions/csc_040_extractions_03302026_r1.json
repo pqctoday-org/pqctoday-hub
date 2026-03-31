@@ -1,0 +1,380 @@
+[
+  {
+    "platform_name": "CircleCI",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "CircleCI",
+    "product_brief": "A CI/CD platform providing execution environments, build optimization, and security features for software development pipelines.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text contains no mention of Post-Quantum Cryptography (PQC) support, algorithms, or implementation within the CircleCI product. The document discusses PQC as a general industry trend in an article section but does not attribute PQC capabilities to CircleCI itself.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "SSH, HTTPS, OpenID Connect (OIDC)",
+    "key_management_model": "Environment variables for secrets; OpenID Connect for authentication without distributing secrets; Restricted contexts for encrypted storage and sharing of environment variables.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-hosted service with option for self-hosted runners or on-premise infrastructure; isolated sandboxes for builds.",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by commercial nature and lack of open source license statement in product section)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No (FedRAMP tailored and SOC 2 Type II compliant mentioned, but no specific FIPS 140 validation stated)",
+    "primary_platforms": "Cloud-hosted; Self-hosted runners; Integrations with GitHub, GitLab, Bitbucket, AWS, GCP, Azure, Kubernetes.",
+    "target_industries": "Enterprise, SMB, Startup, Government (FedRAMP tailored), Financial Services (implied by context of security compliance)",
+    "regulatory_status": "FedRAMP tailored, SOC 2 Type II compliant, EU-U.S. Data Privacy Framework, UK Extension to the EU-U.S. Data Privacy Framework, Swiss-U.S. Data Privacy Framework, PCI compliance (via Stripe).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://circleci.com",
+    "source_documents": [
+      {
+        "filename": "CircleCI.html",
+        "url": "https://circleci.com",
+        "label": "primary"
+      },
+      {
+        "filename": "CircleCI_doc1.html",
+        "url": "https://circleci.com",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Zscaler ZTE",
+    "category": "Web & Application Security",
+    "product_name": "Zscaler Internet Access™ (ZIA™) / Zscaler Zero Trust Exchange™",
+    "product_brief": "Cloud-native inline inspection platform providing real-time decryption and security policy enforcement for PQC traffic.",
+    "pqc_support": "Yes (with details: Supports hybrid PQC key exchange using ML-KEM/FIPS 203 and Pre-shared Post-Quantum Keys (PPK) for IPsec).",
+    "pqc_capability_description": "Provides real-time inline inspection of PQC traffic via hybrid PQC key exchange in TLS 1.2/1.3, auto-detecting ML-KEM (FIPS 203) and Open Quantum Safe groups alongside classical curves. Supports IPsec with Pre-shared Post-Quantum Keys (PPK) per RFC 8784 to protect IKE key derivation against quantum attacks without requiring full PQC algorithms in the exchange.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM (FIPS 203), Open Quantum Safe, classical elliptic curves, Diffie-Hellman (DH/ECDH), TLS 1.2, TLS 1.3, IPsec, IKE.",
+    "key_management_model": "Hybrid PQC key exchange (combining classical and post-quantum algorithms); Pre-shared Post-Quantum Keys (PPK) for IPsec to secure IKE key derivation; supports draft-ietf-tls-echde-mlkem standard.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native inline inspection engine / Zero Trust Exchange / Inline proxy",
+    "infrastructure_layer": "Network, Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (©2026 Zscaler, Inc. All rights reserved)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (ML-KEM is noted as finalized in August 2024 as FIPS 203 standard; product implementation is compliant with the standard but specific FIPS validation status of the appliance is not stated).",
+    "primary_platforms": "Cloud-native (Zscaler Zero Trust Exchange); compatible with Chrome, Firefox, Safari clients and servers.",
+    "target_industries": "Enterprise, Government (implied by compliance mandates), Critical sectors",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implementation of hybrid PQC key exchange compliant with draft-ietf-tls-echde-mlkem; adoption of NIST-standardized ML-KEM (FIPS 203); support for RFC 8784 (PPK) for IPsec.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Document focuses on Key Encapsulation Mechanisms/KEM and key exchange; digital signature mechanisms are mentioned as vulnerable but specific PQC signature schemes supported are not listed).",
+    "authoritative_source_url": "zscaler.com",
+    "source_documents": [
+      {
+        "filename": "Zscaler_ZTE.pdf",
+        "url": "https://www.zscaler.com/products/zscaler-zero-trust-exchange",
+        "label": "primary"
+      },
+      {
+        "filename": "Zscaler_ZTE_doc1.pdf",
+        "url": "https://www.zscaler.com/products/zscaler-zero-trust-exchange",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Akamai Edge",
+    "category": "Web & Application Security",
+    "product_name": "Akamai Edge",
+    "product_brief": "Network security platform offering Post Quantum Cryptography (PQC) for TLS communications between client and edge.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports ML-KEM based hybrid key exchange for transport layer security (TLS) 1.3. Available via \"Post Quantum Cryptography Client to Edge\" behavior for Enhanced TLS hostnames. Can be disabled if high latency or error rates occur. Limited availability; requires contacting Akamai representative.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM (hybrid key exchange), TLS 1.3",
+    "key_management_model": "Certificate-based authentication with TLS 1.3 enabled deployment settings; hybrid key exchange using ML-KEM.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Edge network security platform with inline behaviors for TLS configuration.",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "FIPS mode mentioned as a behavior option; specific validation status not stated.",
+    "primary_platforms": "Akamai Edge network, Enhanced TLS hostnames",
+    "target_industries": "Enterprise (implied by \"Enterprise Application Access\", \"Site Shield\")",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Aligns with industry standard; accepts ML-KEM based hybrid key exchange. Phased release status indicated for some features.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (only key exchange algorithms mentioned)",
+    "authoritative_source_url": "Akamai TechDocs (specific URL not provided in text)",
+    "source_documents": [
+      {
+        "filename": "Akamai_Edge.html",
+        "url": "https://www.akamai.com/products/cloud-computing",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Fastly Edge Cloud",
+    "category": "Web & Application Security",
+    "product_name": "Fastly Edge Cloud Platform",
+    "product_brief": "A modern network platform ensuring websites, applications, and services scale securely and quickly with built-in security.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"built-in security\" and \"enhanced security\" but does not explicitly mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Edge cloud platform / Programmable Edge Platform",
+    "infrastructure_layer": "Network, Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by commercial sales contact and AWS Marketplace listing)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "AWS Cloud, AWS Lambda, Amazon S3",
+    "target_industries": "Enterprise (implied by \"businesses\", \"consumers\", \"DevOps and SecOps teams\")",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "fastly.com",
+    "source_documents": [
+      {
+        "filename": "Fastly_Edge_Cloud.pdf",
+        "url": "https://www.fastly.com/blog/fastly-and-the-post-quantum-future",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Amazon CloudFront",
+    "category": "Web & Application Security",
+    "product_name": "Amazon CloudFront",
+    "product_brief": "A content delivery network service offering hybrid post-quantum key establishment for TLS client-to-edge connections.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports hybrid post-quantum key establishment across all existing TLS security policies and a new TLS 1.3 only policy (TLS1.3_2025). PQC is automatically enabled for client-to-edge connections with no customer configuration required. Available in all edge locations at no additional charge.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, SecP256r1, X25519, ML-DSA (mentioned in context of KMS complications), SLH-DSA (mentioned in NIST timeline)",
+    "key_management_model": "Hybrid key establishment using classical and post-quantum algorithms; AWS Key Management Service (KMS) mentioned for broader AWS PQC strategy.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native edge network (CDN) with TLS termination at edge locations.",
+    "infrastructure_layer": "Network, Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "TLS1.3_2025 policy; AWS SDK for Java v2",
+    "release_date": "2025-09-05",
+    "fips_validated": "Yes (AWS-LC-FIPS-3.0 mentioned in deployment timeline context)",
+    "primary_platforms": "Amazon CloudFront edge locations, AWS Cloud",
+    "target_industries": "Enterprise, Organizations requiring regulatory compliance and long-term data security",
+    "regulatory_status": "Mentions readiness for regulatory compliance; references NIST SP800-208, CNSA 2.0, FIPS 203, FIPS 204, FIPS 205.",
+    "pqc_roadmap_details": "PQC capabilities automatically enabled by default on all existing policies; new TLS1.3_2025 policy launched; alignment with NIST timeline (FIPS 203/204) and CNSA 2.0 standards.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA (referenced in NIST/CNSA timelines); SecP256r1, X25519 used in hybrid key exchange.",
+    "authoritative_source_url": "https://aws.amazon.com/cloudfront/ (inferred from context \"visit the CloudFront documentation\" and AWS branding)",
+    "source_documents": [
+      {
+        "filename": "Amazon_CloudFront.html",
+        "url": "https://aws.amazon.com/blogs/networking-and-content-delivery/introducing-post-quantum-hybrid-key-exchange-for-amazon-cloudfront/",
+        "label": "primary"
+      },
+      {
+        "filename": "Amazon_CloudFront.pdf",
+        "url": "https://aws.amazon.com/blogs/networking-and-content-delivery/introducing-post-quantum-hybrid-key-exchange-for-amazon-cloudfront/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google Cloud CDN",
+    "category": "Web & Application Security",
+    "product_name": "Unknown",
+    "product_brief": "Not stated",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network (inferred from context header, but not explicitly described in document text)",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown (Document indicates a 404 error for the requested URL)",
+    "source_documents": [
+      {
+        "filename": "Google_Cloud_CDN.html",
+        "url": "https://cloud.google.com/blog/products/identity-security/why-google-is-marching-toward-a-quantum-safe-future",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Vultr Cloud GPU",
+    "category": "Web & Application Security",
+    "product_name": "Vultr Cloud GPU",
+    "product_brief": "Not stated (Document lists general cloud infrastructure services, not a specific network security product).",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated. The document contains no information regarding Post-Quantum Cryptography algorithms, implementation status, or maturity levels.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Document lists \"Cloud GPU\", \"Bare Metal\", \"Kubernetes\", etc., but does not describe a specific security architecture like inline encryptor or VPN concentrator).",
+    "infrastructure_layer": "Cloud, Network (implied by \"Advanced Network Control Panel\" and \"Direct Connect\"), Hardware (implied by \"Cloud GPU\", \"Bare Metal\")",
+    "license_type": "Commercial (Implied by \"Contact Sales\", \"Pricing\", and trademark notice)",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No mention",
+    "primary_platforms": "Cloud (Vultr), NVIDIA Dynamo (mentioned in context of inference)",
+    "target_industries": "Industry Cloud, Start-Up Programs (General cloud services; no specific security industry focus stated)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filename provided: Vultr_Cloud_GPU.html, but no specific product URL extracted)",
+    "source_documents": [
+      {
+        "filename": "Vultr_Cloud_GPU.html",
+        "url": "https://www.vultr.com/news/vultr-and-sandboxaq-partner-to-deliver-quantum-safe-security/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Brave Browser",
+    "category": "Web & Application Security",
+    "product_name": "Brave Browser",
+    "product_brief": "A web browser with default support for post-quantum hybrid key agreements (X25519MLKEM768).",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports X25519MLKEM768 as the default post-quantum hybrid key agreement. Also supports X25519Kyber768Draft00 for specific version ranges (Edge 124-130, Firefox 124-131). Implementation relies on underlying libraries like BoringSSL or OpenSSL with PQC providers.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519MLKEM768, X25519Kyber768Draft00",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated (Document lists supported versions of other software like Firefox 132+, Chrome 131+, but does not specify a specific Brave version number)",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Desktop, Android (implied by context of browser support), iOS, macOS",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Default for recent versions; supports X25519MLKEM768 and X25519Kyber768Draft00.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document only mentions key agreement algorithms)",
+    "authoritative_source_url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/index.md",
+    "source_documents": [
+      {
+        "filename": "Brave_Browser.html",
+        "url": "https://brave.com/blog/post-quantum-cryptography/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Tor Browser",
+    "category": "Web & Application Security",
+    "product_name": "Tor Browser",
+    "product_brief": "Anonymity network allowing users to browse anonymously by routing traffic through entry, middle, and exit nodes.",
+    "pqc_support": "No (Current implementation uses classical crypto; PQC is discussed as a theoretical migration target)",
+    "pqc_capability_description": "The document describes Tor's current reliance on non-quantum-resistant schemes (RSA, ECC). It proposes theoretical performance assessments for migrating to PQC algorithms like CRYSTALS-Kyber (ML-KEM), CRYSTALS-Dilithium (ML-DSA), FALCON, and NTRUEncrypt. No full PQC implementation is stated as currently active in the product; research focuses on hybrid handshakes (HybridOR) and overhead estimation.",
+    "pqc_migration_priority": "High (Document highlights vulnerability to \"harvest now, decrypt later\" attacks and NIST's 2035 ban on RSA/ECDSA)",
+    "crypto_primitives": "RSA, ECC, AES, Ed25519, Curve25519, SHA1, SHA3, Diffie-Hellman (DH), NTOR, CRYSTALS-Kyber (ML-KEM), CRYSTALS-Dilithium (ML-DSA), FALCON, NTRUEncrypt, ring-LWE",
+    "key_management_model": "Not stated (Document mentions long-term keys for relays and ephemeral keys for circuits but does not specify a formal key management architecture like HSM or MPC)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Network-based onion routing with circuit creation via directory authorities and relay nodes",
+    "infrastructure_layer": "Application, Network",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "0.3.2.1-alpha (mentioned in context of Onion Services cryptography improvements)",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Constrained devices (mentioned for benchmarking), general client/relay infrastructure",
+    "target_industries": "Not stated (General public use for anonymity, censorship resistance)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Theoretical estimation of overhead by replacing classical crypto times with PQC benchmarks; NIST timeline banning RSA and ECDSA from 2035; proposals to widen cell size (#340) and enable hybridization of ntor protocol with KEMs (#269).",
+    "consensus_mechanism": "Not applicable (Tor uses directory authorities for consensus on network state, not a blockchain consensus mechanism)",
+    "signature_schemes": "Ed25519 (current), RSA (legacy/current), ECDSA (mentioned as banned by 2035), CRYSTALS-Dilithium (ML-DSA) (planned/research), FALCON (expected/planned)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Tor_Browser.pdf",
+        "url": "https://blog.torproject.org/post-quantum-tor/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "DuckDuckGo Browser",
+    "category": "Web & Application Security",
+    "product_name": "DuckDuckGo Browser",
+    "product_brief": "An Internet privacy browser helping users take back control of personal information without sacrificing experience.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document discusses search engine competition, choice screens, and user privacy but contains no mention of Post-Quantum Cryptography algorithms or implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Android, Chrome (desktop), iOS",
+    "target_industries": "Consumer Internet Search",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "duckduckgo.com",
+    "source_documents": [
+      {
+        "filename": "DuckDuckGo_Browser.pdf",
+        "url": "https://spreadprivacy.com/duckduckgo-post-quantum-privacy/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Akamai Connected Cloud",
+    "category": "Web & Application Security",
+    "product_name": "Akamai Connected Cloud",
+    "product_brief": "A distributed cloud platform providing cybersecurity, content delivery, and edge computing services with PQC support in TLS 1.3.",
+    "pqc_support": "Yes (Limited availability for Ghost to Origin connections; General Availability planned for October 31, 2025)",
+    "pqc_capability_description": "Akamai rolled out PQC support on June 30, 2025, for Ghost to Origin (G2O) connections using TLS 1.3 hybrid key exchange. The implementation uses the X25519MLKEM768 group (hybrid of X25519 and ML-KEM768). It is currently in limited availability with a planned general availability release on October 31, 2025, for all origin TLS connections.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM768 (Module-Lattice-Based Key-Encapsulation Mechanism), ECDHE, RSA, AES256-GCM-SHA384",
+    "key_management_model": "TLS 1.3 hybrid key exchange using X25519MLKEM768; supports standalone X25519 and hybrid keys in ClientHello; utilizes HelloRetryRequest for negotiation if needed.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native edge network, CDN edge server, Ghost to Origin (G2O) connection architecture",
+    "infrastructure_layer": "Network, Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Akamai developed its own PQC provider; no open source license mentioned for the platform itself)",
+    "latest_version": "Not stated",
+    "release_date": "2025-06-30",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Akamai Connected Cloud, Ubuntu (mentioned in sample environment context), OpenSSL, BoringSSL",
+    "target_industries": "Media and Entertainment, Retail, Travel & Hospitality, Financial Services, Healthcare & Life Sciences, Public Sector, Games, Online Sports Betting and iGaming, Service Providers",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Phase one: Akamai-to-origin (limited availability as of June 30, 2025); Phase two: Client-to-Akamai; Phase three: Akamai-to-Akamai. General Availability planned for October 31, 2025. Uses X25519MLKEM768 hybrid scheme.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (implied via cipher suites), RSA (implied via cipher suites); PQC uses ML-KEM for key encapsulation, not signatures in this context.",
+    "authoritative_source_url": "https://www.akamai.com (inferred from document source Akamai_Connected_Cloud.html and content context)",
+    "source_documents": [
+      {
+        "filename": "Akamai_Connected_Cloud.html",
+        "url": "https://www.akamai.com/blog/security/post-quantum-cryptography-at-akamai",
+        "label": "primary"
+      }
+    ]
+  }
+]

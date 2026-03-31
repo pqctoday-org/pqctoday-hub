@@ -1,0 +1,55 @@
+[
+  {
+    "platform_name": "Qrypt BLAST SDK",
+    "category": "Quantum Random Number Generator (QRNG)",
+    "product_name": "Qrypt BLAST SDK",
+    "product_brief": "SDK enabling quantum-secure key generation at multiple endpoints without transmission using Doubly-Affine Extractors.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The product enables \"quantum-secure key generation\" and claims to \"exceed Federal NIST Mandates\" by eliminating key transmission alongside PQC algorithm transition. It utilizes \"Doubly-Affine Extractors\" for information-theoretic security, allowing identical keys to be generated locally at endpoints without distribution. It is designed to protect data against future quantum computers breaking RSA and PQC encryption.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "Doubly-Affine Extractors, TLS (mentioned in attack scenarios), One-Time Pad (OTP)",
+    "key_management_model": "Architecture based on generating identical keys at multiple endpoints without transmission; uses \"Doubly-Affine Extractors\" to locally extract keys from returned random numbers; relies on a network of semi-trusted servers for outsourcing storage of long keys.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Doubly-Affine Extractor-based key generation with outsourced storage via semi-trusted servers",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Access token required; contact to obtain)",
+    "latest_version": "Unknown",
+    "release_date": "2024-10-15 (Whitepaper date mentioned)",
+    "fips_validated": "No mention of FIPS validation status",
+    "primary_platforms": "Client library SDKs, cloud-based REST services, command line clients; NVIDIA Quantum Secure Gateway mentioned as related documentation",
+    "target_industries": "Enterprise, Federal/Government, Multicloud/Hybrid Cloud environments",
+    "regulatory_status": "Mentions exceeding \"Federal NIST Mandates\"",
+    "pqc_roadmap_details": "Product is positioned to help complete the transition to PQC algorithms while eliminating key transmission; no specific algorithm migration timeline provided.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Focus is on key generation and encryption, not digital signatures)",
+    "authoritative_source_url": "Unknown (Document text contains navigation links but no explicit base URL string)",
+    "source_documents": [
+      {
+        "filename": "Qrypt_BLAST_SDK.html",
+        "url": "https://www.qrypt.com/quantum-key-generation/",
+        "label": "primary"
+      },
+      {
+        "filename": "Qrypt_BLAST_SDK_repo.html",
+        "url": "https://docs.qrypt.com/sdk/",
+        "label": "repo"
+      },
+      {
+        "filename": "Qrypt_BLAST_SDK_doc1.html",
+        "url": "https://www.qrypt.com/quantum-key-generation/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Qrypt_BLAST_SDK_doc2.html",
+        "url": "https://www.qrypt.com/quantum-key-generation/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Qrypt_BLAST_SDK_doc2.pdf",
+        "url": "https://www.qrypt.com/quantum-key-generation/",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

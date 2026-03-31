@@ -1,0 +1,594 @@
+[
+  {
+    "platform_name": "Cisco IOS XE PQC",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XE",
+    "product_brief": "Single OS for enterprise switching, routing, wired and wireless access providing open programmable interfaces.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports Post-Quantum Pre-Shared Key (PPK) method via RFC 8784 mixing in IKEv2 key derivation. Implements NIST standards FIPS-203 (ML-KEM), FIPS-204 (ML-DSA), and SP 800-208 (LMS) for quantum-resistant encryption, authentication, and secure boot.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, AES256, IKEv2, IPsec, TLS, SSH",
+    "key_management_model": "Post-Quantum Pre-Shared Key (PPK) mixing in IKEv2; supports dynamic PPK rekeying.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "OS-level crypto support with quantum-resistant key exchange and authentication modules.",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Cisco Systems, Inc.)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Mentions FIPS-203, FIPS-204, and SP 800-208 standards; specific validation status not stated.",
+    "primary_platforms": "Cisco Catalyst 9200/9300/9400/9500/9600 Series, ASR 1000/900 Series, NCS 4200 Series, Catalyst 8000 Edge, ISR 4000/1000 Series, cBR Series, Industrial Switches/Routers.",
+    "target_industries": "Enterprise, Government (implied by CNSA 2.0), WAN, SD-WAN",
+    "regulatory_status": "Aligns with NIST PQC Standards, CNSA 2.0, NSA, ETSI, CISA mandates.",
+    "pqc_roadmap_details": "Timeline indicates adoption of Post-Quantum Cryptography between 2025-2030; plans to defend against quantum attacks by 2030-2035.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, LMS (Planned/Supported); ECDSA/RSA implied as current vulnerable methods being replaced.",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Cisco_IOS_XE_PQC.html",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc1.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc2.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc3.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc4.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc5.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Juniper Junos OS",
+    "category": "Network Operating Systems",
+    "product_name": "Junos OS Evolved",
+    "product_brief": "Network operating system running on Juniper Networks ACX, PTX, and QFX Series hardware.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The document lists \"Post-Quantum Cryptography (PQC)\" as a new feature section for ACX, PTX, and QFX Series in Release 25.4R1. However, the provided text contains only the Table of Contents entries and does not include the specific content, algorithms, or implementation details within those sections.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions PQC section but does not list specific algorithms like ECDSA, Ed25519, etc.)",
+    "key_management_model": "Not stated (Document mentions IMA keyrings for integrity measurement but does not describe the general OS keychain or certificate store architecture)",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Document mentions kernel-level IMA enforcement and userspace scripting via SLAX, but does not define the crypto provider model)",
+    "infrastructure_layer": "Network, Hardware, OS",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "25.4R1",
+    "release_date": "2026-03-09",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Juniper Networks ACX Series, PTX Series, QFX Series, Third-Party Whitebox",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (Only the existence of a PQC feature in 25.4R1 is noted; no specific algorithms or future plans are detailed)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Junos OS Evolved Documentation | Juniper Networks",
+    "source_documents": [
+      {
+        "filename": "Juniper_Junos_OS_doc1.pdf",
+        "url": "https://www.juniper.net/documentation/product/en_US/junos-evolved",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Juniper_Junos_OS_doc2.pdf",
+        "url": "https://www.juniper.net/documentation/product/en_US/junos-evolved",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Fortinet FortiOS",
+    "category": "Network Operating Systems",
+    "product_name": "Fortinet FortiOS",
+    "product_brief": "The operating system of the Fortinet Security Platform, integrating networking and security tools.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "FortiOS 8.0 features expanded quantum-safe capabilities. FortiClient supports PQC for secure VPN connectivity. Specific algorithms or maturity levels beyond \"expanded\" are not stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network, Security Stack, Hardware, Cloud",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "8.0 (also mentions 7.6.6 in document library header)",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "FortiGate hardware, Cloud (Public/Private), CNF, Hybrid environments",
+    "target_industries": "Enterprise, IT and OT environments",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Expanded quantum-safe capabilities included in FortiOS 8.0; PQC support for secure VPN connectivity in FortiClient. No specific timeline or algorithm choices stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Fortinet_FortiOS.html",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios.pdf",
+        "label": "primary"
+      },
+      {
+        "filename": "Fortinet_FortiOS_doc1.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Arista EOS (Extensible Operating System)",
+    "category": "Network Operating Systems",
+    "product_name": "Arista EOS (Extensible Operating System)",
+    "product_brief": "Unknown",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Arista_EOS__Extensible_Operating_System_.html",
+    "source_documents": [
+      {
+        "filename": "Arista_EOS__Extensible_Operating_System_.html",
+        "url": "https://www.arista.com/en/products/eos",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "MikroTik RouterOS",
+    "category": "Network Operating Systems",
+    "product_name": "RouterOS",
+    "product_brief": "Stand-alone operating system based on Linux kernel powering MikroTik hardware devices with routing, firewall, and VPN features.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or quantum-resistant implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "IPsec (mentioned as \"IPsec hardware acceleration\"); specific primitives like ECDSA, Ed25519, or RSA are not explicitly listed in the text.",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Stand-alone operating system; Virtual appliance (CHR - Cloud Hosted Router); Inline encryptor/VPN concentrator (implied by \"IPsec gateway\", \"VPN server\").",
+    "infrastructure_layer": "Network, Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (requires license key from MikroTik Account server; free 24-hour trial available).",
+    "latest_version": "Not stated (text mentions \"latest stable RouterOS version\" without a specific number).",
+    "release_date": "Not stated (documentation update dates like Oct 21, 2025, and Mar 04, 2026 are present but do not correspond to a software release date).",
+    "fips_validated": "No",
+    "primary_platforms": "MikroTik hardware devices, PC (x86), Virtual Machines (Cloud Hosted Router/CHR), Amazon AWS marketplace.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (text contains demo addresses demo.mt.lv and demo2.mt.lv, but no primary product URL is explicitly defined as the authoritative source).",
+    "source_documents": [
+      {
+        "filename": "MikroTik_RouterOS.html",
+        "url": "https://mikrotik.com/software",
+        "label": "primary"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc1.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc2.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cisco IOS XR",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XR",
+    "product_brief": "A modern, trustworthy network operating system designed for service providers with Linux-style workflows and secure boot.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text discusses quantum computing fundamentals and the threat of quantum adversaries but does not state that Cisco IOS XR currently implements Post-Quantum Cryptography algorithms or features. It mentions \"Securing Your Network Against Quantum Adversaries\" as a session topic, but no specific PQC implementation details are found in the data sheet.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions signatures and keys generally for secure boot and RPM validation but does not list specific algorithms like ECDSA or RSA).",
+    "key_management_model": "Hardware-based Trust Anchor Module (TAm) housing known good values, keys, and certificates rooted to Cisco; used for verifying hardware components, bootloader, kernel modules, and RPM signatures.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Linux-based (WindRiver Linux 9), single host layer with native control plane processes, supports containers (LXC, Docker).",
+    "infrastructure_layer": "Network, OS",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Cisco and/or its affiliates. All rights reserved.)",
+    "latest_version": "Release 7 (mentioned as \"With Release 7 of IOS XR\")",
+    "release_date": "Not stated (Document copyright is 2026, but no specific release date for version 7 is provided)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cisco 8000 series, NCS 540/560, NCS 5000/5500/5700, ASR 9000, XRd, XRv9000, qualified third-party hardware.",
+    "target_industries": "Service Providers (SPs), Web-scale networks",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Cisco_IOS_XR.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc1.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc2.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc3.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "IDEMIA PQC Accelerator",
+    "category": "Telecom & 5G Security",
+    "product_name": "IDEMIA PQC Accelerator",
+    "product_brief": "Advanced hardware accelerator based on Keccak for post-quantum cryptography, embedded in future quantum-safe chips.",
+    "pqc_support": "Yes (based on Keccak; supports NIST standardized algorithms ML-KEM, ML-DSA, SLH-DSA)",
+    "pqc_capability_description": "Hardware accelerator utilizing Keccak to offload intensive tasks from the main processor. Optimizes performance for quantum-resistant algorithms standardized by NIST: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Designed for seamless transition without compromising speed.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Keccak, ML-KEM, ML-DSA, SLH-DSA",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Accelerator (embedded in chips)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-03-18",
+    "fips_validated": "Supports algorithms standardized by NIST (ML-KEM FIPS 203, ML-DSA FIPS 204, SLH-DSA FIPS 205); specific module validation status not stated.",
+    "primary_platforms": "Embedded in future quantum-safe chips from IDEMIA Secure Transactions; applicable to banking, automotive, IoT, Industry 4.0, healthcare sectors.",
+    "target_industries": "Banking, Automotive, IoT, Industry 4.0, Healthcare",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Will be embedded in all future quantum-safe chips from IDEMIA Secure Transactions to support migration to NIST standardized algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (FIPS 204), SLH-DSA (FIPS 205)",
+    "authoritative_source_url": "www.idemia.com",
+    "source_documents": [
+      {
+        "filename": "IDEMIA_PQC_Accelerator.html",
+        "url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cisco IOS XE PQC",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XE",
+    "product_brief": "Single OS for enterprise switching, routing, wired and wireless access providing open programmable interfaces.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports Post-Quantum Pre-Shared Key (PPK) method via RFC 8784 mixing in IKEv2 key derivation. Implements NIST standards FIPS-203 (ML-KEM), FIPS-204 (ML-DSA), and SP 800-208 (LMS) for quantum-resistant encryption, authentication, and secure boot.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, AES256, IKEv2, IPsec, TLS, SSH",
+    "key_management_model": "Post-Quantum Pre-Shared Key (PPK) mixing in IKEv2; supports dynamic PPK rekeying.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "OS-level crypto support with quantum-resistant key exchange and authentication modules.",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Cisco Systems, Inc.)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Mentions FIPS-203, FIPS-204, and SP 800-208 standards; specific validation status not stated.",
+    "primary_platforms": "Cisco Catalyst 9200/9300/9400/9500/9600 Series, ASR 1000/900 Series, NCS 4200 Series, Catalyst 8000 Edge, ISR 4000/1000 Series, cBR Series, Industrial Switches/Routers.",
+    "target_industries": "Enterprise, Government (implied by CNSA 2.0), WAN, SD-WAN",
+    "regulatory_status": "Aligns with NIST PQC Standards, CNSA 2.0, NSA, ETSI, CISA mandates.",
+    "pqc_roadmap_details": "Timeline indicates adoption of Post-Quantum Cryptography between 2025-2030; plans to defend against quantum attacks by 2030-2035.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, LMS (Planned/Supported); ECDSA/RSA implied as current vulnerable methods being replaced.",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Cisco_IOS_XE_PQC.html",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc1.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc2.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc3.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc4.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc5.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Juniper Junos OS",
+    "category": "Network Operating Systems",
+    "product_name": "Junos OS Evolved",
+    "product_brief": "Network operating system running on Juniper Networks ACX, PTX, and QFX Series hardware.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The document lists \"Post-Quantum Cryptography (PQC)\" as a new feature section for ACX, PTX, and QFX Series in Release 25.4R1. However, the provided text contains only the Table of Contents entries and does not include the specific content, algorithms, or implementation details within those sections.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions PQC section but does not list specific algorithms like ECDSA, Ed25519, etc.)",
+    "key_management_model": "Not stated (Document mentions IMA keyrings for integrity measurement but does not describe the general OS keychain or certificate store architecture)",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Document mentions kernel-level IMA enforcement and userspace scripting via SLAX, but does not define the crypto provider model)",
+    "infrastructure_layer": "Network, Hardware, OS",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "25.4R1",
+    "release_date": "2026-03-09",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Juniper Networks ACX Series, PTX Series, QFX Series, Third-Party Whitebox",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (Only the existence of a PQC feature in 25.4R1 is noted; no specific algorithms or future plans are detailed)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Junos OS Evolved Documentation | Juniper Networks",
+    "source_documents": [
+      {
+        "filename": "Juniper_Junos_OS_doc1.pdf",
+        "url": "https://www.juniper.net/documentation/product/en_US/junos-evolved",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Juniper_Junos_OS_doc2.pdf",
+        "url": "https://www.juniper.net/documentation/product/en_US/junos-evolved",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Fortinet FortiOS",
+    "category": "Network Operating Systems",
+    "product_name": "Fortinet FortiOS",
+    "product_brief": "The operating system of the Fortinet Security Platform, integrating networking and security tools.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "FortiOS 8.0 features expanded quantum-safe capabilities. FortiClient supports PQC for secure VPN connectivity. Specific algorithms or maturity levels beyond \"expanded\" are not stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network, Security Stack, Hardware, Cloud",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "8.0 (also mentions 7.6.6 in document library header)",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "FortiGate hardware, Cloud (Public/Private), CNF, Hybrid environments",
+    "target_industries": "Enterprise, IT and OT environments",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Expanded quantum-safe capabilities included in FortiOS 8.0; PQC support for secure VPN connectivity in FortiClient. No specific timeline or algorithm choices stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Fortinet_FortiOS.html",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios.pdf",
+        "label": "primary"
+      },
+      {
+        "filename": "Fortinet_FortiOS_doc1.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Arista EOS (Extensible Operating System)",
+    "category": "Network Operating Systems",
+    "product_name": "Arista EOS (Extensible Operating System)",
+    "product_brief": "Unknown",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Arista_EOS__Extensible_Operating_System_.html",
+    "source_documents": [
+      {
+        "filename": "Arista_EOS__Extensible_Operating_System_.html",
+        "url": "https://www.arista.com/en/products/eos",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "MikroTik RouterOS",
+    "category": "Network Operating Systems",
+    "product_name": "RouterOS",
+    "product_brief": "Stand-alone operating system based on Linux kernel powering MikroTik hardware devices with routing, firewall, and VPN features.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or quantum-resistant implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "IPsec (mentioned as \"IPsec hardware acceleration\"); specific primitives like ECDSA, Ed25519, or RSA are not explicitly listed in the text.",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Stand-alone operating system; Virtual appliance (CHR - Cloud Hosted Router); Inline encryptor/VPN concentrator (implied by \"IPsec gateway\", \"VPN server\").",
+    "infrastructure_layer": "Network, Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (requires license key from MikroTik Account server; free 24-hour trial available).",
+    "latest_version": "Not stated (text mentions \"latest stable RouterOS version\" without a specific number).",
+    "release_date": "Not stated (documentation update dates like Oct 21, 2025, and Mar 04, 2026 are present but do not correspond to a software release date).",
+    "fips_validated": "No",
+    "primary_platforms": "MikroTik hardware devices, PC (x86), Virtual Machines (Cloud Hosted Router/CHR), Amazon AWS marketplace.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (text contains demo addresses demo.mt.lv and demo2.mt.lv, but no primary product URL is explicitly defined as the authoritative source).",
+    "source_documents": [
+      {
+        "filename": "MikroTik_RouterOS.html",
+        "url": "https://mikrotik.com/software",
+        "label": "primary"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc1.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc2.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cisco IOS XR",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XR",
+    "product_brief": "A modern, trustworthy network operating system designed for service providers with Linux-style workflows and secure boot.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text discusses quantum computing fundamentals and the threat of quantum adversaries but does not state that Cisco IOS XR currently implements Post-Quantum Cryptography algorithms or features. It mentions \"Securing Your Network Against Quantum Adversaries\" as a session topic, but no specific PQC implementation details are found in the data sheet.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions signatures and keys generally for secure boot and RPM validation but does not list specific algorithms like ECDSA or RSA).",
+    "key_management_model": "Hardware-based Trust Anchor Module (TAm) housing known good values, keys, and certificates rooted to Cisco; used for verifying hardware components, bootloader, kernel modules, and RPM signatures.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Linux-based (WindRiver Linux 9), single host layer with native control plane processes, supports containers (LXC, Docker).",
+    "infrastructure_layer": "Network, OS",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Cisco and/or its affiliates. All rights reserved.)",
+    "latest_version": "Release 7 (mentioned as \"With Release 7 of IOS XR\")",
+    "release_date": "Not stated (Document copyright is 2026, but no specific release date for version 7 is provided)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cisco 8000 series, NCS 540/560, NCS 5000/5500/5700, ASR 9000, XRd, XRv9000, qualified third-party hardware.",
+    "target_industries": "Service Providers (SPs), Web-scale networks",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Cisco_IOS_XR.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc1.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc2.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_IOS_XR_doc3.pdf",
+        "url": "https://xrdocs.io/asr9000/blogs/2024-04-pqc/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "IDEMIA PQC Accelerator",
+    "category": "Telecom & 5G Security",
+    "product_name": "IDEMIA PQC Accelerator",
+    "product_brief": "Advanced hardware accelerator based on Keccak for post-quantum cryptography, embedded in future quantum-safe chips.",
+    "pqc_support": "Yes (based on Keccak; supports NIST standardized algorithms ML-KEM, ML-DSA, SLH-DSA)",
+    "pqc_capability_description": "Hardware accelerator utilizing Keccak to offload intensive tasks from the main processor. Optimizes performance for quantum-resistant algorithms standardized by NIST: ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205). Designed for seamless transition without compromising speed.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Keccak, ML-KEM, ML-DSA, SLH-DSA",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Accelerator (embedded in chips)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-03-18",
+    "fips_validated": "Supports algorithms standardized by NIST (ML-KEM FIPS 203, ML-DSA FIPS 204, SLH-DSA FIPS 205); specific module validation status not stated.",
+    "primary_platforms": "Embedded in future quantum-safe chips from IDEMIA Secure Transactions; applicable to banking, automotive, IoT, Industry 4.0, healthcare sectors.",
+    "target_industries": "Banking, Automotive, IoT, Industry 4.0, Healthcare",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Will be embedded in all future quantum-safe chips from IDEMIA Secure Transactions to support migration to NIST standardized algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (FIPS 204), SLH-DSA (FIPS 205)",
+    "authoritative_source_url": "www.idemia.com",
+    "source_documents": [
+      {
+        "filename": "IDEMIA_PQC_Accelerator.html",
+        "url": "https://www.idemia.com/press-release/idemia-secure-transactions-announces-its-first-hardware-accelerator-designed-post-quantum-cryptography-2025-03-18",
+        "label": "primary"
+      }
+    ]
+  }
+]

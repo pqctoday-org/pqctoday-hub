@@ -1,0 +1,40 @@
+[
+  {
+    "platform_name": "ID Quantique Cerberis XGR QKD",
+    "category": "Quantum Key Distribution Software",
+    "product_name": "Cerberis XGR QKD Platform",
+    "product_brief": "Open QKD platform designed as a versatile research tool for academic and technology evaluation labs.",
+    "pqc_support": "No (Document describes Quantum Key Distribution, not Post-Quantum Cryptography algorithms)",
+    "pqc_capability_description": "The document states the product is a Quantum Key Distribution (QKD) system providing \"proven secrecy of encryption keys\" via quantum physics principles. It mentions protecting against future quantum computers by securing key exchange, but does not state support for specific PQC algorithms (e.g., lattice-based, hash-based).",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "AES-256 (mentioned in context of key rate: \"14'000 AES-256 Keys per hour\"); QKD (Quantum Key Distribution)",
+    "key_management_model": "Quantum Key Distribution (QKD) for secure key generation and distribution; integrated with Clarion KX software suite for network and key management.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Open QKD platform; 19\" rackmount 1U size appliance (inferred from XG Series description which shares architecture); designed for complex network topologies (ring, hub and spoke, meshed, star).",
+    "infrastructure_layer": "Hardware, Network",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "4th generation (Cerberis XGR is the second model in the XG series)",
+    "release_date": "2021-10-18 (Press release date: \"18th October 2021 IDQ unveils Cerberis XGR QKD Platform\")",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Academia, Research institutes, Innovation labs; compatible with major Ethernet and OTN encryptors.",
+    "target_industries": "Academia, Research institutes, Innovation labs, Government & Defense, Telecommunications, Banking & Finance, Critical Infrastructure, Healthcare, IP Protection.",
+    "regulatory_status": "Not stated (Company has ISO 14001 certification, but no specific product regulatory licenses mentioned)",
+    "pqc_roadmap_details": "Not stated (Product is QKD, not PQC software migration)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "www.idquantique.com",
+    "source_documents": [
+      {
+        "filename": "ID_Quantique_Cerberis_XGR_QKD.html",
+        "url": "https://www.idquantique.com/idq-unveils-cerberis-xgr/",
+        "label": "primary"
+      },
+      {
+        "filename": "ID_Quantique_Cerberis_XGR_QKD_doc1.html",
+        "url": "https://www.idquantique.com/idq-unveils-cerberis-xgr/",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

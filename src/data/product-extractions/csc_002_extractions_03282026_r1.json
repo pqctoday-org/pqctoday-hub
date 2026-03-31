@@ -1,0 +1,164 @@
+[
+  {
+    "platform_name": "Crypto4A QxEDGE",
+    "category": "HSM & Hardware Security",
+    "product_name": "Crypto4A QxEDGE (specifically the Quantum-Assured Security Module or QASM™)",
+    "product_brief": "A hardware security module designed with post-quantum cryptographic principles embedded into its roots of trust and internal architecture.",
+    "pqc_support": "Yes (with details: Hybrid approach using traditional ECC and NIST-approved HSS for RoT, FW updates, attestation, and inter-HSM communications)",
+    "pqc_capability_description": "Implements a hybridized approach combining traditional ECDSA P-384 and NIST-approved HSS (Hierarchical Signature System). Uses PQC for firmware signing, secure boot validation, attestation keys, backup encryption, inter-HSM communication, access authentication, and logging integrity. Leverages proprietary Classic McEliece for inter-HSM transfers where standardized options were unavailable. Designed for crypto-agility to adopt future certified PQC algorithms via FW updates.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ECDSA P-384, HSS (Hierarchical Signature System), AES-256-GCM, Classic McEliece",
+    "key_management_model": "HSM-backed with immutable Roots of Trust (RoT) provisioned during manufacturing; private keys for RoT stored offline in manufacturing HSMs; hybrid traditional and PQC keying material.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based hardware security module with field-reprogrammable hardware engines and quantum-ready firmware updates.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (implied by \"proprietary solutions\" and commercial context, specific license name not stated)",
+    "latest_version": "Not stated",
+    "release_date": "2026-01 (Publication date of the whitepaper; product release date not explicitly stated)",
+    "fips_validated": "FIPS 140-3 Level 3 compliant for traditional cryptography; PQC capabilities are not currently required for this validation level but are implemented via hybrid design.",
+    "primary_platforms": "Not stated (Hardware appliance form factor implied)",
+    "target_industries": "Digital sovereignty, critical infrastructure, government, enterprise (implied by \"national importance\" and \"digital trust\")",
+    "regulatory_status": "Designed to comply with FIPS certification requirements; references NIST guidance and IETF draft standards.",
+    "pqc_roadmap_details": "Advocates adoption of certified/standardized quantum-safe approaches as they become available; utilizes crypto-agility and FW update capabilities to evolve from proprietary solutions (e.g., Classic McEliece) to standardized algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA P-384, HSS (Hierarchical Signature System), Classic McEliece (for key agreement/transfers)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Crypto4A_QxEDGE.html",
+        "url": "https://crypto4a.com/",
+        "label": "primary"
+      },
+      {
+        "filename": "Crypto4A_QxEDGE_doc1.pdf",
+        "url": "https://crypto4a.com/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Entrust nShield",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Entrust nShield HSM with Post-Quantum Cryptography Option Pack (PQCOP)",
+    "product_brief": "Hardware Security Module integration guide for generating and using NIST-selected post-quantum cryptographic keys.",
+    "pqc_support": "Yes (with details: Supports LMS, ML-DSA, ML-KEM, SLH-DSA via firmware or PQC Option Pack)",
+    "pqc_capability_description": "The nShield PQC Option Pack enables generation and use of NIST-selected post-quantum algorithms. LMS is the default type for releases after 1.4.1. ML-DSA is supported in firmware and recommended for the main product line. The brochure states nShield HSMs are NIST-validated for ML-DSA, ML-KEM, and SLH-DSA, delivering production-ready quantum-safe cryptography in tamper-resistant hardware with native PQ support in firmware.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "LMS, ML-DSA, ML-KEM, SLH-DSA, ECDSA (NIST P-521), RSA, Elliptic Curve algorithms",
+    "key_management_model": "HSM-backed; keys generated and stored within the nShield HSM using CodeSafe machines; protected by Operator Card Sets (OCS) and Administrator Card Sets (ACS); supports key recovery.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Security Module (HSM); forms include nShield Connect XC and nShield 5c; utilizes CodeSafe machines running on the HSM.",
+    "infrastructure_layer": "Hardware, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Requires license file from Entrust Support for CodeSafe features)",
+    "latest_version": "PQCOP 1.4.1, Security World Software 13.9.3, nShield Firmware 13.8.4",
+    "release_date": "2026-03-16 (Document date)",
+    "fips_validated": "Yes (FIPS Level 3 mentioned in product configurations table; brochure states \"NIST-validated\")",
+    "primary_platforms": "Linux (Ubuntu 22.04), Windows Server 2022",
+    "target_industries": "Enterprise, Government (implied by NSA/NIST mandates and CNSA 2.0 references)",
+    "regulatory_status": "NIST-validated for post-quantum algorithms; FIPS Level 3; aligned with NSA CNSA 2.0 requirements",
+    "pqc_roadmap_details": "LMS is default for PQCOP releases after 1.4.1; ML-DSA supported in firmware; timeline mentions 2025 (NSA preference), 2030 (NIST deprecation of classical), 2033 (NSA exclusive use), 2035 (NIST disallowing classical).",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "LMS, ML-DSA, SLH-DSA, ECDSA",
+    "authoritative_source_url": "https://nshieldsupport.entrust.com",
+    "source_documents": [
+      {
+        "filename": "Entrust_nShield.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "primary"
+      },
+      {
+        "filename": "Entrust_nShield_doc1.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Entrust_nShield_doc2.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Entrust_nShield_doc3.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Entrust_nShield_doc4.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Entrust_nShield_doc5.pdf",
+        "url": "https://www.entrust.com/digital-security/hsm/products/nshield-hsms/post-quantum",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Futurex CryptoHub",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Futurex CryptoHub",
+    "product_brief": "FIPS 140-2 Level 3 validated HSM offering payment, general-purpose, and cloud services with PQC support.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "First HSM to receive PCI HSM validation with PQC support. Supports ML-DSA (FIPS 204) and ML-KEM (FIPS 203). Beta firmware (June 2025) includes ML-KEM-768 and ML-DSA-65 for financial and enterprise security.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-DSA, ML-KEM",
+    "key_management_model": "Hardware-backed key storage with Advanced Key Lifecycle Management, Cloud Key Management, Payment Key Management, Key Distribution, and IoT Key Injection.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (Payment HSM, General Purpose HSM, Cloud HSM)",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Beta firmware (June 2025)",
+    "release_date": "2025-06-01",
+    "fips_validated": "FIPS 140-2 Level 3 validated",
+    "primary_platforms": "Not stated",
+    "target_industries": "Finance, Enterprise, Payment",
+    "regulatory_status": "PCI HSM validated (first with PQC support), PCI PTS certified",
+    "pqc_roadmap_details": "Beta firmware released June 2025 including ML-KEM-768 and ML-DSA-65; supports FIPS 203 and FIPS 204.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (FIPS 204)",
+    "authoritative_source_url": "futurex.com",
+    "source_documents": [
+      {
+        "filename": "Futurex_CryptoHub.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19731",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Marvell LiquidSecurity 2",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Marvell LiquidSecurity 2 HSM Adapter",
+    "product_brief": "Certified FIPS 140-3 Level 3 PCIe HSM adapter offering unified solutions for general purpose, payments, and compliance.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Beta firmware supports hardware-accelerated PQC including ML-KEM-768 (FIPS 203), ML-DSA-65 (FIPS 204), and LMS (SP 800-208). Firmware updates expected as NIST standards mature.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM-768, ML-DSA-65, LMS",
+    "key_management_model": "Hardware key storage with multi-tenant partitioning for cloud service providers; secure key generation via hardware acceleration.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (PCIe adapter)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Beta firmware",
+    "release_date": "2026-03-01",
+    "fips_validated": "Yes, FIPS 140-3 Level 3 (Certificate #4703)",
+    "primary_platforms": "Cloud infrastructure, Azure Dedicated HSM, enterprise deployment",
+    "target_industries": "Financial transaction processing, hyperscale environments, cloud infrastructure",
+    "regulatory_status": "PCI PTS HSM certified",
+    "pqc_roadmap_details": "Firmware updates expected as NIST standards mature; currently supports ML-KEM-768, ML-DSA-65, and LMS in beta.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA-65 (FIPS 204), LMS (SP 800-208)",
+    "authoritative_source_url": "marvell.com",
+    "source_documents": [
+      {
+        "filename": "Marvell_LiquidSecurity_2.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18609",
+        "label": "primary"
+      }
+    ]
+  }
+]

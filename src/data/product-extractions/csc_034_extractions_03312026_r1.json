@@ -1,0 +1,942 @@
+[
+  {
+    "platform_name": "BERTEN MLDS-B235",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "MLDS-B235",
+    "product_brief": "IP Core implementing NIST ML-DSA PQC digital signatures in FPGA, SoC, and ASIC technologies.",
+    "pqc_support": "Yes (NIST ML-DSA standard via CRYSTALS-Dilithium scheme)",
+    "pqc_capability_description": "Implements NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) derived from CRYSTALS-Dilithium. Supports security levels 2, 3, and 5 (ML-DSA-44, ML-DSA-65, ML-DSA-87). Includes sequencer, Polynomial Arithmetic Unit, and SHAKE XOF. Features countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87), SHAKE (XOF)",
+    "key_management_model": "Hardware IP core with internal memory zeroization (automatic and on-demand); key generation, signing, and verifying configured via register map.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP Core for FPGA, SoC, and ASIC; AMBA AXI interfaces (AXI4-Stream, AXI4-Lite)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Perpetual Site Licence (encrypted netlist)",
+    "latest_version": "BDS016 v1.02",
+    "release_date": "2025-03-07",
+    "fips_validated": "Compliant with FIPS 204 and FIPS 140-3 (Note: Document states \"compliant\", not explicitly \"validated\")",
+    "primary_platforms": "AMD (Xilinx) devices, Intel (Altera) devices, Microchip (Microsemi) devices",
+    "target_industries": "Quantum-Resistant Networks, Public Key Infrastructures, Network Security, Transport Protocols, User Authentication, Secure Communications, Electronic Transactions",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implements current NIST ML-DSA standard; no future roadmap details provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87)",
+    "authoritative_source_url": "www.bertendsp.com",
+    "source_documents": [
+      {
+        "filename": "BERTEN_MLDS-B235.html",
+        "url": "https://www.bertendsp.com/products/mlds-b235/",
+        "label": "primary"
+      },
+      {
+        "filename": "BERTEN_MLDS-B235_doc1.pdf",
+        "url": "https://www.bertendsp.com/pdf/datasheet/BDS016_MLDS-B235_Datasheet_v1.0.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "BERTEN MLKE-B135",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "MLDS-B235 IP Core (ML-DSA Crypto Core)",
+    "product_brief": "FPGA, SoC, and ASIC IP core implementing NIST FIPS 204 ML-DSA post-quantum digital signatures.",
+    "pqc_support": "Yes (Implements NIST FIPS 204 ML-DSA derived from CRYSTALS-Dilithium)",
+    "pqc_capability_description": "Implements the NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) in FPGA, SoC, and ASIC. Supports security levels ML-DSA-44, ML-DSA-65, and ML-DSA-87. Includes countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87), SHAKE (XOF)",
+    "key_management_model": "Hardware IP core with internal memory zeroization (automatic and on-demand); key generation, signing, and verifying configured via register map.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP Core for FPGA, SoC, and ASIC deployment",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Perpetual Site Licence (encrypted netlist)",
+    "latest_version": "BDS016 v1.02",
+    "release_date": "2025-03-07",
+    "fips_validated": "Compliant with FIPS 204 and FIPS 140-3 (Note: Text states \"compliant\", not explicitly \"validated\")",
+    "primary_platforms": "AMD (Xilinx), Intel (Altera), Microchip (Microsemi) FPGA/ASIC devices",
+    "target_industries": "Quantum-Resistant Networks, Public Key Infrastructures, Network Security, Secure Communications, Electronic Transactions",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implements current NIST FIPS 204 standard; no future roadmap details provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87)",
+    "authoritative_source_url": "www.bertendsp.com",
+    "source_documents": [
+      {
+        "filename": "BERTEN_MLKE-B135.html",
+        "url": "https://www.bertendsp.com/products/mlds-b235/",
+        "label": "primary"
+      },
+      {
+        "filename": "BERTEN_MLKE-B135_doc1.pdf",
+        "url": "https://www.bertendsp.com/pdf/datasheet/BDS016_MLDS-B235_Datasheet_v1.0.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "CAST KiviPQC-KEM",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "CAST KiviPQC-KEM",
+    "product_brief": "Hardware accelerator for NIST FIPS 203 ML-KEM post-quantum key encapsulation operations.",
+    "pqc_support": "Yes (ML-KEM implementation)",
+    "pqc_capability_description": "Implements Module Lattice-based Key Encapsulation Mechanism (ML-KEM) per NIST FIPS 203. Supports all three parameter sets: ML-KEM-512, ML-KEM-768, and ML-KEM-1024. Offers key generation, encapsulation, and decapsulation procedures. Available in Fast (F) and Tiny (T) versions for ASIC/FPGA integration. Includes protection against timing-based side channel attacks.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM (ML-KEM-512, ML-KEM-768, ML-KEM-1024), AES, ASCON, SNOW-V, SM4, SHA-256, SHA-384/512, SHA-3, MD5",
+    "key_management_model": "Hardware key storage within SoC; supports software Random Byte Generator (RBG) or integration with external third-party entropy source/RBG via customized interface.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Silicon IP Core (RISC-V-like SoC topology), available as ASIC or FPGA implementation; includes 32-bit RISC-V processor, hardware crypto accelerators (Fast version), and AMBA AXI4-Lite interface.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Export controlled)",
+    "latest_version": "Not stated",
+    "release_date": "2025-11-05 (Date of related content announcement)",
+    "fips_validated": "No (Text states \"NIST FIPS Compliant\" and implements algorithms standardized in FIPS 203, but does not state the product itself is FIPS validated)",
+    "primary_platforms": "ASIC (TSMC), FPGA (Altera/Intel, AMD/Xilinx, Microchip); integrates into System-on-Chip (SoC) designs.",
+    "target_industries": "Public-key infrastructure, cloud security, safety-critical infrastructure, IoT, HSMs, TPMs, secure Ethernet (MACsec), VPN/IKEv2, edge computing.",
+    "regulatory_status": "Subject to export control regulations; requires potential special export license.",
+    "pqc_roadmap_details": "Implements current NIST FIPS 203 standard; no future roadmap details provided beyond current ML-KEM support.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Product is KEM only; related product KiviPQC-DSA handles signatures)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "CAST_KiviPQC-KEM.html",
+        "url": "https://www.cast-inc.com/security/encryption-primitives/kivipqc-kem",
+        "label": "primary"
+      },
+      {
+        "filename": "CAST_KiviPQC-KEM_doc1.pdf",
+        "url": "https://www.cast-inc.com/pdfs/cast_kivipqc-kem-brief-asic.pdf-1",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "CAST_KiviPQC-KEM_doc2.pdf",
+        "url": "https://www.cast-inc.com/pdfs/cast_kivipqc-kem-brief-altera.pdf-0",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "IP Cores PQC1",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "PQC1 Post-Quantum Cryptography Accelerator IP Core",
+    "product_brief": "Hardware IP core implementing ML-KEM and ML-DSA post-quantum cryptography standards with microprogramming sequencer.",
+    "pqc_support": "Yes (Implements ML-KEM/FIPS-203/Kyber and ML-DSA/FIPS-204/Dilithium)",
+    "pqc_capability_description": "Implements ML-KEM (FIPS-203, Kyber) and ML-DSA (FIPS-204, Dilithium) algorithms. Supports all FIPS-204 categories (ML-DSA-44, 65, 87) and FIPS-203 levels (ML-KEM-512, 768, 1024). Includes built-in NTT and SHAKE128/SHAKE256/SHA-3 engines. Contains three accelerators: NTT, FIPS-202 (SHA-3/SHAKE), and packing/unpacking. True random number generator is not included but TRNG1 core can be used.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM, ML-DSA, SHA-3, SHAKE128, SHAKE256, AES, DES, 3DES, RSA, ECC, GCM, CCM, EAX, XTS, ZUC, SNOW 3G, Kasumi, RC4, CMAC, XCBC",
+    "key_management_model": "Hardware IP core with internal microprogramming sequencer; requires external single-port RAM banks; SDK supports key generation, signing, verification, encapsulation, and decapsulation. True random number generator not included in core.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware IP Core (ASIC/FPGA) with APB/AHB/AXI microprocessor slave bus interface",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Synthesizable Verilog RTL source code, SDK, and documentation provided under license)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Implements algorithms defined in FIPS-203 and FIPS-204 standards; no validation statement found)",
+    "primary_platforms": "ASIC, FPGA (implied by HDL/Verilog deliverables); interfaces include APB, AHB, AXI",
+    "target_industries": "Not stated",
+    "regulatory_status": "Export control classification number 5E002 assigned by US Bureau of Industry and Security",
+    "pqc_roadmap_details": "Not stated (Current implementation details provided for ML-KEM and ML-DSA)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (FIPS-204, Dilithium)",
+    "authoritative_source_url": "www.ipcores.com",
+    "source_documents": [
+      {
+        "filename": "IP_Cores_PQC1.html",
+        "url": "https://www.ipcores.com/PQC_IP_core.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Secure-IC Securyzr",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Securyzr™",
+    "product_brief": "A portfolio of security IP cores and hardware solutions for SoC, ASIC, and FPGA including PQC, symmetric/asymmetric crypto, and memory protection.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Secure-IC is a global leader in PQC, offering ML-KEM/ML-DSA based on LWE hardness and XMSS (software IP running on Host CPU). The platform includes dedicated \"Securyzr™ Post Quantum Cryptography\" solutions.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECC, AES, AES-GCM, AES-XTS, ChaCha20-Poly1305, SM4, ARIA, 3DES, SHA-3, SM3, Snow 3G, ZUC, Kasumi, ML-KEM, ML-DSA, XMSS",
+    "key_management_model": "Hardware key storage via Integrated Secure Element (iSE) and Hardware Security Modules; secure boot; memory encryption; on-the-fly execution from Flash.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP cores for SoC, ASIC, and FPGA; Integrated Secure Element (iSE); Hardware Security Modules; Tunable Cryptography engines.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Mentions compliance with FIPS 140, FIPS 180-3, FIPS 198, and FIPS 46-3; specific validation levels (e.g., Level 2/3) not stated.",
+    "primary_platforms": "SoC, ASIC, FPGA, Microcontroller, Multi-core architectures, CXL link, Automotive (ISO26262 ASIL-D).",
+    "target_industries": "Automotive & Smart Mobility, Defense & Space, Industry & Factory Automation, Critical infrastructures, Media & Entertainment, Smart Grid & Smart Cities, Consumer Electronics, Healthcare, Server & Cloud, Memory & Storage, Academics, Semiconductor.",
+    "regulatory_status": "Mentions support for FIPS and Common Criteria certifications; ISO26262 ASIL-D certified for specific IP cores.",
+    "pqc_roadmap_details": "Implements ML-KEM/ML-DSA (LWE-based) and XMSS; described as pioneering advanced PQC technologies.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, ECC-based algorithms, ML-DSA, XMSS",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Secure-IC_Securyzr.html",
+        "url": "https://www.secure-ic.com/products/securyzr/security-ip/tunable-cryptography/#pqc",
+        "label": "primary"
+      },
+      {
+        "filename": "Secure-IC_Securyzr_doc1.html",
+        "url": "https://www.secure-ic.com/resources/white-papers/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Secure-IC_Securyzr_doc2.html",
+        "url": "https://www.secure-ic.com/resources/white-papers/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "SEALSQ Quantum Shield",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Quantum Shield QS7001",
+    "product_brief": "First secure chip to embed NIST-standardized PQC algorithms directly at the hardware level.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Integrates ML-KEM (CRYSTALS-Kyber) and ML-DSA (CRYSTALS-Dilithium) directly in silicon. Provides 10x performance gains, stronger side-channel resistance, and advanced tamper protection. Built as an open hardware platform with support for custom firmware and hybrid cryptography migration.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-KEM (CRYSTALS-Kyber), ML-DSA (CRYSTALS-Dilithium), ECC, RSA",
+    "key_management_model": "Hardware key storage via secure chip with native PQC embedding; supports custom firmware and hybrid cryptography migration.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Secure chip (semiconductor) with hardware-embedded PQC algorithms; open hardware platform.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "QS7001",
+    "release_date": "2025-11-15 (Planned official launch mid-November 2025)",
+    "fips_validated": "Yes, FIPS 140-3 (Company achieved highest levels including FIPS 140-3; specific chip validation status not explicitly detailed beyond company certification).",
+    "primary_platforms": "Defense & Aerospace, Healthcare & Infrastructure, Energy & Smart Grid, IoT & Edge, Automotive, Industrial Automation.",
+    "target_industries": "Defense, Healthcare, Energy, IoT, Automotive, Industrial Automation, Telecommunications, Logistics, Medical, Luxury.",
+    "regulatory_status": "Not stated (Company holds Common Criteria EAL5+ and FIPS 140-3 certifications).",
+    "pqc_roadmap_details": "Official launch planned for mid-November 2025; development kits available to customers. QVault TPM variants expected starting first half of 2026.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (CRYSTALS-Dilithium)",
+    "authoritative_source_url": "www.sealsq.com",
+    "source_documents": [
+      {
+        "filename": "SEALSQ_Quantum_Shield_doc1.html",
+        "url": "https://markets.financialcontent.com/wral/article/tokenring-2025-10-8-sealsq-unveils-quantum-shield-qs7001-and-wisesat-30-pqc-a-new-era-of-quantum-resistant-security-dawns-for-ai-and-space",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Samsung S3SSE2A eSE",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Samsung Knox Matrix with Post-Quantum Enhanced Data Protection (EDP) on Galaxy S25 series",
+    "product_brief": "Mobile security platform integrating PQC algorithms to protect cloud backups and synced data against quantum threats.",
+    "pqc_support": "Yes (with details: ML-KEM algorithm integrated into Knox Matrix for Samsung Cloud)",
+    "pqc_capability_description": "Samsung has integrated Post-Quantum Enhanced Data Protection (EDP) into Knox Matrix, utilizing the NIST-standardized ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism) algorithm. This provides end-to-end encryption for user data during backup, restore, and sync operations on Samsung Cloud across smartphones, TVs, and digital appliances. The feature is available on the Galaxy S25 series running One UI 7.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM (Module-Lattice-Based Key-Encapsulation Mechanism)",
+    "key_management_model": "Not stated (Document mentions end-to-end encryption for cloud data but does not specify hardware key storage, generation, or injection methods).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Mobile device security software integrated with cloud services; specific hardware form factor of the eSE is not detailed in this text.",
+    "infrastructure_layer": "Hardware, Security Stack, Cloud",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "One UI 7",
+    "release_date": "2025-02-04 (Date of the press release announcing the feature)",
+    "fips_validated": "No (Document mentions NIST standards FIPS 203, 204, 205 as references for algorithms but does not state the product itself is FIPS validated).",
+    "primary_platforms": "Galaxy S25 series, Samsung Cloud, One UI 7",
+    "target_industries": "Consumer Mobile, Enterprise (implied by Knox Matrix context)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Currently deployed on Galaxy S25 series; Samsung plans to continue pioneering mobile security with PQC.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Document mentions ML-KEM for key encapsulation but does not specify signature schemes like FIPS 204 or 205 implementation).",
+    "authoritative_source_url": "https://news.samsung.com/ (Inferred from \"Samsung Newsroom\" context, specific article URL not provided in text)",
+    "source_documents": [
+      {
+        "filename": "Samsung_S3SSE2A_eSE.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19492",
+        "label": "primary"
+      },
+      {
+        "filename": "Samsung_S3SSE2A_eSE_doc1.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19492",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Infineon OPTIGA TPM SLB 9672",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Infineon OPTIGA TPM SLB 9672",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "The provided text contains no information regarding Post-Quantum Cryptography (PQC) algorithms, implementation status, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "primary"
+      },
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672_doc1.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672_doc2.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Intel Platform Trust Technology (PTT)",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Intel Platform Trust Technology (PTT)",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "The provided text contains no information regarding Post-Quantum Cryptography support, algorithms, or implementation status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Text lists general product categories like Processors and FPGAs but does not describe PTT architecture details).",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated (Text lists various Intel product families but does not specify PTT deployment targets).",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "intel.com (inferred from search context, but specific product URL not explicitly provided in text)",
+    "source_documents": [
+      {
+        "filename": "Intel_Platform_Trust_Technology__PTT_.html",
+        "url": "https://www.intel.com/content/www/us/en/support/articles/000007452/technologies.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Intel_Platform_Trust_Technology__PTT__doc1.html",
+        "url": "https://www.intel.com/content/www/us/en/support/articles/000007452/technologies.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google OpenTitan",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "OpenTitan",
+    "product_brief": "Open source silicon Root of Trust (RoT) project administered by lowRISC CIC.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Silicon Root of Trust (RoT); specific key storage or injection methods not detailed in text.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Open source silicon Root of Trust (RoT) design for instantiation as a full-featured product.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Open Source",
+    "license": "Apache License, Version 2.0",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Silicon/Chip manufacturers (targeted for instantiation as a full-featured product)",
+    "target_industries": "Enterprises, platform providers, and chip manufacturers",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://opentitan.org",
+    "source_documents": [
+      {
+        "filename": "Google_OpenTitan_repo.md",
+        "url": "https://github.com/lowRISC/opentitan",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "ARM TrustZone",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Arm TrustZone",
+    "product_brief": "Hardware-enforced isolation technology creating secure and non-secure worlds within SoCs to protect code and data.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), specific PQC algorithms, or any migration plans for quantum-resistant cryptography. It only mentions general \"cryptography\" as a use case.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"cryptography\" generally but lists no specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Hardware-enforced isolation separating secure and non-secure worlds; protects key material within the secure world.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "System-on-Chip (SoC) security architecture with hardware-enforced isolation between secure and non-secure worlds.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary (IP Licensing)",
+    "license": "Proprietary (Arm Licensing, Arm Flexible Access, Arm Total Access mentioned; specific license terms not detailed)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Cortex-A processors, Cortex-M processors, SoCs containing Arm-based chips.",
+    "target_industries": "Automotive, Computing Infrastructure, Consumer Technologies, Internet of Things, Mobile, Datacenter, Edge AI.",
+    "regulatory_status": "Not stated (Mentions PSA guidelines and GlobalPlatform standards, but no regulatory licenses or charters).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text provided from source files ARM_TrustZone.html and ARM_TrustZone_doc1.html, but no specific product URL extracted).",
+    "source_documents": [
+      {
+        "filename": "ARM_TrustZone.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "primary"
+      },
+      {
+        "filename": "ARM_TrustZone_doc1.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "ARM_TrustZone_doc2.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "ARM_TrustZone_doc3.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "SEALSQ QS7001",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "SEALSQ QS7001",
+    "product_brief": "High-performance, low-power 32-bit Secure RISC-V microcontroller with hardware crypto acceleration and PQC support.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports Post Quantum Cryptography algorithms: Crystal Kyber (KEM) and Crystal Dilithium (Signature). Features a dedicated ad-X4 hardware cryptographic accelerator for fast encryption/authentication including PQC acceleration.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES 128/192/256, RSA, DSA, ECC, Diffie-Hellman, Crystal Kyber, Crystal Dilithium, Keccak, CRC 16 & 32",
+    "key_management_model": "Hardware-based key storage in Secure Memory (Supervisor Mode) and FLASH; secure key generation via SP800-90B compliant RNG; hardware protection against SPA/DPA/SEMA/DEMA attacks.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "32-bit Secure RISC-V Microcontroller (Secure Element/Semiconductor) with dedicated crypto accelerators and secure memory.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (All rights reserved by SEALSQ)",
+    "latest_version": "Not stated",
+    "release_date": "2024-12-20",
+    "fips_validated": "Targeted: FIPS SP800-90B (RNG compliance); FIPS 140-2/3 status not explicitly stated as validated.",
+    "primary_platforms": "Embedded Systems (Strong Authentication applications)",
+    "target_industries": "Not stated",
+    "regulatory_status": "Certification Targeted: CC EAL5+; FIPS SP800-90B",
+    "pqc_roadmap_details": "Current implementation includes Crystal Kyber and Crystal Dilithium via hardware accelerator.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Crystal Dilithium (PQC), RSA, DSA, ECC",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "SEALSQ_QS7001.pdf",
+        "url": "https://www.sealsq.com/hubfs/6658E_QS7001_20Dec24.pdf?hsLang=en",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microchip PolarFire",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "Microchip PolarFire",
+    "product_brief": "Mid-range FPGA platform offering radiation-tolerant, low-power, and system-on-chip solutions.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document. The text lists general product categories but does not mention Post-Quantum Cryptography algorithms, implementations, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "FPGA (Field Programmable Gate Array) / System-on-Chip (SoC)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Aerospace and Defense, Automotive, Communications Infrastructure, Industrial, IoT, Medical, Data Centers",
+    "target_industries": "Aerospace and Defense, Automotive and Transportation, Communications Infrastructure, Consumer, Data Centers and Computing, Industrial, IoT Solutions, Medical, Sustainability Technologies",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Microchip_PolarFire.html",
+        "url": "https://www.microchip.com/en-us/about/media-center/blog/2026/post-quantum-cryptography-on-microchip-fpgas",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "NXP SE051 Secure Element",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "EdgeLock® SE051 Secure Element",
+    "product_brief": "Proven, easy-to-use IoT security solution with support for updatability and custom applets.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any PQC migration plans. It focuses on classical cryptography.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "AES 128/192/256, ECDSA",
+    "key_management_model": "Hardware secure element providing root of trust at IC level; supports credential injection and RFC3394 symmetric key import protected with AES.",
+    "supported_blockchains": "Not stated (Document mentions \"Blockchain ID\" in an application note title but does not list supported networks).",
+    "architecture_type": "Secure Element (Hardware)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated (Product family versioning not specified; document revisions listed are for datasheets/notes, e.g., Rev 2.0 for Data Sheet).",
+    "release_date": "Not stated (Document dates refer to application notes and datasheet revisions, not product release).",
+    "fips_validated": "No (Document states Common Criteria EAL 6+ certification; FIPS is not mentioned).",
+    "primary_platforms": "IoT devices, Linux, Zephyr OS, various MCUs/MPUs (i.MX, LPC55S69, FRDM-K64F, Raspberry Pi)",
+    "target_industries": "Industrial IoT, Smart Home, Smart City, Healthcare, Automotive, Telecom, Energy Management, EV Charging, POS Terminal",
+    "regulatory_status": "Common Criteria EAL 6+ (with AVA_VAN.5 up to OS level), IEC62443-4-2 certified, IEC62443-4-1 compliant (maturity level 3)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "NXP_SE051_Secure_Element.html",
+        "url": "https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-proven-secure-element-family-for-the-iot:SE051",
+        "label": "primary"
+      },
+      {
+        "filename": "NXP_SE051_Secure_Element_doc1.html",
+        "url": "https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-proven-secure-element-family-for-the-iot:SE051",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "STMicroelectronics ST33KTPM",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "ST33KTPM (specifically ST33KTPM2XSPI, ST33KTPM2X, ST33KTPM2A, ST33KTPM2I, and ST33KTPM-IDevID)",
+    "product_brief": "FIPS 140-3 certified Trusted Platform Module (TPM) for consumer and industrial systems with post-quantum cryptography support.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Includes firmware updates authenticated by LMS signature (SP800-208). Supports additional post-quantum cryptographic algorithms such as ML-KEM and ML-DSA through field firmware upgrades. Engineered to resist quantum attacks.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, SHA-1, SHA-2, SHA-3, HMAC, AES, ECC (NIST P-256, NIST P-384), ECDSA, ECSchnorr, ECDAA, ECDH, LMS, ML-KEM, ML-DSA",
+    "key_management_model": "Hardware-based key storage and generation within a single silicon chip; supports secure storage for digital certificates; provisioned with Endorsement Keys (EK) and IDevID keys.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Single chip cryptographic HW module (TPM 2.0), integrated circuit package (UFQFPN32, TSSOP20, WLCSP24).",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Firmware versions 9.257, 9.258, 10.257; TPM 2.0 rev 1.59; Datasheet Rev 1 (October 2025).",
+    "release_date": "2025-10 (Datasheet date); FIPS Policy Date: 2024-06-14",
+    "fips_validated": "Yes, FIPS 140-3 Level 1 (Security Policy), with Physical Security Level 3 mentioned in datasheet.",
+    "primary_platforms": "PCs, servers, network-connected IoT devices, medical equipment, industrial infrastructure, Raspberry Pi (via evaluation board).",
+    "target_industries": "Consumer, Industrial, Medical, High-assurance infrastructure, Automotive (EV charger), Camera systems.",
+    "regulatory_status": "FIPS 140-3 certified; Common Criteria EAL4+ certified (ANSSI-CC-2025/10, ANSSI-CC-2024/38); TCG certified; JESD-47 qualified.",
+    "pqc_roadmap_details": "Supports LMS signature for firmware updates currently; enables support for ML-KEM and ML-DSA via future field firmware upgrades.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSASSA-PSS, RSASSA-PKCS1v1_5, ECDSA, ECSchnorr, ECDAA, LMS (SP800-208), ML-DSA (planned via firmware).",
+    "authoritative_source_url": "Not stated (Source text references st.com but no specific product URL provided in the snippet).",
+    "source_documents": [
+      {
+        "filename": "STMicroelectronics_ST33KTPM.html",
+        "url": "https://www.st.com/en/secure-mcus/st33k-series-pqc.html",
+        "label": "primary"
+      },
+      {
+        "filename": "STMicroelectronics_ST33KTPM.pdf",
+        "url": "https://www.st.com/en/secure-mcus/st33k-series-pqc.html",
+        "label": "primary"
+      },
+      {
+        "filename": "STMicroelectronics_ST33KTPM_doc1.pdf",
+        "url": "https://www.st.com/en/secure-mcus/st33k-series-pqc.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "STMicroelectronics_ST33KTPM_doc2.pdf",
+        "url": "https://www.st.com/en/secure-mcus/st33k-series-pqc.html",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Xiphera XIP6110B",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "Chainguard FIPS Provider for OpenSSL (AESNI_ASM)",
+    "product_brief": "Provides cryptographic services to Linux user space software components using Intel AES-NI.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography algorithms, implementations, or plans. It only covers classical symmetric encryption (AES-GCM, AES-GMAC).",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-GCM, AES-GMAC",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software cryptographic provider for Linux user space",
+    "infrastructure_layer": "Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "3.4.0-r4",
+    "release_date": "Unknown (First Validated: 2025-03-10)",
+    "fips_validated": "Yes (Validated by NIST CAVP, First Validated: 3/10/2025)",
+    "primary_platforms": "Amazon Linux 2023 on EC2 m7i.metal-24xl (Intel Sapphire Rapids Xeon Platinum 8488C)",
+    "target_industries": "Not stated",
+    "regulatory_status": "FIPS Validated (NIST CAVP)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "source_documents": [
+      {
+        "filename": "Xiphera_XIP6110B.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19412",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "NXP EdgeLock SE051H",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "EdgeLock® SE051H Secure Element",
+    "product_brief": "Secure element for Matter onboarding via NFC, part of the EdgeLock SE051 family with CC EAL 6+ certification.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any PQC migration plans. It focuses on classical cryptography (AES, ECDSA).",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "AES 128/192/256, ECDSA",
+    "key_management_model": "Hardware secure element providing root of trust at IC level; supports credential injection and RFC3394 symmetric key import protected with AES.",
+    "supported_blockchains": "Not stated (Document mentions \"Blockchain ID\" in a related application note title but does not list supported networks for SE051H).",
+    "architecture_type": "Secure Element (Hardware)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated (Document lists revision numbers for datasheets and application notes, e.g., Rev 2.0 for Data Sheet, but no specific product firmware version).",
+    "release_date": "Not stated (Document lists dates for various resources ranging from 2020 to 2026, but no specific product release date).",
+    "fips_validated": "No (Document states \"Common Criteria EAL 6+ certified up to OS level\" and mentions IEC62443 compliance, but does not mention FIPS 140-2 or 140-3 validation).",
+    "primary_platforms": "IoT devices, Linux, Zephyr OS (via middleware), MCUs/MPUs (integration supported via Plug & Trust middleware).",
+    "target_industries": "Industrial IoT, Smart Home, Smart City, Infrastructure, Transportation, Healthcare, Energy Management, EV Supply Equipment, Building Security.",
+    "regulatory_status": "Common Criteria EAL 6+ (with AVA_VAN.5), IEC62443-4-2 certified, IEC62443-4-1 compliant secure process (maturity level 3).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA",
+    "authoritative_source_url": "Not stated (Source text provided as [Source: NXP_EdgeLock_SE051H.html] without a full URL).",
+    "source_documents": [
+      {
+        "filename": "NXP_EdgeLock_SE051H.html",
+        "url": "https://www.nxp.com/products/security-and-authentication/authentication/edgelock-se051-proven-secure-element-family-for-the-iot:SE051",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Lattice MachXO5-NX",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "Lattice MachXO5-NX",
+    "product_brief": "Secure control FPGA family with root-of-trust features, embedded flash, and support for classical and CNSA2.0 approved PQC algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports full suite of CNSA2.0 prescribed PQC algorithms including LMS, XMSS, ML-DSA, ML-KEM, and SLH-DSA. PQC services (XMSS/LMS, ML-DSA, ML-KEM) are available specifically in TDQ devices to address quantum threats.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ECDSA-256, ECDSA-384, ECDSA-521, RSA-3K, RSA-4K, AES-256, SHA-256, SHA-384, SHA-512, SHA-2, SHA-3, SHAKE, LMS, XMSS, ML-DSA, ML-KEM, SLH-DSA",
+    "key_management_model": "Hardware-based Root-of-Trust with internal flash configuration, AES256 bitstream encryption, and ECDSA/RSA/XMSS/LMS/ML-DSA bitstream authentication.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "FPGA (Field Programmable Gate Array) semiconductor device; deployment as secure control module or system management component.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Software Licensing mentioned, specific terms not detailed)",
+    "latest_version": "Not stated (Device variants listed: LFMXO5-25, LFMXO5-55T, etc.)",
+    "release_date": "Not stated (Document dates range from 2022 to 2026 for various guides)",
+    "fips_validated": "No (CNSA2.0 approved mentioned; FIPS validation status not explicitly stated)",
+    "primary_platforms": "Compute, Communications, Industrial market segments; Lattice Nexus Platform; Intel Lincoln City Reference Architecture; AMI Tektagon Platform.",
+    "target_industries": "Industrial & Auto, Medical, Video Surveillance, Aerospace & Defense, Datacenter Systems, Consumer Electronics, IoT.",
+    "regulatory_status": "CNSA2.0 approved (for PQC algorithms); Intel PFR 4.0 compliance mentioned in context of AMI Tektagon integration.",
+    "pqc_roadmap_details": "Devices built on Lattice's low power Nexus platform expand capabilities with root-of-trust features supporting state-of-the-art classical cryptography and CNSA2.0 approved PQC to address increased threats; full suite of CNSA2.0 prescribed algorithms supported in TDQ devices.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA-256/384/521, RSA-3K/4K, LMS, XMSS, ML-DSA, SLH-DSA",
+    "authoritative_source_url": "Not stated (Source filename: Lattice_MachXO5-NX.html)",
+    "source_documents": [
+      {
+        "filename": "Lattice_MachXO5-NX.html",
+        "url": "https://www.latticesemi.com/Products/FPGAandCPLD/MachXO5-NX",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "AMD Versal Adaptive SoC",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "AMD Versal Adaptive SoC",
+    "product_brief": "An adaptive SoC architecture featuring programmable logic, AI Engines, and high-speed I/O for heterogeneous acceleration.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any related migration plans. It focuses on general SoC architecture, compute resources, and memory solutions.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Adaptive SoC (System on Chip) with programmable logic, AI Engines, and Arm Cortex APUs/RPUs.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Copyright 2026 Advanced Micro Devices, Inc.)",
+    "latest_version": "2025.2 (Software Tools); VER-ARCH v1.0 (Course Specification)",
+    "release_date": "2026-01-31 (Document updated January 2026)",
+    "fips_validated": "No",
+    "primary_platforms": "Versal VCK190 Evaluation Platform, Versal VEK280 Evaluation platform; Software tools: Vivado Design Suite, Vitis unified software platform.",
+    "target_industries": "Not stated (Course targets software/hardware developers, system architects, DSP users)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "www.amd.com",
+    "source_documents": [
+      {
+        "filename": "AMD_Versal_Adaptive_SoC.pdf",
+        "url": "https://www.amd.com/en/products/adaptive-socs-fpgas/versal.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "General Dynamics Mission",
+    "category": "Hardware Security & Semiconductors",
+    "product_name": "General Dynamics Mission Systems Cyber Portfolio (TACLANE, Sectéra, ProtecD@R, TACDS)",
+    "product_brief": "NSA-certified encryption and cross-domain solutions for Land, Sea, Air, Space, and Cyber domains.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the document. The text mentions \"Space & Embedded Crypto\" and \"Encryption\" but does not specify Post-Quantum Cryptography algorithms or migration status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"Encryption\", \"Network Encryption\", \"Data At Rest Encryption\", \"Secure Voice Encryption\" without specifying algorithms like AES, RSA, or ECC).",
+    "key_management_model": "Not stated (Text mentions \"Encryptor Management\" but does not describe key storage architecture or generation methods).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware and Network (Products include network encryptors, data at rest encryptors, and embedded crypto systems).",
+    "infrastructure_layer": "Hardware, Network",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Implied by \"Commercial\" nature of General Dynamics Mission Systems products; no open source license stated).",
+    "latest_version": "Not stated (Text mentions \"TACLANE E-Series\", \"TACLANE-C175N\", but no specific version numbers like v1.0 or 2.0).",
+    "release_date": "Not stated",
+    "fips_validated": "No (Text states \"NSA Certification\" for TACLANE E-Series and TACLANE-C175N, but does not explicitly mention FIPS 140-2 or 140-3 validation).",
+    "primary_platforms": "Land, Sea, Air, Space, Cyber domains; Embedded systems; Network infrastructure.",
+    "target_industries": "Government, Defense (U.S. Army, U.S. Navy, NASA, FAA, Space Development Agency).",
+    "regulatory_status": "NSA Certification (for TACLANE E-Series and TACLANE-C175N).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "GD.COM (General Dynamics Mission Systems website)",
+    "source_documents": [
+      {
+        "filename": "General_Dynamics_Mission.html",
+        "url": "https://gdmissionsystems.com/cyber",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "BERTEN MLDS-B235",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "MLDS-B235",
+    "product_brief": "IP Core implementing NIST ML-DSA PQC digital signatures in FPGA, SoC, and ASIC technologies.",
+    "pqc_support": "Yes (NIST ML-DSA standard via CRYSTALS-Dilithium scheme)",
+    "pqc_capability_description": "Implements NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) derived from CRYSTALS-Dilithium. Supports security levels 2, 3, and 5 (ML-DSA-44, ML-DSA-65, ML-DSA-87). Includes sequencer, Polynomial Arithmetic Unit, and SHAKE XOF. Features countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87), SHAKE (XOF)",
+    "key_management_model": "Hardware IP core with internal memory zeroization (automatic and on-demand); key generation, signing, and verifying configured via register map.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP Core for FPGA, SoC, and ASIC; AMBA AXI interfaces (AXI4-Stream, AXI4-Lite)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Perpetual Site Licence (encrypted netlist)",
+    "latest_version": "BDS016 v1.02",
+    "release_date": "2025-03-07",
+    "fips_validated": "Compliant with FIPS 204 and FIPS 140-3 (Note: Document states \"compliant\", not explicitly \"validated\")",
+    "primary_platforms": "AMD (Xilinx) devices, Intel (Altera) devices, Microchip (Microsemi) devices",
+    "target_industries": "Quantum-Resistant Networks, Public Key Infrastructures, Network Security, Transport Protocols, User Authentication, Secure Communications, Electronic Transactions",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implements current NIST ML-DSA standard; no future roadmap details provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87)",
+    "authoritative_source_url": "www.bertendsp.com",
+    "source_documents": [
+      {
+        "filename": "BERTEN_MLDS-B235.html",
+        "url": "https://www.bertendsp.com/products/mlds-b235/",
+        "label": "primary"
+      },
+      {
+        "filename": "BERTEN_MLDS-B235_doc1.pdf",
+        "url": "https://www.bertendsp.com/pdf/datasheet/BDS016_MLDS-B235_Datasheet_v1.0.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "BERTEN MLKE-B135",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "MLDS-B235 IP Core (ML-DSA Crypto Core)",
+    "product_brief": "FPGA, SoC, and ASIC IP core implementing NIST FIPS 204 ML-DSA post-quantum digital signatures.",
+    "pqc_support": "Yes (Implements NIST FIPS 204 ML-DSA derived from CRYSTALS-Dilithium)",
+    "pqc_capability_description": "Implements the NIST Module-Lattice-Based Digital Signature Standard (ML-DSA) in FPGA, SoC, and ASIC. Supports security levels ML-DSA-44, ML-DSA-65, and ML-DSA-87. Includes countermeasures against Side-Channel Attacks (SCA), timing, and Simple Power Analysis (SPA). Supports Hedged variant for signing.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87), SHAKE (XOF)",
+    "key_management_model": "Hardware IP core with internal memory zeroization (automatic and on-demand); key generation, signing, and verifying configured via register map.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP Core for FPGA, SoC, and ASIC deployment",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Perpetual Site Licence (encrypted netlist)",
+    "latest_version": "BDS016 v1.02",
+    "release_date": "2025-03-07",
+    "fips_validated": "Compliant with FIPS 204 and FIPS 140-3 (Note: Text states \"compliant\", not explicitly \"validated\")",
+    "primary_platforms": "AMD (Xilinx), Intel (Altera), Microchip (Microsemi) FPGA/ASIC devices",
+    "target_industries": "Quantum-Resistant Networks, Public Key Infrastructures, Network Security, Secure Communications, Electronic Transactions",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implements current NIST FIPS 204 standard; no future roadmap details provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (ML-DSA-44, ML-DSA-65, ML-DSA-87)",
+    "authoritative_source_url": "www.bertendsp.com",
+    "source_documents": [
+      {
+        "filename": "BERTEN_MLKE-B135.html",
+        "url": "https://www.bertendsp.com/products/mlds-b235/",
+        "label": "primary"
+      },
+      {
+        "filename": "BERTEN_MLKE-B135_doc1.pdf",
+        "url": "https://www.bertendsp.com/pdf/datasheet/BDS016_MLDS-B235_Datasheet_v1.0.pdf",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "CAST KiviPQC-KEM",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "CAST KiviPQC-KEM",
+    "product_brief": "Hardware accelerator for NIST FIPS 203 ML-KEM post-quantum key encapsulation operations.",
+    "pqc_support": "Yes (ML-KEM implementation)",
+    "pqc_capability_description": "Implements Module Lattice-based Key Encapsulation Mechanism (ML-KEM) per NIST FIPS 203. Supports all three parameter sets: ML-KEM-512, ML-KEM-768, and ML-KEM-1024. Offers key generation, encapsulation, and decapsulation procedures. Available in Fast (F) and Tiny (T) versions for ASIC/FPGA integration. Includes protection against timing-based side channel attacks.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM (ML-KEM-512, ML-KEM-768, ML-KEM-1024), AES, ASCON, SNOW-V, SM4, SHA-256, SHA-384/512, SHA-3, MD5",
+    "key_management_model": "Hardware key storage within SoC; supports software Random Byte Generator (RBG) or integration with external third-party entropy source/RBG via customized interface.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Silicon IP Core (RISC-V-like SoC topology), available as ASIC or FPGA implementation; includes 32-bit RISC-V processor, hardware crypto accelerators (Fast version), and AMBA AXI4-Lite interface.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Export controlled)",
+    "latest_version": "Not stated",
+    "release_date": "2025-11-05 (Date of related content announcement)",
+    "fips_validated": "No (Text states \"NIST FIPS Compliant\" and implements algorithms standardized in FIPS 203, but does not state the product itself is FIPS validated)",
+    "primary_platforms": "ASIC (TSMC), FPGA (Altera/Intel, AMD/Xilinx, Microchip); integrates into System-on-Chip (SoC) designs.",
+    "target_industries": "Public-key infrastructure, cloud security, safety-critical infrastructure, IoT, HSMs, TPMs, secure Ethernet (MACsec), VPN/IKEv2, edge computing.",
+    "regulatory_status": "Subject to export control regulations; requires potential special export license.",
+    "pqc_roadmap_details": "Implements current NIST FIPS 203 standard; no future roadmap details provided beyond current ML-KEM support.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Product is KEM only; related product KiviPQC-DSA handles signatures)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "CAST_KiviPQC-KEM.html",
+        "url": "https://www.cast-inc.com/security/encryption-primitives/kivipqc-kem",
+        "label": "primary"
+      },
+      {
+        "filename": "CAST_KiviPQC-KEM_doc1.pdf",
+        "url": "https://www.cast-inc.com/pdfs/cast_kivipqc-kem-brief-asic.pdf-1",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "CAST_KiviPQC-KEM_doc2.pdf",
+        "url": "https://www.cast-inc.com/pdfs/cast_kivipqc-kem-brief-altera.pdf-0",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "IP Cores PQC1",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "PQC1 Post-Quantum Cryptography Accelerator IP Core",
+    "product_brief": "Hardware IP core implementing ML-KEM and ML-DSA post-quantum cryptography standards with microprogramming sequencer.",
+    "pqc_support": "Yes (Implements ML-KEM/FIPS-203/Kyber and ML-DSA/FIPS-204/Dilithium)",
+    "pqc_capability_description": "Implements ML-KEM (FIPS-203, Kyber) and ML-DSA (FIPS-204, Dilithium) algorithms. Supports all FIPS-204 categories (ML-DSA-44, 65, 87) and FIPS-203 levels (ML-KEM-512, 768, 1024). Includes built-in NTT and SHAKE128/SHAKE256/SHA-3 engines. Contains three accelerators: NTT, FIPS-202 (SHA-3/SHAKE), and packing/unpacking. True random number generator is not included but TRNG1 core can be used.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM, ML-DSA, SHA-3, SHAKE128, SHAKE256, AES, DES, 3DES, RSA, ECC, GCM, CCM, EAX, XTS, ZUC, SNOW 3G, Kasumi, RC4, CMAC, XCBC",
+    "key_management_model": "Hardware IP core with internal microprogramming sequencer; requires external single-port RAM banks; SDK supports key generation, signing, verification, encapsulation, and decapsulation. True random number generator not included in core.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware IP Core (ASIC/FPGA) with APB/AHB/AXI microprocessor slave bus interface",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Synthesizable Verilog RTL source code, SDK, and documentation provided under license)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Implements algorithms defined in FIPS-203 and FIPS-204 standards; no validation statement found)",
+    "primary_platforms": "ASIC, FPGA (implied by HDL/Verilog deliverables); interfaces include APB, AHB, AXI",
+    "target_industries": "Not stated",
+    "regulatory_status": "Export control classification number 5E002 assigned by US Bureau of Industry and Security",
+    "pqc_roadmap_details": "Not stated (Current implementation details provided for ML-KEM and ML-DSA)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (FIPS-204, Dilithium)",
+    "authoritative_source_url": "www.ipcores.com",
+    "source_documents": [
+      {
+        "filename": "IP_Cores_PQC1.html",
+        "url": "https://www.ipcores.com/PQC_IP_core.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Secure-IC Securyzr",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Securyzr™",
+    "product_brief": "A portfolio of security IP cores and hardware solutions for SoC, ASIC, and FPGA including PQC, symmetric/asymmetric crypto, and memory protection.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Secure-IC is a global leader in PQC, offering ML-KEM/ML-DSA based on LWE hardness and XMSS (software IP running on Host CPU). The platform includes dedicated \"Securyzr™ Post Quantum Cryptography\" solutions.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECC, AES, AES-GCM, AES-XTS, ChaCha20-Poly1305, SM4, ARIA, 3DES, SHA-3, SM3, Snow 3G, ZUC, Kasumi, ML-KEM, ML-DSA, XMSS",
+    "key_management_model": "Hardware key storage via Integrated Secure Element (iSE) and Hardware Security Modules; secure boot; memory encryption; on-the-fly execution from Flash.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "IP cores for SoC, ASIC, and FPGA; Integrated Secure Element (iSE); Hardware Security Modules; Tunable Cryptography engines.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Mentions compliance with FIPS 140, FIPS 180-3, FIPS 198, and FIPS 46-3; specific validation levels (e.g., Level 2/3) not stated.",
+    "primary_platforms": "SoC, ASIC, FPGA, Microcontroller, Multi-core architectures, CXL link, Automotive (ISO26262 ASIL-D).",
+    "target_industries": "Automotive & Smart Mobility, Defense & Space, Industry & Factory Automation, Critical infrastructures, Media & Entertainment, Smart Grid & Smart Cities, Consumer Electronics, Healthcare, Server & Cloud, Memory & Storage, Academics, Semiconductor.",
+    "regulatory_status": "Mentions support for FIPS and Common Criteria certifications; ISO26262 ASIL-D certified for specific IP cores.",
+    "pqc_roadmap_details": "Implements ML-KEM/ML-DSA (LWE-based) and XMSS; described as pioneering advanced PQC technologies.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, ECC-based algorithms, ML-DSA, XMSS",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Secure-IC_Securyzr.html",
+        "url": "https://www.secure-ic.com/products/securyzr/security-ip/tunable-cryptography/#pqc",
+        "label": "primary"
+      },
+      {
+        "filename": "Secure-IC_Securyzr_doc1.html",
+        "url": "https://www.secure-ic.com/resources/white-papers/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Secure-IC_Securyzr_doc2.html",
+        "url": "https://www.secure-ic.com/resources/white-papers/",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

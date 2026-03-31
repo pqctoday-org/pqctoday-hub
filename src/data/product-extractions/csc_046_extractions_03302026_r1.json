@@ -1,0 +1,40 @@
+[
+  {
+    "platform_name": "Thales Luna Cloud HSM (DPoD)",
+    "category": "Cloud Hardware Security Module (HSM)",
+    "product_name": "Thales Luna Cloud HSM (DPoD) / Thales TCT Luna T-Series HSMs",
+    "product_brief": "High-assurance cloud and hardware security modules integrating NIST-standardized PQC algorithms for key management and PKI.",
+    "pqc_support": "Yes (with details: Integrates ML-KEM, ML-DSA, LMS/HSS; supports hybrid modes)",
+    "pqc_capability_description": "Luna HSMs are among the first FIPS 140-3 Level 3 platforms to integrate NIST-standardized PQC algorithms (ML-KEM, ML-DSA, LMS/HSS) directly in firmware. Supports quantum-safe key management, TLS, PKI, and code signing on production-proven systems with hybridization capabilities.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, HSS, Falcon (FN-DSA), RSA, ECC",
+    "key_management_model": "HSM-backed key management with crypto-agility; supports customer-managed keys via PKCS#11 and GlobalPlatform standards.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (Hardware Security Module)",
+    "infrastructure_layer": "Cloud, Hardware, Network",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "MultiApp v5.2 Premium PQC (Smartcard); Luna T-Series (HSM version not specified)",
+    "release_date": "Not stated",
+    "fips_validated": "Yes (FIPS 140-3 Level 3 for Luna HSMs; Falcon is FIPS 206)",
+    "primary_platforms": "Cloud infrastructures, U.S. Government intelligence/defense/civilian agencies, commercial enterprises, mobile networks (5G), embedded environments",
+    "target_industries": "Finance, Government, Defense, Telecom, Identity Management, Critical Infrastructure",
+    "regulatory_status": "ANSSI-certified at CC EAL6+ (MultiApp); FIPS 140-3 Level 3; CNSA 2.0 compliant roadmap",
+    "pqc_roadmap_details": "Migration to PQC between 2024 and 2033 per NSA CNSA 2.0; Java Card standard v3.3 with PQC support planned for 2026; ongoing integration of NIST standards (ML-KEM, ML-DSA) across portfolio.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Falcon (FN-DSA), ML-DSA, LMS, HSS, ECDSA (legacy), RSA (legacy)",
+    "authoritative_source_url": "thalestct.com",
+    "source_documents": [
+      {
+        "filename": "Thales_Luna_Cloud_HSM__DPoD__doc1.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/data-protection-on-demand",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Thales_Luna_Cloud_HSM__DPoD__doc2.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/data-protection-on-demand",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

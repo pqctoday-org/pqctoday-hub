@@ -1,0 +1,362 @@
+[
+  {
+    "platform_name": "01 Quantum IronCAP",
+    "category": "Cryptographic Libraries",
+    "product_name": "IronCAP ™ Toolkits",
+    "product_brief": "Post-quantum cryptography toolkits enabling vendors to secure vertical applications against classical and quantum attacks.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Combines NIST-approved PQC algorithms with patent-protected quantum-safe technology. Supports email/file encryption, digital signatures, blockchain security, remote access/VPN, password management, credit card security, cloud storage, and website security. Designed for seamless integration via OpenSSL, PKCS#11, and OpenPGP standards.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "NIST-approved PQC algorithms (specific names not stated), patent-protected quantum-safe technology (specific names not stated)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable (supports blockchain vendors generally, specific networks not listed)",
+    "architecture_type": "Software toolkit compliant with OpenSSL, PKCS#11, and OpenPGP standards",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated (supports vertical applications, IoT devices, cloud storage)",
+    "target_industries": "Blockchain, IoT, Data Storage, Remote Access, Email Security, Financial Transactions, Cloud Storage, Website Security",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Uses NIST-approved PQC algorithms combined with proprietary technology; no specific timeline or algorithm names provided.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Digital signing using NIST-approved PQC algorithms and patent-protected quantum-safe technology (specific schemes not stated)",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "01_Quantum_IronCAP_doc1.html",
+        "url": "https://www.ironcap.ca/ironcap-toolkits/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "SafeLogic CryptoComply",
+    "category": "Cryptographic Libraries",
+    "product_name": "CryptoComply PQ TLS",
+    "product_brief": "Drop-in, commercial-grade, quantum-resistant TLS solution leveraging CAVP-certified ML-KEM.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Provides a drop-in replacement for OpenSSL 3.x based TLS 1.3. Features Pure PQ mode using NIST standard ML-KEM (FIPS 203), Hybrid mode combining classical and PQC, and Legacy mode. Implementation is CAVP-certified and claims to be 20% faster than PKI.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, P256, P384, P521, X25519, RSA (mentioned as vulnerable context), Elliptic Curve Cryptography",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software-based TLS implementation",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (FIPS 140-3 validated algorithms; CAVP-certified ML-KEM implementation)",
+    "primary_platforms": "Go, Java, Mobile, .NET (Core); Multiple platforms mentioned generally.",
+    "target_industries": "Communications, Cybersecurity, Financial Services, Healthcare, Public Sector, Technology, Government, Military",
+    "regulatory_status": "FIPS 140-3, CAVP certified, CNSA 2.0, CMMC 2.0, Common Criteria, FedRAMP, GovRAMP",
+    "pqc_roadmap_details": "Supports NIST standard ML-KEM (FIPS 203); offers Pure PQ, Hybrid, and Legacy modes for migration.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document focuses on Key Encapsulation Mechanisms like ML-KEM and ECDH curves P256/P384/P521/X25519 for TLS handshakes; specific signature algorithms are not listed).",
+    "authoritative_source_url": "www.safelogic.com",
+    "source_documents": [
+      {
+        "filename": "SafeLogic_CryptoComply_doc1.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=18289",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "SAP Cryptographic Library",
+    "category": "Cryptographic Libraries",
+    "product_name": "SAP Cryptographic Library",
+    "product_brief": "Enables applications like SAP S/4 HANA to support security protocols such as TLS, SNC, SSF, and X.509 with quantum-safe cryptography.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Version 8.6 enables quantum-safe TLS 1.3 handshake using hybrid ECDHE-MLKEM key agreement based on X25519MLKEM768. ML-KEM is a standardized FIPS-203 algorithm for key encapsulation, preventing session key decryption by quantum computers.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ECDHE, X25519, MLKEM (ML-KEM), Elliptic Curve Cryptography",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (ECDHE-MLKEM)",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "8.6 (specifically CommonCryptoLib 8.6.2 mentioned in release note)",
+    "release_date": "2025-12-12",
+    "fips_validated": "Yes, FIPS 140-3 certified (Certificate #5093) for the FIPS crypto kernel module.",
+    "primary_platforms": "SAP NetWeaver Application Server for ABAP, SAP HANA",
+    "target_industries": "US public sector agencies, healthcare, financial industries, Enterprise",
+    "regulatory_status": "FIPS 140-3 certified (Certificate #5093)",
+    "pqc_roadmap_details": "Version 8.6 implements hybrid ECDHE-MLKEM (X25519MLKEM768) for TLS 1.3; ML-KEM standardized as FIPS-203.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document mentions key agreement algorithms ECDHE and MLKEM, but does not explicitly list signature schemes like ECDSA or Ed25519)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "SAP_Cryptographic_Library_doc1.html",
+        "url": "https://community.sap.com/t5/technology-blogs-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "SAP_Cryptographic_Library_doc2.html",
+        "url": "https://community.sap.com/t5/technology-blogs-by-sap/new-version-8-6-of-the-sap-cryptographic-library-with-quantum-safe/ba-p/14280039",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "PQShield PQSDK",
+    "category": "Cryptographic Libraries",
+    "product_name": "PQShield PQSDK",
+    "product_brief": "Software development kit integrating post-quantum and classical cryptographic primitives with OpenSSL and mbedTLS.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Provides implementations of PQC key agreement and digital signature algorithms via PQCryptoLib integrated into OpenSSL (v3.2.0+) and mbedTLS (v3.2.1). Supports hybrid modes (classical plus PQC). Enables post-quantum TLS 1.3 and X.509 PKI support. Algorithms include Falcon, ML-KEM, and ML-DSA.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Falcon 512/1024, FIPS-203 ML-KEM 512/768/1024, FIPS-204 ML-DSA 2/3/5 (OpenSSL); Falcon 512/1024, FIPS-204 ML-DSA 44/65/87, FIPS-203 ML-KEM 512/768/1024 (mbedTLS); All existing classical cryptography via OpenSSL.",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software library integration (OpenSSL/mbedTLS)",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "R24.3.1",
+    "release_date": "2024-07-12",
+    "fips_validated": "No (References FIPS-203 and FIPS-204 standards for algorithms, but no validation status mentioned)",
+    "primary_platforms": "Linux (x86_64 and ARM64), macOS, MS Windows",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Enables experimentation and prototyping before full deployment; supports migration use cases including TLS, PKI, VPN, web servers, user authentication, software signing, and Zero Trust.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Falcon 512/1024, FIPS-204 ML-DSA 2/3/5 (OpenSSL), FIPS-204 ML-DSA 44/65/87 (mbedTLS)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "PQShield_PQSDK_doc1.pdf",
+        "url": "https://pqshield.com/products/pqc-sdk/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "leancrypto",
+    "category": "Cryptographic Libraries",
+    "product_name": "leancrypto",
+    "product_brief": "A cryptographic library exclusively containing PQC-resistant algorithms with minimal dependencies and support for multiple environments.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The library exclusively contains PQC-resistant algorithms. It implements NIST-approved schemes: ML-DSA/Dilithium, ML-KEM/Kyber, SLH-DSA/Sphincs+, and BIKE. Accelerated implementations exist for x86_64, ARMv7/ARMv8, and RISCV64. Algorithms are tested with NIST ACVP and hold official CAVP certificates.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Ascon, SHA2, SHA-3, Curve 25519, Curve 448, ML-DSA (Dilithium), ML-KEM (Kyber), SLH-DSA (Sphincs+), BIKE, AES, ChaCha20, KMAC",
+    "key_management_model": "Programmatic key management via library API; supports PKCS#8 generator and parser; stack-only or heap allocation supported.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software cryptographic library (User space, Linux kernel module, EFI)",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-11-17",
+    "fips_validated": "Yes (Official CAVP certificates received for algorithms tested with NIST ACVP; references FIPS 203, FIPS 204, FIPS 205)",
+    "primary_platforms": "Linux user space, Linux kernel space, BSD user space, Apple OSes user space, Windows user space, EFI environment",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Library exclusively contains PQC-resistant algorithms; supports NIST-approved post-quantum asymmetric algorithms (ML-DSA, ML-KEM, SLH-DSA) with composite algorithms and accelerations.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ML-DSA (Dilithium), SLH-DSA (Sphincs+), Ascon-Hash256, SHA-3 derivatives, KMAC256",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "leancrypto_doc1.html",
+        "url": "https://github.com/smuellerDD/leancrypto",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "SandboxAQ Sandwich",
+    "category": "Cryptographic Libraries",
+    "product_name": "Sandwich",
+    "product_brief": "Open source meta-library of cryptographic algorithms enabling agile cryptography implementation.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Includes libOQS library providing access to new post-quantum cryptography (PQC) algorithms from NIST. Enables developers to embed PQC directly into applications and swap algorithms without rewriting code. Supports hybrid mode via \"sandwich\" of protocols.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (mentions support for cryptographic libraries OpenSSL, BoringSSL, libOQS but does not list specific primitives like ECDSA or Ed25519)",
+    "key_management_model": "Not stated (mentions future planned features may include key management services (KMS), but current model is not described)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Meta-library/Framework",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2023-08-08",
+    "fips_validated": "No",
+    "primary_platforms": "MacOS, Linux; Languages: C/C++, Rust, Python, Go",
+    "target_industries": "Government (U.S. Air Force, DISA, HHS), Enterprise, Telecommunications, Banking",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Future iterations planned to enable multi-layered stacked sandwiches and access to fundamental primitives or functionalities like authentication, VPNs, or KMS. Supports algorithms soon to be standardized by NIST.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (mentions support for PQC algorithms from NIST via libOQS but does not list specific signature schemes)",
+    "authoritative_source_url": "https://www.sandboxaq.com/solutions/sandwich",
+    "source_documents": [
+      {
+        "filename": "SandboxAQ_Sandwich_doc1.html",
+        "url": "https://github.com/sandbox-quantum/sandwich",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "QuintessenceLabs qSOC",
+    "category": "Cloud Key Management",
+    "product_name": "QuintessenceLabs qSOC (Trusted Security Foundation® / TSF®)",
+    "product_brief": "Centralized, vendor-neutral encryption key management solution supporting PQC and quantum entropy.",
+    "pqc_support": "Yes (with details: Supports NIST Quantum Resistant Algorithms and NIST approved PQC algorithms via qConnect and TSF).",
+    "pqc_capability_description": "The Trusted Security Foundation (TSF) provides PQC crypto-agile key management supporting the latest NIST Quantum Resistant Algorithms. The qConnect Quantum Safe Key Distributor enables quantum safe key distribution using NIST approved PQC algorithms, standard industry protocols, and supports hybrid QKD/PQC key delivery. Integration with PQShield quantum resistant algorithm implementations is described for TSF KMS and qClient SDK.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, ECC, DH (mentioned as legacy targets), NIST Quantum Resistant Algorithms (specific names not listed), Symmetric encryption (256-bit keys).",
+    "key_management_model": "Centralized, vendor-neutral key and policy management; supports KMIP and PKCS#11 APIs; integrates with QKD for key distribution; supports hybrid QKD/PQC delivery.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Software SDK, Virtual Machine, Network Attached Appliance, Hardware QKD)",
+    "infrastructure_layer": "Application, Security Stack, Cloud, Hardware, Network",
+    "license_type": "Commercial",
+    "license": "Proprietary (©2025 QuintessenceLabs. All rights reserved.)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No (NIST 800-90B Certified for entropy; mentions NIST algorithms are being developed into FIPS, but does not state the product itself is FIPS validated).",
+    "primary_platforms": "Virtual Machine, Network Attached Appliance, On-premise, Cloud, Mobile (via qProtect), any application via SDK.",
+    "target_industries": "Insurance, Public sector, Banking, Life sciences, Advanced industries, Global energy and materials, Telecom, media, and technology, Consumer electronics, Travel and logistics.",
+    "regulatory_status": "Common Criteria Certified; NIST 800-90B Certified (for qStream QRNG).",
+    "pqc_roadmap_details": "Supports latest NIST Quantum Resistant Algorithms; integrates with PQShield implementations; designed for seamless transition to a post-quantum world; supports hybrid QKD/PQC delivery.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document mentions support for PQC algorithms and RSA/ECC/DH context, but does not list specific signature schemes like Ed25519 or Dilithium).",
+    "authoritative_source_url": "www.quintessencelabs.com",
+    "source_documents": [
+      {
+        "filename": "QuintessenceLabs_qSOC.pdf",
+        "url": "https://www.quintessencelabs.com/products/qsoc-quantum-security-operations-center/",
+        "label": "primary"
+      },
+      {
+        "filename": "QuintessenceLabs_qSOC_doc1.pdf",
+        "url": "https://www.quintessencelabs.com/products/qsoc-quantum-security-operations-center/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "QuintessenceLabs_qSOC_doc2.pdf",
+        "url": "https://www.quintessencelabs.com/products/qsoc-quantum-security-operations-center/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "QuintessenceLabs_qSOC_doc3.pdf",
+        "url": "https://www.quintessencelabs.com/products/qsoc-quantum-security-operations-center/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Amazon Web Services (AWS)",
+    "category": "Cloud Key Management",
+    "product_name": "Amazon Web Services (AWS)",
+    "product_brief": "Cloud platform offering PQC migration strategies, TLS/SFTP implementations, and key management services.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implements hybrid PQ-TLS 1.3 (SecP256r1MLKEM768, X25519MLKEM768) in AWS SDK for Java v2 and PQ-SFTP policies (mlkem768nistp256-sha256, mlkem1024nistp384-sha384, mlkem768x25519-sha256) via AWS Transfer Family. Mentions ML-KEM and ML-DSA adoption timelines.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "SecP256r1, X25519, ML-KEM (MLKEM768, MLKEM1024), NIST P-256, NIST P-384, SHA-256, SHA-384",
+    "key_management_model": "Cloud Key Management Service (AWS KMS) with programmatic access via SDK; mentions complications around ML-DSA in cloud key management systems.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-centric, Shared-responsibility model",
+    "infrastructure_layer": "Cloud, Application, Security Stack",
+    "license_type": "Commercial/Open Source (AWS-LC mentioned as Open Source)",
+    "license": "Not stated",
+    "latest_version": "AWS SDK for Java v2; AWS-LC-FIPS-3.0",
+    "release_date": "2025-03-24 (Document date); November, 2024 (AWS-LC-FIPS-3.0); January, 2025 (ML-KEM TLS 1.3 Policies)",
+    "fips_validated": "Yes (AWS-LC-FIPS-3.0 mentioned; FIPS 203 IPD and CMVP Pending noted)",
+    "primary_platforms": "AWS Cloud, Java (SDK), OpenSSH, Putty, AsyncSSH, Dropbear, jsch",
+    "target_industries": "Enterprise, Government (references CNSA 2.0, NIST timelines)",
+    "regulatory_status": "References NIST SP800-208, Draft IR 8547, FIPS 203, FIPS 204, FIPS 205, CNSA 1.0/2.0, CNSSP 15",
+    "pqc_roadmap_details": "Timeline includes 2025 for ML-KEM TLS 1.3 policies; 2024-2025 for AWS-LC-FIPS-3.0; Long-term migration strategy covering inventorying use cases and long-lived roots of trust.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ML-DSA (planned/complications noted), LMS/XMSS (referenced in CNSA 2.0 context)",
+    "authoritative_source_url": "https://github.com/aws-samples/aws-kms-pq-tls-example; https://docs.aws.amazon.com/transfer/latest/userguide/post-quantum-security-policies.html",
+    "source_documents": [
+      {
+        "filename": "Amazon_Web_Services__AWS_.pdf",
+        "url": "https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/",
+        "label": "primary"
+      },
+      {
+        "filename": "Amazon_Web_Services__AWS__doc1.html",
+        "url": "https://aws.amazon.com/blogs/security/post-quantum-tls-now-supported-in-aws-kms/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microsoft Azure",
+    "category": "Cloud Key Management",
+    "product_name": "Microsoft Azure (specifically Azure Key Vault and SymCrypt library context)",
+    "product_brief": "Cloud platform offering quantum-safe security capabilities via SymCrypt library updates and Azure Key Vault services.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "PQC algorithms (ML-KEM, ML-DSA) are available through CNG and Certificate functions for Windows Insiders and Linux. TLS 1.3 hybrid key exchange is enabled in SymCrypt-OpenSSL v1.9.0. Full transition of services planned by 2033, with early adoption starting 2029.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "AES, RSA, ECDSA, ML-KEM, ML-DSA, FrodoKEM (research/standardization context)",
+    "key_management_model": "Not stated (mentions key and secret management services but no specific architectural model like MPC or HSM details in text)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Cloud, Application, Security Stack",
+    "license_type": "Commercial/Open Source",
+    "license": "Not stated (SymCrypt and Adams Bridge Accelerator mentioned as open-source; Azure services are commercial)",
+    "latest_version": "1.9.0 (SymCrypt-OpenSSL)",
+    "release_date": "2025-08-20 (Blog post date; specific software release dates not stated)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Windows, Linux, Microsoft Azure, Microsoft 365",
+    "target_industries": "Enterprise, Government, Financial services, Healthcare, Manufacturing, Retail",
+    "regulatory_status": "Aligned with NIST, CISA, OMB, CNSA 2.0, CNSSP-15, ISO standards",
+    "pqc_roadmap_details": "Early adoption by 2029; default in subsequent years; full transition of services and products by 2033. Uses hybrid approach (classical + PQC) as interim step before full PQC shift.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA, ML-DSA (planned/preview), RSA (current)",
+    "authoritative_source_url": "https://www.microsoft.com/security/blog (inferred from context \"Microsoft Security Blog\" and text source)",
+    "source_documents": [
+      {
+        "filename": "Microsoft_Azure.html",
+        "url": "https://www.microsoft.com/en-us/security/blog/2025/08/20/quantum-safe-security-progress-towards-next-generation-cryptography/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google Cloud Platform (GCP)",
+    "category": "Cloud Key Management",
+    "product_name": "Google Cloud Platform (GCP) / Cloud KMS",
+    "product_brief": "Cloud infrastructure enabling customers to protect workloads with NIST-approved PQC algorithms via libraries like BoringSSL and Tink.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Implementing PQC according to NIST standards, specifically prioritizing ML-KEM for store-now-decrypt-later mitigation. Enabling developers to use NIST-approved PQC algorithms via Google libraries BoringSSL and Tink. Starting with Quantum-Safe Signatures in Cloud KMS.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, TLS, SSH, ALTS, PKI, Symmetric Cryptography",
+    "key_management_model": "Programmatic key management via libraries (Tink, BoringSSL) and Cloud KMS; supports cryptographic agility and key rotation.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Cloud Infrastructure + 3rd party tooling + Customer Workloads)",
+    "infrastructure_layer": "Cloud, Application, Security Stack",
+    "license_type": "Proprietary / Open Source (libraries)",
+    "license": "Not stated",
+    "latest_version": "Unknown",
+    "release_date": "2025-03-24",
+    "fips_validated": "No",
+    "primary_platforms": "Google Cloud Platform (GCP), Chrome, Chromium",
+    "target_industries": "Enterprise, Finance (FS-ISAC mentioned), Telco (GSMA mentioned)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Phase 1: Architectural Readiness (Secure by Design, crypto key inventory); Phase 2: Roll Out (enabling customer workload security). Prioritizing ML-KEM implementation.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Quantum-Safe Signatures (specific algorithms not named beyond general PQC context), Digital Signing (PKI)",
+    "authoritative_source_url": "https://cloud.google.com/blog/products/identity-security/cloud-ciso-perspectives-why-we-need-to-get-ready-for-pqc",
+    "source_documents": [
+      {
+        "filename": "Google_Cloud_Platform__GCP_.pdf",
+        "url": "https://cloud.google.com/blog/products/identity-security/why-google-is-marching-toward-a-quantum-safe-future",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Cloud_Platform__GCP__doc1.html",
+        "url": "https://cloud.google.com/blog/products/identity-security/why-google-is-marching-toward-a-quantum-safe-future",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

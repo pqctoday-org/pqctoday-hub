@@ -1,0 +1,35 @@
+[
+  {
+    "platform_name": "IBM Security Guardium Data Protection",
+    "category": "Data Security & Protection",
+    "product_name": "IBM Security Guardium Data Protection",
+    "product_brief": "Secure enterprise data and simplify compliance across hybrid cloud infrastructure with discovery, monitoring, and real-time protection.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions managing certificates and security baselines but does not explicitly mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated. The text mentions centrally managing policies and certificates but does not describe key hierarchy, root key protection, escrow, or specific rotation policies.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid cloud infrastructure; supports agents or agentless universal connector plug-ins; centralized visibility and control.",
+    "infrastructure_layer": "Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Book a live demo\", \"Commercial\" context of IBM products, no open source license mentioned)",
+    "latest_version": "12.2.1",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Hybrid cloud infrastructure, SaaS environments, edge gateway; supports agents or agentless universal connector plug-ins.",
+    "target_industries": "Enterprise (implied by \"enterprise data\", \"hybrid cloud\", compliance standards like PCI DSS, GDPR, SOX).",
+    "regulatory_status": "Not stated (Document mentions meeting requirements for PCI DSS, GDPR, CPRA, SOX, but does not list specific regulatory licenses or charters held by the vendor).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filename provided: IBM_Security_Guardium_Data_Protection.html, but no full URL in text)",
+    "source_documents": [
+      {
+        "filename": "IBM_Security_Guardium_Data_Protection.html",
+        "url": "https://www.ibm.com/products/guardium-data-protection",
+        "label": "primary"
+      }
+    ]
+  }
+]

@@ -1,0 +1,108 @@
+[
+  {
+    "platform_name": "Google Chrome",
+    "category": "Web Browsers",
+    "product_name": "Google Chrome",
+    "product_brief": "Web browser with hybrid post-quantum key establishment support via ML-KEM.",
+    "pqc_support": "Yes (Hybrid ML-KEM enabled by default in TLS 1.3)",
+    "pqc_capability_description": "Chrome offers hybrid ML-KEM (formerly Kyber) by default on desktop since version 131 and Android since version 133. It uses X25519+ML-KEM for key exchange with ECDSA for authentication. Google servers prefer ML-KEM. Experimental support for Kyber began in Chrome 116. ML-DSA signatures are under standardization and not yet deployed by default due to size/latency concerns.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM (Kyber), ECDSA, Curve25519, AES, ChaCha-Poly, Simon/Speck, RSA, ECDH",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Classical + PQC)",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Chrome 133 (Android), Chrome 131 (Desktop)",
+    "release_date": "2024-10-01 (Chrome 131 ML-KEM default enablement mentioned as Oct 2024)",
+    "fips_validated": "No (ML-DSA recently defined in FIPS standard, but Chrome implementation status not stated as validated)",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support context), macOS",
+    "target_industries": "General Consumer, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "ML-KEM enabled by default in Chrome 131 (Oct 2024) for desktop and 133 for Android. ML-DSA adoption is delayed due to handshake size/latency; standardization ongoing at IETF.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA, RSA Sign (Classical); ML-DSA (Planned/Under Standardization)",
+    "authoritative_source_url": "https://dadrian.io/blog/posts/pqc-signatures-2024/ (Referenced in text), Chrome Security documentation implied.",
+    "source_documents": [
+      {
+        "filename": "Google_Chrome.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome_doc1.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Google_Chrome_doc1.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Mozilla Firefox",
+    "category": "Web Browsers",
+    "product_name": "Mozilla Firefox",
+    "product_brief": "Web browser with experimental PQC support via a modified NSS library and external PKCS#11 modules.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports hybrid key agreements using X25519MLKEM768 (default in Firefox 132+ Desktop, 145+ Android) and X25519Kyber768Draft00 (Firefox 124-131 via config). A research fork integrates ML-DSA for signatures and ML-KEM for key encapsulation using the Qryptotoken PKCS#11 module and Libcrux library.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM (Kyber), ML-DSA, TLS 1.3, QUIC/HTTP3",
+    "key_management_model": "PKCS#11 compliant software token (Qryptotoken) with shallow module architecture delegating operations to external libraries; supports programmatic key management via NSS.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Application-layer with modular PKCS#11 integration",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Firefox 145 (Android), Firefox 132 (Desktop) for default PQC; Firefox 128+ for QUIC/HTTP3 Kyber support.",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support mentioned in context of other browsers), macOS",
+    "target_industries": "General consumer and enterprise web browsing",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Default deployment of X25519MLKEM768 in Firefox 132+; research integration of ML-DSA and ML-KEM via Qryptotoken for future interoperability.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA (implied by standard NSS), Ed25519 (implied by standard NSS), ML-DSA (research fork only, not exposed in default signature list yet)",
+    "authoritative_source_url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/index.md",
+    "source_documents": [
+      {
+        "filename": "Mozilla_Firefox.html",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "primary"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc1.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc2.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc3.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc4.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc5.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-5"
+      }
+    ]
+  }
+]

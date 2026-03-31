@@ -1,0 +1,68 @@
+[
+  {
+    "platform_name": "Citrix CVAD",
+    "category": "Remote Access and VDI Software",
+    "product_name": "Citrix App and Desktop Virtualization",
+    "product_brief": "Enterprise-grade platform delivering secure virtual apps, desktops, and DaaS experiences across hybrid infrastructure.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document. The text mentions general security features but does not reference Post-Quantum Cryptography algorithms or implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Microsoft Azure, Google Cloud Platform, AWS, on-premises",
+    "target_industries": "Healthcare, Financial services, Manufacturing, Education, Government, Retail",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "Citrix_CVAD.html",
+        "url": "https://www.citrix.com/products/citrix-virtual-apps-and-desktops/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microsoft RDS",
+    "category": "Remote Access and VDI Software",
+    "product_name": "Remote Desktop Services",
+    "product_brief": "Delivers virtualized applications and provides secure remote and mobile desktop access through remote desktop sessions.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Windows Server 2025, Windows 10",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Microsoft_RDS.html",
+    "source_documents": [
+      {
+        "filename": "Microsoft_RDS.html",
+        "url": "https://learn.microsoft.com/en-us/windows-server/remote/remote-desktop-services/",
+        "label": "primary"
+      }
+    ]
+  }
+]

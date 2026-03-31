@@ -1,0 +1,357 @@
+[
+  {
+    "platform_name": "Ericsson Quantum-Safe 5G",
+    "category": "5G & Telecom Security",
+    "product_name": "Ericsson Quantum-Safe 5G",
+    "product_brief": "Research evaluation of replacing conventional cryptographic algorithms with post-quantum alternatives in the 5G Core.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Experimental simulation environment evaluating PQC integration in 5G Core registration/deregistration. Uses hybrid schemes combining conventional and PQC algorithms. Tested KEMs: BIKE, FrodoKEM. Tested Signatures: ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA). Also evaluated secp256r1 and RSA for comparison.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "BIKE, FrodoKEM, ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA), secp256r1, RSA, TLS",
+    "key_management_model": "Hybrid schemes combining conventional and post-quantum algorithms; PKI-based framework for dynamic authentication.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native, microservice-oriented core architecture (5GC) with virtualized network functions (VNFs).",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-12-23",
+    "fips_validated": "No",
+    "primary_platforms": "5G Core (5GC), Virtualized Network Functions (VNFs)",
+    "target_industries": "Telecom, Service Providers",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Evaluation of NIST standardization process algorithms; adoption of hybrid schemes promoted by standardization bodies; transition expected within coming years.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA), RSA, secp256r1",
+    "authoritative_source_url": "arXiv:2512.20243v1",
+    "source_documents": [
+      {
+        "filename": "Ericsson_Quantum-Safe_5G.pdf",
+        "url": "https://www.ericsson.com/en/security/quantum-safe-networks",
+        "label": "primary"
+      },
+      {
+        "filename": "Ericsson_Quantum-Safe_5G_doc1.html",
+        "url": "https://www.ericsson.com/en/security/quantum-safe-networks",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Ericsson_Quantum-Safe_5G_doc2.html",
+        "url": "https://www.ericsson.com/en/security/quantum-safe-networks",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Nokia Quantum-Safe Networks",
+    "category": "5G & Telecom Security",
+    "product_name": "Nokia Quantum-Safe Networks",
+    "product_brief": "A network security solution area by Nokia designed to protect networks against quantum threats.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "The document mentions \"Quantum-safe networks\" as a solution area and discusses harnessing quantum technologies for security. It references a blog titled \"Get ahead of the quantum threat with a quantum-safe network strategy\" and news about rising cryptographic demands, but does not state specific algorithms, production status, or implementation details.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated",
+    "target_industries": "Telecommunication providers, Mission-critical enterprises, AI and cloud providers, Defense, Energy, Public sector",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Mentions a \"quantum-safe network strategy\" and preparing for rising cryptographic demands; no specific algorithm choices or timelines provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Nokia_Quantum-Safe_Networks_doc1.html",
+        "url": "https://www.nokia.com/cybersecurity/post-quantum-cryptography/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Samsung Networks 5G Core",
+    "category": "5G & Telecom Security",
+    "product_name": "Samsung 5G Core",
+    "product_brief": "Cloud-native, 3GPP-compliant 5G core network platform supporting NSA/SA, network slicing, and MEC.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any related migration plans. It focuses on cloud-native architecture, NFV, and 3GPP standards.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native, micro-services based, stateless, Service-Based Architecture (SBA)",
+    "infrastructure_layer": "Network, Cloud",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Vol.1",
+    "release_date": "2019-04 (Context: Commercialization of service mentioned as April 2019; document date not explicitly stated as a release date)",
+    "fips_validated": "No",
+    "primary_platforms": "Cloud-native environment, micro-services, containers",
+    "target_industries": "Telecommunications, Mobile Operators",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Samsung_Networks_5G_Core.pdf",
+        "url": "https://networks.samsungsemiconductor.com/5g",
+        "label": "primary"
+      },
+      {
+        "filename": "Samsung_Networks_5G_Core_doc1.pdf",
+        "url": "https://networks.samsungsemiconductor.com/5g",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Samsung_Networks_5G_Core_doc2.pdf",
+        "url": "https://networks.samsungsemiconductor.com/5g",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Mavenir Cloud RAN",
+    "category": "5G & Telecom Security",
+    "product_name": "Mavenir Cloud RAN",
+    "product_brief": "Not stated (Document is a research paper evaluating PQC in 5G Core, not a product datasheet)",
+    "pqc_support": "Partial (with scope) - Evaluated in simulation environment for 5G Core; hybrid schemes used.",
+    "pqc_capability_description": "The document describes a simulation study replacing conventional algorithms with PQC alternatives in the 5G Core. Algorithms evaluated include BIKE and FrodoKEM (KEMs), ML-DSA (Dilithium), SLH-DSA (SPHINCS+), and Falcon (FN). Hybridized versions combining conventional and PQC algorithms were used. Results show measurable but small performance impact on bandwidth and latency, confirming technical feasibility without inherent issues.",
+    "pqc_migration_priority": "High - Document highlights \"harvest now, decrypt later\" risks and the critical need to preemptively integrate PQC into 5G Core due to reliance on PKI vulnerable to Shor's algorithm.",
+    "crypto_primitives": "RSA, Diffie-Hellman, secp256r1 (referred to as secp2561 in text), AES, ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon, BIKE, FrodoKEM.",
+    "key_management_model": "Hybrid schemes combining conventional and post-quantum algorithms; PKI-based framework for dynamic authentication and scalable key management; TLS handshake negotiation.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native, microservice-oriented core architecture (5GC); Virtualized Network Functions (VNFs).",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-12-23 (Document date)",
+    "fips_validated": "No",
+    "primary_platforms": "5G Core (5GC), Virtualized Network Functions (VNFs), Service-Based Architecture (SBA).",
+    "target_industries": "5G & Telecom Security, Mobile Network Operators.",
+    "regulatory_status": "Mentions encouragement/requirements from European Commission, BSI (Germany), NCSC (UK), IETF, and NIST; no specific product licenses or charters stated.",
+    "pqc_roadmap_details": "Transition expected within coming years; adoption of NIST standards (ML-DSA, SLH-DSA, Falcon, BIKE, FrodoKEM); use of hybrid schemes promoted by standardization bodies.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Current: RSA, ECDSA (implied via secp256r1). Planned/Evaluated: ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA).",
+    "authoritative_source_url": "Not stated (arXiv ID: 2512.20243v1)",
+    "source_documents": [
+      {
+        "filename": "Mavenir_Cloud_RAN.pdf",
+        "url": "https://mavenir.com/portfolio/5g/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "NEC 5G Core",
+    "category": "5G & Telecom Security",
+    "product_name": "NEC 5G Core",
+    "product_brief": "Fully cloud-native architecture for flexible scaling and auto-healing in 4G/5G converged core networks.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "The document describes a research simulation evaluating the replacement of conventional algorithms with PQC alternatives (BIKE, FrodoKEM, ML-DSA/Dilithium, SLH-DSA/SPHINCS+, Falcon/FN-DSA) in a 5G Core environment. It concludes the 5G Core is technically able to support PQC without substantial impact on usability, but does not state that the commercial product currently ships with these features enabled.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, secp256r1 (referred to as secp2561 in text), TLS, OAuth 2.0, BIKE, FrodoKEM, ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA)",
+    "key_management_model": "Public Key Infrastructure (PKI)-based framework for dynamic authentication and scalable key management; hybridization of conventional and post-quantum algorithms.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native, microservice-oriented core architecture with virtualized network functions (VNFs).",
+    "infrastructure_layer": "Network",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Cloud-native environment, virtualized network functions (VNFs)",
+    "target_industries": "Telecommunications, 5G & Telecom Security",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Research indicates transition is expected within coming years; evaluation of hybrid schemes using NIST-standardized algorithms (BIKE, FrodoKEM, ML-DSA, SLH-DSA, Falcon) in simulation environments.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, secp256r1, ML-DSA (Dilithium), SLH-DSA (SPHINCS+), Falcon (FN-DSA)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "NEC_5G_Core.pdf",
+        "url": "https://www.nec.com/en/global/solutions/5g/",
+        "label": "primary"
+      },
+      {
+        "filename": "NEC_5G_Core_doc1.html",
+        "url": "https://www.nec.com/en/global/solutions/5g/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Rakuten Symphony (Symworld)",
+    "category": "5G & Telecom Security",
+    "product_name": "Rakuten Symphony (Symworld)",
+    "product_brief": "Cloud-native telecom solutions including Open RAN, OSS, and enterprise internet services.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-native, hyperconverged Kubernetes for the Stateful Edge",
+    "infrastructure_layer": "Network, Cloud",
+    "license_type": "Proprietary (inferred from \"End User License Agreement\" and commercial context)",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No mention",
+    "primary_platforms": "Cloud-native, Kubernetes",
+    "target_industries": "Telecom, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filename provided: Rakuten_Symphony__Symworld__doc1.html)",
+    "source_documents": [
+      {
+        "filename": "Rakuten_Symphony__Symworld__doc1.html",
+        "url": "https://symphony.rakuten.com",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "JetBrains TeamCity 2026.1",
+    "category": "Supply Chain & DevSecOps",
+    "product_name": "TeamCity On-Premises",
+    "product_brief": "A continuous integration and build management server with a roadmap for version 2026.1.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the document.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "2025.11",
+    "release_date": "Not stated (Only \"22 November 2025\" is mentioned as a date for the Release Cycle article, not a product release)",
+    "fips_validated": "No mention",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text mentions \"visit our website\" but does not provide the specific URL)",
+    "source_documents": [
+      {
+        "filename": "JetBrains_TeamCity_2026.1.html",
+        "url": "https://www.jetbrains.com/help/teamcity/roadmap-outline.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "GitHub Copilot Security",
+    "category": "Supply Chain & DevSecOps",
+    "product_name": "GitHub Actions",
+    "product_brief": "CI/CD platform with a 2026 roadmap focusing on secure defaults, policy controls, and supply chain hardening.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It focuses on supply chain security, dependency locking, and workflow execution policies.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-26",
+    "fips_validated": "No",
+    "primary_platforms": "GitHub Actions (CI/CD runners)",
+    "target_industries": "Enterprise software, DevSecOps",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.blog/news-and-insights/product/whats-coming-to-our-github-actions-2026-security-roadmap/ (Inferred from context, but exact URL not explicitly in text; text source is GitHub_Copilot_Security.html)",
+    "source_documents": [
+      {
+        "filename": "GitHub_Copilot_Security.html",
+        "url": "https://github.blog/news-insights/product-news/whats-coming-to-our-github-actions-2026-security-roadmap/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Veracode Platform",
+    "category": "Supply Chain & DevSecOps",
+    "product_name": "Veracode Platform",
+    "product_brief": "Unified visibility, AI-driven prioritization, and integrated tools to detect, understand, and remediate application vulnerabilities.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document focuses on Static Application Security Testing (SAST), Dynamic Analysis (DAST), and Software Composition Analysis (SCA) but contains no mention of Post-Quantum Cryptography algorithms, implementations, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated (mentions IDEs, CI/CD pipelines, and cloud-native stacks generally)",
+    "target_industries": "Financial Services, Government – Public Sector, Healthcare, Retail & Commerce, Energy",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "Veracode_Platform.html",
+        "url": "https://www.veracode.com/products/binary-static-analysis-sast",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Checkmarx One",
+    "category": "Supply Chain & DevSecOps",
+    "product_name": "Checkmarx One",
+    "product_brief": "Not stated (Document contains only cookie consent information)",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated. The provided text consists exclusively of a cookie consent banner and a list of cookies used for tracking, analytics, and functionality; it contains no information regarding cryptographic implementations or Post-Quantum Cryptography.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application (as per user prompt context, though not explicitly defined in the text)",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No mention",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Checkmarx_One.html",
+        "url": "https://checkmarx.com/product/checkmarx-one-platform/",
+        "label": "primary"
+      }
+    ]
+  }
+]

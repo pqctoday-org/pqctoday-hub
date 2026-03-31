@@ -1,0 +1,126 @@
+[
+  {
+    "platform_name": "Infineon TEGRION SLC27 PQC",
+    "category": "Smart Cards & Secure Elements",
+    "product_name": "Infineon TEGRION SLC27 PQC",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text. The document lists general product categories and microcontroller families but contains no specific details regarding Post-Quantum Cryptography algorithms, implementation status, or maturity for the TEGRION SLC27 PQC.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Context indicates \"Smart Cards & Secure Elements\" and \"Hardware\", but specific architecture details are absent from the text).",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated (Text lists \"Security and smart card solutions\" and \"Smart solutions for government ID\" as categories, but does not explicitly link them to the TEGRION SLC27 PQC).",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filenames provided, but no external URL in text).",
+    "source_documents": [
+      {
+        "filename": "Infineon_TEGRION_SLC27_PQC.html",
+        "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+        "label": "primary"
+      },
+      {
+        "filename": "Infineon_TEGRION_SLC27_PQC_doc1.html",
+        "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Infineon_TEGRION_SLC27_PQC_doc2.html",
+        "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Infineon_TEGRION_SLC27_PQC_doc3.html",
+        "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Infineon_TEGRION_SLC27_PQC_doc4.html",
+        "url": "https://www.infineon.com/market-news/2025/INFCSS202510-004",
+        "label": "doc-link-4"
+      }
+    ]
+  },
+  {
+    "platform_name": "NXP JCOP 4.5 P71D600",
+    "category": "Smart Cards & Secure Elements",
+    "product_name": "JCOP 4.5 on P71D600",
+    "product_brief": "Hardware module implementing GlobalPlatform operational environment for smart cards, IoT, and automotive applications.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC) algorithms or capabilities. It only lists classical algorithms such as ECDSA using NIST P-256 and Brainpool256r1 curves, and KASECC operations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ECDSA, KASECC, NIST P-256 curve, Brainpool256r1 curve",
+    "key_management_model": "Hardware key storage within a single chip embodiment (Secure Element) with Sensitive Security Parameter (SSP) management; specific injection methods not detailed in provided text.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Single chip hardware module (Secure Element) acting as an auxiliary security device attached to a host controller.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (NXP Semiconductors 2025, Public Material – May be reproduced only in its original entirety)",
+    "latest_version": "1.6 (Document Version); Firmware/Platform ID: J3R6000373181200; Applets: NXP IoT applet v7.2.22, NXP SEMS Lite applet v2.0.2.11",
+    "release_date": "2025-03-20 (Document Date)",
+    "fips_validated": "Yes, FIPS 140-3 Overall Security Level 3 (Physical Security Level 4)",
+    "primary_platforms": "Smart cards, IoT, automotive applications; interfaces via ISO 7816, ISO 14443, or NXP I2C.",
+    "target_industries": "Not explicitly stated as industries, but mentions market segments: smart cards, IoT, automotive.",
+    "regulatory_status": "FIPS 140-3 Validated (Level 3 Overall, Level 4 Physical)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (using NIST P-256 or Brainpool256r1), KASECC",
+    "authoritative_source_url": "https://csrc.nist.gov/projects/cryptographicmodulevalidation-program",
+    "source_documents": [
+      {
+        "filename": "NXP_JCOP_4.5_P71D600.html",
+        "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4679.pdf",
+        "label": "primary"
+      },
+      {
+        "filename": "NXP_JCOP_4.5_P71D600.pdf",
+        "url": "https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp4679.pdf",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microchip ATECC608B",
+    "category": "Smart Cards & Secure Elements",
+    "product_name": "Microchip ATECC608B (part of CryptoAuth family)",
+    "product_brief": "Library for interacting with Microchip Security devices including the ATECC608B secure element.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography, PQC algorithms, or migration plans. It references standard crypto implementations (SHA1, SHA2) and ECC support via device families but no specific PQC primitives.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "SHA1, SHA2 (software implementations mentioned); ECC (implied by \"CryptoAuth\" family and device names like ECC204/608, but specific curves not listed in text).",
+    "key_management_model": "Hardware secure element storage; key locking mechanism mentioned (\"once you lock a device, it will not be changeable\"); no specific injection method details provided.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Secure Element (Hardware); supported via I2C, SPI, and SWI protocols.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Open Source/Commercial (Library is open source; hardware is commercial)",
+    "license": "NOASSERTION",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-02 (Last Updated timestamp in repository metadata)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Bare-metal, RTOS, Windows, Linux, MacOS; specific MCUs: ATSAMR21, ATSAMD21.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions \"Crypto Authentication\" and ECC support generally but does not list specific signature schemes like ECDSA or Ed25519).",
+    "authoritative_source_url": "https://github.com/MicrochipTech/cryptoauthlib",
+    "source_documents": [
+      {
+        "filename": "Microchip_ATECC608B_repo.md",
+        "url": "https://github.com/MicrochipTech/cryptoauthlib",
+        "label": "repo"
+      }
+    ]
+  }
+]

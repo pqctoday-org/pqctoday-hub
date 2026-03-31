@@ -1,0 +1,98 @@
+[
+  {
+    "platform_name": "ID Quantique Quantis QRNG",
+    "category": "Quantum Random Number Generator (QRNG)",
+    "product_name": "Quantis QRNG (including Quantis QRNG USB, Quantis QRNG PCIe, Quantis QRNG Chips)",
+    "product_brief": "Hardware Quantum Random Number Generator providing true randomness via quantum optics for cryptographic key generation.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document describes the product as a source of \"true randomness\" and \"entropy\" to secure keys against predictability, but it does not state that the device implements Post-Quantum Cryptography (PQC) algorithms itself. It is positioned as a component for \"Quantum-Safe Security\" by providing high-quality entropy for key generation, not as a PQC algorithm implementation.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated (Product generates random numbers/entropy; does not implement specific crypto primitives like ECDSA or RSA)",
+    "key_management_model": "Hardware-based secure key generation source; provides entropy for external systems; includes live monitoring and failure detection to disable output on failure.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware (USB module, PCIe card, embedded chip)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated (Specific versions like \"Quantis Appliance 2.0\" mentioned in navigation, but no version number for the core QRNG product)",
+    "release_date": "Not stated (First released in 2001; document mentions events up to January 2025)",
+    "fips_validated": "No (Passed NIST SP800-22 and SP800-90B statistical tests; AIS31 validated versions available; no FIPS 140-2/3 validation explicitly stated)",
+    "primary_platforms": "Compatible with most platforms; drivers provided for commonly used operating systems.",
+    "target_industries": "Banking, Gaming and Lotteries, Automotive, Telecommunications, IoT, Satellites, Government & Defense, Healthcare, Critical Infrastructure.",
+    "regulatory_status": "AIS31 validated (BSI test procedure by French ANSSI); Certified by CTL (English) and METAS (Swiss); ISO 14001 certification for ID Quantique company.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.idquantique.com (inferred from text \"ID Quantique SA\" and context, though specific URL not explicitly listed as a link in the raw text provided)",
+    "source_documents": [
+      {
+        "filename": "ID_Quantique_Quantis_QRNG.html",
+        "url": "https://www.idquantique.com/random-number-generation/products/quantis-random-number-generator/",
+        "label": "primary"
+      },
+      {
+        "filename": "ID_Quantique_Quantis_QRNG_doc1.html",
+        "url": "https://www.idquantique.com/random-number-generation/products/quantis-random-number-generator/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "ID_Quantique_Quantis_QRNG_doc1.pdf",
+        "url": "https://www.idquantique.com/random-number-generation/products/quantis-random-number-generator/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "ID_Quantique_Quantis_QRNG_doc2.pdf",
+        "url": "https://www.idquantique.com/random-number-generation/products/quantis-random-number-generator/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Quantinuum Quantum Origin",
+    "category": "Quantum Random Number Generator (QRNG)",
+    "product_name": "Quantum Origin",
+    "product_brief": "Advanced quantum random number generator (QRNG) using software deployment to strengthen encryption with proven quantum randomness.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document describes Quantum Origin as a QRNG designed to \"strengthen encryption\" and help organizations become \"post-quantum ready\" by providing provable quantum entropy for key generation. It does not state that the product implements specific Post-Quantum Cryptography (PQC) algorithms (e.g., CRYSTALS-Kyber, Dilithium) or replaces classical signature schemes with PQC primitives.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions RSA certificates as an example of weak keys in legacy systems but does not list specific primitives implemented by Quantum Origin).",
+    "key_management_model": "Software-based randomness enhancement; uses a \"Quantum Seed\" generated on a quantum computer to enhance local classical randomness via randomness extractors. No hardware key storage or HSM mentioned for the product itself.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Standalone software module (software-based deployment); utilizes remote quantum computer (System Model H2) for seed generation.",
+    "infrastructure_layer": "Security Stack, Software (Note: Context provided in prompt lists \"Hardware\", but document explicitly states \"no extra hardware\" and \"software-based deployment\").",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Document discusses NIST SP 800-90B standards but does not claim FIPS 140-2 or 140-3 validation for Quantum Origin).",
+    "primary_platforms": "Linux operating system (explicitly mentioned as an integration example); general \"target system\" deployment.",
+    "target_industries": "Enterprise, Government, Cybersecurity (Mentions Honeywell, Fornetix, Thales, Keyfactor, Senetas as partners/customers).",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (Product is positioned to enable post-quantum readiness via entropy, not as a PQC algorithm migration tool).",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text contains \"Quantinuum_Quantum_Origin.html\" and \"Quantinuum_Quantum_Origin_doc1.pdf\" as source filenames, but no external URL).",
+    "source_documents": [
+      {
+        "filename": "Quantinuum_Quantum_Origin.html",
+        "url": "https://www.quantinuum.com/cybersecurity/quantumorigin",
+        "label": "primary"
+      },
+      {
+        "filename": "Quantinuum_Quantum_Origin_doc1.html",
+        "url": "https://www.quantinuum.com/cybersecurity/quantumorigin",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Quantinuum_Quantum_Origin_doc1.pdf",
+        "url": "https://www.quantinuum.com/cybersecurity/quantumorigin",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Quantinuum_Quantum_Origin_doc2.html",
+        "url": "https://www.quantinuum.com/cybersecurity/quantumorigin",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

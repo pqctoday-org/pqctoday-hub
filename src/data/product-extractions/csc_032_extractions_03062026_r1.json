@@ -1,0 +1,141 @@
+[
+  {
+    "platform_name": "Cisco IOS XE PQC",
+    "category": "Network Operating Systems",
+    "product_name": "Cisco IOS XE",
+    "product_brief": "The single OS for enterprise switching, routing, wired and wireless access providing open, standards-based programmable interfaces.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The provided text focuses on general programmability, automation, Zero-Touch Provisioning (ZTP), YANG, NETCONF, RESTCONF, Telemetry, Python, Guest Shell, and Application Hosting. There is no mention of Post-Quantum Cryptography algorithms, implementation status, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Network Operating System (OS) with programmable interfaces; supports containers and virtual machines via Cisco Application-Hosting Framework.",
+    "infrastructure_layer": "Network, OS",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "IOS XE 16.6 (mentioned as the baseline for features covered in the book)",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cisco Catalyst switches, routers, access points, and wireless controllers (e.g., Catalyst 9200-9800 Series, ASR 1000/900 Series, NCS 4200 Series, ISR 4000/1000 Series).",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.cisco.com (inferred from \"Cisco.com\" in text, though specific product URL not explicitly listed as a single link)",
+    "source_documents": [
+      {
+        "filename": "Cisco_IOS_XE_PQC.html",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc1.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc2.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc3.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc4.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Cisco_IOS_XE_PQC_doc5.pdf",
+        "url": "https://www.cisco.com/c/en/us/td/docs/ios-xml/ios/sec_conn_ikevpn/configuration/xe-17/sec-ike-xe-17-book.html",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Arista EOS (Extensible Operating System)",
+    "category": "Network Operating Systems",
+    "product_name": "Arista EOS (Extensible Operating System)",
+    "product_brief": "Unknown",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Network",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Arista_EOS__Extensible_Operating_System_.html",
+    "source_documents": [
+      {
+        "filename": "Arista_EOS__Extensible_Operating_System_.html",
+        "url": "https://www.arista.com/en/products/eos",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "MikroTik RouterOS",
+    "category": "Network Operating Systems",
+    "product_name": "RouterOS",
+    "product_brief": "Stand-alone operating system based on Linux kernel powering MikroTik hardware devices with routing, firewall, and VPN features.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or quantum-resistant implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "IPsec (mentioned as \"IPsec hardware acceleration\"); specific primitives like ECDSA, Ed25519, or RSA are not explicitly listed in the text.",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Stand-alone operating system; Virtual appliance (CHR - Cloud Hosted Router); Inline encryptor/VPN concentrator (implied by \"IPsec gateway\", \"VPN server\").",
+    "infrastructure_layer": "Network, Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (requires license key from MikroTik Account server; free 24-hour trial available).",
+    "latest_version": "Not stated (text mentions \"latest stable RouterOS version\" without a specific number).",
+    "release_date": "Not stated (documentation update dates like Oct 21, 2025, and Mar 04, 2026 are present but do not correspond to a software release date).",
+    "fips_validated": "No",
+    "primary_platforms": "MikroTik hardware devices, PC (x86), Virtual Machines (Cloud Hosted Router/CHR), Amazon AWS marketplace.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (text contains demo addresses demo.mt.lv and demo2.mt.lv, but no primary product URL is explicitly defined as the authoritative source).",
+    "source_documents": [
+      {
+        "filename": "MikroTik_RouterOS.html",
+        "url": "https://mikrotik.com/software",
+        "label": "primary"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc1.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "MikroTik_RouterOS_doc2.html",
+        "url": "https://mikrotik.com/software",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

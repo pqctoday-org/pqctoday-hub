@@ -1,0 +1,318 @@
+[
+  {
+    "platform_name": "Thales Luna HSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Thales Luna HSM",
+    "product_brief": "Dedicated crypto processor designed to protect the cryptographic key lifecycle within a hardened, tamper-resistant device.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Luna HSMs are quantum-ready with NIST-standardized post-quantum cryptography in core firmware. They protect against \"Harvest-Now, Decrypt Later\" attacks and allow users to stay crypto agile by adopting emerging PQC algorithms and leveraging a broad ecosystem of PQC-ready partner integrations.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions \"NIST-standardized post-quantum cryptography\" and \"traditional and emerging technologies\" but does not list specific algorithm names like ECDSA, Ed25519, or specific PQC schemes).",
+    "key_management_model": "Hardware-backed; keys are stored in hardware within an intrusion-resistant, tamper-evident appliance. Keys never leave the device, and all cryptographic operations occur within the HSM.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Security Module (HSM); available as Hybrid, On-Premises, and Cloud HSM.",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (Text states \"FIPS-validated appliance\" and lists \"FIPS 140-2\" and \"FIPS 140-3\" under compliance, but does not explicitly link a specific validation level to the Luna HSM product in the provided text).",
+    "primary_platforms": "Amazon Web Services, Google Cloud, Microsoft Azure, Oracle Cloud Infrastructure; On-Premises.",
+    "target_industries": "Financial Services, Government, Healthcare, Manufacturing, Retail, Telecommunications, Automotive, Critical Infrastructure, Insurance Providers, Media and Entertainment, SaaS Providers.",
+    "regulatory_status": "FIPS 140-2, FIPS 140-3, PCI DSS, PCI HSM, Swift CSC Validations and Certifications, GDPR, ISO/IEC 27001:2022, NIST 800-53, FedRamp, HIPAA, GLBA, SOC 2, SOX.",
+    "pqc_roadmap_details": "Product is described as \"quantum-ready\" with PQC in core firmware; strategy involves adopting emerging PQC algorithms and leveraging partner integrations for crypto agility. No specific timeline or algorithm migration schedule provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions \"digital signing services\" generally but does not list specific signature schemes).",
+    "authoritative_source_url": "Not stated (Source filenames provided, but no explicit URL in text).",
+    "source_documents": [
+      {
+        "filename": "Thales_Luna_HSM.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules",
+        "label": "primary"
+      },
+      {
+        "filename": "Thales_Luna_HSM_doc1.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Thales_Luna_HSM_doc2.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Thales_Luna_HSM_doc3.html",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Thales_Luna_HSM_doc4.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/hardware-security-modules",
+        "label": "doc-link-4"
+      }
+    ]
+  },
+  {
+    "platform_name": "Securosys Primus HSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Securosys Primus HSM",
+    "product_brief": "Hardware Security Modules (HSMs) providing encryption, key management, and Post-Quantum Cryptography capabilities.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports hybrid operations combining classical (RSA/ECC/ED) and PQC algorithms. Supported PQC algorithms include ML-KEM, ML-DSA, SLH-DSA, HSS-LMS, and XMSS. Offers dedicated test environments (CloudHSM Sandbox) for migration strategies and research collaboration with HSLU on TLS performance.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, ECC, ED, ML-KEM, ML-DSA, SLH-DSA, HSS-LMS, XMSS",
+    "key_management_model": "Hardware-backed key storage within Securosys Primus HSMs; supports secure key generation and hybrid operations for classical and PQC keys.",
+    "supported_blockchains": "Not stated (Product line \"Primus HSM Blockchain\" mentioned, but specific networks not listed)",
+    "architecture_type": "HSM-based (On-premises appliance models: CyberVault X2, Core E2, X-Series, E-Series, S-Series; Cloud-based: Securosys CloudHSM)",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (End-User License Agreement mentioned)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated (Text mentions \"Security Certifications\" and \"Safety & Compliance Certifications\" generally, but no specific FIPS level is explicitly cited)",
+    "primary_platforms": "On-premises HSMs; CloudHSM (Cloud); Integrations with AWS, Azure, Microsoft 365, HashiCorp Vault, Fortinet, Keyfactor, etc.",
+    "target_industries": "Enterprise, Finance (implied by \"critical data\", \"digital assets\"), General Cybersecurity",
+    "regulatory_status": "Not stated (Mentions \"eIDAS and SAM\" in navigation menu, but no specific regulatory status details provided in text)",
+    "pqc_roadmap_details": "Supports transition via hybrid operations; offers CloudHSM Sandbox for testing migration strategies; collaborating with HSLU on PQC research for TLS.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA, HSS-LMS (PQC); RSA, ECC/ED (Classical)",
+    "authoritative_source_url": "Not stated (Document text contains navigation links but no explicit base URL string)",
+    "source_documents": [
+      {
+        "filename": "Securosys_Primus_HSM.html",
+        "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+        "label": "primary"
+      },
+      {
+        "filename": "Securosys_Primus_HSM.pdf",
+        "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+        "label": "primary"
+      },
+      {
+        "filename": "Securosys_Primus_HSM_doc1.html",
+        "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Securosys_Primus_HSM_doc1.pdf",
+        "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Securosys_Primus_HSM_doc2.html",
+        "url": "https://www.securosys.com/en/hsm/post-quantum-cryptography",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google Cloud HSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Google Cloud HSM",
+    "product_brief": "A cloud-hosted Hardware Security Module (HSM) service allowing users to host encryption keys and perform cryptographic operations in a FIPS 140-2 Level 3 certified cluster.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any PQC migration plans. It references standard symmetric and asymmetric encryption but provides no details on PQC implementation.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"symmetric key\", \"asymmetric key\", \"MAC signatures\", and \"KEMs\" generically, but does not list specific algorithm names like RSA, ECDSA, or AES).",
+    "key_management_model": "HSM-backed; keys are hosted in a Google-managed cluster of HSMs; supports key generation within the HSM and key import via wrapping.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-hosted HSM cluster (managed by Google); accessed via Cloud KMS front-end.",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Google Cloud\" service model; specific license text not stated)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Yes, FIPS 140-2 Level 3 certified cluster.",
+    "primary_platforms": "Google Cloud (specifically Google Cloud projects and locations supporting Cloud HSM).",
+    "target_industries": "Not stated",
+    "regulatory_status": "FIPS 140-2 Level 3 certification mentioned for the HSM cluster.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Digital signatures, MAC signatures (specific algorithms not listed).",
+    "authoritative_source_url": "Not stated (Source text provided as HTML content without a specific URL string).",
+    "source_documents": [
+      {
+        "filename": "Google_Cloud_HSM.html",
+        "url": "https://cloud.google.com/kms/docs/hsm",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Cloud_HSM_doc1.html",
+        "url": "https://cloud.google.com/kms/docs/hsm",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Google_Cloud_HSM_doc2.html",
+        "url": "https://cloud.google.com/kms/docs/hsm",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Crypto4A QxHSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "QxHSM™",
+    "product_brief": "Quantum-first, FIPS-validated Hardware Security Module (HSM) built for securing digital assets against current and future threats.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Full support for NIST standard approved PQC algorithms including ML-KEM (FIPS-203), ML-DSA (FIPS-204), SLH-DSA (FIPS-205), LMS, HSS, XMSS/XMSSMT, and Classic McEliece. Future algorithms supported through quantum-safe firmware updates.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, ECDSA, ECDH, EdSA-25519/448, X25519, X448, ML-KEM, ML-DSA, SLH-DSA, LMS, HSS, XMSS/XMSSMT, Classic McEliece, AES (ECB, CBC, GCM), SHA-1, SHA-2, SHA-3 (including SHAKE XOF)",
+    "key_management_model": "Hardware Security Module (HSM) with modular blade design; secure key generation and injection for device identities; supports on-premises, hybrid, or cloud deployment.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based hardware platform with modular 1U, 4U blade server or desktop enclosure configurations.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Contact Sales\" and \"Transparent, all-inclusive pricing model\")",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "FIPS 140-2 level 3+ validated; pending FIPS 140-3 level 3 (MIP)",
+    "primary_platforms": "On-premises, hybrid, or cloud environments; Chassis configurations include QxBMC-1 Desktop, QxBMC-3 1RU, QxBMC-12 4RU.",
+    "target_industries": "Enterprises and governments; Secure manufacturing; PKI; Code Signing; Multi-Cloud Key Management; DNSSEC.",
+    "regulatory_status": "FIPS 140-2 level 3+ validated; pending FIPS 140-3 level 3 (MIP); AIS 20/31 DRG compliance for RNG.",
+    "pqc_roadmap_details": "Supports NIST standards ML-KEM, ML-DSA, SLH-DSA, LMS, HSS, XMSS/XMSSMT, and Classic McEliece; future algorithms supported via quantum-safe firmware updates.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, EdSA-25519/448, ML-DSA (FIPS-204), SLH-DSA (FIPS-205), LMS, HSS, XMSS/XMSSMT",
+    "authoritative_source_url": "crypto4a.com",
+    "source_documents": [
+      {
+        "filename": "Crypto4A_QxHSM.html",
+        "url": "https://crypto4a.com/products/blade-modules/qx-hsm",
+        "label": "primary"
+      },
+      {
+        "filename": "Crypto4A_QxHSM_doc1.html",
+        "url": "https://crypto4a.com/products/blade-modules/qx-hsm",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Crypto4A_QxHSM_doc1.pdf",
+        "url": "https://crypto4a.com/products/blade-modules/qx-hsm",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Thales Luna T-Series HSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Thales Luna T-Series HSM",
+    "product_brief": "Hardware Security Module (Network, PCIe, Tablet) providing quantum-resistant cryptographic foundations.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Version 7.15.0 provides fully standardized implementations of ML-KEM (FIPS 203) and ML-DSA (FIPS 204). Also supports Leighton-Micali Signature (LMS) and Hierarchical Signature Scheme (HSS) for CNSA 2.0 compliance. Enables quantum-resistant firmware/software signing.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, HSS",
+    "key_management_model": "Hardware-backed key storage within Luna T-Series HSMs; supports hardware redundancy for LMS trees across multiple HSMs.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (Network appliance, PCIe card, Tablet)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "7.15.0",
+    "release_date": "2025-09-15",
+    "fips_validated": "Not stated (Text mentions algorithms are FIPS 203/204 compliant, but does not explicitly state the HSM's FIPS 140 validation level)",
+    "primary_platforms": "Luna Client supports Windows 11; Luna T-Series Network, PCIe, and Tablet HSMs.",
+    "target_industries": "Federal Government, Healthcare, National Security (implied by CNSA 2.0 and U.S. Federal policy references)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Release 7.15.0 enables transition to quantum-resistant firmware/software signing per CNSA 2.0; supports LMS trees across multiple HSMs for redundancy under NIST SP800-208.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, LMS, HSS",
+    "authoritative_source_url": "Not stated (Document text contains navigation links but no specific product URL)",
+    "source_documents": [
+      {
+        "filename": "Thales_Luna_T-Series_HSM.html",
+        "url": "https://www.thalestct.com/luna-t-series-hardware-security-module-7-15-0-release-announcement/",
+        "label": "primary"
+      },
+      {
+        "filename": "Thales_Luna_T-Series_HSM_doc1.html",
+        "url": "https://www.thalestct.com/luna-t-series-hardware-security-module-7-15-0-release-announcement/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Thales_Luna_T-Series_HSM_doc2.html",
+        "url": "https://www.thalestct.com/luna-t-series-hardware-security-module-7-15-0-release-announcement/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "SoftHSM2",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "SoftHSM version 2",
+    "product_brief": "A software implementation of a generic cryptographic device with a PKCS#11 interface, originally part of OpenDNSSEC.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography (PQC) algorithms, support, or migration plans. It only lists classical algorithms such as ECC, GOST, and EDDSA.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ECC, GOST, EDDSA (EdDSA), RSA (implied by PKCS#11 context but not explicitly listed in config options, though Botan/OpenSSL support it; strictly from text: ECC, GOST, EDDSA)",
+    "key_management_model": "Software-based key storage using a file system or SQLite database object store; keys are stored in token directories defined in the configuration file.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software implementation of a cryptographic device (SoftHSM) providing a PKCS#11 interface; not a hardware appliance.",
+    "infrastructure_layer": "Security Stack, Application",
+    "license_type": "Open Source",
+    "license": "NOASSERTION",
+    "latest_version": "SoftHSM version 2",
+    "release_date": "Not stated (Last Updated: 2026-03-03)",
+    "fips_validated": "No",
+    "primary_platforms": "Linux, Windows (implied by \"Windows event log\" and build tools like Autoconf/Automake), macOS (implied by generic Unix build tools)",
+    "target_industries": "DNSSEC (OpenDNSSEC), General Cryptographic Applications",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECC, GOST, EDDSA",
+    "authoritative_source_url": "https://github.com/opendnssec/SoftHSMv2",
+    "source_documents": [
+      {
+        "filename": "SoftHSM2.md",
+        "url": "https://github.com/softhsm/SoftHSMv2",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Yubico YubiHSM 2",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "YubiHSM 2",
+    "product_brief": "A game-changing hardware solution for protecting cryptographic keys throughout their lifecycle with secure generation, storage, and operations.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC) algorithms, support, or migration plans. It lists classical algorithms only: RSA, ECC, ECDSA (ed25519), SHA-2, and AES.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, ECC, ECDSA (ed25519), SHA-2, AES (ECB/CBC mode for non-FIPS only)",
+    "key_management_model": "Hardware-backed key storage with secure on-chip generation, attestation, distribution, backup, and destruction; supports M of N wrap keys.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (Hardware Security Module)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial / Open Source (SDK available as open source)",
+    "license": "Not stated (SDK described as \"open source\", product is commercial)",
+    "latest_version": "v2.4",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (YubiHSM 2 FIPS variant mentioned; AES ECB/CBC mode noted as non-FIPS only)",
+    "primary_platforms": "USB-A connector for standard 1.0, 2.0 and 3.0 ports; integrates with Microsoft Active Directory Certificate Services; supports PKCS#11, YubiHSM KSP, and native libraries.",
+    "target_industries": "Enterprise, Cryptocurrency exchanges, IoT gateways, Certificate Authorities (CA)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (ed25519), RSA",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Yubico_YubiHSM_2.html",
+        "url": "https://www.yubico.com/product/yubihsm-2/",
+        "label": "primary"
+      },
+      {
+        "filename": "Yubico_YubiHSM_2_doc1.html",
+        "url": "https://www.yubico.com/product/yubihsm-2/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Yubico_YubiHSM_2_doc2.html",
+        "url": "https://www.yubico.com/product/yubihsm-2/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Yubico_YubiHSM_2_doc3.html",
+        "url": "https://www.yubico.com/product/yubihsm-2/",
+        "label": "doc-link-3"
+      }
+    ]
+  }
+]

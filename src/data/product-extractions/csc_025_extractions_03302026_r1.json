@@ -1,0 +1,139 @@
+[
+  {
+    "platform_name": "QuSecure QuProtect R3",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "QuProtect R3",
+    "product_brief": "Fully integrated, production-ready platform for cryptographic discovery, remediation, and reporting with post-quantum capabilities.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Production-ready, end-to-end PQC software-based solution providing quantum-resilience using quantum secure channels. Supports NIST-approved PQC algorithms. Enables transitions to post-quantum algorithms without code changes or system downtime. Designed for national security, network, IoT, edge devices, and satellite communications.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, ECC (mentioned as vulnerable), NIST-approved PQC algorithms (specific algorithm names not stated)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Quantum-security-as-a-service (QSaaS); software-based; supports on-premises or cloud hosting.",
+    "infrastructure_layer": "Cloud, Network, Application, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "R3",
+    "release_date": "2023-01-05 (Announcement date for QuProtect R3 launch context)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cloud, on-premises, hybrid, air-gapped environments; any device.",
+    "target_industries": "Telecom, Finance, Defense, Healthcare, Space/Satellite, IT/Data Enterprises, Critical Infrastructure, Government",
+    "regulatory_status": "Not stated (Aligns with NIST, NSM-10, EO 14028, OMB M-23-02 for compliance reporting)",
+    "pqc_roadmap_details": "Supports latest NIST-approved PQC algorithms; enables scheduled or on-demand transitions to post-quantum algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (General mention of RSA, ECC, and NIST-approved PQC algorithms)",
+    "authoritative_source_url": "www.qusecure.com",
+    "source_documents": [
+      {
+        "filename": "QuSecure_QuProtect_R3.html",
+        "url": "https://www.qusecure.com/qusecure-launches-quprotect-r3/",
+        "label": "primary"
+      },
+      {
+        "filename": "QuSecure_QuProtect_R3_doc1.html",
+        "url": "https://www.qusecure.com/qusecure-launches-quprotect-r3/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cryptosense Analyzer",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "AQtive Guard",
+    "product_brief": "Unified platform for AI security and cryptographic posture management, including PQC migration planning.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The platform provides continuous cryptographic inventory, assesses risk, and plans post-quantum migration. It includes PQC impact simulation built directly into the platform. Researchers contributed to NIST post-quantum cryptography standards.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS (Cloud-based platform)",
+    "infrastructure_layer": "Cloud, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Cloud (SaaS); specific cloud providers not stated.",
+    "target_industries": "Enterprise, AI Security",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Includes PQC impact simulation and planning for post-quantum migration; aligns with NIST standards.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "Cryptosense_Analyzer_doc1.html",
+        "url": "https://cryptosense.com/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "ISARA Radiate",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "ISARA Radiate™",
+    "product_brief": "High-performance quantum-safe software development kit for constrained devices to large-scale cloud applications.",
+    "pqc_support": "Yes (Production-ready; supports ML-KEM, ML-DSA, and NIST-standardized PQC algorithms)",
+    "pqc_capability_description": "Production-ready SDK offering modular libraries for integrating PQC algorithms (ML-KEM, ML-DSA). Supports hybrid certificates for migration. Achieves NIST PQC Security Level 5 on resource-limited devices. Includes MISRA-C compliant code and tools for validation of performance and interoperability between legacy and upgraded systems.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "ML-KEM, ML-DSA (NIST-standardized PQC algorithms); Hybrid certificates mentioned; Legacy cryptography implied but specific classical primitives not explicitly named in text.",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software Development Kit (SDK) with Embedded and Standard variants; supports integration into embedded systems, IoT, enterprise software, and cloud applications.",
+    "infrastructure_layer": "Application, Security Stack, Cloud, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Commercial implied by \"Book Your Meeting\", \"ISARA Advance®\", and lack of open source license mention)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Embedded devices, IoT, smartcards, general-purpose devices, enterprise software, large-scale cloud applications; compatible with OpenSSL/NSS.",
+    "target_industries": "Financial Services, Government & Public Sector, Energy & Utilities",
+    "regulatory_status": "Mentions compliance with DORA, GDPR, PCI DSS, CNSA 2.0 requirements, and CISA initiatives.",
+    "pqc_roadmap_details": "Supports transition to NIST-standardized PQC algorithms (ML-KEM, ML-DSA); promotes crypto agility via simple APIs for algorithm switching; plans for hybrid then fully quantum-safe PKI transitions.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (NIST-standardized); Hybrid certificates supported.",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "ISARA_Radiate_doc1.html",
+        "url": "https://www.isara.com/products/isara-radiate.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Arqit Encryption Intelligence",
+    "category": "Cryptographic Agility Frameworks",
+    "product_name": "Encryption Intelligence",
+    "product_brief": "Automated cryptographic discovery and risk prioritisation tool for post-quantum migration planning.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Provides complete cryptographic inventory, continuous discovery, and risk prioritisation to plan and execute migration to post-quantum cryptography (PQC). Validates methodology via UK NCSC Post-Quantum Cryptography Pilot. Does not explicitly state specific PQC algorithms implemented within the tool itself, but focuses on discovering legacy algorithms to enable migration.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Document mentions \"legacy algorithms\" and \"deprecated protocols\" generally but does not list specific primitives like ECDSA or RSA).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Described as a product delivering inventory and discovery, likely SaaS, but architecture details are not specified).",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "2026-01-22",
+    "fips_validated": "No",
+    "primary_platforms": "Networks, applications, and cloud services (specific providers not listed).",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Selected by UK National Cyber Security Centre (NCSC) for Post-Quantum Cryptography Pilot under the Assured Cyber Security Consultancy Scheme.",
+    "pqc_roadmap_details": "Focuses on exposing hidden encryption risks, accelerating secure migration via roadmap insights, and continuous monitoring; specific algorithm choices or timelines not stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://arqitgroup.com/products/encryption-intelligence",
+    "source_documents": [
+      {
+        "filename": "Arqit_Encryption_Intelligence_doc1.html",
+        "url": "https://ir.arqit.uk/",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

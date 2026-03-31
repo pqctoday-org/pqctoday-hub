@@ -1,0 +1,164 @@
+[
+  {
+    "platform_name": "Infineon OPTIGA TPM SLB 9672",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Infineon OPTIGA TPM SLB 9672",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "The provided text contains no information regarding Post-Quantum Cryptography (PQC) algorithms, implementation status, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "primary"
+      },
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672_doc1.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Infineon_OPTIGA_TPM_SLB_9672_doc2.html",
+        "url": "https://www.infineon.com/cms/en/product/security-smart-card-solutions/optiga-embedded-security-solutions/optiga-tpm/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Intel Platform Trust Technology (PTT)",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Intel Platform Trust Technology (PTT)",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "The provided text contains no information regarding Post-Quantum Cryptography support, algorithms, or implementation status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Text lists general product categories like Processors and FPGAs but does not describe PTT architecture details).",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated (Text lists various Intel product families but does not specify PTT deployment targets).",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "intel.com (inferred from search context, but specific product URL not explicitly provided in text)",
+    "source_documents": [
+      {
+        "filename": "Intel_Platform_Trust_Technology__PTT_.html",
+        "url": "https://www.intel.com/content/www/us/en/support/articles/000007452/technologies.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Intel_Platform_Trust_Technology__PTT__doc1.html",
+        "url": "https://www.intel.com/content/www/us/en/support/articles/000007452/technologies.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google OpenTitan",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "OpenTitan",
+    "product_brief": "Open source silicon Root of Trust (RoT) project administered by lowRISC CIC.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Silicon Root of Trust (RoT); specific key storage or injection methods not detailed in text.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Open source silicon Root of Trust (RoT) design for instantiation as a full-featured product.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Open Source",
+    "license": "Apache License, Version 2.0",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Silicon/Chip manufacturers (targeted for instantiation as a full-featured product)",
+    "target_industries": "Enterprises, platform providers, and chip manufacturers",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://opentitan.org",
+    "source_documents": [
+      {
+        "filename": "Google_OpenTitan_repo.md",
+        "url": "https://github.com/lowRISC/opentitan",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "ARM TrustZone",
+    "category": "Hardware Security and Semiconductors",
+    "product_name": "Arm TrustZone",
+    "product_brief": "Hardware-enforced isolation technology creating secure and non-secure worlds within SoCs to protect code and data.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), specific PQC algorithms, or any migration plans for quantum-resistant cryptography. It only mentions general \"cryptography\" as a use case.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"cryptography\" generally but lists no specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Hardware-enforced isolation separating secure and non-secure worlds; protects key material within the secure world.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "System-on-Chip (SoC) security architecture with hardware-enforced isolation between secure and non-secure worlds.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary (IP Licensing)",
+    "license": "Proprietary (Arm Licensing, Arm Flexible Access, Arm Total Access mentioned; specific license terms not detailed)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Cortex-A processors, Cortex-M processors, SoCs containing Arm-based chips.",
+    "target_industries": "Automotive, Computing Infrastructure, Consumer Technologies, Internet of Things, Mobile, Datacenter, Edge AI.",
+    "regulatory_status": "Not stated (Mentions PSA guidelines and GlobalPlatform standards, but no regulatory licenses or charters).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text provided from source files ARM_TrustZone.html and ARM_TrustZone_doc1.html, but no specific product URL extracted).",
+    "source_documents": [
+      {
+        "filename": "ARM_TrustZone.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "primary"
+      },
+      {
+        "filename": "ARM_TrustZone_doc1.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "ARM_TrustZone_doc2.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "ARM_TrustZone_doc3.html",
+        "url": "https://www.arm.com/technologies/trustzone-for-cortex-a",
+        "label": "doc-link-3"
+      }
+    ]
+  }
+]

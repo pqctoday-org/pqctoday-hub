@@ -1,0 +1,106 @@
+[
+  {
+    "platform_name": "QuintessenceLabs qStream",
+    "category": "Quantum Random Number Generator (QRNG)",
+    "product_name": "QuintessenceLabs qStream",
+    "product_brief": "High-speed, full entropy quantum random number generator (QRNG) available as an appliance or PCIe card.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document describes a Quantum Random Number Generator (QRNG) using quantum technology for true random number generation. It does not mention Post-Quantum Cryptography (PQC) algorithms, migration plans, or PQC-specific implementations.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated (Document mentions support for KMIP and PKCS#11 interfaces but does not list specific cryptographic primitives like ECDSA, RSA, or PQC algorithms).",
+    "key_management_model": "Supports OASIS Key Management Interoperability Protocol (KMIP) for interoperability with key management servers; integrates with QuintessenceLabs Trusted Security Foundation® (TSF®) key and policy manager.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware-based QRNG (Quantum Random Number Generator); available as a PCIe Gen 2 card module or Rackmount Appliance.",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary (©2022 QuintessenceLabs. All rights reserved.)",
+    "latest_version": "Not stated (Models qStream 100 and qStream 200 are listed, but no software version numbers are provided).",
+    "release_date": "Not stated (Document copyright is 2022; Document ID: 1620).",
+    "fips_validated": "No (Document states it meets NIST SP 800-90A, 90B, 90C standards for Non-Deterministic Random Bit Generators and satisfies NIST SP 800-22 and Dieharder tests, but does not claim FIPS 140-2 or 140-3 validation).",
+    "primary_platforms": "PCIe Gen 2 card module; Rackmount Appliance (1RU); supports running multiple Virtual Machines (VMs); delivered with qClientTM 100.",
+    "target_industries": "Not stated (Mentions uses in data protection, numerical simulations, random sampling, and gaming).",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "www.quintessencelabs.com",
+    "source_documents": [
+      {
+        "filename": "QuintessenceLabs_qStream.pdf",
+        "url": "https://www.quintessencelabs.com/products",
+        "label": "primary"
+      },
+      {
+        "filename": "QuintessenceLabs_qStream_doc1.pdf",
+        "url": "https://www.quintessencelabs.com/products",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "PQShield Core",
+    "category": "Cryptographic SDKs & Libraries",
+    "product_name": "PQCryptoLib-Core",
+    "product_brief": "Highly configurable SW PQC Library for Classical, PQC and PQ/T Hybrid on Linux, Windows and Mac.",
+    "pqc_support": "Yes (NIST-standardized post-quantum and PQ/T Hybrid algorithms)",
+    "pqc_capability_description": "Provides latest NIST-standardized post-quantum and PQ/T Hybrid algorithms in a software environment. Optimized for crypto-agility and FIPS-compliant PQ/T Hybrid solutions to protect against 'Harvest Now Decrypt Later' attacks. Supports smooth transition to quantum resistance.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"Classical, PQC and PQ/T Hybrid\" but does not list specific algorithm names like ECDSA, Kyber, or Dilithium)",
+    "key_management_model": "Not stated (Text mentions \"Secure key provisioning\" and \"Secure key exchange\" as use cases, but no specific architecture details)",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software Library",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Contact us for an evaluation\" and lack of open source license mention)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Yes (FIPS 140-3 CMVP Certified / CAVP Compliant)",
+    "primary_platforms": "Linux, Windows, Mac (requires a C compiler)",
+    "target_industries": "Semiconductors and Manufacturing, Identity and Paymentech, Military and Aerospace, System Integrators, Automotive, Industrial IoT, Network & Telecommunications, Enterprise Platforms, Healthcare",
+    "regulatory_status": "FIPS 140-3 CMVP Certified / CAVP Compliant; NCSC Assured Consultancy mentioned in footer links",
+    "pqc_roadmap_details": "Not stated (Text mentions providing \"latest NIST-standardized\" algorithms but no specific future timeline or roadmap)",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Text mentions \"Classical, PQC and PQ/T Hybrid\" generally but does not list specific signature schemes)",
+    "authoritative_source_url": "Unknown (Source filename provided as PQShield_Core.html, but no full URL in text)",
+    "source_documents": [
+      {
+        "filename": "PQShield_Core.html",
+        "url": "https://pqshield.com/products/pqc-cor/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Bouncy Castle C\\# / Java",
+    "category": "Cryptographic SDKs & Libraries",
+    "product_name": "PostQuantumCryptographyBc172 (Concept study using Bouncy Castle)",
+    "product_brief": "A concept study application demonstrating Post-Quantum Cryptography algorithms using Bouncy Castle 1.72 on Android.",
+    "pqc_support": "Yes (with details: CRYSTALS-KYBER, CRYSTALS-DILITHIUM, FALCON, SPHINCS+, BIKE, Classic McEliece, HQC, NTRU, FRODO, SABER, NTRULPrime, SNTRUPrime, Picnic)",
+    "pqc_capability_description": "This is a concept study to run PQC algorithms using Bouncy Castle 1.72. It supports Public-key Encryption/KEMs (CRYSTALS-KYBER, BIKE, Classic McEliece, HQC, NTRU, FRODO, SABER, NTRULPrime, SNTRUPrime) and Digital Signatures (CRYSTALS-DILITHIUM, FALCON, SPHINCS+, Picnic). SIKE is excluded as broken; Rainbow is noted as not available in this version. The app generates key pairs, encodes keys to byte arrays, performs KEM key exchange/encryption/decryption, and signature sign/verify flows.",
+    "pqc_migration_priority": "Low (Concept study/research application)",
+    "crypto_primitives": "CRYSTALS-KYBER, CRYSTALS-DILITHIUM, FALCON, SPHINCS+, BIKE, Classic McEliece, HQC, NTRU, FRODO, SABER, NTRULPrime, SNTRUPrime, Picnic",
+    "key_management_model": "Programmatic generation of asymmetric key pairs with parameter sets; keys encoded to byte arrays for storage and rebuilt from encoded form.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Application-layer cryptographic library implementation (Bouncy Castle)",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "1.72 (Bouncy Castle version used)",
+    "release_date": "2022-11-01 (Last commit date for the repository)",
+    "fips_validated": "No",
+    "primary_platforms": "Android (Java), implied desktop via Bouncy Castle Java/C# context but text focuses on AndroidManifest.xml",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (Document describes a static concept study using existing Bouncy Castle 1.72 features)",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "CRYSTALS-DILITHIUM, FALCON, SPHINCS+, Picnic",
+    "authoritative_source_url": "https://github.com/MichaelsPlayground/PostQuantumCryptographyBc172",
+    "source_documents": [
+      {
+        "filename": "Bouncy_Castle_C_____Java.html",
+        "url": "https://www.bouncycastle.org/documentation/documentation-c/",
+        "label": "primary"
+      }
+    ]
+  }
+]

@@ -1,0 +1,406 @@
+[
+  {
+    "platform_name": "Google Chrome",
+    "category": "Web Browsers",
+    "product_name": "Google Chrome",
+    "product_brief": "Web browser with hybrid post-quantum key establishment support via ML-KEM.",
+    "pqc_support": "Yes (Hybrid ML-KEM enabled by default in TLS 1.3)",
+    "pqc_capability_description": "Chrome offers hybrid ML-KEM (formerly Kyber) by default on desktop since version 131 and Android since version 133. It uses X25519+ML-KEM for key exchange with ECDSA for authentication. Google servers prefer ML-KEM. Experimental support for Kyber began in Chrome 116. ML-DSA signatures are under standardization and not yet deployed by default due to size/latency concerns.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM (Kyber), ECDSA, Curve25519, AES, ChaCha-Poly, Simon/Speck, RSA, ECDH",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Classical + PQC)",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Chrome 133 (Android), Chrome 131 (Desktop)",
+    "release_date": "2024-10-01 (Chrome 131 ML-KEM default enablement mentioned as Oct 2024)",
+    "fips_validated": "No (ML-DSA recently defined in FIPS standard, but Chrome implementation status not stated as validated)",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support context), macOS",
+    "target_industries": "General Consumer, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "ML-KEM enabled by default in Chrome 131 (Oct 2024) for desktop and 133 for Android. ML-DSA adoption is delayed due to handshake size/latency; standardization ongoing at IETF.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA, RSA Sign (Classical); ML-DSA (Planned/Under Standardization)",
+    "authoritative_source_url": "https://dadrian.io/blog/posts/pqc-signatures-2024/ (Referenced in text), Chrome Security documentation implied.",
+    "source_documents": [
+      {
+        "filename": "Google_Chrome.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome_doc1.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Google_Chrome_doc1.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microsoft Edge",
+    "category": "Web Browsers",
+    "product_name": "Microsoft Edge",
+    "product_brief": "Web browser with integrated security features, AI capabilities, and enterprise management policies.",
+    "pqc_support": "No (PQC algorithms are available in Windows OS and .NET 10, but not explicitly stated as supported within the Microsoft Edge browser itself).",
+    "pqc_capability_description": "The document states that PQC algorithms (ML-KEM, ML-DSA) are generally available in Windows Server 2025, Windows 11, and .NET 10 via CNG libraries. It mentions that development of PQC support for securing TLS is proceeding in alignment with IETF standards, but does not confirm current implementation or support within the Microsoft Edge browser application.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions ML-KEM and ML-DSA availability in Windows/.NET, but does not list specific primitives used by Edge).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "145.0.3800.82",
+    "release_date": "2026-02-26",
+    "fips_validated": "No",
+    "primary_platforms": "Windows, macOS (implied by \"non-Windows platforms\" mention), Linux (implied by .NET context)",
+    "target_industries": "Enterprise, Government (implied by Intune MAM, Microsoft 365 admin center features)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "PQC support for TLS is proceeding in alignment with IETF standards; PQC in Active Directory Certificate Services (ADCS) targeted for early 2026.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Microsoft_Edge.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "primary"
+      },
+      {
+        "filename": "Microsoft_Edge_doc1.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Microsoft_Edge_doc2.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Microsoft_Edge_doc3.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Mozilla Firefox",
+    "category": "Web Browsers",
+    "product_name": "Mozilla Firefox",
+    "product_brief": "Web browser with experimental PQC support via a modified NSS library and external PKCS#11 modules.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports hybrid key agreements using X25519MLKEM768 (default in Firefox 132+ Desktop, 145+ Android) and X25519Kyber768Draft00 (Firefox 124-131 via config). A research fork integrates ML-DSA for signatures and ML-KEM for key encapsulation using the Qryptotoken PKCS#11 module and Libcrux library.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM (Kyber), ML-DSA, TLS 1.3, QUIC/HTTP3",
+    "key_management_model": "PKCS#11 compliant software token (Qryptotoken) with shallow module architecture delegating operations to external libraries; supports programmatic key management via NSS.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Application-layer with modular PKCS#11 integration",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Firefox 145 (Android), Firefox 132 (Desktop) for default PQC; Firefox 128+ for QUIC/HTTP3 Kyber support.",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support mentioned in context of other browsers), macOS",
+    "target_industries": "General consumer and enterprise web browsing",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Default deployment of X25519MLKEM768 in Firefox 132+; research integration of ML-DSA and ML-KEM via Qryptotoken for future interoperability.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA (implied by standard NSS), Ed25519 (implied by standard NSS), ML-DSA (research fork only, not exposed in default signature list yet)",
+    "authoritative_source_url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/index.md",
+    "source_documents": [
+      {
+        "filename": "Mozilla_Firefox.html",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "primary"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc1.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc2.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc3.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc4.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc5.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Apple Safari",
+    "category": "Web Browsers",
+    "product_name": "Safari",
+    "product_brief": "Web browser for iPhone, iPad, and Mac offering fast performance, energy efficiency, and quantum-secure cryptography support.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Apple adopts hybrid cryptography combining classic and post-quantum algorithms. PQC is deployed in TLS/HTTPS (via URLSession/Network framework), VPN (IKEv2), SSH, and Apple Watch pairing using ML-KEM. CryptoKit supports ML-KEM 768/1024 for encryption and ML-DSA-65/ML-DSA-87 for authentication in iOS/iPadOS/macOS/tvOS/watchOS 26.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, Elliptic Curve Diffie-Hellman, Elliptic Curve signature, ML-KEM (768, 1024), ML-DSA (65, 87)",
+    "key_management_model": "Hybrid cryptography; keys backed up and synced via iCloud Keychain; Passkeys use WebAuthn.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid (Classic + PQC)",
+    "infrastructure_layer": "Application, Network",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "Safari 16 (mentioned for Web Push); iOS/iPadOS/macOS/tvOS/watchOS 26 (for PQC features)",
+    "release_date": "2026-01-28",
+    "fips_validated": "Not stated",
+    "primary_platforms": "iOS, iPadOS, macOS, tvOS, visionOS, watchOS",
+    "target_industries": "Consumer, Enterprise, General Web Browsing",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Deployed hybrid cryptography in iOS 17.4+ (iMessage PQ3) and OS version 26 (TLS, VPN, SSH, CryptoKit). Uses ML-KEM and ML-DSA algorithms.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Elliptic Curve signature, ML-DSA-65, ML-DSA-87",
+    "authoritative_source_url": "https://developer.apple.com/safari/ (inferred from context \"Apple Developer\" and \"Safari for developers\")",
+    "source_documents": [
+      {
+        "filename": "Apple_Safari.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "primary"
+      },
+      {
+        "filename": "Apple_Safari_doc1.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Apple_Safari_doc2.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Apple_Safari_doc3.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Google Chrome",
+    "category": "Web Browsers",
+    "product_name": "Google Chrome",
+    "product_brief": "Web browser with hybrid post-quantum key establishment support via ML-KEM.",
+    "pqc_support": "Yes (Hybrid ML-KEM enabled by default on desktop since Chrome 131 and Android since Chrome 133; experimental Kyber support in Chrome 116).",
+    "pqc_capability_description": "Chrome offers hybrid ML-KEM (formerly Kyber) by default for key establishment. Desktop platforms use it since Chrome 131, Android since Chrome 133. Client Hello includes X25519+ML-KEM with ECDSA signatures. Google servers prefer ML-KEM for properties. Authentication remains classical (ECDSA); PQC authentication is not yet required as quantum computers do not exist.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, ML-KEM, ECDSA, Curve25519, AES, ChaCha-Poly, Simon/Speck, RSA (mentioned as vulnerable), Diffie-Hellman, ECDH.",
+    "key_management_model": "Hybrid key establishment (Classical + PQC)",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid Key Establishment",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Chrome 133 (Android), Chrome 131 (Desktop)",
+    "release_date": "2024-10-01 (Chrome 131 enables ML-KEM by default in Oct 2024; Android version 133 implied later)",
+    "fips_validated": "No (ML-DSA only recently defined in FIPS standard, but Chrome status not stated as validated)",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support mentioned for Apple OS), macOS",
+    "target_industries": "General Consumer, Enterprise (implied by Google properties)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "ML-KEM enabled by default in Chrome 131 (Oct 2024). PQC authentication not needed until quantum computers exist. NIST renamed Kyber to ML-KEM and Dilithium to ML-DSA in Aug 2024.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA (current), ML-DSA (planned/under standardization, not yet deployed for authentication)",
+    "authoritative_source_url": "https://dadrian.io",
+    "source_documents": [
+      {
+        "filename": "Google_Chrome.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "primary"
+      },
+      {
+        "filename": "Google_Chrome_doc1.html",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Google_Chrome_doc1.pdf",
+        "url": "https://chromestatus.com/feature/5186851614359552",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microsoft Edge",
+    "category": "Web Browsers",
+    "product_name": "Microsoft Edge",
+    "product_brief": "Web browser with enterprise security features, AI integration, and upcoming PQC support via Windows/.NET infrastructure.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "PQC algorithms (ML-KEM, ML-DSA) are GA in Windows Server 2025, Windows 11, and .NET 10, which Edge relies on. PQC for TLS is proceeding per IETF standards. PQC in Active Directory Certificate Services (ADCS) is targeted for early 2026. No explicit statement of PQC implementation directly within the Edge browser binary itself in the provided text.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "145.0.3800.82",
+    "release_date": "2026-02-26",
+    "fips_validated": "No",
+    "primary_platforms": "Windows Server 2025, Windows 11 (24H2, 25H2), .NET 10",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "PQC in ADCS targeted for early 2026. TLS PQC support proceeding per IETF standards. SymCrypt to incorporate additional quantum-resistant algorithms.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (planned/available via OS), ECDSA, Ed25519 (implied by standard browser context but not explicitly listed as current PQC status in text)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Microsoft_Edge.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "primary"
+      },
+      {
+        "filename": "Microsoft_Edge_doc1.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Microsoft_Edge_doc2.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Microsoft_Edge_doc3.html",
+        "url": "https://learn.microsoft.com/en-us/deployedge/microsoft-edge-relnote-stable-channel",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Mozilla Firefox",
+    "category": "Web Browsers",
+    "product_name": "Mozilla Firefox",
+    "product_brief": "Web browser with experimental PQC support via a modified NSS library and external PKCS#11 modules.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports X25519MLKEM768 by default in Firefox 132+ (Desktop) and 145+ (Android); supports X25519Kyber768Draft00 in versions 124-131 via config flags. A research fork implements ML-DSA and ML-KEM using the Qryptotoken PKCS#11 module and Libcrux library, enabling hybrid TLS 1.3 handshakes with OQS and Cloudflare servers.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519, MLKEM768 (Kyber), Kyber768Draft00, ML-DSA, ML-KEM, TLS 1.3",
+    "key_management_model": "PKCS#11 based external software token (Qryptotoken) with shallow module architecture delegating to Libcrux",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software-based cryptographic agility via loadable PKCS#11 modules",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "Firefox 145 (Android), Firefox 132 (Desktop) for default PQC; research fork version not specified",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Desktop, Android, iOS (via system-wide support mentioned in context of other browsers, but specific Firefox mobile versions listed are Android)",
+    "target_industries": "General consumer, Research",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Default deployment of X25519MLKEM768 starting Firefox 132+; research implementation of ML-DSA and ML-KEM via Qryptotoken for interoperability testing.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA (research fork), ECDSA (implied existing), EdDSA (implied existing)",
+    "authoritative_source_url": "https://developers.cloudflare.com/ssl/post-quantum-cryptography/pqc-support/index.md",
+    "source_documents": [
+      {
+        "filename": "Mozilla_Firefox.html",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "primary"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc1.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc2.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc3.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc4.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Mozilla_Firefox_doc5.pdf",
+        "url": "https://blog.mozilla.org/security/2024/05/23/pqc-in-firefox/",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Apple Safari",
+    "category": "Web Browsers",
+    "product_name": "Apple Safari",
+    "product_brief": "Web browser for iPhone, iPad, and Mac offering fast performance, energy efficiency, and advanced developer tools.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Apple supports quantum-secure encryption in TLS/HTTPS via URLSession and Network frameworks in iOS 26, iPadOS 26, macOS 26, tvOS 26, and watchOS 26. Hybrid cryptography combines classic algorithms with post-quantum algorithms (ML-KEM for key exchange, ML-DSA for authentication) to mitigate \"Harvest Now, Decrypt Later\" attacks. Support is enabled by default for system services and apps using these APIs.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, Elliptic Curve Diffie-Hellman, Elliptic Curve signature, ML-KEM (768, 1024), ML-DSA (65, 87)",
+    "key_management_model": "Hybrid cryptography combining classic algorithms and post-quantum algorithms; iCloud Keychain for credential syncing.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid cryptography",
+    "infrastructure_layer": "Application, Security Stack, Network",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "Safari 16 (mentioned for Web Push), iOS 26/macOS 26/iPadOS 26/tvOS 26/watchOS 26 (for PQC features)",
+    "release_date": "2026-01-28",
+    "fips_validated": "Not stated",
+    "primary_platforms": "iOS, iPadOS, macOS, tvOS, watchOS, visionOS",
+    "target_industries": "General consumer and enterprise web browsing; not specific to a single industry.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Apple has deployed quantum-secure cryptography in TLS/HTTPS, VPN (IKEv2), SSH, iMessage (PQ3), and CryptoKit for iOS 26/iPadOS 26/macOS 26/tvOS 26/watchOS 26. Uses hybrid approach with ML-KEM and ML-DSA.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Elliptic Curve signature, ML-DSA-65, ML-DSA-87",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Apple_Safari.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "primary"
+      },
+      {
+        "filename": "Apple_Safari_doc1.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Apple_Safari_doc2.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Apple_Safari_doc3.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-3"
+      }
+    ]
+  }
+]

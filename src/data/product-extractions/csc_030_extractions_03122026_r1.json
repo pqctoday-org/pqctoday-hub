@@ -1,0 +1,88 @@
+[
+  {
+    "platform_name": "evolutionQ BasejumpQDN",
+    "category": "Quantum Key Distribution Software",
+    "product_name": "BasejumpQDN",
+    "product_brief": "Ultra-secure key exchange solution delivering long-term enterprise cybersecurity using evolving quantum networks.",
+    "pqc_support": "No (Product utilizes Quantum Key Distribution, not Post-Quantum Cryptography algorithms)",
+    "pqc_capability_description": "Not stated. The document describes a Quantum Key Distribution (QKD) solution (\"Ultra-secure key exchange for evolving quantum networks\") rather than software implementing post-quantum cryptographic algorithms (e.g., lattice-based cryptography). It mentions \"quantum-safe\" in the context of QKD integration.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document focuses on Quantum Key Distribution and key exchange, not specific classical or PQC primitives like ECDSA or RSA)",
+    "key_management_model": "Quantum Key Distribution (QKD) integration using trusted certified repeater nodes; supports virtual QKD key-swap; vendor-neutral approach allowing multiple vendors.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Network-based key exchange solution utilizing quantum links over optical fibre and trusted/certified repeater nodes; includes a dashboard for monitoring.",
+    "infrastructure_layer": "Network",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Download Product Sheet\", \"Schedule a product introduction\", and trademark notices)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Quantum networks over optical fibre; supports simulation via BasejumpSIM in the cloud.",
+    "target_industries": "Critical industries, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (Roadmap focuses on upgrading from trusted repeater nodes to zero-trust quantum repeater nodes as they become commercially available)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "evolutionQ_BasejumpQDN.html",
+        "url": "https://www.evolutionq.com/products/basejumpqdn",
+        "label": "primary"
+      },
+      {
+        "filename": "evolutionQ_BasejumpQDN_doc1.html",
+        "url": "https://www.evolutionq.com/products/basejumpqdn",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "evolutionQ_BasejumpQDN_doc2.html",
+        "url": "https://www.evolutionq.com/products/basejumpqdn",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "evolutionQ BasejumpSKI",
+    "category": "Quantum Key Distribution Software",
+    "product_name": "BasejumpSKI",
+    "product_brief": "Symmetric key infrastructure solution providing post-quantum security via multimodal key establishment.",
+    "pqc_support": "Yes (combines symmetric key, classical asymmetric key, and post-quantum cryptography)",
+    "pqc_capability_description": "Combines symmetric key infrastructure with post-quantum cryptography for end-to-end key generation. Provides resilience even if asymmetric cryptography is broken. Supports forward secrecy and post-compromise security. Designed to evolve with emerging threats and integrate with quantum networks.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions \"symmetric key\", \"classical asymmetric key\", and \"post-quantum cryptography\" generically without naming specific algorithms like ECDSA, Ed25519, or Kyber)",
+    "key_management_model": "Multimodal key establishment protocol combining symmetric key infrastructure with post-quantum cryptography to establish end-to-end symmetric pre-shared keys (PSKs).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software solution integrating into existing infrastructure; described as a \"Symmetric key infrastructure solution\" and part of the Basejump platform.",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Trademarks of evolutionQ)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated (Text mentions integration into \"existing infrastructure\" and \"quantum networks\" but does not list specific OS or cloud platforms)",
+    "target_industries": "Enterprise (implied by \"Organizations\", \"risk management program\", \"Executive Workshop\")",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Designed to be future-adaptable and evolve in response to emerging threats; can be upgraded to work with quantum key exchange capabilities enabled by quantum networks.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filenames provided, but no public URL extracted from text)",
+    "source_documents": [
+      {
+        "filename": "evolutionQ_BasejumpSKI.html",
+        "url": "https://www.evolutionq.com/products/basejumpski",
+        "label": "primary"
+      },
+      {
+        "filename": "evolutionQ_BasejumpSKI_doc1.html",
+        "url": "https://www.evolutionq.com/products/basejumpski",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "evolutionQ_BasejumpSKI_doc2.html",
+        "url": "https://www.evolutionq.com/products/basejumpski",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

@@ -1,0 +1,78 @@
+[
+  {
+    "platform_name": "Crypto Quantique QDID Platform",
+    "category": "IoT Security",
+    "product_name": "Crypto Quantique QDID Platform",
+    "product_brief": "Not stated (Document describes \"Security IP\" and \"Device Software\" but does not explicitly define a \"QDID Platform\" or its specific function).",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated. The document mentions \"Cryptographic Cores IP\" and \"Security IP\" but does not specify any Post-Quantum Cryptography algorithms, implementations, or maturity levels.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document lists \"Cryptographic Cores IP\" generically but does not name specific algorithms like ECDSA, RSA, etc.).",
+    "key_management_model": "Not stated (Document mentions \"Fleet & Certificate Management Software\" and \"Provisioning & Secure Boot\" but does not describe the underlying key management architecture or formats).",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated (Document mentions \"Security IP\" for SoC design and \"Device Software\" but does not specify an architecture type like MPC or HSM).",
+    "infrastructure_layer": "Hardware, Application",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No mention",
+    "primary_platforms": "SoC (System on Chip), Custom SoCs, Chiplets, IoT devices",
+    "target_industries": "Medical Device Manufacturers, Automotive, Industry 4.0, Radio Module, IC Designers",
+    "regulatory_status": "Not stated (Document mentions \"Accelerating CRA Compliance\" but does not specify a regulatory license or charter).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text contains navigation links like \"Github\", \"Contact Us\", and \"Products\" but no specific product URL is provided).",
+    "source_documents": [
+      {
+        "filename": "Crypto_Quantique_QDID_Platform_doc1.html",
+        "url": "https://www.crypto-quantique.com",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Kudelski IoT Security Platform",
+    "category": "IoT Security",
+    "product_name": "Kudelski IoT Security Platform (specifically Kudelski Secure Enclave / KSE)",
+    "product_brief": "Integrated PQC security IP and services for IoT devices, offering secure boot, provisioning, and firmware updates.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Embedded ML-KEM and ML-DSA algorithms with side-channel/fault countermeasures in Kudelski Secure Enclave (KSE). Includes LMS algorithm support. Features hybrid cryptography for phased migration and crypto agility. Hardware-software hybrid architecture.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS",
+    "key_management_model": "Hardware-software hybrid architecture; supports secure boot, update, provisioning, and key management; PUF-based TRNG for entropy (via partnership); PKCS#8/PKCS#12 not explicitly stated.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hardware-software hybrid (Kudelski Secure Enclave / KSE)",
+    "infrastructure_layer": "Application, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "2024-12-03 (Partnership announcement date; specific product release date not stated)",
+    "fips_validated": "No mention of validation status; mentions alignment with FIPS 203–205 requirements.",
+    "primary_platforms": "IoT devices, semiconductors, SoCs, Edge devices",
+    "target_industries": "Automotive, Medical Devices, Smart Home, Semiconductors, National Security, Industrial, AI",
+    "regulatory_status": "Aligns with CNSA 2.0, NIST, EU CRA, FIPS, ANSSI; mentions compliance with UK PSTI and U.S. IoT Cybersecurity Improvement Act.",
+    "pqc_roadmap_details": "Supports hybrid cryptography for phased migration; enables post-deployment upgrades; targets US deadline of 2027 and EU deadlines of 2030–2035.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ML-DSA, LMS (Leighton-Micali Signature)",
+    "authoritative_source_url": "www.kudelskilabs.com",
+    "source_documents": [
+      {
+        "filename": "Kudelski_IoT_Security_Platform.pdf",
+        "url": "https://www.kudelski-iot.com",
+        "label": "primary"
+      },
+      {
+        "filename": "Kudelski_IoT_Security_Platform_doc1.html",
+        "url": "https://www.kudelski-iot.com",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Kudelski_IoT_Security_Platform_doc1.pdf",
+        "url": "https://www.kudelski-iot.com",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

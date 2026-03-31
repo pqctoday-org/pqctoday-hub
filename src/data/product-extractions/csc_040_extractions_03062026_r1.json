@@ -1,0 +1,280 @@
+[
+  {
+    "platform_name": "JFrog Artifactory",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "JFrog Artifactory",
+    "product_brief": "Universal Artifact & ML Model Repository Manager for software supply chain visibility, security, and control.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It focuses on artifact management, vulnerability scanning, and standard software supply chain security.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Commercial\", \"Renew, retrieve licenses\", and \"JFrog Enterprise+\")",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "SaaS, self-managed, multi-cloud, hybrid; supports Kubernetes, Docker, Maven, Gradle, Helm, npm, NuGet, Conan, Poetry.",
+    "target_industries": "Financial Services, Public Sector, Technology, Healthcare, Gaming, Automotive, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Unknown",
+    "source_documents": [
+      {
+        "filename": "JFrog_Artifactory.html",
+        "url": "https://jfrog.com/artifactory/",
+        "label": "primary"
+      },
+      {
+        "filename": "JFrog_Artifactory_doc1.html",
+        "url": "https://jfrog.com/artifactory/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "JFrog_Artifactory_doc2.html",
+        "url": "https://jfrog.com/artifactory/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "JFrog_Artifactory_doc3.html",
+        "url": "https://jfrog.com/artifactory/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Sonatype Nexus",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "Sonatype Nexus Repository",
+    "product_brief": "Cloud-native binary artifact management tool to store, manage, and distribute software applications, AI/ML models, and components.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It only mentions general security features like TLS encryption and malware protection.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "TLS (encryption mentioned generally); no specific primitives (e.g., ECDSA, RSA) explicitly listed in the text.",
+    "key_management_model": "Not stated (mentions \"encrypts stored credentials\" but does not describe key management architecture).",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-Native Binary Artifact Management; supports centralized repository, HA clusters, edge nodes, and cloud-hosted service.",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Open Source/Commercial",
+    "license": "Community Edition (Free/Open Source) and Pro Edition (Commercial/Paid). Specific license names not stated.",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "AWS, Microsoft Azure, OpenShift, Self-hosted (data centers), Air-gapped environments; supports CI/CD tools like GitHub, GitLab, Bitbucket, Jenkins.",
+    "target_industries": "Government, Financial Services, Technology, Manufacturing, Healthcare, Retail, Telecommunications.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document source filenames provided: Sonatype_Nexus.html, Sonatype_Nexus_doc1.html, Sonatype_Nexus_doc2.html)",
+    "source_documents": [
+      {
+        "filename": "Sonatype_Nexus.html",
+        "url": "https://www.sonatype.com/products/nexus-repository",
+        "label": "primary"
+      },
+      {
+        "filename": "Sonatype_Nexus_doc1.html",
+        "url": "https://www.sonatype.com/products/nexus-repository",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Sonatype_Nexus_doc2.html",
+        "url": "https://www.sonatype.com/products/nexus-repository",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Sonatype_Nexus_doc3.html",
+        "url": "https://www.sonatype.com/products/nexus-repository",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "GitHub Actions",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "GitHub Actions",
+    "product_brief": "Automate your workflow from idea to production with world-class CI/CD.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The provided text contains no mention of Post-Quantum Cryptography (PQC) algorithms, implementations, or migration plans. It focuses on general CI/CD automation and mentions standard security features like secret protection and code scanning without specifying cryptographic primitives.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "SSH (Secure Shell Protocol), GITHUB_TOKEN (mentioned as a credential mechanism)",
+    "key_management_model": "Built-in secret store; uses GitHub credentials integrated via APIs and webhooks; supports commit signature verification.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-based CI/CD platform with hosted runners (Linux, macOS, Windows, ARM, GPU, containers) and self-hosted runner support.",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Open Source/Commercial",
+    "license": "Not stated (Text mentions \"Open Source legacy\" and free usage for public repositories, but does not specify a license identifier like MIT or Apache).",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Linux, macOS, Windows, ARM, GPU, containers; supports Node.js, Python, Java, Ruby, PHP, Go, Rust, .NET.",
+    "target_industries": "Enterprises, Small and medium teams, Startups, Nonprofits, Healthcare, Financial services, Manufacturing, Government.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Commit signature verification (algorithm not specified)",
+    "authoritative_source_url": "https://github.com/features/actions (inferred from context of \"GitHub Actions\" product page, though exact URL not explicitly listed as a single string in text; text references \"View docs\" and \"Get started with actions\").",
+    "source_documents": [
+      {
+        "filename": "GitHub_Actions.html",
+        "url": "https://github.com/features/actions",
+        "label": "primary"
+      },
+      {
+        "filename": "GitHub_Actions_doc1.html",
+        "url": "https://github.com/features/actions",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "GitHub_Actions_doc2.html",
+        "url": "https://github.com/features/actions",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "GitHub_Actions_doc3.html",
+        "url": "https://github.com/features/actions",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "GitLab CI/CD",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "GitLab CI/CD",
+    "product_brief": "A continuous method of software development to build, test, deploy, and monitor iterative code changes.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text. The document describes general CI/CD functionality, pipeline configuration, runners, and variables but contains no mention of Post-Quantum Cryptography algorithms or implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated (mentions storing sensitive information like passwords or API keys in CI/CD variables with security settings such as Protected and Masked, but does not describe cryptographic key management architecture).",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "MIT License",
+    "latest_version": "Unknown (169 Releases mentioned, but no specific version number provided)",
+    "release_date": "Unknown (Created on May 20, 2015; no specific release date for the latest version)",
+    "fips_validated": "No",
+    "primary_platforms": "Linux, Windows, macOS (for runners); GitLab.com, GitLab Self-Managed, GitLab Dedicated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://gitlab.com",
+    "source_documents": [
+      {
+        "filename": "GitLab_CI_CD.html",
+        "url": "https://docs.gitlab.com/ee/ci/",
+        "label": "primary"
+      },
+      {
+        "filename": "GitLab_CI_CD_repo.html",
+        "url": "https://gitlab.com/gitlab-org/gitlab",
+        "label": "repo"
+      },
+      {
+        "filename": "GitLab_CI_CD_doc1.html",
+        "url": "https://docs.gitlab.com/ee/ci/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "GitLab_CI_CD_doc1.md",
+        "url": "https://docs.gitlab.com/ee/ci/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Jenkins",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "Jenkins",
+    "product_brief": "Leading open-source automation server built with Java to support automating virtually anything.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document. The text describes Jenkins as an automation server for CI/CD but contains no mention of Post-Quantum Cryptography, PQC algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "MIT",
+    "latest_version": "Not stated (Only release lines \"Weekly\" and \"LTS\" are mentioned without specific version numbers)",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "Linux distributions, Windows, Docker",
+    "target_industries": "Not stated (Mentions \"startups to enterprises\" and \"different industries\" generally)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.jenkins.io",
+    "source_documents": [
+      {
+        "filename": "Jenkins.html",
+        "url": "https://www.jenkins.io",
+        "label": "primary"
+      },
+      {
+        "filename": "Jenkins_repo.md",
+        "url": "https://github.com/jenkinsci/jenkins",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "Azure DevOps",
+    "category": "CI/CD & Artifact Management",
+    "product_name": "Azure DevOps",
+    "product_brief": "A set of modern dev services to plan, track, build, test, and deploy software across any platform.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), specific PQC algorithms, or migration plans for quantum-resistant cryptography. It mentions \"Embedded security\" and \"DevSecOps\" generally but provides no details on cryptographic primitives.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Commercial\" and Microsoft ownership; specific license text not stated)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Linux, macOS, Windows, Cloud (Azure), GitHub",
+    "target_industries": "Enterprise, Software Development, Small Business, Telco, Healthcare (implied by customer stories)",
+    "regulatory_status": ">100 Compliance certifications mentioned generally for Microsoft/Azure; specific product certifications not stated.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://azure.microsoft.com/en-us/products/devops/ (inferred from context, but exact URL not explicitly listed in text)",
+    "source_documents": [
+      {
+        "filename": "Azure_DevOps.html",
+        "url": "https://azure.microsoft.com/en-us/products/devops",
+        "label": "primary"
+      },
+      {
+        "filename": "Azure_DevOps_doc1.html",
+        "url": "https://azure.microsoft.com/en-us/products/devops",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Azure_DevOps_doc2.html",
+        "url": "https://azure.microsoft.com/en-us/products/devops",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Azure_DevOps_doc3.html",
+        "url": "https://azure.microsoft.com/en-us/products/devops",
+        "label": "doc-link-3"
+      }
+    ]
+  }
+]

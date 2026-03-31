@@ -1,0 +1,106 @@
+[
+  {
+    "platform_name": "Okta Workforce Identity",
+    "category": "Identity & Access Management (IAM)",
+    "product_name": "Okta Workforce Identity",
+    "product_brief": "An identity security fabric platform securing employees, apps, and AI agents with governance and access management.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans for PQC. It mentions OIDC ID Token Encryption using JSON Web Encryption (JWE) but does not specify the underlying cryptographic primitives as PQC.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"JSON Web Encryption (JWE)\" and \"OIDC ID Token Encryption\" but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS / Cloud-based (Described as \"Okta Workforce Identity Cloud\" and \"highly multi-tenant\").",
+    "infrastructure_layer": "Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"© Okta and/or its affiliates. All rights reserved.\" and commercial nature).",
+    "latest_version": "Not stated",
+    "release_date": "2025-07-01 (Context: Q3 2025 release overview, July - September 2025)",
+    "fips_validated": "No (Document mentions FedRAMP High/Moderate and NIST SP 800-63C FAL3 compliance but does not explicitly state FIPS 140-2 or 140-3 validation status).",
+    "primary_platforms": "Cloud Apps, On Prem Servers, Public/Private Directories, Kubernetes (mentioned in context of Axiom integration), Databases.",
+    "target_industries": "Enterprise, Government (Federal/US Military), Healthcare (HIPAA customers).",
+    "regulatory_status": "FedRAMP High, FedRAMP Moderate, HIPAA (with signed BAA).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "okta.com/agreements (mentioned for contractual assurances); okta.com (implied general domain).",
+    "source_documents": [
+      {
+        "filename": "Okta_Workforce_Identity.pdf",
+        "url": "https://www.okta.com/resources/whitepaper/okta-and-post-quantum-cryptography/",
+        "label": "primary"
+      },
+      {
+        "filename": "Okta_Workforce_Identity_doc1.html",
+        "url": "https://www.okta.com/resources/whitepaper/okta-and-post-quantum-cryptography/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Ping Identity PingFederate",
+    "category": "Identity & Access Management (IAM)",
+    "product_name": "PingFederate",
+    "product_brief": "Cloud-ready software for authentication and single sign-on authority.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions standards SAML, OAuth, OIDC but does not list specific cryptographic algorithms like ECDSA or RSA).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized authentication authority; supports hybrid IT environments (on-premises and cloud); acts as a federation hub.",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Ping Products\" and commercial sales context)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "On-premises, Cloud, SaaS, Hybrid IT environments; integrates with Office 365, Apache, Java.",
+    "target_industries": "Enterprise (Workforce, Customers, Partners)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Ping_Identity_PingFederate_doc1.html",
+        "url": "https://www.pingidentity.com/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "JumpCloud Directory Platform",
+    "category": "Identity & Access Management (IAM)",
+    "product_name": "JumpCloud Directory Platform",
+    "product_brief": "Intelligent, Secure IT platform unifying identity management, device management, and access control for humans, machines, and AI.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"Intelligent IT,\" \"Zero Trust,\" and \"AI-Powered\" features but contains no explicit mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-based SaaS (implied by \"Cloud Directory,\" \"SaaS Management,\" and \"Cloud-First Directory\"), but specific cryptographic architecture details are not stated.",
+    "infrastructure_layer": "Security Stack, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Commercial\" pricing models and \"© JumpCloud Inc. All rights reserved\")",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Windows, Apple (macOS), Linux, Android; Cloud platforms including Google Workspace integration.",
+    "target_industries": "Enterprise, MSPs (Managed Service Providers), General IT organizations.",
+    "regulatory_status": "Mentions \"Achieve and Maintain Compliance\" and \"GDPR,\" but no specific regulatory licenses or charters are listed.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document source is internal filename: JumpCloud_Directory_Platform_doc1.html)",
+    "source_documents": [
+      {
+        "filename": "JumpCloud_Directory_Platform_doc1.html",
+        "url": "https://jumpcloud.com",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

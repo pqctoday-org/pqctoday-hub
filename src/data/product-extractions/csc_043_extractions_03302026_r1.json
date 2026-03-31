@@ -1,0 +1,580 @@
+[
+  {
+    "platform_name": "Thales CipherTrust Data Security Platform",
+    "category": "Data Security & Protection",
+    "product_name": "Thales CipherTrust Data Security Platform (Note: Document primarily references \"Luna HSMs\", \"High Speed Encryptors\", \"MultiApp v5.2 Premium PQC\", and \"Thales Cybersecurity and Digital Identity\" portfolio)",
+    "product_brief": "A comprehensive security infrastructure platform providing quantum-safe key management, PKI, data protection, and identity credentials via HSMs and secure elements.",
+    "pqc_support": "Yes (with details: NIST-standardized ML-KEM, ML-DSA, LMS/HSS, and Falcon/FN-DSA integrated in firmware; hybrid modes supported)",
+    "pqc_capability_description": "Thales integrates PQC algorithms (ML-KEM, ML-DSA, LMS/HSS, Falcon) directly into Luna HSM firmware and High Speed Encryptors. Supports hybrid PQC/classical protection for data-in-motion (Layers 2–4), PKI, TLS, code signing, and key management. Includes crypto-agility to shift between classical and PQC algorithms. MultiApp v5.2 Premium PQC is CC EAL6+ certified.",
+    "pqc_migration_priority": "Critical (Document states \"urgent to plan and execute\" by 2030/2035; addresses \"Harvest Now, Decrypt Later\" threats for critical systems)",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS/HSS, Falcon (FN-DSA), classical public key algorithms (specific names like ECDSA/RSA not explicitly listed in text, but \"classical\" is mentioned)",
+    "key_management_model": "HSM-backed (Luna HSMs), secure element-based (eSE), hybrid modes, crypto-agile architectures supporting quantum-safe and classical keys",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hardware Security Module (HSM)-based, FPGA-based (for High Speed Encryptors), Secure Element (eSE) based, hybrid PQC/classical",
+    "infrastructure_layer": "Security Stack, Hardware, Network",
+    "license_type": "Commercial",
+    "license": "Proprietary (Not explicitly stated as Open Source; described as commercial solutions and products)",
+    "latest_version": "MultiApp v5.2 Premium PQC; Java Card standard release v3.3 (planned for 2026)",
+    "release_date": "Not stated",
+    "fips_validated": "Yes (Luna HSMs are FIPS 140-3 Level 3 platforms; Falcon is FIPS 206)",
+    "primary_platforms": "Production-proven systems, mobile networks (5G), cloud infrastructures, embedded environments (IoT, automotive), secure elements (eSIM, ePassports)",
+    "target_industries": "Finance (Wells Fargo, HSBC), Telecom (SK Telecom, GSMA), Government/Defense (Canada's DIGITAL/NDEC), Identity/Travel (ICAO), Enterprise",
+    "regulatory_status": "ANSSI-certified at CC EAL6+ (MultiApp v5.2); FIPS 140-3 Level 3 (Luna HSMs); FIPS 206 (Falcon)",
+    "pqc_roadmap_details": "Transition to PQC by 2030 for critical systems and 2035 for broader infrastructures; Java Card standard v3.3 with formal PQC support planned for 2026; ongoing participation in NIST, OASIS, GlobalPlatform, ISO, ETSI, GSMA, 3GPP, ICAO, FIDO Alliance",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Falcon (FN-DSA), ML-DSA, LMS/HSS",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Thales_CipherTrust_Data_Security_Platform_doc1.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-data-security-platform",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Thales_CipherTrust_Data_Security_Platform_doc2.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-data-security-platform",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Thales_CipherTrust_Data_Security_Platform_doc3.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-data-security-platform",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Thales_CipherTrust_Data_Security_Platform_doc4.pdf",
+        "url": "https://cpl.thalesgroup.com/encryption/ciphertrust-data-security-platform",
+        "label": "doc-link-4"
+      }
+    ]
+  },
+  {
+    "platform_name": "Virtru Data Protection",
+    "category": "Data Security & Protection",
+    "product_name": "Virtru Data Security Platform",
+    "product_brief": "A data-centric security platform built on the open Trusted Data Format (TDF) standard for persistent control over shared information.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the document. The text mentions \"open standards\" and \"Trusted Data Format\" but does not specify Post-Quantum Cryptography algorithms, readiness, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"encryption keys\" and \"ABAC\" but lists no specific algorithms like ECDSA, RSA, or lattice-based schemes).",
+    "key_management_model": "Control access to encryption keys using ABAC (Attribute Based Access Control); supports self-managed and cloud options via Virtru Private Keystore.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Data-centric security; supports On-Premises, Virtual Private Cloud, or Managed SaaS deployment; leverages OpenTDF open-source project.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial / Open Source (Platform is commercial; built upon the open-source OpenTDF project)",
+    "license": "Not stated (OpenTDF is mentioned as an open source project, but specific license names like Apache-2.0 are not provided in the text).",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No (Text mentions compliance with NIST standards generally, but does not explicitly state FIPS 140-2 or 140-3 validation status).",
+    "primary_platforms": "Google Workspace (Gmail, Drive), Microsoft 365 (Outlook, OneDrive, SharePoint), Desktop, Zendesk, Confluence, Data Lakes, Windows.",
+    "target_industries": "Commercial, Aerospace, Education, Finance, Healthcare, Technology & Telecom, Threat Intelligence, Government, Defense, Intelligence, State & Local, Systems Integrators.",
+    "regulatory_status": "Supports compliance with CJIS, CMMC, NIST, DFARS, FERPA, FINRA, GLBA, PCI, SOX, FTC Safeguards Rule, GDPR, HIPAA, ISO 27001, ITAR.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text contains navigation links but no explicit base URL string).",
+    "source_documents": [
+      {
+        "filename": "Virtru_Data_Protection_doc1.html",
+        "url": "https://www.virtru.com/data-protection/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "IBM Storage Scale 5.2",
+    "category": "Data Storage & Protection",
+    "product_name": "IBM Storage Scale System",
+    "product_brief": "An integrated storage building block solution offering predictable high performance and simplified installation.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document contains no mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or related migration plans. It focuses on storage architecture, hardware models, and RAID configurations.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Hardware, Application",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Copyright International Business Machines Corporation)",
+    "latest_version": "7.0.0 and 6.0.0",
+    "release_date": "2026-03-27",
+    "fips_validated": "Not stated",
+    "primary_platforms": "IBM Storage Scale System models (6000, 3500), Nvidia DGX SuperPod",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "IBM_Storage_Scale_5.2.pdf",
+        "url": "https://www.ibm.com/docs/en/storage-scale/5.2.0?topic=introduction-whats-new-in-storage-scale",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "NetApp ONTAP 9.16",
+    "category": "Data Storage & Protection",
+    "product_name": "NetApp ONTAP 9.16",
+    "product_brief": "The data storage OS that natively spans hybrid cloud, delivering unified data management and protection.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"cybersecurity capabilities,\" \"Autonomous Ransomware Protection,\" and \"secure-first design\" but does not explicitly mention Post-Quantum Cryptography (PQC), specific PQC algorithms, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Cloud, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Contact Sales\", \"ONTP One software license\", and commercial nature)",
+    "latest_version": "9.16",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "On-Premises Storage Systems, AWS, Azure, Google Cloud, Commodity servers (ONTAP Select)",
+    "target_industries": "Automotive, Electronic Design Automation, Financial Services, Game Development, Government, Healthcare, Life Sciences, Manufacturing, Media and Entertainment, Oil and Gas",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "NetApp.com (inferred from text \"NetApp.com\" and context, though specific product URL not explicitly listed as a standalone link)",
+    "source_documents": [
+      {
+        "filename": "NetApp_ONTAP_9.16.html",
+        "url": "https://www.netapp.com/data-management/ontap-data-management-software/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Pure Storage Purity//FA 6.6",
+    "category": "Data Storage & Protection",
+    "product_name": "Purity Encryption Module (within Purity//FA 6.6)",
+    "product_brief": "Standalone software cryptographic module providing always-on, inline AES-256 encryption for FlashArray storage with internal key management.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography (PQC) algorithms, schemes, or migration plans. It exclusively details FIPS 140-3 validated AES-256 encryption and standard symmetric/asymmetric operations without PQC references.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "AES-256 (data-at-rest), DRBG (NIST SP 800-90A/B/C implied by FIPS 140-3 context, though specific primitive names not listed in text), AES-NI hardware acceleration.",
+    "key_management_model": "Internal key management scheme requiring no user intervention; keys are managed within the module boundary.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software cryptographic module running on General Purpose Computer (GPC) with hardware acceleration (AES-NI).",
+    "infrastructure_layer": "Hardware, Application",
+    "license_type": "Proprietary",
+    "license": "Proprietary (End User Agreements apply)",
+    "latest_version": "FA-1.5 (Module version); Purity OS 6.4 (Tested environment); Purity//FA 6.6 (Platform context).",
+    "release_date": "2024-10 (Security Policy document date); 2022-05 (Data Sheet date)",
+    "fips_validated": "Yes, FIPS 140-3 Level 1 (Purity Encryption Module); FIPS 140-2 validated encryption mentioned in Data Sheet.",
+    "primary_platforms": "Pure Storage FlashArray (X20R3), Purity OS 6.4, Intel Xeon Silver 4210R.",
+    "target_industries": "Enterprise, Government (US Federal agencies), Data Centers.",
+    "regulatory_status": "FIPS 140-3 Level 1 validated; GDPR compliance support mentioned.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document focuses on encryption and integrity, not digital signatures).",
+    "authoritative_source_url": "https://www.purestorage.com",
+    "source_documents": [
+      {
+        "filename": "Pure_Storage_Purity__FA_6.6.pdf",
+        "url": "https://support.purestorage.com/FlashArray/PurityFA/Purity_Release_Notes",
+        "label": "primary"
+      },
+      {
+        "filename": "Pure_Storage_Purity__FA_6.6_doc1.pdf",
+        "url": "https://support.purestorage.com/FlashArray/PurityFA/Purity_Release_Notes",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Dell PowerStore OS 4.0",
+    "category": "Data Storage & Protection",
+    "product_name": "Dell PowerStore OS 4.0",
+    "product_brief": "A secure, scalable data storage platform for private cloud and AI-powered enterprises with data reduction guarantees.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or any related migration plans. It focuses on general security features like \"secure storage\" and \"data protection\" without specifying cryptographic primitives.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Hardware, Application",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "4.0",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Intel® Xeon® processors; Private Cloud; On-premises",
+    "target_industries": "Enterprise, Federal Government, Financial Services, Healthcare, Higher Education, Life Sciences, Manufacturing, Retail, Telecommunications",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Dell_PowerStore_OS_4.0.html",
+        "url": "https://www.dell.com/en-us/dt/storage/powerstore-storage-appliance.htm",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "HPE Alletra MP",
+    "category": "Data Storage & Protection",
+    "product_name": "HPE Alletra Storage MP",
+    "product_brief": "Cloud-native data infrastructure delivering AI-driven management, disaggregated scaling, and 100% data availability.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document mentions \"Quantum Security\" under the Technology Leadership section but provides no specific details regarding PQC algorithms, implementation status, or maturity levels for the HPE Alletra Storage MP product itself.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Disaggregated architecture with AIOps powered management",
+    "infrastructure_layer": "Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Hybrid cloud environments (edge to cloud)",
+    "target_industries": "Government research, global retail, healthcare, container terminals, general enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "HPE_Alletra_MP.html",
+        "url": "https://www.hpe.com/us/en/storage/alletra.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Veeam Data Platform v13",
+    "category": "Data Storage & Protection",
+    "product_name": "Veeam Backup & Replication v13 (part of Veeam Data Platform)",
+    "product_brief": "Enterprise-grade data resilience platform providing backup, replication, and recovery for hybrid estates against disaster and cyberthreats.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It focuses on general security hardening (DISA STIG), immutability, and certificate-based authentication.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Certificate-based authentication; specific algorithms (e.g., ECDSA, RSA) are not explicitly listed in the text.",
+    "key_management_model": "Certificate-based authentication for management connections; secrets encrypted with master keys (implied by \"secrets encrypted with ma...\"); no specific key formats or programmatic models detailed.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software Appliance (VSA), Infrastructure Appliance (VIA), and Windows-based installable software; includes active/passive clustering for High Availability.",
+    "infrastructure_layer": "Application, Hardware (via Appliances)",
+    "license_type": "Commercial",
+    "license": "Veeam Universal License (VUL); also supports legacy Socket-based licenses for Windows installable software; Community Edition not available for Appliance.",
+    "latest_version": "v13",
+    "release_date": "2025-11-18 (Based on footer date \"11182025\")",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Microsoft Windows, Linux-based JeOS (Veeam Software Appliance), VMware vSphere, Cloud machines.",
+    "target_industries": "Enterprise, ROBO environments, SMB (with limitations for Essentials license).",
+    "regulatory_status": "Mentions compliance with EAA (European Accessibility Act) and ADA (Americans with Disabilities Act); references CISA Secure by Design pledge; no specific crypto regulatory licenses mentioned.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Veeam_Data_Platform_v13.pdf",
+        "url": "https://www.veeam.com/data-platform.html",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Commvault Cloud",
+    "category": "Data Storage & Protection",
+    "product_name": "Commvault Cloud",
+    "product_brief": "The only cloud-native platform that unifies data security, identity resilience and cyber recovery at enterprise scale.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"encryption\" generally but does not specify any Post-Quantum Cryptography algorithms, hybrid modes, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"encryption\" generically but lists no specific algorithms like ECDSA, RSA, or AES).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-native platform built on Metallic AI; not a cryptographic architecture.",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Inferred from \"Commercial\" nature and lack of open source license mention)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "AWS, Azure, Google Cloud, Kubernetes, Microsoft 365, Salesforce, GitHub, GitLab, Azure DevOps, VMware, Nutanix AHV, Hyper-v, Active Directory, Entra ID.",
+    "target_industries": "Government, Healthcare, Financial Services, Education, Regulated Industries.",
+    "regulatory_status": "Not stated (Mentions \"Compliance & eDiscovery\" and \"Government Regulated Industries\" as use cases, but no specific regulatory licenses or charters).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Commvault.com",
+    "source_documents": [
+      {
+        "filename": "Commvault_Cloud.html",
+        "url": "https://www.commvault.com/platform",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Veritas NetBackup 10.5",
+    "category": "Data Storage & Protection",
+    "product_name": "Veritas NetBackup 10.5",
+    "product_brief": "Automated and secure hybrid cloud optimized data management solution combining AI and elastic architecture.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document mentions \"Military-grade encryption in transit and at rest\" but does not explicitly state support for Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "10.5 (Note: Text also mentions \"NetBackup 11.1\" in a \"What's new\" section)",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "AWS, Azure, Google Cloud Platform, Windows, Linux, Kubernetes, VMware, Hyper-V, Oracle, SAP HANA, MongoDB, MS SQL Server, NAS, NoSQL & Hadoop, Nutanix, Red Hat, IBM",
+    "target_industries": "Financial services, Healthcare and life sciences, Manufacturing and logistics, Federal government, State/local government/education, Retail and hospitality, Legal, Energy and utilities, Telecom, Technology, Media and Entertainment",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Veritas_NetBackup_10.5.html",
+        "url": "https://www.veritas.com/protection/netbackup",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Rubrik Security Cloud",
+    "category": "Data Storage & Protection",
+    "product_name": "Rubrik Security Cloud",
+    "product_brief": "A SaaS platform delivering data protection and cyber resilience across enterprise, cloud, and SaaS applications.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It only references \"modern cryptography\" generally without specifying PQC standards.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "AES-256, TLS 1.2+, SAML 2.0, TOTP",
+    "key_management_model": "Uses Google Managed Encryption Keys and GCP's Cloud Key Management Service (Cloud KMS) with Cloud IAM; includes a process for key rotation and revocation.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Microservices-based architecture running on Google Cloud Platform (GCP).",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Google Cloud Platform (GCP), AWS, Azure; accessible via Web Browser, CLI, and APIs.",
+    "target_industries": "Enterprise, Cloud, SaaS applications",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Document mentions SAML 2.0 for authentication and TLS for transport security but does not list specific signature algorithms like ECDSA or Ed25519).",
+    "authoritative_source_url": "https://status.rubrik.com",
+    "source_documents": [
+      {
+        "filename": "Rubrik_Security_Cloud.pdf",
+        "url": "https://www.rubrik.com/product/rubrik-security-cloud",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cohesity DataCloud",
+    "category": "Data Storage & Protection",
+    "product_name": "Cohesity DataCloud",
+    "product_brief": "A hyper-converged data protection platform providing backup, recovery, and security features like encryption and immutability.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or migration plans. It only specifies classical algorithms: TLS 1.3, AES-256-GCM, and X509 certificates for node-to-node communication.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "TLS 1.3, AES-256-GCM, X509",
+    "key_management_model": "Supports integration with external Key Management Systems (KMS) via KMIP; mentions PKI management and certificate-based authentication.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software-defined storage with distributed file system (SpanFS); uses certificate-based authentication for inter-node communication.",
+    "infrastructure_layer": "Application, Cloud, Security Stack",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "7.2",
+    "release_date": "2024-06-01",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cohesity Data Cloud (Hyperconverged platform); supports cloud tiering and integration with leading cloud providers.",
+    "target_industries": "Enterprise, General IT (implied by \"business and organization\" context)",
+    "regulatory_status": "Mentions compliance standards and certifications generally, but no specific licenses or charters are listed in the text.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "X509 (implied for certificate-based authentication); specific signature algorithms (e.g., RSA, ECDSA) not explicitly named.",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Cohesity_DataCloud.pdf",
+        "url": "https://www.cohesity.com/products/datacloud/",
+        "label": "primary"
+      },
+      {
+        "filename": "Cohesity_DataCloud_doc1.pdf",
+        "url": "https://www.cohesity.com/products/datacloud/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cohesity_DataCloud_doc2.pdf",
+        "url": "https://www.cohesity.com/products/datacloud/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cohesity_DataCloud_doc3.pdf",
+        "url": "https://www.cohesity.com/products/datacloud/",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Cohesity_DataCloud_doc4.pdf",
+        "url": "https://www.cohesity.com/products/datacloud/",
+        "label": "doc-link-4"
+      }
+    ]
+  },
+  {
+    "platform_name": "Zerto 11.0",
+    "category": "Data Storage & Protection",
+    "product_name": "HPE Zerto Software",
+    "product_brief": "Continuous data protection software strengthening cyber resilience, disaster recovery, and reducing data loss.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document mentions \"Quantum Security\" under the Technology Leadership section as a general topic but contains no specific details regarding Post-Quantum Cryptography implementation, algorithms, or migration plans for HPE Zerto Software.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "11.0",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "On-premises and cloud platforms (AWS, Azure)",
+    "target_industries": "Enterprise, Healthcare, Manufacturing, Government, Retail",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.hpe.com/us/en/software/zerto.html (Inferred from context, but exact URL not explicitly listed in text; text only mentions \"HPE Zerto Software Overview\")",
+    "source_documents": [
+      {
+        "filename": "Zerto_11.0.html",
+        "url": "https://www.zerto.com/zerto-it-resilience-platform/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "Druva Data Resiliency Cloud",
+    "category": "Data Storage & Protection",
+    "product_name": "Druva Data Resiliency Cloud",
+    "product_brief": "Cloud-native, SaaS-based endpoint protection solution delivering automated backup and recovery for Windows, MacOS, and Linux devices.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document discusses Post-Quantum Cryptography (PQC) as a general industry challenge and mentions case studies of other organizations (JPMorgan Chase, Mayo Clinic, DoD). It does not state that Druva Data Resiliency Cloud currently implements, supports, or plans to implement PQC algorithms.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "SaaS-based, cloud-native",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Windows, MacOS, Linux",
+    "target_industries": "Enterprise (General), Finance, Healthcare, Government (mentioned in context of PQC case studies, not specific Druva targeting)",
+    "regulatory_status": "Compliance with GDPR and CCPA mentioned; no specific licenses or charters stated.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "druva.com",
+    "source_documents": [
+      {
+        "filename": "Druva_Data_Resiliency_Cloud.pdf",
+        "url": "https://www.druva.com/products/data-resiliency-cloud/",
+        "label": "primary"
+      },
+      {
+        "filename": "Druva_Data_Resiliency_Cloud_doc1.pdf",
+        "url": "https://www.druva.com/products/data-resiliency-cloud/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Druva_Data_Resiliency_Cloud_doc2.pdf",
+        "url": "https://www.druva.com/products/data-resiliency-cloud/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Scality RING9",
+    "category": "Data Storage & Protection",
+    "product_name": "Scality RING",
+    "product_brief": "The world's most scalable and cyber-resilient object store designed for massive, unpredictable workloads.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"256-bit data encryption at rest\" and \"secure connections over HTTPS\" but does not specify any Post-Quantum Cryptography algorithms or migration plans.",
+    "pqc_migration_priority": "Low",
+    "crypto_primitives": "256-bit encryption (algorithm unspecified), HTTPS/TLS (version unspecified)",
+    "key_management_model": "Not stated (mentions AWS-compatible IAM and MFA, but no specific key management architecture details like HSM or MPC).",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software-defined object storage with MultiScale Architecture; not a crypto-specific architecture.",
+    "infrastructure_layer": "Application, Cloud",
+    "license_type": "Proprietary",
+    "license": "Proprietary (Commercial software implied by \"Scality builds... enterprise software\" and sales/demo context).",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Industry-standard servers, AWS-compatible environments, hybrid-cloud (on-prem and cloud).",
+    "target_industries": "Enterprise, Healthcare, Government & Public Sector, Media & Entertainment, Cloud Service Providers.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Source filename provided: Scality_RING9.html)",
+    "source_documents": [
+      {
+        "filename": "Scality_RING9.html",
+        "url": "https://www.scality.com/products/ring/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "MinIO Enterprise",
+    "category": "Data Storage & Protection",
+    "product_name": "MinIO Enterprise",
+    "product_brief": "Object storage server supporting TLS configuration with existing or self-signed certificates on Linux and Windows.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document contains no mention of Post-Quantum Cryptography (PQC) algorithms, hybrid modes, or migration plans. It only describes classical cryptographic implementations for TLS.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "ECDSA (prime256v1), RSA (2048-bit, 3072-bit)",
+    "key_management_model": "File-based storage of private keys and certificates in PEM format; supports password-protected keys via environment variable MINIO_CERT_PASSWD. Supports PKCS#1 for RSA; does not support PKCS#8 or PFX/PKCS#12.",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Software-based TLS implementation using file-stored certificates and keys.",
+    "infrastructure_layer": "Application, Network",
+    "license_type": "Open Source/Commercial (MinIO Enterprise implies commercial offering; repository shows open source code)",
+    "license": "Not stated (Repository contains LICENSE file but content not provided in text)",
+    "latest_version": "Unknown",
+    "release_date": "2025-08-12 (Date of latest commit mentioned: Aug 12, 2025)",
+    "fips_validated": "No",
+    "primary_platforms": "Linux, Windows",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ECDSA (prime256v1), RSA",
+    "authoritative_source_url": "Not stated (Document is from a GitHub repository, but specific product URL not explicitly listed in text)",
+    "source_documents": [
+      {
+        "filename": "MinIO_Enterprise.html",
+        "url": "https://min.io/enterprise",
+        "label": "primary"
+      }
+    ]
+  }
+]

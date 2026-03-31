@@ -1,0 +1,167 @@
+[
+  {
+    "platform_name": "Android 16",
+    "category": "Operating Systems",
+    "product_name": "Android 16",
+    "product_brief": "Operating system implementing Post-Quantum Cryptography as announced in a Google Security Blog post.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "The document announces the implementation of Post-Quantum Cryptography in Android, titled \"Security for the Quantum Era,\" but does not specify specific algorithms, maturity levels, or current deployment status beyond the announcement date.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "OS",
+    "license_type": "Open Source/Commercial (inferred from \"Open Source\" label and Google product context, but specific license type not explicitly defined in text) -> Unknown",
+    "license": "Not stated",
+    "latest_version": "Android 16",
+    "release_date": "2026-03-25",
+    "fips_validated": "No",
+    "primary_platforms": "Android",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Implementation of Post-Quantum Cryptography announced for March 25, 2026; specific algorithm choices or detailed timelines not stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Android_16_doc1.html",
+        "url": "https://security.googleblog.com/2026/03/post-quantum-cryptography-in-android.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "iOS 26 / macOS 26",
+    "category": "Operating Systems",
+    "product_name": "iOS 26 / macOS 26 (Apple Operating Systems)",
+    "product_brief": "Apple operating systems featuring hybrid post-quantum cryptography support across messaging, TLS, VPN, and developer APIs.",
+    "pqc_support": "Yes (with details: Hybrid cryptography deployed in iMessage PQ3, TLS, VPN, SSH, and CryptoKit for iOS 26/macOS 26).",
+    "pqc_capability_description": "Apple uses hybrid cryptography combining classical and post-quantum algorithms. Deployed in iMessage (PQ3), TLS/HTTPS (URLSession/Network framework), native VPN/IKEv2, SSH (macOS 26), and Apple Watch pairing. CryptoKit supports ML-KEM (768, 1024) for encryption and ML-DSA (65, 87) for authentication.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, Elliptic Curve Diffie-Hellman, Elliptic Curve signature, ML-KEM, ML-DSA",
+    "key_management_model": "Hybrid cryptography; utilizes Secure Enclave and iCloud Keychain (mentioned in context of OS security).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Hybrid (combines classic algorithms with post-quantum algorithms); Kernel-level support via native APIs.",
+    "infrastructure_layer": "Operating Systems, Security Stack, Network",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "iOS 26, macOS 26, iPadOS 26, watchOS 26, tvOS 26, visionOS 26",
+    "release_date": "2026-01-28 (Published Date of document)",
+    "fips_validated": "Not stated",
+    "primary_platforms": "iOS, macOS, iPadOS, watchOS, tvOS, visionOS",
+    "target_industries": "Consumer, Enterprise, Government, Education",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Adopting hybrid cryptography; deployed ML-KEM and ML-DSA in CryptoKit for iOS 26/macOS 26; prioritizing sensitive user information protocols.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Elliptic Curve signature, ML-DSA-65, ML-DSA-87",
+    "authoritative_source_url": "Not stated (Document source: iOS_26___macOS_26_doc1.html)",
+    "source_documents": [
+      {
+        "filename": "iOS_26___macOS_26_doc1.html",
+        "url": "https://support.apple.com/en-us/111900",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Fedora Linux",
+    "category": "Operating Systems",
+    "product_name": "Fedora Linux",
+    "product_brief": "An innovative, free, and open source platform for hardware, clouds, and containers enabling tailored solutions.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports experimental PQ algorithms via liboqs and oqsprovider integrated into OpenSSL and NSS. Includes Kyber, Dilithium, ML-KEM, and ML-DSA in Fedora 39, 40, and Rawhide. Enables hybrid PQ key exchange in TLS for NGINX and curl. Not yet supported for package signature verification or secure boot.",
+    "pqc_migration_priority": "Medium",
+    "crypto_primitives": "Kyber, Dilithium, ML-KEM, ML-DSA (PQ); OpenSSL, NSS, GnuTLS (libraries)",
+    "key_management_model": "OS keychain via crypto policies; manual key generation required for testing containers; no specific TPM or HSM integration stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Kernel vs userspace crypto via pluggable provider model (OpenSSL providers API, NSS PKCS#11)",
+    "infrastructure_layer": "OS, Security Stack",
+    "license_type": "Open Source",
+    "license": "Not stated (described as \"free, and open source\")",
+    "latest_version": "Fedora Rawhide (future Fedora 41)",
+    "release_date": "2024-07-05",
+    "fips_validated": "No",
+    "primary_platforms": "Fedora Linux (versions 39, 40, Rawhide/41); containers; Flatpak for Firefox",
+    "target_industries": "Software developers, community members, research environments (QUBIP consortium)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Integrating liboqs and oqsprovider; upgrading to match NIST draft standards (ML-KEM, ML-DSA); adding hybrid Kyber algorithms; planning documentation before public release.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Dilithium, ML-DSA (PQ signatures mentioned as supported in Rawhide)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Fedora_Linux_doc1.html",
+        "url": "https://research.redhat.com/blog/2024/07/05/fedora-linux-transition-for-quantum-resistant-cryptography/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Debian 12 (Bookworm)",
+    "category": "Operating Systems",
+    "product_name": "Debian 12 (Bookworm)",
+    "product_brief": "Operating system platform with a wiki page collating ideas and questions regarding Post-Quantum Cryptography (PQC) use.",
+    "pqc_support": "Planned (with timeline: \"TODO: Add questions, FAQs, links later\")",
+    "pqc_capability_description": "The document is a draft wiki page intended to collate ideas and questions about PQC in Debian. It lists external resources including IETF drafts and NIST FIPS standards (FIPS 203 ML-KEM/Kyber, FIPS 204 ML-DSA/Dilithium, FIPS 205 Sphincs+, DRAFT FIPS 206 FN-DSA/NTRU) and links to Open Quantum Safe libraries. No specific implementation status or maturity level within Debian 12 is stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document lists external standards like ML-KEM, CRYSTALS-Dilithium, Sphincs+, NTRU as references, but does not state they are currently implemented in the OS)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Operating Systems",
+    "license_type": "Open Source (implied by \"Debian\" and \"Creative Commons Attribution-ShareAlike 4.0 International\" for the wiki content)",
+    "license": "Creative Commons Attribution-ShareAlike 4.0 International (for the wiki page content); OS license not explicitly stated in text.",
+    "latest_version": "Debian 12 (Bookworm)",
+    "release_date": "Not stated (Document last modified: 2024-11-12)",
+    "fips_validated": "No (Document lists FIPS 203, 204, 205, and DRAFT 206 as external references/links, not as validation status for the OS)",
+    "primary_platforms": "Debian 12 (Bookworm)",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "\"TODO: Add questions, FAQs, links later\"; lists external standards and drafts as reference material.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (References to ML-DSA, Sphincs+, FN-DSA are listed as external standards, not current OS capabilities)",
+    "authoritative_source_url": "Not stated (Document contains links to IETF, NIST, Open Quantum Safe, but no specific product URL for Debian 12 PQC implementation)",
+    "source_documents": [
+      {
+        "filename": "Debian_12__Bookworm__doc1.html",
+        "url": "https://www.debian.org/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Alpine Linux",
+    "category": "Operating Systems",
+    "product_name": "Alpine Linux",
+    "product_brief": "Operating system providing PQC support via OpenSSL 3.5.x in release 3.22.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "PQC support is available in Alpine Linux 3.22 which ships with OpenSSL 3.5.x, enabling NIST-approved PQC algorithms by default. Version 3.21 uses OpenSSL 3.3.x and does not support PQC. Older versions can use the OQS provider workaround for key exchange but lack server authentication support until OpenSSL 3.2+.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X25519MLKEM768, X25519, prime256v1, NIST-approved PQC algorithms (specific names not listed beyond hybrid group)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "OS-level crypto support via OpenSSL library integration; supports OQS provider plugin model for older versions.",
+    "infrastructure_layer": "Operating Systems, Security Stack",
+    "license_type": "Open Source",
+    "license": "Not stated",
+    "latest_version": "3.22",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Alpine Linux (specifically version 3.22)",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "PQC enabled by default in OpenSSL 3.5.x (Alpine 3.22); older versions require manual OQS provider installation with limitations on TLS 1.3 server authentication for OpenSSL <3.2.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Document notes PQC signature algorithms are not supported for TLS 1.3 server authentication in OpenSSL 3.0.x/3.1.x)",
+    "authoritative_source_url": "github.com/nginxinc (referenced as source context, though document is an NGINX blog post about Alpine compatibility)",
+    "source_documents": [
+      {
+        "filename": "Alpine_Linux_doc1.html",
+        "url": "https://www.alpinelinux.org",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

@@ -1,0 +1,73 @@
+[
+  {
+    "platform_name": "Xiphera PQC IP Cores",
+    "category": "HSM & Hardware Security",
+    "product_name": "Chainguard FIPS Provider for OpenSSL (AESNI_ASM)",
+    "product_brief": "Provides cryptographic services to Linux user space software components using Intel AES-NI.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention any Post-Quantum Cryptography algorithms, implementations, or migration plans. It only covers classical symmetric encryption (AES-GCM).",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "AES-GCM, AES-GMAC",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software cryptographic provider for Linux user space",
+    "infrastructure_layer": "Application, Security Stack",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "3.4.0-r4",
+    "release_date": "Not stated (First Validated: 2025-03-10)",
+    "fips_validated": "Yes, FIPS validated (Module ID A6694, First Validated: 3/10/2025)",
+    "primary_platforms": "Amazon Linux 2023 on EC2 m7i.metal-24xl (Intel Sapphire Rapids Xeon Platinum 8488C)",
+    "target_industries": "Not stated",
+    "regulatory_status": "FIPS Validated (A6694)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://csrc.nist.gov",
+    "source_documents": [
+      {
+        "filename": "Xiphera_PQC_IP_Cores.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19412",
+        "label": "primary"
+      },
+      {
+        "filename": "Xiphera_PQC_IP_Cores_doc1.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19412",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Utimaco SecurityServer",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Quantum Protect (Application Package for u.trust GP HSM Se-Series)",
+    "product_brief": "Post-Quantum Cryptography application package for Utimaco's u.trust General Purpose HSM supporting NIST-standardized algorithms.",
+    "pqc_support": "Yes (with details: Supports ML-KEM, ML-DSA, LMS, XMSS, HSS, XMSS-MT)",
+    "pqc_capability_description": "Quantum Protect is an application package for the u.trust GP HSM Se-Series supporting NIST-standardized PQC algorithms ML-KEM and ML-DSA, plus mature stateful hash-based signatures LMS, XMSS, HSS, and XMSS-MT. It includes a patented state management solution, implements CNSA 2.0 mandatory algorithms (LMS, XMSS, ML-KEM, ML-DSA, AES, SHA), and integrates via PKCS #11. Activation is in-field without hardware exchange. A free simulator is available.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, XMSS, HSS, XMSS-MT, AES, SHA, RSA, ECC (mentioned as legacy to be deprecated), Elliptic Curve DH, MQC, Finite Field DH, MQV",
+    "key_management_model": "HSM-backed key storage and generation within u.trust GP HSM Se-Series; includes patented state management for stateful signatures.",
+    "supported_blockchains": "Not stated (Blockchain Protect is listed as a separate application package)",
+    "architecture_type": "HSM-based (Application Package on u.trust GP HSM Se-Series)",
+    "infrastructure_layer": "Hardware, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Commercial product with free simulator)",
+    "latest_version": "Not stated",
+    "release_date": "2025-04-02",
+    "fips_validated": "FIPS 140-2 mentioned in general compliance list; specific validation level for Quantum Protect not stated.",
+    "primary_platforms": "u.trust GP HSM Se-Series (Hardware Security Module)",
+    "target_industries": "Enterprise, Finance (Payment HSM context), Government (CNSA 2.0 context)",
+    "regulatory_status": "CNSA 2.0 compliance mentioned; NIST standardization referenced.",
+    "pqc_roadmap_details": "Further PQC algorithms such as SLH-DSA are on the roadmap for future releases.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "LMS, XMSS, HSS, XMSS-MT (current); ML-DSA (current); SLH-DSA (planned)",
+    "authoritative_source_url": "Not stated (Source text is from Utimaco_SecurityServer.html but no specific URL provided in text)",
+    "source_documents": [
+      {
+        "filename": "Utimaco_SecurityServer.html",
+        "url": "https://csrc.nist.gov/projects/cryptographic-algorithm-validation-program/details?product=19133",
+        "label": "primary"
+      }
+    ]
+  }
+]

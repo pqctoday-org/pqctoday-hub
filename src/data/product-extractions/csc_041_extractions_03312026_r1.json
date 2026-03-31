@@ -1,0 +1,680 @@
+[
+  {
+    "platform_name": "EVERTRUST HORIZON",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "EVERTRUST HORIZON (also referred to as Evertrust CLM)",
+    "product_brief": "Automates Certificate Lifecycle Management, seamlessly integrating with corporate and cloud environments for issuance, renewal, and revocation.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "The product is described as \"Crypto Agile\" to adapt to an evolving cryptographic world and prepare for disruption. A whitepaper titled \"Preparing for Post-Quantum Migration\" (May 2025) indicates the company provides guidance on preparing for the quantum computing era, but specific PQC algorithms or production implementation details are not stated in the text.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions support for \"weak algorithms\" detection and standards like NIST/ANSSI, but does not list specific current primitives like ECDSA or RSA).",
+    "key_management_model": "Sovereign model where the customer keeps keys and control; integrates with HSMs; supports open protocols. Specific hierarchy or escrow details are not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Fully distributed architecture with High Availability mechanisms; SaaS, on-premises, or hybrid deployment options; agent-based (local scanning) and agentless (network scanning).",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (Subject to license terms and conditions)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Not mentioned in text; mentions NIST standards for quality scoring but not FIPS validation status).",
+    "primary_platforms": "AWS, Azure, Google Cloud, on-premises, hybrid environments; supports servers, mobiles, workstations, IoT devices.",
+    "target_industries": "Enterprise, Government (public organizations), Aviation (mentioned in testimonial), general corporate sectors.",
+    "regulatory_status": "ISO 27001 certified; member of Hexatrust and PKI Consortium; compliant with GDPR, SOX, HIPAA.",
+    "pqc_roadmap_details": "Company offers a whitepaper on \"Preparing for Post-Quantum Migration\" (May 2025) and positions the product as \"Crypto Agile\" to anticipate disruption, but no specific algorithm choices or migration timelines are explicitly stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text contains navigation links but no explicit base URL).",
+    "source_documents": [
+      {
+        "filename": "EVERTRUST_HORIZON.html",
+        "url": "https://evertrust.io/horizon/",
+        "label": "primary"
+      },
+      {
+        "filename": "EVERTRUST_HORIZON_doc1.html",
+        "url": "https://evertrust.io/whitepapers/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "EVERTRUST_HORIZON_doc2.pdf",
+        "url": "https://evertrust.io/files/Datasheets/fr-datasheet-clm.pdf",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "MTG AG CLM",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "MTG Certificate Lifecycle Manager (MTG CLM) / MTG Public Key Infrastructure Platform – MTG CARA",
+    "product_brief": "A PKI platform providing certificate lifecycle management, key management, and high-availability architecture for enterprise security.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports MLDSA and SLHDSA algorithms. Both are explicitly labeled as \"PQC, experimental\" in the Supported Cryptographic Algorithms section. No production status is stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, EC, EdDSA, MLDSA, SLHDSA",
+    "key_management_model": "HSM-backed (supports Securosys, Nitrokey, nShield, Cloud Based HSM); utilizes clustered HSMs connected via PKCS#11; supports BYOK.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based; supports Single Location (Hot-Standby), Two Location (Cold-Standby), and Three Location architectures using VMs, Galera Cluster (MariaDB), and Keepalived/VRRP.",
+    "infrastructure_layer": "Security Stack, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"MTG AG\" and lack of open source license mention)",
+    "latest_version": "6.10.0 (Certificate Lifecycle Manager), 3.13.0 (Key Management System)",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Linux Package, Docker Compose, Kubernetes; integrates with Windows Active Directory, Microsoft Intune, Workspace ONE, Keycloak.",
+    "target_industries": "Enterprise (implied by \"MTG Enterprise Resource Security\" and AD/Intune integrations)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "MLDSA and SLHDSA are listed as experimental; no specific timeline or migration plan details provided beyond current support status.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, EC, EdDSA, MLDSA (experimental), SLHDSA (experimental)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "MTG_AG_CLM.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/comp-reference.html",
+        "label": "primary"
+      },
+      {
+        "filename": "MTG_AG_CLM_doc1.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/admin/ha-single-location.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "MTG_AG_CLM_doc2.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/admin/ha-two-location.html",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "essendi xc",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "essendi xc",
+    "product_brief": "A tool for automatic and simple management of digital certificates to prevent disruptions from expired or incorrectly issued certificates.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "The product offers \"essendi crypto solutions\" enabling end-to-end cryptography management including \"post-quantum readiness.\" It supports discovery, lifecycle management, and future-proofing against quantum attacks. Specific algorithms or implementation details are not stated; the focus is on readiness and monitoring vulnerabilities.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X.509, TLS/SSL (Specific algorithms like ECDSA or RSA not explicitly listed in text)",
+    "key_management_model": "Supports integration with Securosys HSMs for secure management; supports key lifecycle (generation, distribution, usage, storage, renewal, deletion).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized platform integrating into existing complex infrastructures; supports agent-based or connector-based installation in target systems.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Manufacturer with own product)",
+    "latest_version": "3.1",
+    "release_date": "2026-03-19",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Microsoft world (Microsoft Enrollment Adapter, Microsoft Intune Adapter), IoT devices, servers, target systems.",
+    "target_industries": "Financial services, industrial sector, commercial sector, listed corporations.",
+    "regulatory_status": "ISO 27001 certified; supports DORA compliance requirements.",
+    "pqc_roadmap_details": "Focus on \"post-quantum readiness\" and continuous monitoring of vulnerabilities; no specific algorithm choices or migration timelines stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions digital signatures generally but not specific schemes)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "essendi_xc.html",
+        "url": "https://xc.essendi.de/en/",
+        "label": "primary"
+      },
+      {
+        "filename": "essendi_xc_doc1.html",
+        "url": "https://www.essendi.de/en/whitepapers/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "Keyfactor Command",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Keyfactor Command",
+    "product_brief": "Platform that discovers, protects, and automates every certificate across any CA, cloud, and machine.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports discovery of post-quantum (PQ) and hybrid certificates via real-time visibility. Offers a \"PQC Lab\" sandbox for quantum readiness and resources. Mentions \"Quantum-ready algorithms\" and Key Encapsulation Mechanisms (KEMs) in educational content, but specific algorithm names are not listed in the product feature text.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions \"post-quantum cryptography\", \"hybrid certificates\", and \"Key Encapsulation Mechanisms\" generally, but does not list specific primitives like ECDSA, Ed25519, or specific PQC algorithms).",
+    "key_management_model": "Supports on-device key generation and integrations to popular HSMs and key vaults. Mentions \"four-eye / dual-person control\" for HSMs.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized governance with modular orchestrators; supports agent-based or agentless discovery; integrates with HSMs and key vaults.",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial / Open Source (Community editions available)",
+    "license": "Not stated (Text mentions \"Commercial\" for Enterprise editions and \"Open Source\" for community editions of EJBCA, SignServer, and Bouncy Castle APIs, but no specific license names like Apache-2.0 are provided).",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Partial (Bouncy Castle APIs are described as \"FIPS-Certified\"; Keyfactor Command mentions HSMs in FIPS mode but does not explicitly state the platform itself is FIPS validated).",
+    "primary_platforms": "On-premises, Cloud (Azure), Kubernetes (Helm Charts), SaaS.",
+    "target_industries": "Financial Services, Telecom, Automotive, Medical, Industrial IoT, Consumer IoT, Software & IT.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Offers a \"PQC Lab\" sandbox and resources for quantum readiness; mentions \"Achieve Crypto-Agility\" as a use case; no specific timeline or algorithm migration schedule provided.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions \"Secure code signing\" and \"digital signing engine\" generally, but does not list specific signature algorithms).",
+    "authoritative_source_url": "Not stated (Source text contains navigation links but no explicit base URL string).",
+    "source_documents": [
+      {
+        "filename": "Keyfactor_Command.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "primary"
+      },
+      {
+        "filename": "Keyfactor_Command_doc1.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Keyfactor_Command_doc2.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Keyfactor_Command_doc3.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Venafi TLS Protect",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Venafi TLS Protect (now part of CyberArk Machine Identity Security / Certificate Manager)",
+    "product_brief": "Automation platform for certificate lifecycle management, enterprise PKI, and machine identity security.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or readiness status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions TLS/SSL certificates generally but does not list specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Not stated (Text mentions \"Zero Touch PKI\" and automation but does not describe key hierarchy, HSM usage, or escrow).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Text mentions SaaS and Self-Hosted options for Secrets Manager, but specific architecture for TLS Protect is not detailed beyond \"automation\").",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"CyberArk Software Ltd. All rights reserved\" and subscription model)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cloud-native, on-premises, third-party applications (General deployment targets mentioned); Kubernetes (specifically for Certificate Manager for Kubernetes).",
+    "target_industries": "Automotive, Banking, Critical Infrastructure, Financial Services, Government, Healthcare, Insurance, Manufacturing, Managed Service Providers.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text contains navigation links but no specific product documentation URL).",
+    "source_documents": [
+      {
+        "filename": "Venafi_TLS_Protect.html",
+        "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+        "label": "primary"
+      },
+      {
+        "filename": "Venafi_TLS_Protect_doc2.html",
+        "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "AppViewX CERT+",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "AVX CLM / AVX ONE Platform",
+    "product_brief": "The most advanced SaaS certificate lifecycle management (CLM) platform for enterprise PKI, IAM, security, DevOps, cloud, and application teams.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Offers AVX ONE PQC Assessment Tool for crypto risk assessment and CBOM generation; supports quantum-ready PKIaaS issuing FIPS 203, FIPS 204, FIPS 205, and upcoming FIPS 206 (FALCON) algorithms; enables crypto-agility for rapid transition to PQC.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "FIPS 203, FIPS 204, FIPS 205, FALCON (FIPS 206)",
+    "key_management_model": "Private keys safeguarded in FIPS 140-2 certified HSMs; centralized control plane for enterprise-wide certificate lifecycle management.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS offering, on-premises deployment, private cloud deployment; centralized control plane (CryptoMesh).",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "2025-04-23",
+    "fips_validated": "Yes (FIPS 140-2 certified HSMs mentioned for code signing; FIPS 203, 204, 205, 206 algorithms supported)",
+    "primary_platforms": "Hybrid multi-cloud environments, Kubernetes, containers, on-premises, private cloud, SaaS.",
+    "target_industries": "Enterprise, Healthcare (PacificSource), Finance (Rabobank), Government (Australian Bureau of Statistics).",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Aligns with NIST guidance for transition by 2030; supports FIPS 203, 204, 205, and upcoming FALCON (FIPS 206); provides assessment tools and quantum-ready PKIaaS.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "FIPS 203, FIPS 204, FIPS 205, FALCON (FIPS 206)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "AppViewX_CERT__doc1.html",
+        "url": "https://www.appviewx.com/post-quantum-readiness/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "AppViewX_CERT__doc2.html",
+        "url": "https://www.appviewx.com/post-quantum-readiness/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "EJBCA",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "EJBCA",
+    "product_brief": "Open-source public key infrastructure (PKI) and certificate authority (CA) software covering full certificate lifecycle.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports all finalist NIST PQC algorithms. Specifically supports Dilithium, FALCON, and SPHINCS+ for certificate issuance and signing. Enables inventory of keys/certificates/algorithms including Dilithium certificates. Allows creation of post-quantum CAs and code signing with PQC certificates. Available in EJBCA 8.0 and SignServer 6.0.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "ECDSA, EdDSA, RSA, Dilithium (ML-DSA), FALCON, SPHINCS+ (SLH-DSA)",
+    "key_management_model": "HSM-backed (supports generic PKCS#11, AWS CloudHSM, Azure Key Vault, Thales Luna, Utimaco, etc.), supports remote authenticators and crypto tokens.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized CA/RA/VA architecture; supports distributed RA/VAs, High Availability, Clustering, Container-based (Docker/Helm), On-premises or Cloud deployment.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source/Commercial",
+    "license": "LGPL-2.1 (Community Edition); Commercial License (Enterprise Edition)",
+    "latest_version": "9.5.1",
+    "release_date": "Not stated",
+    "fips_validated": "No mention of specific FIPS validation status for the software itself; mentions support for FIPS 203, 204, 205 algorithms in draft format.",
+    "primary_platforms": "Linux, Windows (runs on JVM/OpenJDK); Docker, Kubernetes (Helm)",
+    "target_industries": "Enterprise, Government (mentions government recommendations), IoT (Matter CAs), Healthcare (EAC/Passport), Automotive (C-ITS)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Supports NIST PQC finalists (Dilithium, FALCON, SPHINCS+). Mentions transition to PQC will take years and planning is needed now. Supports inventory and migration automation for PQC.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ECDSA, EdDSA, RSA, Dilithium, FALCON, SPHINCS+",
+    "authoritative_source_url": "https://www.ejbca.org/",
+    "source_documents": [
+      {
+        "filename": "EJBCA_repo.md",
+        "url": "https://github.com/Keyfactor/ejbca-ce",
+        "label": "repo"
+      },
+      {
+        "filename": "EJBCA_doc1.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "EJBCA_doc2.html",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "EJBCA_doc3.html",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "EJBCA_doc4.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "EJBCA_doc5.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "DigiCert Trust Lifecycle Manager",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "DigiCert Trust Lifecycle Manager",
+    "product_brief": "Platform to issue and manage private post-quantum cryptography (PQC) certificates using ML-DSA or SLH-DSA algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports issuing and managing (revoke, suspend/resume, escrow/recover) private PQC certificates using ML-DSA or SLH-DSA algorithms. Includes network scans for discovery. Does not currently support Falcon or Composite PQC certificates as they are experimental; testing available via DigiCert LABS.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-DSA, SLH-DSA",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "2025-08-26",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Falcon and Composite PQC certificates are under active development and considered experimental; testing available via DigiCert LABS.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, SLH-DSA (Falcon and Composite are experimental/planned)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "DigiCert_Trust_Lifecycle_Manager.html",
+        "url": "https://docs.digicert.com/en/trust-lifecycle-manager/enroll-and-manage-certificates/post-quantum-cryptography-pqc.html",
+        "label": "primary"
+      },
+      {
+        "filename": "DigiCert_Trust_Lifecycle_Manager_doc1.html",
+        "url": "https://docs.digicert.com/en/trust-lifecycle-manager/enroll-and-manage-certificates/post-quantum-cryptography-pqc.html",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "DigiCert CertCentral",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "DigiCert CertCentral",
+    "product_brief": "A certificate lifecycle management platform offering cryptographic agility and automation tools.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "The document states DigiCert supports the journey with \"cryptographic agility, lifecycle automation, and developer tools.\" It mentions industry leaders are using PQC in production and that DigiCert is active in NIST and European ecosystems. Specific algorithms mentioned for future adoption include ML-KEM, ML-DSA, and SLH-DSA. The text notes \"Early enterprise pilots\" and \"PQC Labs adoption\" are expected between 2025-2026.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, ECC (mentioned as current vulnerable algorithms); ML-KEM, ML-DSA, SLH-DSA (mentioned as NIST-standardized PQC algorithms).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud (Certificate Lifecycle Management)",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Not stated",
+    "target_industries": "Enterprise, Government, Finance, Healthcare, Critical Infrastructure",
+    "regulatory_status": "Not stated (Document mentions regulatory requirements like CNSA 2.0, CRA, DORA that the product helps address, but does not state specific licenses or charters held by the product).",
+    "pqc_roadmap_details": "Aligns with NIST standards finalized in 2024 (ML-KEM, ML-DSA, SLH-DSA). Mentions CAB Forum/IETF drafts for PQC certificates and TLS authentication expected 2024-2025. Early enterprise pilots and hybrid certificate discussions expected 2025-2026. Full CNSA 2.0 compliance deadline is 2030.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Current: RSA, ECC. Planned/Supported: ML-DSA, SLH-DSA.",
+    "authoritative_source_url": "Not stated (Source text contains an error message and a PDF title, but no valid product URL).",
+    "source_documents": [
+      {
+        "filename": "DigiCert_CertCentral.html",
+        "url": "https://www.digicert.com/certcentral/",
+        "label": "primary"
+      },
+      {
+        "filename": "DigiCert_CertCentral_doc1.pdf",
+        "url": "https://www.digicert.com/certcentral/",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "DigiCert ONE",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "DigiCert ONE",
+    "product_brief": "A cloud-based certificate lifecycle management platform offering cryptographic agility and PQC migration support.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports NIST-standardized post-quantum algorithms including ML-KEM (encryption), ML-DSA (signatures), and SLH-DSA (long-lived use cases). Offers cryptographic agility, lifecycle automation, and developer tools. Industry leaders are using PQC in production via DigiCert.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "RSA, ECC, ML-KEM, ML-DSA, SLH-DSA",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud (SaaS/Managed service implied by \"Cloud KMS\" context and \"DigiCert ONE\" platform nature)",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cloud (AWS, Azure, GCP not explicitly listed in text, only \"Cloud\" category mentioned)",
+    "target_industries": "Enterprise, Government, Finance, Healthcare, Critical Infrastructure",
+    "regulatory_status": "Aligns with CNSA 2.0, EU CRA, DORA; supports U.S. Executive actions on cryptographic inventory.",
+    "pqc_roadmap_details": "NIST finalized standards in 2024 (ML-KEM, ML-DSA, SLH-DSA). Migration window estimated at 3-4 years post-CRQC arrival. CNSA 2.0 mandates adoption by 2030. Early enterprise pilots and hybrid certificate discussions expected 2025-2026.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Current: RSA, ECC; Planned/Supported: ML-DSA, SLH-DSA",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "DigiCert_ONE.html",
+        "url": "https://www.digicert.com/digicert-one",
+        "label": "primary"
+      },
+      {
+        "filename": "DigiCert_ONE_doc1.pdf",
+        "url": "https://www.digicert.com/digicert-one",
+        "label": "doc-link-1"
+      }
+    ]
+  },
+  {
+    "platform_name": "GlobalSign Atlas CLM",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "GlobalSign Atlas CLM (Atlas - Digital Identity Platform)",
+    "product_brief": "A high-availability, SaaS-based Certificate Authority platform for automated certificate management and signing workflows.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "The document lists \"Post Quantum Computing\" as a menu item under Solutions but provides no details on implementation status, algorithms used, maturity level, or specific capabilities within the Atlas platform text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"key support\" and \"multiple protocols\" generally but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Not stated (Text mentions Atlas eliminates the need for in-house CAs and handles key management tasks, but does not specify the underlying architecture such as HSM-backed, MPC, or cloud KMS integration details).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS-based platform; Cloud Certificate Authority.",
+    "infrastructure_layer": "Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Commercial\" nature and purchase options; specific license name not stated)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "SaaS-based platform; supports integration with AD, MDM, Kubernetes (via cert-manager), ServiceNow, HashiCorp Vault.",
+    "target_industries": "Finance and Insurance, Government, Health and Dental, Education, Legal and Real Estate, Energy, IoT innovators.",
+    "regulatory_status": "Not stated (Text mentions compliance with regulatory obligations generally but lists no specific licenses or charters).",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text contains navigation links but no explicit authoritative source URL for the product page itself).",
+    "source_documents": [
+      {
+        "filename": "GlobalSign_Atlas_CLM.html",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "primary"
+      },
+      {
+        "filename": "GlobalSign_Atlas_CLM_doc1.pdf",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "GlobalSign_Atlas_CLM_doc2.html",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "GlobalSign_Atlas_CLM_doc3.pdf",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "GlobalSign_Atlas_CLM_doc4.html",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "GlobalSign_Atlas_CLM_doc5.pdf",
+        "url": "https://www.globalsign.com/en/atlas",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "Sectigo Certificate Manager (SCM)",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Sectigo Certificate Manager (SCM)",
+    "product_brief": "CA-agnostic automation platform to discover, manage, and automate digital certificates across hybrid, multi-cloud, and legacy systems.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Offers a \"Quantum Safe Certificate Toolkit\" described as a demo/POC solution for enterprises to evaluate quantum safe solutions. Mentions \"Post-quantum cryptography (PQC)\" and \"Crypto agility\" in resource tags, but no specific production algorithms or full implementation details are stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "SaaS (Cloud-based Certificate Lifecycle Management)",
+    "infrastructure_layer": "Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-02 (Date of \"Sectigo Certificate Integration for Dynatrace\" datasheet)",
+    "fips_validated": "No",
+    "primary_platforms": "Hybrid, multi-cloud, and legacy systems; integrates with ServiceNow, Dynatrace, WHMCS.",
+    "target_industries": "Enterprise, smaller organizations",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Mentions a \"47-day Toolkit\" for crypto agility readiness and a \"Quantum PKI Toolkit Demo,\" but no specific migration timeline or algorithm choices are detailed.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Sectigo_Certificate_Manager__SCM_.html",
+        "url": "https://www.sectigo.com/enterprise-solutions",
+        "label": "primary"
+      },
+      {
+        "filename": "Sectigo_Certificate_Manager__SCM__doc1.html",
+        "url": "https://www.sectigo.com/enterprise-solutions",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Sectigo_Certificate_Manager__SCM__doc2.html",
+        "url": "https://www.sectigo.com/enterprise-solutions",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Sectigo Certificate Manager",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Sectigo Certificate Manager",
+    "product_brief": "Not stated in the provided text.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated in the provided text.",
+    "key_management_model": "Not stated in the provided text.",
+    "supported_blockchains": "Not stated in the provided text.",
+    "architecture_type": "Not stated in the provided text.",
+    "infrastructure_layer": "Security Stack (as per user prompt context, not explicitly defined in text)",
+    "license_type": "Unknown",
+    "license": "Not stated in the provided text.",
+    "latest_version": "Not stated in the provided text.",
+    "release_date": "Not stated in the provided text.",
+    "fips_validated": "Not stated in the provided text.",
+    "primary_platforms": "Not stated in the provided text.",
+    "target_industries": "Not stated in the provided text.",
+    "regulatory_status": "Not stated in the provided text.",
+    "pqc_roadmap_details": "Not stated in the provided text.",
+    "consensus_mechanism": "Not stated in the provided text.",
+    "signature_schemes": "Not stated in the provided text.",
+    "authoritative_source_url": "sectigo.com (mentioned in cookie domain list)",
+    "source_documents": [
+      {
+        "filename": "Sectigo_Certificate_Manager.html",
+        "url": "https://sectigo.com/post-quantum-cryptography",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "EVERTRUST HORIZON",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "EVERTRUST HORIZON (also referred to as Evertrust CLM)",
+    "product_brief": "Automates Certificate Lifecycle Management, seamlessly integrating with corporate and cloud environments for issuance, renewal, and revocation.",
+    "pqc_support": "Planned (with timeline)",
+    "pqc_capability_description": "The product is described as \"Crypto Agile\" to adapt to an evolving cryptographic world and prepare for disruption. A whitepaper titled \"Preparing for Post-Quantum Migration\" (May 2025) indicates the company provides guidance on preparing for the quantum computing era, but specific PQC algorithms or production implementation details are not stated in the text.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions support for \"weak algorithms\" detection and standards like NIST/ANSSI, but does not list specific current primitives like ECDSA or RSA).",
+    "key_management_model": "Sovereign model where the customer keeps keys and control; integrates with HSMs; supports open protocols. Specific hierarchy or escrow details are not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Fully distributed architecture with High Availability mechanisms; SaaS, on-premises, or hybrid deployment options; agent-based (local scanning) and agentless (network scanning).",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial",
+    "license": "Proprietary (Subject to license terms and conditions)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Not mentioned in text; mentions NIST standards for quality scoring but not FIPS validation status).",
+    "primary_platforms": "AWS, Azure, Google Cloud, on-premises, hybrid environments; supports servers, mobiles, workstations, IoT devices.",
+    "target_industries": "Enterprise, Government (public organizations), Aviation (mentioned in testimonial), general corporate sectors.",
+    "regulatory_status": "ISO 27001 certified; member of Hexatrust and PKI Consortium; compliant with GDPR, SOX, HIPAA.",
+    "pqc_roadmap_details": "Company offers a whitepaper on \"Preparing for Post-Quantum Migration\" (May 2025) and positions the product as \"Crypto Agile\" to anticipate disruption, but no specific algorithm choices or migration timelines are explicitly stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text contains navigation links but no explicit base URL).",
+    "source_documents": [
+      {
+        "filename": "EVERTRUST_HORIZON.html",
+        "url": "https://evertrust.io/horizon/",
+        "label": "primary"
+      },
+      {
+        "filename": "EVERTRUST_HORIZON_doc1.html",
+        "url": "https://evertrust.io/whitepapers/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "EVERTRUST_HORIZON_doc2.pdf",
+        "url": "https://evertrust.io/files/Datasheets/fr-datasheet-clm.pdf",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "MTG AG CLM",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "MTG Certificate Lifecycle Manager (MTG CLM) / MTG Public Key Infrastructure Platform – MTG CARA",
+    "product_brief": "A PKI platform providing certificate lifecycle management, key management, and high-availability architecture for enterprise security.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "Supports MLDSA and SLHDSA algorithms. Both are explicitly labeled as \"PQC, experimental\" in the Supported Cryptographic Algorithms section. No production status is stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "RSA, EC, EdDSA, MLDSA, SLHDSA",
+    "key_management_model": "HSM-backed (supports Securosys, Nitrokey, nShield, Cloud Based HSM); utilizes clustered HSMs connected via PKCS#11; supports BYOK.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based; supports Single Location (Hot-Standby), Two Location (Cold-Standby), and Three Location architectures using VMs, Galera Cluster (MariaDB), and Keepalived/VRRP.",
+    "infrastructure_layer": "Security Stack, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"MTG AG\" and lack of open source license mention)",
+    "latest_version": "6.10.0 (Certificate Lifecycle Manager), 3.13.0 (Key Management System)",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Linux Package, Docker Compose, Kubernetes; integrates with Windows Active Directory, Microsoft Intune, Workspace ONE, Keycloak.",
+    "target_industries": "Enterprise (implied by \"MTG Enterprise Resource Security\" and AD/Intune integrations)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "MLDSA and SLHDSA are listed as experimental; no specific timeline or migration plan details provided beyond current support status.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, EC, EdDSA, MLDSA (experimental), SLHDSA (experimental)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "MTG_AG_CLM.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/comp-reference.html",
+        "label": "primary"
+      },
+      {
+        "filename": "MTG_AG_CLM_doc1.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/admin/ha-single-location.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "MTG_AG_CLM_doc2.html",
+        "url": "https://docs.mtg.de/enterprise-resource-security/latest/admin/ha-two-location.html",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "essendi xc",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "essendi xc",
+    "product_brief": "A tool for automatic and simple management of digital certificates to prevent disruptions from expired or incorrectly issued certificates.",
+    "pqc_support": "Partial (with scope)",
+    "pqc_capability_description": "The product offers \"essendi crypto solutions\" enabling end-to-end cryptography management including \"post-quantum readiness.\" It supports discovery, lifecycle management, and future-proofing against quantum attacks. Specific algorithms or implementation details are not stated; the focus is on readiness and monitoring vulnerabilities.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "X.509, TLS/SSL (Specific algorithms like ECDSA or RSA not explicitly listed in text)",
+    "key_management_model": "Supports integration with Securosys HSMs for secure management; supports key lifecycle (generation, distribution, usage, storage, renewal, deletion).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized platform integrating into existing complex infrastructures; supports agent-based or connector-based installation in target systems.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Manufacturer with own product)",
+    "latest_version": "3.1",
+    "release_date": "2026-03-19",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Microsoft world (Microsoft Enrollment Adapter, Microsoft Intune Adapter), IoT devices, servers, target systems.",
+    "target_industries": "Financial services, industrial sector, commercial sector, listed corporations.",
+    "regulatory_status": "ISO 27001 certified; supports DORA compliance requirements.",
+    "pqc_roadmap_details": "Focus on \"post-quantum readiness\" and continuous monitoring of vulnerabilities; no specific algorithm choices or migration timelines stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions digital signatures generally but not specific schemes)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "essendi_xc.html",
+        "url": "https://xc.essendi.de/en/",
+        "label": "primary"
+      },
+      {
+        "filename": "essendi_xc_doc1.html",
+        "url": "https://www.essendi.de/en/whitepapers/",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]

@@ -1,0 +1,149 @@
+[
+  {
+    "platform_name": "Kubernetes",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "Kubernetes (K8s)",
+    "product_brief": "Open source system for managing containerized applications across multiple hosts.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Container orchestration system (managing containerized applications)",
+    "infrastructure_layer": "Cloud, Application",
+    "license_type": "Open Source",
+    "license": "Apache-2.0",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "Go environment, Docker environment",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/kubernetes/kubernetes",
+    "source_documents": [
+      {
+        "filename": "Kubernetes.html",
+        "url": "https://kubernetes.io",
+        "label": "primary"
+      },
+      {
+        "filename": "Kubernetes_repo.md",
+        "url": "https://github.com/kubernetes/kubernetes",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "Istio Service Mesh",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "Istio",
+    "product_brief": "An open source service mesh that layers transparently onto existing distributed applications to secure, connect, and monitor services.",
+    "pqc_support": "No mention",
+    "pqc_capability_description": "Not stated in the document.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"service-to-service authentication\" and \"certificate management\" but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Certificate-based auth (implied by \"certificate management\" in Istiod description); specific exchange protocols (e.g., IKE) not stated.",
+    "supported_blockchains": "Not applicable / Not stated",
+    "architecture_type": "Service mesh with sidecar proxies (Envoy) and lightweight data plane proxy (Ztunnel for Ambient mode).",
+    "infrastructure_layer": "Network, Cloud (Kubernetes, Nomad), Application (Microservices)",
+    "license_type": "Open Source",
+    "license": "Apache-2.0",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-06 (Last Updated timestamp in repository metadata)",
+    "fips_validated": "No mention",
+    "primary_platforms": "Kubernetes, Nomad",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable / Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/istio/istio",
+    "source_documents": [
+      {
+        "filename": "Istio_Service_Mesh_repo.md",
+        "url": "https://github.com/istio/istio",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "Linkerd",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "Linkerd",
+    "product_brief": "Ultralight, security-first service mesh for Kubernetes.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the document.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Service mesh (control plane and data plane proxy)",
+    "infrastructure_layer": "Network, Cloud",
+    "license_type": "Open Source",
+    "license": "Apache-2.0",
+    "latest_version": "2.x",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "Kubernetes",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/linkerd/linkerd2",
+    "source_documents": [
+      {
+        "filename": "Linkerd_repo.md",
+        "url": "https://github.com/linkerd/linkerd2",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "HashiCorp Consul Connect (Service Mesh)",
+    "category": "Container Orchestration & Service Mesh",
+    "product_name": "HashiCorp Consul Connect (Service Mesh)",
+    "product_brief": "A service networking solution enabling secure network connectivity, service discovery, and identity-based authorization across environments.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions mTLS encryption and a built-in certificate authority but does not mention Post-Quantum Cryptography algorithms or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "mTLS (Mutual TLS)",
+    "key_management_model": "Built-in certificate authority for enforcing mTLS; identity-based authorization using service intentions and ACLs.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Service mesh with sidecar proxies (Envoy), gateways, control plane, and data plane architecture.",
+    "infrastructure_layer": "Network, Security Stack, Cloud",
+    "license_type": "Open Source/Commercial",
+    "license": "Not stated (Document mentions Enterprise and Community editions but does not specify the license name).",
+    "latest_version": "v1.22.x (Connect service mesh), v1.21.x (Consul)",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Virtual machine (VM), Kubernetes, Docker, AWS ECS, AWS Lambda, Nomad, RedHat OpenShift",
+    "target_industries": "Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Raft protocol (for cluster consensus)",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "HashiCorp_Consul_Connect__Service_Mesh_.html",
+        "url": "https://www.consul.io/docs/connect",
+        "label": "primary"
+      },
+      {
+        "filename": "HashiCorp_Consul_Connect__Service_Mesh__doc1.html",
+        "url": "https://www.consul.io/docs/connect",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "HashiCorp_Consul_Connect__Service_Mesh__doc2.html",
+        "url": "https://www.consul.io/docs/connect",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

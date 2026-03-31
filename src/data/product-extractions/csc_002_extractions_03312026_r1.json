@@ -1,0 +1,88 @@
+[
+  {
+    "platform_name": "Eviden Trustway Proteccio NetHSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Trustway Proteccio NetHSM",
+    "product_brief": "Highly certified Hardware Security Module (HSM) offering secure cryptographic operations and PQC readiness.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The product is described as \"PQC ready\" and aligned with NIST recommendations to protect against \"store now, decrypt later\" threats. It supports specific post-quantum algorithms: ML-DSA (Signature), SLH-DSA (Signature), and ML-KEM (Key exchange). A virtual HSMaaS version is available for testing PQC live.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "RSA, AES, 3DES, ECDSA, MD5, SHA-1, SHA-256, SHA-384, SHA-512, ML-DSA, SLH-DSA, ML-KEM",
+    "key_management_model": "Hardware Security Module (HSM) with tamper-proof design, secure key generation, and key storage within a certified cryptographic core.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (2U 19in. Rack mount appliance)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No (Document mentions Common Criteria EAL4+, ANSSI QR Enhanced Qualification, NATO SECRET, eIDAS SOG-IS, but does not explicitly state FIPS 140-2 or 140-3 validation)",
+    "primary_platforms": "On-premise, Virtual, Cloud (via HSMaaS), Private Cloud",
+    "target_industries": "Government, Critical Infrastructure, Defense, Finance, Enterprise",
+    "regulatory_status": "Common Criteria EAL4+, ANSSI QR (Enhanced Qualification), NATO SECRET, eIDAS SOG-IS",
+    "pqc_roadmap_details": "Aligned with NIST recommendations; supports ML-DSA, SLH-DSA, and ML-KEM; offers free access to virtual HSMaaS for testing PQC.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA PSS, PKCS v1.5, ECDSA, ML-DSA, SLH-DSA",
+    "authoritative_source_url": "Not stated (Source text provided as HTML content without a specific URL string)",
+    "source_documents": [
+      {
+        "filename": "Eviden_Trustway_Proteccio_NetHSM.html",
+        "url": "https://eviden.com/solutions/digital-security/data-encryption/trustway-proteccio-nethsm/",
+        "label": "primary"
+      },
+      {
+        "filename": "Eviden_Trustway_Proteccio_NetHSM_doc1.html",
+        "url": "https://eviden.com/publications/#techpapers",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Eviden_Trustway_Proteccio_NetHSM_doc2.html",
+        "url": "https://eviden.com/publications/whitepapers/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Utimaco uTrust HSM",
+    "category": "Hardware Security Module (HSM) Software",
+    "product_name": "Utimaco uTrust HSM (specifically Quantum Protect application package for u.trust GP HSM Se-Series)",
+    "product_brief": "Application package extending u.trust GP HSM Se-Series with standardized Post Quantum Cryptography algorithms.",
+    "pqc_support": "Yes (with details: ML-KEM, ML-DSA, LMS, XMSS, HSS, XMSS-MT; SLH-DSA in progress)",
+    "pqc_capability_description": "Offers lattice-based algorithms ML-KEM (FIPS 203) and ML-DSA (FIPS 204), and stateful hash-based signature schemes LMS, HSS, XMSS, and XMSS-MT. SLH-DSA (FIPS 205) is in progress. Designed as a crypto-agile in-field firmware upgrade for u.trust GP HSM Se-Series without hardware exchange. Includes a free simulator for evaluation.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "ML-KEM, ML-DSA, LMS, HSS, XMSS, XMSS-MT, SLH-DSA (in progress)",
+    "key_management_model": "Hardware Security Module (HSM) backed; supports in-field firmware upgrade for algorithm addition.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "HSM-based (General Purpose HSM Se-Series with application package)",
+    "infrastructure_layer": "Hardware, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Commercial)",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Yes (ML-KEM FIPS 203, ML-DSA FIPS 204, SLH-DSA FIPS 205 in progress; General HSM mentions FIPS 140-2)",
+    "primary_platforms": "u.trust General Purpose HSM Se-Series",
+    "target_industries": "Finance, Enterprise, Government (implied by compliance standards like FedRAMP, DORA, NIS2)",
+    "regulatory_status": "Mentions Common Criteria (CC), FIPS 140-2, ISO 9001, ISO 14001, NITES VS-NfD, FISMA, FedRAMP, FICAM, eIDAS, GDPR, DORA, NIS2, PCI DSS.",
+    "pqc_roadmap_details": "SLH-DSA (FIPS 205) is on the roadmap/in progress; solution designed for crypto-agile in-field upgrades.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "ML-DSA, LMS, HSS, XMSS, XMSS-MT, SLH-DSA (in progress)",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Utimaco_uTrust_HSM.html",
+        "url": "https://utimaco.com/data-protection/gp-hsm/application-package/quantum-protect",
+        "label": "primary"
+      },
+      {
+        "filename": "Utimaco_uTrust_HSM_doc1.html",
+        "url": "https://utimaco.com/data-sheets/trust-service-datasheet",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Utimaco_uTrust_HSM_doc2.html",
+        "url": "https://utimaco.com/downloads/data-sheets/at1000-payment-hsm-datasheet",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

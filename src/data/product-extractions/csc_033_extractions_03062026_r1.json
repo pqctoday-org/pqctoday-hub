@@ -1,0 +1,270 @@
+[
+  {
+    "platform_name": "Imperva WAF",
+    "category": "Network Security Software",
+    "product_name": "Imperva Web Application Firewall (WAF)",
+    "product_brief": "Industry-leading application and API protection that stops attacks with near-zero false positives.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"Data encryption and cryptographic solutions\" generally but contains no specific references to Post-Quantum Cryptography, quantum-resistant algorithms, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions SSL/TLS management and data encryption generally, but does not list specific primitives like ECDSA, RSA, or AES).",
+    "key_management_model": "Enterprise SSL management with automated certificate renewal and domain validation; centralized observability. Specific key exchange protocols (e.g., IKE, PSK) are not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Cloud-based SaaS (Cloud WAF), Virtual Appliance/Gateway (WAF Gateway), Kubernetes-based hybrid (Elastic WAF).",
+    "infrastructure_layer": "Application, Security Stack, Cloud, Network",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "No",
+    "primary_platforms": "Public cloud, private cloud, hybrid cloud, on-premises environments; Kubernetes (for Elastic WAF).",
+    "target_industries": "Government, Healthcare, Financial Services, Telecom & ISPs, Retail.",
+    "regulatory_status": "Mentions compliance features for GDPR, PII, and PCI DSS 4.0; no specific regulatory licenses or charters stated.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text provided from Imperva_WAF.html and Imperva_WAF_doc2.html, but no specific URL string extracted).",
+    "source_documents": [
+      {
+        "filename": "Imperva_WAF.html",
+        "url": "https://www.imperva.com/products/web-application-firewall-waf/",
+        "label": "primary"
+      },
+      {
+        "filename": "Imperva_WAF_doc1.html",
+        "url": "https://www.imperva.com/products/web-application-firewall-waf/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Imperva_WAF_doc2.html",
+        "url": "https://www.imperva.com/products/web-application-firewall-waf/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cisco ASA (Adaptive Security Appliance)",
+    "category": "Network Security Software",
+    "product_name": "Cisco Secure Firewall ASA (Adaptive Security Appliance)",
+    "product_brief": "A network security firewall product available as a series of appliances and software releases.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document contains no mention of Post-Quantum Cryptography, quantum-resistant algorithms, or PQC migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"IPsec\", \"TLS\", \"SAML\", and \"ACME Protocol\" but does not list specific cryptographic primitives like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Not stated (Document mentions \"Certificate Enrollment with ACME Protocol\" and \"Tunnel Groups\" but does not describe the underlying key management architecture).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Firewall (Network Security Software)",
+    "infrastructure_layer": "Network, Hardware",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"Commercial\" status and Cisco ownership; specific license text not stated)",
+    "latest_version": "9.24(x) (Cisco Secure Firewall ASA), 7.24(x) (ASDM)",
+    "release_date": "2026-03-04",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cisco Secure Firewall ASA Series, Cisco ASA Device Package Software for ACI",
+    "target_industries": "Enterprise (Inferred from \"Cisco\" and general firewall context; specific industries not explicitly listed)",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Document text contains navigation links but no explicit authoritative source URL string)",
+    "source_documents": [
+      {
+        "filename": "Cisco_ASA__Adaptive_Security_Appliance_.html",
+        "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_ASA__Adaptive_Security_Appliance__doc1.html",
+        "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_ASA__Adaptive_Security_Appliance__doc2.html",
+        "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_ASA__Adaptive_Security_Appliance__doc3.html",
+        "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Cisco_ASA__Adaptive_Security_Appliance__doc4.pdf",
+        "url": "https://www.cisco.com/c/en/us/products/security/adaptive-security-appliance-asa-software/index.html",
+        "label": "doc-link-4"
+      }
+    ]
+  },
+  {
+    "platform_name": "Cisco Meraki MX (Cloud-Managed Firewall)",
+    "category": "Network Security Software",
+    "product_name": "Cisco Meraki MX (Cloud-Managed Firewall)",
+    "product_brief": "Enterprise security & SD-WAN appliance designed for distributed deployments requiring remote administration.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"IPsec\" and \"Secure overlay services\" but contains no explicit mention of Post-Quantum Cryptography (PQC), quantum-resistant algorithms, or quantum key distribution.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "IPsec (mentioned in context of Secure SD-WAN Overlay and VPN tunnels); TLS (implied by \"Secure overlay services\" and general web security context, but specific cipher suites not listed).",
+    "key_management_model": "Not stated. The document mentions \"IPsec VPN tunnels\" and \"AutoVPN architecture\" but does not specify key exchange mechanisms (e.g., IKEv2 details), pre-shared keys, or certificate-based authentication specifics.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Security & SD-WAN appliance; Virtual appliance (vMX); Cloud-managed security.",
+    "infrastructure_layer": "Network, Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Cisco Meraki\" and commercial trial/subscription model mentioned).",
+    "latest_version": "Not stated (Document mentions \"MX19.1\" in a guide title, but this refers to a specific guide version or legacy reference, not the current product firmware version).",
+    "release_date": "2023-09-20 (Date of the Miercom evaluation report; product release date not stated).",
+    "fips_validated": "Not stated",
+    "primary_platforms": "AWS, Azure, Alibaba Cloud, GCP, Cisco NFVIS (for vMX); On-premises hardware appliances.",
+    "target_industries": "Enterprise (Small branch to Data Center), SaaS application users.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://meraki.cisco.com",
+    "source_documents": [
+      {
+        "filename": "Cisco_Meraki_MX__Cloud-Managed_Firewall_.html",
+        "url": "https://meraki.cisco.com/products/security-sd-wan/",
+        "label": "primary"
+      },
+      {
+        "filename": "Cisco_Meraki_MX__Cloud-Managed_Firewall__doc1.html",
+        "url": "https://meraki.cisco.com/products/security-sd-wan/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Cisco_Meraki_MX__Cloud-Managed_Firewall__doc2.pdf",
+        "url": "https://meraki.cisco.com/products/security-sd-wan/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Cisco_Meraki_MX__Cloud-Managed_Firewall__doc3.pdf",
+        "url": "https://meraki.cisco.com/products/security-sd-wan/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Fortinet FortiGate (FortiOS)",
+    "category": "Network Security Software",
+    "product_name": "Fortinet FortiGate (FortiOS)",
+    "product_brief": "Next-Generation Firewall protecting data, assets, and users across hybrid environments with AI-powered security.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports Quantum key distribution (QKD) requiring FortiOS 7.4.2 and Post Quantum Cryptography (PQC) for IPsec VPNs requiring FortiOS 7.6.1. Includes NIST-approved algorithms and algorithm stacking to protect against quantum computing threats.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Supports Quantum key distribution (QKD); specific IKE key exchange or certificate-based auth details not explicitly detailed beyond general IPsec VPN support.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Next-Generation Firewall (NGFW), Hybrid Mesh Firewall, Virtual appliance, Cloud-native, Physical appliance.",
+    "infrastructure_layer": "Network, Security Stack, Hardware, Cloud",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "FortiOS 7.6.1",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Physical appliances (FortiGate 3800G Series), Virtualized environments, Cloud environments, Data Centers, Campus, Branch.",
+    "target_industries": "Enterprise, IT/OT, Manufacturing, Oil & Gas, Power Utilities, Health and Medical, Education, Financial Services, Retail, Hospitality, Service Providers.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "QKD support requires FortiOS 7.4.2; PQC for IPsec VPNs requires FortiOS 7.6.1; utilizes NIST-approved algorithms and algorithm stacking.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated",
+    "source_documents": [
+      {
+        "filename": "Fortinet_FortiGate__FortiOS_.html",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "primary"
+      },
+      {
+        "filename": "Fortinet_FortiGate__FortiOS__doc1.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Fortinet_FortiGate__FortiOS__doc2.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Fortinet_FortiGate__FortiOS__doc3.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "Fortinet_FortiGate__FortiOS__doc4.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "Fortinet_FortiGate__FortiOS__doc5.pdf",
+        "url": "https://www.fortinet.com/content/dam/fortinet/assets/solution-brief/sb-fortios-quantum-safe.pdf",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "pfSense Community Edition",
+    "category": "Network Security Software",
+    "product_name": "pfSense Community Edition",
+    "product_brief": "A free network firewall distribution based on FreeBSD with a custom kernel and third-party packages.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Network firewall distribution based on FreeBSD with a custom kernel.",
+    "infrastructure_layer": "Network, Hardware",
+    "license_type": "Open Source/Commercial",
+    "license": "Apache-2.0",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "FreeBSD operating system",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://pfsense.org/",
+    "source_documents": [
+      {
+        "filename": "pfSense_Community_Edition_repo.md",
+        "url": "https://github.com/pfsense/pfsense",
+        "label": "repo"
+      }
+    ]
+  },
+  {
+    "platform_name": "OPNsense",
+    "category": "Network Security Software",
+    "product_name": "OPNsense",
+    "product_brief": "Open source firewall project providing GUI, API, and systems backend for network security.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Virtual appliance / Network security software (GUI and system management)",
+    "infrastructure_layer": "Network, Security Stack",
+    "license_type": "Open Source",
+    "license": "BSD-2-Clause",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-06",
+    "fips_validated": "No",
+    "primary_platforms": "FreeBSD (implied by \"bsd\" topic and \"FreeBSD compatible package/ports origin\")",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/opnsense/core",
+    "source_documents": [
+      {
+        "filename": "OPNsense_repo.md",
+        "url": "https://github.com/opnsense/core",
+        "label": "repo"
+      }
+    ]
+  }
+]

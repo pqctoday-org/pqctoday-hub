@@ -1,0 +1,45 @@
+[
+  {
+    "platform_name": "PQ Code Package",
+    "category": "Post-Quantum Cryptography Libraries",
+    "product_name": "PQ Code Package",
+    "product_brief": "A collection of open source projects building high-assurance software implementations of standards-track post-quantum cryptography algorithms.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The project builds high-assurance implementations of standards-track PQC algorithms, specifically ML-KEM (FIPS 203) and ML-DSA (FIPS 204). It includes C90, Assembly, and Rust implementations optimized for various environments including embedded microcontrollers. Some code is formally verified for panic freedom and correctness.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "ML-KEM, ML-DSA, SLH-DSA (inferred from repository name slhdsa-c)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source",
+    "license": "Apache-2.0, CC-BY-4.0 (varies by repository)",
+    "latest_version": "Unknown",
+    "release_date": "2026-03-30 (based on latest repository update date mentioned)",
+    "fips_validated": "No mention of validation status; implementations target FIPS 203 and FIPS 204 standards.",
+    "primary_platforms": "C90, Assembly, Rust, Embedded microcontrollers, AVX2 optimized environments",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Full AVX2 support for rust-libcrux will be added over the coming months.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "ML-DSA (FIPS 204), SLH-DSA",
+    "authoritative_source_url": "https://pqca.org/",
+    "source_documents": [
+      {
+        "filename": "PQ_Code_Package.html",
+        "url": "https://github.com/pq-code-package",
+        "label": "primary"
+      },
+      {
+        "filename": "PQ_Code_Package_doc1.html",
+        "url": "https://docs.github.com/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "PQ_Code_Package_doc2.html",
+        "url": "https://github.com/resources/whitepapers",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

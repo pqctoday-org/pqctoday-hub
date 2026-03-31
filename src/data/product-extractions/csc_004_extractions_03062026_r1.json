@@ -1,0 +1,126 @@
+[
+  {
+    "platform_name": "Keyfactor EJBCA",
+    "category": "Public Key Infrastructure (PKI) Software",
+    "product_name": "EJBCA Community Edition (EJBCA CE) / Keyfactor EJBCA Enterprise Edition (EJBCA EE)",
+    "product_brief": "Open-source public key infrastructure (PKI) and certificate authority (CA) software covering the full certificate lifecycle.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or capabilities.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"cryptography\" and \"PKI\" generally but does not list specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Not stated (Text mentions \"key lifecycle management\" is covered by the solution but does not describe hierarchy, escrow, or protection mechanisms).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Platform-independent; runs on a JVM (e.g., OpenJDK); available as source code, Docker container, and Helm chart.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source/Commercial",
+    "license": "LGPL-2.1 (Community Edition); Commercial license required for Enterprise Edition.",
+    "latest_version": "Not stated",
+    "release_date": "2026-02-27 (Last Updated date of the repository)",
+    "fips_validated": "Not stated (Text mentions \"security certifications\" are available in Enterprise but does not specify FIPS).",
+    "primary_platforms": "Linux, Windows (runs on JVM/OpenJDK); Docker; Kubernetes (via Helm).",
+    "target_industries": "Not stated (Text mentions \"Enterprise-grade operations\" and \"production PKI deployments\").",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://github.com/Keyfactor/ejbca-ce (Repository); https://www.ejbca.org/ (Website)",
+    "source_documents": [
+      {
+        "filename": "Keyfactor_EJBCA_repo.md",
+        "url": "https://github.com/Keyfactor/ejbca-ce",
+        "label": "repo"
+      },
+      {
+        "filename": "Keyfactor_EJBCA_doc1.pdf",
+        "url": "https://www.keyfactor.com/blog/ejbca-post-quantum-cryptography/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Keyfactor_EJBCA_doc2.html",
+        "url": "https://www.keyfactor.com/blog/ejbca-post-quantum-cryptography/",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "Microsoft AD CS",
+    "category": "Public Key Infrastructure (PKI) Software",
+    "product_name": "Active Directory Certificate Services (AD CS)",
+    "product_brief": "Provides public key infrastructure (PKI) for cryptography, digital certificates and signature capabilities.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document mentions \"Disable weak cryptographic algorithms\" but does not explicitly state support for Post-Quantum Cryptography algorithms or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Document mentions \"weak cryptographic algorithms\" generally but does not list specific primitives like ECDSA, RSA, etc.)",
+    "key_management_model": "Key Storage Provider (KSP) mentioned for migrating Certification Authority keys; no details on hierarchy or escrow.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "On-premises infrastructure implied by \"Active Directory\" and \"Certification Authority role service\"; specific architecture type (centralized/distributed) not explicitly defined beyond PKI hierarchy.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "Not stated",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Windows (implied by \"Active Directory\" and \"Microsoft Edge\"), not explicitly listed as an OS requirement in the text.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Document mentions \"signature capabilities\" generally)",
+    "authoritative_source_url": "Not stated (Source filename provided: Microsoft_AD_CS.html, but no full URL in text)",
+    "source_documents": [
+      {
+        "filename": "Microsoft_AD_CS.html",
+        "url": "https://learn.microsoft.com/en-us/windows-server/identity/ad-cs/",
+        "label": "primary"
+      }
+    ]
+  },
+  {
+    "platform_name": "smallstep Certificate Authority",
+    "category": "Public Key Infrastructure (PKI) Software",
+    "product_name": "smallstep Certificate Authority (step-ca)",
+    "product_brief": "An online Certificate Authority for secure, automated X.509 and SSH certificate management.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or migration plans. It explicitly lists support for RSA, ECDSA, and EdDSA only.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "RSA, ECDSA, EdDSA",
+    "key_management_model": "Supports integrations with PKCS #11 HSMs, Google Cloud KMS, AWS KMS, and YubiKey PIV for signing key protection; designed for a two-tiered PKI with an offline Root CA and online Intermediate CA.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Online Certificate Authority (CA) server; supports centralized deployment or high availability via root federation; can operate as an intermediate CA or Registration Authority (RA).",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source/Commercial",
+    "license": "Apache-2.0 (for step-ca/open source); Commercial license available for hosted Smallstep authority and advanced features.",
+    "latest_version": "Not stated",
+    "release_date": "2026-03-06 (Repository last updated)",
+    "fips_validated": "No (Document states \"FIPS-compliant software\" is a feature of the commercial product, implying step-ca open source does not have it).",
+    "primary_platforms": "Linux, macOS, Windows (implied by browser/OS integrations), Kubernetes, Docker; Cloud platforms: AWS, GCP, Azure.",
+    "target_industries": "Enterprise, DevOps",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "RSA, ECDSA, EdDSA",
+    "authoritative_source_url": "https://github.com/smallstep/certificates",
+    "source_documents": [
+      {
+        "filename": "smallstep_Certificate_Authority.html",
+        "url": "https://smallstep.com/docs/step-ca/",
+        "label": "primary"
+      },
+      {
+        "filename": "smallstep_Certificate_Authority_repo.md",
+        "url": "https://github.com/smallstep/certificates",
+        "label": "repo"
+      },
+      {
+        "filename": "smallstep_Certificate_Authority_doc1.html",
+        "url": "https://smallstep.com/docs/step-ca/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "smallstep_Certificate_Authority_doc2.html",
+        "url": "https://smallstep.com/docs/step-ca/",
+        "label": "doc-link-2"
+      }
+    ]
+  }
+]

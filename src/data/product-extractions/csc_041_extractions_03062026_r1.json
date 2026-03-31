@@ -1,0 +1,184 @@
+[
+  {
+    "platform_name": "Keyfactor Command",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Keyfactor Command",
+    "product_brief": "Platform that discovers, protects, and automates every certificate across any CA, cloud, and machine.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Supports discovery of post-quantum (PQ) and hybrid certificates via real-time visibility. Offers a \"PQC Lab\" sandbox for quantum readiness and resources. Mentions \"Quantum-ready algorithms\" and Key Encapsulation Mechanisms (KEMs) in educational content, but specific algorithm names are not listed in the product feature text.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "Not stated (Text mentions \"hybrid certificates\", \"PQ certificates\", and \"Key Encapsulation Mechanisms\" generally, but does not list specific primitives like ECDSA, Ed25519, or specific PQC algorithms).",
+    "key_management_model": "On-device key generation; integrations to popular HSMs and key vaults. Mentions \"four-eye / dual-person control for protecting your keys on the HSM\".",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Centralized governance with modular orchestrators; supports SaaS, On-Premises (Self-hosted), Kubernetes (Helm Charts), and Hybrid (CLA as a Service + Managed PKI).",
+    "infrastructure_layer": "Security Stack, Cloud, Application",
+    "license_type": "Commercial / Open Source",
+    "license": "Not stated (Text mentions \"Community editions\" of EJBCA and SignServer are open source, but does not specify the license name like Apache-2.0; Keyfactor Command is commercial).",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Partial (Bouncy Castle APIs are described as \"FIPS-Certified\"; HSM FIPS mode is discussed in educational content, but no specific validation statement for Keyfactor Command itself).",
+    "primary_platforms": "On-premises data centers, Cloud (Azure mentioned for SaaS Lite), Kubernetes clusters.",
+    "target_industries": "Financial Services, Telecom, Automotive, Medical, Industrial IoT, Consumer IoT, Software & IT.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Offers \"PQC Lab\" sandbox and resources; focuses on \"Achieve Crypto-Agility\" and \"Quantum Readiness\"; specific timelines or algorithm migration schedules are not stated.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated (Text mentions \"Secure code signing\" and \"digital signing engine\" generally, but does not list specific signature algorithms).",
+    "authoritative_source_url": "Not stated (Source text is from HTML files, no explicit URL provided in the content).",
+    "source_documents": [
+      {
+        "filename": "Keyfactor_Command.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "primary"
+      },
+      {
+        "filename": "Keyfactor_Command_doc1.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "Keyfactor_Command_doc2.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "Keyfactor_Command_doc3.html",
+        "url": "https://www.keyfactor.com/products/command/",
+        "label": "doc-link-3"
+      }
+    ]
+  },
+  {
+    "platform_name": "Venafi TLS Protect",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "Venafi TLS Protect (now part of CyberArk Machine Identity Security / Certificate Manager)",
+    "product_brief": "Automation platform for certificate lifecycle management, enterprise PKI, and machine identity security.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, migration plans, or readiness status.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions TLS/SSL certificates generally but does not list specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Not stated (Text mentions \"Zero Touch PKI\" and automation but does not describe key hierarchy, HSM usage, or escrow).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated (Text mentions SaaS and Self-Hosted options for Secrets Manager, but specific architecture for TLS Protect is not detailed beyond \"automation\").",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Implied by \"CyberArk Software Ltd. All rights reserved\" and subscription model)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Not stated",
+    "primary_platforms": "Cloud-native, on-premises, third-party applications (General deployment targets mentioned); Kubernetes (specifically for Certificate Manager for Kubernetes).",
+    "target_industries": "Automotive, Banking, Critical Infrastructure, Financial Services, Government, Healthcare, Insurance, Manufacturing, Managed Service Providers.",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated (Text contains navigation links but no specific product documentation URL).",
+    "source_documents": [
+      {
+        "filename": "Venafi_TLS_Protect.html",
+        "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+        "label": "primary"
+      },
+      {
+        "filename": "Venafi_TLS_Protect_doc2.html",
+        "url": "https://docs.venafi.com/Docs/24.3/TopNav/Content/CodeSigning/t-codesigning-pqc.php",
+        "label": "doc-link-2"
+      }
+    ]
+  },
+  {
+    "platform_name": "EJBCA",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "EJBCA Community Edition (EJBCA CE) / EJBCA Enterprise Edition (EJBCA EE)",
+    "product_brief": "Open-source public key infrastructure (PKI) and certificate authority (CA) software covering the full certificate lifecycle.",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text. No mention of Post-Quantum Cryptography algorithms, implementation status, or migration plans.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (Text mentions \"cryptography\" and \"PKI\" generally but does not list specific algorithms like ECDSA, RSA, etc.)",
+    "key_management_model": "Not stated (Text mentions \"key lifecycle management\" is covered by the solution but does not describe hierarchy, escrow, or protection mechanisms).",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Platform-independent software running on a JVM; supports deployment from source, Docker containers, and Helm automation.",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Open Source/Commercial (Community Edition is Open Source; Enterprise Edition is Commercial)",
+    "license": "LGPL-2.1 (for Community Edition); Commercial license for Enterprise Edition",
+    "latest_version": "Not stated",
+    "release_date": "2026-02-27 (Last Updated date of the repository)",
+    "fips_validated": "No (Text states Enterprise offers \"security certifications\" but does not explicitly mention FIPS validation).",
+    "primary_platforms": "Linux, Windows (runs on JVM such as OpenJDK); Docker; Kubernetes (via Helm)",
+    "target_industries": "Not stated (Mentions \"Enterprise-grade operations\" and \"production PKI deployments\")",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable (Not a blockchain protocol)",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://www.ejbca.org/",
+    "source_documents": [
+      {
+        "filename": "EJBCA_repo.md",
+        "url": "https://github.com/Keyfactor/ejbca-ce",
+        "label": "repo"
+      },
+      {
+        "filename": "EJBCA_doc1.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-1"
+      },
+      {
+        "filename": "EJBCA_doc2.html",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-2"
+      },
+      {
+        "filename": "EJBCA_doc3.html",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-3"
+      },
+      {
+        "filename": "EJBCA_doc4.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-4"
+      },
+      {
+        "filename": "EJBCA_doc5.pdf",
+        "url": "https://github.com/primekey/ejbca-ce/releases/tag/EJBCA_9_1_0",
+        "label": "doc-link-5"
+      }
+    ]
+  },
+  {
+    "platform_name": "DigiCert Trust Lifecycle Manager",
+    "category": "Certificate Lifecycle Management",
+    "product_name": "DigiCert Trust Lifecycle Manager",
+    "product_brief": "Unknown",
+    "pqc_support": "Unknown",
+    "pqc_capability_description": "Not stated in the provided text.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Security Stack",
+    "license_type": "Unknown",
+    "license": "Unknown",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "Unknown",
+    "primary_platforms": "Unknown",
+    "target_industries": "Unknown",
+    "regulatory_status": "Unknown",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "DigiCert_Trust_Lifecycle_Manager.html (Note: The provided text indicates a request failure and does not contain a functional URL).",
+    "source_documents": [
+      {
+        "filename": "DigiCert_Trust_Lifecycle_Manager.html",
+        "url": "https://docs.digicert.com/en/trust-lifecycle-manager/enroll-and-manage-certificates/post-quantum-cryptography-pqc.html",
+        "label": "primary"
+      },
+      {
+        "filename": "DigiCert_Trust_Lifecycle_Manager_doc1.html",
+        "url": "https://docs.digicert.com/en/trust-lifecycle-manager/enroll-and-manage-certificates/post-quantum-cryptography-pqc.html",
+        "label": "doc-link-1"
+      }
+    ]
+  }
+]
