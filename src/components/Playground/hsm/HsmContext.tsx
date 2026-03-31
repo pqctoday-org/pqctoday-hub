@@ -23,6 +23,9 @@ export type EngineMode = 'software' | 'cpp' | 'rust' | 'dual'
 
 export type HsmKeyRole = 'public' | 'private' | 'secret'
 
+/** Semantic purpose of a key within a provisioning or crypto workflow */
+export type HsmKeyPurpose = 'attestation' | 'application' | 'tls' | 'kek' | 'general'
+
 export interface HsmKey {
   handle: number
   family: HsmFamily
@@ -35,6 +38,8 @@ export interface HsmKey {
   engine?: 'cpp' | 'rust'
   /** Wall-clock time when generated (for display) */
   generatedAt: string
+  /** Semantic role in a provisioning workflow (optional, defaults to 'general') */
+  purpose?: HsmKeyPurpose
 }
 
 export interface HsmContextValue {

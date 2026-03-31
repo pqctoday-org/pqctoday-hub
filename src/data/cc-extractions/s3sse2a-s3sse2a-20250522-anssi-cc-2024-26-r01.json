@@ -1,0 +1,11 @@
+{
+  "vendor": "Samsung Electronics Co., Ltd.",
+  "product_name": "S3SSE2A Version 1.1",
+  "pqc_algorithms": ["ML-DSA"],
+  "pqc_standard_refs": [],
+  "product_brief": "A smartcard integrated circuit with a cryptographic coprocessor, supporting post-quantum cryptography (ML-DSA) and classical algorithms like Triple-DES, AES, and SHA-3.",
+  "product_category": "Smart Card / Secure Element",
+  "assurance_level": null,
+  "classical_algorithms": ["Triple-DES", "AES", "SHA-3"],
+  "_source_pdf": "s3sse2a-s3sse2a-20250522-anssi-cc-2024-26-r01.pdf"
+}

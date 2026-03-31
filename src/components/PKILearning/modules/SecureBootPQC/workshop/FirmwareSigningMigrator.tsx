@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback, useRef } from 'react'
+import React, { useState, useCallback, useRef, useEffect } from 'react'
 import {
   FileCode,
   Key,
@@ -9,6 +9,10 @@ import {
   RotateCcw,
   Info,
   Loader2,
+  Upload,
+  Eye,
+  Download,
+  BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useHSM } from '@/hooks/useHSM'
@@ -20,11 +24,293 @@ import {
   hsm_digest,
   hsm_sign,
   hsm_verify,
+  hsm_generateRSAKeyPair,
+  hsm_rsaSign,
+  hsm_rsaVerify,
+  hsm_generateECKeyPair,
+  hsm_ecdsaSign,
+  hsm_ecdsaVerify,
+  hsm_generateSLHDSAKeyPair,
+  hsm_slhdsaSign,
+  hsm_slhdsaVerify,
+  hsm_getKeyAttributes,
   CKM_SHA256,
+  CKM_SHA256_RSA_PKCS,
+  CKM_SHA384_RSA_PKCS,
+  CKM_SHA512_RSA_PKCS,
+  CKM_ECDSA_SHA256,
+  CKM_ECDSA_SHA384,
+  CKM_ECDSA_SHA512,
+  CKP_SLH_DSA_SHA2_128S,
+  type KeyAttributeSet,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { KeyAttrModal } from '@/components/Playground/keystore/HsmKeyTable'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+type PqcAlgo = 'ML-DSA-44' | 'ML-DSA-65' | 'ML-DSA-87' | 'SLH-DSA-SHA2-128S'
+type ClassicalAlgo = 'RSA-2048' | 'RSA-3072' | 'ECDSA-P256' | 'ECDSA-P384'
+type HashAlgo = 'SHA-256' | 'SHA-384' | 'SHA-512'
+type WizardStep = 0 | 1 | 2 | 3
+
+// ---------------------------------------------------------------------------
+// Algorithm config lookup tables
+// ---------------------------------------------------------------------------
+
+const CLASSICAL_MECH: Record<ClassicalAlgo, Record<HashAlgo, number>> = {
+  'RSA-2048': {
+    'SHA-256': CKM_SHA256_RSA_PKCS,
+    'SHA-384': CKM_SHA384_RSA_PKCS,
+    'SHA-512': CKM_SHA512_RSA_PKCS,
+  },
+  'RSA-3072': {
+    'SHA-256': CKM_SHA256_RSA_PKCS,
+    'SHA-384': CKM_SHA384_RSA_PKCS,
+    'SHA-512': CKM_SHA512_RSA_PKCS,
+  },
+  'ECDSA-P256': {
+    'SHA-256': CKM_ECDSA_SHA256,
+    'SHA-384': CKM_ECDSA_SHA384,
+    'SHA-512': CKM_ECDSA_SHA512,
+  },
+  'ECDSA-P384': {
+    'SHA-256': CKM_ECDSA_SHA256,
+    'SHA-384': CKM_ECDSA_SHA384,
+    'SHA-512': CKM_ECDSA_SHA512,
+  },
+}
+
+const MLDSA_VARIANT: Record<string, number> = { 'ML-DSA-44': 44, 'ML-DSA-65': 65, 'ML-DSA-87': 87 }
+
+// Expected key sizes from FIPS 203/204/205
+const CLASSICAL_PUBKEY_BYTES: Record<ClassicalAlgo, number> = {
+  'RSA-2048': 256,
+  'RSA-3072': 384,
+  'ECDSA-P256': 65,
+  'ECDSA-P384': 97,
+}
+const CLASSICAL_PRIVKEY_BYTES: Record<ClassicalAlgo, number> = {
+  'RSA-2048': 1192,
+  'RSA-3072': 1700,
+  'ECDSA-P256': 32,
+  'ECDSA-P384': 48,
+}
+const MLDSA_PUBKEY_BYTES: Record<string, number> = {
+  'ML-DSA-44': 1312,
+  'ML-DSA-65': 1952,
+  'ML-DSA-87': 2592,
+}
+const MLDSA_PRIVKEY_BYTES: Record<string, number> = {
+  'ML-DSA-44': 2560,
+  'ML-DSA-65': 4032,
+  'ML-DSA-87': 4896,
+}
+const MLDSA_SIG_BYTES: Record<string, number> = {
+  'ML-DSA-44': 2420,
+  'ML-DSA-65': 3309,
+  'ML-DSA-87': 4627,
+}
+const MLDSA_NIST_LEVEL: Record<string, string> = {
+  'ML-DSA-44': 'NIST Level 2',
+  'ML-DSA-65': 'NIST Level 3',
+  'ML-DSA-87': 'NIST Level 5',
+}
+// SLH-DSA-SHA2-128S: pubkey=32B, privkey=64B, sig=7,856B
+const SLHDSA_PUBKEY_BYTES = 32
+const SLHDSA_PRIVKEY_BYTES = 64
+const SLHDSA_SIG_BYTES = 7856
+
+// CMS OIDs (RFC 9882, RFC 9814, RFC 5652)
+const OID_SIGNED_DATA = '1.2.840.113549.1.7.2'
+const OID_DATA = '1.2.840.113549.1.7.1'
+const OID_ML_DSA: Record<string, string> = {
+  'ML-DSA-44': '2.16.840.1.101.3.4.3.17',
+  'ML-DSA-65': '2.16.840.1.101.3.4.3.18',
+  'ML-DSA-87': '2.16.840.1.101.3.4.3.19',
+}
+const OID_SLH_DSA_SHA2_128S = '2.16.840.1.101.3.4.3.20'
+const OID_SHA: Record<HashAlgo, string> = {
+  'SHA-256': '2.16.840.1.101.3.4.2.1',
+  'SHA-384': '2.16.840.1.101.3.4.2.2',
+  'SHA-512': '2.16.840.1.101.3.4.2.3',
+}
+const OID_RSA_SHA: Record<HashAlgo, string> = {
+  'SHA-256': '1.2.840.113549.1.1.11', // sha256WithRSAEncryption
+  'SHA-384': '1.2.840.113549.1.1.12', // sha384WithRSAEncryption
+  'SHA-512': '1.2.840.113549.1.1.13', // sha512WithRSAEncryption
+}
+const OID_ECDSA_SHA: Record<HashAlgo, string> = {
+  'SHA-256': '1.2.840.10045.4.3.2',
+  'SHA-384': '1.2.840.10045.4.3.3',
+  'SHA-512': '1.2.840.10045.4.3.4',
+}
+
+// ---------------------------------------------------------------------------
+// CMS SignedData encoder (minimal, per RFC 5652, RFC 9882, RFC 9814)
+// Hand-rolled DER using @peculiar/asn1-schema + low-level helpers.
+// Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1.2).
+// ---------------------------------------------------------------------------
+
+function encodeDERLength(n: number): Uint8Array {
+  if (n < 0x80) return new Uint8Array([n])
+  if (n < 0x100) return new Uint8Array([0x81, n])
+  if (n < 0x10000) return new Uint8Array([0x82, (n >> 8) & 0xff, n & 0xff])
+  return new Uint8Array([0x83, (n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff])
+}
+
+function derSeq(items: Uint8Array[]): Uint8Array {
+  const body = concat(items)
+  const len = encodeDERLength(body.length)
+  return concat([new Uint8Array([0x30]), len, body])
+}
+
+function derSet(items: Uint8Array[]): Uint8Array {
+  const body = concat(items)
+  const len = encodeDERLength(body.length)
+  return concat([new Uint8Array([0x31]), len, body])
+}
+
+function derOctetString(data: Uint8Array): Uint8Array {
+  const len = encodeDERLength(data.length)
+  return concat([new Uint8Array([0x04]), len, data])
+}
+
+function derInteger(value: number): Uint8Array {
+  return new Uint8Array([0x02, 0x01, value])
+}
+
+function derContextExplicit(tag: number, content: Uint8Array): Uint8Array {
+  const len = encodeDERLength(content.length)
+  return concat([new Uint8Array([0xa0 | tag]), len, content])
+}
+
+function derOID(oidStr: string): Uint8Array {
+  // Encode OID string to DER bytes
+  const parts = oidStr.split('.').map(Number)
+  const values: number[] = [parts[0] * 40 + parts[1]]
+  for (let i = 2; i < parts.length; i++) {
+    let v = parts[i]
+    const bytes: number[] = []
+    bytes.push(v & 0x7f)
+    v >>= 7
+    while (v > 0) {
+      bytes.unshift((v & 0x7f) | 0x80)
+      v >>= 7
+    }
+    values.push(...bytes)
+  }
+  const body = new Uint8Array(values)
+  const len = encodeDERLength(body.length)
+  return concat([new Uint8Array([0x06]), len, body])
+}
+
+function derAlgId(oidStr: string): Uint8Array {
+  // AlgorithmIdentifier ::= SEQUENCE { algorithm OID }
+  // For PQC (ML-DSA, SLH-DSA): no parameters field per RFC 9882/9814
+  return derSeq([derOID(oidStr)])
+}
+
+function derAlgIdWithNull(oidStr: string): Uint8Array {
+  // AlgorithmIdentifier for classical algos: SEQUENCE { algorithm OID, parameters NULL }
+  return derSeq([derOID(oidStr), new Uint8Array([0x05, 0x00])])
+}
+
+function concat(arrays: Uint8Array[]): Uint8Array {
+  const total = arrays.reduce((s, a) => s + a.length, 0)
+  const result = new Uint8Array(total)
+  let offset = 0
+  for (const a of arrays) {
+    result.set(a, offset)
+    offset += a.length
+  }
+  return result
+}
+
+interface CmsInput {
+  sigAlgOid: string
+  digestAlgOid: string
+  isPqc: boolean // if true, omit NULL parameters from AlgIds
+  content: Uint8Array
+  sigBytes: Uint8Array
+  signerLabel: string
+}
+
+/**
+ * Build a minimal CMS SignedData DER blob (RFC 5652).
+ * Pure mode only — no pre-hash (RFC 9882 §3.1, RFC 9814 §1.2).
+ * Does not include a certificate — educational demo only.
+ */
+function buildCmsSignedData(input: CmsInput): Uint8Array {
+  const { sigAlgOid, digestAlgOid, isPqc, content, sigBytes } = input
+
+  // digestAlgorithm AlgorithmIdentifier
+  const digestAlgIdDer = isPqc ? derAlgId(digestAlgOid) : derAlgIdWithNull(digestAlgOid)
+
+  // signatureAlgorithm AlgorithmIdentifier
+  const sigAlgIdDer = isPqc ? derAlgId(sigAlgOid) : derAlgIdWithNull(sigAlgOid)
+
+  // EncapsulatedContentInfo ::= SEQUENCE { eContentType OID, eContent [0] EXPLICIT OCTET STRING }
+  const eContentDer = derContextExplicit(0, derOctetString(content))
+  const encapContentInfo = derSeq([derOID(OID_DATA), eContentDer])
+
+  // IssuerAndSerialNumber (minimal placeholder): SEQUENCE { SEQUENCE { SET { SEQUENCE { OID CN, UTF8 "demo" } } }, INTEGER 1 }
+  const cnOid = new Uint8Array([0x55, 0x04, 0x03]) // 2.5.4.3 CN
+  const cnOidDer = concat([new Uint8Array([0x06, cnOid.length]), cnOid])
+  const cnValDer = concat([new Uint8Array([0x0c, 0x04]), new TextEncoder().encode('demo')])
+  const atav = derSeq([cnOidDer, cnValDer])
+  const rdn = derSet([atav])
+  const issuerName = derSeq([rdn])
+  const serial = derInteger(1)
+  const issuerAndSerial = derSeq([issuerName, serial])
+
+  // SignerInfo ::= SEQUENCE { version, sid, digestAlgorithm, signatureAlgorithm, signature }
+  const signerInfo = derSeq([
+    derInteger(1), // version
+    issuerAndSerial, // sid: IssuerAndSerialNumber
+    digestAlgIdDer, // digestAlgorithm
+    sigAlgIdDer, // signatureAlgorithm
+    derOctetString(sigBytes), // signature OCTET STRING
+  ])
+
+  // SignedData ::= SEQUENCE { version, digestAlgorithms SET, encapContentInfo, signerInfos SET }
+  const signedData = derSeq([
+    derInteger(1), // version
+    derSet([digestAlgIdDer]), // digestAlgorithms
+    encapContentInfo, // encapContentInfo
+    derSet([signerInfo]), // signerInfos
+  ])
+
+  // ContentInfo ::= SEQUENCE { contentType OID, content [0] EXPLICIT SignedData }
+  const contentInfo = derSeq([derOID(OID_SIGNED_DATA), derContextExplicit(0, signedData)])
+
+  return contentInfo
+}
+
+// ---------------------------------------------------------------------------
+// Standards reference chips
+// ---------------------------------------------------------------------------
+
+const LibRef = ({ id, label }: { id: string; label: string }) => (
+  <a
+    href={`/library?ref=${id}`}
+    target="_blank"
+    rel="noopener noreferrer"
+    className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+  >
+    <BookOpen size={9} />
+    {label}
+  </a>
+)
+
+// ---------------------------------------------------------------------------
+// KAT specs
+// ---------------------------------------------------------------------------
 
 const SECBOOT_KAT_SPECS: KatTestSpec[] = [
   {
@@ -59,7 +345,9 @@ const SECBOOT_KAT_SPECS: KatTestSpec[] = [
   },
 ]
 
-type WizardStep = 0 | 1 | 2 | 3
+// ---------------------------------------------------------------------------
+// Mock data (used when Live HSM is off)
+// ---------------------------------------------------------------------------
 
 interface FirmwareManifest {
   firmwareName: string
@@ -70,42 +358,7 @@ interface FirmwareManifest {
   currentAlgorithm: string
   currentSignatureSize: number
   currentKeySize: number
-  components: FirmwareComponent[]
-}
-
-interface FirmwareComponent {
-  name: string
-  size: string
-  hash: string
-}
-
-interface GeneratedKey {
-  algorithm: string
-  publicKeyHex: string
-  publicKeySize: number
-  privateKeySize: number
-  nistLevel: string
-  usage: string
-  isLive?: boolean
-}
-
-interface SignatureResult {
-  algorithm: string
-  signatureHex: string
-  signatureSize: number
-  signingTime: string
-  certChain: string[]
-  isLive?: boolean
-}
-
-interface VerificationResult {
-  verified: boolean
-  algorithm: string
-  signerDN: string
-  validFrom: string
-  validUntil: string
-  nistLevel: string
-  isLive?: boolean
+  components: { name: string; size: string; hash: string }[]
 }
 
 const MOCK_MANIFEST: FirmwareManifest = {
@@ -126,43 +379,44 @@ const MOCK_MANIFEST: FirmwareManifest = {
   ],
 }
 
-const MOCK_PQC_KEY: GeneratedKey = {
-  algorithm: 'ML-DSA-65 (FIPS 204)',
-  publicKeyHex:
-    '308203c0300d0609608648016503040303050003820003003082037ec0f2a1d3e4b5c6a7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2...(truncated 1,952 bytes total)',
-  publicKeySize: 1952,
-  privateKeySize: 4032,
-  nistLevel: 'NIST Level 3',
-  usage: 'Firmware Signing (id-ml-dsa-65)',
+// ---------------------------------------------------------------------------
+// Helpers
+// ---------------------------------------------------------------------------
+
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
+
+const truncateHex = (hex: string, maxChars = 80): string => {
+  if (hex.length <= maxChars) return hex
+  return `${hex.slice(0, maxChars / 2)}...${hex.slice(-maxChars / 2)}`
 }
 
-const MOCK_SIGNATURE: SignatureResult = {
-  algorithm: 'ML-DSA-65 (FIPS 204)',
-  signatureHex:
-    '3082035003050603608648016503040303050003820310a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4...(3,309 bytes total)',
-  signatureSize: 3309,
-  signingTime: '2026-03-07T14:32:11Z',
-  certChain: [
-    'AMI Firmware Signing Cert (ML-DSA-65) — Subject: CN=ami-fw-sign-pqc-001',
-    'AMI Intermediate CA (ML-DSA-87) — Subject: CN=AMI PQC Intermediate CA 2026',
-    'AMI Root CA (ML-DSA-87) — Subject: CN=AMI PQC Root CA',
-  ],
+const buildManifestString = (fileBytes: Uint8Array | null): string => {
+  if (fileBytes) {
+    // Use a prefix + length + last-8-bytes fingerprint of the uploaded file
+    const tail = fileBytes.slice(-8)
+    return `file-upload:${fileBytes.length}:${toHex(tail)}`
+  }
+  return MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
 }
 
-const MOCK_VERIFICATION: VerificationResult = {
-  verified: true,
-  algorithm: 'ML-DSA-65 (FIPS 204)',
-  signerDN: 'CN=ami-fw-sign-pqc-001, O=AMI, C=US',
-  validFrom: '2026-01-01T00:00:00Z',
-  validUntil: '2029-01-01T00:00:00Z',
-  nistLevel: 'NIST Level 3 — Quantum-safe',
+const downloadBlob = (bytes: Uint8Array, filename: string) => {
+  const blob = new Blob([bytes.buffer as ArrayBuffer], { type: 'application/octet-stream' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = filename
+  a.click()
+  URL.revokeObjectURL(url)
 }
 
 const STEP_TITLES = [
-  'Step 1: Inventory — Current Firmware Manifest',
-  'Step 2: Generate ML-DSA-65 Signing Key',
-  'Step 3: Sign Firmware with ML-DSA-65',
-  'Step 4: Verify Signature & Certificate Chain',
+  'Step 1: Upload & Configure',
+  'Step 2: Generate Keys',
+  'Step 3: Sign Firmware',
+  'Step 4: Verify & Compare',
 ]
 
 const STEP_ICONS = [FileCode, Key, AlertTriangle, CheckCircle]
@@ -172,6 +426,10 @@ const LIVE_OPERATIONS = [
   'C_GetAttributeValue',
   'C_DigestInit',
   'C_Digest',
+  'C_SignInit',
+  'C_Sign',
+  'C_VerifyInit',
+  'C_Verify',
   'C_MessageSignInit',
   'C_SignMessage',
   'C_MessageSignFinal',
@@ -180,163 +438,450 @@ const LIVE_OPERATIONS = [
   'C_MessageVerifyFinal',
 ]
 
-/** Convert byte array to hex string */
-const toHex = (bytes: Uint8Array): string =>
-  Array.from(bytes)
-    .map((b) => b.toString(16).padStart(2, '0'))
-    .join('')
+// Dropdown option lists
+const PQC_ALGO_OPTIONS = ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87', 'SLH-DSA-SHA2-128S']
+const CLASSICAL_ALGO_OPTIONS = ['RSA-2048', 'RSA-3072', 'ECDSA-P256', 'ECDSA-P384']
+const HASH_ALGO_OPTIONS = ['SHA-256', 'SHA-384', 'SHA-512']
 
-/** Truncate hex for display */
-const truncateHex = (hex: string, maxChars = 80): string => {
-  if (hex.length <= maxChars) return hex
-  return `${hex.slice(0, maxChars / 2)}...${hex.slice(-maxChars / 2)}`
+// ---------------------------------------------------------------------------
+// Key inspection row (inline, no full HsmKeyTable dependency)
+// ---------------------------------------------------------------------------
+
+interface InspectableKey {
+  handle: number
+  label: string
+  role: 'public' | 'private'
+  algo: string
+  expectedBytes: number
 }
 
-/** Build a deterministic manifest string from the component hashes */
-const buildManifestString = (): string =>
-  MOCK_MANIFEST.components.map((c) => `${c.name}:${c.size}:${c.hash}`).join('|')
+const KeyInspectRow = ({
+  k,
+  moduleRef,
+  hSessionRef,
+}: {
+  k: InspectableKey
+  moduleRef: React.RefObject<SoftHSMModule | null>
+  hSessionRef: React.RefObject<number>
+}) => {
+  const [open, setOpen] = useState(false)
+  const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
+
+  const handleOpen = () => {
+    const M = moduleRef.current
+    const hSession = hSessionRef.current
+    if (!attrs && M) {
+      try {
+        setAttrs(hsm_getKeyAttributes(M as unknown as SoftHSMModule, hSession, k.handle))
+      } catch {
+        // ignore — handle may be stale
+      }
+    }
+    setOpen(true)
+  }
+
+  const roleColor = k.role === 'public' ? 'text-primary' : 'text-status-warning'
+
+  return (
+    <>
+      <tr className="border-b border-border/50 text-xs">
+        <td className="py-1.5 font-mono text-muted-foreground">{k.handle}</td>
+        <td className="py-1.5 text-foreground">{k.label}</td>
+        <td className={`py-1.5 font-medium ${roleColor}`}>
+          {k.role === 'public' ? 'Public' : 'Private'}
+        </td>
+        <td className="py-1.5 font-mono text-muted-foreground">{k.algo}</td>
+        <td className="py-1.5 text-right font-mono text-muted-foreground">
+          ~{k.expectedBytes.toLocaleString()} B
+        </td>
+        <td className="py-1.5 text-right">
+          <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={handleOpen}>
+            <Eye size={12} />
+          </Button>
+        </td>
+      </tr>
+      {open && attrs && (
+        <KeyAttrModal
+          hsmKey={{
+            handle: k.handle,
+            label: k.label,
+            family: 'ml-dsa',
+            role: k.role,
+            generatedAt: new Date().toISOString(),
+          }}
+          attrs={attrs}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
+  )
+}
+
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
 
 export const FirmwareSigningMigrator: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<WizardStep>(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
   const [isProcessing, setIsProcessing] = useState(false)
+  const [signError, setSignError] = useState<string>('')
+
+  // Algorithm selection
+  const [pqcAlgo, setPqcAlgo] = useState<PqcAlgo>('ML-DSA-65')
+  const [classicalAlgo, setClassicalAlgo] = useState<ClassicalAlgo>('RSA-2048')
+  const [hashAlgo, setHashAlgo] = useState<HashAlgo>('SHA-256')
+
+  // File upload
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [uploadedFile, setUploadedFile] = useState<File | null>(null)
+  const [fileBytes, setFileBytes] = useState<Uint8Array | null>(null)
+  const [fileDigestHex, setFileDigestHex] = useState<string>('')
+  const [isDragOver, setIsDragOver] = useState(false)
 
   // Live HSM state
   const hsm = useHSM()
-  const liveKeyRef = useRef<{ pubHandle: number; privHandle: number }>({
+
+  // PQC key handles
+  const pqcKeyRef = useRef<{ pubHandle: number; privHandle: number }>({
     pubHandle: 0,
     privHandle: 0,
   })
-  const [liveKey, setLiveKey] = useState<GeneratedKey | null>(null)
-  const [liveSig, setLiveSig] = useState<SignatureResult | null>(null)
-  const [liveVerify, setLiveVerify] = useState<VerificationResult | null>(null)
-  const liveSigBytesRef = useRef<Uint8Array | null>(null)
+  const [pqcHandles, setPqcHandles] = useState<{ pubHandle: number; privHandle: number }>({
+    pubHandle: 0,
+    privHandle: 0,
+  })
+  const [pqcPubKeyBytes, setPqcPubKeyBytes] = useState<number>(0)
+  const [pqcKeysReady, setPqcKeysReady] = useState(false)
 
-  const [hasPrivHandle, setHasPrivHandle] = useState(false)
-  const [hasSigBytes, setHasSigBytes] = useState(false)
+  // Classical key handles
+  const classicalKeyRef = useRef<{ pubHandle: number; privHandle: number }>({
+    pubHandle: 0,
+    privHandle: 0,
+  })
+  const [classicalHandles, setClassicalHandles] = useState<{
+    pubHandle: number
+    privHandle: number
+  }>({ pubHandle: 0, privHandle: 0 })
+  const [classicalPubKeyBytes, setClassicalPubKeyBytes] = useState<number>(0)
+  const [classicalKeysReady, setClassicalKeysReady] = useState(false)
+
+  // PQC signature
+  const pqcSigBytesRef = useRef<Uint8Array | null>(null)
+  const [pqcSigHex, setPqcSigHex] = useState<string>('')
+  const [pqcSigSize, setPqcSigSize] = useState<number>(0)
+  const [pqcCmsDer, setPqcCmsDer] = useState<Uint8Array | null>(null)
+
+  // Classical signature
+  const classicalSigBytesRef = useRef<Uint8Array | null>(null)
+  const [classicalSigHex, setClassicalSigHex] = useState<string>('')
+  const [classicalSigSize, setClassicalSigSize] = useState<number>(0)
+  const [classicalCmsDer, setClassicalCmsDer] = useState<Uint8Array | null>(null)
+
+  // Verify results
+  const [pqcVerified, setPqcVerified] = useState<boolean | null>(null)
+  const [classicalVerified, setClassicalVerified] = useState<boolean | null>(null)
 
   const isLive = hsm.isReady && !!hsm.moduleRef.current
-  const keyData = isLive && liveKey ? liveKey : MOCK_PQC_KEY
-  const sigData = isLive && liveSig ? liveSig : MOCK_SIGNATURE
-  const verifyData = isLive && liveVerify ? liveVerify : MOCK_VERIFICATION
+  const keysGenerated = pqcKeysReady && classicalKeysReady
+  const signaturesReady = pqcSigSize > 0 && classicalSigSize > 0
 
-  const markComplete = (step: number) => {
-    setCompletedSteps((prev) => new Set([...prev, step]))
-  }
+  // Reset PQC key state when algorithm changes — stale handles cause WASM errors.
+  useEffect(() => {
+    if (!pqcKeysReady) return
+    pqcKeyRef.current = { pubHandle: 0, privHandle: 0 }
+    pqcSigBytesRef.current = null
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setPqcKeysReady(false)
+    setPqcHandles({ pubHandle: 0, privHandle: 0 })
+    setPqcPubKeyBytes(0)
+    setPqcSigHex('')
+    setPqcSigSize(0)
+    setPqcCmsDer(null)
+    setPqcVerified(null)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [pqcAlgo]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Step 2: Generate real ML-DSA-65 key pair via PKCS#11
-  const handleGenerateKey = useCallback(async () => {
+  // Reset classical key state when algorithm changes — stale handles cause WASM errors.
+  useEffect(() => {
+    if (!classicalKeysReady) return
+    classicalKeyRef.current = { pubHandle: 0, privHandle: 0 }
+    classicalSigBytesRef.current = null
+    /* eslint-disable react-hooks/set-state-in-effect */
+    setClassicalKeysReady(false)
+    setClassicalHandles({ pubHandle: 0, privHandle: 0 })
+    setClassicalPubKeyBytes(0)
+    setClassicalSigHex('')
+    setClassicalSigSize(0)
+    setClassicalCmsDer(null)
+    setClassicalVerified(null)
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [classicalAlgo]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  const markComplete = (step: number) => setCompletedSteps((prev) => new Set([...prev, step]))
+
+  // ---------------------------------------------------------------------------
+  // File upload
+  // ---------------------------------------------------------------------------
+
+  const handleFileSelect = useCallback(
+    async (file: File) => {
+      setUploadedFile(file)
+      const buf = await file.arrayBuffer()
+      const bytes = new Uint8Array(buf)
+      setFileBytes(bytes)
+      // Compute SHA-256 of file for display
+      if (isLive && hsm.moduleRef.current) {
+        try {
+          const M = hsm.moduleRef.current as unknown as SoftHSMModule
+          const digest = hsm_digest(M, hsm.hSessionRef.current, bytes, CKM_SHA256)
+          setFileDigestHex(toHex(digest))
+        } catch {
+          // fallback: SubtleCrypto
+          const hashBuf = await crypto.subtle.digest('SHA-256', buf)
+          setFileDigestHex(toHex(new Uint8Array(hashBuf)))
+        }
+      } else {
+        const hashBuf = await crypto.subtle.digest('SHA-256', buf)
+        setFileDigestHex(toHex(new Uint8Array(hashBuf)))
+      }
+    },
+    [isLive, hsm]
+  )
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault()
+      setIsDragOver(false)
+      const file = e.dataTransfer.files[0]
+      if (file) handleFileSelect(file)
+    },
+    [handleFileSelect]
+  )
+
+  // ---------------------------------------------------------------------------
+  // Key generation
+  // ---------------------------------------------------------------------------
+
+  const handleGenerateBothKeys = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current) return
     setIsProcessing(true)
     try {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
       const hSession = hsm.hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
-      liveKeyRef.current = { pubHandle, privHandle }
-      setHasPrivHandle(true)
 
-      const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
-      const pubHex = toHex(pubBytes)
+      // --- Classical keygen ---
+      if (classicalAlgo.startsWith('RSA')) {
+        const bits = classicalAlgo === 'RSA-2048' ? 2048 : 3072
+        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, bits)
+        classicalKeyRef.current = { pubHandle, privHandle }
+        setClassicalHandles({ pubHandle, privHandle })
+        setClassicalPubKeyBytes(CLASSICAL_PUBKEY_BYTES[classicalAlgo])
+      } else {
+        const curve = classicalAlgo === 'ECDSA-P256' ? 'P-256' : 'P-384'
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+        classicalKeyRef.current = { pubHandle, privHandle }
+        setClassicalHandles({ pubHandle, privHandle })
+        setClassicalPubKeyBytes(CLASSICAL_PUBKEY_BYTES[classicalAlgo])
+      }
+      setClassicalKeysReady(true)
 
-      setLiveKey({
-        algorithm: 'ML-DSA-65 (FIPS 204)',
-        publicKeyHex: pubHex,
-        publicKeySize: pubBytes.length,
-        privateKeySize: 4032,
-        nistLevel: 'NIST Level 3',
-        usage: 'Firmware Signing (id-ml-dsa-65)',
-        isLive: true,
-      })
+      // --- PQC keygen ---
+      if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
+        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
+          M,
+          hSession,
+          CKP_SLH_DSA_SHA2_128S
+        )
+        pqcKeyRef.current = { pubHandle, privHandle }
+        setPqcHandles({ pubHandle, privHandle })
+        setPqcPubKeyBytes(SLHDSA_PUBKEY_BYTES)
+      } else {
+        const variant = MLDSA_VARIANT[pqcAlgo] ?? 65
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
+          M,
+          hSession,
+          variant as 44 | 65 | 87
+        )
+        pqcKeyRef.current = { pubHandle, privHandle }
+        setPqcHandles({ pubHandle, privHandle })
+        const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+        setPqcPubKeyBytes(pubBytes.length)
+      }
+      setPqcKeysReady(true)
     } catch (err) {
-      console.error('[FirmwareSigningMigrator] live keygen error:', err)
+      console.error('[FirmwareSigningMigrator] keygen error:', err)
     }
     setIsProcessing(false)
-  }, [hsm])
+  }, [hsm, classicalAlgo, pqcAlgo])
 
-  // Step 3: Sign firmware manifest hash via PKCS#11
-  const handleSign = useCallback(async () => {
-    if (!hsm.isReady || !hsm.moduleRef.current || !liveKeyRef.current.privHandle) return
-    setIsProcessing(true)
-    try {
-      const M = hsm.moduleRef.current as unknown as SoftHSMModule
-      const hSession = hsm.hSessionRef.current
-      const { privHandle } = liveKeyRef.current
+  // ---------------------------------------------------------------------------
+  // Signing
+  // ---------------------------------------------------------------------------
 
-      // Build the firmware manifest string and hash it for PKCS#11 log visibility
-      const manifestStr = buildManifestString()
-      const manifestBytes = new TextEncoder().encode(manifestStr)
-      hsm_digest(M, hSession, manifestBytes, CKM_SHA256)
-
-      // Sign with ML-DSA-65 (message signing, not pre-hash)
-      const sig = hsm_sign(M, hSession, privHandle, manifestStr)
-      liveSigBytesRef.current = sig
-      setHasSigBytes(true)
-
-      setLiveSig({
-        algorithm: 'ML-DSA-65 (FIPS 204)',
-        signatureHex: toHex(sig),
-        signatureSize: sig.length,
-        signingTime: new Date().toISOString(),
-        certChain: MOCK_SIGNATURE.certChain,
-        isLive: true,
-      })
-    } catch (err) {
-      console.error('[FirmwareSigningMigrator] live sign error:', err)
-    }
-    setIsProcessing(false)
-  }, [hsm])
-
-  // Step 4: Verify firmware signature via PKCS#11
-  const handleVerify = useCallback(async () => {
-    if (
-      !hsm.isReady ||
-      !hsm.moduleRef.current ||
-      !liveKeyRef.current.pubHandle ||
-      !liveSigBytesRef.current
-    )
+  const handleSignBoth = useCallback(async () => {
+    if (!hsm.isReady || !hsm.moduleRef.current) return
+    if (!classicalKeyRef.current.privHandle || !pqcKeyRef.current.privHandle) {
+      setSignError('Keys not ready — generate keys first (Step 2: Generate Keys)')
       return
+    }
+    setSignError('')
     setIsProcessing(true)
     try {
       const M = hsm.moduleRef.current as unknown as SoftHSMModule
       const hSession = hsm.hSessionRef.current
-      const { pubHandle } = liveKeyRef.current
+      const content = buildManifestString(fileBytes)
+      const contentBytes = new TextEncoder().encode(content)
 
-      const manifestStr = buildManifestString()
-      const verified = hsm_verify(M, hSession, pubHandle, manifestStr, liveSigBytesRef.current)
+      // --- Classical sign ---
+      const mechType = CLASSICAL_MECH[classicalAlgo][hashAlgo]
+      let classicalSig: Uint8Array
+      if (classicalAlgo.startsWith('RSA')) {
+        classicalSig = hsm_rsaSign(
+          M,
+          hSession,
+          classicalKeyRef.current.privHandle,
+          content,
+          mechType
+        )
+      } else {
+        classicalSig = hsm_ecdsaSign(
+          M,
+          hSession,
+          classicalKeyRef.current.privHandle,
+          content,
+          mechType
+        )
+      }
+      classicalSigBytesRef.current = classicalSig
+      setClassicalSigHex(toHex(classicalSig))
+      setClassicalSigSize(classicalSig.length)
 
-      setLiveVerify({
-        verified,
-        algorithm: 'ML-DSA-65 (FIPS 204)',
-        signerDN: 'CN=ami-fw-sign-pqc-001, O=AMI, C=US',
-        validFrom: '2026-01-01T00:00:00Z',
-        validUntil: '2029-01-01T00:00:00Z',
-        nistLevel: 'NIST Level 3 — Quantum-safe',
-        isLive: true,
+      // Build classical CMS SignedData
+      const classicalSigAlgOid = classicalAlgo.startsWith('RSA')
+        ? OID_RSA_SHA[hashAlgo]
+        : OID_ECDSA_SHA[hashAlgo]
+      const classicalCms = buildCmsSignedData({
+        sigAlgOid: classicalSigAlgOid,
+        digestAlgOid: OID_SHA[hashAlgo],
+        isPqc: false,
+        content: contentBytes,
+        sigBytes: classicalSig,
+        signerLabel: classicalAlgo,
       })
+      setClassicalCmsDer(classicalCms)
+
+      // --- PQC sign (pure mode — RFC 9882 §3.1 / RFC 9814 §1.2) ---
+      let pqcSig: Uint8Array
+      if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
+        pqcSig = hsm_slhdsaSign(M, hSession, pqcKeyRef.current.privHandle, content)
+      } else {
+        pqcSig = hsm_sign(M, hSession, pqcKeyRef.current.privHandle, content)
+      }
+      pqcSigBytesRef.current = pqcSig
+      setPqcSigHex(toHex(pqcSig))
+      setPqcSigSize(pqcSig.length)
+
+      // Build PQC CMS SignedData
+      const pqcSigAlgOid =
+        pqcAlgo === 'SLH-DSA-SHA2-128S' ? OID_SLH_DSA_SHA2_128S : OID_ML_DSA[pqcAlgo]
+      // Per RFC 9882/9814: digestAlgorithm in SignerInfo should be sha256 (matches hash used for messageDigest)
+      const pqcCms = buildCmsSignedData({
+        sigAlgOid: pqcSigAlgOid,
+        digestAlgOid: OID_SHA[hashAlgo],
+        isPqc: true,
+        content: contentBytes,
+        sigBytes: pqcSig,
+        signerLabel: pqcAlgo,
+      })
+      setPqcCmsDer(pqcCms)
     } catch (err) {
-      console.error('[FirmwareSigningMigrator] live verify error:', err)
+      console.error('[FirmwareSigningMigrator] sign error:', err)
+      setSignError(`Sign failed: ${err instanceof Error ? err.message : String(err)}`)
     }
     setIsProcessing(false)
-  }, [hsm])
+  }, [hsm, classicalAlgo, pqcAlgo, hashAlgo, fileBytes])
+
+  // ---------------------------------------------------------------------------
+  // Verification
+  // ---------------------------------------------------------------------------
+
+  const handleVerifyBoth = useCallback(async () => {
+    if (!hsm.isReady || !hsm.moduleRef.current) return
+    if (!classicalSigBytesRef.current || !pqcSigBytesRef.current) return
+    setIsProcessing(true)
+    try {
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+      const content = buildManifestString(fileBytes)
+
+      // Classical verify
+      const mechType = CLASSICAL_MECH[classicalAlgo][hashAlgo]
+      let cvResult: boolean
+      if (classicalAlgo.startsWith('RSA')) {
+        cvResult = hsm_rsaVerify(
+          M,
+          hSession,
+          classicalKeyRef.current.pubHandle,
+          content,
+          classicalSigBytesRef.current,
+          mechType
+        )
+      } else {
+        cvResult = hsm_ecdsaVerify(
+          M,
+          hSession,
+          classicalKeyRef.current.pubHandle,
+          content,
+          classicalSigBytesRef.current,
+          mechType
+        )
+      }
+      setClassicalVerified(cvResult)
+
+      // PQC verify (pure mode)
+      let pvResult: boolean
+      if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
+        pvResult = hsm_slhdsaVerify(
+          M,
+          hSession,
+          pqcKeyRef.current.pubHandle,
+          content,
+          pqcSigBytesRef.current
+        )
+      } else {
+        pvResult = hsm_verify(
+          M,
+          hSession,
+          pqcKeyRef.current.pubHandle,
+          content,
+          pqcSigBytesRef.current
+        )
+      }
+      setPqcVerified(pvResult)
+    } catch (err) {
+      console.error('[FirmwareSigningMigrator] verify error:', err)
+    }
+    setIsProcessing(false)
+  }, [hsm, classicalAlgo, pqcAlgo, hashAlgo, fileBytes])
 
   const handleNext = useCallback(async () => {
-    // Auto-execute live operations when advancing steps
     if (isLive) {
-      if (currentStep === 1 && !liveKey) await handleGenerateKey()
-      if (currentStep === 2 && !liveSig) await handleSign()
-      if (currentStep === 3 && !liveVerify) await handleVerify()
+      if (currentStep === 1 && !keysGenerated) await handleGenerateBothKeys()
+      if (currentStep === 2 && !signaturesReady) await handleSignBoth()
+      if (currentStep === 3 && pqcVerified === null) await handleVerifyBoth()
     }
     markComplete(currentStep)
     if (currentStep < 3) setCurrentStep((currentStep + 1) as WizardStep)
   }, [
     currentStep,
     isLive,
-    liveKey,
-    liveSig,
-    liveVerify,
-    handleGenerateKey,
-    handleSign,
-    handleVerify,
+    keysGenerated,
+    signaturesReady,
+    pqcVerified,
+    handleGenerateBothKeys,
+    handleSignBoth,
+    handleVerifyBoth,
   ])
 
   const handleBack = () => {
@@ -346,24 +891,103 @@ export const FirmwareSigningMigrator: React.FC = () => {
   const handleReset = () => {
     setCurrentStep(0)
     setCompletedSteps(new Set())
-    setLiveKey(null)
-    setLiveSig(null)
-    setLiveVerify(null)
-    liveSigBytesRef.current = null
-    liveKeyRef.current = { pubHandle: 0, privHandle: 0 }
-    setHasPrivHandle(false)
-    setHasSigBytes(false)
+    setPqcKeysReady(false)
+    setClassicalKeysReady(false)
+    setPqcPubKeyBytes(0)
+    setClassicalPubKeyBytes(0)
+    setPqcSigHex('')
+    setPqcSigSize(0)
+    setClassicalSigHex('')
+    setClassicalSigSize(0)
+    setPqcVerified(null)
+    setClassicalVerified(null)
+    setPqcCmsDer(null)
+    setClassicalCmsDer(null)
+    pqcSigBytesRef.current = null
+    classicalSigBytesRef.current = null
+    pqcKeyRef.current = { pubHandle: 0, privHandle: 0 }
+    classicalKeyRef.current = { pubHandle: 0, privHandle: 0 }
+    setUploadedFile(null)
+    setFileBytes(null)
+    setFileDigestHex('')
     hsm.clearLog()
     hsm.clearKeys()
   }
+
+  // Derived display values (fall back to expected sizes when not live)
+  const pqcPubDisplay =
+    pqcPubKeyBytes ||
+    (pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_PUBKEY_BYTES : MLDSA_PUBKEY_BYTES[pqcAlgo])
+  const pqcPrivDisplay =
+    pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_PRIVKEY_BYTES : MLDSA_PRIVKEY_BYTES[pqcAlgo]
+  const classicalPubDisplay = classicalPubKeyBytes || CLASSICAL_PUBKEY_BYTES[classicalAlgo]
+  const classicalPrivDisplay = CLASSICAL_PRIVKEY_BYTES[classicalAlgo]
+  const pqcExpectedSig =
+    pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_SIG_BYTES : MLDSA_SIG_BYTES[pqcAlgo]
+  const classicalExpectedSig = CLASSICAL_PUBKEY_BYTES[classicalAlgo]
+
+  const displayPqcSig = pqcSigSize || pqcExpectedSig
+  const displayClassicalSig = classicalSigSize || classicalExpectedSig
+  const sigRatio = (displayPqcSig / Math.max(displayClassicalSig, 1)).toFixed(1)
+
+  // Content string being signed (computed inline for display)
+  const contentToSign = buildManifestString(fileBytes)
+
+  // PKCS#11 mechanism name for display
+  const classicalMechName = classicalAlgo.startsWith('RSA')
+    ? hashAlgo === 'SHA-256'
+      ? 'CKM_SHA256_RSA_PKCS'
+      : hashAlgo === 'SHA-384'
+        ? 'CKM_SHA384_RSA_PKCS'
+        : 'CKM_SHA512_RSA_PKCS'
+    : hashAlgo === 'SHA-256'
+      ? 'CKM_ECDSA_SHA256'
+      : hashAlgo === 'SHA-384'
+        ? 'CKM_ECDSA_SHA384'
+        : 'CKM_ECDSA_SHA512'
+
+  // Key inspection rows for live mode — use state handles (not refs) to avoid accessing .current during render
+  const inspectableKeys: InspectableKey[] =
+    keysGenerated && isLive
+      ? [
+          {
+            handle: classicalHandles.pubHandle,
+            label: `${classicalAlgo} Public Key`,
+            role: 'public',
+            algo: classicalAlgo.startsWith('RSA') ? 'CKK_RSA' : 'CKK_EC',
+            expectedBytes: classicalPubDisplay,
+          },
+          {
+            handle: classicalHandles.privHandle,
+            label: `${classicalAlgo} Private Key`,
+            role: 'private',
+            algo: classicalAlgo.startsWith('RSA') ? 'CKK_RSA' : 'CKK_EC',
+            expectedBytes: classicalPrivDisplay,
+          },
+          {
+            handle: pqcHandles.pubHandle,
+            label: `${pqcAlgo} Public Key`,
+            role: 'public',
+            algo: pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'CKK_SLH_DSA' : 'CKK_ML_DSA',
+            expectedBytes: pqcPubDisplay,
+          },
+          {
+            handle: pqcHandles.privHandle,
+            label: `${pqcAlgo} Private Key`,
+            role: 'private',
+            algo: pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'CKK_SLH_DSA' : 'CKK_ML_DSA',
+            expectedBytes: pqcPrivDisplay,
+          },
+        ]
+      : []
 
   return (
     <div className="space-y-6">
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Firmware Signing Migrator</h3>
         <p className="text-sm text-muted-foreground">
-          Walk through the 4-step ML-DSA-65 firmware signing migration. Compare RSA-2048 vs
-          ML-DSA-65 signature sizes, certificate chains, and verification flows.
+          Sign firmware with both a classical algorithm and a post-quantum algorithm side-by-side.
+          Compare keys, signatures, and CMS output. All PKCS#11 operations execute in SoftHSM3 WASM.
         </p>
       </div>
 
@@ -401,412 +1025,820 @@ export const FirmwareSigningMigrator: React.FC = () => {
 
       {/* Step Content */}
       <div className="glass-panel p-4 sm:p-6 min-h-[400px]">
-        <h4 className="text-base font-bold text-foreground mb-4">{STEP_TITLES[currentStep]}</h4>
+        <div className="flex items-center justify-between mb-4">
+          <h4 className="text-base font-bold text-foreground">{STEP_TITLES[currentStep]}</h4>
+        </div>
 
+        {/* ── Step 0: Upload & Configure ── */}
         {currentStep === 0 && (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Review the current firmware manifest. The platform uses RSA-2048 for signing — a
-              quantum-vulnerable algorithm. We will migrate this to ML-DSA-65.
-            </p>
+          <div className="space-y-5">
+            {/* Standard refs */}
+            <div className="flex flex-wrap gap-1.5">
+              <LibRef id="FIPS 204" label="FIPS 204" />
+              <LibRef id="FIPS 205" label="FIPS 205" />
+              <LibRef id="FIPS 186-5" label="FIPS 186-5" />
+              <LibRef id="FIPS-180-4" label="FIPS 180-4" />
+              <LibRef id="UEFI-SPEC-2.10-SecureBoot" label="UEFI 2.10" />
+            </div>
 
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs mb-3">
-                <div>
-                  <span className="text-muted-foreground">Firmware: </span>
-                  <span className="text-foreground font-mono">{MOCK_MANIFEST.firmwareName}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Version: </span>
-                  <span className="text-foreground font-mono">{MOCK_MANIFEST.version}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Vendor: </span>
-                  <span className="text-foreground">{MOCK_MANIFEST.vendor}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Platform: </span>
-                  <span className="text-foreground">{MOCK_MANIFEST.platform}</span>
-                </div>
-              </div>
+            {/* Explanation */}
+            <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-xs space-y-1">
+              <p className="font-semibold text-foreground">Why firmware signing matters</p>
+              <ul className="text-muted-foreground space-y-0.5 list-disc list-inside">
+                <li>
+                  UEFI Secure Boot verifies every firmware image against signed db certificates at
+                  boot
+                </li>
+                <li>
+                  TPM PCR measurements attest firmware integrity — signatures must survive quantum
+                  attacks
+                </li>
+                <li>
+                  Supply chain compromise via forged signatures is a critical threat — PQC
+                  eliminates Shor&apos;s algorithm risk
+                </li>
+              </ul>
+            </div>
 
-              <div className="border-t border-border pt-3">
-                <div className="flex items-center gap-2 mb-2">
-                  <AlertTriangle size={14} className="text-status-error" aria-hidden="true" />
-                  <span className="text-xs font-bold text-status-error">
-                    Current Signing Configuration (Quantum-Vulnerable)
+            {/* Pure mode callout */}
+            <div className="bg-muted/60 rounded-lg p-3 border border-border text-xs space-y-1">
+              <div className="flex items-center gap-2">
+                <Info size={13} className="text-primary shrink-0" aria-hidden="true" />
+                <span className="font-semibold text-foreground">
+                  Signing mode: Pure &nbsp;
+                  <span className="font-normal text-muted-foreground">
+                    [Standard per <span className="font-mono">RFC 9882 §3.1</span> &amp;{' '}
+                    <span className="font-mono">RFC 9814 §1.2</span>]
                   </span>
+                </span>
+              </div>
+              <p className="text-muted-foreground pl-5">
+                ML-DSA and SLH-DSA use SHAKE-256 internally — no caller pre-hashing needed.
+                HashML-DSA (pre-hash) is <strong>explicitly excluded</strong> from CMS and X.509
+                (RFC 9882, RFC 9881). Your hash selection applies to: firmware digest display +
+                classical signature mechanism (e.g. CKM_SHA256_RSA_PKCS).
+              </p>
+            </div>
+
+            {/* File upload zone */}
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label="Drop firmware binary or click to browse"
+              className={`rounded-lg border-2 border-dashed p-5 flex flex-col items-center gap-3 cursor-pointer transition-colors
+                ${isDragOver ? 'border-primary bg-primary/10' : 'border-border hover:border-primary/50 hover:bg-muted/30'}`}
+              onDragOver={(e) => {
+                e.preventDefault()
+                setIsDragOver(true)
+              }}
+              onDragLeave={() => setIsDragOver(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0]
+                  if (file) handleFileSelect(file)
+                }}
+              />
+              {uploadedFile ? (
+                <div className="text-center space-y-1">
+                  <div className="flex items-center gap-2 justify-center text-status-success">
+                    <CheckCircle size={16} />
+                    <span className="text-sm font-medium">{uploadedFile.name}</span>
+                  </div>
+                  <p className="text-xs text-muted-foreground">
+                    {(uploadedFile.size / 1024).toFixed(1)} KB
+                  </p>
+                  {fileDigestHex && (
+                    <p className="text-[10px] font-mono text-muted-foreground break-all">
+                      SHA-256: {truncateHex(fileDigestHex, 48)}
+                    </p>
+                  )}
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              ) : (
+                <>
+                  <Upload size={24} className="text-muted-foreground" aria-hidden="true" />
+                  <div className="text-center">
+                    <p className="text-sm text-foreground font-medium">Drop firmware binary here</p>
+                    <p className="text-xs text-muted-foreground">
+                      or click to browse — any file format
+                    </p>
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Mock manifest fallback */}
+            <details className="group">
+              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground select-none">
+                {uploadedFile
+                  ? '▸ Mock UEFI manifest (not used)'
+                  : '▸ Using mock UEFI firmware manifest (no file uploaded)'}
+              </summary>
+              <div className="mt-2 bg-muted/50 rounded-lg p-4 border border-border">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs mb-3">
                   <div>
-                    <span className="text-muted-foreground">Key ID: </span>
-                    <span className="font-mono text-status-error">
-                      {MOCK_MANIFEST.currentSigningKey}
-                    </span>
+                    <span className="text-muted-foreground">Firmware: </span>
+                    <span className="font-mono">{MOCK_MANIFEST.firmwareName}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Algorithm: </span>
-                    <span className="text-status-error">{MOCK_MANIFEST.currentAlgorithm}</span>
+                    <span className="text-muted-foreground">Version: </span>
+                    <span className="font-mono">{MOCK_MANIFEST.version}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Signature size: </span>
-                    <span className="font-mono text-status-error">
-                      {MOCK_MANIFEST.currentSignatureSize} bytes
-                    </span>
+                    <span className="text-muted-foreground">Vendor: </span>
+                    <span>{MOCK_MANIFEST.vendor}</span>
                   </div>
                   <div>
-                    <span className="text-muted-foreground">Public key size: </span>
-                    <span className="font-mono text-status-error">
-                      {MOCK_MANIFEST.currentKeySize} bytes
-                    </span>
+                    <span className="text-muted-foreground">Platform: </span>
+                    <span>{MOCK_MANIFEST.platform}</span>
                   </div>
                 </div>
+                <div className="border-t border-border pt-3">
+                  <div className="flex items-center gap-2 mb-2">
+                    <AlertTriangle size={13} className="text-status-error" aria-hidden="true" />
+                    <span className="text-xs font-bold text-status-error">
+                      Current signing: RSA-2048 (quantum-vulnerable)
+                    </span>
+                  </div>
+                  <table className="w-full text-xs mt-2">
+                    <thead>
+                      <tr className="border-b border-border">
+                        <th className="text-left py-1 text-muted-foreground font-medium">
+                          Component
+                        </th>
+                        <th className="text-right py-1 text-muted-foreground font-medium">Size</th>
+                        <th className="text-right py-1 text-muted-foreground font-medium">Hash</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {MOCK_MANIFEST.components.map((c) => (
+                        <tr key={c.name} className="border-b border-border/50">
+                          <td className="py-1 text-foreground">{c.name}</td>
+                          <td className="py-1 text-right font-mono text-muted-foreground">
+                            {c.size}
+                          </td>
+                          <td className="py-1 text-right font-mono text-muted-foreground truncate max-w-[100px]">
+                            {c.hash}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </details>
+
+            {/* Algorithm selectors */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">PQC Algorithm</p>
+                <FilterDropdown
+                  items={PQC_ALGO_OPTIONS}
+                  selectedId={pqcAlgo}
+                  onSelect={(id) => setPqcAlgo(id as PqcAlgo)}
+                  label={pqcAlgo}
+                />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">Classical Algorithm</p>
+                <FilterDropdown
+                  items={CLASSICAL_ALGO_OPTIONS}
+                  selectedId={classicalAlgo}
+                  onSelect={(id) => setClassicalAlgo(id as ClassicalAlgo)}
+                  label={classicalAlgo}
+                />
+              </div>
+              <div className="space-y-1">
+                <p className="text-xs font-medium text-muted-foreground">Hash Algorithm</p>
+                <FilterDropdown
+                  items={HASH_ALGO_OPTIONS}
+                  selectedId={hashAlgo}
+                  onSelect={(id) => setHashAlgo(id as HashAlgo)}
+                  label={hashAlgo}
+                />
               </div>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="text-xs font-bold text-foreground mb-2">
-                Firmware Components ({MOCK_MANIFEST.components.length})
-              </div>
-              <table className="w-full text-xs">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left py-1.5 text-muted-foreground font-medium">
-                      Component
-                    </th>
-                    <th className="text-right py-1.5 text-muted-foreground font-medium">Size</th>
-                    <th className="text-right py-1.5 text-muted-foreground font-medium">
-                      Hash (SHA-256)
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MOCK_MANIFEST.components.map((c) => (
-                    <tr key={c.name} className="border-b border-border/50">
-                      <td className="py-1.5 text-foreground">{c.name}</td>
-                      <td className="py-1.5 text-right font-mono text-muted-foreground">
-                        {c.size}
-                      </td>
-                      <td className="py-1.5 text-right font-mono text-muted-foreground truncate max-w-[120px]">
-                        {c.hash}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+            <p className="text-xs text-muted-foreground">
+              <span className="text-status-warning font-medium">Note:</span> Hash applies to
+              classical signing mechanism (
+              {hashAlgo === 'SHA-256'
+                ? 'CKM_SHA256_RSA_PKCS'
+                : hashAlgo === 'SHA-384'
+                  ? 'CKM_SHA384_RSA_PKCS'
+                  : 'CKM_SHA512_RSA_PKCS'}
+              ) and digest display. PQC algorithms ({pqcAlgo}) use SHAKE-256 internally — pure mode
+              per RFC 9882/9814.
+            </p>
           </div>
         )}
 
+        {/* ── Step 1: Generate Keys ── */}
         {currentStep === 1 && (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Generate a new ML-DSA-65 signing key pair. The public key is{' '}
-              <strong>7.6× larger</strong> than RSA-2048 (1,952 bytes vs 256 bytes). The private key
-              is <strong>3.4× larger</strong> (4,032 bytes vs 1,192 bytes).
-            </p>
+          <div className="space-y-5">
+            {/* Standard refs */}
+            <div className="flex flex-wrap gap-1.5">
+              <LibRef id="FIPS 204" label="FIPS 204" />
+              <LibRef id="FIPS 205" label="FIPS 205" />
+              <LibRef id="FIPS 186-5" label="FIPS 186-5" />
+              <LibRef id="PKCS11-V32-OASIS" label="PKCS#11 v3.2" />
+            </div>
 
             {isLive && (
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-3">
                 <Button
-                  onClick={handleGenerateKey}
+                  onClick={handleGenerateBothKeys}
                   disabled={isProcessing}
                   variant="outline"
                   className="text-sm"
                 >
                   {isProcessing ? (
                     <>
-                      <Loader2 size={14} className="animate-spin mr-1" /> Generating...
+                      <Loader2 size={14} className="animate-spin mr-1.5" />
+                      Generating…
                     </>
                   ) : (
                     <>
-                      <Key size={14} className="mr-1" />
-                      Generate (Live WASM)
+                      <Key size={14} className="mr-1.5" />
+                      Generate Both Keys
                     </>
                   )}
                 </Button>
-                {liveKey?.isLive && (
+                {keysGenerated && (
                   <span className="text-[11px] text-status-success font-semibold">
-                    Real key via C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)
+                    ✓ {classicalAlgo} + {pqcAlgo} keys generated via C_GenerateKeyPair
                   </span>
                 )}
               </div>
             )}
 
+            {/* Side-by-side key comparison */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Classical */}
               <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20">
-                <div className="text-xs font-bold text-status-error mb-2">
-                  Classical RSA-2048 Key
+                <div className="text-xs font-bold text-status-error mb-3">
+                  Classical — {classicalAlgo}
                 </div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Algorithm:</span>
-                    <span className="font-mono text-status-error">RSA-2048</span>
+                    <span className="font-mono text-status-error">{classicalAlgo}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Public key:</span>
-                    <span className="font-mono">256 bytes</span>
+                    <span className="font-mono">{classicalPubDisplay.toLocaleString()} B</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Private key:</span>
-                    <span className="font-mono">1,192 bytes</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Security:</span>
-                    <span className="text-status-error">~112-bit classical</span>
+                    <span className="font-mono">{classicalPrivDisplay.toLocaleString()} B</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Quantum-safe:</span>
                     <span className="text-status-error font-bold">No</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Standard:</span>
+                    <span className="font-mono">FIPS 186-5</span>
+                  </div>
                 </div>
               </div>
 
+              {/* PQC */}
               <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
-                <div className="text-xs font-bold text-primary mb-2">
-                  ML-DSA-65 Key {keyData.isLive ? '(Live WASM)' : '(Generated)'}
-                </div>
+                <div className="text-xs font-bold text-primary mb-3">PQC — {pqcAlgo}</div>
                 <div className="space-y-1.5 text-xs">
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Algorithm:</span>
-                    <span className="font-mono text-primary">{keyData.algorithm}</span>
+                    <span className="font-mono text-primary">{pqcAlgo}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Public key:</span>
                     <span className="font-mono text-primary">
-                      {keyData.publicKeySize.toLocaleString()} bytes
+                      {pqcPubDisplay.toLocaleString()} B
                     </span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Private key:</span>
                     <span className="font-mono text-primary">
-                      {keyData.privateKeySize.toLocaleString()} bytes
+                      {pqcPrivDisplay.toLocaleString()} B
                     </span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Security:</span>
-                    <span className="text-primary">{keyData.nistLevel}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-muted-foreground">Quantum-safe:</span>
                     <span className="text-status-success font-bold">Yes</span>
                   </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">NIST level:</span>
+                    <span className="font-mono text-primary">
+                      {pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'NIST Level 1' : MLDSA_NIST_LEVEL[pqcAlgo]}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">Standard:</span>
+                    <span className="font-mono">
+                      {pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205'}
+                    </span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="text-xs font-bold text-foreground mb-2">Public Key (excerpt)</div>
-              <pre className="text-[10px] font-mono text-muted-foreground bg-background rounded p-2 border border-border overflow-x-auto whitespace-pre-wrap break-all">
-                {truncateHex(keyData.publicKeyHex, 120)}
-              </pre>
-              <p className="text-[10px] text-muted-foreground mt-2">
-                {keyData.isLive
-                  ? `${keyData.publicKeySize.toLocaleString()} bytes — CKA_VALUE extracted via C_GetAttributeValue. Private key is HSM-protected (CKA_EXTRACTABLE=FALSE).`
-                  : `Usage: ${keyData.usage} — This key will be enrolled in the UEFI Secure Boot db as an EFI_CERT_X509 entry.`}
+            {/* Key inspection panel */}
+            {keysGenerated && isLive && inspectableKeys.length > 0 && (
+              <div className="bg-muted/50 rounded-lg border border-border overflow-hidden">
+                <div className="px-4 py-2 border-b border-border flex items-center gap-2">
+                  <Key size={13} className="text-muted-foreground" aria-hidden="true" />
+                  <span className="text-xs font-semibold text-foreground">
+                    Generated Keys — PKCS#11 Objects
+                  </span>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full">
+                    <thead>
+                      <tr className="border-b border-border text-[10px] text-muted-foreground font-medium">
+                        <th className="text-left px-4 py-2">Handle</th>
+                        <th className="text-left px-2 py-2">Label</th>
+                        <th className="text-left px-2 py-2">Role</th>
+                        <th className="text-left px-2 py-2">Type</th>
+                        <th className="text-right px-2 py-2">Size</th>
+                        <th className="text-right px-4 py-2">Inspect</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {inspectableKeys.map((k) => (
+                        <KeyInspectRow
+                          key={k.handle}
+                          k={k}
+                          moduleRef={hsm.moduleRef as React.RefObject<SoftHSMModule | null>}
+                          hSessionRef={hsm.hSessionRef}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="text-[10px] text-muted-foreground px-4 py-2 border-t border-border">
+                  Session objects · attributes read via C_GetAttributeValue · private keys:
+                  CKA_EXTRACTABLE=FALSE
+                </p>
+              </div>
+            )}
+
+            {/* Key size callout */}
+            <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
+              <p className="font-semibold text-foreground mb-1">
+                Key size impact on UEFI Secure Boot db
+              </p>
+              <p className="text-muted-foreground">
+                Each UEFI db entry stores an EFI_CERT_X509 containing the full public key.
+                {pqcAlgo === 'SLH-DSA-SHA2-128S'
+                  ? ` SLH-DSA-SHA2-128S has the smallest PQC public key (${SLHDSA_PUBKEY_BYTES} B) but the largest signature (${SLHDSA_SIG_BYTES.toLocaleString()} B).`
+                  : ` ML-DSA-65 public key is ${(MLDSA_PUBKEY_BYTES['ML-DSA-65'] / CLASSICAL_PUBKEY_BYTES['RSA-2048']).toFixed(1)}× larger than RSA-2048 (${MLDSA_PUBKEY_BYTES['ML-DSA-65'].toLocaleString()} B vs ${CLASSICAL_PUBKEY_BYTES['RSA-2048']} B).`}{' '}
+                UEFI db partition is typically 64–128 KB — plan capacity accordingly.
               </p>
             </div>
           </div>
         )}
 
+        {/* ── Step 2: Sign Firmware ── */}
         {currentStep === 2 && (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Sign the firmware manifest with the ML-DSA-65 private key. The signature is{' '}
-              <strong>12.9× larger</strong> than RSA-2048 (3,309 bytes vs 256 bytes). This affects
-              UEFI Authenticated Variable storage.
-            </p>
+          <div className="space-y-5">
+            {/* Standard refs */}
+            <div className="flex flex-wrap gap-1.5">
+              <LibRef id="RFC 9882" label="RFC 9882" />
+              <LibRef id="RFC 9814" label="RFC 9814" />
+              <LibRef id="RFC 5652" label="RFC 5652" />
+              <LibRef id="FIPS 204" label="FIPS 204" />
+              <LibRef id="FIPS 205" label="FIPS 205" />
+              <LibRef id="FIPS 186-5" label="FIPS 186-5" />
+            </div>
 
             {isLive && (
-              <div className="flex items-center gap-2">
-                <Button
-                  onClick={handleSign}
-                  disabled={isProcessing || !hasPrivHandle}
-                  variant="outline"
-                  className="text-sm"
-                >
-                  {isProcessing ? (
-                    <>
-                      <Loader2 size={14} className="animate-spin mr-1" /> Signing...
-                    </>
-                  ) : (
-                    'Sign Manifest (Live WASM)'
+              <div className="space-y-2">
+                <div className="flex items-center gap-3">
+                  <Button
+                    onClick={handleSignBoth}
+                    disabled={isProcessing || !keysGenerated}
+                    variant="outline"
+                    className="text-sm"
+                  >
+                    {isProcessing ? (
+                      <>
+                        <Loader2 size={14} className="animate-spin mr-1.5" />
+                        Signing…
+                      </>
+                    ) : (
+                      'Sign Both (Classical + PQC)'
+                    )}
+                  </Button>
+                  {signaturesReady && (
+                    <span className="text-[11px] text-status-success font-semibold">
+                      ✓ Both signatures produced + CMS envelopes built
+                    </span>
                   )}
-                </Button>
-                {liveSig?.isLive && (
-                  <span className="text-[11px] text-status-success font-semibold">
-                    Real signature via C_MessageSignInit + C_SignMessage (CKM_ML_DSA)
-                  </span>
+                </div>
+                {signError && (
+                  <div className="flex items-center gap-2 text-xs text-status-error bg-status-error/5 border border-status-error/20 rounded px-3 py-2">
+                    <AlertTriangle size={13} className="shrink-0" aria-hidden="true" />
+                    {signError}
+                  </div>
                 )}
               </div>
             )}
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              <div className="bg-status-error/5 rounded-lg p-3 border border-status-error/20 text-center">
-                <div className="text-lg font-bold text-status-error">256 B</div>
-                <div className="text-[10px] text-muted-foreground">RSA-2048 signature</div>
+            {/* Data-to-sign: content + PKCS#11 mechanism formatting per standard */}
+            <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs space-y-2">
+              <div className="font-semibold text-foreground flex items-center gap-1.5">
+                <Info size={12} className="text-primary shrink-0" aria-hidden="true" />
+                Data to sign — PKCS#11 input formatting per standard
               </div>
-              <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
-                <div className="text-lg font-bold text-primary">
-                  {sigData.signatureSize.toLocaleString()} B
+              <div className="space-y-1">
+                <div className="flex gap-2">
+                  <span className="text-muted-foreground shrink-0 w-20">Content:</span>
+                  <span className="font-mono text-foreground break-all text-[10px]">
+                    {contentToSign.length > 90 ? `${contentToSign.slice(0, 90)}…` : contentToSign}
+                  </span>
                 </div>
-                <div className="text-[10px] text-muted-foreground">ML-DSA-65 signature</div>
               </div>
-              <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20 text-center">
-                <div className="text-lg font-bold text-status-warning">
-                  {(sigData.signatureSize / 256).toFixed(1)}×
-                </div>
-                <div className="text-[10px] text-muted-foreground">Size increase</div>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border text-center">
-                <div className="text-lg font-bold text-foreground">~50 KB</div>
-                <div className="text-[10px] text-muted-foreground">Total signing overhead</div>
-              </div>
-            </div>
-
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="text-xs font-bold text-foreground mb-2">
-                Signature (ML-DSA-65, DER-encoded)
-              </div>
-              <pre className="text-[10px] font-mono text-primary bg-background rounded p-2 border border-primary/20 overflow-x-auto whitespace-pre-wrap break-all">
-                {truncateHex(sigData.signatureHex, 120)}
-              </pre>
-              <div className="flex items-center justify-between mt-2 text-[10px] text-muted-foreground">
-                <span>Signing time: {sigData.signingTime}</span>
-                <span className="font-mono text-primary">
-                  {sigData.signatureSize.toLocaleString()} bytes
-                </span>
-              </div>
-            </div>
-
-            <div className="bg-muted/50 rounded-lg p-4 border border-border">
-              <div className="text-xs font-bold text-foreground mb-2">Certificate Chain</div>
-              <div className="space-y-1.5">
-                {sigData.certChain.map((cert, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start gap-2 bg-background rounded p-2 border border-border"
-                  >
-                    <span className="text-[10px] font-bold text-muted-foreground w-4 shrink-0">
-                      {idx + 1}
-                    </span>
-                    <span className="text-[10px] text-foreground/80">{cert}</span>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 pt-2 border-t border-border/50">
+                {/* Classical formatting */}
+                <div className="space-y-0.5">
+                  <div className="text-[10px] font-semibold text-status-error">{classicalAlgo}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Mechanism:{' '}
+                    <span className="font-mono text-foreground">{classicalMechName}</span>
                   </div>
-                ))}
+                  {classicalAlgo.startsWith('RSA') ? (
+                    <div className="text-[10px] text-muted-foreground">
+                      Flow: <span className="font-mono">SHA-{hashAlgo.split('-')[1]}(msg)</span> →{' '}
+                      <span className="font-mono">DigestInfo</span> → RSA-sign
+                      <span className="ml-1 text-[9px]">(PKCS#1 v1.5, RFC 8017 §9.2)</span>
+                    </div>
+                  ) : (
+                    <div className="text-[10px] text-muted-foreground">
+                      Flow: <span className="font-mono">SHA-{hashAlgo.split('-')[1]}(msg)</span> →
+                      ECDSA-sign → <span className="font-mono">DER(r, s)</span>
+                      <span className="ml-1 text-[9px]">(ANSI X9.62, FIPS 186-5)</span>
+                    </div>
+                  )}
+                </div>
+                {/* PQC formatting */}
+                <div className="space-y-0.5">
+                  <div className="text-[10px] font-semibold text-primary">{pqcAlgo}</div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Mechanism:{' '}
+                    <span className="font-mono text-foreground">C_SignMessage (pure)</span>
+                  </div>
+                  <div className="text-[10px] text-muted-foreground">
+                    Flow: raw msg →{' '}
+                    <span className="font-mono">
+                      {pqcAlgo.startsWith('ML-DSA') ? 'SHAKE-256' : 'SHA2/SHAKE'} internal
+                    </span>
+                    <span className="ml-1 text-[9px]">
+                      (no pre-hash,{' '}
+                      {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'})
+                    </span>
+                  </div>
+                </div>
               </div>
+            </div>
+
+            {/* Side-by-side signatures */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Classical */}
+              <div className="bg-status-error/5 rounded-lg p-4 border border-status-error/20 space-y-2">
+                <div className="text-xs font-bold text-status-error">
+                  {classicalAlgo} — {hashAlgo}
+                </div>
+                <div className="text-lg font-bold text-status-error text-center py-1">
+                  {displayClassicalSig.toLocaleString()} B
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    Signature bytes (hex):
+                  </span>
+                  <pre className="text-[9px] font-mono text-muted-foreground bg-background rounded p-1.5 border border-border break-all whitespace-pre-wrap min-h-[36px]">
+                    {classicalSigHex
+                      ? truncateHex(classicalSigHex, 160)
+                      : isLive
+                        ? '— click Sign Both to generate —'
+                        : '— enable Live HSM to sign —'}
+                  </pre>
+                </div>
+                <p className="text-[10px] text-muted-foreground">Quantum-vulnerable · FIPS 186-5</p>
+              </div>
+
+              {/* PQC */}
+              <div className="bg-primary/5 rounded-lg p-4 border border-primary/20 space-y-2">
+                <div className="text-xs font-bold text-primary">
+                  {pqcAlgo} — Pure mode
+                  <span className="ml-1 text-[9px] font-normal text-muted-foreground">
+                    ({pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'})
+                  </span>
+                </div>
+                <div className="text-lg font-bold text-primary text-center py-1">
+                  {displayPqcSig.toLocaleString()} B
+                </div>
+                <div className="space-y-1">
+                  <span className="text-[10px] text-muted-foreground font-medium">
+                    Signature bytes (hex):
+                  </span>
+                  <pre className="text-[9px] font-mono text-primary bg-background rounded p-1.5 border border-primary/20 break-all whitespace-pre-wrap min-h-[36px]">
+                    {pqcSigHex
+                      ? truncateHex(pqcSigHex, 160)
+                      : isLive
+                        ? '— click Sign Both to generate —'
+                        : '— enable Live HSM to sign —'}
+                  </pre>
+                </div>
+                <p className="text-[10px] text-muted-foreground">
+                  Quantum-safe · {pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205'}
+                </p>
+              </div>
+            </div>
+
+            {/* Size ratio */}
+            <div className="text-center">
+              <span className="text-sm font-bold text-status-warning">{sigRatio}×</span>
+              <span className="text-xs text-muted-foreground ml-1">
+                larger PQC signature — {displayPqcSig.toLocaleString()} B vs{' '}
+                {displayClassicalSig.toLocaleString()} B
+              </span>
+            </div>
+
+            {/* CMS SignedData output */}
+            {(classicalCmsDer || pqcCmsDer) && (
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Info size={13} className="text-primary" aria-hidden="true" />
+                  <p className="text-xs font-semibold text-foreground">
+                    CMS SignedData output (RFC 5652) — pure mode, no pre-hash
+                  </p>
+                </div>
+                {classicalCmsDer && (
+                  <div className="bg-muted/40 rounded p-3 border border-border space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-semibold text-status-error">
+                        {classicalAlgo} · {classicalCmsDer.length.toLocaleString()} bytes DER
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] gap-1 px-2"
+                        onClick={() => downloadBlob(classicalCmsDer, 'classical-signed.p7s')}
+                      >
+                        <Download size={10} /> classical-signed.p7s
+                      </Button>
+                    </div>
+                    <pre className="text-[9px] font-mono text-muted-foreground break-all whitespace-pre-wrap">
+                      {truncateHex(toHex(classicalCmsDer), 120)}
+                    </pre>
+                  </div>
+                )}
+                {pqcCmsDer && (
+                  <div className="bg-primary/5 rounded p-3 border border-primary/20 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-[10px] font-semibold text-primary">
+                        {pqcAlgo} · {pqcCmsDer.length.toLocaleString()} bytes DER
+                      </span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 text-[10px] gap-1 px-2"
+                        onClick={() => downloadBlob(pqcCmsDer, 'pqc-signed.p7s')}
+                      >
+                        <Download size={10} /> pqc-signed.p7s
+                      </Button>
+                    </div>
+                    <pre className="text-[9px] font-mono text-primary break-all whitespace-pre-wrap">
+                      {truncateHex(toHex(pqcCmsDer), 120)}
+                    </pre>
+                  </div>
+                )}
+                <p className="text-[10px] text-muted-foreground">
+                  ContentInfo → SignedData (RFC 5652) · Pure ML-DSA/SLH-DSA mandated by RFC
+                  9882/9814 · In production: add X.509 certificate to certificates field
+                </p>
+              </div>
+            )}
+
+            {/* Explanation */}
+            <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
+              <p className="font-semibold text-foreground mb-1">Signature size impacts</p>
+              <p className="text-muted-foreground">
+                UEFI Authenticated Variable storage (NVRAM) has tight limits — each db entry stores
+                a full .p7s envelope. OTA firmware update packages carry the signature in their
+                manifest.
+                {pqcAlgo === 'SLH-DSA-SHA2-128S'
+                  ? ' SLH-DSA-SHA2-128S has very large signatures (7,856 B) — suitable for low-frequency root key signing, not per-image signing.'
+                  : ` ML-DSA signatures are large but acceptable for UEFI db (NVRAM partition is typically 64–128 KB).`}
+              </p>
             </div>
           </div>
         )}
 
+        {/* ── Step 3: Verify & Compare ── */}
         {currentStep === 3 && (
-          <div className="space-y-4">
-            <p className="text-sm text-muted-foreground">
-              Verify the ML-DSA-65 firmware signature. The UEFI firmware verifier checks: (1)
-              certificate chain up to the enrolled db certificate, (2) ML-DSA signature over the
-              firmware hash, (3) certificate validity period.
-            </p>
+          <div className="space-y-5">
+            {/* Standard refs */}
+            <div className="flex flex-wrap gap-1.5">
+              <LibRef id="RFC 5652" label="RFC 5652" />
+              <LibRef id="FIPS 204" label="FIPS 204" />
+              <LibRef id="FIPS 205" label="FIPS 205" />
+              <LibRef id="NSA CNSA 2.0" label="NSA CNSA 2.0" />
+              <LibRef id="RFC 9019" label="RFC 9019 (SUIT)" />
+            </div>
 
             {isLive && (
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-3">
                 <Button
-                  onClick={handleVerify}
-                  disabled={isProcessing || !hasSigBytes}
+                  onClick={handleVerifyBoth}
+                  disabled={isProcessing || !signaturesReady}
                   variant="outline"
                   className="text-sm"
                 >
                   {isProcessing ? (
                     <>
-                      <Loader2 size={14} className="animate-spin mr-1" /> Verifying...
+                      <Loader2 size={14} className="animate-spin mr-1.5" />
+                      Verifying…
                     </>
                   ) : (
-                    'Verify (Live WASM)'
+                    'Verify Both Signatures'
                   )}
                 </Button>
-                {liveVerify?.isLive && (
-                  <span className="text-[11px] text-status-success font-semibold">
-                    Real verification via C_MessageVerifyInit + C_VerifyMessage
-                  </span>
-                )}
               </div>
             )}
 
-            <div
-              className={`rounded-lg p-4 border-2 ${verifyData.verified ? 'border-status-success/50 bg-status-success/5' : 'border-status-error/50 bg-status-error/5'}`}
-            >
-              <div className="flex items-center gap-2 mb-3">
-                {verifyData.verified ? (
-                  <CheckCircle size={20} className="text-status-success" aria-label="Verified" />
-                ) : (
-                  <AlertTriangle
-                    size={20}
-                    className="text-status-error"
-                    aria-label="Verification failed"
-                  />
+            {/* Verification results */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {/* Classical */}
+              <div
+                className={`rounded-lg p-4 border-2 space-y-2 ${classicalVerified === null ? 'border-border bg-muted/30' : classicalVerified ? 'border-status-success/40 bg-status-success/5' : 'border-status-error/40 bg-status-error/5'}`}
+              >
+                <div className="flex items-center gap-2">
+                  {classicalVerified === null ? (
+                    <Key size={16} className="text-muted-foreground" aria-hidden="true" />
+                  ) : classicalVerified ? (
+                    <CheckCircle size={16} className="text-status-success" aria-label="Verified" />
+                  ) : (
+                    <AlertTriangle size={16} className="text-status-error" aria-label="Failed" />
+                  )}
+                  <span className="text-xs font-bold text-foreground">{classicalAlgo}</span>
+                </div>
+                {classicalVerified !== null && (
+                  <p
+                    className={`text-xs font-semibold ${classicalVerified ? 'text-status-success' : 'text-status-error'}`}
+                  >
+                    {classicalVerified ? 'VERIFIED' : 'FAILED'}
+                  </p>
                 )}
-                <span
-                  className={`text-sm font-bold ${verifyData.verified ? 'text-status-success' : 'text-status-error'}`}
-                >
-                  {verifyData.verified
-                    ? 'Signature Verification PASSED'
-                    : 'Signature Verification FAILED'}
-                </span>
+                {classicalSigHex && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Signature (hex):
+                    </span>
+                    <pre className="text-[9px] font-mono text-muted-foreground bg-background rounded p-1.5 border border-border break-all whitespace-pre-wrap">
+                      {truncateHex(classicalSigHex, 160)}
+                    </pre>
+                    <span className="text-[10px] text-muted-foreground">
+                      {classicalSigSize.toLocaleString()} bytes · {classicalMechName}
+                    </span>
+                  </div>
+                )}
+                <p className="text-[10px] text-muted-foreground">Quantum-vulnerable · FIPS 186-5</p>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-xs">
-                <div>
-                  <span className="text-muted-foreground">Algorithm: </span>
-                  <span className="text-primary font-medium">{verifyData.algorithm}</span>
+              {/* PQC */}
+              <div
+                className={`rounded-lg p-4 border-2 space-y-2 ${pqcVerified === null ? 'border-border bg-muted/30' : pqcVerified ? 'border-status-success/40 bg-status-success/5' : 'border-status-error/40 bg-status-error/5'}`}
+              >
+                <div className="flex items-center gap-2">
+                  {pqcVerified === null ? (
+                    <Key size={16} className="text-muted-foreground" aria-hidden="true" />
+                  ) : pqcVerified ? (
+                    <CheckCircle size={16} className="text-status-success" aria-label="Verified" />
+                  ) : (
+                    <AlertTriangle size={16} className="text-status-error" aria-label="Failed" />
+                  )}
+                  <span className="text-xs font-bold text-foreground">{pqcAlgo}</span>
                 </div>
-                <div>
-                  <span className="text-muted-foreground">Security level: </span>
-                  <span className="text-status-success">{verifyData.nistLevel}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Signer: </span>
-                  <span className="font-mono text-foreground/80">{verifyData.signerDN}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Valid from: </span>
-                  <span className="font-mono text-foreground/80">{verifyData.validFrom}</span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Valid until: </span>
-                  <span className="font-mono text-foreground/80">{verifyData.validUntil}</span>
-                </div>
+                {pqcVerified !== null && (
+                  <p
+                    className={`text-xs font-semibold ${pqcVerified ? 'text-status-success' : 'text-status-error'}`}
+                  >
+                    {pqcVerified ? 'VERIFIED' : 'FAILED'}
+                  </p>
+                )}
+                {pqcSigHex && (
+                  <div className="space-y-1">
+                    <span className="text-[10px] text-muted-foreground font-medium">
+                      Signature (hex):
+                    </span>
+                    <pre className="text-[9px] font-mono text-primary bg-background rounded p-1.5 border border-primary/20 break-all whitespace-pre-wrap">
+                      {truncateHex(pqcSigHex, 160)}
+                    </pre>
+                    <span className="text-[10px] text-muted-foreground">
+                      {pqcSigSize.toLocaleString()} bytes · pure mode ·{' '}
+                      {pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882 §3.1' : 'RFC 9814 §1.2'}
+                    </span>
+                  </div>
+                )}
+                <p className="text-[10px] text-muted-foreground">
+                  Quantum-safe · {pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205'} · Pure
+                  mode
+                </p>
               </div>
             </div>
 
+            {/* Full comparison table */}
             <div className="bg-muted/50 rounded-lg p-4 border border-border">
               <div className="flex items-center gap-2 mb-3">
                 <Info size={14} className="text-primary" aria-hidden="true" />
-                <div className="text-xs font-bold text-foreground">
-                  Migration Summary: RSA-2048 → ML-DSA-65
-                </div>
+                <span className="text-xs font-bold text-foreground">
+                  Migration Comparison: {classicalAlgo} → {pqcAlgo}
+                </span>
               </div>
               <table className="w-full text-xs">
                 <thead>
                   <tr className="border-b border-border">
                     <th className="text-left py-1.5 text-muted-foreground font-medium">Metric</th>
-                    <th className="text-right py-1.5 text-muted-foreground font-medium">
-                      RSA-2048
+                    <th className="text-right py-1.5 text-status-error font-medium">
+                      {classicalAlgo}
                     </th>
-                    <th className="text-right py-1.5 text-muted-foreground font-medium">
-                      ML-DSA-65
-                    </th>
+                    <th className="text-right py-1.5 text-primary font-medium">{pqcAlgo}</th>
                     <th className="text-right py-1.5 text-muted-foreground font-medium">Change</th>
                   </tr>
                 </thead>
                 <tbody>
                   {[
-                    { metric: 'Public key', rsa: '256 B', pqc: '1,952 B', change: '7.6×' },
-                    { metric: 'Private key', rsa: '1,192 B', pqc: '4,032 B', change: '3.4×' },
-                    { metric: 'Signature', rsa: '256 B', pqc: '3,309 B', change: '12.9×' },
-                    { metric: 'Quantum-safe', rsa: 'No', pqc: 'Yes', change: '✓' },
-                    { metric: 'NIST level', rsa: '~80-bit PQ', pqc: 'Level 3', change: '↑' },
+                    {
+                      metric: 'Public key',
+                      classical: `${classicalPubDisplay.toLocaleString()} B`,
+                      pqc: `${pqcPubDisplay.toLocaleString()} B`,
+                      change: `${(pqcPubDisplay / classicalPubDisplay).toFixed(1)}×`,
+                    },
+                    {
+                      metric: 'Private key',
+                      classical: `${classicalPrivDisplay.toLocaleString()} B`,
+                      pqc: `${pqcPrivDisplay.toLocaleString()} B`,
+                      change: `${(pqcPrivDisplay / classicalPrivDisplay).toFixed(1)}×`,
+                    },
+                    {
+                      metric: 'Signature',
+                      classical: `${displayClassicalSig.toLocaleString()} B`,
+                      pqc: `${displayPqcSig.toLocaleString()} B`,
+                      change: `${sigRatio}×`,
+                    },
+                    {
+                      metric: 'Hash (digest)',
+                      classical: hashAlgo,
+                      pqc: 'SHAKE-256 (internal)',
+                      change: '—',
+                    },
+                    {
+                      metric: 'Signing mode',
+                      classical: `Hash+Sign (${hashAlgo})`,
+                      pqc: 'Pure (RFC 9882/9814)',
+                      change: '✓',
+                    },
+                    {
+                      metric: 'Quantum-safe',
+                      classical: 'No',
+                      pqc: 'Yes',
+                      change: '✓',
+                    },
+                    {
+                      metric: 'NIST level',
+                      classical: '~112-bit classical',
+                      pqc:
+                        pqcAlgo === 'SLH-DSA-SHA2-128S'
+                          ? 'NIST Level 1'
+                          : MLDSA_NIST_LEVEL[pqcAlgo],
+                      change: '↑',
+                    },
+                    {
+                      metric: 'Standard',
+                      classical: 'FIPS 186-5',
+                      pqc: pqcAlgo.startsWith('ML-DSA') ? 'FIPS 204' : 'FIPS 205',
+                      change: '—',
+                    },
+                    {
+                      metric: 'CMS spec',
+                      classical: 'RFC 5652',
+                      pqc: pqcAlgo.startsWith('ML-DSA') ? 'RFC 9882' : 'RFC 9814',
+                      change: '—',
+                    },
                   ].map((row) => (
                     <tr key={row.metric} className="border-b border-border/50">
                       <td className="py-1.5 text-foreground">{row.metric}</td>
-                      <td className="py-1.5 text-right font-mono text-status-error">{row.rsa}</td>
+                      <td className="py-1.5 text-right font-mono text-status-error">
+                        {row.classical}
+                      </td>
                       <td className="py-1.5 text-right font-mono text-primary">{row.pqc}</td>
                       <td className="py-1.5 text-right font-bold text-status-warning">
                         {row.change}
@@ -816,16 +1848,49 @@ export const FirmwareSigningMigrator: React.FC = () => {
                 </tbody>
               </table>
             </div>
+
+            {/* NSA CNSA 2.0 callout */}
+            <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs flex gap-2">
+              <Info size={13} className="text-primary shrink-0 mt-0.5" aria-hidden="true" />
+              <p className="text-muted-foreground">
+                <strong className="text-foreground">NSA CNSA 2.0</strong> mandates ML-DSA-87 for US
+                government firmware signing by 2030.{' '}
+                <a
+                  href="/library?ref=NSA CNSA 2.0"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline"
+                >
+                  → View requirements
+                </a>{' '}
+                · RFC 9019 (SUIT) defines firmware update manifest format for IoT devices using the
+                same CMS signatures.
+              </p>
+            </div>
+
+            {/* Migration impact */}
+            <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
+              <p className="font-semibold text-foreground mb-1">Migration pipeline impact</p>
+              <ul className="text-muted-foreground space-y-0.5 list-disc list-inside">
+                <li>UEFI db entries must store larger X.509 certificates with PQC public keys</li>
+                <li>OTA update packages will carry larger .p7s signature envelopes</li>
+                <li>Legacy firmware images need re-signing with new PQC keys</li>
+                <li>
+                  HSM provisioning tooling must support CKM_ML_DSA_KEY_PAIR_GEN and
+                  CKM_SLH_DSA_KEY_PAIR_GEN
+                </li>
+              </ul>
+            </div>
           </div>
         )}
 
-        {/* PKCS#11 Call Log */}
-        {hsm.isReady && hsm.log.length > 0 && (
+        {/* PKCS#11 Call Log — open by default */}
+        {hsm.isReady && (
           <Pkcs11LogPanel
             log={hsm.log}
             onClear={hsm.clearLog}
             title="PKCS#11 Call Log"
-            defaultOpen={false}
+            defaultOpen={true}
             className="mt-4"
             filterFns={LIVE_OPERATIONS}
           />
@@ -861,7 +1926,8 @@ export const FirmwareSigningMigrator: React.FC = () => {
             >
               {isProcessing ? (
                 <>
-                  <Loader2 size={14} className="animate-spin" /> Processing...
+                  <Loader2 size={14} className="animate-spin" />
+                  Processing…
                 </>
               ) : (
                 <>
@@ -887,8 +1953,8 @@ export const FirmwareSigningMigrator: React.FC = () => {
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong>{' '}
           {isLive
-            ? 'All cryptographic operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Key sizes and signature sizes match the FIPS 204 (ML-DSA) specification exactly.'
-            : 'In simulation mode, key and signature data are representative examples. Enable Live WASM mode to execute real PKCS#11 v3.2 operations.'}{' '}
+            ? 'All cryptographic operations execute in SoftHSM3 WASM (PKCS#11 v3.2). Key and signature sizes match FIPS 204/205 exactly. CMS SignedData uses pure mode per RFC 9882/9814.'
+            : 'Enable Live HSM to execute real PKCS#11 v3.2 operations. Algorithm selection, comparison table, and CMS structure are always shown.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>
@@ -896,7 +1962,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
       <KatValidationPanel
         specs={SECBOOT_KAT_SPECS}
         label="Secure Boot PQC Known Answer Tests"
-        authorityNote="UEFI 2.10 · TPM 2.0 · FIPS 204 · FIPS 180-4"
+        authorityNote="UEFI 2.10 · TPM 2.0 · FIPS 204 · FIPS 205 · FIPS 180-4"
       />
     </div>
   )

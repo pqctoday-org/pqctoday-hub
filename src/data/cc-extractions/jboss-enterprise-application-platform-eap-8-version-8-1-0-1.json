@@ -1,0 +1,11 @@
+{
+  "vendor": "Red Hat, Inc.",
+  "product_name": "JBoss EAP 8",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "JBoss EAP 8 is an application server platform providing enterprise application services, relying on TLS for certificate-based authentication and using standard cryptographic service providers from Java Runtime Environments.",
+  "product_category": "Application Server",
+  "assurance_level": null,
+  "classical_algorithms": [],
+  "_source_pdf": "jboss-enterprise-application-platform-eap-8-version-8-1-0-1.pdf"
+}

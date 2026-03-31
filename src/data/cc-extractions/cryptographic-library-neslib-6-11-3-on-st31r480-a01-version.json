@@ -1,0 +1,11 @@
+{
+  "vendor": "STMicroelectronics",
+  "product_name": "NesLib 6.11.3 on ST31R480 A01",
+  "pqc_algorithms": ["LMS"],
+  "pqc_standard_refs": ["NIST SP 800-208"],
+  "product_brief": "NesLib is a cryptographic library supporting symmetric and asymmetric encryption, hash functions, DRBG, and post-quantum LMS signatures, operating on the ST31R480 Security IC.",
+  "product_category": "Cryptographic Library",
+  "assurance_level": "EAL5+",
+  "classical_algorithms": ["AES-256", "RSA-2048", "ECDSA P-256", "SHA-256", "Diffie-Hellman"],
+  "_source_pdf": "cryptographic-library-neslib-6-11-3-on-st31r480-a01-version.pdf"
+}

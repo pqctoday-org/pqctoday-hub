@@ -14,6 +14,7 @@ import {
   Info,
 } from 'lucide-react'
 import type { ComplianceRecord } from './types'
+import { getMigrateCategory, type MigrateCategoryRef } from './migrateCategories'
 import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import clsx from 'clsx'
@@ -41,10 +42,12 @@ interface ComplianceTableProps {
   currentPage?: number
   selectedRecordId?: string
   onFilterTextChange?: (text: string) => void
+  migrateCatFilters?: string[]
   onPqcFiltersChange?: (filters: string[]) => void
   onCategoryFiltersChange?: (filters: string[]) => void
   onSourceFiltersChange?: (filters: string[]) => void
   onVendorFiltersChange?: (filters: string[]) => void
+  onMigrateCatFiltersChange?: (filters: string[]) => void
   onSortColumnChange?: (col: SortColumn) => void
   onSortDirectionChange?: (dir: SortDirection) => void
   onCurrentPageChange?: (page: number) => void
@@ -280,6 +283,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   categoryFilters: categoryFiltersProp,
   sourceFilters: sourceFiltersProp,
   vendorFilters: vendorFiltersProp,
+  migrateCatFilters: migrateCatFiltersProp,
   sortColumn: sortColumnProp,
   sortDirection: sortDirectionProp,
   currentPage: currentPageProp,
@@ -289,6 +293,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onCategoryFiltersChange,
   onSourceFiltersChange,
   onVendorFiltersChange,
+  onMigrateCatFiltersChange,
   onSortColumnChange,
   onSortDirectionChange,
   onCurrentPageChange,
@@ -299,6 +304,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [localCategoryFilters, setLocalCategoryFilters] = useState<string[]>([])
   const [localSourceFilters, setLocalSourceFilters] = useState<string[]>([])
   const [localVendorFilters, setLocalVendorFilters] = useState<string[]>([])
+  const [localMigrateCatFilters, setLocalMigrateCatFilters] = useState<string[]>([])
   const [localSortColumn, setLocalSortColumn] = useState<SortColumn>('date')
   const [localSortDirection, setLocalSortDirection] = useState<SortDirection>('desc')
   const [localCurrentPage, setLocalCurrentPage] = useState(1)
@@ -309,6 +315,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const categoryFilters = categoryFiltersProp ?? localCategoryFilters
   const sourceFilters = sourceFiltersProp ?? localSourceFilters
   const vendorFilters = vendorFiltersProp ?? localVendorFilters
+  const migrateCatFilters = migrateCatFiltersProp ?? localMigrateCatFilters
   const sortColumn = sortColumnProp ?? localSortColumn
   const sortDirection = sortDirectionProp ?? localSortDirection
   const currentPage = currentPageProp ?? localCurrentPage
@@ -320,6 +327,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     onCategoryFiltersChange ?? ((f: string[]) => setLocalCategoryFilters(f))
   const setSourceFilters = onSourceFiltersChange ?? ((f: string[]) => setLocalSourceFilters(f))
   const setVendorFilters = onVendorFiltersChange ?? ((f: string[]) => setLocalVendorFilters(f))
+  const setMigrateCatFilters =
+    onMigrateCatFiltersChange ?? ((f: string[]) => setLocalMigrateCatFilters(f))
   const setSortColumn = onSortColumnChange ?? setLocalSortColumn
   const setSortDirection = onSortDirectionChange ?? setLocalSortDirection
   const setCurrentPage = onCurrentPageChange ?? setLocalCurrentPage
@@ -328,6 +337,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [showCategoryMenu, setShowCategoryMenu] = useState(false)
   const [showSourceMenu, setShowSourceMenu] = useState(false)
   const [showVendorMenu, setShowVendorMenu] = useState(false)
+  const [showMigrateCatMenu, setShowMigrateCatMenu] = useState(false)
   const [vendorSearch, setVendorSearch] = useState('')
   const ITEMS_PER_PAGE = 50
 
@@ -348,6 +358,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     category: categoryFilters,
     source: sourceFilters,
     vendor: vendorFilters,
+    migrateCat: migrateCatFilters,
     vendorSearch: '',
   })
 
@@ -360,6 +371,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         category: categoryFilters,
         source: sourceFilters,
         vendor: vendorFilters,
+        migrateCat: migrateCatFilters,
         vendorSearch: vendorSearch,
       })
       if (!onCurrentPageChange) setLocalCurrentPage(1)
@@ -372,6 +384,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     categoryFilters,
     sourceFilters,
     vendorFilters,
+    migrateCatFilters,
     vendorSearch,
     onCurrentPageChange,
   ])
@@ -408,6 +421,14 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     setCurrentPage(1)
   }
 
+  const handleToggleMigrateCatFilter = (categoryId: string) => {
+    const next = migrateCatFilters.includes(categoryId)
+      ? migrateCatFilters.filter((c) => c !== categoryId)
+      : [...migrateCatFilters, categoryId]
+    setMigrateCatFilters(next)
+    setCurrentPage(1)
+  }
+
   const uniqueCategories = useMemo(() => {
     const cats = new Set(data.map((d) => d.productCategory).filter(Boolean))
     return Array.from(cats).sort()
@@ -421,6 +442,15 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const uniqueVendors = useMemo(() => {
     const vendors = new Set(data.map((d) => d.vendor).filter(Boolean))
     return Array.from(vendors).sort()
+  }, [data])
+
+  const uniqueMigrateCategories = useMemo((): MigrateCategoryRef[] => {
+    const seen = new Map<string, MigrateCategoryRef>()
+    for (const record of data) {
+      const mc = getMigrateCategory(record.productCategory)
+      if (mc && !seen.has(mc.categoryId)) seen.set(mc.categoryId, mc)
+    }
+    return Array.from(seen.values()).sort((a, b) => a.categoryId.localeCompare(b.categoryId))
   }, [data])
 
   const filteredVendors = useMemo(() => {
@@ -462,13 +492,21 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         !activeFilters.vendorSearch ||
         record.vendor.toLowerCase().includes(activeFilters.vendorSearch.toLowerCase())
 
+      // Migrate Category Filter Logic
+      const matchesMigrateCat =
+        activeFilters.migrateCat.length === 0 ||
+        activeFilters.migrateCat.includes(
+          getMigrateCategory(record.productCategory)?.categoryId ?? ''
+        )
+
       return (
         matchesText &&
         matchesPQC &&
         matchesCategory &&
         matchesSource &&
         matchesVendor &&
-        matchesVendorSearch
+        matchesVendorSearch &&
+        matchesMigrateCat
       )
     })
 
@@ -728,78 +766,162 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         )}
                       />
                     </Button>
-                    <div className="relative">
-                      <button
-                        type="button"
-                        aria-expanded={showCategoryMenu}
-                        aria-label="Filter by product category"
-                        onClick={(e) => {
-                          e.stopPropagation()
-                          setShowCategoryMenu(!showCategoryMenu)
-                        }}
-                        className={clsx(
-                          'p-0.5 rounded hover:bg-muted',
-                          categoryFilters.length > 0 && 'text-primary'
-                        )}
-                      >
-                        <Filter size={12} />
-                        {categoryFilters.length > 0 && (
-                          <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
-                            {categoryFilters.length}
-                          </span>
-                        )}
-                      </button>
-                      {showCategoryMenu && (
-                        <>
-                          <div
-                            className="fixed inset-0 z-40"
-                            onClick={() => setShowCategoryMenu(false)}
-                            aria-hidden="true"
-                          />
-                          <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
-                            <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
-                              Product Categories
-                            </div>
-                            {uniqueCategories.map((cat) => (
-                              <button
-                                type="button"
-                                key={cat}
-                                onClick={() => handleToggleCategoryFilter(cat)}
-                                className={clsx(
-                                  'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
-                                  categoryFilters.includes(cat)
-                                    ? 'text-primary'
-                                    : 'text-muted-foreground'
-                                )}
-                              >
-                                <div
+                    <div className="flex items-center gap-0.5">
+                      {/* Product category filter */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          aria-expanded={showCategoryMenu}
+                          aria-label="Filter by product category"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowCategoryMenu(!showCategoryMenu)
+                            setShowMigrateCatMenu(false)
+                          }}
+                          className={clsx(
+                            'p-0.5 rounded hover:bg-muted',
+                            categoryFilters.length > 0 && 'text-primary'
+                          )}
+                        >
+                          <Filter size={12} />
+                          {categoryFilters.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-primary rounded-full text-[8px] flex items-center justify-center text-primary-foreground font-bold">
+                              {categoryFilters.length}
+                            </span>
+                          )}
+                        </button>
+                        {showCategoryMenu && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-40"
+                              onClick={() => setShowCategoryMenu(false)}
+                              aria-hidden="true"
+                            />
+                            <div className="absolute left-0 top-full mt-1 w-64 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                              <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                                Product Categories
+                              </div>
+                              {uniqueCategories.map((cat) => (
+                                <button
+                                  type="button"
+                                  key={cat}
+                                  onClick={() => handleToggleCategoryFilter(cat)}
                                   className={clsx(
-                                    'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                    'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
                                     categoryFilters.includes(cat)
-                                      ? 'border-primary bg-primary'
-                                      : 'border-border'
+                                      ? 'text-primary'
+                                      : 'text-muted-foreground'
                                   )}
                                 >
-                                  {categoryFilters.includes(cat) && (
-                                    <Check size={10} className="text-primary-foreground" />
+                                  <div
+                                    className={clsx(
+                                      'w-3 h-3 rounded-[3px] border flex items-center justify-center',
+                                      categoryFilters.includes(cat)
+                                        ? 'border-primary bg-primary'
+                                        : 'border-border'
+                                    )}
+                                  >
+                                    {categoryFilters.includes(cat) && (
+                                      <Check size={10} className="text-primary-foreground" />
+                                    )}
+                                  </div>
+                                  <span className="truncate">{cat}</span>
+                                </button>
+                              ))}
+                              {categoryFilters.length > 0 && (
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  onClick={() => setCategoryFilters([])}
+                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                >
+                                  Clear
+                                </Button>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
+
+                      {/* Migrate category filter */}
+                      <div className="relative">
+                        <button
+                          type="button"
+                          aria-expanded={showMigrateCatMenu}
+                          aria-label="Filter by migrate category"
+                          title="Filter by Migrate Category (CSC)"
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            setShowMigrateCatMenu(!showMigrateCatMenu)
+                            setShowCategoryMenu(false)
+                          }}
+                          className={clsx(
+                            'p-0.5 rounded hover:bg-muted',
+                            migrateCatFilters.length > 0 && 'text-secondary'
+                          )}
+                        >
+                          <LockKeyhole size={12} />
+                          {migrateCatFilters.length > 0 && (
+                            <span className="absolute -top-1 -right-1 w-3 h-3 bg-secondary rounded-full text-[8px] flex items-center justify-center text-secondary-foreground font-bold">
+                              {migrateCatFilters.length}
+                            </span>
+                          )}
+                        </button>
+                        {showMigrateCatMenu && (
+                          <>
+                            <div
+                              className="fixed inset-0 z-40"
+                              onClick={() => setShowMigrateCatMenu(false)}
+                              aria-hidden="true"
+                            />
+                            <div className="absolute left-0 top-full mt-1 w-72 max-w-[calc(100vw-2rem)] bg-popover border border-border rounded-md shadow-xl z-50 p-2 space-y-1 max-h-80 overflow-y-auto">
+                              <div className="text-xs font-semibold text-muted-foreground px-2 py-1 mb-1">
+                                Migrate Category (CSC)
+                              </div>
+                              {uniqueMigrateCategories.map((mc) => (
+                                <button
+                                  type="button"
+                                  key={mc.categoryId}
+                                  onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
+                                  className={clsx(
+                                    'w-full flex items-center gap-2 px-2 py-1.5 rounded text-xs cursor-pointer hover:bg-muted transition-colors text-left',
+                                    migrateCatFilters.includes(mc.categoryId)
+                                      ? 'text-secondary'
+                                      : 'text-muted-foreground'
                                   )}
-                                </div>
-                                <span className="truncate">{cat}</span>
-                              </button>
-                            ))}
-                            {categoryFilters.length > 0 && (
-                              <Button
-                                variant="link"
-                                size="sm"
-                                onClick={() => setCategoryFilters([])}
-                                className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
-                              >
-                                Clear
-                              </Button>
-                            )}
-                          </div>
-                        </>
-                      )}
+                                >
+                                  <div
+                                    className={clsx(
+                                      'w-3 h-3 rounded-[3px] border flex items-center justify-center shrink-0',
+                                      migrateCatFilters.includes(mc.categoryId)
+                                        ? 'border-secondary bg-secondary'
+                                        : 'border-border'
+                                    )}
+                                  >
+                                    {migrateCatFilters.includes(mc.categoryId) && (
+                                      <Check size={10} className="text-secondary-foreground" />
+                                    )}
+                                  </div>
+                                  <span className="font-mono text-[10px] text-muted-foreground shrink-0">
+                                    {mc.categoryId}
+                                  </span>
+                                  <span className="truncate">{mc.categoryName}</span>
+                                </button>
+                              ))}
+                              {migrateCatFilters.length > 0 && (
+                                <Button
+                                  variant="link"
+                                  size="sm"
+                                  onClick={() => setMigrateCatFilters([])}
+                                  className="w-full text-xs text-center text-destructive hover:text-destructive/80 py-1 border-t border-border mt-1 pt-2"
+                                >
+                                  Clear
+                                </Button>
+                              )}
+                            </div>
+                          </>
+                        )}
+                      </div>
                     </div>
                   </div>
                 </th>

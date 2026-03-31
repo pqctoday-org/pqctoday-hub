@@ -1,0 +1,19 @@
+{
+  "vendor": "Thales",
+  "product_name": "MultiApp V5.2: GP-SE",
+  "pqc_algorithms": ["ML-DSA-65", "ML-KEM"],
+  "pqc_standard_refs": ["FIPS 204"],
+  "product_brief": "MultiApp V5.2 is a Java Card platform providing secure execution of applets with EAL6+ assurance, supporting post-quantum cryptography algorithms like ML-DSA-65 and ML-KEM.",
+  "product_category": "Smart Card / Secure Element",
+  "assurance_level": "EAL6+",
+  "classical_algorithms": [
+    "RSA-2048",
+    "RSA-4096",
+    "ECC-521",
+    "AES-256",
+    "HMAC-SHA256",
+    "TDES-112",
+    "SHA-256"
+  ],
+  "_source_pdf": "multiapp-5-2-premium-pqc-gp-se-version-5-2-anssi-cc-2025-30.pdf"
+}

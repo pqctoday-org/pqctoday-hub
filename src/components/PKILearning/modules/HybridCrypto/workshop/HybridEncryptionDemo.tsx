@@ -15,7 +15,7 @@ import {
   hsm_hkdf,
   hsm_extractKeyValue,
   hsm_importGenericSecret,
-  CKM_SHA256_HMAC,
+  CKM_SHA256,
 } from '@/wasm/softhsm'
 
 const HYBRID_LIVE_OPERATIONS = [
@@ -67,31 +67,14 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
     setPqcKemResult(null)
     setHybridKemResult(null)
 
-    // 1. Pure PQC: ML-KEM-768
-    const prefix = 'ml_kem_768'
-    const keyFile = `${prefix}_enc_key.pem`
-    const pubFile = `${prefix}_enc_pub.pem`
+    try {
+      // 1. Pure PQC: ML-KEM-768
+      const prefix = 'ml_kem_768'
+      const keyFile = `${prefix}_enc_key.pem`
+      const pubFile = `${prefix}_enc_pub.pem`
 
-    const keyResult = await hybridCryptoService.generateKey('ML-KEM-768', keyFile)
-    if (keyResult.error) {
-      setPqcKemResult({
-        algorithm: 'ML-KEM-768',
-        keyGenMs: keyResult.timingMs,
-        encapMs: 0,
-        decapMs: 0,
-        ciphertextHex: '',
-        encapSecretHex: '',
-        decapSecretHex: '',
-        secretsMatch: false,
-        error: keyResult.error,
-      })
-    } else {
-      const pubResult = await hybridCryptoService.extractPublicKey(
-        keyFile,
-        pubFile,
-        keyResult.fileData
-      )
-      if (pubResult.error) {
+      const keyResult = await hybridCryptoService.generateKey('ML-KEM-768', keyFile)
+      if (keyResult.error) {
         setPqcKemResult({
           algorithm: 'ML-KEM-768',
           keyGenMs: keyResult.timingMs,
@@ -101,141 +84,167 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
           encapSecretHex: '',
           decapSecretHex: '',
           secretsMatch: false,
-          error: pubResult.error,
+          error: keyResult.error,
         })
       } else {
-        const encapResult = await hybridCryptoService.kemEncapsulate(
+        const pubResult = await hybridCryptoService.extractPublicKey(
+          keyFile,
           pubFile,
-          prefix,
-          pubResult.fileData
+          keyResult.fileData
         )
-        if (encapResult.error) {
+        if (pubResult.error) {
           setPqcKemResult({
             algorithm: 'ML-KEM-768',
             keyGenMs: keyResult.timingMs,
-            encapMs: encapResult.timingMs,
+            encapMs: 0,
             decapMs: 0,
             ciphertextHex: '',
             encapSecretHex: '',
             decapSecretHex: '',
             secretsMatch: false,
-            error: encapResult.error,
+            error: pubResult.error,
           })
         } else {
-          const ctFile = `${prefix}_ct.bin`
-          const decapInputFiles: { name: string; data: Uint8Array }[] = []
-          if (keyResult.fileData) decapInputFiles.push(keyResult.fileData)
-          if (encapResult.ctFileData) decapInputFiles.push(encapResult.ctFileData)
-          const decapResult = await hybridCryptoService.kemDecapsulate(
-            keyFile,
-            ctFile,
+          const encapResult = await hybridCryptoService.kemEncapsulate(
+            pubFile,
             prefix,
-            decapInputFiles
+            pubResult.fileData
           )
+          if (encapResult.error) {
+            setPqcKemResult({
+              algorithm: 'ML-KEM-768',
+              keyGenMs: keyResult.timingMs,
+              encapMs: encapResult.timingMs,
+              decapMs: 0,
+              ciphertextHex: '',
+              encapSecretHex: '',
+              decapSecretHex: '',
+              secretsMatch: false,
+              error: encapResult.error,
+            })
+          } else {
+            const ctFile = `${prefix}_ct.bin`
+            const decapInputFiles: { name: string; data: Uint8Array }[] = []
+            if (keyResult.fileData) decapInputFiles.push(keyResult.fileData)
+            if (encapResult.ctFileData) decapInputFiles.push(encapResult.ctFileData)
+            const decapResult = await hybridCryptoService.kemDecapsulate(
+              keyFile,
+              ctFile,
+              prefix,
+              decapInputFiles
+            )
 
-          const secretsMatch =
-            encapResult.sharedSecretHex === decapResult.sharedSecretHex &&
-            encapResult.sharedSecretHex.length > 0
+            const secretsMatch =
+              encapResult.sharedSecretHex === decapResult.sharedSecretHex &&
+              encapResult.sharedSecretHex.length > 0
 
-          setPqcKemResult({
-            algorithm: 'ML-KEM-768',
-            keyGenMs: keyResult.timingMs,
-            encapMs: encapResult.timingMs,
-            decapMs: decapResult.timingMs,
-            ciphertextHex: encapResult.ciphertextHex,
-            encapSecretHex: encapResult.sharedSecretHex,
-            decapSecretHex: decapResult.sharedSecretHex,
-            secretsMatch,
-            error: decapResult.error,
-          })
+            setPqcKemResult({
+              algorithm: 'ML-KEM-768',
+              keyGenMs: keyResult.timingMs,
+              encapMs: encapResult.timingMs,
+              decapMs: decapResult.timingMs,
+              ciphertextHex: encapResult.ciphertextHex,
+              encapSecretHex: encapResult.sharedSecretHex,
+              decapSecretHex: decapResult.sharedSecretHex,
+              secretsMatch,
+              error: decapResult.error,
+            })
+          }
         }
       }
+
+      // 2. Hybrid: X25519 + ML-KEM-768 (simulated via separate ops + HKDF)
+      const hybrid = await hybridCryptoService.hybridKemEncapDecap()
+      setHybridKemResult(hybrid)
+    } catch {
+      // handled by individual result.error checks above
+    } finally {
+      setIsRunning(false)
     }
-
-    // 2. Hybrid: X25519 + ML-KEM-768 (simulated via separate ops + HKDF)
-    const hybrid = await hybridCryptoService.hybridKemEncapDecap()
-    setHybridKemResult(hybrid)
-
-    setIsRunning(false)
   }, [])
 
   const runSignatureDemo = useCallback(async () => {
     setIsRunning(true)
-    const algorithms = [
-      { name: 'ECDSA P-256', opensslAlg: 'EC' },
-      { name: 'ML-DSA-65', opensslAlg: 'ML-DSA-65' },
-    ]
-    const results: SignDemoResult[] = []
+    try {
+      const algorithms = [
+        { name: 'ECDSA P-256', opensslAlg: 'EC' },
+        { name: 'ML-DSA-65', opensslAlg: 'ML-DSA-65' },
+      ]
+      const results: SignDemoResult[] = []
 
-    for (const algo of algorithms) {
-      const prefix = algo.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
-      const keyFile = `${prefix}_sig_key.pem`
-      const pubFile = `${prefix}_sig_pub.pem`
+      for (const algo of algorithms) {
+        const prefix = algo.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
+        const keyFile = `${prefix}_sig_key.pem`
+        const pubFile = `${prefix}_sig_pub.pem`
 
-      const keyResult = await hybridCryptoService.generateKey(algo.opensslAlg, keyFile)
-      if (keyResult.error) {
-        results.push({
-          algorithm: algo.name,
-          keyGenMs: keyResult.timingMs,
-          signMs: 0,
-          verifyMs: 0,
-          signatureHex: '',
-          verified: false,
-          error: keyResult.error,
-        })
-        continue
-      }
+        const keyResult = await hybridCryptoService.generateKey(algo.opensslAlg, keyFile)
+        if (keyResult.error) {
+          results.push({
+            algorithm: algo.name,
+            keyGenMs: keyResult.timingMs,
+            signMs: 0,
+            verifyMs: 0,
+            signatureHex: '',
+            verified: false,
+            error: keyResult.error,
+          })
+          continue
+        }
 
-      const pubResult = await hybridCryptoService.extractPublicKey(
-        keyFile,
-        pubFile,
-        keyResult.fileData
-      )
+        const pubResult = await hybridCryptoService.extractPublicKey(
+          keyFile,
+          pubFile,
+          keyResult.fileData
+        )
 
-      const signResult = await hybridCryptoService.signData(
-        keyFile,
-        message,
-        prefix,
-        keyResult.fileData
-      )
-      if (signResult.error) {
+        const signResult = await hybridCryptoService.signData(
+          keyFile,
+          message,
+          prefix,
+          keyResult.fileData
+        )
+        if (signResult.error) {
+          results.push({
+            algorithm: algo.name,
+            keyGenMs: keyResult.timingMs,
+            signMs: signResult.timingMs,
+            verifyMs: 0,
+            signatureHex: '',
+            verified: false,
+            error: signResult.error,
+          })
+          continue
+        }
+
+        const sigFile = `${prefix}_sig.bin`
+        const verifyInputFiles: { name: string; data: Uint8Array }[] = []
+        if (pubResult.fileData) verifyInputFiles.push(pubResult.fileData)
+        if (signResult.sigFileData) verifyInputFiles.push(signResult.sigFileData)
+        const verifyResult = await hybridCryptoService.verifySignature(
+          pubFile,
+          message,
+          sigFile,
+          prefix,
+          verifyInputFiles
+        )
+
         results.push({
           algorithm: algo.name,
           keyGenMs: keyResult.timingMs,
           signMs: signResult.timingMs,
-          verifyMs: 0,
-          signatureHex: '',
-          verified: false,
-          error: signResult.error,
+          verifyMs: verifyResult.timingMs,
+          signatureHex: signResult.signatureHex,
+          verified: verifyResult.verified,
+          error: verifyResult.error,
         })
-        continue
       }
 
-      const sigFile = `${prefix}_sig.bin`
-      const verifyInputFiles: { name: string; data: Uint8Array }[] = []
-      if (pubResult.fileData) verifyInputFiles.push(pubResult.fileData)
-      if (signResult.sigFileData) verifyInputFiles.push(signResult.sigFileData)
-      const verifyResult = await hybridCryptoService.verifySignature(
-        pubFile,
-        message,
-        sigFile,
-        prefix,
-        verifyInputFiles
-      )
-
-      results.push({
-        algorithm: algo.name,
-        keyGenMs: keyResult.timingMs,
-        signMs: signResult.timingMs,
-        verifyMs: verifyResult.timingMs,
-        signatureHex: signResult.signatureHex,
-        verified: verifyResult.verified,
-        error: verifyResult.error,
-      })
+      setSigResults(results)
+    } catch {
+      // results array was built with individual error handling above
+    } finally {
+      setIsRunning(false)
     }
-
-    setSigResults(results)
-    setIsRunning(false)
   }, [message])
 
   const handleRun = mode === 'kem' ? runKemDemo : runSignatureDemo
@@ -312,7 +321,7 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
         M,
         hSession,
         derivableECDH,
-        CKM_SHA256_HMAC,
+        CKM_SHA256,
         true,
         true,
         kemSS,

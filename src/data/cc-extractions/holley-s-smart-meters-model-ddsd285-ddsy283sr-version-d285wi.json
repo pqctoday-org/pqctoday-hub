@@ -1,0 +1,11 @@
+{
+  "vendor": "Holley Technology Ltd",
+  "product_name": "Holley’s Smart Meters: DDSD285, DDSY283SR, DTSD545 and DTSY541 V1.9",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Holley’s Smart Meters are devices used for electrical energy measurement and monitoring, supporting secure communication and firmware updates.",
+  "product_category": "Smart Meter",
+  "assurance_level": "EAL4+,ALC_FLR.3",
+  "classical_algorithms": ["AES-GCM-128", "AES key wrap (RFC3394)", "ECDSA (ECC256, FIPS 186-5)"],
+  "_source_pdf": "holley-s-smart-meters-model-ddsd285-ddsy283sr-version-d285wi.pdf"
+}

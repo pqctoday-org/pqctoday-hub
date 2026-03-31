@@ -19,6 +19,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - "Find tools" deep-links from each PQC algorithm cell to pre-filtered `/migrate` catalog
   - Mobile-responsive layout with accessible `aria-sort` attributes; separate mobile list view
   - AI-powered context button on each row for classical↔PQC migration rationale
+  - **Deep-linkable sub-tabs**: performance/security/sizes/usecases sub-tabs URL-persisted via `?subtab=` param
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - **Software ↔ PKCS#11 HSM mode toggle**: switch all tabs between the software stack and a
     SoftHSMv3 WASM engine backed by PKCS#11 v3.2 — run ML-KEM and ML-DSA through a real HSM
@@ -50,7 +51,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
     bytes for ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA) — in both C++ and Rust engines
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
     timing, and optional "Show Params" inspect mode (powered by `src/wasm/inspect/` — decodes
-    mechanism IDs, attribute types, and CKR return codes into human-readable form)
+    mechanism IDs, attribute types, and CKR return codes into human-readable form); entries with
+    inspect data show an expandable `▶` row; step-separator headers divide multi-step workflows
   - **SoftHSM tab**: modular demo components — Token Setup, ML-KEM encapsulate/decapsulate,
     ML-DSA sign/verify (+ pre-hash), SLH-DSA (all 12 param sets); HSM symmetric panel split into
     AES-CBC/GCM, AES-CMAC, AES-CTR, HMAC, Key Wrap, and RNG panels
@@ -75,6 +77,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     buttons (44px minimum), and viewport-clamped dropdowns
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
+  - **TLS 1.3 Simulator** (Playground workshop tool): interactive client/server TLS 1.3 handshake simulator — configure cipher suites, key exchange groups (X25519, ML-KEM-768, X25519MLKEM768), mTLS, and PQC/hybrid certificate options; step-through handshake visualization with PKCS#11 log
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
@@ -166,14 +169,18 @@ Test your PQC readiness with this interactive web application visualizing the gl
       key derivation via HKDF)
     - Global QKD deployment explorer with real-world adoption data including AWS Center for Quantum
       Networking (CQN) and Chicago Quantum Exchange (CQE) 111 km fiber network
-  - **Merkle Tree Certificates**:
+  - **Merkle Tree Certificates** (5-step workshop):
     - Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS
+    - **Step 5 — CT Log Simulator**: simulate a Certificate Transparency log with ML-DSA-44 signing via SoftHSMv3, consistency proofs, and misissuance detection
   - **Code Signing** (5-step workshop):
     - Binary signing with ML-DSA-87 vs ECDSA P-384 with real byte-size comparison
     - PQC certificate chain builder (root CA → intermediate → leaf) with ML-DSA
     - Hybrid package signing (RPM-style, ML-DSA-87 + Ed448 dual signatures)
     - Keyless Sigstore flow with transparency-log inclusion proof visualization
     - Secure Boot Chain: 4-stage firmware signing comparison (LMS vs XMSS vs ML-DSA) with stateful signature counter tracking and CNSA 2.0 mandate timelines
+  - **Secure Boot PQC** (5-step workshop):
+    - Secure Boot Chain Analyzer: UEFI PK/KEK/db key hierarchy quantum vulnerability
+    - **Firmware Signing Migrator**: multi-algorithm wizard (RSA-2048/3072, ECDSA P-256/P-384, ML-DSA-44/65/87, SLH-DSA-SHA2-128S) with 4-step flow — key gen, sign, verify, KAT validation; per-key PKCS#11 attribute inspector
   - **API Security & JWT** (5-step workshop):
     - JWT Inspector: decode and flag quantum-vulnerable algorithms (RS256/HS256)
     - PQC JWT Signing with ML-DSA-87 vs RS256 signature byte size comparison
@@ -296,7 +303,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     infrastructure layer with PQC support badge, FIPS badge, ACVP/CC certification chips,
     license info, and a deep-link to the full Migrate catalog entry
 - **Migrate Module**: Comprehensive PQC migration planning with structured workflow
-  - **Reference Catalog**: 394 verified PQC-relevant product entries across 7 infrastructure layers
+  - **Reference Catalog**: 519 PQC-relevant product entries across 7 infrastructure layers (under active review — WIP banner shown)
   - **7-Layer Infrastructure Stack**: Cloud, Network, Application Servers & Software, Database,
     Security Stack, Operating System, Hardware & Secure Elements — click any layer to filter the
     catalog. Products can span multiple layers (e.g., AWS KMS in Cloud + Security Stack).

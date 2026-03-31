@@ -1,0 +1,27 @@
+{
+  "vendor": null,
+  "product_name": "Trident",
+  "pqc_algorithms": ["SPHINCS+", "ML-KEM", "ML-DSA"],
+  "pqc_standard_refs": ["FIPS 203", "FIPS 204"],
+  "product_brief": "Trident is a distributed remote Qualified Signature Creation Device that provides cryptographic functions including post-quantum algorithms like SPHINCS+, ML-KEM (Kyber), and ML-DSA.",
+  "product_category": "Hardware Security Module (HSM)",
+  "assurance_level": "EAL4+,ALC_FLR.3",
+  "classical_algorithms": [
+    "RSA-2048",
+    "RSA-3072",
+    "RSA-4096",
+    "RSA-6144",
+    "ECDSA P-256",
+    "AES-256",
+    "3DES-192",
+    "ARIA-128",
+    "ARIA-192",
+    "ARIA-256",
+    "SEED-128",
+    "HMAC-SHA-256",
+    "HMAC-SHA-384",
+    "HMAC-SHA-512",
+    "TOTP"
+  ],
+  "_source_pdf": "trident-version-3-2-3.pdf"
+}

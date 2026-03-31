@@ -1,0 +1,23 @@
+{
+  "vendor": "Samsung Electronics Co., Ltd.",
+  "product_name": "STRONGV4P00 of S5E9945 with Specific IC",
+  "pqc_algorithms": ["ML-DSA"],
+  "pqc_standard_refs": ["FIPS 204"],
+  "product_brief": "A secure subsystem providing cryptographic operations including post-quantum algorithms, used in authentication, content protection, and secure key storage.",
+  "product_category": "Hardware Security Module (HSM)",
+  "assurance_level": null,
+  "classical_algorithms": [
+    "TDES",
+    "AES-128",
+    "AES-192",
+    "AES-256",
+    "SHA-256",
+    "SHA-384",
+    "SHA-512",
+    "HMAC",
+    "RSA-4096",
+    "ECDSA",
+    "ECDH"
+  ],
+  "_source_pdf": "samsung-strongv4p00-of-s5e9945-with-specific-ic-dedicated-so.pdf"
+}

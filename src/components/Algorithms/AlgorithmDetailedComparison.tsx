@@ -34,6 +34,8 @@ function getPerformanceMultiplier(cycles: string): number {
   return match ? parseFloat(match[1]) : 1
 }
 
+type SubTab = 'performance' | 'security' | 'sizes' | 'usecases'
+
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
   onInfoOpen?: () => void
@@ -42,6 +44,8 @@ interface AlgorithmDetailedComparisonProps {
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
   onToggleCompare: (name: string) => void
+  activeSubTab?: SubTab
+  onSubTabChange?: (tab: SubTab) => void
 }
 
 export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonProps> = ({
@@ -52,11 +56,13 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
   compareType,
   maxCompareReached,
   onToggleCompare,
+  activeSubTab = 'performance',
+  onSubTabChange,
 }) => {
   return (
     <div className="space-y-6">
       {/* Tabs */}
-      <Tabs defaultValue="performance">
+      <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange?.(v as SubTab)}>
         <div className="flex items-center gap-2 mb-4">
           <TabsList className="bg-muted/50 border border-border">
             <TabsTrigger value="performance" className="flex items-center gap-2">
@@ -178,6 +184,53 @@ interface DetailViewProps {
   compareType?: 'KEM' | 'Signature' | null
   maxCompareReached?: boolean
   onToggleCompare?: (name: string) => void
+}
+
+function CompareButton({
+  algo,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
+}: {
+  algo: AlgorithmDetail
+  compareSet?: Set<string>
+  compareType?: 'KEM' | 'Signature' | null
+  maxCompareReached?: boolean
+  onToggleCompare?: (name: string) => void
+}) {
+  if (!onToggleCompare) return null
+  const algoGroup = getFunctionGroup(algo)
+  if (algoGroup !== 'KEM' && algoGroup !== 'Signature') return null
+  const isCompared = compareSet?.has(algo.name) ?? false
+  const canToggle =
+    isCompared || (!maxCompareReached && (compareType === null || compareType === algoGroup))
+  return (
+    <button
+      type="button"
+      onClick={() => onToggleCompare(algo.name)}
+      disabled={!canToggle && !isCompared}
+      title={
+        isCompared
+          ? 'Remove from comparison'
+          : !canToggle
+            ? maxCompareReached
+              ? 'Max 3 reached'
+              : 'Clear to switch type'
+            : 'Add to comparison'
+      }
+      className={clsx(
+        'shrink-0 p-1 rounded transition-colors',
+        isCompared
+          ? 'text-secondary bg-secondary/10'
+          : canToggle
+            ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
+            : 'text-muted-foreground/30 cursor-not-allowed'
+      )}
+    >
+      <Scale size={14} />
+    </button>
+  )
 }
 
 function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean {
@@ -313,13 +366,6 @@ const PerformanceView = ({
               const signPerf = getPerformanceCategory(algo.signEncapsCycles)
               const verifyPerf = getPerformanceCategory(algo.verifyDecapsCycles)
               const highlighted = isHighlighted(algo, highlightAlgorithms)
-              const isCompared = compareSet?.has(algo.name) ?? false
-              const algoGroup = getFunctionGroup(algo)
-              const canToggle =
-                isCompared ||
-                (!maxCompareReached &&
-                  (compareType === null || compareType === algoGroup) &&
-                  (algoGroup === 'KEM' || algoGroup === 'Signature'))
 
               return (
                 <tr
@@ -335,32 +381,13 @@ const PerformanceView = ({
                 >
                   <td className="p-4">
                     <div className="flex items-start gap-2">
-                      {onToggleCompare && (algoGroup === 'KEM' || algoGroup === 'Signature') && (
-                        <button
-                          type="button"
-                          onClick={() => onToggleCompare(algo.name)}
-                          disabled={!canToggle && !isCompared}
-                          title={
-                            isCompared
-                              ? 'Remove from comparison'
-                              : !canToggle
-                                ? maxCompareReached
-                                  ? 'Max 3 reached'
-                                  : 'Clear to switch type'
-                                : 'Add to comparison'
-                          }
-                          className={clsx(
-                            'shrink-0 p-1 mt-0.5 rounded transition-colors',
-                            isCompared
-                              ? 'text-secondary bg-secondary/10'
-                              : canToggle
-                                ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
-                                : 'text-muted-foreground/30 cursor-not-allowed'
-                          )}
-                        >
-                          <Scale size={14} />
-                        </button>
-                      )}
+                      <CompareButton
+                        algo={algo}
+                        compareSet={compareSet}
+                        compareType={compareType}
+                        maxCompareReached={maxCompareReached}
+                        onToggleCompare={onToggleCompare}
+                      />
                       <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-1.5">
                           <span className="font-semibold text-foreground">{algo.name}</span>
@@ -534,7 +561,14 @@ const PerformanceView = ({
 }
 
 // Security View Component
-const SecurityView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
+const SecurityView = ({
+  algorithms,
+  highlightAlgorithms,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
+}: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   const groupedByLevel = algorithms.reduce(
@@ -586,7 +620,16 @@ const SecurityView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
                   )}
                 >
                   <div className="flex items-start justify-between mb-2">
-                    <h5 className="font-semibold text-foreground">{algo.name}</h5>
+                    <div className="flex items-center gap-1.5">
+                      <CompareButton
+                        algo={algo}
+                        compareSet={compareSet}
+                        compareType={compareType}
+                        maxCompareReached={maxCompareReached}
+                        onToggleCompare={onToggleCompare}
+                      />
+                      <h5 className="font-semibold text-foreground">{algo.name}</h5>
+                    </div>
                     <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
                       {algo.family}
                     </span>
@@ -619,7 +662,14 @@ const SecurityView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
 }
 
 // Sizes View Component
-const SizesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
+const SizesView = ({
+  algorithms,
+  highlightAlgorithms,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
+}: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   const maxPubKey = Math.max(...algorithms.map((a) => a.publicKeySize))
@@ -639,7 +689,16 @@ const SizesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
             )}
           >
             <div className="flex items-center justify-between mb-3">
-              <h5 className="font-semibold text-foreground">{algo.name}</h5>
+              <div className="flex items-center gap-1.5">
+                <CompareButton
+                  algo={algo}
+                  compareSet={compareSet}
+                  compareType={compareType}
+                  maxCompareReached={maxCompareReached}
+                  onToggleCompare={onToggleCompare}
+                />
+                <h5 className="font-semibold text-foreground">{algo.name}</h5>
+              </div>
               <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
                 {algo.family}
               </span>
@@ -716,7 +775,14 @@ const SizesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
 }
 
 // Use Cases View Component
-const UseCasesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
+const UseCasesView = ({
+  algorithms,
+  highlightAlgorithms,
+  compareSet,
+  compareType,
+  maxCompareReached,
+  onToggleCompare,
+}: DetailViewProps) => {
   if (algorithms.length === 0) return <EmptyState />
 
   return (
@@ -745,7 +811,16 @@ const UseCasesView = ({ algorithms, highlightAlgorithms }: DetailViewProps) => {
               )}
             >
               <div className="flex items-start justify-between mb-3">
-                <h5 className="font-semibold text-foreground text-lg">{algo.name}</h5>
+                <div className="flex items-center gap-1.5">
+                  <CompareButton
+                    algo={algo}
+                    compareSet={compareSet}
+                    compareType={compareType}
+                    maxCompareReached={maxCompareReached}
+                    onToggleCompare={onToggleCompare}
+                  />
+                  <h5 className="font-semibold text-foreground text-lg">{algo.name}</h5>
+                </div>
                 {algo.securityLevel && (
                   <span
                     className={clsx(

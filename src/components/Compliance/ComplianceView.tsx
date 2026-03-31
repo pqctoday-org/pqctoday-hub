@@ -378,6 +378,9 @@ export const ComplianceView = () => {
   const [recVendor, setRecVendor] = useState<string[]>(
     () => searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
   )
+  const [recMcat, setRecMcat] = useState<string[]>(
+    () => searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
+  )
   const [recSortCol, setRecSortCol] = useState<SortColumn>(
     () => (searchParams.get('sort') as SortColumn | null) ?? 'date'
   )
@@ -405,6 +408,7 @@ export const ComplianceView = () => {
       cat?: string[]
       src?: string[]
       vendor?: string[]
+      mcat?: string[]
       rsort?: string
       dir?: SortDirection
       page?: number
@@ -431,6 +435,7 @@ export const ComplianceView = () => {
             'cat',
             'src',
             'vendor',
+            'mcat',
             'dir',
             'page',
             'cert',
@@ -457,6 +462,7 @@ export const ComplianceView = () => {
             const cat = overrides.cat ?? recCat
             const src = overrides.src ?? recSrc
             const vendor = overrides.vendor ?? recVendor
+            const mcat = overrides.mcat ?? recMcat
             const sort = overrides.rsort ?? recSortCol
             const dir = overrides.dir ?? recSortDir
             const page = overrides.page ?? recPage
@@ -468,6 +474,7 @@ export const ComplianceView = () => {
             if (cat.length > 0) next.set('cat', cat.join(','))
             if (src.length > 0) next.set('src', src.join(','))
             if (vendor.length > 0) next.set('vendor', vendor.join(','))
+            if (mcat.length > 0) next.set('mcat', mcat.join(','))
             if (sort !== 'date') next.set('sort', sort)
             if (dir !== 'desc') next.set('dir', dir)
             if (page > 1) next.set('page', String(page))
@@ -492,6 +499,7 @@ export const ComplianceView = () => {
       recCat,
       recSrc,
       recVendor,
+      recMcat,
       recSortCol,
       recSortDir,
       recPage,
@@ -526,6 +534,7 @@ export const ComplianceView = () => {
       const nextCat = searchParams.get('cat')?.split(',').filter(Boolean) ?? []
       const nextSrc = searchParams.get('src')?.split(',').filter(Boolean) ?? []
       const nextVendor = searchParams.get('vendor')?.split(',').filter(Boolean) ?? []
+      const nextMcat = searchParams.get('mcat')?.split(',').filter(Boolean) ?? []
       const nextSort = (searchParams.get('sort') as SortColumn) ?? 'date'
       const nextDir = (searchParams.get('dir') as SortDirection) ?? 'desc'
       const nextPage = parseInt(searchParams.get('page') ?? '1', 10) || 1
@@ -539,6 +548,7 @@ export const ComplianceView = () => {
       setRecVendor((prev) =>
         JSON.stringify(prev) !== JSON.stringify(nextVendor) ? nextVendor : prev
       )
+      setRecMcat((prev) => (JSON.stringify(prev) !== JSON.stringify(nextMcat) ? nextMcat : prev))
       setRecSortCol((prev) => (prev !== nextSort ? nextSort : prev))
       setRecSortDir((prev) => (prev !== nextDir ? nextDir : prev))
       setRecPage((prev) => (prev !== nextPage ? nextPage : prev))
@@ -652,6 +662,15 @@ export const ComplianceView = () => {
       setRecVendor(filters)
       setRecPage(1)
       syncFiltersToUrl({ vendor: filters, page: 1 })
+    },
+    [syncFiltersToUrl]
+  )
+
+  const handleRecMcatChange = useCallback(
+    (filters: string[]) => {
+      setRecMcat(filters)
+      setRecPage(1)
+      syncFiltersToUrl({ mcat: filters, page: 1 })
     },
     [syncFiltersToUrl]
   )
@@ -968,6 +987,8 @@ export const ComplianceView = () => {
                   onCategoryFiltersChange={handleRecCatChange}
                   onSourceFiltersChange={handleRecSrcChange}
                   onVendorFiltersChange={handleRecVendorChange}
+                  migrateCatFilters={recMcat}
+                  onMigrateCatFiltersChange={handleRecMcatChange}
                   onSortColumnChange={handleRecSortColChange}
                   onSortDirectionChange={handleRecSortDirChange}
                   onCurrentPageChange={handleRecPageChange}
@@ -993,6 +1014,8 @@ export const ComplianceView = () => {
                   onCategoryFiltersChange={handleRecCatChange}
                   onSourceFiltersChange={handleRecSrcChange}
                   onVendorFiltersChange={handleRecVendorChange}
+                  migrateCatFilters={recMcat}
+                  onMigrateCatFiltersChange={handleRecMcatChange}
                   onSortColumnChange={handleRecSortColChange}
                   onSortDirectionChange={handleRecSortDirChange}
                   onCurrentPageChange={handleRecPageChange}
@@ -1018,6 +1041,8 @@ export const ComplianceView = () => {
                   onCategoryFiltersChange={handleRecCatChange}
                   onSourceFiltersChange={handleRecSrcChange}
                   onVendorFiltersChange={handleRecVendorChange}
+                  migrateCatFilters={recMcat}
+                  onMigrateCatFiltersChange={handleRecMcatChange}
                   onSortColumnChange={handleRecSortColChange}
                   onSortDirectionChange={handleRecSortDirChange}
                   onCurrentPageChange={handleRecPageChange}
@@ -1043,6 +1068,8 @@ export const ComplianceView = () => {
                   onCategoryFiltersChange={handleRecCatChange}
                   onSourceFiltersChange={handleRecSrcChange}
                   onVendorFiltersChange={handleRecVendorChange}
+                  migrateCatFilters={recMcat}
+                  onMigrateCatFiltersChange={handleRecMcatChange}
                   onSortColumnChange={handleRecSortColChange}
                   onSortDirectionChange={handleRecSortDirChange}
                   onCurrentPageChange={handleRecPageChange}

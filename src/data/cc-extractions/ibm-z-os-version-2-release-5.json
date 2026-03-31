@@ -1,0 +1,25 @@
+{
+  "vendor": "IBM Corporation",
+  "product_name": "z/OS Version 2 Release 5",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "z/OS is a mainframe operating system that provides cryptographic services such as encryption, hashing, digital signatures, and secure communications.",
+  "product_category": "Operating System",
+  "assurance_level": null,
+  "classical_algorithms": [
+    "AES-XTS",
+    "AES-CBC",
+    "AES-CTR",
+    "AES-GCMP-256",
+    "SHA-256",
+    "SHA-384",
+    "SHA-512",
+    "RSA-3072",
+    "ECDSA P-384",
+    "ECDSA P-521",
+    "HMAC-SHA256",
+    "HMAC-SHA384",
+    "HMAC-SHA512"
+  ],
+  "_source_pdf": "ibm-z-os-version-2-release-5.pdf"
+}

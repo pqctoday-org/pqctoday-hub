@@ -3,7 +3,7 @@
  * HsmKeyTable — displays PKCS#11 key handles registered via HsmContext.
  * All keys are session objects (non-persistent) — no export/download.
  */
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useRef } from 'react'
 import { Eye, Key as KeyIcon, Lock, RefreshCw, Trash2, X } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { useHsmContext, type HsmKey, type HsmFamily, type HsmKeyRole } from '../hsm/HsmContext'
@@ -147,7 +147,7 @@ const BOOL_ATTRS: Array<{ label: string; key: keyof KeyAttributeSet }> = [
   { label: 'CKA_DECAPSULATE', key: 'ckDecapsulate' },
 ]
 
-const KeyAttrModal = ({
+export const KeyAttrModal = ({
   hsmKey,
   attrs,
   onClose,
@@ -279,22 +279,29 @@ export const HsmKeyTable = () => {
   const [discoverCount, setDiscoverCount] = useState<number | null>(null)
   const [discovering, setDiscovering] = useState(false)
 
+  // Cache PKCS#11 attribute reads per handle to avoid re-querying on every render.
+  // Only new handles (not yet in cache) trigger C_GetAttributeValue calls.
+  const attrCache = useRef(new Map<number, KeyAttributeSet | null>())
+
   // Batch-query key sizes from PKCS#11 attributes (synchronous WASM calls)
   const keySizeMap = useMemo(() => {
     const map = new Map<number, number | null>()
     for (const k of hsmKeys) {
-      const M = k.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
-      const hSession = hSessionRef.current
-      if (!M || !hSession) {
-        map.set(k.handle, null)
-        continue
+      if (!attrCache.current.has(k.handle)) {
+        const M = k.engine === 'rust' ? crossCheckModuleRef.current : moduleRef.current
+        const hSession = hSessionRef.current
+        if (!M || !hSession) {
+          attrCache.current.set(k.handle, null)
+        } else {
+          try {
+            attrCache.current.set(k.handle, hsm_getKeyAttributes(M, hSession, k.handle))
+          } catch {
+            attrCache.current.set(k.handle, null)
+          }
+        }
       }
-      try {
-        const a = hsm_getKeyAttributes(M, hSession, k.handle)
-        map.set(k.handle, estimateKeySize(a))
-      } catch {
-        map.set(k.handle, null)
-      }
+      const a = attrCache.current.get(k.handle) ?? null
+      map.set(k.handle, a ? estimateKeySize(a) : null)
     }
     return map
   }, [hsmKeys, moduleRef, crossCheckModuleRef, hSessionRef])
@@ -328,6 +335,7 @@ export const HsmKeyTable = () => {
     try {
       hsm_destroyObject(M, hSession, key.handle)
       removeHsmKey(key.handle)
+      attrCache.current.delete(key.handle)
     } catch {
       // key may already be destroyed
     }

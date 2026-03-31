@@ -458,13 +458,12 @@ export const LibraryView: React.FC = () => {
     const groups = new Map<string, LibraryItem[]>(LIBRARY_CATEGORIES.map((cat) => [cat, []]))
 
     filteredItems.forEach((item) => {
-      const itemCategories =
-        item.categories?.length > 0 ? item.categories : ['General Recommendations']
+      const itemCategories = item.categories?.length > 0 ? item.categories : ['Migration Guidance']
       itemCategories.forEach((category) => {
         if (groups.has(category)) {
           groups.get(category)!.push(item)
         } else {
-          groups.get('General Recommendations')!.push(item)
+          groups.get('Migration Guidance')!.push(item)
         }
       })
     })

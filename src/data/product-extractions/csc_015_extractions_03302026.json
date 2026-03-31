@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Okta Integration Network",
+    "category": "API Security and JWT Libraries",
+    "product_name": "Okta Platform (including Okta Workforce Identity, Okta Customer Identity, Okta Integration Network)",
+    "product_brief": "A comprehensive identity security fabric platform securing human, non-human, and AI agent identities across all environments.",
+    "pqc_support": "No",
+    "pqc_capability_description": "The document does not mention Post-Quantum Cryptography (PQC), PQC algorithms, or any plans for PQC migration. It mentions OIDC ID Token Encryption using JSON Web Encryption (JWE) but does not specify the underlying cryptographic primitives as PQC.",
+    "pqc_migration_priority": "Not stated",
+    "crypto_primitives": "Not stated (Document mentions \"JSON Web Encryption (JWE)\" and \"OIDC ID Token Encryption\" but does not list specific algorithms like ECDSA, RSA, or Ed25519).",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Cloud-based identity security fabric; includes Okta Private Cloud option.",
+    "infrastructure_layer": "Application, Cloud, Security Stack",
+    "license_type": "Commercial",
+    "license": "Proprietary (Okta and/or its affiliates. All rights reserved.)",
+    "latest_version": "Not stated",
+    "release_date": "2025-07-01 (Q3 2025 release overview; specific day not provided, range July-September 2025)",
+    "fips_validated": "No (Document mentions \"Okta for Government High\" and \"FedRAMP High\" compliance but does not explicitly state FIPS 140-2 or 140-3 validation status).",
+    "primary_platforms": "Cloud, On Prem Servers, Public/Private Directories, Kubernetes (via Axiom integration), Databases (via Axiom integration)",
+    "target_industries": "Public Sector, Financial Services, Healthcare, Manufacturing, Retail, Travel & Hospitality, Technology, Non-Profit, Energy",
+    "regulatory_status": "FedRAMP High, FedRAMP Moderate, HIPAA (with signed BAA), NIST SP 800-63C FAL3 compliance support mentioned.",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "okta.com (referenced as okta.com/agreements for contractual assurances)"
+  }
+]

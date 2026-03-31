@@ -597,19 +597,17 @@ const fetchLiveACVPData = async (): Promise<ComplianceRecord[]> => {
       const certId = cells[2]?.textContent?.trim() || `acvp-${Math.random()}`
       const date = cells[3]?.textContent?.trim() || new Date().toISOString().split('T')[0]
 
-      // Heuristic PQC Check (Fast placeholder)
-      let pqcCoverage: boolean | string = false
-      if (
-        moduleName.toLowerCase().includes('files') ||
-        moduleName.toLowerCase().includes('lms') ||
-        moduleName.toLowerCase().includes('xmss') ||
-        moduleName.toLowerCase().includes('kyber') ||
-        moduleName.toLowerCase().includes('dilithium')
-      ) {
-        pqcCoverage = 'Potentially PQC' // Will be updated by enricher
-      } else {
-        pqcCoverage = 'Pending Check...' // Marked for background check
-      }
+      // All records from this query implement PQC (filtered by algorithm IDs 173–180 = LMS/ML-DSA/ML-KEM).
+      // Derive the mechanism(s) from the product name where possible; enrichment will refine it.
+      const nameL = moduleName.toLowerCase()
+      const mechanisms: string[] = []
+      if (nameL.includes('ml-kem') || nameL.includes('kyber')) mechanisms.push('ML-KEM')
+      if (nameL.includes('ml-dsa') || nameL.includes('dilithium')) mechanisms.push('ML-DSA')
+      if (nameL.includes('slh-dsa') || nameL.includes('sphincs')) mechanisms.push('SLH-DSA')
+      if (nameL.includes('lms') || nameL.includes('xmss') || nameL.includes('hss'))
+        mechanisms.push('LMS')
+      if (nameL.includes('falcon') || nameL.includes('fn-dsa')) mechanisms.push('FN-DSA')
+      const pqcCoverage: string = mechanisms.length > 0 ? mechanisms.join(', ') : 'Pending Check...'
 
       // Link Construction
       let fullLink = certHref

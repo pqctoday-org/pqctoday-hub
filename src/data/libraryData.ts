@@ -38,18 +38,32 @@ export const LIBRARY_CATEGORIES = [
   'KEM',
   'PKI Certificate Management',
   'Protocols',
-  'General Recommendations',
+  'Government & Policy',
+  'NIST Standards',
+  'International Frameworks',
+  'Migration Guidance',
+  'Algorithm Specifications',
+  'Industry & Research',
 ] as const
 
 export type LibraryCategory = (typeof LIBRARY_CATEGORIES)[number]
 
 // C-002/C-003: Map CSV manual_category values to UI categories
 const CATEGORY_ALIASES: Record<string, LibraryCategory> = {
-  'General PQC Migration': 'General Recommendations',
-  'Government Guidance': 'General Recommendations',
   'PQC Protocol Specification': 'Protocols',
   'PQC Certificate Standard': 'PKI Certificate Management',
+  // Legacy aliases (pre-03302026 CSVs)
+  'General PQC Migration': 'Migration Guidance',
+  'Government Guidance': 'Government & Policy',
+  'General Recommendations': 'Migration Guidance',
 }
+
+// Broad categories that should be removed when a more specific category also matches
+const BROAD_CATEGORIES: ReadonlySet<string> = new Set([
+  'Migration Guidance',
+  'Industry & Research',
+  'Government & Policy',
+])
 
 // Helper to detect all applicable categories for an item
 function detectCategories(title: string, type: string): LibraryCategory[] {
@@ -101,9 +115,9 @@ function detectCategories(title: string, type: string): LibraryCategory[] {
     categories.push('Digital Signature')
   }
 
-  // Fallback to General Recommendations if no specific category detected
+  // Fallback to Migration Guidance if no specific category detected
   if (categories.length === 0) {
-    categories.push('General Recommendations')
+    categories.push('Migration Guidance')
   }
 
   return categories
@@ -180,8 +194,12 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     if (LIBRARY_CATEGORIES.includes(mappedCategory as LibraryCategory)) {
       const allCategories = new Set<string>([mappedCategory])
       autoCategories.forEach((cat) => allCategories.add(cat))
-      if (allCategories.size > 1 && allCategories.has('General Recommendations')) {
-        allCategories.delete('General Recommendations')
+      if (allCategories.size > 1) {
+        for (const broad of BROAD_CATEGORIES) {
+          if (allCategories.has(broad) && allCategories.size > 1) {
+            allCategories.delete(broad)
+          }
+        }
       }
       item.categories = Array.from(allCategories)
     } else {

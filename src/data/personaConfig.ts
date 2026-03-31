@@ -542,12 +542,18 @@ export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
 // ── Library: persona → preferred document categories ─────────────────────
 
 export const PERSONA_LIBRARY_CATEGORIES: Record<PersonaId, string[]> = {
-  executive: ['General Recommendations', 'PKI Certificate Management'],
-  developer: ['Protocols', 'KEM', 'Digital Signature'],
-  architect: ['PKI Certificate Management', 'KEM', 'Protocols', 'General Recommendations'],
+  executive: ['Government & Policy', 'Migration Guidance', 'Industry & Research'],
+  developer: ['Protocols', 'KEM', 'Digital Signature', 'Algorithm Specifications'],
+  architect: [
+    'PKI Certificate Management',
+    'KEM',
+    'Protocols',
+    'NIST Standards',
+    'International Frameworks',
+  ],
   researcher: [],
-  ops: ['PKI Certificate Management', 'Protocols', 'General Recommendations'],
-  curious: ['General Recommendations'],
+  ops: ['PKI Certificate Management', 'Protocols', 'Government & Policy', 'Migration Guidance'],
+  curious: ['Migration Guidance', 'Government & Policy'],
 }
 
 // ── Achievement exclusions: achievements structurally unreachable per persona ──

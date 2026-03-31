@@ -18,6 +18,7 @@ import {
   PackageSearch,
   EyeOff,
   ArrowRightLeft,
+  Wrench,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -675,6 +676,20 @@ export const MigrateView: React.FC = () => {
         shareText="A 7-phase migration framework aligned with NIST, NSA CNSA 2.0, CISA, and ETSI guidance. Explore software readiness and migration steps."
         onExport={handleExportCsv}
       />
+
+      {/* WIP Disclaimer */}
+      <div className="glass-panel border border-status-warning/30 bg-status-warning/5 px-4 py-3 rounded-lg text-sm text-secondary flex items-start gap-3">
+        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold border border-status-warning/40 bg-status-warning/15 text-status-warning animate-pulse-glow shrink-0 mt-0.5">
+          <Wrench size={12} className="animate-bounce-subtle" />
+          WIP
+        </span>
+        <p>
+          I am in the process of reviewing and validating the PQC product information. There are
+          still many inaccuracies that need to be addressed. The community can help with this effort
+          by submitting product update requests via the <em>Update PQC Info</em> link available in
+          each product card.
+        </p>
+      </div>
 
       {/* Migration Workflow Hero — collapsible (desktop only) */}
       <div className="hidden md:block">

@@ -496,21 +496,20 @@ def safe_filename(name: str) -> str:
 
 
 def find_latest_migrate_csv() -> Path:
-    """Find the latest quantum_safe_cryptographic_software_reference_*.csv."""
-    prefix = 'quantum_safe_cryptographic_software_reference_'
-    pattern = re.compile(rf'^{prefix}\d{{8}}(_r\d+)?\.csv$')
-    files = [f for f in DATA_DIR.iterdir() if pattern.match(f.name)]
-    if not files:
-        raise FileNotFoundError(f'No {prefix}*.csv found in {DATA_DIR}')
-
-    def sort_key(f):
-        m = re.search(rf'{prefix}(\d{{2}})(\d{{2}})(\d{{4}})(_r(\d+))?\.csv$', f.name)
-        date_str = f'{m.group(3)}-{m.group(1)}-{m.group(2)}'
-        rev = int(m.group(5)) if m.group(5) else 0
-        return (date_str, rev)
-
-    files.sort(key=sort_key, reverse=True)
-    return files[0]
+    """Find the latest pqc_product_catalog_*.csv (or legacy quantum_safe_*)."""
+    prefixes = ['pqc_product_catalog_', 'quantum_safe_cryptographic_software_reference_']
+    for prefix in prefixes:
+        pattern = re.compile(rf'^{prefix}\d{{8}}(_r\d+)?\.csv$')
+        files = [f for f in DATA_DIR.iterdir() if pattern.match(f.name)]
+        if files:
+            def sort_key(f, pfx=prefix):
+                m = re.search(rf'{pfx}(\d{{2}})(\d{{2}})(\d{{4}})(_r(\d+))?\.csv$', f.name)
+                date_str = f'{m.group(3)}-{m.group(1)}-{m.group(2)}'
+                rev = int(m.group(5)) if m.group(5) else 0
+                return (date_str, rev)
+            files.sort(key=sort_key, reverse=True)
+            return files[0]
+    raise FileNotFoundError(f'No product catalog CSV found in {DATA_DIR}')
 
 
 def load_products_from_csv(csv_path: Path) -> list[dict]:

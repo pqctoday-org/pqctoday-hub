@@ -1,0 +1,11 @@
+{
+  "vendor": "THALES Norway AS",
+  "product_name": "Trusted Security Filter TSF 401",
+  "pqc_algorithms": ["SPHINCS+"],
+  "pqc_standard_refs": [],
+  "product_brief": "The Trusted Security Filter TSF 401 is a security module that provides encryption, authentication, and secure communication for data storage and management.",
+  "product_category": "Hardware Security Module (HSM)",
+  "assurance_level": null,
+  "classical_algorithms": ["AES-XTS", "AES-GCM", "RSA", "TLS"],
+  "_source_pdf": "trusted-security-filter-tsf-401.pdf"
+}

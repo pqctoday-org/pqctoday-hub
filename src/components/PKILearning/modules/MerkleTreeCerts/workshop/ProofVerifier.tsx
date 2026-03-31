@@ -33,9 +33,11 @@ interface PathAnnotation {
 }
 
 const circledNumbers = ['\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465']
+const PROOF_VERIFIER_CERTS = SAMPLE_CERTS.slice(0, 8)
 
 export const ProofVerifier: React.FC = () => {
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
+  const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null)
   const [originalProof, setOriginalProof] = useState<InclusionProof | null>(null)
   const [editableProof, setEditableProof] = useState<InclusionProof | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
@@ -52,18 +54,16 @@ export const ProofVerifier: React.FC = () => {
   } | null>(null)
   const [currentStep, setCurrentStep] = useState(-1)
 
-  const certs = SAMPLE_CERTS.slice(0, 8)
   const tamperCount = tamperedPositions.size
 
   const handleSetup = useCallback(async () => {
     setIsBuilding(true)
     try {
-      const result = await buildMerkleTree(certs)
+      const result = await buildMerkleTree(PROOF_VERIFIER_CERTS)
       setLevels(result.levels)
-      // Pick leaf index 2 (Cert 3) for the demo
-      const p = getInclusionProof(result.levels, 2)
-      setOriginalProof(p)
-      setEditableProof(structuredClone(p))
+      setSelectedLeaf(null)
+      setOriginalProof(null)
+      setEditableProof(null)
       setTamperedPositions(new Map())
       setVerificationResult(null)
       setCurrentStep(-1)
@@ -71,6 +71,20 @@ export const ProofVerifier: React.FC = () => {
       setIsBuilding(false)
     }
   }, [])
+
+  const handleSelectLeaf = useCallback(
+    (leafIndex: number) => {
+      if (!levels) return
+      const p = getInclusionProof(levels, leafIndex)
+      setSelectedLeaf(leafIndex)
+      setOriginalProof(p)
+      setEditableProof(structuredClone(p))
+      setTamperedPositions(new Map())
+      setVerificationResult(null)
+      setCurrentStep(-1)
+    },
+    [levels]
+  )
 
   /** Toggle a hex character in a sibling hash */
   const handleFlipChar = useCallback(
@@ -176,7 +190,7 @@ export const ProofVerifier: React.FC = () => {
     annotations.set(`0-${originalProof.leafIndex}`, {
       type: 'selected',
       order: 0,
-      label: 'Cert 3',
+      label: `Cert ${originalProof.leafIndex + 1}`,
     })
 
     let idx = originalProof.leafIndex
@@ -228,7 +242,7 @@ export const ProofVerifier: React.FC = () => {
       </div>
 
       {/* Setup */}
-      {!originalProof ? (
+      {!levels ? (
         <button
           onClick={handleSetup}
           disabled={isBuilding}
@@ -236,21 +250,75 @@ export const ProofVerifier: React.FC = () => {
         >
           {isBuilding ? (
             <>
-              <Loader2 size={16} className="animate-spin" /> Preparing...
+              <Loader2 size={16} className="animate-spin" /> Building...
             </>
           ) : (
             <>
-              <ShieldCheck size={16} /> Set Up Verification Demo
+              <ShieldCheck size={16} /> Build Tree &amp; Select a Leaf
             </>
           )}
         </button>
+      ) : !originalProof ? (
+        /* Leaf picker — tree built but no leaf selected yet */
+        <div className="space-y-4">
+          <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
+            <p className="text-xs text-foreground">
+              <TreePine size={12} className="inline mr-1 text-primary" />
+              <strong>Click any certificate leaf</strong> to generate its inclusion proof, then
+              verify it step-by-step.
+            </p>
+          </div>
+          <div className="bg-muted/50 rounded-lg p-4 border border-border overflow-x-auto">
+            <div className="space-y-3 min-w-fit">
+              {[...levels].reverse().map((level, reversedIdx) => {
+                const levelIdx = levels.length - 1 - reversedIdx
+                const isRoot = levelIdx === levels.length - 1
+                const isLeaf = levelIdx === 0
+                return (
+                  <div key={levelIdx}>
+                    <div className="text-[10px] text-muted-foreground mb-1">
+                      {isRoot ? 'Root' : isLeaf ? 'Leaves (click to select)' : `Level ${levelIdx}`}
+                    </div>
+                    <div className="flex justify-center gap-1 flex-wrap">
+                      {level.map((node) => (
+                        <button
+                          key={`${levelIdx}-${node.index}`}
+                          onClick={() => isLeaf && handleSelectLeaf(node.index)}
+                          disabled={!isLeaf}
+                          className={`px-2 py-1.5 rounded text-[10px] font-mono border transition-all ${
+                            isRoot
+                              ? 'bg-accent/20 text-accent border-accent/50 cursor-default'
+                              : isLeaf
+                                ? 'bg-primary/10 text-primary border-primary/30 hover:bg-primary/25 cursor-pointer'
+                                : 'bg-muted text-foreground border-border cursor-default'
+                          }`}
+                        >
+                          <div className="text-[9px] text-muted-foreground mb-0.5">
+                            {node.label}
+                          </div>
+                          <div>{truncateHash(node.hash, 6)}</div>
+                          {isLeaf && node.index < PROOF_VERIFIER_CERTS.length && (
+                            <div className="text-[8px] mt-0.5 text-muted-foreground">
+                              {PROOF_VERIFIER_CERTS[node.index].subject}
+                            </div>
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </div>
+        </div>
       ) : (
         <>
           {/* Proof info */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <div className="flex items-center justify-between mb-2">
               <h4 className="text-sm font-bold text-foreground">
-                Proof for Cert 3 ({certs[2].subject})
+                Proof for Cert {(selectedLeaf ?? 0) + 1} (
+                {PROOF_VERIFIER_CERTS[selectedLeaf ?? 0]?.subject})
               </h4>
               {tamperCount > 0 && (
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-destructive/20 text-destructive border border-destructive/30 font-bold">
@@ -341,8 +409,8 @@ export const ProofVerifier: React.FC = () => {
                 <h4 className="text-sm font-bold text-foreground">Authentication Path in Tree</h4>
               </div>
               <p className="text-[10px] text-muted-foreground mb-3">
-                Cert 3 is the selected leaf. The highlighted siblings are the hashes you must
-                provide to recompute the root. Tampered nodes appear in red.
+                Cert {(selectedLeaf ?? 0) + 1} is the selected leaf. The highlighted siblings are
+                the hashes you must provide to recompute the root. Tampered nodes appear in red.
               </p>
 
               {/* Legend */}
@@ -448,9 +516,9 @@ export const ProofVerifier: React.FC = () => {
                                   {node.label}
                                 </div>
                                 <div>{truncateHash(node.hash, 6)}</div>
-                                {isLeaf && node.index < certs.length && (
+                                {isLeaf && node.index < PROOF_VERIFIER_CERTS.length && (
                                   <div className="text-[8px] mt-0.5 text-muted-foreground">
-                                    {certs[node.index].subject}
+                                    {PROOF_VERIFIER_CERTS[node.index].subject}
                                   </div>
                                 )}
                                 {annotation && annotation.type !== 'selected' && (

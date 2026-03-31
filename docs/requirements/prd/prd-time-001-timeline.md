@@ -6,8 +6,8 @@
 |---------------|------------------------------------------------------|
 | Document ID   | PRD-TIME-001                                         |
 | Title         | Timeline Page                                        |
-| Version       | 2.1                                                  |
-| Date          | 2026-03-27                                           |
+| Version       | 2.3                                                  |
+| Date          | 2026-03-30                                           |
 | Route         | `/timeline`                                          |
 | Status        | Current                                              |
 | Component     | `src/components/Timeline/TimelineView.tsx`           |
@@ -828,7 +828,7 @@ The Timeline page is in `ALWAYS_VISIBLE_PATHS` and appears in navigation for all
 
 ### 10.2 Persona-Specific Defaults
 
-5 personas are supported. The platform uses 5-persona profiling (Executive, Architect, Developer, Researcher, Ops/Security Engineer).
+6 personas are supported. The platform uses 6-persona profiling (Executive, Architect, Developer, Researcher, Ops/Security Engineer, Curious/Generalist).
 
 | Persona | Region Pre-Selection | Phase Type Default | Recommended Path |
 |---------|---------------------|-------------------|-----------------|
@@ -837,9 +837,10 @@ The Timeline page is in `ALWAYS_VISIBLE_PATHS` and appears in navigation for all
 | Architect | Yes (from `selectedRegion`) | "All" | Yes (landing page badge) |
 | Researcher | Yes (from `selectedRegion`) | "All" | No |
 | Ops/Security Engineer | Yes (from `selectedRegion`) | "All" | Secondary path (operational compliance deadlines) |
+| Curious/Generalist | Yes (from `selectedRegion`) | "All" | Yes (landing page badge) |
 | None | "All" | "All" | N/A |
 
-**Document archive**: `public/timeline/` contains 110+ archived HTML/PDF copies of government PQC milestone documents, named `{Country}_{Org}_{Title}.{html|pdf}`. These are gitignored and populated on fresh clone by running `npm run download:timeline`. The manifest (`public/timeline/manifest.json`) tracks 110+ entries. Ops/Security Engineers use these archived source documents to verify deadline dates and authority of compliance mandates for operational planning.
+**Document archive**: `public/timeline/` contains 213 timeline events with trust score badges and peer review fields across 30+ countries. Archived HTML/PDF copies of government PQC milestone documents are stored at `public/timeline/`, named `{Country}_{Org}_{Title}.{html|pdf}`. These are gitignored and populated on fresh clone by running `npm run download:timeline`. The manifest (`public/timeline/manifest.json`) tracks all entries. Ops/Security Engineers use these archived source documents to verify deadline dates and authority of compliance mandates for operational planning.
 
 ### 10.3 Journey Step Mapping
 

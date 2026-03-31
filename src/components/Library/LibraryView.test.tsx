@@ -114,7 +114,12 @@ vi.mock('../../data/libraryData', () => ({
     'KEM',
     'PKI Certificate Management',
     'Protocols',
-    'General Recommendations',
+    'Government & Policy',
+    'NIST Standards',
+    'International Frameworks',
+    'Migration Guidance',
+    'Algorithm Specifications',
+    'Industry & Research',
   ],
 }))
 

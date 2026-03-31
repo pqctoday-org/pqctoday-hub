@@ -1,0 +1,22 @@
+{
+  "vendor": "STMicroelectronics",
+  "product_name": "STSAFE-V100-TPM & ST33KTPM2I 10.512",
+  "pqc_algorithms": ["LMS"],
+  "pqc_standard_refs": ["SP 800-208"],
+  "product_brief": "The STSAFE-V100-TPM is a Trusted Platform Module (TPM) firmware that provides cryptographic operations including encryption, decryption, digital signatures, and key management, supporting various algorithms such as RSA, ECC, and LMS.",
+  "product_category": "Trusted Platform Module (TPM)",
+  "assurance_level": null,
+  "classical_algorithms": [
+    "RSA-2048",
+    "RSA-3072",
+    "RSA-4096",
+    "ECDSA P-256",
+    "ECDSA P-384",
+    "ECDSA P-521",
+    "EdDSA Ed448",
+    "AES-128",
+    "AES-192",
+    "AES-256"
+  ],
+  "_source_pdf": "stsafe-v100-tpm-st33ktpm2i-tpm-firmware-10-512-anssi-cc-2024.pdf"
+}

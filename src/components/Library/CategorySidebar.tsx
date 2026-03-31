@@ -1,5 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { PenTool, Key, ShieldCheck, Network, BookOpen, Library } from 'lucide-react'
+import {
+  PenTool,
+  Key,
+  ShieldCheck,
+  Network,
+  Library,
+  Landmark,
+  Award,
+  Globe,
+  Compass,
+  FlaskConical,
+  Briefcase,
+  BookOpen,
+} from 'lucide-react'
 import type { LibraryCategory } from '../../data/libraryData'
 import clsx from 'clsx'
 
@@ -22,7 +35,12 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
   KEM: <Key size={18} aria-hidden="true" />,
   'PKI Certificate Management': <ShieldCheck size={18} aria-hidden="true" />,
   Protocols: <Network size={18} aria-hidden="true" />,
-  'General Recommendations': <BookOpen size={18} aria-hidden="true" />,
+  'Government & Policy': <Landmark size={18} aria-hidden="true" />,
+  'NIST Standards': <Award size={18} aria-hidden="true" />,
+  'International Frameworks': <Globe size={18} aria-hidden="true" />,
+  'Migration Guidance': <Compass size={18} aria-hidden="true" />,
+  'Algorithm Specifications': <FlaskConical size={18} aria-hidden="true" />,
+  'Industry & Research': <Briefcase size={18} aria-hidden="true" />,
 }
 
 export const CATEGORY_ICON_MAP = CATEGORY_ICONS

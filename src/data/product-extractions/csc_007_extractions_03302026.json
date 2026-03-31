@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Oracle AI Database 26ai",
+    "category": "Database Encryption Software",
+    "product_name": "Chainguard FIPS Provider for OpenSSL (AESNI_ASM)",
+    "product_brief": "Provides cryptographic services to Linux user space software components with Intel AES-NI AES using GCM.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document only mentions classical algorithms (AES-GCM, AES-GMAC).",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "AES-GCM, AES-GMAC",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Software provider for Linux user space",
+    "infrastructure_layer": "Hardware (Intel Sapphire Rapids), Cloud (Amazon EC2)",
+    "license_type": "Unknown",
+    "license": "Not stated",
+    "latest_version": "3.4.0-r4",
+    "release_date": "2025-04-03",
+    "fips_validated": "Yes, First Validated: 3/10/2025 (Module ID A6694)",
+    "primary_platforms": "Amazon Linux 2023 on EC2 m7i.metal-24xl on Intel Sapphire Rapids Xeon Platinum 8488C",
+    "target_industries": "Not stated",
+    "regulatory_status": "FIPS Validated (A6694)",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "https://csrc.nist.gov"
+  }
+]

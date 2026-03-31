@@ -280,6 +280,8 @@ export interface Pkcs11LogEntry {
   ok: boolean
   engineName?: string
   inspect?: import('./pkcs11Inspect').Pkcs11LogInspect
+  /** When true, renders as a visual step-separator in the log panel (not a real PKCS#11 call) */
+  isStepHeader?: true
 }
 
 let _logId = 0
@@ -292,6 +294,8 @@ const RV_NAMES: Record<number, string> = {
   0x00000005: 'CKR_GENERAL_ERROR',
   0x00000006: 'CKR_FUNCTION_FAILED',
   0x00000007: 'CKR_ARGUMENTS_BAD',
+  0x00000010: 'CKR_ATTRIBUTE_READ_ONLY',
+  0x00000012: 'CKR_ATTRIBUTE_TYPE_INVALID',
   0x00000020: 'CKR_DATA_INVALID',
   0x00000030: 'CKR_DEVICE_ERROR',
   0x00000042: 'CKR_AEAD_DECRYPT_FAILED',
@@ -3772,7 +3776,10 @@ export interface KeyAttributeSet {
   ckCheckValue?: Uint8Array | null
 }
 
-/** Read common PKCS#11 attributes for any key object in the current session. */
+/** Read common PKCS#11 attributes for any key object in the current session.
+ *  Per PKCS#11 v3.2 §5.7.5 there is no "list all attributes" API — the caller must know
+ *  which attributes apply to each object class. We read CKA_CLASS + CKA_KEY_TYPE first,
+ *  then only probe the attributes defined for that class (Tables 27/29/30). */
 export const hsm_getKeyAttributes = (
   M: SoftHSMModule,
   hSession: number,
@@ -3780,36 +3787,54 @@ export const hsm_getKeyAttributes = (
 ): KeyAttributeSet => {
   const b = (t: number) => readBoolAttr(M, hSession, handle, t)
   const u = (t: number) => readUlongAttr(M, hSession, handle, t)
+
+  // Read class + type first — these are on every key object (Table 26 common attrs)
+  const ckClass = u(CKA_CLASS)
+  const ckKeyType = u(CKA_KEY_TYPE)
+
+  const isPublic = ckClass === CKO_PUBLIC_KEY
+  const isPrivate = ckClass === CKO_PRIVATE_KEY
+  const isSecret = ckClass === CKO_SECRET_KEY
+
   return {
-    ckClass: u(CKA_CLASS),
-    ckKeyType: u(CKA_KEY_TYPE),
+    ckClass,
+    ckKeyType,
+    // Common to all key classes (Table 26): DERIVE, LOCAL, KEY_GEN_MECHANISM
     ckParameterSet: u(CKA_PARAMETER_SET),
     ckKeyGenMechanism: u(CKA_KEY_GEN_MECHANISM),
     ckToken: b(CKA_TOKEN),
     ckPrivate: b(CKA_PRIVATE),
-    ckSensitive: b(CKA_SENSITIVE),
-    ckExtractable: b(CKA_EXTRACTABLE),
-    ckAlwaysSensitive: b(CKA_ALWAYS_SENSITIVE),
-    ckNeverExtractable: b(CKA_NEVER_EXTRACTABLE),
     ckLocal: b(CKA_LOCAL),
-    ckEncrypt: b(CKA_ENCRYPT),
-    ckDecrypt: b(CKA_DECRYPT),
-    ckSign: b(CKA_SIGN),
-    ckVerify: b(CKA_VERIFY),
-    ckWrap: b(CKA_WRAP),
-    ckUnwrap: b(CKA_UNWRAP),
     ckDerive: b(CKA_DERIVE),
-    ckEncapsulate: b(CKA_ENCAPSULATE),
-    ckDecapsulate: b(CKA_DECAPSULATE),
-    ckValueLen: u(CKA_VALUE_LEN),
-    ckCheckValue: (() => {
-      try {
-        return hsm_getKeyCheckValue(M, hSession, handle)
-      } catch (e) {
-        console.warn('[softhsm] KCV read failed for handle', handle, e)
-        return null
-      }
-    })(),
+    // Sensitivity / extractability — private and secret keys only (Tables 29/30)
+    ckSensitive: isPrivate || isSecret ? b(CKA_SENSITIVE) : null,
+    ckExtractable: isPrivate || isSecret ? b(CKA_EXTRACTABLE) : null,
+    ckAlwaysSensitive: isPrivate || isSecret ? b(CKA_ALWAYS_SENSITIVE) : null,
+    ckNeverExtractable: isPrivate || isSecret ? b(CKA_NEVER_EXTRACTABLE) : null,
+    // Encryption / decryption — public+secret can encrypt, private+secret can decrypt
+    ckEncrypt: isPublic || isSecret ? b(CKA_ENCRYPT) : null,
+    ckDecrypt: isPrivate || isSecret ? b(CKA_DECRYPT) : null,
+    // Signing — private keys sign, public keys verify; secret keys can do both (MAC)
+    ckSign: isPrivate || isSecret ? b(CKA_SIGN) : null,
+    ckVerify: isPublic || isSecret ? b(CKA_VERIFY) : null,
+    // Wrapping — public+secret can wrap, private+secret can unwrap
+    ckWrap: isPublic || isSecret ? b(CKA_WRAP) : null,
+    ckUnwrap: isPrivate || isSecret ? b(CKA_UNWRAP) : null,
+    // KEM encap/decap — public key encapsulates, private key decapsulates (Table 27/29)
+    ckEncapsulate: isPublic ? b(CKA_ENCAPSULATE) : null,
+    ckDecapsulate: isPrivate ? b(CKA_DECAPSULATE) : null,
+    // Secret-key-only attributes (Table 30)
+    ckValueLen: isSecret ? u(CKA_VALUE_LEN) : null,
+    ckCheckValue: isSecret
+      ? (() => {
+          try {
+            return hsm_getKeyCheckValue(M, hSession, handle)
+          } catch (e) {
+            console.warn('[softhsm] KCV read failed for handle', handle, e)
+            return null
+          }
+        })()
+      : null,
   }
 }
 

@@ -389,6 +389,16 @@ export function AlgorithmsView() {
                   compareType={compareType}
                   maxCompareReached={compareKeys.length >= MAX_COMPARE}
                   onToggleCompare={handleToggleCompare}
+                  activeSubTab={
+                    (searchParams.get('subtab') as
+                      | 'performance'
+                      | 'security'
+                      | 'sizes'
+                      | 'usecases') || 'performance'
+                  }
+                  onSubTabChange={(v) =>
+                    updateSearchParams({ subtab: v === 'performance' ? null : v })
+                  }
                 />
               </motion.div>
             </TabsContent>

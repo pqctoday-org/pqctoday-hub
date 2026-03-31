@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Adva FSP 3000 S-Flex",
+    "category": "Network Encryptors",
+    "product_name": "Adva FSP 3000 S-Flex™",
+    "product_brief": "BSI-approved 400G Layer 1 muxponder with quantum-safe encryption for classified data.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "The solution delivers quantum-safe Layer 1 encryption utilizing post-quantum cryptography (PQC) and post-quantum key exchange. It is approved by the German Federal Office for Information Security (BSI) for VS-NfD and EU/NATO-restricted data, protecting against harvest-now, decrypt-later attacks.",
+    "pqc_migration_priority": "Critical",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Post-quantum key exchange; specific architecture details (e.g., HSM, MPC) not stated.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "High-capacity transponder/muxponder card for optical transport platform; Layer 1 encryption solution.",
+    "infrastructure_layer": "Network, Hardware",
+    "license_type": "Proprietary",
+    "license": "Not stated",
+    "latest_version": "Not stated",
+    "release_date": "2025-09-25",
+    "fips_validated": "No (BSI approved for VS-NfD and EU/NATO-restricted data; FIPS status not mentioned)",
+    "primary_platforms": "Adtran FSP 3000 open optical transport platform",
+    "target_industries": "Critical infrastructure, Research and science, Finance and insurance, Energy and utilities, Public sector and defense",
+    "regulatory_status": "BSI-approved for VS-NfD and EU/NATO-restricted data communication",
+    "pqc_roadmap_details": "Already deployed and certified; provides a path to upgrade in sync with evolving standards.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Adva_FSP_3000_S-Flex.html"
+  }
+]

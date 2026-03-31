@@ -440,7 +440,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'kms-pqc': 5,
   'hsm-pqc': 4,
   'entropy-randomness': 5,
-  'merkle-tree-certs': 4,
+  'merkle-tree-certs': 5,
   qkd: 5,
   'code-signing': 5,
   'api-security-jwt': 5,
@@ -701,6 +701,7 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'inclusion', label: 'Inclusion Proofs & Authentication Paths' },
     { id: 'verification', label: 'Proof Verification Algorithm' },
     { id: 'comparison', label: 'MTC vs X.509: Size & Performance Trade-offs' },
+    { id: 'ct-log', label: 'Certificate Transparency Log (ML-DSA-44 via SoftHSMv3)' },
   ],
   qkd: [
     { id: 'bb84', label: 'BB84 Protocol & Quantum Channel' },
@@ -1047,6 +1048,7 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'inclusion-proof', label: 'Inclusion Proof' },
     { id: 'verify-proof', label: 'Verify Proof' },
     { id: 'size-comparison', label: 'Size Comparison' },
+    { id: 'ct-log', label: 'CT Log Simulator' },
   ],
   qkd: [
     { id: 'bb84-simulator', label: 'BB84 Protocol' },

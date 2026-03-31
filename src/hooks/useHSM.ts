@@ -11,7 +11,7 @@
  * Lifecycle:
  *   initialize() → getSoftHSMModule → createLoggingProxy →
  *     C_Initialize → C_GetSlotList → C_InitToken → C_OpenSession → C_Login
- *   finalize()   → C_CloseSession → C_Finalize
+ *   finalize()   → C_CloseSession (never C_Finalize — singleton must stay alive)
  *
  * All PKCS#11 calls use the logging proxy so every call appears in `log`.
  */
@@ -22,7 +22,6 @@ import {
   hsm_getFirstSlot,
   hsm_initToken,
   hsm_openUserSession,
-  hsm_finalize,
 } from '../wasm/softhsm'
 import type { SoftHSMModule, Pkcs11LogEntry } from '../wasm/softhsm'
 import type { HsmFamily, HsmKey, HsmKeyRole } from '../components/Playground/hsm/HsmContext'
@@ -56,6 +55,8 @@ export interface UseHSMResult {
   log: Pkcs11LogEntry[]
   addLog: (e: Pkcs11LogEntry) => void
   clearLog: () => void
+  /** Inject a visual step-separator entry into the log (isStepHeader: true). Call AFTER the step's ops. */
+  addStepLog: (label: string) => void
 
   // ── Key registry ──────────────────────────────────────────────────────────
   keys: HsmKey[]
@@ -88,6 +89,23 @@ export function useHSM(): UseHSMResult {
   }, [])
 
   const clearLog = useCallback(() => setLog([]), [])
+
+  const addStepLog = useCallback(
+    (label: string) => {
+      addLog({
+        id: Math.random(),
+        timestamp: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        fn: label,
+        args: '',
+        rvHex: '',
+        rvName: '',
+        ms: 0,
+        ok: true,
+        isStepHeader: true,
+      })
+    },
+    [addLog]
+  )
 
   const addKey = useCallback((key: HsmKey): HsmKey => {
     setKeys((prev) => [key, ...prev])
@@ -148,9 +166,9 @@ export function useHSM(): UseHSMResult {
   const finalize = useCallback(() => {
     if (moduleRef.current && hSessionRef.current) {
       try {
-        hsm_finalize(moduleRef.current, hSessionRef.current)
+        moduleRef.current._C_CloseSession(hSessionRef.current)
       } catch {
-        // Ignore finalize errors (session may already be closed)
+        // Ignore close errors (session may already be closed)
       }
     }
     moduleRef.current = null
@@ -170,6 +188,7 @@ export function useHSM(): UseHSMResult {
     log,
     addLog,
     clearLog,
+    addStepLog,
     keys,
     addKey,
     removeKey,

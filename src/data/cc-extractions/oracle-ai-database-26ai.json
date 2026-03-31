@@ -1,0 +1,11 @@
+{
+  "vendor": "Oracle Corporation",
+  "product_name": "Oracle AI Database 26ai",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Oracle AI Database 26ai is a database management system designed to handle AI workloads, providing secure storage and processing of data.",
+  "product_category": "Database",
+  "assurance_level": null,
+  "classical_algorithms": [],
+  "_source_pdf": "oracle-ai-database-26ai.pdf"
+}

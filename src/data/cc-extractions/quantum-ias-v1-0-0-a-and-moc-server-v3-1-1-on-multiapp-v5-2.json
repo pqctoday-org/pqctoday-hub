@@ -1,0 +1,11 @@
+{
+  "vendor": "THALES GROUP LIMITED",
+  "product_name": "Quantum IAS v1.0.0.A and MOC Server v3.1.1 on MultiApp V5.2 Premium PQC",
+  "pqc_algorithms": ["ML-DSA"],
+  "pqc_standard_refs": ["FIPS 204"],
+  "product_brief": "A Java Card application providing a Secure Signature Creation Device (SSCD) that supports classical algorithms (ECDSA, RSA) and post-quantum ML-DSA-65 for electronic signatures, with hybrid signature mechanisms for enhanced security.",
+  "product_category": "Smart Card / Secure Element",
+  "assurance_level": "EAL5+",
+  "classical_algorithms": ["RSA", "ECDSA", "AES-256"],
+  "_source_pdf": "quantum-ias-v1-0-0-a-and-moc-server-v3-1-1-on-multiapp-v5-2.pdf"
+}

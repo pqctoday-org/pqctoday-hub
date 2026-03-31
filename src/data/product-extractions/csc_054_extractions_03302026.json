@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Thales MultiApp 5.2 Premium PQC",
+    "category": "Smart Cards & Secure Elements",
+    "product_name": "Thales MultiApp 5.2 Premium PQC",
+    "product_brief": "World's first smartcard certified to resist quantum computer attacks, incorporating FIPS 204 signatures.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Certified by ANSSI as the world's first smartcard to resist quantum attacks. Incorporates cryptographic signatures based on FIPS 204 (NIST-approved post-quantum algorithm derived from structured lattice mathematics). Designed to withstand future quantum decryption methods threatening RSA and ECC.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "FIPS 204, RSA, ECC",
+    "key_management_model": "Hardware-based key storage within a smartcard; specific injection or generation methods not stated in provided text.",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Smartcard (Hardware)",
+    "infrastructure_layer": "Hardware",
+    "license_type": "Proprietary",
+    "license": "Proprietary",
+    "latest_version": "5.2",
+    "release_date": "2025-10-14",
+    "fips_validated": "No (Text states it incorporates signatures based on FIPS 204, but does not state the product itself is FIPS 140 validated)",
+    "primary_platforms": "Smartcard readers/terminals (implied by smartcard form factor); specific OS not stated.",
+    "target_industries": "Not stated",
+    "regulatory_status": "Certified by ANSSI (France's national cybersecurity agency); Common Criteria EAL6+",
+    "pqc_roadmap_details": "Product is already launched and certified; no future roadmap details provided in text.",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "FIPS 204, RSA, ECC",
+    "authoritative_source_url": "Not stated"
+  }
+]

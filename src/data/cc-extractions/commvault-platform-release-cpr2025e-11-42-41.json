@@ -1,0 +1,11 @@
+{
+  "vendor": "Commvault Systems Inc",
+  "product_name": "Commvault Platform Release CPR2025E (11.42.41)",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Enterprise data backup and recovery software implementing intelligent data management features, storing data in a space-efficient and encrypted format.",
+  "product_category": "Other",
+  "assurance_level": "EAL2",
+  "classical_algorithms": [],
+  "_source_pdf": "commvault-platform-release-cpr2025e-11-42-41.pdf"
+}

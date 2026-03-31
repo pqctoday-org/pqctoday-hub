@@ -15,6 +15,9 @@ import {
   Server,
   Cpu,
   Loader2,
+  AppWindow,
+  Globe,
+  ShieldCheck,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -24,6 +27,8 @@ import type { TEEVendor } from '../data/ccConstants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import type { HsmKeyPurpose } from '@/components/Playground/hsm/HsmContext'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateMLKEMKeyPair,
@@ -31,7 +36,9 @@ import {
   hsm_encapsulate,
   hsm_aesWrapKey,
   hsm_sign,
+  hsm_ecdsaSign,
   hsm_extractKeyValue,
+  hsm_generateECKeyPair,
 } from '@/wasm/softhsm'
 
 const TEE_LIVE_OPERATIONS = [
@@ -41,7 +48,41 @@ const TEE_LIVE_OPERATIONS = [
   'C_MessageSignInit',
   'C_SignMessage',
   'C_MessageSignFinal',
+  'C_GenerateKey',
 ]
+
+interface ProvisioningResult {
+  step: number
+  purpose: HsmKeyPurpose
+  title: string
+  pkcs11Call: string
+  detail: string
+  note: string
+}
+
+const PURPOSE_ICON: Record<HsmKeyPurpose, React.ReactNode> = {
+  attestation: <ShieldCheck size={12} className="text-status-warning shrink-0" />,
+  tls: <Globe size={12} className="text-status-info shrink-0" />,
+  kek: <Key size={12} className="text-status-success shrink-0" />,
+  application: <AppWindow size={12} className="text-primary shrink-0" />,
+  general: <Key size={12} className="text-muted-foreground shrink-0" />,
+}
+
+const PURPOSE_LABEL_CLASS: Record<HsmKeyPurpose, string> = {
+  attestation: 'text-status-warning bg-status-warning/10',
+  tls: 'text-status-info bg-status-info/10',
+  kek: 'text-status-success bg-status-success/10',
+  application: 'text-primary bg-primary/10',
+  general: 'text-muted-foreground bg-muted',
+}
+
+const PURPOSE_DISPLAY: Record<HsmKeyPurpose, string> = {
+  attestation: 'Attestation Key (AK)',
+  tls: 'TLS / KEM Key',
+  kek: 'Wrapping Key (KEK)',
+  application: 'Application Key',
+  general: 'General',
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -156,64 +197,234 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
   // Live HSM demo — TEE-HSM key provisioning flow
   const hsm = useHSM()
-  const [liveLines, setLiveLines] = useState<string[]>([])
+  const [liveResults, setLiveResults] = useState<ProvisioningResult[]>([])
   const [liveRunning, setLiveRunning] = useState(false)
   const [liveError, setLiveError] = useState<string | null>(null)
 
   const runLiveDemo = useCallback(async () => {
     if (!hsm.moduleRef.current) return
     setLiveRunning(true)
-    setLiveLines([])
+    setLiveResults([])
     setLiveError(null)
     hsm.clearLog()
+    hsm.clearKeys()
 
-    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
+    const now = () => new Date().toLocaleTimeString()
+    const addResult = (r: ProvisioningResult) => setLiveResults((prev) => [...prev, r])
 
     try {
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
 
-      // Step 1: HSM generates attestation key (ML-DSA-65)
-      const dsaKeys = hsm_generateMLDSAKeyPair(M, hSession, 65)
-      const dsaPubBytes = hsm_extractKeyValue(M, hSession, dsaKeys.pubHandle)
-      addLine(
-        `[HSM] Attestation key: C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
-          ` → pub=${dsaPubBytes.length} B`
-      )
+      if (pqcMode) {
+        // ── PQC flow ──────────────────────────────────────────────────────────
 
-      // Step 2: Key transport to TEE via ML-KEM-768 encapsulation
-      const kemKeys = hsm_generateMLKEMKeyPair(M, hSession, 768)
-      const kemPubBytes = hsm_extractKeyValue(M, hSession, kemKeys.pubHandle)
-      addLine(
-        `[HSM→TEE] KEK transport: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN) → pub=${kemPubBytes.length} B`
-      )
+        // Step 1: Attestation key (ML-DSA-65)
+        const dsaKeys = hsm_generateMLDSAKeyPair(M, hSession, 65)
+        const dsaPubBytes = hsm_extractKeyValue(M, hSession, dsaKeys.pubHandle)
+        hsm.addKey({
+          handle: dsaKeys.pubHandle,
+          family: 'ml-dsa',
+          role: 'public',
+          label: 'ML-DSA-65 Attestation Key (Public)',
+          purpose: 'attestation',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: dsaKeys.privHandle,
+          family: 'ml-dsa',
+          role: 'private',
+          label: 'ML-DSA-65 Attestation Key (Private)',
+          purpose: 'attestation',
+          generatedAt: now(),
+        })
+        addResult({
+          step: 1,
+          purpose: 'attestation',
+          title: 'Attestation Key Generated (ML-DSA-65)',
+          pkcs11Call: 'C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)',
+          detail: `pub = ${dsaPubBytes.length} B (1952 B) · priv = 4032 B`,
+          note: 'Used to sign TEE attestation reports and authenticate to relying parties. The private key never leaves the HSM.',
+        })
 
-      const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, kemKeys.pubHandle, 768)
-      addLine(
-        `[TEE] Encapsulate: C_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B, ss=32 B`
-      )
+        // Step 2: TLS transport via ML-KEM-768
+        const kemKeys = hsm_generateMLKEMKeyPair(M, hSession, 768)
+        const kemPubBytes = hsm_extractKeyValue(M, hSession, kemKeys.pubHandle)
+        hsm.addKey({
+          handle: kemKeys.pubHandle,
+          family: 'ml-kem',
+          role: 'public',
+          label: 'ML-KEM-768 TLS Transport Key (Public)',
+          purpose: 'tls',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: kemKeys.privHandle,
+          family: 'ml-kem',
+          role: 'private',
+          label: 'ML-KEM-768 TLS Transport Key (Private)',
+          purpose: 'tls',
+          generatedAt: now(),
+        })
+        const { ciphertextBytes, secretHandle } = hsm_encapsulate(
+          M,
+          hSession,
+          kemKeys.pubHandle,
+          768
+        )
+        addResult({
+          step: 2,
+          purpose: 'tls',
+          title: 'TLS Transport Key (ML-KEM-768) + Encapsulation',
+          pkcs11Call: `C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN) → pub=${kemPubBytes.length} B\nC_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B`,
+          detail: `pub = ${kemPubBytes.length} B (1184 B) · ciphertext = ${ciphertextBytes.length} B · shared secret handle = 0x${secretHandle.toString(16)}`,
+          note: 'ML-KEM replaces ECDH for the TLS 1.3 key exchange. The encapsulated shared secret is used to derive the session wrapping key.',
+        })
 
-      // Step 3: Wrap provisioning key with shared secret-derived AES key
-      const wrapKey = hsm_generateAESKey(M, hSession, 256)
-      const provKey = hsm_generateAESKey(M, hSession, 256)
-      const wrappedKey = hsm_aesWrapKey(M, hSession, wrapKey, provKey)
-      addLine(`[HSM] Wrap provisioning key: C_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`)
+        // Step 3: KEK wraps provisioning key
+        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        const provKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        hsm.addKey({
+          handle: wrapKeyHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Key Encryption Key (KEK)',
+          purpose: 'kek',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: provKeyHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Provisioning Key',
+          purpose: 'application',
+          generatedAt: now(),
+        })
+        const wrappedKey = hsm_aesWrapKey(M, hSession, wrapKeyHandle, provKeyHandle)
+        addResult({
+          step: 3,
+          purpose: 'kek',
+          title: 'KEK Wraps Provisioning Key (AES-256)',
+          pkcs11Call: `C_GenerateKey(CKM_AES_KEY_GEN, 256) → KEK handle\nC_GenerateKey(CKM_AES_KEY_GEN, 256) → prov key handle\nC_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`,
+          detail: `KEK = 32 B · provisioning key = 32 B · wrapped blob = ${wrappedKey.length} B`,
+          note: 'The Key Encryption Key (KEK) is derived from the ML-KEM shared secret via HKDF. It wraps the provisioning key before transmission to the enclave.',
+        })
 
-      // Step 4: Sign attestation report
-      const teeReport = `TEE-attestation:kem-ct=${ciphertextBytes.length}B:ks-handle=0x${secretHandle.toString(16)}`
-      const sigBytes = hsm_sign(M, hSession, dsaKeys.privHandle, teeReport)
-      addLine(
-        `[HSM] Attestation: C_MessageSignInit(CKM_ML_DSA) + C_SignMessage("${teeReport.slice(0, 40)}…") → ${sigBytes.length} B`
-      )
-      addLine(
-        `[TEE] Channel established — ${wrappedKey.length} B provisioning key secured in TEE enclave`
-      )
+        // Step 4: Sign attestation report
+        const teeReport = `TEE-attestation:kem-ct=${ciphertextBytes.length}B:ks-handle=0x${secretHandle.toString(16)}`
+        const sigBytes = hsm_sign(M, hSession, dsaKeys.privHandle, teeReport)
+        addResult({
+          step: 4,
+          purpose: 'attestation',
+          title: 'Attestation Report Signed (ML-DSA)',
+          pkcs11Call: `C_MessageSignInit(CKM_ML_DSA) + C_SignMessage("${teeReport.slice(0, 40)}…")`,
+          detail: `message = "${teeReport.slice(0, 50)}…" · signature = ${sigBytes.length} B`,
+          note: 'The HSM signs the TEE attestation report with the attestation private key. The enclave verifies this signature to confirm the HSM identity before unsealing.',
+        })
+      } else {
+        // ── Classical flow ────────────────────────────────────────────────────
+
+        // Step 1: Attestation key (ECDSA P-256)
+        const dsaKeys = hsm_generateECKeyPair(M, hSession, 'P-256')
+        hsm.addKey({
+          handle: dsaKeys.pubHandle,
+          family: 'ecdsa',
+          role: 'public',
+          label: 'ECDSA P-256 Attestation Key (Public)',
+          purpose: 'attestation',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: dsaKeys.privHandle,
+          family: 'ecdsa',
+          role: 'private',
+          label: 'ECDSA P-256 Attestation Key (Private)',
+          purpose: 'attestation',
+          generatedAt: now(),
+        })
+        addResult({
+          step: 1,
+          purpose: 'attestation',
+          title: 'Attestation Key Generated (ECDSA P-256)',
+          pkcs11Call: 'C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256)',
+          detail: 'pub ≈ 65 B (uncompressed) · priv ≈ 32 B',
+          note: "Classical ECDSA P-256 attestation key. Vulnerable to Shor's algorithm on a cryptographically-relevant quantum computer — migrate to ML-DSA.",
+        })
+
+        // Step 2: TLS transport via ECDH P-256
+        const kemKeys = hsm_generateECKeyPair(M, hSession, 'P-256')
+        hsm.addKey({
+          handle: kemKeys.pubHandle,
+          family: 'ecdh',
+          role: 'public',
+          label: 'ECDH P-256 TLS Ephemeral Key (Public)',
+          purpose: 'tls',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: kemKeys.privHandle,
+          family: 'ecdh',
+          role: 'private',
+          label: 'ECDH P-256 TLS Ephemeral Key (Private)',
+          purpose: 'tls',
+          generatedAt: now(),
+        })
+        addResult({
+          step: 2,
+          purpose: 'tls',
+          title: 'TLS Ephemeral Key (ECDH P-256)',
+          pkcs11Call: 'C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) — ephemeral',
+          detail: 'pub ≈ 65 B · priv ≈ 32 B · ECDH shared secret ≈ 32 B',
+          note: 'Classical ECDH P-256 for TLS 1.3 key exchange. The shared secret is used to derive the wrapping key. Use PQC mode to see ML-KEM-768 instead.',
+        })
+
+        // Step 3: KEK wraps provisioning key
+        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        const provKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        hsm.addKey({
+          handle: wrapKeyHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Key Encryption Key (KEK)',
+          purpose: 'kek',
+          generatedAt: now(),
+        })
+        hsm.addKey({
+          handle: provKeyHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Provisioning Key',
+          purpose: 'application',
+          generatedAt: now(),
+        })
+        const wrappedKey = hsm_aesWrapKey(M, hSession, wrapKeyHandle, provKeyHandle)
+        addResult({
+          step: 3,
+          purpose: 'kek',
+          title: 'KEK Wraps Provisioning Key (AES-256)',
+          pkcs11Call: `C_GenerateKey(CKM_AES_KEY_GEN, 256) × 2\nC_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`,
+          detail: `KEK = 32 B · provisioning key = 32 B · wrapped blob = ${wrappedKey.length} B`,
+          note: "The Key Encryption Key wraps the provisioning key for secure transmission. AES-256 symmetric keys are quantum-safe (Grover's requires 2^128 ops).",
+        })
+
+        // Step 4: Sign attestation report
+        const teeReport = `TEE-attestation:ecdh-ephem:ks-handle=0x${wrapKeyHandle.toString(16)}`
+        const sigBytes = hsm_ecdsaSign(M, hSession, dsaKeys.privHandle, teeReport)
+        addResult({
+          step: 4,
+          purpose: 'attestation',
+          title: 'Attestation Report Signed (ECDSA)',
+          pkcs11Call: `C_MessageSignInit(CKM_ECDSA) + C_SignMessage("${teeReport.slice(0, 35)}…")`,
+          detail: `message = "${teeReport.slice(0, 50)}…" · signature ≈ ${sigBytes.length} B`,
+          note: 'ECDSA signature on the attestation report. In PQC mode this uses ML-DSA, producing a ~3.3 KB signature vs ~72 B here.',
+        })
+      }
     } catch (e) {
       setLiveError(e instanceof Error ? e.message : String(e))
     } finally {
       setLiveRunning(false)
     }
-  }, [hsm])
+  }, [hsm, pqcMode])
 
   const bothSelected = selectedTeeVendor !== 'All' && selectedHsmVendor !== 'All'
 
@@ -248,27 +459,121 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
           {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
 
-          {liveLines.length > 0 && (
-            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
-              {liveLines.map((line, i) => (
-                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
-                  {line}
-                </p>
+          {liveResults.length > 0 && (
+            <div className="space-y-2">
+              {liveResults.map((r) => (
+                <div
+                  key={r.step}
+                  className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+                >
+                  {/* Step header */}
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={13} className="text-status-success shrink-0" />
+                    <span className="text-xs font-semibold text-foreground">{r.title}</span>
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ml-auto ${PURPOSE_LABEL_CLASS[r.purpose]}`}
+                    >
+                      {PURPOSE_ICON[r.purpose]}
+                      {PURPOSE_DISPLAY[r.purpose]}
+                    </span>
+                  </div>
+
+                  {/* PKCS#11 call */}
+                  <div className="bg-background/60 rounded px-2 py-1.5 border border-border/50">
+                    {r.pkcs11Call.split('\n').map((line, i) => (
+                      <p key={i} className="text-[11px] font-mono text-foreground/80 break-all">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+
+                  {/* Detail + note */}
+                  <p className="text-[10px] font-mono text-muted-foreground">{r.detail}</p>
+                  <p className="text-[10px] text-muted-foreground italic border-t border-border/30 pt-1">
+                    {r.note}
+                  </p>
+                </div>
               ))}
-              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+              <p className="text-[10px] text-muted-foreground">
                 Real output from SoftHSM3 WASM · PKCS#11 v3.2
               </p>
+            </div>
+          )}
+
+          {/* Vendor-specific notes when scenario is selected */}
+          {liveResults.length > 0 && integration && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1">
+              <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <Server size={12} className="text-primary" />
+                {selectedHsmVendor} + {teeArch?.name ?? selectedTeeVendor} — Integration Notes
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-[10px]">
+                <div>
+                  <span className="text-muted-foreground">Channel type: </span>
+                  <span className="text-foreground font-medium">
+                    {CHANNEL_TYPE_LABELS[integration.channelType] ?? integration.channelType}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Mutual attestation: </span>
+                  <span
+                    className={
+                      integration.mutualAttestation
+                        ? 'text-status-success font-medium'
+                        : 'text-status-error font-medium'
+                    }
+                  >
+                    {integration.mutualAttestation ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">TLS channel binding: </span>
+                  <span
+                    className={
+                      integration.tlsChannelBinding
+                        ? 'text-status-success font-medium'
+                        : 'text-muted-foreground font-medium'
+                    }
+                  >
+                    {integration.tlsChannelBinding ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Migration complexity: </span>
+                  <span
+                    className={`font-bold rounded px-1 py-0.5 ${COMPLEXITY_CONFIG[integration.migrationComplexity]?.className ?? ''}`}
+                  >
+                    {COMPLEXITY_CONFIG[integration.migrationComplexity]?.label ??
+                      integration.migrationComplexity}
+                  </span>
+                </div>
+              </div>
+              {integration.notes && (
+                <p className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                  {integration.notes}
+                </p>
+              )}
             </div>
           )}
 
           <Pkcs11LogPanel
             log={hsm.log}
             onClear={hsm.clearLog}
-            defaultOpen={true}
+            defaultOpen={false}
             title="PKCS#11 Call Log — TEE-HSM Channel"
             emptyMessage="Click 'Execute' to run the TEE-HSM key provisioning flow."
             filterFns={TEE_LIVE_OPERATIONS}
           />
+
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+              title="Generated Keys — TEE-HSM Provisioning"
+            />
+          )}
         </div>
       )}
 

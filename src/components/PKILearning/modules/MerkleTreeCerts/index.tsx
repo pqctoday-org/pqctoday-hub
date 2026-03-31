@@ -1,13 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, TreePine, Search, ShieldCheck, BarChart3 } from 'lucide-react'
+import { Trash2, TreePine, Search, ShieldCheck, BarChart3, FileCheck } from 'lucide-react'
 import { MTCIntroduction } from './components/MTCIntroduction'
 import { MTCExercises } from './components/MTCExercises'
 import { MerkleTreeBuilder } from './workshop/MerkleTreeBuilder'
 import { InclusionProofGenerator } from './workshop/InclusionProofGenerator'
 import { ProofVerifier } from './workshop/ProofVerifier'
 import { SizeComparison } from './workshop/SizeComparison'
+import { CTLogSimulator } from './workshop/CTLogSimulator'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -43,6 +44,13 @@ const PARTS = [
     title: 'Step 4: Size Comparison',
     description: 'Compare handshake sizes: traditional X.509 chains vs Merkle Tree Certificates.',
     icon: BarChart3,
+  },
+  {
+    id: 'ct-log',
+    title: 'Step 5: CT Log',
+    description:
+      'Simulate a Certificate Transparency log with ML-DSA-44 signing via SoftHSMv3, consistency proofs, and misissuance detection.',
+    icon: FileCheck,
   },
 ]
 
@@ -209,6 +217,7 @@ export const MerkleTreeCertsModule: React.FC = () => {
               {currentPart === 1 && <InclusionProofGenerator key={`proof-${configKey}`} />}
               {currentPart === 2 && <ProofVerifier key={`verify-${configKey}`} />}
               {currentPart === 3 && <SizeComparison key={`size-${configKey}`} />}
+              {currentPart === 4 && <CTLogSimulator key={`ctlog-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

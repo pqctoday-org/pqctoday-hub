@@ -1,0 +1,21 @@
+{
+  "vendor": "Teron Labs",
+  "product_name": "Ad Noctem Connect 2.3",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Ad Noctem Connect 2.3 is an application and kernel module running on a Linux operating system, implementing IPsec and IKEv2 for secure communication. It uses the OpenSSL 1.1.1 FIPS module and does not store Personally Identifiable Information (PII).",
+  "product_category": "Cryptographic Library",
+  "assurance_level": null,
+  "classical_algorithms": [
+    "RSA-2048",
+    "ECDSA P-256",
+    "AES-256",
+    "HMAC-SHA-256",
+    "HMAC-SHA-384",
+    "HMAC-SHA-512",
+    "SHA-256",
+    "SHA-384",
+    "SHA-512"
+  ],
+  "_source_pdf": "ad-noctem-connect-2-3.pdf"
+}

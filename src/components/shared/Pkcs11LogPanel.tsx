@@ -3,16 +3,31 @@
  * Pkcs11LogPanel — prop-based PKCS#11 call log for learning modules.
  *
  * Self-contained (no HsmContext dependency). Pass log entries from useHSM().
+ * Rows with inspect data show a ▶ chevron — click to expand decoded parameters.
  * Default: collapsible, starts collapsed.
  */
 import { useState } from 'react'
 import { ChevronDown, ChevronRight, Trash2, Copy, CheckCircle } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
+import { lookupCkr } from '../../wasm/pkcs11Inspect'
+import { InspectPanel } from './Pkcs11InspectPanel'
 
 // ── Entry row ────────────────────────────────────────────────────────────────
 
 const LogEntryRow = ({ entry }: { entry: Pkcs11LogEntry }) => {
+  const [expanded, setExpanded] = useState(false)
+
+  if (entry.isStepHeader) {
+    return (
+      <div className="py-1 px-1 mt-1 text-[11px] font-mono font-semibold text-primary/80 border-t border-border/50 bg-muted/20 -mx-1 rounded-sm">
+        {entry.fn}
+      </div>
+    )
+  }
+
+  const hasInspect = !!entry.inspect
+
   const rvColor = entry.ok
     ? 'text-status-success'
     : entry.rvHex === '0x00000150'
@@ -20,16 +35,57 @@ const LogEntryRow = ({ entry }: { entry: Pkcs11LogEntry }) => {
       : 'text-status-error'
 
   return (
-    <div className="grid grid-cols-[7rem_12rem_1fr_6rem_4rem] gap-x-2 text-xs font-mono py-0.5 border-b border-border/10 last:border-0 hover:bg-muted/30 px-1 rounded items-start">
-      <span className="text-muted-foreground shrink-0">{entry.timestamp}</span>
-      <span className="text-primary font-semibold truncate" title={entry.fn}>
-        {entry.fn}
-      </span>
-      <span className="text-foreground/70 truncate" title={entry.args}>
-        {entry.args || '—'}
-      </span>
-      <span className={`${rvColor} shrink-0`}>{entry.rvName}</span>
-      <span className="text-muted-foreground shrink-0 text-right">{entry.ms}ms</span>
+    <div>
+      <div
+        role={hasInspect ? 'button' : undefined}
+        tabIndex={hasInspect ? 0 : undefined}
+        aria-expanded={hasInspect ? expanded : undefined}
+        className={`grid grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem] gap-x-2 text-xs font-mono py-0.5 border-b border-border/10 last:border-0 px-1 rounded items-start
+          ${hasInspect ? 'cursor-pointer hover:bg-muted/30' : ''}`}
+        onClick={hasInspect ? () => setExpanded((v) => !v) : undefined}
+        onKeyDown={
+          hasInspect
+            ? (e) => (e.key === 'Enter' || e.key === ' ') && setExpanded((v) => !v)
+            : undefined
+        }
+      >
+        {/* Expand chevron */}
+        <span className="flex items-center justify-center mt-0.5">
+          {hasInspect ? (
+            expanded ? (
+              <ChevronDown size={10} className="text-muted-foreground" />
+            ) : (
+              <ChevronRight size={10} className="text-muted-foreground" />
+            )
+          ) : (
+            <span className="w-2.5" />
+          )}
+        </span>
+        <span className="text-muted-foreground shrink-0">{entry.timestamp}</span>
+        <span className="text-primary font-semibold truncate" title={entry.fn}>
+          {entry.fn}
+        </span>
+        <span className="text-foreground/70 truncate" title={entry.args}>
+          {entry.args || '—'}
+        </span>
+        <span className={`${rvColor} shrink-0`}>{entry.rvName}</span>
+        <span className="text-muted-foreground shrink-0 text-right">{entry.ms}ms</span>
+      </div>
+
+      {/* Inspect drawer — reuses the same InspectPanel as the HSM Playground */}
+      {expanded && entry.inspect && <InspectPanel inspect={entry.inspect} />}
+
+      {/* Error hint */}
+      {!entry.ok &&
+        (() => {
+          const ckr = lookupCkr(parseInt(entry.rvHex, 16) || 0)
+          return (
+            <div className="ml-4 mb-0.5 text-[10px] leading-relaxed">
+              <span className="text-status-error">{ckr.description}</span>
+              {ckr.hint && <span className="text-muted-foreground ml-1.5">— {ckr.hint}</span>}
+            </div>
+          )
+        })()}
     </div>
   )
 }
@@ -64,7 +120,8 @@ export const Pkcs11LogPanel = ({
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
 
-  const visibleLog = filterFns ? log.filter((e) => filterFns.includes(e.fn)) : log
+  const visibleLog = filterFns ? log.filter((e) => e.isStepHeader || filterFns.includes(e.fn)) : log
+  const inspectableCount = visibleLog.filter((e) => !!e.inspect).length
 
   const copyAll = () => {
     const text = [...visibleLog]
@@ -96,7 +153,11 @@ export const Pkcs11LogPanel = ({
           )}
           {title}
           <span className="text-xs font-normal text-muted-foreground">
-            ({visibleLog.length} calls)
+            ({visibleLog.length} calls
+            {inspectableCount > 0 && (
+              <span className="text-primary"> · {inspectableCount} inspectable</span>
+            )}
+            )
           </span>
         </span>
         {/* role="presentation" + onKeyDown satisfies jsx-a11y for stopPropagation wrapper */}
@@ -141,12 +202,20 @@ export const Pkcs11LogPanel = ({
           {visibleLog.length === 0 ? (
             <p className="text-xs text-muted-foreground italic">{emptyMessage}</p>
           ) : (
-            <div className="space-y-0 max-h-64 overflow-y-auto">
-              {/* Log is newest-first; display oldest-first */}
-              {[...visibleLog].reverse().map((e) => (
-                <LogEntryRow key={e.id} entry={e} />
-              ))}
-            </div>
+            <>
+              {inspectableCount > 0 && (
+                <p className="text-[10px] text-muted-foreground mb-1.5">
+                  Click any <ChevronRight size={9} className="inline" /> row to expand decoded
+                  PKCS#11 parameters &amp; attributes
+                </p>
+              )}
+              <div className="space-y-0 max-h-80 overflow-y-auto">
+                {/* Log is newest-first; display oldest-first */}
+                {[...visibleLog].reverse().map((e) => (
+                  <LogEntryRow key={e.id} entry={e} />
+                ))}
+              </div>
+            </>
           )}
         </div>
       )}

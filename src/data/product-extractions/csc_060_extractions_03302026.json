@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Cranium AI Security Platform",
+    "category": "AI/ML Security Platforms",
+    "product_name": "Cranium AI Security Platform",
+    "product_brief": "Unified AI Security, Third-Party Risk Management, and AI Governance platform.",
+    "pqc_support": "No",
+    "pqc_capability_description": "Not stated. The document focuses on AI security governance, vulnerability monitoring, and compliance but contains no mention of Post-Quantum Cryptography algorithms or implementations.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Application",
+    "license_type": "Commercial",
+    "license": "Proprietary",
+    "latest_version": "Not stated",
+    "release_date": "2025-10-14",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated",
+    "target_industries": "Financial Services, Life Sciences, Enterprise",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated"
+  }
+]

@@ -13,6 +13,7 @@ import {
   Bitcoin,
   Workflow,
   Terminal,
+  Shield,
 } from 'lucide-react'
 import { lazyWithRetry } from '@/utils/lazyWithRetry'
 import type { PersonaId } from '@/data/learningPersonas'
@@ -98,18 +99,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['tee', 'trusted execution', 'confidential', 'channel', 'attestation', 'hsm'],
     difficulty: 'advanced',
     recommendedPersonas: ['architect', 'researcher'],
-  },
-  {
-    id: 'binary-signing',
-    name: 'Code Signing',
-    description: 'ML-DSA binary signing with SHA-256 digest and KAT validation',
-    category: 'HSM / PKCS#11',
-    algorithms: ['ML-DSA-44/65/87', 'SHA-256'],
-    icon: FileSignature,
-    moduleLink: '/learn/code-signing',
-    keywords: ['code signing', 'binary', 'ml-dsa', 'sha-256', 'kat', 'acvp', 'artifact'],
-    difficulty: 'intermediate',
-    recommendedPersonas: ['developer', 'researcher', 'ops'],
   },
   {
     id: 'pkcs11-sim',
@@ -238,14 +227,26 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'merkle-proof',
-    name: 'Merkle Proof Verifier',
-    description: 'SHA-256 Merkle tree construction, inclusion proofs, and tamper detection',
+    name: 'Merkle Tree Workshop',
+    description:
+      'Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs',
     category: 'Certificates & Proofs',
-    algorithms: ['SHA-256', 'Merkle Tree'],
+    algorithms: ['SHA-256', 'Merkle Tree', 'CT Log'],
     icon: Hash,
     moduleLink: '/learn/merkle-tree-certs',
-    keywords: ['merkle', 'tree', 'proof', 'inclusion', 'sha-256', 'tamper', 'transparency log'],
-    difficulty: 'beginner',
+    keywords: [
+      'merkle',
+      'tree',
+      'proof',
+      'inclusion',
+      'sha-256',
+      'tamper',
+      'transparency log',
+      'ct',
+      'sct',
+      'consistency',
+    ],
+    difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher', 'curious'],
   },
   {
@@ -361,6 +362,34 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
   },
+  {
+    id: 'tls-simulator',
+    name: 'TLS 1.3 Simulator',
+    description:
+      'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
+    category: 'OpenSSL Studio',
+    algorithms: ['TLS 1.3', 'ML-KEM', 'X25519MLKEM768', 'ML-DSA', 'ECDSA', 'RSA'],
+    icon: Shield,
+    moduleLink: '/learn/tls-basics',
+    keywords: [
+      'tls',
+      'tls 1.3',
+      'handshake',
+      'client',
+      'server',
+      'cipher',
+      'ml-kem',
+      'x25519',
+      'hybrid',
+      'mtls',
+      'certificate',
+      'pqc',
+      'openssl',
+      'simulation',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+  },
 ]
 
 export const CATEGORIES = [
@@ -405,11 +434,6 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       (m) => ({ default: m.TEEHSMTrustedChannel })
     )
   ),
-  'binary-signing': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/CodeSigning/workshop/BinarySigning').then((m) => ({
-      default: m.BinarySigning,
-    }))
-  ),
   'pkcs11-sim': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/HsmPqc/workshop/Pkcs11Simulator').then((m) => ({
       default: m.Pkcs11Simulator,
@@ -451,9 +475,9 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     )
   ),
   'merkle-proof': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/ProofVerifier').then((m) => ({
-      default: m.ProofVerifier,
-    }))
+    import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/MerkleWorkshopSteps').then(
+      (m) => ({ default: m.MerkleWorkshopSteps })
+    )
   ),
   'hybrid-signing': lazyWithRetry(() =>
     import('@/components/Playground/workshop/HybridSigningDemo').then((m) => ({
@@ -468,6 +492,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       EmbeddedOpenSSL.displayName = 'EmbeddedOpenSSL'
       return { default: EmbeddedOpenSSL }
     })
+  ),
+  'tls-simulator': lazyWithRetry(() =>
+    import('@/components/OpenSSLStudio/TLSSimulatorTab').then((m) => ({
+      default: m.TLSSimulatorTab,
+    }))
   ),
 }
 

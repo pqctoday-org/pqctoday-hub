@@ -1,0 +1,11 @@
+{
+  "vendor": "Wasion International Ltd.",
+  "product_name": "Wasion aMeter100 and aMeter300 Smart Energy Meters v1.6",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Wasion aMeter100 and aMeter300 are smart energy meters that provide secure data collection, authentication, and firmware updates using classical cryptographic algorithms.",
+  "product_category": "Smart Meter",
+  "assurance_level": "EAL3+ALC_FLR.3",
+  "classical_algorithms": ["AES-128", "AES-GCM-128", "SHA-256", "ECDSA P-256", "ECDH P-256"],
+  "_source_pdf": "wasion-ameter100-and-ameter300-smart-energy-meters.pdf"
+}

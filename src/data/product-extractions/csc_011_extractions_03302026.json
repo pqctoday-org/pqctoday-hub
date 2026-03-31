@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "Tuta Mail",
+    "category": "Secure Messaging and Communication",
+    "product_name": "Tuta Mail",
+    "product_brief": "End-to-end encrypted email provider featuring TutaCrypt, a hybrid post-quantum encryption protocol.",
+    "pqc_support": "Yes (with details)",
+    "pqc_capability_description": "Tuta Mail uses TutaCrypt, a hybrid protocol combining CRYSTALS-Kyber (ML-KEM) for key encapsulation and X25519 (ECDH) for key exchange. Enabled by default for new accounts; rolling out to existing users. Protects against \"Harvest Now, Decrypt Later\" attacks.",
+    "pqc_migration_priority": "High",
+    "crypto_primitives": "CRYSTALS-Kyber (Kyber-1024), X25519, AES-256, HMAC-SHA-256, Argon2, HKDF-SHA-256, RSA-2048 (legacy)",
+    "key_management_model": "Hybrid protocol with server-side encrypted private keys derived from user passwords using Argon2; generates two key pairs per user (X25519 and Kyber-1024).",
+    "supported_blockchains": "Not applicable",
+    "architecture_type": "Hybrid cryptographic protocol (PQC + Classical)",
+    "infrastructure_layer": "Application",
+    "license_type": "Open Source/Commercial",
+    "license": "Not stated (Text mentions \"open source project\" and GitHub repository but does not specify the license name)",
+    "latest_version": "Not stated",
+    "release_date": "2024-03-11",
+    "fips_validated": "No",
+    "primary_platforms": "Tuta apps (specific OS versions not listed), Web",
+    "target_industries": "General consumer, Secure communication",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Rolling out to existing users via key rotation; planning formal verification with University of Wuppertal; long-term aim to implement full PQMail protocol for Perfect Forward Secrecy and Future Secrecy; added key verification in August 2025.",
+    "consensus_mechanism": "Not applicable",
+    "signature_schemes": "Not stated (Text mentions CRYSTALS-Dilithium as ML-DSA chosen by NIST but does not explicitly state Tuta Mail currently implements it for signatures, only Kyber for KEM and X25519 for ECDH)",
+    "authoritative_source_url": "Not stated (Text references \"our website\" and \"GitHub repository\" but provides no specific URLs)"
+  }
+]

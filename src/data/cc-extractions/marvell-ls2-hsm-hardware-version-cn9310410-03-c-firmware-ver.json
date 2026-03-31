@@ -1,0 +1,11 @@
+{
+  "vendor": "Marvell Semiconductor, Inc.",
+  "product_name": "Marvell LS2 HSM Security Target v1.18",
+  "pqc_algorithms": ["ML-KEM", "ML-DSA"],
+  "pqc_standard_refs": ["NIST.FIPS.203", "NIST.FIPS.204"],
+  "product_brief": "A Hardware Security Module (HSM) providing cryptographic operations, key management, and secure storage. Supports post-quantum algorithms like ML-KEM and ML-DSA alongside classical cryptographic standards.",
+  "product_category": "Hardware Security Module (HSM)",
+  "assurance_level": null,
+  "classical_algorithms": ["RSA-2048", "ECDSA P-256", "AES-256"],
+  "_source_pdf": "marvell-ls2-hsm-hardware-version-cn9310410-03-c-firmware-ver.pdf"
+}

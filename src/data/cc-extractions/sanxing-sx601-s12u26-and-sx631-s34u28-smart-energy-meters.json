@@ -1,0 +1,20 @@
+{
+  "vendor": "SANXING",
+  "product_name": "SANXING SX601 1 phase and SX631 3 phase Smart Meter V2.0",
+  "pqc_algorithms": [],
+  "pqc_standard_refs": [],
+  "product_brief": "Smart meters for electricity measurement and communication, supporting secure data transmission using AES and ECDSA cryptographic algorithms.",
+  "product_category": "Smart Meter",
+  "assurance_level": "EAL3+,ALC_FLR.3",
+  "classical_algorithms": [
+    "AES-128",
+    "AES-256",
+    "AES-GCM",
+    "AES-ECB",
+    "SHA-256",
+    "SHA-384",
+    "ECDSA P-256",
+    "ECDSA P-384"
+  ],
+  "_source_pdf": "sanxing-sx601-s12u26-and-sx631-s34u28-smart-energy-meters.pdf"
+}

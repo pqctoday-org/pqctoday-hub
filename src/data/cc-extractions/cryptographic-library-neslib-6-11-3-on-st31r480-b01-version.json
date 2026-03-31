@@ -1,0 +1,11 @@
+{
+  "vendor": "STMicroelectronics",
+  "product_name": "NESLIB 6.11.3 on ST31R480 B01",
+  "pqc_algorithms": ["LMS"],
+  "pqc_standard_refs": ["NIST SP 800-208"],
+  "product_brief": "Cryptographic library providing symmetric and asymmetric encryption, hash functions, and post-quantum LMS signatures on ST31R480 B01.",
+  "product_category": "Cryptographic Library",
+  "assurance_level": "EAL5+",
+  "classical_algorithms": ["AES-256", "RSA-2048", "ECDSA P-256", "Diffie-Hellman", "SHA-256"],
+  "_source_pdf": "cryptographic-library-neslib-6-11-3-on-st31r480-b01-version.pdf"
+}

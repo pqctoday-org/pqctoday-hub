@@ -102,21 +102,23 @@ export const fetchPDFWithCache = async (url: string, maxAgeDays = 7): Promise<Bu
 
 export const PQC_PATTERNS = [
   // eslint-disable-next-line security/detect-unsafe-regex
-  /ML-KEM\s*(\[.*?\])?/gi,
+  /\bML-KEM\b\s*(\[.*?\])?/gi,
   // eslint-disable-next-line security/detect-unsafe-regex
-  /ML-DSA\s*(\[.*?\])?/gi,
+  /\bML-DSA\b\s*(\[.*?\])?/gi,
   // eslint-disable-next-line security/detect-unsafe-regex
-  /SLH-DSA\s*(\[.*?\])?/gi,
+  /\bSLH-DSA\b\s*(\[.*?\])?/gi,
+  // Word boundary prevents matching "DLMS" (metering protocol) or "realms"
   // eslint-disable-next-line security/detect-unsafe-regex
-  /LMS\s*(\[.*?\])?/gi,
+  /\bLMS\b\s*(\[.*?\])?/g,
   // eslint-disable-next-line security/detect-unsafe-regex
-  /XMSS\s*(\[.*?\])?/gi,
+  /\bXMSS\b\s*(\[.*?\])?/g,
   // eslint-disable-next-line security/detect-unsafe-regex
-  /Falcon\s*(\[.*?\])?/gi,
+  /\bFalcon\b\s*(\[.*?\])?/gi,
   // eslint-disable-next-line security/detect-unsafe-regex
-  /SPHINCS\+\s*(\[.*?\])?/gi,
+  /\bSPHINCS\+\b\s*(\[.*?\])?/gi,
+  // Word boundary prevents matching substrings in unrelated acronyms
   // eslint-disable-next-line security/detect-unsafe-regex
-  /HSS\s*(\[.*?\])?/gi,
+  /\bHSS\b\s*(\[.*?\])?/g,
 ]
 
 // Focused Classical Patterns (RSA/ECC with Key Lengths)

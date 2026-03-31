@@ -4,6 +4,49 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.67.0] - 2026-03-31
+
+### Added
+
+- **CT Log Simulator** (Step 5 of Merkle Tree Certs workshop): simulate a Certificate Transparency log with ML-DSA-44 signing via SoftHSMv3, append/lookup certificates, generate and verify consistency proofs, and detect certificate misissuance [view:/learn/merkle-tree-certs]
+- **TLS 1.3 Simulator**: new Playground workshop tool — client/server TLS 1.3 handshake simulator with configurable cipher suites, key exchange groups (X25519, ML-KEM, X25519MLKEM768), mTLS, and PQC/hybrid certificate support [view:/playground]
+- **HsmKeyInspector** shared component: semantic purpose labels (attestation/tls/kek/application/general) for HSM keys with per-purpose icon+color coding; integrates into TEE-HSM provisioning flows [shared]
+- **KeyInspectTable** shared component: attribute table for inspecting PKCS#11 key material alongside KCV and size [shared]
+- **Pkcs11InspectPanel** shared component: extracted `AttributeRow` + `InspectPanel` sub-components from `PkcsLogPanel` for reuse across all PKCS#11 log consumers [shared]
+- **Algorithm comparison sub-tab deep-linking**: performance/security/sizes/usecases sub-tabs now URL-persisted via `?subtab=` param; navigating away and back restores the selected sub-tab [view:/algorithms]
+- **Compliance migrate-category filter**: new `?mcat=` filter in Compliance view maps compliance product categories (Algorithm Implementation, Databases, Operating Systems, etc.) to their migrate catalog CSC category via `migrateCategories.ts` [view:/compliance]
+- **Library taxonomy overhaul**: replaced generic `General Recommendations` category with 6 specific categories — `Government & Policy`, `NIST Standards`, `International Frameworks`, `Migration Guidance`, `Algorithm Specifications`, `Industry & Research`; sidebar icons updated; persona library preferences updated to match [view:/library]
+- **Migrate WIP disclaimer**: animated `WIP` banner at top of Migrate view informs users the catalog is actively being reviewed; links to per-product update request flow [view:/migrate]
+- **`addStepLog(label)`** in `useHSM`: injects visual step-separator entries (rendered as section headers in the PKCS#11 log panel) after each logical step to improve multi-step workshop readability [infra]
+- **`isStepHeader` field** on `Pkcs11LogEntry`: log entries with `isStepHeader: true` render as bold section dividers in both `PkcsLogPanel` and `Pkcs11LogPanel` [infra]
+- **`HsmKeyPurpose` type** in `HsmContext`: semantic enum (`attestation | application | tls | kek | general`) with `purpose` field on `HsmKey`; TEEHSMTrustedChannel uses it to annotate provisioned keys [infra]
+- **New infographics**: 11 new GCP "curious" persona visual variants and 30+ NLLM topic infographics added to `public/images/infographics/` [assets]
+- **New library enrichment**: `library_doc_enrichments_03302026.md` with enriched descriptions for latest library additions [data]
+- **CC extractions**: `src/data/cc-extractions/` directory with Common Criteria PQC security target extractions [data]
+- **`migrateCategories.ts`**: new mapping module from compliance certificate `productCategory` values to migrate catalog CSC category IDs and names [infra]
+
+### Changed
+
+- **Firmware Signing Migrator** (Secure Boot PQC workshop): major rewrite — now supports RSA-2048/3072, ECDSA P-256/P-384, ML-DSA-44/65/87, and SLH-DSA-SHA2-128S with a 4-step wizard UI (algorithm selection → key generation → signing → verification + KAT); per-algorithm `KeyAttrModal` attribute inspector; expected key sizes from FIPS 203/204/205 [view:/learn/secure-boot-pqc]
+- **TEE-HSM Trusted Channel** (Confidential Computing workshop): enhanced provisioning flow with `HsmKeyPurpose` roles, ECDSA P-256 TLS key generation via `C_GenerateKeyPair`, step-annotated PKCS#11 log, and `HsmKeyInspector` panel showing provisioned keys grouped by purpose [view:/learn/confidential-computing]
+- **Envelope Encryption Demo** (KMS-PQC workshop): extended KEK algorithm selector to include RSA-2048/4096 in addition to ML-KEM variants; wrap mechanism now selectable (AES-KW, AES-KWP, AES-GCM); RSA-OAEP wrap/unwrap added; `KeyInspectTable` shows DEK attributes and KCV after each step [view:/learn/kms-pqc]
+- **PKCS#11 call log** (`Pkcs11LogPanel`): entries with inspect data now show expandable `▶` rows — click to decode mechanism IDs, attribute types, and CKR codes inline; `isStepHeader` entries render as bold step separators [shared]
+- **`PkcsLogPanel`** (Playground): refactored — inspect sub-components (`AttributeRow`, `InspectPanel`) extracted to shared `Pkcs11InspectPanel`; component is now a thin consumer layer [view:/playground]
+- **`HsmKeyTable`**: PKCS#11 attribute reads now cached per handle (`attrCache` ref) to avoid redundant `C_GetAttributeValue` calls on every render; `KeyAttrModal` exported for reuse in workshop components [view:/playground]
+- **`hsm_getKeyAttributes`**: class-aware attribute reading — reads `CKA_CLASS` + `CKA_KEY_TYPE` first, then probes only the attributes defined for that class (Tables 27/29/30 in PKCS#11 v3.2 §5.7); prevents `CKR_ATTRIBUTE_TYPE_INVALID` errors on attributes that don't apply to the key class [infra]
+- **`useHSM.finalize()`**: now calls `C_CloseSession` directly instead of `hsm_finalize` — singleton WASM module must never be `C_Finalize`-d (would destroy all slot state) [infra]
+- **Merkle Tree Workshop** registry entry: renamed from "Merkle Proof Verifier" to "Merkle Tree Workshop"; description expanded to cover CT Log step; difficulty elevated to `intermediate`; keywords extended with `ct`, `sct`, `consistency` [view:/playground]
+- **Deleted stale library CSVs**: removed `library_03272026.csv`, `library_03282026.csv`, `library_03282026_r1.csv`, `library_03282026_r3.csv`, `library_03282026_r4.csv` (superseded by `library_03302026_r3.csv`) [data]
+- **Deleted stale product catalogs**: removed `pqc_product_catalog_03302026.csv` and `pqc_product_catalog_03302026_r1.csv` (superseded by `pqc_product_catalog_03312026_r2.csv`) [data]
+- **RAG corpus regenerated**: updated `public/data/rag-corpus.json` with new library, compliance, timeline, and quiz content [data]
+- **Compliance data refreshed**: `public/data/compliance-data.json` and `public/data/vendor-cert-counts.json` updated with latest scrape [data]
+
+### Fixed
+
+- **`hsm_getKeyAttributes`**: prevented `CKR_ATTRIBUTE_READ_ONLY` and `CKR_ATTRIBUTE_TYPE_INVALID` errors by skipping attributes not applicable to public/private/secret key classes [infra]
+- **`RV_NAMES`**: added `CKR_ATTRIBUTE_READ_ONLY` (0x10) and `CKR_ATTRIBUTE_TYPE_INVALID` (0x12) entries so these return codes decode to human-readable names in the PKCS#11 log [infra]
+- **`binary-signing` tool removed** from Playground registry: the standalone "Code Signing" tool was duplicating the Secure Boot PQC workshop; removed from `WORKSHOP_TOOLS`; functionality remains in the learning module [view:/playground]
+
 ## [2.66.0] - 2026-03-30
 
 ### Added

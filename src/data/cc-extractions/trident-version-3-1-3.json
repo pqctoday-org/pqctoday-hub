@@ -1,0 +1,25 @@
+{
+  "vendor": null,
+  "product_name": "Trident",
+  "pqc_algorithms": ["SPHINCS+", "ML-KEM"],
+  "pqc_standard_refs": ["NIST.IR.8240", "NIST IR 8413", "Kyber", "SPHINCS+"],
+  "product_brief": "Trident is a distributed remote Qualified Signature Creation Device that provides cryptographic modules (CM) and Signature Activation Module (SAM) functionality, supporting post-quantum algorithms like SPHINCS+ and Kyber.",
+  "product_category": "Hardware Security Module (HSM)",
+  "assurance_level": "EAL4+, ALC_FLR.3",
+  "classical_algorithms": [
+    "RSA-2048",
+    "RSA-3072",
+    "RSA-4096",
+    "RSA-6144",
+    "ECDSA P-256",
+    "AES-256",
+    "3DES-192",
+    "ARIA-128",
+    "ARIA-192",
+    "ARIA-256",
+    "SEED-128",
+    "TOTP",
+    "JWT"
+  ],
+  "_source_pdf": "trident-version-3-1-3.pdf"
+}
