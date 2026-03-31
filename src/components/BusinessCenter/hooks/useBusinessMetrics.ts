@@ -188,10 +188,12 @@ const INFRA_LAYERS = [
   'Hardware',
   'Cloud',
   'Network',
-  'Identity',
-  'Data',
-  'Application',
-  'Operations',
+  'Security Stack',
+  'Database',
+  'AppServers',
+  'Libraries',
+  'SecSoftware',
+  'OS',
 ]
 
 function getModuleProgress(moduleStore: LearningProgress, moduleId: string): ModuleProgressInfo {

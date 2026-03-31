@@ -972,7 +972,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
           </Link>
         </div>
       </section>
-      <VendorCoverageNotice migrateLayer="Application" />
+      <VendorCoverageNotice migrateLayer="AppServers" />
 
       {/* -- Reading Complete ------------------------------------------------- */}
       <ReadingCompleteButton />

@@ -390,7 +390,7 @@ export const NetworkComparator: React.FC = () => {
               <X size={14} className="mr-1" /> Clear
             </Button>
           </div>
-          <VendorCoverageNotice migrateLayer="Application" className="mb-2" />
+          <VendorCoverageNotice migrateLayer="AppServers" className="mb-2" />
 
           {/* Comparison table */}
           <div className="glass-panel overflow-x-auto">

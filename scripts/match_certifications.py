@@ -595,6 +595,78 @@ SKIP_FIPS: set[str] = {
 }
 
 
+# ── FIPS product-relevance filter ───────────────────────────────────────
+#
+# Prevents over-matching: a vendor's OS-level crypto subsystem certs should
+# NOT be linked to that vendor's application products.  E.g., "Oracle Linux 9
+# NSS Cryptographic Module" is irrelevant to "Oracle AI Database 26ai".
+#
+# Two-layer filter:
+#   1. OS subsystem keywords — certs for secondary crypto subsystems (NSS,
+#      GnuTLS, libgcrypt, OpenSSH, libreswan, kernel crypto) are blocked for
+#      non-OS products.  These are infrastructure, not application crypto.
+#   2. OS distribution markers — certs named after a specific OS distribution
+#      (e.g., "Oracle Linux", "Azure Linux") only match products that ARE
+#      that OS, preventing cross-platform false associations.
+
+_OS_SUBSYSTEM_KEYWORDS: list[str] = [
+    "nss cryptographic",
+    " nss ",
+    "gnutls cryptographic",
+    "gnutls module",
+    "libgcrypt",
+    "openssh server",
+    "openssh client",
+    "libreswan",
+    "kernel crypto api",
+    "kernel cryptographic",
+    "unbreakable enterprise kernel",
+]
+
+# (pattern_in_cert_product, required_substring_in_migrate_product)
+# If a cert product contains the first pattern, the migrate product MUST
+# contain the second pattern to be considered relevant.
+_OS_DISTRO_MARKERS: list[tuple[str, str]] = [
+    ("oracle linux", "oracle linux"),
+    ("oracle solaris", "oracle solaris"),
+    ("oracle cloud infrastructure", "oracle cloud infrastructure"),
+    ("red hat enterprise linux", "red hat enterprise linux"),
+    ("amazon linux", "amazon linux"),
+    ("azure linux", "azure linux"),
+    ("rocky linux", "rocky linux"),
+    ("almalinux", "almalinux"),
+    ("ubuntu", "ubuntu"),
+    ("suse linux", "suse linux"),
+    ("ibm cos linux", "ibm cos"),
+    ("wind river linux", "wind river"),
+]
+
+_OS_CATEGORIES: set[str] = {"CSC-031"}
+
+
+def _is_relevant_fips_cert(sw_name: str, product_cat: str, cert_product: str) -> bool:
+    """Check if a FIPS cert is relevant to a migrate product.
+
+    Returns False for:
+    - OS subsystem certs (NSS, GnuTLS, etc.) matched to non-OS products
+    - OS-distribution-specific certs matched to products that aren't that OS
+    """
+    cert_lower = cert_product.lower()
+    sw_lower = sw_name.lower()
+
+    # Rule 1: Block OS subsystem certs for non-OS products
+    if product_cat not in _OS_CATEGORIES:
+        if any(kw in cert_lower for kw in _OS_SUBSYSTEM_KEYWORDS):
+            return False
+
+    # Rule 2: Block OS-distro-specific certs unless product IS that OS
+    for cert_pattern, product_pattern in _OS_DISTRO_MARKERS:
+        if cert_pattern in cert_lower and product_pattern not in sw_lower:
+            return False
+
+    return True
+
+
 def normalize_product_family(product_name: str) -> str:
     """Extract product family from full product name (strip build variants)."""
     base = re.sub(r"\s*\((?:static|dynamic)\s+build\).*", "", product_name)
@@ -1003,11 +1075,14 @@ def main():
         # Determine compatible cert categories
         compat_cats = CATEGORY_COMPAT.get(product_cat, {"CSC-001"})
 
-        # Find matching FIPS certs: vendor + category
+        # Find matching FIPS certs: vendor + category + relevance filter
         product_fips: list[dict] = []
         for cert_cat in compat_cats:
             key = (product_vendor, cert_cat)
             for rec in fips_index.get(key, []):
+                cert_product = rec.get("productName", "")
+                if not _is_relevant_fips_cert(sw_name, product_cat, cert_product):
+                    continue
                 product_fips.append(make_xref_entry(sw_name, rec))
 
         # Also check override rules

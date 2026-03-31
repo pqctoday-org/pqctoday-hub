@@ -307,7 +307,7 @@ export const LanguageEcosystemComparator: React.FC = () => {
         </button>
       </div>
 
-      <VendorCoverageNotice migrateLayer="Application" className="mb-2" />
+      <VendorCoverageNotice migrateLayer="Libraries" className="mb-2" />
 
       {compareMode && compareLangs.length >= 2 && (
         <div className="glass-panel p-4">

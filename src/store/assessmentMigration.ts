@@ -68,6 +68,15 @@ export function runLegacyAssessmentMigrations(state: Record<string, any>, versio
     state.infrastructure = state.infrastructure.filter((id: string) => validLayerIds.includes(id))
   }
 
+  // v10 → v11: three-way split of Application layer
+  if (version <= 10 && Array.isArray(state.infrastructure)) {
+    const hasApp = state.infrastructure.includes('Application')
+    if (hasApp) {
+      state.infrastructure = state.infrastructure.filter((id: string) => id !== 'Application')
+      state.infrastructure.push('AppServers', 'Libraries', 'SecSoftware')
+    }
+  }
+
   // v5 → v6: rename 'ECDH' to 'ECDH P-256' in currentCrypto
   if (version <= 5 && Array.isArray(state.currentCrypto)) {
     state.currentCrypto = state.currentCrypto.map((a: string) => (a === 'ECDH' ? 'ECDH P-256' : a))

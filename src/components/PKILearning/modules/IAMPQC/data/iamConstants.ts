@@ -302,7 +302,7 @@ export const ZERO_TRUST_LAYERS: ZeroTrustLayer[] = [
   {
     id: 'authorization',
     name: 'Authorization / Policy Enforcement',
-    pillar: 'Application',
+    pillar: 'SecSoftware',
     currentCrypto: 'RSA / ECDSA signed policy tokens; HMAC for API gateway enforcement',
     quantumRisk: 'medium',
     pqcApproach:

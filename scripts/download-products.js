@@ -118,13 +118,30 @@ function parseCSV(content) {
 
 // ─── Find the latest migrate CSV ────────────────────────────────────────────
 function findLatestMigrateCSV() {
-  const prefix = 'quantum_safe_cryptographic_software_reference_'
-  const re = new RegExp(`^${prefix}\\d{8}(_r\\d+)?\\.csv$`)
-  const files = readdirSync(DATA_DIR).filter((f) => re.test(f))
-  if (files.length === 0) throw new Error(`No ${prefix}*.csv found in src/data/`)
+  // Support both old and new naming conventions
+  const patterns = [
+    {
+      prefix: 'pqc_product_catalog_',
+      re: /^pqc_product_catalog_(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/,
+    },
+    {
+      prefix: 'quantum_safe_cryptographic_software_reference_',
+      re: /^quantum_safe_cryptographic_software_reference_(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/,
+    },
+  ]
+  const allFiles = readdirSync(DATA_DIR)
+  let files = []
+  for (const { re } of patterns) {
+    const matched = allFiles.filter((f) => re.test(f))
+    if (matched.length > 0) {
+      files = matched
+      break
+    }
+  }
+  if (files.length === 0) throw new Error(`No pqc_product_catalog_*.csv found in src/data/`)
   files.sort((a, b) => {
     const parse = (name) => {
-      const m = name.match(new RegExp(`${prefix}(\\d{2})(\\d{2})(\\d{4})(_r(\\d+))?\\.csv$`))
+      const m = name.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.csv$/)
       return { date: new Date(`${m[3]}-${m[1]}-${m[2]}`), rev: m[5] ? parseInt(m[5], 10) : 0 }
     }
     const pa = parse(a)

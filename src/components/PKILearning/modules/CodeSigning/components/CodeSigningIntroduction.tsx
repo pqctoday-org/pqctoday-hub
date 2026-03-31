@@ -739,7 +739,7 @@ export const CodeSigningIntroduction: React.FC<CodeSigningIntroductionProps> = (
           secure boot trust chains.
         </p>
       </div>
-      <VendorCoverageNotice migrateLayer="Application" />
+      <VendorCoverageNotice migrateLayer="Libraries" />
       <ReadingCompleteButton />
     </div>
   )

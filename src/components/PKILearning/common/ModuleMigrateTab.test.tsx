@@ -9,7 +9,7 @@ const mockProduct = (overrides: Partial<SoftwareItem> = {}): SoftwareItem => ({
   softwareName: 'TestProduct',
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',
-  infrastructureLayer: 'Application',
+  infrastructureLayer: 'Libraries',
   pqcSupport: 'Yes (ML-KEM)',
   pqcCapabilityDescription: 'Full PQC support',
   licenseType: 'Open Source',
@@ -38,7 +38,7 @@ vi.mock('@/data/migrateData', () => ({
       return [
         mockProduct({
           softwareName: 'MultiLayerTool',
-          infrastructureLayer: 'Application,Security Stack',
+          infrastructureLayer: 'Libraries,Security Stack',
         }),
       ]
     }
@@ -68,7 +68,9 @@ vi.mock('@/components/Migrate/InfrastructureStack', () => ({
   LAYERS: [
     { id: 'Cloud', label: 'Cloud', icon: () => null },
     { id: 'Network', label: 'Network', icon: () => null },
-    { id: 'Application', label: 'Application Servers & Software', icon: () => null },
+    { id: 'AppServers', label: 'Application Servers', icon: () => null },
+    { id: 'Libraries', label: 'Libraries & SDKs', icon: () => null },
+    { id: 'SecSoftware', label: 'Security Software', icon: () => null },
     { id: 'Database', label: 'Database', icon: () => null },
     { id: 'Security Stack', label: 'Security Stack', icon: () => null },
     { id: 'OS', label: 'Operating System', icon: () => null },
@@ -92,7 +94,7 @@ describe('ModuleMigrateTab', () => {
 
   it('renders products grouped by layer', () => {
     renderTab('tls-basics')
-    expect(screen.getByText('Application Servers & Software')).toBeInTheDocument()
+    expect(screen.getByText('Libraries & SDKs')).toBeInTheDocument()
     expect(screen.getByText('Security Stack')).toBeInTheDocument()
     expect(screen.getByText('Cloud')).toBeInTheDocument()
     expect(screen.getByText('TestProduct')).toBeInTheDocument()
@@ -139,7 +141,7 @@ describe('ModuleMigrateTab', () => {
   it('shows multi-layer products in all matching layers', () => {
     renderTab('multi-layer')
     // MultiLayerTool should appear in both Application and Security Stack sections
-    expect(screen.getByText('Application Servers & Software')).toBeInTheDocument()
+    expect(screen.getByText('Libraries & SDKs')).toBeInTheDocument()
     expect(screen.getByText('Security Stack')).toBeInTheDocument()
     expect(screen.getAllByText('MultiLayerTool')).toHaveLength(2)
   })

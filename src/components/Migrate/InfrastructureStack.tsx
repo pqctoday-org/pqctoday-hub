@@ -4,11 +4,12 @@ import {
   Server,
   Monitor,
   Database,
-  Laptop,
+  Code,
   Cloud,
   ShieldCheck,
   Network,
   ChevronUp,
+  Laptop,
 } from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'
 
@@ -18,7 +19,9 @@ export type InfrastructureLayerType =
   | 'OS'
   | 'Security Stack'
   | 'Database'
-  | 'Application'
+  | 'AppServers'
+  | 'Libraries'
+  | 'SecSoftware'
   | 'Network'
   | 'Cloud'
 
@@ -63,15 +66,37 @@ export const LAYERS = [
     iconColor: 'text-primary',
   },
   {
-    id: 'Application',
-    label: 'Application Servers & Software',
+    id: 'AppServers',
+    label: 'Application Servers',
     icon: Laptop,
     description:
-      'TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Signatures, Code Signing, API Security, Crypto & PQC Libraries, Blockchain, Payment, Remote Access, Disk Encryption, CI/CD, Digital Identity, 5G',
+      'TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Blockchain, Payment, VPN, Remote Access, CI/CD',
     color: 'from-secondary/20 to-secondary/10',
     borderColor: 'border-secondary/50',
     activeColor: 'bg-card border-secondary shadow-[0_0_15px_hsl(var(--secondary)/0.5)]',
     iconColor: 'text-secondary',
+  },
+  {
+    id: 'Libraries',
+    label: 'Libraries & SDKs',
+    icon: Code,
+    description:
+      'Cryptographic Libraries, PQC Libraries, API Security, Code Signing, Digital Signatures, Disk Encryption, SDKs',
+    color: 'from-accent/20 to-accent/10',
+    borderColor: 'border-accent/50',
+    activeColor: 'bg-card border-accent shadow-[0_0_15px_hsl(var(--accent)/0.5)]',
+    iconColor: 'text-accent',
+  },
+  {
+    id: 'SecSoftware',
+    label: 'Security Software',
+    icon: Server,
+    description:
+      'Data Protection, Digital Identity, Secrets Management, Security Discovery, IoT/OT, AI/ML Security, Supply Chain',
+    color: 'from-tertiary/20 to-tertiary/10',
+    borderColor: 'border-tertiary/50',
+    activeColor: 'bg-card border-tertiary shadow-[0_0_15px_hsl(var(--tertiary)/0.5)]',
+    iconColor: 'text-tertiary',
   },
   {
     id: 'Database',

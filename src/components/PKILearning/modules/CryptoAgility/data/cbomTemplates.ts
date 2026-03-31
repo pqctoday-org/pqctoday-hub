@@ -23,7 +23,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'TLS server certificate signing',
     quantumStatus: 'vulnerable',
     recommendation: 'Migrate to ML-DSA-65 or composite certificate',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'tls-kex',
@@ -34,7 +34,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'TLS key exchange (ECDHE)',
     quantumStatus: 'vulnerable',
     recommendation: 'Enable X25519MLKEM768 hybrid key exchange',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'tls-cipher',
@@ -45,7 +45,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'Symmetric encryption of TLS records',
     quantumStatus: 'safe',
     recommendation: 'No action required — AES-256 provides 128-bit post-quantum security',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'db-tde',
@@ -67,7 +67,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'API authentication token signatures',
     quantumStatus: 'vulnerable',
     recommendation: 'Migrate to ML-DSA-44 for short-lived tokens',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'vpn-ike',
@@ -100,7 +100,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'SSH host key authentication',
     quantumStatus: 'vulnerable',
     recommendation: 'Enable mlkem768x25519-sha256 key exchange in OpenSSH 9.x',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'code-sign',
@@ -111,7 +111,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     usage: 'Code signing for release artifacts',
     quantumStatus: 'vulnerable',
     recommendation: 'Consider LMS/HSS (NIST SP 800-208) for firmware/code signing',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'SecSoftware',
   },
   {
     id: 'hash-integrity',
@@ -123,7 +123,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     quantumStatus: 'safe',
     recommendation:
       'No action required — SHA-256 provides 128-bit post-quantum collision resistance',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'SecSoftware',
   },
   {
     id: 'pki-ca',
@@ -146,7 +146,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     quantumStatus: 'vulnerable',
     recommendation:
       'Migrate to ML-DSA-65 signing + ML-KEM-768 encryption using RFC 9629 KEM framework',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'legacy-3des',
@@ -158,7 +158,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     quantumStatus: 'weakened',
     recommendation:
       'Migrate to AES-256 — 3DES effective security is 112 bits classical, ~56 bits post-quantum (Grover)',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'AppServers',
   },
   {
     id: 'legacy-sha1',
@@ -170,7 +170,7 @@ export const SAMPLE_CBOM: CBOMEntry[] = [
     quantumStatus: 'weakened',
     recommendation:
       'Upgrade to SHA-256 — SHA-1 has known collision attacks and only ~80-bit post-quantum preimage resistance',
-    infrastructureLayer: 'Application',
+    infrastructureLayer: 'SecSoftware',
   },
   // Cloud layer
   {

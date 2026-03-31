@@ -72,7 +72,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 5,
+      version: 6,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -96,6 +96,13 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         if (version < 5) {
           // v4 → v5: default workflowCollapsed to true (hide by default)
           state.workflowCollapsed = true
+        }
+        if (version < 6) {
+          // v5 → v6: three-way split of Application layer
+          if (state.activeLayer === 'Application') {
+            state.activeLayer = 'AppServers'
+          }
+          state.activeSubCategory = state.activeSubCategory ?? 'All'
         }
         return state
       },

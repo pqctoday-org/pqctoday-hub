@@ -14,6 +14,7 @@ export type PageId =
   | 'report'
   | 'business-center'
   | 'learn'
+  | 'faq'
 
 export interface ManualSection {
   heading: string
@@ -67,7 +68,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Detailed Comparison Tab',
-        body: 'Deep-dive into individual PQC algorithms. Filter by crypto family (KEM, Signature) or function type. Click any algorithm card to see full specifications including key sizes, ciphertext sizes, security levels, and performance benchmarks.',
+        body: 'Deep-dive into individual PQC algorithms with four sub-tabs: Performance (benchmarks and timing), Security (levels and threat analysis), Sizes (key, ciphertext, and signature sizes), and Use Cases (recommended applications). A baseline algorithm is auto-selected for comparison (ECDH P-256 for KEM, RSA-2048 for Signatures). Filter by crypto family, function group, or security level.',
       },
       {
         heading: 'Compare Panel',
@@ -75,23 +76,24 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'URL Parameters',
-        body: 'Algorithms can be highlighted via URL parameters for deep linking. Use the Share button to copy a link to your current selection.',
+        body: 'Deep link to specific views: ?tab=transition|detailed, ?subtab=performance|security|sizes|usecases, ?highlight= to highlight algorithms, ?compare= for pre-selected comparisons. Use the Share button to copy a link to your current selection.',
       },
     ],
     tips: [
       'Use the Detailed tab filters to quickly narrow down algorithms by security level or standardization status.',
       'The compare panel is great for preparing algorithm selection reports.',
+      'Switch between sub-tabs (Performance, Security, Sizes, Use Cases) for focused analysis.',
     ],
   },
 
   library: {
     title: 'PQC Library',
     summary:
-      'Search and browse the latest post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
+      'Search and browse 372+ post-quantum cryptography standards, drafts, RFCs, and reference documents from NIST, IETF, ETSI, and other organizations.',
     sections: [
       {
         heading: 'Search & Filters',
-        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter by standardization body (NIST, IETF, ETSI, ISO, etc.). Filter by urgency or priority to find the most relevant documents.',
+        body: 'Type in the search bar to search across titles, descriptions, and tags. Use the category sidebar to filter across 10 categories (Digital Signature, KEM, PKI Certificate Management, Protocols, Government & Policy, NIST Standards, International Frameworks, Migration Guidance, Algorithm Specifications, Industry & Research). Filter by organization or industry. Persona-aware category boosting surfaces the most relevant categories for your role.',
       },
       {
         heading: 'View Toggle',
@@ -109,33 +111,30 @@ export const pageManuals: Record<PageId, PageManual> = {
     tips: [
       'Use the URL parameter ?ref=REFERENCE_ID to deep-link directly to a specific document.',
       'Export the full library as CSV for offline analysis or reporting.',
+      'URL params: ?cat=, ?org=, ?ind=, ?sort=, ?view=cards|table are all combinable for shareable filtered views.',
     ],
   },
 
   playground: {
     title: 'Interactive Playground',
     summary:
-      'Generate real post-quantum cryptographic keys, encrypt data, and sign messages directly in your browser using WebAssembly. All operations run locally — no data leaves your machine.',
+      'Generate real post-quantum cryptographic keys, encrypt data, and sign messages directly in your browser using WebAssembly. 21 workshop tools, an interactive crypto lab, and a full PKCS#11 HSM emulator — all running locally.',
     sections: [
       {
-        heading: 'Key Generation',
-        body: 'Select any algorithm from the dropdown to generate a keypair instantly. The playground shows public key size, private key size, and generation time. Compare PQC key sizes with classical equivalents.',
+        heading: 'Workshop Grid',
+        body: 'The main /playground view shows a searchable catalog of 21 workshop tools across 6 categories: HSM / PKCS#11, Entropy & Random, Certificates & Proofs, Protocol Simulations, Blockchain & Digital Assets, and OpenSSL Studio (includes TLS 1.3 Simulator). Persona-aware filtering highlights recommended tools with difficulty badges (beginner/intermediate/advanced).',
       },
       {
-        heading: 'KEM Operations',
-        body: 'Test ML-KEM key encapsulation: generate a keypair, encapsulate to create a shared secret + ciphertext, then decapsulate to recover the shared secret. Compare ciphertext sizes across parameter sets.',
+        heading: 'Interactive Crypto Lab',
+        body: 'The /playground/interactive route provides 7 tabs: Key Store (keypair generation), Data (hex editor), KEM & Encrypt (ML-KEM + X25519 ECDH), Sym Encrypt (AES/ChaCha), Hash (SHA/SHAKE), Sign & Verify (PQC + classical), and Logs (operation history). Use ?tab= to deep-link to specific operations.',
       },
       {
-        heading: 'Digital Signatures',
-        body: 'Sign messages with ML-DSA or SLH-DSA and verify signatures. Enter any message, sign it with a private key, then verify with the public key. Compare signature sizes across algorithms.',
+        heading: 'HSM Playground',
+        body: 'The /playground/hsm route emulates a PKCS#11 v3.2 HSM via SoftHSMv3 WASM with 10 tabs: Keystore, Symmetric, Key Wrap, Hashing, Sign/Verify, Key Agreement, Key Derivation, Mechanisms, ACVP (NIST KAT vectors), and Logs. Supports C++, Rust, and Dual engine modes with parity cross-check.',
       },
       {
-        heading: 'SoftHSM Tab',
-        body: 'Emulates a PKCS#11 v3.2 hardware security module in the browser. Demonstrates HSM-style key management, signing, KEM, and key agreement operations — all via WASM with no real hardware required.',
-      },
-      {
-        heading: 'Additional Tabs',
-        body: 'Symmetric encryption (AES), hashing, key store management, operation logs, and ACVP testing are available as separate tabs. Use URL parameters (?tab=kem_ops&algo=ML-KEM-768) to deep-link to specific operations.',
+        heading: 'Individual Tools',
+        body: 'Each workshop tool has its own route at /playground/:toolId with lazy-loaded components, breadcrumb navigation, and community endorse/flag buttons.',
       },
     ],
     tips: [
@@ -181,19 +180,19 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Industry Filters',
-        body: 'Filter threats by industry (Aviation, Finance, Healthcare, Energy, Government, etc.) using the dropdown. Each industry shows its specific threat landscape and affected cryptographic protocols.',
+        body: 'Filter threats by industry using the multi-select dropdown — select multiple industries simultaneously (e.g., Finance + Healthcare). Each industry shows its specific threat landscape and affected cryptographic protocols. A persona-aware summary card highlights the most impactful threats for your role.',
       },
       {
         heading: 'Criticality & Search',
-        body: 'Filter by criticality level (Critical, High, Medium, Low) to focus on the most urgent threats. Use the search bar to find threats by keyword across all fields.',
+        body: 'Filter by criticality level (Critical, High, Medium-High, Medium, Low) to focus on the most urgent threats. Use the search bar to find threats by keyword across all fields.',
       },
       {
         heading: 'Threat Details',
-        body: 'Click any threat card to expand full details: affected algorithms, at-risk protocols, timeline to quantum risk, recommended PQC replacements, and references to compliance frameworks.',
+        body: 'Click any threat card to expand full details: affected algorithms, at-risk protocols, timeline to quantum risk, recommended PQC replacements, trust score badges, and references to compliance frameworks.',
       },
       {
         heading: 'Sort Options',
-        body: 'Sort threats by industry, threat ID, or criticality level. The default view groups threats by industry with the most critical items first.',
+        body: 'Sort threats by industry, threat ID, or criticality level. The default view groups threats by industry with the most critical items first. URL params: ?industry= (comma-separated), ?criticality=, ?q=, ?sort=, ?dir=, ?id=.',
       },
     ],
     tips: [
@@ -217,7 +216,7 @@ export const pageManuals: Record<PageId, PageManual> = {
       },
       {
         heading: 'Leader Details',
-        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources.',
+        body: 'Click a leader card to see their full profile: organization, contributions to PQC, key publications, and links to related library resources. 71 leaders are currently profiled.',
       },
       {
         heading: 'Search',
@@ -233,19 +232,19 @@ export const pageManuals: Record<PageId, PageManual> = {
   compliance: {
     title: 'Compliance Frameworks',
     summary:
-      'Map compliance and certification frameworks to PQC requirements across industries. Track FIPS 140-3, Common Criteria, ACVP, and other certification schemes.',
+      'Map compliance and certification frameworks to PQC requirements across industries. Track FIPS 140-3, Common Criteria, ACVP, and other certification schemes across 5 tabs.',
     sections: [
       {
-        heading: 'Certification Schemes Tab',
-        body: 'Browse active certification programs relevant to PQC: FIPS 140-3, Common Criteria, ACVP, and industry-specific schemes. Each entry shows status, scope, and links to source documents.',
+        heading: 'Five Tabs',
+        body: 'The page has 5 tabs: Standardization Bodies (standards orgs), Technical Standards (technical specifications), Certification Schemes (FIPS/ACVP/CC programs), Compliance Frameworks (regulatory requirements), and Cert Records (searchable FIPS/ACVP/CC product certification records with pagination).',
       },
       {
-        heading: 'Compliance Landscape Tab',
-        body: 'Interactive visualization showing how compliance frameworks relate to each other. See which frameworks cover which industries and how PQC requirements cascade through the regulatory landscape.',
+        heading: 'Landscape Tabs (Bodies, Standards, Schemes, Frameworks)',
+        body: 'Each landscape tab shows cards for compliance entries, filterable by organization, industry, and search. Persona and industry context hints appear at the top to guide exploration.',
       },
       {
-        heading: 'Industry Filtering',
-        body: 'Filter by industry to see only the compliance frameworks relevant to your sector. The table highlights which frameworks are mandatory vs. recommended for each industry.',
+        heading: 'Cert Records Tab',
+        body: 'Searchable database of FIPS, ACVP, and Common Criteria certification records. Filter by PQC algorithm, category, source, vendor, and module category (?mcat=). Supports pagination and deep-linking via ?cert= to open a specific record.',
       },
       {
         heading: 'Framework Details',
@@ -255,53 +254,55 @@ export const pageManuals: Record<PageId, PageManual> = {
     tips: [
       'Compliance data is automatically updated daily via the compliance scraper.',
       'Framework entries cross-reference both Library documents and Timeline milestones.',
+      'URL params: ?tab=standards|technical|certification|compliance|records, ?org=, ?ind=, ?q=, ?cert=, ?mcat=.',
     ],
   },
 
   migrate: {
     title: 'Migration Catalog',
     summary:
-      'Browse the software migration catalog to see product PQC readiness, migration status, and recommendations organized by infrastructure layer.',
+      'Browse 521+ PQC-ready software products organized across 9 infrastructure layers with certification cross-references and migration planning tools.',
     sections: [
       {
         heading: 'Infrastructure Layer Stack',
-        body: 'Products are organized by layer: Application, Platform, Network, Hardware, and more. Click a layer in the stack visualization to filter products. The stack shows readiness counts per layer.',
+        body: 'Products are organized across 9 layers: Cloud, Network, Application Servers, Libraries & SDKs, Security Software, Database, Security Stack, Operating Systems, and Hardware & Secure Elements. Click a layer to filter. The stack shows readiness counts per layer.',
       },
       {
         heading: 'Product Search & Filters',
-        body: 'Search by product name or vendor. Filter by PQC readiness status, infrastructure layer, or category. Persona-based recommendations highlight the most relevant layers for your role.',
+        body: 'Search by product name or vendor. Filter by infrastructure layer, category, sub-category, vendor, verification status, and migration step. Persona-based recommendations highlight relevant layers. URL params: ?q=, ?layer=, ?cat=, ?vendor=, ?verification=, ?sort=, ?mode=stack|cards|table, ?subcat=, ?step=, ?industry=.',
       },
       {
         heading: 'Product Details',
         body: 'Click any product to see its full migration profile: current PQC support, migration timeline, certification status (FIPS/ACVP/CC cross-references), vendor links, and product briefs.',
       },
       {
-        heading: 'My Products',
-        body: 'Add products to your comparison list using the bookmark icon. The "My Products" panel lets you compare multiple products side-by-side and export the comparison.',
+        heading: 'My Products & Comparison',
+        body: 'Add products to your comparison list using the bookmark icon. The "My Products" panel lets you compare up to 3 products side-by-side via the sticky compare bar.',
       },
       {
-        heading: 'View Toggle',
-        body: 'Switch between Card view and Table view. The table view supports sorting by any column and shows more products at a glance.',
+        heading: 'View Modes',
+        body: 'Three view modes: Stack (grouped by infrastructure layer, default), Cards (flat grid), and Table (sortable columns). Hidden products can be managed via the settings icon.',
       },
     ],
     tips: [
       'Hidden products can be managed via the settings icon — useful for excluding irrelevant entries.',
       'Certification cross-references link directly to the Compliance page for each product.',
+      'Community members can submit product update requests via the contribution cards.',
     ],
   },
 
   assess: {
     title: 'Risk Assessment',
     summary:
-      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (~2 min) or Comprehensive (~5 min) mode.",
+      "Complete a guided assessment wizard to evaluate your organization's PQC readiness. Choose Quick (6 steps, ~2 min) or Comprehensive (13 steps, ~5 min) mode.",
     sections: [
       {
         heading: 'Assessment Modes',
-        body: 'Quick mode covers essential questions for a rapid readiness check. Comprehensive mode adds deeper questions about compliance, data sensitivity, credential lifetime, and migration planning.',
+        body: 'Quick mode covers 6 essential questions (Industry, Country, Crypto, Sensitivity, Compliance, Migration) for a rapid readiness check. Comprehensive mode adds 7 deeper steps: Use Cases, Data Retention, Credential Lifetime, Organization Scale, Crypto Agility, Infrastructure, and Timeline Pressure.',
       },
       {
-        heading: 'Wizard Steps',
-        body: 'The wizard walks you through questions about your industry, country, cryptographic stack, compliance requirements, data sensitivity, credential lifetime, organization scale, and migration readiness. Each step has clear guidance.',
+        heading: '13 Comprehensive Steps',
+        body: 'Industry → Country → Crypto Stack → Data Sensitivity → Compliance → Migration Status → Use Cases → Data Retention → Credential Lifetime → Organization Scale → Crypto Agility → Infrastructure → Timeline Pressure. Four risk categories scored: Strategic, Operational, Compliance, and Vendor.',
       },
       {
         heading: 'Progress & Navigation',
@@ -325,19 +326,19 @@ export const pageManuals: Record<PageId, PageManual> = {
     sections: [
       {
         heading: 'Report Overview',
-        body: 'The report summarizes your PQC readiness across multiple dimensions: risk level, compliance gaps, migration priority, and recommended next steps. Scores are computed from your assessment answers.',
+        body: 'The report summarizes your PQC readiness across multiple dimensions: risk level, compliance gaps, migration priority, and recommended next steps. Includes Board Brief, KPI Trending, Migration Roadmap, ROI Calculator, and HNDL/HNFL risk window analysis.',
       },
       {
         heading: 'Recommendations',
-        body: 'Each section includes specific, actionable recommendations tailored to your industry, country, and cryptographic stack. Recommendations link to relevant pages (Compliance, Migrate, Library) for deeper exploration.',
+        body: 'Each section includes specific, actionable recommendations tailored to your industry, country, and cryptographic stack. Persona-aware CTAs adapt the report sections to your role. Recommendations link to relevant pages (Compliance, Migrate, Library) for deeper exploration.',
       },
       {
-        heading: 'URL Hydration',
-        body: 'Reports can be shared via URL parameters that encode your assessment context (industry, country, algorithms, compliance, sensitivity). Recipients see the same personalized view.',
+        heading: 'URL Hydration & Sharing',
+        body: 'Reports can be shared via URL parameters encoding your assessment context (?i=industry, ?cy=country, ?c=crypto, ?d=sensitivity, ?f=frameworks, etc.). Recipients see the same personalized view. Supports Print/PDF output.',
       },
       {
-        heading: 'Navigation',
-        body: 'Action buttons link directly to pre-filtered views on the Compliance and Migrate pages based on your assessment context, saving you from manual filtering.',
+        heading: 'Navigation & History',
+        body: 'Action buttons link directly to pre-filtered views on the Compliance and Migrate pages. Assessment snapshots provide historical tracking of readiness changes over time.',
       },
     ],
     tips: [
@@ -377,7 +378,7 @@ export const pageManuals: Record<PageId, PageManual> = {
   learn: {
     title: 'Learning Center',
     summary:
-      'Structured PQC education with 40+ interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
+      'Structured PQC education with 50 interactive modules covering PKI fundamentals, quantum threats, hybrid cryptography, industry-specific topics, and hands-on workshops.',
     sections: [
       {
         heading: 'Module Tracks',
@@ -404,6 +405,29 @@ export const pageManuals: Record<PageId, PageManual> = {
       'Start with the Foundations track if you are new to PQC.',
       'Workshop exercises use real WASM-based crypto — all operations run locally in your browser.',
       'The quiz module tests your knowledge across all tracks.',
+    ],
+  },
+
+  faq: {
+    title: 'Frequently Asked Questions',
+    summary:
+      'Browse common questions about post-quantum cryptography, the PQC Today platform, and how to get started with your migration planning.',
+    sections: [
+      {
+        heading: 'Category Navigation',
+        body: 'Questions are organized by category with quick-link navigation pills at the top. Click a category pill to jump directly to that section.',
+      },
+      {
+        heading: 'Search',
+        body: 'Use the search bar to filter questions across all categories. Multi-term search is supported — results match any word in both questions and answers.',
+      },
+      {
+        heading: 'Deep Links',
+        body: 'Each answer includes direct links to relevant app pages and features for further exploration.',
+      },
+    ],
+    tips: [
+      'Can\'t find your answer? Use the "Ask the PQC Assistant" button at the bottom to chat with the AI assistant.',
     ],
   },
 }

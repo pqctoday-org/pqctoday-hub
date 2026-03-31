@@ -157,11 +157,17 @@ export const MigrateView: React.FC = () => {
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
   )
 
+  // Backward-compat mapping for renamed infrastructure layers
+  const LEGACY_LAYER_MAP: Record<string, string> = { Application: 'AppServers' }
+
   // Sync URL params on same-route navigations (e.g. chatbot deep links)
   useEffect(() => {
     const layerParam = searchParams.get('layer')
-    if (layerParam && LAYERS.some((l) => l.id === layerParam)) {
-      setActiveLayer(layerParam)
+    if (layerParam) {
+      const resolved = LEGACY_LAYER_MAP[layerParam] ?? layerParam
+      if (LAYERS.some((l) => l.id === resolved)) {
+        setActiveLayer(resolved)
+      }
     }
     const q = searchParams.get('q')
     if (q !== null) {
@@ -635,6 +641,30 @@ export const MigrateView: React.FC = () => {
       : items.length
   }, [effectiveViewMode, sortedFlatProducts, allFilteredProducts, hiddenSet, filterText])
 
+  // Total filtered count across all layers (for stack mode)
+  const stackFilteredCount = useMemo(() => {
+    return Object.values(perLayerData).reduce((sum, items) => {
+      if (!filterText && hiddenSet.size > 0) {
+        return (
+          sum +
+          items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
+        )
+      }
+      return sum + items.length
+    }, 0)
+  }, [perLayerData, hiddenSet, filterText])
+
+  // Whether any filter is currently active
+  const hasActiveFilter =
+    !!filterText ||
+    !!stepFilter ||
+    !!industryFilter ||
+    vendorFilter !== 'All' ||
+    verificationFilter !== 'All' ||
+    effectiveLayer !== 'All' ||
+    flatCategoryFilter !== 'All' ||
+    hiddenSet.size > 0
+
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-migrate-catalog'))
@@ -897,23 +927,26 @@ export const MigrateView: React.FC = () => {
         </div>
       </div>
 
-      {/* Results count — flat modes + always on mobile */}
-      <p
-        className={`text-xs text-muted-foreground ${effectiveViewMode === 'stack' ? 'md:hidden' : ''}`}
-      >
-        {flatVisibleCount === softwareData.length ? (
-          <>
-            {flatVisibleCount} product{flatVisibleCount !== 1 ? 's' : ''}
-          </>
-        ) : (
-          <>
-            {flatVisibleCount} of {softwareData.length} product
-            {softwareData.length !== 1 ? 's' : ''}
-            {effectiveLayer !== 'All' &&
-              ` in ${LAYERS.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
-          </>
-        )}
-      </p>
+      {/* Results count — always visible in all modes */}
+      {(() => {
+        const visibleCount = effectiveViewMode === 'stack' ? stackFilteredCount : flatVisibleCount
+        const total = softwareData.length
+        return (
+          <p className="text-xs text-muted-foreground">
+            {hasActiveFilter ? (
+              <>
+                Showing {visibleCount} of {total} product{total !== 1 ? 's' : ''}
+                {effectiveLayer !== 'All' &&
+                  ` in ${LAYERS.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
+              </>
+            ) : (
+              <>
+                {total} product{total !== 1 ? 's' : ''}
+              </>
+            )}
+          </p>
+        )
+      })()}
 
       {/* Content area — mode-specific rendering */}
       <div className="py-4">
@@ -958,6 +991,7 @@ export const MigrateView: React.FC = () => {
               activeLayer={activeInfrastructureLayer}
               onSelectLayer={(layer) => {
                 setActiveLayer(layer)
+                syncFiltersToUrl({ layer })
               }}
               subCategories={activeInfrastructureLayer !== 'All' ? categories : []}
               activeSubCategory={activeTab}

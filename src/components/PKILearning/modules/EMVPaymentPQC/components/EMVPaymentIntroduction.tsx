@@ -597,7 +597,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
           </Link>
         </div>
       </section>
-      <VendorCoverageNotice migrateLayer="Application" />
+      <VendorCoverageNotice migrateLayer="AppServers" />
       <div className="flex items-center justify-start">
         <Button variant="gradient" onClick={onNavigateToWorkshop}>
           <ShieldCheck size={16} className="mr-2" />

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect, useCallback } from 'react'
 import { Play } from 'lucide-react'
-import { useTLSStore } from '@/store/tls-learning.store'
+import { useTLSStore, type SimulationResult } from '@/store/tls-learning.store'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateOpenSSLConfig } from '../PKILearning/modules/TLSBasics/utils/configGenerator'
 import { TLSClientPanel } from '../PKILearning/modules/TLSBasics/TLSClientPanel'
@@ -139,28 +139,25 @@ export const TLSSimulatorTab: React.FC = () => {
       )
 
       try {
-        const parsed = JSON.parse(resultStr)
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const parsed = JSON.parse(resultStr) as Record<string, unknown>
         setResults({
-          trace: parsed.trace || [],
-          status: parsed.status || 'success',
-          error: parsed.error,
-        } as any)
+          trace: (parsed.trace as SimulationResult['trace']) || [],
+          status: (parsed.status as SimulationResult['status']) || 'success',
+          error: parsed.error as string | undefined,
+        })
       } catch {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         setResults({
           trace: [],
           status: 'error',
           error: resultStr.substring(0, 200) || 'Unknown WASM error',
-        } as any)
+        })
       }
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setResults({
         trace: [],
         status: 'error',
         error: error instanceof Error ? error.message : 'Unknown error',
-      } as any)
+      })
     } finally {
       setIsSimulating(false)
     }

@@ -67,15 +67,29 @@ const INDUSTRY_CREDENTIAL_LIFETIME: Record<string, string[]> = {
 // ── Industry → infrastructure layers mapping ─────────────────────────────
 
 const INDUSTRY_INFRASTRUCTURE: Record<string, string[]> = {
-  'Finance & Banking': ['Cloud', 'Network', 'Application', 'Security Stack', 'Database'],
-  'Government & Defense': ['Network', 'Application', 'Security Stack', 'Hardware', 'OS'],
-  Healthcare: ['Cloud', 'Application', 'Database', 'Network'],
-  Telecommunications: ['Network', 'Application', 'Hardware', 'Security Stack'],
-  'Energy & Utilities': ['Network', 'Hardware', 'Application', 'OS'],
-  Aerospace: ['Hardware', 'Network', 'Application', 'Security Stack', 'OS'],
-  Automotive: ['Hardware', 'Application', 'Network'],
-  Technology: ['Cloud', 'Application', 'Database', 'Network'],
-  'Retail & E-Commerce': ['Cloud', 'Application', 'Network'],
+  'Finance & Banking': [
+    'Cloud',
+    'Network',
+    'AppServers',
+    'Libraries',
+    'Security Stack',
+    'Database',
+  ],
+  'Government & Defense': [
+    'Network',
+    'AppServers',
+    'Libraries',
+    'Security Stack',
+    'Hardware',
+    'OS',
+  ],
+  Healthcare: ['Cloud', 'AppServers', 'SecSoftware', 'Database', 'Network'],
+  Telecommunications: ['Network', 'AppServers', 'Hardware', 'Security Stack'],
+  'Energy & Utilities': ['Network', 'Hardware', 'AppServers', 'OS'],
+  Aerospace: ['Hardware', 'Network', 'AppServers', 'Libraries', 'Security Stack', 'OS'],
+  Automotive: ['Hardware', 'AppServers', 'Network'],
+  Technology: ['Cloud', 'Libraries', 'AppServers', 'Database', 'Network'],
+  'Retail & E-Commerce': ['Cloud', 'AppServers', 'SecSoftware', 'Network'],
 }
 
 // ── Industry → organizational scale mapping ──────────────────────────────
@@ -156,7 +170,7 @@ function applyPersonaOverrides(
 
   // Executive: trim infrastructure to high-level layers only
   if (persona === 'executive') {
-    const execLayers = ['Cloud', 'Network', 'Application']
+    const execLayers = ['Cloud', 'Network', 'AppServers']
     result.infrastructure = defaults.infrastructure.filter((l) => execLayers.includes(l))
     if (result.infrastructure.length === 0) {
       result.infrastructure = getInfraDefaults(industry).slice(0, 3)
@@ -281,7 +295,7 @@ function getScaleDefaults(industry: string): {
 }
 
 function getInfraDefaults(industry: string): string[] {
-  return INDUSTRY_INFRASTRUCTURE[industry] ?? ['Cloud', 'Application', 'Network']
+  return INDUSTRY_INFRASTRUCTURE[industry] ?? ['Cloud', 'AppServers', 'Network']
 }
 
 function getTimelineDefaults(country: string): SmartDefaults['timelinePressure'] {

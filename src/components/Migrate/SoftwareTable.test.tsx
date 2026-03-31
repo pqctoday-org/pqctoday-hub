@@ -13,7 +13,7 @@ const baseSoftwareItem: SoftwareItem = {
   softwareName: 'TestLib',
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',
-  infrastructureLayer: 'Application',
+  infrastructureLayer: 'Libraries',
   pqcSupport: 'Yes (ML-KEM)',
   pqcCapabilityDescription: 'Supports ML-KEM key exchange',
   licenseType: 'Open Source',

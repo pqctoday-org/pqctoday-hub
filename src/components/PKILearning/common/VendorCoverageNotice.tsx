@@ -2,7 +2,7 @@ import { Info } from 'lucide-react'
 import { Link } from 'react-router-dom'
 
 interface VendorCoverageNoticeProps {
-  /** Migrate catalog layer ID — e.g., 'Hardware', 'Network', 'Security Stack', 'Application', 'Database', 'OS' */
+  /** Migrate catalog layer ID — e.g., 'Hardware', 'Network', 'Security Stack', 'AppServers', 'Libraries', 'SecSoftware', 'Database', 'OS' */
   migrateLayer: string
   /** Optional search term to pre-filter the Migrate catalog */
   migrateQuery?: string

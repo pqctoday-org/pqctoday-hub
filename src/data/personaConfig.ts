@@ -531,9 +531,9 @@ export const PERSONA_WORKFLOW_LABELS: Record<PersonaId, Record<WorkflowPhaseId, 
 // ── Migrate catalog: persona → preferred infrastructure layers ───────────
 
 export const PERSONA_MIGRATE_LAYERS: Record<PersonaId, string[]> = {
-  executive: ['Cloud', 'Application'],
-  developer: ['Application', 'Cloud', 'Database'],
-  architect: ['Cloud', 'Network', 'Application', 'Security Stack'],
+  executive: ['Cloud', 'AppServers'],
+  developer: ['Libraries', 'Cloud', 'Database'],
+  architect: ['Cloud', 'Network', 'AppServers', 'Security Stack'],
   researcher: [],
   ops: ['Network', 'Hardware', 'OS', 'Security Stack'],
   curious: [],

@@ -441,7 +441,7 @@ describe('usePageContext', () => {
         assessmentStatus: 'complete',
         lastResult: MOCK_RESULT,
         complianceRequirements: ['PCI DSS'],
-        infrastructure: ['Application'],
+        infrastructure: ['AppServers'],
         migrationStatus: 'started',
         timelinePressure: 'within-1y',
         cryptoAgility: 'hardcoded',
@@ -453,7 +453,7 @@ describe('usePageContext', () => {
       expect(result.current.assessmentComplete).toBe(true)
       expect(result.current.riskScore).toBe(72)
       expect(result.current.complianceFrameworks).toEqual(['PCI DSS'])
-      expect(result.current.infrastructure).toEqual(['Application'])
+      expect(result.current.infrastructure).toEqual(['AppServers'])
       expect(result.current.migrationStatus).toBe('started')
     })
   })

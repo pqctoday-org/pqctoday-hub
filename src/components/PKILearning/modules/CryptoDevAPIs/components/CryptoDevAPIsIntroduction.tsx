@@ -653,7 +653,7 @@ export const CryptoDevAPIsIntroduction: React.FC = () => {
           </Link>
         </div>
       </section>
-      <VendorCoverageNotice migrateLayer="Application" />
+      <VendorCoverageNotice migrateLayer="Libraries" />
 
       <ReadingCompleteButton />
     </div>

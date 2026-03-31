@@ -523,7 +523,7 @@ export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop
         </div>
       </CollapsibleSection>
 
-      <VendorCoverageNotice migrateLayer="Application" />
+      <VendorCoverageNotice migrateLayer="Libraries" />
 
       {/* ── Workshop CTA ────────────────────────────────────────────────── */}
       <div className="glass-panel p-6 border-primary/20">
