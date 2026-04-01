@@ -643,7 +643,17 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
 
 // ── Main panel ───────────────────────────────────────────────────────────────
 
-export const HsmKdfPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
+const KDF_MODE_URL: Record<KdfMode, string> = {
+  pbkdf2: 'PBKDF2',
+  hkdf: 'HKDF',
+  'kbkdf-counter': 'KBKDF-Counter',
+  'kbkdf-feedback': 'KBKDF-Feedback',
+}
+
+export const HsmKdfPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { isReady } = useHsmContext()
   const [mode, setMode] = useState<KdfMode>(() => {
     if (initialAlgo === 'HKDF') return 'hkdf'
@@ -669,7 +679,10 @@ export const HsmKdfPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
           {KDF_MODES.map((m) => (
             <button
               key={m.id}
-              onClick={() => setMode(m.id)}
+              onClick={() => {
+                setMode(m.id)
+                onAlgoChange?.(KDF_MODE_URL[m.id])
+              }}
               className={`flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] transition-colors ${
                 mode === m.id
                   ? 'bg-primary/20 text-primary font-medium shadow-sm'

@@ -74,6 +74,9 @@ export const HsmPlayground = () => {
   // Guard to skip URL sync on the very first render (don't wipe incoming params)
   const urlSyncReady = useRef(false)
 
+  // Current algo string — updated by panels via onAlgoChange, written to ?algo=
+  const [algoParam, setAlgoParam] = useState<string | undefined>(initialAlgo.current)
+
   /** Generate a sensible default key for the target tab after deep-link auto-init. */
   const generateDefaultKeyForTab = (tab: HsmTab, algo?: string, engine?: EngineMode) => {
     if (!moduleRef.current || !hSessionRef.current) return
@@ -185,11 +188,13 @@ export const HsmPlayground = () => {
         else next.delete('tab')
         if (engineMode !== 'cpp') next.set('engine', engineMode)
         else next.delete('engine')
+        if (algoParam) next.set('algo', algoParam)
+        else next.delete('algo')
         return next
       },
       { replace: true }
     )
-  }, [activeTab, engineMode, setSearchParams])
+  }, [activeTab, engineMode, algoParam, setSearchParams])
 
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -215,6 +220,7 @@ export const HsmPlayground = () => {
 
   const handleTabChange = (tab: HsmTab) => {
     setActiveTab(tab)
+    setAlgoParam(undefined)
     logEvent('HSM Playground', 'Switch Tab', tab)
   }
 
@@ -444,12 +450,24 @@ export const HsmPlayground = () => {
             <HsmKeyTable />
           </div>
         )}
-        {activeTab === 'symmetric' && <HsmSymmetricPanel initialAlgo={initialAlgo.current} />}
-        {activeTab === 'key_wrap' && <KeyWrapPanel />}
-        {activeTab === 'hashing' && <HsmHashingPanel />}
-        {activeTab === 'sign_verify' && <HsmSignCombinedPanel initialAlgo={initialAlgo.current} />}
-        {activeTab === 'key_agree' && <HsmKeyAgreementPanel initialAlgo={initialAlgo.current} />}
-        {activeTab === 'key_derive' && <HsmKdfPanel initialAlgo={initialAlgo.current} />}
+        {activeTab === 'symmetric' && (
+          <HsmSymmetricPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
+        {activeTab === 'key_wrap' && (
+          <KeyWrapPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
+        {activeTab === 'hashing' && (
+          <HsmHashingPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
+        {activeTab === 'sign_verify' && (
+          <HsmSignCombinedPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
+        {activeTab === 'key_agree' && (
+          <HsmKeyAgreementPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
+        {activeTab === 'key_derive' && (
+          <HsmKdfPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
+        )}
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
         {activeTab === 'acvp' && <HsmAcvpTesting />}
         {activeTab === 'logs' && <PkcsLogPanel />}

@@ -28,9 +28,14 @@ const HASH_ALGOS = [
 
 // ── Panel ──────────────────────────────────────────────────────────────────────
 
-export const HsmHashingPanel = () => {
+export const HsmHashingPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, isReady } = useHsmContext()
-  const [selectedMech, setSelectedMech] = useState<number>(CKM_SHA256)
+  const [selectedMech, setSelectedMech] = useState<number>(
+    () => HASH_ALGOS.find((a) => a.label === initialAlgo)?.mech ?? CKM_SHA256
+  )
   const [input, setInput] = useState('Hello, PQC World!')
   const [digest, setDigest] = useState<Uint8Array | null>(null)
   const [loading, setLoading] = useState(false)
@@ -132,6 +137,7 @@ export const HsmHashingPanel = () => {
                   setSelectedMech(a.mech)
                   setDigest(null)
                   setMatchResult(null)
+                  onAlgoChange?.(a.label)
                 }}
                 className={
                   selectedMech === a.mech

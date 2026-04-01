@@ -1080,7 +1080,19 @@ const RngPanel = () => {
 
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
-export const HsmSymmetricPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
+const SYM_MODE_URL: Record<SymMode, string> = {
+  'aes-gcm': 'AES-GCM',
+  'aes-cbc': 'AES-CBC',
+  'aes-ctr': 'AES-CTR',
+  'aes-cmac': 'AES-CMAC',
+  hmac: 'HMAC',
+  rng: 'RNG',
+}
+
+export const HsmSymmetricPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { isReady } = useHsmContext()
   const [mode, setMode] = useState<SymMode>(() => {
     if (initialAlgo === 'AES-CBC') return 'aes-cbc'
@@ -1107,7 +1119,10 @@ export const HsmSymmetricPanel = ({ initialAlgo }: { initialAlgo?: string } = {}
               key={m.id}
               variant="ghost"
               size="sm"
-              onClick={() => setMode(m.id)}
+              onClick={() => {
+                setMode(m.id)
+                onAlgoChange?.(SYM_MODE_URL[m.id])
+              }}
               className={
                 mode === m.id
                   ? 'bg-primary/20 text-primary text-xs h-7 px-3'

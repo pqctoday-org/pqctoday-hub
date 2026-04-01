@@ -402,16 +402,28 @@ const hexToBytes = (hex: string): Uint8Array => {
 
 // ── Main component ─────────────────────────────────────────────────────────────
 
-export const KeyWrapPanel = () => {
+export const KeyWrapPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, hsmKeys, keysForFamily, addHsmKey, addHsmLog } = useHsmContext()
 
   const [showInfo, setShowInfo] = useState(false)
 
   // Mode
-  const [wrapMode, setWrapMode] = useState<WrapMode>('direct')
+  const [wrapMode, setWrapMode] = useState<WrapMode>(() => {
+    if (initialAlgo === 'RSA-OAEP') return 'indirect'
+    if (initialAlgo?.startsWith('P256-ML-KEM-') || initialAlgo?.startsWith('X25519-ML-KEM-'))
+      return 'pqc'
+    return 'direct'
+  })
 
   // Direct mode
-  const [directMech, setDirectMech] = useState<DirectMech>('aes-kw')
+  const [directMech, setDirectMech] = useState<DirectMech>(() => {
+    if (initialAlgo === 'AES-KWP') return 'aes-kwp'
+    if (initialAlgo === 'AES-GCM') return 'aes-gcm'
+    return 'aes-kw'
+  })
   const [wrapKeyHandle, setWrapKeyHandle] = useState<number | null>(null)
 
   // Indirect mode (RSA-OAEP + AES-KWP)
@@ -421,8 +433,13 @@ export const KeyWrapPanel = () => {
   const [rsaPrivHandle, setRsaPrivHandle] = useState<number | null>(null)
 
   // PQC hybrid mode
-  const [hybridCombiner, setHybridCombiner] = useState<HybridCombiner>('p256-mlkem')
-  const [mlkemVariant, setMlkemVariant] = useState<512 | 768 | 1024>(768)
+  const [hybridCombiner, setHybridCombiner] = useState<HybridCombiner>(() =>
+    initialAlgo?.startsWith('X25519-ML-KEM-') ? 'x25519-mlkem' : 'p256-mlkem'
+  )
+  const [mlkemVariant, setMlkemVariant] = useState<512 | 768 | 1024>(() => {
+    if (initialAlgo?.endsWith('-1024')) return 1024
+    return 768
+  })
   const [mlkemPubHandle, setMlkemPubHandle] = useState<number | null>(null)
   const [mlkemPrivHandle, setMlkemPrivHandle] = useState<number | null>(null)
   // P-256 ECDH (PKCS#11)
@@ -488,6 +505,21 @@ export const KeyWrapPanel = () => {
       engineName: 'cpp',
     }
     addHsmLog(synthetic)
+  }
+
+  const emitAlgo = (
+    mode: WrapMode,
+    mech: DirectMech,
+    combiner: HybridCombiner,
+    variant: 512 | 768 | 1024
+  ) => {
+    if (mode === 'direct') {
+      onAlgoChange?.(mech === 'aes-kw' ? 'AES-KW' : mech === 'aes-kwp' ? 'AES-KWP' : 'AES-GCM')
+    } else if (mode === 'indirect') {
+      onAlgoChange?.('RSA-OAEP')
+    } else {
+      onAlgoChange?.(`${combiner === 'p256-mlkem' ? 'P256' : 'X25519'}-ML-KEM-${variant}`)
+    }
   }
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
@@ -1186,6 +1218,7 @@ export const KeyWrapPanel = () => {
                   setWrapResult(null)
                   setUnwrappedHandle(null)
                   setError(null)
+                  emitAlgo(id, directMech, hybridCombiner, mlkemVariant)
                 }}
                 className={`flex flex-col items-start px-3 py-2 rounded border text-left transition-colors ${
                   wrapMode === id
@@ -1224,7 +1257,10 @@ export const KeyWrapPanel = () => {
                   key={id}
                   variant="ghost"
                   size="sm"
-                  onClick={() => setDirectMech(id)}
+                  onClick={() => {
+                    setDirectMech(id)
+                    emitAlgo(wrapMode, id, hybridCombiner, mlkemVariant)
+                  }}
                   className={`text-xs h-7 px-3 ${directMech === id ? 'bg-primary/20 text-primary' : ''}`}
                 >
                   {label} <span className="ml-1 opacity-60">{desc}</span>
@@ -1325,7 +1361,10 @@ export const KeyWrapPanel = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setHybridCombiner('p256-mlkem')}
+                onClick={() => {
+                  setHybridCombiner('p256-mlkem')
+                  emitAlgo(wrapMode, directMech, 'p256-mlkem', mlkemVariant)
+                }}
                 className={`text-xs h-7 px-3 ${hybridCombiner === 'p256-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
               >
                 P-256 + ML-KEM <span className="ml-1 opacity-60">PKCS#11</span>
@@ -1333,7 +1372,10 @@ export const KeyWrapPanel = () => {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setHybridCombiner('x25519-mlkem')}
+                onClick={() => {
+                  setHybridCombiner('x25519-mlkem')
+                  emitAlgo(wrapMode, directMech, 'x25519-mlkem', mlkemVariant)
+                }}
                 className={`text-xs h-7 px-3 ${hybridCombiner === 'x25519-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
               >
                 X25519 + ML-KEM <span className="ml-1 opacity-60">X-Wing</span>
@@ -1348,7 +1390,10 @@ export const KeyWrapPanel = () => {
                   key={v}
                   variant="ghost"
                   size="sm"
-                  onClick={() => setMlkemVariant(v)}
+                  onClick={() => {
+                    setMlkemVariant(v)
+                    emitAlgo(wrapMode, directMech, hybridCombiner, v)
+                  }}
                   className={`text-xs h-7 px-2 ${mlkemVariant === v ? 'bg-primary/20 text-primary' : ''}`}
                 >
                   ML-KEM-{v}
