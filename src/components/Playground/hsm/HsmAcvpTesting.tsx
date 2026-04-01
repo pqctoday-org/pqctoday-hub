@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
-import { Play, CheckCircle, XCircle, ExternalLink } from 'lucide-react'
+import { useState, useRef } from 'react'
+import { Play, CheckCircle, XCircle, ExternalLink, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import mlkemTestVectors from '../../../data/acvp/mlkem_test.json'
 import mldsaTestVectors from '../../../data/acvp/mldsa_test.json'
@@ -107,6 +107,8 @@ export const HsmAcvpTesting = () => {
   const [results, setResults] = useState<TestResult[]>([])
   const [loading, setLoading] = useState(false)
   const [logs, setLogs] = useState<string[]>([])
+  const [logCopied, setLogCopied] = useState(false)
+  const logCopyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const {
     moduleRef,
     crossCheckModuleRef,
@@ -1843,9 +1845,27 @@ export const HsmAcvpTesting = () => {
 
         {/* Logs Column */}
         <div className="space-y-4 flex flex-col min-h-0">
-          <h4 className="font-bold text-muted-foreground uppercase tracking-wider text-sm">
-            Execution Log
-          </h4>
+          <div className="flex items-center justify-between">
+            <h4 className="font-bold text-muted-foreground uppercase tracking-wider text-sm">
+              Execution Log
+            </h4>
+            {logs.length > 0 && (
+              <button
+                onClick={() => {
+                  void navigator.clipboard.writeText(logs.join('\n')).then(() => {
+                    setLogCopied(true)
+                    if (logCopyTimerRef.current) clearTimeout(logCopyTimerRef.current)
+                    logCopyTimerRef.current = setTimeout(() => setLogCopied(false), 2000)
+                  })
+                }}
+                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                title="Copy log to clipboard"
+              >
+                {logCopied ? <Check size={12} className="text-success" /> : <Copy size={12} />}
+                {logCopied ? 'Copied' : 'Copy log'}
+              </button>
+            )}
+          </div>
           <div className="bg-muted/50 border border-border rounded-lg p-4 font-mono text-xs text-success/80 overflow-y-auto custom-scrollbar flex-1">
             {logs.length === 0 ? (
               <span className="text-foreground/20 italic">Ready to engage HSM suite...</span>
