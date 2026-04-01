@@ -17,7 +17,9 @@ All notable changes to this project will be documented in this file.
 - **Stale enrichment headings**: removed `draft-ietf-lamps-kyber-certificates-11` entries from 3 enrichment files (record was removed from library CSV; heading was orphaned) [data]
 - **Data integrity validator**: fixed migrate catalog prefix in 6 validator files (`quantum_safe_cryptographic_software_reference_` → `pqc_product_catalog_`); resolves N7, N16, C6 false positives from stale CSV name [infra]
 - **CSV archive cleanup**: archived 52 excess CSV versions to `src/data/archive/` to comply with 2-version-per-type rule [data]
-- **RAG corpus regenerated**: 5,569 chunks [data]
+- **Library enrichments** (`library_doc_enrichments_03312026.md`): 67 new enrichments — 47 blockchain/DeFi records (Algorand, Aptos, Avalanche, BitGo, Cardano, Coinbase, Copper, Cosmos, DFNS, Ethereum, Fireblocks, Hex-Trust, Hyperledger, IOTA, Komainu, Ledger, Polkadot, QRL, Solana, Sui, Taurus, Zodia, Anchorage, BTQ) + 20 previously-unenriched records (NSA CNSA 2.0, ANSSI/BSI QKD, Signal PQXDH, Apple PQ3, KpqC algorithms, IACR papers, RFC 9935, HKMA, IETF ML-KEM TLS, SBOM/CBOM guidelines); library coverage 386/419 (92%) [data]
+- **Timeline enrichments** (`timeline_doc_enrichments_03312026.md`): 10 new entries — BTQ Bitcoin quantum testnet, Algorand first PQC mainnet tx, Bitcoin BIP-360, Ethereum PQC strawmap, IDEMIA hardware accelerator, Infineon CC EAL6 controller, Ciena 1.6T quantum-safe optical, ADVA 400G BSI-approved encryptor, OpenSSL 3.6.1, DoD PQC memorandum; timeline coverage 213/213 (100%) [data]
+- **RAG corpus regenerated**: 5,570 chunks [data]
 
 ### Fixed
 
