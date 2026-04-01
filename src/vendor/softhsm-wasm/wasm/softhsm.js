@@ -145,7 +145,7 @@ var createSoftHSMModule = (() => {
     }
     var wasmBinaryFile
     function findWasmBinary() {
-      return locateFile('softhsm.wasm')
+      return locateFile('libsofthsmv3.wasm')
     }
     function getBinarySync(file) {
       if (file == wasmBinaryFile && wasmBinary) {
@@ -3711,7 +3711,7 @@ var createSoftHSMModule = (() => {
       HEAP64[ptime >> 3] = BigInt(nsec)
       return 0
     }
-    var getHeapMax = () => 2147483648
+    var getHeapMax = () => 536870912
     var alignMemory = (size, alignment) => Math.ceil(size / alignment) * alignment
     var growMemory = (size) => {
       var oldHeapSize = wasmMemory.buffer.byteLength
@@ -4012,8 +4012,8 @@ var createSoftHSMModule = (() => {
       _C_GetInterface,
       _malloc,
       _free,
-      _ntohs,
       _htons,
+      _ntohs,
       memory,
       __indirect_function_table,
       wasmMemory
@@ -4124,8 +4124,8 @@ var createSoftHSMModule = (() => {
       _C_GetInterface = Module['_C_GetInterface'] = wasmExports['Ab']
       _malloc = Module['_malloc'] = wasmExports['Bb']
       _free = Module['_free'] = wasmExports['Cb']
-      _ntohs = wasmExports['Db']
-      _htons = wasmExports['Eb']
+      _htons = wasmExports['Db']
+      _ntohs = wasmExports['Eb']
       memory = wasmMemory = wasmExports['D']
       __indirect_function_table = wasmExports['__indirect_function_table']
     }
