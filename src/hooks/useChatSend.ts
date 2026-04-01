@@ -66,7 +66,11 @@ export function useChatSend() {
       const trimmed = queryText.trim().slice(0, MAX_INPUT_LENGTH)
       if (!trimmed || isLoading || isStreaming) return
       // Provider-specific guards
-      if (provider === 'gemini' && !apiKey) return
+      if (provider === 'gemini' && !apiKey) {
+        onInputRestore?.(trimmed)
+        setError('API key is missing. Use the key icon to reconnect.')
+        return
+      }
       if (provider === 'local' && webllmStatus === 'unsupported') return
       if (!provider) return
 

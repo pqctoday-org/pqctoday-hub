@@ -4,6 +4,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.69.1] - 2026-04-01
+
+### Fixed
+
+- **Chatbot blank screen on send**: when `provider='gemini'` was persisted but `apiKey` was null (cleared by a prior API key rejection), `sendQuery` silently returned without restoring the typed text or showing any feedback — input was cleared and the screen appeared blank; now restores the input text and shows `"API key is missing. Use the key icon to reconnect."` [view:/]
+
 ## [2.69.0] - 2026-04-01
 
 ### Added
