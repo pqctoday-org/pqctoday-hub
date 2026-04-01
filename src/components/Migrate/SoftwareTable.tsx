@@ -18,6 +18,12 @@ import {
   Sparkles,
   Bookmark,
   BookmarkCheck,
+  ShieldCheck,
+  CheckCircle,
+  Check,
+  AlertCircle,
+  XCircle,
+  HelpCircle,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -32,6 +38,49 @@ import { ProductExtractionModal } from './ProductExtractionModal'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { CertBadges, EvidenceWarnings, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+
+function ValidationResultBadge({ result }: { result: SoftwareItem['validationResult'] }) {
+  if (!result) return null
+  const config: Record<
+    NonNullable<SoftwareItem['validationResult']>,
+    { label: string; icon: React.ReactNode; cls: string }
+  > = {
+    VALIDATED: {
+      label: 'Validated',
+      icon: <CheckCircle size={11} />,
+      cls: 'text-status-success bg-status-success/10 border-status-success/20',
+    },
+    PASS: {
+      label: 'Pass',
+      icon: <Check size={11} />,
+      cls: 'text-status-success bg-status-success/10 border-status-success/20',
+    },
+    PARTIALLY_VALIDATED: {
+      label: 'Partial',
+      icon: <AlertCircle size={11} />,
+      cls: 'text-status-warning bg-status-warning/10 border-status-warning/20',
+    },
+    FIPS_ISSUE: {
+      label: 'FIPS Issue',
+      icon: <XCircle size={11} />,
+      cls: 'text-status-error bg-status-error/10 border-status-error/20',
+    },
+    NEEDS_VERIFICATION: {
+      label: 'Needs Verification',
+      icon: <HelpCircle size={11} />,
+      cls: 'text-muted-foreground bg-muted border-border',
+    },
+  }
+  const { label, icon, cls } = config[result] ?? config['NEEDS_VERIFICATION']
+  return (
+    <span
+      className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${cls}`}
+    >
+      {icon}
+      {label}
+    </span>
+  )
+}
 
 interface SoftwareTableProps {
   data: SoftwareItem[]
@@ -467,9 +516,12 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   Released:{' '}
                                   <span className="text-foreground">{item.releaseDate}</span>
                                 </p>
-                                <p>
-                                  Last Verified:{' '}
-                                  <span className="text-foreground">{item.lastVerifiedDate}</span>
+                                <p className="flex items-center gap-2 flex-wrap">
+                                  <span>
+                                    Last Verified:{' '}
+                                    <span className="text-foreground">{item.lastVerifiedDate}</span>
+                                  </span>
+                                  <ValidationResultBadge result={item.validationResult} />
                                 </p>
                                 <p>Source Type: {item.sourceType}</p>
                                 {item.vendorId && vendorMap.has(item.vendorId) && (
@@ -653,6 +705,28 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 >
                                   <ExternalLink size={12} /> Authoritative Source
                                 </a>
+                              )}
+                              {item.proofUrl && (
+                                <div className="flex flex-col gap-0.5">
+                                  <a
+                                    href={item.proofUrl}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-xs"
+                                  >
+                                    <ShieldCheck size={12} /> View Proof
+                                    {item.proofPublicationDate && (
+                                      <span className="text-muted-foreground">
+                                        ({item.proofPublicationDate})
+                                      </span>
+                                    )}
+                                  </a>
+                                  {item.proofRelevantInfo && (
+                                    <p className="text-xs text-muted-foreground pl-5 leading-snug">
+                                      {item.proofRelevantInfo}
+                                    </p>
+                                  )}
+                                </div>
                               )}
                               <UpdateProductButton
                                 updateUrl={buildProductUpdateUrl({

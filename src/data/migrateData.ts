@@ -39,6 +39,11 @@ interface RawSoftwareItem {
   peer_reviewed?: string
   vetting_body?: string
   evidence_flags?: string
+  proof_url?: string
+  proof_publication_date?: string
+  proof_relevant_info?: string
+  validation_result?: string
+  correction_notes?: string
 }
 
 const {
@@ -85,6 +90,11 @@ const {
           .map((s: string) => s.trim())
           .filter(Boolean)
       : undefined,
+    proofUrl: row.proof_url || undefined,
+    proofPublicationDate: row.proof_publication_date || undefined,
+    proofRelevantInfo: row.proof_relevant_info || undefined,
+    validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
+    correctionNotes: row.correction_notes || undefined,
   }),
   true // withPrevious for status badges
 )

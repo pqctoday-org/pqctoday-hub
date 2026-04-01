@@ -4,6 +4,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.69.0] - 2026-04-01
+
+### Added
+
+- **Migrate catalog r12** (`pqc_product_catalog_03312026_r12.csv`): promoted from audit CSV (`docs/audits/pqc_catalog_validated_03312026.csv`); full replacement of r11 — 521 rows, 30 columns (25 base + 5 new audit fields: `proof_url`, `proof_publication_date`, `proof_relevant_info`, `validation_result`, `correction_notes`); all 521 rows have a `validation_result` (VALIDATED: 236, PASS: 101, FIPS_ISSUE: 5, PARTIALLY_VALIDATED: 7); 334 rows have `proof_url` [data]
+- **`ValidationResultBadge`** in `SoftwareTable.tsx`: color-coded pill badge (icon + label) renders next to "Last Verified" in the product expanded row; maps VALIDATED → green CheckCircle, PASS → green Check, PARTIALLY_VALIDATED → amber AlertCircle, FIPS_ISSUE → red XCircle [view:/migrate]
+- **Proof link in product expanded row**: "View Proof" external link with `ShieldCheck` icon, optional publication date, and `proof_relevant_info` summary rendered below; shown only when `proof_url` is set [view:/migrate]
+- **`SoftwareItem` interface**: 5 new optional fields — `proofUrl`, `proofPublicationDate`, `proofRelevantInfo`, `validationResult` (`PASS | FIPS_ISSUE | VALIDATED | PARTIALLY_VALIDATED | NEEDS_VERIFICATION`), `correctionNotes` (CSV-only, not rendered) [infra]
+
+### Changed
+
+- **`migrateData.ts`**: parses all 5 new audit columns from r12 CSV; `validationResult` cast to union type; `correctionNotes` stored but not surfaced in UI [infra]
+- **RAG corpus** (`generate-rag-corpus.ts`): migrate chunks now include `Validation: <result>` and `Proof: <info>` lines in content; `validationResult` and `proofUrl` added to chunk metadata [rag]
+- **RAG corpus regenerated**: 5,572 chunks; all 521 migrate chunks carry validation result; 334 carry proof URL in metadata [data]
+
+### Removed
+
+- **Catalog r9 and r10** (`pqc_product_catalog_03312026_r9.csv`, `pqc_product_catalog_03312026_r10.csv`): archived to `src/data/archive/` per 2-version-per-type rule; r11 (previous) and r12 (current) remain active [data]
+
 ## [2.68.0] - 2026-03-31
 
 ### Added

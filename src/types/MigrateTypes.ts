@@ -53,6 +53,16 @@ export interface SoftwareItem {
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
   evidenceFlags?: string[]
+  proofUrl?: string
+  proofPublicationDate?: string
+  proofRelevantInfo?: string
+  validationResult?:
+    | 'PASS'
+    | 'FIPS_ISSUE'
+    | 'VALIDATED'
+    | 'PARTIALLY_VALIDATED'
+    | 'NEEDS_VERIFICATION'
+  correctionNotes?: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

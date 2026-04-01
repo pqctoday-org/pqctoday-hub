@@ -909,6 +909,8 @@ function processMigrateSoftware(): RAGChunk[] {
       `Platforms: ${sanitize(r.primary_platforms)}`,
       `Industries: ${sanitize(r.target_industries)}`,
       sanitize(r.product_brief) ? `Brief: ${sanitize(r.product_brief)}` : '',
+      sanitize(r.validation_result) ? `Validation: ${sanitize(r.validation_result)}` : '',
+      sanitize(r.proof_relevant_info) ? `Proof: ${sanitize(r.proof_relevant_info)}` : '',
     ]
       .filter(Boolean)
       .join('\n')
@@ -943,6 +945,8 @@ function processMigrateSoftware(): RAGChunk[] {
         categoryName: sanitize(r.category_name),
         fipsValidated: sanitize(r.fips_validated),
         repositoryUrl: sanitize(r.repository_url),
+        validationResult: sanitize(r.validation_result) || '',
+        proofUrl: sanitize(r.proof_url) || '',
       },
       deepLink: migrateDeepLink,
     })
