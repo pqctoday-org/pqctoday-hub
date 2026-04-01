@@ -2,6 +2,15 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import type { Pkcs11LogEntry } from '../../../wasm/softhsm'
+import {
+  getSoftHSMCppModule,
+  getSoftHSMRustModule,
+  createLoggingProxy,
+  hsm_initialize,
+  hsm_getFirstSlot,
+  hsm_initToken,
+  hsm_openUserSession,
+} from '../../../wasm/softhsm'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -91,6 +100,16 @@ export interface HsmContextValue {
   /** When true the PKCS#11 log panel decodes parameter structures inline */
   inspectMode: boolean
   toggleInspect: () => void
+
+  // ── Auto-init (deep-link / programmatic) ─────────────────────────────────
+  /**
+   * Silently run the full 3-step HSM init (load WASM → init token → open
+   * session) without requiring button clicks. Used by deep-link URL handling
+   * so recipients can land directly on an operation tab.
+   * @param engine - Override engine mode for this init (optional; defaults to current engineMode)
+   * @returns true on success, false if any step fails
+   */
+  autoInit: (engine?: EngineMode) => Promise<boolean>
 }
 
 // ── Context ────────────────────────────────────────────────────────────────
@@ -158,6 +177,55 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const toggleInspect = useCallback(() => setInspectMode((m) => !m), [])
 
+  const autoInit = useCallback(
+    async (engine?: EngineMode): Promise<boolean> => {
+      const mode = engine ?? engineMode
+      if (engine) setEngineMode(mode)
+      try {
+        // Step 1: load WASM module(s) and call C_Initialize
+        let M: SoftHSMModule | null = null
+        let checkM: SoftHSMModule | null = null
+        if (mode === 'cpp') {
+          M = await getSoftHSMCppModule()
+        } else if (mode === 'rust') {
+          M = await getSoftHSMRustModule()
+        } else if (mode === 'dual') {
+          M = await getSoftHSMCppModule()
+          checkM = await getSoftHSMRustModule()
+        } else {
+          throw new Error('Unknown engine mode')
+        }
+        const engineLabel = mode === 'rust' ? 'rust' : 'cpp'
+        const proxy = createLoggingProxy(M, addHsmLog, engineLabel)
+        moduleRef.current = proxy
+        hsm_initialize(proxy)
+        if (checkM) {
+          const cp = createLoggingProxy(checkM, addHsmLog, 'rust')
+          crossCheckModuleRef.current = cp
+          hsm_initialize(cp)
+        }
+        setPhase('initialized')
+
+        // Step 2: init token
+        const slot0 = hsm_getFirstSlot(proxy)
+        const newSlot = hsm_initToken(proxy, slot0, '12345678', 'SoftHSM3')
+        slotRef.current = newSlot
+        setTokenCreated(true)
+
+        // Step 3: open session and login
+        const hSession = hsm_openUserSession(proxy, newSlot, '12345678', 'user1234')
+        hSessionRef.current = hSession
+        setPhase('session_open')
+        return true
+      } catch {
+        moduleRef.current = null
+        crossCheckModuleRef.current = null
+        return false
+      }
+    },
+    [engineMode, addHsmLog]
+  )
+
   const value = useMemo<HsmContextValue>(
     () => ({
       moduleRef,
@@ -182,6 +250,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       clearHsmLog,
       inspectMode,
       toggleInspect,
+      autoInit,
     }),
     [
       engineMode,
@@ -199,6 +268,7 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       clearHsmLog,
       inspectMode,
       toggleInspect,
+      autoInit,
     ]
   )
 

@@ -1080,9 +1080,16 @@ const RngPanel = () => {
 
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
-export const HsmSymmetricPanel = () => {
+export const HsmSymmetricPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
   const { isReady } = useHsmContext()
-  const [mode, setMode] = useState<SymMode>('aes-gcm')
+  const [mode, setMode] = useState<SymMode>(() => {
+    if (initialAlgo === 'AES-CBC') return 'aes-cbc'
+    if (initialAlgo === 'AES-CTR') return 'aes-ctr'
+    if (initialAlgo === 'AES-CMAC') return 'aes-cmac'
+    if (initialAlgo === 'HMAC') return 'hmac'
+    if (initialAlgo === 'RNG') return 'rng'
+    return 'aes-gcm'
+  })
 
   return (
     <HsmReadyGuard isReady={isReady}>

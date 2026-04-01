@@ -123,11 +123,15 @@ const toHexSnippetDsa = (b: Uint8Array) => {
   return h.length > 40 ? `${h.slice(0, 20)}…${h.slice(-8)}` : h
 }
 
-const HsmSignPanel: React.FC = () => {
+const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
   const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
     useHsmContext()
 
-  const [variant, setVariant] = useState<44 | 65 | 87>(65)
+  const [variant, setVariant] = useState<44 | 65 | 87>(() => {
+    if (initialAlgo === 'ML-DSA-44') return 44
+    if (initialAlgo === 'ML-DSA-87') return 87
+    return 65
+  })
   const [extractable, setExtractable] = useState(false)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello, PQC World!')
@@ -775,10 +779,21 @@ const HsmSlhDsaSignPanel: React.FC = () => {
 
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
-export const HsmSignCombinedPanel: React.FC = () => {
+export const HsmSignCombinedPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
   const { isReady } = useHsmContext()
-  const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>('pqc')
-  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa'>('ml-dsa')
+  const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>(() => {
+    if (
+      initialAlgo?.startsWith('RSA') ||
+      initialAlgo?.startsWith('ECDSA') ||
+      initialAlgo?.startsWith('EdDSA')
+    )
+      return 'classical'
+    return 'pqc'
+  })
+  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa'>(() => {
+    if (initialAlgo?.startsWith('SLH-DSA')) return 'slh-dsa'
+    return 'ml-dsa'
+  })
   return (
     <HsmReadyGuard isReady={isReady}>
       <div className="space-y-4">
@@ -823,7 +838,7 @@ export const HsmSignCombinedPanel: React.FC = () => {
         </div>
         {signFamily === 'pqc' ? (
           pqcAlgo === 'ml-dsa' ? (
-            <HsmSignPanel />
+            <HsmSignPanel initialAlgo={initialAlgo} />
           ) : (
             <HsmSlhDsaSignPanel />
           )

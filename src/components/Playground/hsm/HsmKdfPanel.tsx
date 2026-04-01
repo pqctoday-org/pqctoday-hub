@@ -643,9 +643,14 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
 
 // ── Main panel ───────────────────────────────────────────────────────────────
 
-export const HsmKdfPanel = () => {
+export const HsmKdfPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
   const { isReady } = useHsmContext()
-  const [mode, setMode] = useState<KdfMode>('pbkdf2')
+  const [mode, setMode] = useState<KdfMode>(() => {
+    if (initialAlgo === 'HKDF') return 'hkdf'
+    if (initialAlgo === 'KBKDF-Counter') return 'kbkdf-counter'
+    if (initialAlgo === 'KBKDF-Feedback') return 'kbkdf-feedback'
+    return 'pbkdf2'
+  })
 
   const currentMode = KDF_MODES.find((m) => m.id === mode)!
 

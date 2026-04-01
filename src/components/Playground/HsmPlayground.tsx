@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useRef, useEffect, useState } from 'react'
 import React from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Cpu,
   Key as KeyIcon,
@@ -33,6 +34,11 @@ import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 import { logEvent } from '../../utils/analytics'
+import {
+  hsm_generateMLDSAKeyPair,
+  hsm_generateECKeyPair,
+  hsm_generateAESKey,
+} from '../../wasm/softhsm'
 
 type HsmTab =
   | 'keystore'
@@ -48,12 +54,141 @@ type HsmTab =
 
 export const HsmPlayground = () => {
   const { error } = useSettingsContext()
-  const { engineMode, setEngineMode, phase } = useHsmContext()
+  const { engineMode, setEngineMode, phase, isReady, autoInit, moduleRef, hSessionRef, addHsmKey } =
+    useHsmContext()
   const [activeTab, setActiveTab] = useState<HsmTab>('keystore')
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
   const tabListRef = useRef<HTMLDivElement>(null)
   const [showTabFade, setShowTabFade] = useState(false)
+
+  // ── URL deep-link setup ──────────────────────────────────────────────────
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  // Capture incoming URL params once at mount (before any effects modify the URL)
+  const initialTab = useRef(searchParams.get('tab') as HsmTab | null)
+  const initialEngine = useRef(searchParams.get('engine') as EngineMode | null)
+  const initialAlgo = useRef(searchParams.get('algo') ?? undefined)
+
+  // Guard to skip URL sync on the very first render (don't wipe incoming params)
+  const urlSyncReady = useRef(false)
+
+  /** Generate a sensible default key for the target tab after deep-link auto-init. */
+  const generateDefaultKeyForTab = (tab: HsmTab, algo?: string, engine?: EngineMode) => {
+    if (!moduleRef.current || !hSessionRef.current) return
+    const M = moduleRef.current
+    const hSession = hSessionRef.current
+    const engineLabel: 'cpp' | 'rust' = (engine ?? engineMode) === 'rust' ? 'rust' : 'cpp'
+    const ts = new Date().toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    })
+    switch (tab) {
+      case 'sign_verify': {
+        const variant: 44 | 65 | 87 = algo === 'ML-DSA-44' ? 44 : algo === 'ML-DSA-87' ? 87 : 65
+        const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, variant)
+        addHsmKey({
+          handle: pubHandle,
+          family: 'ml-dsa',
+          role: 'public',
+          label: `ML-DSA-${variant} Public Key (auto)`,
+          variant: String(variant),
+          engine: engineLabel,
+          generatedAt: ts,
+        })
+        addHsmKey({
+          handle: privHandle,
+          family: 'ml-dsa',
+          role: 'private',
+          label: `ML-DSA-${variant} Private Key (auto)`,
+          variant: String(variant),
+          engine: engineLabel,
+          generatedAt: ts,
+        })
+        break
+      }
+      case 'key_agree': {
+        const curve = ['P-256', 'P-384', 'P-521'].includes(algo ?? '')
+          ? (algo as 'P-256' | 'P-384' | 'P-521')
+          : 'P-256'
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+        addHsmKey({
+          handle: pubHandle,
+          family: 'ecdh',
+          role: 'public',
+          label: `${curve} Public Key (auto)`,
+          engine: engineLabel,
+          generatedAt: ts,
+        })
+        addHsmKey({
+          handle: privHandle,
+          family: 'ecdh',
+          role: 'private',
+          label: `${curve} Private Key (auto)`,
+          engine: engineLabel,
+          generatedAt: ts,
+        })
+        break
+      }
+      case 'symmetric':
+      case 'key_wrap':
+      case 'key_derive': {
+        const bits: 128 | 192 | 256 = algo === 'AES-128' ? 128 : algo === 'AES-192' ? 192 : 256
+        const handle = hsm_generateAESKey(M, hSession, bits)
+        addHsmKey({
+          handle,
+          family: 'aes',
+          role: 'secret',
+          label: `AES-${bits} Key (auto)`,
+          engine: engineLabel,
+          generatedAt: ts,
+        })
+        break
+      }
+      default:
+        break
+    }
+  }
+
+  // ── Deep-link mount effect ───────────────────────────────────────────────
+  useEffect(() => {
+    const tab = initialTab.current
+    const engine = initialEngine.current
+    const algo = initialAlgo.current
+    if (engine) setEngineMode(engine)
+    if (tab && tab !== 'keystore') {
+      if (phase === 'idle') {
+        autoInit(engine ?? undefined).then((ok) => {
+          if (!ok) return
+          setActiveTab(tab)
+          generateDefaultKeyForTab(tab, algo, engine ?? undefined)
+        })
+      } else if (isReady) {
+        setActiveTab(tab)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  // ── URL sync effect: keep URL in sync with current tab + engine ──────────
+  useEffect(() => {
+    if (!urlSyncReady.current) {
+      urlSyncReady.current = true
+      return
+    }
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (activeTab !== 'keystore') next.set('tab', activeTab)
+        else next.delete('tab')
+        if (engineMode !== 'cpp') next.set('engine', engineMode)
+        else next.delete('engine')
+        return next
+      },
+      { replace: true }
+    )
+  }, [activeTab, engineMode, setSearchParams])
 
   useEffect(() => {
     if (error) errorRef.current?.focus()
@@ -308,12 +443,12 @@ export const HsmPlayground = () => {
             <HsmKeyTable />
           </div>
         )}
-        {activeTab === 'symmetric' && <HsmSymmetricPanel />}
+        {activeTab === 'symmetric' && <HsmSymmetricPanel initialAlgo={initialAlgo.current} />}
         {activeTab === 'key_wrap' && <KeyWrapPanel />}
         {activeTab === 'hashing' && <HsmHashingPanel />}
-        {activeTab === 'sign_verify' && <HsmSignCombinedPanel />}
-        {activeTab === 'key_agree' && <HsmKeyAgreementPanel />}
-        {activeTab === 'key_derive' && <HsmKdfPanel />}
+        {activeTab === 'sign_verify' && <HsmSignCombinedPanel initialAlgo={initialAlgo.current} />}
+        {activeTab === 'key_agree' && <HsmKeyAgreementPanel initialAlgo={initialAlgo.current} />}
+        {activeTab === 'key_derive' && <HsmKdfPanel initialAlgo={initialAlgo.current} />}
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
         {activeTab === 'acvp' && <HsmAcvpTesting />}
         {activeTab === 'logs' && <PkcsLogPanel />}

@@ -29,22 +29,24 @@ import { Button } from '../ui/button'
 import { Card } from '../ui/card'
 
 export const InteractivePlayground = () => {
-  const { activeTab, setActiveTab, error, lastLogEntry } = useSettingsContext()
+  const { activeTab, setActiveTab, algorithm, error, lastLogEntry } = useSettingsContext()
   const { keyStore } = useKeyStoreContext()
   const [, setSearchParams] = useSearchParams()
 
-  // Sync activeTab → URL whenever it changes
+  // Sync activeTab + algorithm → URL whenever either changes
   useEffect(() => {
     setSearchParams(
       (prev) => {
         const next = new URLSearchParams(prev)
         if (activeTab !== 'keystore') next.set('tab', activeTab)
         else next.delete('tab')
+        if (algorithm) next.set('algo', algorithm)
+        else next.delete('algo')
         return next
       },
       { replace: true }
     )
-  }, [activeTab, setSearchParams])
+  }, [activeTab, algorithm, setSearchParams])
 
   const [showQuickStart, setShowQuickStart] = useState(() => {
     try {

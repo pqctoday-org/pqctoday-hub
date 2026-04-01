@@ -33,9 +33,13 @@ const KDF_OPTIONS = [
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-export const HsmKeyAgreementPanel = () => {
+export const HsmKeyAgreementPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
   const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
-  const [curve, setCurve] = useState<KaCurve>('P-256')
+  const [curve, setCurve] = useState<KaCurve>(() => {
+    if (initialAlgo === 'P-384') return 'P-384'
+    if (initialAlgo === 'P-521') return 'P-521'
+    return 'P-256'
+  })
   const [cofactorMode, setCofactorMode] = useState(false)
   const [kdf, setKdf] = useState<number>(CKD_NULL)
 
