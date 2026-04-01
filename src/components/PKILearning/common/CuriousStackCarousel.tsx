@@ -12,9 +12,13 @@ import { CheckCircle } from 'lucide-react'
 
 interface CuriousStackCarouselProps {
   modules: ModuleItem[]
+  onNextStack?: () => void
 }
 
-export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({ modules }) => {
+export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
+  modules,
+  onNextStack,
+}) => {
   const [currentIndex, setCurrentIndex] = useState(0)
   const { updateModuleProgress, modules: globalModules } = useModuleStore()
   const navigate = useNavigate()
@@ -116,19 +120,37 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({ modu
           Previous
         </button>
 
-        <button
-          type="button"
-          onClick={handleNext}
-          disabled={!hasNext}
-          className={`flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors ${
-            hasNext
-              ? 'bg-primary text-black hover:bg-primary/90 shadow-sm cursor-pointer'
-              : 'bg-muted text-muted-foreground/40 cursor-not-allowed'
-          }`}
-        >
-          Next
-          <ArrowRight size={16} />
-        </button>
+        {hasNext ? (
+          <button
+            type="button"
+            onClick={handleNext}
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-primary text-black hover:bg-primary/90 shadow-sm cursor-pointer"
+          >
+            Next
+            <ArrowRight size={16} />
+          </button>
+        ) : onNextStack ? (
+          <button
+            type="button"
+            onClick={() => {
+              updateModuleProgress(currentModule.id, { status: 'completed' })
+              onNextStack()
+            }}
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm cursor-pointer"
+          >
+            Next Stack
+            <ArrowRight size={16} />
+          </button>
+        ) : (
+          <button
+            type="button"
+            disabled
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-muted text-muted-foreground/40 cursor-not-allowed"
+          >
+            Next
+            <ArrowRight size={16} />
+          </button>
+        )}
       </div>
 
       {PERSONAS.curious.recommendedPath.includes(currentModule.id) && (

@@ -141,9 +141,7 @@ export const CuriousSummaryBanner = ({
   const isCuriousMode = experienceLevel === 'curious' || selectedPersona === 'curious'
   const [expanded, setExpanded] = useState(true)
 
-  const idealImgSrc = isCuriousMode
-    ? `/images/infographics/gcp_${moduleId}-curious.png`
-    : `/images/infographics/gcp_${moduleId}.png`
+  const idealImgSrc = `/images/infographics/nllm_${moduleId}.jpg`
 
   const [imgSrc, setImgSrc] = useState(idealImgSrc)
 
@@ -152,8 +150,14 @@ export const CuriousSummaryBanner = ({
   }, [idealImgSrc])
 
   const handleImgError = () => {
-    if (imgSrc.includes('-curious.png')) {
-      // Fallback to standard infographic if curious variant is missing
+    // Fallback chain: nllm → gcp curious variant → gcp standard
+    if (imgSrc.startsWith('/images/infographics/nllm_')) {
+      setImgSrc(
+        isCuriousMode
+          ? `/images/infographics/gcp_${moduleId}-curious.png`
+          : `/images/infographics/gcp_${moduleId}.png`
+      )
+    } else if (imgSrc.includes('-curious.png')) {
       setImgSrc(`/images/infographics/gcp_${moduleId}.png`)
     }
   }

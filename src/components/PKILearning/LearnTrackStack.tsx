@@ -217,6 +217,12 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
     setActiveTrack((prev) => (prev === track ? null : track))
   }
 
+  // Ordered list of tracks that have at least one visible module (for next-stack navigation)
+  const visibleTrackNames = TRACK_META.filter((meta) => {
+    const trackData = MODULE_TRACKS.find((t) => t.track === meta.track)
+    return (trackData?.modules ?? []).filter((m) => filteredModuleIds.has(m.id)).length > 0
+  }).map((m) => m.track)
+
   return (
     <div className="w-full">
       <div className="flex flex-col gap-3 p-4 md:p-6 bg-card border border-border rounded-2xl shadow-lg relative">
@@ -417,7 +423,17 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                           No modules match the current filters.
                         </p>
                       ) : isCuriousMode ? (
-                        <CuriousStackCarousel modules={visibleModules} />
+                        <CuriousStackCarousel
+                          modules={visibleModules}
+                          onNextStack={(() => {
+                            const idx = visibleTrackNames.indexOf(meta.track)
+                            const nextTrack =
+                              idx !== -1 && idx < visibleTrackNames.length - 1
+                                ? visibleTrackNames[idx + 1]
+                                : null
+                            return nextTrack ? () => setActiveTrack(nextTrack) : undefined
+                          })()}
+                        />
                       ) : (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
                           {visibleModules.map((module) => (
