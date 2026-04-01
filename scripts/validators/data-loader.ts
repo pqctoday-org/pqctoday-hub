@@ -375,7 +375,7 @@ export function buildModuleEnrichmentMap(): Map<string, ModuleEnrichmentSet> {
   const libraryCSV = loadCSV('library_')
 
   // Load migrate CSV for learning_modules → category_id mapping
-  const migrateCSV = loadCSV('quantum_safe_cryptographic_software_reference_')
+  const migrateCSV = loadCSV('pqc_product_catalog_')
 
   // Build CSC category → module_id mapping from migrate CSV
   const cscToModules = new Map<string, Set<string>>()

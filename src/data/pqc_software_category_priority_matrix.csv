@@ -49,3 +49,6 @@
 "CSC-059","Industrial Control System & OT Security","High","5","0","0.0","10","15","68.8","2026-Q3","Energy, Utilities, Manufacturing, Government, Critical Infrastructure"
 "CSC-060","AI/ML Security Platforms","Medium","5","0","0.0","10","15","68.8","2026-Q3","Technology, Finance, Healthcare, Government, Enterprise"
 "CSC-061","Network Testing & Validation Tools","High","9","8","88.9","10","15","60.4","2026-Q3","Enterprise, Government, Telecommunications, Defense, Financial Services"
+"CSC-013","PKI & Certificate Lifecycle","Critical","7","0","0.0","14","16","65.0","2026-Q3","All industries"
+"CSC-019","Operating Systems & Platforms","High","15","0","0.0","10","14","62.0","2026-Q4","All industries"
+"CSC-039","IoT Security","High","3","0","0.0","12","16","66.0","2026-Q4","Industrial, Healthcare, Automotive, Energy, Consumer Electronics"

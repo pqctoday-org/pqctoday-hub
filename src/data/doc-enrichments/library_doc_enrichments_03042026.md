@@ -875,36 +875,6 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## draft-ietf-lamps-kyber-certificates-11
-
-- **Reference ID**: draft-ietf-lamps-kyber-certificates-11
-- **Title**: Internet X.509 PKI — Algorithm Identifiers for ML-KEM
-- **Authors**: IETF LAMPS
-- **Publication Date**: 2022-06-03
-- **Last Updated**: 2025-07-22
-- **Document Status**: Internet-Draft (RFC Ed Queue, AUTH48)
-- **Main Topic**: None detected
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: None detected
-- **Standardization Bodies**: None detected
-- **Compliance Frameworks Referenced**: None detected
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: None detected
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: None detected
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: None detected
-
----
-
 ## draft-yang-tls-hybrid-sm2-mlkem-03
 
 - **Reference ID**: draft-yang-tls-hybrid-sm2-mlkem-03
@@ -932,36 +902,6 @@ enrichment_method: ollama-qwen3.5:27b
 - **Target Audience**: None detected
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: None detected
-
----
-
-## draft-ietf-lamps-kyber-certificates-11
-
-- **Reference ID**: draft-ietf-lamps-kyber-certificates-11
-- **Title**: Internet X.509 PKI — Algorithm Identifiers for ML-KEM
-- **Authors**: IETF LAMPS
-- **Publication Date**: 2022-06-03
-- **Last Updated**: 2025-07-22
-- **Document Status**: Internet-Draft (RFC Ed Queue, AUTH48)
-- **Main Topic**: Defines X.509 algorithm identifiers, public key structures, and private key formats for ML-KEM in PKIX certificates.
-- **PQC Algorithms Covered**: ML-KEM
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: United States; NIST
-- **Leaders Contributions Mentioned**: Sean Turner, Panos Kampanakis, Jake Massimo, Bas Westerbaan, Russ Housley, Deb Cooley
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: X.509, TLS
-- **Infrastructure Layers**: PKI
-- **Standardization Bodies**: IETF, NIST
-- **Compliance Frameworks Referenced**: FIPS 203, BCP 78, BCP 79, RFC 5280, RFC 5912, RFC 5958, RFC 7468
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: ML-KEM certificates require the keyEncipherment bit as the only key usage; Public keys for ML-KEM-512, ML-KEM-768, and ML-KEM-1024 have fixed sizes of 800, 1184, and 1568 octets respectively; Private keys can be stored as a 64-octet seed or an expanded decapsulation key; The parameters field in the AlgorithmIdentifier for ML-KEM public keys must be absent; ML-KEM is not compatible with the earlier Kyber mechanism.
-- **Security Levels & Parameters**: ML-KEM-512, ML-KEM-768, ML-KEM-1024
-- **Hybrid & Transition Approaches**: None detected
-- **Performance & Size Considerations**: ML-KEM-512 public key 800 octets; ML-KEM-768 public key 1184 octets; ML-KEM-1024 public key 1568 octets; Private key seed 64 octets
-- **Target Audience**: Security Architect, Developer, Compliance Officer
-- **Implementation Prerequisites**: Cryptographically secure pseudorandom number generator (CSPRNG); Support for ASN.1 encoding; X.509 certificate infrastructure updates
-- **Relevant PQC Today Features**: Algorithms, pki-workshop, tls-basics, migration-program, crypto-agility
 
 ---
 

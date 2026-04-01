@@ -1647,28 +1647,6 @@ documents_processed: 163
 
 ---
 
-## draft-ietf-lamps-kyber-certificates-11
-
-- **Reference ID**: draft-ietf-lamps-kyber-certificates-11
-- **Title**: Internet X.509 PKI — Algorithm Identifiers for ML-KEM
-- **Authors**: IETF LAMPS
-- **Publication Date**: 2022-06-03
-- **Last Updated**: 2025-07-22
-- **Document Status**: Internet-Draft (RFC Ed Queue, AUTH48)
-- **Main Topic**: Specifies conventions for using ML-KEM in X.509 Public Key Infrastructure (PKIX) certificates at three security levels, defining algorithm identifiers, subject public key encoding, key usage, and private key formats for digital certificates.
-- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
-- **Quantum Threats Addressed**: Post-Quantum
-- **Migration Timeline Info**: Milestones: NIST standardized ML-KEM in FIPS 203 August 2024
-- **Applicable Regions / Bodies**: Regions: US; Bodies: NIST, IETF (LAMPS WG)
-- **Leaders Contributions Mentioned**: Sean Turner, Panos Kampanakis, Jake Massimo, Bas Westerbaan, Mallory Knodel, Russ Housley
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: X.509 PKIX, RFC 5280, RFC 5912, RFC 5958, ASN.1 encoding
-- **Infrastructure Layers**: PKI/Certificates
-- **Standardization Bodies**: NIST, IETF, IANA, ITU-T
-- **Compliance Frameworks Referenced**: FIPS 203, RFC 5280, RFC 9629, NIST FIPS 205, NIST PQC Project
-
----
-
 ## draft-ietf-lamps-pq-composite-kem-12
 
 - **Reference ID**: draft-ietf-lamps-pq-composite-kem-12

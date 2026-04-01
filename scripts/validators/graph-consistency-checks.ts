@@ -193,7 +193,7 @@ export function runGraphConsistencyChecks(): { results: CheckResult[]; markdownR
   const library = loadCSV('library_')
   const compliance = loadCSV('compliance_')
   const threats = loadCSV('quantum_threats_hsm_industries_')
-  const migrate = loadCSV('quantum_safe_cryptographic_software_reference_')
+  const migrate = loadCSV('pqc_product_catalog_')
   const leaders = loadCSV('leaders_')
   const vendors = loadCSV('vendors_')
   const certXref = loadCSV('migrate_certification_xref_')

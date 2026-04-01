@@ -52,7 +52,7 @@ const URL_CONFIGS: UrlCheckConfig[] = [
   },
   {
     source: 'migrate',
-    prefix: 'quantum_safe_cryptographic_software_reference_',
+    prefix: 'pqc_product_catalog_',
     idField: 'software_name',
     urlFields: ['authoritative_source', 'repository_url'],
     anyOneSuffices: true,

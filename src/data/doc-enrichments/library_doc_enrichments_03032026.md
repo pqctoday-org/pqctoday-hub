@@ -665,28 +665,6 @@ enrichment_method: ollama-qwen3:14b
 
 ---
 
-## draft-ietf-lamps-kyber-certificates-11
-
-- **Reference ID**: draft-ietf-lamps-kyber-certificates-11
-- **Title**: Internet X.509 PKI — Algorithm Identifiers for ML-KEM
-- **Authors**: IETF LAMPS
-- **Publication Date**: 2022-06-03
-- **Last Updated**: 2025-07-22
-- **Document Status**: Internet-Draft (RFC Ed Queue, AUTH48)
-- **Main Topic**: Specification of ML-KEM in X.509 certificates for public key and private key formats
-- **PQC Algorithms Covered**: ML-KEM
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: United States; NIST
-- **Leaders Contributions Mentioned**: None detected
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: X.509
-- **Infrastructure Layers**: PKI; Key Management
-- **Standardization Bodies**: NIST; IETF
-- **Compliance Frameworks Referenced**: None detected
-
----
-
 ## RFC 9881
 
 - **Reference ID**: RFC 9881

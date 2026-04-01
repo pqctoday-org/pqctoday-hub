@@ -24,7 +24,7 @@ interface SourceConfig {
 
 const SOURCES: SourceConfig[] = [
   { key: 'library', type: 'csv', prefix: 'library_' },
-  { key: 'migrate', type: 'csv', prefix: 'quantum_safe_cryptographic_software_reference_' },
+  { key: 'migrate', type: 'csv', prefix: 'pqc_product_catalog_' },
   { key: 'certification_xref', type: 'csv', prefix: 'migrate_certification_xref_' },
   { key: 'timeline', type: 'csv', prefix: 'timeline_' },
   { key: 'compliance', type: 'csv', prefix: 'compliance_' },

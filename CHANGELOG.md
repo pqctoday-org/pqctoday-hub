@@ -4,6 +4,25 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.67.1] - 2026-03-31
+
+### Changed
+
+- **Library CSV r3** (`library_03312026_r3.csv`): fixed 10 broken `trusted_source_id` typos (`oqs`→`oqs-project`, `etsi`→`etsi-cyber`, `ieee`→`ieee-sa`, `ibm`→`ibm-research`, `nist`→`nist-csrc`, `apple-security`→`apple`, `arxiv`→`arxiv-crypto`); fixed C3 dependency for `draft-ietf-hpke-pq` (`RFC 9180`→`IETF RFC 9180`); marked 4 undownloadable files as `no-blocked` (BSI TR-02102, BSI TR-02102-4, ANSSI PQC Position Paper, OpenSSL-3x-Docs) [data]
+- **Migrate catalog r10** (`pqc_product_catalog_03312026_r10.csv`): corrected 33 `trusted_source_id` values from `pkic` to `pki-consortium` [data]
+- **Timeline CSV** (`timeline_03312026.csv`): fixed 3 `trusted_source_id` typos (`bitcoin`→`bitcoin-core`, `ethereum`→`eth-foundation`, `openssl`→`openssl-project`) [data]
+- **Trusted sources** (`trusted_sources_03312026.csv`): added 12 new entries — `github`, `itu`, `intel`, `uefi-forum`, `signal`, `btq`, `algorand`, `idemia`, `infineon`, `ciena`, `adva`, `mitre` (200 total) [data]
+- **Priority matrix**: added 3 missing category rows — CSC-013 (PKI & Certificate Lifecycle), CSC-019 (Operating Systems & Platforms), CSC-039 (IoT Security) [data]
+- **Module QA** (`database-encryption-pqc-workshop-019`): updated `migrate_ref` from removed `Oracle TDE` to `Oracle AI Database 26ai` [data]
+- **Stale enrichment headings**: removed `draft-ietf-lamps-kyber-certificates-11` entries from 3 enrichment files (record was removed from library CSV; heading was orphaned) [data]
+- **Data integrity validator**: fixed migrate catalog prefix in 6 validator files (`quantum_safe_cryptographic_software_reference_` → `pqc_product_catalog_`); resolves N7, N16, C6 false positives from stale CSV name [infra]
+- **CSV archive cleanup**: archived 52 excess CSV versions to `src/data/archive/` to comply with 2-version-per-type rule [data]
+- **RAG corpus regenerated**: 5,569 chunks [data]
+
+### Fixed
+
+- **Data integrity**: 0 errors (down from 8); 63/98 checks passing; resolved C3 (dependency FK), N1 (stale enrichment heading), N7 (priority matrix gaps), N16 (freshness tracker), N22 (bad source files), QA-D1 (oracle TDE assertion), TS-2 (trusted source FK refs across library/timeline/migrate/compliance) [infra]
+
 ## [2.67.0] - 2026-03-31
 
 ### Added

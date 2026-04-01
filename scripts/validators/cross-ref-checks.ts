@@ -214,7 +214,7 @@ export function runCrossRefChecks(): CheckResult[] {
   const compliance = loadCSV('compliance_')
   const timeline = loadCSV('timeline_')
   const threats = loadCSV('quantum_threats_hsm_industries_')
-  const migrate = loadCSV('quantum_safe_cryptographic_software_reference_')
+  const migrate = loadCSV('pqc_product_catalog_')
   const quiz = loadCSV('pqcquiz_')
   const certXref = loadCSV('migrate_certification_xref_')
   const leaders = loadCSV('leaders_')

@@ -83,7 +83,7 @@ export function runLocalResourceChecks(): {
 
   // ── products directory coverage ─────────────────────────────────────────
   {
-    const migrate = loadCSV('quantum_safe_cryptographic_software_reference_')
+    const migrate = loadCSV('pqc_product_catalog_')
     const findings: Finding[] = []
     const productsDir = path.join(ROOT, 'public', 'products')
     const productDirs = new Set(
