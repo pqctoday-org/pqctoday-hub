@@ -17,6 +17,17 @@ All notable changes to this project will be documented in this file.
 - **`CuriousStackCarousel`**: accepts optional `onNextStack` callback; renders "Next Stack" button on the last slide when callback is provided [view:/learn]
 - **`LearnTrackStack`**: computes ordered list of visible tracks and passes `onNextStack` to each carousel to enable cross-track navigation in curious mode [view:/learn]
 
+## [2.70.1] - 2026-04-01
+
+### Changed
+
+- **Migrate catalog r14** (`pqc_product_catalog_03312026_r14.csv`): rounds 6–10 audit pass — 622 rows (+101 new products); all 622 rows have `proof_url`; VALIDATED count 338 (was 237); same 30-column schema, same 8-value `validation_result` enum [data]
+- **RAG corpus regenerated**: 5,677 chunks (+102 vs r13) [data]
+
+### Removed
+
+- **Catalog r12** archived to `src/data/archive/` [data]
+
 ## [2.70.0] - 2026-04-01
 
 ### Added
