@@ -19,6 +19,8 @@ notebooklm/
 
 # WASM build artifacts and source code
 openssl-3.6.0-src/
+openssl-3.6.0-src.bak/
+openssl-3.6.1-src/
 lms-wasm/
 *.o
 *.wasm.map
@@ -215,9 +217,11 @@ explainer.html
 generate_animation.py
 platform_map_with_labels_*.png
 # PDFs & HTML reference documents — enrichment source artifacts, not used at runtime
+/*.html
 /*.pdf
 public/timeline/*.pdf
 public/timeline/*.html
+public/timeline/*_files/
 public/threats/*.pdf
 public/threats/*.html
 .cache/*.pdf
