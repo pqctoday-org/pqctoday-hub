@@ -90,7 +90,7 @@ import {
   CKO_SECRET_KEY,
   CKK_AES,
 } from '../../../wasm/softhsm'
-import type { SoftHSMModule } from '../../../wasm/softhsm'
+import type { SoftHSMModule, SLHDSASignOptions } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import type { HsmKey } from './HsmContext'
 
@@ -1573,6 +1573,149 @@ export const HsmAcvpTesting = () => {
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id20}] AES-KWP: ${errMessage}`)
+          }
+        }
+
+        // ── 21. SLH-DSA Context Binding (FIPS 205 §9.2) ───────────────────
+        {
+          const id21 = `slhdsa-ctx-binding-${eName}`
+          addLog(`[${eName}] Testing SLH-DSA-SHA2-128s Context Binding (FIPS 205 §9.2)...`)
+          try {
+            const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
+              M,
+              hSession,
+              CKP_SLH_DSA_SHA2_128S
+            )
+            regKey({
+              handle: pubHandle,
+              family: 'slh-dsa',
+              role: 'public',
+              label: `ACVP SLH-DSA Ctx Binding Public (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privHandle,
+              family: 'slh-dsa',
+              role: 'private',
+              label: `ACVP SLH-DSA Ctx Binding Private (${eName})`,
+              engine: engineId,
+            })
+            const ctxA: SLHDSASignOptions = { context: new TextEncoder().encode('acvp-ctx-A') }
+            const ctxB: SLHDSASignOptions = { context: new TextEncoder().encode('acvp-ctx-B') }
+            const sig = hsm_slhdsaSign(M, hSession, privHandle, 'ACVP context-binding test', ctxA)
+            const verifyOk = hsm_slhdsaVerify(
+              M,
+              hSession,
+              pubHandle,
+              'ACVP context-binding test',
+              sig,
+              ctxA
+            )
+            const verifyCrossFail = !hsm_slhdsaVerify(
+              M,
+              hSession,
+              pubHandle,
+              'ACVP context-binding test',
+              sig,
+              ctxB
+            )
+            const verifyNoCxtFail = !hsm_slhdsaVerify(
+              M,
+              hSession,
+              pubHandle,
+              'ACVP context-binding test',
+              sig
+            )
+            const pass = verifyOk && verifyCrossFail && verifyNoCxtFail
+            newResults.push({
+              id: id21,
+              algorithm: `SLH-DSA-SHA2-128s (${eName})`,
+              testCase: 'Context Binding (FIPS 205 §9.2)',
+              referenceUrl: REF.slhdsa,
+              status: pass ? 'pass' : 'fail',
+              details: pass
+                ? `ctx-A verifies ✓ | ctx-B rejects ✓ | no-ctx rejects ✓`
+                : `verifyOk=${verifyOk} crossFail=${verifyCrossFail} noCtxFail=${verifyNoCxtFail}`,
+            })
+            addLog(
+              `[${eName}] [id:${id21}] Context Binding: ${pass ? 'PASS' : 'FAIL'} | same=${verifyOk} cross=${verifyCrossFail} empty=${verifyNoCxtFail}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `slhdsa-ctx-binding-err-${eName}`,
+              algorithm: `SLH-DSA-SHA2-128s (${eName})`,
+              testCase: 'Context Binding (FIPS 205 §9.2)',
+              referenceUrl: REF.slhdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id21}] Context Binding: ${errMessage}`)
+          }
+        }
+
+        // ── 22. SLH-DSA Deterministic Mode (FIPS 205 §10) ────────────────
+        {
+          const id22 = `slhdsa-deterministic-${eName}`
+          addLog(`[${eName}] Testing SLH-DSA-SHA2-128s Deterministic Mode (FIPS 205 §10)...`)
+          try {
+            const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
+              M,
+              hSession,
+              CKP_SLH_DSA_SHA2_128S
+            )
+            regKey({
+              handle: pubHandle,
+              family: 'slh-dsa',
+              role: 'public',
+              label: `ACVP SLH-DSA Det Mode Public (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privHandle,
+              family: 'slh-dsa',
+              role: 'private',
+              label: `ACVP SLH-DSA Det Mode Private (${eName})`,
+              engine: engineId,
+            })
+            const detOpts: SLHDSASignOptions = { deterministic: true }
+            const sig1 = hsm_slhdsaSign(M, hSession, privHandle, 'ACVP deterministic test', detOpts)
+            const sig2 = hsm_slhdsaSign(M, hSession, privHandle, 'ACVP deterministic test', detOpts)
+            const equal =
+              sig1.length === sig2.length && sig1.every((b: number, i: number) => b === sig2[i])
+            const verifyOk = hsm_slhdsaVerify(
+              M,
+              hSession,
+              pubHandle,
+              'ACVP deterministic test',
+              sig1,
+              detOpts
+            )
+            const pass = equal && verifyOk
+            newResults.push({
+              id: id22,
+              algorithm: `SLH-DSA-SHA2-128s (${eName})`,
+              testCase: 'Deterministic Mode (FIPS 205 §10)',
+              referenceUrl: REF.slhdsa,
+              status: pass ? 'pass' : 'fail',
+              details: pass
+                ? `sig[${sig1.length}B] reproducible ✓ | verify ✓`
+                : `equal=${equal} verify=${verifyOk}`,
+            })
+            addLog(
+              `[${eName}] [id:${id22}] Deterministic: ${pass ? 'PASS' : 'FAIL'} | equal=${equal} verify=${verifyOk}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `slhdsa-deterministic-err-${eName}`,
+              algorithm: `SLH-DSA-SHA2-128s (${eName})`,
+              testCase: 'Deterministic Mode (FIPS 205 §10)',
+              referenceUrl: REF.slhdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id22}] Deterministic: ${errMessage}`)
           }
         }
       }

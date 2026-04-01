@@ -16,10 +16,26 @@ import {
   hsm_extractKeyValue,
   hsm_importMLDSAPublicKey,
   type MLDSASignOptions,
+  hsm_generateSLHDSAKeyPair,
+  hsm_slhdsaSign,
+  hsm_slhdsaVerify,
+  hsm_importSLHDSAPublicKey,
+  type SLHDSASignOptions,
+  type SLHDSAPreHash,
+  CKP_SLH_DSA_SHA2_128S,
 } from '../../../wasm/softhsm'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
 import { HsmReadyGuard } from '../hsm/shared'
+import { SLH_DSA_PARAM_SET_OPTIONS } from './softhsm/SoftHsmUI'
+
+// FIPS 205 §11 HashSLH-DSA approved hash functions only
+const FIPS205_SLH_PREHASH_OPTIONS = [
+  { id: 'sha256', label: 'SHA-256' },
+  { id: 'sha512', label: 'SHA-512' },
+  { id: 'shake128', label: 'SHAKE-128' },
+  { id: 'shake256', label: 'SHAKE-256' },
+] as const
 
 // Helper for Hex/ASCII toggle with editing
 const EditableDataDisplay: React.FC<{
@@ -449,15 +465,324 @@ const HsmSignPanel: React.FC = () => {
   )
 }
 
+// ── HSM SLH-DSA Sign Panel ────────────────────────────────────────────────────
+
+const HsmSlhDsaSignPanel: React.FC = () => {
+  const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
+    useHsmContext()
+
+  const [paramSetId, setParamSetId] = useState('sha2-128s')
+  const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [message, setMessage] = useState('Hello, PQC World!')
+  const [signature, setSignature] = useState<Uint8Array | null>(null)
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [preHash, setPreHash] = useState<'' | SLHDSAPreHash>('')
+  const [context, setContext] = useState('')
+  const [deterministic, setDeterministic] = useState(false)
+  const [extractable, setExtractable] = useState(false)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const getParamSet = () =>
+    SLH_DSA_PARAM_SET_OPTIONS.find((o) => o.id === paramSetId) ?? SLH_DSA_PARAM_SET_OPTIONS[0]
+
+  const getParamSetCkp = () => getParamSet().ckp ?? CKP_SLH_DSA_SHA2_128S
+
+  const changeParamSet = (id: string) => {
+    setParamSetId(id)
+    setHandles(null)
+    setSignature(null)
+    setVerifyResult(null)
+    setError(null)
+  }
+
+  const withLoading = async (op: string, fn: () => Promise<void>) => {
+    setLoadingOp(op)
+    try {
+      await fn()
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const buildOpts = (): SLHDSASignOptions | undefined => {
+    const opts: SLHDSASignOptions = {}
+    if (preHash) opts.preHash = preHash
+    // Context and deterministic only apply to pure SLH-DSA (not pre-hash variants)
+    if (!preHash) {
+      if (context) opts.context = new TextEncoder().encode(context)
+      if (deterministic) opts.deterministic = true
+    }
+    return Object.keys(opts).length > 0 ? opts : undefined
+  }
+
+  const doGenKeyPair = () =>
+    withLoading('gen', async () => {
+      setError(null)
+      setSignature(null)
+      setVerifyResult(null)
+      try {
+        const M = moduleRef.current
+        if (!M) throw new Error('Module not loaded — complete Token Setup first')
+        const ckp = getParamSetCkp()
+        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSessionRef.current, ckp)
+        setHandles({ pub: pubHandle, priv: privHandle })
+        const ts = new Date().toLocaleTimeString([], {
+          hour12: false,
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+        })
+        addHsmKey({
+          handle: pubHandle,
+          family: 'slh-dsa',
+          role: 'public',
+          label: `SLH-DSA-${paramSetId} Public Key`,
+          variant: paramSetId,
+          generatedAt: ts,
+        })
+        addHsmKey({
+          handle: privHandle,
+          family: 'slh-dsa',
+          role: 'private',
+          label: `SLH-DSA-${paramSetId} Private Key${extractable ? ' (extractable)' : ''}`,
+          variant: paramSetId,
+          generatedAt: ts,
+        })
+      } catch (e) {
+        setError(String(e))
+      }
+    })
+
+  const runDualEngineCrossCheck = async (sig: Uint8Array, opts: SLHDSASignOptions | undefined) => {
+    if (engineMode !== 'dual' || !crossCheckModuleRef.current || !handles) return
+    const M = moduleRef.current!
+    const checkM = crossCheckModuleRef.current
+    try {
+      const pubBytes = hsm_extractKeyValue(M, hSessionRef.current, handles.pub)
+      const rustPub = hsm_importSLHDSAPublicKey(
+        checkM,
+        hSessionRef.current,
+        getParamSetCkp(),
+        pubBytes
+      )
+      const checkOk = hsm_slhdsaVerify(checkM, hSessionRef.current, rustPub, message, sig, opts)
+      if (!checkOk) {
+        setError('Dual-Engine Parity Failure: Rust failed to verify C++ SLH-DSA signature')
+      } else {
+        addHsmLog({
+          id: Math.floor(Math.random() * 1_000_000),
+          timestamp: new Date().toISOString().slice(11, 19),
+          fn: 'Dual-Engine Parity',
+          rvName: 'SUCCESS',
+          rvHex: '0x00000000',
+          ms: 0,
+          ok: true,
+          engineName: 'dual',
+          args: `Rust Verify(C++ SLH-DSA-${paramSetId} Signature) → valid`,
+        })
+      }
+    } catch (e) {
+      setError('Cross-check failed: ' + String(e))
+    }
+  }
+
+  const doSign = () =>
+    withLoading('sign', async () => {
+      setError(null)
+      setVerifyResult(null)
+      try {
+        const M = moduleRef.current!
+        const opts = buildOpts()
+        const sig = hsm_slhdsaSign(M, hSessionRef.current, handles!.priv, message, opts)
+        setSignature(sig)
+        await runDualEngineCrossCheck(sig, opts)
+      } catch (e) {
+        setError(String(e))
+      }
+    })
+
+  const doVerify = () =>
+    withLoading('verify', async () => {
+      setError(null)
+      try {
+        const M = moduleRef.current!
+        const opts = buildOpts()
+        const ok = hsm_slhdsaVerify(M, hSessionRef.current, handles!.pub, message, signature!, opts)
+        setVerifyResult(ok)
+        if (ok) await runDualEngineCrossCheck(signature!, opts)
+      } catch (e) {
+        setError(String(e))
+      }
+    })
+
+  const ps = getParamSet()
+
+  return (
+    <div className="space-y-4">
+      <div className="glass-panel p-4 space-y-4">
+        <div className="flex items-center justify-between flex-wrap gap-2">
+          <h3 className="font-semibold text-sm">SLH-DSA Sign &amp; Verify (FIPS 205)</h3>
+          <FilterDropdown
+            selectedId={paramSetId}
+            onSelect={(id) => {
+              if (id !== 'All') changeParamSet(id)
+            }}
+            items={SLH_DSA_PARAM_SET_OPTIONS.map((o) => ({ id: o.id, label: o.label }))}
+            defaultLabel="SHA2-128s"
+            noContainer
+          />
+        </div>
+
+        <p className="text-xs text-muted-foreground font-mono">
+          pub: {ps.pub} B · sig: {ps.sig.toLocaleString()} B
+        </p>
+
+        <div className="space-y-1.5">
+          <label htmlFor="hsm-slhdsa-message" className="text-xs text-muted-foreground">
+            Message
+          </label>
+          <Input
+            id="hsm-slhdsa-message"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value)
+              setSignature(null)
+              setVerifyResult(null)
+            }}
+            className="text-sm font-mono"
+            placeholder="Enter message to sign…"
+          />
+        </div>
+
+        <div className="flex flex-wrap gap-3 text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="text-muted-foreground">Pre-hash:</span>
+            <FilterDropdown
+              selectedId={preHash || 'All'}
+              onSelect={(id) => {
+                setPreHash(id === 'All' ? '' : (id as SLHDSAPreHash))
+                setSignature(null)
+                setVerifyResult(null)
+              }}
+              items={[...FIPS205_SLH_PREHASH_OPTIONS]}
+              defaultLabel="Pure SLH-DSA"
+              noContainer
+            />
+          </div>
+          {!preHash && (
+            <>
+              <div className="flex items-center gap-1.5">
+                <label htmlFor="hsm-slhdsa-context" className="text-muted-foreground">
+                  Context:
+                </label>
+                <Input
+                  id="hsm-slhdsa-context"
+                  value={context}
+                  onChange={(e) => {
+                    setContext(e.target.value)
+                    setSignature(null)
+                    setVerifyResult(null)
+                  }}
+                  placeholder="optional"
+                  className="h-6 text-xs px-2 w-28"
+                />
+              </div>
+              <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={deterministic}
+                  onChange={(e) => {
+                    setDeterministic(e.target.checked)
+                    setSignature(null)
+                    setVerifyResult(null)
+                  }}
+                  className="accent-primary"
+                />
+                Deterministic
+              </label>
+            </>
+          )}
+        </div>
+
+        <div className="flex flex-wrap gap-2 items-center">
+          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+            {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            {handles ? '✓ Key Pair' : 'Generate Key Pair'}
+          </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
+          <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+            {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Sign
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!signature || anyLoading}
+            onClick={doVerify}
+          >
+            {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            Verify
+          </Button>
+        </div>
+
+        <div className="space-y-1.5 text-xs font-mono">
+          {handles && (
+            <div className="flex gap-3 text-muted-foreground">
+              <span>pubH={handles.pub}</span>
+              <span>privH={handles.priv}</span>
+            </div>
+          )}
+          {signature && (
+            <div className="flex gap-3 bg-muted rounded px-2 py-1">
+              <span className="text-muted-foreground w-16 shrink-0">Signature</span>
+              <span className="truncate">{toHexSnippetDsa(signature)}</span>
+              <span className="text-muted-foreground shrink-0">
+                {signature.length.toLocaleString()} B
+              </span>
+            </div>
+          )}
+          {verifyResult !== null && (
+            <div
+              role="status"
+              aria-live="polite"
+              aria-atomic="true"
+              className={`flex items-center gap-2 rounded px-2 py-1 ${verifyResult ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
+            >
+              {verifyResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
+              {verifyResult
+                ? 'Signature valid — SLH-DSA verify passed'
+                : 'Signature invalid — verification failed'}
+            </div>
+          )}
+        </div>
+
+        {error && <ErrorAlert message={error} />}
+      </div>
+    </div>
+  )
+}
+
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
 export const HsmSignCombinedPanel: React.FC = () => {
   const { isReady } = useHsmContext()
   const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>('pqc')
+  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa'>('ml-dsa')
   return (
     <HsmReadyGuard isReady={isReady}>
       <div className="space-y-4">
-        <div className="flex gap-2">
+        <div className="flex gap-2 flex-wrap">
           <Button
             variant="ghost"
             size="sm"
@@ -474,8 +799,37 @@ export const HsmSignCombinedPanel: React.FC = () => {
           >
             Classical (RSA · ECDSA · EdDSA)
           </Button>
+          {signFamily === 'pqc' && (
+            <>
+              <span className="text-muted-foreground text-xs self-center">|</span>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPqcAlgo('ml-dsa')}
+                className={`text-xs h-7 px-3 ${pqcAlgo === 'ml-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+              >
+                ML-DSA
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPqcAlgo('slh-dsa')}
+                className={`text-xs h-7 px-3 ${pqcAlgo === 'slh-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+              >
+                SLH-DSA
+              </Button>
+            </>
+          )}
         </div>
-        {signFamily === 'pqc' ? <HsmSignPanel /> : <HsmClassicalSignPanel />}
+        {signFamily === 'pqc' ? (
+          pqcAlgo === 'ml-dsa' ? (
+            <HsmSignPanel />
+          ) : (
+            <HsmSlhDsaSignPanel />
+          )
+        ) : (
+          <HsmClassicalSignPanel />
+        )}
       </div>
     </HsmReadyGuard>
   )

@@ -66,7 +66,7 @@ const INTENT_BOOSTS: Record<QueryIntent, Record<string, number>> = {
     glossary: 1.2,
     'authoritative-sources': 1.5,
   },
-  whats_new: { changelog: 3, 'app-guide': 1.5 },
+  whats_new: { changelog: 10, 'app-guide': 1.5 },
   general: { leaders: 1.5, threats: 1.5 },
 }
 
