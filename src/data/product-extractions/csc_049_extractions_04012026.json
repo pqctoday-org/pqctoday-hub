@@ -1,0 +1,28 @@
+[
+  {
+    "platform_name": "CyberZero Quantanaut",
+    "category": "Cryptographic Discovery Platforms",
+    "product_name": "Quantanaut",
+    "product_brief": "A cryptographic intelligence platform that illuminates hidden encryption risks and guides the transition to post-quantum security.",
+    "pqc_support": "Yes (guides the transition to post-quantum security)",
+    "pqc_capability_description": "The platform is designed to illuminate hidden encryption risks and guide organizations through the transition to post-quantum security. It maps cryptographic risk across infrastructure, vendors, and supply chains using structured models and visualizations. No specific PQC algorithms or implementation maturity levels are stated.",
+    "pqc_migration_priority": "Unknown",
+    "crypto_primitives": "Not stated (mentions \"unknown vendor algorithms\" as a risk but does not list specific primitives used by the product)",
+    "key_management_model": "Not stated",
+    "supported_blockchains": "Not stated",
+    "architecture_type": "Not stated",
+    "infrastructure_layer": "Security Stack, Cloud, On-Premises",
+    "license_type": "Commercial",
+    "license": "Proprietary (implied by \"Built in Canada by Canadians\" and commercial contact structure, but specific license type not explicitly named)",
+    "latest_version": "Unknown",
+    "release_date": "Unknown",
+    "fips_validated": "No",
+    "primary_platforms": "Not stated",
+    "target_industries": "Government, Defence, Critical Infrastructure",
+    "regulatory_status": "Not stated",
+    "pqc_roadmap_details": "Not stated (mentions guiding the transition but provides no specific timeline or algorithm choices)",
+    "consensus_mechanism": "Not stated",
+    "signature_schemes": "Not stated",
+    "authoritative_source_url": "Not stated"
+  }
+]

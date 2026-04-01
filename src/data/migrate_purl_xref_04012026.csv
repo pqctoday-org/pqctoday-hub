@@ -1,0 +1,623 @@
+software_name,purl,purl_type,purl_namespace,purl_name,match_confidence,status,registry_url,last_verified_date
+.NET 10 PQC,,,,,,not_found,,2026-04-01
+.NET System.Security.Cryptography,pkg:github/dotnet/runtime,github,dotnet,runtime,exact,matched,https://github.com/dotnet/runtime,2026-04-01
+01 Quantum IronCAP,,,,,,not_found,,2026-04-01
+1Password,,,,,,not_found,,2026-04-01
+A10 Networks Thunder ADC,,,,,,not_found,,2026-04-01
+AdGuard DNS,,,,,,not_found,,2026-04-01
+Adobe Acrobat Sign,,,,,,not_found,,2026-04-01
+Adva FSP 3000 S-Flex,,,,,,not_found,,2026-04-01
+Adva Network Security FSP 3000 S-Flex,,,,,,not_found,,2026-04-01
+Akamai Connected Cloud,,,,,,not_found,,2026-04-01
+Akamai Edge,,,,,,not_found,,2026-04-01
+Akamai PQC Edge,,,,,,not_found,,2026-04-01
+Algorand,pkg:github/algorand/go-algorand,github,algorand,go-algorand,exact,matched,https://github.com/algorand/go-algorand,2026-04-01
+Algorand FALCON Mainnet,,,,,,not_found,,2026-04-01
+Alibaba Cloud GVSM,,,,,,not_found,,2026-04-01
+Alpine Linux,,,,,,not_found,,2026-04-01
+Amazon CloudFront,,,,,,not_found,,2026-04-01
+Amazon Cognito,,,,,,not_found,,2026-04-01
+Amazon EKS,,,,,,not_found,,2026-04-01
+Amazon Web Services (AWS),,,,,,not_found,,2026-04-01
+AMD SEV-SNP (Secure Encrypted Virtualization),pkg:github/AMDESE/AMDSEV,github,AMDESE,AMDSEV,exact,matched,https://github.com/AMDESE/AMDSEV,2026-04-01
+AMD Versal Adaptive SoC,,,,,,not_found,,2026-04-01
+American Binary Ambit Client,,,,,,not_found,,2026-04-01
+Anchorage Digital,,,,,,not_found,,2026-04-01
+Android 16,,,,,,not_found,,2026-04-01
+ANKATech ANKASecure,,,,,,not_found,,2026-04-01
+Apache Guacamole,pkg:github/apache/guacamole-server,github,apache,guacamole-server,exact,matched,https://github.com/apache/guacamole-server,2026-04-01
+Apache HTTP Server,pkg:github/apache/httpd,github,apache,httpd,exact,matched,https://github.com/apache/httpd,2026-04-01
+Apache Tomcat,pkg:github/apache/tomcat,github,apache,tomcat,exact,matched,https://github.com/apache/tomcat,2026-04-01
+Apache Traffic Server,pkg:github/apache/trafficserver,github,apache,trafficserver,exact,matched,https://github.com/apache/trafficserver,2026-04-01
+Apple codesign,,,,,,not_found,,2026-04-01
+Apple PQ3 / CoreCrypto,,,,,,not_found,,2026-04-01
+Apple Safari,,,,,,not_found,,2026-04-01
+Applivery UEM PQC,,,,,,not_found,,2026-04-01
+AppViewX CERT+,,,,,,not_found,,2026-04-01
+AppViewX Spring 2026,,,,,,not_found,,2026-04-01
+Aptos,pkg:github/aptos-labs/aptos-core,github,aptos-labs,aptos-core,exact,matched,https://github.com/aptos-labs/aptos-core,2026-04-01
+Arch Linux,,,,,,not_found,,2026-04-01
+Arista EOS (Extensible Operating System),,,,,,not_found,,2026-04-01
+ARM Confidential Compute Architecture (CCA),pkg:github/ARM-software/cca-rmm-acs,github,ARM-software,cca-rmm-acs,exact,matched,https://github.com/ARM-software/cca-rmm-acs,2026-04-01
+ARM Trusted Firmware (TF-A),pkg:github/ARM-software/arm-trusted-firmware,github,ARM-software,arm-trusted-firmware,exact,matched,https://github.com/ARM-software/arm-trusted-firmware,2026-04-01
+ARM TrustZone,,,,,,not_found,,2026-04-01
+Arqit 6WIND Telco PQC,,,,,,not_found,,2026-04-01
+Arqit Encryption Intelligence,,,,,,not_found,,2026-04-01
+Ascertia ADSS PKI Server,,,,,,not_found,,2026-04-01
+Ascertia ADSS Server/SAM,,,,,,not_found,,2026-04-01
+Ascertia ADSS Signing Server,,,,,,not_found,,2026-04-01
+ASUSTOR ADM 5.1 PQC,,,,,,not_found,,2026-04-01
+AsyncSSH,pkg:github/ronf/asyncssh,github,ronf,asyncssh,exact,matched,https://github.com/ronf/asyncssh,2026-04-01
+Auth0 (Okta Customer Identity),,,,,,not_found,,2026-04-01
+AUTOCRYPT PKI-Vehicles,,,,,,not_found,,2026-04-01
+Avalanche,pkg:github/ava-labs/avalanchego,github,ava-labs,avalanchego,exact,matched,https://github.com/ava-labs/avalanchego,2026-04-01
+AWS API Gateway PQC,,,,,,not_found,,2026-04-01
+AWS Application Load Balancer (ALB),,,,,,not_found,,2026-04-01
+AWS CloudHSM,,,,,,not_found,,2026-04-01
+AWS Identity and Access Management (IAM),,,,,,not_found,,2026-04-01
+AWS KMS,,,,,,not_found,,2026-04-01
+AWS KMS (Cloud Gateway),,,,,,not_found,,2026-04-01
+AWS Payments Cryptography PQC,,,,,,not_found,,2026-04-01
+AWS Private CA PQC,,,,,,not_found,,2026-04-01
+AWS s2n-tls,pkg:github/aws/s2n-tls,github,aws,s2n-tls,exact,matched,https://github.com/aws/s2n-tls,2026-04-01
+AWS Transfer Family,,,,,,not_found,,2026-04-01
+AWS-LC,pkg:github/aws/aws-lc,github,aws,aws-lc,manual,matched,https://github.com/aws/aws-lc,2026-04-01
+Azure AKS,,,,,,not_found,,2026-04-01
+Azure Dedicated HSM (Marvell LiquidSecurity),,,,,,not_found,,2026-04-01
+Azure DevOps,,,,,,not_found,,2026-04-01
+Azure Key Vault,,,,,,not_found,,2026-04-01
+Barracuda Email Protection,,,,,,not_found,,2026-04-01
+BERTEN MLDS-B235,,,,,,not_found,,2026-04-01
+BERTEN MLKE-B135,,,,,,not_found,,2026-04-01
+Bitcoin Core,pkg:github/bitcoin/bitcoin,github,bitcoin,bitcoin,exact,matched,https://github.com/bitcoin/bitcoin,2026-04-01
+BitGo,,,,,,not_found,,2026-04-01
+BitLocker (Windows),,,,,,not_found,,2026-04-01
+Bitvise SSH Server,,,,,,not_found,,2026-04-01
+Bitwarden,,,,,,not_found,,2026-04-01
+BoringSSL,pkg:github/google/boringssl,github,google,boringssl,manual,matched,https://github.com/google/boringssl,2026-04-01
+Botan,pkg:github/randombit/botan,github,randombit,botan,exact,matched,https://github.com/randombit/botan,2026-04-01
+Bouncy Castle C# .NET,pkg:nuget/BouncyCastle.Cryptography,nuget,,BouncyCastle.Cryptography,manual,matched,https://www.nuget.org/packages/BouncyCastle.Cryptography,2026-04-01
+Bouncy Castle C\# / Java,,,,,,not_found,,2026-04-01
+Bouncy Castle Java,pkg:maven/org.bouncycastle/bcprov-jdk18on,maven,org.bouncycastle,bcprov-jdk18on,manual,matched,https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk18on,2026-04-01
+Bouncy Castle Java LTS,pkg:maven/org.bouncycastle/bcprov-lts8on,maven,org.bouncycastle,bcprov-lts8on,manual,matched,https://mvnrepository.com/artifact/org.bouncycastle/bcprov-lts8on,2026-04-01
+Brave Browser,,,,,,not_found,,2026-04-01
+Broadcom Avi (NSX ALB),,,,,,not_found,,2026-04-01
+Broadcom Emulex SecureHBA,,,,,,not_found,,2026-04-01
+Broadcom Symantec DLP,,,,,,not_found,,2026-04-01
+Broadcom Symantec SES,,,,,,not_found,,2026-04-01
+BTQ Bitcoin Quantum,,,,,,not_found,,2026-04-01
+BTQ Bitcoin Quantum Testnet,,,,,,not_found,,2026-04-01
+Caddy Server,,,,,,not_found,,2026-04-01
+Cardano,pkg:github/IntersectMBO/cardano-node,github,IntersectMBO,cardano-node,exact,matched,https://github.com/IntersectMBO/cardano-node,2026-04-01
+CAST KiviPQC-KEM,,,,,,not_found,,2026-04-01
+CATO Networks SASE,,,,,,not_found,,2026-04-01
+CentOS Stream,,,,,,not_found,,2026-04-01
+Check Point Quantum,,,,,,not_found,,2026-04-01
+Checkmarx One,,,,,,not_found,,2026-04-01
+ChromeOS,,,,,,not_found,,2026-04-01
+Ciena WaveLogic 6 Extreme,,,,,,not_found,,2026-04-01
+Cilium Service Mesh PQC,,,,,,not_found,,2026-04-01
+CIQ Rocky Linux CAVP PQC,,,,,,not_found,,2026-04-01
+CircleCI,,,,,,not_found,,2026-04-01
+CISA PQC Migration Framework,,,,,,not_found,,2026-04-01
+Cisco ASA (Adaptive Security Appliance),,,,,,not_found,,2026-04-01
+Cisco Catalyst 9500 PQC,,,,,,not_found,,2026-04-01
+Cisco Catalyst Center,,,,,,not_found,,2026-04-01
+Cisco Identity Services Engine (ISE),,,,,,not_found,,2026-04-01
+Cisco IOS XE PQC,,,,,,not_found,,2026-04-01
+Cisco IOS XR,,,,,,not_found,,2026-04-01
+Cisco Meraki MX (Cloud-Managed Firewall),,,,,,not_found,,2026-04-01
+Cisco Secure Client (AnyConnect),,,,,,not_found,,2026-04-01
+Cisco Webex,,,,,,not_found,,2026-04-01
+citadel_pqcrypto,pkg:github/citadel-protocol/citadel_pqcrypto,github,citadel-protocol,citadel_pqcrypto,exact,matched,https://github.com/citadel-protocol/citadel_pqcrypto,2026-04-01
+Citrix ADC (NetScaler),,,,,,not_found,,2026-04-01
+Citrix CVAD,,,,,,not_found,,2026-04-01
+Citrix Virtual Apps and Desktops,,,,,,not_found,,2026-04-01
+Claroty Platform,,,,,,not_found,,2026-04-01
+Cloudflare CIRCL,,,,,,not_found,,2026-04-01
+Cloudflare Edge Network,,,,,,not_found,,2026-04-01
+Cloudflare Zero Trust,,,,,,not_found,,2026-04-01
+CockroachDB Encryption,pkg:github/cockroachdb/cockroach,github,cockroachdb,cockroach,exact,matched,https://github.com/cockroachdb/cockroach,2026-04-01
+Codegic Khatim PKI Server,,,,,,not_found,,2026-04-01
+Codegic Khatim Sign Server,,,,,,not_found,,2026-04-01
+Cohesity DataCloud,,,,,,not_found,,2026-04-01
+Coinbase Custody,,,,,,not_found,,2026-04-01
+Commvault Cloud,,,,,,not_found,,2026-04-01
+Copper.co,,,,,,not_found,,2026-04-01
+coreboot,pkg:github/coreboot/coreboot,github,coreboot,coreboot,exact,matched,https://github.com/coreboot/coreboot,2026-04-01
+CoreDNS PQC DNSSEC,,,,,,not_found,,2026-04-01
+Cosmian covercrypt,pkg:github/Cosmian/cover_crypt,github,Cosmian,cover_crypt,exact,matched,https://github.com/Cosmian/cover_crypt,2026-04-01
+Cosmos/Tendermint,pkg:github/cosmos/cosmos-sdk,github,cosmos,cosmos-sdk,exact,matched,https://github.com/cosmos/cosmos-sdk,2026-04-01
+Cranium AI Security Platform,,,,,,not_found,,2026-04-01
+CREDEBL,,,,,,not_found,,2026-04-01
+CrowdStrike Falcon,,,,,,not_found,,2026-04-01
+Crucible,pkg:github/symbolicsoft/crucible,github,symbolicsoft,crucible,exact,matched,https://github.com/symbolicsoft/crucible,2026-04-01
+Crypto Quantique QDID Platform,,,,,,not_found,,2026-04-01
+Crypto++ (cryptopp),pkg:github/weidai11/cryptopp,github,weidai11,cryptopp,exact,matched,https://github.com/weidai11/cryptopp,2026-04-01
+Crypto4A QxEDGE,,,,,,not_found,,2026-04-01
+Crypto4A QxHSM,,,,,,not_found,,2026-04-01
+Crypto4A QxVault,,,,,,not_found,,2026-04-01
+Cryptomathic CKMS,,,,,,not_found,,2026-04-01
+Cryptomathic CrystalKey 360,,,,,,not_found,,2026-04-01
+CryptoNext COMPASS Network Probe,,,,,,not_found,,2026-04-01
+CryptoNext COMPASS Probe,,,,,,not_found,,2026-04-01
+CryptoNext Quantum-Safe Library,,,,,,not_found,,2026-04-01
+Cryptosense Analyzer,,,,,,not_found,,2026-04-01
+CRYSTALS Reference Implementations,,,,,,not_found,,2026-04-01
+CyberArk Conjur,,,,,,not_found,,2026-04-01
+Cyberint (Check Point),,,,,,not_found,,2026-04-01
+CZERTAINLY,,,,,,not_found,,2026-04-01
+Dashlane,,,,,,not_found,,2026-04-01
+Debian 12 (Bookworm),,,,,,not_found,,2026-04-01
+Delinea Secret Server,,,,,,not_found,,2026-04-01
+Dell BSAFE Crypto Module for C,,,,,,not_found,,2026-04-01
+Dell BSAFE Crypto-J,,,,,,not_found,,2026-04-01
+Dell PowerStore OS 4.0,,,,,,not_found,,2026-04-01
+DFNS,,,,,,not_found,,2026-04-01
+DigiCert CertCentral,,,,,,not_found,,2026-04-01
+DigiCert Device Trust Manager,,,,,,not_found,,2026-04-01
+DigiCert ONE,,,,,,not_found,,2026-04-01
+DigiCert SigningHub,,,,,,not_found,,2026-04-01
+DigiCert Software Trust Manager,,,,,,not_found,,2026-04-01
+DigiCert Trust Lifecycle Manager,,,,,,not_found,,2026-04-01
+DigiCert TrustCore SDK,,,,,,not_found,,2026-04-01
+Docker Engine 28.0,,,,,,not_found,,2026-04-01
+Dogtag Certificate System,,,,,,not_found,,2026-04-01
+Dragos Platform,,,,,,not_found,,2026-04-01
+Druva Data Resiliency Cloud,,,,,,not_found,,2026-04-01
+DuckDuckGo Browser,,,,,,not_found,,2026-04-01
+Dyber QuantaTPM,,,,,,not_found,,2026-04-01
+Eclipse Jetty,pkg:github/jetty/jetty.project,github,jetty,jetty.project,exact,matched,https://github.com/jetty/jetty.project,2026-04-01
+EJBCA,pkg:github/Keyfactor/ejbca-ce,github,Keyfactor,ejbca-ce,exact,matched,https://github.com/Keyfactor/ejbca-ce,2026-04-01
+Elastic Stack (ELK),,,,,,not_found,,2026-04-01
+Element (Matrix Protocol),,,,,,not_found,,2026-04-01
+Entrust Cryptographic Platform,,,,,,not_found,,2026-04-01
+Entrust Cryptographic Security Platform,,,,,,not_found,,2026-04-01
+Entrust Identity as a Service (IDaaS),,,,,,not_found,,2026-04-01
+Entrust KeyControl,,,,,,not_found,,2026-04-01
+Entrust nShield,,,,,,not_found,,2026-04-01
+Entrust PKI,,,,,,not_found,,2026-04-01
+Envoy Proxy,pkg:github/envoyproxy/envoy,github,envoyproxy,envoy,exact,matched,https://github.com/envoyproxy/envoy,2026-04-01
+Ericsson Quantum-Safe 5G,,,,,,not_found,,2026-04-01
+ESCRYPT Automotive PQC Solutions,,,,,,not_found,,2026-04-01
+essendi xc,,,,,,not_found,,2026-04-01
+Ethereum (Geth),pkg:github/ethereum/go-ethereum,github,ethereum,go-ethereum,exact,matched,https://github.com/ethereum/go-ethereum,2026-04-01
+EUDI Reference Wallet,pkg:github/eu-digital-identity-wallet/eudi-app-android-wallet-ui,github,eu-digital-identity-wallet,eudi-app-android-wallet-ui,exact,matched,https://github.com/eu-digital-identity-wallet/eudi-app-android-wallet-ui,2026-04-01
+EVERTRUST HORIZON,,,,,,not_found,,2026-04-01
+EVERTRUST STREAM,,,,,,not_found,,2026-04-01
+Eviden IDnomic PKI,,,,,,not_found,,2026-04-01
+Eviden Trustway Proteccio NetHSM,,,,,,not_found,,2026-04-01
+evolutionQ BasejumpQDN,,,,,,not_found,,2026-04-01
+evolutionQ BasejumpSKI,,,,,,not_found,,2026-04-01
+ExeQuantum,,,,,,not_found,,2026-04-01
+ExpressVPN Lightway,,,,,,not_found,,2026-04-01
+F5 ADSP PQC,,,,,,not_found,,2026-04-01
+F5 BIG-IP,,,,,,not_found,,2026-04-01
+Fastly Edge Cloud,,,,,,not_found,,2026-04-01
+Fastly PQC CDN,,,,,,not_found,,2026-04-01
+Fedora Linux,,,,,,not_found,,2026-04-01
+FileVault (macOS),,,,,,not_found,,2026-04-01
+Fireblocks,pkg:github/fireblocks/mpc-lib,github,fireblocks,mpc-lib,exact,matched,https://github.com/fireblocks/mpc-lib,2026-04-01
+FIS Modern Banking,,,,,,not_found,,2026-04-01
+Forcepoint DLP,,,,,,not_found,,2026-04-01
+Fortanix Data Security Manager,,,,,,not_found,,2026-04-01
+Fortanix PQC Central,,,,,,not_found,,2026-04-01
+Fortinet FortiAuthenticator,,,,,,not_found,,2026-04-01
+Fortinet FortiGate (FortiOS),,,,,,not_found,,2026-04-01
+Fortinet FortiGate-Rugged,,,,,,not_found,,2026-04-01
+Fortinet FortiManager,,,,,,not_found,,2026-04-01
+Fortinet FortiOS,,,,,,not_found,,2026-04-01
+Fortinet FortiWeb,,,,,,not_found,,2026-04-01
+Forward Edge-AI Isidore Quantum,,,,,,not_found,,2026-04-01
+Forward Edge-AI Space Router,,,,,,not_found,,2026-04-01
+FreeBSD,pkg:github/freebsd/freebsd-src,github,freebsd,freebsd-src,exact,matched,https://github.com/freebsd/freebsd-src,2026-04-01
+FreeRTOS,pkg:github/FreeRTOS/FreeRTOS,github,FreeRTOS,FreeRTOS,exact,matched,https://github.com/FreeRTOS/FreeRTOS,2026-04-01
+FusionAuth,pkg:github/FusionAuth/fusionauth-issues,github,FusionAuth,fusionauth-issues,exact,matched,https://github.com/FusionAuth/fusionauth-issues,2026-04-01
+Futurex Cloud,,,,,,not_found,,2026-04-01
+Futurex CryptoHub,,,,,,not_found,,2026-04-01
+Futurex Vectera Plus,,,,,,not_found,,2026-04-01
+G+D Quantum-Safe SIM Platform,,,,,,not_found,,2026-04-01
+Garantir GaraTrust,,,,,,not_found,,2026-04-01
+General Dynamics Mission,,,,,,not_found,,2026-04-01
+GitHub Actions,,,,,,not_found,,2026-04-01
+GitHub Copilot Security,,,,,,not_found,,2026-04-01
+GitHub SSH PQC,,,,,,not_found,,2026-04-01
+GitLab CI/CD,,,,,,not_found,,2026-04-01
+GlobalSign Atlas CLM,,,,,,not_found,,2026-04-01
+GlobalSign Digital Signing Service,,,,,,not_found,,2026-04-01
+Gmail / Google Workspace,,,,,,not_found,,2026-04-01
+GnuPG,pkg:github/gpg/gnupg,github,gpg,gnupg,exact,matched,https://github.com/gpg/gnupg,2026-04-01
+GnuTLS,pkg:github/gnutls/gnutls,github,gnutls,gnutls,manual,matched,https://gitlab.com/gnutls/gnutls,2026-04-01
+Go stdlib crypto/mlkem,pkg:go/golang.org/x/crypto,go,golang.org/x,crypto,manual,matched,https://pkg.go.dev/golang.org/x/crypto,2026-04-01
+go-jose v4,pkg:github/go-jose/go-jose,github,go-jose,go-jose,exact,matched,https://github.com/go-jose/go-jose,2026-04-01
+Google ALTS,,,,,,not_found,,2026-04-01
+Google Chrome,,,,,,not_found,,2026-04-01
+Google Cloud CDN,,,,,,not_found,,2026-04-01
+Google Cloud HSM,,,,,,not_found,,2026-04-01
+Google Cloud KMS,,,,,,not_found,,2026-04-01
+Google Cloud KMS (Cloud Gateway),,,,,,not_found,,2026-04-01
+Google Cloud Platform (GCP),,,,,,not_found,,2026-04-01
+Google GKE,,,,,,not_found,,2026-04-01
+Google OpenTitan,pkg:github/lowRISC/opentitan,github,lowRISC,opentitan,exact,matched,https://github.com/lowRISC/opentitan,2026-04-01
+Google Tink,pkg:github/tink-crypto/tink-java,github,tink-crypto,tink-java,exact,matched,https://github.com/tink-crypto/tink-java,2026-04-01
+GPG Code Signing,pkg:github/gpg/gnupg,github,gpg,gnupg,exact,matched,https://github.com/gpg/gnupg,2026-04-01
+HAProxy,pkg:github/haproxy/haproxy,github,haproxy,haproxy,exact,matched,https://github.com/haproxy/haproxy,2026-04-01
+hash-sigs,pkg:github/cisco/hash-sigs,github,cisco,hash-sigs,exact,matched,https://github.com/cisco/hash-sigs,2026-04-01
+HashiCorp Boundary,pkg:github/hashicorp/boundary,github,hashicorp,boundary,exact,matched,https://github.com/hashicorp/boundary,2026-04-01
+HashiCorp Consul Connect (Service Mesh),pkg:github/hashicorp/consul,github,hashicorp,consul,exact,matched,https://github.com/hashicorp/consul,2026-04-01
+HashiCorp Vault,pkg:github/hashicorp/vault,github,hashicorp,vault,exact,matched,https://github.com/hashicorp/vault,2026-04-01
+HashiCorp Vault Transit,pkg:github/hashicorp/vault,github,hashicorp,vault,exact,matched,https://github.com/hashicorp/vault,2026-04-01
+HiddenLayer Model Scanner,,,,,,not_found,,2026-04-01
+HIPAA (Quantum Security Rule),,,,,,not_found,,2026-04-01
+Hitachi DoMobile,,,,,,not_found,,2026-04-01
+HPE Alletra MP,,,,,,not_found,,2026-04-01
+HPE ProLiant Gen12,,,,,,not_found,,2026-04-01
+HQC Algorithm,pkg:github/PQClean/PQClean,github,PQClean,PQClean,exact,matched,https://github.com/PQClean/PQClean,2026-04-01
+Hyland OnBase,,,,,,not_found,,2026-04-01
+Hyperledger Aries (ACA-Py),pkg:github/hyperledger/aries-cloudagent-python,github,hyperledger,aries-cloudagent-python,exact,matched,https://github.com/hyperledger/aries-cloudagent-python,2026-04-01
+Hyperledger Besu,pkg:github/hyperledger/besu,github,hyperledger,besu,exact,matched,https://github.com/hyperledger/besu,2026-04-01
+Hyperledger Fabric,pkg:github/hyperledger/fabric,github,hyperledger,fabric,exact,matched,https://github.com/hyperledger/fabric,2026-04-01
+Hyperledger Fabric 3.0 PQC,,,,,,not_found,,2026-04-01
+I4P Trident HSM,,,,,,not_found,,2026-04-01
+IBM Aspera,,,,,,not_found,,2026-04-01
+IBM Cloud HSM (Utimaco),,,,,,not_found,,2026-04-01
+IBM Db2,,,,,,not_found,,2026-04-01
+IBM Guardium Key Lifecycle Manager,,,,,,not_found,,2026-04-01
+IBM Guardium Quantum Safe,,,,,,not_found,,2026-04-01
+IBM Guardium Safe,,,,,,not_found,,2026-04-01
+IBM LinuxONE PQC,,,,,,not_found,,2026-04-01
+IBM MQ,,,,,,not_found,,2026-04-01
+IBM Quantum Safe Toolkit,,,,,,not_found,,2026-04-01
+IBM Security Guardium Data Protection,,,,,,not_found,,2026-04-01
+IBM Storage Scale 5.2,,,,,,not_found,,2026-04-01
+IBM z/OS Cryptographic Services (ICSF),,,,,,not_found,,2026-04-01
+IBM z/VSE,,,,,,not_found,,2026-04-01
+IBM z17 Quantum Safe,,,,,,not_found,,2026-04-01
+ID Quantique Cerberis XGR QKD,,,,,,not_found,,2026-04-01
+ID Quantique Quantis QRNG,,,,,,not_found,,2026-04-01
+IDEMIA Digital Identity Platform,,,,,,not_found,,2026-04-01
+IDEMIA PQC Accelerator,,,,,,not_found,,2026-04-01
+IDEMIA PQC Secure Element,,,,,,not_found,,2026-04-01
+Imperva WAF,,,,,,not_found,,2026-04-01
+Infineon OPTIGA TPM SLB 9672,,,,,,not_found,,2026-04-01
+Infineon PSOC Control C3 PQC,,,,,,not_found,,2026-04-01
+Infineon TEGRION SLC27 PQC,,,,,,not_found,,2026-04-01
+Intel Platform Trust Technology (PTT),,,,,,not_found,,2026-04-01
+Intel TDX (Trust Domain Extensions),pkg:github/intel/tdx,github,intel,tdx,exact,matched,https://github.com/intel/tdx,2026-04-01
+Internxt Drive PQC,,,,,,not_found,,2026-04-01
+Inturai PQ Station ESP32,,,,,,not_found,,2026-04-01
+iOS 26 / macOS 26,,,,,,not_found,,2026-04-01
+IOTA,,,,,,not_found,,2026-04-01
+IP Cores PQC1,,,,,,not_found,,2026-04-01
+IronCore Labs SaaS Shield,,,,,,not_found,,2026-04-01
+ISARA Advance,,,,,,not_found,,2026-04-01
+ISARA Radiate,,,,,,not_found,,2026-04-01
+ISC BIND 9.21,,,,,,not_found,,2026-04-01
+Istio Service Mesh,pkg:github/istio/istio,github,istio,istio,exact,matched,https://github.com/istio/istio,2026-04-01
+Ivanti Neurons for MDM,,,,,,not_found,,2026-04-01
+Jamf Pro,,,,,,not_found,,2026-04-01
+Java 24 PQC Runtime,,,,,,not_found,,2026-04-01
+Java jarsigner (JDK),pkg:github/openjdk/jdk,github,openjdk,jdk,exact,matched,https://github.com/openjdk/jdk,2026-04-01
+Jenkins,pkg:github/jenkinsci/jenkins,github,jenkinsci,jenkins,exact,matched,https://github.com/jenkinsci/jenkins,2026-04-01
+JetBrains TeamCity 2026.1,,,,,,not_found,,2026-04-01
+JFrog Artifactory,,,,,,not_found,,2026-04-01
+jose4j,,,,,,not_found,,2026-04-01
+jsonwebtoken (auth0),pkg:github/auth0/node-jsonwebtoken,github,auth0,node-jsonwebtoken,exact,matched,https://github.com/auth0/node-jsonwebtoken,2026-04-01
+JumpCloud Directory Platform,,,,,,not_found,,2026-04-01
+Juniper Junos OS,,,,,,not_found,,2026-04-01
+Juniper SRX Series Firewalls,,,,,,not_found,,2026-04-01
+Keeper Security,,,,,,not_found,,2026-04-01
+Keycloak,pkg:github/keycloak/keycloak,github,keycloak,keycloak,exact,matched,https://github.com/keycloak/keycloak,2026-04-01
+Keyfactor 2026 Trends,,,,,,not_found,,2026-04-01
+Keyfactor AgileSec Analytics,,,,,,not_found,,2026-04-01
+Keyfactor Command,,,,,,not_found,,2026-04-01
+Keyfactor EJBCA,pkg:github/Keyfactor/ejbca-ce,github,Keyfactor,ejbca-ce,exact,matched,https://github.com/Keyfactor/ejbca-ce,2026-04-01
+Keysight CyPerf,,,,,,not_found,,2026-04-01
+Keysight Inspector,,,,,,not_found,,2026-04-01
+Kong API Gateway,pkg:github/Kong/kong,github,Kong,kong,exact,matched,https://github.com/Kong/kong,2026-04-01
+Kubernetes,pkg:github/kubernetes/kubernetes,github,kubernetes,kubernetes,exact,matched,https://github.com/kubernetes/kubernetes,2026-04-01
+Kudelski IoT Security Platform,,,,,,not_found,,2026-04-01
+Lakera Guard,,,,,,not_found,,2026-04-01
+Landis+Gyr SEALSQ Smart Grid PKI,,,,,,not_found,,2026-04-01
+Lattice MachXO5-NX,,,,,,not_found,,2026-04-01
+leancrypto,pkg:github/wolfeidau/leancrypto,github,wolfeidau,leancrypto,exact,matched,https://github.com/wolfeidau/leancrypto,2026-04-01
+Ledger Enterprise,,,,,,not_found,,2026-04-01
+Let's Encrypt,pkg:github/letsencrypt/boulder,github,letsencrypt,boulder,exact,matched,https://github.com/letsencrypt/boulder,2026-04-01
+liboqs,pkg:github/open-quantum-safe/liboqs,github,open-quantum-safe,liboqs,exact,matched,https://github.com/open-quantum-safe/liboqs,2026-04-01
+liboqs-rust (oqs crate),pkg:cargo/oqs,cargo,,oqs,exact,matched,https://crates.io/crates/oqs,2026-04-01
+LibreSSL,pkg:github/libressl/portable,github,libressl,portable,manual,matched,https://github.com/libressl/portable,2026-04-01
+Libreswan,pkg:github/libreswan/libreswan,github,libreswan,libreswan,exact,matched,https://github.com/libreswan/libreswan,2026-04-01
+libssh,,,,,,not_found,,2026-04-01
+Linkerd,pkg:github/linkerd/linkerd2,github,linkerd,linkerd2,exact,matched,https://github.com/linkerd/linkerd2,2026-04-01
+Linux IMA/EVM,,,,,,not_found,,2026-04-01
+Linux LUKS / dm-crypt,,,,,,not_found,,2026-04-01
+LTO-10 PQC-Ready Tape,,,,,,not_found,,2026-04-01
+Mandiant (Google Cloud),,,,,,not_found,,2026-04-01
+MariaDB Server,pkg:github/MariaDB/server,github,MariaDB,server,exact,matched,https://github.com/MariaDB/server,2026-04-01
+Marvell LiquidSecurity 2,,,,,,not_found,,2026-04-01
+Mastercard Quantum-Resistant Contactless,,,,,,not_found,,2026-04-01
+Mavenir Cloud RAN,,,,,,not_found,,2026-04-01
+Mbed TLS,pkg:github/Mbed-TLS/mbedtls,github,Mbed-TLS,mbedtls,exact,matched,https://github.com/Mbed-TLS/mbedtls,2026-04-01
+Microchip ATECC608B,pkg:github/MicrochipTech/cryptoauthlib,github,MicrochipTech,cryptoauthlib,exact,matched,https://github.com/MicrochipTech/cryptoauthlib,2026-04-01
+Microchip MEC175xB PQC Controllers,,,,,,not_found,,2026-04-01
+Microchip PolarFire,,,,,,not_found,,2026-04-01
+Microsoft AD CS,,,,,,not_found,,2026-04-01
+Microsoft Azure,,,,,,not_found,,2026-04-01
+Microsoft Defender for Endpoint,,,,,,not_found,,2026-04-01
+Microsoft Edge,,,,,,not_found,,2026-04-01
+Microsoft Entra External ID,,,,,,not_found,,2026-04-01
+Microsoft Entra ID,,,,,,not_found,,2026-04-01
+Microsoft Entra Verified ID,,,,,,not_found,,2026-04-01
+Microsoft Hyper-V,,,,,,not_found,,2026-04-01
+Microsoft Intune,,,,,,not_found,,2026-04-01
+Microsoft RDS,,,,,,not_found,,2026-04-01
+Microsoft Remote Desktop Services (RDS),,,,,,not_found,,2026-04-01
+Microsoft SignTool,,,,,,not_found,,2026-04-01
+Microsoft SymCrypt,pkg:github/microsoft/SymCrypt,github,microsoft,SymCrypt,exact,matched,https://github.com/microsoft/SymCrypt,2026-04-01
+MikroTik RouterOS,,,,,,not_found,,2026-04-01
+Mimecast Cloud Integrated,,,,,,not_found,,2026-04-01
+MinIO Enterprise,,,,,,not_found,,2026-04-01
+mlkem-native,pkg:github/pq-code-package/mlkem-native,github,pq-code-package,mlkem-native,exact,matched,https://github.com/pq-code-package/mlkem-native,2026-04-01
+MongoDB Queryable Encryption,pkg:github/mongodb/libmongocrypt,github,mongodb,libmongocrypt,exact,matched,https://github.com/mongodb/libmongocrypt,2026-04-01
+Mozilla Firefox,,,,,,not_found,,2026-04-01
+MTG AG CARA,,,,,,not_found,,2026-04-01
+MTG AG CLM,,,,,,not_found,,2026-04-01
+MTG AG KMS,,,,,,not_found,,2026-04-01
+Mullvad VPN App,,,,,,not_found,,2026-04-01
+MySQL Community Server,pkg:github/mysql/mysql-server,github,mysql,mysql-server,exact,matched,https://github.com/mysql/mysql-server,2026-04-01
+MySQL Enterprise Encryption,,,,,,not_found,,2026-04-01
+NEC 5G Core,,,,,,not_found,,2026-04-01
+NetApp ONTAP 9.16,,,,,,not_found,,2026-04-01
+Netskope Intelligent DLP,,,,,,not_found,,2026-04-01
+Netskope One PQC,,,,,,not_found,,2026-04-01
+Nexus Group Certificate Manager,,,,,,not_found,,2026-04-01
+Nginx,pkg:github/nginx/nginx,github,nginx,nginx,exact,matched,https://github.com/nginx/nginx,2026-04-01
+NGINX Plus,,,,,,not_found,,2026-04-01
+NGINX Plus R33 PQC,,,,,,not_found,,2026-04-01
+Nimbus JOSE+JWT,,,,,,not_found,,2026-04-01
+NIST SP 800-227 PQC Guidance,,,,,,not_found,,2026-04-01
+NixOS,pkg:github/NixOS/nixpkgs,github,NixOS,nixpkgs,exact,matched,https://github.com/NixOS/nixpkgs,2026-04-01
+noble-post-quantum,pkg:github/paulmillr/noble-post-quantum,github,paulmillr,noble-post-quantum,exact,matched,https://github.com/paulmillr/noble-post-quantum,2026-04-01
+Node.js,pkg:github/nodejs/node,github,nodejs,node,exact,matched,https://github.com/nodejs/node,2026-04-01
+Nokia Quantum-Safe Networks,,,,,,not_found,,2026-04-01
+NordVPN,,,,,,not_found,,2026-04-01
+Notary Project,pkg:github/notaryproject/notation,github,notaryproject,notation,exact,matched,https://github.com/notaryproject/notation,2026-04-01
+Nozomi Networks Guardian,,,,,,not_found,,2026-04-01
+NSS (Mozilla),,,,,,not_found,,2026-04-01
+Nutanix AHV,,,,,,not_found,,2026-04-01
+Nvidia cuPQC,,,,,,not_found,,2026-04-01
+NVIDIA cuPQC SDK,,,,,,not_found,,2026-04-01
+NXP EdgeLock SE051H,,,,,,not_found,,2026-04-01
+NXP i.MX 94 PQC Processor,,,,,,not_found,,2026-04-01
+NXP JCOP 4.5 P71D600,,,,,,not_found,,2026-04-01
+NXP OrangeBox 2.0 PQC,,,,,,not_found,,2026-04-01
+NXP SE051 Secure Element,,,,,,not_found,,2026-04-01
+OAuth 2.0 / OpenID Connect (OIDC),,,,,,not_found,,2026-04-01
+Okta Integration Network,,,,,,not_found,,2026-04-01
+Okta Workforce Identity,,,,,,not_found,,2026-04-01
+OpenSSH,pkg:github/openssh/openssh-portable,github,openssh,openssh-portable,exact,matched,https://github.com/openssh/openssh-portable,2026-04-01
+OpenSSL,pkg:github/openssl/openssl,github,openssl,openssl,manual,matched,https://github.com/openssl/openssl,2026-04-01
+openSUSE Leap,,,,,,not_found,,2026-04-01
+OpenText Content Cloud,,,,,,not_found,,2026-04-01
+OpenVPN,pkg:github/OpenVPN/openvpn,github,OpenVPN,openvpn,exact,matched,https://github.com/OpenVPN/openvpn,2026-04-01
+OpenWrt,pkg:github/openwrt/openwrt,github,openwrt,openwrt,exact,matched,https://github.com/openwrt/openwrt,2026-04-01
+Opera Browser PQC,,,,,,not_found,,2026-04-01
+OPNsense,pkg:github/opnsense/core,github,opnsense,core,exact,matched,https://github.com/opnsense/core,2026-04-01
+oqs-provider,pkg:github/open-quantum-safe/oqs-provider,github,open-quantum-safe,oqs-provider,exact,matched,https://github.com/open-quantum-safe/oqs-provider,2026-04-01
+Oracle AI Database 26ai,,,,,,not_found,,2026-04-01
+Oracle Key Vault,,,,,,not_found,,2026-04-01
+Oracle Linux 9.7,,,,,,not_found,,2026-04-01
+OVHcloud QRNG SSL,,,,,,not_found,,2026-04-01
+PacketLight PQC Optical Encryption,,,,,,not_found,,2026-04-01
+Palo Alto Cortex XDR,,,,,,not_found,,2026-04-01
+Palo Alto GlobalProtect,,,,,,not_found,,2026-04-01
+Palo Alto PAN-OS,,,,,,not_found,,2026-04-01
+Palo Alto Prisma SASE,,,,,,not_found,,2026-04-01
+Palo Alto Quantum-Safe Security,,,,,,not_found,,2026-04-01
+Paradym (Animo Solutions),,,,,,not_found,,2026-04-01
+Paramiko (Python SSH),pkg:github/paramiko/paramiko,github,paramiko,paramiko,exact,matched,https://github.com/paramiko/paramiko,2026-04-01
+Patero PQC Gateway,,,,,,not_found,,2026-04-01
+Payara Server,pkg:github/payara/Payara,github,payara,Payara,exact,matched,https://github.com/payara/Payara,2026-04-01
+pfSense Community Edition,pkg:github/pfsense/pfsense,github,pfsense,pfsense,exact,matched,https://github.com/pfsense/pfsense,2026-04-01
+Ping Identity PingFederate,,,,,,not_found,,2026-04-01
+Polkadot/Substrate,pkg:github/nicola-mazzocca/BPQS-node,github,nicola-mazzocca,BPQS-node,exact,matched,https://github.com/nicola-mazzocca/BPQS-node,2026-04-01
+Postfix 3.10 PQC,,,,,,not_found,,2026-04-01
+PostgreSQL,pkg:github/postgres/postgres,github,postgres,postgres,exact,matched,https://github.com/postgres/postgres,2026-04-01
+PostgreSQL pgcrypto,,,,,,not_found,,2026-04-01
+PQ Code Package,,,,,,not_found,,2026-04-01
+pqc-flow,pkg:github/CipherIQ/pqc-flow,github,CipherIQ,pqc-flow,exact,matched,https://github.com/CipherIQ/pqc-flow,2026-04-01
+PQC-LEO,pkg:github/crt26/pqc-evaluation-tools,github,crt26,pqc-evaluation-tools,exact,matched,https://github.com/crt26/pqc-evaluation-tools,2026-04-01
+PQChat Quantum-Safe Messaging,,,,,,not_found,,2026-04-01
+PQClean,pkg:github/PQClean/PQClean,github,PQClean,PQClean,exact,matched,https://github.com/PQClean/PQClean,2026-04-01
+pqcrypto,pkg:cargo/pqcrypto,cargo,,pqcrypto,exact,matched,https://crates.io/crates/pqcrypto,2026-04-01
+pqcrypto Python Library,,,,,,not_found,,2026-04-01
+PQCryptoLib-Core,,,,,,not_found,,2026-04-01
+pqcscan,pkg:github/anvilsecure/pqcscan,github,anvilsecure,pqcscan,exact,matched,https://github.com/anvilsecure/pqcscan,2026-04-01
+pqm4,pkg:github/mupq/pqm4,github,mupq,pqm4,exact,matched,https://github.com/mupq/pqm4,2026-04-01
+PQMicroLib-Core,,,,,,not_found,,2026-04-01
+PQSecure Technologies HW IP,,,,,,not_found,,2026-04-01
+PQShield Core,,,,,,not_found,,2026-04-01
+PQShield PQSDK,,,,,,not_found,,2026-04-01
+Procivis One,pkg:github/procivis/one-open-core,github,procivis,one-open-core,exact,matched,https://github.com/procivis/one-open-core,2026-04-01
+Project Eleven Solana PQC,,,,,,not_found,,2026-04-01
+Proofpoint Aegis,,,,,,not_found,,2026-04-01
+Protect AI Guardian,,,,,,not_found,,2026-04-01
+Proton Mail,,,,,,not_found,,2026-04-01
+Proton Mail PQC OpenPGP,,,,,,not_found,,2026-04-01
+Proton VPN,,,,,,not_found,,2026-04-01
+Pure Storage Purity//FA 6.6,,,,,,not_found,,2026-04-01
+PuTTY,,,,,,not_found,,2026-04-01
+PyCryptodome,pkg:github/Legrandin/pycryptodome,github,Legrandin,pycryptodome,exact,matched,https://github.com/Legrandin/pycryptodome,2026-04-01
+PyJWT,pkg:github/jpadilla/pyjwt,github,jpadilla,pyjwt,exact,matched,https://github.com/jpadilla/pyjwt,2026-04-01
+Q-CORE Q-Scanner,,,,,,not_found,,2026-04-01
+QAN XLINK PQC,,,,,,not_found,,2026-04-01
+QNu Labs QShield,,,,,,not_found,,2026-04-01
+QRL,pkg:github/theQRL/QRL,github,theQRL,QRL,exact,matched,https://github.com/theQRL/QRL,2026-04-01
+QRL 2.0 (Quantum Resistant Ledger),,,,,,not_found,,2026-04-01
+Qrypt BLAST SDK,,,,,,not_found,,2026-04-01
+Qrypt VPN for NVIDIA Jetson,,,,,,not_found,,2026-04-01
+Qualcomm Snapdragon SPU,,,,,,not_found,,2026-04-01
+Qualcomm Snapdragon Trusted Execution Environment,,,,,,not_found,,2026-04-01
+Qualys Cloud Platform,,,,,,not_found,,2026-04-01
+Quantinuum Quantum Origin,,,,,,not_found,,2026-04-01
+Quantropi QiSpace STM32,,,,,,not_found,,2026-04-01
+QuintessenceLabs qSOC,,,,,,not_found,,2026-04-01
+QuintessenceLabs qStream,,,,,,not_found,,2026-04-01
+QuSecure QuProtect R3,,,,,,not_found,,2026-04-01
+QuSecure QuProtect Tactical,,,,,,not_found,,2026-04-01
+QVerse,,,,,,not_found,,2026-04-01
+R3 Corda,pkg:github/corda/corda,github,corda,corda,exact,matched,https://github.com/corda/corda,2026-04-01
+Rakuten Symphony (Symworld),,,,,,not_found,,2026-04-01
+Rambus QSE IP,,,,,,not_found,,2026-04-01
+Rapid7 InsightVM,,,,,,not_found,,2026-04-01
+Recorded Future,,,,,,not_found,,2026-04-01
+Red Hat Enterprise Linux 10 PQC,,,,,,not_found,,2026-04-01
+Red Hat Enterprise Linux 9,,,,,,not_found,,2026-04-01
+Red Hat OpenShift,,,,,,not_found,,2026-04-01
+Red Hat OpenShift Service Mesh PQC,,,,,,not_found,,2026-04-01
+Redis,pkg:github/redis/redis,github,redis,redis,exact,matched,https://github.com/redis/redis,2026-04-01
+Renesas Veridify PQC for RA MCUs,,,,,,not_found,,2026-04-01
+Resquant Crypto Accelerator,,,,,,not_found,,2026-04-01
+Rocky Linux,,,,,,not_found,,2026-04-01
+RPM Signing (rpm-sign),pkg:github/rpm-software-management/rpm,github,rpm-software-management,rpm,exact,matched,https://github.com/rpm-software-management/rpm,2026-04-01
+Rubrik Security Cloud,,,,,,not_found,,2026-04-01
+RustCrypto ml-dsa,pkg:cargo/ml-dsa,cargo,,ml-dsa,exact,matched,https://crates.io/crates/ml-dsa,2026-04-01
+RustCrypto ml-kem,pkg:cargo/ml-kem,cargo,,ml-kem,exact,matched,https://crates.io/crates/ml-kem,2026-04-01
+RustCrypto slh-dsa,pkg:cargo/slh-dsa,cargo,,slh-dsa,exact,matched,https://crates.io/crates/slh-dsa,2026-04-01
+rustls,pkg:github/rustls/rustls,github,rustls,rustls,exact,matched,https://github.com/rustls/rustls,2026-04-01
+SafeLogic CryptoComply,,,,,,not_found,,2026-04-01
+SAML 2.0,,,,,,not_found,,2026-04-01
+Samsung Knox Quantum-Safe,,,,,,not_found,,2026-04-01
+Samsung Networks 5G Core,,,,,,not_found,,2026-04-01
+Samsung S3SSE2A eSE,,,,,,not_found,,2026-04-01
+SandboxAQ AQtive Guard,,,,,,not_found,,2026-04-01
+SandboxAQ Sandwich,,,,,,not_found,,2026-04-01
+SAP Cryptographic Library,,,,,,not_found,,2026-04-01
+SAP Cryptographic Library 8.6 PQC,,,,,,not_found,,2026-04-01
+Scality RING9,,,,,,not_found,,2026-04-01
+SEALSQ QS7001,,,,,,not_found,,2026-04-01
+SEALSQ Quantum Shield,,,,,,not_found,,2026-04-01
+SEALSQ QVault TPM,,,,,,not_found,,2026-04-01
+Sectigo 2026 Predictions,,,,,,not_found,,2026-04-01
+Sectigo Cert Manager 2026,,,,,,not_found,,2026-04-01
+Sectigo Certificate Manager,,,,,,not_found,,2026-04-01
+Sectigo Certificate Manager (SCM),,,,,,not_found,,2026-04-01
+Secure-IC Securyzr,,,,,,not_found,,2026-04-01
+Securosys CloudHSM,,,,,,not_found,,2026-04-01
+Securosys Primus HSM,,,,,,not_found,,2026-04-01
+Senetas CN7000 Series,,,,,,not_found,,2026-04-01
+Sequoia-PGP PQC,,,,,,not_found,,2026-04-01
+Session Protocol V2 PQC,,,,,,not_found,,2026-04-01
+Siemens SINEMA Remote Connect,,,,,,not_found,,2026-04-01
+Signal,pkg:github/signalapp/libsignal,github,signalapp,libsignal,exact,matched,https://github.com/signalapp/libsignal,2026-04-01
+Signiant Media Shuttle,,,,,,not_found,,2026-04-01
+SignQuantum PQC E-Signature,,,,,,not_found,,2026-04-01
+SignServer,pkg:github/Keyfactor/signserver-ce,github,Keyfactor,signserver-ce,exact,matched,https://github.com/Keyfactor/signserver-ce,2026-04-01
+sigstore/cosign,pkg:github/sigstore/cosign,github,sigstore,cosign,exact,matched,https://github.com/sigstore/cosign,2026-04-01
+SimpleX Chat PQC,,,,,,not_found,,2026-04-01
+SK Telecom 5G PQC SIM,,,,,,not_found,,2026-04-01
+smallstep Certificate Authority,pkg:github/smallstep/certificates,github,smallstep,certificates,exact,matched,https://github.com/smallstep/certificates,2026-04-01
+Snort IDS/IPS,pkg:github/snort3/snort3,github,snort3,snort3,exact,matched,https://github.com/snort3/snort3,2026-04-01
+SOC 2 (Quantum Trust Criteria),,,,,,not_found,,2026-04-01
+SoftHSM2,pkg:github/opendnssec/SoftHSMv2,github,opendnssec,SoftHSMv2,exact,matched,https://github.com/opendnssec/SoftHSMv2,2026-04-01
+Solana,pkg:github/solana-labs/solana,github,solana-labs,solana,exact,matched,https://github.com/solana-labs/solana,2026-04-01
+Sonatype Nexus,,,,,,not_found,,2026-04-01
+SOTI MobiControl,,,,,,not_found,,2026-04-01
+Sphereon SSI SDK,pkg:github/Sphereon-Opensource/SSI-SDK,github,Sphereon-Opensource,SSI-SDK,exact,matched,https://github.com/Sphereon-Opensource/SSI-SDK,2026-04-01
+Spherity CARO Pharma PQC,,,,,,not_found,,2026-04-01
+Splunk Enterprise,,,,,,not_found,,2026-04-01
+Spring Security OAuth2,pkg:github/spring-projects/spring-security,github,spring-projects,spring-security,exact,matched,https://github.com/spring-projects/spring-security,2026-04-01
+SpruceID,,,,,,not_found,,2026-04-01
+SQL Server TDE/Always Encrypted,,,,,,not_found,,2026-04-01
+SSLyze,pkg:github/nabla-c0d3/sslyze,github,nabla-c0d3,sslyze,exact,matched,https://github.com/nabla-c0d3/sslyze,2026-04-01
+STMicroelectronics ST33KTPM,,,,,,not_found,,2026-04-01
+STMicroelectronics X-CUBE-PQC,,,,,,not_found,,2026-04-01
+strongSwan,pkg:github/strongswan/strongswan,github,strongswan,strongswan,exact,matched,https://github.com/strongswan/strongswan,2026-04-01
+STV Post-Quantum Secure Drones,,,,,,not_found,,2026-04-01
+Sui,pkg:github/MystenLabs/sui,github,MystenLabs,sui,exact,matched,https://github.com/MystenLabs/sui,2026-04-01
+SUPERCOP,,,,,,not_found,,2026-04-01
+Surfshark,,,,,,not_found,,2026-04-01
+Suricata IDS/IPS,pkg:github/OISF/suricata,github,OISF,suricata,exact,matched,https://github.com/OISF/suricata,2026-04-01
+SUSE Linux Enterprise Server (SLES),,,,,,not_found,,2026-04-01
+SWIFT Quantum-Safe Messaging,,,,,,not_found,,2026-04-01
+Tailscale PQC,,,,,,not_found,,2026-04-01
+Taurus SA,,,,,,not_found,,2026-04-01
+Telegram,,,,,,not_found,,2026-04-01
+Teleport Access Platform,pkg:github/gravitational/teleport,github,gravitational,teleport,exact,matched,https://github.com/gravitational/teleport,2026-04-01
+Tenable Nessus Professional,,,,,,not_found,,2026-04-01
+testssl.sh,pkg:github/drwetter/testssl.sh,github,drwetter,testssl.sh,exact,matched,https://github.com/drwetter/testssl.sh,2026-04-01
+Thales 5G Quantum-Safe SIM,,,,,,not_found,,2026-04-01
+Thales CipherTrust Cloud Key Manager,,,,,,not_found,,2026-04-01
+Thales CipherTrust Data Security Platform,,,,,,not_found,,2026-04-01
+Thales CipherTrust Manager,,,,,,not_found,,2026-04-01
+Thales High Speed Encryptor (HSE),,,,,,not_found,,2026-04-01
+Thales Luna Cloud HSM (DPoD),,,,,,not_found,,2026-04-01
+Thales Luna HSM,,,,,,not_found,,2026-04-01
+Thales Luna T-Series HSM,,,,,,not_found,,2026-04-01
+Thales MISTRAL Encryptor,,,,,,not_found,,2026-04-01
+Thales MultiApp 5.2 Premium PQC,,,,,,not_found,,2026-04-01
+Thales payShield 10K,,,,,,not_found,,2026-04-01
+Threema PQC,,,,,,not_found,,2026-04-01
+Thunderbird PQC (OpenPGP),,,,,,not_found,,2026-04-01
+TianoCore EDK2 (UEFI Firmware),pkg:github/tianocore/edk2,github,tianocore,edk2,exact,matched,https://github.com/tianocore/edk2,2026-04-01
+TikTok PQC Data Protection,,,,,,not_found,,2026-04-01
+TOPPAN SecureBridge HPKI PQC,,,,,,not_found,,2026-04-01
+Tor Browser,,,,,,not_found,,2026-04-01
+Toshiba QKD System,,,,,,not_found,,2026-04-01
+Traefik,pkg:github/traefik/traefik,github,traefik,traefik,exact,matched,https://github.com/traefik/traefik,2026-04-01
+Trezor Safe 7 PQC,,,,,,not_found,,2026-04-01
+TrustCloud Quantum Vault,,,,,,not_found,,2026-04-01
+Tuta Mail,,,,,,not_found,,2026-04-01
+U-Boot,pkg:github/u-boot/u-boot,github,u-boot,u-boot,exact,matched,https://github.com/u-boot/u-boot,2026-04-01
+Ubuntu 24.04 LTS,,,,,,not_found,,2026-04-01
+Ubuntu 26.04 LTS,,,,,,not_found,,2026-04-01
+Unisys ClearPath Forward,,,,,,not_found,,2026-04-01
+Utimaco ESKM,,,,,,not_found,,2026-04-01
+Utimaco Quantum Protect Suite,,,,,,not_found,,2026-04-01
+Utimaco SecurityServer,,,,,,not_found,,2026-04-01
+Utimaco uTrust HSM,,,,,,not_found,,2026-04-01
+VanDyke SecureCRT 10.x,,,,,,not_found,,2026-04-01
+Veeam Data Platform v13,,,,,,not_found,,2026-04-01
+Venafi CodeSign Protect,,,,,,not_found,,2026-04-01
+Venafi TLS PQC Continuity,,,,,,not_found,,2026-04-01
+Venafi TLS Protect,,,,,,not_found,,2026-04-01
+Venafi Trust Protection Platform,,,,,,not_found,,2026-04-01
+Veracode Platform,,,,,,not_found,,2026-04-01
+VeraCrypt,pkg:github/veracrypt/VeraCrypt,github,veracrypt,VeraCrypt,exact,matched,https://github.com/veracrypt/VeraCrypt,2026-04-01
+Veritas NetBackup 10.5,,,,,,not_found,,2026-04-01
+Versa Networks SASE PQC,,,,,,not_found,,2026-04-01
+VIAVI Observer Analyzer,,,,,,not_found,,2026-04-01
+VIAVI TeraVM Security Test,,,,,,not_found,,2026-04-01
+Virtru Data Protection,,,,,,not_found,,2026-04-01
+VMware ESXi 9.0,,,,,,not_found,,2026-04-01
+VMware Horizon,,,,,,not_found,,2026-04-01
+VMware Workspace ONE,,,,,,not_found,,2026-04-01
+Vultr Cloud GPU,,,,,,not_found,,2026-04-01
+walt.id,,,,,,not_found,,2026-04-01
+WhatsApp,,,,,,not_found,,2026-04-01
+WildFly (JBoss),pkg:github/wildfly/wildfly,github,wildfly,wildfly,exact,matched,https://github.com/wildfly/wildfly,2026-04-01
+Wind River VxWorks,,,,,,not_found,,2026-04-01
+Windows 11,,,,,,not_found,,2026-04-01
+Windows Server 2025,,,,,,not_found,,2026-04-01
+Windscribe,,,,,,not_found,,2026-04-01
+WinSCP PQC File Transfer,,,,,,not_found,,2026-04-01
+Wire,,,,,,not_found,,2026-04-01
+WireGuard,,,,,,not_found,,2026-04-01
+WISeSat PQC Constellation,,,,,,not_found,,2026-04-01
+wolfBoot,pkg:github/wolfSSL/wolfBoot,github,wolfSSL,wolfBoot,exact,matched,https://github.com/wolfSSL/wolfBoot,2026-04-01
+wolfSSH,pkg:github/wolfSSL/wolfssh,github,wolfSSL,wolfssh,exact,matched,https://github.com/wolfSSL/wolfssh,2026-04-01
+wolfSSL,pkg:github/wolfSSL/wolfssl,github,wolfSSL,wolfssl,exact,matched,https://github.com/wolfSSL/wolfssl,2026-04-01
+wolfTPM PQC,,,,,,not_found,,2026-04-01
+Xiphera PQC IP Cores,,,,,,not_found,,2026-04-01
+Xiphera XIP6110B,,,,,,not_found,,2026-04-01
+Xiphera xQlave,,,,,,not_found,,2026-04-01
+XiPKI,pkg:github/xipki/xipki,github,xipki,xipki,exact,matched,https://github.com/xipki/xipki,2026-04-01
+xmss-reference,pkg:github/XMSS/xmss-reference,github,XMSS,xmss-reference,exact,matched,https://github.com/XMSS/xmss-reference,2026-04-01
+Yubico YubiHSM 2,pkg:github/Yubico/yubihsm-shell,github,Yubico,yubihsm-shell,exact,matched,https://github.com/Yubico/yubihsm-shell,2026-04-01
+Zeek Network Analysis Framework,pkg:github/zeek/zeek,github,zeek,zeek,exact,matched,https://github.com/zeek/zeek,2026-04-01
+ZeroTier Quantum,,,,,,not_found,,2026-04-01
+Zerto 11.0,,,,,,not_found,,2026-04-01
+Zodia Custody,,,,,,not_found,,2026-04-01
+Zoom Compliance 2026,,,,,,not_found,,2026-04-01
+Zscaler Zero Trust Exchange,,,,,,not_found,,2026-04-01
+Zscaler ZTE,,,,,,not_found,,2026-04-01
