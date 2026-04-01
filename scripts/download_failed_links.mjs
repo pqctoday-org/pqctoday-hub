@@ -2,7 +2,6 @@
 import fs from 'fs'
 import path from 'path'
 import { chromium } from 'playwright'
-
 ;(async () => {
   const mdPath = path.join(process.cwd(), 'scripts', 'google-refs-failed-links.md')
   const outDir = path.join(process.cwd(), 'scripts', 'downloaded_links')
