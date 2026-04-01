@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FileSignature, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
@@ -9,6 +9,7 @@ import { logEvent } from '../../../utils/analytics'
 import { Button } from '../../ui/button'
 import { Input } from '../../ui/input'
 import { ErrorAlert } from '../../ui/error-alert'
+import { ShareButton } from '../../ui/ShareButton'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_sign,
@@ -123,7 +124,10 @@ const toHexSnippetDsa = (b: Uint8Array) => {
   return h.length > 40 ? `${h.slice(0, 20)}…${h.slice(-8)}` : h
 }
 
-const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
+const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: string) => void }> = ({
+  initialAlgo,
+  onAlgoChange,
+}) => {
   const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
     useHsmContext()
 
@@ -151,6 +155,7 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
     setSignature(null)
     setVerifyResult(null)
     setDsaError(null)
+    onAlgoChange?.(`ML-DSA-${v}`)
   }
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
@@ -391,17 +396,28 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
               noContainer
             />
           </div>
-          <div className="flex items-center gap-1.5">
-            <label htmlFor="hsm-dsa-context" className="text-muted-foreground">
-              Context:
-            </label>
-            <Input
-              id="hsm-dsa-context"
-              value={context}
-              onChange={(e) => setContext(e.target.value)}
-              placeholder="optional"
-              className="h-6 text-xs px-2 w-28"
-            />
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <label
+                htmlFor="hsm-dsa-context"
+                className="text-muted-foreground"
+                title="FIPS 204 §5.2: 0–255 bytes. Used to domain-separate signatures across protocols or applications."
+              >
+                Context:
+              </label>
+              <Input
+                id="hsm-dsa-context"
+                value={context}
+                onChange={(e) => setContext(e.target.value)}
+                placeholder="optional, e.g. app-v1"
+                className="h-6 text-xs px-2 w-32"
+              />
+              <span
+                className={`text-[10px] font-mono ${new TextEncoder().encode(context).length > 255 ? 'text-status-error' : 'text-muted-foreground'}`}
+              >
+                {new TextEncoder().encode(context).length}/255B
+              </span>
+            </div>
           </div>
         </div>
 
@@ -419,14 +435,25 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
             />
             CKA_EXTRACTABLE
           </label>
-          <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={
+              !handles || anyLoading || (!preHash && new TextEncoder().encode(context).length > 255)
+            }
+            onClick={doSign}
+          >
             {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             Sign
           </Button>
           <Button
             variant="outline"
             size="sm"
-            disabled={!signature || anyLoading}
+            disabled={
+              !signature ||
+              anyLoading ||
+              (!preHash && new TextEncoder().encode(context).length > 255)
+            }
             onClick={doVerify}
           >
             {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
@@ -471,7 +498,9 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
 
 // ── HSM SLH-DSA Sign Panel ────────────────────────────────────────────────────
 
-const HsmSlhDsaSignPanel: React.FC = () => {
+const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = ({
+  onAlgoChange,
+}) => {
   const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
     useHsmContext()
 
@@ -500,6 +529,7 @@ const HsmSlhDsaSignPanel: React.FC = () => {
     setSignature(null)
     setVerifyResult(null)
     setError(null)
+    onAlgoChange?.(`SLH-DSA-${id}`)
   }
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
@@ -678,21 +708,32 @@ const HsmSlhDsaSignPanel: React.FC = () => {
           </div>
           {!preHash && (
             <>
-              <div className="flex items-center gap-1.5">
-                <label htmlFor="hsm-slhdsa-context" className="text-muted-foreground">
-                  Context:
-                </label>
-                <Input
-                  id="hsm-slhdsa-context"
-                  value={context}
-                  onChange={(e) => {
-                    setContext(e.target.value)
-                    setSignature(null)
-                    setVerifyResult(null)
-                  }}
-                  placeholder="optional"
-                  className="h-6 text-xs px-2 w-28"
-                />
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-1.5">
+                  <label
+                    htmlFor="hsm-slhdsa-context"
+                    className="text-muted-foreground"
+                    title="FIPS 205 §9.2: 0–255 bytes. Used to domain-separate signatures across protocols or applications."
+                  >
+                    Context:
+                  </label>
+                  <Input
+                    id="hsm-slhdsa-context"
+                    value={context}
+                    onChange={(e) => {
+                      setContext(e.target.value)
+                      setSignature(null)
+                      setVerifyResult(null)
+                    }}
+                    placeholder="optional, e.g. app-v1"
+                    className="h-6 text-xs px-2 w-32"
+                  />
+                  <span
+                    className={`text-[10px] font-mono ${new TextEncoder().encode(context).length > 255 ? 'text-status-error' : 'text-muted-foreground'}`}
+                  >
+                    {new TextEncoder().encode(context).length}/255B
+                  </span>
+                </div>
               </div>
               <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
                 <input
@@ -725,14 +766,19 @@ const HsmSlhDsaSignPanel: React.FC = () => {
             />
             CKA_EXTRACTABLE
           </label>
-          <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={!handles || anyLoading || new TextEncoder().encode(context).length > 255}
+            onClick={doSign}
+          >
             {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
             Sign
           </Button>
           <Button
             variant="outline"
             size="sm"
-            disabled={!signature || anyLoading}
+            disabled={!signature || anyLoading || new TextEncoder().encode(context).length > 255}
             onClick={doVerify}
           >
             {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
@@ -779,7 +825,10 @@ const HsmSlhDsaSignPanel: React.FC = () => {
 
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
-export const HsmSignCombinedPanel: React.FC<{ initialAlgo?: string }> = ({ initialAlgo }) => {
+export const HsmSignCombinedPanel: React.FC<{
+  initialAlgo?: string
+  onAlgoChange?: (algo: string) => void
+}> = ({ initialAlgo, onAlgoChange }) => {
   const { isReady } = useHsmContext()
   const [signFamily, setSignFamily] = useState<'pqc' | 'classical'>(() => {
     if (
@@ -794,53 +843,78 @@ export const HsmSignCombinedPanel: React.FC<{ initialAlgo?: string }> = ({ initi
     if (initialAlgo?.startsWith('SLH-DSA')) return 'slh-dsa'
     return 'ml-dsa'
   })
+  useEffect(() => {
+    if (signFamily === 'classical') {
+      onAlgoChange?.('ECDSA')
+    } else if (pqcAlgo === 'slh-dsa') {
+      onAlgoChange?.(initialAlgo?.startsWith('SLH-DSA') ? initialAlgo : 'SLH-DSA-sha2-128s')
+    } else {
+      onAlgoChange?.(initialAlgo?.startsWith('ML-DSA') ? initialAlgo : 'ML-DSA-65')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <HsmReadyGuard isReady={isReady}>
       <div className="space-y-4">
-        <div className="flex gap-2 flex-wrap">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSignFamily('pqc')}
-            className={`text-xs h-7 px-3 ${signFamily === 'pqc' ? 'bg-primary/20 text-primary' : ''}`}
-          >
-            PQC (ML-DSA · SLH-DSA)
-          </Button>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setSignFamily('classical')}
-            className={`text-xs h-7 px-3 ${signFamily === 'classical' ? 'bg-primary/20 text-primary' : ''}`}
-          >
-            Classical (RSA · ECDSA · EdDSA)
-          </Button>
-          {signFamily === 'pqc' && (
-            <>
-              <span className="text-muted-foreground text-xs self-center">|</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setPqcAlgo('ml-dsa')}
-                className={`text-xs h-7 px-3 ${pqcAlgo === 'ml-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
-              >
-                ML-DSA
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => setPqcAlgo('slh-dsa')}
-                className={`text-xs h-7 px-3 ${pqcAlgo === 'slh-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
-              >
-                SLH-DSA
-              </Button>
-            </>
-          )}
+        <div className="flex items-start justify-between gap-2">
+          <div className="flex gap-2 flex-wrap flex-1">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSignFamily('pqc')
+                onAlgoChange?.(pqcAlgo === 'slh-dsa' ? 'SLH-DSA-sha2-128s' : 'ML-DSA-65')
+              }}
+              className={`text-xs h-7 px-3 ${signFamily === 'pqc' ? 'bg-primary/20 text-primary' : ''}`}
+            >
+              PQC (ML-DSA · SLH-DSA)
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setSignFamily('classical')
+                onAlgoChange?.('ECDSA')
+              }}
+              className={`text-xs h-7 px-3 ${signFamily === 'classical' ? 'bg-primary/20 text-primary' : ''}`}
+            >
+              Classical (RSA · ECDSA · EdDSA)
+            </Button>
+            {signFamily === 'pqc' && (
+              <>
+                <span className="text-muted-foreground text-xs self-center">|</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setPqcAlgo('ml-dsa')
+                    onAlgoChange?.('ML-DSA-65')
+                  }}
+                  className={`text-xs h-7 px-3 ${pqcAlgo === 'ml-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                >
+                  ML-DSA
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setPqcAlgo('slh-dsa')
+                    onAlgoChange?.('SLH-DSA-sha2-128s')
+                  }}
+                  className={`text-xs h-7 px-3 ${pqcAlgo === 'slh-dsa' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                >
+                  SLH-DSA
+                </Button>
+              </>
+            )}
+          </div>
+          <ShareButton title="HSM Sign &amp; Verify" variant="icon" />
         </div>
         {signFamily === 'pqc' ? (
           pqcAlgo === 'ml-dsa' ? (
-            <HsmSignPanel initialAlgo={initialAlgo} />
+            <HsmSignPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
           ) : (
-            <HsmSlhDsaSignPanel />
+            <HsmSlhDsaSignPanel onAlgoChange={onAlgoChange} />
           )
         ) : (
           <HsmClassicalSignPanel />

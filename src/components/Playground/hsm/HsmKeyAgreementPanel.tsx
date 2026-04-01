@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { ArrowLeftRight, CheckCircle, XCircle, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ShareButton } from '../../ui/ShareButton'
 import {
   CKD_SHA256_KDF,
   CKD_SHA384_KDF,
@@ -33,13 +34,22 @@ const KDF_OPTIONS = [
 
 // ── Component ────────────────────────────────────────────────────────────────
 
-export const HsmKeyAgreementPanel = ({ initialAlgo }: { initialAlgo?: string } = {}) => {
+export const HsmKeyAgreementPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, isReady, addHsmKey } = useHsmContext()
   const [curve, setCurve] = useState<KaCurve>(() => {
     if (initialAlgo === 'P-384') return 'P-384'
     if (initialAlgo === 'P-521') return 'P-521'
     return 'P-256'
   })
+  // Emit initial algo on mount so URL reflects current selection immediately
+  useEffect(() => {
+    onAlgoChange?.(curve)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const [cofactorMode, setCofactorMode] = useState(false)
   const [kdf, setKdf] = useState<number>(CKD_NULL)
 
@@ -173,7 +183,10 @@ export const HsmKeyAgreementPanel = ({ initialAlgo }: { initialAlgo?: string } =
         <div className="flex items-center gap-2">
           <ArrowLeftRight size={18} className="text-primary" />
           <h3 className="font-semibold text-foreground">ECDH Key Agreement</h3>
-          <span className="text-xs text-muted-foreground ml-auto">PKCS#11 v3.2 §2.3</span>
+          <div className="ml-auto flex items-center gap-1">
+            <ShareButton title="HSM Key Agreement" variant="icon" />
+            <span className="text-xs text-muted-foreground">PKCS#11 v3.2 §2.3</span>
+          </div>
         </div>
 
         {/* Config */}
@@ -188,6 +201,7 @@ export const HsmKeyAgreementPanel = ({ initialAlgo }: { initialAlgo?: string } =
                   onClick={() => {
                     setCurve(c)
                     reset()
+                    onAlgoChange?.(c)
                   }}
                   className={`flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] border transition-colors ${
                     curve === c

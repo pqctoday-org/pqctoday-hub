@@ -1,8 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Lock, Loader2, CheckCircle, XCircle } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
+import { ShareButton } from '../../ui/ShareButton'
 import {
   CKM_SHA256_HMAC,
   CKM_SHA384_HMAC,
@@ -56,9 +57,20 @@ const HMAC_ALGOS = [
 
 // ── AES sub-panel ───────────────────────────────────────────────────────────────
 
-const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
+const AesPanel = ({
+  mode,
+  initialAlgo,
+  onAlgoChange,
+}: {
+  mode: 'aes-gcm' | 'aes-cbc'
+  initialAlgo?: string
+  onAlgoChange?: (algo: string) => void
+}) => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
-  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(256)
+  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
+    const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
+    return bits === 128 || bits === 192 || bits === 256 ? bits : 256
+  })
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [plaintext, setPlaintext] = useState('Hello, PQC World!')
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
@@ -76,6 +88,12 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
   const [ckaExtractable, setCkaExtractable] = useState(true)
 
   const anyLoading = loadingOp !== null
+
+  const modeLabel = mode === 'aes-gcm' ? 'AES-GCM' : 'AES-CBC'
+  useEffect(() => {
+    onAlgoChange?.(`${modeLabel}-${keyBits}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -175,6 +193,7 @@ const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
                 setCiphertext(null)
                 setIv(null)
                 setDecrypted(null)
+                onAlgoChange?.(`${modeLabel}-${b}`)
               }}
               className={
                 keyBits === b
@@ -482,9 +501,15 @@ const HmacPanel = () => {
 
 // ── AES-CTR sub-panel ───────────────────────────────────────────────────────────
 
-const AesCtrPanel = () => {
+const AesCtrPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
-  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(128)
+  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
+    const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
+    return bits === 128 || bits === 192 || bits === 256 ? bits : 128
+  })
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [plaintext, setPlaintext] = useState('Hello, PQC World!')
   const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
@@ -501,6 +526,11 @@ const AesCtrPanel = () => {
   const [ckaExtractable, setCkaExtractable] = useState(true)
 
   const anyLoading = loadingOp !== null
+
+  useEffect(() => {
+    onAlgoChange?.(`AES-CTR-${keyBits}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -599,6 +629,7 @@ const AesCtrPanel = () => {
                 setKeyHandle(null)
                 setCiphertext(null)
                 setDecrypted(null)
+                onAlgoChange?.(`AES-CTR-${b}`)
               }}
               className={
                 keyBits === b
@@ -719,9 +750,15 @@ const AesCtrPanel = () => {
 
 // ── AES-CMAC sub-panel ──────────────────────────────────────────────────────────
 
-const AesCmacPanel = () => {
+const AesCmacPanel = ({
+  initialAlgo,
+  onAlgoChange,
+}: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef, addHsmKey } = useHsmContext()
-  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(128)
+  const [keyBits, setKeyBits] = useState<128 | 192 | 256>(() => {
+    const bits = parseInt(initialAlgo?.split('-').pop() ?? '', 10)
+    return bits === 128 || bits === 192 || bits === 256 ? bits : 128
+  })
   const [keyHandle, setKeyHandle] = useState<number | null>(null)
   const [input, setInput] = useState('Hello, PQC World!')
   const [mac, setMac] = useState<Uint8Array | null>(null)
@@ -738,6 +775,11 @@ const AesCmacPanel = () => {
   const [ckaExtractable, setCkaExtractable] = useState(true)
 
   const anyLoading = loadingOp !== null
+
+  useEffect(() => {
+    onAlgoChange?.(`AES-CMAC-${keyBits}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -823,6 +865,7 @@ const AesCmacPanel = () => {
                 setKeyHandle(null)
                 setMac(null)
                 setVerified(null)
+                onAlgoChange?.(`AES-CMAC-${b}`)
               }}
               className={
                 keyBits === b
@@ -1095,9 +1138,9 @@ export const HsmSymmetricPanel = ({
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { isReady } = useHsmContext()
   const [mode, setMode] = useState<SymMode>(() => {
-    if (initialAlgo === 'AES-CBC') return 'aes-cbc'
-    if (initialAlgo === 'AES-CTR') return 'aes-ctr'
-    if (initialAlgo === 'AES-CMAC') return 'aes-cmac'
+    if (initialAlgo?.startsWith('AES-CBC')) return 'aes-cbc'
+    if (initialAlgo?.startsWith('AES-CTR')) return 'aes-ctr'
+    if (initialAlgo?.startsWith('AES-CMAC')) return 'aes-cmac'
     if (initialAlgo === 'HMAC') return 'hmac'
     if (initialAlgo === 'RNG') return 'rng'
     return 'aes-gcm'
@@ -1110,6 +1153,9 @@ export const HsmSymmetricPanel = ({
         <div className="flex items-center gap-2">
           <Lock size={18} className="text-primary" />
           <h3 className="font-semibold text-base">HSM Symmetric Crypto — AES &amp; HMAC</h3>
+          <div className="ml-auto">
+            <ShareButton title="HSM Symmetric Crypto" variant="icon" />
+          </div>
         </div>
 
         {/* Mode selector */}
@@ -1138,10 +1184,18 @@ export const HsmSymmetricPanel = ({
         </p>
 
         {/* Sub-panel */}
-        {mode === 'aes-gcm' && <AesPanel mode="aes-gcm" />}
-        {mode === 'aes-cbc' && <AesPanel mode="aes-cbc" />}
-        {mode === 'aes-ctr' && <AesCtrPanel />}
-        {mode === 'aes-cmac' && <AesCmacPanel />}
+        {mode === 'aes-gcm' && (
+          <AesPanel mode="aes-gcm" initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
+        )}
+        {mode === 'aes-cbc' && (
+          <AesPanel mode="aes-cbc" initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
+        )}
+        {mode === 'aes-ctr' && (
+          <AesCtrPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
+        )}
+        {mode === 'aes-cmac' && (
+          <AesCmacPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
+        )}
         {mode === 'hmac' && <HmacPanel />}
         {mode === 'rng' && <RngPanel />}
       </div>

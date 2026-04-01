@@ -99,8 +99,11 @@ export const MigrateView: React.FC = () => {
     setWorkflowCollapsed,
   } = useMigrateSelectionStore()
 
-  // Shared expanded-row state — survives layer/filter switches
-  const [tableExpandedIds, setTableExpandedIds] = useState<Set<string>>(new Set())
+  // Shared expanded-row state — survives layer/filter switches; init from ?product= deep link
+  const [tableExpandedIds, setTableExpandedIds] = useState<Set<string>>(() => {
+    const p = searchParams.get('product')
+    return p ? new Set([p]) : new Set()
+  })
   const handleToggleTableExpand = useCallback((id: string) => {
     setTableExpandedIds((prev) => {
       const next = new Set(prev)
@@ -108,6 +111,36 @@ export const MigrateView: React.FC = () => {
       else next.add(id)
       return next
     })
+  }, [])
+
+  // Sync a single expanded product row → ?product= URL param
+  useEffect(() => {
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        if (tableExpandedIds.size === 1) {
+          const key = [...tableExpandedIds][0]
+          next.set('product', key)
+          if (!next.has('mode') || next.get('mode') === 'stack') next.set('mode', 'table')
+        } else {
+          next.delete('product')
+        }
+        return next
+      },
+      { replace: true }
+    )
+  }, [tableExpandedIds, setSearchParams])
+
+  // Scroll to the initially-deep-linked product row after first render
+  const initialProductKeyRef = useRef(searchParams.get('product'))
+  useEffect(() => {
+    const key = initialProductKeyRef.current
+    if (!key) return
+    const timer = setTimeout(() => {
+      const el = document.querySelector(`[data-product-key="${key}"]`)
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }, 400)
+    return () => clearTimeout(timer)
   }, [])
 
   // Comparison state — separate from "My Products" workflow selection
@@ -195,6 +228,13 @@ export const MigrateView: React.FC = () => {
     if (sort !== null) setSortBy((prev) => (prev !== sort ? sort : prev))
     const mode = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
     if (mode !== null) setViewMode(mode)
+    const product = searchParams.get('product')
+    if (product !== null) {
+      setTableExpandedIds((prev) =>
+        prev.size === 1 && prev.has(product) ? prev : new Set([product])
+      )
+      if (mode === null) setViewMode('table')
+    }
     const subcat = searchParams.get('subcat')
     if (subcat !== null) setActiveSubCategory(subcat)
     // eslint-disable-next-line react-hooks/exhaustive-deps

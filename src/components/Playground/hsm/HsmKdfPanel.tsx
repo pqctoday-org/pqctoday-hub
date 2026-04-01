@@ -4,6 +4,7 @@ import { Filter, Loader2 } from 'lucide-react'
 import { Button } from '../../ui/button'
 import { ErrorAlert } from '../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { ShareButton } from '../../ui/ShareButton'
 import {
   CKP_PKCS5_PBKD2_HMAC_SHA256,
   CKP_PKCS5_PBKD2_HMAC_SHA384,
@@ -78,6 +79,11 @@ const PRF_SEED_BYTES: Record<number, number> = {
 
 const OUTPUT_LENS = [16, 24, 32] as const
 
+// ── Hex validation helpers ───────────────────────────────────────────────────
+
+const isValidHex = (s: string) => /^[0-9a-fA-F\s:]*$/.test(s)
+const hexByteLen = (s: string) => Math.floor(s.replace(/[\s:]/g, '').replace(/^0x/i, '').length / 2)
+
 // ── Random hex helpers ───────────────────────────────────────────────────────
 
 const randomHex = (bytes: number) =>
@@ -96,7 +102,7 @@ const hexToBytes = (hex: string): Uint8Array => {
 
 // ── PBKDF2 sub-panel ─────────────────────────────────────────────────────────
 
-const Pbkdf2Panel = () => {
+const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef } = useHsmContext()
   const [password, setPassword] = useState('correct-horse-battery-staple')
   const [salt, setSalt] = useState(() => randomHex(16))
@@ -106,6 +112,11 @@ const Pbkdf2Panel = () => {
   const [derived, setDerived] = useState<Uint8Array | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    onAlgoChange?.(`PBKDF2-${outLen * 8}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleDerive = async () => {
     setError(null)
@@ -154,12 +165,17 @@ const Pbkdf2Panel = () => {
               type="text"
               value={salt}
               onChange={(e) => setSalt(e.target.value)}
-              className="flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+              className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${!isValidHex(salt) ? 'border-status-error' : 'border-border'}`}
             />
             <Button variant="outline" size="sm" onClick={() => setSalt(randomHex(16))}>
               Random
             </Button>
           </div>
+          <p
+            className={`text-[10px] font-mono ${!isValidHex(salt) ? 'text-status-error' : 'text-muted-foreground'}`}
+          >
+            {isValidHex(salt) ? `${hexByteLen(salt)}B` : 'invalid hex'}
+          </p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -173,6 +189,11 @@ const Pbkdf2Panel = () => {
               onChange={(e) => setIterations(Number(e.target.value))}
               className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
             />
+            {iterations < 100_000 && (
+              <p className="text-[10px] text-status-warning">
+                Below NIST SP 800-132 minimum (100,000)
+              </p>
+            )}
           </div>
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF</p>
@@ -189,7 +210,10 @@ const Pbkdf2Panel = () => {
               {OUTPUT_LENS.map((l) => (
                 <button
                   key={l}
-                  onClick={() => setOutLen(l)}
+                  onClick={() => {
+                    setOutLen(l)
+                    onAlgoChange?.(`PBKDF2-${l * 8}`)
+                  }}
                   className={`flex-1 text-xs rounded-lg px-1 py-1.5 border transition-colors ${
                     outLen === l
                       ? 'bg-primary/20 border-primary text-primary'
@@ -209,7 +233,7 @@ const Pbkdf2Panel = () => {
         size="sm"
         className="w-full"
         onClick={handleDerive}
-        disabled={loading || !password}
+        disabled={loading || !password || !isValidHex(salt)}
       >
         {loading && <Loader2 size={14} className="animate-spin mr-1" />}
         C_DeriveKey (PBKDF2)
@@ -237,7 +261,7 @@ const Pbkdf2Panel = () => {
 
 // ── HKDF sub-panel ───────────────────────────────────────────────────────────
 
-const HkdfPanel = () => {
+const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } = {}) => {
   const { moduleRef, hSessionRef } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [salt, setSalt] = useState(() => randomHex(16))
@@ -247,6 +271,11 @@ const HkdfPanel = () => {
   const [ikmHandle, setIkmHandle] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    onAlgoChange?.(`HKDF-${outLen * 8}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleGenIkm = async () => {
     setError(null)
@@ -336,12 +365,19 @@ const HkdfPanel = () => {
               value={salt}
               onChange={(e) => setSalt(e.target.value)}
               placeholder="leave blank for no salt"
-              className="flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+              className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${salt && !isValidHex(salt) ? 'border-status-error' : 'border-border'}`}
             />
             <Button variant="outline" size="sm" onClick={() => setSalt(randomHex(16))}>
               Random
             </Button>
           </div>
+          {salt && (
+            <p
+              className={`text-[10px] font-mono ${!isValidHex(salt) ? 'text-status-error' : 'text-muted-foreground'}`}
+            >
+              {isValidHex(salt) ? `${hexByteLen(salt)}B` : 'invalid hex'}
+            </p>
+          )}
         </div>
 
         <div className="space-y-1">
@@ -370,7 +406,10 @@ const HkdfPanel = () => {
               {OUTPUT_LENS.map((l) => (
                 <button
                   key={l}
-                  onClick={() => setOutLen(l)}
+                  onClick={() => {
+                    setOutLen(l)
+                    onAlgoChange?.(`HKDF-${l * 8}`)
+                  }}
                   className={`flex-1 text-xs rounded-lg px-1 py-1.5 border transition-colors ${
                     outLen === l
                       ? 'bg-primary/20 border-primary text-primary'
@@ -390,7 +429,7 @@ const HkdfPanel = () => {
         size="sm"
         className="w-full"
         onClick={handleDerive}
-        disabled={loading || !ikmHandle}
+        disabled={loading || !ikmHandle || (!!salt && !isValidHex(salt))}
       >
         {loading && ikmHandle ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
         C_DeriveKey (HKDF — Extract+Expand)
@@ -422,7 +461,13 @@ const HkdfPanel = () => {
 
 // ── KBKDF sub-panel (Counter + Feedback) ─────────────────────────────────────
 
-const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
+const KbkdfPanel = ({
+  feedback,
+  onAlgoChange,
+}: {
+  feedback: boolean
+  onAlgoChange?: (algo: string) => void
+}) => {
   const { moduleRef, hSessionRef } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [label, setLabel] = useState('pqc-key-derivation')
@@ -442,6 +487,11 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
 
   const mechName = feedback ? 'CKM_SP800_108_FEEDBACK_KDF' : 'CKM_SP800_108_COUNTER_KDF'
   const mechCode = feedback ? '0x3ad' : '0x3ac'
+
+  useEffect(() => {
+    onAlgoChange?.(`${feedback ? 'KBKDF-Feedback' : 'KBKDF-Counter'}-${outLen * 8}`)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleGenBase = async () => {
     setError(null)
@@ -542,12 +592,17 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
               type="text"
               value={context}
               onChange={(e) => setContext(e.target.value)}
-              className="flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+              className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${!isValidHex(context) ? 'border-status-error' : 'border-border'}`}
             />
             <Button variant="outline" size="sm" onClick={() => setContext(randomHex(8))}>
               Random
             </Button>
           </div>
+          <p
+            className={`text-[10px] font-mono ${!isValidHex(context) ? 'text-status-error' : 'text-muted-foreground'}`}
+          >
+            {isValidHex(context) ? `${hexByteLen(context)}B` : 'invalid hex'}
+          </p>
         </div>
 
         {feedback && (
@@ -559,7 +614,7 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
                 value={iv}
                 onChange={(e) => setIv(e.target.value)}
                 placeholder="leave blank for no IV"
-                className="flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+                className={`flex-1 text-xs font-mono rounded-lg px-3 py-1.5 bg-muted border text-foreground ${iv && hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32) ? 'border-status-error' : 'border-border'}`}
               />
               <Button
                 variant="outline"
@@ -569,6 +624,13 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
                 Random
               </Button>
             </div>
+            {iv && (
+              <p
+                className={`text-[10px] font-mono ${hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32) ? 'text-status-error' : 'text-muted-foreground'}`}
+              >
+                {hexByteLen(iv)}/{PRF_SEED_BYTES[prf] ?? 32}B required
+              </p>
+            )}
           </div>
         )}
 
@@ -588,7 +650,10 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
               {OUTPUT_LENS.map((l) => (
                 <button
                   key={l}
-                  onClick={() => setOutLen(l)}
+                  onClick={() => {
+                    setOutLen(l)
+                    onAlgoChange?.(`${feedback ? 'KBKDF-Feedback' : 'KBKDF-Counter'}-${l * 8}`)
+                  }}
                   className={`flex-1 text-xs rounded-lg px-1 py-1.5 border transition-colors ${
                     outLen === l
                       ? 'bg-primary/20 border-primary text-primary'
@@ -608,7 +673,12 @@ const KbkdfPanel = ({ feedback }: { feedback: boolean }) => {
         size="sm"
         className="w-full"
         onClick={handleDerive}
-        disabled={loading || !baseKeyHandle}
+        disabled={
+          loading ||
+          !baseKeyHandle ||
+          !isValidHex(context) ||
+          (feedback && !!iv && hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32))
+        }
       >
         {loading && baseKeyHandle ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
         C_DeriveKey ({mechName})
@@ -656,9 +726,9 @@ export const HsmKdfPanel = ({
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
   const { isReady } = useHsmContext()
   const [mode, setMode] = useState<KdfMode>(() => {
-    if (initialAlgo === 'HKDF') return 'hkdf'
-    if (initialAlgo === 'KBKDF-Counter') return 'kbkdf-counter'
-    if (initialAlgo === 'KBKDF-Feedback') return 'kbkdf-feedback'
+    if (initialAlgo?.startsWith('HKDF')) return 'hkdf'
+    if (initialAlgo?.startsWith('KBKDF-Counter')) return 'kbkdf-counter'
+    if (initialAlgo?.startsWith('KBKDF-Feedback')) return 'kbkdf-feedback'
     return 'pbkdf2'
   })
 
@@ -671,7 +741,10 @@ export const HsmKdfPanel = ({
         <div className="flex items-center gap-2">
           <Filter size={18} className="text-primary" />
           <h3 className="font-semibold text-foreground">Key Derivation Functions</h3>
-          <span className="text-xs text-muted-foreground ml-auto">{currentMode.spec}</span>
+          <div className="ml-auto flex items-center gap-1">
+            <ShareButton title="HSM Key Derivation" variant="icon" />
+            <span className="text-xs text-muted-foreground">{currentMode.spec}</span>
+          </div>
         </div>
 
         {/* Mode tabs */}
@@ -695,10 +768,10 @@ export const HsmKdfPanel = ({
         </div>
 
         {/* Sub-panels */}
-        {mode === 'pbkdf2' && <Pbkdf2Panel />}
-        {mode === 'hkdf' && <HkdfPanel />}
-        {mode === 'kbkdf-counter' && <KbkdfPanel feedback={false} />}
-        {mode === 'kbkdf-feedback' && <KbkdfPanel feedback={true} />}
+        {mode === 'pbkdf2' && <Pbkdf2Panel onAlgoChange={onAlgoChange} />}
+        {mode === 'hkdf' && <HkdfPanel onAlgoChange={onAlgoChange} />}
+        {mode === 'kbkdf-counter' && <KbkdfPanel feedback={false} onAlgoChange={onAlgoChange} />}
+        {mode === 'kbkdf-feedback' && <KbkdfPanel feedback={true} onAlgoChange={onAlgoChange} />}
       </div>
     </HsmReadyGuard>
   )

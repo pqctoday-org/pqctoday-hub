@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { ExternalLink, Calendar, X } from 'lucide-react'
+import { ShareButton } from '../ui/ShareButton'
 import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
@@ -167,6 +168,10 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 flagUrl={buildLibraryFlagUrl(item, true)}
                 resourceLabel={item.referenceId}
                 resourceType="Library"
+              />
+              <ShareButton
+                title={item.documentTitle}
+                url={`${window.location.origin}/library?ref=${item.referenceId}`}
               />
               <button
                 onClick={onClose}

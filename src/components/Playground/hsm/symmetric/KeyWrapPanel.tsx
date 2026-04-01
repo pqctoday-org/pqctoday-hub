@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import {
   Lock,
   Unlock,
@@ -15,6 +15,7 @@ import {
   X as XIcon,
 } from 'lucide-react'
 import { Button } from '../../../ui/button'
+import { ShareButton } from '../../../ui/ShareButton'
 import { ErrorAlert } from '../../../ui/error-alert'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
@@ -394,6 +395,9 @@ const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
 const normalizeHex = (raw: string): string =>
   raw.replace(/\s+/g, '').replace(/^0x/i, '').replace(/:/g, '').toLowerCase()
 
+const isValidHex = (s: string) => !s || /^[0-9a-fA-F\s:]*$/.test(s)
+const hexByteLen = (s: string) => Math.floor(normalizeHex(s).length / 2)
+
 const hexToBytes = (hex: string): Uint8Array => {
   const h = normalizeHex(hex)
   if (h.length % 2 !== 0) throw new Error('Odd-length hex string')
@@ -521,6 +525,12 @@ export const KeyWrapPanel = ({
       onAlgoChange?.(`${combiner === 'p256-mlkem' ? 'P256' : 'X25519'}-ML-KEM-${variant}`)
     }
   }
+
+  // Emit initial algo on mount so URL reflects current selection immediately
+  useEffect(() => {
+    emitAlgo(wrapMode, directMech, hybridCombiner, mlkemVariant)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const withLoading = async (op: string, fn: () => Promise<void>) => {
     setLoadingOp(op)
@@ -987,16 +997,19 @@ export const KeyWrapPanel = ({
   // ── Readiness checks ───────────────────────────────────────────────────────
 
   const canUnwrap = (() => {
-    if (!pastedWrappedHex) return false
+    if (!pastedWrappedHex || !isValidHex(pastedWrappedHex)) return false
     if (wrapMode === 'direct') {
       if (!wrapKeyHandle) return false
-      if (directMech === 'aes-gcm' && !pastedIvHex) return false
+      if (directMech === 'aes-gcm') {
+        if (!pastedIvHex || hexByteLen(pastedIvHex) !== 12) return false
+      }
     }
     if (wrapMode === 'indirect') {
-      if (!rsaPrivHandle || !pastedAuxHex) return false
+      if (!rsaPrivHandle || !pastedAuxHex || !isValidHex(pastedAuxHex)) return false
     }
     if (wrapMode === 'pqc') {
       if (!mlkemPrivHandle || !pastedAuxHex || !pastedAux2Hex) return false
+      if (!isValidHex(pastedAuxHex) || !isValidHex(pastedAux2Hex)) return false
       if (hybridCombiner === 'p256-mlkem' && !ecPrivHandle) return false
       if (hybridCombiner === 'x25519-mlkem' && !x25519KeyPair) return false
     }
@@ -1179,14 +1192,17 @@ export const KeyWrapPanel = ({
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
               Wrapping Mode
             </p>
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-6 px-2 text-xs"
-              onClick={() => setShowInfo(true)}
-            >
-              <Info size={12} className="mr-1" /> NIST refs &amp; cloud HSM
-            </Button>
+            <div className="flex items-center gap-1">
+              <ShareButton title="HSM Key Wrap" variant="icon" />
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 px-2 text-xs"
+                onClick={() => setShowInfo(true)}
+              >
+                <Info size={12} className="mr-1" /> NIST refs &amp; cloud HSM
+              </Button>
+            </div>
           </div>
           <div className="flex flex-wrap gap-2">
             {(
@@ -1680,9 +1696,20 @@ export const KeyWrapPanel = ({
           )}
 
           <div className="space-y-2">
-            <label htmlFor="unwrap-wrapped-hex" className="text-xs text-muted-foreground">
-              Wrapped key blob (hex) — supports raw hex, 0x-prefix, colon-separated
-            </label>
+            <div className="flex items-center justify-between">
+              <label htmlFor="unwrap-wrapped-hex" className="text-xs text-muted-foreground">
+                Wrapped key blob (hex) — raw hex, 0x-prefix, or colon-separated
+              </label>
+              {pastedWrappedHex && (
+                <span
+                  className={`text-[10px] font-mono ${!isValidHex(pastedWrappedHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                >
+                  {isValidHex(pastedWrappedHex)
+                    ? `${hexByteLen(pastedWrappedHex)}B`
+                    : 'invalid hex'}
+                </span>
+              )}
+            </div>
             <textarea
               id="unwrap-wrapped-hex"
               value={pastedWrappedHex}
@@ -1691,21 +1718,30 @@ export const KeyWrapPanel = ({
                 setUnwrappedHandle(null)
               }}
               placeholder="e.g. a0b1c2d3… or 0xa0:b1:c2 or a0 b1 c2"
-              className="w-full h-16 text-xs font-mono bg-muted border border-input rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+              className={`w-full h-16 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedWrappedHex && !isValidHex(pastedWrappedHex) ? 'border-status-error' : 'border-input'}`}
             />
           </div>
 
           {wrapMode === 'indirect' && (
             <div className="space-y-1">
-              <label htmlFor="unwrap-rsa-kek-hex" className="text-xs text-muted-foreground">
-                RSA-encrypted KEK (hex)
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="unwrap-rsa-kek-hex" className="text-xs text-muted-foreground">
+                  RSA-encrypted KEK (hex)
+                </label>
+                {pastedAuxHex && (
+                  <span
+                    className={`text-[10px] font-mono ${!isValidHex(pastedAuxHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                  >
+                    {isValidHex(pastedAuxHex) ? `${hexByteLen(pastedAuxHex)}B` : 'invalid hex'}
+                  </span>
+                )}
+              </div>
               <textarea
                 id="unwrap-rsa-kek-hex"
                 value={pastedAuxHex}
                 onChange={(e) => setPastedAuxHex(e.target.value)}
                 placeholder="Paste the RSA-OAEP encrypted AES key…"
-                className="w-full h-12 text-xs font-mono bg-muted border border-input rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                className={`w-full h-12 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAuxHex && !isValidHex(pastedAuxHex) ? 'border-status-error' : 'border-input'}`}
               />
             </div>
           )}
@@ -1713,27 +1749,45 @@ export const KeyWrapPanel = ({
           {wrapMode === 'pqc' && (
             <>
               <div className="space-y-1">
-                <label htmlFor="unwrap-mlkem-ct-hex" className="text-xs text-muted-foreground">
-                  ML-KEM ciphertext (hex)
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="unwrap-mlkem-ct-hex" className="text-xs text-muted-foreground">
+                    ML-KEM ciphertext (hex)
+                  </label>
+                  {pastedAuxHex && (
+                    <span
+                      className={`text-[10px] font-mono ${!isValidHex(pastedAuxHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                    >
+                      {isValidHex(pastedAuxHex) ? `${hexByteLen(pastedAuxHex)}B` : 'invalid hex'}
+                    </span>
+                  )}
+                </div>
                 <textarea
                   id="unwrap-mlkem-ct-hex"
                   value={pastedAuxHex}
                   onChange={(e) => setPastedAuxHex(e.target.value)}
                   placeholder="Paste the ML-KEM encapsulation ciphertext…"
-                  className="w-full h-12 text-xs font-mono bg-muted border border-input rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                  className={`w-full h-12 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAuxHex && !isValidHex(pastedAuxHex) ? 'border-status-error' : 'border-input'}`}
                 />
               </div>
               <div className="space-y-1">
-                <label htmlFor="unwrap-eph-pubkey-hex" className="text-xs text-muted-foreground">
-                  Ephemeral {hybridCombiner === 'p256-mlkem' ? 'EC P-256' : 'X25519'} pubkey (hex)
-                </label>
+                <div className="flex items-center justify-between">
+                  <label htmlFor="unwrap-eph-pubkey-hex" className="text-xs text-muted-foreground">
+                    Ephemeral {hybridCombiner === 'p256-mlkem' ? 'EC P-256' : 'X25519'} pubkey (hex)
+                  </label>
+                  {pastedAux2Hex && (
+                    <span
+                      className={`text-[10px] font-mono ${!isValidHex(pastedAux2Hex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                    >
+                      {isValidHex(pastedAux2Hex) ? `${hexByteLen(pastedAux2Hex)}B` : 'invalid hex'}
+                    </span>
+                  )}
+                </div>
                 <textarea
                   id="unwrap-eph-pubkey-hex"
                   value={pastedAux2Hex}
                   onChange={(e) => setPastedAux2Hex(e.target.value)}
                   placeholder="Paste the ephemeral public key…"
-                  className="w-full h-10 text-xs font-mono bg-muted border border-input rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                  className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAux2Hex && !isValidHex(pastedAux2Hex) ? 'border-status-error' : 'border-input'}`}
                 />
               </div>
             </>
@@ -1741,15 +1795,24 @@ export const KeyWrapPanel = ({
 
           {wrapMode === 'direct' && directMech === 'aes-gcm' && (
             <div className="space-y-1">
-              <label htmlFor="unwrap-gcm-iv-hex" className="text-xs text-muted-foreground">
-                GCM IV (hex, 12 bytes)
-              </label>
+              <div className="flex items-center justify-between">
+                <label htmlFor="unwrap-gcm-iv-hex" className="text-xs text-muted-foreground">
+                  GCM IV (hex, 12 bytes)
+                </label>
+                {pastedIvHex && (
+                  <span
+                    className={`text-[10px] font-mono ${hexByteLen(pastedIvHex) !== 12 ? 'text-status-error' : 'text-muted-foreground'}`}
+                  >
+                    {hexByteLen(pastedIvHex)}/12B
+                  </span>
+                )}
+              </div>
               <textarea
                 id="unwrap-gcm-iv-hex"
                 value={pastedIvHex}
                 onChange={(e) => setPastedIvHex(e.target.value)}
                 placeholder="24-char hex (12 bytes)…"
-                className="w-full h-10 text-xs font-mono bg-muted border border-input rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary"
+                className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedIvHex && hexByteLen(pastedIvHex) !== 12 ? 'border-status-error' : 'border-input'}`}
               />
             </div>
           )}

@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Globe } from 'lucide-react'
+import { Globe, Link2, Check } from 'lucide-react'
+import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
@@ -105,6 +106,8 @@ export const TimelineView = () => {
     }
     return result
   }, [ganttData, regionFilter, countryFilter])
+
+  const [countryCopied, setCountryCopied] = useState(false)
 
   const handleExportCsv = useCallback(() => {
     const flatEvents = ganttData.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
@@ -251,6 +254,23 @@ export const TimelineView = () => {
                 className="mb-0 w-full"
               />
             </div>
+            {countryFilter !== 'All' && (
+              <button
+                type="button"
+                aria-label="Copy country timeline link"
+                onClick={() => {
+                  navigator.clipboard.writeText(
+                    `${window.location.origin}/timeline?country=${encodeURIComponent(countryFilter)}`
+                  )
+                  toast.success('Link copied!')
+                  setCountryCopied(true)
+                  setTimeout(() => setCountryCopied(false), 2000)
+                }}
+                className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
+              >
+                {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
+              </button>
+            )}
           </div>
           {(regionFilter !== 'All' || countryFilter !== 'All') && (
             <p className="text-xs text-primary/90 mb-3">

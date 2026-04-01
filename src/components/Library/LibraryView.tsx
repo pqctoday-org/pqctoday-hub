@@ -484,7 +484,17 @@ export const LibraryView: React.FC = () => {
     return categoryRoots
   }, [filteredItems])
 
-  const openDetail = (item: LibraryItem) => setSelectedItem(item)
+  const openDetail = (item: LibraryItem) => {
+    setSelectedItem(item)
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev)
+        next.set('ref', item.referenceId)
+        return next
+      },
+      { replace: true }
+    )
+  }
 
   // Category tabs for mobile dropdown
   const categoryTabs = ['All', ...LIBRARY_CATEGORIES]
@@ -664,7 +674,17 @@ export const LibraryView: React.FC = () => {
       {/* Detail Popover */}
       <LibraryDetailPopover
         isOpen={!!selectedItem}
-        onClose={() => setSelectedItem(null)}
+        onClose={() => {
+          setSelectedItem(null)
+          setSearchParams(
+            (prev) => {
+              const next = new URLSearchParams(prev)
+              next.delete('ref')
+              return next
+            },
+            { replace: true }
+          )
+        }}
         item={selectedItem}
       />
     </div>

@@ -10,7 +10,10 @@ import {
   Filter,
   Download,
   X,
+  Link2,
+  Check,
 } from 'lucide-react'
+import toast from 'react-hot-toast'
 import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { GanttDetailPopover } from './GanttDetailPopover'
@@ -75,6 +78,7 @@ export const SimpleGanttChart = ({
   initialFilter,
 }: SimpleGanttChartProps) => {
   const [filterText, setFilterText] = useState(initialFilter ?? '')
+  const [countryCopied, setCountryCopied] = useState(false)
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
@@ -400,7 +404,7 @@ export const SimpleGanttChart = ({
             />
           </div>
         </div>
-        <div className="flex items-center gap-2 w-full md:w-auto text-xs">
+        <div className="flex items-center gap-1 w-full md:w-auto text-xs">
           <div className="flex-1 min-w-[150px]">
             <FilterDropdown
               items={countryItems}
@@ -412,6 +416,23 @@ export const SimpleGanttChart = ({
               noContainer
             />
           </div>
+          {selectedCountry !== 'All' && (
+            <button
+              type="button"
+              aria-label="Copy country timeline link"
+              onClick={() => {
+                navigator.clipboard.writeText(
+                  `${window.location.origin}/timeline?country=${encodeURIComponent(selectedCountry)}`
+                )
+                toast.success('Link copied!')
+                setCountryCopied(true)
+                setTimeout(() => setCountryCopied(false), 2000)
+              }}
+              className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
+            >
+              {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
+            </button>
+          )}
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto text-xs">
           <div className="flex-1 min-w-[120px]">

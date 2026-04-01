@@ -44,6 +44,7 @@ import { ProductExtractionModal } from './ProductExtractionModal'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { CertBadges, EvidenceWarnings, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { ShareButton } from '../ui/ShareButton'
 
 function ValidationResultBadge({ result }: { result: SoftwareItem['validationResult'] }) {
   if (!result) return null
@@ -595,7 +596,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     <td className="p-4 text-sm">{renderFipsStatus(item.fipsValidated)}</td>
                   </tr>
                   {isExpanded && (
-                    <tr className="bg-muted/10 border-b border-border">
+                    <tr className="bg-muted/10 border-b border-border" data-product-key={key}>
                       <td colSpan={totalCols} className="p-0">
                         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 text-sm animate-fade-in">
                           <div>
@@ -886,6 +887,12 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   <Sparkles size={14} /> View Extraction
                                 </button>
                               )}
+                              <ShareButton
+                                title={item.softwareName}
+                                text={`${item.softwareName} PQC migration status`}
+                                url={`${window.location.origin}/migrate?product=${encodeURIComponent(key)}&mode=table`}
+                                variant="icon"
+                              />
                             </div>
                           </div>
                         </div>
