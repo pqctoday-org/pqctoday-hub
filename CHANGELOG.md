@@ -4,19 +4,6 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.69.2] - 2026-04-01
-
-### Added
-
-- **NLLM infographics for all 49 learning modules**: renamed 27 unnamed NLLM JPG files to `nllm_<module-id>.jpg` across 3 batch passes; all modules now have a dedicated NLLM-format visual in `public/images/infographics/` [assets]
-- **Next Stack button in curious mode carousel**: when a user reaches the last module of a track in curious mode, a "Next Stack" button (accent style) replaces the disabled "Next" — clicking marks the module reviewed, collapses the current track, and opens the next track automatically [view:/learn]
-
-### Changed
-
-- **`CuriousSummaryBanner`**: primary infographic now uses `nllm_<moduleId>.jpg`; fallback chain: `gcp_<moduleId>-curious.png` → `gcp_<moduleId>.png`; both curious and standard modes use the NLLM visual [view:/learn]
-- **`CuriousStackCarousel`**: accepts optional `onNextStack` callback; renders "Next Stack" button on the last slide when callback is provided [view:/learn]
-- **`LearnTrackStack`**: computes ordered list of visible tracks and passes `onNextStack` to each carousel to enable cross-track navigation in curious mode [view:/learn]
-
 ## [2.70.1] - 2026-04-01
 
 ### Changed
@@ -48,6 +35,19 @@ All notable changes to this project will be documented in this file.
 ### Removed
 
 - **Catalog r11** archived to `src/data/archive/` per 2-version rule [data]
+
+## [2.69.2] - 2026-04-01
+
+### Added
+
+- **NLLM infographics for all 49 learning modules**: renamed 27 unnamed NLLM JPG files to `nllm_<module-id>.jpg` across 3 batch passes; all modules now have a dedicated NLLM-format visual in `public/images/infographics/` [assets]
+- **Next Stack button in curious mode carousel**: when a user reaches the last module of a track in curious mode, a "Next Stack" button (accent style) replaces the disabled "Next" — clicking marks the module reviewed, collapses the current track, and opens the next track automatically [view:/learn]
+
+### Changed
+
+- **`CuriousSummaryBanner`**: primary infographic now uses `nllm_<moduleId>.jpg`; fallback chain: `gcp_<moduleId>-curious.png` → `gcp_<moduleId>.png`; both curious and standard modes use the NLLM visual [view:/learn]
+- **`CuriousStackCarousel`**: accepts optional `onNextStack` callback; renders "Next Stack" button on the last slide when callback is provided [view:/learn]
+- **`LearnTrackStack`**: computes ordered list of visible tracks and passes `onNextStack` to each carousel to enable cross-track navigation in curious mode [view:/learn]
 
 ## [2.69.1] - 2026-04-01
 
