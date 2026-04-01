@@ -17,6 +17,26 @@ All notable changes to this project will be documented in this file.
 - **`CuriousStackCarousel`**: accepts optional `onNextStack` callback; renders "Next Stack" button on the last slide when callback is provided [view:/learn]
 - **`LearnTrackStack`**: computes ordered list of visible tracks and passes `onNextStack` to each carousel to enable cross-track navigation in curious mode [view:/learn]
 
+## [2.70.0] - 2026-04-01
+
+### Added
+
+- **`VALIDATED_NO_PQC` badge**: muted gray pill with `MinusCircle` icon — product validated, no PQC support found [view:/migrate]
+- **`CORRECTED` badge**: amber pill with `RefreshCw` icon — catalog data was corrected during audit round [view:/migrate]
+- **`FIPS_VERIFIED` badge**: green pill with `BadgeCheck` icon — FIPS cert confirmed during audit [view:/migrate]
+- **`NEEDS_REVIEW` badge**: amber pill with `Clock` icon — flagged for follow-up [view:/migrate]
+- **`NOT_VALIDATED` badge**: red pill with `Ban` icon — could not validate [view:/migrate]
+
+### Changed
+
+- **Migrate catalog r13** (`pqc_product_catalog_03312026_r13.csv`): round-5 audit pass — all 521 rows now have `proof_url`; `validation_result` enum expanded to 8 values (VALIDATED: 237, VALIDATED_NO_PQC: 171, CORRECTED: 81, PARTIALLY_VALIDATED: 7, NEEDS_REVIEW: 9, NOT_VALIDATED: 8, FIPS_ISSUE: 5, FIPS_VERIFIED: 3); `PASS` and `NEEDS_VERIFICATION` retired [data]
+- **`validationResult` union type** (`MigrateTypes.ts`): updated to new 8-value enum [infra]
+- **RAG corpus regenerated**: 5,575 chunks (7.8MB); all 521 migrate chunks carry updated validation results and proof URLs [data]
+
+### Removed
+
+- **Catalog r11** archived to `src/data/archive/` per 2-version rule [data]
+
 ## [2.69.1] - 2026-04-01
 
 ### Fixed

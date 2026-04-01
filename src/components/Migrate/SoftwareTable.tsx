@@ -20,10 +20,13 @@ import {
   BookmarkCheck,
   ShieldCheck,
   CheckCircle,
-  Check,
+  BadgeCheck,
   AlertCircle,
   XCircle,
-  HelpCircle,
+  Ban,
+  MinusCircle,
+  RefreshCw,
+  Clock,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -50,28 +53,43 @@ function ValidationResultBadge({ result }: { result: SoftwareItem['validationRes
       icon: <CheckCircle size={11} />,
       cls: 'text-status-success bg-status-success/10 border-status-success/20',
     },
-    PASS: {
-      label: 'Pass',
-      icon: <Check size={11} />,
+    FIPS_VERIFIED: {
+      label: 'FIPS Verified',
+      icon: <BadgeCheck size={11} />,
       cls: 'text-status-success bg-status-success/10 border-status-success/20',
+    },
+    VALIDATED_NO_PQC: {
+      label: 'No PQC',
+      icon: <MinusCircle size={11} />,
+      cls: 'text-muted-foreground bg-muted border-border',
+    },
+    CORRECTED: {
+      label: 'Corrected',
+      icon: <RefreshCw size={11} />,
+      cls: 'text-status-warning bg-status-warning/10 border-status-warning/20',
     },
     PARTIALLY_VALIDATED: {
       label: 'Partial',
       icon: <AlertCircle size={11} />,
       cls: 'text-status-warning bg-status-warning/10 border-status-warning/20',
     },
+    NEEDS_REVIEW: {
+      label: 'Needs Review',
+      icon: <Clock size={11} />,
+      cls: 'text-status-warning bg-status-warning/10 border-status-warning/20',
+    },
+    NOT_VALIDATED: {
+      label: 'Not Validated',
+      icon: <Ban size={11} />,
+      cls: 'text-status-error bg-status-error/10 border-status-error/20',
+    },
     FIPS_ISSUE: {
       label: 'FIPS Issue',
       icon: <XCircle size={11} />,
       cls: 'text-status-error bg-status-error/10 border-status-error/20',
     },
-    NEEDS_VERIFICATION: {
-      label: 'Needs Verification',
-      icon: <HelpCircle size={11} />,
-      cls: 'text-muted-foreground bg-muted border-border',
-    },
   }
-  const { label, icon, cls } = config[result] ?? config['NEEDS_VERIFICATION']
+  const { label, icon, cls } = config[result] ?? config['NEEDS_REVIEW']
   return (
     <span
       className={`inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-semibold border ${cls}`}

@@ -57,11 +57,14 @@ export interface SoftwareItem {
   proofPublicationDate?: string
   proofRelevantInfo?: string
   validationResult?:
-    | 'PASS'
-    | 'FIPS_ISSUE'
     | 'VALIDATED'
+    | 'VALIDATED_NO_PQC'
+    | 'CORRECTED'
+    | 'FIPS_VERIFIED'
+    | 'FIPS_ISSUE'
     | 'PARTIALLY_VALIDATED'
-    | 'NEEDS_VERIFICATION'
+    | 'NEEDS_REVIEW'
+    | 'NOT_VALIDATED'
   correctionNotes?: string
   status?: 'New' | 'Updated' | 'Deleted'
 }
