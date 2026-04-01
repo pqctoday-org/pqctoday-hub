@@ -19,6 +19,7 @@ import {
 import clsx from 'clsx'
 import { useSettingsContext } from './contexts/SettingsContext'
 import { useHsmContext } from './hsm/HsmContext'
+import type { EngineMode } from './hsm/HsmContext'
 import { HsmSymmetricPanel } from './hsm/HsmSymmetricPanel'
 import { HsmHashingPanel } from './hsm/HsmHashingPanel'
 import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
