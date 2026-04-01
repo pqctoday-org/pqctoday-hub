@@ -12,6 +12,7 @@ import {
   Info,
   EyeOff,
   Award,
+  Shield,
   CheckSquare,
   Square,
   Sparkles,
@@ -20,6 +21,8 @@ import {
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
+import { cpeByProduct } from '../../data/cpeXrefData'
+import { purlByProduct } from '../../data/purlXrefData'
 import { vendorMap } from '../../data/migrateData'
 import { getProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
@@ -544,6 +547,87 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                         </a>
                                       )
                                     })}
+                                  </div>
+                                </div>
+                              )
+                            })()}
+
+                            {(() => {
+                              const cpe = cpeByProduct.get(item.softwareName)
+                              const purl = purlByProduct.get(item.softwareName)
+                              const vendor = item.vendorId
+                                ? vendorMap.get(item.vendorId)
+                                : undefined
+                              const hasCpe = cpe && cpe.status !== 'not_found'
+                              const hasPurl = purl && purl.status !== 'not_found'
+                              const hasLei = vendor?.leiCode
+                              if (!hasCpe && !hasPurl && !hasLei) return null
+                              return (
+                                <div>
+                                  <h4 className="font-semibold text-foreground mb-2 flex items-center gap-2">
+                                    <Shield size={14} /> External References
+                                  </h4>
+                                  <div className="space-y-1.5">
+                                    {hasCpe && (
+                                      <a
+                                        href={cpe.nvdUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                      >
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-muted/50 text-muted-foreground border-border whitespace-nowrap">
+                                          CPE
+                                        </span>
+                                        <span className="text-muted-foreground font-mono truncate">
+                                          {cpe.cpeVendor}/{cpe.cpeProduct}
+                                        </span>
+                                        <ExternalLink
+                                          size={10}
+                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                        />
+                                      </a>
+                                    )}
+                                    {hasPurl && (
+                                      <a
+                                        href={purl.registryUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                      >
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-primary/10 text-primary border-primary/20 whitespace-nowrap">
+                                          {purl.purlType.toUpperCase()}
+                                        </span>
+                                        <span className="text-muted-foreground font-mono truncate">
+                                          {purl.purlName}
+                                        </span>
+                                        <ExternalLink
+                                          size={10}
+                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                        />
+                                      </a>
+                                    )}
+                                    {hasLei && vendor?.gleifUrl && (
+                                      <a
+                                        href={vendor.gleifUrl}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="flex items-center gap-2 text-xs group hover:bg-muted/30 rounded-md p-1.5 -mx-1.5 transition-colors"
+                                      >
+                                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-semibold border bg-secondary/10 text-secondary border-secondary/20 whitespace-nowrap">
+                                          LEI
+                                        </span>
+                                        <span className="text-muted-foreground font-mono truncate">
+                                          {vendor.hqCountry && (
+                                            <>{vendor.hqCountry.slice(0, 2).toUpperCase()} · </>
+                                          )}
+                                          {vendor.leiCode!.slice(0, 8)}…
+                                        </span>
+                                        <ExternalLink
+                                          size={10}
+                                          className="text-muted-foreground/50 group-hover:text-primary shrink-0"
+                                        />
+                                      </a>
+                                    )}
                                   </div>
                                 </div>
                               )

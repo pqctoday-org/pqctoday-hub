@@ -18,6 +18,12 @@ export interface Vendor {
   pqcCommitment: 'Active' | 'Partial' | 'Announced' | 'None' | 'Unknown'
   lastVerifiedDate: string
   productCount?: number
+  // GLEIF LEI — ultimate-parent legal entity identifier (ISO 17442)
+  leiCode?: string
+  leiLegalName?: string
+  leiEntityStatus?: string
+  gleifUrl?: string
+  leiLastVerifiedDate?: string
 }
 
 export interface SoftwareItem {
@@ -104,4 +110,27 @@ export interface SoftwareCategoryGap {
   industriesAffected: string
   hasSoftwareInReference: boolean
   softwareCount: number
+}
+
+export interface CpeXref {
+  softwareName: string
+  cpeUri: string
+  cpeVendor: string
+  cpeProduct: string
+  matchConfidence: 'exact' | 'partial' | 'manual' | ''
+  status: 'matched' | 'partial' | 'not_found'
+  nvdUrl: string
+  lastVerifiedDate: string
+}
+
+export interface PurlXref {
+  softwareName: string
+  purl: string
+  purlType: 'npm' | 'pypi' | 'maven' | 'go' | 'github' | 'cargo' | 'nuget' | ''
+  purlNamespace: string
+  purlName: string
+  matchConfidence: 'exact' | 'partial' | 'manual' | ''
+  status: 'matched' | 'not_found'
+  registryUrl: string
+  lastVerifiedDate: string
 }

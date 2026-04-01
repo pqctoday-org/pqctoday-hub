@@ -55,7 +55,13 @@
     "validate:data:verbose": "tsx scripts/validate-data-integrity.ts --verbose",
     "check:urls": "tsx scripts/check-url-liveness.ts",
     "check:urls:verbose": "tsx scripts/check-url-liveness.ts --verbose",
-    "check:urls:json": "tsx scripts/check-url-liveness.ts --json"
+    "check:urls:json": "tsx scripts/check-url-liveness.ts --json",
+    "xref:cpe": "python3 scripts/generate-cpe-xref.py",
+    "xref:cpe:dry": "python3 scripts/generate-cpe-xref.py --dry-run",
+    "xref:purl": "python3 scripts/generate-purl-xref.py",
+    "xref:purl:dry": "python3 scripts/generate-purl-xref.py --dry-run",
+    "xref:lei": "python3 scripts/generate-lei-xref.py",
+    "xref:lei:dry": "python3 scripts/generate-lei-xref.py --dry-run"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3"
