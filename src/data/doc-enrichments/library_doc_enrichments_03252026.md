@@ -5,36 +5,6 @@ documents_processed: 8
 enrichment_method: ollama-qwen3.5:27b
 ---
 
-## draft-ietf-pquip-hybrid-signature-spectrums-07
-
-- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
-- **Title**: Hybrid signature spectrums
-- **Authors**: IETF PQUIP
-- **Publication Date**: 2024-03-01
-- **Last Updated**: 2026-03-25
-- **Document Status**: Internet-Draft
-- **Main Topic**: Classification of design goals and security considerations for hybrid digital signature schemes combining traditional and post-quantum algorithms.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: Cryptographically-Relevant Quantum Computer (CRQC); store and decrypt attacks; quantum attacks against RSA-2048
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: None detected
-- **Leaders Contributions Mentioned**: Nina Bindel; Britta Hale; Deirdre Connolly; Flo Driscoll; Paul E. Hoffman (Document shepherd); Paul Wouters (Responsible AD)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: PKI; root certificates; key revocation; entity authentication
-- **Standardization Bodies**: Internet Engineering Task Force (IETF); NIST Post-Quantum Cryptography Standardization Project
-- **Compliance Frameworks Referenced**: BCP 78; BCP 79; Revised BSD License
-- **Classical Algorithms Referenced**: RSA-2048
-- **Key Takeaways**: Hybrid signature schemes combine traditional and post-quantum algorithms to maintain security if at least one component holds; Designers must choose between mutually exclusive properties like non-separability and backwards compatibility; Implementation-independent attacks have broken a significant percentage of past PQC proposals, justifying hybrid approaches; Hybrid signatures require careful design to prevent downgrade or stripping attacks due to potential separability.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: Hybrid signature schemes; proof composability; non-separability of component signatures; backwards/forwards compatibility; simultaneous verification; hybrid generality
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect; Developer; Researcher; Protocol Designer
-- **Implementation Prerequisites**: Correct provisioning and management of keys; entity authentication; key revocation mechanisms
-- **Relevant PQC Today Features**: hybrid-crypto, crypto-agility, pki-workshop, tls-basics, code-signing
-
----
-
 ## draft-ietf-uta-pqc-app-01
 
 - **Reference ID**: draft-ietf-uta-pqc-app-01

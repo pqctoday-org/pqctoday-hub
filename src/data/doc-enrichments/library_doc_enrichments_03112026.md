@@ -35,36 +35,6 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
-## NIST-SP-800-57-Pt1-R6
-
-- **Reference ID**: NIST-SP-800-57-Pt1-R6
-- **Title**: Recommendation for Key Management: Part 1 – General (Revision 6)
-- **Authors**: NIST
-- **Publication Date**: 2025-12-05
-- **Last Updated**: 2025-12-05
-- **Document Status**: Initial Public Draft
-- **Main Topic**: Initial Public Draft of NIST SP 800-57 Part 1 Revision 6 providing general cryptographic key management guidelines including quantum-resistant algorithms and Ascon.
-- **PQC Algorithms Covered**: None detected
-- **Quantum Threats Addressed**: None detected
-- **Migration Timeline Info**: None detected
-- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; U.S. Department of Commerce; Office of Management and Budget
-- **Leaders Contributions Mentioned**: Elaine Barker (Author); William Barker (Author)
-- **PQC Products Mentioned**: None detected
-- **Protocols Covered**: None detected
-- **Infrastructure Layers**: Key Management
-- **Standardization Bodies**: National Institute of Standards and Technology
-- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act; OMB Circular A-130; FIPS 203; FIPS 204; FIPS 205; SP 800-232; SP 800-131A
-- **Classical Algorithms Referenced**: None detected
-- **Key Takeaways**: Ascon and quantum-resistant algorithms from FIPS 203, 204, and 205 are included in the guidelines; Key establishment and key storage discussions are now separated; Security categories from the PQC competition are incorporated; Time-based algorithm approval status is replaced with references to SP 800-131A; A new section discusses keying material storage and mechanisms.
-- **Security Levels & Parameters**: None detected
-- **Hybrid & Transition Approaches**: None detected
-- **Performance & Size Considerations**: None detected
-- **Target Audience**: Security Architect, Compliance Officer, Policy Maker, Researcher
-- **Implementation Prerequisites**: None detected
-- **Relevant PQC Today Features**: Algorithms, Compliance, Migrate, Assess, crypto-agility
-
----
-
 ## NIST-IR-8528
 
 - **Reference ID**: NIST-IR-8528

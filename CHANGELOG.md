@@ -4,6 +4,21 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.68.0] - 2026-03-31
+
+### Added
+
+- **RAG deep-link `?tab=transition`**: transition/classical algorithm chunks (RSA, ECDH, ECDSA, etc.) now deep-link to `/algorithms?tab=transition&highlight=<classical-slug>`; previously omitting `?tab=` caused `AlgorithmsView` to auto-switch to the `detailed` tab where classical algorithms are absent, making the link appear to open the home page [rag]
+- **RAG deep-link `?tab=standards`**: compliance chunks now include `?tab=standards` so the link opens the Standards tab directly instead of the default Records tab [rag]
+- **RAG migrate layer filtering**: all 521 migrate product chunks now include `?layer=<primaryLayer>` in their deep-link URL, enabling the chat UI to navigate directly to the infrastructure layer context for each product [rag]
+- **RAG playground tab targeting**: interactive playground lab chunk split into two tab-specific chunks — `playground-interactive-lab-kem` (`/playground/interactive?tab=kem_ops`) and `playground-interactive-lab-sign` (`/playground/interactive?tab=sign_verify`) for more precise navigation [rag]
+
+### Changed
+
+- **System prompt URL patterns** (`promptBuilder.ts`): updated both Gemini and local model prompts with `?tab=transition&highlight=<classical-slug>` for classical algorithm links, `?tab=detailed&subtab=<performance|security|sizes|usecases>` for comparison sub-views, and `/compliance?tab=standards&q=<label>` / `?mcat=<category>` for compliance; fixed example slug from `ml-kem` (non-existent) to `ml-kem-768` [rag]
+- **RAG test harness `VALID_QUERY_PARAMS`** expanded to cover all new params: `subtab` for `/algorithms`, `mcat`/`pqc`/`tab` for `/compliance`, `layer`/`industry`/`cat` for `/migrate`, `algo`/`tab` for `/playground` and `/playground/interactive`; `VALID_ROUTES` expanded with `/playground/interactive`, `/playground/hsm`, `/learn`, `/business`, `/changelog`, `/faq`, `/terms` [rag]
+- **RAG corpus regenerated**: 5,571 chunks (was 5,570); all transition algorithm chunks, compliance chunks, and migrate product chunks carry corrected deep-link URLs [data]
+
 ## [2.67.1] - 2026-03-31
 
 ### Changed

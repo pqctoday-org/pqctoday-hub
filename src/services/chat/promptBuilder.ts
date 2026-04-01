@@ -268,12 +268,15 @@ GUIDELINES:
 2. When listing items (leaders, products, documents, algorithms), ONLY include items from the ENTITY INVENTORY above. Never fabricate entries. If you list N items, every one must come from the inventory.
 3. **Linking**: When referencing a specific standard, RFC, or document (e.g., NIST IR 8547, FIPS 203, RFC 9629), ALWAYS link to \`/library?ref=<referenceId>\` — even if the chunk came from a timeline or other source. The Library page has the authoritative record for every catalogued document.
    When a context chunk has a "Deep Link:" field, ALWAYS use that URL. Otherwise construct links using these patterns:
-   - /algorithms?highlight=<slug>, /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>
+   - /algorithms?highlight=<slug> (PQC algorithm detail, e.g. ml-kem-768, ml-dsa-65, slh-dsa-128f)
+   - /algorithms?tab=transition&highlight=<classical-slug> (classical→PQC transition, e.g. rsa, diffie-hellman, ecdsa)
+   - /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases> (algorithm comparison sub-views)
+   - /algorithms?compare=<algo1>,<algo2>, /algorithms?family=<name>
    - /timeline?country=<name>, /timeline?region=<name>
    - /library?ref=<id>, /library?cat=<category>&org=<org>
    - /migrate?q=<name>, /migrate?layer=<layer>&cat=<category>
    - /leaders?leader=<name>, /leaders?sector=<Public|Private|Academic>&country=<name>
-   - /compliance?cert=<id>
+   - /compliance?tab=standards&q=<label>, /compliance?tab=standards&cert=<id>, /compliance?mcat=<category>
    - /threats?id=<threatId>&industry=<industry>
    - /playground/<toolId> (workshop tool), /playground?algo=<name>
    - /playground/interactive?tab=<tab>&algo=<algo> (interactive lab), /playground/hsm (HSM emulator)
@@ -366,11 +369,12 @@ Pages: [Algorithms](/algorithms), [Timeline](/timeline), [Library](/library), [T
 ${topModules}
 LINKING (MANDATORY): Every named item (algorithm, product, leader, document, threat) MUST be a markdown link.
 Use "Deep Link:" from context chunks when available. Otherwise use these patterns:
-- /algorithms?highlight=<slug>, /timeline?country=<name>, /library?ref=<id>
-- /migrate?q=<name>, /leaders?leader=<name>, /compliance?cert=<id>
+- /algorithms?highlight=<slug> (PQC algo, e.g. ml-kem-768, ml-dsa-65), /algorithms?tab=transition&highlight=<classical-slug> (classical algo, e.g. rsa, ecdsa)
+- /algorithms?tab=detailed&subtab=<performance|security|sizes|usecases>, /timeline?country=<name>, /library?ref=<id>
+- /migrate?q=<name>, /leaders?leader=<name>, /compliance?tab=standards&q=<label>, /compliance?tab=standards&cert=<id>
 - /threats?id=<threatId>, /learn/<module-id>, /assess?step=<n>
 - /playground/<toolId>, /business/tools/<toolId>, /openssl?cmd=<category>
-Example: [ML-KEM](/algorithms?highlight=ml-kem), [NIST IR 8547](/library?ref=NIST-IR-8547)
+Example: [ML-KEM-768](/algorithms?highlight=ml-kem-768), [RSA transition](/algorithms?tab=transition&highlight=rsa), [NIST IR 8547](/library?ref=NIST-IR-8547)
 
 BREVITY: Keep answers to 2–4 short paragraphs. Use bullet points for lists. Do not repeat the question. Do not add preamble. Educational only — not production advice.
 

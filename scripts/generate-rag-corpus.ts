@@ -773,7 +773,7 @@ function processAlgorithmTransitions(): RAGChunk[] {
         classical: sanitize(classical),
         pqc: sanitize(pqc),
       },
-      deepLink: `/algorithms?highlight=${algoSlug(classical)}`,
+      deepLink: `/algorithms?tab=transition&highlight=${algoSlug(classical)}`,
     })
   }
 
@@ -878,7 +878,7 @@ function processCompliance(): RAGChunk[] {
         deadline: sanitize(deadline),
         requiresPQC: sanitize(requiresPQC),
       },
-      deepLink: `/compliance?q=${encodeParam(label)}`,
+      deepLink: `/compliance?tab=standards&q=${encodeParam(label)}`,
     })
   }
 
@@ -913,6 +913,26 @@ function processMigrateSoftware(): RAGChunk[] {
       .filter(Boolean)
       .join('\n')
 
+    // Use the first valid infrastructure layer for deep-link context
+    const VALID_LAYERS = new Set([
+      'Cloud',
+      'Network',
+      'AppServers',
+      'Libraries',
+      'SecSoftware',
+      'Database',
+      'Security Stack',
+      'OS',
+      'Hardware',
+    ])
+    const primaryLayer = sanitize(r.infrastructure_layer)
+      .split(',')
+      .map((l) => l.trim())
+      .find((l) => VALID_LAYERS.has(l))
+    const migrateDeepLink = primaryLayer
+      ? `/migrate?q=${encodeParam(name)}&layer=${encodeParam(primaryLayer)}`
+      : `/migrate?q=${encodeParam(name)}`
+
     chunks.push({
       id: `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
       source: 'migrate',
@@ -924,7 +944,7 @@ function processMigrateSoftware(): RAGChunk[] {
         fipsValidated: sanitize(r.fips_validated),
         repositoryUrl: sanitize(r.repository_url),
       },
-      deepLink: `/migrate?q=${encodeParam(name)}`,
+      deepLink: migrateDeepLink,
     })
   }
 
@@ -1907,14 +1927,24 @@ function processPlaygroundGuide(): RAGChunk[] {
       deepLink: '/playground',
     },
     {
-      id: 'playground-interactive-lab',
+      id: 'playground-interactive-lab-kem',
       source: 'playground-guide',
-      title: 'Playground — Interactive Crypto Lab',
+      title: 'Playground — Interactive Lab: KEM & Key Operations',
       content:
-        'Interactive Lab in the PQC Playground\n\nThe Interactive lab at /playground/interactive provides hands-on cryptographic operations across 7 tabs:\n\n1. Keystore (default) — Generate keypairs for any supported algorithm. Shows public/private key sizes, generation time. Algorithm selector dropdown with PQC and classical options.\n2. Data — Hex editor for input data used in subsequent operations.\n3. KEM Operations — ML-KEM (FIPS 203) encapsulation/decapsulation workflow: generate keypair → encapsulate (creates ciphertext + shared secret from public key) → decapsulate (recovers shared secret from private key). Includes X25519 ECDH classical baseline panel for comparison. ML-KEM-768 ciphertext is 1,088 bytes vs X25519 at 32 bytes; shared secret always 32 bytes.\n4. Symmetric — AES-128/256-GCM, AES-CBC, AES-CTR, AES-CMAC, ChaCha20-Poly1305 encrypt/decrypt operations.\n5. Hashing — SHA-256, SHA-512, SHAKE128, SHAKE256 digest computation with hex output.\n6. Sign/Verify — Sign messages with ML-DSA, SLH-DSA, ECDSA, RSA, or Ed25519 private keys; verify with public keys. Signature size comparison: ML-DSA-65 = 3,309 bytes, SLH-DSA-SHA2-128s = 7,856 bytes, ECDSA P-256 = 64 bytes. LMS stateful-key warning banner included.\n7. Logs — Full operation history with execution times and result status.\n\nTab persistence via URL query param (?tab=symmetric). Key store counter shown in keystore tab label. Last operation strip displays most recent result. Keyboard accessible with ARIA tabs and Home/End/Arrow navigation.',
+        'Interactive Lab — KEM Operations & Key Generation\n\nThe PQC Interactive lab at /playground/interactive?tab=kem_ops provides ML-KEM (FIPS 203) hands-on key encapsulation:\n\nKEM Operations tab (?tab=kem_ops) — ML-KEM encapsulation/decapsulation workflow: generate keypair → encapsulate (creates ciphertext + shared secret from public key) → decapsulate (recovers shared secret from private key). Includes X25519 ECDH classical baseline panel for comparison. ML-KEM-768 ciphertext is 1,088 bytes vs X25519 at 32 bytes; shared secret always 32 bytes. Demonstrates quantum-safe key exchange end-to-end.\n\nKeystore tab (?tab=keystore) — Generate keypairs for any supported algorithm (ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA, X25519, P-256, RSA, Ed25519, secp256k1). Shows public/private key sizes and generation time. Key store persists across tabs within the session.\n\nURL: /playground/interactive?tab=kem_ops&algo=ML-KEM-768 to pre-select ML-KEM-768 for KEM operations.',
       category: 'playground',
-      metadata: { feature: 'interactive-lab' },
-      deepLink: '/playground/interactive',
+      metadata: { feature: 'interactive-lab-kem' },
+      deepLink: '/playground/interactive?tab=kem_ops',
+    },
+    {
+      id: 'playground-interactive-lab-sign',
+      source: 'playground-guide',
+      title: 'Playground — Interactive Lab: Sign, Verify & Symmetric',
+      content:
+        'Interactive Lab — Signing, Verification & Symmetric Crypto\n\nSign/Verify tab (?tab=sign_verify) — Sign messages with ML-DSA-44/65/87 (FIPS 204), SLH-DSA all 12 parameter sets (FIPS 205), ECDSA, RSA, or Ed25519 private keys; verify with corresponding public keys. Signature size comparison: ML-DSA-65 = 3,309 bytes, SLH-DSA-SHA2-128s = 7,856 bytes, ECDSA P-256 = 64 bytes. LMS stateful-key warning banner included. Pre-select algorithm: /playground/interactive?tab=sign_verify&algo=ML-DSA-65\n\nSymmetric tab (?tab=symmetric) — AES-128/256-GCM, AES-CBC, AES-CTR, AES-CMAC, ChaCha20-Poly1305 encrypt/decrypt operations.\n\nHashing tab (?tab=hashing) — SHA-256, SHA-512, SHAKE128, SHAKE256 digest computation with hex output.\n\nData tab (?tab=data) — Hex editor for input data used in subsequent operations.\n\nLogs tab (?tab=logs) — Full operation history with execution times and result status.',
+      category: 'playground',
+      metadata: { feature: 'interactive-lab-sign' },
+      deepLink: '/playground/interactive?tab=sign_verify',
     },
     {
       id: 'playground-hsm',
