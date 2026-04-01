@@ -1,5 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
+import FocusLock from 'react-focus-lock'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import {
   ChevronRight,
@@ -27,6 +29,7 @@ import {
   MinusCircle,
   RefreshCw,
   Clock,
+  X,
 } from 'lucide-react'
 import { LAYERS } from './InfrastructureStack'
 import { certsByProduct } from '../../data/certificationXrefData'
@@ -100,6 +103,114 @@ function ValidationResultBadge({ result }: { result: SoftwareItem['validationRes
   )
 }
 
+interface ProofModalProps {
+  isOpen: boolean
+  onClose: () => void
+  item: SoftwareItem
+}
+
+function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
+  const ref = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose()
+    }
+    const onOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) onClose()
+    }
+    if (isOpen) {
+      document.addEventListener('keydown', onKey)
+      document.addEventListener('mousedown', onOutside)
+    }
+    return () => {
+      document.removeEventListener('keydown', onKey)
+      document.removeEventListener('mousedown', onOutside)
+    }
+  }, [isOpen, onClose])
+
+  if (!isOpen) return null
+
+  const content = (
+    <FocusLock returnFocus>
+      <div
+        className="fixed inset-0 z-[9998] bg-black/60 flex items-center justify-center p-4"
+        aria-hidden="true"
+      />
+      <div
+        ref={ref}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="proof-modal-title"
+        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[95vw] sm:w-[80vw] md:w-[520px] max-h-[85vh] bg-popover border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+      >
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3 p-4 border-b border-border bg-muted/20 shrink-0">
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 mb-1 flex-wrap">
+              <ShieldCheck size={14} className="text-primary shrink-0" />
+              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                Validation Proof
+              </span>
+              <ValidationResultBadge result={item.validationResult} />
+            </div>
+            <h3
+              id="proof-modal-title"
+              className="text-sm font-semibold text-foreground leading-snug"
+            >
+              {item.softwareName}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            aria-label="Close proof"
+            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors shrink-0"
+          >
+            <X size={16} aria-hidden="true" />
+          </button>
+        </div>
+
+        {/* Body */}
+        <div className="p-4 overflow-y-auto space-y-4">
+          {item.proofRelevantInfo && (
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+                Summary
+              </p>
+              <p className="text-sm text-foreground leading-relaxed">{item.proofRelevantInfo}</p>
+            </div>
+          )}
+          {item.proofPublicationDate && (
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1">
+                Publication Date
+              </p>
+              <p className="text-sm text-foreground">{item.proofPublicationDate}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        {item.proofUrl && (
+          <div className="p-4 border-t border-border shrink-0">
+            <a
+              href={item.proofUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+            >
+              <ExternalLink size={14} />
+              Open Source Document
+            </a>
+          </div>
+        )}
+      </div>
+    </FocusLock>
+  )
+
+  return createPortal(content, document.body)
+}
+
 interface SoftwareTableProps {
   data: SoftwareItem[]
   defaultSort?: { key: SortKey; direction: SortDirection }
@@ -145,6 +256,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
     defaultSort || { key: 'softwareName', direction: 'asc' }
   )
   const [extractionModal, setExtractionModal] = useState<{ softwareName: string } | null>(null)
+  const [proofModal, setProofModal] = useState<SoftwareItem | null>(null)
 
   const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
 
@@ -725,26 +837,17 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 </a>
                               )}
                               {item.proofUrl && (
-                                <div className="flex flex-col gap-0.5">
-                                  <a
-                                    href={item.proofUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-xs"
-                                  >
-                                    <ShieldCheck size={12} /> View Proof
-                                    {item.proofPublicationDate && (
-                                      <span className="text-muted-foreground">
-                                        ({item.proofPublicationDate})
-                                      </span>
-                                    )}
-                                  </a>
-                                  {item.proofRelevantInfo && (
-                                    <p className="text-xs text-muted-foreground pl-5 leading-snug">
-                                      {item.proofRelevantInfo}
-                                    </p>
+                                <button
+                                  onClick={() => setProofModal(item)}
+                                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-xs"
+                                >
+                                  <ShieldCheck size={12} /> View Proof
+                                  {item.proofPublicationDate && (
+                                    <span className="text-muted-foreground">
+                                      ({item.proofPublicationDate})
+                                    </span>
                                   )}
-                                </div>
+                                </button>
                               )}
                               <UpdateProductButton
                                 updateUrl={buildProductUpdateUrl({
@@ -815,6 +918,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
         }
         softwareName={extractionModal?.softwareName ?? ''}
       />
+      {proofModal && (
+        <ProofModal isOpen={!!proofModal} onClose={() => setProofModal(null)} item={proofModal} />
+      )}
     </div>
   )
 }

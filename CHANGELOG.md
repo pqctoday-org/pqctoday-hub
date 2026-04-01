@@ -21,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
+- **`ProofModal`**: clicking "View Proof" now opens a focused modal (portal, FocusLock, Escape/outside-click to close) showing validation badge, proof summary, publication date, and external source link; modal is `w-[95vw]` on mobile, `md:w-[520px]` on desktop [view:/migrate]
 - **`VALIDATED_NO_PQC` badge**: muted gray pill with `MinusCircle` icon — product validated, no PQC support found [view:/migrate]
 - **`CORRECTED` badge**: amber pill with `RefreshCw` icon — catalog data was corrected during audit round [view:/migrate]
 - **`FIPS_VERIFIED` badge**: green pill with `BadgeCheck` icon — FIPS cert confirmed during audit [view:/migrate]
