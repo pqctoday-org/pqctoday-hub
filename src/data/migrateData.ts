@@ -16,6 +16,7 @@ interface RawSoftwareItem {
   category_id: string
   category_name: string
   infrastructure_layer: string
+  cisa_category?: string
   pqc_support: string
   pqc_capability_description: string
   license_type: string
@@ -44,6 +45,7 @@ interface RawSoftwareItem {
   proof_relevant_info?: string
   validation_result?: string
   correction_notes?: string
+  quantum_tech?: string
 }
 
 const {
@@ -58,6 +60,7 @@ const {
     categoryId: row.category_id,
     categoryName: row.category_name,
     infrastructureLayer: row.infrastructure_layer,
+    cisaCategory: row.cisa_category || 'Other / Unclassified',
     pqcSupport: row.pqc_support,
     pqcCapabilityDescription: row.pqc_capability_description,
     licenseType: row.license_type,
@@ -95,6 +98,7 @@ const {
     proofRelevantInfo: row.proof_relevant_info || undefined,
     validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
     correctionNotes: row.correction_notes || undefined,
+    quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
   }),
   true // withPrevious for status badges
 )

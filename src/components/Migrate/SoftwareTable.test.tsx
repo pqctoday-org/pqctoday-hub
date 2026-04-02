@@ -14,6 +14,7 @@ const baseSoftwareItem: SoftwareItem = {
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',
   infrastructureLayer: 'Libraries',
+  cisaCategory: 'Other / Unclassified',
   pqcSupport: 'Yes (ML-KEM)',
   pqcCapabilityDescription: 'Supports ML-KEM key exchange',
   licenseType: 'Open Source',

@@ -212,17 +212,15 @@ export function hasSubstantiveEnrichment(e: LibraryEnrichment): boolean {
 // Auto-discover the latest enrichment markdown via import.meta.glob
 // ---------------------------------------------------------------------------
 
-function loadEnrichments(): EnrichmentLookup {
-  const modules = import.meta.glob('./doc-enrichments/library_doc_enrichments_*.md', {
-    query: '?raw',
-    import: 'default',
-    eager: true,
-  }) as Record<string, string>
-
+/**
+ * Merge all enrichment markdown files from a glob result into a single lookup.
+ * Files are sorted oldest → newest so later dates overwrite duplicates.
+ * Shared by all collection loaders — do not duplicate this logic.
+ */
+export function mergeEnrichmentFiles(modules: Record<string, string>): EnrichmentLookup {
   const paths = Object.keys(modules)
   if (paths.length === 0) return {}
 
-  // Sort oldest → newest so later files overwrite earlier ones for duplicate IDs
   const withDates = paths.map((p) => {
     const match = p.match(/(\d{2})(\d{2})(\d{4})(_r(\d+))?\.md$/)
     if (!match) return { path: p, date: 0, rev: 0 }
@@ -231,7 +229,6 @@ function loadEnrichments(): EnrichmentLookup {
   })
   withDates.sort((a, b) => a.date - b.date || a.rev - b.rev)
 
-  // Merge all files — later dates take precedence for duplicate IDs
   const merged: EnrichmentLookup = {}
   for (const { path } of withDates) {
     const raw = modules[path]
@@ -239,6 +236,15 @@ function loadEnrichments(): EnrichmentLookup {
     Object.assign(merged, parseEnrichmentMarkdown(raw))
   }
   return merged
+}
+
+function loadEnrichments(): EnrichmentLookup {
+  const modules = import.meta.glob('./doc-enrichments/library_doc_enrichments_*.md', {
+    query: '?raw',
+    import: 'default',
+    eager: true,
+  }) as Record<string, string>
+  return mergeEnrichmentFiles(modules)
 }
 
 export const libraryEnrichments: EnrichmentLookup = loadEnrichments()

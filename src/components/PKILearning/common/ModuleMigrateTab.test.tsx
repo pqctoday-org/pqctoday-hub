@@ -10,6 +10,7 @@ const mockProduct = (overrides: Partial<SoftwareItem> = {}): SoftwareItem => ({
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',
   infrastructureLayer: 'Libraries',
+  cisaCategory: 'Other / Unclassified',
   pqcSupport: 'Yes (ML-KEM)',
   pqcCapabilityDescription: 'Full PQC support',
   licenseType: 'Open Source',

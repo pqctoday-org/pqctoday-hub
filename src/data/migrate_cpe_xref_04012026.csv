@@ -4,10 +4,11 @@ software_name,cpe_uri,cpe_vendor,cpe_product,match_confidence,status,nvd_url,las
 01 Quantum IronCAP,,,,,not_found,,2026-04-01
 1Password,,,,,not_found,,2026-04-01
 A10 Networks Thunder ADC,,,,,not_found,,2026-04-01
-AdGuard DNS,cpe:2.3:a:adguard-dns:adguard_dns:2.2:*:*:*:*:*:*:*,adguard-dns,adguard_dns,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=adguard%20dns,2026-04-01
+AdGuard DNS,,,,,not_found,,2026-04-01
 Adobe Acrobat Sign,,,,,not_found,,2026-04-01
 Adva FSP 3000 S-Flex,,,,,not_found,,2026-04-01
 Adva Network Security FSP 3000 S-Flex,,,,,not_found,,2026-04-01
+Africa Quantum Consortium PQC,,,,,not_found,,2026-04-01
 Akamai Connected Cloud,,,,,not_found,,2026-04-01
 Akamai Edge,,,,,not_found,,2026-04-01
 Akamai PQC Edge,,,,,not_found,,2026-04-01
@@ -24,7 +25,9 @@ AMD Versal Adaptive SoC,,,,,not_found,,2026-04-01
 American Binary Ambit Client,,,,,not_found,,2026-04-01
 Anchorage Digital,,,,,not_found,,2026-04-01
 Android 16,,,,,not_found,,2026-04-01
+Android 17 PQC,,,,,not_found,,2026-04-01
 ANKATech ANKASecure,,,,,not_found,,2026-04-01
+ANSSI PQC Migration Guidance,,,,,not_found,,2026-04-01
 Apache Guacamole,cpe:2.3:a:apache:guacamole:0.8.3:*:*:*:*:*:*:*,apache,guacamole,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=apache%20guacamole,2026-04-01
 Apache HTTP Server,cpe:2.3:a:apache:http_server:1.2:*:*:*:*:*:*:*,apache,http_server,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=apache%20http_server,2026-04-01
 Apache Tomcat,cpe:2.3:a:apache:tomcat:-:*:*:*:*:*:*:*,apache,tomcat,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=apache%20tomcat,2026-04-01
@@ -43,11 +46,12 @@ ARM Trusted Firmware (TF-A),cpe:2.3:a:arm:trusted_firmware-a:-:*:*:*:*:*:*:*,arm
 ARM TrustZone,,,,,not_found,,2026-04-01
 Arqit 6WIND Telco PQC,,,,,not_found,,2026-04-01
 Arqit Encryption Intelligence,,,,,not_found,,2026-04-01
+Arqit QuantumCloud,,,,,not_found,,2026-04-01
 Ascertia ADSS PKI Server,,,,,not_found,,2026-04-01
 Ascertia ADSS Server/SAM,,,,,not_found,,2026-04-01
 Ascertia ADSS Signing Server,,,,,not_found,,2026-04-01
 ASUSTOR ADM 5.1 PQC,,,,,not_found,,2026-04-01
-AsyncSSH,cpe:2.3:a:asyncssh_project:asyncssh:0.1.0:*:*:*:*:*:*:*,asyncssh_project,asyncssh,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=asyncssh%20asyncssh,2026-04-01
+AsyncSSH,,,,,not_found,,2026-04-01
 Auth0 (Okta Customer Identity),,,,,not_found,,2026-04-01
 AUTOCRYPT PKI-Vehicles,,,,,not_found,,2026-04-01
 Avalanche,,,,,not_found,,2026-04-01
@@ -69,6 +73,7 @@ Azure Key Vault,,,,,not_found,,2026-04-01
 Barracuda Email Protection,,,,,not_found,,2026-04-01
 BERTEN MLDS-B235,,,,,not_found,,2026-04-01
 BERTEN MLKE-B135,,,,,not_found,,2026-04-01
+BIS Project Leap PQC,,,,,not_found,,2026-04-01
 Bitcoin Core,cpe:2.3:a:bitcoincore:bitcoin_core:0.16.2:*:*:*:*:*:*:*,bitcoincore,bitcoin_core,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=bitcoin%20core,2026-04-01
 BitGo,,,,,not_found,,2026-04-01
 BitLocker (Windows),,,,,not_found,,2026-04-01
@@ -85,12 +90,15 @@ Broadcom Avi (NSX ALB),,,,,not_found,,2026-04-01
 Broadcom Emulex SecureHBA,,,,,not_found,,2026-04-01
 Broadcom Symantec DLP,,,,,not_found,,2026-04-01
 Broadcom Symantec SES,,,,,not_found,,2026-04-01
+BSI PQC Recommendations,,,,,not_found,,2026-04-01
 BTQ Bitcoin Quantum,,,,,not_found,,2026-04-01
 BTQ Bitcoin Quantum Testnet,,,,,not_found,,2026-04-01
+C-DOT Quantum CEM Encryptor,,,,,not_found,,2026-04-01
 Caddy Server,,,,,not_found,,2026-04-01
 Cardano,,,,,not_found,,2026-04-01
 CAST KiviPQC-KEM,,,,,not_found,,2026-04-01
 CATO Networks SASE,,,,,not_found,,2026-04-01
+Cellcrypt PQC Communications,,,,,not_found,,2026-04-01
 CentOS Stream,cpe:2.3:o:centos:stream:8:*:*:*:*:*:*:*,centos,stream,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=centos%20stream,2026-04-01
 Check Point Quantum,cpe:2.3:h:checkpoint:quantum_security_management:-:*:*:*:*:*:*:*,checkpoint,quantum_security_management,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=check%20point%20quantum,2026-04-01
 Checkmarx One,,,,,not_found,,2026-04-01
@@ -102,7 +110,7 @@ CircleCI,,,,,not_found,,2026-04-01
 CISA PQC Migration Framework,,,,,not_found,,2026-04-01
 Cisco ASA (Adaptive Security Appliance),,,,,not_found,,2026-04-01
 Cisco Catalyst 9500 PQC,,,,,not_found,,2026-04-01
-Cisco Catalyst Center,cpe:2.3:a:cisco:dna_center:1.2.5:*:*:*:*:*:*:*,cisco,dna_center,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=cisco%20catalyst%20center,2026-04-01
+Cisco Catalyst Center,,,,,not_found,,2026-04-01
 Cisco Identity Services Engine (ISE),cpe:2.3:h:cisco:identity_services_engine:-:*:*:*:*:*:*:*,cisco,identity_services_engine,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=cisco%20identity%20services%20engine%20%28ise%29,2026-04-01
 Cisco IOS XE PQC,,,,,not_found,,2026-04-01
 Cisco IOS XR,cpe:2.3:o:cisco:ios_xr_for_crs-1:-:*:*:*:*:*:*:*,cisco,ios_xr_for_crs-1,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=cisco%20ios%20xr,2026-04-01
@@ -123,6 +131,7 @@ Codegic Khatim Sign Server,,,,,not_found,,2026-04-01
 Cohesity DataCloud,,,,,not_found,,2026-04-01
 Coinbase Custody,,,,,not_found,,2026-04-01
 Commvault Cloud,,,,,not_found,,2026-04-01
+Confluent Cloud Kafka PQC,,,,,not_found,,2026-04-01
 Copper.co,,,,,not_found,,2026-04-01
 coreboot,cpe:2.3:o:coreboot:coreboot:4.13:*:*:*:*:*:*:*,coreboot,coreboot,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=coreboot%20coreboot,2026-04-01
 CoreDNS PQC DNSSEC,,,,,not_found,,2026-04-01
@@ -143,14 +152,16 @@ CryptoNext COMPASS Network Probe,,,,,not_found,,2026-04-01
 CryptoNext COMPASS Probe,,,,,not_found,,2026-04-01
 CryptoNext Quantum-Safe Library,,,,,not_found,,2026-04-01
 Cryptosense Analyzer,,,,,not_found,,2026-04-01
+CryptPad PQC Collaboration,,,,,not_found,,2026-04-01
 CRYSTALS Reference Implementations,,,,,not_found,,2026-04-01
+curl PQC,,,,,not_found,,2026-04-01
 CyberArk Conjur,cpe:2.3:a:cyberark:conjur_service_broker:-:*:*:*:*:pivotal_cloud_foundry:*:*,cyberark,conjur_service_broker,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=cyberark%20conjur,2026-04-01
 Cyberint (Check Point),,,,,not_found,,2026-04-01
 CZERTAINLY,,,,,not_found,,2026-04-01
 Dashlane,cpe:2.3:a:dashlane:dashlane:-:*:*:*:*:windows:*:*,dashlane,dashlane,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=dashlane%20dashlane,2026-04-01
 Debian 12 (Bookworm),,,,,not_found,,2026-04-01
 Delinea Secret Server,cpe:2.3:a:delinea:secret_server:10.9.000002:*:*:*:*:*:*:*,delinea,secret_server,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=delinea%20secret%20server,2026-04-01
-Dell BSAFE Crypto Module for C,cpe:2.3:a:dell:bsafe_crypto-module-for-c:3.0:*:*:*:*:*:*:*,dell,bsafe_crypto-module-for-c,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=dell%20bsafe%20crypto%20module%20for%20c,2026-04-01
+Dell BSAFE Crypto Module for C,,,,,not_found,,2026-04-01
 Dell BSAFE Crypto-J,cpe:2.3:a:dell:bsafe_crypto-j:-:*:*:*:*:*:*:*,dell,bsafe_crypto-j,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=dell%20bsafe%20crypto-j,2026-04-01
 Dell PowerStore OS 4.0,,,,,not_found,,2026-04-01
 DFNS,,,,,not_found,,2026-04-01
@@ -167,10 +178,11 @@ Dragos Platform,cpe:2.3:a:dragos:dragos_platform:2.2.1:*:*:*:*:*:*:*,dragos,drag
 Druva Data Resiliency Cloud,,,,,not_found,,2026-04-01
 DuckDuckGo Browser,,,,,not_found,,2026-04-01
 Dyber QuantaTPM,,,,,not_found,,2026-04-01
-Eclipse Jetty,cpe:2.3:a:eclipse:jetty:9.3.0:m2:*:*:*:*:*:*,eclipse,jetty,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=eclipse%20jetty,2026-04-01
+Eclipse Jetty,,,,,not_found,,2026-04-01
 EJBCA,,,,,not_found,,2026-04-01
 Elastic Stack (ELK),,,,,not_found,,2026-04-01
 Element (Matrix Protocol),,,,,not_found,,2026-04-01
+Enquantum PQC Accelerator,,,,,not_found,,2026-04-01
 Entrust Cryptographic Platform,,,,,not_found,,2026-04-01
 Entrust Cryptographic Security Platform,,,,,not_found,,2026-04-01
 Entrust Identity as a Service (IDaaS),,,,,not_found,,2026-04-01
@@ -182,10 +194,12 @@ Ericsson Quantum-Safe 5G,,,,,not_found,,2026-04-01
 ESCRYPT Automotive PQC Solutions,,,,,not_found,,2026-04-01
 essendi xc,,,,,not_found,,2026-04-01
 Ethereum (Geth),,,,,not_found,,2026-04-01
+ETSI TS 104 105 Hybrid PQC Standard,,,,,not_found,,2026-04-01
 EUDI Reference Wallet,,,,,not_found,,2026-04-01
 EVERTRUST HORIZON,,,,,not_found,,2026-04-01
 EVERTRUST STREAM,,,,,not_found,,2026-04-01
 Eviden IDnomic PKI,,,,,not_found,,2026-04-01
+Eviden PQC HSMaaS,,,,,not_found,,2026-04-01
 Eviden Trustway Proteccio NetHSM,,,,,not_found,,2026-04-01
 evolutionQ BasejumpQDN,,,,,not_found,,2026-04-01
 evolutionQ BasejumpSKI,,,,,not_found,,2026-04-01
@@ -195,7 +209,7 @@ F5 ADSP PQC,,,,,not_found,,2026-04-01
 F5 BIG-IP,cpe:2.3:h:f5:big-ip:-:*:*:*:*:*:*:*,f5,big-ip,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=f5%20big-ip,2026-04-01
 Fastly Edge Cloud,,,,,not_found,,2026-04-01
 Fastly PQC CDN,,,,,not_found,,2026-04-01
-Fedora Linux,cpe:2.3:a:fedoraproject:fedora_extra_packages_for_enterprise_linux:7.0:*:*:*:*:*:*:*,fedoraproject,fedora_extra_packages_for_enterprise_linux,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fedora%20linux,2026-04-01
+Fedora Linux,,,,,not_found,,2026-04-01
 FileVault (macOS),,,,,not_found,,2026-04-01
 Fireblocks,,,,,not_found,,2026-04-01
 FIS Modern Banking,,,,,not_found,,2026-04-01
@@ -205,12 +219,12 @@ Fortanix PQC Central,,,,,not_found,,2026-04-01
 Fortinet FortiAuthenticator,cpe:2.3:a:fortinet:fortiauthenticator:3.0.0:*:*:*:*:*:*:*,fortinet,fortiauthenticator,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fortinet%20fortiauthenticator,2026-04-01
 Fortinet FortiGate (FortiOS),,,,,not_found,,2026-04-01
 Fortinet FortiGate-Rugged,,,,,not_found,,2026-04-01
-Fortinet FortiManager,cpe:2.3:o:fortinet:fortimanager_firmware:5.0.3:*:*:*:*:*:*:*,fortinet,fortimanager_firmware,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fortinet%20fortimanager,2026-04-01
+Fortinet FortiManager,,,,,not_found,,2026-04-01
 Fortinet FortiOS,cpe:2.3:o:fortinet:fortios:4.3.10:*:*:*:*:*:*:*,fortinet,fortios,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fortinet%20fortios,2026-04-01
-Fortinet FortiWeb,cpe:2.3:a:fortinet:fortiweb:5.0.4:*:*:*:*:*:*:*,fortinet,fortiweb,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fortinet%20fortiweb,2026-04-01
+Fortinet FortiWeb,,,,,not_found,,2026-04-01
 Forward Edge-AI Isidore Quantum,,,,,not_found,,2026-04-01
 Forward Edge-AI Space Router,,,,,not_found,,2026-04-01
-FreeBSD,cpe:2.3:o:freebsd:freebsd:-:*:*:*:*:*:*:*,freebsd,freebsd,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=freebsd%20freebsd,2026-04-01
+FreeBSD,,,,,not_found,,2026-04-01
 FreeRTOS,,,,,not_found,,2026-04-01
 FusionAuth,cpe:2.3:a:fusionauth:fusionauth:1.0.13:*:*:*:*:*:*:*,fusionauth,fusionauth,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=fusionauth%20fusionauth,2026-04-01
 Futurex Cloud,,,,,not_found,,2026-04-01
@@ -219,6 +233,8 @@ Futurex Vectera Plus,,,,,not_found,,2026-04-01
 G+D Quantum-Safe SIM Platform,,,,,not_found,,2026-04-01
 Garantir GaraTrust,,,,,not_found,,2026-04-01
 General Dynamics Mission,,,,,not_found,,2026-04-01
+Genua Quantum-Resistant VPN,,,,,not_found,,2026-04-01
+Giesecke+Devrient PQC ID Card,,,,,not_found,,2026-04-01
 GitHub Actions,cpe:2.3:a:github:runner:2.298.2:*:*:*:*:*:*:*,github,runner,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=github%20actions,2026-04-01
 GitHub Copilot Security,,,,,not_found,,2026-04-01
 GitHub SSH PQC,,,,,not_found,,2026-04-01
@@ -226,7 +242,7 @@ GitLab CI/CD,,,,,not_found,,2026-04-01
 GlobalSign Atlas CLM,,,,,not_found,,2026-04-01
 GlobalSign Digital Signing Service,,,,,not_found,,2026-04-01
 Gmail / Google Workspace,,,,,not_found,,2026-04-01
-GnuPG,cpe:2.3:a:gnupg:gnupg:1.4.3:*:*:*:*:*:*:*,gnupg,gnupg,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=gnupg%20gnupg,2026-04-01
+GnuPG,,,,,not_found,,2026-04-01
 GnuTLS,cpe:2.3:a:gnu:gnutls:-:*:*:*:*:*:*:*,gnu,gnutls,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=gnu%20gnutls,2026-04-01
 Go stdlib crypto/mlkem,,,,,not_found,,2026-04-01
 go-jose v4,,,,,not_found,,2026-04-01
@@ -241,7 +257,8 @@ Google GKE,,,,,not_found,,2026-04-01
 Google OpenTitan,,,,,not_found,,2026-04-01
 Google Tink,cpe:2.3:a:google:tink:1.0.0:*:*:*:*:*:*:*,google,tink,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=google%20tink,2026-04-01
 GPG Code Signing,,,,,not_found,,2026-04-01
-HAProxy,cpe:2.3:a:haproxy:haproxy:1.4.20:*:*:*:*:*:*:*,haproxy,haproxy,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=haproxy%20haproxy,2026-04-01
+GSMA PQ Telco Task Force,,,,,not_found,,2026-04-01
+HAProxy,,,,,not_found,,2026-04-01
 hash-sigs,,,,,not_found,,2026-04-01
 HashiCorp Boundary,cpe:2.3:a:hashicorp:boundary:0.1.8:*:*:*:*:*:*:*,hashicorp,boundary,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=hashicorp%20boundary,2026-04-01
 HashiCorp Consul Connect (Service Mesh),,,,,not_found,,2026-04-01
@@ -250,19 +267,21 @@ HashiCorp Vault Transit,,,,,not_found,,2026-04-01
 HiddenLayer Model Scanner,,,,,not_found,,2026-04-01
 HIPAA (Quantum Security Rule),,,,,not_found,,2026-04-01
 Hitachi DoMobile,,,,,not_found,,2026-04-01
+HP Enterprise Printers PQC,,,,,not_found,,2026-04-01
 HPE Alletra MP,,,,,not_found,,2026-04-01
 HPE ProLiant Gen12,,,,,not_found,,2026-04-01
 HQC Algorithm,,,,,not_found,,2026-04-01
+Huawei PQC Network Security,,,,,not_found,,2026-04-01
 Hyland OnBase,cpe:2.3:a:hyland:onbase:18.0.0.0:*:*:*:*:*:*:*,hyland,onbase,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=hyland%20onbase,2026-04-01
 Hyperledger Aries (ACA-Py),,,,,not_found,,2026-04-01
 Hyperledger Besu,,,,,not_found,,2026-04-01
 Hyperledger Fabric,cpe:2.3:a:hyperledger:fabric:1.4.0:*:*:*:*:*:*:*,hyperledger,fabric,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=hyperledger%20fabric,2026-04-01
 Hyperledger Fabric 3.0 PQC,,,,,not_found,,2026-04-01
 I4P Trident HSM,,,,,not_found,,2026-04-01
-IBM Aspera,cpe:2.3:a:ibm:aspera_application_platform_on_demand:-:*:*:*:*:*:*:*,ibm,aspera_application_platform_on_demand,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=ibm%20aspera,2026-04-01
+IBM Aspera,,,,,not_found,,2026-04-01
 IBM Cloud HSM (Utimaco),,,,,not_found,,2026-04-01
 IBM Db2,cpe:2.3:a:ibm:db2:-:*:*:*:*:*:*:*,ibm,db2,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=ibm%20db2,2026-04-01
-IBM Guardium Key Lifecycle Manager,cpe:2.3:a:ibm:security_guardium_key_lifecycle_manager:4.1.0:*:*:*:*:*:*:*,ibm,security_guardium_key_lifecycle_manager,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=ibm%20guardium%20key%20lifecycle%20manager,2026-04-01
+IBM Guardium Key Lifecycle Manager,,,,,not_found,,2026-04-01
 IBM Guardium Quantum Safe,,,,,not_found,,2026-04-01
 IBM Guardium Safe,,,,,not_found,,2026-04-01
 IBM LinuxONE PQC,,,,,not_found,,2026-04-01
@@ -279,9 +298,12 @@ IDEMIA Digital Identity Platform,,,,,not_found,,2026-04-01
 IDEMIA PQC Accelerator,,,,,not_found,,2026-04-01
 IDEMIA PQC Secure Element,,,,,not_found,,2026-04-01
 Imperva WAF,,,,,not_found,,2026-04-01
+India National PQC Roadmap,,,,,not_found,,2026-04-01
+Infineon AURIX TC49 PQC,,,,,not_found,,2026-04-01
 Infineon OPTIGA TPM SLB 9672,,,,,not_found,,2026-04-01
 Infineon PSOC Control C3 PQC,,,,,not_found,,2026-04-01
 Infineon TEGRION SLC27 PQC,,,,,not_found,,2026-04-01
+Infineon TEGRION SLI22 Automotive,,,,,not_found,,2026-04-01
 Intel Platform Trust Technology (PTT),,,,,not_found,,2026-04-01
 Intel TDX (Trust Domain Extensions),,,,,not_found,,2026-04-01
 Internxt Drive PQC,,,,,not_found,,2026-04-01
@@ -304,17 +326,20 @@ JFrog Artifactory,cpe:2.3:a:jfrog:artifactory:1.0:*:*:*:*:jenkins:*:*,jfrog,arti
 jose4j,cpe:2.3:a:jose4j_project:jose4j:0.9.3:*:*:*:*:*:*:*,jose4j_project,jose4j,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=jose4j%20jose4j,2026-04-01
 jsonwebtoken (auth0),,,,,not_found,,2026-04-01
 JumpCloud Directory Platform,,,,,not_found,,2026-04-01
-Juniper Junos OS,cpe:2.3:o:juniper:junos:12.3x48:-:*:*:*:*:*:*,juniper,junos,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=juniper%20junos%20os,2026-04-01
+Juniper Junos OS,,,,,not_found,,2026-04-01
 Juniper SRX Series Firewalls,,,,,not_found,,2026-04-01
 Keeper Security,cpe:2.3:a:keepersecurity:keeper:16.10.2:*:*:*:*:*:*:*,keepersecurity,keeper,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=keeper%20security,2026-04-01
 Keycloak,cpe:2.3:a:keycloak:keycloak-nodejs-auth-utils:2.5.0:*:*:*:*:*:*:*,keycloak,keycloak-nodejs-auth-utils,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=keycloak%20keycloak,2026-04-01
 Keyfactor 2026 Trends,,,,,not_found,,2026-04-01
 Keyfactor AgileSec Analytics,,,,,not_found,,2026-04-01
-Keyfactor Command,cpe:2.3:a:keyfactor:command:10.5.0:*:*:*:*:*:*:*,keyfactor,command,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=keyfactor%20command,2026-04-01
+Keyfactor Command,,,,,not_found,,2026-04-01
 Keyfactor EJBCA,cpe:2.3:a:keyfactor:ejbca:8.0.0:*:*:*:*:*:*:*,keyfactor,ejbca,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=keyfactor%20ejbca,2026-04-01
 Keysight CyPerf,,,,,not_found,,2026-04-01
 Keysight Inspector,,,,,not_found,,2026-04-01
+Kiteworks PQC File Sharing,,,,,not_found,,2026-04-01
+KiviCore PQC IP Cores,,,,,not_found,,2026-04-01
 Kong API Gateway,,,,,not_found,,2026-04-01
+KpqC Korean PQC Standards,,,,,not_found,,2026-04-01
 Kubernetes,cpe:2.3:a:kubernetes:kubernetes:-:*:*:*:*:*:*:*,kubernetes,kubernetes,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=kubernetes%20kubernetes,2026-04-01
 Kudelski IoT Security Platform,,,,,not_found,,2026-04-01
 Lakera Guard,,,,,not_found,,2026-04-01
@@ -323,11 +348,11 @@ Lattice MachXO5-NX,,,,,not_found,,2026-04-01
 leancrypto,,,,,not_found,,2026-04-01
 Ledger Enterprise,,,,,not_found,,2026-04-01
 Let's Encrypt,,,,,not_found,,2026-04-01
-liboqs,cpe:2.3:a:openquantumsafe:liboqs:0.10.1:-:*:*:*:*:*:*,openquantumsafe,liboqs,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=openquantumsafe%20liboqs,2026-04-01
+liboqs,,,,,not_found,,2026-04-01
 liboqs-rust (oqs crate),,,,,not_found,,2026-04-01
-LibreSSL,cpe:2.3:a:openbsd:libressl:2.1.1:*:*:*:*:*:*:*,openbsd,libressl,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=openbsd%20libressl,2026-04-01
+LibreSSL,,,,,not_found,,2026-04-01
 Libreswan,cpe:2.3:a:libreswan:libreswan:3.5:*:*:*:*:*:*:*,libreswan,libreswan,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=libreswan%20libreswan,2026-04-01
-libssh,cpe:2.3:a:libssh:libssh:0.5.2:*:*:*:*:*:*:*,libssh,libssh,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=libssh%20libssh,2026-04-01
+libssh,,,,,not_found,,2026-04-01
 Linkerd,cpe:2.3:a:linkerd:linkerd:2.13.0:*:*:*:stable:kubernetes:*:*,linkerd,linkerd,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=linkerd%20linkerd,2026-04-01
 Linux IMA/EVM,,,,,not_found,,2026-04-01
 Linux LUKS / dm-crypt,,,,,not_found,,2026-04-01
@@ -339,6 +364,7 @@ Mastercard Quantum-Resistant Contactless,,,,,not_found,,2026-04-01
 Mavenir Cloud RAN,,,,,not_found,,2026-04-01
 Mbed TLS,,,,,not_found,,2026-04-01
 Microchip ATECC608B,,,,,not_found,,2026-04-01
+Microchip CryptoAutomotive TA100,,,,,not_found,,2026-04-01
 Microchip MEC175xB PQC Controllers,,,,,not_found,,2026-04-01
 Microchip PolarFire,,,,,not_found,,2026-04-01
 Microsoft AD CS,,,,,not_found,,2026-04-01
@@ -354,7 +380,7 @@ Microsoft RDS,,,,,not_found,,2026-04-01
 Microsoft Remote Desktop Services (RDS),,,,,not_found,,2026-04-01
 Microsoft SignTool,,,,,not_found,,2026-04-01
 Microsoft SymCrypt,,,,,not_found,,2026-04-01
-MikroTik RouterOS,cpe:2.3:o:mikrotik:routeros:5.15:*:*:*:*:*:*:*,mikrotik,routeros,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=mikrotik%20routeros,2026-04-01
+MikroTik RouterOS,,,,,not_found,,2026-04-01
 Mimecast Cloud Integrated,,,,,not_found,,2026-04-01
 MinIO Enterprise,cpe:2.3:a:miniorange:oauth_single_sign_on:48.4.9:*:*:*:enterprise:wordpress:*:*,miniorange,oauth_single_sign_on,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=minio%20enterprise,2026-04-01
 mlkem-native,,,,,not_found,,2026-04-01
@@ -366,8 +392,10 @@ MTG AG KMS,,,,,not_found,,2026-04-01
 Mullvad VPN App,,,,,not_found,,2026-04-01
 MySQL Community Server,cpe:2.3:a:mysql:mysql_community_server:-:*:*:*:*:*:*:*,mysql,mysql_community_server,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=mysql%20community%20server,2026-04-01
 MySQL Enterprise Encryption,,,,,not_found,,2026-04-01
+NCSC UK PQC Migration Timelines,,,,,not_found,,2026-04-01
 NEC 5G Core,,,,,not_found,,2026-04-01
 NetApp ONTAP 9.16,,,,,not_found,,2026-04-01
+NetSfere PQC Messaging,,,,,not_found,,2026-04-01
 Netskope Intelligent DLP,,,,,not_found,,2026-04-01
 Netskope One PQC,,,,,not_found,,2026-04-01
 Nexus Group Certificate Manager,,,,,not_found,,2026-04-01
@@ -378,12 +406,14 @@ Nimbus JOSE+JWT,,,,,not_found,,2026-04-01
 NIST SP 800-227 PQC Guidance,,,,,not_found,,2026-04-01
 NixOS,cpe:2.3:o:nixos:nix:0.5:*:*:*:*:*:*:*,nixos,nix,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=nixos%20nixos,2026-04-01
 noble-post-quantum,,,,,not_found,,2026-04-01
-Node.js,cpe:2.3:a:nodejs:node.js:0.10.18:*:*:*:*:*:*:*,nodejs,node.js,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=nodejs%20node.js,2026-04-01
+Node.js,,,,,not_found,,2026-04-01
 Nokia Quantum-Safe Networks,,,,,not_found,,2026-04-01
+Nokia Quantum-Safe Railways,,,,,not_found,,2026-04-01
 NordVPN,cpe:2.3:a:nordvpn:nordvpn:6.14.28.0:*:*:*:*:*:*:*,nordvpn,nordvpn,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=nordvpn%20nordvpn,2026-04-01
 Notary Project,cpe:2.3:a:notaryproject:notation:1.0.0:rc1:*:*:*:go:*:*,notaryproject,notation,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=notary%20project,2026-04-01
-Nozomi Networks Guardian,cpe:2.3:a:nozominetworks:guardian:19.0.4:*:*:*:*:*:*:*,nozominetworks,guardian,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=nozomi%20networks%20guardian,2026-04-01
+Nozomi Networks Guardian,,,,,not_found,,2026-04-01
 NSS (Mozilla),,,,,not_found,,2026-04-01
+NTT PQC Secure Transport,,,,,not_found,,2026-04-01
 Nutanix AHV,cpe:2.3:o:nutanix:ahv:-:*:*:*:*:*:*:*,nutanix,ahv,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=nutanix%20ahv,2026-04-01
 Nvidia cuPQC,,,,,not_found,,2026-04-01
 NVIDIA cuPQC SDK,,,,,not_found,,2026-04-01
@@ -391,11 +421,13 @@ NXP EdgeLock SE051H,,,,,not_found,,2026-04-01
 NXP i.MX 94 PQC Processor,,,,,not_found,,2026-04-01
 NXP JCOP 4.5 P71D600,,,,,not_found,,2026-04-01
 NXP OrangeBox 2.0 PQC,,,,,not_found,,2026-04-01
+NXP S32K5 Automotive PQC MCU,,,,,not_found,,2026-04-01
 NXP SE051 Secure Element,,,,,not_found,,2026-04-01
 OAuth 2.0 / OpenID Connect (OIDC),,,,,not_found,,2026-04-01
 Okta Integration Network,,,,,not_found,,2026-04-01
 Okta Workforce Identity,,,,,not_found,,2026-04-01
-OpenSSH,cpe:2.3:a:openbsd:openssh:-:*:*:*:*:*:*:*,openbsd,openssh,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=openbsd%20openssh,2026-04-01
+Open Quantum Safe liboqs,cpe:2.3:a:openquantumsafe:liboqs:0.10.1:-:*:*:*:*:*:*,openquantumsafe,liboqs,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=open%20quantum%20safe%20liboqs,2026-04-01
+OpenSSH,,,,,not_found,,2026-04-01
 OpenSSL,cpe:2.3:a:openssl:openssl:-:*:*:*:*:*:*:*,openssl,openssl,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=openssl%20openssl,2026-04-01
 openSUSE Leap,cpe:2.3:o:opensuse_project:leap:42.2:*:*:*:*:*:*:*,opensuse_project,leap,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=opensuse%20leap,2026-04-01
 OpenText Content Cloud,,,,,not_found,,2026-04-01
@@ -403,14 +435,17 @@ OpenVPN,cpe:2.3:a:openvpn:openvpn:-:*:*:*:*:*:*:*,openvpn,openvpn,exact,matched,
 OpenWrt,cpe:2.3:o:openwrt:lede:17.01:*:*:*:*:*:*:*,openwrt,lede,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=openwrt%20openwrt,2026-04-01
 Opera Browser PQC,,,,,not_found,,2026-04-01
 OPNsense,cpe:2.3:a:opnsense:opnsense:16.1.16:*:*:*:*:*:*:*,opnsense,opnsense,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=opnsense%20opnsense,2026-04-01
+"OQS Docker Images (nginx, curl, haproxy)",,,,,not_found,,2026-04-01
+OQS-OpenSSL Provider,,,,,not_found,,2026-04-01
 oqs-provider,,,,,not_found,,2026-04-01
 Oracle AI Database 26ai,,,,,not_found,,2026-04-01
 Oracle Key Vault,,,,,not_found,,2026-04-01
 Oracle Linux 9.7,,,,,not_found,,2026-04-01
+Orange Business PQC WAN,,,,,not_found,,2026-04-01
 OVHcloud QRNG SSL,,,,,not_found,,2026-04-01
 PacketLight PQC Optical Encryption,,,,,not_found,,2026-04-01
 Palo Alto Cortex XDR,cpe:2.3:a:paloaltonetworks:cortex_xdr_agent:5.0:*:*:*:*:*:*:*,paloaltonetworks,cortex_xdr_agent,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=palo%20alto%20cortex%20xdr,2026-04-01
-Palo Alto GlobalProtect,cpe:2.3:a:paloaltonetworks:globalprotect:1.1.7:*:*:*:*:*:*:*,paloaltonetworks,globalprotect,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=palo%20alto%20globalprotect,2026-04-01
+Palo Alto GlobalProtect,,,,,not_found,,2026-04-01
 Palo Alto PAN-OS,cpe:2.3:o:paloaltonetworks:pan-os:5.1.10:*:*:*:*:*:*:*,paloaltonetworks,pan-os,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=palo%20alto%20pan-os,2026-04-01
 Palo Alto Prisma SASE,,,,,not_found,,2026-04-01
 Palo Alto Quantum-Safe Security,,,,,not_found,,2026-04-01
@@ -418,15 +453,17 @@ Paradym (Animo Solutions),,,,,not_found,,2026-04-01
 Paramiko (Python SSH),,,,,not_found,,2026-04-01
 Patero PQC Gateway,,,,,not_found,,2026-04-01
 Payara Server,,,,,not_found,,2026-04-01
-pfSense Community Edition,cpe:2.3:a:pfsense:pfsense:2.2.6:*:*:*:community:*:*:*,pfsense,pfsense,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=pfsense%20community%20edition,2026-04-01
+pfSense Community Edition,,,,,not_found,,2026-04-01
 Ping Identity PingFederate,cpe:2.3:a:pingidentity:pingfederate:6.10.1:*:*:*:*:*:*:*,pingidentity,pingfederate,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=ping%20identity%20pingfederate,2026-04-01
 Polkadot/Substrate,,,,,not_found,,2026-04-01
 Postfix 3.10 PQC,,,,,not_found,,2026-04-01
-PostgreSQL,cpe:2.3:a:postgresql:postgresql:-:*:*:*:*:*:*:*,postgresql,postgresql,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=postgresql%20postgresql,2026-04-01
+PostgreSQL,,,,,not_found,,2026-04-01
 PostgreSQL pgcrypto,,,,,not_found,,2026-04-01
+PowerDNS PQC DNSSEC,,,,,not_found,,2026-04-01
 PQ Code Package,,,,,not_found,,2026-04-01
 pqc-flow,,,,,not_found,,2026-04-01
 PQC-LEO,,,,,not_found,,2026-04-01
+pQCee CNG Provider,,,,,not_found,,2026-04-01
 PQChat Quantum-Safe Messaging,,,,,not_found,,2026-04-01
 PQClean,cpe:2.3:a:pqclean_project:pqclean:-:*:*:*:*:*:*:*,pqclean_project,pqclean,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=pqclean%20pqclean,2026-04-01
 pqcrypto,,,,,not_found,,2026-04-01
@@ -437,6 +474,7 @@ pqm4,,,,,not_found,,2026-04-01
 PQMicroLib-Core,,,,,not_found,,2026-04-01
 PQSecure Technologies HW IP,,,,,not_found,,2026-04-01
 PQShield Core,,,,,not_found,,2026-04-01
+PQShield PQE2E Messaging SDK,,,,,not_found,,2026-04-01
 PQShield PQSDK,,,,,not_found,,2026-04-01
 Procivis One,,,,,not_found,,2026-04-01
 Project Eleven Solana PQC,,,,,not_found,,2026-04-01
@@ -461,8 +499,12 @@ Qualcomm Snapdragon Trusted Execution Environment,,,,,not_found,,2026-04-01
 Qualys Cloud Platform,cpe:2.3:a:qualys:private_cloud_platform:10.24.0.0:*:*:*:*:*:*:*,qualys,private_cloud_platform,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=qualys%20cloud%20platform,2026-04-01
 Quantinuum Quantum Origin,,,,,not_found,,2026-04-01
 Quantropi QiSpace STM32,,,,,not_found,,2026-04-01
+Quantum Bridge DSKE,,,,,not_found,,2026-04-01
+Quantum eMotion Sentry-Q,,,,,not_found,,2026-04-01
+Quantum Xchange Platform,,,,,not_found,,2026-04-01
 QuintessenceLabs qSOC,,,,,not_found,,2026-04-01
 QuintessenceLabs qStream,,,,,not_found,,2026-04-01
+Quranium PQC Blockchain,,,,,not_found,,2026-04-01
 QuSecure QuProtect R3,,,,,not_found,,2026-04-01
 QuSecure QuProtect Tactical,,,,,not_found,,2026-04-01
 QVerse,,,,,not_found,,2026-04-01
@@ -478,18 +520,20 @@ Red Hat OpenShift Service Mesh PQC,,,,,not_found,,2026-04-01
 Redis,,,,,not_found,,2026-04-01
 Renesas Veridify PQC for RA MCUs,,,,,not_found,,2026-04-01
 Resquant Crypto Accelerator,,,,,not_found,,2026-04-01
-Rocky Linux,cpe:2.3:o:rockylinux:rocky_linux:8.4:*:*:*:*:*:*:*,rockylinux,rocky_linux,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=rocky%20linux,2026-04-01
+Rocky Linux,,,,,not_found,,2026-04-01
 RPM Signing (rpm-sign),,,,,not_found,,2026-04-01
 Rubrik Security Cloud,,,,,not_found,,2026-04-01
 RustCrypto ml-dsa,,,,,not_found,,2026-04-01
 RustCrypto ml-kem,,,,,not_found,,2026-04-01
 RustCrypto slh-dsa,,,,,not_found,,2026-04-01
 rustls,cpe:2.3:a:rustls_project:rustls:0.1.0:*:*:*:*:*:*:*,rustls_project,rustls,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=rustls%20rustls,2026-04-01
+SA QuTI Quantum Communications,,,,,not_found,,2026-04-01
 SafeLogic CryptoComply,,,,,not_found,,2026-04-01
-SAML 2.0,cpe:2.3:a:samlify_project:samlify:2.0.0:*:*:*:*:*:*:*,samlify_project,samlify,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=saml%202.0,2026-04-01
+SAML 2.0,,,,,not_found,,2026-04-01
 Samsung Knox Quantum-Safe,,,,,not_found,,2026-04-01
 Samsung Networks 5G Core,,,,,not_found,,2026-04-01
 Samsung S3SSE2A eSE,,,,,not_found,,2026-04-01
+Samsung SDS S-CAPE PQC Platform,,,,,not_found,,2026-04-01
 SandboxAQ AQtive Guard,,,,,not_found,,2026-04-01
 SandboxAQ Sandwich,,,,,not_found,,2026-04-01
 SAP Cryptographic Library,,,,,not_found,,2026-04-01
@@ -502,8 +546,10 @@ Sectigo 2026 Predictions,,,,,not_found,,2026-04-01
 Sectigo Cert Manager 2026,,,,,not_found,,2026-04-01
 Sectigo Certificate Manager,,,,,not_found,,2026-04-01
 Sectigo Certificate Manager (SCM),,,,,not_found,,2026-04-01
+Secunet SINA PQC Components,,,,,not_found,,2026-04-01
 Secure-IC Securyzr,,,,,not_found,,2026-04-01
 Securosys CloudHSM,,,,,not_found,,2026-04-01
+Securosys Primus CyberVault PQC,,,,,not_found,,2026-04-01
 Securosys Primus HSM,,,,,not_found,,2026-04-01
 Senetas CN7000 Series,,,,,not_found,,2026-04-01
 Sequoia-PGP PQC,,,,,not_found,,2026-04-01
@@ -515,13 +561,14 @@ SignQuantum PQC E-Signature,,,,,not_found,,2026-04-01
 SignServer,,,,,not_found,,2026-04-01
 sigstore/cosign,,,,,not_found,,2026-04-01
 SimpleX Chat PQC,,,,,not_found,,2026-04-01
+Singtel Quantum-Safe Network,,,,,not_found,,2026-04-01
 SK Telecom 5G PQC SIM,,,,,not_found,,2026-04-01
 smallstep Certificate Authority,,,,,not_found,,2026-04-01
 Snort IDS/IPS,,,,,not_found,,2026-04-01
 SOC 2 (Quantum Trust Criteria),,,,,not_found,,2026-04-01
 SoftHSM2,,,,,not_found,,2026-04-01
-Solana,cpe:2.3:a:solana:rbpf:0.2.14:*:*:*:*:*:*:*,solana,rbpf,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=solana%20solana,2026-04-01
-Sonatype Nexus,cpe:2.3:a:sonatype:nexus:2.7.1:*:*:*:*:*:*:*,sonatype,nexus,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=sonatype%20nexus,2026-04-01
+Solana,,,,,not_found,,2026-04-01
+Sonatype Nexus,,,,,not_found,,2026-04-01
 SOTI MobiControl,,,,,not_found,,2026-04-01
 Sphereon SSI SDK,,,,,not_found,,2026-04-01
 Spherity CARO Pharma PQC,,,,,not_found,,2026-04-01
@@ -560,9 +607,11 @@ Thales payShield 10K,,,,,not_found,,2026-04-01
 Threema PQC,,,,,not_found,,2026-04-01
 Thunderbird PQC (OpenPGP),,,,,not_found,,2026-04-01
 TianoCore EDK2 (UEFI Firmware),,,,,not_found,,2026-04-01
+TII PQC Library (UAE),,,,,not_found,,2026-04-01
 TikTok PQC Data Protection,,,,,not_found,,2026-04-01
 TOPPAN SecureBridge HPKI PQC,,,,,not_found,,2026-04-01
 Tor Browser,cpe:2.3:a:tor_browser_the_short_guide_project:tor_browser_the_short_guide:0.1:*:*:*:*:android:*:*,tor_browser_the_short_guide_project,tor_browser_the_short_guide,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=tor%20browser,2026-04-01
+Toshiba Integrated PQC-QKD Platform,,,,,not_found,,2026-04-01
 Toshiba QKD System,,,,,not_found,,2026-04-01
 Traefik,,,,,not_found,,2026-04-01
 Trezor Safe 7 PQC,,,,,not_found,,2026-04-01
@@ -574,7 +623,7 @@ Ubuntu 26.04 LTS,,,,,not_found,,2026-04-01
 Unisys ClearPath Forward,,,,,not_found,,2026-04-01
 Utimaco ESKM,,,,,not_found,,2026-04-01
 Utimaco Quantum Protect Suite,,,,,not_found,,2026-04-01
-Utimaco SecurityServer,cpe:2.3:h:utimaco:securityserver_cse:-:*:*:*:*:*:*:*,utimaco,securityserver_cse,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=utimaco%20securityserver,2026-04-01
+Utimaco SecurityServer,,,,,not_found,,2026-04-01
 Utimaco uTrust HSM,,,,,not_found,,2026-04-01
 VanDyke SecureCRT 10.x,,,,,not_found,,2026-04-01
 Veeam Data Platform v13,,,,,not_found,,2026-04-01
@@ -585,35 +634,40 @@ Venafi Trust Protection Platform,,,,,not_found,,2026-04-01
 Veracode Platform,,,,,not_found,,2026-04-01
 VeraCrypt,cpe:2.3:a:veracrypt:veracrypt:1.14:*:*:*:*:*:*:*,veracrypt,veracrypt,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=veracrypt%20veracrypt,2026-04-01
 Veritas NetBackup 10.5,,,,,not_found,,2026-04-01
+Veritas NetBackup 11 PQC,,,,,not_found,,2026-04-01
 Versa Networks SASE PQC,,,,,not_found,,2026-04-01
 VIAVI Observer Analyzer,,,,,not_found,,2026-04-01
 VIAVI TeraVM Security Test,,,,,not_found,,2026-04-01
 Virtru Data Protection,,,,,not_found,,2026-04-01
+VMware Avi Load Balancer PQC,,,,,not_found,,2026-04-01
 VMware ESXi 9.0,,,,,not_found,,2026-04-01
-VMware Horizon,cpe:2.3:a:vmware:horizon_view:6.2:*:*:*:*:*:*:*,vmware,horizon_view,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=vmware%20horizon,2026-04-01
+VMware Horizon,,,,,not_found,,2026-04-01
 VMware Workspace ONE,cpe:2.3:a:vmware:workspace_one:2.5.1:*:*:*:*:iphone_os:*:*,vmware,workspace_one,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=vmware%20workspace%20one,2026-04-01
+Vodafone Quantum-Safe Network,,,,,not_found,,2026-04-01
+Vox Messenger PQC,,,,,not_found,,2026-04-01
 Vultr Cloud GPU,,,,,not_found,,2026-04-01
 walt.id,,,,,not_found,,2026-04-01
 WhatsApp,cpe:2.3:a:whatsapp:whatsapp:2.2.5:*:*:*:*:iphone_os:*:*,whatsapp,whatsapp,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=whatsapp%20whatsapp,2026-04-01
 WildFly (JBoss),,,,,not_found,,2026-04-01
-Wind River VxWorks,cpe:2.3:o:windriver:vxworks:6.4:*:*:*:*:*:*:*,windriver,vxworks,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=wind%20river%20vxworks,2026-04-01
+Wind River VxWorks,,,,,not_found,,2026-04-01
 Windows 11,,,,,not_found,,2026-04-01
 Windows Server 2025,,,,,not_found,,2026-04-01
 Windscribe,cpe:2.3:a:windscribe:windscribe:1.81:*:*:*:*:*:*:*,windscribe,windscribe,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=windscribe%20windscribe,2026-04-01
 WinSCP PQC File Transfer,,,,,not_found,,2026-04-01
 Wire,,,,,not_found,,2026-04-01
-WireGuard,cpe:2.3:a:wireguard:wireguard:0.5.3:*:*:*:*:*:*:*,wireguard,wireguard,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=wireguard%20wireguard,2026-04-01
+WireGuard,,,,,not_found,,2026-04-01
 WISeSat PQC Constellation,,,,,not_found,,2026-04-01
+Wiz Cloud Security PQC,,,,,not_found,,2026-04-01
 wolfBoot,,,,,not_found,,2026-04-01
 wolfSSH,cpe:2.3:a:wolfssh:wolfssh:1.4.7:*:*:*:*:*:*:*,wolfssh,wolfssh,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=wolfssh%20wolfssh,2026-04-01
-wolfSSL,cpe:2.3:a:wolfssl:wolfssl:3.6.6:*:*:*:*:*:*:*,wolfssl,wolfssl,exact,matched,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=wolfssl%20wolfssl,2026-04-01
+wolfSSL,,,,,not_found,,2026-04-01
 wolfTPM PQC,,,,,not_found,,2026-04-01
 Xiphera PQC IP Cores,,,,,not_found,,2026-04-01
 Xiphera XIP6110B,,,,,not_found,,2026-04-01
 Xiphera xQlave,,,,,not_found,,2026-04-01
 XiPKI,,,,,not_found,,2026-04-01
 xmss-reference,,,,,not_found,,2026-04-01
-Yubico YubiHSM 2,cpe:2.3:a:yubico:yubihsm-shell:2.0.0:*:*:*:*:*:*:*,yubico,yubihsm-shell,partial,partial,https://nvd.nist.gov/products/cpe/search#results?namingFormat=2.3&keyword=yubico%20yubihsm%202,2026-04-01
+Yubico YubiHSM 2,,,,,not_found,,2026-04-01
 Zeek Network Analysis Framework,,,,,not_found,,2026-04-01
 ZeroTier Quantum,,,,,not_found,,2026-04-01
 Zerto 11.0,,,,,not_found,,2026-04-01
@@ -621,3 +675,36 @@ Zodia Custody,,,,,not_found,,2026-04-01
 Zoom Compliance 2026,,,,,not_found,,2026-04-01
 Zscaler Zero Trust Exchange,,,,,not_found,,2026-04-01
 Zscaler ZTE,,,,,not_found,,2026-04-01
+Kryptus kNET HSM PQC,,,,,not_found,,2026-04-01
+Bradesco IBM Quantum Safe,,,,,not_found,,2026-04-01
+FENASBAC Pix PQC Research,,,,,not_found,,2026-04-01
+Sequre Quantum (Chile),,,,,not_found,,2026-04-01
+Chile National Quantum Strategy,,,,,not_found,,2026-04-01
+Telefonica Quantum Centre,,,,,not_found,,2026-04-01
+STC Quantum-Safe Framework,,,,,not_found,,2026-04-01
+E& Nokia Quantum-Safe Network,,,,,not_found,,2026-04-01
+TUBITAK BILGEM PQC (Turkey),,,,,not_found,,2026-04-01
+Turkcell Nokia Quantum-Safe IPsec,,,,,not_found,,2026-04-01
+Qatar QC2 Quantum Center,,,,,not_found,,2026-04-01
+Quantum Leap Africa (AIMS),,,,,not_found,,2026-04-01
+QuantumCTek PQC Chip,,,,,not_found,,2026-04-01
+China Telecom Quantum Group,,,,,not_found,,2026-04-01
+China PQC National Standards (ICCS),,,,,not_found,,2026-04-01
+Toppan PQC CARD,,,,,not_found,,2026-04-01
+Fujitsu PQC Networks,,,,,not_found,,2026-04-01
+NEDO PQShield Japan PQC Program,,,,,not_found,,2026-04-01
+Chelpis Quantum PQC (Taiwan),,,,,not_found,,2026-04-01
+SECQAI Q-Locked TPM (Taiwan/TSMC),,,,,not_found,,2026-04-01
+Taiwan QSMC Migration Center,,,,,not_found,,2026-04-01
+Malaysia NACSA PQC Roadmap,,,,,not_found,,2026-04-01
+Indonesia BSSN PQC Migration,,,,,not_found,,2026-04-01
+Cybernetica PQC Estonia,,,,,not_found,,2026-04-01
+CZQCI Czech Quantum Infrastructure,,,,,not_found,,2026-04-01
+PIONIER-Q Poland QCI,,,,,not_found,,2026-04-01
+Spain Quantum Strategy EUR 808M,,,,,not_found,,2026-04-01
+MadQuantum-CM (Spain),,,,,not_found,,2026-04-01
+ASD Australia PQC Transition,,,,,not_found,,2026-04-01
+NZISM New Zealand PQC Guidance,,,,,not_found,,2026-04-01
+QApp PQC TLS Gateway (Russia),,,,,not_found,,2026-04-01
+Kryptonite Shipovnik PQC Signature (Russia),,,,,not_found,,2026-04-01
+EU PQC Implementation Roadmap,,,,,not_found,,2026-04-01

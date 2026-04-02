@@ -87,6 +87,18 @@ export const renderPqcSupport = (support: string): React.ReactElement => {
   )
 }
 
+export const renderQuantumTech = (quantumTech: string | undefined): React.ReactElement | null => {
+  if (!quantumTech) return null
+  return (
+    <span
+      className="text-[10px] px-1.5 py-0.5 rounded-full font-bold border bg-status-info/10 text-status-info border-status-info/20"
+      title="Quantum hardware technology"
+    >
+      {quantumTech}
+    </span>
+  )
+}
+
 const CERT_TYPE_CONFIG: Record<string, { label: string; className: string }> = {
   'FIPS 140-3': {
     label: 'FIPS',

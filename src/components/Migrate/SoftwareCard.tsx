@@ -12,7 +12,7 @@ import {
 } from 'lucide-react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
-import { CertBadges, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import { CertBadges, renderFipsStatus, renderPqcSupport, renderQuantumTech } from './migrateHelpers'
 import { certsByProduct } from '../../data/certificationXrefData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
@@ -134,6 +134,7 @@ export const SoftwareCard = ({
         <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
         {renderPqcSupport(item.pqcSupport)}
         {renderFipsStatus(item.fipsValidated)}
+        {renderQuantumTech(item.quantumTech)}
         <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
         {item.evidenceFlags && item.evidenceFlags.length > 0 && (
           <span

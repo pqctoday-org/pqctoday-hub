@@ -2,7 +2,7 @@
 import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
-export type MigrateViewMode = 'stack' | 'cards' | 'table'
+export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
 interface MigrateSelectionState {
   /** Row keys ('softwareName::categoryId') that the user has hidden */
@@ -88,7 +88,10 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         }
         if (version < 4) {
           // v3 → v4: add viewMode + workflowCollapsed
-          if (!state.viewMode || !['stack', 'cards', 'table'].includes(state.viewMode)) {
+          if (
+            !state.viewMode ||
+            !['stack', 'cisaStack', 'cards', 'table'].includes(state.viewMode)
+          ) {
             state.viewMode = 'stack'
           }
           state.workflowCollapsed = state.workflowCollapsed ?? false

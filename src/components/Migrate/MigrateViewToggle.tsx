@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Layers, LayoutGrid, Table } from 'lucide-react'
+import { Layers, LayoutGrid, Table, ShieldAlert } from 'lucide-react'
 import clsx from 'clsx'
 import type { MigrateViewMode } from '../../store/useMigrateSelectionStore'
 
@@ -9,7 +9,8 @@ interface MigrateViewToggleProps {
 }
 
 const OPTIONS: { value: MigrateViewMode; label: string; icon: typeof Layers }[] = [
-  { value: 'stack', label: 'Stack', icon: Layers },
+  { value: 'stack', label: 'Layer Stack', icon: Layers },
+  { value: 'cisaStack', label: 'CISA Stack', icon: ShieldAlert },
   { value: 'cards', label: 'Cards', icon: LayoutGrid },
   { value: 'table', label: 'Table', icon: Table },
 ]

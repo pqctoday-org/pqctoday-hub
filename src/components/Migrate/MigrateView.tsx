@@ -6,7 +6,7 @@ import { useSearchParams } from 'react-router-dom'
 import { SoftwareTable } from './SoftwareTable'
 import { SoftwareCardGrid } from './SoftwareCardGrid'
 import { MigrationWorkflow } from './MigrationWorkflow'
-import { InfrastructureStack, LAYERS, type InfrastructureLayerType } from './InfrastructureStack'
+import { InfrastructureStack, LAYERS, CISA_LAYERS } from './InfrastructureStack'
 import { MigrateViewToggle } from './MigrateViewToggle'
 import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -23,7 +23,7 @@ import {
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
 import { MIGRATION_STEPS } from '../../data/migrationWorkflowData'
-import type { MigrationStep, SoftwareItem } from '../../types/MigrateTypes'
+import type { MigrationStep, SoftwareItem, PqcStats } from '../../types/MigrateTypes'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { MIGRATE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -37,6 +37,11 @@ import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { ComparisonPanel } from './ComparisonPanel'
 import { StickyCompareBar } from './StickyCompareBar'
+
+const LICENSE_FILTER_ITEMS = [
+  { id: 'Open Source', label: 'Open Source' },
+  { id: 'Commercial', label: 'Commercial' },
+]
 
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -186,6 +191,9 @@ export const MigrateView: React.FC = () => {
   const [verificationFilter, setVerificationFilter] = useState(
     () => searchParams.get('verification') ?? 'All'
   )
+  const [licenseFilter, setLicenseFilter] = useState(
+    () => searchParams.get('licenseFilter') ?? 'All'
+  )
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
   )
@@ -226,7 +234,7 @@ export const MigrateView: React.FC = () => {
     if (vendor !== null) setVendorFilter((prev) => (prev !== vendor ? vendor : prev))
     const sort = searchParams.get('sort') as MigrateSortOption | null
     if (sort !== null) setSortBy((prev) => (prev !== sort ? sort : prev))
-    const mode = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
+    const mode = searchParams.get('mode') as 'stack' | 'cisaStack' | 'cards' | 'table' | null
     if (mode !== null) setViewMode(mode)
     const product = searchParams.get('product')
     if (product !== null) {
@@ -237,6 +245,9 @@ export const MigrateView: React.FC = () => {
     }
     const subcat = searchParams.get('subcat')
     if (subcat !== null) setActiveSubCategory(subcat)
+
+    const license = searchParams.get('licenseFilter')
+    if (license !== null) setLicenseFilter((prev) => (prev !== license ? license : prev))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
@@ -249,8 +260,9 @@ export const MigrateView: React.FC = () => {
       cat?: string
       vendor?: string
       verification?: string
+      licenseFilter?: string
       sort?: MigrateSortOption
-      mode?: 'stack' | 'cards' | 'table'
+      mode?: 'stack' | 'cisaStack' | 'cards' | 'table'
       subcat?: string
     }) => {
       setSearchParams(
@@ -264,6 +276,8 @@ export const MigrateView: React.FC = () => {
           const vendor = overrides.vendor !== undefined ? overrides.vendor : vendorFilter
           const verification =
             overrides.verification !== undefined ? overrides.verification : verificationFilter
+          const license =
+            overrides.licenseFilter !== undefined ? overrides.licenseFilter : licenseFilter
           const sort = overrides.sort !== undefined ? overrides.sort : sortBy
           const mode = overrides.mode !== undefined ? overrides.mode : viewMode
           const subcat = overrides.subcat !== undefined ? overrides.subcat : activeSubCategory
@@ -289,6 +303,9 @@ export const MigrateView: React.FC = () => {
           if (verification !== 'All') next.set('verification', verification)
           else next.delete('verification')
 
+          if (license !== 'All') next.set('licenseFilter', license)
+          else next.delete('licenseFilter')
+
           if (sort !== 'name') next.set('sort', sort)
           else next.delete('sort')
 
@@ -311,6 +328,7 @@ export const MigrateView: React.FC = () => {
       flatCategoryFilter,
       vendorFilter,
       verificationFilter,
+      licenseFilter,
       sortBy,
       viewMode,
       activeSubCategory,
@@ -323,17 +341,25 @@ export const MigrateView: React.FC = () => {
   // still called in the useEffect above so the store converges after first render.
   const urlLayerParam = searchParams.get('layer')
   const urlSubcatParam = searchParams.get('subcat')
-  const urlModeParam = searchParams.get('mode') as 'stack' | 'cards' | 'table' | null
-  const effectiveLayer =
-    urlLayerParam && LAYERS.some((l) => l.id === urlLayerParam) ? urlLayerParam : activeLayer
-  const effectiveSubCategory = urlSubcatParam ?? activeSubCategory
+  const urlModeParam = searchParams.get('mode') as 'stack' | 'cisaStack' | 'cards' | 'table' | null
   const effectiveViewMode = urlModeParam ?? viewMode
+  const isStackMode = effectiveViewMode === 'stack' || effectiveViewMode === 'cisaStack'
+  const activePartitions = useMemo(
+    () => (effectiveViewMode === 'cisaStack' ? CISA_LAYERS : LAYERS),
+    [effectiveViewMode]
+  )
 
-  const activeInfrastructureLayer = effectiveLayer as InfrastructureLayerType
+  const effectiveLayer =
+    urlLayerParam && activePartitions.some((l) => l.id === urlLayerParam)
+      ? urlLayerParam
+      : activeLayer
+  const effectiveSubCategory = urlSubcatParam ?? activeSubCategory
+
+  const activeInfrastructureLayer = effectiveLayer as string
   const activeTab = effectiveSubCategory
   const hiddenSet = useMemo(() => new Set(hiddenProducts), [hiddenProducts])
   const myProductsSet = useMemo(() => new Set(myProducts), [myProducts])
-  const isStackAllView = effectiveViewMode === 'stack' && activeInfrastructureLayer === 'All'
+  const isStackAllView = isStackMode && activeInfrastructureLayer === 'All'
 
   // Fire a history event when the product selection changes meaningfully (debounced)
   const prevProductCountRef = useRef(myProducts.length)
@@ -372,7 +398,7 @@ export const MigrateView: React.FC = () => {
 
   // Per-layer data: products scoped by global filters (search, step)
   const perLayerData = useMemo(() => {
-    return LAYERS.reduce(
+    return activePartitions.reduce(
       (acc, layer) => {
         acc[layer.id] = softwareData.filter((item) => {
           // Step filter
@@ -381,8 +407,12 @@ export const MigrateView: React.FC = () => {
             if (!phases.includes(stepFilter.stepId)) return false
           }
           // Layer filter
-          const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
-          if (!itemLayers.includes(layer.id)) return false
+          if (effectiveViewMode === 'cisaStack') {
+            if (item.cisaCategory !== layer.id) return false
+          } else {
+            const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
+            if (!itemLayers.includes(layer.id)) return false
+          }
           // Industry filter (from ?industry= deep link)
           if (industryFilter) {
             const q = industryFilter.toLowerCase()
@@ -392,6 +422,12 @@ export const MigrateView: React.FC = () => {
           if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
           // Verification status filter
           if (verificationFilter !== 'All' && item.verificationStatus !== verificationFilter)
+            return false
+          // License filter
+          if (
+            licenseFilter !== 'All' &&
+            !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
+          )
             return false
           // Search filter
           if (filterText) {
@@ -411,65 +447,115 @@ export const MigrateView: React.FC = () => {
       },
       {} as Record<string, (typeof softwareData)[number][]>
     )
-  }, [stepFilter, filterText, industryFilter, vendorFilter, verificationFilter])
+  }, [
+    stepFilter,
+    filterText,
+    industryFilter,
+    vendorFilter,
+    verificationFilter,
+    licenseFilter,
+    effectiveViewMode,
+    activePartitions,
+  ])
 
   // Layer product counts (for badges on collapsed layer rows)
   const layerProductCounts = useMemo(
     () =>
-      LAYERS.reduce(
+      activePartitions.reduce(
         (acc, layer) => {
-          acc[layer.id as InfrastructureLayerType] = perLayerData[layer.id]?.length ?? 0
+          acc[layer.id as string] = perLayerData[layer.id]?.length ?? 0
           return acc
         },
-        {} as Partial<Record<InfrastructureLayerType, number>>
+        {} as Partial<Record<string, number>>
       ),
-    [perLayerData]
+    [perLayerData, activePartitions]
   )
 
   // Layer product keys (for restore-layer action)
   const layerProductKeys = useMemo(
     () =>
-      LAYERS.reduce(
+      activePartitions.reduce(
         (acc, layer) => {
-          acc[layer.id as InfrastructureLayerType] = (perLayerData[layer.id] ?? []).map(
+          acc[layer.id as string] = (perLayerData[layer.id] ?? []).map(
             (item) => `${item.softwareName}::${item.categoryId}`
           )
           return acc
         },
-        {} as Partial<Record<InfrastructureLayerType, string[]>>
+        {} as Partial<Record<string, string[]>>
       ),
-    [perLayerData]
+    [perLayerData, activePartitions]
   )
 
   // Layer selected counts (for "My Products" badges)
   const layerSelectedCounts = useMemo(
     () =>
-      LAYERS.reduce(
+      activePartitions.reduce(
         (acc, layer) => {
-          const keys = new Set(layerProductKeys[layer.id as InfrastructureLayerType] ?? [])
-          acc[layer.id as InfrastructureLayerType] = myProducts.filter((k) => keys.has(k)).length
+          const keys = new Set(layerProductKeys[layer.id as string] ?? [])
+          acc[layer.id as string] = myProducts.filter((k) => keys.has(k)).length
           return acc
         },
-        {} as Partial<Record<InfrastructureLayerType, number>>
+        {} as Partial<Record<string, number>>
       ),
-    [layerProductKeys, myProducts]
+    [layerProductKeys, myProducts, activePartitions]
   )
 
   // Layer hidden counts (for restore badges)
   const layerHiddenCounts = useMemo(
     () =>
-      LAYERS.reduce(
+      activePartitions.reduce(
         (acc, layer) => {
-          const keys = new Set(layerProductKeys[layer.id as InfrastructureLayerType] ?? [])
-          acc[layer.id as InfrastructureLayerType] = hiddenProducts.filter((k) =>
-            keys.has(k)
-          ).length
+          const keys = new Set(layerProductKeys[layer.id as string] ?? [])
+          acc[layer.id as string] = hiddenProducts.filter((k) => keys.has(k)).length
           return acc
         },
-        {} as Partial<Record<InfrastructureLayerType, number>>
+        {} as Partial<Record<string, number>>
       ),
-    [layerProductKeys, hiddenProducts]
+    [layerProductKeys, hiddenProducts, activePartitions]
   )
+
+  // Helper to categorize PQC capability
+  const getPqcStats = useCallback(
+    (items: SoftwareItem[]): PqcStats => {
+      const stats: PqcStats = { established: 0, inProgress: 0, noCapabilities: 0, total: 0 }
+
+      const visibleItems = filterText
+        ? items
+        : items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`))
+
+      stats.total = visibleItems.length
+
+      visibleItems.forEach((item) => {
+        const support = (item.pqcSupport || '').toLowerCase()
+        if (support.startsWith('yes')) {
+          stats.established++
+        } else if (
+          support.startsWith('partial') ||
+          support.startsWith('limited') ||
+          support.startsWith('planned') ||
+          support.startsWith('in')
+        ) {
+          stats.inProgress++
+        } else {
+          stats.noCapabilities++
+        }
+      })
+
+      return stats
+    },
+    [filterText, hiddenSet]
+  )
+
+  // PQC stats per layer
+  const layerPqcStats = useMemo(() => {
+    return activePartitions.reduce(
+      (acc, layer) => {
+        acc[layer.id as string] = getPqcStats(perLayerData[layer.id] ?? [])
+        return acc
+      },
+      {} as Record<string, PqcStats>
+    )
+  }, [perLayerData, getPqcStats, activePartitions])
 
   // Sub-categories for the active layer (scoped to perLayerData)
   const categories = useMemo(() => {
@@ -515,8 +601,12 @@ export const MigrateView: React.FC = () => {
       }
       // Layer filter (from dropdown in flat modes)
       if (effectiveLayer !== 'All') {
-        const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
-        if (!itemLayers.includes(effectiveLayer)) return false
+        if (effectiveViewMode === 'cisaStack') {
+          if (item.cisaCategory !== effectiveLayer) return false
+        } else {
+          const itemLayers = item.infrastructureLayer.split(',').map((l) => l.trim())
+          if (!itemLayers.includes(effectiveLayer)) return false
+        }
       }
       // Category filter (from dropdown in flat modes)
       if (flatCategoryFilter !== 'All') {
@@ -526,6 +616,12 @@ export const MigrateView: React.FC = () => {
       if (vendorFilter !== 'All' && item.vendorId !== vendorFilter) return false
       // Verification status filter
       if (verificationFilter !== 'All' && item.verificationStatus !== verificationFilter)
+        return false
+      // License filter
+      if (
+        licenseFilter !== 'All' &&
+        !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
+      )
         return false
       // Search filter
       if (filterText) {
@@ -549,13 +645,22 @@ export const MigrateView: React.FC = () => {
     filterText,
     vendorFilter,
     verificationFilter,
+    licenseFilter,
   ])
+
+  // PQC stats for all filtered products
+  const totalPqcStats = useMemo(() => {
+    return getPqcStats(allFilteredProducts)
+  }, [allFilteredProducts, getPqcStats])
 
   // Unique categories for the flat-mode category dropdown (scoped to selected layer)
   const flatCategories = useMemo(() => {
     const sourceData =
       effectiveLayer !== 'All'
         ? softwareData.filter((item) => {
+            if (effectiveViewMode === 'cisaStack') {
+              return item.cisaCategory === effectiveLayer
+            }
             const layers = item.infrastructureLayer.split(',').map((l) => l.trim())
             return layers.includes(effectiveLayer)
           })
@@ -565,7 +670,7 @@ export const MigrateView: React.FC = () => {
       if (item.categoryName) cats.add(item.categoryName)
     })
     return Array.from(cats).sort()
-  }, [effectiveLayer])
+  }, [effectiveLayer, effectiveViewMode])
 
   // Reset flat category filter when layer changes and category no longer exists
   useEffect(() => {
@@ -626,7 +731,7 @@ export const MigrateView: React.FC = () => {
   // Layer filter dropdown items
   const layerFilterItems = useMemo(
     () =>
-      LAYERS.map((layer) => {
+      activePartitions.map((layer) => {
         const Icon = layer.icon
         return {
           id: layer.id,
@@ -634,7 +739,7 @@ export const MigrateView: React.FC = () => {
           icon: <Icon size={16} className={layer.iconColor} />,
         }
       }),
-    []
+    [activePartitions]
   )
 
   // Category filter dropdown items
@@ -701,6 +806,7 @@ export const MigrateView: React.FC = () => {
     !!industryFilter ||
     vendorFilter !== 'All' ||
     verificationFilter !== 'All' ||
+    licenseFilter !== 'All' ||
     effectiveLayer !== 'All' ||
     flatCategoryFilter !== 'All' ||
     hiddenSet.size > 0
@@ -852,7 +958,7 @@ export const MigrateView: React.FC = () => {
       {/* Filter control band */}
       <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-2">
         {/* Layer dropdown — flat modes + always on mobile (mobile always shows cards) */}
-        <div className={effectiveViewMode === 'stack' ? 'md:hidden' : ''}>
+        <div className={isStackMode ? 'md:hidden' : ''}>
           <FilterDropdown
             items={layerFilterItems}
             selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
@@ -868,7 +974,7 @@ export const MigrateView: React.FC = () => {
 
         {/* Category dropdown — flat modes + always on mobile, scoped to selected layer */}
         {flatCategories.length > 1 && (
-          <div className={effectiveViewMode === 'stack' ? 'md:hidden' : ''}>
+          <div className={isStackMode ? 'md:hidden' : ''}>
             <FilterDropdown
               items={categoryFilterItems}
               selectedId={flatCategoryFilter}
@@ -910,6 +1016,20 @@ export const MigrateView: React.FC = () => {
               logMigrateAction('Filter Verification', id)
             }}
             defaultLabel="All Verification"
+          />
+        </div>
+
+        {/* License dropdown */}
+        <div>
+          <FilterDropdown
+            items={LICENSE_FILTER_ITEMS}
+            selectedId={licenseFilter}
+            onSelect={(id) => {
+              setLicenseFilter(id)
+              syncFiltersToUrl({ licenseFilter: id })
+              logMigrateAction('Filter License', id)
+            }}
+            defaultLabel="All Licenses"
           />
         </div>
 
@@ -969,7 +1089,7 @@ export const MigrateView: React.FC = () => {
 
       {/* Results count — always visible in all modes */}
       {(() => {
-        const visibleCount = effectiveViewMode === 'stack' ? stackFilteredCount : flatVisibleCount
+        const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
         const total = softwareData.length
         return (
           <p className="text-xs text-muted-foreground">
@@ -977,7 +1097,7 @@ export const MigrateView: React.FC = () => {
               <>
                 Showing {visibleCount} of {total} product{total !== 1 ? 's' : ''}
                 {effectiveLayer !== 'All' &&
-                  ` in ${LAYERS.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
+                  ` in ${activePartitions.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
               </>
             ) : (
               <>
@@ -996,7 +1116,7 @@ export const MigrateView: React.FC = () => {
             <div className="flex items-center justify-between gap-2 mb-3 px-3 py-2 text-xs bg-primary/10 border border-primary/20 rounded-md animate-fade-in">
               <span className="text-primary font-medium">
                 Layer:{' '}
-                {LAYERS.find((l) => l.id === activeInfrastructureLayer)?.label ??
+                {activePartitions.find((l) => l.id === activeInfrastructureLayer)?.label ??
                   activeInfrastructureLayer}
               </span>
               <button
@@ -1026,7 +1146,7 @@ export const MigrateView: React.FC = () => {
 
         {/* Desktop: mode-specific rendering */}
         <div className="hidden md:block">
-          {effectiveViewMode === 'stack' && (
+          {isStackMode && (
             <InfrastructureStack
               activeLayer={activeInfrastructureLayer}
               onSelectLayer={(layer) => {
@@ -1046,6 +1166,9 @@ export const MigrateView: React.FC = () => {
               onRestoreLayer={(keys) => restoreLayerProducts(keys)}
               layerSelectedCounts={layerSelectedCounts}
               hideEmptyLayers={vendorFilter !== 'All'}
+              layerPqcStats={layerPqcStats}
+              totalPqcStats={totalPqcStats}
+              partitions={activePartitions}
               expandedContent={
                 activeInfrastructureLayer !== 'All' ? (
                   activeLayerTableData.length > 0 ? (

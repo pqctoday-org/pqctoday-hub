@@ -26,11 +26,32 @@ export interface Vendor {
   leiLastVerifiedDate?: string
 }
 
+export const CISA_CATEGORIES = [
+  'Cloud Services',
+  'Collaboration Software',
+  'Web Software',
+  'Endpoint Security',
+  'Networking Hardware',
+  'Networking Software',
+  'Telecommunications Hardware',
+  'Computers (Physical and Virtual)',
+  'Computer Peripherals',
+  'Storage Area Network',
+  'Identity, Credential, and Access Management (ICAM) Software',
+  'Identity, Credential, and Access Management (ICAM) Hardware',
+  'Data',
+  'Enterprise Security',
+  'Other / Unclassified',
+] as const
+
+export type CisaCategoryType = (typeof CISA_CATEGORIES)[number]
+
 export interface SoftwareItem {
   softwareName: string
   categoryId: string
   categoryName: string
   infrastructureLayer: string
+  cisaCategory: string
   pqcSupport: string
   pqcCapabilityDescription: string
   licenseType: string
@@ -66,6 +87,7 @@ export interface SoftwareItem {
     | 'NEEDS_REVIEW'
     | 'NOT_VALIDATED'
   correctionNotes?: string
+  quantumTech?: 'QKD' | 'QRNG' | 'QKD,QRNG'
   status?: 'New' | 'Updated' | 'Deleted'
 }
 
@@ -146,4 +168,11 @@ export interface PurlXref {
   status: 'matched' | 'not_found'
   registryUrl: string
   lastVerifiedDate: string
+}
+
+export interface PqcStats {
+  established: number
+  inProgress: number
+  noCapabilities: number
+  total: number
 }

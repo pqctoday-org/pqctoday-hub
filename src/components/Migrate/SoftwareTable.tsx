@@ -42,7 +42,13 @@ import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
-import { CertBadges, EvidenceWarnings, renderFipsStatus, renderPqcSupport } from './migrateHelpers'
+import {
+  CertBadges,
+  EvidenceWarnings,
+  renderFipsStatus,
+  renderPqcSupport,
+  renderQuantumTech,
+} from './migrateHelpers'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ShareButton } from '../ui/ShareButton'
 
@@ -571,6 +577,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               resourceId={item.softwareName}
                               size="sm"
                             />
+                            {renderQuantumTech(item.quantumTech)}
                             <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
                           </div>
                           <span className="text-xs text-muted-foreground">
