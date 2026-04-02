@@ -26,13 +26,13 @@ test.describe('Compliance Table Sorting', () => {
     await allTab.click({ force: true })
 
     // Wait for table to load
-    await page.waitForSelector('table tbody tr')
+    await page.waitForSelector('table:visible tbody tr')
 
     // Click "Product Name" header to sort ASC
     await page.getByRole('button', { name: 'Product Name' }).click()
     // Get all product names
     const namesAsc = await page
-      .locator('tbody tr td:nth-child(4) > div:first-child')
+      .locator('table:visible tbody tr td:nth-child(4) > div:first-child')
       .allInnerTexts()
     // Verify sorted
     const sortedAsc = [...namesAsc].sort((a, b) => a.localeCompare(b))
@@ -43,7 +43,7 @@ test.describe('Compliance Table Sorting', () => {
 
     // Get all product names
     const namesDesc = await page
-      .locator('tbody tr td:nth-child(4) > div:first-child')
+      .locator('table:visible tbody tr td:nth-child(4) > div:first-child')
       .allInnerTexts()
     // Verify sorted desc
     const sortedDesc = [...namesDesc].sort((a, b) => b.localeCompare(a))
@@ -56,7 +56,7 @@ test.describe('Compliance Table Sorting', () => {
     const allTab = page.getByRole('tab', { name: 'Cert Records' })
     await expect(allTab).toBeVisible({ timeout: 10000 })
     await allTab.click({ force: true })
-    await page.waitForSelector('table tbody tr')
+    await page.waitForSelector('table:visible tbody tr')
 
     // Default might be desc, click to toggle
     // Use locator for th since it's not a button

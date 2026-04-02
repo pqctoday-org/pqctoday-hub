@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import {
+  X,
   ArrowUpDown,
   Search,
   ShieldCheck,
@@ -20,6 +21,7 @@ import { Input } from '../ui/input'
 import clsx from 'clsx'
 import Papa from 'papaparse'
 import { ComplianceDetailPopover } from './ComplianceDetailPopover'
+import { MobileFilterDrawer } from '../Migrate/MobileFilterDrawer'
 
 interface ComplianceTableProps {
   data: ComplianceRecord[]
@@ -51,6 +53,8 @@ interface ComplianceTableProps {
   onSortColumnChange?: (col: SortColumn) => void
   onSortDirectionChange?: (dir: SortDirection) => void
   onCurrentPageChange?: (page: number) => void
+  certType?: string
+  onCertTypeChange?: (ct: string) => void
 }
 
 export type SortDirection = 'asc' | 'desc'
@@ -297,6 +301,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   onSortColumnChange,
   onSortDirectionChange,
   onCurrentPageChange,
+  certType = 'all',
+  onCertTypeChange,
 }) => {
   // Local state fallbacks (used when not in controlled mode)
   const [localFilterText, setLocalFilterText] = useState(initialFilter ?? '')
@@ -340,6 +346,22 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const [showMigrateCatMenu, setShowMigrateCatMenu] = useState(false)
   const [vendorSearch, setVendorSearch] = useState('')
   const ITEMS_PER_PAGE = 50
+
+  const totalActiveFilters =
+    pqcFilters.length +
+    categoryFilters.length +
+    sourceFilters.length +
+    vendorFilters.length +
+    migrateCatFilters.length
+
+  const handleClearAll = () => {
+    setPqcFilters([])
+    setCategoryFilters([])
+    setSourceFilters([])
+    setVendorFilters([])
+    setMigrateCatFilters([])
+    // We intentionally don't clear filterText here; users usually want to keep their search.
+  }
 
   const handleSort = (column: SortColumn) => {
     if (sortColumn === column) {
@@ -461,6 +483,15 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
   const filteredAndSortedData = useMemo(() => {
     // Filter
     const processed = data.filter((record) => {
+      // 0. Tab/CertType matching
+      if (certType && certType !== 'all' && certType !== 'All') {
+        const ct = certType.toLowerCase()
+        if (ct === 'fips' && record.type !== 'FIPS 140-3') return false
+        if (ct === 'acvp' && record.type !== 'ACVP') return false
+        if (ct === 'cc' && record.type !== 'Common Criteria') return false
+        if (ct === 'fips 140-3' && record.type !== 'FIPS 140-3') return false
+      }
+
       const searchStr = activeFilters.text.toLowerCase()
       const matchesText =
         record.productName.toLowerCase().includes(searchStr) ||
@@ -499,6 +530,13 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           getMigrateCategory(record.productCategory)?.categoryId ?? ''
         )
 
+      const matchesCertType =
+        !certType ||
+        certType === 'all' ||
+        (certType === 'fips' && record.type === 'FIPS 140-3') ||
+        (certType === 'acvp' && record.type === 'ACVP') ||
+        (certType === 'cc' && record.type === 'Common Criteria')
+
       return (
         matchesText &&
         matchesPQC &&
@@ -506,7 +544,8 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         matchesSource &&
         matchesVendor &&
         matchesVendorSearch &&
-        matchesMigrateCat
+        matchesMigrateCat &&
+        matchesCertType
       )
     })
 
@@ -538,7 +577,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     })
 
     return processed
-  }, [data, activeFilters, sortColumn, sortDirection])
+  }, [data, activeFilters, sortColumn, sortDirection, certType])
 
   const paginatedData = useMemo(() => {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
@@ -561,6 +600,86 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
     link.click()
     document.body.removeChild(link)
   }
+
+  const MobileFilterContent = (
+    <div className="space-y-6">
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold">PQC Support</h3>
+        <div className="flex flex-wrap gap-2">
+          {PQC_ALGOS.map((algo) => (
+            <button
+              key={algo}
+              onClick={() => handleTogglePqcFilter(algo)}
+              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                pqcFilters.includes(algo)
+                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  : 'bg-muted border-border text-muted-foreground'
+              }`}
+            >
+              {algo}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold">Source</h3>
+        <div className="flex flex-wrap gap-2">
+          {uniqueSources.map((src) => (
+            <button
+              key={src}
+              onClick={() => handleToggleSourceFilter(src)}
+              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                sourceFilters.includes(src)
+                  ? 'bg-primary/10 border-primary/30 text-primary'
+                  : 'bg-muted border-border text-muted-foreground'
+              }`}
+            >
+              {src}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold">Categories</h3>
+        <div className="flex flex-wrap gap-2">
+          {uniqueCategories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => handleToggleCategoryFilter(cat)}
+              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                categoryFilters.includes(cat)
+                  ? 'bg-secondary/10 border-secondary/30 text-secondary'
+                  : 'bg-muted border-border text-muted-foreground'
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="space-y-2">
+        <h3 className="text-sm font-semibold">Migrate Category (CSC)</h3>
+        <div className="flex flex-wrap gap-2">
+          {uniqueMigrateCategories.map((mc) => (
+            <button
+              key={mc.categoryId}
+              onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
+              className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
+                migrateCatFilters.includes(mc.categoryId)
+                  ? 'bg-secondary/10 border-secondary/30 text-secondary'
+                  : 'bg-muted border-border text-muted-foreground'
+              }`}
+            >
+              <span className="font-mono opacity-60 mr-1">{mc.categoryId}</span> {mc.categoryName}
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 
   return (
     <div className="space-y-4">
@@ -607,6 +726,122 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         </div>
       </div>
 
+      {/* Mobile Drawer & Filters */}
+      <div className="md:hidden mt-2">
+        <MobileFilterDrawer
+          filterContent={MobileFilterContent}
+          activeFilterCount={totalActiveFilters}
+          onClearAll={handleClearAll}
+        />
+      </div>
+
+      {/* Cert Type Toggle + Active Filters (Desktop) */}
+      <div className="flex flex-col gap-2 mb-2">
+        <div className="flex gap-2 p-1 bg-muted/50 rounded-lg w-fit">
+          {[
+            { id: 'all', label: 'All Records' },
+            { id: 'fips', label: 'FIPS 140-3' },
+            { id: 'acvp', label: 'ACVP' },
+            { id: 'cc', label: 'Common Criteria' },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
+              className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
+                certType === tab.id
+                  ? 'bg-background shadow text-foreground'
+                  : 'text-muted-foreground hover:bg-muted/80'
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+
+        {totalActiveFilters > 0 && (
+          <div className="hidden md:flex flex-wrap gap-2 items-center mt-1">
+            <span className="text-xs font-semibold text-muted-foreground mr-1">
+              Active Filters:
+            </span>
+            {pqcFilters.map((f) => (
+              <span
+                key={`pqc-${f}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"
+              >
+                {f}{' '}
+                <button onClick={() => handleTogglePqcFilter(f)} className="hover:text-primary/70">
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            {categoryFilters.map((f) => (
+              <span
+                key={`cat-${f}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary/10 text-secondary text-xs font-medium border border-secondary/20"
+              >
+                {f}{' '}
+                <button
+                  onClick={() => handleToggleCategoryFilter(f)}
+                  className="hover:text-secondary/70"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            {sourceFilters.map((f) => (
+              <span
+                key={`src-${f}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-muted/50 text-foreground text-xs font-medium border border-border"
+              >
+                {f}{' '}
+                <button
+                  onClick={() => handleToggleSourceFilter(f)}
+                  className="hover:text-foreground/70"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            {vendorFilters.map((f) => (
+              <span
+                key={`ven-${f}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-muted/50 text-foreground text-xs font-medium border border-border"
+              >
+                {f}{' '}
+                <button
+                  onClick={() => handleToggleVendorFilter(f)}
+                  className="hover:text-foreground/70"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            {migrateCatFilters.map((f) => (
+              <span
+                key={`mc-${f}`}
+                className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-secondary/10 text-secondary text-xs font-medium border border-secondary/20"
+              >
+                <LockKeyhole size={10} /> {f}{' '}
+                <button
+                  onClick={() => handleToggleMigrateCatFilter(f)}
+                  className="hover:text-secondary/70"
+                >
+                  <X size={12} />
+                </button>
+              </span>
+            ))}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleClearAll}
+              className="h-6 text-xs px-2 text-muted-foreground hover:text-foreground hover:underline"
+            >
+              Clear All
+            </Button>
+          </div>
+        )}
+      </div>
+
       {/* Data Table */}
       <div className="rounded-md border border-border overflow-hidden bg-card/50 relative min-h-[400px]">
         {/* Loading Overlay */}
@@ -624,7 +859,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
           </div>
         )}
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-left table-fixed">
+          <table className="max-md:hidden w-full text-sm text-left table-fixed">
             <caption className="sr-only">
               Compliance certifications table with PQC coverage and classical algorithm details
             </caption>
@@ -1140,6 +1375,75 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               )}
             </tbody>
           </table>
+
+          {/* Mobile View */}
+          <div className="md:hidden flex flex-col divide-y divide-border/50">
+            {paginatedData.map((record) => (
+              <div
+                key={`${record.id}-${record.source}`}
+                className="p-4 bg-card hover:bg-muted/50 transition-colors"
+              >
+                <div className="flex items-start justify-between gap-2 mb-2">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="flex items-center gap-1 text-xs font-mono text-muted-foreground">
+                      <Database size={10} className="shrink-0" />
+                      {record.source}
+                    </span>
+                    <span
+                      className={`inline-flex items-center px-1.5 py-0.5 rounded text-xs font-bold uppercase tracking-wider border ${
+                        record.status === 'Active'
+                          ? 'bg-status-success/10 text-status-success border-status-success/30'
+                          : record.status === 'Revoked'
+                            ? 'bg-status-error/10 text-status-error border-status-error/30'
+                            : 'bg-status-warning/10 text-status-warning border-status-warning/30'
+                      }`}
+                    >
+                      {record.status}
+                    </span>
+                  </div>
+                  {record.pqcCoverage &&
+                    record.pqcCoverage !== 'No PQC Mechanisms Detected' &&
+                    record.pqcCoverage !== 'Pending Check...' && (
+                      <ShieldCheck size={16} className="text-tertiary shrink-0 mt-0.5" />
+                    )}
+                </div>
+
+                <p className="text-sm font-semibold text-foreground leading-snug mb-1 line-clamp-2">
+                  {record.productName}
+                </p>
+                <div className="text-xs text-muted-foreground flex items-center gap-1 truncate mb-3">
+                  <span className="font-medium truncate max-w-[50%]">{record.vendor}</span>
+                  <span className="opacity-50">&bull;</span>
+                  <span className="truncate">{record.productCategory}</span>
+                </div>
+
+                <div className="flex items-center justify-between mt-2 pt-3 border-t border-border/50">
+                  <div className="flex flex-col gap-0.5">
+                    <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                      Cert ID
+                    </span>
+                    <span className="text-xs font-mono text-muted-foreground/80 truncate max-w-[150px]">
+                      {record.id}
+                    </span>
+                  </div>
+                  <div className="flex flex-col gap-0.5 items-end">
+                    <span className="text-[10px] text-muted-foreground uppercase opacity-70">
+                      Date
+                    </span>
+                    <span className="text-xs font-mono text-muted-foreground/80">
+                      {record.date}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {filteredAndSortedData.length === 0 && (
+              <div className="px-4 py-12 text-center text-muted-foreground text-sm">
+                No compliance records found matching your filters.
+              </div>
+            )}
+          </div>
         </div>
       </div>
       {/* Pagination Controls */}
