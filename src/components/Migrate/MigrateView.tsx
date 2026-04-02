@@ -7,6 +7,7 @@ import { SoftwareTable } from './SoftwareTable'
 import { SoftwareCardGrid } from './SoftwareCardGrid'
 import { MigrationWorkflow } from './MigrationWorkflow'
 import { InfrastructureStack, LAYERS, CISA_LAYERS } from './InfrastructureStack'
+import { MobileFilterDrawer } from './MobileFilterDrawer'
 import { MigrateViewToggle } from './MigrateViewToggle'
 import { MigrateSortControl, type MigrateSortOption } from './MigrateSortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
@@ -19,6 +20,7 @@ import {
   EyeOff,
   ArrowRightLeft,
   Wrench,
+  Scale,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -138,6 +140,10 @@ export const MigrateView: React.FC = () => {
 
   // Scroll to the initially-deep-linked product row after first render
   const initialProductKeyRef = useRef(searchParams.get('product'))
+
+  const [hasDismissedCompareOnboarding, setHasDismissedCompareOnboarding] = useState(
+    () => typeof window !== 'undefined' && localStorage.getItem('dimissed_compare_onboarding') === 'true'
+  )
   useEffect(() => {
     const key = initialProductKeyRef.current
     if (!key) return
@@ -859,11 +865,14 @@ export const MigrateView: React.FC = () => {
           <Wrench size={12} className="animate-bounce-subtle" />
           WIP
         </span>
-        <p>
+        <p className="hidden md:block">
           I am in the process of reviewing and validating the PQC product information. There are
           still many inaccuracies that need to be addressed. The community can help with this effort
           by submitting product update requests via the <em>Update PQC Info</em> link available in
           each product card.
+        </p>
+        <p className="md:hidden text-xs">
+          Data under review. Please help by submitting product update requests via the <em>Update PQC Info</em> link in each product card.
         </p>
       </div>
 
@@ -886,28 +895,7 @@ export const MigrateView: React.FC = () => {
         )}
       </div>
 
-      {/* Mobile migration step selector — visible below md */}
-      <div className="md:hidden">
-        <FilterDropdown
-          label="Migration Phase"
-          items={MIGRATION_STEPS.map((s) => ({
-            id: s.id,
-            label: `${s.stepNumber}. ${s.shortTitle}`,
-          }))}
-          selectedId={stepFilter?.stepId ?? 'All'}
-          onSelect={(id) => {
-            if (id === 'All') {
-              setStepFilter(null)
-              syncFiltersToUrl({ step: null })
-            } else {
-              const step = MIGRATION_STEPS.find((s) => s.id === id)
-              if (step) handleViewSoftware(step)
-            }
-          }}
-          defaultLabel="All Phases"
-          noContainer
-        />
-      </div>
+      {/* Removed standalone mobile migration step selector to save vertical space; it now lives inside the Filter Drawer */}
 
       {/* Industry filter banner (from ?industry= deep link) */}
       {industryFilter && (
@@ -955,198 +943,340 @@ export const MigrateView: React.FC = () => {
         </div>
       )}
 
-      {/* Filter control band */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-wrap items-center gap-2">
-        {/* Layer dropdown — flat modes + always on mobile (mobile always shows cards) */}
-        <div className={isStackMode ? 'md:hidden' : ''}>
-          <FilterDropdown
-            items={layerFilterItems}
-            selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
-            onSelect={(id) => {
-              setActiveLayer(id)
-              setFlatCategoryFilter('All')
-              syncFiltersToUrl({ layer: id })
-              logMigrateAction('Filter Layer', id)
-            }}
-            defaultLabel="All Layers"
-          />
-        </div>
+      {/* Sticky filter container */}
+      <div className="sticky top-0 z-40 bg-background/95 backdrop-blur backdrop-saturate-150 border-b border-border/50 pb-3 pt-3 -mx-4 px-4 md:mx-0 md:px-0 mb-6 shadow-sm transition-all duration-300">
+        <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row gap-2">
+          
+          {/* Mobile Layout: Search + Drawer Row */}
+          <div className="flex flex-col md:hidden items-stretch gap-3 w-full">
+            <div className="relative w-full">
+              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <input
+                type="text"
+                placeholder="Search software..."
+                value={inputValue}
+                onChange={handleSearchChange}
+                className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+            
+            <div className="w-full">
+              <MobileFilterDrawer
+                activeFilterCount={
+                  (stepFilter ? 1 : 0) +
+                  (effectiveLayer !== 'All' ? 1 : 0) +
+                  (flatCategoryFilter !== 'All' ? 1 : 0) +
+                  (vendorFilter !== 'All' ? 1 : 0) +
+                  (verificationFilter !== 'All' ? 1 : 0) +
+                  (licenseFilter !== 'All' ? 1 : 0) +
+                  (hiddenSet.size > 0 ? 1 : 0) +
+                  (sortBy !== 'pqcMigrationPriority' ? 1 : 0)
+                }
+                onClearAll={() => {
+                  setStepFilter(null)
+                  setActiveLayer('All')
+                  setFlatCategoryFilter('All')
+                  setVendorFilter('All')
+                  setVerificationFilter('All')
+                  setLicenseFilter('All')
+                  setSortBy('pqcMigrationPriority')
+                  if (hiddenSet.size > 0) restoreAll()
+                  syncFiltersToUrl({ step: null, layer: 'All', cat: 'All', vendor: 'All', verification: 'All', licenseFilter: 'All', sort: 'pqcMigrationPriority' })
+                }}
+                filterContent={
+                  <div className="space-y-6">
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Migration Phase</h3>
+                      <FilterDropdown
+                        items={MIGRATION_STEPS.map((s) => ({
+                          id: s.id,
+                          label: `${s.stepNumber}. ${s.shortTitle}`,
+                        }))}
+                        selectedId={stepFilter?.stepId ?? 'All'}
+                        onSelect={(id) => {
+                          if (id === 'All') {
+                            setStepFilter(null)
+                            syncFiltersToUrl({ step: null })
+                          } else {
+                            const step = MIGRATION_STEPS.find((s) => s.id === id)
+                            if (step) handleViewSoftware(step)
+                          }
+                        }}
+                        defaultLabel="All Phases"
+                      />
+                    </div>
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Architecture</h3>
+                      <FilterDropdown
+                        items={layerFilterItems}
+                        selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
+                        onSelect={(id) => {
+                          setActiveLayer(id)
+                          setFlatCategoryFilter('All')
+                          syncFiltersToUrl({ layer: id })
+                          logMigrateAction('Filter Layer', id)
+                        }}
+                        defaultLabel="All Layers"
+                      />
+                      {flatCategories.length > 1 && (
+                        <FilterDropdown
+                          items={categoryFilterItems}
+                          selectedId={flatCategoryFilter}
+                          onSelect={(id) => {
+                            setFlatCategoryFilter(id)
+                            syncFiltersToUrl({ cat: id })
+                            logMigrateAction('Filter Category', id)
+                          }}
+                          defaultLabel="All Categories"
+                        />
+                      )}
+                    </div>
+                    
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Properties</h3>
+                      {vendorFilterItems.length > 0 && (
+                        <FilterDropdown
+                          items={vendorFilterItems}
+                          selectedId={vendorFilter}
+                          onSelect={(id) => {
+                            setVendorFilter(id)
+                            syncFiltersToUrl({ vendor: id })
+                            logMigrateAction('Filter Vendor', id)
+                          }}
+                          defaultLabel="All Vendors"
+                          searchable
+                        />
+                      )}
+                      <FilterDropdown
+                        items={verificationFilterItems}
+                        selectedId={verificationFilter}
+                        onSelect={(id) => {
+                          setVerificationFilter(id)
+                          syncFiltersToUrl({ verification: id })
+                          logMigrateAction('Filter Verification', id)
+                        }}
+                        defaultLabel="All Verification"
+                      />
+                      <FilterDropdown
+                        items={LICENSE_FILTER_ITEMS}
+                        selectedId={licenseFilter}
+                        onSelect={(id) => {
+                          setLicenseFilter(id)
+                          syncFiltersToUrl({ licenseFilter: id })
+                          logMigrateAction('Filter License', id)
+                        }}
+                        defaultLabel="All Licenses"
+                      />
+                    </div>
 
-        {/* Category dropdown — flat modes + always on mobile, scoped to selected layer */}
-        {flatCategories.length > 1 && (
-          <div className={isStackMode ? 'md:hidden' : ''}>
-            <FilterDropdown
-              items={categoryFilterItems}
-              selectedId={flatCategoryFilter}
-              onSelect={(id) => {
-                setFlatCategoryFilter(id)
-                syncFiltersToUrl({ cat: id })
-                logMigrateAction('Filter Category', id)
-              }}
-              defaultLabel="All Categories"
-            />
+                    <div className="space-y-3">
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Sorting</h3>
+                      <MigrateSortControl
+                        value={sortBy}
+                        onChange={(s) => {
+                          setSortBy(s)
+                          syncFiltersToUrl({ sort: s })
+                        }}
+                      />
+                    </div>
+                    
+                    {hiddenSet.size > 0 && (
+                      <div className="space-y-3 pt-6 border-t border-border">
+                        <Button
+                          variant="outline"
+                          onClick={() => restoreAll()}
+                          className="w-full text-status-warning border-status-warning/50 hover:bg-status-warning/10"
+                        >
+                          <EyeOff size={16} className="mr-2" />
+                          Restore {hiddenSet.size} hidden products
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                }
+              />
+            </div>
           </div>
-        )}
 
-        {/* Vendor dropdown — all modes */}
-        {vendorFilterItems.length > 0 && (
-          <div>
-            <FilterDropdown
-              items={vendorFilterItems}
-              selectedId={vendorFilter}
-              onSelect={(id) => {
-                setVendorFilter(id)
-                syncFiltersToUrl({ vendor: id })
-                logMigrateAction('Filter Vendor', id)
-              }}
-              defaultLabel="All Vendors"
-              searchable
-            />
+          {/* Desktop Layout: Inline Filter Band */}
+          <div className="hidden md:flex flex-wrap items-center gap-2 flex-1 relative z-10 w-full overflow-visible">
+            {/* Layer dropdown — flat modes */}
+            <div className={isStackMode ? 'hidden' : ''}>
+              <FilterDropdown
+                items={layerFilterItems}
+                selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
+                onSelect={(id) => {
+                  setActiveLayer(id)
+                  setFlatCategoryFilter('All')
+                  syncFiltersToUrl({ layer: id })
+                  logMigrateAction('Filter Layer', id)
+                }}
+                defaultLabel="All Layers"
+              />
+            </div>
+
+            {/* Category dropdown — flat modes */}
+            {flatCategories.length > 1 && (
+              <div className={isStackMode ? 'hidden' : ''}>
+                <FilterDropdown
+                  items={categoryFilterItems}
+                  selectedId={flatCategoryFilter}
+                  onSelect={(id) => {
+                    setFlatCategoryFilter(id)
+                    syncFiltersToUrl({ cat: id })
+                    logMigrateAction('Filter Category', id)
+                  }}
+                  defaultLabel="All Categories"
+                />
+              </div>
+            )}
+
+            {/* Vendor dropdown */}
+            {vendorFilterItems.length > 0 && (
+              <div>
+                <FilterDropdown
+                  items={vendorFilterItems}
+                  selectedId={vendorFilter}
+                  onSelect={(id) => {
+                    setVendorFilter(id)
+                    syncFiltersToUrl({ vendor: id })
+                    logMigrateAction('Filter Vendor', id)
+                  }}
+                  defaultLabel="All Vendors"
+                  searchable
+                />
+              </div>
+            )}
+
+            {/* Verification status dropdown */}
+            <div>
+              <FilterDropdown
+                items={verificationFilterItems}
+                selectedId={verificationFilter}
+                onSelect={(id) => {
+                  setVerificationFilter(id)
+                  syncFiltersToUrl({ verification: id })
+                  logMigrateAction('Filter Verification', id)
+                }}
+                defaultLabel="All Verification"
+              />
+            </div>
+
+            {/* License dropdown */}
+            <div>
+              <FilterDropdown
+                items={LICENSE_FILTER_ITEMS}
+                selectedId={licenseFilter}
+                onSelect={(id) => {
+                  setLicenseFilter(id)
+                  syncFiltersToUrl({ licenseFilter: id })
+                  logMigrateAction('Filter License', id)
+                }}
+                defaultLabel="All Licenses"
+              />
+            </div>
+
+            {/* Search */}
+            <div className="relative flex-1 min-w-[150px]">
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <input
+                type="text"
+                id="software-search-desktop"
+                placeholder="Search..."
+                value={inputValue}
+                onChange={handleSearchChange}
+                className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[40px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              />
+            </div>
+
+            {/* Sort — cards mode */}
+            <div className={effectiveViewMode !== 'cards' ? 'hidden' : ''}>
+              <MigrateSortControl
+                value={sortBy}
+                onChange={(s) => {
+                  setSortBy(s)
+                  syncFiltersToUrl({ sort: s })
+                }}
+              />
+            </div>
+
+            {/* Restore hidden */}
+            {hiddenSet.size > 0 && (
+              <Button
+                variant="ghost"
+                onClick={() => restoreAll()}
+                className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
+                aria-label={`Restore ${hiddenSet.size} hidden product${hiddenSet.size !== 1 ? 's' : ''}`}
+              >
+                <EyeOff size={14} />
+                {hiddenSet.size} hidden
+              </Button>
+            )}
+
+            {/* View toggle */}
+            <div>
+              <MigrateViewToggle
+                mode={effectiveViewMode}
+                onChange={(m) => {
+                  setViewMode(m)
+                  syncFiltersToUrl({ mode: m })
+                }}
+              />
+            </div>
           </div>
-        )}
-
-        {/* Verification status dropdown */}
-        <div>
-          <FilterDropdown
-            items={verificationFilterItems}
-            selectedId={verificationFilter}
-            onSelect={(id) => {
-              setVerificationFilter(id)
-              syncFiltersToUrl({ verification: id })
-              logMigrateAction('Filter Verification', id)
-            }}
-            defaultLabel="All Verification"
-          />
-        </div>
-
-        {/* License dropdown */}
-        <div>
-          <FilterDropdown
-            items={LICENSE_FILTER_ITEMS}
-            selectedId={licenseFilter}
-            onSelect={(id) => {
-              setLicenseFilter(id)
-              syncFiltersToUrl({ licenseFilter: id })
-              logMigrateAction('Filter License', id)
-            }}
-            defaultLabel="All Licenses"
-          />
-        </div>
-
-        {/* Search */}
-        <div className="relative flex-1 min-w-[200px]">
-          <Search
-            size={16}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
-            aria-hidden="true"
-          />
-          <input
-            type="text"
-            id="software-search"
-            placeholder="Search software..."
-            aria-label="Search software"
-            value={inputValue}
-            onChange={handleSearchChange}
-            className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
-          />
-        </div>
-
-        {/* Sort — cards mode + always on mobile */}
-        <div className={effectiveViewMode !== 'cards' ? 'md:hidden' : ''}>
-          <MigrateSortControl
-            value={sortBy}
-            onChange={(s) => {
-              setSortBy(s)
-              syncFiltersToUrl({ sort: s })
-            }}
-          />
-        </div>
-
-        {/* Restore hidden — when any products are hidden */}
-        {hiddenSet.size > 0 && (
-          <Button
-            variant="ghost"
-            onClick={() => restoreAll()}
-            className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground"
-            aria-label={`Restore ${hiddenSet.size} hidden product${hiddenSet.size !== 1 ? 's' : ''}`}
-          >
-            <EyeOff size={14} />
-            {hiddenSet.size} hidden
-          </Button>
-        )}
-
-        {/* View toggle — desktop only (mobile always shows cards) */}
-        <div className="hidden md:block">
-          <MigrateViewToggle
-            mode={effectiveViewMode}
-            onChange={(m) => {
-              setViewMode(m)
-              syncFiltersToUrl({ mode: m })
-            }}
-          />
         </div>
       </div>
 
       {/* Results count — always visible in all modes */}
-      {(() => {
-        const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
-        const total = softwareData.length
-        return (
-          <p className="text-xs text-muted-foreground">
-            {hasActiveFilter ? (
-              <>
-                Showing {visibleCount} of {total} product{total !== 1 ? 's' : ''}
-                {effectiveLayer !== 'All' &&
-                  ` in ${activePartitions.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
-              </>
-            ) : (
-              <>
-                {total} product{total !== 1 ? 's' : ''}
-              </>
-            )}
-          </p>
-        )
-      })()}
+      <div className="flex flex-col sm:flex-row items-baseline justify-between mb-2">
+        {(() => {
+          const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
+          const total = softwareData.length
+          return (
+            <p className="text-xs text-muted-foreground">
+              {hasActiveFilter ? (
+                <>
+                  Showing {visibleCount} of {total} product{total !== 1 ? 's' : ''}
+                  {effectiveLayer !== 'All' &&
+                    ` in ${activePartitions.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
+                </>
+              ) : (
+                <>
+                  {total} product{total !== 1 ? 's' : ''}
+                </>
+              )}
+            </p>
+          )
+        })()}
+        
+        {/* Compare Onboarding Tooltip banner */}
+        {!hasDismissedCompareOnboarding && (
+          <div className="mt-2 sm:mt-0 flex items-center gap-2 bg-secondary/10 border border-secondary/20 text-secondary text-xs px-3 py-1.5 rounded-full animate-in fade-in slide-in-from-bottom-2">
+            <Scale size={14} className="animate-pulse" />
+            <span>Select up to 4 products to compare capabilities.</span>
+            <button
+              onClick={() => {
+                setHasDismissedCompareOnboarding(true)
+                localStorage.setItem('dimissed_compare_onboarding', 'true')
+              }}
+              className="ml-2 hover:bg-secondary/20 rounded-full p-0.5"
+              aria-label="Dismiss tip"
+            >
+              <X size={12} />
+            </button>
+          </div>
+        )}
+      </div>
 
       {/* Content area — mode-specific rendering */}
       <div className="py-4">
-        {/* Mobile: always show card grid */}
-        <div className="md:hidden">
-          {activeInfrastructureLayer !== 'All' && (
-            <div className="flex items-center justify-between gap-2 mb-3 px-3 py-2 text-xs bg-primary/10 border border-primary/20 rounded-md animate-fade-in">
-              <span className="text-primary font-medium">
-                Layer:{' '}
-                {activePartitions.find((l) => l.id === activeInfrastructureLayer)?.label ??
-                  activeInfrastructureLayer}
-              </span>
-              <button
-                type="button"
-                aria-label="Clear layer filter"
-                onClick={() => {
-                  setActiveLayer('All')
-                  syncFiltersToUrl({ layer: 'All' })
-                }}
-                className="p-0.5 rounded hover:bg-primary/20 text-primary transition-colors"
-              >
-                <X size={14} />
-              </button>
-            </div>
-          )}
-          <SoftwareCardGrid
-            items={sortedFlatProducts}
-            hiddenProducts={filterText ? undefined : hiddenSet}
-            onHideProduct={hideProduct}
-            selectedProducts={myProductsSet}
-            onToggleProduct={toggleMyProduct}
-            compareProducts={compareSet}
-            onToggleCompare={handleToggleCompare}
-            maxCompareReached={maxCompareReached}
-          />
-        </div>
-
-        {/* Desktop: mode-specific rendering */}
-        <div className="hidden md:block">
-          {isStackMode && (
+        {/* Stack Mode: Accordion on Mobile, Expanded on Desktop */}
+        {isStackMode && (
+          <div className="block">
             <InfrastructureStack
               activeLayer={activeInfrastructureLayer}
               onSelectLayer={(layer) => {
@@ -1172,32 +1302,73 @@ export const MigrateView: React.FC = () => {
               expandedContent={
                 activeInfrastructureLayer !== 'All' ? (
                   activeLayerTableData.length > 0 ? (
-                    <SoftwareTable
-                      key={`${activeInfrastructureLayer}-${activeTab}-${stepFilter?.stepId ?? 'none'}`}
-                      data={activeLayerTableData}
-                      defaultSort={{ key: 'softwareName', direction: 'asc' }}
-                      hiddenProducts={hiddenSet}
-                      onHideProduct={hideProduct}
-                      selectedProducts={myProductsSet}
-                      onToggleProduct={toggleMyProduct}
-                      compareProducts={compareSet}
-                      onToggleCompare={handleToggleCompare}
-                      maxCompareReached={maxCompareReached}
-                      expandedIds={tableExpandedIds}
-                      onToggleExpand={handleToggleTableExpand}
-                    />
+                    <>
+                      <div className="hidden md:block">
+                        <SoftwareTable
+                          key={`${activeInfrastructureLayer}-${activeTab}-${stepFilter?.stepId ?? 'none'}`}
+                          data={activeLayerTableData}
+                          defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                          hiddenProducts={hiddenSet}
+                          onHideProduct={hideProduct}
+                          selectedProducts={myProductsSet}
+                          onToggleProduct={toggleMyProduct}
+                          compareProducts={compareSet}
+                          onToggleCompare={handleToggleCompare}
+                          maxCompareReached={maxCompareReached}
+                          expandedIds={tableExpandedIds}
+                          onToggleExpand={handleToggleTableExpand}
+                        />
+                      </div>
+                      <div className="block md:hidden">
+                        <SoftwareCardGrid
+                          items={activeLayerTableData}
+                          hiddenProducts={hiddenSet}
+                          onHideProduct={hideProduct}
+                          selectedProducts={myProductsSet}
+                          onToggleProduct={toggleMyProduct}
+                          compareProducts={compareSet}
+                          onToggleCompare={handleToggleCompare}
+                          maxCompareReached={maxCompareReached}
+                        />
+                      </div>
+                    </>
                   ) : (
-                    <EmptyState
-                      icon={<PackageSearch size={32} />}
-                      title="No products match the current filters."
-                    />
+                    <div className="block">
+                      <EmptyState
+                        icon={<PackageSearch size={32} />}
+                        title="No products match the current filters."
+                      />
+                    </div>
                   )
                 ) : undefined
               }
             />
-          )}
+          </div>
+        )}
 
-          {effectiveViewMode === 'cards' && (
+        {/* Cards Mode */}
+        {effectiveViewMode === 'cards' && (
+          <div className="animate-in fade-in block">
+            {activeInfrastructureLayer !== 'All' && (
+              <div className="flex md:hidden items-center justify-between gap-2 mb-3 px-3 py-2 text-xs bg-primary/10 border border-primary/20 rounded-md animate-fade-in">
+                <span className="text-primary font-medium">
+                  Layer:{' '}
+                  {activePartitions.find((l) => l.id === activeInfrastructureLayer)?.label ??
+                    activeInfrastructureLayer}
+                </span>
+                <button
+                  type="button"
+                  aria-label="Clear layer filter"
+                  onClick={() => {
+                    setActiveLayer('All')
+                    syncFiltersToUrl({ layer: 'All' })
+                  }}
+                  className="p-0.5 rounded hover:bg-primary/20 text-primary transition-colors"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )}
             <SoftwareCardGrid
               items={sortedFlatProducts}
               hiddenProducts={filterText ? undefined : hiddenSet}
@@ -1208,31 +1379,50 @@ export const MigrateView: React.FC = () => {
               onToggleCompare={handleToggleCompare}
               maxCompareReached={maxCompareReached}
             />
-          )}
+          </div>
+        )}
 
-          {effectiveViewMode === 'table' &&
-            (allFilteredProducts.length > 0 ? (
-              <SoftwareTable
-                key={`flat-table-${effectiveLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
-                data={allFilteredProducts}
-                defaultSort={{ key: 'softwareName', direction: 'asc' }}
-                hiddenProducts={filterText ? undefined : hiddenSet}
-                onHideProduct={hideProduct}
-                selectedProducts={myProductsSet}
-                onToggleProduct={toggleMyProduct}
-                compareProducts={compareSet}
-                expandedIds={tableExpandedIds}
-                onToggleExpand={handleToggleTableExpand}
-                onToggleCompare={handleToggleCompare}
-                maxCompareReached={maxCompareReached}
-              />
-            ) : (
+        {/* Table Mode */}
+        {effectiveViewMode === 'table' &&
+          (allFilteredProducts.length > 0 ? (
+            <>
+              <div className="hidden md:block">
+                <SoftwareTable
+                  key={`flat-table-${effectiveLayer}-${flatCategoryFilter}-${stepFilter?.stepId ?? 'none'}`}
+                  data={allFilteredProducts}
+                  defaultSort={{ key: 'softwareName', direction: 'asc' }}
+                  hiddenProducts={filterText ? undefined : hiddenSet}
+                  onHideProduct={hideProduct}
+                  selectedProducts={myProductsSet}
+                  onToggleProduct={toggleMyProduct}
+                  compareProducts={compareSet}
+                  expandedIds={tableExpandedIds}
+                  onToggleExpand={handleToggleTableExpand}
+                  onToggleCompare={handleToggleCompare}
+                  maxCompareReached={maxCompareReached}
+                />
+              </div>
+              <div className="block md:hidden">
+                <SoftwareCardGrid
+                  items={allFilteredProducts}
+                  hiddenProducts={filterText ? undefined : hiddenSet}
+                  onHideProduct={hideProduct}
+                  selectedProducts={myProductsSet}
+                  onToggleProduct={toggleMyProduct}
+                  compareProducts={compareSet}
+                  onToggleCompare={handleToggleCompare}
+                  maxCompareReached={maxCompareReached}
+                />
+              </div>
+            </>
+          ) : (
+            <div className="block">
               <EmptyState
                 icon={<PackageSearch size={32} />}
                 title="No products match the current filters."
               />
-            ))}
-        </div>
+            </div>
+          ))}
 
         {/* Comparison panel — shown inline when triggered from sticky bar */}
         {showComparisonPanel && comparisonProducts.length >= 2 && (

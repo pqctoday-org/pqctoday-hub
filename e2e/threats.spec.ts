@@ -54,7 +54,7 @@ test.describe('Threats Dashboard', () => {
 
   test('searches threats by keyword', async ({ page }) => {
     // Use search input (desktop only)
-    const searchInput = page.getByPlaceholder('Search threats...')
+    const searchInput = page.getByPlaceholder('Search threats...').first()
 
     // Only run search tests on desktop
     if (await searchInput.isVisible()) {
@@ -66,7 +66,7 @@ test.describe('Threats Dashboard', () => {
   })
 
   test('finds new threat from 01/19/2026 update', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('Search threats...')
+    const searchInput = page.getByPlaceholder('Search threats...').first()
     if (await searchInput.isVisible()) {
       // Search for a specific new threat ID
       await searchInput.fill('CROSS-001')
@@ -77,7 +77,7 @@ test.describe('Threats Dashboard', () => {
   })
 
   test('displays empty state when no results', async ({ page }) => {
-    const searchInput = page.getByPlaceholder('Search threats...')
+    const searchInput = page.getByPlaceholder('Search threats...').first()
 
     if (await searchInput.isVisible()) {
       // Search for nonexistent term
@@ -90,8 +90,8 @@ test.describe('Threats Dashboard', () => {
 
   test('opens threat detail dialog', async ({ page }) => {
     // Click the info button on first row
-    const infoButton = page.locator('[aria-label="View Details"]').first()
-    await infoButton.click()
+    const infoRow = page.locator('table tbody tr td').first()
+    await infoRow.click()
 
     // Verify dialog opens with expected content
     await expect(page.locator('[role="dialog"]')).toBeVisible()
@@ -102,7 +102,7 @@ test.describe('Threats Dashboard', () => {
 
   test('closes dialog with close button', async ({ page }) => {
     // Open dialog
-    await page.locator('[aria-label="View Details"]').first().click()
+    await page.locator('table tbody tr td').first().click()
     await expect(page.locator('[role="dialog"]')).toBeVisible()
 
     // Close with X button
@@ -114,12 +114,12 @@ test.describe('Threats Dashboard', () => {
 
   test('closes dialog by clicking outside', async ({ page }) => {
     // Open dialog
-    await page.locator('[aria-label="View Details"]').first().click()
+    await page.locator('table tbody tr td').first().click()
     await expect(page.locator('[role="dialog"]')).toBeVisible()
 
     // Click outside (on the backdrop)
     await page
-      .locator('.fixed.inset-0')
+      .locator('.backdrop-blur-sm')
       .first()
       .click({ position: { x: 10, y: 10 }, force: true })
 

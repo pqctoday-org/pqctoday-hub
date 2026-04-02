@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import { useEffect, useRef, useState } from 'react'
-import { BookOpen, CheckCircle, Lightbulb, Wrench, X, ArrowLeft } from 'lucide-react'
+import { CheckCircle, Lightbulb, X, ArrowLeft } from 'lucide-react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -77,13 +77,13 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
   if (learnSections.length === 0) return null
 
   return (
-    <div className="bg-card border border-border rounded-xl shadow-sm px-4 py-3 mb-3 space-y-1">
+    <div className="bg-transparent space-y-2 py-1">
       {/* Completion banner */}
       {banner && (
         <div className="flex items-center justify-between px-3 py-2 rounded-lg bg-status-success/15 border border-status-success/30 mb-2">
-          <span className="flex items-center gap-2 text-xs font-semibold text-status-success">
-            <CheckCircle size={14} className="shrink-0" />
-            {banner === 'learn' ? 'Learn Reading Complete!' : 'Workshop Complete!'}
+          <span className="flex items-center gap-2 text-[11px] font-semibold text-status-success">
+            <CheckCircle size={12} className="shrink-0" />
+            {banner === 'learn' ? 'Reading Complete!' : 'Workshop Complete!'}
           </span>
           <button
             type="button"
@@ -103,15 +103,15 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
             <Lightbulb size={12} className="shrink-0" />
             Dive Deeper Active
           </span>
-          <span className="text-xs text-muted-foreground flex-1">
-            You are viewing the standard technical module.
+          <span className="text-[10px] text-muted-foreground flex-1">
+            Standard technical module.
           </span>
           <button
             onClick={() => navigate(location.pathname)}
-            className="flex items-center gap-1.5 text-xs text-foreground font-medium bg-background border border-border px-3 py-1.5 rounded-md hover:bg-muted transition-colors"
+            className="flex items-center gap-1.5 text-[10px] text-foreground font-medium bg-background border border-border px-2 py-1 rounded-md hover:bg-muted transition-colors"
           >
-            <ArrowLeft size={14} />
-            Back to Simple Mode
+            <ArrowLeft size={12} />
+            Simple Mode
           </button>
         </div>
       ) : experienceLevel === 'curious' ? (
@@ -127,24 +127,20 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
       ) : null}
 
       {/* Learn progress row */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <span
-          className={`flex items-center gap-1 text-xs font-medium w-24 shrink-0 ${learnPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
+          className={`flex items-center gap-1 text-[10px] uppercase font-bold w-16 shrink-0 tracking-wider ${learnPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
         >
-          <BookOpen size={11} />
           Learn
-          {learnPct === 100 && (
-            <CheckCircle size={11} className="text-status-success" aria-hidden="true" />
-          )}
         </span>
-        <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="flex-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
           <div
             className={`h-full rounded-full transition-all duration-300 ${learnPct === 100 ? 'bg-status-success' : 'bg-primary'}`}
             style={{ width: `${learnPct}%` }}
           />
         </div>
         <span
-          className={`text-xs font-mono w-9 text-right shrink-0 ${learnPct === 100 ? 'text-status-success font-semibold' : 'text-muted-foreground'}`}
+          className={`text-[10px] font-mono w-9 text-right shrink-0 ${learnPct === 100 ? 'text-status-success font-semibold' : 'text-muted-foreground'}`}
         >
           {learnPct}%
         </span>
@@ -152,24 +148,20 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
 
       {/* Workshop progress row */}
       {hasWorkshop && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span
-            className={`flex items-center gap-1 text-xs font-medium w-24 shrink-0 ${workshopPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
+            className={`flex items-center gap-1 text-[10px] uppercase font-bold w-16 shrink-0 tracking-wider ${workshopPct === 100 ? 'text-status-success' : 'text-muted-foreground'}`}
           >
-            <Wrench size={11} />
-            Workshop
-            {workshopPct === 100 && (
-              <CheckCircle size={11} className="text-status-success" aria-hidden="true" />
-            )}
+            Build
           </span>
-          <div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+          <div className="flex-1 h-1.5 rounded-full bg-muted/50 overflow-hidden">
             <div
               className={`h-full rounded-full transition-all duration-300 ${workshopPct === 100 ? 'bg-status-success' : 'bg-accent'}`}
               style={{ width: `${workshopPct}%` }}
             />
           </div>
           <span
-            className={`text-xs font-mono w-9 text-right shrink-0 ${workshopPct === 100 ? 'text-status-success font-semibold' : 'text-muted-foreground'}`}
+            className={`text-[10px] font-mono w-9 text-right shrink-0 ${workshopPct === 100 ? 'text-status-success font-semibold' : 'text-muted-foreground'}`}
           >
             {workshopPct}%
           </span>

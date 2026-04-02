@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { Bookmark, BookmarkCheck, Calendar, Eye, ExternalLink, Info, Sparkles } from 'lucide-react'
+import { Bookmark, BookmarkCheck, Calendar, Eye, ExternalLink, Sparkles } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { StatusBadge } from '../common/StatusBadge'
@@ -9,6 +9,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { DocumentAnalysis } from './DocumentAnalysis'
 import clsx from 'clsx'
 
 interface DocumentCardProps {
@@ -34,7 +35,16 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.2, delay: index * 0.03 }}
-      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 transition-colors bg-card/50 relative"
+      onClick={() => onViewDetails(item)}
+      className="glass-panel p-5 flex flex-col h-full hover:border-secondary/50 hover:shadow-md cursor-pointer transition-all bg-card/50 relative"
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onViewDetails(item)
+        }
+      }}
     >
       {item.status && (
         <div className="absolute top-3 right-3">
@@ -44,7 +54,10 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
 
       <span className="font-mono text-sm text-primary/80 mb-1">{item.referenceId}</span>
 
-      <h3 className="text-sm font-semibold text-foreground mb-2 leading-snug pr-16 line-clamp-2">
+      <h3 
+        className="text-sm font-semibold text-foreground mb-2 leading-snug pr-16 line-clamp-2"
+        title={item.documentTitle}
+      >
         {item.documentTitle}
       </h3>
 
@@ -107,20 +120,24 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         </div>
       )}
 
-      <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
-        <button
-          onClick={() => onViewDetails(item)}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all"
-          aria-label={`View details for ${item.documentTitle}`}
+      {isEnriched && (
+        <div
+          className="mb-3 mt-1"
+          onClick={(e) => e.stopPropagation()}
+          onKeyDown={(e) => e.stopPropagation()}
+          role="presentation"
         >
-          <Info size={14} aria-hidden="true" />
-          Details
-        </button>
+          <DocumentAnalysis enrichment={libraryEnrichments[item.referenceId]} />
+        </div>
+      )}
+
+      <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
         {item.downloadUrl && (
           <a
             href={item.downloadUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={(e) => e.stopPropagation()}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg hover:bg-muted/30 border border-border text-muted-foreground hover:text-foreground text-xs font-medium transition-all"
             aria-label={`Open ${item.documentTitle} in new tab`}
           >
@@ -128,7 +145,8 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
             Open
           </a>
         )}
-        <div className="flex items-center gap-1 ml-auto">
+        {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+        <div className="flex items-center gap-1 ml-auto" onClick={(e) => e.stopPropagation()}>
           <button
             onClick={(e) => {
               e.stopPropagation()

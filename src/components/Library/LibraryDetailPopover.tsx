@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom'
 import type { LibraryItem } from '../../data/libraryData'
 import { useEffect, useRef, useState } from 'react'
 import FocusLock from 'react-focus-lock'
+import { motion } from 'framer-motion'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -110,7 +111,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
     }
   }
 
-  const style: React.CSSProperties = { zIndex: 9999 }
+
 
   // Derive PNG URL from localFile if available (e.g. "public/library/FIPS_203.pdf" → "/library/FIPS_203.png")
   const stem = item.localFile
@@ -126,10 +127,22 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
 
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
-        <div
+      <div className="fixed inset-0 flex items-end justify-center md:items-center pointer-events-none" style={{ zIndex: 9999 }}>
+        <motion.div
           ref={popoverRef}
-          className="fixed bottom-0 left-0 right-0 w-full max-h-[90dvh] rounded-t-2xl md:bottom-auto md:left-1/2 md:right-auto md:top-1/2 md:-translate-x-1/2 md:-translate-y-1/2 md:w-[60vw] md:max-w-[1200px] md:max-h-[85dvh] md:rounded-xl border border-border overflow-hidden animate-in slide-in-from-bottom-4 duration-300 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-          style={style}
+          initial={{ y: '100%', opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          exit={{ y: '100%', opacity: 0 }}
+          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+          drag="y"
+          dragConstraints={{ top: 0, bottom: 0 }}
+          dragElastic={{ top: 0, bottom: 0.5 }}
+          onDragEnd={(_, info) => {
+            if (info.offset.y > 100 || info.velocity.y > 500) {
+              onClose()
+            }
+          }}
+          className="w-full max-h-[90dvh] md:max-h-[85dvh] rounded-t-2xl md:w-[80vw] md:max-w-[1200px] md:rounded-xl border border-border overflow-hidden flex flex-col bg-popover text-popover-foreground shadow-2xl pointer-events-auto"
           role="dialog"
           aria-modal="true"
           aria-labelledby="popover-title"
@@ -140,19 +153,30 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
           </div>
 
           {/* Header */}
-          <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4 flex-shrink-0">
-            <div>
-              <div className="flex items-center gap-2 mb-1">
-                <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50">
-                  {item.documentType?.trim()}
-                </span>
-                <span className="text-xs text-muted-foreground">{item.referenceId?.trim()}</span>
+          <div className="p-4 border-b border-border bg-muted/20 flex flex-col gap-3 flex-shrink-0 relative">
+            <div className="flex justify-between items-start gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-status-info text-status-info border-status-info/50">
+                    {item.documentType?.trim()}
+                  </span>
+                  <span className="text-xs text-muted-foreground">{item.referenceId?.trim()}</span>
+                </div>
+                <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight">
+                  {item.documentTitle?.trim()}
+                </h3>
               </div>
-              <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight">
-                {item.documentTitle?.trim()}
-              </h3>
+              <button
+                onClick={onClose}
+                aria-label="Close details"
+                className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+                style={{ marginTop: '-4px', marginRight: '-4px' }}
+              >
+                <X size={18} aria-hidden="true" />
+              </button>
             </div>
-            <div className="flex items-center gap-1 flex-shrink-0">
+            {/* Actions Row */}
+            <div className="hidden md:flex items-center gap-2 flex-wrap">
               {/* Ask button hidden on mobile — shown in content area instead */}
               <div className="hidden sm:contents">
                 <AskAssistantButton
@@ -173,149 +197,164 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                 title={item.documentTitle}
                 url={`${window.location.origin}/library?ref=${item.referenceId}`}
               />
-              <button
-                onClick={onClose}
-                aria-label="Close details"
-                className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
-              >
-                <X size={18} aria-hidden="true" />
-              </button>
             </div>
           </div>
 
           {/* Scrollable Content */}
-          <div className="p-4 overflow-y-auto space-y-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
-            {/* Ask button — mobile only, shown here since header is crowded on small screens */}
-            <div className="sm:hidden">
-              <AskAssistantButton
-                question={`What is the significance of "${item.documentTitle?.trim()}"${item.authorsOrOrganization ? ` by ${item.authorsOrOrganization}` : ''}${item.documentType ? ` (${item.documentType})` : ''} for PQC migration?${item.shortDescription ? ` Summary: ${item.shortDescription}` : ''}`}
-              />
-            </div>
-            {/* PNG Preview — shown only if the file exists (onError hides it) */}
-            {pngUrl && (
-              <img
-                src={pngUrl}
-                alt={`First page preview of ${item.documentTitle}`}
-                className={`w-full max-h-52 object-contain bg-muted/30 rounded-lg ${pngVisible ? 'block' : 'hidden'}`}
-                onLoad={() => setPngVisible(true)}
-                onError={() => setPngVisible(false)}
-              />
-            )}
-
-            {/* Description */}
-            <div>
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0">
-                Description
-              </h4>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                {item.shortDescription?.trim() || 'No description available.'}
-              </p>
-            </div>
-
-            {/* Metadata Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 w-full">
-              <div className="flex flex-row items-baseline gap-2">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                  Status:
-                </h4>
-                <p className="text-sm text-foreground">{item.documentStatus?.trim()}</p>
+          <div className="p-4 overflow-y-auto pb-24 md:pb-4 flex flex-col md:grid md:grid-cols-[1.5fr_1fr] md:gap-6 md:items-start relative">
+            <div className="space-y-4 order-2 md:order-1">
+              {/* Ask button — mobile only, shown here since header is crowded on small screens */}
+              <div className="sm:hidden">
+                <AskAssistantButton
+                  question={`What is the significance of "${item.documentTitle?.trim()}"${item.authorsOrOrganization ? ` by ${item.authorsOrOrganization}` : ''}${item.documentType ? ` (${item.documentType})` : ''} for PQC migration?${item.shortDescription ? ` Summary: ${item.shortDescription}` : ''}`}
+                />
               </div>
 
-              <div className="flex flex-row items-baseline gap-2">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                  Authors:
+              {/* Description */}
+              <div>
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2">
+                  Description
                 </h4>
-                <p
-                  className="text-sm text-foreground truncate"
-                  title={item.authorsOrOrganization?.trim()}
-                >
-                  {item.authorsOrOrganization?.trim()}
+                <p className="text-sm text-foreground leading-relaxed">
+                  {item.shortDescription?.trim() || 'No description available.'}
                 </p>
               </div>
 
-              <div className="flex flex-row items-center gap-2">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                  Published:
-                </h4>
-                <div className="flex items-center gap-1.5 text-foreground text-sm">
-                  <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                  <span>{item.initialPublicationDate?.trim()}</span>
-                </div>
-              </div>
-
-              <div className="flex flex-row items-center gap-2">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                  Updated:
-                </h4>
-                <div className="flex items-center gap-1.5 text-foreground text-sm">
-                  <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                  <span>{item.lastUpdateDate?.trim()}</span>
-                </div>
-              </div>
-
-              {item.regionScope && (
-                <div className="flex flex-row items-baseline gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                    Region:
-                  </h4>
-                  <p className="text-sm text-muted-foreground">{item.regionScope?.trim()}</p>
-                </div>
-              )}
-
-              {item.migrationUrgency && (
-                <div className="flex flex-row items-baseline gap-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                    Urgency:
-                  </h4>
-                  <p className="text-sm text-muted-foreground">{item.migrationUrgency?.trim()}</p>
-                </div>
-              )}
-
-              {item.applicableIndustries && (
-                <div className="flex flex-row items-baseline gap-2 col-span-2">
-                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0">
-                    Industries:
-                  </h4>
-                  <p
-                    className="text-sm text-muted-foreground truncate"
-                    title={
-                      Array.isArray(item.applicableIndustries)
-                        ? item.applicableIndustries.join(', ')
-                        : (item.applicableIndustries as string)?.trim()
-                    }
-                  >
-                    {Array.isArray(item.applicableIndustries)
-                      ? item.applicableIndustries.join(', ')
-                      : (item.applicableIndustries as string)?.trim()}
-                  </p>
-                </div>
+              {/* Document Analysis — enriched dimensions */}
+              {libraryEnrichments[item.referenceId] && (
+                <DocumentAnalysis
+                  enrichment={libraryEnrichments[item.referenceId]}
+                  relatedLeaders={relatedLeaders}
+                />
               )}
             </div>
 
-            {/* Download Link */}
-            {item.downloadUrl && (
-              <div className="pt-2 border-t border-border">
-                <a
-                  href={item.downloadUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
-                >
-                  <ExternalLink size={14} />
-                  Open Document
-                </a>
-              </div>
-            )}
+            <div className="space-y-4 order-1 md:order-2 md:sticky md:top-0">
+              {/* PNG Preview — shown only if the file exists (onError hides it) */}
+              {pngUrl && (
+                <img
+                  src={pngUrl}
+                  alt={`First page preview of ${item.documentTitle}`}
+                  className={`w-full max-h-52 object-contain bg-muted/30 rounded-lg border border-border ${pngVisible ? 'block' : 'hidden'}`}
+                  onLoad={() => setPngVisible(true)}
+                  onError={() => setPngVisible(false)}
+                />
+              )}
 
-            {/* Document Analysis — enriched dimensions */}
-            {libraryEnrichments[item.referenceId] && (
-              <DocumentAnalysis
-                enrichment={libraryEnrichments[item.referenceId]}
-                relatedLeaders={relatedLeaders}
-              />
-            )}
+              {/* Metadata Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2 p-3 bg-muted/20 border border-border rounded-lg">
+                <div className="flex flex-row items-baseline gap-2">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    Status:
+                  </h4>
+                  <p className="text-sm text-foreground font-medium">{item.documentStatus?.trim()}</p>
+                </div>
+
+                <div className="flex flex-row items-baseline gap-2">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    Authors:
+                  </h4>
+                  <p className="text-sm text-foreground break-words line-clamp-3">
+                    {item.authorsOrOrganization?.trim()}
+                  </p>
+                </div>
+
+                <div className="flex flex-row items-center gap-2">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    Published:
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-foreground text-sm">
+                    <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
+                    <span>{item.initialPublicationDate?.trim()}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-row items-center gap-2">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                    Updated:
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-foreground text-sm">
+                    <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
+                    <span>{item.lastUpdateDate?.trim()}</span>
+                  </div>
+                </div>
+
+                {item.regionScope && (
+                  <div className="flex flex-row items-baseline gap-2">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      Region:
+                    </h4>
+                    <p className="text-sm text-foreground">{item.regionScope?.trim()}</p>
+                  </div>
+                )}
+
+                {item.migrationUrgency && (
+                  <div className="flex flex-row items-baseline gap-2">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider shrink-0 w-20">
+                      Urgency:
+                    </h4>
+                    <p className="text-sm text-foreground">{item.migrationUrgency?.trim()}</p>
+                  </div>
+                )}
+
+                {item.applicableIndustries && (
+                  <div className="flex flex-col gap-1 mt-1 col-span-full">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Industries:
+                    </h4>
+                    <p className="text-sm text-foreground break-words">
+                      {Array.isArray(item.applicableIndustries)
+                        ? item.applicableIndustries.join(', ')
+                        : (item.applicableIndustries as string)?.trim()}
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Download Link Desktop Only */}
+              {item.downloadUrl && (
+                <div className="hidden md:block pt-4 text-center">
+                  <a
+                    href={item.downloadUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold rounded-lg transition-colors"
+                  >
+                    <ExternalLink size={16} />
+                    Open Document
+                  </a>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+
+          {/* Mobile Sticky Footer */}
+          <div className="md:hidden sticky bottom-0 left-0 right-0 p-3 bg-popover/90 backdrop-blur-md border-t border-border flex items-center justify-between gap-2 shadow-[0_-4px_12px_rgba(0,0,0,0.05)] shrink-0 z-10 w-[calc(100%+1px)] -ml-[0.5px]">
+            {item.downloadUrl && (
+              <a
+                href={item.downloadUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors truncate"
+              >
+                <ExternalLink size={16} className="shrink-0" />
+                <span className="truncate">Open Document</span>
+              </a>
+            )}
+            <div className="flex items-center gap-1 shrink-0">
+              <EndorseButton
+                endorseUrl={buildLibraryEndorsementUrl(item, true)}
+                resourceLabel={item.referenceId}
+                resourceType="Library"
+              />
+              <ShareButton
+                title={item.documentTitle}
+                url={`${window.location.origin}/library?ref=${item.referenceId}`}
+              />
+            </div>
+          </div>
+        </motion.div>
+      </div>
       </FocusLock>
     </>
   )

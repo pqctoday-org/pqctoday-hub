@@ -18,7 +18,7 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, FileSearch, BookOpen } from 'lucide-react'
+import { Search, FileSearch, BookOpen, SlidersHorizontal, X } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
@@ -216,6 +216,7 @@ export const LibraryView: React.FC = () => {
   const [sortBy, setSortBy] = useState<SortOption>(
     () => (searchParams.get('sort') as SortOption | null) ?? 'newest'
   )
+  const [showFilters, setShowFilters] = useState(false)
   const [selectedItem, setSelectedItem] = useState<LibraryItem | null>(() => {
     const ref = searchParams.get('ref')
     return ref ? findByRef(libraryData, ref) : null
@@ -496,8 +497,6 @@ export const LibraryView: React.FC = () => {
     )
   }
 
-  // Category tabs for mobile dropdown
-  const categoryTabs = ['All', ...LIBRARY_CATEGORIES]
 
   if (libraryError) {
     return <ErrorAlert message={libraryError} />
@@ -564,81 +563,53 @@ export const LibraryView: React.FC = () => {
       />
 
       {/* Controls Bar */}
-      <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row items-center gap-3">
-        {/* Mobile: Category dropdown (hidden on lg where pills show) */}
-        <div className="flex items-center gap-2 w-full lg:hidden text-xs">
-          <div className="flex-1 min-w-[150px]">
-            <FilterDropdown
-              items={categoryTabs}
-              selectedId={activeCategory}
-              onSelect={handleCategorySelect}
-              defaultLabel="Category"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-        </div>
-
-        {/* Org + Search + Sort + ViewToggle */}
-        <div className="flex flex-wrap items-center gap-2 w-full text-xs">
-          <div className="min-w-[140px]">
-            <FilterDropdown
-              items={orgs}
-              selectedId={activeOrg}
-              onSelect={(org) => {
-                setActiveOrg(org)
-                syncFiltersToUrl({ org })
-                logEvent('Library', 'Filter Org', org)
-              }}
-              defaultLabel="Organization"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-
-          <div className="min-w-[140px]">
-            <FilterDropdown
-              items={industries}
-              selectedId={activeIndustry}
-              onSelect={(ind) => {
-                setActiveIndustry(ind)
-                syncFiltersToUrl({ ind })
-                logEvent('Library', 'Filter Industry', ind)
-              }}
-              defaultLabel="Industry"
-              noContainer
-              opaque
-              className="mb-0 w-full"
-            />
-          </div>
-
-          <div className="relative flex-1 min-w-[140px]">
+      <div className="bg-card border border-border rounded-lg shadow-sm p-3 space-y-3">
+        {/* Top Row: Search + Essential Controls */}
+        <div className="flex flex-wrap items-center gap-2 w-full text-sm">
+          <div className="relative flex-1 min-w-[200px]">
             <Search
-              size={16}
+              size={18}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
               aria-hidden="true"
             />
             <input
               type="text"
               id="library-search"
-              placeholder="Search standards..."
+              placeholder="Search standards and drafts..."
               aria-label="Search PQC standards library"
               value={inputValue}
               onChange={handleSearchChange}
-              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
 
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
+              showFilters || activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All' 
+                ? 'bg-primary/10 border-primary/30 text-primary' 
+                : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
+            }`}
+            aria-expanded={showFilters}
+          >
+            <SlidersHorizontal size={16} />
+            <span className="hidden sm:inline">Filters</span>
+            {/* Show badge if filters are active */}
+            {(activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All') && (
+              <span className="w-2 h-2 rounded-full bg-primary" />
+            )}
+          </button>
+
           {viewMode === 'cards' && (
-            <SortControl
-              value={sortBy}
-              onChange={(s) => {
-                setSortBy(s)
-                syncFiltersToUrl({ sort: s })
-              }}
-            />
+            <div className="hidden sm:block">
+              <SortControl
+                value={sortBy}
+                onChange={(s) => {
+                  setSortBy(s)
+                  syncFiltersToUrl({ sort: s })
+                }}
+              />
+            </div>
           )}
 
           <div className="hidden md:block">
@@ -651,7 +622,104 @@ export const LibraryView: React.FC = () => {
             />
           </div>
         </div>
+
+        {/* Expandable Advanced Filters */}
+        {showFilters && (
+          <div className="pt-3 border-t border-border flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">Organization</span>
+              <FilterDropdown
+                items={orgs}
+                selectedId={activeOrg}
+                onSelect={(org) => {
+                  setActiveOrg(org)
+                  syncFiltersToUrl({ org })
+                  logEvent('Library', 'Filter Org', org)
+                }}
+                defaultLabel="Organization"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+
+            <div className="flex-1 min-w-[160px]">
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">Industry</span>
+              <FilterDropdown
+                items={industries}
+                selectedId={activeIndustry}
+                onSelect={(ind) => {
+                  setActiveIndustry(ind)
+                  syncFiltersToUrl({ ind })
+                  logEvent('Library', 'Filter Industry', ind)
+                }}
+                defaultLabel="Industry"
+                noContainer
+                opaque
+                className="mb-0 w-full"
+              />
+            </div>
+            
+            {/* Sort Dropdown for Mobile (Inside filters drawer) */}
+            {viewMode === 'cards' && (
+              <div className="flex-1 min-w-[160px] sm:hidden">
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">Sort By</span>
+                <div className="w-full">
+                  <SortControl
+                    value={sortBy}
+                    onChange={(s) => {
+                      setSortBy(s)
+                      syncFiltersToUrl({ sort: s })
+                    }}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
+
+      {/* Active Filter Chips */}
+      {(activeOrg !== 'All' || activeIndustry !== 'All' || filterText !== '') && (
+        <div className="flex flex-wrap items-center gap-2 text-xs">
+          {filterText && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
+              <span className="text-muted-foreground">Search:</span> {filterText}
+              <button onClick={() => { setFilterText(''); setInputValue(''); syncFiltersToUrl({ q: '' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear search">
+                <X size={12} aria-hidden="true" />
+              </button>
+            </span>
+          )}
+          {activeOrg !== 'All' && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
+              <span className="text-muted-foreground">Org:</span> {activeOrg}
+              <button onClick={() => { setActiveOrg('All'); syncFiltersToUrl({ org: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear organization filter">
+                <X size={12} aria-hidden="true" />
+              </button>
+            </span>
+          )}
+          {activeIndustry !== 'All' && (
+            <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
+              <span className="text-muted-foreground">Industry:</span> {activeIndustry}
+              <button onClick={() => { setActiveIndustry('All'); syncFiltersToUrl({ ind: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear industry filter">
+                <X size={12} aria-hidden="true" />
+              </button>
+            </span>
+          )}
+          <button
+            onClick={() => {
+              setActiveOrg('All')
+              setActiveIndustry('All')
+              setFilterText('')
+              setInputValue('')
+              syncFiltersToUrl({ org: 'All', ind: 'All', q: '' })
+            }}
+            className="text-muted-foreground hover:text-foreground underline decoration-muted-foreground/30 hover:decoration-muted-foreground transition-all ml-1"
+          >
+            Clear all
+          </button>
+        </div>
+      )}
 
       {/* Results count */}
       <p className="text-xs text-muted-foreground">
@@ -666,7 +734,7 @@ export const LibraryView: React.FC = () => {
         <>
           <div className="hidden md:block">{renderTableView()}</div>
           <div className="md:hidden">
-            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} />
+            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} showHierarchicalAccordion />
           </div>
         </>
       )}

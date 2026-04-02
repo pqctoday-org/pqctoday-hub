@@ -354,19 +354,24 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
         {/* Connection Line */}
         <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
 
-        {partitions
-          .filter((layer) => {
-            if (!hideEmptyLayers) return true
-            return (layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0
-          })
-          .map((layer, index) => {
-            const isActive = activeLayer === layer.id
-            const isFaded = activeLayer !== 'All' && !isActive
-            const IconInfo = layer.icon
+        {partitions.map((layer, index) => {
+          const productCount = layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0
+          const isEmptyAndHidden = hideEmptyLayers && productCount === 0
+          const isActive = activeLayer === layer.id
+          const isFaded = activeLayer !== 'All' && !isActive
+          const IconInfo = layer.icon
 
-            return (
+          return (
+            <div
+              key={layer.id}
+              style={{
+                zIndex: isActive ? partitions.length + 10 : partitions.length - index,
+              }}
+              className={`transition-all duration-500 ease-in-out relative flex flex-col ${
+                isEmptyAndHidden ? 'max-h-0 opacity-0 overflow-hidden !m-0' : 'max-h-[3000px] opacity-100'
+              }`}
+            >
               <button
-                key={layer.id}
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape' && isActive) {
@@ -529,8 +534,39 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   </div>
                 )}
               </button>
-            )
-          })}
+            </div>
+          )
+        })}
+      </div>
+
+      {/* Desktop Stack Minimap Navigation Rail */}
+      <div className="hidden xl:flex flex-col gap-2 absolute right-[-40px] top-1/2 -translate-y-1/2 py-4 px-2 bg-card/80 backdrop-blur border border-border rounded-full shadow-lg z-20">
+        {partitions.map((layer) => {
+          const productCount = layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0
+          const isEmptyAndHidden = hideEmptyLayers && productCount === 0
+          if (isEmptyAndHidden) return null
+
+          const isActive = activeLayer === layer.id
+          
+          return (
+            <button
+              key={`minimap-${layer.id}`}
+              onClick={(e) => {
+                e.preventDefault()
+                // Find element and scroll to it smoothly
+                // We use handleSelect to expand it if not expanded
+                handleSelect(layer.id as InfrastructureLayerType)
+              }}
+              title={layer.label}
+              aria-label={`Jump to ${layer.label}`}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                isActive 
+                  ? 'bg-primary scale-125 ring-2 ring-primary/30 ring-offset-1 ring-offset-background' 
+                  : 'bg-muted-foreground/30 hover:bg-primary/60 hover:scale-110'
+              }`}
+            />
+          )
+        })}
       </div>
     </div>
   )

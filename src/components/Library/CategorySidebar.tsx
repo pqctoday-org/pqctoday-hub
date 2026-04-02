@@ -53,11 +53,14 @@ export const CategorySidebar = ({
   totalHasUpdates,
 }: CategorySidebarProps) => {
   return (
-    <nav className="hidden lg:flex flex-wrap items-center gap-2" aria-label="Library categories">
+    <nav 
+      className="flex flex-nowrap lg:flex-wrap items-center gap-2 overflow-x-auto lg:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2 lg:pb-0" 
+      aria-label="Library categories"
+    >
       <button
         onClick={() => onSelect('All')}
         className={clsx(
-          'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+          'flex items-center shrink-0 gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
           active === 'All'
             ? 'bg-primary/10 text-primary border border-primary/30'
             : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent'
@@ -77,7 +80,7 @@ export const CategorySidebar = ({
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(
-            'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
+            'flex items-center shrink-0 gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
             active === cat.name
               ? 'bg-primary/10 text-primary border border-primary/30'
               : 'text-muted-foreground hover:bg-muted/30 hover:text-foreground border border-transparent'

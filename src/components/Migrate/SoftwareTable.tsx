@@ -823,77 +823,86 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               )
                             })()}
 
-                            <div className="pt-2 flex flex-col gap-2">
-                              {item.repositoryUrl && (
-                                <a
-                                  href={item.repositoryUrl}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                                >
-                                  <ExternalLink size={14} /> Repository / Download
-                                </a>
-                              )}
-                              {item.authoritativeSource && (
-                                <a
-                                  href={item.authoritativeSource}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-xs"
-                                >
-                                  <ExternalLink size={12} /> Authoritative Source
-                                </a>
-                              )}
-                              {item.proofUrl && (
-                                <button
-                                  onClick={() => setProofModal(item)}
-                                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-xs"
-                                >
-                                  <ShieldCheck size={12} /> View Proof
-                                  {item.proofPublicationDate && (
-                                    <span className="text-muted-foreground">
-                                      ({item.proofPublicationDate})
-                                    </span>
-                                  )}
-                                </button>
-                              )}
-                              <UpdateProductButton
-                                updateUrl={buildProductUpdateUrl({
-                                  productName: item.softwareName,
-                                  categoryName: item.categoryName,
-                                  currentPqcSupport: item.pqcSupport || 'Unknown',
-                                  productDetails: [
-                                    `**Version:** ${item.latestVersion || 'N/A'}`,
-                                    `**FIPS:** ${item.fipsValidated || 'N/A'}`,
-                                    `**Migration Priority:** ${item.pqcMigrationPriority || 'N/A'}`,
-                                    item.pqcCapabilityDescription
-                                      ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
-                                      : '',
-                                  ]
-                                    .filter(Boolean)
-                                    .join('\n'),
-                                  pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
-                                })}
-                                resourceLabel={item.softwareName}
-                                variant="text"
-                              />
-                              <AskAssistantButton
-                                variant="text"
-                                label="Ask about PQC capabilities"
-                                question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
-                              />
-                              {getProductExtraction(item.softwareName) && (
-                                <button
-                                  type="button"
-                                  onClick={(e) => {
-                                    e.stopPropagation()
-                                    setExtractionModal({ softwareName: item.softwareName })
-                                  }}
-                                  className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors"
-                                >
-                                  <Sparkles size={14} /> View Extraction
-                                </button>
-                              )}
+                          </div>
+                        </div>
+
+                        {/* Action Bar Footer */}
+                        <div className="p-4 px-6 bg-background/30 border-t border-border/50 flex flex-col sm:flex-row flex-wrap items-center justify-between gap-4">
+                          {/* Left-side links/tools */}
+                          <div className="flex flex-wrap items-center gap-4">
+                            {item.repositoryUrl && (
+                              <a
+                                href={item.repositoryUrl}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
+                              >
+                                <ExternalLink size={14} /> Repository / Download
+                              </a>
+                            )}
+                            {item.authoritativeSource && (
+                              <a
+                                href={item.authoritativeSource}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center gap-1.5 text-muted-foreground hover:text-foreground transition-colors text-xs font-medium bg-muted/40 px-2.5 py-1.5 rounded-md border border-border/50"
+                              >
+                                <ExternalLink size={12} /> Authoritative Source
+                              </a>
+                            )}
+                            {item.proofUrl && (
+                              <button
+                                onClick={() => setProofModal(item)}
+                                className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
+                              >
+                                <ShieldCheck size={14} /> View Proof
+                                {item.proofPublicationDate && (
+                                  <span className="text-muted-foreground ml-1">
+                                    ({item.proofPublicationDate})
+                                  </span>
+                                )}
+                              </button>
+                            )}
+                            {getProductExtraction(item.softwareName) && (
+                              <button
+                                type="button"
+                                onClick={(e) => {
+                                  e.stopPropagation()
+                                  setExtractionModal({ softwareName: item.softwareName })
+                                }}
+                                className="inline-flex items-center gap-1.5 text-secondary hover:text-secondary/80 transition-colors text-xs font-medium bg-secondary/5 px-2.5 py-1.5 rounded-md border border-secondary/20"
+                              >
+                                <Sparkles size={14} /> View Extraction
+                              </button>
+                            )}
+                          </div>
+                          
+                          {/* Right-side main CTAs */}
+                          <div className="flex flex-wrap items-center gap-3">
+                            <UpdateProductButton
+                              updateUrl={buildProductUpdateUrl({
+                                productName: item.softwareName,
+                                categoryName: item.categoryName,
+                                currentPqcSupport: item.pqcSupport || 'Unknown',
+                                productDetails: [
+                                  `**Version:** ${item.latestVersion || 'N/A'}`,
+                                  `**FIPS:** ${item.fipsValidated || 'N/A'}`,
+                                  `**Migration Priority:** ${item.pqcMigrationPriority || 'N/A'}`,
+                                  item.pqcCapabilityDescription
+                                    ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
+                                    : '',
+                                ].filter(Boolean).join('\n'),
+                                pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
+                              })}
+                              resourceLabel={item.softwareName}
+                              variant="text"
+                            />
+                            <AskAssistantButton
+                              variant="text"
+                              label="Ask"
+                              question={`What PQC algorithms does ${item.softwareName} support${item.categoryName ? ` (${item.categoryName})` : ''}?${item.pqcCapabilityDescription ? ` Capabilities: ${item.pqcCapabilityDescription}` : ''}${item.fipsValidated && item.fipsValidated !== 'No' ? ` FIPS status: ${item.fipsValidated}.` : ''}`}
+                            />
+                            <div className="border-l border-border/50 pl-3 h-8 flex items-center">
                               <ShareButton
                                 title={item.softwareName}
                                 text={`${item.softwareName} PQC migration status`}

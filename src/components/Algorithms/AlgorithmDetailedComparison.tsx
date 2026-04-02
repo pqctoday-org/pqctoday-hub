@@ -64,22 +64,22 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
       {/* Tabs */}
       <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange?.(v as SubTab)}>
         <div className="flex items-center gap-2 mb-4">
-          <TabsList className="bg-muted/50 border border-border">
-            <TabsTrigger value="performance" className="flex items-center gap-2">
+          <TabsList className="bg-muted/50 border border-border flex w-full overflow-x-auto hide-scrollbar justify-start sm:justify-center p-1 rounded-lg">
+            <TabsTrigger value="performance" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
               <Zap size={16} />
-              <span className="hidden sm:inline">Performance</span>
+              <span>Performance</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2">
+            <TabsTrigger value="security" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
               <Shield size={16} />
-              <span className="hidden sm:inline">Security Levels</span>
+              <span>Security Levels</span>
             </TabsTrigger>
-            <TabsTrigger value="sizes" className="flex items-center gap-2">
+            <TabsTrigger value="sizes" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
               <HardDrive size={16} />
-              <span className="hidden sm:inline">Size Comparison</span>
+              <span>Size Comparison</span>
             </TabsTrigger>
-            <TabsTrigger value="usecases" className="flex items-center gap-2">
+            <TabsTrigger value="usecases" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
               <TrendingUp size={16} />
-              <span className="hidden sm:inline">Use Cases</span>
+              <span>Use Cases</span>
             </TabsTrigger>
           </TabsList>
           {onInfoOpen && (
@@ -206,30 +206,37 @@ function CompareButton({
   const canToggle =
     isCompared || (!maxCompareReached && (compareType === null || compareType === algoGroup))
   return (
-    <button
-      type="button"
-      onClick={() => onToggleCompare(algo.name)}
-      disabled={!canToggle && !isCompared}
-      title={
-        isCompared
-          ? 'Remove from comparison'
-          : !canToggle
-            ? maxCompareReached
-              ? 'Max 3 reached'
-              : 'Clear to switch type'
-            : 'Add to comparison'
-      }
-      className={clsx(
-        'shrink-0 p-1 rounded transition-colors',
-        isCompared
-          ? 'text-secondary bg-secondary/10'
-          : canToggle
-            ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
-            : 'text-muted-foreground/30 cursor-not-allowed'
+    <div className="relative group/compare flex items-center shrink-0">
+      <button
+        type="button"
+        onClick={() => onToggleCompare(algo.name)}
+        disabled={!canToggle && !isCompared}
+        title={
+          isCompared
+            ? 'Remove from comparison'
+            : !canToggle
+              ? maxCompareReached
+                ? 'Max 3 reached'
+                : `Requires ${compareType}`
+              : 'Add to comparison'
+        }
+        className={clsx(
+          'shrink-0 p-1 rounded transition-colors',
+          isCompared
+            ? 'text-secondary bg-secondary/10'
+            : canToggle
+              ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
+              : 'text-muted-foreground/30 cursor-not-allowed'
+        )}
+      >
+        <Scale size={14} />
+      </button>
+      {!canToggle && !isCompared && (
+        <span className="absolute left-full ml-2 whitespace-nowrap bg-status-error text-status-error-foreground text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover/compare:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
+          {maxCompareReached ? 'Max 3 reached' : `Compare ${compareType} only`}
+        </span>
       )}
-    >
-      <Scale size={14} />
-    </button>
+    </div>
   )
 }
 

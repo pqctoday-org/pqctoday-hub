@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Filter, Shield, Search } from 'lucide-react'
+import { Filter, Shield, Search, ChevronDown, SlidersHorizontal } from 'lucide-react'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
+import { useState } from 'react'
+import clsx from 'clsx'
 
 export const CRYPTO_FAMILY_ITEMS = [
   { id: 'All', label: 'All Families' },
@@ -58,10 +60,40 @@ export function AlgorithmFilters({
     ? LEVEL_ITEMS.filter((item) => item.id === 'All' || availableLevels.includes(parseInt(item.id)))
     : LEVEL_ITEMS
 
+  const [isMobileOpen, setIsMobileOpen] = useState(false)
+  const hasActiveFilters =
+    cryptoFamily !== 'All' || functionGroup !== 'All' || securityLevel !== 'All' || searchQuery !== ''
+
   return (
     <div className="glass-panel p-3 md:p-4">
-      <div className="flex flex-col md:flex-row md:items-center gap-3">
-        <div className="flex items-center gap-2">
+      {/* Mobile Toggle Button */}
+      <div className="md:hidden flex items-center justify-between">
+        <button
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+          className="flex items-center gap-2 text-sm font-medium text-foreground p-2 rounded-md bg-muted/50 w-full justify-between"
+        >
+          <div className="flex items-center gap-2">
+            <SlidersHorizontal size={16} className="text-muted-foreground" />
+            <span>Filter Algorithms</span>
+            {hasActiveFilters && (
+              <span className="w-2 h-2 rounded-full bg-primary inline-block ml-1" />
+            )}
+          </div>
+          <ChevronDown
+            size={16}
+            className={clsx('text-muted-foreground transition-transform', isMobileOpen && 'rotate-180')}
+          />
+        </button>
+      </div>
+
+      {/* Filters Container (Hidden on mobile unless open) */}
+      <div
+        className={clsx(
+          'flex-col md:flex-row md:items-center gap-3 mt-3 md:mt-0',
+          isMobileOpen ? 'flex' : 'hidden md:flex'
+        )}
+      >
+        <div className="hidden md:flex items-center gap-2">
           <Filter size={18} className="text-muted-foreground" />
           <span className="text-sm font-medium text-muted-foreground">Filters:</span>
         </div>

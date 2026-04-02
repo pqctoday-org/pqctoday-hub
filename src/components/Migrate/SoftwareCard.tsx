@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
+import { useState } from 'react'
 import {
   AlertTriangle,
   ExternalLink,
@@ -9,6 +10,8 @@ import {
   Scale,
   Bookmark,
   BookmarkCheck,
+  ChevronDown,
+  ChevronUp,
 } from 'lucide-react'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import { LAYERS } from './InfrastructureStack'
@@ -51,6 +54,7 @@ export const SoftwareCard = ({
   const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
   const isBookmarked = migrateBookmarks.includes(item.softwareName)
   const key = `${item.softwareName}::${item.categoryId}`
+  const [isExpandedMobile, setIsExpandedMobile] = useState(false)
 
   // Find the primary layer (first in comma-separated list)
   const layerIds = item.infrastructureLayer.split(',').map((l) => l.trim())
@@ -129,45 +133,66 @@ export const SoftwareCard = ({
       )}
       <span className="text-xs text-muted-foreground/70 mb-3">{item.categoryName}</span>
 
-      {/* Badges row */}
-      <div className="flex flex-wrap items-center gap-2 mb-3">
-        <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
-        {renderPqcSupport(item.pqcSupport)}
-        {renderFipsStatus(item.fipsValidated)}
-        {renderQuantumTech(item.quantumTech)}
-        <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
-        {item.evidenceFlags && item.evidenceFlags.length > 0 && (
-          <span
-            title={`${item.evidenceFlags.length} evidence notice${item.evidenceFlags.length > 1 ? 's' : ''}`}
-            className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-status-warning/30 bg-status-warning/10 text-status-warning"
-          >
-            <AlertTriangle size={10} /> {item.evidenceFlags.length}
-          </span>
-        )}
-      </div>
+      {/* Badges row & Metadata */}
+      <div className="flex flex-col mb-3">
+        <div className="flex flex-wrap items-center gap-2">
+          {/* Always visible on mobile and desktop */}
+          <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
+          {renderPqcSupport(item.pqcSupport)}
+          
+          {/* Progressively Disclosed on Mobile */}
+          <div className={`flex flex-wrap items-center gap-2 ${isExpandedMobile ? 'flex' : 'hidden md:flex'}`}>
+            {renderFipsStatus(item.fipsValidated)}
+            {renderQuantumTech(item.quantumTech)}
+            <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
+            {item.evidenceFlags && item.evidenceFlags.length > 0 && (
+              <span
+                title={`${item.evidenceFlags.length} evidence notice${item.evidenceFlags.length > 1 ? 's' : ''}`}
+                className="inline-flex items-center gap-0.5 text-[10px] px-1.5 py-0.5 rounded border border-status-warning/30 bg-status-warning/10 text-status-warning"
+              >
+                <AlertTriangle size={10} /> {item.evidenceFlags.length}
+              </span>
+            )}
+          </div>
+        </div>
 
-      {/* Metadata */}
-      <div className="text-xs text-muted-foreground space-y-1 mb-3">
-        {item.license && (
-          <p>
-            License: <span className="text-foreground">{item.license}</span>
-          </p>
-        )}
-        {item.pqcMigrationPriority && (
-          <p>
-            Priority:{' '}
-            <span
-              className={`font-medium ${PRIORITY_COLORS[item.pqcMigrationPriority] ?? 'text-muted-foreground'}`}
-            >
-              {item.pqcMigrationPriority}
-            </span>
-          </p>
-        )}
-        {item.primaryPlatforms && (
-          <p className="line-clamp-1">
-            Platforms: <span className="text-foreground">{item.primaryPlatforms}</span>
-          </p>
-        )}
+        {/* Expandable Mobile Toggle */}
+        <div className="md:hidden mt-3 mb-1">
+          <button
+            onClick={() => setIsExpandedMobile(!isExpandedMobile)}
+            className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-medium transition-colors"
+          >
+            {isExpandedMobile ? (
+              <>Hide Details <ChevronUp size={14} /></>
+            ) : (
+              <>View Details <ChevronDown size={14} /></>
+            )}
+          </button>
+        </div>
+
+        {/* Metadata - hidden on mobile unless expanded */}
+        <div className={`text-xs text-muted-foreground space-y-1 mt-3 md:block ${isExpandedMobile ? 'block' : 'hidden'}`}>
+          {item.license && (
+            <p>
+              License: <span className="text-foreground">{item.license}</span>
+            </p>
+          )}
+          {item.pqcMigrationPriority && (
+            <p>
+              Priority:{' '}
+              <span
+                className={`font-medium ${PRIORITY_COLORS[item.pqcMigrationPriority] ?? 'text-muted-foreground'}`}
+              >
+                {item.pqcMigrationPriority}
+              </span>
+            </p>
+          )}
+          {item.primaryPlatforms && (
+            <p className="line-clamp-1">
+              Platforms: <span className="text-foreground">{item.primaryPlatforms}</span>
+            </p>
+          )}
+        </div>
       </div>
 
       {/* Footer: links + select */}
