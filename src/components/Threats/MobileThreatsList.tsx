@@ -5,6 +5,9 @@ import type { ThreatItem } from '../../data/threatsData'
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
+import { EndorseButton } from '../ui/EndorseButton'
+import { FlagButton } from '../ui/FlagButton'
+import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 
 interface MobileThreatsListProps {
   items: ThreatItem[]
@@ -64,7 +67,14 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                     <Icon size={11} aria-hidden="true" />
                     {item.criticality}
                   </span>
-                  <span className="text-xs text-muted-foreground truncate">{item.industry}</span>
+                  <span className="text-xs text-muted-foreground truncate flex items-center gap-1">
+                    {item.industry}
+                    {item.mainSource && (
+                      <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] opacity-70 uppercase tracking-wider">
+                        {item.mainSource.length > 20 ? item.mainSource.substring(0, 20) + '...' : item.mainSource}
+                      </span>
+                    )}
+                  </span>
                 </div>
 
                 {/* Description */}
@@ -90,6 +100,46 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                       {item.pqcReplacement}
                     </p>
                   </div>
+                </div>
+                {/* Actions Footer */}
+                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+                <div className="flex pt-3 mt-3 border-t border-border/50 items-center justify-end gap-2" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                  <EndorseButton
+                    endorseUrl={buildEndorsementUrl({
+                      category: 'threat-endorsement',
+                      title: `Endorse: ${item.threatId} — ${item.industry}`,
+                      resourceType: 'Threat Assessment',
+                      resourceId: item.threatId,
+                      resourceDetails: [
+                        `**Threat ID:** ${item.threatId}`,
+                        `**Industry:** ${item.industry}`,
+                        `**Criticality:** ${item.criticality}`,
+                        `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
+                        `**PQC Mitigation:** ${item.pqcReplacement}`,
+                      ].join('\n'),
+                      pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                    })}
+                    resourceLabel={item.threatId}
+                    resourceType="Threat"
+                  />
+                  <FlagButton
+                    flagUrl={buildFlagUrl({
+                      category: 'threat-endorsement',
+                      title: `Flag: ${item.threatId} — ${item.industry}`,
+                      resourceType: 'Threat Assessment',
+                      resourceId: item.threatId,
+                      resourceDetails: [
+                        `**Threat ID:** ${item.threatId}`,
+                        `**Industry:** ${item.industry}`,
+                        `**Criticality:** ${item.criticality}`,
+                        `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
+                        `**PQC Mitigation:** ${item.pqcReplacement}`,
+                      ].join('\n'),
+                      pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
+                    })}
+                    resourceLabel={item.threatId}
+                    resourceType="Threat"
+                  />
                 </div>
               </button>
             </li>

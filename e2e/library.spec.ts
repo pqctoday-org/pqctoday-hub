@@ -84,10 +84,10 @@ test.describe('Library Feature', () => {
   })
 
   test('should show details popup from card view', async ({ page }) => {
-    // Click the first "Details" button in a card
-    const detailsButton = page.getByLabel(/^View details for/).first()
-    await expect(detailsButton).toBeVisible({ timeout: 10000 })
-    await detailsButton.click()
+    // Click the first card
+    const firstCard = page.locator('article').first()
+    await expect(firstCard).toBeVisible({ timeout: 10000 })
+    await firstCard.click()
 
     // Verify popup appears
     const popup = page.getByRole('dialog')

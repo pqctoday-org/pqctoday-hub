@@ -4,7 +4,6 @@ import { useSearchParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable, type SortColumn, type SortDirection } from './ComplianceTable'
 import { ComplianceLandscape, type FrameworkSortOption } from './ComplianceLandscape'
-import { MobileComplianceView } from './MobileComplianceView'
 import { useComplianceRefresh } from './services'
 import {
   ShieldCheck,
@@ -136,15 +135,11 @@ function SectionHeader({ icon, title, description, learnLabel, learnTo }: Sectio
 type MobileSection = 'standards' | 'technical' | 'certification' | 'compliance' | 'records'
 
 function MobileViewToggle({
-  data,
-  loading,
   activeSection,
   onSectionChange,
   landscapeProps,
-  mobileRecordProps,
+  tableProps,
 }: {
-  data: import('./types').ComplianceRecord[]
-  loading?: boolean
   activeSection: MobileSection
   onSectionChange: (section: MobileSection) => void
   landscapeProps: {
@@ -160,12 +155,7 @@ function MobileViewToggle({
     onSortByChange: (sort: FrameworkSortOption) => void
     onViewModeChange: (mode: ViewMode) => void
   }
-  mobileRecordProps: {
-    filterText: string
-    onFilterTextChange: (text: string) => void
-    certType: string
-    onCertTypeChange: (ct: string) => void
-  }
+  tableProps: React.ComponentProps<typeof ComplianceTable>
 }) {
   const section = activeSection
   const setSection = onSectionChange
@@ -252,14 +242,9 @@ function MobileViewToggle({
         />
       )}
       {section === 'records' && (
-        <MobileComplianceView
-          data={data}
-          loading={loading}
-          filterText={mobileRecordProps.filterText}
-          onFilterTextChange={mobileRecordProps.onFilterTextChange}
-          certType={mobileRecordProps.certType as 'All' | 'FIPS 140-3' | 'ACVP' | 'Common Criteria'}
-          onCertTypeChange={mobileRecordProps.onCertTypeChange}
-        />
+        <div className="mt-2">
+          <ComplianceTable {...tableProps} />
+        </div>
       )}
     </div>
   )
@@ -718,24 +703,6 @@ export const ComplianceView = () => {
     [syncFiltersToUrl]
   )
 
-  // Mobile cert type ↔ rtab mapping
-  const mobileCertType =
-    rtab === 'all'
-      ? 'All'
-      : rtab === 'fips'
-        ? 'FIPS 140-3'
-        : rtab === 'acvp'
-          ? 'ACVP'
-          : 'Common Criteria'
-  const handleMobileCertTypeChange = useCallback(
-    (ct: string) => {
-      const rt = ct === 'All' ? 'all' : ct === 'FIPS 140-3' ? 'fips' : ct === 'ACVP' ? 'acvp' : 'cc'
-      setRtab(rt)
-      syncFiltersToUrl({ rtab: rt })
-    },
-    [syncFiltersToUrl]
-  )
-
   return (
     <div className="space-y-6 animate-fade-in">
       <PageHeader
@@ -790,8 +757,6 @@ export const ComplianceView = () => {
       {/* Mobile: 3-section toggle */}
       <div className="md:hidden">
         <MobileViewToggle
-          data={data}
-          loading={loading}
           activeSection={activeTab}
           onSectionChange={handleTabChange}
           landscapeProps={{
@@ -807,11 +772,33 @@ export const ComplianceView = () => {
             onSortByChange: handleLsSortChange,
             onViewModeChange: handleLsViewChange,
           }}
-          mobileRecordProps={{
+          tableProps={{
+            data: data,
+            onRefresh: refresh,
+            isRefreshing: loading,
+            lastUpdated: lastUpdated,
+            onEnrich: enrichRecord,
+            certType: rtab,
+            onCertTypeChange: handleRtabChange,
             filterText: recSearchInput,
+            pqcFilters: recPqc,
+            categoryFilters: recCat,
+            sourceFilters: recSrc,
+            vendorFilters: recVendor,
+            sortColumn: recSortCol,
+            sortDirection: recSortDir,
+            currentPage: recPage,
+            selectedRecordId: certParam,
             onFilterTextChange: handleRecSearchChange,
-            certType: mobileCertType,
-            onCertTypeChange: handleMobileCertTypeChange,
+            onPqcFiltersChange: handleRecPqcChange,
+            onCategoryFiltersChange: handleRecCatChange,
+            onSourceFiltersChange: handleRecSrcChange,
+            onVendorFiltersChange: handleRecVendorChange,
+            migrateCatFilters: recMcat,
+            onMigrateCatFiltersChange: handleRecMcatChange,
+            onSortColumnChange: handleRecSortColChange,
+            onSortDirectionChange: handleRecSortDirChange,
+            onCurrentPageChange: handleRecPageChange,
           }}
         />
       </div>
@@ -823,7 +810,7 @@ export const ComplianceView = () => {
           className="w-full"
           onValueChange={(tab) => handleTabChange(tab as MobileSection)}
         >
-          <TabsList className="mb-4 bg-muted/50 border border-border">
+          <TabsList className="mb-4 bg-muted/50 border border-border flex-wrap md:flex-nowrap h-auto overflow-x-auto scrollbar-none">
             <TabsTrigger value="standards" className="flex items-center gap-1.5">
               <BookOpen size={14} />
               Standardization Bodies
@@ -959,123 +946,34 @@ export const ComplianceView = () => {
               learnLabel="Understand the cert chain"
               learnTo="/learn/standards-bodies?step=2"
             />
-            <Tabs value={rtab} onValueChange={handleRtabChange} className="w-full">
-              <TabsList className="mb-4 bg-muted/50 border border-border">
-                <TabsTrigger value="all">All Records</TabsTrigger>
-                <TabsTrigger value="fips">FIPS 140-3</TabsTrigger>
-                <TabsTrigger value="acvp">ACVP</TabsTrigger>
-                <TabsTrigger value="cc">Common Criteria</TabsTrigger>
-              </TabsList>
-              <TabsContent value="all" className="mt-0">
-                <ComplianceTable
-                  data={data}
-                  onRefresh={refresh}
-                  isRefreshing={loading}
-                  lastUpdated={lastUpdated}
-                  onEnrich={enrichRecord}
-                  filterText={recSearchInput}
-                  pqcFilters={recPqc}
-                  categoryFilters={recCat}
-                  sourceFilters={recSrc}
-                  vendorFilters={recVendor}
-                  sortColumn={recSortCol}
-                  sortDirection={recSortDir}
-                  currentPage={recPage}
-                  selectedRecordId={certParam}
-                  onFilterTextChange={handleRecSearchChange}
-                  onPqcFiltersChange={handleRecPqcChange}
-                  onCategoryFiltersChange={handleRecCatChange}
-                  onSourceFiltersChange={handleRecSrcChange}
-                  onVendorFiltersChange={handleRecVendorChange}
-                  migrateCatFilters={recMcat}
-                  onMigrateCatFiltersChange={handleRecMcatChange}
-                  onSortColumnChange={handleRecSortColChange}
-                  onSortDirectionChange={handleRecSortDirChange}
-                  onCurrentPageChange={handleRecPageChange}
-                />
-              </TabsContent>
-              <TabsContent value="fips" className="mt-0">
-                <ComplianceTable
-                  data={data.filter((r) => r.type === 'FIPS 140-3')}
-                  onRefresh={refresh}
-                  isRefreshing={loading}
-                  lastUpdated={lastUpdated}
-                  onEnrich={enrichRecord}
-                  filterText={recSearchInput}
-                  pqcFilters={recPqc}
-                  categoryFilters={recCat}
-                  sourceFilters={recSrc}
-                  vendorFilters={recVendor}
-                  sortColumn={recSortCol}
-                  sortDirection={recSortDir}
-                  currentPage={recPage}
-                  onFilterTextChange={handleRecSearchChange}
-                  onPqcFiltersChange={handleRecPqcChange}
-                  onCategoryFiltersChange={handleRecCatChange}
-                  onSourceFiltersChange={handleRecSrcChange}
-                  onVendorFiltersChange={handleRecVendorChange}
-                  migrateCatFilters={recMcat}
-                  onMigrateCatFiltersChange={handleRecMcatChange}
-                  onSortColumnChange={handleRecSortColChange}
-                  onSortDirectionChange={handleRecSortDirChange}
-                  onCurrentPageChange={handleRecPageChange}
-                />
-              </TabsContent>
-              <TabsContent value="acvp" className="mt-0">
-                <ComplianceTable
-                  data={data.filter((r) => r.type === 'ACVP')}
-                  onRefresh={refresh}
-                  isRefreshing={loading}
-                  lastUpdated={lastUpdated}
-                  onEnrich={enrichRecord}
-                  filterText={recSearchInput}
-                  pqcFilters={recPqc}
-                  categoryFilters={recCat}
-                  sourceFilters={recSrc}
-                  vendorFilters={recVendor}
-                  sortColumn={recSortCol}
-                  sortDirection={recSortDir}
-                  currentPage={recPage}
-                  onFilterTextChange={handleRecSearchChange}
-                  onPqcFiltersChange={handleRecPqcChange}
-                  onCategoryFiltersChange={handleRecCatChange}
-                  onSourceFiltersChange={handleRecSrcChange}
-                  onVendorFiltersChange={handleRecVendorChange}
-                  migrateCatFilters={recMcat}
-                  onMigrateCatFiltersChange={handleRecMcatChange}
-                  onSortColumnChange={handleRecSortColChange}
-                  onSortDirectionChange={handleRecSortDirChange}
-                  onCurrentPageChange={handleRecPageChange}
-                />
-              </TabsContent>
-              <TabsContent value="cc" className="mt-0">
-                <ComplianceTable
-                  data={data.filter((r) => r.type === 'Common Criteria')}
-                  onRefresh={refresh}
-                  isRefreshing={loading}
-                  lastUpdated={lastUpdated}
-                  onEnrich={enrichRecord}
-                  filterText={recSearchInput}
-                  pqcFilters={recPqc}
-                  categoryFilters={recCat}
-                  sourceFilters={recSrc}
-                  vendorFilters={recVendor}
-                  sortColumn={recSortCol}
-                  sortDirection={recSortDir}
-                  currentPage={recPage}
-                  onFilterTextChange={handleRecSearchChange}
-                  onPqcFiltersChange={handleRecPqcChange}
-                  onCategoryFiltersChange={handleRecCatChange}
-                  onSourceFiltersChange={handleRecSrcChange}
-                  onVendorFiltersChange={handleRecVendorChange}
-                  migrateCatFilters={recMcat}
-                  onMigrateCatFiltersChange={handleRecMcatChange}
-                  onSortColumnChange={handleRecSortColChange}
-                  onSortDirectionChange={handleRecSortDirChange}
-                  onCurrentPageChange={handleRecPageChange}
-                />
-              </TabsContent>
-            </Tabs>
+            <ComplianceTable
+              data={data}
+              onRefresh={refresh}
+              isRefreshing={loading}
+              lastUpdated={lastUpdated}
+              onEnrich={enrichRecord}
+              certType={rtab}
+              onCertTypeChange={handleRtabChange}
+              filterText={recSearchInput}
+              pqcFilters={recPqc}
+              categoryFilters={recCat}
+              sourceFilters={recSrc}
+              vendorFilters={recVendor}
+              sortColumn={recSortCol}
+              sortDirection={recSortDir}
+              currentPage={recPage}
+              selectedRecordId={certParam}
+              onFilterTextChange={handleRecSearchChange}
+              onPqcFiltersChange={handleRecPqcChange}
+              onCategoryFiltersChange={handleRecCatChange}
+              onSourceFiltersChange={handleRecSrcChange}
+              onVendorFiltersChange={handleRecVendorChange}
+              migrateCatFilters={recMcat}
+              onMigrateCatFiltersChange={handleRecMcatChange}
+              onSortColumnChange={handleRecSortColChange}
+              onSortDirectionChange={handleRecSortDirChange}
+              onCurrentPageChange={handleRecPageChange}
+            />
           </TabsContent>
         </Tabs>
       </div>

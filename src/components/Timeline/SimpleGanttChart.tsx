@@ -9,7 +9,6 @@ import {
   Layers,
   Filter,
   Download,
-  X,
   Link2,
   Check,
 } from 'lucide-react'
@@ -28,18 +27,7 @@ import { StatusBadge } from '../common/StatusBadge'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
-const FilterChip = ({ label, onClear }: { label: string; onClear: () => void }) => (
-  <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded-full bg-primary/10 border border-primary/30 text-xs text-primary font-medium">
-    {label}
-    <button
-      onClick={onClear}
-      aria-label={`Remove ${label} filter`}
-      className="hover:text-foreground transition-colors"
-    >
-      <X size={12} />
-    </button>
-  </span>
-)
+import { FilterChip } from '../common/FilterChip'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -49,7 +37,8 @@ interface SimpleGanttChartProps {
   selectedCountry: string
   onCountrySelect: (id: string) => void
   countryItems: Array<{ id: string; label: string; icon: React.ReactNode | null }>
-  initialFilter?: string
+  searchText?: string
+  onSearchChange?: (text: string) => void
 }
 
 const START_YEAR = 2024
@@ -75,9 +64,20 @@ export const SimpleGanttChart = ({
   selectedCountry,
   onCountrySelect,
   countryItems,
-  initialFilter,
+  searchText = '',
+  onSearchChange,
 }: SimpleGanttChartProps) => {
-  const [filterText, setFilterText] = useState(initialFilter ?? '')
+  const [localSearchText, setLocalSearchText] = useState(searchText)
+  const filterText = onSearchChange ? searchText : localSearchText
+  
+  const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value
+    if (onSearchChange) {
+      onSearchChange(val)
+    } else {
+      setLocalSearchText(val)
+    }
+  }
   const [countryCopied, setCountryCopied] = useState(false)
   const [sortField, setSortField] = useState<'country' | 'organization'>('country')
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc')
@@ -213,7 +213,9 @@ export const SimpleGanttChart = ({
     filterText !== ''
 
   const clearAllFilters = useCallback(() => {
-    setFilterText('')
+    if (onSearchChange) onSearchChange('')
+    else setLocalSearchText('')
+    
     setSelectedPhaseType('All')
     setSelectedEventType('All')
     onRegionSelect('All')
@@ -478,7 +480,7 @@ export const SimpleGanttChart = ({
             type="text"
             placeholder="Filter by country..."
             value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
+            onChange={handleFilterTextChange}
             onBlur={handleFilterBlur}
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
@@ -528,7 +530,10 @@ export const SimpleGanttChart = ({
               onClear={() => setSelectedEventType('All')}
             />
           )}
-          {filterText && <FilterChip label={`"${filterText}"`} onClear={() => setFilterText('')} />}
+          {filterText && <FilterChip label={`"${filterText}"`} onClear={() => {
+            if (onSearchChange) onSearchChange('')
+            else setLocalSearchText('')
+          }} />}
           <span className="text-xs text-muted-foreground">
             {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
             {processedData.length !== data.length

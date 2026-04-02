@@ -22,7 +22,7 @@ test.describe('Compliance Data View', () => {
 
     // Wait for table to populate
     // We look for rows in the table body
-    const rows = page.locator('tbody tr')
+    const rows = page.locator('tbody tr').filter({ visible: true })
 
     // Should have at least one row (snapshot or live data)
     await expect(rows.first()).toBeVisible({ timeout: 10000 })
@@ -43,8 +43,8 @@ test.describe('Compliance Data View', () => {
     await page.getByRole('button', { name: 'FIPS 140-3' }).first().click({ force: true })
 
     // Wait for table to reflect the FIPS filter before counting rows
-    await expect(page.locator('tbody tr').first()).toBeVisible()
-    const fipsCount = await page.locator('tbody tr').count()
+    await expect(page.locator('tbody tr').filter({ visible: true }).first()).toBeVisible()
+    const fipsCount = await page.locator('tbody tr').filter({ visible: true }).count()
 
     // If >50 records exist, we should see exactly 50 rows
     if (fipsCount === 50) {
@@ -56,11 +56,11 @@ test.describe('Compliance Data View', () => {
 
     // Switch to ACVP and wait for the tab content to stabilise
     await page.getByRole('button', { name: 'ACVP' }).first().click({ force: true })
-    await expect(page.locator('tbody tr').first()).toBeVisible()
+    await expect(page.locator('tbody tr').filter({ visible: true }).first()).toBeVisible()
 
     // Switch to Common Criteria and wait for the tab content to stabilise
     await page.getByRole('button', { name: 'Common Criteria' }).first().click({ force: true })
-    await expect(page.locator('tbody tr').first()).toBeVisible()
+    await expect(page.locator('tbody tr').filter({ visible: true }).first()).toBeVisible()
   })
 
   test('should search and filter results including pagination feedback', async ({ page }) => {
@@ -70,18 +70,18 @@ test.describe('Compliance Data View', () => {
     await allTab.click({ force: true })
 
     // Wait for data
-    await expect(page.locator('tbody tr').first()).toBeVisible()
+    await expect(page.locator('tbody tr').filter({ visible: true }).first()).toBeVisible()
 
     // Type "Active"
-    await page.getByPlaceholder('Search products, vendors, types...').fill('Active')
+    await page.getByPlaceholder(/Search/i).fill('Active')
 
     // Wait for "Filtering Records..." overlay to appear and disappear
     // Note: The overlay has a 400ms delay to appear, and effectively disappears when done
     // We just ensure we end up with results
-    await expect(page.locator('tbody tr').first()).toBeVisible()
+    await expect(page.locator('tbody tr').filter({ visible: true }).first()).toBeVisible()
 
     // Check finding rows
-    const count = await page.locator('tbody tr').count()
+    const count = await page.locator('tbody tr').filter({ visible: true }).count()
     expect(count).toBeGreaterThan(0)
   })
 })

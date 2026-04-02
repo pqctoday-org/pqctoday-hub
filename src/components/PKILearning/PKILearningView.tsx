@@ -338,17 +338,14 @@ export const PKILearningView: React.FC = () => {
       </div>
 
       <div className="flex flex-col lg:flex-row gap-4 lg:gap-6 items-start">
-        {/* Progress sidebar — mobile accordion (order-first) then desktop aside (order-last) */}
-        {showSidebar && !isCuriousMode && (
-          <div className="order-first lg:order-last w-full lg:w-auto shrink-0">
-            <ModuleProgressSidebar moduleId={moduleId} />
-          </div>
-        )}
-
         {/* Main module content */}
-        <div className="flex-1 min-w-0 order-last lg:order-first">
-          {/* Dual progress header bar — above all module tabs */}
-          {showSidebar && !isCuriousMode && <ModuleProgressHeader moduleId={moduleId} />}
+        <div className="flex-1 min-w-0 w-full">
+          {/* Dual progress header bar — mobile only slim header */}
+          {showSidebar && !isCuriousMode && (
+            <div className="lg:hidden sticky top-[60px] z-30 -mx-4 px-4 bg-background/80 backdrop-blur-md pb-2 pt-2 mb-4 border-b border-border/50">
+              <ModuleProgressHeader moduleId={moduleId} />
+            </div>
+          )}
 
           {isCuriousMode && showSidebar ? (
             <CuriousModuleView moduleId={moduleId} />
@@ -436,6 +433,13 @@ export const PKILearningView: React.FC = () => {
             </p>
           )}
         </div>
+
+        {/* Progress sidebar — desktop aside (order-last). Mobile moved to bottom organically by DOM order */}
+        {showSidebar && !isCuriousMode && (
+          <div className="w-full lg:w-auto shrink-0 pb-12 lg:pb-0">
+            <ModuleProgressSidebar moduleId={moduleId} />
+          </div>
+        )}
       </div>
     </div>
   )

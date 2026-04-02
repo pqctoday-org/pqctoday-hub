@@ -156,7 +156,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
       const rows = [
         <tr
           key={`${item.referenceId}-${level}`} // Unique key for duplicates in tree
-          className="border-b border-border hover:bg-muted/50 transition-colors group"
+          className="border-b border-border hover:bg-muted/50 transition-colors group cursor-pointer"
+          tabIndex={0}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault()
+              setSelectedItem(item)
+            }
+          }}
+          onClick={() => setSelectedItem(item)}
         >
           <td
             className="p-4 whitespace-nowrap text-sm font-medium text-foreground"
@@ -165,7 +173,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             <div className="flex items-center gap-2">
               {hasChildren ? (
                 <button
-                  onClick={() => toggleExpand(item.referenceId)}
+                  onClick={(e) => { e.stopPropagation(); toggleExpand(item.referenceId); }}
                   className="p-1 hover:bg-muted rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
                   aria-label={
@@ -192,6 +200,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   href={item.downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
+                  onClick={(e) => e.stopPropagation()}
                   className="text-primary/80 hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary rounded"
                   aria-label={`Open ${item.documentTitle} in new tab`}
                 >
@@ -209,7 +218,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             {item.lastUpdateDate}
           </td>
           <td className="p-4 text-sm">
-            <div className="flex items-center gap-1">
+            {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
+            <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
               {(() => {
                 const enriched = !!libraryEnrichments[item.referenceId]
                 return (
@@ -282,39 +292,44 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
     })
   }
 
-  const headers: { key: SortKey | 'actions'; label: string }[] = [
-    { key: 'referenceId', label: 'Reference ID' },
-    { key: 'documentTitle', label: 'Title' },
-    { key: 'documentStatus', label: 'Status' },
-    { key: 'lastUpdateDate', label: 'Last Update' },
-    { key: 'actions', label: '' },
+  const headers: { key: SortKey | 'actions'; label: string; width?: string }[] = [
+    { key: 'referenceId', label: 'Reference ID', width: 'w-48 xl:w-56' },
+    { key: 'documentTitle', label: 'Title', width: 'w-auto min-w-[280px]' },
+    { key: 'documentStatus', label: 'Status', width: 'w-40' },
+    { key: 'lastUpdateDate', label: 'Last Update', width: 'w-36' },
+    { key: 'actions', label: '', width: 'w-32' },
   ]
 
   return (
     <>
-      <div className="glass-panel overflow-hidden">
+      <div className="glass-panel overflow-hidden border border-border shadow-sm rounded-lg">
         {/* A-003: Added aria-controls for expand/collapse buttons */}
-        <div className="p-2 border-b border-border flex justify-end gap-2 bg-muted/10">
-          <button
-            onClick={() => {
-              const ids = getAllExpandedIds(data)
-              setExpandedIds(ids)
-            }}
-            aria-controls="library-table"
-            className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 px-2 py-1 rounded hover:bg-primary/10 transition-colors"
-          >
-            <ChevronDown size={14} aria-hidden="true" /> Expand All
-          </button>
-          <button
-            onClick={() => setExpandedIds(new Set())}
-            aria-controls="library-table"
-            className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
-          >
-            <ChevronRight size={14} aria-hidden="true" /> Collapse All
-          </button>
+        <div className="px-4 py-2 flex items-center justify-between bg-muted/20 border-b border-border">
+          <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+            Document Tree
+          </span>
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const ids = getAllExpandedIds(data)
+                setExpandedIds(ids)
+              }}
+              aria-controls="library-table"
+              className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 px-2 py-1 rounded hover:bg-primary/10 transition-colors"
+            >
+              <ChevronDown size={14} aria-hidden="true" /> Expand All
+            </button>
+            <button
+              onClick={() => setExpandedIds(new Set())}
+              aria-controls="library-table"
+              className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
+            >
+              <ChevronRight size={14} aria-hidden="true" /> Collapse All
+            </button>
+          </div>
         </div>
-        <div className="overflow-x-auto">
-          <table id="library-table" className="w-full text-left border-collapse">
+        <div className="overflow-x-auto w-full">
+          <table id="library-table" className="w-full text-left border-collapse table-fixed">
             <caption className="sr-only">
               Library of standards and specifications organized hierarchically by reference ID.
               Sortable columns: Title, Status, Last Update.
@@ -332,11 +347,11 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                           : 'descending'
                         : 'none'
                     }
-                    className="p-4 font-semibold text-sm"
+                    className={clsx("p-4 font-semibold text-sm", header.width)}
                   >
                     {header.key !== 'actions' ? (
                       <button
-                        className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1"
+                        className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1 text-left"
                         onClick={() => handleSort(header.key as SortKey)}
                       >
                         {header.label}

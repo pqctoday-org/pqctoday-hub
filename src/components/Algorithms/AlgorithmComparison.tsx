@@ -196,7 +196,34 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
       ) : (
         <>
           {/* Mobile View */}
-          <div className="lg:hidden">
+          <div className="lg:hidden flex flex-col gap-4 mb-4">
+            <div className="bg-muted/30 p-3 rounded-lg border border-border flex items-center justify-between">
+              <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">Sort by:</span>
+              <select
+                className="bg-background border border-input rounded-md text-sm p-1.5 flex-1 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-foreground"
+                value={`${sortColumn || 'none'}-${sortDirection || 'none'}`}
+                onChange={(e) => {
+                  const [col, dir] = e.target.value.split('-')
+                  if (col === 'none') {
+                    setSortColumn(null)
+                    setSortDirection(null)
+                  } else {
+                    setSortColumn(col as SortColumn)
+                    setSortDirection(dir as SortDirection)
+                    if (col) {
+                      logEvent('Algorithms', 'Sort Mobile', `${col} (${dir})`)
+                    }
+                  }
+                }}
+              >
+                <option value="none-none">Default</option>
+                <option value="deprecation-asc">Urgency (Earliest first)</option>
+                <option value="deprecation-desc">Urgency (Latest first)</option>
+                <option value="function-asc">Function (A-Z)</option>
+                <option value="classical-asc">Classical Algorithm (A-Z)</option>
+                <option value="pqc-asc">PQC Alternative (A-Z)</option>
+              </select>
+            </div>
             <MobileAlgorithmList data={sortedData} />
           </div>
 

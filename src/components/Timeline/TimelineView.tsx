@@ -1,9 +1,10 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo, useEffect, useCallback } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { Globe, Link2, Check } from 'lucide-react'
+import { Globe, Link2, Check, Search, Download } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
+import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 import { SimpleGanttChart } from './SimpleGanttChart'
@@ -43,25 +44,30 @@ export const TimelineView = () => {
     return 'All'
   })
 
+  const [searchText, setSearchText] = useState<string>(searchParams.get('q') ?? '')
+
   /** Write region + country filters back to URL. */
   const syncFiltersToUrl = useCallback(
-    (overrides: { region?: string; country?: string }) => {
+    (overrides: { region?: string; country?: string; q?: string }) => {
       setSearchParams(
         (prev) => {
           const next = new URLSearchParams(prev)
           const region = overrides.region ?? regionFilter
           const country = overrides.country ?? countryFilter
+          const q = overrides.q ?? searchText
 
           if (region !== 'All') next.set('region', region)
           else next.delete('region')
           if (country !== 'All') next.set('country', country)
           else next.delete('country')
+          if (q) next.set('q', q)
+          else next.delete('q')
           return next
         },
         { replace: true }
       )
     },
-    [regionFilter, countryFilter, setSearchParams]
+    [regionFilter, countryFilter, searchText, setSearchParams]
   )
 
   // Changing region resets country selection
@@ -75,15 +81,22 @@ export const TimelineView = () => {
     setCountryFilter(country)
     syncFiltersToUrl({ country })
   }
+  
+  const handleSearchChange = (q: string) => {
+    setSearchText(q)
+    syncFiltersToUrl({ q })
+  }
 
   // Sync ?region= and ?country= params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent cascade loops.
   useEffect(() => {
     const nextCountry = searchParams.get('country') ?? 'All'
     const nextRegion = searchParams.get('region') ?? 'All'
+    const nextQ = searchParams.get('q') ?? ''
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
     setCountryFilter((prev) => (prev !== nextCountry ? nextCountry : prev))
     setRegionFilter((prev) => (prev !== nextRegion ? nextRegion : prev))
+    if (searchText !== nextQ) setSearchText(nextQ)
   }, [searchParams])
 
   // Always call hooks first (React rules)
@@ -95,6 +108,13 @@ export const TimelineView = () => {
   // Mobile: filter ganttData to the selected region/country (mirrors desktop Gantt behaviour)
   const mobileGanttData = useMemo(() => {
     let result = ganttData
+    if (searchText) {
+      result = result.filter(
+        (d) =>
+          d.country.countryName.toLowerCase().includes(searchText.toLowerCase()) ||
+          d.country.bodies.some((b) => b.name.toLowerCase().includes(searchText.toLowerCase()))
+      )
+    }
     if (regionFilter !== 'All' && regionFilter !== 'global') {
       const allowed = new Set(
         REGION_COUNTRIES_MAP[regionFilter as keyof typeof REGION_COUNTRIES_MAP]
@@ -105,12 +125,14 @@ export const TimelineView = () => {
       result = result.filter((d) => d.country.countryName === countryFilter)
     }
     return result
-  }, [ganttData, regionFilter, countryFilter])
+  }, [ganttData, regionFilter, countryFilter, searchText])
 
   const [countryCopied, setCountryCopied] = useState(false)
 
-  const handleExportCsv = useCallback(() => {
-    const flatEvents = ganttData.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
+  // Explicit any type used below since the caller from Desktop passes its own processed data, which matches GanttCountryData type.
+  const handleExportCsv = useCallback((dataToExport: any[] = ganttData) => {
+    if (dataToExport.length === 0) return
+    const flatEvents = dataToExport.flatMap((gcd) => gcd.phases.flatMap((phase: any) => phase.events))
     const csv = generateCsv(flatEvents, TIMELINE_CSV_COLUMNS)
     downloadCsv(csv, csvFilename('pqc-timeline'))
   }, [ganttData])
@@ -225,14 +247,31 @@ export const TimelineView = () => {
             selectedCountry={countryFilter}
             onCountrySelect={handleCountrySelect}
             countryItems={countryItems}
-            initialFilter={searchParams.get('q') ?? undefined}
+            searchText={searchText}
+            onSearchChange={handleSearchChange}
           />
         </div>
 
         {/* Mobile View: Simplified List */}
         <div className="md:hidden" data-testid="mobile-view-container">
-          <div className="flex gap-2 mb-4">
-            <div className="flex-1">
+          {/* Mobile Search */}
+          <div className="relative w-full mb-3">
+            <Search
+              size={16}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            />
+            <input
+              type="text"
+              placeholder="Search countries or organizations"
+              value={searchText}
+              onChange={(e) => handleSearchChange(e.target.value)}
+              className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
+            />
+          </div>
+
+          {/* Filters & Actions row */}
+          <div className="flex gap-2 mb-3">
+            <div className="flex-1 min-w-0">
               <FilterDropdown
                 items={regionItems}
                 selectedId={regionFilter}
@@ -243,7 +282,7 @@ export const TimelineView = () => {
                 className="mb-0 w-full"
               />
             </div>
-            <div className="flex-1">
+            <div className="flex-1 min-w-0">
               <FilterDropdown
                 items={countryItems}
                 selectedId={countryFilter}
@@ -266,23 +305,39 @@ export const TimelineView = () => {
                   setCountryCopied(true)
                   setTimeout(() => setCountryCopied(false), 2000)
                 }}
-                className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
+                className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
               >
                 {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
               </button>
             )}
+            <button
+               type="button"
+               aria-label="Export to CSV"
+               title="Export filtered timeline data to CSV"
+               onClick={() => handleExportCsv(mobileGanttData)}
+               className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
+            >
+              <Download size={16} />
+            </button>
           </div>
-          {(regionFilter !== 'All' || countryFilter !== 'All') && (
-            <p className="text-xs text-primary/90 mb-3">
-              {mobileGanttData.length} countr{mobileGanttData.length === 1 ? 'y' : 'ies'}
-              {regionFilter !== 'All' && regionFilter !== 'global' && (
-                <>
-                  {/* eslint-disable-next-line security/detect-object-injection */} in{' '}
-                  {REGION_LABELS[regionFilter] ?? regionFilter}
-                </>
-              )}
+
+          {/* Active Filter Chips */}
+          {(regionFilter !== 'All' || countryFilter !== 'All' || searchText) && (
+            <div className="flex flex-wrap gap-2 mb-3">
+               {regionFilter !== 'All' && regionFilter !== 'global' && <FilterChip label={REGION_LABELS[regionFilter] ?? regionFilter} onClear={() => handleRegionChange('All')} />}
+               {regionFilter === 'global' && <FilterChip label="Global" onClear={() => handleRegionChange('All')} />}
+               {countryFilter !== 'All' && <FilterChip label={countryFilter} onClear={() => handleCountrySelect('All')} />}
+               {searchText && <FilterChip label={`"${searchText}"`} onClear={() => handleSearchChange('')} />}
+            </div>
+          )}
+
+          {/* Results count text */}
+          {(regionFilter !== 'All' || countryFilter !== 'All' || searchText) && (
+            <p className="text-xs text-muted-foreground mb-3 font-medium">
+              {mobileGanttData.length} result{mobileGanttData.length === 1 ? '' : 's'} found
             </p>
           )}
+
           <MobileTimelineList data={mobileGanttData} />
         </div>
       </div>

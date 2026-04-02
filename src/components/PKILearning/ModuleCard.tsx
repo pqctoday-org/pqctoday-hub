@@ -161,18 +161,18 @@ export const ModuleCard = ({
 
       <h3 className="text-xl font-bold mb-2">{module.title}</h3>
 
-      <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow">
+      <p className="text-sm text-muted-foreground leading-relaxed mb-4 flex-grow line-clamp-2 md:line-clamp-none">
         {module.description}
       </p>
 
       <div className="flex items-center justify-between pt-4 border-t border-border">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <Clock size={14} />
-          {durationDisplay}
+        <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+          <Clock size={14} className="shrink-0" />
+          <span className="truncate max-w-[120px] md:max-w-none">{durationDisplay}</span>
           {module.difficulty && (
             <span
               className={
-                'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ' +
+                'px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide shrink-0 ' +
                 (module.difficulty === 'beginner'
                   ? 'bg-status-success/15 text-status-success'
                   : module.difficulty === 'intermediate'
@@ -184,48 +184,50 @@ export const ModuleCard = ({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-2">
-          <EndorseButton
-            endorseUrl={buildEndorsementUrl({
-              category: 'learn-module-endorsement',
-              title: `Endorse: ${module.title}`,
-              resourceType: 'Learning Module',
-              resourceId: module.id,
-              resourceDetails: [
-                `**Module:** ${module.title}`,
-                `**Duration:** ${module.duration}`,
-                module.difficulty ? `**Difficulty:** ${module.difficulty}` : '',
-                `**Description:** ${module.description}`,
-              ]
-                .filter(Boolean)
-                .join('\n'),
-              pageUrl: `/learn/${module.id}`,
-            })}
-            resourceLabel={module.title}
-            resourceType="Module"
-          />
-          <FlagButton
-            flagUrl={buildFlagUrl({
-              category: 'learn-module-endorsement',
-              title: `Flag: ${module.title}`,
-              resourceType: 'Learning Module',
-              resourceId: module.id,
-              resourceDetails: [
-                `**Module:** ${module.title}`,
-                `**Duration:** ${module.duration}`,
-                module.difficulty ? `**Difficulty:** ${module.difficulty}` : '',
-                `**Description:** ${module.description}`,
-              ]
-                .filter(Boolean)
-                .join('\n'),
-              pageUrl: `/learn/${module.id}`,
-            })}
-            resourceLabel={module.title}
-            resourceType="Module"
-          />
-          <AskAssistantButton
-            question={`Tell me about the ${module.title} module — what will I learn and why does it matter for PQC migration?`}
-          />
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="hidden lg:flex items-center gap-2">
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'learn-module-endorsement',
+                title: `Endorse: ${module.title}`,
+                resourceType: 'Learning Module',
+                resourceId: module.id,
+                resourceDetails: [
+                  `**Module:** ${module.title}`,
+                  `**Duration:** ${module.duration}`,
+                  module.difficulty ? `**Difficulty:** ${module.difficulty}` : '',
+                  `**Description:** ${module.description}`,
+                ]
+                  .filter(Boolean)
+                  .join('\n'),
+                pageUrl: `/learn/${module.id}`,
+              })}
+              resourceLabel={module.title}
+              resourceType="Module"
+            />
+            <FlagButton
+              flagUrl={buildFlagUrl({
+                category: 'learn-module-endorsement',
+                title: `Flag: ${module.title}`,
+                resourceType: 'Learning Module',
+                resourceId: module.id,
+                resourceDetails: [
+                  `**Module:** ${module.title}`,
+                  `**Duration:** ${module.duration}`,
+                  module.difficulty ? `**Difficulty:** ${module.difficulty}` : '',
+                  `**Description:** ${module.description}`,
+                ]
+                  .filter(Boolean)
+                  .join('\n'),
+                pageUrl: `/learn/${module.id}`,
+              })}
+              resourceLabel={module.title}
+              resourceType="Module"
+            />
+            <AskAssistantButton
+              question={`Tell me about the ${module.title} module — what will I learn and why does it matter for PQC migration?`}
+            />
+          </div>
           {status === 'completed' ? (
             <CheckCircle className="text-status-success" size={20} aria-hidden="true" />
           ) : (

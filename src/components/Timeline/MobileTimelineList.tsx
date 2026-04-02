@@ -3,8 +3,8 @@
 import type { GanttCountryData, Phase } from '../../types/timeline'
 import { CountryFlag } from '../common/CountryFlag'
 import { phaseColors } from '../../data/timelineData'
-import { ChevronRight, Flag } from 'lucide-react'
-import { useState } from 'react'
+import { ChevronRight, ChevronLeft, Flag } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { GanttDetailPopover } from './GanttDetailPopover'
 import type { TimelinePhase } from '../../types/timeline'
 import { motion } from 'framer-motion'
@@ -18,6 +18,28 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
+  
+  // Track swipe hint visibility
+  const [showSwipeHint, setShowSwipeHint] = useState(false)
+
+  useEffect(() => {
+    const dismissed = localStorage.getItem('timeline-swipe-hint-dismissed')
+    if (!dismissed) {
+      setShowSwipeHint(true)
+      const timer = setTimeout(() => {
+        setShowSwipeHint(false)
+        localStorage.setItem('timeline-swipe-hint-dismissed', 'true')
+      }, 5000)
+      return () => clearTimeout(timer)
+    }
+  }, [])
+
+  const dismissSwipeHint = () => {
+    if (showSwipeHint) {
+      setShowSwipeHint(false)
+      localStorage.setItem('timeline-swipe-hint-dismissed', 'true')
+    }
+  }
 
   const handleCardClick = (phase: TimelinePhase) => {
     setSelectedPhase(phase)
@@ -90,22 +112,38 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                     const threshold = 50
                     if (info.offset.x > threshold) {
                       handleSwipe(country.countryName, 'right', phases.length)
+                      dismissSwipeHint()
                     } else if (info.offset.x < -threshold) {
                       handleSwipe(country.countryName, 'left', phases.length)
+                      dismissSwipeHint()
                     }
                   }}
                   initial={{ opacity: 0, x: 20 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -20 }}
                   transition={{ duration: 0.2 }}
-                  className="cursor-grab active:cursor-grabbing"
+                  className="cursor-grab active:cursor-grabbing group"
+                  aria-label={`Timeline phases for ${country.countryName}`}
+                  role="region"
                 >
                   <button
                     type="button"
-                    className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors"
+                    className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors relative"
                     onClick={() => handleCardClick(currentPhase)}
                   >
-                    <div className="flex items-center gap-3">
+                    {/* Swipe Hint overlay */}
+                    {showSwipeHint && currentIndex === 0 && (
+                      <div className="absolute inset-0 z-10 pointer-events-none flex items-center justify-center">
+                        <div className="bg-background/90 text-foreground text-xs px-3 py-1 rounded-full shadow-md flex items-center gap-2 border border-border/50 backdrop-blur-sm animate-pulse">
+                          <span>← Swipe →</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {/* Subtle Side Chevrons on Hover */}
+                    <ChevronLeft size={16} className="absolute left-1 opacity-0 group-hover:opacity-30 transition-opacity hidden sm:block" />
+
+                    <div className="flex items-center gap-3 pl-2 sm:pl-4">
                       {currentPhase.type === 'Milestone' ? (
                         <Flag
                           size={14}
@@ -135,13 +173,16 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                           </span>
                           <StatusBadge status={currentPhase.status} size="sm" />
                         </div>
-                        <span className="text-xs text-muted-foreground font-mono">
+                        <span className="text-[10px] sm:text-xs text-muted-foreground font-mono">
                           {currentPhase.startYear} -{' '}
                           {currentPhase.endYear === 2035 ? '2035+' : currentPhase.endYear}
                         </span>
                       </div>
                     </div>
-                    <ChevronRight size={16} className="text-muted-foreground/50" />
+                    <div className="flex flex-col items-end gap-1">
+                       <span className="text-[9px] text-muted-foreground/70 tracking-wider uppercase pr-2 sm:pr-4">Phase {currentIndex + 1} of {phases.length}</span>
+                       <ChevronRight size={16} className="text-muted-foreground/50 opacity-100 group-hover:opacity-30 transition-opacity hidden sm:block mr-2" />
+                    </div>
                   </button>
                 </motion.div>
 

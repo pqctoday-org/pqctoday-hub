@@ -18,6 +18,7 @@ import { LearnViewToggle, type LearnViewMode } from './LearnViewToggle'
 import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } from './moduleData'
+import { MobileLearnFilterDrawer } from './MobileLearnFilterDrawer'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -468,6 +469,12 @@ const ModuleTracksGrid = ({
   // Sort is disabled in stack mode and when persona filter active
   const sortDisabled = viewMode === 'stack' || personaFilterActive
 
+  let activeFilterCount = 0
+  if (selectedTrack !== 'All') activeFilterCount++
+  if (selectedDifficulty !== 'All') activeFilterCount++
+  if (selectedStatus !== 'All') activeFilterCount++
+  if (personaFilterActive) activeFilterCount++
+
   return (
     <div className="space-y-6 pt-4">
       {/* Header */}
@@ -503,8 +510,105 @@ const ModuleTracksGrid = ({
         </p>
       )}
 
-      {/* Controls bar */}
-      <div className="flex flex-wrap items-center gap-2">
+      {/* Desktop Profile Banner */}
+      <div className="hidden md:flex justify-between items-center bg-muted/10 p-3 rounded-lg border border-border/50">
+        <span className="text-sm font-medium text-foreground">Learning Journey Profile:</span>
+        <FilterDropdown
+          items={personaFilterItems}
+          selectedId={selectedPersonaFilter}
+          onSelect={handlePersonaFilterChange}
+          defaultLabel={isCuriousMode ? 'All Paths' : 'All Roles'}
+          noContainer
+        />
+      </div>
+
+      {/* Mobile Search & Filter Drawer */}
+      <div className="flex md:hidden items-center gap-2">
+        <div className="relative flex-1">
+          <Search
+            size={14}
+            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+            aria-hidden="true"
+          />
+          <Input
+            type="search"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+            placeholder="Search modules…"
+            aria-label="Search modules"
+            className="pl-8 h-[44px] text-sm rounded-lg"
+          />
+        </div>
+        <div className="w-[140px] shrink-0">
+          <MobileLearnFilterDrawer
+            activeFilterCount={activeFilterCount}
+            onClearAll={clearFilters}
+            filterContent={
+              <div className="space-y-6">
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-foreground">Learning Profile</label>
+                  <FilterDropdown
+                    items={personaFilterItems}
+                    selectedId={selectedPersonaFilter}
+                    onSelect={handlePersonaFilterChange}
+                    defaultLabel={isCuriousMode ? 'All Paths' : 'All Roles'}
+                    noContainer
+                  />
+                </div>
+                {showTrackFilter && (
+                  <div className="space-y-2 flex flex-col">
+                    <label className="text-sm font-semibold text-foreground">Track</label>
+                    <FilterDropdown
+                      items={TRACK_FILTER_ITEMS}
+                      selectedId={selectedTrack}
+                      onSelect={setSelectedTrack}
+                      defaultLabel="All Tracks"
+                      noContainer
+                    />
+                  </div>
+                )}
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-foreground">Difficulty</label>
+                  <FilterDropdown
+                    items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
+                      id: d,
+                      label: d === 'All' ? 'All Levels' : d.charAt(0).toUpperCase() + d.slice(1),
+                    }))}
+                    selectedId={selectedDifficulty}
+                    onSelect={setSelectedDifficulty}
+                    defaultLabel="All Levels"
+                    noContainer
+                  />
+                </div>
+                <div className="space-y-2 flex flex-col">
+                  <label className="text-sm font-semibold text-foreground">Status</label>
+                  <FilterDropdown
+                    items={STATUS_FILTER_ITEMS.map((s) => ({
+                      id: s,
+                      label: s === 'All' ? 'All Statuses' : (STATUS_LABELS[s] ?? s),
+                    }))}
+                    selectedId={selectedStatus}
+                    onSelect={setSelectedStatus}
+                    defaultLabel="All Statuses"
+                    noContainer
+                  />
+                </div>
+                <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                  <label className="text-sm font-semibold text-foreground">Sort By</label>
+                  <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
+                </div>
+                <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
+                  <label className="text-sm font-semibold text-foreground">View Mode</label>
+                  <LearnViewToggle mode={viewMode} onChange={setViewMode} />
+                </div>
+              </div>
+            }
+          />
+        </div>
+      </div>
+
+      {/* Desktop Controls bar */}
+      <div className="hidden md:flex flex-wrap items-center gap-2">
         {/* Search */}
         <div className="relative flex-1 min-w-[160px]">
           <Search
@@ -554,15 +658,6 @@ const ModuleTracksGrid = ({
           selectedId={selectedStatus}
           onSelect={setSelectedStatus}
           defaultLabel="All Statuses"
-          noContainer
-        />
-
-        {/* Persona / Role */}
-        <FilterDropdown
-          items={personaFilterItems}
-          selectedId={selectedPersonaFilter}
-          onSelect={handlePersonaFilterChange}
-          defaultLabel={isCuriousMode ? 'All Paths' : 'All Roles'}
           noContainer
         />
 
