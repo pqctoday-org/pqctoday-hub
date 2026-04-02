@@ -148,21 +148,18 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
 
     try {
       if (stepData.id === 'init_network_key') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           (profile === 'A' || profile === 'B')
-        ) {
-          // ── Live HSM Mode: EC key gen via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
-          const curve = profile === 'A' ? 'X25519' : 'P-256'
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(
-            M,
-            hSession,
-            curve === 'X25519' ? 'P-256' : curve
-          )
+        let hsmResult = ''
+
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          const curve = profile === 'A' ? 'P-256' : 'P-256'
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
           hsmHandlesRef.current.hnPubHandle = pubHandle
           hsmHandlesRef.current.hnPrivHandle = privHandle
           hsm.addKey({
@@ -179,117 +176,127 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             role: 'private',
             generatedAt: new Date().toISOString(),
           })
-          result =
+          hsmResult =
             `[PKCS#11] C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, ${curve})\n` +
-            `  → Public key handle:  ${pubHandle}\n` +
-            `  → Private key handle: ${privHandle}\n` +
-            `\nHome Network key pair generated via SoftHSM3 WASM.`
-          setArtifacts((prev) => ({
-            ...prev,
-            hnPubFile: `hsm_pub_${pubHandle}`,
-            hnPrivFile: `hsm_priv_${privHandle}`,
-          }))
+            (profile === 'A'
+              ? `  ⚠️  [X25519 NOT SUPPORTED IN WASM - FALLING BACK TO P-256]\n`
+              : '') +
+            `  → Public key handle:  ${pubHandle}\n  → Private key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.`
+        }
+
+        const res = await fiveGService.generateNetworkKey(profile, pqcMode)
+        setArtifacts((prev) => ({
+          ...prev,
+          hnPubFile: res.pubKeyFile,
+          hnPrivFile: res.privKeyFile,
+        }))
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${res.output}`
         } else {
-          const res = await fiveGService.generateNetworkKey(profile, pqcMode)
-          setArtifacts((prev) => ({
-            ...prev,
-            hnPubFile: res.pubKeyFile,
-            hnPrivFile: res.privKeyFile,
-          }))
           result = res.output
         }
       } else if (stepData.id === 'encrypt_msin') {
-        if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
-          // ── Live HSM Mode: AES encryption via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
+        const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
           const aesHandle = hsm_generateAESKey(M, hSession, 128)
           const msin = new TextEncoder().encode('0123456789')
           const ct = hsm_aesEncrypt(M, hSession, aesHandle, msin, 'cbc')
           const ctHex = Array.from(ct.ciphertext)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          result =
-            `[PKCS#11] C_GenerateKey(CKM_AES_KEY_GEN, 128-bit)\n` +
-            `[PKCS#11] C_EncryptInit(CKM_AES_CBC) + C_Encrypt\n` +
-            `  MSIN plaintext:  0123456789\n` +
-            `  Ciphertext (hex): ${ctHex}\n` +
-            `\nMSIN encrypted via SoftHSM3 WASM.`
+          hsmResult = `[PKCS#11] C_GenerateKey(CKM_AES_KEY_GEN, 128-bit)\n[PKCS#11] C_EncryptInit(CKM_AES_CBC) + C_Encrypt\n  MSIN plaintext:  0123456789\n  Ciphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM.`
+        }
+
+        const osslResult = await fiveGService.encryptMSIN()
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          result = await fiveGService.encryptMSIN()
+          result = osslResult
         }
       } else if (stepData.id === 'compute_mac') {
-        if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
-          // ── Live HSM Mode: HMAC via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
+        const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
           const hmacHandle = hsm_generateHMACKey(M, hSession, 32)
           const data = new TextEncoder().encode('suci-mac-input-data')
           const mac = hsm_hmac(M, hSession, hmacHandle, data)
           const macHex = Array.from(mac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          result =
-            `[PKCS#11] C_GenerateKey(CKM_GENERIC_SECRET_KEY_GEN, 256-bit)\n` +
-            `[PKCS#11] C_SignInit(CKM_SHA256_HMAC) + C_Sign\n` +
-            `  MAC tag (hex): ${macHex}\n` +
-            `\nMAC computed via SoftHSM3 WASM.`
+          hsmResult = `[PKCS#11] C_GenerateKey(CKM_GENERIC_SECRET_KEY_GEN, 256-bit)\n[PKCS#11] C_SignInit(CKM_SHA256_HMAC) + C_Sign\n  MAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM.`
+        }
+
+        const osslResult = await fiveGService.computeMAC()
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          result = await fiveGService.computeMAC()
+          result = osslResult
         }
       } else if (stepData.id === 'provision_usim') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.hnPubHandle
-        ) {
-          // ── Live HSM Mode: Extract public key for USIM provisioning ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
-          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
           const pubHex = Array.from(pubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          result =
-            `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n` +
-            `  Public key bytes: ${pubBytes.length}\n` +
-            `  Key (hex): ${pubHex.slice(0, 64)}...\n` +
-            `\nHN public key extracted from SoftHSM3 → provisioned to USIM.`
+          hsmResult = `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n  Public key bytes: ${pubBytes.length}\n  Key (hex): ${pubHex.slice(0, 64)}...\n\nHN public key extracted from SoftHSM3 → provisioned to USIM.`
+        }
+
+        const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
+        const osslResult = await fiveGService.provisionUSIM(targetFile)
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
-          result = await fiveGService.provisionUSIM(targetFile)
+          result = osslResult
         }
       } else if (stepData.id === 'retrieve_key') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.hnPubHandle
-        ) {
-          // ── Live HSM Mode: Read back public key ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
-          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
-          result =
-            `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) — key retrieved from HSM\n` +
-            `  Public key size: ${pubBytes.length} bytes\n` +
-            `  Profile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n` +
-            `\nUE retrieved HN public key from USIM (HSM-backed).`
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+          hsmResult = `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) — key retrieved from HSM\n  Public key size: ${pubBytes.length} bytes\n  Profile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n\nUE retrieved HN public key from USIM (HSM-backed).`
+        }
+
+        const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
+        const osslResult = await fiveGService.retrieveKey(targetFile, profile)
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
-          result = await fiveGService.retrieveKey(targetFile, profile)
+          result = osslResult
         }
       } else if (stepData.id === 'gen_ephemeral_key') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           (profile === 'A' || profile === 'B')
-        ) {
-          // ── Live HSM Mode: Ephemeral EC key gen via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
           const curve = profile === 'A' ? 'P-256' : 'P-256'
           const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
           hsmHandlesRef.current.ephPubHandle = pubHandle
@@ -298,79 +305,76 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const ephPubHex = Array.from(ephPubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          setArtifacts((prev) => ({
-            ...prev,
-            ephPrivKey: `hsm_eph_priv_${privHandle}`,
-            ephPubKey: `hsm_eph_pub_${pubHandle}`,
-          }))
-          result =
-            `[PKCS#11] C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, ${curve})\n` +
-            `  → Ephemeral pub handle:  ${pubHandle}\n` +
-            `  → Ephemeral priv handle: ${privHandle}\n` +
-            `  → Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n` +
-            `\nEphemeral key pair generated via SoftHSM3 WASM.`
+          hsmResult = `[PKCS#11] C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, ${curve})\n  → Ephemeral pub handle:  ${pubHandle}\n  → Ephemeral priv handle: ${privHandle}\n  → Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n\nEphemeral key pair generated via SoftHSM3 WASM.`
+        }
+
+        const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
+        setArtifacts((prev) => ({
+          ...prev,
+          ephPrivKey: res.privKey,
+          ephPubKey: res.pubKey,
+        }))
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${res.output}`
         } else {
-          const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
-          setArtifacts((prev) => ({
-            ...prev,
-            ephPrivKey: res.privKey,
-            ephPubKey: res.pubKey,
-          }))
           result = res.output
         }
       } else if (stepData.id === 'compute_shared_secret') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.ephPrivHandle &&
           hsmHandlesRef.current.hnPubHandle
-        ) {
-          // ── Live HSM Mode: ECDH key agreement via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
-          const hnPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle)
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          const hnPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
           const derivedHandle = hsm_ecdhDerive(
             M,
             hSession,
-            hsmHandlesRef.current.ephPrivHandle,
-            hnPubBytes
+            hsmHandlesRef.current.ephPrivHandle!,
+            hnPubBytes,
+            undefined,
+            undefined,
+            { keyLen: 32, derive: true, extractable: true }
           )
           hsmHandlesRef.current.sharedSecretHandle = derivedHandle
           const sharedBytes = hsm_extractKeyValue(M, hSession, derivedHandle)
           const sharedHex = Array.from(sharedBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          result =
-            `[PKCS#11] C_DeriveKey(CKM_ECDH1_DERIVE)\n` +
-            `  ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}\n` +
-            `  hnPub bytes: ${hnPubBytes.length}\n` +
-            `  → Shared secret handle: ${derivedHandle}\n` +
-            `  → Z (hex): ${sharedHex.slice(0, 64)}...\n` +
-            `\nECDH shared secret computed via SoftHSM3 WASM.`
+          hsmResult = `[PKCS#11] C_DeriveKey(CKM_ECDH1_DERIVE, CKA_DERIVE=true)\n  ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}\n  hnPub bytes: ${hnPubBytes.length}\n  → Shared secret handle: ${derivedHandle}\n  → Z (hex): ${sharedHex.slice(0, 64)}...\n\nECDH shared secret computed via SoftHSM3 WASM.`
+        }
+
+        const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
+        const hnPub = artifacts.hnPubFile || 'sim_hn_pub.key'
+        const osslResult = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
-          const hnPub = artifacts.hnPubFile || 'sim_hn_pub.key'
-          result = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
+          result = osslResult
         }
       } else if (stepData.id === 'derive_keys') {
-        if (
+        const hsmActive =
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.sharedSecretHandle
-        ) {
-          // ── Live HSM Mode: HKDF key derivation via PKCS#11 ──
-          const M = hsm.moduleRef.current
-          const hSession = hsm.hSessionRef.current
+        let hsmResult = ''
+        if (hsmActive) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
           const salt = new TextEncoder().encode('5G-SUCI-KDF-salt')
           const infoEnc = new TextEncoder().encode('encryption-key')
           const infoMac = new TextEncoder().encode('mac-key')
-
           const kEnc = hsm_hkdf(
             M,
             hSession,
-            hsmHandlesRef.current.sharedSecretHandle,
+            hsmHandlesRef.current.sharedSecretHandle!,
             CKM_SHA256,
             true,
             true,
@@ -381,7 +385,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const kMac = hsm_hkdf(
             M,
             hSession,
-            hsmHandlesRef.current.sharedSecretHandle,
+            hsmHandlesRef.current.sharedSecretHandle!,
             CKM_SHA256,
             true,
             true,
@@ -395,14 +399,15 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const kMacHex = Array.from(kMac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          result =
-            `[PKCS#11] C_DeriveKey(CKM_HKDF_DERIVE, CKM_SHA256)\n` +
-            `  Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n` +
-            `  → K_enc (${kEnc.length} bytes): ${kEncHex}\n` +
-            `  → K_mac (${kMac.length} bytes): ${kMacHex}\n` +
-            `\nEncryption + MAC keys derived via HKDF in SoftHSM3 WASM.`
+          hsmResult = `[PKCS#11] C_DeriveKey(CKM_HKDF_DERIVE, CKM_SHA256)\n  Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n  → K_enc (${kEnc.length} bytes): ${kEncHex}\n  → K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived via SoftHSM3 WASM.`
+        }
+
+        const osslResult = await fiveGService.deriveKeys(profile)
+
+        if (hsmActive) {
+          result = `=== DUAL-ENGINE PARALLEL EXECUTION ===\n\n[SoftHSM3 Node]\n${hsmResult}\n\n[OpenSSL Engine]\n${osslResult}`
         } else {
-          result = await fiveGService.deriveKeys(profile)
+          result = osslResult
         }
       } else if (stepData.id === 'sidf_decryption') {
         result = await fiveGService.sidfDecrypt(profile)
