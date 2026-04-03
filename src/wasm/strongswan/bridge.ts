@@ -1,4 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import StrongSwanWorker from './worker.ts?worker'
+
 export interface StrongSwanLog {
   level: 'info' | 'error'
   text: string
@@ -46,8 +48,7 @@ export class StrongSwanEngine {
 
     this.setState('LOADING')
 
-    // @vite-ignore
-    this.worker = new Worker(new URL('./worker.ts', import.meta.url), { type: 'module' })
+    this.worker = new StrongSwanWorker()
 
     this.worker.onmessage = (e) => {
       const { type, payload } = e.data

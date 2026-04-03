@@ -32,7 +32,10 @@ self.onmessage = async (e: MessageEvent) => {
 
   if (type === 'INIT') {
     try {
-      importScripts('/wasm/strongswan.js')
+      const res = await fetch('/wasm/strongswan.js')
+      const jsContent = await res.text()
+      const globalEval = eval
+      globalEval(jsContent)
 
       const createModule = (globalThis as any).Module || (globalThis as any).strongswan
 
