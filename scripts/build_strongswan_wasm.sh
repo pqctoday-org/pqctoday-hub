@@ -40,7 +40,6 @@ emmake make -j4 LDFLAGS="-O3 -s EXPORTED_FUNCTIONS=[\"_main\"] -s EXPORTED_RUNTI
 echo "Copying WASM to public directory..."
 mkdir -p /Users/ericamador/antigravity/pqc-timeline-app/public/wasm
 cp src/charon/charon /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.js
-echo "export default Module;" >> /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.js
 cp src/charon/charon.wasm /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.wasm
 
 echo "Successfully built strongSwan WASM."
