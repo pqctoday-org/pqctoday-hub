@@ -1376,7 +1376,6 @@ export const MigrateView: React.FC = () => {
                           data={activeLayerTableData}
                           defaultSort={{ key: 'softwareName', direction: 'asc' }}
                           hiddenProducts={hiddenSet}
-                          onHideProduct={hideProduct}
                           selectedProducts={myProductsSet}
                           onToggleProduct={toggleMyProduct}
                           compareProducts={compareSet}
@@ -1390,7 +1389,6 @@ export const MigrateView: React.FC = () => {
                         <SoftwareCardGrid
                           items={activeLayerTableData}
                           hiddenProducts={hiddenSet}
-                          onHideProduct={hideProduct}
                           selectedProducts={myProductsSet}
                           onToggleProduct={toggleMyProduct}
                           compareProducts={compareSet}
