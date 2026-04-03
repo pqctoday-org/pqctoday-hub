@@ -32,12 +32,10 @@ self.onmessage = async (e: MessageEvent) => {
 
   if (type === 'INIT') {
     try {
-      const res = await fetch('/wasm/strongswan.js')
-      const jsContent = await res.text()
-      const globalEval = eval
-      globalEval(jsContent)
-
-      const createModule = (globalThis as any).Module || (globalThis as any).strongswan
+      // @ts-ignore
+      const moduleImport = await import(/* @vite-ignore */ '/wasm/strongswan.js')
+      const createModule =
+        moduleImport.default || (globalThis as any).Module || (globalThis as any).strongswan
 
       strongSwanModule = await createModule({
         locateFile: (path: string) => `/wasm/${path}`,
