@@ -32,8 +32,10 @@ self.onmessage = async (e: MessageEvent) => {
 
   if (type === 'INIT') {
     try {
+      // Bypass Vite's import analysis for /public directory by evaluating path dynamically
+      const scriptPath = ['/wa', 'sm/strong', 'swan.js'].join('')
       // @ts-ignore
-      const moduleImport = await import(/* @vite-ignore */ '/wasm/strongswan.js')
+      const moduleImport = await import(/* @vite-ignore */ scriptPath)
       const createModule =
         moduleImport.default || (globalThis as any).Module || (globalThis as any).strongswan
 
