@@ -167,14 +167,17 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           onClick={() => setSelectedItem(item)}
         >
           <td
-            className="p-4 whitespace-nowrap text-sm font-medium text-foreground"
+            className="p-4 text-sm font-medium text-foreground max-w-0"
             style={{ paddingLeft: `${level * 20 + 16}px` }}
           >
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 min-w-0">
               {hasChildren ? (
                 <button
-                  onClick={(e) => { e.stopPropagation(); toggleExpand(item.referenceId); }}
-                  className="p-1 hover:bg-muted rounded focus:outline-none focus:ring-2 focus:ring-primary"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    toggleExpand(item.referenceId)
+                  }}
+                  className="shrink-0 p-1 hover:bg-muted rounded focus:outline-none focus:ring-2 focus:ring-primary"
                   aria-expanded={isExpanded}
                   aria-label={
                     isExpanded ? `Collapse ${item.documentTitle}` : `Expand ${item.documentTitle}`
@@ -187,9 +190,11 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   )}
                 </button>
               ) : (
-                <span className="w-6" /> // Spacer
+                <span className="w-6 shrink-0" /> // Spacer
               )}
-              <span className="font-mono text-primary/80">{item.referenceId}</span>
+              <span className="font-mono text-primary/80 truncate block" title={item.referenceId}>
+                {item.referenceId}
+              </span>
             </div>
           </td>
           <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors">
@@ -293,11 +298,11 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
   }
 
   const headers: { key: SortKey | 'actions'; label: string; width?: string }[] = [
-    { key: 'referenceId', label: 'Reference ID', width: 'w-48 xl:w-56' },
-    { key: 'documentTitle', label: 'Title', width: 'w-auto min-w-[280px]' },
-    { key: 'documentStatus', label: 'Status', width: 'w-40' },
+    { key: 'referenceId', label: 'Reference ID', width: 'w-56 xl:w-64' },
+    { key: 'documentTitle', label: 'Title', width: 'w-auto' },
+    { key: 'documentStatus', label: 'Status', width: 'w-36' },
     { key: 'lastUpdateDate', label: 'Last Update', width: 'w-36' },
-    { key: 'actions', label: '', width: 'w-32' },
+    { key: 'actions', label: '', width: 'w-28' },
   ]
 
   return (
@@ -347,7 +352,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                           : 'descending'
                         : 'none'
                     }
-                    className={clsx("p-4 font-semibold text-sm", header.width)}
+                    className={clsx('p-4 font-semibold text-sm', header.width)}
                   >
                     {header.key !== 'actions' ? (
                       <button

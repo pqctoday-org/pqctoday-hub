@@ -18,13 +18,14 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, FileSearch, BookOpen, SlidersHorizontal, X } from 'lucide-react'
+import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -201,6 +202,8 @@ function findByRef(
 export const LibraryView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
+  const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
+    useBookmarkStore()
   const [activeCategory, setActiveCategory] = useState<string>(
     () => searchParams.get('cat') ?? 'All'
   )
@@ -393,6 +396,9 @@ export const LibraryView: React.FC = () => {
         if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
+      // My bookmarks filter
+      if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
+
       // Search filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -403,7 +409,14 @@ export const LibraryView: React.FC = () => {
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
       )
     })
-  }, [activeCategory, activeOrg, activeIndustry, filterText])
+  }, [
+    activeCategory,
+    activeOrg,
+    activeIndustry,
+    filterText,
+    showOnlyLibraryBookmarks,
+    libraryBookmarks,
+  ])
 
   // Persona-preferred categories for secondary sort boost
   const preferredCategories = useMemo(() => {
@@ -497,7 +510,6 @@ export const LibraryView: React.FC = () => {
     )
   }
 
-
   if (libraryError) {
     return <ErrorAlert message={libraryError} />
   }
@@ -586,8 +598,11 @@ export const LibraryView: React.FC = () => {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
-              showFilters || activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All' 
-                ? 'bg-primary/10 border-primary/30 text-primary' 
+              showFilters ||
+              activeCategory !== 'All' ||
+              activeOrg !== 'All' ||
+              activeIndustry !== 'All'
+                ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
             }`}
             aria-expanded={showFilters}
@@ -599,6 +614,21 @@ export const LibraryView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-primary" />
             )}
           </button>
+
+          {libraryBookmarks.length > 0 && (
+            <button
+              onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+                showOnlyLibraryBookmarks
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+              }`}
+              aria-pressed={showOnlyLibraryBookmarks}
+            >
+              <BookmarkCheck size={14} />
+              My ({libraryBookmarks.length})
+            </button>
+          )}
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">
@@ -627,7 +657,9 @@ export const LibraryView: React.FC = () => {
         {showFilters && (
           <div className="pt-3 border-t border-border flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
             <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Organization</span>
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Organization
+              </span>
               <FilterDropdown
                 items={orgs}
                 selectedId={activeOrg}
@@ -659,11 +691,13 @@ export const LibraryView: React.FC = () => {
                 className="mb-0 w-full"
               />
             </div>
-            
+
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
               <div className="flex-1 min-w-[160px] sm:hidden">
-                <span className="text-xs font-medium text-muted-foreground mb-1 block">Sort By</span>
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                  Sort By
+                </span>
                 <div className="w-full">
                   <SortControl
                     value={sortBy}
@@ -685,7 +719,15 @@ export const LibraryView: React.FC = () => {
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Search:</span> {filterText}
-              <button onClick={() => { setFilterText(''); setInputValue(''); syncFiltersToUrl({ q: '' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear search">
+              <button
+                onClick={() => {
+                  setFilterText('')
+                  setInputValue('')
+                  syncFiltersToUrl({ q: '' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -693,7 +735,14 @@ export const LibraryView: React.FC = () => {
           {activeOrg !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Org:</span> {activeOrg}
-              <button onClick={() => { setActiveOrg('All'); syncFiltersToUrl({ org: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear organization filter">
+              <button
+                onClick={() => {
+                  setActiveOrg('All')
+                  syncFiltersToUrl({ org: 'All' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear organization filter"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -701,7 +750,14 @@ export const LibraryView: React.FC = () => {
           {activeIndustry !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Industry:</span> {activeIndustry}
-              <button onClick={() => { setActiveIndustry('All'); syncFiltersToUrl({ ind: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear industry filter">
+              <button
+                onClick={() => {
+                  setActiveIndustry('All')
+                  syncFiltersToUrl({ ind: 'All' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear industry filter"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -734,7 +790,11 @@ export const LibraryView: React.FC = () => {
         <>
           <div className="hidden md:block">{renderTableView()}</div>
           <div className="md:hidden">
-            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} showHierarchicalAccordion />
+            <DocumentCardGrid
+              items={sortedItems}
+              onViewDetails={openDetail}
+              showHierarchicalAccordion
+            />
           </div>
         </>
       )}

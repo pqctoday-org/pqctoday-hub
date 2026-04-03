@@ -30,12 +30,12 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
     <FocusLock returnFocus>
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
         {/* Isolated backdrop */}
-        <div 
-          className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[-1]" 
-          onClick={onClose} 
-          aria-hidden="true" 
+        <div
+          className="absolute inset-0 bg-black/60 backdrop-blur-sm z-[-1]"
+          onClick={onClose}
+          aria-hidden="true"
         />
-        
+
         <div
           role="dialog"
           aria-modal="true"
@@ -152,51 +152,51 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               </div>
             )}
           </div>
-          
+
           {/* Sticky Bottom Action Bar */}
           <div className="p-4 border-t bg-card sticky bottom-0 z-10 shrink-0 flex flex-wrap justify-end gap-2 items-center">
-              <EndorseButton
-                endorseUrl={buildEndorsementUrl({
-                  category: 'threat-endorsement',
-                  title: `Endorse: ${threat.threatId} — ${threat.industry}`,
-                  resourceType: 'Threat Assessment',
-                  resourceId: threat.threatId,
-                  resourceDetails: [
-                    `**Threat ID:** ${threat.threatId}`,
-                    `**Industry:** ${threat.industry}`,
-                    `**Criticality:** ${threat.criticality}`,
-                    `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                    `**PQC Mitigation:** ${threat.pqcReplacement}`,
-                  ].join('\n'),
-                  pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
-                })}
-                resourceLabel={threat.threatId}
-                resourceType="Threat"
-                label="Endorse"
-              />
-              <FlagButton
-                flagUrl={buildFlagUrl({
-                  category: 'threat-endorsement',
-                  title: `Flag: ${threat.threatId} — ${threat.industry}`,
-                  resourceType: 'Threat Assessment',
-                  resourceId: threat.threatId,
-                  resourceDetails: [
-                    `**Threat ID:** ${threat.threatId}`,
-                    `**Industry:** ${threat.industry}`,
-                    `**Criticality:** ${threat.criticality}`,
-                    `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
-                    `**PQC Mitigation:** ${threat.pqcReplacement}`,
-                  ].join('\n'),
-                  pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
-                })}
-                resourceLabel={threat.threatId}
-                resourceType="Threat"
-                label="Flag"
-              />
-              <AskAssistantButton
-                label="Ask Assistant"
-                question={`What are the recommended PQC mitigations for ${threat.threatId} in the ${threat.industry} sector? Criticality: ${threat.criticality}. Crypto at risk: ${threat.cryptoAtRisk}. Recommended replacement: ${threat.pqcReplacement}.`}
-              />
+            <EndorseButton
+              endorseUrl={buildEndorsementUrl({
+                category: 'threat-endorsement',
+                title: `Endorse: ${threat.threatId} — ${threat.industry}`,
+                resourceType: 'Threat Assessment',
+                resourceId: threat.threatId,
+                resourceDetails: [
+                  `**Threat ID:** ${threat.threatId}`,
+                  `**Industry:** ${threat.industry}`,
+                  `**Criticality:** ${threat.criticality}`,
+                  `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
+                  `**PQC Mitigation:** ${threat.pqcReplacement}`,
+                ].join('\n'),
+                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+              })}
+              resourceLabel={threat.threatId}
+              resourceType="Threat"
+              label="Endorse"
+            />
+            <FlagButton
+              flagUrl={buildFlagUrl({
+                category: 'threat-endorsement',
+                title: `Flag: ${threat.threatId} — ${threat.industry}`,
+                resourceType: 'Threat Assessment',
+                resourceId: threat.threatId,
+                resourceDetails: [
+                  `**Threat ID:** ${threat.threatId}`,
+                  `**Industry:** ${threat.industry}`,
+                  `**Criticality:** ${threat.criticality}`,
+                  `**At-Risk Crypto:** ${threat.cryptoAtRisk}`,
+                  `**PQC Mitigation:** ${threat.pqcReplacement}`,
+                ].join('\n'),
+                pageUrl: `/threats?threat=${encodeURIComponent(threat.threatId)}`,
+              })}
+              resourceLabel={threat.threatId}
+              resourceType="Threat"
+              label="Flag"
+            />
+            <AskAssistantButton
+              label="Ask Assistant"
+              question={`What are the recommended PQC mitigations for ${threat.threatId} in the ${threat.industry} sector? Criticality: ${threat.criticality}. Crypto at risk: ${threat.cryptoAtRisk}. Recommended replacement: ${threat.pqcReplacement}.`}
+            />
           </div>
         </div>
       </div>

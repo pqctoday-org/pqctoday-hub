@@ -3,44 +3,120 @@ import { create } from 'zustand'
 import { persist, createJSONStorage } from 'zustand/middleware'
 
 interface BookmarkState {
+  // ── Library ──────────────────────────────────────────────────────────────
   libraryBookmarks: string[] // referenceId values
-  migrateBookmarks: string[] // softwareName values
-
   toggleLibraryBookmark: (id: string) => void
-  toggleMigrateBookmark: (name: string) => void
   isLibraryBookmarked: (id: string) => boolean
+  showOnlyLibraryBookmarks: boolean
+  setShowOnlyLibraryBookmarks: (val: boolean) => void
+
+  // ── Migrate (legacy deep-link bookmarks — kept for backwards compat) ──────
+  migrateBookmarks: string[] // softwareName values
+  toggleMigrateBookmark: (name: string) => void
   isMigrateBookmarked: (name: string) => boolean
+
+  // ── Learn ─────────────────────────────────────────────────────────────────
+  myLearnModules: string[] // moduleId values
+  toggleMyLearnModule: (id: string) => void
+  clearMyLearnModules: () => void
+  showOnlyLearnModules: boolean
+  setShowOnlyLearnModules: (val: boolean) => void
+
+  // ── Timeline ──────────────────────────────────────────────────────────────
+  myTimelineCountries: string[] // countryName values
+  toggleMyTimelineCountry: (name: string) => void
+  clearMyTimelineCountries: () => void
+  showOnlyTimelineCountries: boolean
+  setShowOnlyTimelineCountries: (val: boolean) => void
+
+  // ── Threats ───────────────────────────────────────────────────────────────
+  myThreats: string[] // threatId values
+  toggleMyThreat: (id: string) => void
+  clearMyThreats: () => void
+  showOnlyThreats: boolean
+  setShowOnlyThreats: (val: boolean) => void
+
+  // ── Playground ────────────────────────────────────────────────────────────
+  myPlaygroundTools: string[] // tool.id values
+  toggleMyPlaygroundTool: (id: string) => void
+  clearMyPlaygroundTools: () => void
+  showOnlyPlaygroundTools: boolean
+  setShowOnlyPlaygroundTools: (val: boolean) => void
+
+  // ── Global ────────────────────────────────────────────────────────────────
   clearAll: () => void
 }
+
+const toggle = (arr: string[], val: string) =>
+  arr.includes(val) ? arr.filter((x) => x !== val) : [...arr, val]
 
 export const useBookmarkStore = create<BookmarkState>()(
   persist(
     (set, get) => ({
+      // Library
       libraryBookmarks: [],
-      migrateBookmarks: [],
-
       toggleLibraryBookmark: (id) =>
-        set((state) => ({
-          libraryBookmarks: state.libraryBookmarks.includes(id)
-            ? state.libraryBookmarks.filter((b) => b !== id)
-            : [...state.libraryBookmarks, id],
-        })),
-
-      toggleMigrateBookmark: (name) =>
-        set((state) => ({
-          migrateBookmarks: state.migrateBookmarks.includes(name)
-            ? state.migrateBookmarks.filter((b) => b !== name)
-            : [...state.migrateBookmarks, name],
-        })),
-
+        set((s) => ({ libraryBookmarks: toggle(s.libraryBookmarks, id) })),
       isLibraryBookmarked: (id) => get().libraryBookmarks.includes(id),
+      showOnlyLibraryBookmarks: false,
+      setShowOnlyLibraryBookmarks: (val) => set({ showOnlyLibraryBookmarks: val }),
+
+      // Migrate (legacy)
+      migrateBookmarks: [],
+      toggleMigrateBookmark: (name) =>
+        set((s) => ({ migrateBookmarks: toggle(s.migrateBookmarks, name) })),
       isMigrateBookmarked: (name) => get().migrateBookmarks.includes(name),
 
-      clearAll: () => set({ libraryBookmarks: [], migrateBookmarks: [] }),
+      // Learn
+      myLearnModules: [],
+      toggleMyLearnModule: (id) => set((s) => ({ myLearnModules: toggle(s.myLearnModules, id) })),
+      clearMyLearnModules: () => set({ myLearnModules: [], showOnlyLearnModules: false }),
+      showOnlyLearnModules: false,
+      setShowOnlyLearnModules: (val) => set({ showOnlyLearnModules: val }),
+
+      // Timeline
+      myTimelineCountries: [],
+      toggleMyTimelineCountry: (name) =>
+        set((s) => ({ myTimelineCountries: toggle(s.myTimelineCountries, name) })),
+      clearMyTimelineCountries: () =>
+        set({ myTimelineCountries: [], showOnlyTimelineCountries: false }),
+      showOnlyTimelineCountries: false,
+      setShowOnlyTimelineCountries: (val) => set({ showOnlyTimelineCountries: val }),
+
+      // Threats
+      myThreats: [],
+      toggleMyThreat: (id) => set((s) => ({ myThreats: toggle(s.myThreats, id) })),
+      clearMyThreats: () => set({ myThreats: [], showOnlyThreats: false }),
+      showOnlyThreats: false,
+      setShowOnlyThreats: (val) => set({ showOnlyThreats: val }),
+
+      // Playground
+      myPlaygroundTools: [],
+      toggleMyPlaygroundTool: (id) =>
+        set((s) => ({ myPlaygroundTools: toggle(s.myPlaygroundTools, id) })),
+      clearMyPlaygroundTools: () => set({ myPlaygroundTools: [], showOnlyPlaygroundTools: false }),
+      showOnlyPlaygroundTools: false,
+      setShowOnlyPlaygroundTools: (val) => set({ showOnlyPlaygroundTools: val }),
+
+      // Global clear
+      clearAll: () =>
+        set({
+          libraryBookmarks: [],
+          migrateBookmarks: [],
+          showOnlyLibraryBookmarks: false,
+          myLearnModules: [],
+          showOnlyLearnModules: false,
+          myTimelineCountries: [],
+          showOnlyTimelineCountries: false,
+          myThreats: [],
+          showOnlyThreats: false,
+          myPlaygroundTools: [],
+          showOnlyPlaygroundTools: false,
+        }),
     }),
     {
       name: 'pqc-bookmarks',
-      version: 1,
+      version: 2,
       storage: createJSONStorage(() => localStorage),
       migrate: (persistedState: unknown, version: number) => {
         const state =
@@ -55,6 +131,22 @@ export const useBookmarkStore = create<BookmarkState>()(
           state.migrateBookmarks = Array.isArray(state.migrateBookmarks)
             ? state.migrateBookmarks
             : []
+        }
+        if (version < 2) {
+          // v1 → v2: add all new page bookmark arrays + showOnly flags
+          state.showOnlyLibraryBookmarks = false
+          state.myLearnModules = Array.isArray(state.myLearnModules) ? state.myLearnModules : []
+          state.showOnlyLearnModules = false
+          state.myTimelineCountries = Array.isArray(state.myTimelineCountries)
+            ? state.myTimelineCountries
+            : []
+          state.showOnlyTimelineCountries = false
+          state.myThreats = Array.isArray(state.myThreats) ? state.myThreats : []
+          state.showOnlyThreats = false
+          state.myPlaygroundTools = Array.isArray(state.myPlaygroundTools)
+            ? state.myPlaygroundTools
+            : []
+          state.showOnlyPlaygroundTools = false
         }
 
         return state as unknown as BookmarkState

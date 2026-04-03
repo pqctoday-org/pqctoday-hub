@@ -1,7 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { motion } from 'framer-motion'
-import { BookOpen, CheckCircle, Circle, Clock, Wrench } from 'lucide-react'
+import { BookOpen, CheckCircle, Circle, Clock, Wrench, CheckSquare, Square } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
@@ -29,6 +30,8 @@ export const ModuleCard = ({
   isAboveLevel?: boolean
 }) => {
   const { modules } = useModuleStore()
+  const isBookmarked = useBookmarkStore((s) => s.myLearnModules.includes(module.id))
+  const toggleMyLearnModule = useBookmarkStore((s) => s.toggleMyLearnModule)
   const moduleState = modules[module.id]
   const status = moduleState?.status || 'not-started'
   const timeSpentRaw = moduleState?.timeSpent || 0
@@ -129,6 +132,21 @@ export const ModuleCard = ({
           </div>
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
+          {/* Bookmark toggle */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleMyLearnModule(module.id)
+            }}
+            className={`p-1 rounded transition-colors ${
+              isBookmarked
+                ? 'text-primary hover:text-primary/80'
+                : 'text-muted-foreground/40 hover:text-primary'
+            }`}
+            aria-label={isBookmarked ? 'Remove from My Learn' : 'Add to My Learn'}
+          >
+            {isBookmarked ? <CheckSquare size={16} /> : <Square size={16} />}
+          </button>
           {isRelevant && (
             <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5">
               Relevant

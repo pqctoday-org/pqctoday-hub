@@ -198,7 +198,9 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           {/* Mobile View */}
           <div className="lg:hidden flex flex-col gap-4 mb-4">
             <div className="bg-muted/30 p-3 rounded-lg border border-border flex items-center justify-between">
-              <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">Sort by:</span>
+              <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">
+                Sort by:
+              </span>
               <select
                 className="bg-background border border-input rounded-md text-sm p-1.5 flex-1 focus:ring-2 focus:ring-secondary focus:border-secondary outline-none text-foreground"
                 value={`${sortColumn || 'none'}-${sortDirection || 'none'}`}

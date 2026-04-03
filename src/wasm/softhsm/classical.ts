@@ -15,12 +15,10 @@ import {
   CKA_SIGN,
   CKA_TOKEN,
   CKA_VALUE,
-  CKA_VALUE_LEN,
   CKA_VERIFY,
   CKD_NULL,
   CKK_EC,
   CKK_EC_EDWARDS,
-  CKK_GENERIC_SECRET,
   CKK_RSA,
   CKM_ECDH1_COFACTOR_DERIVE,
   CKM_ECDH1_DERIVE,
@@ -36,16 +34,20 @@ import {
   CKM_SHA512_RSA_PKCS_PSS,
   CKO_PRIVATE_KEY,
   CKO_PUBLIC_KEY,
-  CKO_SECRET_KEY,
   EC_OID_ED25519,
   EC_OID_ED448,
   EC_OID_P256,
   EC_OID_P384,
   EC_OID_P521,
+  EC_OID_X25519,
+  CKK_EC_MONTGOMERY,
+  CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
 } from './constants'
 import {
   type AttrDef,
+  type DerivedKeyProfile,
   allocUlong,
+  buildDerivedKeyTemplate,
   buildECDH1DeriveParams,
   buildMech,
   buildOAEPParams,
@@ -355,9 +357,12 @@ export const hsm_ecdsaVerify = (
  * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
  * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
- * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI deconcealment).
- * keyLen: derived key length in bytes (default 32).
- * Returns handle to derived generic secret key.
+ * sharedData: optional SharedInfo for X9.63 KDF.
+ * derivedKeyProfile: PKCS#11 v3.2 attribute profile for the derived key object.
+ *   Pass { keyLen: 32, derive: true } when the result will be used as HKDF base key.
+ *   Pass { keyLen: 32, encrypt: true, decrypt: true } for a direct-use AES key.
+ *   Defaults to { keyLen: 32, extractable: true } (generic secret, extract-only).
+ * Returns handle to derived key object.
  */
 export const hsm_ecdhDerive = (
   M: SoftHSMModule,
@@ -366,29 +371,22 @@ export const hsm_ecdhDerive = (
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,
   sharedData?: Uint8Array,
-  keyLen = 32
+  derivedKeyProfile: DerivedKeyProfile = { keyLen: 32, extractable: true }
 ): number => {
   const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
   const mech = buildMech(M, CKM_ECDH1_DERIVE, dp.ptr, dp.len)
-  const derivedTpl = buildTemplate(M, [
-    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_VALUE_LEN, ulongVal: keyLen },
-  ])
+  const { tpl: derivedTpl, attrCount } = buildDerivedKeyTemplate(M, derivedKeyProfile)
   const derivedHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, attrCount, derivedHPtr),
       'C_DeriveKey(ECDH1)'
     )
     return readUlong(M, derivedHPtr)
   } finally {
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
-    freeTemplate(M, derivedTpl, 6)
+    freeTemplate(M, derivedTpl, attrCount)
     M._free(derivedHPtr)
   }
 }
@@ -405,29 +403,22 @@ export const hsm_ecdhCofactorDerive = (
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,
   sharedData?: Uint8Array,
-  keyLen = 32
+  derivedKeyProfile: DerivedKeyProfile = { keyLen: 32, extractable: true }
 ): number => {
   const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
   const mech = buildMech(M, CKM_ECDH1_COFACTOR_DERIVE, dp.ptr, dp.len)
-  const derivedTpl = buildTemplate(M, [
-    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
-    { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
-    { type: CKA_VALUE_LEN, ulongVal: keyLen },
-  ])
+  const { tpl: derivedTpl, attrCount } = buildDerivedKeyTemplate(M, derivedKeyProfile)
   const derivedHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, attrCount, derivedHPtr),
       'C_DeriveKey(ECDH1_COFACTOR)'
     )
     return readUlong(M, derivedHPtr)
   } finally {
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
-    freeTemplate(M, derivedTpl, 6)
+    freeTemplate(M, derivedTpl, attrCount)
     M._free(derivedHPtr)
   }
 }
@@ -473,6 +464,50 @@ export const hsm_generateEdDSAKeyPair = (
     M._free(oidPtr)
     freeTemplate(M, pubTpl, 5)
     freeTemplate(M, prvTpl, 7)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/** Generate an X25519 key pair for ECDH. */
+export const hsm_generateX25519KeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  extractable = false
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_EC_MONTGOMERY_KEY_PAIR_GEN)
+  const oidPtr = writeBytes(M, EC_OID_X25519)
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC_MONTGOMERY },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: EC_OID_X25519.length },
+    { type: CKA_VERIFY, boolVal: false },
+    { type: CKA_ENCRYPT, boolVal: false },
+  ])
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC_MONTGOMERY },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: false },
+    { type: CKA_DERIVE, boolVal: true },
+  ])
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 6, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(X25519)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    M._free(oidPtr)
+    freeTemplate(M, pubTpl, 6)
+    freeTemplate(M, prvTpl, 8)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }

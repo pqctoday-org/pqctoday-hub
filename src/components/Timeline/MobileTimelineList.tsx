@@ -18,18 +18,21 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
   const [selectedPhase, setSelectedPhase] = useState<TimelinePhase | null>(null)
   // Track current phase index for each country
   const [phaseIndices, setPhaseIndices] = useState<Record<string, number>>({})
-  
+
   // Track swipe hint visibility
   const [showSwipeHint, setShowSwipeHint] = useState(false)
 
   useEffect(() => {
     const dismissed = localStorage.getItem('timeline-swipe-hint-dismissed')
     if (!dismissed) {
-      setShowSwipeHint(true)
       const timer = setTimeout(() => {
-        setShowSwipeHint(false)
-        localStorage.setItem('timeline-swipe-hint-dismissed', 'true')
-      }, 5000)
+        setShowSwipeHint(true)
+        const hideTimer = setTimeout(() => {
+          setShowSwipeHint(false)
+          localStorage.setItem('timeline-swipe-hint-dismissed', 'true')
+        }, 5000)
+        return () => clearTimeout(hideTimer)
+      }, 0)
       return () => clearTimeout(timer)
     }
   }, [])
@@ -139,9 +142,12 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                         </div>
                       </div>
                     )}
-                    
+
                     {/* Subtle Side Chevrons on Hover */}
-                    <ChevronLeft size={16} className="absolute left-1 opacity-0 group-hover:opacity-30 transition-opacity hidden sm:block" />
+                    <ChevronLeft
+                      size={16}
+                      className="absolute left-1 opacity-0 group-hover:opacity-30 transition-opacity hidden sm:block"
+                    />
 
                     <div className="flex items-center gap-3 pl-2 sm:pl-4">
                       {currentPhase.type === 'Milestone' ? (
@@ -180,8 +186,13 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                       </div>
                     </div>
                     <div className="flex flex-col items-end gap-1">
-                       <span className="text-[9px] text-muted-foreground/70 tracking-wider uppercase pr-2 sm:pr-4">Phase {currentIndex + 1} of {phases.length}</span>
-                       <ChevronRight size={16} className="text-muted-foreground/50 opacity-100 group-hover:opacity-30 transition-opacity hidden sm:block mr-2" />
+                      <span className="text-[9px] text-muted-foreground/70 tracking-wider uppercase pr-2 sm:pr-4">
+                        Phase {currentIndex + 1} of {phases.length}
+                      </span>
+                      <ChevronRight
+                        size={16}
+                        className="text-muted-foreground/50 opacity-100 group-hover:opacity-30 transition-opacity hidden sm:block mr-2"
+                      />
                     </div>
                   </button>
                 </motion.div>

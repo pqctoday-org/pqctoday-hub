@@ -21,6 +21,7 @@ import {
   ArrowRightLeft,
   Wrench,
   Scale,
+  BookmarkCheck,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -100,6 +101,8 @@ export const MigrateView: React.FC = () => {
     setActiveSubCategory,
     myProducts,
     toggleMyProduct,
+    showOnlyMyProducts,
+    setShowOnlyMyProducts,
     viewMode,
     setViewMode,
     workflowCollapsed,
@@ -128,7 +131,7 @@ export const MigrateView: React.FC = () => {
         if (tableExpandedIds.size === 1) {
           const key = [...tableExpandedIds][0]
           next.set('product', key)
-          if (!next.has('mode') || next.get('mode') === 'stack') next.set('mode', 'table')
+          // Removed forcing mode to table, so Stack View inline expansions work.
         } else {
           next.delete('product')
         }
@@ -142,7 +145,9 @@ export const MigrateView: React.FC = () => {
   const initialProductKeyRef = useRef(searchParams.get('product'))
 
   const [hasDismissedCompareOnboarding, setHasDismissedCompareOnboarding] = useState(
-    () => typeof window !== 'undefined' && localStorage.getItem('dimissed_compare_onboarding') === 'true'
+    () =>
+      typeof window !== 'undefined' &&
+      localStorage.getItem('dimissed_compare_onboarding') === 'true'
   )
   useEffect(() => {
     const key = initialProductKeyRef.current
@@ -247,7 +252,7 @@ export const MigrateView: React.FC = () => {
       setTableExpandedIds((prev) =>
         prev.size === 1 && prev.has(product) ? prev : new Set([product])
       )
-      if (mode === null) setViewMode('table')
+      // Removed: if (mode === null) setViewMode('table')
     }
     const subcat = searchParams.get('subcat')
     if (subcat !== null) setActiveSubCategory(subcat)
@@ -435,6 +440,9 @@ export const MigrateView: React.FC = () => {
             !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
           )
             return false
+          // My Products filter
+          if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
+            return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -462,6 +470,8 @@ export const MigrateView: React.FC = () => {
     licenseFilter,
     effectiveViewMode,
     activePartitions,
+    showOnlyMyProducts,
+    myProductsSet,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)
@@ -629,6 +639,9 @@ export const MigrateView: React.FC = () => {
         !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
       )
         return false
+      // My Products filter
+      if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
+        return false
       // Search filter
       if (filterText) {
         const q = filterText.toLowerCase()
@@ -652,6 +665,8 @@ export const MigrateView: React.FC = () => {
     vendorFilter,
     verificationFilter,
     licenseFilter,
+    showOnlyMyProducts,
+    myProductsSet,
   ])
 
   // PQC stats for all filtered products
@@ -815,7 +830,8 @@ export const MigrateView: React.FC = () => {
     licenseFilter !== 'All' ||
     effectiveLayer !== 'All' ||
     flatCategoryFilter !== 'All' ||
-    hiddenSet.size > 0
+    hiddenSet.size > 0 ||
+    showOnlyMyProducts
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
@@ -872,7 +888,8 @@ export const MigrateView: React.FC = () => {
           each product card.
         </p>
         <p className="md:hidden text-xs">
-          Data under review. Please help by submitting product update requests via the <em>Update PQC Info</em> link in each product card.
+          Data under review. Please help by submitting product update requests via the{' '}
+          <em>Update PQC Info</em> link in each product card.
         </p>
       </div>
 
@@ -946,11 +963,14 @@ export const MigrateView: React.FC = () => {
       {/* Sticky filter container */}
       <div className="sticky top-0 z-40 bg-background/95 backdrop-blur backdrop-saturate-150 border-b border-border/50 pb-3 pt-3 -mx-4 px-4 md:mx-0 md:px-0 mb-6 shadow-sm transition-all duration-300">
         <div className="bg-card border border-border rounded-lg shadow-lg p-2 flex flex-col md:flex-row gap-2">
-          
           {/* Mobile Layout: Search + Drawer Row */}
           <div className="flex flex-col md:hidden items-stretch gap-3 w-full">
             <div className="relative w-full">
-              <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+              <Search
+                size={16}
+                className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
               <input
                 type="text"
                 placeholder="Search software..."
@@ -959,7 +979,7 @@ export const MigrateView: React.FC = () => {
                 className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
               />
             </div>
-            
+
             <div className="w-full">
               <MobileFilterDrawer
                 activeFilterCount={
@@ -981,12 +1001,22 @@ export const MigrateView: React.FC = () => {
                   setLicenseFilter('All')
                   setSortBy('pqcMigrationPriority')
                   if (hiddenSet.size > 0) restoreAll()
-                  syncFiltersToUrl({ step: null, layer: 'All', cat: 'All', vendor: 'All', verification: 'All', licenseFilter: 'All', sort: 'pqcMigrationPriority' })
+                  syncFiltersToUrl({
+                    step: null,
+                    layer: 'All',
+                    cat: 'All',
+                    vendor: 'All',
+                    verification: 'All',
+                    licenseFilter: 'All',
+                    sort: 'pqcMigrationPriority',
+                  })
                 }}
                 filterContent={
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Migration Phase</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                        Migration Phase
+                      </h3>
                       <FilterDropdown
                         items={MIGRATION_STEPS.map((s) => ({
                           id: s.id,
@@ -1006,7 +1036,9 @@ export const MigrateView: React.FC = () => {
                       />
                     </div>
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Architecture</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                        Architecture
+                      </h3>
                       <FilterDropdown
                         items={layerFilterItems}
                         selectedId={effectiveLayer === 'All' ? 'All' : effectiveLayer}
@@ -1031,9 +1063,11 @@ export const MigrateView: React.FC = () => {
                         />
                       )}
                     </div>
-                    
+
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Properties</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                        Properties
+                      </h3>
                       {vendorFilterItems.length > 0 && (
                         <FilterDropdown
                           items={vendorFilterItems}
@@ -1070,7 +1104,9 @@ export const MigrateView: React.FC = () => {
                     </div>
 
                     <div className="space-y-3">
-                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">Sorting</h3>
+                      <h3 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider">
+                        Sorting
+                      </h3>
                       <MigrateSortControl
                         value={sortBy}
                         onChange={(s) => {
@@ -1079,7 +1115,24 @@ export const MigrateView: React.FC = () => {
                         }}
                       />
                     </div>
-                    
+
+                    {(myProducts.length > 0 || showOnlyMyProducts) && (
+                      <div className="space-y-3 pt-6 border-t border-border">
+                        <button
+                          onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
+                          className={`w-full inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-lg border transition-colors font-medium ${
+                            showOnlyMyProducts
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                          }`}
+                          aria-pressed={showOnlyMyProducts}
+                        >
+                          <BookmarkCheck size={14} />
+                          My Products ({myProducts.length})
+                        </button>
+                      </div>
+                    )}
+
                     {hiddenSet.size > 0 && (
                       <div className="space-y-3 pt-6 border-t border-border">
                         <Button
@@ -1217,8 +1270,8 @@ export const MigrateView: React.FC = () => {
               </Button>
             )}
 
-            {/* View toggle */}
-            <div>
+            {/* View toggle + My filter — grouped together */}
+            <div className="flex items-center gap-2">
               <MigrateViewToggle
                 mode={effectiveViewMode}
                 onChange={(m) => {
@@ -1226,6 +1279,20 @@ export const MigrateView: React.FC = () => {
                   syncFiltersToUrl({ mode: m })
                 }}
               />
+              {(myProducts.length > 0 || showOnlyMyProducts) && (
+                <button
+                  onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
+                  className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                    showOnlyMyProducts
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+                  aria-pressed={showOnlyMyProducts}
+                >
+                  <BookmarkCheck size={12} />
+                  My ({myProducts.length})
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1252,7 +1319,7 @@ export const MigrateView: React.FC = () => {
             </p>
           )
         })()}
-        
+
         {/* Compare Onboarding Tooltip banner */}
         {!hasDismissedCompareOnboarding && (
           <div className="mt-2 sm:mt-0 flex items-center gap-2 bg-secondary/10 border border-secondary/20 text-secondary text-xs px-3 py-1.5 rounded-full animate-in fade-in slide-in-from-bottom-2">
@@ -1295,7 +1362,7 @@ export const MigrateView: React.FC = () => {
               layerProductKeys={layerProductKeys}
               onRestoreLayer={(keys) => restoreLayerProducts(keys)}
               layerSelectedCounts={layerSelectedCounts}
-              hideEmptyLayers={vendorFilter !== 'All'}
+              hideEmptyLayers={vendorFilter !== 'All' || showOnlyMyProducts}
               layerPqcStats={layerPqcStats}
               totalPqcStats={totalPqcStats}
               partitions={activePartitions}

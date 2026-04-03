@@ -10,6 +10,7 @@ const mockSearchParams = new URLSearchParams()
 const mockSetSearchParams = vi.fn()
 vi.mock('react-router-dom', () => ({
   useSearchParams: () => [mockSearchParams, mockSetSearchParams],
+  useNavigate: () => vi.fn(),
 }))
 
 // Mock framer-motion to avoid animation issues in tests
@@ -23,6 +24,10 @@ vi.mock('./LibraryTreeTable', () => ({
   LibraryTreeTable: ({ data }: { data: unknown[] }) => (
     <div data-testid="library-tree-table">Tree Table ({data.length} items)</div>
   ),
+}))
+
+vi.mock('./DocumentAnalysis', () => ({
+  DocumentAnalysis: () => <div data-testid="document-analysis" />,
 }))
 
 vi.mock('./LibraryDetailPopover', () => ({
@@ -60,6 +65,7 @@ vi.mock('../../data/libraryEnrichmentData', () => ({
   },
   hasSubstantiveEnrichment: () => true,
   parseEnrichmentMarkdown: () => ({}),
+  mergeEnrichmentFiles: () => ({}),
 }))
 
 // Mock library data
@@ -216,13 +222,13 @@ describe('LibraryView', () => {
   describe('Search Functionality', () => {
     it('renders search input', () => {
       render(<LibraryView />)
-      expect(screen.getByPlaceholderText('Search standards...')).toBeInTheDocument()
+      expect(screen.getByPlaceholderText('Search standards and drafts...')).toBeInTheDocument()
     })
 
     it('filters items by title', async () => {
       vi.useFakeTimers()
       render(<LibraryView />)
-      const searchInput = screen.getByPlaceholderText('Search standards...')
+      const searchInput = screen.getByPlaceholderText('Search standards and drafts...')
 
       fireEvent.change(searchInput, { target: { value: 'NIST' } })
       await act(async () => {
@@ -237,7 +243,7 @@ describe('LibraryView', () => {
     it('shows no results message when search matches nothing', async () => {
       vi.useFakeTimers()
       render(<LibraryView />)
-      const searchInput = screen.getByPlaceholderText('Search standards...')
+      const searchInput = screen.getByPlaceholderText('Search standards and drafts...')
 
       fireEvent.change(searchInput, { target: { value: 'XYZ123' } })
       await act(async () => {

@@ -26,11 +26,13 @@ interface StepWizardProps {
   onNext: () => void
   onBack: () => void
   onComplete?: () => void
+  completeLabel?: string
   onExecute: () => Promise<void>
   isExecuting: boolean
   output: string | null
   error: string | null
   isStepComplete: boolean
+  renderOutput?: (output: string) => React.ReactNode
 }
 
 export const StepWizard: React.FC<StepWizardProps> = ({
@@ -39,11 +41,13 @@ export const StepWizard: React.FC<StepWizardProps> = ({
   onNext,
   onBack,
   onComplete,
+  completeLabel,
   onExecute,
   isExecuting,
   output,
   error,
   isStepComplete,
+  renderOutput,
 }) => {
   /* eslint-disable-next-line security/detect-object-injection */
   const step = steps[currentStepIndex]
@@ -172,7 +176,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
               className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
             >
               <CheckCircle size={16} />
-              Completed
+              {completeLabel || 'Completed'}
             </button>
           ) : (
             <button
@@ -203,7 +207,11 @@ export const StepWizard: React.FC<StepWizardProps> = ({
           aria-label="Command output"
         >
           {output ? (
-            <OutputFormatter output={output} />
+            renderOutput ? (
+              renderOutput(output)
+            ) : (
+              <OutputFormatter output={output} />
+            )
           ) : (
             <div className="h-full flex items-center justify-center text-foreground/20 text-sm">
               Waiting for execution...

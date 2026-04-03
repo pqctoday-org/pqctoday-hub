@@ -5,11 +5,9 @@ import {
   AlertTriangle,
   ExternalLink,
   EyeOff,
-  CheckSquare,
-  Square,
-  Scale,
-  Bookmark,
   BookmarkCheck,
+  Bookmark,
+  Scale,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
@@ -139,9 +137,11 @@ export const SoftwareCard = ({
           {/* Always visible on mobile and desktop */}
           <TrustScoreBadge resourceType="migrate" resourceId={item.softwareName} size="sm" />
           {renderPqcSupport(item.pqcSupport)}
-          
+
           {/* Progressively Disclosed on Mobile */}
-          <div className={`flex flex-wrap items-center gap-2 ${isExpandedMobile ? 'flex' : 'hidden md:flex'}`}>
+          <div
+            className={`flex flex-wrap items-center gap-2 ${isExpandedMobile ? 'flex' : 'hidden md:flex'}`}
+          >
             {renderFipsStatus(item.fipsValidated)}
             {renderQuantumTech(item.quantumTech)}
             <CertBadges certs={certsByProduct.get(item.softwareName) || []} />
@@ -163,15 +163,21 @@ export const SoftwareCard = ({
             className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-medium transition-colors"
           >
             {isExpandedMobile ? (
-              <>Hide Details <ChevronUp size={14} /></>
+              <>
+                Hide Details <ChevronUp size={14} />
+              </>
             ) : (
-              <>View Details <ChevronDown size={14} /></>
+              <>
+                View Details <ChevronDown size={14} />
+              </>
             )}
           </button>
         </div>
 
         {/* Metadata - hidden on mobile unless expanded */}
-        <div className={`text-xs text-muted-foreground space-y-1 mt-3 md:block ${isExpandedMobile ? 'block' : 'hidden'}`}>
+        <div
+          className={`text-xs text-muted-foreground space-y-1 mt-3 md:block ${isExpandedMobile ? 'block' : 'hidden'}`}
+        >
           {item.license && (
             <p>
               License: <span className="text-foreground">{item.license}</span>
@@ -261,7 +267,7 @@ export const SoftwareCard = ({
                 : 'text-muted-foreground/40 hover:text-primary'
             }`}
           >
-            {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+            {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
           </button>
         )}
       </div>

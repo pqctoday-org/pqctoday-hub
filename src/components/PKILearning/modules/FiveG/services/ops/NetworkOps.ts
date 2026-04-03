@@ -96,19 +96,16 @@ export async function generateNetworkKey(
       return {
         output: `${header}
                     
-Step 1: Generating Curve25519 Private Key...
-$ ${cmd1}
+Step 1: Generating Curve25519 Key Pair...
+> C_GenerateKeyPair(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)
 
 [EDUCATIONAL] Private Key Hex(Normally Hidden):
 ${(privHex.match(/.{1,64}/g) || [privHex]).join('\n')}
 
 Step 2: Deriving Public Key...
-$ ${cmd2}
-$ ${derCmd}
+> Target: CKA_EC_POINT (Public Key Extraction)
 
 Step 3: Public Key Hex(Shareable):
-$ xxd -p -c 32 ${derFile}
-
 ${(pubHex.match(/.{1,64}/g) || [pubHex]).join('\n')}
 
 [SUCCESS] Home Network Key Pair Generated.
@@ -193,19 +190,16 @@ Public Key Hex: ${pubHex} `,
       return {
         output: `${header}
 
-Step 1: Generating NIST P-256 Private Key...
-$ ${cmd1}
+Step 1: Generating NIST P-256 Key Pair...
+> C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN)
 
 [EDUCATIONAL] Private Key Hex(Normally Hidden):
 ${(privHex.match(/.{1,64}/g) || [privHex]).join('\n')}
 
 Step 2: Deriving Public Key...
-$ ${cmd2}
-$ ${derCmd}
+> Target: CKA_EC_POINT (Public Key Extraction)
 
 Step 3: Public Key Hex(Shareable):
-$ xxd -p -c 32 ${derFile}
-
 ${(pubHex.match(/.{1,64}/g) || [pubHex]).join('\n')}
 
 [SUCCESS] Home Network Key Pair Generated.
@@ -321,7 +315,7 @@ ${
   pqcMode === 'hybrid'
     ? `
 Step 1: Generating ECC Key (X25519)...
-$ openssl genpkey -algorithm x25519
+> C_GenerateKeyPair(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)
 
 Step 2: ECC Public Key (Classic):
 ${(eccHex.match(/.{1,64}/g) || [eccHex]).join('\n')}
@@ -368,19 +362,15 @@ Step 2: Writing to Secure Storage(EF_SUCI_Calc_Info)...
     hexDisplay = await ctx.readFileHex(pubKeyFile)
   }
 
-  const res = await openSSLService.execute(`openssl asn1parse -in ${pubKeyFile} `)
+  await openSSLService.execute(`openssl asn1parse -in ${pubKeyFile} `)
   return `═══════════════════════════════════════════════════════════════
               USIM PROVISIONING
 ═══════════════════════════════════════════════════════════════
 
 Step 1: Parsing Key Structure(ASN.1)...
-$ openssl asn1parse -in ${pubKeyFile}
-
-${res.stdout}
+> SoftHSM: Importing Public Key into CKA_EC_POINT or CKA_QKEY...
 
 Step 2: verifying Public Key Hex String...
-$ xxd -p -c 32 ${derFile}
-
 ${hexDisplay.match(/.{1,64}/g)?.join('\n')}
 
 Step 3: Writing to EF_SUCI_Calc_Info...

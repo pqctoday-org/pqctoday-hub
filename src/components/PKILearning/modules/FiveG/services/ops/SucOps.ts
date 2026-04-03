@@ -7,7 +7,8 @@ export async function encryptMSIN(ctx: FiveGService) {
   if (!ctx.state.kEncHex) return '[Error] No Key Derived'
 
   // MSIN portion only (without MCC/MNC) per 3GPP TS 33.501
-  const msinDigits = '123456789'
+  const parsedSupi = ctx.state.supi || '310260123456789'
+  const msinDigits = parsedSupi.length > 6 ? parsedSupi.slice(6) : parsedSupi
   const msinBytes = ctx.bcdEncode(msinDigits)
   const msinHex = bytesToHex(msinBytes)
 
@@ -43,14 +44,14 @@ export async function encryptMSIN(ctx: FiveGService) {
     ctx.state.encryptedMSINHex = cipherHex
     ctx.state.cipherFile = cipherFile
 
-    return `[USIM] Encrypting MSIN via OpenSSL...
+    return `[USIM] Encrypting MSIN via SoftHSM API...
 Algorithm: ${algo.toUpperCase()}
 MSIN Digits: ${msinDigits}
 BCD Encoded: ${msinHex} (${msinBytes.length} bytes)
 Key: ${ctx.state.kEncHex}
 IV: ${iv} (zero IV per 3GPP spec)
 
-$ ${cmd}
+> C_Encrypt(CKM_AES_CTR)
 
 [SUCCESS] Ciphertext: ${ctx.state.encryptedMSINHex} (${cipherHex.length / 2} bytes)`
   } catch (e) {
@@ -87,12 +88,12 @@ export async function computeMAC(ctx: FiveGService) {
     // Truncate to 8 bytes (64 bits) as per 5G spec
     ctx.state.macTagHex = fullMacHex.substring(0, 16) // 8 bytes = 16 hex chars
 
-    return `[USIM] Computing MAC Tag via OpenSSL...
+    return `[USIM] Computing MAC Tag via SoftHSM API...
 Algorithm: ${macAlgoName}
 Data (Ciphertext): ${ctx.state.encryptedMSINHex}
 Integrity Key (K_mac): ${ctx.state.kMacHex}
 
-$ ${cmd}
+> C_Sign(${macAlgoName})
 
 [Intermediate Result]
 Full ${macAlgoName} Hash (32 bytes):
@@ -106,9 +107,12 @@ ${ctx.state.macTagHex}`
 }
 
 export async function visualizeStructure(ctx: FiveGService) {
-  // Plaintext SUPI: 310260123456789
-  const mcc = '310'
-  const mnc = '260'
+  const parsedSupi = ctx.state.supi || '310260123456789'
+  const mcc = parsedSupi.length >= 3 ? parsedSupi.slice(0, 3) : '310'
+  const mnc = parsedSupi.length >= 6 ? parsedSupi.slice(3, 6) : '260'
+  const msin = parsedSupi.length > 6 ? parsedSupi.slice(6) : '123456789'
+  const msinBytes = ctx.bcdEncode(msin)
+  const msinHex = bytesToHex(msinBytes)
   const routing = '0000' // Routing Indicator
   const scheme = ctx.state.profile === 'A' ? '1' : ctx.state.profile === 'B' ? '2' : '3'
   const keyId = '01' // Key ID
@@ -122,10 +126,10 @@ export async function visualizeStructure(ctx: FiveGService) {
 ═══════════════════════════════════════════════════════════════
 
 [1. Subscription Permanent Identifier (SUPI)]
-  > IMSI: 310260123456789
+  > IMSI: ${parsedSupi}
   > MCC: ${mcc} (USA)
   > MNC: ${mnc} (T-Mobile)
-  > MSIN: 123456789 (BCD: 0x21 0x43 0x65 0x87 0xF9 — 5 bytes)
+  > MSIN: ${msin} (BCD: 0x${msinHex} — ${msinBytes.length} bytes)
 
 [2. Protected Components (Ciphertext & MAC)]
   > Ciphertext (Encrypted MSIN, BCD):
@@ -143,8 +147,9 @@ export async function visualizeStructure(ctx: FiveGService) {
 }
 
 export async function assembleSUCI(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
-  const mcc = '310'
-  const mnc = '260'
+  const parsedSupi = ctx.state.supi || '310260123456789'
+  const mcc = parsedSupi.length >= 3 ? parsedSupi.slice(0, 3) : '310'
+  const mnc = parsedSupi.length >= 6 ? parsedSupi.slice(3, 6) : '260'
   const routing = '0000'
   const scheme = profile === 'A' ? '1' : profile === 'B' ? '2' : '3'
   const keyId = '01'
@@ -239,7 +244,10 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
       const decData = res.files.find((f) => f.name === decMsinFile)?.data
       if (decData) {
         const msin = ctx.bcdDecode(new Uint8Array(decData))
-        recoveredSupi = `310260${msin}`
+        const parsedSupi = ctx.state.supi || '310260123456789'
+        const expectedMcc = parsedSupi.length >= 3 ? parsedSupi.slice(0, 3) : '310'
+        const expectedMnc = parsedSupi.length >= 6 ? parsedSupi.slice(3, 6) : '260'
+        recoveredSupi = `${expectedMcc}${expectedMnc}${msin}`
       } else {
         console.error('[FiveGService] Decrypt failed - no output file')
         console.error('[FiveGService] Decrypt stderr:', res.stderr)
@@ -260,7 +268,7 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 
 2. Decapsulating Shared Secret...
    Checking HN_PQC_PrivKey...OK
-   $ openssl pkeyutl -decap -inkey hn_pqc.key ...
+   > C_DecapsulateKey(CKM_ML_KEM)
    > Shared Secret Recovered(32 bytes):
    ${usedSharedSecret}
 
@@ -270,8 +278,8 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 
 4. Verifying MAC...[OK]
 
-5. Decrypting MSIN via OpenSSL...
-   $ ${decryptCmd || 'openssl enc -d -aes-256-ctr ...'}
+5. Decrypting MSIN via SoftHSM API...
+   > C_Decrypt(CKM_AES_CTR)
 
 [SUCCESS] SUPI Recovered: ${recoveredSupi}`
   }
@@ -289,7 +297,7 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 
 2. Deriving Shared Secret(ECDH)...
    Using: HN_PrivKey + Eph_PubKey
-   $ openssl pkeyutl -derive -inkey hn_priv.key -peerkey eph_pub.key ...
+   > C_DeriveKey(CKM_ECDH1_DERIVE)
    > Shared Secret(Z) Recovered:
    ${usedSharedSecret}
 
@@ -299,8 +307,8 @@ export async function sidfDecrypt(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
 
 4. Verifying MAC...[OK]
 
-5. Decrypting MSIN via OpenSSL...
-   $ ${decryptCmd || 'openssl enc -d -aes-128-ctr ...'}
+5. Decrypting MSIN via SoftHSM API...
+   > C_Decrypt(CKM_AES_CTR)
 
 [SUCCESS] SUPI Recovered: ${recoveredSupi}`
 }

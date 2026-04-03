@@ -43,6 +43,7 @@ export class FiveGService {
   } = {}
   public state: {
     profile?: 'A' | 'B' | 'C'
+    supi?: string // Added supi tracking
     sharedSecretHex?: string
     kEncHex?: string
     kMacHex?: string

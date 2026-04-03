@@ -11,6 +11,21 @@ import {
   CKM_SHA512_RSA_PKCS_PSS,
   CKZ_DATA_SPECIFIED,
   CK_ATTRIBUTE_SIZE,
+  CKA_CLASS,
+  CKA_KEY_TYPE,
+  CKA_TOKEN,
+  CKA_SENSITIVE,
+  CKA_EXTRACTABLE,
+  CKA_VALUE_LEN,
+  CKA_DERIVE,
+  CKA_ENCRYPT,
+  CKA_DECRYPT,
+  CKA_WRAP,
+  CKA_UNWRAP,
+  CKA_SIGN,
+  CKA_VERIFY,
+  CKO_SECRET_KEY,
+  CKK_GENERIC_SECRET,
 } from './constants'
 import { rvName } from './logging'
 
@@ -38,6 +53,51 @@ export const checkRV = (rv: number, fn: string): void => {
 
 // Build a CK_ATTRIBUTE array in WASM memory.
 // attrs: [{ type, boolVal? | ulongVal? | bytesPtr?/len? }]
+// ── PKCS#11 v3.2 Derived Key Profile ─────────────────────────────────────────
+/**
+ * Caller-defined attribute profile for a key produced by C_DeriveKey.
+ * Maps directly to the CK_ATTRIBUTE template passed in pTemplate per PKCS#11 v3.2.
+ *
+ * All fields are optional — omitted fields are not included in the template.
+ * keyLen and keyType are always required for GENERIC_SECRET derived keys.
+ *
+ * Usage examples:
+ *   // ECDH shared secret that will be used as HKDF base key (CKA_DERIVE=true)
+ *   { keyLen: 32, derive: true, extractable: true }
+ *
+ *   // AES-256 key for direct encryption
+ *   { keyType: CKK_AES, keyLen: 32, encrypt: true, decrypt: true }
+ *
+ *   // Intermediate key for further derivation only (non-extractable, derive-only)
+ *   { keyLen: 32, derive: true, sensitive: true, extractable: false }
+ */
+export interface DerivedKeyProfile {
+  /** CKA_KEY_TYPE — defaults to CKK_GENERIC_SECRET (0x10) if omitted */
+  keyType?: number
+  /** CKA_VALUE_LEN — derived key length in bytes */
+  keyLen: number
+  /** CKA_TOKEN — store in token (default: false, session-only) */
+  token?: boolean
+  /** CKA_SENSITIVE — key value hidden from C_GetAttributeValue */
+  sensitive?: boolean
+  /** CKA_EXTRACTABLE — key value can be extracted (default: true) */
+  extractable?: boolean
+  /** CKA_DERIVE — key may be used as base key for C_DeriveKey (HKDF, ECDH chain etc.) */
+  derive?: boolean
+  /** CKA_ENCRYPT — key may be used with C_EncryptInit */
+  encrypt?: boolean
+  /** CKA_DECRYPT — key may be used with C_DecryptInit */
+  decrypt?: boolean
+  /** CKA_WRAP — key may wrap other keys */
+  wrap?: boolean
+  /** CKA_UNWRAP — key may unwrap other keys */
+  unwrap?: boolean
+  /** CKA_SIGN — key may be used with C_SignInit (HMAC) */
+  sign?: boolean
+  /** CKA_VERIFY — key may be used with C_VerifyInit (HMAC) */
+  verify?: boolean
+}
+
 export interface AttrDef {
   type: number
   boolVal?: boolean
@@ -90,6 +150,37 @@ export const freeTemplate = (
   M._free(tpl.ptr)
   tpl.auxPtrs.forEach((p) => M._free(p))
   void count
+}
+
+/**
+ * Build a WASM CK_ATTRIBUTE template from a DerivedKeyProfile per PKCS#11 v3.2.
+ * Only includes attributes that are explicitly set in the profile —
+ * unset boolean flags are omitted (not included in the template) per spec §4.1.
+ *
+ * Returns { tpl, attrCount } — pass both to C_DeriveKey as pTemplate/ulAttributeCount.
+ */
+export const buildDerivedKeyTemplate = (
+  M: SoftHSMModule,
+  profile: DerivedKeyProfile
+): { tpl: ReturnType<typeof buildTemplate>; attrCount: number } => {
+  const defs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: profile.keyType ?? CKK_GENERIC_SECRET },
+    { type: CKA_TOKEN, boolVal: profile.token ?? false },
+    { type: CKA_SENSITIVE, boolVal: profile.sensitive ?? false },
+    { type: CKA_EXTRACTABLE, boolVal: profile.extractable ?? true },
+    { type: CKA_VALUE_LEN, ulongVal: profile.keyLen },
+  ]
+  // Conditionally include usage attributes — omit if not specified (PKCS#11 v3.2 §4.1)
+  if (profile.derive !== undefined) defs.push({ type: CKA_DERIVE, boolVal: profile.derive })
+  if (profile.encrypt !== undefined) defs.push({ type: CKA_ENCRYPT, boolVal: profile.encrypt })
+  if (profile.decrypt !== undefined) defs.push({ type: CKA_DECRYPT, boolVal: profile.decrypt })
+  if (profile.wrap !== undefined) defs.push({ type: CKA_WRAP, boolVal: profile.wrap })
+  if (profile.unwrap !== undefined) defs.push({ type: CKA_UNWRAP, boolVal: profile.unwrap })
+  if (profile.sign !== undefined) defs.push({ type: CKA_SIGN, boolVal: profile.sign })
+  if (profile.verify !== undefined) defs.push({ type: CKA_VERIFY, boolVal: profile.verify })
+
+  return { tpl: buildTemplate(M, defs), attrCount: defs.length }
 }
 
 // ── High-level PKCS#11 helpers ───────────────────────────────────────────────

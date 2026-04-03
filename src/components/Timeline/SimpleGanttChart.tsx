@@ -11,6 +11,8 @@ import {
   Download,
   Link2,
   Check,
+  Bookmark,
+  BookmarkCheck,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { GanttCountryData, TimelinePhase, Phase } from '../../types/timeline'
@@ -39,6 +41,10 @@ interface SimpleGanttChartProps {
   countryItems: Array<{ id: string; label: string; icon: React.ReactNode | null }>
   searchText?: string
   onSearchChange?: (text: string) => void
+  myCountries?: string[]
+  onToggleMyCountry?: (name: string) => void
+  showOnlyMyCountries?: boolean
+  onSetShowOnlyMyCountries?: (val: boolean) => void
 }
 
 const START_YEAR = 2024
@@ -66,10 +72,14 @@ export const SimpleGanttChart = ({
   countryItems,
   searchText = '',
   onSearchChange,
+  myCountries = [],
+  onToggleMyCountry,
+  showOnlyMyCountries = false,
+  onSetShowOnlyMyCountries,
 }: SimpleGanttChartProps) => {
   const [localSearchText, setLocalSearchText] = useState(searchText)
   const filterText = onSearchChange ? searchText : localSearchText
-  
+
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     if (onSearchChange) {
@@ -189,6 +199,7 @@ export const SimpleGanttChart = ({
           }),
       }))
       .filter((c) => c.phases.length > 0)
+      .filter((c) => !showOnlyMyCountries || myCountries.includes(c.country.countryName))
   }, [
     data,
     filterText,
@@ -198,6 +209,8 @@ export const SimpleGanttChart = ({
     selectedCountry,
     selectedPhaseType,
     selectedEventType,
+    showOnlyMyCountries,
+    myCountries,
   ])
 
   const totalPhaseCount = useMemo(
@@ -215,7 +228,7 @@ export const SimpleGanttChart = ({
   const clearAllFilters = useCallback(() => {
     if (onSearchChange) onSearchChange('')
     else setLocalSearchText('')
-    
+
     setSelectedPhaseType('All')
     setSelectedEventType('All')
     onRegionSelect('All')
@@ -418,6 +431,20 @@ export const SimpleGanttChart = ({
               noContainer
             />
           </div>
+          {myCountries.length > 0 && onSetShowOnlyMyCountries && (
+            <button
+              onClick={() => onSetShowOnlyMyCountries(!showOnlyMyCountries)}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                showOnlyMyCountries
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+              }`}
+              aria-pressed={showOnlyMyCountries}
+            >
+              <BookmarkCheck size={12} />
+              My ({myCountries.length})
+            </button>
+          )}
           {selectedCountry !== 'All' && (
             <button
               type="button"
@@ -504,11 +531,10 @@ export const SimpleGanttChart = ({
         <button
           onClick={handleExportCSV}
           disabled={processedData.length === 0}
-          className="flex items-center gap-2 px-4 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-sm text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
+          className="flex items-center justify-center px-2.5 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Export filtered timeline as CSV"
         >
           <Download size={16} />
-          <span className="hidden md:inline">Export CSV</span>
         </button>
       </div>
 
@@ -530,10 +556,15 @@ export const SimpleGanttChart = ({
               onClear={() => setSelectedEventType('All')}
             />
           )}
-          {filterText && <FilterChip label={`"${filterText}"`} onClear={() => {
-            if (onSearchChange) onSearchChange('')
-            else setLocalSearchText('')
-          }} />}
+          {filterText && (
+            <FilterChip
+              label={`"${filterText}"`}
+              onClear={() => {
+                if (onSearchChange) onSearchChange('')
+                else setLocalSearchText('')
+              }}
+            />
+          )}
           <span className="text-xs text-muted-foreground">
             {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
             {processedData.length !== data.length
@@ -671,6 +702,30 @@ export const SimpleGanttChart = ({
                                 </span>
                               </div>
                               <div className="flex items-center gap-0.5 -ml-1 mt-0.5">
+                                {onToggleMyCountry && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation()
+                                      onToggleMyCountry(country.countryName)
+                                    }}
+                                    className={`p-1 rounded transition-colors ${
+                                      myCountries.includes(country.countryName)
+                                        ? 'text-primary hover:text-primary/80'
+                                        : 'text-muted-foreground/40 hover:text-primary'
+                                    }`}
+                                    aria-label={
+                                      myCountries.includes(country.countryName)
+                                        ? 'Remove from My Countries'
+                                        : 'Add to My Countries'
+                                    }
+                                  >
+                                    {myCountries.includes(country.countryName) ? (
+                                      <BookmarkCheck size={14} />
+                                    ) : (
+                                      <Bookmark size={14} />
+                                    )}
+                                  </button>
+                                )}
                                 <EndorseButton
                                   endorseUrl={buildEndorsementUrl({
                                     category: 'timeline-endorsement',

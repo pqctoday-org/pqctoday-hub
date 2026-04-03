@@ -3,7 +3,7 @@
 import React, { useState, useMemo, useRef, useEffect, useCallback } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ArrowUpDown, BookOpen, Home, PlayCircle, Search, X } from 'lucide-react'
+import { ArrowUpDown, BookOpen, Home, PlayCircle, Search, X, CheckSquare } from 'lucide-react'
 import clsx from 'clsx'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
@@ -19,6 +19,7 @@ import { LearnTrackStack } from './LearnTrackStack'
 import { ModuleTable, type ModuleTableItem } from './ModuleTable'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } from './moduleData'
 import { MobileLearnFilterDrawer } from './MobileLearnFilterDrawer'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -250,6 +251,7 @@ const ModuleTracksGrid = ({
 }) => {
   const { modules } = useModuleStore()
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
+  const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
 
   // Filter state
   const [searchText, setSearchText] = useState('')
@@ -366,6 +368,7 @@ const ModuleTracksGrid = ({
     let filtered = flatItems.filter((item) => {
       if (item.kind === 'checkpoint') return true
       const { module, track } = item
+      if (showOnlyLearnModules && !myLearnModules.includes(module.id)) return false
       if (needle && !`${module.title} ${module.description}`.toLowerCase().includes(needle))
         return false
       if (selectedTrack !== 'All' && track !== selectedTrack) return false
@@ -420,6 +423,8 @@ const ModuleTracksGrid = ({
     sortBy,
     personaFilterActive,
     modules,
+    showOnlyLearnModules,
+    myLearnModules,
   ])
 
   // For stack mode: which module IDs pass the current filters
@@ -428,6 +433,7 @@ const ModuleTracksGrid = ({
     return new Set(
       allModules
         .filter((m) => {
+          if (showOnlyLearnModules && !myLearnModules.includes(m.id)) return false
           if (needle && !`${m.title} ${m.description}`.toLowerCase().includes(needle)) return false
           if (selectedDifficulty !== 'All' && (m.difficulty ?? '') !== selectedDifficulty)
             return false
@@ -451,6 +457,8 @@ const ModuleTracksGrid = ({
     selectedPersonaFilter,
     allModules,
     modules,
+    showOnlyLearnModules,
+    myLearnModules,
   ])
 
   const moduleItemCount = filteredItems.filter((i) => i.kind === 'module').length
@@ -546,7 +554,7 @@ const ModuleTracksGrid = ({
             filterContent={
               <div className="space-y-6">
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Learning Profile</label>
+                  <span className="text-sm font-semibold text-foreground">Learning Profile</span>
                   <FilterDropdown
                     items={personaFilterItems}
                     selectedId={selectedPersonaFilter}
@@ -557,7 +565,7 @@ const ModuleTracksGrid = ({
                 </div>
                 {showTrackFilter && (
                   <div className="space-y-2 flex flex-col">
-                    <label className="text-sm font-semibold text-foreground">Track</label>
+                    <span className="text-sm font-semibold text-foreground">Track</span>
                     <FilterDropdown
                       items={TRACK_FILTER_ITEMS}
                       selectedId={selectedTrack}
@@ -568,7 +576,7 @@ const ModuleTracksGrid = ({
                   </div>
                 )}
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Difficulty</label>
+                  <span className="text-sm font-semibold text-foreground">Difficulty</span>
                   <FilterDropdown
                     items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
                       id: d,
@@ -581,7 +589,7 @@ const ModuleTracksGrid = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Status</label>
+                  <span className="text-sm font-semibold text-foreground">Status</span>
                   <FilterDropdown
                     items={STATUS_FILTER_ITEMS.map((s) => ({
                       id: s,
@@ -594,11 +602,11 @@ const ModuleTracksGrid = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                  <label className="text-sm font-semibold text-foreground">Sort By</label>
+                  <span className="text-sm font-semibold text-foreground">Sort By</span>
                   <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                  <label className="text-sm font-semibold text-foreground">View Mode</label>
+                  <span className="text-sm font-semibold text-foreground">View Mode</span>
                   <LearnViewToggle mode={viewMode} onChange={setViewMode} />
                 </div>
               </div>
@@ -664,6 +672,22 @@ const ModuleTracksGrid = ({
         {/* Sort — hidden in stack mode, disabled when persona active */}
         {viewMode !== 'stack' && (
           <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
+        )}
+
+        {/* My Modules filter toggle */}
+        {myLearnModules.length > 0 && (
+          <button
+            onClick={() => setShowOnlyLearnModules(!showOnlyLearnModules)}
+            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+              showOnlyLearnModules
+                ? 'border-primary bg-primary/10 text-primary'
+                : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+            }`}
+            aria-pressed={showOnlyLearnModules}
+          >
+            <CheckSquare size={12} />
+            My ({myLearnModules.length})
+          </button>
         )}
 
         {/* View toggle */}

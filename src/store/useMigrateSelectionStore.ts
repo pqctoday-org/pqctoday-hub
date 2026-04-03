@@ -21,6 +21,9 @@ interface MigrateSelectionState {
   myProducts: string[]
   toggleMyProduct: (key: string) => void
   clearMyProducts: () => void
+  /** Whether the "show only my products" filter is active */
+  showOnlyMyProducts: boolean
+  setShowOnlyMyProducts: (val: boolean) => void
   /** Active view mode for the migrate catalog */
   viewMode: MigrateViewMode
   setViewMode: (mode: MigrateViewMode) => void
@@ -36,6 +39,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
       activeLayer: 'All',
       activeSubCategory: 'All',
       myProducts: [],
+      showOnlyMyProducts: false,
       viewMode: 'stack' as MigrateViewMode,
       workflowCollapsed: true,
 
@@ -66,13 +70,15 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
 
       clearMyProducts: () => set({ myProducts: [] }),
 
+      setShowOnlyMyProducts: (val) => set({ showOnlyMyProducts: val }),
+
       setViewMode: (mode) => set({ viewMode: mode }),
       setWorkflowCollapsed: (collapsed) => set({ workflowCollapsed: collapsed }),
     }),
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 6,
+      version: 7,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -106,6 +112,10 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
             state.activeLayer = 'AppServers'
           }
           state.activeSubCategory = state.activeSubCategory ?? 'All'
+        }
+        if (version < 7) {
+          // v6 → v7: add showOnlyMyProducts
+          state.showOnlyMyProducts = false
         }
         return state
       },

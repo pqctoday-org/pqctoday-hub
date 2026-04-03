@@ -272,7 +272,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.0"
+                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.2"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -417,7 +417,9 @@ export function SbomSection() {
               <div className="break-inside-avoid">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust WASM Bindings{' '}
-                  <span className="text-xs font-normal text-muted-foreground">(softhsmrustv3)</span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (softhsmrustv3 v0.4.2)
+                  </span>
                 </h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -470,7 +472,9 @@ export function SbomSection() {
               <div className="break-inside-avoid">
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust Crypto Crates{' '}
-                  <span className="text-xs font-normal text-muted-foreground">(softhsmrustv3)</span>
+                  <span className="text-xs font-normal text-muted-foreground">
+                    (softhsmrustv3 v0.4.2)
+                  </span>
                 </h3>
                 <ul className="space-y-2">
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">

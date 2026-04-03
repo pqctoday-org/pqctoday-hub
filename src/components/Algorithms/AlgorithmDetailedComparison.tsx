@@ -65,19 +65,31 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
       <Tabs value={activeSubTab} onValueChange={(v) => onSubTabChange?.(v as SubTab)}>
         <div className="flex items-center gap-2 mb-4">
           <TabsList className="bg-muted/50 border border-border flex w-full overflow-x-auto hide-scrollbar justify-start sm:justify-center p-1 rounded-lg">
-            <TabsTrigger value="performance" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
+            <TabsTrigger
+              value="performance"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
               <Zap size={16} />
               <span>Performance</span>
             </TabsTrigger>
-            <TabsTrigger value="security" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
+            <TabsTrigger
+              value="security"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
               <Shield size={16} />
               <span>Security Levels</span>
             </TabsTrigger>
-            <TabsTrigger value="sizes" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
+            <TabsTrigger
+              value="sizes"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
               <HardDrive size={16} />
               <span>Size Comparison</span>
             </TabsTrigger>
-            <TabsTrigger value="usecases" className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm">
+            <TabsTrigger
+              value="usecases"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
               <TrendingUp size={16} />
               <span>Use Cases</span>
             </TabsTrigger>
