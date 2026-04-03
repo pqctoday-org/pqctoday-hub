@@ -50,7 +50,16 @@ export function useEthereumSigning({
           test recovery IDs (0 and 1) to find the correct one, then encode it.
         </>
       ),
-      code: `// 1. OpenSSL Command (Sign Raw Hash) -> Outputs r, s\nopenssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ethereum_hashdata_[ts].dat -out ethereum_signdata_[ts].sig\n\n// 2. Compute v (Post-processing)`,
+      code: `// 1. SoftHSMv3 Signing (CKM_ECDSA)
+const signature = hsm_ecdsaSign(
+  hsm.module, 
+  hsm.sessionHandle, 
+  privHandle, 
+  sighash, 
+  CKM_ECDSA
+);
+
+// 2. Compute v (Post-processing)`,
       language: 'javascript',
       actionLabel: 'Sign Transaction',
     },

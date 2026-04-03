@@ -148,6 +148,19 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
+  {
+    id: 'vpn-sim',
+    name: 'PQC VPN Simulator',
+    description:
+      'Simulate IKEv2 RFC 7383 packet fragmentation and MTU breakage caused by massive ML-KEM keys.',
+    category: 'HSM / PKCS#11',
+    algorithms: ['ML-KEM-768', 'RFC 7383', 'IKEv2'],
+    icon: Shield,
+    moduleLink: '/learn/network-security-pqc',
+    keywords: ['vpn', 'ipsec', 'ikev2', 'mtu', 'fragmentation', 'ml-kem', 'pure pqc', 'hybrid'],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'ops'],
+  },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
   {
@@ -447,6 +460,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'kdf-derivation': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/QKD/workshop/HSMKeyDerivationDemo').then((m) => ({
       default: m.HSMKeyDerivationDemo,
+    }))
+  ),
+  'vpn-sim': lazyWithRetry(() =>
+    import('@/components/Playground/hsm/VpnSimulationPanel').then((m) => ({
+      default: m.VpnSimulationPanel,
     }))
   ),
   'rng-demo': lazyWithRetry(() =>

@@ -6,7 +6,7 @@ import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
 import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
 import { fiveGService } from './services/FiveGService'
-import { Shield, Radio, Info, ExternalLink } from 'lucide-react'
+import { Shield, Radio, Info } from 'lucide-react'
 import clsx from 'clsx'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -14,8 +14,6 @@ import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { OutputFormatter } from '../DigitalAssets/components/OutputFormatter'
 
 import type { KatTestSpec } from '@/utils/katRunner'
 
@@ -60,6 +58,9 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
 ]
 import {
   hsm_generateECKeyPair,
+  hsm_generateMLKEMKeyPair,
+  hsm_pqcEncap,
+  hsm_pqcDecap,
   hsm_generateAESKey,
   hsm_aesEncrypt,
   hsm_hmac,
@@ -125,76 +126,6 @@ function getGsmaVector(profile: 'A' | 'B' | 'C', stepId: string) {
   }
 }
 
-import { CheckCircle2 } from 'lucide-react'
-
-const DualEngineOutputViewer = ({ output }: { output: string }) => {
-  try {
-    const data = JSON.parse(output)
-    if (data && data.type === 'DUAL_ENGINE') {
-      const isMatch =
-        data.gsma &&
-        data.hsm.toLowerCase().includes(data.gsma.split(':')[1]?.trim().toLowerCase() || 'XXXXX')
-      return (
-        <Tabs defaultValue="softhsm" className="w-full">
-          <TabsList className="mb-2">
-            <TabsTrigger value="softhsm" className="font-mono text-xs">
-              SoftHSM3 (KAT)
-            </TabsTrigger>
-            <TabsTrigger value="openssl" className="font-mono text-xs">
-              OpenSSL Engine
-            </TabsTrigger>
-            {data.gsma && (
-              <TabsTrigger value="gsma" className="font-mono text-xs">
-                GSMA Vector Validation
-              </TabsTrigger>
-            )}
-          </TabsList>
-          <TabsContent value="softhsm" className="mt-0">
-            <OutputFormatter output={data.hsm} />
-          </TabsContent>
-          <TabsContent value="openssl" className="mt-0">
-            <OutputFormatter output={data.ossl} />
-          </TabsContent>
-          {data.gsma && (
-            <TabsContent value="gsma" className="mt-0">
-              <div className="bg-muted p-4 rounded border border-border font-mono text-sm whitespace-pre-wrap">
-                <div className="flex items-center justify-between mb-2">
-                  <div className="text-primary font-bold">
-                    GSMA TS 33.501 Annex C.4 (Profile B) known answer test
-                  </div>
-                  <a
-                    href="https://www.3gpp.org/ftp/Specs/archive/33_series/33.501/"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-xs text-blue-500 hover:text-blue-400 hover:underline flex items-center gap-1"
-                  >
-                    View Spec <ExternalLink size={12} />
-                  </a>
-                </div>
-                {data.gsma}
-                <div className="mt-4 pt-4 border-t border-border flex items-center gap-2">
-                  {isMatch ? (
-                    <span className="text-success flex items-center gap-1">
-                      <CheckCircle2 size={16} /> SoftHSM3 Output matches GSMA Reference precisely.
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      Compare manually vs generator output.
-                    </span>
-                  )}
-                </div>
-              </div>
-            </TabsContent>
-          )}
-        </Tabs>
-      )
-    }
-  } catch {
-    //
-  }
-  return <OutputFormatter output={output} />
-}
-
 export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, initialPqcMode }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
@@ -203,6 +134,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
 
   // Track HSM key handles across steps for ECDH derive + HKDF
   const hsmHandlesRef = useRef<{
+    ciphertext?: Uint8Array
     hnPubHandle?: number
     hnPrivHandle?: number
     ephPubHandle?: number
@@ -248,21 +180,66 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
     ephPubKey?: string
   }>({})
 
+  const buildDualEngineResult = (hsmRes: string, osslRes: string, stepId: string) => {
+    const gsmaText = getGsmaVector(profile, stepId)
+    let enhancedGsma = gsmaText
+    if (gsmaText) {
+      const isMatch = hsmRes
+        .toLowerCase()
+        .includes(gsmaText.split(':')[1]?.trim().toLowerCase() || 'XXXXX')
+      enhancedGsma =
+        gsmaText +
+        '\n\n' +
+        (isMatch
+          ? '[SUCCESS] SoftHSM3 Output matches GSMA Reference precisely.'
+          : '[WARNING] Compare manually vs generator output.')
+    }
+    const r: Record<string, string> = {
+      'SoftHSM3 (KAT)': hsmRes,
+      'OpenSSL Engine': osslRes,
+    }
+    if (enhancedGsma) r['GSMA Vector Validation'] = enhancedGsma
+    return r
+  }
   const executeStep = async () => {
     const stepData = rawSteps[wizard.currentStep]
     fiveGService.state.supi = customSupi || '310260123456789'
-    let result = ''
+    let result: string | Record<string, string> = ''
 
     try {
       if (stepData.id === 'init_network_key') {
-        const hsmActive =
-          hsm.isReady &&
-          hsm.moduleRef.current &&
-          hsm.hSessionRef.current &&
-          (profile === 'A' || profile === 'B')
+        const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
         let hsmResult = ''
-
         if (hsmActive) {
+          if (profile === 'C') {
+            const M = hsm.moduleRef.current!
+            const hSession = hsm.hSessionRef.current!
+            const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+              M,
+              hSession,
+              768,
+              false,
+              '5G HN Key (ML-KEM)'
+            )
+            hsmHandlesRef.current.hnPubHandle = pubHandle
+            hsmHandlesRef.current.hnPrivHandle = privHandle
+            hsm.addKey({
+              handle: pubHandle,
+              label: 'HN Key (ML-KEM-768)',
+              family: 'ml-kem',
+              role: 'public',
+              generatedAt: new Date().toISOString(),
+            })
+            hsm.addKey({
+              handle: privHandle,
+              label: 'HN Key (ML-KEM-768)',
+              family: 'ml-kem',
+              role: 'private',
+              generatedAt: new Date().toISOString(),
+            })
+            hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          }
+        } else {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
           const curve = (profile === 'A' ? 'X25519' : 'P-256') as 'X25519' | 'P-256'
@@ -289,9 +266,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             role: 'private',
             generatedAt: new Date().toISOString(),
           })
-          hsmResult =
-            `[PKCS#11] C_GenerateKeyPair(${curve === 'X25519' ? 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN' : 'CKM_EC_KEY_PAIR_GEN'}, ${curve})\n` +
-            `  → Public key handle:  ${pubHandle}\n  → Private key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.`
+          hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const res = await fiveGService.generateNetworkKey(profile, pqcMode)
@@ -302,12 +277,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         }))
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: res.output,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, res.output, stepData.id)
         } else {
           result = res.output
         }
@@ -317,7 +287,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const aesHandle = hsm_generateAESKey(M, hSession, 128)
+          const aesHandle = hsm_generateAESKey(M, hSession, profile === 'C' ? 256 : 128)
           const supiStr = customSupi || '310260123456789'
           const msinString = supiStr.length > 6 ? supiStr.slice(6) : supiStr
           const msin = new TextEncoder().encode(msinString)
@@ -325,18 +295,13 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const ctHex = Array.from(ct.ciphertext)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `[PKCS#11] C_GenerateKey(CKM_AES_KEY_GEN, 128-bit)\n[PKCS#11] C_EncryptInit(CKM_AES_CBC) + C_Encrypt\n  MSIN plaintext:  ${msinString}\n  Ciphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM. (Completed)`
+          hsmResult = `MSIN plaintext:  ${msinString}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.encryptMSIN()
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
@@ -352,18 +317,13 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const macHex = Array.from(mac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `[PKCS#11] C_GenerateKey(CKM_GENERIC_SECRET_KEY_GEN, 256-bit)\n[PKCS#11] C_SignInit(CKM_SHA256_HMAC) + C_Sign\n  MAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM. (Completed)`
+          hsmResult = `MAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.computeMAC()
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
@@ -377,23 +337,21 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+          const pubBytes =
+            profile === 'C'
+              ? hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+              : hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
           const pubHex = Array.from(pubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) on pub handle ${hsmHandlesRef.current.hnPubHandle}\n  Public key bytes: ${pubBytes.length}\n  Key (hex): ${pubHex.slice(0, 64)}...\n\nHN public key extracted from SoftHSM3 → provisioned to USIM. (Completed)`
+          hsmResult = `Public key bytes: ${pubBytes.length}\nKey (hex): ${pubHex.slice(0, 64)}...\n\nHN public key extracted from SoftHSM3 → provisioned to USIM. (Completed)`
         }
 
         const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
         const osslResult = await fiveGService.provisionUSIM(targetFile)
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
@@ -407,31 +365,28 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const pubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-          hsmResult = `[PKCS#11] C_GetAttributeValue(CKA_EC_POINT) — key retrieved from HSM\n  Public key size: ${pubBytes.length} bytes\n  Profile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n\nUE retrieved HN public key from USIM (HSM-backed). (Completed)`
+          const pubBytes =
+            profile === 'C'
+              ? hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+              : hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+          hsmResult = `Public key size: ${pubBytes.length} bytes\nProfile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n\nUE retrieved HN public key from USIM (HSM-backed). (Completed)`
         }
 
         const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
         const osslResult = await fiveGService.retrieveKey(targetFile, profile)
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
       } else if (stepData.id === 'gen_ephemeral_key') {
-        const hsmActive =
-          hsm.isReady &&
-          hsm.moduleRef.current &&
-          hsm.hSessionRef.current &&
-          (profile === 'A' || profile === 'B')
+        const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
         let hsmResult = ''
-        if (hsmActive) {
+        if (hsmActive && profile === 'C' && pqcMode === 'pure') {
+          hsmResult =
+            'In Pure ML-KEM mode, ephemeral keys are generated dynamically during encapsulation.\n\n(Skipped)'
+        } else if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
           const curve = (profile === 'A' ? 'X25519' : 'P-256') as 'X25519' | 'P-256'
@@ -448,7 +403,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const ephPubHex = Array.from(ephPubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `[PKCS#11] C_GenerateKeyPair(${curve === 'X25519' ? 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN' : 'CKM_EC_KEY_PAIR_GEN'}, ${curve})\n  → Ephemeral pub handle:  ${pubHandle}\n  → Ephemeral priv handle: ${privHandle}\n  → Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n\nEphemeral key pair generated via SoftHSM3 WASM.`
+          hsmResult = `→ Ephemeral pub handle:  ${pubHandle}\n→ Ephemeral priv handle: ${privHandle}\n→ Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n\nEphemeral key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
@@ -459,12 +414,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         }))
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: res.output,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, res.output, stepData.id)
         } else {
           result = res.output
         }
@@ -473,28 +423,45 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsm.isReady &&
           hsm.moduleRef.current &&
           hsm.hSessionRef.current &&
-          hsmHandlesRef.current.ephPrivHandle &&
           hsmHandlesRef.current.hnPubHandle
         let hsmResult = ''
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const hnPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-          const derivedHandle = hsm_ecdhDerive(
-            M,
-            hSession,
-            hsmHandlesRef.current.ephPrivHandle!,
-            hnPubBytes,
-            undefined,
-            undefined,
-            { keyLen: 32, derive: true, extractable: true }
-          )
-          hsmHandlesRef.current.sharedSecretHandle = derivedHandle
-          const sharedBytes = hsm_extractKeyValue(M, hSession, derivedHandle)
-          const sharedHex = Array.from(sharedBytes)
-            .map((b: number) => b.toString(16).padStart(2, '0'))
-            .join('')
-          hsmResult = `[PKCS#11] C_DeriveKey(CKM_ECDH1_DERIVE, CKA_DERIVE=true)\n  ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}\n  hnPub bytes: ${hnPubBytes.length}\n  → Shared secret handle: ${derivedHandle}\n  → Z (hex): ${sharedHex.slice(0, 64)}...\n\nECDH shared secret computed via SoftHSM3 WASM. (Derived)`
+          if (profile === 'C') {
+            const { ciphertextBytes, secretHandle } = hsm_pqcEncap(
+              M,
+              hSession,
+              hsmHandlesRef.current.hnPubHandle!,
+              'ML-KEM-768'
+            )
+            hsmHandlesRef.current.sharedSecretHandle = secretHandle
+            hsmHandlesRef.current.ciphertext = ciphertextBytes
+            const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+            const sharedHex = Array.from(sharedBytes)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            hsmResult = `hnPub handle: ${hsmHandlesRef.current.hnPubHandle}\n→ Ciphertext length: ${ciphertextBytes.length} bytes\n→ Shared secret handle: ${secretHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nML-KEM Encapsulation executed via SoftHSM3 WASM. (Encapsulated)`
+          } else {
+            const M = hsm.moduleRef.current!
+            const hSession = hsm.hSessionRef.current!
+            const hnPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
+            const derivedHandle = hsm_ecdhDerive(
+              M,
+              hSession,
+              hsmHandlesRef.current.ephPrivHandle!,
+              hnPubBytes,
+              undefined,
+              undefined,
+              { keyLen: 32, derive: true, extractable: true }
+            )
+            hsmHandlesRef.current.sharedSecretHandle = derivedHandle
+            const sharedBytes = hsm_extractKeyValue(M, hSession, derivedHandle)
+            const sharedHex = Array.from(sharedBytes)
+              .map((b: number) => b.toString(16).padStart(2, '0'))
+              .join('')
+            hsmResult = `ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}\nhnPub bytes: ${hnPubBytes.length}\n→ Shared secret handle: ${derivedHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nECDH shared secret computed via SoftHSM3 WASM. (Derived)`
+          }
         }
 
         const ephPriv = artifacts.ephPrivKey || 'sim_eph_priv.key'
@@ -502,12 +469,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         const osslResult = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
@@ -552,23 +514,48 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const kMacHex = Array.from(kMac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `[PKCS#11] C_DeriveKey(CKM_HKDF_DERIVE, CKM_SHA256)\n  Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n  → K_enc (${kEnc.length} bytes): ${kEncHex}\n  → K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived via SoftHSM3 WASM. (Derived)`
+          hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n→ K_enc (${kEnc.length} bytes): ${kEncHex}\n→ K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived via SoftHSM3 WASM. (Derived)`
         }
 
         const osslResult = await fiveGService.deriveKeys(profile)
 
         if (hsmActive) {
-          result = JSON.stringify({
-            type: 'DUAL_ENGINE',
-            hsm: hsmResult,
-            ossl: osslResult,
-            gsma: getGsmaVector(profile, stepData.id),
-          })
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
         }
       } else if (stepData.id === 'sidf_decryption') {
-        result = await fiveGService.sidfDecrypt(profile)
+        const hsmActive =
+          hsm.isReady &&
+          hsm.moduleRef.current &&
+          hsm.hSessionRef.current &&
+          hsmHandlesRef.current.hnPrivHandle
+        let hsmResult = ''
+        if (hsmActive && profile === 'C' && hsmHandlesRef.current.ciphertext) {
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          const secretHandle = hsm_pqcDecap(
+            M,
+            hSession,
+            hsmHandlesRef.current.hnPrivHandle!,
+            hsmHandlesRef.current.ciphertext!,
+            'ML-KEM-768'
+          )
+          const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+          const sharedHex = Array.from(sharedBytes)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          hsmResult = `Ciphertext length: ${hsmHandlesRef.current.ciphertext.length} bytes\n→ Decapsulated Secret Handle: ${secretHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nML-KEM Decapsulation executed via SoftHSM3 WASM.`
+        } else if (hsmActive && hsmHandlesRef.current.ephPubHandle) {
+          hsmResult = '(Decryption using ECDH in SoftHSM3...)'
+        }
+
+        const osslResult = await fiveGService.sidfDecrypt(profile)
+        if (hsmActive) {
+          result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
+        } else {
+          result = osslResult
+        }
       } else if (stepData.id === 'visualize_suci') {
         result = await fiveGService.visualizeStructure()
       } else if (stepData.id === 'assemble_suci') {
@@ -730,7 +717,6 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         currentStepIndex={wizard.currentStep}
         onExecute={() => wizard.execute(executeStep)}
         output={wizard.output}
-        renderOutput={(o) => <DualEngineOutputViewer output={o} />}
         isExecuting={wizard.isExecuting}
         error={wizard.error}
         isStepComplete={wizard.isStepComplete}

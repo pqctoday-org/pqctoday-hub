@@ -299,3 +299,17 @@ export const buildECDH1DeriveParams = (
   M.setValue(ptr + 16, pubPtr, 'i32') // pPublicData
   return { ptr, len: 20, allocPtrs }
 }
+
+/** Build CK_BIP32_CHILD_DERIVE_PARAMS (8 bytes) in WASM heap. All allocPtrs must be freed. */
+export const buildBIP32ChildDeriveParams = (
+  M: SoftHSMModule,
+  index: number,
+  hardened: boolean
+): { ptr: number; len: number; allocPtrs: number[] } => {
+  const allocPtrs: number[] = []
+  const ptr = M._malloc(8)
+  allocPtrs.push(ptr)
+  M.setValue(ptr, hardened ? 1 : 0, 'i32') // flags
+  M.setValue(ptr + 4, index, 'i32') // index
+  return { ptr, len: 8, allocPtrs }
+}

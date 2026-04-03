@@ -40,7 +40,8 @@ export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
    */
   const generateKeyPair = async (
     privateKeyFilename: string,
-    publicKeyFilename: string
+    publicKeyFilename: string,
+    privateKeyOverride?: Uint8Array
   ): Promise<KeyGenerationResult> => {
     // Step 1: Generate private key
     const genKeyCmd =
@@ -56,6 +57,10 @@ export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
     let privHex: string | null = null
 
     try {
+      if (privateKeyOverride) {
+        throw new Error('Forcing fallback for deterministic KAT override')
+      }
+
       res1 = await openSSLService.execute(genKeyCmd)
 
       if (
@@ -84,8 +89,7 @@ export function useKeyGeneration(chain: 'bitcoin' | 'ethereum' | 'solana') {
     } catch (err) {
       // Fallback for Solana/Ed25519
       if (chain === 'solana') {
-        console.warn('Falling back to JS for Ed25519 key generation:', err)
-        const privKey = ed25519.utils.randomSecretKey()
+        const privKey = privateKeyOverride || ed25519.utils.randomSecretKey()
         rawPrivateKeyBytes = privKey
         privHex = bytesToHex(privKey)
         setUsingFallback(true)

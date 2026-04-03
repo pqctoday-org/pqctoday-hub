@@ -145,7 +145,7 @@ var createSoftHSMModule = (() => {
     }
     var wasmBinaryFile
     function findWasmBinary() {
-      return locateFile('libsofthsmv3.wasm')
+      return locateFile('softhsm.wasm')
     }
     function getBinarySync(file) {
       if (file == wasmBinaryFile && wasmBinary) {

@@ -29,10 +29,10 @@ interface StepWizardProps {
   completeLabel?: string
   onExecute: () => Promise<void>
   isExecuting: boolean
-  output: string | null
+  output: string | Record<string, string> | null
   error: string | null
   isStepComplete: boolean
-  renderOutput?: (output: string) => React.ReactNode
+  renderOutput?: (output: string | Record<string, string>) => React.ReactNode
 }
 
 export const StepWizard: React.FC<StepWizardProps> = ({
@@ -52,19 +52,36 @@ export const StepWizard: React.FC<StepWizardProps> = ({
   /* eslint-disable-next-line security/detect-object-injection */
   const step = steps[currentStepIndex]
   const outputRef = useRef<HTMLDivElement>(null)
+  const [activeTabOverride, setActiveTabOverride] = React.useState<string | null>(null)
+
+  // Reset override tracking if step changes
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActiveTabOverride(null)
+  }, [currentStepIndex])
 
   useEffect(() => {
     if (outputRef.current) {
-      outputRef.current.scrollTop = outputRef.current.scrollHeight
+      // Anchoring to the top ensures newest prepended logs are instantly visible without scroll fatigue
+      outputRef.current.scrollTop = 0
     }
   }, [output])
+
+  // Calculate active tab dynamically
+  const activeTab =
+    activeTabOverride ||
+    (output && typeof output === 'object'
+      ? Object.keys(output).includes('SoftHSMv3')
+        ? 'SoftHSMv3'
+        : Object.keys(output)[0]
+      : null)
 
   if (!step) return null
 
   return (
-    <div className="max-w-7xl mx-auto h-full">
+    <div className="w-full max-w-7xl mx-auto h-full flex flex-col">
       {/* Main Step Content - Full Width */}
-      <div className="glass-panel border border-border rounded-xl p-4 sm:p-6 mb-6">
+      <div className="glass-panel border border-border rounded-xl p-4 sm:p-5 mb-4 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
           <span className="text-xs font-mono text-primary">
             STEP {currentStepIndex + 1} OF {steps.length}
@@ -83,13 +100,13 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         </div>
 
         <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{step.title}</h2>
-        <p className="text-sm sm:text-base text-muted-foreground mb-6">{step.description}</p>
+        <p className="text-sm sm:text-base text-muted-foreground mb-4">{step.description}</p>
 
         {/* Optional diagram */}
-        {step.diagram && <div className="mb-6">{step.diagram}</div>}
+        {step.diagram && <div className="mb-4">{step.diagram}</div>}
 
         {step.explanationTable ? (
-          <div className="mb-6 overflow-x-auto rounded-lg border border-border">
+          <div className="mb-4 overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-left text-sm">
               <thead className="bg-muted/30 text-muted-foreground">
                 <tr>
@@ -116,7 +133,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             </table>
           </div>
         ) : (
-          <div className="bg-muted/40 rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm border border-border mb-6 overflow-x-auto">
+          <div className="bg-muted/40 rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm border border-border mb-4 overflow-x-auto">
             <div className="flex items-center justify-between mb-2 border-b border-border pb-2">
               <span className="text-xs text-muted-foreground uppercase">{step.language}</span>
             </div>
@@ -129,7 +146,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
         {/* Custom Controls (if any) */}
         {step.customControls}
 
-        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
+        <div className="mt-auto flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-border">
           <button
             onClick={onBack}
             disabled={isExecuting}
@@ -191,26 +208,56 @@ export const StepWizard: React.FC<StepWizardProps> = ({
       </div>
 
       {/* Terminal Output - Full Width Below */}
-      <div className="bg-muted/30 border border-border rounded-xl overflow-hidden max-h-[350px]">
-        <div className="bg-muted/20 p-3 flex items-center justify-between border-b border-border">
-          <span className="text-xs text-muted-foreground">TERMINAL OUTPUT</span>
-          <div className="flex items-center gap-2">
-            {isStepComplete && <CheckCircle size={14} className="text-success" />}
-            {output && <CopyButton text={output} label="" />}
+      <div className="bg-muted/30 border border-border rounded-xl overflow-hidden max-h-[350px] flex flex-col">
+        <div className="bg-muted/20 border-b border-border">
+          <div className="p-3 flex items-center justify-between">
+            <span className="text-xs text-muted-foreground">TERMINAL OUTPUT</span>
+            <div className="flex items-center gap-2">
+              {isStepComplete && <CheckCircle size={14} className="text-success" />}
+              {output && (
+                <CopyButton
+                  text={typeof output === 'object' ? (activeTab ? output[activeTab] : '') : output}
+                  label=""
+                />
+              )}
+            </div>
           </div>
+
+          {/* Tabs for dual-engine output */}
+          {output && typeof output === 'object' && (
+            <div className="flex px-2 gap-1 border-t border-border bg-background/50">
+              {Object.keys(output).map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTabOverride(tab)}
+                  className={`px-3 py-1.5 text-xs font-medium rounded-t-lg border-b-2 transition-colors ${
+                    activeTab === tab
+                      ? 'border-primary text-primary bg-muted/40'
+                      : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
 
         <div
-          className="p-4 overflow-x-auto overflow-y-auto min-h-[150px] max-h-[250px] font-mono text-sm"
+          className="p-4 overflow-x-auto overflow-y-auto flex-1 min-h-[150px] max-h-[250px] font-mono text-sm"
           ref={outputRef}
           aria-live="polite"
           aria-label="Command output"
         >
           {output ? (
             renderOutput ? (
-              renderOutput(output)
+              renderOutput(typeof output === 'object' && activeTab ? output[activeTab] : output)
             ) : (
-              <OutputFormatter output={output} />
+              <OutputFormatter
+                output={
+                  typeof output === 'object' && activeTab ? output[activeTab] : (output as string)
+                }
+              />
             )
           ) : (
             <div className="h-full flex items-center justify-center text-foreground/20 text-sm">

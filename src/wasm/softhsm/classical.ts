@@ -42,6 +42,9 @@ import {
   EC_OID_X25519,
   CKK_EC_MONTGOMERY,
   CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
+  EC_OID_SECP256K1,
+  CKM_BIP32_MASTER_DERIVE,
+  CKM_BIP32_CHILD_DERIVE,
 } from './constants'
 import {
   type AttrDef,
@@ -49,6 +52,7 @@ import {
   allocUlong,
   buildDerivedKeyTemplate,
   buildECDH1DeriveParams,
+  buildBIP32ChildDeriveParams,
   buildMech,
   buildOAEPParams,
   buildPSSParams,
@@ -248,17 +252,18 @@ export const hsm_rsaDecrypt = (
 
 // ── EC / ECDSA / ECDH helpers ─────────────────────────────────────────────────
 
-export const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521'): Uint8Array => {
+export const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1'): Uint8Array => {
+  if (curve === 'secp256k1') return EC_OID_SECP256K1
   if (curve === 'P-384') return EC_OID_P384
   if (curve === 'P-521') return EC_OID_P521
   return EC_OID_P256
 }
 
-/** Generate an EC key pair (P-256, P-384, or P-521) for ECDSA and ECDH. */
+/** Generate an EC key pair (P-256, P-384, P-521, or secp256k1) for ECDSA and ECDH. */
 export const hsm_generateECKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  curve: 'P-256' | 'P-384' | 'P-521',
+  curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1',
   extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_EC_KEY_PAIR_GEN)
@@ -305,11 +310,11 @@ export const hsm_ecdsaSign = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string,
+  message: string | Uint8Array,
   mechType: number = CKM_ECDSA_SHA256
 ): Uint8Array => {
   const mech = buildMech(M, mechType)
-  const msgBytes = new TextEncoder().encode(message)
+  const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
   let sigPtr = 0
@@ -334,12 +339,12 @@ export const hsm_ecdsaVerify = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
-  message: string,
+  message: string | Uint8Array,
   sigBytes: Uint8Array,
   mechType: number = CKM_ECDSA_SHA256
 ): boolean => {
   const mech = buildMech(M, mechType)
-  const msgBytes = new TextEncoder().encode(message)
+  const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
   try {
@@ -419,6 +424,104 @@ export const hsm_ecdhCofactorDerive = (
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
     freeTemplate(M, derivedTpl, attrCount)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * BIP32/SLIP10 Master Node Derivation.
+ * Returns handle to the newly derived CKO_PRIVATE_KEY.
+ */
+export const hsm_bip32MasterDerive = (
+  M: SoftHSMModule,
+  hSession: number,
+  hSeedKey: number,
+  curve: 'P-256' | 'ed25519' | 'secp256k1',
+  extractable = false
+): number => {
+  const mech = buildMech(M, CKM_BIP32_MASTER_DERIVE)
+  const actualOid = curve === 'ed25519' ? EC_OID_ED25519 : ecCurveOID(curve)
+  const oidPtr = writeBytes(M, actualOid)
+
+  const derivedProfile: DerivedKeyProfile = {
+    keyType: curve === 'ed25519' ? CKK_EC_EDWARDS : CKK_EC,
+    keyLen: 32,
+    extractable,
+    derive: true,
+    sign: true,
+  }
+
+  const { tpl: derivedTpl, attrCount } = buildDerivedKeyTemplate(M, derivedProfile)
+
+  // Re-build template manually with EC_PARAMS. Actually it is simpler:
+  freeTemplate(M, derivedTpl, attrCount)
+  const newTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: derivedProfile.keyType },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: actualOid.length },
+  ])
+
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, hSeedKey, newTpl.ptr, 8, derivedHPtr),
+      'C_DeriveKey(BIP32_MASTER_DERIVE)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    M._free(oidPtr)
+    freeTemplate(M, newTpl, 8)
+    M._free(derivedHPtr)
+  }
+}
+
+/**
+ * BIP32/SLIP10 Child Node Derivation.
+ * Returns handle to the newly derived child CKO_PRIVATE_KEY.
+ */
+export const hsm_bip32ChildDerive = (
+  M: SoftHSMModule,
+  hSession: number,
+  hParentKey: number,
+  index: number,
+  hardened: boolean,
+  curve: 'P-256' | 'ed25519' | 'secp256k1',
+  extractable = false
+): number => {
+  const dp = buildBIP32ChildDeriveParams(M, index, hardened)
+  const mech = buildMech(M, CKM_BIP32_CHILD_DERIVE, dp.ptr, dp.len)
+  const actualOid = curve === 'ed25519' ? EC_OID_ED25519 : ecCurveOID(curve)
+  const oidPtr = writeBytes(M, actualOid)
+
+  const newTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: curve === 'ed25519' ? CKK_EC_EDWARDS : CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: actualOid.length },
+  ])
+
+  const derivedHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_DeriveKey(hSession, mech, hParentKey, newTpl.ptr, 8, derivedHPtr),
+      'C_DeriveKey(BIP32_CHILD_DERIVE)'
+    )
+    return readUlong(M, derivedHPtr)
+  } finally {
+    M._free(mech)
+    dp.allocPtrs.forEach((p) => M._free(p))
+    M._free(oidPtr)
+    freeTemplate(M, newTpl, 8)
     M._free(derivedHPtr)
   }
 }
@@ -578,10 +681,10 @@ export const hsm_eddsaSign = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string
+  message: string | Uint8Array
 ): Uint8Array => {
   const mech = buildMech(M, CKM_EDDSA)
-  const msgBytes = new TextEncoder().encode(message)
+  const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
   let sigPtr = 0
@@ -606,11 +709,11 @@ export const hsm_eddsaVerify = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number,
-  message: string,
+  message: string | Uint8Array,
   sigBytes: Uint8Array
 ): boolean => {
   const mech = buildMech(M, CKM_EDDSA)
-  const msgBytes = new TextEncoder().encode(message)
+  const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
   try {

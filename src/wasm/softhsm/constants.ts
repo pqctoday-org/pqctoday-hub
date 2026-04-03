@@ -113,6 +113,12 @@ export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofa
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
 
+export const CKM_BIP32_MASTER_DERIVE = 0x0000105b
+export const CKM_BIP32_CHILD_DERIVE = 0x0000105c
+export const CKF_BIP32_HARDENED = 0x80000000
+export const CKA_BIP32_CHAIN_CODE = 0x00001021
+export const CKA_BIP32_CHILD_INDEX = 0x00001022
+
 // PBKDF2 (PKCS#11 v3.2 §5.7.3.1)
 export const CKM_PKCS5_PBKD2 = 0x3b0
 export const CKP_PKCS5_PBKD2_HMAC_SHA1 = 0x01
@@ -145,6 +151,61 @@ export const CKM_SHA3_512 = 0x2d0
 // KMAC mechanisms — vendor-defined (NIST SP 800-185, softhsmv3 extension)
 export const CKM_KMAC_128 = 0x80000100
 export const CKM_KMAC_256 = 0x80000101
+
+// ── Stateful Hash-Based Signatures (G10) ─────────────────────────────────────
+// Standard PKCS#11 v3.2 §6.14 (HSS/LMS/XMSS)
+export const CKK_HSS = 0x46
+export const CKK_XMSS = 0x47
+export const CKK_XMSSMT = 0x48
+export const CKM_HSS_KEY_PAIR_GEN = 0x00004032
+export const CKM_HSS = 0x00004033
+export const CKM_XMSS_KEY_PAIR_GEN = 0x00004034
+export const CKM_XMSS = 0x00004036
+
+// Vendor: single-level LMS (not in PKCS#11 v3.2 standard CKM range)
+export const CKK_LMS = 0x80000001 // vendor key type
+export const CKM_LMS_KEY_PAIR_GEN = 0x80000001 // vendor mechanism
+export const CKM_LMS = 0x80000002 // vendor mechanism
+
+// Vendor: Keccak-256 digest (G11 — Ethereum address derivation, Rust engine only)
+export const CKM_KECCAK_256 = 0x80000010
+
+// Standard PKCS#11 v3.2 error code (key state exhausted)
+export const CKR_KEY_EXHAUSTED = 0x00000203
+
+// Stateful key attributes (vendor, G10) — range 0x80000101–0x80000105
+export const CKA_STATEFUL_KEY_STATE = 0x80000101 // raw private key blob
+export const CKA_LMS_PARAM_SET = 0x80000102 // CKP_LMS_SHA256_M32_H* value
+export const CKA_LMOTS_PARAM_SET = 0x80000103 // CKP_LMOTS_SHA256_N32_W* value
+export const CKA_XMSS_PARAM_SET = 0x80000104 // CKP_XMSS_* value
+export const CKA_LEAF_INDEX = 0x80000105 // current leaf index (u64 LE)
+export const CKA_HSS_LMS_TYPE = 0x00000618 // number of HSS levels (standard §6.14)
+
+// LMS parameter set constants (tree-height naming, PKCS#11 v3.2 §6.14)
+export const CKP_LMS_SHA256_M32_H5 = 5
+export const CKP_LMS_SHA256_M32_H10 = 10
+export const CKP_LMS_SHA256_M32_H15 = 15
+export const CKP_LMS_SHA256_M32_H20 = 20
+export const CKP_LMS_SHA256_M32_H25 = 25
+
+// LMOTS parameter set constants
+export const CKP_LMOTS_SHA256_N32_W1 = 1
+export const CKP_LMOTS_SHA256_N32_W2 = 2
+export const CKP_LMOTS_SHA256_N32_W4 = 4
+export const CKP_LMOTS_SHA256_N32_W8 = 8
+
+// LMS signature byte sizes (RFC 8554) — n=32, indexed by [lmsParam][lmotsParam]
+// LMOTS sig = 4+32+p*32; LMS sig = 4+lmots_sig+4+h*32
+export const LMS_SIG_BYTES: Record<number, Record<number, number>> = {
+  [5]: { 1: 8649, 2: 4457, 4: 2313, 8: 1257 }, // H5
+  [10]: { 1: 8809, 2: 4617, 4: 2473, 8: 1417 }, // H10
+  [15]: { 1: 8969, 2: 4777, 4: 2633, 8: 1577 }, // H15
+  [20]: { 1: 9129, 2: 4937, 4: 2793, 8: 1737 }, // H20
+  [25]: { 1: 9289, 2: 5097, 4: 2953, 8: 1897 }, // H25
+}
+
+/** LMS public key size is always 52 bytes (typecode=4 + I=16 + T[1]=32). */
+export const LMS_PUB_BYTES = 52
 
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
@@ -260,3 +321,4 @@ export const EC_OID_P521 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0
 export const EC_OID_ED25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x70])
 export const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
 export const EC_OID_X25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])
+export const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0a])

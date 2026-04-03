@@ -13,7 +13,7 @@ export const FiveGDiagram: React.FC<FiveGDiagramProps> = ({ step, profile }) => 
   const hnActive = step <= 1 || step >= 10
 
   return (
-    <div className="relative w-full h-[300px] bg-muted/50 rounded-lg p-4 flex items-center justify-between overflow-hidden">
+    <div className="relative w-full h-[180px] bg-muted/50 rounded-lg p-4 flex items-center justify-between overflow-hidden">
       {/* USIM Node */}
       <div
         className={`

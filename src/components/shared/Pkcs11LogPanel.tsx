@@ -210,8 +210,11 @@ export const Pkcs11LogPanel = ({
                 </p>
               )}
               <div className="space-y-0 max-h-80 overflow-y-auto">
-                {/* Log is newest-first; display oldest-first */}
-                {[...visibleLog].reverse().map((e) => (
+                {/* 
+                  Strictly LIFO (Newest First). Both Steps AND commands within steps 
+                  are rendered instantly at the top.
+                */}
+                {visibleLog.map((e) => (
                   <LogEntryRow key={e.id} entry={e} />
                 ))}
               </div>

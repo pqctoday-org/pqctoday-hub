@@ -41,7 +41,19 @@ export function useEthereumVerification({
           separately.
         </>
       ),
-      code: `// OpenSSL Standard ECDSA Verify\nopenssl pkeyutl -verify -inkey src_pub.pem -pubin -in ethereum_hashdata_[ts].dat -sigfile ethereum_signdata_[ts].sig\n\n// Recover Address\nconst recoveredPubKey = sigObj.recoverPublicKey(txHash);\nconst recoveredAddress = deriveAddress(recoveredPubKey);`,
+      code: `// SoftHSMv3 Verification (CKM_ECDSA)
+const isValid = hsm_ecdsaVerify(
+  hsm.module, 
+  hsm.sessionHandle, 
+  pubHandle, 
+  hashBytes, 
+  sigBytes, 
+  CKM_ECDSA
+);
+
+// Recover Address
+const recoveredPubKey = sigObj.recoverPublicKey(txHash);
+const recoveredAddress = deriveAddress(recoveredPubKey);`,
       language: 'javascript',
       actionLabel: 'Verify & Recover',
     },

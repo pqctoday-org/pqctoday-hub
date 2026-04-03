@@ -1052,6 +1052,7 @@ export const hsm_encapsulate = (
     { type: CKA_VALUE_LEN, ulongVal: 32 },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: 0x10c, boolVal: true }, // CKA_DERIVE
   ])
   const ctLenPtr = allocUlong(M)
   const secretHPtr = allocUlong(M)
@@ -1113,6 +1114,7 @@ export const hsm_decapsulate = (
     { type: CKA_VALUE_LEN, ulongVal: 32 },
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: 0x10c, boolVal: true }, // CKA_DERIVE
   ])
 
   const ctPtr = M._malloc(ciphertextBytes.length)

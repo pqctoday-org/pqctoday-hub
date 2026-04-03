@@ -30,7 +30,10 @@ export function useEthereumKeyGeneration({
   fileRetrieval,
   actions,
   filenames,
-}: UseEthereumKeyGenerationProps): { steps: Step[]; execute: (stepId: string) => Promise<string> } {
+}: UseEthereumKeyGenerationProps): {
+  steps: Step[]
+  execute: (stepId: string) => Promise<string | Record<string, string>>
+} {
   const steps: Step[] = [
     {
       id: 'keygen',
@@ -45,8 +48,13 @@ export function useEthereumKeyGeneration({
           and performance. It's battle-tested across Bitcoin and Ethereum ecosystems.
         </>
       ),
-      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.SRC_PRIVATE_KEY)}`,
-      language: 'bash',
+      code: `// SoftHSMv3 WebAssembly API
+const { pubHandle, privHandle } = hsm_generateECKeyPair(
+  hsm.module,
+  hsm.sessionHandle,
+  'secp256k1'
+);`,
+      language: 'javascript',
       actionLabel: 'Generate Source Key',
       diagram: <EthereumFlowDiagram />,
     },
@@ -63,8 +71,10 @@ export function useEthereumKeyGeneration({
           curve. Uncompressed format: 0x04 || x || y (65 bytes total).
         </>
       ),
-      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(filenames.SRC_PRIVATE_KEY, filenames.SRC_PUBLIC_KEY)}`,
-      language: 'bash',
+      code: `// SoftHSMv3 Key Extraction
+// The public key handle is used to retrieve CKA_VALUE
+const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, CKA_VALUE);`,
+      language: 'javascript',
       actionLabel: 'Extract Public Key',
     },
     {
@@ -99,8 +109,13 @@ export function useEthereumKeyGeneration({
           only shares the address. Never share private keys!
         </>
       ),
-      code: `// OpenSSL Command\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.GEN_KEY(filenames.DST_PRIVATE_KEY)}\n\n// Extract Public Key\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ETHEREUM.EXTRACT_PUB(filenames.DST_PRIVATE_KEY, filenames.DST_PUBLIC_KEY)}`,
-      language: 'bash',
+      code: `// SoftHSMv3 WebAssembly API
+const { pubHandle, privHandle } = hsm_generateECKeyPair(
+  hsm.module,
+  hsm.sessionHandle,
+  'secp256k1'
+);`,
+      language: 'javascript',
       actionLabel: 'Generate Recipient Key',
     },
     {

@@ -26,6 +26,7 @@ import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
 import { HsmKdfPanel } from './hsm/HsmKdfPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
+import { VpnSimulationPanel } from './hsm/VpnSimulationPanel'
 import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
 import { HsmTestMethodologyModal } from './hsm/HsmTestMethodologyModal'
 import { TokenSetupPanel } from './components/TokenSetupPanel'
@@ -51,6 +52,7 @@ type HsmTab =
   | 'key_derive'
   | 'mechanisms'
   | 'acvp'
+  | 'vpn_sim'
   | 'logs'
 
 export const HsmPlayground = () => {
@@ -418,6 +420,13 @@ export const HsmPlayground = () => {
             </>
           )}
           {tabBtn(
+            'vpn_sim',
+            <>
+              <ArrowLeftRight size={16} className="shrink-0" aria-hidden="true" />
+              <span className="text-xs ml-1">VPN Sim</span>
+            </>
+          )}
+          {tabBtn(
             'logs',
             <>
               <Cpu size={16} className="shrink-0" aria-hidden="true" />
@@ -470,6 +479,7 @@ export const HsmPlayground = () => {
         )}
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
         {activeTab === 'acvp' && <HsmAcvpTesting />}
+        {activeTab === 'vpn_sim' && <VpnSimulationPanel />}
         {activeTab === 'logs' && <PkcsLogPanel />}
       </div>
 
