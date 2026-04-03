@@ -89,25 +89,35 @@ conn host-host
     if (selectedMode === 'classical') modeike = 'aes256-sha256-modp3072!'
     if (selectedMode === 'hybrid') modeike = 'aes256-mlkem768-x25519-sha384!'
 
-    // Replace the ike line
-    setActiveIpsec((prev) => prev.replace(/ike=.*/, `ike=${modeike}`))
+    setActiveIpsec((prev) => {
+      if (/ike=.*/.test(prev)) {
+        return prev.replace(/ike=.*/, `ike=${modeike}`)
+      } else {
+        // If the user deleted the ike= line, we safely inject it back under the host-host connection block
+        return prev.replace(/conn host-host/, `conn host-host\n  ike=${modeike}`)
+      }
+    })
   }, [selectedMode])
 
   React.useEffect(() => {
-    strongSwanEngine.init(
-      (log) => {
-        setSsLogs((prev) => {
-          const next = [...prev, log]
-          return next.length > 500 ? next.slice(next.length - 500) : next
-        })
-        if (scrollRef.current) {
-          scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-        }
-      },
-      (state) => setSsState(state)
-    )
+    const handleLog = (log: StrongSwanLog) => {
+      setSsLogs((prev) => {
+        const next = [...prev, log]
+        return next.length > 500 ? next.slice(next.length - 500) : next
+      })
+      if (scrollRef.current) {
+        scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+      }
+    }
+    const handleState = (state: StrongSwanState) => setSsState(state)
+
+    strongSwanEngine.addLogListener(handleLog)
+    strongSwanEngine.addStateListener(handleState)
+    strongSwanEngine.init()
 
     return () => {
+      strongSwanEngine.removeLogListener(handleLog)
+      strongSwanEngine.removeStateListener(handleState)
       strongSwanEngine.destroy()
     }
   }, [])

@@ -4,6 +4,8 @@
 declare const self: DedicatedWorkerGlobalScope
 
 let strongSwanModule: any = null
+let isDaemonRunning = false
+let cachedGetFunctionListPtr: number | null = null
 
 const createConfigFiles = (configs: { [filename: string]: string }) => {
   if (!strongSwanModule) return
@@ -51,6 +53,13 @@ self.onmessage = async (e: MessageEvent) => {
           })
           return 1 // return valid handle
         },
+        wasm_dlclose: (_handle: number) => {
+          self.postMessage({
+            type: 'LOG',
+            payload: { level: 'info', text: `[WASM DLCLOSE] Successfully unloaded module handle` },
+          })
+          return 0 // success
+        },
         wasm_dlsym: (_handle: number, symbolPtr: number) => {
           const sym = strongSwanModule.UTF8ToString(symbolPtr)
           if (sym === 'C_GetFunctionList') {
@@ -59,15 +68,17 @@ self.onmessage = async (e: MessageEvent) => {
               payload: { level: 'info', text: `[WASM DLSYM] Binding JS SoftHSM hook to ${sym}!` },
             })
 
+            if (cachedGetFunctionListPtr !== null) {
+              return cachedGetFunctionListPtr
+            }
+
             // This is the C-callable that returns CKR_OK and writes the function list pointer
             const cGetFunctionList = (_ppFunctionList: number) => {
-              // In a complete implementation, this allocates a struct CK_FUNCTION_LIST
-              // and fills it with addFunction mapped pointers from our React SoftHSM module.
-              // For this simulation phase, we log the binding success and return a mock.
-              // We will implement full 70-function mapping in the dedicated PKCS#11 mapping pass.
+              // Mock implementation
               return 0 // CKR_OK
             }
-            return strongSwanModule.addFunction(cGetFunctionList, 'ii')
+            cachedGetFunctionListPtr = strongSwanModule.addFunction(cGetFunctionList, 'ii')
+            return cachedGetFunctionListPtr
           }
           return 0
         },
@@ -79,15 +90,26 @@ self.onmessage = async (e: MessageEvent) => {
       self.postMessage({ type: 'ERROR', payload: `Init error: ${err.message}` })
     }
   } else if (type === 'START_DAEMON') {
+    if (isDaemonRunning) {
+      self.postMessage({
+        type: 'LOG',
+        payload: { level: 'error', text: 'Daemon is already running in this worker block!' },
+      })
+      return
+    }
+
     if (strongSwanModule && strongSwanModule._main) {
       try {
         if (payload) {
           createConfigFiles(payload)
         }
+        isDaemonRunning = true
         // Starts the Charon Daemon
         strongSwanModule._main(0, 0)
       } catch (err: any) {
         self.postMessage({ type: 'ERROR', payload: `Daemon exited: ${err.message}` })
+      } finally {
+        isDaemonRunning = false
       }
     }
   }

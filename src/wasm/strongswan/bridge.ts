@@ -8,25 +8,42 @@ export type StrongSwanState = 'UNINITIALIZED' | 'LOADING' | 'READY' | 'RUNNING' 
 
 export class StrongSwanEngine {
   private worker: Worker | null = null
-  private onLog?: (log: StrongSwanLog) => void
-  private onStateChange?: (state: StrongSwanState) => void
+  private logListeners = new Set<(log: StrongSwanLog) => void>()
+  private stateListeners = new Set<(state: StrongSwanState) => void>()
   private state: StrongSwanState = 'UNINITIALIZED'
 
   constructor() {}
 
-  private setState(s: StrongSwanState) {
-    this.state = s
-    this.onStateChange?.(s)
+  public addLogListener(fn: (log: StrongSwanLog) => void) {
+    this.logListeners.add(fn)
   }
 
-  public init(
-    onLog?: (log: StrongSwanLog) => void,
-    onStateChange?: (state: StrongSwanState) => void
-  ) {
+  public removeLogListener(fn: (log: StrongSwanLog) => void) {
+    this.logListeners.delete(fn)
+  }
+
+  public addStateListener(fn: (state: StrongSwanState) => void) {
+    this.stateListeners.add(fn)
+    // Immediately emit current state to new listener
+    fn(this.state)
+  }
+
+  public removeStateListener(fn: (state: StrongSwanState) => void) {
+    this.stateListeners.delete(fn)
+  }
+
+  private setState(s: StrongSwanState) {
+    this.state = s
+    this.stateListeners.forEach((fn) => fn(s))
+  }
+
+  private dispatchLog(log: StrongSwanLog) {
+    this.logListeners.forEach((fn) => fn(log))
+  }
+
+  public init() {
     if (this.worker) return
 
-    this.onLog = onLog
-    this.onStateChange = onStateChange
     this.setState('LOADING')
 
     // @vite-ignore
@@ -36,14 +53,14 @@ export class StrongSwanEngine {
       const { type, payload } = e.data
       switch (type) {
         case 'LOG':
-          this.onLog?.(payload as StrongSwanLog)
+          this.dispatchLog(payload as StrongSwanLog)
           break
         case 'READY':
           this.setState('READY')
           break
         case 'ERROR':
           this.setState('ERROR')
-          this.onLog?.({ level: 'error', text: payload })
+          this.dispatchLog({ level: 'error', text: payload })
           break
       }
     }
