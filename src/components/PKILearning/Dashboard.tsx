@@ -546,7 +546,7 @@ const ModuleTracksGrid = ({
             filterContent={
               <div className="space-y-6">
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Learning Profile</label>
+                  <span className="text-sm font-semibold text-foreground">Learning Profile</span>
                   <FilterDropdown
                     items={personaFilterItems}
                     selectedId={selectedPersonaFilter}
@@ -557,7 +557,7 @@ const ModuleTracksGrid = ({
                 </div>
                 {showTrackFilter && (
                   <div className="space-y-2 flex flex-col">
-                    <label className="text-sm font-semibold text-foreground">Track</label>
+                    <span className="text-sm font-semibold text-foreground">Track</span>
                     <FilterDropdown
                       items={TRACK_FILTER_ITEMS}
                       selectedId={selectedTrack}
@@ -568,7 +568,7 @@ const ModuleTracksGrid = ({
                   </div>
                 )}
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Difficulty</label>
+                  <span className="text-sm font-semibold text-foreground">Difficulty</span>
                   <FilterDropdown
                     items={DIFFICULTY_FILTER_ITEMS.map((d) => ({
                       id: d,
@@ -581,7 +581,7 @@ const ModuleTracksGrid = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col">
-                  <label className="text-sm font-semibold text-foreground">Status</label>
+                  <span className="text-sm font-semibold text-foreground">Status</span>
                   <FilterDropdown
                     items={STATUS_FILTER_ITEMS.map((s) => ({
                       id: s,
@@ -594,11 +594,11 @@ const ModuleTracksGrid = ({
                   />
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                  <label className="text-sm font-semibold text-foreground">Sort By</label>
+                  <span className="text-sm font-semibold text-foreground">Sort By</span>
                   <LearnSortControl value={sortBy} onChange={setSortBy} disabled={sortDisabled} />
                 </div>
                 <div className="space-y-2 flex flex-col pt-4 border-t border-border/50">
-                  <label className="text-sm font-semibold text-foreground">View Mode</label>
+                  <span className="text-sm font-semibold text-foreground">View Mode</span>
                   <LearnViewToggle mode={viewMode} onChange={setViewMode} />
                 </div>
               </div>
