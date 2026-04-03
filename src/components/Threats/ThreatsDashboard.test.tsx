@@ -188,7 +188,7 @@ describe('ThreatsDashboard', () => {
       </MemoryRouter>
     )
 
-    const searchInput = screen.getByPlaceholderText('Search threats...')
+    const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
     fireEvent.change(searchInput, { target: { value: 'banking' } }) // matches "Quantum attack on banking..."
 
     const table = screen.getByRole('table')
@@ -240,7 +240,7 @@ describe('ThreatsDashboard', () => {
       </MemoryRouter>
     )
 
-    const searchInput = screen.getByPlaceholderText('Search threats...')
+    const searchInput = screen.getAllByPlaceholderText('Search threats...')[0]
     fireEvent.change(searchInput, { target: { value: 'NonExistentTermXYZ' } })
 
     // Both mobile and desktop render the empty state message
