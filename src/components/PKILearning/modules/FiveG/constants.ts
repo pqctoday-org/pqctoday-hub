@@ -6,196 +6,15 @@ export const FIVE_G_CONSTANTS = {
       title: '1. Home Network Key Generation (Profile A)',
       description:
         'The home network operator provisions a long-term asymmetric key pair. For Profile A, 5G mandates the use of Curve25519 (X25519), a state-of-the-art elliptic curve tailored for speed and security. The private key is securely stored for use by the SIDF (Subscription Identifier De-concealing Function) at the UDM for SUCI deconcealment, while the public key (32 bytes) is distributed to USIMs during SIM personalization.',
-      code: `# Generate Curve25519 Private Key
-openssl genpkey -algorithm X25519 -out hn_priv.key
+      code: `// SoftHSMv3 WASM: Generate Home Network X25519 Key
+const { pubHandle, privHandle } = hsm_generateECKeyPair(
+  hsmd, sessionHandle, 'X25519'
+);
 
-# Derive Public Key (32 bytes)
-openssl pkey -in hn_priv.key -pubout -out hn_pub.key
-
-# Inspect Key Parameters
-openssl pkey -in hn_pub.key -pubout -text_pub`,
-      output: `[Home Network] Generating Profile A Key Pair...
-[Home Network] Private Key stored in HSM.
-[Home Network] Public Key: 0x8520f009... (32 bytes) ready for provisioning.`,
-    },
-    {
-      id: 'provision_usim',
-      title: '2. Provision USIM',
-      description:
-        "The standardized Home Network Public Key (HN_PubKey) is written into the USIM's secure file system (EF_SUCI_Calc_Info) during SIM card personalization. This allows the USIM to encrypt the subscriber identity in a way that only the Home Network can decrypt.",
-      code: `# Simulated Provisioning API
-USIM.write('EF_SUCI_Calc_Info', {
-  HN_PubKey: readFile('hn_pub.key'),
-  ProtectionScheme: 'Profile A (X25519)',
-  KeyId: 1
-});`,
-      output: `[Provisioning] Writing to USIM EF_SUCI_Calc_Info...
-[Provisioning] Success. USIM now holds the network public key.`,
-    },
-    {
-      id: 'retrieve_key',
-      title: '3. Retrieve Home Network Public Key',
-      description:
-        'When the phone initiates a connection, the USIM reads the HN_PubKey. This key identifies the destination of the encrypted identity.',
-      code: `// USIM Internal Operation
-const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');
-const hnPubKey = suciInfo.HN_PubKey; // Curve25519 Public Key`,
-      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Scheme: Profile A (Curve25519)\n[USIM] HN Public Key: 0x8520f009... (32 bytes)`,
-    },
-    {
-      id: 'gen_ephemeral_key',
-      title: '4. Generate Ephemeral Key Pair',
-      description:
-        'The USIM generates a fresh, temporary (ephemeral) X25519 key pair for this specific session. This ensures "Forward Secrecy" - even if the long-term key is compromised later, past sessions remain secure.',
-      code: `# Generate Ephemeral Private Key
-openssl genpkey -algorithm X25519 -out eph_priv.key
-
-# Extract Ephemeral Public Key to send to Network
-openssl pkey -in eph_priv.key -pubout -out eph_pub.key`,
-      output: `[USIM] Generating Ephemeral Key Pair (X25519)...\n[USIM] Ephemeral PubKey: 0x1a2b3c4d... (32 bytes)`,
-    },
-    {
-      id: 'compute_shared_secret',
-      title: '5. Compute Shared Secret (ECDH)',
-      description:
-        "The USIM performs Elliptic Curve Diffie-Hellman (ECDH) using its ephemeral private key and the Home Network's public key. This results in a shared secret (Z) that is mathematically identical to what the Home Network will calculate.",
-      code: `# Derive Shared Secret (Z)
-openssl pkeyutl -derive \\
-  -inkey eph_priv.key \\
-  -peerkey hn_pub.key \\
-  -out shared_secret.bin
-
-# View Raw Secret (for verifying)
-xxd -p shared_secret.bin`,
-      output: `[USIM] Executing ECDH...\n[USIM] Shared Secret (Z): [PROTECTED]`,
-    },
-    {
-      id: 'derive_keys',
-      title: '6. Derive Keys (ANSI-X9.63-KDF)',
-      description:
-        'The shared secret (Z) is not used directly. Instead, it is passed through a Key Derivation Function (KDF) along with the ephemeral public key (SharedInfo) to generate two distinct keys: K_enc for encryption (AES-128, 128 bits) and K_mac for integrity (HMAC-SHA-256, 256 bits). The KDF runs two iterations of SHA-256.',
-      code: `// ANSI X9.63 KDF (2 iterations, SharedInfo = EphPubKey)
-const block1 = SHA256(Z || 0x00000001 || EphPubKey);
-const block2 = SHA256(Z || 0x00000002 || EphPubKey);
-
-const K = Buffer.concat([block1, block2]);
-const K_enc = K.slice(0, 16);   // 128-bit AES Key
-const K_mac = K.slice(16, 48);  // 256-bit HMAC Key`,
-      output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
-    },
-    {
-      id: 'encrypt_msin',
-      title: '7. Encrypt MSIN (Encryption Point)',
-      description:
-        'This is the Encryption Point. The cleartext MSIN is now encrypted using AES-128-CTR. From this point forward, the identity is concealed.',
-      code: `openssl enc -aes-128-ctr \\
-  -K <K_enc_hex> \\
-  -iv 00000000000000000000000000000000 \\
-  -in msin.txt -out encrypted_msin.bin`,
-      output: `[USIM] Encrypting MSIN...\n[USIM] Ciphertext: 0x4f8a2b1c9d... (5 bytes)`,
-    },
-    {
-      id: 'compute_mac',
-      title: '8. Compute MAC Tag',
-      description:
-        'An HMAC-SHA-256 tag is computed over the ciphertext and header data to prevent tampering. The first 64 bits (8 bytes) are used as the tag.',
-      code: `# Compute HMAC
-openssl dgst -sha256 -mac HMAC -macopt hexkey:<K_mac_hex> \\
-  -out mac_full.bin encrypted_msin.bin
-
-# Truncate to 8 bytes
-head -c 8 mac_full.bin > mac_tag.bin`,
-      output: `[USIM] Computed MAC Tag: 0xa1b2c3d4...`,
-    },
-    {
-      id: 'visualize_suci',
-      title: '9. Visual Inspection: SUPI vs SUCI',
-      description:
-        'Compare the sensitive cleartext identity (SUPI) with the protected SUCI structure. The SUCI includes the ephemeral public key needed by the network to derive the decryption key.',
-      code: '# Visual Verification',
-      output: '[Visualizing Data Structures...]',
-      explanationTable: [
-        {
-          label: 'SUPI (Input)',
-          value: 'IMSI: 310260123456789 (MCC=310, MNC=260, MSIN=123456789)',
-          description: 'Subscriber Permanent Identifier (Cleartext). No dashes per 3GPP TS 23.003.',
-        },
-        {
-          label: 'SUPI Hex',
-          value: '333130323630313233343536373839',
-          description: 'Raw Hexadecimal of IMSI digits (310260123456789).',
-        },
-        {
-          label: 'Ciphertext',
-          value: '0x4F 0x8A 0x2B 0x1C 0x9D',
-          description: 'Encrypted MSIN (AES-128-CTR). Unintelligible without Derived Key.',
-        },
-        {
-          label: 'MAC Tag',
-          value: '0xA1 0xB2 0xC3 0xD4 ...',
-          description: 'HMAC Integrity Tag. Validates authenticity.',
-        },
-        {
-          label: 'SUCI (Output)',
-          value: 'suci-0-310-260-1-1-0x1a2b...-0x4f8a...',
-          description: 'Concealed Identifier. Safe for transmission.',
-        },
-        {
-          label: 'SUCI Hex',
-          value: '737563692d302d3331302d3236302d312d31...',
-          description: 'Partial Raw Hex of the full SUCI string.',
-        },
-      ],
-    },
-    {
-      id: 'assemble_suci',
-      title: '10. Assemble SUCI',
-      description:
-        'The final SUCI is concatenated in the standard format: <MCC>.<MNC>.<RoutingIndicator>.<Scheme>.<HomeNetPubKeyID>.<EphPubKey>.<Ciphertext>.<MAC>.',
-      code: `// Final SUCI String Construction
-const suci = [
-  type=0, mcc=310, mnc=260,
-  routing=1, scheme=1, keyId=1,
-  ephKey=0x1a2b...,
-  cipher=0x4f8a...,
-  mac=0xa1b2...
-].join('-');`,
-      output: `[USIM] SUCI-0-310-260-1-1-0x1a2b...-0x4f8a...-0xa1b2...`,
-    },
-    {
-      id: 'sidf_decryption',
-      title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
-      description:
-        'The SUCI reaches the Home Network. The SIDF (Subscription Identifier De-concealing Function) uses the Network Private Key (HN_Priv) to derive the same shared secret, generate the same keys, and decrypt the SUCI back to the original SUPI.',
-      code: `# Network Side Decryption
-# 1. Derive Shared Secret using HN_Priv
-openssl pkeyutl -derive -inkey hn_priv.key -peerkey eph_pub.key ...
-
-# 2. Decrypt MSIN
-openssl enc -d -aes-128-ctr -in ciphertext.bin ...`,
-      output: `[SIDF] Receiving SUCI...
-[SIDF] Deriving Keys... Matches USIM.
-[SIDF] Decrypting...
-[SIDF] SUPI Recovered: 310260123456789`,
-    },
-  ],
-
-  SUCI_STEPS_B: [
-    {
-      id: 'init_network_key',
-      title: '1. Home Network Key Generation (Profile B)',
-      description:
-        'For Profile B, the home network operator provisions a long-term key pair using the NIST P-256 (secp256r1) elliptic curve. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment. This profile is common in legacy-compliant 5G deployments.',
-      code: `# Generate P-256 Private Key
-openssl genpkey -algorithm EC \\
-  -pkeyopt ec_paramgen_curve:P-256 \\
-  -out hn_priv.key
-
-# Derive Public Key (65 bytes uncompressed)
-openssl pkey -in hn_priv.key -pubout -out hn_pub.key
-
-# Inspect Curve Parameters
-openssl pkey -in hn_pub.key -pubout -text_pub`,
+// Or inject Profile A explicit test vectors for KAT validation:
+const hnPrivHandle = await hsm_injectTestKey(
+  hsmd, sessionHandle, hnPrivBytes, 'X25519'
+);`,
       output: `[Home Network] Generating Profile B Key Pair...
 [Home Network] NIST P-256 Key generated.
 [Home Network] Public Key: 0x04...... (65 bytes) ready.`,
@@ -227,13 +46,10 @@ USIM.write('EF_SUCI_Calc_Info', {
       title: '4. Generate Ephemeral Key Pair',
       description:
         'Generate a fresh ephemeral key pair using NIST P-256. This key pair is unique to this connection attempt.',
-      code: `# Generate Ephemeral P-256 Private Key
-openssl genpkey -algorithm EC \\
-  -pkeyopt ec_paramgen_curve:P-256 \\
-  -out eph_priv.key
-
-# Extract Public Key
-openssl pkey -in eph_priv.key -pubout -out eph_pub.key`,
+      code: `// SoftHSMv3 WASM: Generate Ephemeral Key
+const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
+  hsmd, sessionHandle, 'P-256'
+);`,
       output: `[USIM] Generating Ephemeral Key Pair (P-256)...\n[USIM] Ephemeral PubKey: 0x04...... (65 bytes)`,
     },
     {
@@ -241,11 +57,14 @@ openssl pkey -in eph_priv.key -pubout -out eph_pub.key`,
       title: '5. Compute Shared Secret (ECDH)',
       description:
         "Perform P-256 Diffie-Hellman Key Agreement. The USIM combines its ephemeral private key with the network's public key.",
-      code: `# Derive Shared Secret (Z)
-openssl pkeyutl -derive \\
-  -inkey eph_priv.key \\
-  -peerkey hn_pub.key \\
-  -out shared_secret.bin`,
+      code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (ECDH)
+const sharedSecretHandle = hsm_ecdhDerive(
+  hsmd, 
+  sessionHandle, 
+  ephPriv,      // Ephemeral Private Key 
+  hnPubHandle,  // Network Public Key
+  false         // False = Raw Z extraction
+);`,
       output: `[USIM] Executing ECDH...\n[USIM] Shared Secret (Z): [PROTECTED]`,
     },
     {
@@ -253,31 +72,34 @@ openssl pkeyutl -derive \\
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
         'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
-      code: `// ANSI X9.63 KDF (2 iterations, SharedInfo = EphPubKey)
-const block1 = SHA256(Z || 0x00000001 || EphPubKey);
-const block2 = SHA256(Z || 0x00000002 || EphPubKey);
+      code: `// SoftHSMv3 WASM: ANSI X9.63 KDF (using HKDF internally for KAT)
+const derivedHandle = hsm_deriveKey(
+  hsmd, sessionHandle, sharedSecretHandle, ephPubKeyBytes, CKM_SHA256, 48
+);
 
-const K = Buffer.concat([block1, block2]);
-const K_enc = K.slice(0, 16);   // 128-bit AES Key
-const K_mac = K.slice(16, 48);  // 256-bit HMAC Key`,
+// Extract encryption key (AES) and MAC key (HMAC)
+const kEnc = rawRawKDFBytes.slice(0, 16);
+const kMac = rawKDFBytes.slice(16, 48);`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
       description: 'This is the Encryption Point where the MSIN becomes ciphertext.',
-      code: `openssl enc -aes-128-ctr \\
-  -K <K_enc_hex> \\
-  -iv 00000000000000000000000000000000 \\
-  -in msin.txt -out encrypted_msin.bin`,
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
+const ciphertext = hsm_aesEncrypt(
+  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'CTR'
+);`,
       output: `[USIM] Encrypting MSIN...\n[USIM] Ciphertext: 0x4f8a2b1c9d... (5 bytes)`,
     },
     {
       id: 'compute_mac',
       title: '8. Compute MAC Tag',
       description: 'Compute and truncate HMAC-SHA-256 tag.',
-      code: `openssl dgst -sha256 -mac HMAC -macopt hexkey:<K_mac_hex> \\
-  -out mac_full.bin encrypted_msin.bin`,
+      code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA256)
+const macTagFull = hsm_hmac(
+  hsmd, sessionHandle, hKmac, ciphertext, 'SHA256'
+);`,
       output: `[USIM] Computed MAC Tag: 0xa1b2c3d4...`,
     },
     {
@@ -331,12 +153,13 @@ const K_mac = K.slice(16, 48);  // 256-bit HMAC Key`,
       id: 'sidf_decryption',
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
-      code: `# Network Side Decryption
-# 1. Derive Shared Secret (Z)
-openssl pkeyutl -derive -inkey hn_priv.key -peerkey eph_pub.key ...
-
-# 2. Decrypt
-openssl enc -d -aes-128-ctr ...`,
+      code: `// SoftHSMv3 WASM: Network SIDF Validation
+const sidfSecretHandle = hsm_ecdhDerive(
+  hsmd, sessionHandle, hnPrivHandle, hPeerPub, false
+);
+const msin = hsm_aesDecrypt(
+  hsmd, sessionHandle, hKenc, ciphertext, iv, 'CTR'
+);`,
       output: `[SIDF] Processing SUCI (Profile B)...
 [SIDF] SUPI Recovered: 310260123456789`,
     },
@@ -348,11 +171,10 @@ openssl enc -d -aes-128-ctr ...`,
       title: '1. Home Network Key Generation (Profile C)',
       description:
         'For Profile C (Post-Quantum), the home network operator provisions a key pair using ML-KEM (Kyber), a lattice-based algorithm resistant to quantum attacks. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment.',
-      code: `# Generate ML-KEM Private Key
-openssl genpkey -algorithm ML-KEM-768 -out hn_pqc.key
-
-# Derive Public Key (1184 bytes)
-openssl pkey -in hn_pqc.key -pubout -out hn_pqc.pub`,
+      code: `// SoftHSMv3 WASM: Generate ML-KEM-768 Key Pair
+const { pubHandle, privHandle } = hsm_pqcGenerateKeyPair(
+  hsmd, sessionHandle, 'ML-KEM-768'
+);`,
       output: `[Home Network] Generating Profile C (PQC) Key Pair...
 [Home Network] ML-KEM-768 Keys generated.
 [Home Network] Public Key: 1184 bytes.`,
@@ -383,11 +205,8 @@ USIM.write('EF_SUCI_Calc_Info', {
       title: '4. Generate Ephemeral Key (Hybrid)',
       description:
         'In Hybrid Mode, the USIM generates an X25519 ephemeral key pair. In Pure PQC mode, this step is skipped (or prepares for Encapsulation).',
-      code: `# Hybrid: Generate X25519 Ephemeral Key
-openssl genpkey -algorithm X25519 -out eph_priv.key
-
-# Pure PQC:
-# No classic ephemeral key needed.`,
+      code: `// In ML-KEM, Ephemeral keys are generated dynamically during Encapsulation.
+// No explicit ephemeral generation is required prior to Encap.`,
       output: `[USIM] Generating Ephemeral Key...`,
     },
     {
@@ -395,13 +214,10 @@ openssl genpkey -algorithm X25519 -out eph_priv.key
       title: '5. Compute Shared Secret (Hybrid / Encap)',
       description:
         'Hybrid: Compute ECDH shared secret (Z_ecdh) AND Encapsulate PQC shared secret (Z_kem). Derive final Z = SHA256(Z_ecdh || Z_kem). Pure: Encapsulate only.',
-      code: `# Hybrid:
-openssl pkeyutl -derive ... # Z_ecdh
-openssl pkeyutl -encap ...  # Z_kem (Ciphertext)
-SHA256(Z_ecdh || Z_kem)
-
-# Pure:
-openssl pkeyutl -encap ...`,
+      code: `// SoftHSMv3 WASM: ML-KEM-768 Encapsulation
+const { ciphertext, sharedSecretHandle } = hsm_pqcEncap(
+  hsmd, sessionHandle, hnPubHandle, 'ML-KEM-768'
+);`,
       output: `[USIM] Computing Hybrid Shared Secret...`,
     },
     {
@@ -422,18 +238,20 @@ mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
       description: 'This is the Encryption Point (AES-256-CTR).',
-      code: `openssl enc -aes-256-ctr \\
-  -K <K_enc_hex> -iv 0 \\
-  -in msin.txt -out encrypted_msin.bin`,
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-CTR)
+const ciphertext = hsm_aesEncrypt(
+  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'CTR'
+);`,
       output: `[USIM] Encrypting MSIN (AES-256)...\n[USIM] Ciphertext: 0x...`,
     },
     {
       id: 'compute_mac',
       title: '8. Compute MAC Tag (HMAC-SHA3)',
       description: 'Compute HMAC-SHA3-256 tag.',
-      code: `openssl dgst -sha3-256 -mac HMAC \\
-  -macopt hexkey:<K_mac_hex> \\
-  -out mac_tag.bin encrypted_msin.bin`,
+      code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA3-256)
+const macTagFull = hsm_hmac(
+  hsmd, sessionHandle, hKmac, ciphertext, 'SHA3-256'
+);`,
       output: `[USIM] Computed PQC MAC Tag: 0x...`,
     },
     {
@@ -488,14 +306,15 @@ mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description:
         'For Post-Quantum Profile C, the SIDF Decapsulates the shared secret using the ML-KEM Private Key and decrypts the MSIN.',
-      code: `# Network Side Decaptulation (ML-KEM)
-openssl pkeyutl -decap \\
-  -inkey hn_pqc.key \\
-  -in ciphertext.bin \\
-  -secret shared_secret.bin
+      code: `// SoftHSMv3 WASM: ML-KEM-768 Decapsulation
+const sidfSecretHandle = hsm_pqcDecap(
+  hsmd, sessionHandle, hnPrivHandle, ciphertext, 'ML-KEM-768'
+);
 
-# Decrypt
-openssl enc -d -aes-256-ctr ...`,
+// Re-derive keys and Decrypt
+const msin = hsm_aesDecrypt(
+  hsmd, sessionHandle, hKenc, encMsin, iv, 'CTR'
+);`,
       output: `[SIDF] Decapsulating ML-KEM Secret...
 [SIDF] Keys Derived.
 [SIDF] SUPI Recovered: 310260123456789`,

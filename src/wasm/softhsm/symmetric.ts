@@ -34,6 +34,7 @@ import {
   CKM_SHA256,
   CKM_SHA256_HMAC,
   CKO_PUBLIC_KEY,
+  CKO_PRIVATE_KEY,
   CKO_SECRET_KEY,
 } from './constants'
 import {
@@ -322,6 +323,55 @@ export const hsm_importECPublicKey = (
     M._free(hKeyPtr)
     M._free(oidPtr)
     M._free(pointPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Import an EC private key from its raw scalar bytes (big-endian integer d).
+ * Creates a CKO_PRIVATE_KEY object with CKA_DERIVE=true for use in ECDH.
+ *
+ * Profile: curve P-256 → 32-byte scalar, P-384 → 48-byte scalar.
+ *
+ * ⚠️  On real hardware HSMs, private keys must never be imported as plaintext.
+ *     Use C_UnwrapKey(CKM_AES_KEY_WRAP) instead:
+ *       1. C_GenerateKey(AES-256, CKA_EXTRACTABLE=true) → hKEK
+ *       2. Export hKEK bytes → kekBytes (external)
+ *       3. AES-KW( kekBytes, rawScalarD ) → wrappedBlob (external)
+ *       4. C_UnwrapKey(hKEK, CKM_AES_KEY_WRAP, wrappedBlob, privKeyTemplate) → hPriv
+ *
+ * This function is the SoftHSM3 WASM equivalent (C_CreateObject is allowed
+ * because it is a software HSM). Used for GSMA TS 33.501 KAT injection.
+ */
+export const hsm_importECPrivateKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  scalarBytes: Uint8Array,
+  curve: 'P-256' | 'P-384' | 'P-521' = 'P-256',
+  derive = true,
+  extractable = true
+): number => {
+  const oid = ecCurveOID(curve)
+  const oidPtr = writeBytes(M, oid)
+  const valPtr = writeBytes(M, scalarBytes)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DERIVE, boolVal: derive },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: scalarBytes.length },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 8, hKeyPtr), 'C_CreateObject(Import EC PrivKey)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+    M._free(oidPtr)
     M._free(valPtr)
   }
 }

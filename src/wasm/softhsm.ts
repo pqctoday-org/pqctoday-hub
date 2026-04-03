@@ -590,6 +590,7 @@ const CKM_ML_DSA = 0x0000001d
 export const CKA_CLASS = 0x00000000
 export const CKA_TOKEN = 0x00000001
 export const CKA_PRIVATE = 0x00000002
+export const CKA_LABEL = 0x00000003
 export const CKA_SENSITIVE = 0x00000103
 export const CKA_SIGN = 0x00000108
 export const CKA_VERIFY = 0x0000010a
@@ -885,7 +886,8 @@ export const hsm_generateMLKEMKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   variant: 512 | 768 | 1024,
-  extractable = false
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, CKM_ML_KEM_KEY_PAIR_GEN, 'i32')
@@ -893,15 +895,20 @@ export const hsm_generateMLKEMKeyPair = (
   M.setValue(mech + 8, 0, 'i32')
 
   const ps = kemParamSet(variant)
-  const pubTpl = buildTemplate(M, [
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: false },
     { type: CKA_ENCAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
-  ])
-  const prvTpl = buildTemplate(M, [
+  ]
+  if (labelBytes)
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
     { type: CKA_TOKEN, boolVal: false },
@@ -910,20 +917,35 @@ export const hsm_generateMLKEMKeyPair = (
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_DECAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
-  ])
+  ]
+  if (labelBytes)
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
 
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 6, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(ML-KEM)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 6)
-    freeTemplate(M, prvTpl, 8)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -934,31 +956,39 @@ export const hsm_importMLKEMPublicKey = (
   M: SoftHSMModule,
   hSession: number,
   variant: 512 | 768 | 1024,
-  pubKeyBytes: Uint8Array
+  pubKeyBytes: Uint8Array,
+  label?: string
 ): number => {
   const ps = kemParamSet(variant)
   const pubPtr = M._malloc(pubKeyBytes.length)
   M.HEAPU8.set(pubKeyBytes, pubPtr)
 
-  const pubTpl = buildTemplate(M, [
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: false },
     { type: CKA_ENCAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
     { type: CKA_VALUE, bytesPtr: pubPtr, bytesLen: pubKeyBytes.length },
-  ])
+  ]
+  if (labelBytes)
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const pubTpl = buildTemplate(M, pubAttrs)
 
   const pubHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_CreateObject(hSession, pubTpl.ptr, 7, pubHPtr),
+      M._C_CreateObject(hSession, pubTpl.ptr, pubAttrs.length, pubHPtr),
       'C_CreateObject(Import ML-KEM PubKey)'
     )
     return readUlong(M, pubHPtr)
   } finally {
-    freeTemplate(M, pubTpl, 7)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
     M._free(pubHPtr)
     M._free(pubPtr)
   }
@@ -1112,6 +1142,34 @@ export const hsm_decapsulate = (
   }
 }
 
+/** PKCS#11 v3.2 §6.3 — ML-KEM encapsulation (string-variant API).
+ * Accepts variant as 'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024' for UI compatibility.
+ * Delegates to hsm_encapsulate() which uses C_EncapsulateKey per the spec. */
+export const hsm_pqcEncap = (
+  M: SoftHSMModule,
+  hSession: number,
+  pubHandle: number,
+  variant: string
+): { ciphertextBytes: Uint8Array; secretHandle: number } => {
+  const bits = parseInt(variant.replace(/\D/g, ''), 10) as 512 | 768 | 1024
+  return hsm_encapsulate(M, hSession, pubHandle, bits)
+}
+
+/** PKCS#11 v3.2 §6.3 — ML-KEM decapsulation (string-variant API).
+ * Accepts variant as 'ML-KEM-512' | 'ML-KEM-768' | 'ML-KEM-1024' for UI compatibility.
+ * Delegates to hsm_decapsulate() which uses C_DecapsulateKey per the spec.
+ * Returns handle to the recovered shared secret key object. */
+export const hsm_pqcDecap = (
+  M: SoftHSMModule,
+  hSession: number,
+  privHandle: number,
+  ciphertextBytes: Uint8Array,
+  variant: string
+): number => {
+  const bits = parseInt(variant.replace(/\D/g, ''), 10) as 512 | 768 | 1024
+  return hsm_decapsulate(M, hSession, privHandle, ciphertextBytes, bits)
+}
+
 /** C_GetAttributeValue(CKA_VALUE) → Uint8Array */
 export const hsm_extractKeyValue = (
   M: SoftHSMModule,
@@ -1136,26 +1194,38 @@ export const hsm_extractKeyValue = (
   }
 }
 
-/** C_GetAttributeValue(CKA_EC_POINT) → DER-encoded EC point bytes for an EC public key. */
+/** C_GetAttributeValue(CKA_EC_POINT or CKA_VALUE) → DER-encoded EC point bytes for an EC public key. */
 export const hsm_extractECPoint = (
   M: SoftHSMModule,
   hSession: number,
   pubHandle: number
 ): Uint8Array => {
-  const lenTpl = buildTemplate(M, [{ type: CKA_EC_POINT }])
-  checkRV(
-    M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1),
-    'C_GetAttributeValue(EC_POINT,len)'
-  )
+  let isMontgomery = false
+  let lenTpl = buildTemplate(M, [{ type: CKA_EC_POINT }])
+  let rv = M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1) >>> 0
+
+  if (rv === 0x12) {
+    // CKR_ATTRIBUTE_TYPE_INVALID (Montgomery uses CKA_VALUE)
+    freeTemplate(M, lenTpl, 1)
+    isMontgomery = true
+    lenTpl = buildTemplate(M, [{ type: CKA_VALUE }])
+    rv = M._C_GetAttributeValue(hSession, pubHandle, lenTpl.ptr, 1) >>> 0
+  }
+
+  if (rv !== 0) {
+    throw new Error(`C_GetAttributeValue(len) failed with rv=0x${rv.toString(16)}`)
+  }
+
   const len = readUlong(M, lenTpl.ptr + 8)
   freeTemplate(M, lenTpl, 1)
 
   const valPtr = M._malloc(len)
-  const valTpl = buildTemplate(M, [{ type: CKA_EC_POINT, bytesPtr: valPtr, bytesLen: len }])
+  const attrType = isMontgomery ? CKA_VALUE : CKA_EC_POINT
+  const valTpl = buildTemplate(M, [{ type: attrType, bytesPtr: valPtr, bytesLen: len }])
   try {
     checkRV(
       M._C_GetAttributeValue(hSession, pubHandle, valTpl.ptr, 1),
-      'C_GetAttributeValue(EC_POINT)'
+      'C_GetAttributeValue(EC_POINT/VALUE)'
     )
     return M.HEAPU8.slice(valPtr, valPtr + len)
   } finally {
@@ -1774,6 +1844,11 @@ export const CKK_EC = 0x03
 export const CKK_GENERIC_SECRET = 0x10
 export const CKK_AES = 0x1f
 export const CKK_EC_EDWARDS = 0x40
+/** PKCS#11 v3.2 §6.7 — X25519/X448 Montgomery-curve DH keys.
+ * Supported as of @pqctoday/softhsm-wasm 0.4.3.
+ * CKM_EC_MONTGOMERY_KEY_PAIR_GEN (0x1056) registered in C_GetMechanismInfo. */
+export const CKK_EC_MONTGOMERY = 0x41 // PKCS#11 v3.2 §6.7 pkcs11t.h (0x40=EDWARDS, 0x41=MONTGOMERY)
+export const CKM_EC_MONTGOMERY_KEY_PAIR_GEN = 0x00001056
 export const CKK_SLH_DSA = 0x4b
 
 // RSA mechanisms
@@ -1924,6 +1999,8 @@ export const CKD_SHA1_KDF = 0x00000002 // ANSI X9.63 KDF with SHA-1
 export const CKD_SHA256_KDF = 0x00000006 // ANSI X9.63 KDF with SHA-256 (SUCI Profile A/B)
 export const CKD_SHA384_KDF = 0x00000007 // ANSI X9.63 KDF with SHA-384
 export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
+export const CKD_SHA3_256_KDF = 0x0000000b // ANSI X9.63 KDF with SHA3-256 (PKCS#11 v3.2 §5.2.12)
+export const CKD_SHA3_512_KDF = 0x0000000d // ANSI X9.63 KDF with SHA3-512 (PKCS#11 v3.2 §5.2.12)
 
 // HKDF derive (PKCS#11 v3.0+ §2.43)
 export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.0 §2.43
@@ -1943,6 +2020,10 @@ const EC_OID_P256 = new Uint8Array([0x06, 0x08, 0x2a, 0x86, 0x48, 0xce, 0x3d, 0x
 const EC_OID_P384 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x22])
 const EC_OID_P521 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23])
 const EC_OID_ED25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x70])
+// id-X25519 OID 1.3.101.110 (RFC 8410) — used for PKCS#11 v3.2 §6.7 CKA_EC_PARAMS on Montgomery keys
+const EC_OID_X25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])
+// id-X448 OID 1.3.101.111 (RFC 8410) — used for PKCS#11 v3.2 §6.7 CKA_EC_PARAMS on X448 Montgomery keys
+const EC_OID_X448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6f])
 const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
 
 // ── Additional WASM memory helpers ───────────────────────────────────────────
@@ -2063,12 +2144,16 @@ export const hsm_generateRSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   keyBits: 1024 | 2048 | 3072 | 4096,
-  extractable = false
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
   const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
   const expPtr = writeBytes(M, exp)
-  const pubTpl = buildTemplate(M, [
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
@@ -2076,8 +2161,11 @@ export const hsm_generateRSAKeyPair = (
     { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
     { type: CKA_ENCRYPT, boolVal: true },
     { type: CKA_VERIFY, boolVal: true },
-  ])
-  const prvTpl = buildTemplate(M, [
+  ]
+  if (labelBytes)
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
@@ -2086,20 +2174,35 @@ export const hsm_generateRSAKeyPair = (
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_DECRYPT, boolVal: true },
     { type: CKA_SIGN, boolVal: true },
-  ])
+  ]
+  if (labelBytes)
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(RSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     M._free(expPtr)
-    freeTemplate(M, pubTpl, 7)
-    freeTemplate(M, prvTpl, 8)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -2244,53 +2347,115 @@ export const hsm_rsaDecrypt = (
 
 // ── EC / ECDSA / ECDH helpers ─────────────────────────────────────────────────
 
-const ecCurveOID = (curve: 'P-256' | 'P-384' | 'P-521'): Uint8Array => {
-  if (curve === 'P-384') return EC_OID_P384
-  if (curve === 'P-521') return EC_OID_P521
-  return EC_OID_P256
+/**
+ * Return the DER OID bytes for any supported EC curve (PKCS#11 v3.2 CKA_EC_PARAMS).
+ * Throws CKR_CURVE_NOT_SUPPORTED (0x00000140) for unknown curves so callers get a
+ * spec-compliant error instead of a silent crash.
+ *   P-256 / P-384 / P-521 — Weierstrass (C++ engine); P-256 also on Rust
+ *   X25519 / X448          — Montgomery (both engines, softhsm-wasm ≥ 0.4.3)
+ */
+const ecCurveOID = (curve: string): Uint8Array => {
+  switch (curve) {
+    case 'P-256':
+      return EC_OID_P256
+    case 'P-384':
+      return EC_OID_P384
+    case 'P-521':
+      return EC_OID_P521
+    case 'X25519':
+      return EC_OID_X25519
+    case 'X448':
+      return EC_OID_X448
+    default:
+      throw new Error(
+        `CKR_CURVE_NOT_SUPPORTED (0x00000140): curve '${curve}' is not recognised. ` +
+          `Supported: P-256 (Rust+C++), P-384/P-521 (C++ only), X25519/X448 (both engines).`
+      )
+  }
 }
 
-/** Generate an EC key pair (P-256, P-384, or P-521) for ECDSA and ECDH. */
+/**
+ * OID bytes for SEC1 / Weierstrass curves only (P-256 / P-384 / P-521).
+ * Throws CKR_CURVE_NOT_SUPPORTED if a Montgomery curve (X25519 / X448) is supplied —
+ * those use raw byte formats; call hsm_importX25519PublicKey() / hsm_importX448PublicKey() instead.
+ */
+const weierstrassCurveOID = (curve: string): Uint8Array => {
+  if (curve === 'X25519' || curve === 'X448') {
+    throw new Error(
+      `CKR_CURVE_NOT_SUPPORTED (0x00000140): '${curve}' is a Montgomery curve and does not ` +
+        `use SEC1 (qx/qy) format. Use hsm_importX25519PublicKey() or hsm_importX448PublicKey() instead.`
+    )
+  }
+  return ecCurveOID(curve)
+}
+
+/**
+ * Generate an EC key pair.
+ * - P-256: Rust + C++ engines (ECDSA + ECDH)
+ * - P-384 / P-521: C++ engine only (ECDSA + ECDH); Rust returns CKR_CURVE_NOT_SUPPORTED at runtime
+ * - X25519 / X448: Montgomery ECDH, both engines (softhsm-wasm ≥ 0.4.3)
+ */
 export const hsm_generateECKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  curve: 'P-256' | 'P-384' | 'P-521',
-  extractable = false
+  curve: 'P-256' | 'P-384' | 'P-521' | 'X25519' | 'X448',
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
-  const mech = buildMech(M, CKM_EC_KEY_PAIR_GEN)
+  const isMontgomery = curve === 'X25519' || curve === 'X448'
+  const mech = buildMech(M, isMontgomery ? CKM_EC_MONTGOMERY_KEY_PAIR_GEN : CKM_EC_KEY_PAIR_GEN)
   const oid = ecCurveOID(curve)
   const oidPtr = writeBytes(M, oid)
-  const pubTpl = buildTemplate(M, [
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_KEY_TYPE, ulongVal: isMontgomery ? CKK_EC_MONTGOMERY : CKK_EC },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
-    { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_ENCRYPT, boolVal: false },
-  ])
-  const prvTpl = buildTemplate(M, [
+  ]
+  const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
-    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_KEY_TYPE, ulongVal: isMontgomery ? CKK_EC_MONTGOMERY : CKK_EC },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
     { type: CKA_DERIVE, boolVal: true },
-  ])
+  ]
+
+  if (!isMontgomery) {
+    pubAttrs.push({ type: CKA_VERIFY, boolVal: true })
+    prvAttrs.push({ type: CKA_SIGN, boolVal: true })
+  }
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 6, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(EC)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     M._free(oidPtr)
-    freeTemplate(M, pubTpl, 6)
-    freeTemplate(M, prvTpl, 8)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -2353,9 +2518,11 @@ export const hsm_ecdsaVerify = (
  * ECDH1 key derivation via C_DeriveKey (PKCS#11 v3.2 §2.3.5).
  * peerPubBytes: DER-encoded EC point from peer's CKA_EC_POINT attribute.
  * kdf: CKD_NULL (raw Z, default) or CKD_SHA256_KDF etc. for ANSI X9.63 KDF.
- * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI deconcealment).
- * keyLen: derived key length in bytes (default 32).
- * Returns handle to derived generic secret key.
+ * sharedData: optional SharedInfo for X9.63 KDF (e.g. ephemeral public key for SUCI).
+ * derivedKeyProfile: PKCS#11 v3.2 attribute profile for the derived key object.
+ *   Pass { keyLen: 32, derive: true } when the result will be used as HKDF base key.
+ *   Defaults to { keyLen: 32, extractable: true } (generic secret, extract-only).
+ * Returns handle to derived key object.
  */
 export const hsm_ecdhDerive = (
   M: SoftHSMModule,
@@ -2364,29 +2531,56 @@ export const hsm_ecdhDerive = (
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,
   sharedData?: Uint8Array,
-  keyLen = 32
+  derivedKeyProfile: {
+    keyLen?: number
+    sensitive?: boolean
+    extractable?: boolean
+    derive?: boolean
+    encrypt?: boolean
+    decrypt?: boolean
+    wrap?: boolean
+    unwrap?: boolean
+    sign?: boolean
+    verify?: boolean
+  } = { keyLen: 32, extractable: true }
 ): number => {
+  const keyLen = derivedKeyProfile.keyLen ?? 32
   const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
   const mech = buildMech(M, CKM_ECDH1_DERIVE, dp.ptr, dp.len)
-  const derivedTpl = buildTemplate(M, [
+  const attrDefs: { type: number; boolVal?: boolean; ulongVal?: number }[] = [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: derivedKeyProfile.sensitive ?? false },
+    { type: CKA_EXTRACTABLE, boolVal: derivedKeyProfile.extractable ?? true },
     { type: CKA_VALUE_LEN, ulongVal: keyLen },
-  ])
+  ]
+  if (derivedKeyProfile.derive !== undefined)
+    attrDefs.push({ type: CKA_DERIVE, boolVal: derivedKeyProfile.derive })
+  if (derivedKeyProfile.encrypt !== undefined)
+    attrDefs.push({ type: CKA_ENCRYPT, boolVal: derivedKeyProfile.encrypt })
+  if (derivedKeyProfile.decrypt !== undefined)
+    attrDefs.push({ type: CKA_DECRYPT, boolVal: derivedKeyProfile.decrypt })
+  if (derivedKeyProfile.wrap !== undefined)
+    attrDefs.push({ type: CKA_WRAP, boolVal: derivedKeyProfile.wrap })
+  if (derivedKeyProfile.unwrap !== undefined)
+    attrDefs.push({ type: CKA_UNWRAP, boolVal: derivedKeyProfile.unwrap })
+  if (derivedKeyProfile.sign !== undefined)
+    attrDefs.push({ type: CKA_SIGN, boolVal: derivedKeyProfile.sign })
+  if (derivedKeyProfile.verify !== undefined)
+    attrDefs.push({ type: CKA_VERIFY, boolVal: derivedKeyProfile.verify })
+  const derivedTpl = buildTemplate(M, attrDefs)
   const derivedHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, attrDefs.length, derivedHPtr),
       'C_DeriveKey(ECDH1)'
     )
     return readUlong(M, derivedHPtr)
   } finally {
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
-    freeTemplate(M, derivedTpl, 6)
+    freeTemplate(M, derivedTpl, attrDefs.length)
     M._free(derivedHPtr)
   }
 }
@@ -2403,29 +2597,56 @@ export const hsm_ecdhCofactorDerive = (
   peerPubBytes: Uint8Array,
   kdf: number = CKD_NULL,
   sharedData?: Uint8Array,
-  keyLen = 32
+  derivedKeyProfile: {
+    keyLen?: number
+    sensitive?: boolean
+    extractable?: boolean
+    derive?: boolean
+    encrypt?: boolean
+    decrypt?: boolean
+    wrap?: boolean
+    unwrap?: boolean
+    sign?: boolean
+    verify?: boolean
+  } = { keyLen: 32, extractable: true }
 ): number => {
+  const keyLen = derivedKeyProfile.keyLen ?? 32
   const dp = buildECDH1DeriveParams(M, peerPubBytes, kdf, sharedData)
   const mech = buildMech(M, CKM_ECDH1_COFACTOR_DERIVE, dp.ptr, dp.len)
-  const derivedTpl = buildTemplate(M, [
+  const attrDefs: { type: number; boolVal?: boolean; ulongVal?: number }[] = [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_GENERIC_SECRET },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: derivedKeyProfile.sensitive ?? false },
+    { type: CKA_EXTRACTABLE, boolVal: derivedKeyProfile.extractable ?? true },
     { type: CKA_VALUE_LEN, ulongVal: keyLen },
-  ])
+  ]
+  if (derivedKeyProfile.derive !== undefined)
+    attrDefs.push({ type: CKA_DERIVE, boolVal: derivedKeyProfile.derive })
+  if (derivedKeyProfile.encrypt !== undefined)
+    attrDefs.push({ type: CKA_ENCRYPT, boolVal: derivedKeyProfile.encrypt })
+  if (derivedKeyProfile.decrypt !== undefined)
+    attrDefs.push({ type: CKA_DECRYPT, boolVal: derivedKeyProfile.decrypt })
+  if (derivedKeyProfile.wrap !== undefined)
+    attrDefs.push({ type: CKA_WRAP, boolVal: derivedKeyProfile.wrap })
+  if (derivedKeyProfile.unwrap !== undefined)
+    attrDefs.push({ type: CKA_UNWRAP, boolVal: derivedKeyProfile.unwrap })
+  if (derivedKeyProfile.sign !== undefined)
+    attrDefs.push({ type: CKA_SIGN, boolVal: derivedKeyProfile.sign })
+  if (derivedKeyProfile.verify !== undefined)
+    attrDefs.push({ type: CKA_VERIFY, boolVal: derivedKeyProfile.verify })
+  const derivedTpl = buildTemplate(M, attrDefs)
   const derivedHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, 6, derivedHPtr),
+      M._C_DeriveKey(hSession, mech, privHandle, derivedTpl.ptr, attrDefs.length, derivedHPtr),
       'C_DeriveKey(ECDH1_COFACTOR)'
     )
     return readUlong(M, derivedHPtr)
   } finally {
     M._free(mech)
     dp.allocPtrs.forEach((p) => M._free(p))
-    freeTemplate(M, derivedTpl, 6)
+    freeTemplate(M, derivedTpl, attrDefs.length)
     M._free(derivedHPtr)
   }
 }
@@ -2757,19 +2978,26 @@ export const hsm_generateEdDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   curve: 'Ed25519' | 'Ed448',
-  extractable = false
+  extractable = false,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_EC_EDWARDS_KEY_PAIR_GEN)
   const oid = curve === 'Ed448' ? EC_OID_ED448 : EC_OID_ED25519
   const oidPtr = writeBytes(M, oid)
-  const pubTpl = buildTemplate(M, [
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
     { type: CKA_VERIFY, boolVal: true },
-  ])
-  const prvTpl = buildTemplate(M, [
+  ]
+  if (labelBytes)
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
     { type: CKA_TOKEN, boolVal: false },
@@ -2777,20 +3005,35 @@ export const hsm_generateEdDSAKeyPair = (
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
-  ])
+  ]
+  if (labelBytes)
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(EdDSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     M._free(oidPtr)
-    freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 7)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -2957,10 +3200,15 @@ export const hsm_generateAESKey = (
   wrap = true,
   unwrap = true,
   derive = true,
-  extractable = true
+  extractable = true,
+  label?: string
 ): number => {
   const mech = buildMech(M, CKM_AES_KEY_GEN)
-  const tpl = buildTemplate(M, [
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const attrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
     { type: CKA_TOKEN, boolVal: false },
@@ -2972,14 +3220,18 @@ export const hsm_generateAESKey = (
     { type: CKA_UNWRAP, boolVal: unwrap },
     { type: CKA_DERIVE, boolVal: derive },
     { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
-  ])
+  ]
+  if (labelBytes) attrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const tpl = buildTemplate(M, attrs)
   const hKeyPtr = allocUlong(M)
   try {
-    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, 11, hKeyPtr), 'C_GenerateKey(AES)')
+    checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, hKeyPtr), 'C_GenerateKey(AES)')
     return readUlong(M, hKeyPtr)
   } finally {
     M._free(mech)
-    freeTemplate(M, tpl, 11)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, tpl, attrs.length)
     M._free(hKeyPtr)
   }
 }
@@ -3164,7 +3416,7 @@ export const hsm_importECPublicKey = (
   qy: Uint8Array,
   curve: 'P-256' | 'P-384' | 'P-521' = 'P-256'
 ): number => {
-  const oid = ecCurveOID(curve)
+  const oid = weierstrassCurveOID(curve)
   const oidPtr = writeBytes(M, oid)
 
   // Build DER-encoded uncompressed EC point: OCTET STRING { 04 || x || y }
@@ -3217,6 +3469,204 @@ export const hsm_importECPublicKey = (
     M._free(hKeyPtr)
     M._free(oidPtr)
     M._free(pointPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Import an EC private key from its raw scalar bytes (big-endian integer d).
+ * Creates a CKO_PRIVATE_KEY object with CKA_DERIVE=true for use in ECDH.
+ *
+ * ⚠️  On real hardware HSMs use C_UnwrapKey(CKM_AES_KEY_WRAP) instead:
+ *       1. C_GenerateKey(AES-256, CKA_EXTRACTABLE=true) → hKEK
+ *       2. Export KEK bytes externally
+ *       3. AES-KW( kekBytes, rawScalarD ) → wrappedBlob
+ *       4. C_UnwrapKey(hKEK, CKM_AES_KEY_WRAP, wrappedBlob, privKeyTemplate) → hPriv
+ * This function uses C_CreateObject (valid in SoftHSM3 WASM). Used for GSMA TS 33.501 KAT.
+ */
+export const hsm_importECPrivateKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  scalarBytes: Uint8Array,
+  curve: 'P-256' | 'P-384' | 'P-521' = 'P-256',
+  derive = true,
+  extractable = true
+): number => {
+  const oid = ecCurveOID(curve)
+  const oidPtr = writeBytes(M, oid)
+  const valPtr = writeBytes(M, scalarBytes)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_DERIVE, boolVal: derive },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+    { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: scalarBytes.length },
+  ])
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 8, hKeyPtr), 'C_CreateObject(Import EC PrivKey)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    freeTemplate(M, tpl, 8)
+    M._free(hKeyPtr)
+    M._free(oidPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Inject an EC private key using the hardware-HSM equivalent Key Wrap/Unwrap flow.
+ * Required because real HSMs block plaintext injection of private keys via C_CreateObject.
+ *
+ * Flow:
+ *  1. Generate ephemeral KEK inside the HSM (AES-256)
+ *  2. Export KEK bytes externally
+ *  3. Wrap the raw scalar internally with WebCrypto AES-GCM and the KEK
+ *  4. C_UnwrapKey(hKEK, CKM_AES_GCM, wrappedBlob, privKeyTemplate) → hPriv
+ *
+ * @returns The wrapped handle (CKO_PRIVATE_KEY) safely inside the HSM.
+ */
+export const hsm_injectTestKey = async (
+  M: SoftHSMModule,
+  hSession: number,
+  scalarBytes: Uint8Array,
+  curve: 'P-256' | 'P-384' | 'P-521' = 'P-256',
+  derive = true,
+  extractable = true
+): Promise<number> => {
+  // 1. Generate KEK (AES-256) with wrap/unwrap capabilities
+  const hKek = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, true)
+
+  try {
+    // 2. Extract KEK bytes to software boundary
+    const kekBytes = hsm_extractKeyValue(M, hSession, hKek)
+
+    // 3. Wrap raw scalar with WebCrypto AES-GCM
+    const iv = globalThis.crypto.getRandomValues(new Uint8Array(12))
+    const keyObj = await globalThis.crypto.subtle.importKey(
+      'raw',
+      new Uint8Array(kekBytes),
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt']
+    )
+    const wrappedBuf = await globalThis.crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      keyObj,
+      new Uint8Array(scalarBytes)
+    )
+    const wrappedBytes = new Uint8Array(wrappedBuf)
+
+    // 4. Unwrap securely inside the HSM
+    const oid = ecCurveOID(curve)
+    const oidPtr = writeBytes(M, oid)
+    try {
+      const hPriv = hsm_aesGcmUnwrapKey(M, hSession, hKek, wrappedBytes, iv, [
+        { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+        { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
+        { type: CKA_TOKEN, boolVal: false },
+        { type: CKA_SENSITIVE, boolVal: false }, // Allowed sensitive=false for emulation debug
+        { type: CKA_EXTRACTABLE, boolVal: extractable },
+        { type: CKA_DERIVE, boolVal: derive },
+        { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
+      ])
+      return hPriv
+    } finally {
+      M._free(oidPtr)
+    }
+  } finally {
+    // Destroy the KEK — no trace left
+    const mech = buildMech(M, 0)
+    // Actually we don't have a direct hsm_destroyObject helper exposed here effortlessly.
+    // SoftHSM3 C_DestroyObject isn't wrapped nicely without doing M._C_DestroyObject.
+    // We'll leave it in the session since test session closes anyway, or destroy if needed.
+    M._C_DestroyObject(hSession, hKek)
+    M._free(mech) // buildMech(M, 0) is safe, it allocated mech pointer, we free it
+  }
+}
+
+/**
+ * Import an X25519 public key from 32 raw bytes (PKCS#11 v3.2 §6.7, RFC 8410).
+ * Creates a CKO_PUBLIC_KEY / CKK_EC_MONTGOMERY object with CKA_DERIVE capability.
+ * Supported by both Rust and C++ engines.
+ *
+ * @param rawBytes32 - 32-byte little-endian X25519 public key value
+ * @returns handle to the imported public key object
+ */
+export const hsm_importX25519PublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  rawBytes32: Uint8Array
+): number => {
+  if (rawBytes32.length !== 32) {
+    throw new Error(
+      `CKR_ARGUMENTS_BAD (0x00000007): X25519 public key must be exactly 32 bytes, got ${rawBytes32.length}`
+    )
+  }
+  const oidPtr = writeBytes(M, EC_OID_X25519)
+  const valPtr = writeBytes(M, rawBytes32)
+  const hKeyPtr = allocUlong(M)
+  try {
+    const tpl = buildTemplate(M, [
+      { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+      { type: CKA_KEY_TYPE, ulongVal: CKK_EC_MONTGOMERY },
+      { type: CKA_TOKEN, boolVal: false },
+      { type: CKA_DERIVE, boolVal: true },
+      { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: EC_OID_X25519.length },
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: rawBytes32.length },
+    ])
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, 6, hKeyPtr),
+      'C_CreateObject(Import X25519 PubKey)'
+    )
+    freeTemplate(M, tpl, 6)
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(oidPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Import an X448 public key from 56 raw bytes (PKCS#11 v3.2 §6.7, RFC 8410).
+ * Creates a CKO_PUBLIC_KEY / CKK_EC_MONTGOMERY object with CKA_DERIVE capability.
+ * Supported by both Rust and C++ engines as of softhsm-wasm 0.4.3.
+ *
+ * @param rawBytes56 - 56-byte little-endian X448 public key value
+ * @returns handle to the imported public key object
+ */
+export const hsm_importX448PublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  rawBytes56: Uint8Array
+): number => {
+  if (rawBytes56.length !== 56) {
+    throw new Error(
+      `CKR_ARGUMENTS_BAD (0x00000007): X448 public key must be exactly 56 bytes, got ${rawBytes56.length}`
+    )
+  }
+  const oidPtr = writeBytes(M, EC_OID_X448)
+  const valPtr = writeBytes(M, rawBytes56)
+  const hKeyPtr = allocUlong(M)
+  try {
+    const tpl = buildTemplate(M, [
+      { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+      { type: CKA_KEY_TYPE, ulongVal: CKK_EC_MONTGOMERY },
+      { type: CKA_TOKEN, boolVal: false },
+      { type: CKA_DERIVE, boolVal: true },
+      { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: EC_OID_X448.length },
+      { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: rawBytes56.length },
+    ])
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 6, hKeyPtr), 'C_CreateObject(Import X448 PubKey)')
+    freeTemplate(M, tpl, 6)
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(hKeyPtr)
+    M._free(oidPtr)
     M._free(valPtr)
   }
 }
@@ -3603,17 +4053,25 @@ export const hsm_digestMultiPart = (
 export const hsm_generateSLHDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  paramSet: number = CKP_SLH_DSA_SHA2_128S
+  paramSet: number = CKP_SLH_DSA_SHA2_128S,
+  label?: string
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
-  const pubTpl = buildTemplate(M, [
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
-  ])
-  const prvTpl = buildTemplate(M, [
+  ]
+  if (labelBytes)
+    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
     { type: CKA_TOKEN, boolVal: false },
@@ -3621,19 +4079,36 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: false },
     { type: CKA_SIGN, boolVal: true },
-  ])
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+  ]
+  if (labelBytes)
+    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
       'C_GenerateKeyPair(SLH-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 7)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }

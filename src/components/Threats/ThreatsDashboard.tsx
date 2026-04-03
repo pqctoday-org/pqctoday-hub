@@ -4,57 +4,33 @@ import {
   Search,
   AlertTriangle,
   Info,
-  Cpu,
-  Briefcase,
-  Plane,
-  Landmark,
-  Zap,
-  Radio,
-  Stethoscope,
-  Shield,
-  ShieldAlert,
-  Car,
   AlertOctagon,
   AlertCircle,
   CheckCircle,
-  ChevronDown,
-  ChevronUp,
   Filter,
+  Briefcase,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
 import type { ThreatItem } from '../../data/threatsData'
-import { motion, AnimatePresence } from 'framer-motion'
+import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
-import { StatusBadge } from '../common/StatusBadge'
-import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
-import { EndorseButton } from '../ui/EndorseButton'
-import { FlagButton } from '../ui/FlagButton'
 import { Button } from '../ui/button'
-import { EmptyState } from '../ui/empty-state'
 
 type SortField = 'industry' | 'threatId' | 'criticality'
 type SortDirection = 'asc' | 'desc'
 
-// Helper to get icon for industry
-const getIndustryIcon = (industry: string) => {
-  const lower = industry.toLowerCase()
-  if (lower.includes('aerospace') || lower.includes('aviation')) return <Plane size={16} />
-  if (lower.includes('finance') || lower.includes('banking')) return <Landmark size={16} />
-  if (lower.includes('energy') || lower.includes('utilities')) return <Zap size={16} />
-  if (lower.includes('telecom')) return <Radio size={16} />
-  if (lower.includes('healthcare') || lower.includes('pharma')) return <Stethoscope size={16} />
-  if (lower.includes('government') || lower.includes('defense')) return <Shield size={16} />
-  if (lower.includes('automotive')) return <Car size={16} />
-  if (lower.includes('technology')) return <Cpu size={16} />
-  return <Briefcase size={16} />
-}
+import { getIndustryIcon } from './threatsHelper'
+import { ThreatsViewToggle, type ThreatsViewMode } from './ThreatsViewToggle'
+import { ThreatsCardGrid } from './ThreatsCardGrid'
+import { ThreatsTable } from './ThreatsTable'
+import { IndustryStack } from './IndustryStack'
 
 import { ThreatDetailDialog } from './ThreatDetailDialog'
 import { MobileThreatsList } from './MobileThreatsList'
@@ -102,6 +78,10 @@ export const ThreatsDashboard: React.FC = () => {
     return null
   })
   const [showMobileFilters, setShowMobileFilters] = useState(false)
+  const [viewMode, setViewMode] = useState<ThreatsViewMode>(
+    () => (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
+  )
+  const [activeLayer, setActiveLayer] = useState<string>('All')
 
   // Sync all filter params on same-route navigations (e.g. chatbot deep links).
   // Functional setters prevent infinite loops when syncFiltersToUrl triggers a searchParams update.
@@ -112,6 +92,7 @@ export const ThreatsDashboard: React.FC = () => {
     const nextQ = searchParams.get('q') ?? ''
     const nextSort = (searchParams.get('sort') as SortField | null) ?? 'industry'
     const nextDir = (searchParams.get('dir') as SortDirection | null) ?? 'asc'
+    const nextMode = (searchParams.get('mode') as ThreatsViewMode | null) ?? 'table'
 
     if (indParam) {
       const matches = indParam.split(',').flatMap((p) => {
@@ -132,6 +113,7 @@ export const ThreatsDashboard: React.FC = () => {
     setSearchQuery((prev) => (prev !== nextQ ? nextQ : prev))
     setSortField((prev) => (prev !== nextSort ? nextSort : prev))
     setSortDirection((prev) => (prev !== nextDir ? nextDir : prev))
+    setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
   }, [searchParams])
 
   /** Write all current filter state back to URL. Call with overrides for the value that just
@@ -144,6 +126,7 @@ export const ThreatsDashboard: React.FC = () => {
       sort?: SortField
       dir?: SortDirection
       id?: string | null
+      mode?: ThreatsViewMode
     }) => {
       setSearchParams(
         (prev) => {
@@ -154,6 +137,7 @@ export const ThreatsDashboard: React.FC = () => {
           const sort = overrides.sort ?? sortField
           const dir = overrides.dir ?? sortDirection
           const id = overrides.id !== undefined ? overrides.id : (selectedThreat?.threatId ?? null)
+          const mode = overrides.mode ?? viewMode
 
           if (inds.length > 0) next.set('industry', inds.join(','))
           else next.delete('industry')
@@ -167,6 +151,8 @@ export const ThreatsDashboard: React.FC = () => {
           else next.delete('dir')
           if (id) next.set('id', id)
           else next.delete('id')
+          if (mode !== 'table') next.set('mode', mode)
+          else next.delete('mode')
           return next
         },
         { replace: true }
@@ -179,6 +165,7 @@ export const ThreatsDashboard: React.FC = () => {
       sortField,
       sortDirection,
       selectedThreat,
+      viewMode,
       setSearchParams,
     ]
   )
@@ -188,7 +175,9 @@ export const ThreatsDashboard: React.FC = () => {
     const unique = new Set(threatsData.map((d) => d.industry))
     return Array.from(unique)
       .sort()
-      .map((ind) => ({ id: ind, label: ind, icon: getIndustryIcon(ind) }))
+      .map((ind) => {
+        return { id: ind, label: ind, icon: getIndustryIcon(ind, 16) }
+      })
   }, [])
 
   // Criticality items
@@ -375,10 +364,10 @@ export const ThreatsDashboard: React.FC = () => {
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
-          <Button 
-            variant="outline" 
-            size="icon" 
-            className="shrink-0 h-[44px] w-[44px]" 
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0 h-[44px] w-[44px]"
             onClick={() => setShowMobileFilters(!showMobileFilters)}
             aria-label="Toggle filters"
           >
@@ -387,7 +376,12 @@ export const ThreatsDashboard: React.FC = () => {
         </div>
 
         {/* Filters Container: Hidden on mobile unless showMobileFilters is true */}
-        <div className={clsx("w-full md:w-full md:flex flex-col md:flex-row items-center gap-4", showMobileFilters ? "flex" : "hidden")}>
+        <div
+          className={clsx(
+            'w-full md:w-full md:flex flex-col md:flex-row items-center gap-4',
+            showMobileFilters ? 'flex' : 'hidden'
+          )}
+        >
           <div className="flex flex-col md:flex-row items-center gap-2 w-full md:w-auto text-xs">
             <div className="flex-1 w-full md:min-w-[120px]">
               <FilterDropdown
@@ -443,228 +437,73 @@ export const ThreatsDashboard: React.FC = () => {
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
+          <div className="hidden md:block">
+            <ThreatsViewToggle
+              mode={viewMode}
+              onChange={(mode) => {
+                setViewMode(mode)
+                syncFiltersToUrl({ mode })
+              }}
+            />
+          </div>
         </div>
       </div>
 
-      {/* Mobile: card list */}
-      <div className="md:hidden">
-        <MobileThreatsList items={filteredAndSortedData} />
-      </div>
-
-      {/* Desktop: table */}
-      <div className="hidden md:block glass-panel overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="border-b border-border bg-muted/20">
-                <th
-                  className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors max-w-[60px] md:max-w-none"
-                  onClick={() => handleSort('industry')}
-                >
-                  <div className="flex items-center gap-1 justify-center md:justify-start">
-                    <span className="md:hidden">Ind.</span>
-                    <span className="hidden md:inline">Industry</span>
-                    {sortField === 'industry' &&
-                      (sortDirection === 'asc' ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      ))}
-                  </div>
-                </th>
-                <th
-                  className="hidden md:table-cell p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors"
-                  onClick={() => handleSort('threatId')}
-                >
-                  <div className="flex items-center gap-1">
-                    ID
-                    {sortField === 'threatId' &&
-                      (sortDirection === 'asc' ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      ))}
-                  </div>
-                </th>
-                <th className="hidden md:table-cell p-4 font-semibold text-sm w-1/3">
-                  Description
-                </th>
-                <th
-                  className="p-4 font-semibold text-sm cursor-pointer hover:text-primary transition-colors max-w-[60px] md:max-w-none"
-                  onClick={() => handleSort('criticality')}
-                >
-                  <div className="flex items-center gap-1 justify-center md:justify-start">
-                    <span className="md:hidden">Crit.</span>
-                    <span className="hidden md:inline">Criticality</span>
-                    {sortField === 'criticality' &&
-                      (sortDirection === 'asc' ? (
-                        <ChevronUp size={14} />
-                      ) : (
-                        <ChevronDown size={14} />
-                      ))}
-                  </div>
-                </th>
-
-                <th className="p-4 font-semibold text-sm">Crypto</th>
-                <th className="p-4 font-semibold text-sm">PQC Repl.</th>
-                <th className="hidden lg:table-cell p-4 font-semibold text-sm text-center">
-                  Actions
-                </th>
-                <th className="p-4 font-semibold text-sm text-center">Info</th>
-              </tr>
-            </thead>
-            <tbody>
-              <AnimatePresence mode="popLayout">
-                {filteredAndSortedData.map((item) => (
-                  <motion.tr
-                    key={item.threatId}
-                    layout
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="border-b border-border hover:bg-muted/30 transition-colors group cursor-pointer"
-                    onClick={() => {
-                      setSelectedThreat(item)
-                      syncFiltersToUrl({ id: item.threatId })
-                    }}
-                    role="button"
-                    tabIndex={0}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault()
-                        setSelectedThreat(item)
-                        syncFiltersToUrl({ id: item.threatId })
-                      }
-                    }}
-                  >
-                    <td className="p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors text-center md:text-left">
-                      <span
-                        className="md:hidden flex items-center justify-center text-primary"
-                        title={item.industry}
-                      >
-                        {getIndustryIcon(item.industry)}
-                      </span>
-                      <span className="hidden md:inline">{item.industry}</span>
-                    </td>
-                    <td className="hidden md:table-cell p-4 text-sm font-mono text-primary/80">
-                      <div className="flex items-center gap-2">
-                        {item.threatId}
-                        <StatusBadge status={item.status} size="sm" />
-                        <TrustScoreBadge
-                          resourceType="threats"
-                          resourceId={item.threatId}
-                          size="sm"
-                        />
-                      </div>
-                    </td>
-                    {/* Desktop Description */}
-                    <td className="hidden md:table-cell p-4 text-sm text-muted-foreground group-hover:text-foreground transition-colors max-w-[300px]">
-                      <div className="line-clamp-2 md:line-clamp-3">
-                        {item.description}
-                      </div>
-                      <div className="text-xs text-muted-foreground/50 mt-1 uppercase tracking-wider">
-                        Source: {item.mainSource}
-                      </div>
-                    </td>
-                    <td className="p-4 text-center md:text-left">
-                      {/* Mobile Criticality Icon */}
-                      <div className="md:hidden flex justify-center">
-                        {criticalityItems.find((c) => c.id === item.criticality)?.icon || (
-                          <AlertCircle size={16} />
-                        )}
-                      </div>
-                      {/* Desktop Criticality Badge */}
-                      <span
-                        className={clsx(
-                          'hidden md:inline-block px-2 py-1 rounded text-xs font-bold border',
-                          item.criticality.toLowerCase() === 'critical'
-                            ? 'bg-status-error text-status-error border-status-error'
-                            : item.criticality.toLowerCase() === 'high'
-                              ? 'bg-status-error text-status-error border-status-error'
-                              : 'bg-primary/10 text-primary border-primary/20'
-                        )}
-                      >
-                        {item.criticality}
-                      </span>
-                    </td>
-
-                    <td className="p-4 text-xs font-mono">
-                      <div className="flex flex-wrap gap-1">
-                        {item.cryptoAtRisk.split(',').map((c, i) => (
-                          <span key={i} className="px-1.5 py-0.5 rounded-sm bg-muted/50 border border-border/50 text-muted-foreground whitespace-nowrap">{c.trim()}</span>
-                        ))}
-                      </div>
-                    </td>
-                    <td className="p-4 text-xs font-mono">
-                      <div className="flex flex-wrap gap-1">
-                        {item.pqcReplacement.split(',').map((c, i) => (
-                          <span key={i} className="px-1.5 py-0.5 rounded-sm bg-status-success/10 border border-status-success/20 text-status-success/80 whitespace-nowrap">{c.trim()}</span>
-                        ))}
-                      </div>
-                    </td>
-                    {/* Endorse / Flag Column */}
-                    <td className="hidden lg:table-cell p-4 text-center">
-                      {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                      <div className="flex items-center justify-center gap-1" onClick={(e) => e.stopPropagation()}>
-                        <EndorseButton
-                          endorseUrl={buildEndorsementUrl({
-                            category: 'threat-endorsement',
-                            title: `Endorse: ${item.threatId} — ${item.industry}`,
-                            resourceType: 'Threat Assessment',
-                            resourceId: item.threatId,
-                            resourceDetails: [
-                              `**Threat ID:** ${item.threatId}`,
-                              `**Industry:** ${item.industry}`,
-                              `**Criticality:** ${item.criticality}`,
-                              `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
-                              `**PQC Mitigation:** ${item.pqcReplacement}`,
-                            ].join('\n'),
-                            pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-                          })}
-                          resourceLabel={item.threatId}
-                          resourceType="Threat"
-                        />
-                        <FlagButton
-                          flagUrl={buildFlagUrl({
-                            category: 'threat-endorsement',
-                            title: `Flag: ${item.threatId} — ${item.industry}`,
-                            resourceType: 'Threat Assessment',
-                            resourceId: item.threatId,
-                            resourceDetails: [
-                              `**Threat ID:** ${item.threatId}`,
-                              `**Industry:** ${item.industry}`,
-                              `**Criticality:** ${item.criticality}`,
-                              `**At-Risk Crypto:** ${item.cryptoAtRisk}`,
-                              `**PQC Mitigation:** ${item.pqcReplacement}`,
-                            ].join('\n'),
-                            pageUrl: `/threats?threat=${encodeURIComponent(item.threatId)}`,
-                          })}
-                          resourceLabel={item.threatId}
-                          resourceType="Threat"
-                        />
-                      </div>
-                    </td>
-                    {/* Info Chevron Column */}
-                    <td className="p-4 text-center">
-                      <div className="text-muted-foreground group-hover:text-primary transition-colors flex justify-center items-center h-full">
-                        <ChevronDown className="-rotate-90" size={16} />
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-        </div>
-        {filteredAndSortedData.length === 0 && (
-          <EmptyState
-            icon={<ShieldAlert size={32} />}
-            title="No threats found"
-            description="No threats match your current filters. Try adjusting the industry or search query."
+      {/* View Rendering */}
+      <div className="w-full">
+        {viewMode === 'stack' && (
+          <IndustryStack
+            activeLayer={activeLayer}
+            onSelectLayer={setActiveLayer}
+            items={filteredAndSortedData}
+            expandedContent={
+              <ThreatsTable
+                items={filteredAndSortedData.filter(
+                  (t) => t.industry === activeLayer || activeLayer === 'All'
+                )}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                onItemClick={(item) => {
+                  setSelectedThreat(item)
+                  syncFiltersToUrl({ id: item.threatId })
+                }}
+              />
+            }
           />
         )}
+        {viewMode === 'cards' && (
+          <div className="mb-8">
+            <ThreatsCardGrid
+              items={filteredAndSortedData}
+              onItemClick={(item) => {
+                setSelectedThreat(item)
+                syncFiltersToUrl({ id: item.threatId })
+              }}
+            />
+          </div>
+        )}
+        {viewMode === 'table' && (
+          <>
+            <div className="hidden md:block">
+              <ThreatsTable
+                items={filteredAndSortedData}
+                sortField={sortField}
+                sortDirection={sortDirection}
+                onSort={handleSort}
+                onItemClick={(item) => {
+                  setSelectedThreat(item)
+                  syncFiltersToUrl({ id: item.threatId })
+                }}
+              />
+            </div>
+            <div className="md:hidden">
+              <MobileThreatsList items={filteredAndSortedData} />
+            </div>
+          </>
+        )}
       </div>
-      {/* End desktop wrapper */}
+      {/* End detail dialog wrapper */}
       <AnimatePresence>
         {selectedThreat && (
           <ThreatDetailDialog
