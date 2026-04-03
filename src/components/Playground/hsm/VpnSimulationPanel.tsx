@@ -65,6 +65,16 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       path = libsofthsmv3.so
     }
   }
+  filelog {
+    /dev/stdout {
+      time_format = %H:%M:%S
+      default = 1
+      mgr = 2
+      ike = 2
+      enc = 2
+      cfg = 2
+    }
+  }
 }`
   const defaultIpsec = `config setup
   strictcrlpolicy=no
@@ -113,7 +123,8 @@ conn host-host
 
     strongSwanEngine.addLogListener(handleLog)
     strongSwanEngine.addStateListener(handleState)
-    strongSwanEngine.init()
+    // Do NOT call init() here — configs must be passed at init time (preRun).
+    // The daemon starts when the user clicks "Start Daemon".
 
     return () => {
       strongSwanEngine.removeLogListener(handleLog)
@@ -187,7 +198,7 @@ conn host-host
     setCurrentStep(0)
     setSsLogs([])
     strongSwanEngine.destroy()
-    strongSwanEngine.init()
+    // Don't re-init here — user must click "Start Daemon" to pass configs.
   }, [])
 
   const handleModeChange = useCallback((mode: IKEv2Mode) => {
@@ -453,10 +464,10 @@ conn host-host
           >
             <RotateCcw size={16} />
           </button>
-          {currentStep === 0 && ssState === 'READY' ? (
+          {currentStep === 0 && ssState === 'UNINITIALIZED' ? (
             <button
               onClick={() => {
-                strongSwanEngine.startDaemon({
+                strongSwanEngine.init({
                   'strongswan.conf': activeConfig,
                   'ipsec.conf': activeIpsec,
                 })
