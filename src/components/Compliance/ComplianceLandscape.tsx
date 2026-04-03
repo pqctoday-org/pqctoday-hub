@@ -14,8 +14,8 @@ import {
   Building2,
   Search,
   ExternalLink,
-  CheckSquare,
-  Square,
+  BookmarkCheck,
+  Bookmark,
 } from 'lucide-react'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { complianceFrameworks, type ComplianceFramework } from '@/data/complianceData'
@@ -277,7 +277,7 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
               : 'text-muted-foreground/40 hover:text-primary'
           }`}
         >
-          {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+          {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </button>
       </div>
 
@@ -429,7 +429,7 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
               : 'text-muted-foreground/40 hover:text-primary'
           }`}
         >
-          {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+          {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
         </button>
       </td>
       <td className="py-2.5 px-3">
@@ -769,7 +769,7 @@ export function ComplianceLandscape({
             }`}
             aria-pressed={showOnlyMine}
           >
-            <CheckSquare size={12} />
+            <BookmarkCheck size={12} />
             My ({myFrameworks.length})
           </button>
         )}

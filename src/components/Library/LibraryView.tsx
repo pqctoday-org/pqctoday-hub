@@ -18,13 +18,14 @@ import type { ViewMode } from './ViewToggle'
 import { SortControl } from './SortControl'
 import type { SortOption } from './SortControl'
 import { FilterDropdown } from '../common/FilterDropdown'
-import { Search, FileSearch, BookOpen, SlidersHorizontal, X } from 'lucide-react'
+import { Search, FileSearch, BookOpen, SlidersHorizontal, X, BookmarkCheck } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { LIBRARY_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import debounce from 'lodash/debounce'
 import { logLibrarySearch, logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
@@ -201,6 +202,8 @@ function findByRef(
 export const LibraryView: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams()
   const { selectedIndustry: storeIndustry, selectedPersona } = usePersonaStore()
+  const { libraryBookmarks, showOnlyLibraryBookmarks, setShowOnlyLibraryBookmarks } =
+    useBookmarkStore()
   const [activeCategory, setActiveCategory] = useState<string>(
     () => searchParams.get('cat') ?? 'All'
   )
@@ -393,6 +396,9 @@ export const LibraryView: React.FC = () => {
         if (!itemCanonicalOrgs.includes(activeOrg)) return false
       }
 
+      // My bookmarks filter
+      if (showOnlyLibraryBookmarks && !libraryBookmarks.includes(item.referenceId)) return false
+
       // Search filter
       if (!filterText) return true
       const searchLower = filterText.toLowerCase()
@@ -403,7 +409,14 @@ export const LibraryView: React.FC = () => {
         item.categories?.some((cat) => cat.toLowerCase().includes(searchLower))
       )
     })
-  }, [activeCategory, activeOrg, activeIndustry, filterText])
+  }, [
+    activeCategory,
+    activeOrg,
+    activeIndustry,
+    filterText,
+    showOnlyLibraryBookmarks,
+    libraryBookmarks,
+  ])
 
   // Persona-preferred categories for secondary sort boost
   const preferredCategories = useMemo(() => {
@@ -601,6 +614,21 @@ export const LibraryView: React.FC = () => {
               <span className="w-2 h-2 rounded-full bg-primary" />
             )}
           </button>
+
+          {libraryBookmarks.length > 0 && (
+            <button
+              onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
+              className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
+                showOnlyLibraryBookmarks
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+              }`}
+              aria-pressed={showOnlyLibraryBookmarks}
+            >
+              <BookmarkCheck size={14} />
+              My ({libraryBookmarks.length})
+            </button>
+          )}
 
           {viewMode === 'cards' && (
             <div className="hidden sm:block">

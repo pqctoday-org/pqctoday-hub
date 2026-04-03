@@ -9,6 +9,7 @@ import {
   CheckCircle,
   Filter,
   Briefcase,
+  BookmarkCheck,
 } from 'lucide-react'
 import { useSearchParams } from 'react-router-dom'
 import { threatsData, threatsMetadata } from '../../data/threatsData'
@@ -17,6 +18,7 @@ import { AnimatePresence } from 'framer-motion'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { logEvent } from '../../utils/analytics'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { INDUSTRY_TO_THREATS_MAP } from '../../data/personaConfig'
 import clsx from 'clsx'
 import { PageHeader } from '../common/PageHeader'
@@ -58,6 +60,8 @@ export const ThreatsDashboard: React.FC = () => {
         .filter((mapped) => threatsData.some((d) => d.industry === mapped))
     )
   }, [searchParams, storeIndustries])
+
+  const { myThreats, showOnlyThreats, setShowOnlyThreats } = useBookmarkStore()
 
   const [selectedIndustries, setSelectedIndustries] = useState<string[]>(initialIndustries)
   const [selectedCriticality, setSelectedCriticality] = useState<string>(
@@ -281,8 +285,21 @@ export const ThreatsDashboard: React.FC = () => {
       return 0
     })
 
+    // My Threats filter
+    if (showOnlyThreats) {
+      data = data.filter((item) => myThreats.includes(item.threatId))
+    }
+
     return data
-  }, [selectedIndustries, selectedCriticality, searchQuery, sortField, sortDirection])
+  }, [
+    selectedIndustries,
+    selectedCriticality,
+    searchQuery,
+    sortField,
+    sortDirection,
+    showOnlyThreats,
+    myThreats,
+  ])
 
   // Persona-aware summary statistics
   const personaSummary = useMemo(() => {
@@ -437,6 +454,20 @@ export const ThreatsDashboard: React.FC = () => {
               className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
             />
           </div>
+          {myThreats.length > 0 && (
+            <button
+              onClick={() => setShowOnlyThreats(!showOnlyThreats)}
+              className={`hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                showOnlyThreats
+                  ? 'border-primary bg-primary/10 text-primary'
+                  : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+              }`}
+              aria-pressed={showOnlyThreats}
+            >
+              <BookmarkCheck size={12} />
+              My ({myThreats.length})
+            </button>
+          )}
           <div className="hidden md:block">
             <ThreatsViewToggle
               mode={viewMode}

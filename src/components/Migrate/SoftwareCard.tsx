@@ -5,11 +5,9 @@ import {
   AlertTriangle,
   ExternalLink,
   EyeOff,
-  CheckSquare,
-  Square,
-  Scale,
-  Bookmark,
   BookmarkCheck,
+  Bookmark,
+  Scale,
   ChevronDown,
   ChevronUp,
 } from 'lucide-react'
@@ -269,7 +267,7 @@ export const SoftwareCard = ({
                 : 'text-muted-foreground/40 hover:text-primary'
             }`}
           >
-            {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+            {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
           </button>
         )}
       </div>

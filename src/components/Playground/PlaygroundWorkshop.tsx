@@ -1,12 +1,23 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
-import { Search, Play, Cpu, FlaskConical, Sparkles, ArrowRight, BookOpen } from 'lucide-react'
+import {
+  Search,
+  Play,
+  Cpu,
+  FlaskConical,
+  Sparkles,
+  ArrowRight,
+  BookOpen,
+  BookmarkCheck,
+  Bookmark,
+} from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { PersonaId } from '@/data/learningPersonas'
 
 // ---------------------------------------------------------------------------
@@ -242,6 +253,10 @@ export const PlaygroundWorkshop = () => {
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
+  const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
+  const toggleMyPlaygroundTool = useBookmarkStore((s) => s.toggleMyPlaygroundTool)
+  const showOnlyPlaygroundTools = useBookmarkStore((s) => s.showOnlyPlaygroundTools)
+  const setShowOnlyPlaygroundTools = useBookmarkStore((s) => s.setShowOnlyPlaygroundTools)
 
   const recommendedTools = useMemo(() => {
     if (!selectedPersona) return []
@@ -254,17 +269,28 @@ export const PlaygroundWorkshop = () => {
         ? recommendedTools
         : WORKSHOP_TOOLS
     if (activeCategory) tools = tools.filter((t) => t.category === activeCategory)
-    if (!searchQuery.trim()) return tools
-    const q = searchQuery.toLowerCase()
-    return tools.filter(
-      (t) =>
-        t.name.toLowerCase().includes(q) ||
-        t.description.toLowerCase().includes(q) ||
-        t.algorithms.some((a) => a.toLowerCase().includes(q)) ||
-        t.keywords.some((k) => k.includes(q)) ||
-        t.category.toLowerCase().includes(q)
-    )
-  }, [searchQuery, activeCategory, showPersonaFilter, selectedPersona, recommendedTools])
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase()
+      tools = tools.filter(
+        (t) =>
+          t.name.toLowerCase().includes(q) ||
+          t.description.toLowerCase().includes(q) ||
+          t.algorithms.some((a) => a.toLowerCase().includes(q)) ||
+          t.keywords.some((k) => k.includes(q)) ||
+          t.category.toLowerCase().includes(q)
+      )
+    }
+    if (showOnlyPlaygroundTools) tools = tools.filter((t) => myPlaygroundTools.includes(t.id))
+    return tools
+  }, [
+    searchQuery,
+    activeCategory,
+    showPersonaFilter,
+    selectedPersona,
+    recommendedTools,
+    showOnlyPlaygroundTools,
+    myPlaygroundTools,
+  ])
 
   const groupedTools = useMemo(() => {
     const groups: Record<string, typeof WORKSHOP_TOOLS> = {}
@@ -316,17 +342,33 @@ export const PlaygroundWorkshop = () => {
                 className="pl-9"
               />
             </div>
-            <span className="text-sm text-muted-foreground">
-              {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}
-              {isPersonaFiltered && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">
+                {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}
+                {isPersonaFiltered && (
+                  <button
+                    onClick={() => setShowPersonaFilter(false)}
+                    className="ml-2 text-xs text-primary hover:underline"
+                  >
+                    Show all
+                  </button>
+                )}
+              </span>
+              {myPlaygroundTools.length > 0 && (
                 <button
-                  onClick={() => setShowPersonaFilter(false)}
-                  className="ml-2 text-xs text-primary hover:underline"
+                  onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
+                  className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                    showOnlyPlaygroundTools
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+                  aria-pressed={showOnlyPlaygroundTools}
                 >
-                  Show all
+                  <BookmarkCheck size={12} />
+                  My ({myPlaygroundTools.length})
                 </button>
               )}
-            </span>
+            </div>
           </div>
 
           {/* Category filter pills */}
@@ -413,37 +455,53 @@ export const PlaygroundWorkshop = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {tools.map((tool) => {
                   const Icon = tool.icon
+                  const isBookmarked = myPlaygroundTools.includes(tool.id)
                   return (
-                    <Link
-                      key={tool.id}
-                      to={`/playground/${tool.id}`}
-                      className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
-                    >
-                      <div className="flex items-start gap-3 w-full">
-                        <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 flex-wrap">
-                            <p className="font-medium text-foreground group-hover:text-primary transition-colors">
-                              {tool.name}
+                    <div key={tool.id} className="relative">
+                      <Link
+                        to={`/playground/${tool.id}`}
+                        className="glass-panel p-4 h-auto text-left hover:border-primary/40 transition-colors cursor-pointer group items-start justify-start flex"
+                      >
+                        <div className="flex items-start gap-3 w-full">
+                          <Icon className="w-5 h-5 text-primary mt-0.5 shrink-0" />
+                          <div className="min-w-0 flex-1 pr-6">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <p className="font-medium text-foreground group-hover:text-primary transition-colors">
+                                {tool.name}
+                              </p>
+                              <DifficultyBadge level={tool.difficulty} />
+                            </div>
+                            <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
+                              {tool.description}
                             </p>
-                            <DifficultyBadge level={tool.difficulty} />
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                            {tool.description}
-                          </p>
-                          <div className="flex flex-wrap gap-1 mt-2">
-                            {tool.algorithms.map((algo) => (
-                              <span
-                                key={algo}
-                                className="inline-block text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
-                              >
-                                {algo}
-                              </span>
-                            ))}
+                            <div className="flex flex-wrap gap-1 mt-2">
+                              {tool.algorithms.map((algo) => (
+                                <span
+                                  key={algo}
+                                  className="inline-block text-xs px-1.5 py-0.5 rounded bg-muted text-muted-foreground"
+                                >
+                                  {algo}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </Link>
+                      </Link>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          toggleMyPlaygroundTool(tool.id)
+                        }}
+                        className={`absolute top-2 right-2 p-1 rounded transition-colors ${
+                          isBookmarked
+                            ? 'text-primary hover:text-primary/80'
+                            : 'text-muted-foreground/40 hover:text-primary'
+                        }`}
+                        aria-label={isBookmarked ? 'Remove from My Tools' : 'Add to My Tools'}
+                      >
+                        {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+                      </button>
+                    </div>
                   )
                 })}
               </div>

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { AnimatePresence, motion } from 'framer-motion'
-import { ChevronUp, ChevronDown, ShieldAlert } from 'lucide-react'
+import { ChevronUp, ChevronDown, ShieldAlert, BookmarkCheck, Bookmark } from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
@@ -10,6 +10,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
 import { getIndustryIcon } from './threatsHelper'
 import { EmptyState } from '../ui/empty-state'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 
 export type SortField = 'industry' | 'threatId' | 'criticality'
 export type SortDirection = 'asc' | 'desc'
@@ -29,6 +30,9 @@ export const ThreatsTable = ({
   onSort,
   onItemClick,
 }: ThreatsTableProps) => {
+  const myThreats = useBookmarkStore((s) => s.myThreats)
+  const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
+
   if (items.length === 0) {
     return (
       <EmptyState
@@ -175,6 +179,25 @@ export const ThreatsTable = ({
                       className="flex items-center justify-center gap-1"
                       onClick={(e) => e.stopPropagation()}
                     >
+                      <button
+                        onClick={() => toggleMyThreat(item.threatId)}
+                        className={`p-1 rounded transition-colors ${
+                          myThreats.includes(item.threatId)
+                            ? 'text-primary hover:text-primary/80'
+                            : 'text-muted-foreground/40 hover:text-primary'
+                        }`}
+                        aria-label={
+                          myThreats.includes(item.threatId)
+                            ? 'Remove from My Threats'
+                            : 'Add to My Threats'
+                        }
+                      >
+                        {myThreats.includes(item.threatId) ? (
+                          <BookmarkCheck size={16} />
+                        ) : (
+                          <Bookmark size={16} />
+                        )}
+                      </button>
                       <EndorseButton
                         endorseUrl={buildEndorsementUrl({
                           category: 'threat-endorsement',

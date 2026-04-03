@@ -21,6 +21,7 @@ import {
   ArrowRightLeft,
   Wrench,
   Scale,
+  BookmarkCheck,
 } from 'lucide-react'
 import debounce from 'lodash/debounce'
 import { logMigrateAction } from '../../utils/analytics'
@@ -100,6 +101,8 @@ export const MigrateView: React.FC = () => {
     setActiveSubCategory,
     myProducts,
     toggleMyProduct,
+    showOnlyMyProducts,
+    setShowOnlyMyProducts,
     viewMode,
     setViewMode,
     workflowCollapsed,
@@ -437,6 +440,9 @@ export const MigrateView: React.FC = () => {
             !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
           )
             return false
+          // My Products filter
+          if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
+            return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -464,6 +470,8 @@ export const MigrateView: React.FC = () => {
     licenseFilter,
     effectiveViewMode,
     activePartitions,
+    showOnlyMyProducts,
+    myProductsSet,
   ])
 
   // Layer product counts (for badges on collapsed layer rows)
@@ -631,6 +639,9 @@ export const MigrateView: React.FC = () => {
         !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
       )
         return false
+      // My Products filter
+      if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
+        return false
       // Search filter
       if (filterText) {
         const q = filterText.toLowerCase()
@@ -654,6 +665,8 @@ export const MigrateView: React.FC = () => {
     vendorFilter,
     verificationFilter,
     licenseFilter,
+    showOnlyMyProducts,
+    myProductsSet,
   ])
 
   // PQC stats for all filtered products
@@ -817,7 +830,8 @@ export const MigrateView: React.FC = () => {
     licenseFilter !== 'All' ||
     effectiveLayer !== 'All' ||
     flatCategoryFilter !== 'All' ||
-    hiddenSet.size > 0
+    hiddenSet.size > 0 ||
+    showOnlyMyProducts
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
@@ -1102,6 +1116,23 @@ export const MigrateView: React.FC = () => {
                       />
                     </div>
 
+                    {(myProducts.length > 0 || showOnlyMyProducts) && (
+                      <div className="space-y-3 pt-6 border-t border-border">
+                        <button
+                          onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
+                          className={`w-full inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-lg border transition-colors font-medium ${
+                            showOnlyMyProducts
+                              ? 'border-primary bg-primary/10 text-primary'
+                              : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                          }`}
+                          aria-pressed={showOnlyMyProducts}
+                        >
+                          <BookmarkCheck size={14} />
+                          My Products ({myProducts.length})
+                        </button>
+                      </div>
+                    )}
+
                     {hiddenSet.size > 0 && (
                       <div className="space-y-3 pt-6 border-t border-border">
                         <Button
@@ -1239,8 +1270,8 @@ export const MigrateView: React.FC = () => {
               </Button>
             )}
 
-            {/* View toggle */}
-            <div>
+            {/* View toggle + My filter — grouped together */}
+            <div className="flex items-center gap-2">
               <MigrateViewToggle
                 mode={effectiveViewMode}
                 onChange={(m) => {
@@ -1248,6 +1279,20 @@ export const MigrateView: React.FC = () => {
                   syncFiltersToUrl({ mode: m })
                 }}
               />
+              {(myProducts.length > 0 || showOnlyMyProducts) && (
+                <button
+                  onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
+                  className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+                    showOnlyMyProducts
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
+                  }`}
+                  aria-pressed={showOnlyMyProducts}
+                >
+                  <BookmarkCheck size={12} />
+                  My ({myProducts.length})
+                </button>
+              )}
             </div>
           </div>
         </div>
@@ -1317,7 +1362,7 @@ export const MigrateView: React.FC = () => {
               layerProductKeys={layerProductKeys}
               onRestoreLayer={(keys) => restoreLayerProducts(keys)}
               layerSelectedCounts={layerSelectedCounts}
-              hideEmptyLayers={vendorFilter !== 'All'}
+              hideEmptyLayers={vendorFilter !== 'All' || showOnlyMyProducts}
               layerPqcStats={layerPqcStats}
               totalPqcStats={totalPqcStats}
               partitions={activePartitions}

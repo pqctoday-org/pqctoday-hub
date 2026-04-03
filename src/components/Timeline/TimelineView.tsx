@@ -18,6 +18,7 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
+import { useBookmarkStore } from '@/store/useBookmarkStore'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -28,6 +29,11 @@ const REGION_LABELS: Record<string, string> = {
 
 export const TimelineView = () => {
   useWorkflowPhaseTracker('timeline')
+  const myTimelineCountries = useBookmarkStore((s) => s.myTimelineCountries)
+  const toggleMyTimelineCountry = useBookmarkStore((s) => s.toggleMyTimelineCountry)
+  const showOnlyTimelineCountries = useBookmarkStore((s) => s.showOnlyTimelineCountries)
+  const setShowOnlyTimelineCountries = useBookmarkStore((s) => s.setShowOnlyTimelineCountries)
+
   const [searchParams, setSearchParams] = useSearchParams()
 
   // Region filter — preset from URL ?region= or persona preference
@@ -252,6 +258,10 @@ export const TimelineView = () => {
             countryItems={countryItems}
             searchText={searchText}
             onSearchChange={handleSearchChange}
+            myCountries={myTimelineCountries}
+            onToggleMyCountry={toggleMyTimelineCountry}
+            showOnlyMyCountries={showOnlyTimelineCountries}
+            onSetShowOnlyMyCountries={setShowOnlyTimelineCountries}
           />
         </div>
 

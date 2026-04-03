@@ -12,14 +12,12 @@ import {
   ArrowUp,
   ArrowDown,
   Info,
-  EyeOff,
   Award,
   Shield,
-  CheckSquare,
-  Square,
-  Sparkles,
-  Bookmark,
   BookmarkCheck,
+  Bookmark,
+  Scale,
+  Sparkles,
   ShieldCheck,
   CheckCircle,
   BadgeCheck,
@@ -41,7 +39,6 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
-import { useBookmarkStore } from '@/store/useBookmarkStore'
 import {
   CertBadges,
   EvidenceWarnings,
@@ -222,7 +219,6 @@ interface SoftwareTableProps {
   data: SoftwareItem[]
   defaultSort?: { key: SortKey; direction: SortDirection }
   hiddenProducts?: Set<string>
-  onHideProduct?: (key: string) => void
   /** Keys of products the user has marked as "My Products" */
   selectedProducts?: Set<string>
   /** Toggle a product's "My Products" selection */
@@ -246,7 +242,6 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   data,
   defaultSort,
   hiddenProducts,
-  onHideProduct,
   selectedProducts,
   onToggleProduct,
   compareProducts,
@@ -255,8 +250,6 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   expandedIds: controlledExpandedIds,
   onToggleExpand,
 }) => {
-  const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
-  const migrateBookmarkSet = useMemo(() => new Set(migrateBookmarks), [migrateBookmarks])
   const [localExpandedIds, setLocalExpandedIds] = useState<Set<string>>(new Set())
   const expandedIds = controlledExpandedIds ?? localExpandedIds
   const [sortConfig, setSortConfig] = useState<{ key: SortKey; direction: SortDirection }>(
@@ -343,18 +336,6 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                   <span className="sr-only">Compare</span>⚖
                 </th>
               )}
-              {hasSelection && (
-                <th
-                  scope="col"
-                  className="p-2 w-8 text-center text-xs text-muted-foreground font-medium"
-                  title="Mark products as yours for filtered views"
-                >
-                  My
-                </th>
-              )}
-              <th scope="col" className="p-4 w-8" title="Hide product from view">
-                <span className="sr-only">Hide</span>
-              </th>
               <th scope="col" className="p-4 w-8" title="Bookmark for quick access">
                 <span className="sr-only">Bookmark</span>
               </th>
@@ -428,82 +409,33 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               : 'text-muted-foreground/40 hover:text-secondary'
                           }`}
                         >
-                          {compareProducts!.has(key) ? (
-                            <CheckSquare size={16} />
-                          ) : (
-                            <Square size={16} />
-                          )}
+                          <Scale
+                            size={16}
+                            className={
+                              compareProducts!.has(key)
+                                ? 'text-secondary'
+                                : 'text-muted-foreground/40'
+                            }
+                          />
                         </button>
                       </td>
                     )}
-                    {hasSelection && (
-                      <td className="p-2 w-8 text-center">
-                        <button
-                          type="button"
-                          aria-label={
-                            selectedProducts.has(key)
-                              ? 'Remove from My Products'
-                              : 'Add to My Products'
-                          }
-                          title={
-                            selectedProducts.has(key)
-                              ? 'Remove from My Products'
-                              : 'Add to My Products'
-                          }
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onToggleProduct(key)
-                          }}
-                          className={`p-1 rounded transition-colors ${
-                            selectedProducts.has(key)
-                              ? 'text-primary hover:text-primary/80'
-                              : 'text-muted-foreground/40 hover:text-primary'
-                          }`}
-                        >
-                          {selectedProducts.has(key) ? (
-                            <CheckSquare size={16} />
-                          ) : (
-                            <Square size={16} />
-                          )}
-                        </button>
-                      </td>
-                    )}
-                    <td className="p-2 w-8">
-                      {onHideProduct && (
-                        <button
-                          type="button"
-                          aria-label="Hide this product"
-                          title="Hide this product"
-                          onClick={(e) => {
-                            e.stopPropagation()
-                            onHideProduct(key)
-                          }}
-                          className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
-                        >
-                          <EyeOff size={14} />
-                        </button>
-                      )}
-                    </td>
                     <td className="p-2 w-8">
                       <button
                         type="button"
                         aria-label={
-                          migrateBookmarkSet.has(item.softwareName)
-                            ? `Remove ${item.softwareName} bookmark`
-                            : `Bookmark ${item.softwareName}`
+                          selectedProducts?.has(key)
+                            ? `Remove ${item.softwareName} from My`
+                            : `Add ${item.softwareName} to My`
                         }
-                        title={
-                          migrateBookmarkSet.has(item.softwareName)
-                            ? 'Remove bookmark'
-                            : 'Bookmark for quick access'
-                        }
+                        title={selectedProducts?.has(key) ? 'Remove from My' : 'Add to My'}
                         onClick={(e) => {
                           e.stopPropagation()
-                          toggleMigrateBookmark(item.softwareName)
+                          onToggleProduct?.(key)
                         }}
                         className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded transition-colors"
                       >
-                        {migrateBookmarkSet.has(item.softwareName) ? (
+                        {selectedProducts?.has(key) ? (
                           <BookmarkCheck size={14} className="text-primary" />
                         ) : (
                           <Bookmark

@@ -8,6 +8,8 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
+import { BookmarkCheck, Bookmark } from 'lucide-react'
+import { useBookmarkStore } from '../../store/useBookmarkStore'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -16,6 +18,9 @@ interface ThreatCardProps {
 }
 
 export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
+  const isBookmarked = useBookmarkStore((s) => s.myThreats.includes(item.threatId))
+  const toggleMyThreat = useBookmarkStore((s) => s.toggleMyThreat)
+
   return (
     <motion.article
       initial={{ opacity: 0, y: 10 }}
@@ -43,6 +48,16 @@ export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
+          <button
+            onClick={(e) => {
+              e.stopPropagation()
+              toggleMyThreat(item.threatId)
+            }}
+            className={`p-1 rounded transition-colors ${isBookmarked ? 'text-primary hover:text-primary/80' : 'text-muted-foreground/40 hover:text-primary'}`}
+            aria-label={isBookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
+          >
+            {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+          </button>
           {item.status && <StatusBadge status={item.status} size="sm" />}
           <span
             className={clsx(
