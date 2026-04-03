@@ -185,6 +185,9 @@ conn host-host
 
   const handleReset = useCallback(() => {
     setCurrentStep(0)
+    setSsLogs([])
+    strongSwanEngine.destroy()
+    strongSwanEngine.init()
   }, [])
 
   const handleModeChange = useCallback((mode: IKEv2Mode) => {
