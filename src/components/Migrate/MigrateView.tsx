@@ -92,7 +92,6 @@ export const MigrateView: React.FC = () => {
   // Persisted store: hidden products + active layer/sub-category + view mode
   const {
     hiddenProducts,
-    hideProduct,
     restoreLayerProducts,
     restoreAll,
     activeLayer,
@@ -1437,7 +1436,6 @@ export const MigrateView: React.FC = () => {
             <SoftwareCardGrid
               items={sortedFlatProducts}
               hiddenProducts={filterText ? undefined : hiddenSet}
-              onHideProduct={hideProduct}
               selectedProducts={myProductsSet}
               onToggleProduct={toggleMyProduct}
               compareProducts={compareSet}
@@ -1457,7 +1455,6 @@ export const MigrateView: React.FC = () => {
                   data={allFilteredProducts}
                   defaultSort={{ key: 'softwareName', direction: 'asc' }}
                   hiddenProducts={filterText ? undefined : hiddenSet}
-                  onHideProduct={hideProduct}
                   selectedProducts={myProductsSet}
                   onToggleProduct={toggleMyProduct}
                   compareProducts={compareSet}
@@ -1471,7 +1468,6 @@ export const MigrateView: React.FC = () => {
                 <SoftwareCardGrid
                   items={allFilteredProducts}
                   hiddenProducts={filterText ? undefined : hiddenSet}
-                  onHideProduct={hideProduct}
                   selectedProducts={myProductsSet}
                   onToggleProduct={toggleMyProduct}
                   compareProducts={compareSet}
