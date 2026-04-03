@@ -8,6 +8,11 @@ import {
   type IKEv2Mode,
   type IKEv2Payload,
 } from '@/components/PKILearning/modules/VPNSSHModule/data/ikev2Constants'
+import {
+  strongSwanEngine,
+  type StrongSwanLog,
+  type StrongSwanState,
+} from '@/wasm/strongswan/bridge'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
@@ -48,6 +53,64 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [currentStep, setCurrentStep] = useState(0)
   const [mtu, setMtu] = useState<number>(1500)
   const [allowFragmentation, setAllowFragmentation] = useState<boolean>(true)
+  const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
+  const [ssLogs, setSsLogs] = useState<StrongSwanLog[]>([])
+
+  const scrollRef = React.useRef<HTMLDivElement>(null)
+
+  const defaultConfig = `charon {
+  load = pkcs11
+  modules {
+    pkcs11 {
+      path = libsofthsmv3.so
+    }
+  }
+}`
+  const defaultIpsec = `config setup
+  strictcrlpolicy=no
+conn %default
+  ikelifetime=60m
+  keylife=20m
+  rekeymargin=3m
+  keyingtries=1
+conn host-host
+  left=192.168.0.1
+  right=192.168.0.2
+  ike=aes256-mlkem768-sha384!
+  esp=aes256gcm16!
+  auto=start`
+
+  const [activeConfig, setActiveConfig] = useState(defaultConfig)
+  const [activeIpsec, setActiveIpsec] = useState(defaultIpsec)
+
+  // Bidirectional UI -> Config sync
+  React.useEffect(() => {
+    let modeike = 'aes256-mlkem768-sha384!'
+    if (selectedMode === 'classical') modeike = 'aes256-sha256-modp3072!'
+    if (selectedMode === 'hybrid') modeike = 'aes256-mlkem768-x25519-sha384!'
+
+    // Replace the ike line
+    setActiveIpsec((prev) => prev.replace(/ike=.*/, `ike=${modeike}`))
+  }, [selectedMode])
+
+  React.useEffect(() => {
+    strongSwanEngine.init(
+      (log) => {
+        setSsLogs((prev) => {
+          const next = [...prev, log]
+          return next.length > 500 ? next.slice(next.length - 500) : next
+        })
+        if (scrollRef.current) {
+          scrollRef.current.scrollTop = scrollRef.current.scrollHeight
+        }
+      },
+      (state) => setSsState(state)
+    )
+
+    return () => {
+      strongSwanEngine.destroy()
+    }
+  }, [])
 
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
@@ -180,6 +243,31 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               Enable Application-Layer Fragmentation (RFC 7383)
             </label>
           </div>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <span>strongswan.conf</span>
+          </div>
+          <textarea
+            value={activeConfig}
+            onChange={(e) => setActiveConfig(e.target.value)}
+            className="w-full h-32 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"
+            spellCheck={false}
+          />
+        </div>
+        <div className="space-y-2">
+          <div className="flex justify-between text-xs font-bold text-muted-foreground uppercase tracking-wider">
+            <span>ipsec.conf</span>
+          </div>
+          <textarea
+            value={activeIpsec}
+            onChange={(e) => setActiveIpsec(e.target.value)}
+            className="w-full h-32 bg-transparent border border-border rounded-lg text-[10px] font-mono p-3 text-muted-foreground focus:outline-none focus:border-primary"
+            spellCheck={false}
+          />
         </div>
       </div>
 
@@ -334,8 +422,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         >
           &larr; Previous Phase
         </button>
-        <div className="text-xs font-semibold text-muted-foreground bg-background px-3 py-1 rounded-full border border-border">
-          Sequence {currentStep + 1} of {steps.length}
+        <div className="text-xs font-semibold text-muted-foreground bg-background px-3 py-1 rounded-full border border-border flex items-center gap-2">
+          <span>
+            Sequence {currentStep + 1} of {steps.length}
+          </span>
+          <span
+            className={`px-2 py-0.5 rounded text-[10px] uppercase ${ssState === 'RUNNING' ? 'bg-success/20 text-success' : 'bg-muted text-muted-foreground'}`}
+          >
+            Daemon: {ssState}
+          </span>
         </div>
         <div className="flex gap-2">
           <button
@@ -345,13 +440,55 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           >
             <RotateCcw size={16} />
           </button>
-          <button
-            onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))}
-            disabled={currentStep === steps.length - 1 || hasCrashed}
-            className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded shadow-sm hover:bg-primary/90 disabled:opacity-50 text-sm transition-colors"
-          >
-            {currentStep === steps.length - 1 ? 'Tunnel Established' : 'Next Phase \u2192'}
-          </button>
+          {currentStep === 0 && ssState === 'READY' ? (
+            <button
+              onClick={() => {
+                strongSwanEngine.startDaemon({
+                  'strongswan.conf': activeConfig,
+                  'ipsec.conf': activeIpsec,
+                })
+                setCurrentStep(1)
+              }}
+              className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded shadow-sm hover:bg-primary/90 text-sm transition-colors"
+            >
+              Start Daemon
+            </button>
+          ) : (
+            <button
+              onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))}
+              disabled={currentStep === steps.length - 1 || hasCrashed}
+              className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded shadow-sm hover:bg-primary/90 disabled:opacity-50 text-sm transition-colors"
+            >
+              {currentStep === steps.length - 1 ? 'Tunnel Established' : 'Next Phase \u2192'}
+            </button>
+          )}
+        </div>
+      </div>
+
+      <div className="border border-border/50 rounded-xl overflow-hidden bg-black/90 pb-2">
+        <div className="bg-muted px-4 py-1.5 text-xs font-mono font-bold border-b border-border text-muted-foreground flex justify-between">
+          <span>charon.log</span>
+          <span>WASM IKEv2 KEM Daemon</span>
+        </div>
+        <div
+          ref={scrollRef}
+          className="p-3 h-[180px] overflow-y-auto font-mono text-[11px] leading-relaxed"
+        >
+          {ssLogs.length === 0 ? (
+            <div className="text-muted-foreground/50 italic">Awaiting daemon initialization...</div>
+          ) : (
+            ssLogs.map((log, i) => (
+              <div
+                key={i}
+                className={log.level === 'error' ? 'text-destructive' : 'text-success/80'}
+              >
+                <span className="opacity-50 mr-2">
+                  [{new Date().toISOString().split('T')[1]?.split('.')[0]}]
+                </span>
+                {log.text}
+              </div>
+            ))
+          )}
         </div>
       </div>
 

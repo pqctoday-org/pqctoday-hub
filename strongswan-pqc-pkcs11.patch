@@ -1,0 +1,407 @@
+diff -Naur strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/Makefile.am /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/Makefile.am
+--- strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/Makefile.am	2025-11-07 13:05:36
++++ /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/Makefile.am	2026-04-03 10:40:22
+@@ -19,6 +19,7 @@
+ 	pkcs11_hasher.h pkcs11_hasher.c \
+ 	pkcs11_rng.h pkcs11_rng.c \
+ 	pkcs11_dh.h pkcs11_dh.c \
++	pkcs11_kem.h pkcs11_kem.c \
+ 	pkcs11_manager.h pkcs11_manager.c
+ 
+ libstrongswan_pkcs11_la_LDFLAGS = -module -avoid-version
+diff -Naur strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11.h /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11.h
+--- strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11.h	2025-11-07 13:05:36
++++ /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11.h	2026-04-03 10:38:39
+@@ -380,6 +380,7 @@
+ #define CKK_GOST28147           (0x32UL)
+ #define CKK_EC_EDWARDS          (0x40UL)
+ #define CKK_EC_MONTGOMERY       (0x41UL)
++#define CKK_ML_KEM              (0x42UL)
+ #define CKK_VENDOR_DEFINED      (1UL << 31)
+ 
+ 
+@@ -457,6 +458,7 @@
+ #define CKA_ECDSA_PARAMS                (0x180UL)
+ #define CKA_EC_PARAMS                   (0x180UL)
+ #define CKA_EC_POINT                    (0x181UL)
++#define CKA_ML_KEM_PARAMS               (0x182UL)
+ #define CKA_SECONDARY_AUTH              (0x200UL)
+ #define CKA_AUTH_PIN_FLAGS              (0x201UL)
+ #define CKA_ALWAYS_AUTHENTICATE         (0x202UL)
+@@ -748,6 +750,7 @@
+ #define CKM_EC_EDWARDS_KEY_PAIR_GEN     (0x1055UL)
+ #define CKM_EC_MONTGOMERY_KEY_PAIR_GEN  (0x1056UL)
+ #define CKM_EDDSA                       (0x1057UL)
++#define CKM_ML_KEM                      (0x1058UL)
+ #define CKM_JUNIPER_KEY_GEN             (0x1060UL)
+ #define CKM_JUNIPER_ECB128              (0x1061UL)
+ #define CKM_JUNIPER_CBC128              (0x1062UL)
+@@ -1543,6 +1546,9 @@
+   CK_C_VerifyMessageBegin C_VerifyMessageBegin;
+   CK_C_VerifyMessageNext C_VerifyMessageNext;
+   CK_C_MessageVerifyFinal C_MessageVerifyFinal;
++  /* KEM functions from v3.0 / v3.2 */
++  ck_rv_t (*C_EncapsulateKey)(ck_session_handle_t, ck_mechanism_type_t*, ck_object_handle_t, void*, unsigned long*, ck_object_handle_t*);
++  ck_rv_t (*C_DecapsulateKey)(ck_session_handle_t, ck_mechanism_type_t*, ck_object_handle_t, void*, unsigned long, ck_object_handle_t*);
+ };
+ 
+ 
+diff -Naur strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.c /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.c
+--- strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.c	1969-12-31 18:00:00
++++ /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.c	2026-04-03 10:39:16
+@@ -0,0 +1,276 @@
++/*
++ * Copyright (C) 2026 PQC Timeline Project
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.  See <http://www.fsf.org/copyleft/gpl.txt>.
++ */
++
++#include "pkcs11_kem.h"
++
++#include <utils/debug.h>
++#include <library.h>
++#include <asn1/asn1.h>
++#include <asn1/oid.h>
++
++#include "pkcs11_manager.h"
++
++typedef struct private_pkcs11_kem_t private_pkcs11_kem_t;
++
++/**
++ * Private data of a pkcs11_kem_t object.
++ */
++struct private_pkcs11_kem_t {
++	/** Public interface */
++	pkcs11_kem_t public;
++
++	/** PKCS#11 library */
++	pkcs11_library_t *lib;
++
++	/** Session handle */
++	CK_SESSION_HANDLE session;
++
++	/** KEM Group / Algorithm */
++	key_exchange_method_t group;
++
++	/** Handle for own private key */
++	CK_OBJECT_HANDLE pri_key;
++
++	/** Public key */
++	chunk_t pub_key;
++
++	/** Ciphertext to send/receive */
++	chunk_t ciphertext;
++
++	/** Shared secret */
++	chunk_t secret;
++
++	/** Mechanism to use to generate a key pair */
++	CK_MECHANISM_TYPE mech_key;
++
++	/** Mechanism to use for encapsulation/decapsulation */
++	CK_MECHANISM_TYPE mech_encap;
++};
++
++/**
++ * Finds a token supporting the requested mechanism.
++ */
++static pkcs11_library_t *find_token(private_pkcs11_kem_t *this, CK_SESSION_HANDLE *session)
++{
++	enumerator_t *tokens, *mechs;
++	pkcs11_manager_t *manager;
++	pkcs11_library_t *current, *found = NULL;
++	CK_MECHANISM_TYPE type;
++	CK_SLOT_ID slot;
++
++	manager = lib->get(lib, "pkcs11-manager");
++	if (!manager) {
++		return NULL;
++	}
++	tokens = manager->create_token_enumerator(manager);
++	while (tokens->enumerate(tokens, &current, &slot)) {
++		mechs = current->create_mechanism_enumerator(current, slot);
++		while (mechs->enumerate(mechs, &type, NULL)) {
++			/* Look for proper KEM mechanism support */
++			if (type == this->mech_encap) {
++				if (current->f->C_OpenSession(slot, CKF_SERIAL_SESSION, NULL, NULL, session) == CKR_OK) {
++					found = current;
++					break;
++				}
++			}
++		}
++		mechs->destroy(mechs);
++		if (found) break;
++	}
++	tokens->destroy(tokens);
++	return found;
++}
++
++/**
++ * Initiator: Generates an ML-KEM key pair and returns the public key
++ * Responder: Encapsulates against initiator's public key, returning the ciphertext
++ */
++METHOD(key_exchange_t, get_public_key, bool,
++	private_pkcs11_kem_t *this, chunk_t *value)
++{
++	/* If we already have a ciphertext, we are the responder and should return the ciphertext! */
++	if (this->ciphertext.ptr) {
++		*value = chunk_clone(this->ciphertext);
++		return TRUE;
++	}
++
++	/* Otherwise, we are the initiator. Let's generate a key pair */
++	CK_MECHANISM mech = { this->mech_key, NULL, 0 };
++	CK_OBJECT_HANDLE pub_key;
++	CK_BBOOL ck_true = CK_TRUE;
++
++	/* Setting CKA_DERIVE for KEMs as it enables the encapsulation routines implicitly */
++	CK_ATTRIBUTE pub_attr[] = {
++		{ CKA_DERIVE, &ck_true, sizeof(ck_true) }
++	};
++	CK_ATTRIBUTE pri_attr[] = {
++		{ CKA_DERIVE, &ck_true, sizeof(ck_true) }
++	};
++
++	CK_RV rv = this->lib->f->C_GenerateKeyPair(this->session, &mech,
++												pub_attr, countof(pub_attr),
++												pri_attr, countof(pri_attr),
++												&pub_key, &this->pri_key);
++	if (rv != CKR_OK) {
++		DBG1(DBG_CFG, "PKCS#11 C_GenerateKeyPair() KEM error: %N", ck_rv_names, rv);
++		return FALSE;
++	}
++
++	/* Grab the public key value */
++	if (!this->lib->get_ck_attribute(this->lib, this->session, pub_key, CKA_VALUE, &this->pub_key)) {
++		chunk_free(&this->pub_key);
++		return FALSE;
++	}
++
++	*value = chunk_clone(this->pub_key);
++	return TRUE;
++}
++
++/**
++ * Initiator: Receives the ciphertext
++ * Responder: Receives the initiator's public key
++ */
++METHOD(key_exchange_t, set_public_key, bool,
++	private_pkcs11_kem_t *this, chunk_t value)
++{
++	if (!key_exchange_verify_pubkey(this->group, value)) {
++		return FALSE;
++	}
++
++	/* Strongswan's KEM flow denotes whether we have generated our own key first.
++       If we have pri_key, we are the initiator, so this value is literally CIPHERTEXT. 
++       If we do not have pri_key, we are the responder, so this value is the PUBLIC KEY. */
++
++	if (this->pri_key != CK_INVALID_HANDLE) {
++		this->ciphertext = chunk_clone(value);
++	} else {
++		this->pub_key = chunk_clone(value);
++	}
++
++	return TRUE;
++}
++
++/**
++ * Encap/Decap Execution
++ */
++METHOD(key_exchange_t, get_shared_secret, bool,
++	private_pkcs11_kem_t *this, chunk_t *secret)
++{
++	/* Use PKCS11 v3.2 KEM API */
++	struct ck_function_list_3_0 *funcs = (struct ck_function_list_3_0 *)this->lib->f;
++
++	if (!funcs->C_EncapsulateKey || !funcs->C_DecapsulateKey) {
++		DBG1(DBG_CFG, "PKCS#11 HSM lacks IKEv2 PQC KEM v3.2 support (C_EncapsulateKey/C_DecapsulateKey missing)");
++		return FALSE;
++	}
++
++	if (this->pri_key == CK_INVALID_HANDLE) {
++		/* We are RESPONDER. We must ENCAPSULATE against this->pub_key */
++		CK_OBJECT_CLASS klass_key = CKO_PUBLIC_KEY;
++		CK_KEY_TYPE type_key = CKK_ML_KEM;
++		CK_ATTRIBUTE key_template[] = {
++			{ CKA_CLASS, &klass_key, sizeof(klass_key) },
++			{ CKA_KEY_TYPE, &type_key, sizeof(type_key) },
++			{ CKA_VALUE, this->pub_key.ptr, this->pub_key.len }
++		};
++
++		CK_OBJECT_HANDLE hPublicKey, hSecretKey;
++		CK_RV rv = this->lib->f->C_CreateObject(this->session, key_template, countof(key_template), &hPublicKey);
++		if (rv != CKR_OK) return FALSE;
++
++		CK_MECHANISM encap_mech = { this->mech_encap, NULL, 0 };
++		
++		unsigned long ct_len = 0;
++		/* Determine ciphertext length */
++		rv = funcs->C_EncapsulateKey(this->session, &encap_mech, hPublicKey, NULL, &ct_len, &hSecretKey);
++		if (rv != CKR_OK) return FALSE;
++
++		this->ciphertext = chunk_alloc(ct_len);
++		rv = funcs->C_EncapsulateKey(this->session, &encap_mech, hPublicKey, this->ciphertext.ptr, &ct_len, &hSecretKey);
++		if (rv != CKR_OK) return FALSE;
++
++		/* Read Secret */
++		if (!this->lib->get_ck_attribute(this->lib, this->session, hSecretKey, CKA_VALUE, &this->secret)) return FALSE;
++
++	} else {
++		/* We are INITIATOR. We must DECAPSULATE using this->pri_key and this->ciphertext */
++		CK_MECHANISM decap_mech = { this->mech_encap, NULL, 0 };
++		CK_OBJECT_HANDLE hSecretKey;
++
++		CK_RV rv = funcs->C_DecapsulateKey(this->session, &decap_mech, this->pri_key, this->ciphertext.ptr, this->ciphertext.len, &hSecretKey);
++		if (rv != CKR_OK) {
++			DBG1(DBG_CFG, "PKCS#11 C_DecapsulateKey() failed: %N", ck_rv_names, rv);
++			return FALSE;
++		}
++
++		if (!this->lib->get_ck_attribute(this->lib, this->session, hSecretKey, CKA_VALUE, &this->secret)) return FALSE;
++	}
++
++	*secret = chunk_clone(this->secret);
++	return TRUE;
++}
++
++METHOD(key_exchange_t, get_method, key_exchange_method_t,
++	private_pkcs11_kem_t *this)
++{
++	return this->group;
++}
++
++METHOD(key_exchange_t, destroy, void,
++	private_pkcs11_kem_t *this)
++{
++	if (this->session != CK_INVALID_HANDLE) {
++		this->lib->f->C_CloseSession(this->session);
++	}
++	chunk_clear(&this->pub_key);
++	chunk_clear(&this->ciphertext);
++	chunk_clear(&this->secret);
++	free(this);
++}
++
++/**
++ * See header
++ */
++pkcs11_kem_t *pkcs11_kem_create(key_exchange_method_t group)
++{
++	private_pkcs11_kem_t *this;
++	CK_MECHANISM_TYPE key_gen_mech = 0;
++	CK_MECHANISM_TYPE encap_mech = 0;
++
++	if (group == ML_KEM_768) {
++		key_gen_mech = CKM_ML_KEM;
++		encap_mech = CKM_ML_KEM;
++	} else {
++		return NULL;
++	}
++
++	INIT(this,
++		.public = {
++			.ke = {
++				.get_shared_secret = _get_shared_secret,
++				.set_public_key = _set_public_key,
++				.get_public_key = _get_public_key,
++				.get_method = _get_method,
++				.destroy = _destroy,
++			},
++		},
++		.group = ML_KEM_768,
++		.mech_key = key_gen_mech,
++		.mech_encap = encap_mech,
++		.pri_key = CK_INVALID_HANDLE,
++		.session = CK_INVALID_HANDLE,
++	);
++
++	this->lib = find_token(this, &this->session);
++	if (!this->lib) {
++		free(this);
++		return NULL;
++	}
++	return &this->public;
++}
+diff -Naur strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.h /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.h
+--- strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.h	1969-12-31 18:00:00
++++ /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_kem.h	2026-04-03 10:33:37
+@@ -0,0 +1,36 @@
++/*
++ * Copyright (C) 2026
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms of the GNU General Public License as published by the
++ * Free Software Foundation; either version 2 of the License, or (at your
++ * option) any later version.  See <http://www.fsf.org/copyleft/gpl.txt>.
++ */
++
++#ifndef PKCS11_KEM_H_
++#define PKCS11_KEM_H_
++
++typedef struct pkcs11_kem_t pkcs11_kem_t;
++
++#include <crypto/key_exchange.h>
++
++/**
++ * Implementation of a Key Encapsulation Mechanism (KEM) using PKCS#11 
++ */
++struct pkcs11_kem_t {
++
++	/**
++	 * Implements key_exchange_t interface
++	 */
++	key_exchange_t ke;
++};
++
++/**
++ * Create a pkcs11_kem_t instance for a specific method.
++ *
++ * @param group		key exchange algorithm
++ * @return			pkcs11_kem_t instance, or NULL
++ */
++pkcs11_kem_t *pkcs11_kem_create(key_exchange_method_t group);
++
++#endif
+diff -Naur strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_plugin.c /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_plugin.c
+--- strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_plugin.c	2025-11-07 13:05:36
++++ /tmp/strongswan-build/strongswan-6.0.5/src/libstrongswan/plugins/pkcs11/pkcs11_plugin.c	2026-04-03 10:39:47
+@@ -30,6 +30,7 @@
+ #include "pkcs11_hasher.h"
+ #include "pkcs11_rng.h"
+ #include "pkcs11_dh.h"
++#include "pkcs11_kem.h"
+ 
+ typedef struct private_pkcs11_plugin_t private_pkcs11_plugin_t;
+ 
+@@ -218,6 +219,10 @@
+ 			PLUGIN_PROVIDE(KE, ECP_384_BIT),
+ 			PLUGIN_PROVIDE(KE, ECP_521_BIT),
+ 	};
++	static plugin_feature_t f_pqc[] = {
++		PLUGIN_REGISTER(KE, pkcs11_kem_create),
++			PLUGIN_PROVIDE(KE, ML_KEM_768),
++	};
+ 	static plugin_feature_t f_rng[] = {
+ 		PLUGIN_REGISTER(RNG, pkcs11_rng_create),
+ 			PLUGIN_PROVIDE(RNG, RNG_STRONG),
+@@ -239,7 +244,7 @@
+ 	};
+ 	static plugin_feature_t f[countof(f_hash) + countof(f_dh) + countof(f_rng) +
+ 							  countof(f_ecdh) + countof(f_privkey) +
+-							  countof(f_pubkey) + countof(f_manager)] = {};
++							  countof(f_pubkey) + countof(f_manager) + countof(f_pqc)] = {};
+ 	static int count = 0;
+ 
+ 	if (!count)
+@@ -273,6 +278,7 @@
+ 			{
+ 				plugin_features_add(f, f_ecdh, countof(f_ecdh), &count);
+ 			}
++			plugin_features_add(f, f_pqc, countof(f_pqc), &count);
+ 		}
+ 	}
+ 	*features = f;

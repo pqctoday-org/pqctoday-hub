@@ -53,6 +53,18 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
   {
+    id: 'lms-hss',
+    name: 'Stateful Hash Signatures',
+    description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
+    category: 'HSM / PKCS#11',
+    algorithms: ['LMS', 'HSS', 'XMSS'],
+    icon: FileSignature,
+    moduleLink: '/learn/stateful-signatures',
+    keywords: ['lms', 'hss', 'xmss', 'stateful', 'hash-based', 'fips 208'],
+    difficulty: 'advanced',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+  },
+  {
     id: 'hybrid-encrypt',
     name: 'Hybrid KEM + ECDH',
     description: 'ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline',
@@ -300,6 +312,31 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     recommendedPersonas: ['developer', 'architect', 'researcher'],
   },
 
+  // ── Digital Identity ──────────────────────────────────────────────────────
+  {
+    id: 'digital-id',
+    name: 'EUDI Wallet Architecture',
+    description:
+      'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
+    category: 'Digital Identity',
+    algorithms: ['OpenID4VCI', 'P-256', 'mDoc', 'QES'],
+    icon: Shield,
+    moduleLink: '/learn/digital-id',
+    keywords: [
+      'eudi',
+      'digital id',
+      'wallet',
+      'pid',
+      'mdoc',
+      'openid4vci',
+      'qes',
+      'qtsp',
+      'attestation',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['developer', 'architect', 'researcher'],
+  },
+
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
   {
     id: 'bitcoin-flow',
@@ -410,6 +447,7 @@ export const CATEGORIES = [
   'HSM / PKCS#11',
   'Entropy & Random',
   'Certificates & Proofs',
+  'Digital Identity',
   'Blockchain & Digital Assets',
   'Protocol Simulations',
 ]
@@ -425,6 +463,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
   'slh-dsa': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo').then(
       (m) => ({ default: m.SLHDSALiveDemo })
+    )
+  ),
+  'lms-hss': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/StatefulSignatures/workshop/StatefulSignaturesDemo').then(
+      (m) => ({ default: m.StatefulSignaturesDemo })
     )
   ),
   'hybrid-encrypt': lazyWithRetry(() =>
@@ -562,5 +605,12 @@ export const ONBACK_COMPONENTS: Record<string, LazyComp> = {
         Record<string, React.ComponentType<{ onBack: () => void }>>
       >,
     'HDWalletFlow'
+  ),
+  'digital-id': makeLazyWithOnBack(
+    () =>
+      import('@/components/PKILearning/modules/DigitalID/index') as Promise<
+        Record<string, React.ComponentType<{ onBack: () => void }>>
+      >,
+    'DigitalIDModule'
   ),
 }
