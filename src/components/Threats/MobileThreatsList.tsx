@@ -71,7 +71,9 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                     {item.industry}
                     {item.mainSource && (
                       <span className="bg-muted px-1.5 py-0.5 rounded text-[10px] opacity-70 uppercase tracking-wider">
-                        {item.mainSource.length > 20 ? item.mainSource.substring(0, 20) + '...' : item.mainSource}
+                        {item.mainSource.length > 20
+                          ? item.mainSource.substring(0, 20) + '...'
+                          : item.mainSource}
                       </span>
                     )}
                   </span>
@@ -103,7 +105,13 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                 </div>
                 {/* Actions Footer */}
                 {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                <div className="flex pt-3 mt-3 border-t border-border/50 items-center justify-end gap-2" onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}>
+                <div
+                  className="flex pt-3 mt-3 border-t border-border/50 items-center justify-end gap-2"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                  }}
+                >
                   <EndorseButton
                     endorseUrl={buildEndorsementUrl({
                       category: 'threat-endorsement',

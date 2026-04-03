@@ -48,6 +48,30 @@ interface RawSoftwareItem {
   quantum_tech?: string
 }
 
+function deriveCisaCategory(categoryName: string, layer: string): string {
+  const cat = (categoryName || '').toLowerCase()
+  if (cat.includes('cloud')) return 'Cloud Services'
+  if (cat.includes('identity') || cat.includes('iam') || cat.includes('pki'))
+    return 'Identity, Credential, and Access Management (ICAM) Software'
+  if (cat.includes('network') || cat.includes('vpn') || cat.includes('protocol'))
+    return 'Networking Software'
+  if (layer === 'Hardware' || cat.includes('hardware') || cat.includes('semiconductor'))
+    return 'Networking Hardware'
+  if (
+    cat.includes('database') ||
+    cat.includes('storage') ||
+    cat.includes('disk') ||
+    cat.includes('file')
+  )
+    return 'Data'
+  if (cat.includes('messaging') || cat.includes('email') || cat.includes('collaboration'))
+    return 'Collaboration Software'
+  if (cat.includes('browser') || cat.includes('web')) return 'Web Software'
+  if (cat.includes('operating system')) return 'Computers (Physical and Virtual)'
+  if (layer === 'Endpoint') return 'Endpoint Security'
+  return 'Enterprise Security'
+}
+
 const {
   data: currentItems,
   previousData: previousItems,
@@ -60,7 +84,8 @@ const {
     categoryId: row.category_id,
     categoryName: row.category_name,
     infrastructureLayer: row.infrastructure_layer,
-    cisaCategory: row.cisa_category || 'Other / Unclassified',
+    cisaCategory:
+      row.cisa_category || deriveCisaCategory(row.category_name, row.infrastructure_layer),
     pqcSupport: row.pqc_support,
     pqcCapabilityDescription: row.pqc_capability_description,
     licenseType: row.license_type,

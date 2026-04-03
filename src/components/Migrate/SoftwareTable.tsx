@@ -822,7 +822,6 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 </div>
                               )
                             })()}
-
                           </div>
                         </div>
 
@@ -876,7 +875,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               </button>
                             )}
                           </div>
-                          
+
                           {/* Right-side main CTAs */}
                           <div className="flex flex-wrap items-center gap-3">
                             <UpdateProductButton
@@ -891,7 +890,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                   item.pqcCapabilityDescription
                                     ? `**Current Capabilities:** ${item.pqcCapabilityDescription}`
                                     : '',
-                                ].filter(Boolean).join('\n'),
+                                ]
+                                  .filter(Boolean)
+                                  .join('\n'),
                                 pageUrl: `/migrate?q=${encodeURIComponent(item.softwareName)}`,
                               })}
                               resourceLabel={item.softwareName}

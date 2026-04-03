@@ -6,8 +6,8 @@ import Papa from 'papaparse'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 const root = resolve(__dirname, '..')
 
-const INPUT = resolve(root, 'src/data/pqc_product_catalog_04012026_r3.csv')
-const OUTPUT = resolve(root, 'src/data/pqc_product_catalog_04012026_r4.csv')
+const INPUT = resolve(root, 'src/data/pqc_product_catalog_04012026_r4.csv')
+const OUTPUT = resolve(root, 'src/data/pqc_product_catalog_04022026_r1.csv')
 
 function classify(row) {
   const layer = (row.infrastructure_layer || '').toLowerCase()

@@ -55,6 +55,14 @@ import {
   hsm_unwrapKeyMech,
   hsm_pbkdf2,
   hsm_hkdf,
+  hsm_generateECKeyPair,
+  hsm_ecdhDerive,
+  hsm_extractECPoint,
+  hsm_importX25519PublicKey,
+  hsm_importX448PublicKey,
+  CKD_SHA3_256_KDF,
+  CKD_SHA3_512_KDF,
+  CKM_EC_MONTGOMERY_KEY_PAIR_GEN,
   CKP_SLH_DSA_SHA2_128S,
   CKP_SLH_DSA_SHA2_128F,
   CKP_SLH_DSA_SHA2_192S,
@@ -165,6 +173,9 @@ export const HsmAcvpTesting = () => {
       aeskw: 'https://www.rfc-editor.org/rfc/rfc3394',
       aeskwp: 'https://www.rfc-editor.org/rfc/rfc5649',
       slhdsa: 'https://csrc.nist.gov/pubs/fips/205/final',
+      x25519: 'https://www.rfc-editor.org/rfc/rfc7748',
+      x448: 'https://www.rfc-editor.org/rfc/rfc7748',
+      x963kdf: 'https://www.rfc-editor.org/rfc/rfc6637',
     } as const
 
     const engines: Array<{
@@ -1718,6 +1729,382 @@ export const HsmAcvpTesting = () => {
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id22}] Deterministic: ${errMessage}`)
+          }
+        }
+
+        // Helper: extract raw bytes from a Montgomery public key.
+        // Rust stores raw bytes in CKA_VALUE; C++ stores DER-wrapped (04 len raw) in CKA_EC_POINT.
+        const extractMontgomeryPubKey = (handle: number): Uint8Array => {
+          try {
+            return new Uint8Array(hsm_extractKeyValue(M, hSession, handle))
+          } catch {
+            // C++ engine: CKA_EC_POINT = "04 <1-byte-len> <raw>", strip 2-byte DER prefix
+            return hsm_extractECPoint(M, hSession, handle).slice(2)
+          }
+        }
+
+        // ── 23. X25519 ECDH Round-Trip (RFC 7748) ─────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
+          addLog(`[${eName}] [SKIP] X25519: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list`)
+        } else {
+          const id23 = `x25519-ecdh-${eName}`
+          addLog(`[${eName}] Testing X25519 ECDH Round-Trip (RFC 7748)...`)
+          try {
+            // Generate two X25519 keypairs
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true
+            )
+            regKey({
+              handle: pubA,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X25519 PubKey-A (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privA,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X25519 PrivKey-A (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: pubB,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X25519 PubKey-B (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privB,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X25519 PrivKey-B (${eName})`,
+              engine: engineId,
+            })
+
+            // Extract raw 32-byte public key values (engine-agnostic: Rust=CKA_VALUE, C++=CKA_EC_POINT)
+            const pubABytes = extractMontgomeryPubKey(pubA)
+            const pubBBytes = extractMontgomeryPubKey(pubB)
+
+            // Import peer public keys — smoke test only (not used in derive below)
+            let peerBHandle = 0,
+              peerAHandle = 0
+            try {
+              peerBHandle = hsm_importX25519PublicKey(M, hSession, pubBBytes)
+              peerAHandle = hsm_importX25519PublicKey(M, hSession, pubABytes)
+            } catch {
+              /* C++ engine stores Montgomery pubkeys as CKA_EC_POINT; import is smoke-only */
+            }
+
+            // A derives shared secret using B's public key
+            const secretHandleAB = hsm_ecdhDerive(
+              M,
+              hSession,
+              privA,
+              pubBBytes,
+              undefined,
+              undefined,
+              { keyLen: 32, extractable: true }
+            )
+            const secretAB = hsm_extractKeyValue(M, hSession, secretHandleAB)
+
+            // B derives shared secret using A's public key
+            const secretHandleBA = hsm_ecdhDerive(
+              M,
+              hSession,
+              privB,
+              pubABytes,
+              undefined,
+              undefined,
+              { keyLen: 32, extractable: true }
+            )
+            const secretBA = hsm_extractKeyValue(M, hSession, secretHandleBA)
+
+            const matches =
+              secretAB.length === secretBA.length &&
+              secretAB.every((b: number, i: number) => b === secretBA[i])
+
+            void peerBHandle
+            void peerAHandle
+
+            newResults.push({
+              id: id23,
+              algorithm: `X25519 ECDH (${eName})`,
+              testCase: 'RFC 7748 §6.1 Round-Trip',
+              referenceUrl: REF.x25519,
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `A→B and B→A derive same 32B shared secret ✓ | Z=${toHex(secretAB, 8)}…`
+                : `Secrets differ: A→B=${toHex(secretAB, 8)}… B→A=${toHex(secretBA, 8)}…`,
+            })
+            addLog(
+              `[${eName}] [id:${id23}] X25519 ECDH: ${matches ? 'PASS' : 'FAIL'} | Z=${toHex(secretAB, 8)}…`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `x25519-ecdh-err-${eName}`,
+              algorithm: `X25519 ECDH (${eName})`,
+              testCase: 'RFC 7748 §6.1 Round-Trip',
+              referenceUrl: REF.x25519,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id23}] X25519: ${errMessage}`)
+          }
+        }
+
+        // ── 24. X448 ECDH Round-Trip (RFC 7748) ───────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
+          addLog(`[${eName}] [SKIP] X448: CKM_EC_MONTGOMERY_KEY_PAIR_GEN not in mechanism list`)
+        } else {
+          const id24 = `x448-ecdh-${eName}`
+          addLog(`[${eName}] Testing X448 ECDH Round-Trip (RFC 7748)...`)
+          try {
+            // Generate two X448 keypairs
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X448',
+              true
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X448',
+              true
+            )
+            regKey({
+              handle: pubA,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X448 PubKey-A (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privA,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X448 PrivKey-A (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: pubB,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X448 PubKey-B (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privB,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X448 PrivKey-B (${eName})`,
+              engine: engineId,
+            })
+
+            // Extract raw 56-byte public key values (engine-agnostic: Rust=CKA_VALUE, C++=CKA_EC_POINT)
+            const pubABytes = extractMontgomeryPubKey(pubA)
+            const pubBBytes = extractMontgomeryPubKey(pubB)
+
+            // Import peer public keys — smoke test only (not used in derive below)
+            let peerBHandle = 0,
+              peerAHandle = 0
+            try {
+              peerBHandle = hsm_importX448PublicKey(M, hSession, pubBBytes)
+              peerAHandle = hsm_importX448PublicKey(M, hSession, pubABytes)
+            } catch {
+              /* C++ engine stores Montgomery pubkeys as CKA_EC_POINT; import is smoke-only */
+            }
+
+            // A derives shared secret using B's public key
+            const secretHandleAB = hsm_ecdhDerive(
+              M,
+              hSession,
+              privA,
+              pubBBytes,
+              undefined,
+              undefined,
+              { keyLen: 56, extractable: true }
+            )
+            const secretAB = hsm_extractKeyValue(M, hSession, secretHandleAB)
+
+            // B derives shared secret using A's public key
+            const secretHandleBA = hsm_ecdhDerive(
+              M,
+              hSession,
+              privB,
+              pubABytes,
+              undefined,
+              undefined,
+              { keyLen: 56, extractable: true }
+            )
+            const secretBA = hsm_extractKeyValue(M, hSession, secretHandleBA)
+
+            const matches =
+              secretAB.length === secretBA.length &&
+              secretAB.every((b: number, i: number) => b === secretBA[i])
+
+            void peerBHandle
+            void peerAHandle
+
+            newResults.push({
+              id: id24,
+              algorithm: `X448 ECDH (${eName})`,
+              testCase: 'RFC 7748 §6.2 Round-Trip',
+              referenceUrl: REF.x448,
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `A→B and B→A derive same 56B shared secret ✓ | Z=${toHex(secretAB, 8)}…`
+                : `Secrets differ: A→B=${toHex(secretAB, 8)}… B→A=${toHex(secretBA, 8)}…`,
+            })
+            addLog(
+              `[${eName}] [id:${id24}] X448 ECDH: ${matches ? 'PASS' : 'FAIL'} | Z=${toHex(secretAB, 8)}…`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `x448-ecdh-err-${eName}`,
+              algorithm: `X448 ECDH (${eName})`,
+              testCase: 'RFC 7748 §6.2 Round-Trip',
+              referenceUrl: REF.x448,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id24}] X448: ${errMessage}`)
+          }
+        }
+
+        // ── 25. X9.63 KDF with SHA3-256 / SHA3-512 (PKCS#11 v3.2 §5.2.12) ──
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)) {
+          addLog(`[${eName}] [SKIP] X9.63-SHA3: requires X25519 keygen`)
+        } else {
+          const id25 = `x963-sha3-kdf-${eName}`
+          addLog(`[${eName}] Testing X9.63 KDF SHA3-256/SHA3-512 (PKCS#11 v3.2 §5.2.12)...`)
+          try {
+            // Generate an X25519 keypair for each party
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true
+            )
+            regKey({
+              handle: pubA,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X963-SHA3 PubA (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privA,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X963-SHA3 PrivA (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: pubB,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP X963-SHA3 PubB (${eName})`,
+              engine: engineId,
+            })
+            regKey({
+              handle: privB,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP X963-SHA3 PrivB (${eName})`,
+              engine: engineId,
+            })
+
+            const pubABytes = extractMontgomeryPubKey(pubA)
+            const pubBBytes = extractMontgomeryPubKey(pubB)
+
+            // ── SHA3-256 KDF (CKD_SHA3_256_KDF = 0x0B): derive 32B AES key ──
+            const sharedInfo = new TextEncoder().encode('ACVP-X9.63-SHA3-KDF-test')
+            const k256AB = hsm_extractKeyValue(
+              M,
+              hSession,
+              hsm_ecdhDerive(M, hSession, privA, pubBBytes, CKD_SHA3_256_KDF, sharedInfo, {
+                keyLen: 32,
+                extractable: true,
+              })
+            )
+            const k256BA = hsm_extractKeyValue(
+              M,
+              hSession,
+              hsm_ecdhDerive(M, hSession, privB, pubABytes, CKD_SHA3_256_KDF, sharedInfo, {
+                keyLen: 32,
+                extractable: true,
+              })
+            )
+            const sha3_256Match =
+              k256AB.length === k256BA.length &&
+              k256AB.every((b: number, i: number) => b === k256BA[i])
+
+            // ── SHA3-512 KDF (CKD_SHA3_512_KDF = 0x0D): derive 64B material ──
+            const k512AB = hsm_extractKeyValue(
+              M,
+              hSession,
+              hsm_ecdhDerive(M, hSession, privA, pubBBytes, CKD_SHA3_512_KDF, sharedInfo, {
+                keyLen: 64,
+                extractable: true,
+              })
+            )
+            const k512BA = hsm_extractKeyValue(
+              M,
+              hSession,
+              hsm_ecdhDerive(M, hSession, privB, pubABytes, CKD_SHA3_512_KDF, sharedInfo, {
+                keyLen: 64,
+                extractable: true,
+              })
+            )
+            const sha3_512Match =
+              k512AB.length === k512BA.length &&
+              k512AB.every((b: number, i: number) => b === k512BA[i])
+
+            const pass = sha3_256Match && sha3_512Match
+            newResults.push({
+              id: id25,
+              algorithm: `X9.63-KDF (${eName})`,
+              testCase: 'PKCS#11 v3.2 §5.2.12 — SHA3-256 + SHA3-512 bilateral agreement',
+              referenceUrl: REF.x963kdf,
+              status: pass ? 'pass' : 'fail',
+              details: pass
+                ? `SHA3-256: A→B=B→A (32B) ✓ | SHA3-512: A→B=B→A (64B) ✓`
+                : `SHA3-256 match=${sha3_256Match} | SHA3-512 match=${sha3_512Match}`,
+            })
+            addLog(
+              `[${eName}] [id:${id25}] X9.63-SHA3: ${pass ? 'PASS' : 'FAIL'} | SHA3-256=${sha3_256Match} SHA3-512=${sha3_512Match}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `x963-sha3-kdf-err-${eName}`,
+              algorithm: `X9.63-KDF (${eName})`,
+              testCase: 'PKCS#11 v3.2 §5.2.12 — SHA3-256 + SHA3-512 bilateral agreement',
+              referenceUrl: REF.x963kdf,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id25}] X9.63-SHA3: ${errMessage}`)
           }
         }
       }

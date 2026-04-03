@@ -368,7 +368,9 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 zIndex: isActive ? partitions.length + 10 : partitions.length - index,
               }}
               className={`transition-all duration-500 ease-in-out relative flex flex-col ${
-                isEmptyAndHidden ? 'max-h-0 opacity-0 overflow-hidden !m-0' : 'max-h-[3000px] opacity-100'
+                isEmptyAndHidden
+                  ? 'max-h-0 opacity-0 overflow-hidden !m-0'
+                  : 'max-h-[3000px] opacity-100'
               }`}
             >
               <button
@@ -547,7 +549,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           if (isEmptyAndHidden) return null
 
           const isActive = activeLayer === layer.id
-          
+
           return (
             <button
               key={`minimap-${layer.id}`}
@@ -560,8 +562,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               title={layer.label}
               aria-label={`Jump to ${layer.label}`}
               className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                isActive 
-                  ? 'bg-primary scale-125 ring-2 ring-primary/30 ring-offset-1 ring-offset-background' 
+                isActive
+                  ? 'bg-primary scale-125 ring-2 ring-primary/30 ring-offset-1 ring-offset-background'
                   : 'bg-muted-foreground/30 hover:bg-primary/60 hover:scale-110'
               }`}
             />

@@ -62,7 +62,10 @@ export function AlgorithmFilters({
 
   const [isMobileOpen, setIsMobileOpen] = useState(false)
   const hasActiveFilters =
-    cryptoFamily !== 'All' || functionGroup !== 'All' || securityLevel !== 'All' || searchQuery !== ''
+    cryptoFamily !== 'All' ||
+    functionGroup !== 'All' ||
+    securityLevel !== 'All' ||
+    searchQuery !== ''
 
   return (
     <div className="glass-panel p-3 md:p-4">
@@ -81,7 +84,10 @@ export function AlgorithmFilters({
           </div>
           <ChevronDown
             size={16}
-            className={clsx('text-muted-foreground transition-transform', isMobileOpen && 'rotate-180')}
+            className={clsx(
+              'text-muted-foreground transition-transform',
+              isMobileOpen && 'rotate-180'
+            )}
           />
         </button>
       </div>

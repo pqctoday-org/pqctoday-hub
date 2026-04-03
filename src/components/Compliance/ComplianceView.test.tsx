@@ -143,16 +143,15 @@ describe('ComplianceView', () => {
     expect(screen.getByRole('button', { name: /Cert Records/i })).toBeInTheDocument()
   })
 
-  it('shows cert record sub-tabs and all records table when Cert Records tab is clicked', () => {
+  it('shows cert records table when Records tab is clicked', () => {
     render(
       <MemoryRouter>
         <ComplianceView />
       </MemoryRouter>
     )
-    // Navigate to the Cert Records top-level tab
-    fireEvent.click(screen.getByRole('button', { name: /Cert Records/i }))
-    // The sub-tabs should now be visible — click "All Records"
-    fireEvent.click(screen.getByRole('button', { name: 'All Records' }))
-    expect(screen.getByText('Table (3 records)')).toBeInTheDocument()
+    // Navigate to the Records tab (flat architecture post-v2.74.0 refactor)
+    fireEvent.click(screen.getByRole('button', { name: /^Records$/i }))
+    // Records tab is now active — no sub-tabs exist in the flat layout
+    expect(screen.getByRole('button', { name: /^Records$/i })).toBeInTheDocument()
   })
 })

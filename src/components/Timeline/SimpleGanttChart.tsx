@@ -69,7 +69,7 @@ export const SimpleGanttChart = ({
 }: SimpleGanttChartProps) => {
   const [localSearchText, setLocalSearchText] = useState(searchText)
   const filterText = onSearchChange ? searchText : localSearchText
-  
+
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     if (onSearchChange) {
@@ -215,7 +215,7 @@ export const SimpleGanttChart = ({
   const clearAllFilters = useCallback(() => {
     if (onSearchChange) onSearchChange('')
     else setLocalSearchText('')
-    
+
     setSelectedPhaseType('All')
     setSelectedEventType('All')
     onRegionSelect('All')
@@ -530,10 +530,15 @@ export const SimpleGanttChart = ({
               onClear={() => setSelectedEventType('All')}
             />
           )}
-          {filterText && <FilterChip label={`"${filterText}"`} onClear={() => {
-            if (onSearchChange) onSearchChange('')
-            else setLocalSearchText('')
-          }} />}
+          {filterText && (
+            <FilterChip
+              label={`"${filterText}"`}
+              onClear={() => {
+                if (onSearchChange) onSearchChange('')
+                else setLocalSearchText('')
+              }}
+            />
+          )}
           <span className="text-xs text-muted-foreground">
             {totalPhaseCount} {totalPhaseCount === 1 ? 'result' : 'results'}
             {processedData.length !== data.length

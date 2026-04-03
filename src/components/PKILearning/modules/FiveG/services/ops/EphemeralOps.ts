@@ -68,14 +68,14 @@ export async function generateEphemeralKey(
       return {
         output: `${header}
 
-Step 1: Generating Ephemeral Private Key...
-$ ${cmd1}
+Step 1: Generating Ephemeral Key Pair...
+> C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN)
 
 [EDUCATIONAL] Ephemeral Private Key Hex:
 ${privHex.match(/.{1,64}/g)?.join('\n')}
 
 Step 2: Extracting Ephemeral Public Key...
-$ ${cmd2}
+> Target: CKA_EC_POINT (Public Key Extraction)
 
 [EDUCATIONAL] Ephemeral Public Key Hex:
 ${pubHex.match(/.{1,64}/g)?.join('\n')}
@@ -123,7 +123,7 @@ ${pubHex.match(/.{1,64}/g)?.join('\n')}
         return {
           output: `${header}
 Step 1: Generating Ephemeral ECC Key(X25519)...
-$ openssl genpkey -algorithm x25519
+> C_GenerateKeyPair(CKM_EC_MONTGOMERY_KEY_PAIR_GEN)
 
 [EDUCATIONAL] Ephemeral Public Key Hex:
 ${pubHex.match(/.{1,64}/g)?.join('\n')}
@@ -233,7 +233,7 @@ export async function computeSharedSecret(
         }
 
         outputLog += `Step 1: X25519 Shared Secret(Classic)
-$ openssl pkeyutl -derive -inkey ${ephPriv} -peerkey ${hnEccFile || 'sim_eph.pub'}
+> C_DeriveKey(CKM_ECDH1_DERIVE)
 > Z_ecdh(32 bytes):
 ${zEcdhHex}
 
@@ -466,7 +466,7 @@ Step 2: Home Network Public Key Input
   > ${hnPub}
 
 Step 3: ECDH Key Agreement(Curve25519)
-$ ${cmd}
+> C_DeriveKey(CKM_ECDH1_DERIVE)
 
 Step 4: Output Shared Secret(Z)
 [EDUCATIONAL] Resulting Shared Secret(32 bytes):
@@ -562,18 +562,18 @@ Step 2: SharedInfo (Ephemeral Public Key)
 ${ephPubHex ? ephPubHex.substring(0, 64) + (ephPubHex.length > 64 ? '...' : '') : '(empty)'}
 
 Step 3: KDF Iteration 1 — ${hashName}(Z || 0x00000001 || SharedInfo)
-$ ${cmd1}
+> hsm_deriveKey(...)
 Block 1: ${block1Hex}
 
 Step 4: KDF Iteration 2 — ${hashName}(Z || 0x00000002 || SharedInfo)
-$ ${cmd2}
+> hsm_deriveKey(...)
 Block 2: ${block2Hex}
 
 Step 5: Splitting Keys
   > K_enc (${profile === 'C' ? '256' : '128'}-bit AES):   ${ctx.state.kEncHex}
   > K_mac (256-bit HMAC):  ${ctx.state.kMacHex}
 
-[SUCCESS] Protection Keys Derived via OpenSSL (${hashName}).`
+[SUCCESS] Protection Keys Derived via SoftHSM KDF (${hashName}).`
   } catch (e) {
     return `[Error] KDF Failed: ${e} `
   }

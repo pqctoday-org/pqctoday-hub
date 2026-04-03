@@ -19,6 +19,7 @@ export const CKM_ML_DSA = 0x0000001d
 export const CKA_CLASS = 0x00000000
 export const CKA_TOKEN = 0x00000001
 export const CKA_PRIVATE = 0x00000002
+export const CKA_LABEL = 0x00000003
 export const CKA_SENSITIVE = 0x00000103
 export const CKA_SIGN = 0x00000108
 export const CKA_VERIFY = 0x0000010a
@@ -81,6 +82,11 @@ export const CKK_EC = 0x03
 export const CKK_GENERIC_SECRET = 0x10
 export const CKK_AES = 0x1f
 export const CKK_EC_EDWARDS = 0x40
+/** PKCS#11 v3.2 §6.7 — X25519/X448 Montgomery-curve DH keys.
+ * Value 0x41 per PKCS#11 v3.2 pkcs11t.h (CKK_EC_EDWARDS=0x40, CKK_EC_MONTGOMERY=0x41).
+ * Supported as of @pqctoday/softhsm-wasm 0.4.3. */
+export const CKK_EC_MONTGOMERY = 0x41
+export const CKM_EC_MONTGOMERY_KEY_PAIR_GEN = 0x00001056
 export const CKK_SLH_DSA = 0x4b
 
 // RSA mechanisms
@@ -253,3 +259,4 @@ export const EC_OID_P384 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0
 export const EC_OID_P521 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x23])
 export const EC_OID_ED25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x70])
 export const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
+export const EC_OID_X25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])

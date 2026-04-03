@@ -53,8 +53,8 @@ export const CategorySidebar = ({
   totalHasUpdates,
 }: CategorySidebarProps) => {
   return (
-    <nav 
-      className="flex flex-nowrap lg:flex-wrap items-center gap-2 overflow-x-auto lg:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2 lg:pb-0" 
+    <nav
+      className="flex flex-nowrap lg:flex-wrap items-center gap-2 overflow-x-auto lg:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2 lg:pb-0"
       aria-label="Library categories"
     >
       <button

@@ -26,8 +26,9 @@ import { LeadersTable } from './LeadersTable'
 import { LeaderDetailPopover } from './LeaderDetailPopover'
 import { LeaderCategorySidebar, LEADER_CATEGORIES } from './LeaderCategorySidebar'
 import { FLAG_CODE_MAP, LEADERS_REGION_COUNTRIES } from './leadersConstants'
-import { ViewToggle } from '../Library/ViewToggle'
-import type { ViewMode } from '../Library/ViewToggle'
+import { LeadersViewToggle } from './LeadersViewToggle'
+import type { LeadersViewMode } from './LeadersViewToggle'
+import { SectorStack } from './SectorStack'
 import { SortControl } from '../Library/SortControl'
 import { PageHeader } from '../common/PageHeader'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
@@ -69,9 +70,10 @@ export const LeadersGrid = () => {
     searchParams.get('leader')
   )
   const [notFoundMessage, setNotFoundMessage] = useState<string | null>(null)
-  const [viewMode, setViewMode] = useState<ViewMode>(
-    () => (searchParams.get('view') as ViewMode | null) ?? 'cards'
+  const [viewMode, setViewMode] = useState<LeadersViewMode>(
+    () => (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
   )
+  const [activeLayer, setActiveLayer] = useState<string>('All')
   const [sortBy, setSortBy] = useState<LeaderSortOption>(
     () => (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
   )
@@ -91,7 +93,7 @@ export const LeadersGrid = () => {
       q?: string
       cat?: string
       sort?: LeaderSortOption
-      view?: ViewMode
+      mode?: LeadersViewMode
     }) => {
       setSearchParams(
         (prev) => {
@@ -102,7 +104,7 @@ export const LeadersGrid = () => {
           const q = overrides.q ?? searchQuery
           const cat = overrides.cat ?? activeCategory
           const sort = overrides.sort ?? sortBy
-          const view = overrides.view ?? viewMode
+          const mode = overrides.mode ?? viewMode
 
           if (region !== 'All') next.set('region', region)
           else next.delete('region')
@@ -116,8 +118,8 @@ export const LeadersGrid = () => {
           else next.delete('cat')
           if (sort !== 'name') next.set('sort', sort)
           else next.delete('sort')
-          if (view !== 'cards') next.set('view', view)
-          else next.delete('view')
+          if (mode !== 'cards') next.set('mode', mode)
+          else next.delete('mode')
           return next
         },
         { replace: true }
@@ -144,7 +146,7 @@ export const LeadersGrid = () => {
     const nextCountry = searchParams.get('country') ?? 'All'
     const nextCat = searchParams.get('cat') ?? 'All'
     const nextSort = (searchParams.get('sort') as LeaderSortOption | null) ?? 'name'
-    const nextView = (searchParams.get('view') as ViewMode | null) ?? 'cards'
+    const nextMode = (searchParams.get('mode') as LeadersViewMode | null) ?? 'cards'
     const nextLeader = searchParams.get('leader')
 
     // eslint-disable-next-line react-hooks/set-state-in-effect -- URL→state sync is the purpose of this effect
@@ -154,7 +156,7 @@ export const LeadersGrid = () => {
     setSelectedCountry((prev) => (prev !== nextCountry ? nextCountry : prev))
     setActiveCategory((prev) => (prev !== nextCat ? nextCat : prev))
     setSortBy((prev) => (prev !== nextSort ? nextSort : prev))
-    setViewMode((prev) => (prev !== nextView ? nextView : prev))
+    setViewMode((prev) => (prev !== nextMode ? nextMode : prev))
     // ?leader= handled by the scroll-to effect below
     if (nextLeader) setHighlightedLeader((prev) => (prev !== nextLeader ? nextLeader : prev))
   }, [searchParams])
@@ -545,11 +547,11 @@ export const LeadersGrid = () => {
           )}
 
           <div className="hidden md:block">
-            <ViewToggle
+            <LeadersViewToggle
               mode={viewMode}
               onChange={(mode) => {
                 setViewMode(mode)
-                syncFiltersToUrl({ view: mode })
+                syncFiltersToUrl({ mode })
               }}
             />
           </div>
@@ -587,7 +589,43 @@ export const LeadersGrid = () => {
       )}
 
       {/* Content area */}
-      {filteredLeaders.length > 0 && viewMode === 'cards' ? (
+      {filteredLeaders.length > 0 && viewMode === 'stack' ? (
+        <div className="mb-8 hidden md:block">
+          <SectorStack
+            activeLayer={activeLayer}
+            onSelectLayer={setActiveLayer}
+            items={filteredLeaders}
+            expandedContent={
+              <div className="p-4 md:p-6 bg-background rounded-lg border border-border mt-4">
+                <div
+                  ref={gridRef}
+                  className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                >
+                  {sortedLeaders
+                    .filter((l) => l.type === activeLayer || activeLayer === 'All')
+                    .map((leader) => (
+                      <div
+                        key={leader.id}
+                        id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
+                        className={
+                          highlightedLeader === leader.name
+                            ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
+                            : ''
+                        }
+                      >
+                        <LeaderCard
+                          leader={leader}
+                          onClick={() => openDetail(leader)}
+                          isIndustryMatch={industryRelevant.has(leader.id)}
+                        />
+                      </div>
+                    ))}
+                </div>
+              </div>
+            }
+          />
+        </div>
+      ) : filteredLeaders.length > 0 && viewMode === 'cards' ? (
         <div
           ref={gridRef}
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
@@ -595,7 +633,7 @@ export const LeadersGrid = () => {
           {sortedLeaders.map((leader) => (
             <div
               key={leader.id}
-              id={`leader-${leader.name.replace(/\s+/g, '-')}`}
+              id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
               className={
                 highlightedLeader === leader.name
                   ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'
@@ -620,7 +658,7 @@ export const LeadersGrid = () => {
             {sortedLeaders.map((leader) => (
               <div
                 key={leader.id}
-                id={`leader-${leader.name.replace(/\s+/g, '-')}`}
+                id={`leader-${leader.name.replace(/\\s+/g, '-')}`}
                 className={
                   highlightedLeader === leader.name
                     ? 'ring-2 ring-primary/60 rounded-xl transition-all duration-500'

@@ -11,16 +11,29 @@ export interface DocumentCardGridProps {
   showHierarchicalAccordion?: boolean
 }
 
-const HierarchicalCardGroup = ({ root, allItems, onViewDetails, index }: { root: LibraryItem, allItems: LibraryItem[], onViewDetails: (item: LibraryItem) => void, index: number }) => {
+const HierarchicalCardGroup = ({
+  root,
+  allItems,
+  onViewDetails,
+  index,
+}: {
+  root: LibraryItem
+  allItems: LibraryItem[]
+  onViewDetails: (item: LibraryItem) => void
+  index: number
+}) => {
   const [expanded, setExpanded] = useState(false)
   const activeChildren = useMemo(() => {
-    return root.children?.filter((child) => allItems.some((i) => i.referenceId === child.referenceId)) || []
+    return (
+      root.children?.filter((child) => allItems.some((i) => i.referenceId === child.referenceId)) ||
+      []
+    )
   }, [root, allItems])
 
   return (
     <div className="space-y-3">
       <DocumentCard item={root} onViewDetails={onViewDetails} index={index} />
-      
+
       {activeChildren.length > 0 && (
         <div className="flex flex-col gap-2">
           <button
@@ -28,7 +41,8 @@ const HierarchicalCardGroup = ({ root, allItems, onViewDetails, index }: { root:
             className="self-start flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors ml-2 py-1 px-2 rounded-lg bg-primary/10 hover:bg-primary/20"
           >
             {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-            {expanded ? 'Hide' : 'Show'} {activeChildren.length} related {activeChildren.length === 1 ? 'draft' : 'drafts'}
+            {expanded ? 'Hide' : 'Show'} {activeChildren.length} related{' '}
+            {activeChildren.length === 1 ? 'draft' : 'drafts'}
           </button>
 
           <AnimatePresence>
@@ -56,7 +70,11 @@ const HierarchicalCardGroup = ({ root, allItems, onViewDetails, index }: { root:
   )
 }
 
-export const DocumentCardGrid = ({ items, onViewDetails, showHierarchicalAccordion = false }: DocumentCardGridProps) => {
+export const DocumentCardGrid = ({
+  items,
+  onViewDetails,
+  showHierarchicalAccordion = false,
+}: DocumentCardGridProps) => {
   const displayRoots = useMemo(() => {
     if (!showHierarchicalAccordion) return items
 
@@ -80,26 +98,24 @@ export const DocumentCardGrid = ({ items, onViewDetails, showHierarchicalAccordi
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
       <AnimatePresence mode="popLayout">
-        {showHierarchicalAccordion ? (
-          displayRoots.map((root, i) => (
-            <HierarchicalCardGroup
-              key={root.referenceId}
-              root={root}
-              allItems={items}
-              onViewDetails={onViewDetails}
-              index={i}
-            />
-          ))
-        ) : (
-          items.map((item, i) => (
-            <DocumentCard
-              key={item.referenceId}
-              item={item}
-              onViewDetails={onViewDetails}
-              index={i}
-            />
-          ))
-        )}
+        {showHierarchicalAccordion
+          ? displayRoots.map((root, i) => (
+              <HierarchicalCardGroup
+                key={root.referenceId}
+                root={root}
+                allItems={items}
+                onViewDetails={onViewDetails}
+                index={i}
+              />
+            ))
+          : items.map((item, i) => (
+              <DocumentCard
+                key={item.referenceId}
+                item={item}
+                onViewDetails={onViewDetails}
+                index={i}
+              />
+            ))}
       </AnimatePresence>
     </div>
   )

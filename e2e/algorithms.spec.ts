@@ -31,7 +31,7 @@ test.describe('Algorithms View', () => {
 
   test('sorts table by function', async ({ page }) => {
     // Click 'Function' header to sort
-    await page.getByRole('button', { name: 'Function' }).click()
+    await page.getByRole('button', { name: 'Function column' }).click()
 
     // Get all function cells
     // The variable 'rows' and 'firstRowFunc' were not used for subsequent assertions.
