@@ -33,7 +33,9 @@ export function AlgorithmCompareBar({
           {/* Baseline chip (locked) */}
           {baselineName && (
             <span className="flex items-center gap-1 text-[10px] sm:text-xs bg-muted text-foreground border border-primary/50 rounded-full px-2 sm:px-2.5 py-0.5 whitespace-nowrap">
-              <span className="font-semibold text-primary uppercase hidden sm:inline">Baseline</span>
+              <span className="font-semibold text-primary uppercase hidden sm:inline">
+                Baseline
+              </span>
               <span className="font-semibold text-primary uppercase sm:hidden">Base</span>
               <span className="truncate max-w-[80px] sm:max-w-[100px]">{baselineName}</span>
             </span>

@@ -4,6 +4,7 @@ import { useSearchParams } from 'react-router-dom'
 import { Globe, Link2, Check, Search, Download } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { timelineData, timelineMetadata, transformToGanttData } from '../../data/timelineData'
+import type { GanttCountryData } from '../../types/timeline'
 import { FilterChip } from '../common/FilterChip'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
@@ -81,7 +82,7 @@ export const TimelineView = () => {
     setCountryFilter(country)
     syncFiltersToUrl({ country })
   }
-  
+
   const handleSearchChange = (q: string) => {
     setSearchText(q)
     syncFiltersToUrl({ q })
@@ -129,13 +130,15 @@ export const TimelineView = () => {
 
   const [countryCopied, setCountryCopied] = useState(false)
 
-  // Explicit any type used below since the caller from Desktop passes its own processed data, which matches GanttCountryData type.
-  const handleExportCsv = useCallback((dataToExport: any[] = ganttData) => {
-    if (dataToExport.length === 0) return
-    const flatEvents = dataToExport.flatMap((gcd) => gcd.phases.flatMap((phase: any) => phase.events))
-    const csv = generateCsv(flatEvents, TIMELINE_CSV_COLUMNS)
-    downloadCsv(csv, csvFilename('pqc-timeline'))
-  }, [ganttData])
+  const handleExportCsv = useCallback(
+    (dataToExport: GanttCountryData[] = ganttData) => {
+      if (dataToExport.length === 0) return
+      const flatEvents = dataToExport.flatMap((gcd) => gcd.phases.flatMap((phase) => phase.events))
+      const csv = generateCsv(flatEvents, TIMELINE_CSV_COLUMNS)
+      downloadCsv(csv, csvFilename('pqc-timeline'))
+    },
+    [ganttData]
+  )
 
   // Region filter items
   const regionItems = useMemo(
@@ -311,11 +314,11 @@ export const TimelineView = () => {
               </button>
             )}
             <button
-               type="button"
-               aria-label="Export to CSV"
-               title="Export filtered timeline data to CSV"
-               onClick={() => handleExportCsv(mobileGanttData)}
-               className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
+              type="button"
+              aria-label="Export to CSV"
+              title="Export filtered timeline data to CSV"
+              onClick={() => handleExportCsv(mobileGanttData)}
+              className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
             >
               <Download size={16} />
             </button>
@@ -324,10 +327,21 @@ export const TimelineView = () => {
           {/* Active Filter Chips */}
           {(regionFilter !== 'All' || countryFilter !== 'All' || searchText) && (
             <div className="flex flex-wrap gap-2 mb-3">
-               {regionFilter !== 'All' && regionFilter !== 'global' && <FilterChip label={REGION_LABELS[regionFilter] ?? regionFilter} onClear={() => handleRegionChange('All')} />}
-               {regionFilter === 'global' && <FilterChip label="Global" onClear={() => handleRegionChange('All')} />}
-               {countryFilter !== 'All' && <FilterChip label={countryFilter} onClear={() => handleCountrySelect('All')} />}
-               {searchText && <FilterChip label={`"${searchText}"`} onClear={() => handleSearchChange('')} />}
+              {regionFilter !== 'All' && regionFilter !== 'global' && (
+                <FilterChip
+                  label={REGION_LABELS[regionFilter] ?? regionFilter}
+                  onClear={() => handleRegionChange('All')}
+                />
+              )}
+              {regionFilter === 'global' && (
+                <FilterChip label="Global" onClear={() => handleRegionChange('All')} />
+              )}
+              {countryFilter !== 'All' && (
+                <FilterChip label={countryFilter} onClear={() => handleCountrySelect('All')} />
+              )}
+              {searchText && (
+                <FilterChip label={`"${searchText}"`} onClear={() => handleSearchChange('')} />
+              )}
             </div>
           )}
 

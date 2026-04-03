@@ -54,7 +54,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
 
       <span className="font-mono text-sm text-primary/80 mb-1">{item.referenceId}</span>
 
-      <h3 
+      <h3
         className="text-sm font-semibold text-foreground mb-2 leading-snug pr-16 line-clamp-2"
         title={item.documentTitle}
       >

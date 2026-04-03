@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Filter, X } from 'lucide-react'
 
-
 interface MobileFilterDrawerProps {
   // We'll pass the exact same props as the dropdowns
   filterContent: React.ReactNode
@@ -97,9 +96,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             </div>
 
             {/* Scrollable Content */}
-            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">
-              {filterContent}
-            </div>
+            <div className="p-6 overflow-y-auto flex-1 flex flex-col gap-6">{filterContent}</div>
 
             {/* Footer Actions */}
             <div className="p-6 border-t border-border/50 bg-muted/20 flex gap-4">

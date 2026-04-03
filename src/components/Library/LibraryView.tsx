@@ -497,7 +497,6 @@ export const LibraryView: React.FC = () => {
     )
   }
 
-
   if (libraryError) {
     return <ErrorAlert message={libraryError} />
   }
@@ -586,8 +585,11 @@ export const LibraryView: React.FC = () => {
           <button
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
-              showFilters || activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All' 
-                ? 'bg-primary/10 border-primary/30 text-primary' 
+              showFilters ||
+              activeCategory !== 'All' ||
+              activeOrg !== 'All' ||
+              activeIndustry !== 'All'
+                ? 'bg-primary/10 border-primary/30 text-primary'
                 : 'bg-muted/30 border-border text-foreground hover:bg-muted/50'
             }`}
             aria-expanded={showFilters}
@@ -627,7 +629,9 @@ export const LibraryView: React.FC = () => {
         {showFilters && (
           <div className="pt-3 border-t border-border flex flex-wrap gap-3 animate-in fade-in slide-in-from-top-2">
             <div className="flex-1 min-w-[160px]">
-              <span className="text-xs font-medium text-muted-foreground mb-1 block">Organization</span>
+              <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                Organization
+              </span>
               <FilterDropdown
                 items={orgs}
                 selectedId={activeOrg}
@@ -659,11 +663,13 @@ export const LibraryView: React.FC = () => {
                 className="mb-0 w-full"
               />
             </div>
-            
+
             {/* Sort Dropdown for Mobile (Inside filters drawer) */}
             {viewMode === 'cards' && (
               <div className="flex-1 min-w-[160px] sm:hidden">
-                <span className="text-xs font-medium text-muted-foreground mb-1 block">Sort By</span>
+                <span className="text-xs font-medium text-muted-foreground mb-1 block">
+                  Sort By
+                </span>
                 <div className="w-full">
                   <SortControl
                     value={sortBy}
@@ -685,7 +691,15 @@ export const LibraryView: React.FC = () => {
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Search:</span> {filterText}
-              <button onClick={() => { setFilterText(''); setInputValue(''); syncFiltersToUrl({ q: '' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear search">
+              <button
+                onClick={() => {
+                  setFilterText('')
+                  setInputValue('')
+                  syncFiltersToUrl({ q: '' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear search"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -693,7 +707,14 @@ export const LibraryView: React.FC = () => {
           {activeOrg !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Org:</span> {activeOrg}
-              <button onClick={() => { setActiveOrg('All'); syncFiltersToUrl({ org: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear organization filter">
+              <button
+                onClick={() => {
+                  setActiveOrg('All')
+                  syncFiltersToUrl({ org: 'All' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear organization filter"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -701,7 +722,14 @@ export const LibraryView: React.FC = () => {
           {activeIndustry !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Industry:</span> {activeIndustry}
-              <button onClick={() => { setActiveIndustry('All'); syncFiltersToUrl({ ind: 'All' }); }} className="text-muted-foreground hover:text-foreground" aria-label="Clear industry filter">
+              <button
+                onClick={() => {
+                  setActiveIndustry('All')
+                  syncFiltersToUrl({ ind: 'All' })
+                }}
+                className="text-muted-foreground hover:text-foreground"
+                aria-label="Clear industry filter"
+              >
                 <X size={12} aria-hidden="true" />
               </button>
             </span>
@@ -734,7 +762,11 @@ export const LibraryView: React.FC = () => {
         <>
           <div className="hidden md:block">{renderTableView()}</div>
           <div className="md:hidden">
-            <DocumentCardGrid items={sortedItems} onViewDetails={openDetail} showHierarchicalAccordion />
+            <DocumentCardGrid
+              items={sortedItems}
+              onViewDetails={openDetail}
+              showHierarchicalAccordion
+            />
           </div>
         </>
       )}
