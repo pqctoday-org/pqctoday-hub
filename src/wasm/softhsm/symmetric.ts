@@ -58,12 +58,8 @@ export const hsm_generateAESKey = (
   M: SoftHSMModule,
   hSession: number,
   keyBits: 128 | 192 | 256,
-  encrypt = true,
-  decrypt = true,
-  wrap = true,
-  unwrap = true,
-  derive = true,
-  extractable = true
+  extractable: boolean,
+  keyUsage: 'encrypt' | 'wrap' | 'derive'
 ): number => {
   const mech = buildMech(M, CKM_AES_KEY_GEN)
   const tpl = buildTemplate(M, [
@@ -72,11 +68,11 @@ export const hsm_generateAESKey = (
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_ENCRYPT, boolVal: encrypt },
-    { type: CKA_DECRYPT, boolVal: decrypt },
-    { type: CKA_WRAP, boolVal: wrap },
-    { type: CKA_UNWRAP, boolVal: unwrap },
-    { type: CKA_DERIVE, boolVal: derive },
+    { type: CKA_ENCRYPT, boolVal: keyUsage === 'encrypt' },
+    { type: CKA_DECRYPT, boolVal: keyUsage === 'encrypt' },
+    { type: CKA_WRAP, boolVal: keyUsage === 'wrap' },
+    { type: CKA_UNWRAP, boolVal: keyUsage === 'wrap' },
+    { type: CKA_DERIVE, boolVal: keyUsage === 'derive' },
     { type: CKA_VALUE_LEN, ulongVal: keyBits / 8 },
   ])
   const hKeyPtr = allocUlong(M)
@@ -129,14 +125,8 @@ export const hsm_importAESKey = (
   M: SoftHSMModule,
   hSession: number,
   keyBytes: Uint8Array,
-  encrypt = true,
-  decrypt = true,
-  wrap = true,
-  unwrap = true,
-  derive = true,
-  extractable = true,
-  sign = false,
-  verify = false
+  extractable: boolean,
+  keyUsage: 'encrypt' | 'wrap' | 'derive'
 ): number => {
   const keyPtr = M._malloc(keyBytes.length)
   M.HEAPU8.set(keyBytes, keyPtr)
@@ -147,13 +137,13 @@ export const hsm_importAESKey = (
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_ENCRYPT, boolVal: encrypt },
-    { type: CKA_DECRYPT, boolVal: decrypt },
-    { type: CKA_WRAP, boolVal: wrap },
-    { type: CKA_UNWRAP, boolVal: unwrap },
-    { type: CKA_DERIVE, boolVal: derive },
-    { type: CKA_SIGN, boolVal: sign },
-    { type: CKA_VERIFY, boolVal: verify },
+    { type: CKA_ENCRYPT, boolVal: keyUsage === 'encrypt' },
+    { type: CKA_DECRYPT, boolVal: keyUsage === 'encrypt' },
+    { type: CKA_WRAP, boolVal: keyUsage === 'wrap' },
+    { type: CKA_UNWRAP, boolVal: keyUsage === 'wrap' },
+    { type: CKA_DERIVE, boolVal: keyUsage === 'derive' },
+    { type: CKA_SIGN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: false },
     { type: CKA_VALUE, bytesPtr: keyPtr, bytesLen: keyBytes.length },
   ])
   const hKeyPtr = allocUlong(M)
@@ -207,7 +197,7 @@ export const hsm_importRSAPublicKey = (
   hSession: number,
   modulusBytes: Uint8Array,
   exponentBytes: Uint8Array,
-  encrypt = true
+  keyUsage: 'verify' | 'encrypt'
 ): number => {
   const modPtr = M._malloc(modulusBytes.length)
   M.HEAPU8.set(modulusBytes, modPtr)
@@ -225,8 +215,8 @@ export const hsm_importRSAPublicKey = (
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
     { type: CKA_TOKEN, boolVal: false },
-    { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_ENCRYPT, boolVal: encrypt },
+    { type: CKA_VERIFY, boolVal: keyUsage === 'verify' },
+    { type: CKA_ENCRYPT, boolVal: keyUsage === 'encrypt' },
     { type: CKA_MODULUS, bytesPtr: modPtr, bytesLen: modulusBytes.length },
     { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: exponentBytes.length },
   ]

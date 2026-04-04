@@ -584,7 +584,7 @@ export const KeyWrapPanel = ({
       HKDF_INFO,
       32
     )
-    return hsm_importAESKey(M, hSession, kekBytes)
+    return hsm_importAESKey(M, hSession, kekBytes, false, 'wrap')
   }
 
   // ── Wrap operations ──────────────────────────────────────────────────────────
@@ -638,7 +638,7 @@ export const KeyWrapPanel = ({
       const hSession = hSessionRef.current
       const effTarget = resolveTargetHandle(M, hSession)
 
-      const tempKEKHandle = hsm_generateAESKey(M, hSession, 256)
+      const tempKEKHandle = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
       const wrappedTarget = hsm_wrapKeyMech(
         M,
         hSession,
@@ -694,11 +694,8 @@ export const KeyWrapPanel = ({
 
       if (hybridCombiner === 'p256-mlkem') {
         // 2a. ECDH P-256: generate ephemeral pair, derive with recipient's pub
-        const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
-          M,
-          hSession,
-          'P-256'
-        )
+        const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(M, hSession, 'P-256'
+        , false, 'sign')
         const recipientPubBytes = hsm_extractECPoint(M, hSession, ecPubHandle!)
         const classicalSecretHandle = hsm_ecdhDerive(M, hSession, ephPriv, recipientPubBytes)
         classicalSS = hsm_extractKeyValue(M, hSession, classicalSecretHandle)
@@ -1092,7 +1089,7 @@ export const KeyWrapPanel = ({
 
       if (hybridCombiner === 'p256-mlkem') {
         // P-256 ECDH pair
-        const { pubHandle: ecPub, privHandle: ecPriv } = hsm_generateECKeyPair(M, hSession, 'P-256')
+        const { pubHandle: ecPub, privHandle: ecPriv } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
         setEcPubHandle(ecPub)
         setEcPrivHandle(ecPriv)
         addHsmKey({

@@ -4,6 +4,10 @@ import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, CheckCircle2, Lock, Key, Cpu, Zap } from 'lucide-react'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const QKD_KAT_SPECS: KatTestSpec[] = [
   {
@@ -56,49 +60,34 @@ function getRandomUUID(): string {
 }
 
 import {
-  getSoftHSMRustModule,
-  hsm_initialize,
-  hsm_getFirstSlot,
   hsm_importGenericSecret,
   hsm_kbkdf,
 } from '../../../../../wasm/softhsm'
+import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
-async function sp800108CounterKDF(
+function sp800108CounterKDF(
+  M: SoftHSMModule,
+  hSession: number,
   keyMaterialHex: string,
   label: string,
   context: string,
   outputBytes: number
-): Promise<string> {
+): { derivedKeyHex: string; baseKeyHandle: number } {
   const ikm = new Uint8Array(32)
   for (let i = 0; i < 32; i++) ikm[i] = parseInt(keyMaterialHex.slice(i * 2, i * 2 + 2), 16)
 
   // NIST SP 800-108 fixed input = Label || 0x00 || Context
   const fixedInput = new TextEncoder().encode(`${label}\x00${context}`)
 
-  const M = await getSoftHSMRustModule()
-
-  try {
-    hsm_initialize(M)
-  } catch (e: unknown) {
-    if (e instanceof Error && !e.message.includes('CKR_CRYPTOKI_ALREADY_INITIALIZED')) throw e
-  }
-
-  const slot = hsm_getFirstSlot(M)
-  const sessionPtr = M._malloc(4)
-  M._C_OpenSession(slot, 0x0006, 0, 0, sessionPtr) // CKF_SERIAL_SESSION(0x04) | CKF_RW_SESSION(0x02)
-  const hSession = M.getValue(sessionPtr, 'i32') >>> 0
-  M._free(sessionPtr)
-
-  try {
-    const baseKeyHandle = hsm_importGenericSecret(M, hSession, ikm)
-    // Call HSM C_DeriveKey via CKM_SP800_108_COUNTER_KDF with PRF CKM_SHA256_HMAC (0x251)
-    const derived = hsm_kbkdf(M, hSession, baseKeyHandle, 0x00000251, fixedInput, outputBytes)
-    M._C_DestroyObject(hSession, baseKeyHandle)
-    return Array.from(derived)
+  const baseKeyHandle = hsm_importGenericSecret(M, hSession, ikm)
+  // Call HSM C_DeriveKey via CKM_SP800_108_COUNTER_KDF with PRF CKM_SHA256_HMAC (0x251)
+  const derived = hsm_kbkdf(M, hSession, baseKeyHandle, 0x00000251, fixedInput, outputBytes)
+  
+  return {
+    derivedKeyHex: Array.from(derived)
       .map((b) => b.toString(16).padStart(2, '0'))
-      .join('')
-  } finally {
-    M._C_CloseSession(hSession)
+      .join(''),
+    baseKeyHandle
   }
 }
 
@@ -114,6 +103,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
   const [currentStep, setCurrentStep] = useState<number>(0) // 0 = not started
   const [state, setState] = useState<Partial<DemoState>>({})
   const [processing, setProcessing] = useState(false)
+  const hsm = useHSM()
 
   // Step 1: Simulate ETSI QKD 014 REST key retrieval
   const handleFetch = useCallback(async () => {
@@ -148,16 +138,39 @@ export const HSMKeyDerivationDemo: React.FC = () => {
     setProcessing(false)
   }, [])
 
-  // Step 3: SP 800-108 counter-mode KDF inside HSM
   const handleKDF = useCallback(async () => {
     if (!state.qkdSecret) return
     setProcessing(true)
     const sessionId = getRandomHex(16)
-    const sessionKey = await sp800108CounterKDF(state.qkdSecret, 'session-key-v1', sessionId, 32)
+    let sessionKey = ''
+    if (hsm.isReady && hsm.moduleRef.current) {
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const { derivedKeyHex, baseKeyHandle } = sp800108CounterKDF(
+        M,
+        hsm.hSessionRef.current,
+        state.qkdSecret,
+        'session-key-v1',
+        sessionId,
+        32
+      )
+      sessionKey = derivedKeyHex
+      // Note: we don't C_DestroyObject so it stays in the HSMKeyInspector for viewing
+      hsm.addKey({
+        handle: baseKeyHandle,
+        label: 'QKD Imported Master Secret',
+        family: 'ml-kem', // conceptual mapping for QKD
+        role: 'private',
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+    } else {
+      // Mock if HSM is disabled
+      sessionKey = getRandomHex(32)
+    }
+    await new Promise((r) => setTimeout(r, 400)) // delay for UI effect
     setState((s) => ({ ...s, sessionId, sessionKey }))
     setCurrentStep(3)
     setProcessing(false)
-  }, [state.qkdSecret])
+  }, [state.qkdSecret, hsm])
 
   // Step 4: Show output (no async needed)
   const handleShowKey = useCallback(() => {
@@ -175,6 +188,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']} />
       {/* Broader KDF context */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">
@@ -580,10 +594,11 @@ export const HSMKeyDerivationDemo: React.FC = () => {
       {currentStep > 0 && currentStep < 5 && (
         <button
           onClick={stepHandlers[currentStep]}
-          disabled={processing}
+          disabled={processing || (!hsm.isReady && currentStep === 2)}
           className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <Play size={14} /> {processing ? 'Processing…' : `Run Step ${currentStep + 1}`}
+          {!hsm.isReady && currentStep === 2 && ' (Live HSM Required)'}
         </button>
       )}
 
@@ -592,6 +607,28 @@ export const HSMKeyDerivationDemo: React.FC = () => {
         label="QKD/HSM PQC Known Answer Tests"
         authorityNote="ETSI GS QKD 014 · NIST FIPS 203"
       />
+
+      {/* PKCS#11 Call Log & Key Inspector */}
+      {hsm.isReady && (
+        <div className="mt-4 space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={true}
+            filterFns={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+              title="QKD Imported Secrets"
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -8,6 +8,7 @@ import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import {
   hsm_generateECKeyPair,
   hsm_generateMLDSAKeyPair,
@@ -327,7 +328,7 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
 
         if (wizard.currentStep === 0) {
           // Step 1: Generate both keypairs via PKCS#11
-          const ec = hsm_generateECKeyPair(M, hSession, 'P-256')
+          const ec = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
           const ecPoint = hsm_extractECPoint(M, hSession, ec.pubHandle)
           const ml = hsm_generateMLDSAKeyPair(M, hSession, 65)
           const mlPub = hsm_extractKeyValue(M, hSession, ml.pubHandle)
@@ -340,6 +341,35 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
             ecSig: null,
             mlSig: null,
           }
+
+          hsm.addKey({
+            handle: ec.pubHandle,
+            family: 'ecdsa',
+            role: 'public',
+            label: 'secp256k1 Public Key',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addKey({
+            handle: ec.privHandle,
+            family: 'ecdsa',
+            role: 'private',
+            label: 'secp256k1 Private Key',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addKey({
+            handle: ml.pubHandle,
+            family: 'ml-dsa',
+            role: 'public',
+            label: 'ML-DSA-65 Public Key',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addKey({
+            handle: ml.privHandle,
+            family: 'ml-dsa',
+            role: 'private',
+            label: 'ML-DSA-65 Private Key',
+            generatedAt: new Date().toISOString(),
+          })
 
           setClassical((prev) => ({ ...prev, privBytes: 121, pubBytes: ecPoint.length }))
           setPqc((prev) => ({ ...prev, privBytes: 4032, pubBytes: mlPub.length }))
@@ -576,13 +606,23 @@ ${DIGITAL_ASSETS_CONSTANTS.COMMANDS.ML_DSA_65.VERIFY(filenames.mlPub, filenames.
         isStepComplete={wizard.isStepComplete}
       />
       {hsm.isReady && (
-        <Pkcs11LogPanel
-          log={hsm.log}
-          onClear={hsm.clearLog}
-          title="PKCS#11 Call Log — PQC vs Classical"
-          emptyMessage="Click 'Generate Both Keypairs' to see live PKCS#11 operations."
-          filterFns={COMPARISON_LIVE_OPERATIONS}
-        />
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — PQC vs Classical"
+            emptyMessage="Click 'Generate Both Keypairs' to see live PKCS#11 operations."
+            filterFns={COMPARISON_LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
       )}
     </div>
   )

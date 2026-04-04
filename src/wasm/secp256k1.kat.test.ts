@@ -44,7 +44,7 @@ describe('SoftHSMv3 secp256k1 Known Answer Tests', () => {
     // are rebuilt with the patches generated in artifacts/.
     // Catching the expected failure mode to prevent CI breakage in the interim.
     try {
-      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1')
+      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'derive')
       expect(keys.pubHandle).toBeGreaterThan(0)
       expect(keys.privHandle).toBeGreaterThan(0)
     } catch (e: any) {
@@ -64,7 +64,7 @@ describe('SoftHSMv3 secp256k1 Known Answer Tests', () => {
     const msg = 'Bitcoin Transaction Data Hash Placeholder'
 
     try {
-      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1')
+      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'derive')
       const signature = hsm_ecdsaSign(M, hSession, keys.privHandle, msg)
 
       expect(signature.length).toBeGreaterThan(60) // rough DER ecdsa bounds

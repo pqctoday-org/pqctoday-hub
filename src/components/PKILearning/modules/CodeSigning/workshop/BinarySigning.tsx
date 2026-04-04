@@ -8,6 +8,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_extractKeyValue,
@@ -155,6 +156,22 @@ export const BinarySigning: React.FC = () => {
         const pubHex = Array.from(pubBytes)
           .map((b) => b.toString(16).padStart(2, '0'))
           .join('')
+
+        hsm.addKey({
+          handle: pubHandle,
+          family: 'ml-dsa',
+          role: 'public',
+          label: `${selectedAlgorithm} Public`,
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        })
+        hsm.addKey({
+          handle: privHandle,
+          family: 'ml-dsa',
+          role: 'private',
+          label: `${selectedAlgorithm} Private`,
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        })
+
         setKeyPair({
           publicKey: pubHex,
           privateKey: `(HSM-protected — handle 0x${privHandle.toString(16).padStart(8, '0')})`,
@@ -505,17 +522,6 @@ export const BinarySigning: React.FC = () => {
             </div>
           </div>
 
-          {/* PKCS#11 call log — shown when live mode is active */}
-          {hsm.isReady && (
-            <Pkcs11LogPanel
-              log={hsm.log}
-              onClear={hsm.clearLog}
-              title="PKCS#11 Call Log"
-              defaultOpen={true}
-              className="mt-4"
-              filterFns={LIVE_OPERATIONS}
-            />
-          )}
         </div>
       )}
 
@@ -609,6 +615,8 @@ export const BinarySigning: React.FC = () => {
         </div>
       </div>
 
+
+
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
@@ -621,9 +629,30 @@ export const BinarySigning: React.FC = () => {
 
       <KatValidationPanel
         specs={CODE_SIGNING_KAT_SPECS}
-        label="Code Signing PQC Known Answer Tests"
-        authorityNote="CNSA 2.0 · NIST FIPS 204"
+        label="Binary Signing Known Answer Tests"
+        authorityNote="FIPS 204 · NIST SP 800-89"
       />
+
+      {/* PKCS#11 Call Log & Key Inspector */}
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={true}
+            filterFns={LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

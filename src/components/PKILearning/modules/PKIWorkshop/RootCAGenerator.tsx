@@ -15,6 +15,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateRSAKeyPair,
@@ -267,10 +268,10 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
           let mechLabel = ''
 
           if (algoId === 'rsa') {
-            handles = hsm_generateRSAKeyPair(M, hSession, 4096)
+            handles = hsm_generateRSAKeyPair(M, hSession, 4096, false, 'sign')
             mechLabel = 'CKM_RSA_PKCS_KEY_PAIR_GEN, 4096-bit'
           } else if (algoId === 'ecdsa') {
-            handles = hsm_generateECKeyPair(M, hSession, 'P-521')
+            handles = hsm_generateECKeyPair(M, hSession, 'P-521', false, 'sign')
             mechLabel = 'CKM_EC_KEY_PAIR_GEN, P-521'
           } else if (algoId === 'eddsa') {
             handles = hsm_generateEdDSAKeyPair(M, hSession, 'Ed448')
@@ -289,6 +290,29 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
           if (handles) {
             liveKeyRef.current = handles
             const pubKeyBytes = hsm_extractKeyValue(M, hSession, handles.pubHandle)
+            const algoFamily = algoId.startsWith('mldsa')
+              ? 'ml-dsa'
+              : algoId.startsWith('slh')
+                ? 'slh-dsa'
+                : algoId === 'rsa'
+                ? 'rsa'
+                : 'ecdsa'
+                
+            hsm.addKey({
+              handle: handles.pubHandle,
+              family: algoFamily,
+              role: 'public',
+              label: `${algo.name} Root Public`,
+              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+            })
+            hsm.addKey({
+              handle: handles.privHandle,
+              family: algoFamily,
+              role: 'private',
+              label: `${algo.name} Root Private`,
+              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+            })
+
             setOutput(
               (prev) =>
                 prev +
@@ -637,6 +661,9 @@ x509_extensions = v3_ca
 
   return (
     <div className="space-y-8">
+      {/* Live HSM Toggle */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} className="mb-4" />
+
       {/* Row 1: Step 1 & Step 2 */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Step 1: Key Configuration */}
@@ -673,7 +700,6 @@ x509_extensions = v3_ca
               />
             </div>
 
-            <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} className="mt-3" />
 
             {isKeyGenerating && (
               <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
@@ -822,19 +848,10 @@ x509_extensions = v3_ca
               </div>
             )}
           </div>
-
-          {hsm.isReady && (
-            <Pkcs11LogPanel
-              log={hsm.log}
-              onClear={hsm.clearLog}
-              defaultOpen={true}
-              title="PKCS#11 Call Log — CA Key & Signing Operations"
-              emptyMessage="Run key generation or certificate creation to see PKCS#11 calls."
-              filterFns={LIVE_OPERATIONS}
-            />
-          )}
         </div>
       </div>
+
+
 
       {/* Profile Info Modal */}
       {showProfileInfo && (
@@ -872,6 +889,27 @@ x509_extensions = v3_ca
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>
             </div>
           </div>
+        </div>
+      )}
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — CA Key & Signing Operations"
+            emptyMessage="Run key generation or certificate creation to see PKCS#11 calls."
+            filterFns={LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
         </div>
       )}
     </div>

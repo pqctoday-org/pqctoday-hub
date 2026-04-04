@@ -7,6 +7,7 @@
  * in any module that uses the useHSM hook (e.g. TEEHSMTrustedChannel).
  */
 import { useState, useMemo, useEffect, useCallback } from 'react'
+import { createPortal } from 'react-dom'
 import { AppWindow, Eye, Globe, Key as KeyIcon, Lock, ShieldCheck, Trash2, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import type {
@@ -180,14 +181,15 @@ const KeyAttrModal = ({
   hsmKey: HsmKey
   attrs: KeyAttributeSet
   onClose: () => void
-}) => (
+}) => {
+  return createPortal(
   <div
     role="presentation"
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+    className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4"
     onClick={(e) => e.target === e.currentTarget && onClose()}
     onKeyDown={(e) => e.key === 'Escape' && onClose()}
   >
-    <div className="glass-panel w-full max-w-md p-5 space-y-4">
+    <div className="glass-panel w-full max-w-md p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>
@@ -281,8 +283,10 @@ const KeyAttrModal = ({
 
       <p className="text-xs text-muted-foreground">Session object · read via C_GetAttributeValue</p>
     </div>
-  </div>
-)
+  </div>,
+  document.body
+  )
+}
 
 // ── Role styling ──────────────────────────────────────────────────────────────
 
@@ -343,6 +347,7 @@ export const HsmKeyInspector = ({
 
   // Batch-query key sizes via an effect so ref access stays out of render
   const [keySizeMap, setKeySizeMap] = useState<Map<number, number | null>>(new Map())
+  const keyTracker = useMemo(() => keys.map((k) => k.handle).join(','), [keys])
   useEffect(() => {
     const M = moduleRef.current
     const hSession = hSessionRef.current
@@ -361,7 +366,8 @@ export const HsmKeyInspector = ({
     }
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setKeySizeMap(map)
-  }, [keys]) // moduleRef and hSessionRef are stable refs — intentionally omitted
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyTracker]) // moduleRef and hSessionRef are stable refs — intentionally omitted
 
   const totalBytes = useMemo(() => {
     let sum = 0
@@ -425,7 +431,8 @@ export const HsmKeyInspector = ({
         }
       })
     )
-  }, [keys]) // moduleRef/hSessionRef are stable refs — intentionally omitted
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [keyTracker]) // moduleRef/hSessionRef are stable refs — intentionally omitted
 
   if (keys.length === 0) {
     return (

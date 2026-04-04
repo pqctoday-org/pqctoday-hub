@@ -204,10 +204,10 @@ const runStep = async (
 
     case 6: {
       // Step 7: Generate ECDH P-256 + ML-KEM-768 hybrid key pair, then AES key wrap
-      const ecPair = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const ecPair = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
       const mlkemPair2 = hsm_generateMLKEMKeyPair(M, hSession, 768)
       // Generate AES wrapping key and wrap the ML-KEM shared secret
-      const aesWrap = hsm_generateAESKey(M, hSession, 256)
+      const aesWrap = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
       liveState.aesWrapHandle = aesWrap
       // Wrap the ML-KEM shared secret (from step 3) with the AES key
       const wrapped = liveState.mlKemSecretHandle
@@ -399,7 +399,7 @@ export const Pkcs11Simulator: React.FC = () => {
       </div>
 
       {/* Live HSM Toggle */}
-      <LiveHSMToggle hsm={hsm} operations={STEP_OPERATIONS[currentStep] ?? []} />
+      <LiveHSMToggle hsm={hsm} operations={STEP_OPERATIONS[currentStep] ?? []} autoInit={false} />
 
       {/* Progress Bar */}
       <div className="glass-panel p-4">

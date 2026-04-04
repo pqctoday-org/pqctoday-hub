@@ -68,7 +68,7 @@ describe('SoftHSMv3 Cross-Session Consistency KAT', () => {
     const ptBytes = new TextEncoder().encode(message)
 
     // Generate key and encrypt in session A
-    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionA, 256)
+    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionA, 256, false, 'encrypt')
     const { ciphertext, iv } = SoftHSM.hsm_aesEncrypt(hsmd, sessionA, keyHandle, ptBytes, 'gcm')
 
     // Decrypt in session B
@@ -79,7 +79,7 @@ describe('SoftHSMv3 Cross-Session Consistency KAT', () => {
   it('ECDSA P-256: sign in session A, verify in session B', () => {
     const message = 'Cross-session ECDSA P-256 consistency test'
 
-    const { pubHandle, privHandle } = SoftHSM.hsm_generateECKeyPair(hsmd, sessionA, 'P-256')
+    const { pubHandle, privHandle } = SoftHSM.hsm_generateECKeyPair(hsmd, sessionA, 'P-256', false, 'derive')
     const sigBytes = SoftHSM.hsm_ecdsaSign(
       hsmd,
       sessionA,

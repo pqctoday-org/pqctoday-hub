@@ -4,6 +4,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+
+- **Stateful Signatures Workshop**: Integrated native PKCS#11 v3.2 token simulation for Stateful Hash-Based Signatures (LMS, HSS, XMSS) natively wired to the WASM UI layer.
+- **State Exhaustion Tracking**: Implemented dynamic exhaustion validation by securely passing `CKA_HSS_KEYS_REMAINING` across the Rust/Typescript bindings, driving visual decrements via `StateManagementVisualizer.tsx` limiting H5 signatures strictly to 32 executions.
+
 ## [2.76.0] - 2026-04-02
 
 ### Added

@@ -287,7 +287,15 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const aesHandle = hsm_generateAESKey(M, hSession, profile === 'C' ? 256 : 128)
+          const aesHandle = hsm_generateAESKey(M, hSession, profile === 'C' ? 256 : 128, true, false, false, false, false, false, '5G MSIN Encryption Key')
+          hsm.addKey({
+            handle: aesHandle,
+            label: `MSIN Enc Key (AES-${profile === 'C' ? 256 : 128})`,
+            family: 'aes',
+            role: 'secret',
+            purpose: 'application',
+            generatedAt: new Date().toISOString(),
+          })
           const supiStr = customSupi || '310260123456789'
           const msinString = supiStr.length > 6 ? supiStr.slice(6) : supiStr
           const msin = new TextEncoder().encode(msinString)
@@ -312,6 +320,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
           const hmacHandle = hsm_generateHMACKey(M, hSession, 32)
+          hsm.addKey({
+            handle: hmacHandle,
+            label: 'MAC Key (HMAC-SHA256)',
+            family: 'hmac',
+            role: 'secret',
+            purpose: 'application',
+            generatedAt: new Date().toISOString(),
+          })
           const data = new TextEncoder().encode('suci-mac-input-data')
           const mac = hsm_hmac(M, hSession, hmacHandle, data)
           const macHex = Array.from(mac)
@@ -399,6 +415,22 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           )
           hsmHandlesRef.current.ephPubHandle = pubHandle
           hsmHandlesRef.current.ephPrivHandle = privHandle
+          hsm.addKey({
+            handle: pubHandle,
+            label: `Eph Key (${curve})`,
+            family: 'ecdsa',
+            role: 'public',
+            purpose: 'tls',
+            generatedAt: new Date().toISOString(),
+          })
+          hsm.addKey({
+            handle: privHandle,
+            label: `Eph Key (${curve})`,
+            family: 'ecdsa',
+            role: 'private',
+            purpose: 'tls',
+            generatedAt: new Date().toISOString(),
+          })
           const ephPubBytes = hsm_extractECPoint(M, hSession, pubHandle)
           const ephPubHex = Array.from(ephPubBytes)
             .map((b: number) => b.toString(16).padStart(2, '0'))
@@ -437,6 +469,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             )
             hsmHandlesRef.current.sharedSecretHandle = secretHandle
             hsmHandlesRef.current.ciphertext = ciphertextBytes
+            hsm.addKey({
+              handle: secretHandle,
+              label: 'Shared Secret (Z)',
+              family: 'aes',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
             const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
             const sharedHex = Array.from(sharedBytes)
               .map((b) => b.toString(16).padStart(2, '0'))
@@ -456,6 +496,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               { keyLen: 32, derive: true, extractable: true }
             )
             hsmHandlesRef.current.sharedSecretHandle = derivedHandle
+            hsm.addKey({
+              handle: derivedHandle,
+              label: 'Shared Secret (Z)',
+              family: 'aes',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
             const sharedBytes = hsm_extractKeyValue(M, hSession, derivedHandle)
             const sharedHex = Array.from(sharedBytes)
               .map((b: number) => b.toString(16).padStart(2, '0'))
@@ -541,6 +589,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             hsmHandlesRef.current.ciphertext!,
             'ML-KEM-768'
           )
+          hsm.addKey({
+            handle: secretHandle,
+            label: 'Decapsulated Z',
+            family: 'aes',
+            role: 'secret',
+            purpose: 'application',
+            generatedAt: new Date().toISOString(),
+          })
           const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
           const sharedHex = Array.from(sharedBytes)
             .map((b) => b.toString(16).padStart(2, '0'))
@@ -745,30 +801,33 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         }
       />
 
-      {hsm.isReady && (
-        <Pkcs11LogPanel
-          log={hsm.log}
-          onClear={hsm.clearLog}
-          title="PKCS#11 Call Log — SUCI Construction"
-          emptyMessage="Execute a step to see live PKCS#11 operations."
-          filterFns={SUCI_LIVE_OPERATIONS}
-        />
-      )}
 
-      {hsm.isReady && (
-        <HsmKeyInspector
-          keys={hsm.keys}
-          moduleRef={hsm.moduleRef}
-          hSessionRef={hsm.hSessionRef}
-          onRemoveKey={hsm.removeKey}
-        />
-      )}
 
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
         authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
       />
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — SUCI Construction"
+            emptyMessage="Execute a step to see live PKCS#11 operations."
+            filterFns={SUCI_LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

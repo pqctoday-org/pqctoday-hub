@@ -68,7 +68,7 @@ const WORKSHOP_STEPS = [
   },
 ]
 
-export const DigitalIDModule: React.FC = () => {
+export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) => {
   const resetModuleProgress = useModuleStore((state) => state.resetModuleProgress)
   const updateModuleProgress = useModuleStore((state) => state.updateModuleProgress)
   const markStepComplete = useModuleStore((state) => state.markStepComplete)
@@ -197,11 +197,131 @@ export const DigitalIDModule: React.FC = () => {
     }
   }, [currentStep, wallet, navigateTo])
 
+
+  const workshopContent = (
+    <div className="max-w-7xl mx-auto space-y-6">
+      <div className="flex justify-between items-center bg-muted/10 p-4 border-b border-border rounded-t-xl mb-6">
+         <h2 className="text-xl font-bold">EUDI Wallet Architecture</h2>
+         {onBack && (
+           <button onClick={onBack} className="text-sm border border-border px-4 py-2 hover:bg-muted rounded text-muted-foreground transition-colors">
+             &larr; Back to Tools
+           </button>
+         )}
+      </div>
+      <div className="flex justify-end">
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+        >
+          <Trash2 size={16} />
+          Reset
+        </button>
+      </div>
+
+      {/* Part Progress Steps */}
+      <div className="overflow-x-auto px-2 sm:px-0">
+        <div className="flex justify-between relative min-w-max sm:min-w-0">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
+
+          {WORKSHOP_STEPS.map((step, idx) => {
+            const Icon = step.icon
+            return (
+              <button
+                key={step.id}
+                onClick={() => setCurrentStep(idx)}
+                className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                    ${
+                      idx === currentStep
+                        ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                        : idx < currentStep
+                          ? 'border-success text-success'
+                          : 'border-border text-muted-foreground'
+                    }`}
+                >
+                  <Icon size={18} />
+                </div>
+                <span className="text-sm font-medium hidden md:block">
+                  {step.title.split(':')[0]}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="glass-panel p-4 animate-fade-in min-h-[400px] md:min-h-[600px] overflow-y-auto">
+        <WorkshopStepHeader
+          moduleId={MODULE_ID}
+          stepId={WORKSHOP_STEPS[currentStep].id}
+          stepTitle={WORKSHOP_STEPS[currentStep].title}
+          stepDescription={WORKSHOP_STEPS[currentStep].description}
+          stepIndex={currentStep}
+          totalSteps={WORKSHOP_STEPS.length}
+        />
+        {currentStepComponent}
+      </div>
+
+      {/* Navigation */}
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
+        <button
+          onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
+          disabled={currentStep === 0}
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+        >
+          &larr; Previous Step
+        </button>
+        {currentStep === WORKSHOP_STEPS.length - 1 ? (
+          <button
+            onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
+            className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+          >
+            Complete Module ✓
+          </button>
+        ) : (
+          <button
+            onClick={() =>
+              setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))
+            }
+            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Next Step &rarr;
+          </button>
+        )}
+      </div>
+
+      <div className="text-center text-xs text-muted-foreground max-w-2xl mx-auto">
+        <p>
+          This is an educational simulation of the EUDI Wallet Architecture and Reference
+          Framework (ARF). Cryptographic keys are generated in-browser using WebCrypto/WASM
+          (OpenSSL) and stored in memory.
+        </p>
+      </div>
+    </div>
+  );
+
+  if (onBack) {
+    return workshopContent;
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
+          
+          {onBack && (
+            <button
+              onClick={onBack}
+              className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-2 text-sm transition-colors"
+            >
+              &larr; Back to Playground
+            </button>
+          )}
           <h1 className="text-3xl font-bold text-gradient">EUDI Digital Identity Wallet</h1>
+
           <p className="text-muted-foreground mt-2">
             Explore the European Digital Identity ecosystem: Issuance, Presentation, and Signing.
           </p>
@@ -233,101 +353,7 @@ export const DigitalIDModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="workshop">
-          <div className="max-w-7xl mx-auto space-y-6">
-            {/* Reset button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-              >
-                <Trash2 size={16} />
-                Reset
-              </button>
-            </div>
-
-            {/* Part Progress Steps */}
-            <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
-
-                {WORKSHOP_STEPS.map((step, idx) => {
-                  const Icon = step.icon
-                  return (
-                    <button
-                      key={step.id}
-                      onClick={() => setCurrentStep(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                          ${
-                            idx === currentStep
-                              ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                              : idx < currentStep
-                                ? 'border-success text-success'
-                                : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        <Icon size={18} />
-                      </div>
-                      <span className="text-sm font-medium hidden md:block">
-                        {step.title.split(':')[0]}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="glass-panel p-4 animate-fade-in min-h-[400px] md:min-h-[600px] overflow-y-auto">
-              <WorkshopStepHeader
-                moduleId={MODULE_ID}
-                stepId={WORKSHOP_STEPS[currentStep].id}
-                stepTitle={WORKSHOP_STEPS[currentStep].title}
-                stepDescription={WORKSHOP_STEPS[currentStep].description}
-                stepIndex={currentStep}
-                totalSteps={WORKSHOP_STEPS.length}
-              />
-              {currentStepComponent}
-            </div>
-
-            {/* Navigation */}
-            <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
-                onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
-                disabled={currentStep === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
-              >
-                &larr; Previous Step
-              </button>
-              {currentStep === WORKSHOP_STEPS.length - 1 ? (
-                <button
-                  onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
-                >
-                  Complete Module ✓
-                </button>
-              ) : (
-                <button
-                  onClick={() =>
-                    setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))
-                  }
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Next Step &rarr;
-                </button>
-              )}
-            </div>
-
-            <div className="text-center text-xs text-muted-foreground max-w-2xl mx-auto">
-              <p>
-                This is an educational simulation of the EUDI Wallet Architecture and Reference
-                Framework (ARF). Cryptographic keys are generated in-browser using WebCrypto/WASM
-                (OpenSSL) and stored in memory.
-              </p>
-            </div>
-          </div>
+          {workshopContent}
         </TabsContent>
 
         {/* Exercises Tab */}

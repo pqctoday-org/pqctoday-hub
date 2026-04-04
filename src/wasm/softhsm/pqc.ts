@@ -2,8 +2,11 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_CLASS,
   CKA_DECAPSULATE,
+  CKA_DECRYPT,
+  CKA_DERIVE,
   CKA_EC_POINT,
   CKA_ENCAPSULATE,
+  CKA_ENCRYPT,
   CKA_EXTRACTABLE,
   CKA_KEY_TYPE,
   CKA_PARAMETER_SET,
@@ -14,6 +17,8 @@ import {
   CKA_VALUE,
   CKA_VALUE_LEN,
   CKA_VERIFY,
+  CKA_UNWRAP,
+  CKA_WRAP,
   CKH_DETERMINISTIC_REQUIRED,
   CKH_HEDGE_PREFERRED,
   CKH_HEDGE_REQUIRED,
@@ -41,6 +46,7 @@ import {
   CKM_HASH_SLH_DSA_SHA512,
   CKM_HASH_SLH_DSA_SHAKE128,
   CKM_HASH_SLH_DSA_SHAKE256,
+  CKM_HSS_KEY_PAIR_GEN,
   CKM_ML_DSA,
   CKM_ML_DSA_KEY_PAIR_GEN,
   CKM_ML_KEM,
@@ -81,6 +87,8 @@ export const hsm_generateMLKEMKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_KEM },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: false },
+    { type: CKA_ENCRYPT, boolVal: false },
+    { type: CKA_WRAP, boolVal: false },
     { type: CKA_ENCAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
@@ -91,6 +99,10 @@ export const hsm_generateMLKEMKeyPair = (
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: false },
+    { type: CKA_DECRYPT, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
     { type: CKA_DECAPSULATE, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
@@ -347,6 +359,23 @@ export const hsm_extractECPoint = (
   }
 }
 
+/** C_GetAttributeValue(CKA_HSS_KEYS_REMAINING) → number */
+export const hsm_getKeysRemaining = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyHandle: number
+): number | null => {
+  const { CKA_HSS_KEYS_REMAINING } = require('./constants')
+  const valTpl = buildTemplate(M, [{ type: CKA_HSS_KEYS_REMAINING, ulongVal: 0 }])
+  try {
+    const rv = M._C_GetAttributeValue(hSession, keyHandle, valTpl.ptr, 1)
+    if (rv !== 0) return null
+    return Math.abs(M.getValue(valTpl.ptr + 8, 'i32'))
+  } finally {
+    freeTemplate(M, valTpl, 1)
+  }
+}
+
 /** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}. */
 export const hsm_generateMLDSAKeyPair = (
   M: SoftHSMModule,
@@ -365,6 +394,8 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_ML_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: false },
+    { type: CKA_WRAP, boolVal: false },
     { type: CKA_PARAMETER_SET, ulongVal: ps },
   ])
   // Per spec §6.67.4: CKA_PARAMETER_SET goes in the public key template only.
@@ -377,6 +408,9 @@ export const hsm_generateMLDSAKeyPair = (
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
   ])
 
   const pubHPtr = allocUlong(M)
@@ -876,6 +910,8 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: false },
+    { type: CKA_WRAP, boolVal: false },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ])
   const prvTpl = buildTemplate(M, [
@@ -886,6 +922,9 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_SENSITIVE, boolVal: false },
     { type: CKA_EXTRACTABLE, boolVal: false },
     { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
   ])
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
@@ -1005,5 +1044,119 @@ export const hsm_slhdsaVerify = (
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
+  }
+}
+
+/**
+ * Generate a Stateful Hash-Based Signature Key Pair (LMS, HSS, XMSS).
+ */
+export const hsm_generateStatefulKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  keyType: number,
+  paramSet: number
+): { pubHandle: number; privHandle: number } => {
+  const mech = M._malloc(12)
+  M.setValue(mech, mechType, 'i32')
+
+  // CKM_HSS_KEY_PAIR_GEN and equivalents expect a 68-byte CK_HSS_KEY_PAIR_GEN_PARAMS struct
+  let pParamPtr = 0
+  if (
+    mechType === CKM_HSS_KEY_PAIR_GEN ||
+    mechType === 0x00004034 /* CKM_XMSS_KEY_PAIR_GEN */ ||
+    mechType === 0x00004035 /* CKM_XMSSMT_KEY_PAIR_GEN */
+  ) {
+    pParamPtr = M._malloc(68)
+    const levels = 1 // Default to single level for workshop UI unless XMSS/MT implies otherwise
+    M.setValue(pParamPtr, levels, 'i32')
+    // Offset 4: ulLmsParamSet[8]
+    // Offset 36: ulLmotsParamSet[8]
+    for (let i = 0; i < 8; i++) {
+      M.setValue(pParamPtr + 4 + i * 4, i === 0 ? paramSet : 0, 'i32')
+      M.setValue(pParamPtr + 36 + i * 4, i === 0 ? 4 : 0, 'i32') // LMOTS_W4 default
+    }
+    M.setValue(mech + 4, pParamPtr, 'i32')
+    M.setValue(mech + 8, 68, 'i32')
+  } else {
+    M.setValue(mech + 4, 0, 'i32')
+    M.setValue(mech + 8, 0, 'i32')
+  }
+
+  const pubTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: keyType },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+  ])
+
+  const prvTpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: keyType },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: false },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_SIGN, boolVal: true },
+  ])
+
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      'C_GenerateKeyPair(Stateful)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    if (pParamPtr) M._free(pParamPtr)
+    M._free(mech)
+    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, prvTpl, 7)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/**
+ * Sign data using a Stateful Hash-Based Signature scheme (LMS, HSS, XMSS).
+ */
+export const hsm_statefulSignBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  privHandle: number,
+  data: Uint8Array
+): Uint8Array => {
+  const mech = M._malloc(12)
+  M.setValue(mech, mechType, 'i32')
+  M.setValue(mech + 4, 0, 'i32')
+  M.setValue(mech + 8, 0, 'i32')
+
+  const msgPtr = writeBytes(M, data)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+
+  checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(Stateful)')
+  try {
+    checkRV(
+      M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr),
+      'C_Sign(Stateful,len)'
+    )
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(
+      M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr),
+      'C_Sign(Stateful,bytes)'
+    )
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
   }
 }

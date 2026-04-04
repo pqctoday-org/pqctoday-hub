@@ -71,7 +71,8 @@ export const hsm_generateRSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   keyBits: 1024 | 2048 | 3072 | 4096,
-  extractable = false
+  extractable: boolean,
+  keyUsage: 'sign' | 'decrypt'
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
   const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
@@ -82,8 +83,8 @@ export const hsm_generateRSAKeyPair = (
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_MODULUS_BITS, ulongVal: keyBits },
     { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
-    { type: CKA_ENCRYPT, boolVal: true },
-    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: keyUsage === 'decrypt' },
+    { type: CKA_VERIFY, boolVal: keyUsage === 'sign' },
   ])
   const prvTpl = buildTemplate(M, [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
@@ -92,8 +93,8 @@ export const hsm_generateRSAKeyPair = (
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_DECRYPT, boolVal: true },
-    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: keyUsage === 'decrypt' },
+    { type: CKA_SIGN, boolVal: keyUsage === 'sign' },
   ])
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
@@ -264,7 +265,8 @@ export const hsm_generateECKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1',
-  extractable = false
+  extractable: boolean,
+  keyUsage: 'sign' | 'derive'
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_EC_KEY_PAIR_GEN)
   const oid = ecCurveOID(curve)
@@ -274,7 +276,7 @@ export const hsm_generateECKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
-    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_VERIFY, boolVal: keyUsage === 'sign' },
     { type: CKA_ENCRYPT, boolVal: false },
   ])
   const prvTpl = buildTemplate(M, [
@@ -284,8 +286,8 @@ export const hsm_generateECKeyPair = (
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
-    { type: CKA_SIGN, boolVal: true },
-    { type: CKA_DERIVE, boolVal: true },
+    { type: CKA_SIGN, boolVal: keyUsage === 'sign' },
+    { type: CKA_DERIVE, boolVal: keyUsage === 'derive' },
   ])
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)

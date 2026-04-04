@@ -98,7 +98,7 @@ export const HsmKeyAgreementPanel = ({
     run('Gen Alice', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'derive')
       addHsmKey({
         handle: pubHandle,
         family: 'ecdh',
@@ -124,7 +124,7 @@ export const HsmKeyAgreementPanel = ({
     run('Gen Bob', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'derive')
       addHsmKey({
         handle: pubHandle,
         family: 'ecdh',

@@ -180,6 +180,7 @@ export const CKA_LMOTS_PARAM_SET = 0x80000103 // CKP_LMOTS_SHA256_N32_W* value
 export const CKA_XMSS_PARAM_SET = 0x80000104 // CKP_XMSS_* value
 export const CKA_LEAF_INDEX = 0x80000105 // current leaf index (u64 LE)
 export const CKA_HSS_LMS_TYPE = 0x00000618 // number of HSS levels (standard §6.14)
+export const CKA_HSS_KEYS_REMAINING = 0x0000061c
 
 // LMS parameter set constants (tree-height naming, PKCS#11 v3.2 §6.14)
 export const CKP_LMS_SHA256_M32_H5 = 5

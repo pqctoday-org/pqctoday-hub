@@ -10,11 +10,11 @@ import {
   Info,
   Loader2,
   Upload,
-  Eye,
   Download,
   BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -33,7 +33,6 @@ import {
   hsm_generateSLHDSAKeyPair,
   hsm_slhdsaSign,
   hsm_slhdsaVerify,
-  hsm_getKeyAttributes,
   CKM_SHA256,
   CKM_SHA256_RSA_PKCS,
   CKM_SHA384_RSA_PKCS,
@@ -42,12 +41,11 @@ import {
   CKM_ECDSA_SHA384,
   CKM_ECDSA_SHA512,
   CKP_SLH_DSA_SHA2_128S,
-  type KeyAttributeSet,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
-import { KeyAttrModal } from '@/components/Playground/keystore/HsmKeyTable'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 
 // ---------------------------------------------------------------------------
@@ -447,75 +445,7 @@ const HASH_ALGO_OPTIONS = ['SHA-256', 'SHA-384', 'SHA-512']
 // Key inspection row (inline, no full HsmKeyTable dependency)
 // ---------------------------------------------------------------------------
 
-interface InspectableKey {
-  handle: number
-  label: string
-  role: 'public' | 'private'
-  algo: string
-  expectedBytes: number
-}
 
-const KeyInspectRow = ({
-  k,
-  moduleRef,
-  hSessionRef,
-}: {
-  k: InspectableKey
-  moduleRef: React.RefObject<SoftHSMModule | null>
-  hSessionRef: React.RefObject<number>
-}) => {
-  const [open, setOpen] = useState(false)
-  const [attrs, setAttrs] = useState<KeyAttributeSet | null>(null)
-
-  const handleOpen = () => {
-    const M = moduleRef.current
-    const hSession = hSessionRef.current
-    if (!attrs && M) {
-      try {
-        setAttrs(hsm_getKeyAttributes(M as unknown as SoftHSMModule, hSession, k.handle))
-      } catch {
-        // ignore — handle may be stale
-      }
-    }
-    setOpen(true)
-  }
-
-  const roleColor = k.role === 'public' ? 'text-primary' : 'text-status-warning'
-
-  return (
-    <>
-      <tr className="border-b border-border/50 text-xs">
-        <td className="py-1.5 font-mono text-muted-foreground">{k.handle}</td>
-        <td className="py-1.5 text-foreground">{k.label}</td>
-        <td className={`py-1.5 font-medium ${roleColor}`}>
-          {k.role === 'public' ? 'Public' : 'Private'}
-        </td>
-        <td className="py-1.5 font-mono text-muted-foreground">{k.algo}</td>
-        <td className="py-1.5 text-right font-mono text-muted-foreground">
-          ~{k.expectedBytes.toLocaleString()} B
-        </td>
-        <td className="py-1.5 text-right">
-          <Button variant="ghost" size="sm" className="h-6 w-6 p-0" onClick={handleOpen}>
-            <Eye size={12} />
-          </Button>
-        </td>
-      </tr>
-      {open && attrs && (
-        <KeyAttrModal
-          hsmKey={{
-            handle: k.handle,
-            label: k.label,
-            family: 'ml-dsa',
-            role: k.role,
-            generatedAt: new Date().toISOString(),
-          }}
-          attrs={attrs}
-          onClose={() => setOpen(false)}
-        />
-      )}
-    </>
-  )
-}
 
 // ---------------------------------------------------------------------------
 // Main component
@@ -547,10 +477,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
     pubHandle: 0,
     privHandle: 0,
   })
-  const [pqcHandles, setPqcHandles] = useState<{ pubHandle: number; privHandle: number }>({
-    pubHandle: 0,
-    privHandle: 0,
-  })
   const [pqcPubKeyBytes, setPqcPubKeyBytes] = useState<number>(0)
   const [pqcKeysReady, setPqcKeysReady] = useState(false)
 
@@ -559,10 +485,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
     pubHandle: 0,
     privHandle: 0,
   })
-  const [classicalHandles, setClassicalHandles] = useState<{
-    pubHandle: number
-    privHandle: number
-  }>({ pubHandle: 0, privHandle: 0 })
   const [classicalPubKeyBytes, setClassicalPubKeyBytes] = useState<number>(0)
   const [classicalKeysReady, setClassicalKeysReady] = useState(false)
 
@@ -593,7 +515,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
     pqcSigBytesRef.current = null
     /* eslint-disable react-hooks/set-state-in-effect */
     setPqcKeysReady(false)
-    setPqcHandles({ pubHandle: 0, privHandle: 0 })
     setPqcPubKeyBytes(0)
     setPqcSigHex('')
     setPqcSigSize(0)
@@ -609,7 +530,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
     classicalSigBytesRef.current = null
     /* eslint-disable react-hooks/set-state-in-effect */
     setClassicalKeysReady(false)
-    setClassicalHandles({ pubHandle: 0, privHandle: 0 })
     setClassicalPubKeyBytes(0)
     setClassicalSigHex('')
     setClassicalSigSize(0)
@@ -671,22 +591,43 @@ export const FirmwareSigningMigrator: React.FC = () => {
       const hSession = hsm.hSessionRef.current
 
       // --- Classical keygen ---
+      let classicalFamily = ''
+      let classicalLabelSuffix = ''
       if (classicalAlgo.startsWith('RSA')) {
         const bits = classicalAlgo === 'RSA-2048' ? 2048 : 3072
-        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, bits)
+        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, bits, false, 'sign')
         classicalKeyRef.current = { pubHandle, privHandle }
-        setClassicalHandles({ pubHandle, privHandle })
         setClassicalPubKeyBytes(CLASSICAL_PUBKEY_BYTES[classicalAlgo])
+        classicalFamily = 'rsa'
+        classicalLabelSuffix = classicalAlgo
       } else {
         const curve = classicalAlgo === 'ECDSA-P256' ? 'P-256' : 'P-384'
-        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve)
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, false, 'sign')
         classicalKeyRef.current = { pubHandle, privHandle }
-        setClassicalHandles({ pubHandle, privHandle })
         setClassicalPubKeyBytes(CLASSICAL_PUBKEY_BYTES[classicalAlgo])
+        classicalFamily = 'ecdsa'
+        classicalLabelSuffix = classicalAlgo
       }
       setClassicalKeysReady(true)
 
+      hsm.addKey({
+        handle: classicalKeyRef.current.pubHandle,
+        family: classicalFamily as HsmFamily,
+        role: 'public',
+        label: `${classicalLabelSuffix} Public`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: classicalKeyRef.current.privHandle,
+        family: classicalFamily as HsmFamily,
+        role: 'private',
+        label: `${classicalLabelSuffix} Private`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+
       // --- PQC keygen ---
+      let pqcFamily = ''
+      let pqcLabelSuffix = ''
       if (pqcAlgo === 'SLH-DSA-SHA2-128S') {
         const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
           M,
@@ -694,8 +635,9 @@ export const FirmwareSigningMigrator: React.FC = () => {
           CKP_SLH_DSA_SHA2_128S
         )
         pqcKeyRef.current = { pubHandle, privHandle }
-        setPqcHandles({ pubHandle, privHandle })
         setPqcPubKeyBytes(SLHDSA_PUBKEY_BYTES)
+        pqcFamily = 'slh-dsa'
+        pqcLabelSuffix = pqcAlgo
       } else {
         const variant = MLDSA_VARIANT[pqcAlgo] ?? 65
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
@@ -704,11 +646,27 @@ export const FirmwareSigningMigrator: React.FC = () => {
           variant as 44 | 65 | 87
         )
         pqcKeyRef.current = { pubHandle, privHandle }
-        setPqcHandles({ pubHandle, privHandle })
         const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
         setPqcPubKeyBytes(pubBytes.length)
+        pqcFamily = 'ml-dsa'
+        pqcLabelSuffix = pqcAlgo
       }
       setPqcKeysReady(true)
+
+      hsm.addKey({
+        handle: pqcKeyRef.current.pubHandle,
+        family: pqcFamily as HsmFamily,
+        role: 'public',
+        label: `${pqcLabelSuffix} Public`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: pqcKeyRef.current.privHandle,
+        family: pqcFamily as HsmFamily,
+        role: 'private',
+        label: `${pqcLabelSuffix} Private`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
     } catch (err) {
       console.error('[FirmwareSigningMigrator] keygen error:', err)
     }
@@ -946,40 +904,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
         ? 'CKM_ECDSA_SHA384'
         : 'CKM_ECDSA_SHA512'
 
-  // Key inspection rows for live mode — use state handles (not refs) to avoid accessing .current during render
-  const inspectableKeys: InspectableKey[] =
-    keysGenerated && isLive
-      ? [
-          {
-            handle: classicalHandles.pubHandle,
-            label: `${classicalAlgo} Public Key`,
-            role: 'public',
-            algo: classicalAlgo.startsWith('RSA') ? 'CKK_RSA' : 'CKK_EC',
-            expectedBytes: classicalPubDisplay,
-          },
-          {
-            handle: classicalHandles.privHandle,
-            label: `${classicalAlgo} Private Key`,
-            role: 'private',
-            algo: classicalAlgo.startsWith('RSA') ? 'CKK_RSA' : 'CKK_EC',
-            expectedBytes: classicalPrivDisplay,
-          },
-          {
-            handle: pqcHandles.pubHandle,
-            label: `${pqcAlgo} Public Key`,
-            role: 'public',
-            algo: pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'CKK_SLH_DSA' : 'CKK_ML_DSA',
-            expectedBytes: pqcPubDisplay,
-          },
-          {
-            handle: pqcHandles.privHandle,
-            label: `${pqcAlgo} Private Key`,
-            role: 'private',
-            algo: pqcAlgo === 'SLH-DSA-SHA2-128S' ? 'CKK_SLH_DSA' : 'CKK_ML_DSA',
-            expectedBytes: pqcPrivDisplay,
-          },
-        ]
-      : []
+
 
   return (
     <div className="space-y-6">
@@ -1349,45 +1274,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
               </div>
             </div>
 
-            {/* Key inspection panel */}
-            {keysGenerated && isLive && inspectableKeys.length > 0 && (
-              <div className="bg-muted/50 rounded-lg border border-border overflow-hidden">
-                <div className="px-4 py-2 border-b border-border flex items-center gap-2">
-                  <Key size={13} className="text-muted-foreground" aria-hidden="true" />
-                  <span className="text-xs font-semibold text-foreground">
-                    Generated Keys — PKCS#11 Objects
-                  </span>
-                </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full">
-                    <thead>
-                      <tr className="border-b border-border text-[10px] text-muted-foreground font-medium">
-                        <th className="text-left px-4 py-2">Handle</th>
-                        <th className="text-left px-2 py-2">Label</th>
-                        <th className="text-left px-2 py-2">Role</th>
-                        <th className="text-left px-2 py-2">Type</th>
-                        <th className="text-right px-2 py-2">Size</th>
-                        <th className="text-right px-4 py-2">Inspect</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {inspectableKeys.map((k) => (
-                        <KeyInspectRow
-                          key={k.handle}
-                          k={k}
-                          moduleRef={hsm.moduleRef as React.RefObject<SoftHSMModule | null>}
-                          hSessionRef={hsm.hSessionRef}
-                        />
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-[10px] text-muted-foreground px-4 py-2 border-t border-border">
-                  Session objects · attributes read via C_GetAttributeValue · private keys:
-                  CKA_EXTRACTABLE=FALSE
-                </p>
-              </div>
-            )}
+
 
             {/* Key size callout */}
             <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
@@ -1527,7 +1414,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
                       ? truncateHex(classicalSigHex, 160)
                       : isLive
                         ? '— click Sign Both to generate —'
-                        : '— enable Live HSM to sign —'}
+                        : '— waiting for simulation —'}
                   </pre>
                 </div>
                 <p className="text-[10px] text-muted-foreground">Quantum-vulnerable · FIPS 186-5</p>
@@ -1553,7 +1440,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
                       ? truncateHex(pqcSigHex, 160)
                       : isLive
                         ? '— click Sign Both to generate —'
-                        : '— enable Live HSM to sign —'}
+                        : '— waiting for simulation —'}
                   </pre>
                 </div>
                 <p className="text-[10px] text-muted-foreground">
@@ -1884,17 +1771,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
           </div>
         )}
 
-        {/* PKCS#11 Call Log — open by default */}
-        {hsm.isReady && (
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            title="PKCS#11 Call Log"
-            defaultOpen={true}
-            className="mt-4"
-            filterFns={LIVE_OPERATIONS}
-          />
-        )}
+
 
         {/* Navigation */}
         <div className="flex justify-between mt-6 pt-4 border-t border-border">
@@ -1954,7 +1831,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
           <strong>Note:</strong>{' '}
           {isLive
             ? 'All cryptographic operations execute in SoftHSM3 WASM (PKCS#11 v3.2). Key and signature sizes match FIPS 204/205 exactly. CMS SignedData uses pure mode per RFC 9882/9814.'
-            : 'Enable Live HSM to execute real PKCS#11 v3.2 operations. Algorithm selection, comparison table, and CMS structure are always shown.'}{' '}
+            : 'Simulation mode active. Algorithm selection, comparison table, and CMS structure are always shown.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>
@@ -1964,6 +1841,28 @@ export const FirmwareSigningMigrator: React.FC = () => {
         label="Secure Boot PQC Known Answer Tests"
         authorityNote="UEFI 2.10 · TPM 2.0 · FIPS 204 · FIPS 205 · FIPS 180-4"
       />
+
+      {/* PKCS#11 Call Log & Key Inspector */}
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={true}
+            filterFns={LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+              title="Generated Keys — PKCS#11 Objects"
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

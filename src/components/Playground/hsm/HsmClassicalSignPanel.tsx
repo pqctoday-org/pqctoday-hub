@@ -104,7 +104,7 @@ const RsaPanel = () => {
     run('KeyGen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, keyBits, extractable)
+      const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, keyBits, extractable, 'sign')
       addHsmKey({
         handle: pubHandle,
         family: 'rsa',
@@ -429,7 +429,7 @@ const EcdsaPanel = () => {
     run('KeyGen', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, extractable)
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, curve, extractable, 'sign')
       addHsmKey({
         handle: pubHandle,
         family: 'ecdsa',

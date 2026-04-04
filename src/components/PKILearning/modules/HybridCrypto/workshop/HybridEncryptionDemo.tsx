@@ -5,6 +5,8 @@ import { hybridCryptoService, type HybridKemResult } from '../services/HybridCry
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
 import {
   hsm_generateECKeyPair,
   hsm_generateMLKEMKeyPair,
@@ -270,15 +272,43 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
 
       // ── ECDH leg (P-256) ───────────────────────────────────────────────
       // Alice's EC key pair
-      const alice = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const alice = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
       const alicePoint = hsm_extractECPoint(M, hSession, alice.pubHandle)
+      hsm.addKey({
+        handle: alice.pubHandle,
+        family: 'ecdsa' as HsmFamily,
+        role: 'public',
+        label: "Alice X25519 Pub",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: alice.privHandle,
+        family: 'ecdsa' as HsmFamily,
+        role: 'private',
+        label: "Alice X25519 Priv",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
       addLine(
         `Alice EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${alicePoint.length} B`
       )
 
       // Bob's EC key pair
-      const bob = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const bob = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
       const bobPoint = hsm_extractECPoint(M, hSession, bob.pubHandle)
+      hsm.addKey({
+        handle: bob.pubHandle,
+        family: 'ecdsa' as HsmFamily,
+        role: 'public',
+        label: "Bob X25519 Pub",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: bob.privHandle,
+        family: 'ecdsa' as HsmFamily,
+        role: 'private',
+        label: "Bob X25519 Priv",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
       addLine(`Bob EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${bobPoint.length} B`)
 
       // ECDH derivation — both sides must get the same shared secret
@@ -295,18 +325,46 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
       // ── ML-KEM leg (768) ────────────────────────────────────────────────
       const kem = hsm_generateMLKEMKeyPair(M, hSession, 768)
       const kemPubBytes = hsm_extractKeyValue(M, hSession, kem.pubHandle)
+      hsm.addKey({
+        handle: kem.pubHandle,
+        family: 'ml-kem' as HsmFamily,
+        role: 'public',
+        label: "KEM Encap Pub",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: kem.privHandle,
+        family: 'ml-kem' as HsmFamily,
+        role: 'private',
+        label: "KEM Decap Priv",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
       addLine(
         `ML-KEM: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN, CKP_ML_KEM_768) → pub=${kemPubBytes.length} B`
       )
 
       const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, kem.pubHandle, 768)
       const kemSS = hsm_extractKeyValue(M, hSession, secretHandle)
+      hsm.addKey({
+        handle: secretHandle,
+        family: 'ml-kem' as HsmFamily,
+        role: 'secret',
+        label: "Encap Shared Secret",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
       addLine(
         `Encaps: C_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B, ss=${kemSS.length} B`
       )
 
       const recoveredHandle = hsm_decapsulate(M, hSession, kem.privHandle, ciphertextBytes, 768)
       const recoveredKemSS = hsm_extractKeyValue(M, hSession, recoveredHandle)
+      hsm.addKey({
+        handle: recoveredHandle,
+        family: 'ml-kem' as HsmFamily,
+        role: 'secret',
+        label: "Decap Shared Secret",
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
       const kemMatch =
         kemSS.length === recoveredKemSS.length && kemSS.every((b, i) => b === recoveredKemSS[i])
       addLine(
@@ -397,14 +455,6 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
             </div>
           )}
 
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            defaultOpen={true}
-            title="PKCS#11 Call Log — Hybrid KEM"
-            emptyMessage="Click 'Execute' to run the hybrid KEM flow."
-            filterFns={HYBRID_LIVE_OPERATIONS}
-          />
         </div>
       )}
 
@@ -869,6 +919,27 @@ export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
           )}
         </p>
       </div>
+
+      {hsm.isReady && (
+        <div className="mt-4 space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — Hybrid Crypto Operations"
+            emptyMessage="Click 'Execute' to run the flow."
+            filterFns={HYBRID_LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

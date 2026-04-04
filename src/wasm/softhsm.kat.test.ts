@@ -127,7 +127,7 @@ describe('SoftHSMv3 Key Management & Operations Gap-Fill Tests', () => {
   // ── Key Generation & Attribute Query ──────────────────────────────────────
 
   it('AES key generation + attribute query roundtrip', () => {
-    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionHandle, 256)
+    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionHandle, 256, false, 'encrypt')
     expect(keyHandle).toBeGreaterThan(0)
 
     const attrs = SoftHSM.hsm_getKeyAttributes(hsmd, sessionHandle, keyHandle)
@@ -215,7 +215,7 @@ describe('SoftHSMv3 Key Management & Operations Gap-Fill Tests', () => {
       'a1b2c3d4e5f60718293a4b5c6d7e8f90a1b2c3d4e5f60718293a4b5c6d7e8f90',
       'hex'
     )
-    const keyHandle = SoftHSM.hsm_importAESKey(hsmd, sessionHandle, new Uint8Array(original))
+    const keyHandle = SoftHSM.hsm_importAESKey(hsmd, sessionHandle, new Uint8Array(original), false, 'encrypt')
     const extracted = SoftHSM.hsm_extractKeyValue(hsmd, sessionHandle, keyHandle)
     expect(Buffer.from(extracted).toString('hex')).toBe(original.toString('hex'))
   })
@@ -230,7 +230,7 @@ describe('SoftHSMv3 Key Management & Operations Gap-Fill Tests', () => {
   // ── SPKI Public Key Info ──────────────────────────────────────────────────
 
   it('EC P-256 public key → SPKI export (if supported)', () => {
-    const { pubHandle } = SoftHSM.hsm_generateECKeyPair(hsmd, sessionHandle, 'P-256')
+    const { pubHandle } = SoftHSM.hsm_generateECKeyPair(hsmd, sessionHandle, 'P-256', false, 'derive')
     try {
       const spki = SoftHSM.hsm_getPublicKeyInfo(hsmd, sessionHandle, pubHandle)
       // SPKI should start with SEQUENCE (0x30) and be non-trivial length
@@ -245,7 +245,7 @@ describe('SoftHSMv3 Key Management & Operations Gap-Fill Tests', () => {
   // ── Key Check Value ───────────────────────────────────────────────────────
 
   it('AES key check value (KCV) is 3 bytes', () => {
-    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionHandle, 256)
+    const keyHandle = SoftHSM.hsm_generateAESKey(hsmd, sessionHandle, 256, false, 'encrypt')
     const kcv = SoftHSM.hsm_getKeyCheckValue(hsmd, sessionHandle, keyHandle)
     expect(kcv.length).toBe(3)
     // KCV should be non-zero (encrypting zeros with the key)

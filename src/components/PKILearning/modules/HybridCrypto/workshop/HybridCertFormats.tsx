@@ -4,6 +4,12 @@ import React, { useState, useCallback } from 'react'
 import { Loader2, Play, FileText, ExternalLink, Link2 } from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
 import { HYBRID_CERT_FORMATS, type HybridFormatId } from '../constants'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+
+const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 interface FormatResult {
   formatId: HybridFormatId
@@ -17,6 +23,7 @@ export const HybridCertFormats: React.FC = () => {
   const [results, setResults] = useState<Record<string, FormatResult>>({})
   const [generating, setGenerating] = useState<string | null>(null)
   const [expandedViews, setExpandedViews] = useState<Record<string, 'pem' | 'parsed' | null>>({})
+  const hsm = useHSM()
 
   const toggleView = (key: string, view: 'pem' | 'parsed') => {
     setExpandedViews((prev) => ({
@@ -25,7 +32,24 @@ export const HybridCertFormats: React.FC = () => {
     }))
   }
 
+  const onKeyTracked = useCallback(
+    (handle: number, family: string, label: string) => {
+      hsm.addKey({
+        handle,
+        family: family as any,
+        role: 'private',
+        label,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      })
+    },
+    [hsm]
+  )
+
   const generateFormat = useCallback(async (formatId: HybridFormatId) => {
+    if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) return
+    const M = hsm.moduleRef.current
+    const hSession = hsm.hSessionRef.current
+
     setGenerating(formatId)
     const start = performance.now()
     const subject = '/CN=Hybrid Certificate Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
@@ -34,7 +58,10 @@ export const HybridCertFormats: React.FC = () => {
       if (formatId === 'pure-pqc-slh') {
         // SLH-DSA-128s: Real DER-encoded certificate via liboqs + ASN.1 builder (RFC 9909).
         const certResult = await hybridCryptoService.generateSelfSignedCertSLHDSA(
-          '/CN=Pure PQC (SLH-DSA-128s) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
+          '/CN=Pure PQC (SLH-DSA-128s) Demo/O=PQC Today/OU=Hybrid Certificate Sandbox',
+          M,
+          hSession,
+          onKeyTracked
         )
         setResults((prev) => ({
           ...prev,
@@ -57,8 +84,12 @@ export const HybridCertFormats: React.FC = () => {
         setGenerating(null)
         return
       } else if (formatId === 'pure-pqc') {
-        // Real ML-DSA-65 certificate (RFC 9881) via liboqs/SoftHSM + ASN.1 builder
-        const certResult = await hybridCryptoService.generatePurePQCCertMLDSA(subject)
+        const certResult = await hybridCryptoService.generatePurePQCCertMLDSA(
+          subject,
+          M,
+          hSession,
+          onKeyTracked
+        )
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -79,8 +110,12 @@ export const HybridCertFormats: React.FC = () => {
         }))
       } else if (formatId === 'composite') {
         // Real composite certificate (draft-ietf-lamps-pq-composite-sigs-15)
-        // Single cert with OID 1.3.6.1.5.5.7.6.45, both signatures over same TBS
-        const certResult = await hybridCryptoService.generateCompositeCert(subject)
+        const certResult = await hybridCryptoService.generateCompositeCert(
+          subject,
+          M,
+          hSession,
+          onKeyTracked
+        )
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -101,8 +136,12 @@ export const HybridCertFormats: React.FC = () => {
         }))
       } else if (formatId === 'alt-sig') {
         // Real Alt-Sig certificate (ITU-T X.509 §9.8)
-        // Single ECDSA cert with ML-DSA-65 in extensions 2.5.29.72/73/74
-        const certResult = await hybridCryptoService.generateAltSigCert(subject)
+        const certResult = await hybridCryptoService.generateAltSigCert(
+          subject,
+          M,
+          hSession,
+          onKeyTracked
+        )
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -122,8 +161,12 @@ export const HybridCertFormats: React.FC = () => {
           },
         }))
       } else if (formatId === 'related-certs') {
-        // Real Related Certificates (RFC 9763) with bidirectional binding hash
-        const relResult = await hybridCryptoService.generateRelatedCertPairReal(subject)
+        const relResult = await hybridCryptoService.generateRelatedCertPairReal(
+          subject,
+          M,
+          hSession,
+          onKeyTracked
+        )
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -151,8 +194,12 @@ export const HybridCertFormats: React.FC = () => {
         }))
       } else if (formatId === 'chameleon') {
         // Real Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07)
-        // ML-DSA-65 primary with DeltaCertificateDescriptor extension
-        const certResult = await hybridCryptoService.generateChameleonCert(subject)
+        const certResult = await hybridCryptoService.generateChameleonCert(
+          subject,
+          M,
+          hSession,
+          onKeyTracked
+        )
         setResults((prev) => ({
           ...prev,
           [formatId]: {
@@ -185,7 +232,7 @@ export const HybridCertFormats: React.FC = () => {
     }
 
     setGenerating(null)
-  }, [])
+  }, [hsm, onKeyTracked])
 
   const generateAll = useCallback(async () => {
     setGenerating('all')
@@ -200,6 +247,7 @@ export const HybridCertFormats: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Hybrid Certificate Formats</h3>
         <p className="text-sm text-muted-foreground">
@@ -212,7 +260,7 @@ export const HybridCertFormats: React.FC = () => {
       {/* Generate All button */}
       <button
         onClick={generateAll}
-        disabled={generating !== null}
+        disabled={generating !== null || !hsm.isReady}
         className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
       >
         {generating === 'all' ? (
@@ -287,7 +335,7 @@ export const HybridCertFormats: React.FC = () => {
               {!result && !isGeneratingThis && (
                 <button
                   onClick={() => generateFormat(fmt.id)}
-                  disabled={generating !== null}
+                  disabled={generating !== null || !hsm.isReady}
                   className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary font-medium rounded-lg hover:bg-primary/20 disabled:opacity-50 transition-colors text-sm border border-primary/20"
                 >
                   <Play size={14} fill="currentColor" />
@@ -503,6 +551,23 @@ export const HybridCertFormats: React.FC = () => {
             </table>
           </div>
         </div>
+      )}
+
+      {hsm.isReady && (
+        <Pkcs11LogPanel
+          log={hsm.log}
+          onClear={hsm.clearLog}
+          title="PKCS#11 Hybrid Cert Gen Log"
+          filterFns={LIVE_OPERATIONS}
+        />
+      )}
+      {hsm.isReady && (
+        <HsmKeyInspector
+          keys={hsm.keys}
+          moduleRef={hsm.moduleRef}
+          hSessionRef={hsm.hSessionRef}
+          onRemoveKey={hsm.removeKey}
+        />
       )}
     </div>
   )

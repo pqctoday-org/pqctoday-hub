@@ -7,9 +7,8 @@ export const FIVE_G_CONSTANTS = {
       description:
         'The home network operator provisions a long-term asymmetric key pair. For Profile A, 5G mandates the use of Curve25519 (X25519), a state-of-the-art elliptic curve tailored for speed and security. The private key is securely stored for use by the SIDF (Subscription Identifier De-concealing Function) at the UDM for SUCI deconcealment, while the public key (32 bytes) is distributed to USIMs during SIM personalization.',
       code: `// SoftHSMv3 WASM: Generate Home Network X25519 Key
-const { pubHandle, privHandle } = hsm_generateECKeyPair(
-  hsmd, sessionHandle, 'X25519'
-);
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsmd, sessionHandle, 'X25519'
+, false, 'sign');
 
 // Or inject Profile A explicit test vectors for KAT validation:
 const hnPrivHandle = await hsm_injectTestKey(
@@ -47,9 +46,8 @@ USIM.write('EF_SUCI_Calc_Info', {
       description:
         'Generate a fresh ephemeral key pair using NIST P-256. This key pair is unique to this connection attempt.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
-const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
-  hsmd, sessionHandle, 'P-256'
-);`,
+const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(hsmd, sessionHandle, 'P-256'
+, false, 'sign');`,
       output: `[USIM] Generating Ephemeral Key Pair (P-256)...\n[USIM] Ephemeral PubKey: 0x04...... (65 bytes)`,
     },
     {

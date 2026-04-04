@@ -286,7 +286,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           try {
             const M = moduleRef.current!
             const hSession = hSessionRef.current
-            const h = hsm_generateAESKey(M, hSession, 256)
+            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
             setIkmHandle(h)
             setDerived(null)
             resolve()
@@ -502,7 +502,7 @@ const KbkdfPanel = ({
           try {
             const M = moduleRef.current!
             const hSession = hSessionRef.current
-            const h = hsm_generateAESKey(M, hSession, 256)
+            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
             setBaseKeyHandle(h)
             setDerived(null)
             resolve()

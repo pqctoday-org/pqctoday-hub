@@ -7,6 +7,7 @@ import { CRYPTO_APIS } from '../data/apiData'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_getMechanismList } from '@/wasm/softhsm'
 
 const PKCS11_LIVE_OPERATIONS = [
@@ -97,6 +98,22 @@ export const ProviderPatternWorkshop: React.FC = () => {
       // Generate ML-DSA-65 key pair
       const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
       const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
+      
+      hsm.addKey({
+        handle: pubHandle,
+        family: 'ml-dsa',
+        role: 'public',
+        label: 'ML-DSA-65 Provider Root (Pub)',
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: privHandle,
+        family: 'ml-dsa',
+        role: 'private',
+        label: 'ML-DSA-65 Provider Root (Priv)',
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+
       addLine(
         `C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
           ` → pub=0x${pubHandle.toString(16).padStart(8, '0')} (${pubKeyBytes.length} B), priv=0x${privHandle.toString(16).padStart(8, '0')}`
@@ -129,6 +146,8 @@ export const ProviderPatternWorkshop: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      <LiveHSMToggle hsm={hsm} operations={PKCS11_LIVE_OPERATIONS} />
+
       {/* Controls */}
       <div className="flex flex-wrap gap-3">
         <FilterDropdown
@@ -172,51 +191,37 @@ export const ProviderPatternWorkshop: React.FC = () => {
       </div>
 
       {/* Live HSM Demo — shown when PKCS#11 API is selected */}
-      {(apiFilter === 'All' || apiFilter === 'pkcs11') && (
-        <div className="space-y-3">
-          <LiveHSMToggle hsm={hsm} operations={PKCS11_LIVE_OPERATIONS} />
-
-          {hsm.isReady && (
-            <div className="glass-panel p-4 space-y-3">
-              <div className="flex items-center justify-between gap-2">
-                <p className="text-sm font-semibold">Run PKCS#11 Session Lifecycle Demo</p>
-                <button
-                  onClick={runPkcs11Demo}
-                  disabled={liveRunning}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
-                >
-                  {liveRunning ? (
-                    <>
-                      <Loader2 size={11} className="animate-spin" /> Running…
-                    </>
-                  ) : (
-                    'Execute (Live WASM)'
-                  )}
-                </button>
-              </div>
-
-              {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
-
-              {liveLines.length > 0 && (
-                <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
-                  {liveLines.map((line, i) => (
-                    <p key={i} className="text-xs font-mono text-foreground/80 break-all">
-                      {line}
-                    </p>
-                  ))}
-                  <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
-                    Real output from SoftHSM3 WASM · PKCS#11 v3.2
-                  </p>
-                </div>
+      {(apiFilter === 'All' || apiFilter === 'pkcs11') && hsm.isReady && (
+        <div className="glass-panel p-4 space-y-3 animate-fade-in">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold">Run PKCS#11 Session Lifecycle Demo</p>
+            <button
+              onClick={runPkcs11Demo}
+              disabled={liveRunning}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {liveRunning ? (
+                <>
+                  <Loader2 size={11} className="animate-spin" /> Running…
+                </>
+              ) : (
+                'Execute (Live WASM)'
               )}
+            </button>
+          </div>
 
-              <Pkcs11LogPanel
-                log={hsm.log}
-                onClear={hsm.clearLog}
-                defaultOpen={true}
-                title="PKCS#11 Call Log — Full Session Lifecycle"
-                emptyMessage="Click 'Execute' to run the PKCS#11 lifecycle demo."
-              />
+          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+
+          {liveLines.length > 0 && (
+            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
+              {liveLines.map((line, i) => (
+                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
+                  {line}
+                </p>
+              ))}
+              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
+                Real output from SoftHSM3 WASM · PKCS#11 v3.2
+              </p>
             </div>
           )}
         </div>
@@ -272,6 +277,27 @@ export const ProviderPatternWorkshop: React.FC = () => {
           ML-DSA-65. This is the foundation of crypto agility.
         </p>
       </div>
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — Full Session Lifecycle"
+            emptyMessage="Click 'Execute' to run the PKCS#11 lifecycle demo."
+            filterFns={PKCS11_LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

@@ -162,7 +162,7 @@ export const KeyAttrModal = ({
     onClick={(e) => e.target === e.currentTarget && onClose()}
     onKeyDown={(e) => e.key === 'Escape' && onClose()}
   >
-    <div className="glass-panel w-full max-w-md p-5 space-y-4">
+    <div className="glass-panel w-full max-w-md p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
       {/* Header */}
       <div className="flex items-start justify-between gap-3">
         <div>

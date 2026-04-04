@@ -6,6 +6,7 @@ import { Input } from '@/components/ui/input'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import {
   hsm_generateSLHDSAKeyPair,
@@ -294,6 +295,21 @@ export const SLHDSALiveDemo: React.FC = () => {
       const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession, selectedParam.ckp)
       setKeyHandles({ pub: pubHandle, priv: privHandle })
 
+      hsm.addKey({
+        handle: pubHandle,
+        family: 'slh-dsa',
+        role: 'public',
+        label: `SLH-DSA Public Key (${selectedParam.label})`,
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        family: 'slh-dsa',
+        role: 'private',
+        label: `SLH-DSA Private Key (${selectedParam.label})`,
+        generatedAt: new Date().toISOString(),
+      })
+
       const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
       setPubKeyHex(toHex(pubBytes))
     } catch (err) {
@@ -547,16 +563,8 @@ export const SLHDSALiveDemo: React.FC = () => {
           )}
 
           {/* PKCS#11 Call Log */}
-          {hsm.log.length > 0 && (
-            <Pkcs11LogPanel
-              log={hsm.log}
-              onClear={hsm.clearLog}
-              title="PKCS#11 Call Log"
-              defaultOpen={false}
-              filterFns={LIVE_OPERATIONS}
-            />
-          )}
         </div>
+
       ) : (
         <div className="bg-muted/50 rounded-lg p-6 border border-border text-center">
           <p className="text-sm text-muted-foreground">
@@ -611,7 +619,7 @@ export const SLHDSALiveDemo: React.FC = () => {
           signatures while &quot;f&quot; variants optimize for faster signing.{' '}
           {isLive
             ? 'All operations execute via SoftHSM3 PKCS#11 v3.2.'
-            : 'Enable Live WASM mode for real cryptographic operations.'}{' '}
+            : 'Disable simulation mode for real cryptographic operations.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>
@@ -621,6 +629,26 @@ export const SLHDSALiveDemo: React.FC = () => {
         label="Stateful Signatures Known Answer Tests"
         authorityNote="FIPS 205 · FIPS 180-4"
       />
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={true}
+            filterFns={LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

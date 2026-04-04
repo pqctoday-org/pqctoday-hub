@@ -415,14 +415,17 @@ export const USE_CASE_RECOMMENDATIONS: UseCaseRecommendation[] = [
 
 export const WORKSHOP_DISPLAY_PARAMS = {
   lms: [
+    'lms-h5-w1',
+    'lms-h5-w2',
+    'lms-h5-w4',
     'lms-h5-w8',
+    'lms-h10-w2',
     'lms-h10-w4',
-    'lms-h15-w2',
-    'lms-h20-w4',
+    'lms-h10-w8',
     'hss-l2-h20-w4',
     'hss-l2-h20-w8',
   ] as const,
-  xmss: ['xmss-sha2-10', 'xmss-sha2-16', 'xmss-sha2-20'] as const,
+  xmss: ['xmss-sha2-10', 'xmss-shake-10'] as const,
 }
 
 export function formatSignatureCount(count: number): string {

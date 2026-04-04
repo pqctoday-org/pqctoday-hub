@@ -3,9 +3,6 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
-  getSoftHSMCppModule,
-  hsm_initToken,
-  hsm_openUserSession,
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
   hsm_generateSLHDSAKeyPair,
@@ -28,26 +25,7 @@ import {
   type SignerFn,
 } from './certBuilder'
 
-// ---------------------------------------------------------------------------
-// SoftHSM singleton for certificate signing — auto-initializes on first use
-// ---------------------------------------------------------------------------
-let _hsmPromise: Promise<{ M: SoftHSMModule; hSession: number }> | null = null
 
-async function getHsmForSigning(): Promise<{ M: SoftHSMModule; hSession: number }> {
-  if (!_hsmPromise) {
-    _hsmPromise = (async () => {
-      const M = await getSoftHSMCppModule()
-      M._C_Initialize(0)
-      const slot = hsm_initToken(M, 0, '12345678', 'CertBuilder')
-      const hSession = hsm_openUserSession(M, slot, '12345678', 'certpin1')
-      return { M, hSession }
-    })().catch((e) => {
-      _hsmPromise = null // allow retry on failure
-      throw e
-    })
-  }
-  return _hsmPromise
-}
 
 export interface KeyGenResult {
   algorithm: string
@@ -95,6 +73,8 @@ export interface CertResult {
   timingMs: number
   error?: string
 }
+
+export type KeyTracker = (handle: number, family: string, label: string) => void
 
 export class HybridCryptoService {
   private getGenCommand(algorithm: string, filename: string): string {
@@ -640,12 +620,16 @@ export class HybridCryptoService {
    * Generate an ECDSA P-256 key pair + signer function via SoftHSM PKCS#11.
    * C_GenerateKeyPair → CKA_EC_POINT for public key, C_Sign for signature.
    */
-  private async generateECKeyPairForCert(): Promise<{
+  private async generateECKeyPairForCert(
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<{
     publicKeyRaw: Uint8Array
     signerFn: SignerFn
   }> {
-    const { M, hSession } = await getHsmForSigning()
-    const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+    const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
+    if (onKey) onKey(privHandle, 'ecdsa', 'ECDSA P-256 (Cert Gen)')
     const ecPoint = hsm_extractECPoint(M, hSession, pubHandle)
     // CKA_EC_POINT is DER OCTET STRING wrapping the uncompressed point — strip the DER header
     const rawPub = ecPoint.length === 67 ? ecPoint.slice(2) : ecPoint // 04 41 04...
@@ -659,12 +643,16 @@ export class HybridCryptoService {
    * Generate an ML-DSA-65 key pair + signer function via SoftHSM PKCS#11.
    * C_GenerateKeyPair → CKA_VALUE for public key, C_MessageSign for signature.
    */
-  private async generateMLDSAKeyPairForCert(): Promise<{
+  private async generateMLDSAKeyPairForCert(
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<{
     publicKey: Uint8Array
     signerFn: SignerFn
   }> {
-    const { M, hSession } = await getHsmForSigning()
     const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+    if (onKey) onKey(privHandle, 'ml-dsa', 'ML-DSA-65 (Cert Gen)')
     const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
       return hsm_signBytesMLDSA(M, hSession, privHandle, tbs)
@@ -676,12 +664,17 @@ export class HybridCryptoService {
    * Pure PQC certificate: ML-DSA-65 (RFC 9881).
    * Real DER-encoded X.509 with correct OID 2.16.840.1.101.3.4.3.18.
    */
-  async generatePurePQCCertMLDSA(subject: string): Promise<CertResult> {
+  async generatePurePQCCertMLDSA(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const { publicKey, signerFn } = await this.generateMLDSAKeyPairForCert()
+      const { publicKey, signerFn } = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
       const derBytes = await buildSelfSignedX509(publicKey, signerFn, ML_DSA_65_OID, subject)
       const pem = derToPem(derBytes, 'CERTIFICATE')
       const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
@@ -701,13 +694,18 @@ export class HybridCryptoService {
    * Real DER-encoded X.509 with composite OID 1.3.6.1.5.5.7.6.45.
    * Both signatures over the same TBS bytes.
    */
-  async generateCompositeCert(subject: string): Promise<CertResult> {
+  async generateCompositeCert(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const ec = await this.generateECKeyPairForCert()
-      const mldsa = await this.generateMLDSAKeyPairForCert()
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
 
       const derBytes = await buildCompositeCert(
         ec.publicKeyRaw,
@@ -733,13 +731,18 @@ export class HybridCryptoService {
    * Alt-Sig / Catalyst certificate (ITU-T X.509 §9.8).
    * ECDSA primary with ML-DSA-65 in extensions 2.5.29.72/73/74.
    */
-  async generateAltSigCert(subject: string): Promise<CertResult> {
+  async generateAltSigCert(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const ec = await this.generateECKeyPairForCert()
-      const mldsa = await this.generateMLDSAKeyPairForCert()
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
 
       const derBytes = await buildAltSigCert(
         ec.publicKeyRaw,
@@ -766,7 +769,12 @@ export class HybridCryptoService {
    * Each cert contains RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36)
    * with SHA-256 hash of the partner cert.
    */
-  async generateRelatedCertPairReal(subject: string): Promise<{
+  async generateRelatedCertPairReal(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<{
     classical: CertResult
     pqc: CertResult
     bindingHash: string
@@ -778,8 +786,8 @@ export class HybridCryptoService {
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const ec = await this.generateECKeyPairForCert()
-      const mldsa = await this.generateMLDSAKeyPairForCert()
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
 
       const result = await buildRelatedCertPairDER(
         ec.publicKeyRaw,
@@ -821,13 +829,18 @@ export class HybridCryptoService {
    * Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07).
    * ML-DSA-65 primary with DeltaCertificateDescriptor extension containing ECDSA delta.
    */
-  async generateChameleonCert(subject: string): Promise<CertResult> {
+  async generateChameleonCert(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const mldsa = await this.generateMLDSAKeyPairForCert()
-      const ec = await this.generateECKeyPairForCert()
+      const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
 
       const derBytes = await buildChameleonCert(
         mldsa.publicKey,
@@ -855,13 +868,18 @@ export class HybridCryptoService {
    *
    * @param subject OpenSSL slash-format DN e.g. `/CN=.../O=.../OU=...`
    */
-  async generateSelfSignedCertSLHDSA(subject: string): Promise<CertResult> {
+  async generateSelfSignedCertSLHDSA(
+    subject: string,
+    M: SoftHSMModule,
+    hSession: number,
+    onKey?: KeyTracker
+  ): Promise<CertResult> {
     const start = performance.now()
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const { M, hSession } = await getHsmForSigning()
       const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
+      if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s (Cert Gen)')
       const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
 
       const derBytes = await buildSelfSignedX509(

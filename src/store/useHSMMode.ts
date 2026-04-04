@@ -11,7 +11,7 @@ interface HsmModeState {
 export const useHSMMode = create<HsmModeState>()(
   persist(
     (set) => ({
-      liveHsmEnabled: false,
+      liveHsmEnabled: true,
       toggleLiveHsm: () => set((s) => ({ liveHsmEnabled: !s.liveHsmEnabled })),
       setLiveHsm: (v) => set({ liveHsmEnabled: v }),
     }),
@@ -22,7 +22,7 @@ export const useHSMMode = create<HsmModeState>()(
       migrate: (persistedState: unknown, version: number) => {
         const s = (persistedState ?? {}) as Partial<HsmModeState>
         if (version < 1) {
-          return { liveHsmEnabled: s?.liveHsmEnabled ?? false }
+          return { liveHsmEnabled: s?.liveHsmEnabled ?? true }
         }
         return s as { liveHsmEnabled: boolean }
       },

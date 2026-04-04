@@ -13,6 +13,7 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { hsm_generateECKeyPair, hsm_ecdsaSign, hsm_extractECPoint } from '@/wasm/softhsm'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const PID_LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_SignInit', 'C_Sign']
 
@@ -79,7 +80,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       // ── Live HSM Mode: real PKCS#11 operations ──
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
       const pubPoint = hsm_extractECPoint(M, hSession, pubHandle)
       const pubHex = Array.from(pubPoint)
         .map((b) => b.toString(16).padStart(2, '0'))
@@ -330,6 +331,14 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
             title="PKCS#11 Call Log — PID Issuance"
             className="mt-4"
             filterFns={PID_LIVE_OPERATIONS}
+          />
+        )}
+        {hsm.isReady && (
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
           />
         )}
       </CardContent>

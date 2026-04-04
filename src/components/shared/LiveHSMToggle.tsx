@@ -23,19 +23,23 @@ interface LiveHSMToggleProps {
   hsm: UseHSMResult
   /** Standard PKCS#11 v3.2 C_* function names this step calls (shown to user) */
   operations: string[]
+  /** If true (default), automatically starts the HSM without requiring user click. */
+  autoInit?: boolean
   className?: string
 }
 
-export const LiveHSMToggle = ({ hsm, operations, className = '' }: LiveHSMToggleProps) => {
+export const LiveHSMToggle = ({ hsm, operations, autoInit = true, className = '' }: LiveHSMToggleProps) => {
   const { liveHsmEnabled, setLiveHsm } = useHSMMode()
 
-  // Auto-initialize when mounting in enabled state (user navigated away and back)
+  // Auto-initialize when mounting
   useEffect(() => {
-    if (liveHsmEnabled && hsm.phase === 'idle') {
+    if (autoInit && hsm.phase === 'idle') {
       void hsm.initialize()
+      if (!liveHsmEnabled) {
+        setLiveHsm(true)
+      }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []) // intentionally mount-only: restore session when user returns to the step
+  }, [autoInit, hsm, liveHsmEnabled, setLiveHsm])
 
   const handleEnable = () => {
     setLiveHsm(true)
@@ -155,14 +159,16 @@ export const LiveHSMToggle = ({ hsm, operations, className = '' }: LiveHSMToggle
             )}
           </div>
         </div>
-        <Button
-          variant="outline"
-          size="sm"
-          className="h-7 px-3 text-xs shrink-0"
-          onClick={handleEnable}
-        >
-          Enable
-        </Button>
+        {!autoInit && (
+          <Button
+            variant="outline"
+            size="sm"
+            className="h-7 px-3 text-xs shrink-0"
+            onClick={handleEnable}
+          >
+            Enable
+          </Button>
+        )}
       </div>
     </div>
   )

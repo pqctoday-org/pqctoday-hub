@@ -79,7 +79,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
   if (!step) return null
 
   return (
-    <div className="w-full max-w-7xl mx-auto h-full flex flex-col">
+    <div className="w-full h-full flex flex-col">
       {/* Main Step Content - Full Width */}
       <div className="glass-panel border border-border rounded-xl p-4 sm:p-5 mb-4 flex flex-col">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">

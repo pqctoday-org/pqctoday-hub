@@ -281,9 +281,10 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           note: 'ML-KEM replaces ECDH for the TLS 1.3 key exchange. The encapsulated shared secret is used to derive the session wrapping key.',
         })
 
-        // Step 3: KEK wraps provisioning key
-        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
-        const provKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        // wrapKeyHandle is a KEK, so wrap=true, unwrap=true, encrypt/decrypt=false, extractable=false
+        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
+        // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
+        const provKeyHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false)
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
@@ -325,7 +326,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         // ── Classical flow ────────────────────────────────────────────────────
 
         // Step 1: Attestation key (ECDSA P-256)
-        const dsaKeys = hsm_generateECKeyPair(M, hSession, 'P-256')
+        const dsaKeys = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
         hsm.addKey({
           handle: dsaKeys.pubHandle,
           family: 'ecdsa',
@@ -352,7 +353,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         })
 
         // Step 2: TLS transport via ECDH P-256
-        const kemKeys = hsm_generateECKeyPair(M, hSession, 'P-256')
+        const kemKeys = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
         hsm.addKey({
           handle: kemKeys.pubHandle,
           family: 'ecdh',
@@ -378,9 +379,10 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           note: 'Classical ECDH P-256 for TLS 1.3 key exchange. The shared secret is used to derive the wrapping key. Use PQC mode to see ML-KEM-768 instead.',
         })
 
-        // Step 3: KEK wraps provisioning key
-        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256)
-        const provKeyHandle = hsm_generateAESKey(M, hSession, 256)
+        // wrapKeyHandle is a KEK, so wrap=true, unwrap=true, encrypt/decrypt=false, extractable=false
+        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
+        // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
+        const provKeyHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false)
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
@@ -437,145 +439,6 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
       {/* Live HSM TEE-HSM Key Provisioning Demo */}
       <LiveHSMToggle hsm={hsm} operations={TEE_LIVE_OPERATIONS} />
-
-      {hsm.isReady && (
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold">Run TEE-HSM Key Provisioning (PQC)</p>
-            <button
-              onClick={runLiveDemo}
-              disabled={liveRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
-              {liveRunning ? (
-                <>
-                  <Loader2 size={11} className="animate-spin" /> Running…
-                </>
-              ) : (
-                'Execute (Live WASM)'
-              )}
-            </button>
-          </div>
-
-          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
-
-          {liveResults.length > 0 && (
-            <div className="space-y-2">
-              {liveResults.map((r) => (
-                <div
-                  key={r.step}
-                  className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
-                >
-                  {/* Step header */}
-                  <div className="flex items-center gap-2">
-                    <CheckCircle size={13} className="text-status-success shrink-0" />
-                    <span className="text-xs font-semibold text-foreground">{r.title}</span>
-                    <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ml-auto ${PURPOSE_LABEL_CLASS[r.purpose]}`}
-                    >
-                      {PURPOSE_ICON[r.purpose]}
-                      {PURPOSE_DISPLAY[r.purpose]}
-                    </span>
-                  </div>
-
-                  {/* PKCS#11 call */}
-                  <div className="bg-background/60 rounded px-2 py-1.5 border border-border/50">
-                    {r.pkcs11Call.split('\n').map((line, i) => (
-                      <p key={i} className="text-[11px] font-mono text-foreground/80 break-all">
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-
-                  {/* Detail + note */}
-                  <p className="text-[10px] font-mono text-muted-foreground">{r.detail}</p>
-                  <p className="text-[10px] text-muted-foreground italic border-t border-border/30 pt-1">
-                    {r.note}
-                  </p>
-                </div>
-              ))}
-              <p className="text-[10px] text-muted-foreground">
-                Real output from SoftHSM3 WASM · PKCS#11 v3.2
-              </p>
-            </div>
-          )}
-
-          {/* Vendor-specific notes when scenario is selected */}
-          {liveResults.length > 0 && integration && (
-            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1">
-              <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
-                <Server size={12} className="text-primary" />
-                {selectedHsmVendor} + {teeArch?.name ?? selectedTeeVendor} — Integration Notes
-              </p>
-              <div className="grid grid-cols-2 gap-2 text-[10px]">
-                <div>
-                  <span className="text-muted-foreground">Channel type: </span>
-                  <span className="text-foreground font-medium">
-                    {CHANNEL_TYPE_LABELS[integration.channelType] ?? integration.channelType}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Mutual attestation: </span>
-                  <span
-                    className={
-                      integration.mutualAttestation
-                        ? 'text-status-success font-medium'
-                        : 'text-status-error font-medium'
-                    }
-                  >
-                    {integration.mutualAttestation ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">TLS channel binding: </span>
-                  <span
-                    className={
-                      integration.tlsChannelBinding
-                        ? 'text-status-success font-medium'
-                        : 'text-muted-foreground font-medium'
-                    }
-                  >
-                    {integration.tlsChannelBinding ? 'Yes' : 'No'}
-                  </span>
-                </div>
-                <div>
-                  <span className="text-muted-foreground">Migration complexity: </span>
-                  <span
-                    className={`font-bold rounded px-1 py-0.5 ${COMPLEXITY_CONFIG[integration.migrationComplexity]?.className ?? ''}`}
-                  >
-                    {COMPLEXITY_CONFIG[integration.migrationComplexity]?.label ??
-                      integration.migrationComplexity}
-                  </span>
-                </div>
-              </div>
-              {integration.notes && (
-                <p className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
-                  {integration.notes}
-                </p>
-              )}
-            </div>
-          )}
-
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            defaultOpen={false}
-            title="PKCS#11 Call Log — TEE-HSM Channel"
-            emptyMessage="Click 'Execute' to run the TEE-HSM key provisioning flow."
-            filterFns={TEE_LIVE_OPERATIONS}
-          />
-
-          {hsm.keys.length > 0 && (
-            <HsmKeyInspector
-              keys={hsm.keys}
-              moduleRef={hsm.moduleRef}
-              hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
-              title="Generated Keys — TEE-HSM Provisioning"
-            />
-          )}
-        </div>
-      )}
 
       {/* ── Scenario Selector ─────────────────────────────────────── */}
       <div className="glass-panel p-4">
@@ -916,6 +779,129 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         </>
       )}
 
+      {hsm.isReady && (
+        <div className="glass-panel p-4 space-y-3">
+          <div className="flex items-center justify-between gap-2">
+            <p className="text-sm font-semibold">Run TEE-HSM Key Provisioning (PQC)</p>
+            <button
+              onClick={runLiveDemo}
+              disabled={liveRunning}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {liveRunning ? (
+                <>
+                  <Loader2 size={11} className="animate-spin" /> Running…
+                </>
+              ) : (
+                'Execute (Live WASM)'
+              )}
+            </button>
+          </div>
+
+          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
+
+          {liveResults.length > 0 && (
+            <div className="space-y-2">
+              {liveResults.map((r) => (
+                <div
+                  key={r.step}
+                  className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+                >
+                  {/* Step header */}
+                  <div className="flex items-center gap-2">
+                    <CheckCircle size={13} className="text-status-success shrink-0" />
+                    <span className="text-xs font-semibold text-foreground">{r.title}</span>
+                    <span
+                      className={`inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded ml-auto ${PURPOSE_LABEL_CLASS[r.purpose]}`}
+                    >
+                      {PURPOSE_ICON[r.purpose]}
+                      {PURPOSE_DISPLAY[r.purpose]}
+                    </span>
+                  </div>
+
+                  {/* PKCS#11 call */}
+                  <div className="bg-background/60 rounded px-2 py-1.5 border border-border/50">
+                    {r.pkcs11Call.split('\n').map((line, i) => (
+                      <p key={i} className="text-[11px] font-mono text-foreground/80 break-all">
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+
+                  {/* Detail + note */}
+                  <p className="text-[10px] font-mono text-muted-foreground">{r.detail}</p>
+                  <p className="text-[10px] text-muted-foreground italic border-t border-border/30 pt-1">
+                    {r.note}
+                  </p>
+                </div>
+              ))}
+              <p className="text-[10px] text-muted-foreground">
+                Real output from SoftHSM3 WASM · PKCS#11 v3.2
+              </p>
+            </div>
+          )}
+
+          {/* Vendor-specific notes when scenario is selected */}
+          {liveResults.length > 0 && integration && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 space-y-1">
+              <p className="text-xs font-semibold text-foreground flex items-center gap-1.5">
+                <Server size={12} className="text-primary" />
+                {selectedHsmVendor} + {teeArch?.name ?? selectedTeeVendor} — Integration Notes
+              </p>
+              <div className="grid grid-cols-2 gap-2 text-[10px]">
+                <div>
+                  <span className="text-muted-foreground">Channel type: </span>
+                  <span className="text-foreground font-medium">
+                    {CHANNEL_TYPE_LABELS[integration.channelType] ?? integration.channelType}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Mutual attestation: </span>
+                  <span
+                    className={
+                      integration.mutualAttestation
+                        ? 'text-status-success font-medium'
+                        : 'text-status-error font-medium'
+                    }
+                  >
+                    {integration.mutualAttestation ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">TLS channel binding: </span>
+                  <span
+                    className={
+                      integration.tlsChannelBinding
+                        ? 'text-status-success font-medium'
+                        : 'text-muted-foreground font-medium'
+                    }
+                  >
+                    {integration.tlsChannelBinding ? 'Yes' : 'No'}
+                  </span>
+                </div>
+                <div>
+                  <span className="text-muted-foreground">Migration complexity: </span>
+                  <span
+                    className={`font-bold rounded px-1 py-0.5 ${COMPLEXITY_CONFIG[integration.migrationComplexity]?.className ?? ''}`}
+                  >
+                    {COMPLEXITY_CONFIG[integration.migrationComplexity]?.label ??
+                      integration.migrationComplexity}
+                  </span>
+                </div>
+              </div>
+              {integration.notes && (
+                <p className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                  {integration.notes}
+                </p>
+              )}
+            </div>
+          )}
+
+        </div>
+      )}
+
+
+
       {/* ── Cross-reference callout ───────────────────────────────── */}
       <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">
         <strong>Note:</strong> HSM PQC firmware details and vendor comparison are covered in the{' '}
@@ -928,6 +914,29 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         </Link>{' '}
         to explore the HSM side of this integration.
       </div>
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={false}
+            title="PKCS#11 Call Log — TEE-HSM Channel"
+            emptyMessage="Click 'Execute' to run the TEE-HSM key provisioning flow."
+            filterFns={TEE_LIVE_OPERATIONS}
+          />
+
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+              title="Generated Keys — TEE-HSM Provisioning"
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

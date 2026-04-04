@@ -200,6 +200,7 @@ interface KeyGenerationSectionProps {
   classicalLoading: boolean
   onClassicalAlgorithmChange: (algorithm: string) => void
   onGenerateClassicalKeys: () => void
+  hideSnippets?: boolean
 }
 
 export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
@@ -214,6 +215,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
   classicalLoading,
   onClassicalAlgorithmChange,
   onGenerateClassicalKeys,
+  hideSnippets,
 }) => {
   return (
     <>
@@ -327,16 +329,16 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
       </div>
 
       {/* Code snippet reference for selected PQC algorithm */}
-      <CodeSnippetPanel algorithm={algorithm} keySize={keySize} />
+      {!hideSnippets && <CodeSnippetPanel algorithm={algorithm} keySize={keySize} />}
 
       {/* Classical Algorithms Key Generation Section */}
-      <div className="bg-muted/30 border border-border rounded-xl p-6">
-        <div className="flex items-center gap-2 mb-4 pb-3 border-border">
+      <div className="bg-muted/30 border border-border rounded-xl p-6 mt-4">
+        <div className="flex items-center gap-2 mb-4 pb-3 border-b border-border">
           <Lock size={16} className="text-accent" />
           <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate Classical Keys
           </h5>
-          <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>
+          {!hideSnippets && <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

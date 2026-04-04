@@ -282,6 +282,7 @@ export interface Pkcs11LogEntry {
   inspect?: import('./pkcs11Inspect').Pkcs11LogInspect
   /** When true, renders as a visual step-separator in the log panel (not a real PKCS#11 call) */
   isStepHeader?: true
+  hSession?: number
 }
 
 let _logId = 0
@@ -534,6 +535,13 @@ export const createLoggingProxy = (
             const rvUnsigned = rv >>> 0
             const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
             const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
+            
+            let hSession: number | undefined
+            const names = PKCS11_PARAMS[specName]
+            if (names && names[0] === 'hSession' && args.length > 0 && typeof args[0] === 'number') {
+              hSession = args[0]
+            }
+
             onLog({
               id: ++_logId,
               timestamp: fmtTime(),
@@ -545,6 +553,7 @@ export const createLoggingProxy = (
               ok,
               engineName,
               inspect,
+              hSession,
             })
             return rv
           } catch (err) {

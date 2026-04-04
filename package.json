@@ -61,7 +61,8 @@
     "xref:purl": "python3 scripts/generate-purl-xref.py",
     "xref:purl:dry": "python3 scripts/generate-purl-xref.py --dry-run",
     "xref:lei": "python3 scripts/generate-lei-xref.py",
-    "xref:lei:dry": "python3 scripts/generate-lei-xref.py --dry-run"
+    "xref:lei:dry": "python3 scripts/generate-lei-xref.py --dry-run",
+    "generate:manuals": "python3 scripts/generate-page-manuals.py"
   },
   "overrides": {
     "serialize-javascript": ">=7.0.3"

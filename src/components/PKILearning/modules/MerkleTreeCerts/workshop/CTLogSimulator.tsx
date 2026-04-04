@@ -32,6 +32,7 @@ import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHSM } from '@/hooks/useHSM'
 import {
   hsm_generateMLDSAKeyPair,
@@ -1172,7 +1173,19 @@ export const CTLogSimulator: React.FC = () => {
       </div>
 
       {/* PKCS#11 call log — always visible once HSM is initialized */}
-      {hsm.phase !== 'idle' && <Pkcs11LogPanel log={hsm.log} onClear={hsm.clearLog} />}
+      {hsm.isReady && (
+        <div className="space-y-4 mt-6">
+          <Pkcs11LogPanel log={hsm.log} onClear={hsm.clearLog} />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

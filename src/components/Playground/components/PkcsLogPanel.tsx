@@ -54,7 +54,7 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
             Dual
           </span>
         )}
-        <span className="text-foreground shrink-0">{entry.fn}</span>
+        <span className="text-inherit opacity-90 font-bold shrink-0">{entry.fn}</span>
         <span className="text-muted-foreground truncate">{entry.args && `(${entry.args})`}</span>
         <span className="ml-auto shrink-0">→</span>
         <span className={entry.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'}>
@@ -79,12 +79,14 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
 
 // ── Main panel ────────────────────────────────────────────────────────────────
 
-export const PkcsLogPanel = () => {
+export const PkcsLogPanel = ({ filterFn }: { filterFn?: (entry: Pkcs11LogEntry) => boolean }) => {
   const { hsmLog, clearHsmLog, inspectMode, toggleInspect } = useHsmContext()
   const [copied, setCopied] = useState(false)
+  
+  const filteredLogs = filterFn ? hsmLog.filter(filterFn) : hsmLog
 
   const copyAll = () => {
-    const text = hsmLog
+    const text = filteredLogs
       .map(
         (e) =>
           `[${e.timestamp}]${e.engineName ? ` [${e.engineName.toUpperCase()}]` : ''} ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`
@@ -104,7 +106,7 @@ export const PkcsLogPanel = () => {
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm flex items-center gap-2">
           PKCS#11 Call Log
-          <span className="text-xs text-muted-foreground font-normal">({hsmLog.length} calls)</span>
+          <span className="text-xs text-muted-foreground font-normal">({filteredLogs.length} calls)</span>
         </h3>
         <div className="flex gap-2">
           <Button
@@ -125,7 +127,7 @@ export const PkcsLogPanel = () => {
             variant="ghost"
             size="sm"
             className="h-7 px-2 text-xs"
-            disabled={hsmLog.length === 0}
+            disabled={filteredLogs.length === 0}
             onClick={copyAll}
           >
             {copied ? (
@@ -147,14 +149,14 @@ export const PkcsLogPanel = () => {
         </p>
       )}
 
-      {hsmLog.length === 0 ? (
+      {filteredLogs.length === 0 ? (
         <p className="text-xs text-muted-foreground italic">
           No calls yet — initialize the token and run KEM or Sign operations.
         </p>
       ) : (
         <div className="space-y-0.5">
           {/* Log is newest-first from addHsmLog — reverse to show oldest-first visually */}
-          {[...hsmLog].reverse().map((e) => (
+          {[...filteredLogs].reverse().map((e) => (
             <LogEntryRow key={e.id} entry={e} inspectMode={inspectMode} />
           ))}
         </div>

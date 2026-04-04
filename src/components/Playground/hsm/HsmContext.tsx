@@ -49,6 +49,8 @@ export interface HsmKey {
   generatedAt: string
   /** Semantic role in a provisioning workflow (optional, defaults to 'general') */
   purpose?: HsmKeyPurpose
+  /** Which crypto token slot this key belongs to (e.g., Slot 1 = Client, Slot 2 = Server) */
+  slotId?: number
 }
 
 export interface HsmContextValue {

@@ -4959,4 +4959,58 @@ export const glossaryTerms: GlossaryTerm[] = [
     complexity: 'intermediate',
     category: 'concept',
   },
+  // === VPN / IPsec IKEv2 Components ===
+  {
+    term: 'IKE_SA_INIT',
+    definition: 'The initial phase of the IKEv2 protocol. It negotiates cryptographic algorithms, exchanges nonces, and performs a Diffie-Hellman exchange.',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'IKE_INTERMEDIATE',
+    definition: 'An optional phase introduced in IKEv2 to transmit large amounts of data, such as post-quantum key shares, before authentication completes.',
+    complexity: 'advanced',
+    category: 'protocol',
+  },
+  {
+    term: 'IKE_AUTH',
+    definition: 'The completion phase of the IKEv2 handshake. It authenticates the previous messages and establishes the first IPsec Security Association (CHILD_SA).',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Header',
+    acronym: 'HDR',
+    definition: 'The encrypted exchange header found at the start of an IKEv2 packet. Contains the SPIs, version, exchange type, and flags.',
+    complexity: 'beginner',
+    category: 'protocol',
+  },
+  {
+    term: 'Security Association',
+    acronym: 'SA',
+    definition: 'A set of negotiated cryptographic algorithms (encryption, integrity, PRF) agreed upon between two network peers.',
+    complexity: 'intermediate',
+    category: 'concept',
+  },
+  {
+    term: 'Key Exchange',
+    acronym: 'KE',
+    definition: 'The public key material or key share transmitted between parties to derive a shared secret. In Hybrid PQC, this includes both classical elliptic curves and post-quantum lattices.',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
+  {
+    term: 'Nonce',
+    acronym: 'Ni',
+    definition: 'A random cryptographic value (typically 32 bytes) sent by the Initiator (Ni) or Responder (Nr) to prevent replay attacks and contribute to key derivation.',
+    complexity: 'beginner',
+    category: 'concept',
+  },
+  {
+    term: 'Encrypted Payload',
+    acronym: 'SK',
+    definition: 'The secure container wrapping IKEv2 payloads like Identifiers (IDi/IDr), Certificates (CERT), and Authentication (AUTH) data.',
+    complexity: 'intermediate',
+    category: 'protocol',
+  },
 ]

@@ -49,11 +49,8 @@ export function useEthereumKeyGeneration({
         </>
       ),
       code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(
-  hsm.module,
-  hsm.sessionHandle,
-  'secp256k1'
-);`,
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
+, false, 'sign');`,
       language: 'javascript',
       actionLabel: 'Generate Source Key',
       diagram: <EthereumFlowDiagram />,
@@ -110,11 +107,8 @@ const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, C
         </>
       ),
       code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(
-  hsm.module,
-  hsm.sessionHandle,
-  'secp256k1'
-);`,
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
+, false, 'sign');`,
       language: 'javascript',
       actionLabel: 'Generate Recipient Key',
     },

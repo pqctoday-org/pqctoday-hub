@@ -31,12 +31,23 @@ const LogsTabSoftware: React.FC = () => {
         <h4 className="text-lg font-bold text-foreground flex items-center gap-2">
           <FileText size={18} className="text-muted-foreground" /> Operation Log
         </h4>
-        <button
-          onClick={clearLogs}
-          className="text-xs text-muted-foreground hover:text-foreground transition-colors"
-        >
-          Clear Log
-        </button>
+        <div className="flex items-center gap-4">
+          <button
+            onClick={() => {
+              const textOutput = sortedLogs.map((log) => `[${log.timestamp}] ${log.keyLabel} - ${log.operation}: ${log.result} (${log.executionTime.toFixed(2)}ms)`).join('\n')
+              navigator.clipboard.writeText(textOutput)
+            }}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-border px-2 py-1 rounded"
+          >
+            Copy Logs
+          </button>
+          <button
+            onClick={clearLogs}
+            className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+          >
+            Clear Log
+          </button>
+        </div>
       </div>
 
       <div className="flex-1 overflow-hidden rounded-xl border border-border bg-card flex flex-col">

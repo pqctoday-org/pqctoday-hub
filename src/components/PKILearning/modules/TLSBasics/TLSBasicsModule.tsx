@@ -22,6 +22,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
 
 const TLS_HSM_OPERATIONS = [
@@ -316,6 +317,22 @@ export const TLSBasicsModule: React.FC = () => {
 
       // Step 1: Generate server key pair (ML-DSA-65) in HSM
       const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
+
+      hsm.addKey({
+        handle: pubHandle,
+        family: 'ml-dsa',
+        role: 'public',
+        label: `TLS Server Public Key (ML-DSA-65)`,
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        family: 'ml-dsa',
+        role: 'private',
+        label: `TLS Server Private Key (ML-DSA-65)`,
+        generatedAt: new Date().toISOString(),
+      })
+
       const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
       addLine(
         `[Server] Key: C_GenerateKeyPair(CKM_ML_DSA_KEY_PAIR_GEN, CKP_ML_DSA_65)` +
@@ -428,8 +445,8 @@ export const TLSBasicsModule: React.FC = () => {
               </h3>
               <p className="text-xs text-muted-foreground">
                 In production, TLS server private keys live in a Hardware Security Module. The HSM
-                signs the TLS CertificateVerify message via PKCS#11. Enable Live HSM Mode to see the
-                real calls.
+                signs the TLS CertificateVerify message via PKCS#11. The Live HSM Module shows the
+                real calls in action.
               </p>
 
               <LiveHSMToggle hsm={hsm} operations={TLS_HSM_OPERATIONS} />
@@ -467,15 +484,6 @@ export const TLSBasicsModule: React.FC = () => {
                       </p>
                     </div>
                   )}
-
-                  <Pkcs11LogPanel
-                    log={hsm.log}
-                    onClear={hsm.clearLog}
-                    defaultOpen={true}
-                    title="PKCS#11 Call Log — TLS Server Operations"
-                    emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
-                    filterFns={TLS_HSM_OPERATIONS}
-                  />
                 </div>
               )}
             </div>
@@ -520,6 +528,27 @@ export const TLSBasicsModule: React.FC = () => {
           <ModuleMigrateTab moduleId={MODULE_ID} />
         </TabsContent>
       </Tabs>
+
+      {hsm.isReady && (
+        <div className="space-y-4 mt-6">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — TLS Server Operations"
+            emptyMessage="Click 'Execute' to run the HSM-backed TLS server demo."
+            filterFns={TLS_HSM_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
+        </div>
+      )}
     </div>
   )
 }

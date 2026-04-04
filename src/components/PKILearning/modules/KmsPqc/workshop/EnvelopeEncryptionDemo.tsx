@@ -38,7 +38,7 @@ import {
   type AttrDef,
 } from '@/wasm/softhsm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
-import { KeyInspectTable } from '@/components/shared/KeyInspectTable'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import type { KatTestSpec } from '@/utils/katRunner'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -179,7 +179,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const bits = parseInt(kekAlgo.split('-')[1]) as 2048 | 3072 | 4096
 
         // Step 1: Generate AES-256 DEK
-        const dekHandle = hsm_generateAESKey(M, hSession, 256)
+        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=false
+        const dekHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false, 'AES-256 DEK')
         hsm.addKey({
           handle: dekHandle,
           family: 'aes',
@@ -278,7 +279,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const mechMeta = WRAP_MECH_META[wrapMech]
 
         // Step 1: Generate AES-256 DEK
-        const dekHandle = hsm_generateAESKey(M, hSession, 256)
+        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=false
+        const dekHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false, 'AES-256 DEK')
         hsm.addKey({
           handle: dekHandle,
           family: 'aes',
@@ -355,7 +357,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const dekBytesOrig = hsm_extractKeyValue(M, hSession, dekHandle)
 
         // Step 5: Wrap DEK using selected mechanism
-        const wrapKeyHandle = hsm_importAESKey(M, hSession, wrapKeyBytes)
+        const wrapKeyHandle = hsm_importAESKey(M, hSession, wrapKeyBytes, false, false, true, true, false, false)
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
@@ -430,7 +432,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           envelopeInfo,
           32
         )
-        const unwrapKeyHandle = hsm_importAESKey(M, hSession, unwrapKeyBytes)
+        const unwrapKeyHandle = hsm_importAESKey(M, hSession, unwrapKeyBytes, false, false, true, true, false, false)
         hsm.addKey({
           handle: unwrapKeyHandle,
           family: 'aes',
@@ -692,26 +694,6 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             </div>
           )}
 
-          {/* ── PKCS#11 log ───────────────────────────────────────────────────── */}
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            defaultOpen={true}
-            title="PKCS#11 Call Log — Envelope Encryption"
-            emptyMessage="Click 'Execute' to run the live envelope encryption flow."
-            filterFns={LIVE_OPERATIONS}
-          />
-
-          {hsm.keys.length > 0 && (
-            <div className="space-y-2">
-              <p className="text-sm font-semibold">Generated PKCS#11 Keys</p>
-              <KeyInspectTable
-                keys={hsm.keys}
-                moduleRef={hsm.moduleRef}
-                hSessionRef={hsm.hSessionRef}
-              />
-            </div>
-          )}
         </div>
       )}
 
@@ -1007,6 +989,27 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         label="KMS PQC Known Answer Tests"
         authorityNote="SP 800-57 · FIPS 203 · SP 800-38D · RFC 3394 · RFC 5649 · RFC 5869"
       />
+
+      {/* ── PKCS#11 log & Key Inspector (Bottom Layout) ────────────────────── */}
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            defaultOpen={true}
+            title="PKCS#11 Call Log — Envelope Encryption"
+            emptyMessage="Click 'Execute' to run the live envelope encryption flow."
+            filterFns={LIVE_OPERATIONS}
+          />
+
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
+          />
+        </div>
+      )}
     </div>
   )
 }

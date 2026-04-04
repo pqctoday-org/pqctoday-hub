@@ -20,8 +20,13 @@ import {
   CKA_SENSITIVE,
   CKA_SIGN,
   CKA_TOKEN,
-  CKA_VALUE,
+
   CKA_VERIFY,
+  CKA_ENCRYPT,
+  CKA_WRAP,
+  CKA_DECRYPT,
+  CKA_UNWRAP,
+  CKA_DERIVE,
   CKK_HSS,
   CKK_LMS,
   CKM_HSS,
@@ -125,6 +130,8 @@ export const hsm_generateLMSKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_LMS },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: false },
+    { type: CKA_WRAP, boolVal: false },
     { type: CKA_LMS_PARAM_SET, ulongVal: lmsParam },
     { type: CKA_LMOTS_PARAM_SET, ulongVal: lmotsParam },
   ])
@@ -135,6 +142,9 @@ export const hsm_generateLMSKeyPair = (
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: true },
     { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
     { type: CKA_LMS_PARAM_SET, ulongVal: lmsParam },
     { type: CKA_LMOTS_PARAM_SET, ulongVal: lmotsParam },
   ])
@@ -190,6 +200,8 @@ export const hsm_generateHSSKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_ENCRYPT, boolVal: false },
+    { type: CKA_WRAP, boolVal: false },
     { type: CKA_HSS_LMS_TYPE, ulongVal: levels },
   ])
   const prvTpl = buildTemplate(M, [
@@ -199,6 +211,9 @@ export const hsm_generateHSSKeyPair = (
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: true },
     { type: CKA_SIGN, boolVal: true },
+    { type: CKA_DECRYPT, boolVal: false },
+    { type: CKA_UNWRAP, boolVal: false },
+    { type: CKA_DERIVE, boolVal: false },
     { type: CKA_HSS_LMS_TYPE, ulongVal: levels },
   ])
   const pubHPtr = allocUlong(M)

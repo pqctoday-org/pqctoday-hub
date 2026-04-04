@@ -13,6 +13,7 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { hsm_digest, hsm_generateECKeyPair, hsm_ecdsaSign, CKM_ECDSA_SHA384 } from '@/wasm/softhsm'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const QES_LIVE_OPERATIONS = [
   'C_DigestInit',
@@ -106,7 +107,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
       addLog('Remote HSM: Generating ECC P-384 signing key via PKCS#11...')
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-384')
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-384', false, 'sign')
       addLog('Sole Control Assurance: Validated.')
 
       const sig = hsm_ecdsaSign(M, hSession, privHandle, docHash, CKM_ECDSA_SHA384)
@@ -311,6 +312,14 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
             title="PKCS#11 Call Log — QES Signing"
             className="mt-4"
             filterFns={QES_LIVE_OPERATIONS}
+          />
+        )}
+        {hsm.isReady && (
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
           />
         )}
       </CardContent>

@@ -63,11 +63,8 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
       title: '1. Generate Source Key',
       description: 'Generate a secp256k1 private key for the sender using OpenSSL.',
       code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(
-  hsm.module,
-  hsm.sessionHandle,
-  'secp256k1'
-);`,
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
+, false, 'sign');`,
       language: 'javascript',
       actionLabel: 'Generate Source Key',
       diagram: <BitcoinFlowDiagram />,
@@ -107,11 +104,8 @@ const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, C
       title: '4. Generate Recipient Key',
       description: 'Generate a key pair for the recipient to receive funds.',
       code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(
-  hsm.module,
-  hsm.sessionHandle,
-  'secp256k1'
-);`,
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
+, false, 'sign');`,
       language: 'javascript',
       actionLabel: 'Generate Recipient Key',
     },
@@ -268,7 +262,7 @@ const isValid = hsm_ecdsaVerify(
         try {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1')
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
           hsmHandlesRef.current.srcPrivHandle = privHandle
           hsmHandlesRef.current.srcPubHandle = pubHandle
 
@@ -340,7 +334,7 @@ const isValid = hsm_ecdsaVerify(
         try {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1')
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
           hsmHandlesRef.current.dstPrivHandle = privHandle
           hsmHandlesRef.current.dstPubHandle = pubHandle
 

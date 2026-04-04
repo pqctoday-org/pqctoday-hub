@@ -7,6 +7,7 @@ import { SIGNATURE_SIZE_DATA, type SigningAlgorithm } from '../data/iamConstants
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import {
   hsm_generateMLDSAKeyPair,
   hsm_generateECKeyPair,
@@ -201,22 +202,50 @@ export const TokenMigrationLab: React.FC = () => {
       const hSession = hsm.hSessionRef.current
 
       let result: KeyCache
+      let family: any
+      let labelSuffix = ''
+
       if (algo === 'RS256') {
-        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, 2048)
+        const { pubHandle, privHandle } = hsm_generateRSAKeyPair(M, hSession, 2048, false, 'sign')
         result = { pubHandle, privHandle }
+        family = 'rsa'
+        labelSuffix = 'RSA-2048'
       } else if (algo === 'ES256') {
-        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256')
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
         result = { pubHandle, privHandle }
+        family = 'ecdsa'
+        labelSuffix = 'P-256'
       } else if (algo === 'ML-DSA-44') {
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 44)
         result = { pubHandle, privHandle }
+        family = 'ml-dsa'
+        labelSuffix = 'ML-DSA-44'
       } else if (algo === 'ML-DSA-65') {
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
         result = { pubHandle, privHandle }
+        family = 'ml-dsa'
+        labelSuffix = 'ML-DSA-65'
       } else {
         const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 87)
         result = { pubHandle, privHandle }
+        family = 'ml-dsa'
+        labelSuffix = 'ML-DSA-87'
       }
+
+      hsm.addKey({
+        handle: result.pubHandle,
+        family,
+        role: 'public',
+        label: `${labelSuffix} Token Pub`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
+      hsm.addKey({
+        handle: result.privHandle,
+        family,
+        role: 'private',
+        label: `${labelSuffix} Token Priv`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+      })
 
       keyCacheRef.current[algo] = result
       return result
@@ -420,16 +449,7 @@ export const TokenMigrationLab: React.FC = () => {
         </Button>
       </div>
 
-      {/* PKCS#11 Call Log */}
-      {hsm.isReady && hsm.log.length > 0 && (
-        <Pkcs11LogPanel
-          log={hsm.log}
-          onClear={hsm.clearLog}
-          title="PKCS#11 Call Log"
-          defaultOpen={false}
-          filterFns={LIVE_OPERATIONS}
-        />
-      )}
+
 
       {/* Size Impact Analysis */}
       <div className="glass-panel p-5">
@@ -532,7 +552,7 @@ export const TokenMigrationLab: React.FC = () => {
           <strong>Note:</strong>{' '}
           {isLive
             ? 'All signing operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Real key pairs are generated and cached per algorithm. Signature sizes match the actual FIPS 204 / PKCS#1 / ECDSA specifications.'
-            : 'In simulation mode, signature data is representative. Enable Live WASM mode to execute real PKCS#11 v3.2 signing operations across all five algorithms.'}{' '}
+            : 'In simulation mode, signature data is representative. Disable Simulation to execute real PKCS#11 v3.2 signing operations across all five algorithms.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>
@@ -542,6 +562,24 @@ export const TokenMigrationLab: React.FC = () => {
         label="IAM PQC Known Answer Tests"
         authorityNote="OpenID Connect · SAML 2.0 · FIPS 204 · FIPS 198-1"
       />
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — Token Migration"
+            defaultOpen={false}
+            filterFns={LIVE_OPERATIONS}
+          />
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
+          />
+        </div>
+      )}
     </div>
   )
 }
