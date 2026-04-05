@@ -111,14 +111,14 @@ export const hsm_generateMLKEMKeyPair = (
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 6, prvTpl.ptr, 8, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 8, prvTpl.ptr, 12, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(ML-KEM)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 6)
-    freeTemplate(M, prvTpl, 8)
+    freeTemplate(M, pubTpl, 8)
+    freeTemplate(M, prvTpl, 12)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -417,14 +417,14 @@ export const hsm_generateMLDSAKeyPair = (
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 10, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(ML-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 7)
+    freeTemplate(M, pubTpl, 7)
+    freeTemplate(M, prvTpl, 10)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -930,14 +930,14 @@ export const hsm_generateSLHDSAKeyPair = (
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 10, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(SLH-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 7)
+    freeTemplate(M, pubTpl, 7)
+    freeTemplate(M, prvTpl, 10)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -1060,24 +1060,25 @@ export const hsm_generateStatefulKeyPair = (
   const mech = M._malloc(12)
   M.setValue(mech, mechType, 'i32')
 
-  // CKM_HSS_KEY_PAIR_GEN and equivalents expect a 68-byte CK_HSS_KEY_PAIR_GEN_PARAMS struct
   let pParamPtr = 0
-  if (
-    mechType === CKM_HSS_KEY_PAIR_GEN ||
-    mechType === 0x00004034 /* CKM_XMSS_KEY_PAIR_GEN */ ||
-    mechType === 0x00004035 /* CKM_XMSSMT_KEY_PAIR_GEN */
-  ) {
+  if (mechType === CKM_HSS_KEY_PAIR_GEN) {
     pParamPtr = M._malloc(68)
-    const levels = 1 // Default to single level for workshop UI unless XMSS/MT implies otherwise
+    const levels = 1
     M.setValue(pParamPtr, levels, 'i32')
-    // Offset 4: ulLmsParamSet[8]
-    // Offset 36: ulLmotsParamSet[8]
     for (let i = 0; i < 8; i++) {
       M.setValue(pParamPtr + 4 + i * 4, i === 0 ? paramSet : 0, 'i32')
-      M.setValue(pParamPtr + 36 + i * 4, i === 0 ? 4 : 0, 'i32') // LMOTS_W4 default
+      M.setValue(pParamPtr + 36 + i * 4, i === 0 ? 4 : 0, 'i32')
     }
     M.setValue(mech + 4, pParamPtr, 'i32')
     M.setValue(mech + 8, 68, 'i32')
+  } else if (
+    mechType === 0x00004034 /* CKM_XMSS_KEY_PAIR_GEN */ ||
+    mechType === 0x00004035 /* CKM_XMSSMT_KEY_PAIR_GEN */
+  ) {
+    pParamPtr = M._malloc(4)
+    M.setValue(pParamPtr, paramSet, 'i32')
+    M.setValue(mech + 4, pParamPtr, 'i32')
+    M.setValue(mech + 8, 4, 'i32')
   } else {
     M.setValue(mech + 4, 0, 'i32')
     M.setValue(mech + 8, 0, 'i32')
@@ -1088,7 +1089,6 @@ export const hsm_generateStatefulKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: keyType },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ])
 
   const prvTpl = buildTemplate(M, [
@@ -1106,14 +1106,14 @@ export const hsm_generateStatefulKeyPair = (
 
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 4, prvTpl.ptr, 7, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(Stateful)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     if (pParamPtr) M._free(pParamPtr)
     M._free(mech)
-    freeTemplate(M, pubTpl, 5)
+    freeTemplate(M, pubTpl, 4)
     freeTemplate(M, prvTpl, 7)
     M._free(pubHPtr)
     M._free(prvHPtr)
@@ -1141,17 +1141,11 @@ export const hsm_statefulSignBytes = (
 
   checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(Stateful)')
   try {
-    checkRV(
-      M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr),
-      'C_Sign(Stateful,len)'
-    )
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, 0, sigLenPtr), 'C_Sign(Stateful,len)')
     const sigLen = readUlong(M, sigLenPtr)
     sigPtr = M._malloc(sigLen)
     writeUlong(M, sigLenPtr, sigLen)
-    checkRV(
-      M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr),
-      'C_Sign(Stateful,bytes)'
-    )
+    checkRV(M._C_Sign(hSession, msgPtr, data.length, sigPtr, sigLenPtr), 'C_Sign(Stateful,bytes)')
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
     M._free(mech)

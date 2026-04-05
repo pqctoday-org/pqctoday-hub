@@ -152,50 +152,70 @@ export const CKM_SHA3_512 = 0x2d0
 export const CKM_KMAC_128 = 0x80000100
 export const CKM_KMAC_256 = 0x80000101
 
-// ── Stateful Hash-Based Signatures (G10) ─────────────────────────────────────
-// Standard PKCS#11 v3.2 §6.14 (HSS/LMS/XMSS)
-export const CKK_HSS = 0x46
-export const CKK_XMSS = 0x47
-export const CKK_XMSSMT = 0x48
-export const CKM_HSS_KEY_PAIR_GEN = 0x00004032
+// ── Stateful Hash-Based Signatures (PKCS#11 v3.2 §6.14) ─────────────────────
+// Key types
+export const CKK_HSS = 0x00000046 // PKCS#11 v3.2 §6.14 — HSS/LMS (single and multi-level)
+export const CKK_XMSS = 0x00000047 // PKCS#11 v3.2 §6.14 — XMSS single-tree
+export const CKK_XMSSMT = 0x00000048 // PKCS#11 v3.2 §6.14 — XMSS-MT multi-tree
+
+// Mechanisms
+export const CKM_HSS_KEY_PAIR_GEN = 0x00004032 // HSS (covers single-level LMS with levels=1)
 export const CKM_HSS = 0x00004033
 export const CKM_XMSS_KEY_PAIR_GEN = 0x00004034
+export const CKM_XMSSMT_KEY_PAIR_GEN = 0x00004035
 export const CKM_XMSS = 0x00004036
+export const CKM_XMSSMT = 0x00004037
 
-// Vendor: single-level LMS (not in PKCS#11 v3.2 standard CKM range)
-export const CKK_LMS = 0x80000001 // vendor key type
-export const CKM_LMS_KEY_PAIR_GEN = 0x80000001 // vendor mechanism
-export const CKM_LMS = 0x80000002 // vendor mechanism
+// Standard HSS attributes (PKCS#11 v3.2 pkcs11t.h §HSS)
+export const CKA_HSS_LEVELS = 0x00000617 // CK_ULONG number of HSS levels (1–8)
+export const CKA_HSS_LMS_TYPE = 0x00000618 // CK_ULONG LMS type for single-level
+export const CKA_HSS_LMOTS_TYPE = 0x00000619 // CK_ULONG LMOTS type for single-level
+export const CKA_HSS_LMS_TYPES = 0x0000061a // packed CK_ULONG[] for multi-level
+export const CKA_HSS_LMOTS_TYPES = 0x0000061b // packed CK_ULONG[] for multi-level
+export const CKA_HSS_KEYS_REMAINING = 0x0000061c // remaining signature operations
 
-// Vendor: Keccak-256 digest (G11 — Ethereum address derivation, Rust engine only)
-export const CKM_KECCAK_256 = 0x80000010
-
-// Standard PKCS#11 v3.2 error code (key state exhausted)
-export const CKR_KEY_EXHAUSTED = 0x00000203
-
-// Stateful key attributes (vendor, G10) — range 0x80000101–0x80000105
-export const CKA_STATEFUL_KEY_STATE = 0x80000101 // raw private key blob
-export const CKA_LMS_PARAM_SET = 0x80000102 // CKP_LMS_SHA256_M32_H* value
-export const CKA_LMOTS_PARAM_SET = 0x80000103 // CKP_LMOTS_SHA256_N32_W* value
-export const CKA_XMSS_PARAM_SET = 0x80000104 // CKP_XMSS_* value
-export const CKA_LEAF_INDEX = 0x80000105 // current leaf index (u64 LE)
-export const CKA_HSS_LMS_TYPE = 0x00000618 // number of HSS levels (standard §6.14)
-export const CKA_HSS_KEYS_REMAINING = 0x0000061c
-
-// LMS parameter set constants (tree-height naming, PKCS#11 v3.2 §6.14)
+// LMS parameter set values (RFC 8554 §5.1 — tree height naming)
+// Used as CKA_HSS_LMS_TYPE / CKA_HSS_LMS_TYPES values
 export const CKP_LMS_SHA256_M32_H5 = 5
-export const CKP_LMS_SHA256_M32_H10 = 10
-export const CKP_LMS_SHA256_M32_H15 = 15
-export const CKP_LMS_SHA256_M32_H20 = 20
-export const CKP_LMS_SHA256_M32_H25 = 25
+export const CKP_LMS_SHA256_M32_H10 = 6
+export const CKP_LMS_SHA256_M32_H15 = 7
+export const CKP_LMS_SHA256_M32_H20 = 8
+export const CKP_LMS_SHA256_M32_H25 = 9
 
-// LMOTS parameter set constants
+// LMOTS parameter set values (RFC 8554 §4.2)
 export const CKP_LMOTS_SHA256_N32_W1 = 1
 export const CKP_LMOTS_SHA256_N32_W2 = 2
 export const CKP_LMOTS_SHA256_N32_W4 = 4
 export const CKP_LMOTS_SHA256_N32_W8 = 8
 
-// LMS signature byte sizes (RFC 8554) — n=32, indexed by [lmsParam][lmotsParam]
+// XMSS parameter set values (RFC 8391 §5.3 — OID-derived integers)
+export const CKP_XMSS_SHA2_10_256 = 0x00000001
+export const CKP_XMSS_SHA2_16_256 = 0x00000002
+export const CKP_XMSS_SHA2_20_256 = 0x00000003
+export const CKP_XMSS_SHA2_10_512 = 0x00000004
+export const CKP_XMSS_SHA2_16_512 = 0x00000005
+export const CKP_XMSS_SHA2_20_512 = 0x00000006
+export const CKP_XMSS_SHAKE_10_256 = 0x00000007
+export const CKP_XMSS_SHAKE_16_256 = 0x00000008
+export const CKP_XMSS_SHAKE_20_256 = 0x00000009
+export const CKP_XMSS_SHAKE_10_512 = 0x0000000a
+export const CKP_XMSS_SHAKE_16_512 = 0x0000000b
+export const CKP_XMSS_SHAKE_20_512 = 0x0000000c
+
+// XMSS-MT parameter set values (RFC 8391 §5.4 — OID-derived integers)
+export const CKP_XMSSMT_SHA2_20_2_256 = 0x00000001
+export const CKP_XMSSMT_SHA2_20_4_256 = 0x00000002
+export const CKP_XMSSMT_SHA2_40_2_256 = 0x00000003
+export const CKP_XMSSMT_SHA2_40_4_256 = 0x00000004
+export const CKP_XMSSMT_SHA2_40_8_256 = 0x00000005
+export const CKP_XMSSMT_SHA2_60_3_256 = 0x00000006
+export const CKP_XMSSMT_SHA2_60_6_256 = 0x00000007
+export const CKP_XMSSMT_SHA2_60_12_256 = 0x00000008
+
+// Standard PKCS#11 v3.2 error code (key state exhausted)
+export const CKR_KEY_EXHAUSTED = 0x00000203
+
+// LMS/HSS signature sizes (RFC 8554) — indexed by [lmsType][lmotsType]
 // LMOTS sig = 4+32+p*32; LMS sig = 4+lmots_sig+4+h*32
 export const LMS_SIG_BYTES: Record<number, Record<number, number>> = {
   [5]: { 1: 8649, 2: 4457, 4: 2313, 8: 1257 }, // H5
@@ -207,6 +227,10 @@ export const LMS_SIG_BYTES: Record<number, Record<number, number>> = {
 
 /** LMS public key size is always 52 bytes (typecode=4 + I=16 + T[1]=32). */
 export const LMS_PUB_BYTES = 52
+
+// Keccak-256 — vendor extension (no standard PKCS#11 v3.2 equivalent for Keccak-256)
+// Used exclusively by the Rust engine for Ethereum address derivation (G11).
+export const CKM_KECCAK_256 = 0x80000010
 
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d

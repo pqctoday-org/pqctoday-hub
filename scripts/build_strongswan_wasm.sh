@@ -16,27 +16,27 @@ autoreconf -i
 
 # 3. Emscripten Configure
 # We strip everything out except the charon daemon and the pkcs11 plugin!
-echo "Running emconfigure..."
+echo "Running configure..."
 emconfigure ./configure \
-    --disable-shared \
-    --enable-static \
-    --enable-monolithic \
-    --disable-defaults \
-    --enable-charon \
-    --enable-ikev2 \
-    --disable-ikev1 \
-    --disable-scripts \
-    --disable-vici \
-    --disable-socket-default \
-    --enable-pkcs11 \
-    CFLAGS="-O3 -Wno-error" \
-    LDFLAGS="-O3 -s EXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\"] -s ALLOW_MEMORY_GROWTH=1"
+  --host=wasm32-unknown-emscripten \
+  --disable-shared \
+  --enable-static \
+  --disable-defaults \
+  --enable-charon \
+  --enable-monolithic \
+  --enable-pkcs11 \
+  --enable-socket-wasm \
+  --enable-nonce \
+  --enable-random \
+  --enable-sha1 \
+  --enable-sha2 \
+  --enable-aes \
+  --enable-hmac \
+  --disable-kernel-netlink
 
 # 4. Compile via Emscripten
 echo "Running emmake..."
-emmake make -j4 LDFLAGS="-O3 -s EXPORTED_FUNCTIONS=[\"_main\"] -s EXPORTED_RUNTIME_METHODS=[\"ccall\",\"cwrap\",\"addFunction\",\"removeFunction\"] -s ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
-
-# 5. Export to React Public Directory
+emmake make -j4 LDFLAGS="-s ALLOW_MEMORY_GROWTH=1 -s ALLOW_TABLE_GROWTH=1 -s ERROR_ON_UNDEFINED_SYMBOLS=0"
 echo "Copying WASM to public directory..."
 mkdir -p /Users/ericamador/antigravity/pqc-timeline-app/public/wasm
 cp src/charon/charon /Users/ericamador/antigravity/pqc-timeline-app/public/wasm/strongswan.js
