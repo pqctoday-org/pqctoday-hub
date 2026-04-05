@@ -6,10 +6,24 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.77.0] - 2026-04-05
+
 ### Added
 
+- **strongSwan IKEv2 handshake in WASM**: Full IKE_SA establishment running entirely in the browser — strongSwan 6.0.5 charon daemon in Web Workers completes IKE_SA_INIT (SA + KE ECP_256 + Nonce) and IKE_AUTH (PSK authentication) across 4 packets between `initiator@pqc.wasm` and `responder@pqc.wasm`. Selected proposal: `AES_CBC_128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/ECP_256`.
+- **User-configurable PSK for IKEv2 VPN simulation**: Auth mode selector (PSK active, pubkey coming soon), separate PSK inputs for client/server with mismatch warning — mirrors real IKEv2 behavior where mismatched PSKs cause AUTH failure.
 - **Stateful Signatures Workshop**: Integrated native PKCS#11 v3.2 token simulation for Stateful Hash-Based Signatures (LMS, HSS, XMSS) natively wired to the WASM UI layer.
 - **State Exhaustion Tracking**: Implemented dynamic exhaustion validation by securely passing `CKA_HSS_KEYS_REMAINING` across the Rust/Typescript bindings, driving visual decrements via `StateManagementVisualizer.tsx` limiting H5 signatures strictly to 32 executions.
+- **IKEv2 softhsmv3 PKCS#11 replacement analysis**: Mapped all 13 IKE crypto operations (nonce gen, ECDH, PRF, AES-CBC, HMAC) to their PKCS#11 mechanism equivalents — all replaceable by softhsmv3 via the statically-linked `C_GetFunctionList`.
+
+### Fixed
+
+- **strongSwan WASM Unreachable crash resolved**: Guarded all pthread stubs (mutex, condvar, rwlock, sigmask) for single-threaded Emscripten mode across `sender.c`, `receiver.c`, `daemon.c`, and `socket_manager.c`. Worker bridge now sets `_wasm_net_sab` before `successCallback` and uses epoch guards to drop stale messages from terminated workers.
+
+### Data
+
+- **strongSwan product catalog updated**: ML-DSA experimental evidence added with 5 proof URLs (6.0.0 release blog, IPsec Workshop 2025 ML-DSA presentation, IETF draft-reddy-ipsecme-ikev2-pqc-auth, What's New docs, Kivicore integration guide). Validation status: VALIDATED.
+- **RAG corpus regenerated**: Updated search index reflecting latest data changes.
 
 ## [2.76.0] - 2026-04-02
 
