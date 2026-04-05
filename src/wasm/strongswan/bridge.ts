@@ -75,7 +75,8 @@ export class StrongSwanEngine {
     configs: Record<string, string>,
     pkcs11Sab: SharedArrayBuffer,
     netSab: SharedArrayBuffer,
-    role: 'initiator' | 'responder'
+    role: 'initiator' | 'responder',
+    psk: string
   ): Worker {
     const worker = new Worker(`/wasm/strongswan_worker.js?v=${Date.now()}`)
     const spawnEpoch = this._epoch // Capture epoch at spawn time
@@ -163,7 +164,7 @@ export class StrongSwanEngine {
       }
     }
 
-    worker.postMessage({ type: 'INIT', payload: { configs, sab: pkcs11Sab, netSab, role } })
+    worker.postMessage({ type: 'INIT', payload: { configs, sab: pkcs11Sab, netSab, role, psk } })
     return worker
   }
 
@@ -171,7 +172,11 @@ export class StrongSwanEngine {
     this._keySpec = { algType, slot0Size, slot1Size }
   }
 
-  public init(initConfigs: Record<string, string>, respConfigs: Record<string, string>) {
+  public init(
+    initConfigs: Record<string, string>,
+    respConfigs: Record<string, string>,
+    pskOpts?: { initPsk: string; respPsk: string }
+  ) {
     if (this.initWorker) return
 
     this._epoch++
@@ -179,6 +184,9 @@ export class StrongSwanEngine {
     this._readyCount = 0
     this._keysReadyCount = 0
     this.packetCount = 0
+
+    const initPsk = pskOpts?.initPsk ?? 'pqc-wasm-demo-key-2026'
+    const respPsk = pskOpts?.respPsk ?? 'pqc-wasm-demo-key-2026'
 
     this.initPkcs11Sab = new SharedArrayBuffer(65536)
     this.respPkcs11Sab = new SharedArrayBuffer(65536)
@@ -189,13 +197,15 @@ export class StrongSwanEngine {
       initConfigs,
       this.initPkcs11Sab,
       this.initNetSab,
-      'initiator'
+      'initiator',
+      initPsk
     )
     this.respWorker = this._spawnWorker(
       respConfigs,
       this.respPkcs11Sab,
       this.respNetSab,
-      'responder'
+      'responder',
+      respPsk
     )
   }
 

@@ -88,6 +88,12 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     verifyHKey: 0,
   })
 
+  // Auth mode: PSK works now, pubkey is future
+  const [authMode, setAuthMode] = useState<'psk' | 'pubkey'>('psk')
+  const [clientPsk, setClientPsk] = useState('pqc-wasm-demo-key-2026')
+  const [serverPsk, setServerPsk] = useState('pqc-wasm-demo-key-2026')
+  const pskMismatch = clientPsk !== serverPsk
+
   // Key Gen State for Client
   const [clientAlg, setClientAlg] = useState('RSA')
   const [clientSize, setClientSize] = useState('65')
@@ -1228,7 +1234,8 @@ conn host-host
 
                   strongSwanEngine.init(
                     { 'strongswan.conf': activeInitConfig, 'ipsec.conf': activeInitIpsec },
-                    { 'strongswan.conf': activeRespConfig, 'ipsec.conf': activeRespIpsec }
+                    { 'strongswan.conf': activeRespConfig, 'ipsec.conf': activeRespIpsec },
+                    { initPsk: clientPsk, respPsk: serverPsk }
                   )
                   setCurrentStep(1)
                 } catch (err: unknown) {
@@ -1372,41 +1379,81 @@ conn host-host
 
               <TabsContent value="client" className="space-y-4">
                 {ssState === 'UNINITIALIZED' && (
-                  <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30">
-                    <div className="text-xs font-semibold mb-2">Client Key Type</div>
-                    <div className="flex gap-2 items-center flex-wrap">
-                      <select
-                        value={clientAlg}
-                        onChange={(e) => setClientAlg(e.target.value)}
-                        className="text-xs px-2 py-1 rounded border border-border bg-background"
-                      >
-                        <option value="ML-DSA">ML-DSA (PQC)</option>
-                        <option value="RSA">RSA (Classical)</option>
-                      </select>
-                      {clientAlg === 'ML-DSA' ? (
+                  <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
+                    <div>
+                      <div className="text-xs font-semibold mb-2">Authentication Mode</div>
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => setAuthMode('psk')}
+                          className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
+                        >
+                          Pre-Shared Key (PSK)
+                        </button>
+                        <button
+                          onClick={() => setAuthMode('pubkey')}
+                          disabled
+                          className="px-3 py-1 rounded text-xs font-medium border bg-muted/30 border-border text-muted-foreground opacity-50 cursor-not-allowed"
+                          title="Public key authentication requires certificate wiring — coming soon"
+                        >
+                          Public Key (RSA / ML-DSA) — soon
+                        </button>
+                      </div>
+                    </div>
+                    {authMode === 'psk' && (
+                      <div>
+                        <div className="text-xs font-semibold mb-1">Client PSK</div>
+                        <input
+                          type="text"
+                          value={clientPsk}
+                          onChange={(e) => setClientPsk(e.target.value)}
+                          className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
+                          placeholder="Pre-shared key"
+                        />
+                        {pskMismatch && (
+                          <p className="text-[10px] text-status-warning mt-1">
+                            PSK does not match server — IKE AUTH will fail
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-xs font-semibold mb-2">Client Key Type</div>
+                      <div className="flex gap-2 items-center flex-wrap">
                         <select
-                          value={clientSize}
-                          onChange={(e) => setClientSize(e.target.value)}
+                          value={clientAlg}
+                          onChange={(e) => setClientAlg(e.target.value)}
                           className="text-xs px-2 py-1 rounded border border-border bg-background"
                         >
-                          <option value="44">ML-DSA-44</option>
-                          <option value="65">ML-DSA-65</option>
-                          <option value="87">ML-DSA-87</option>
+                          <option value="ML-DSA">ML-DSA (PQC)</option>
+                          <option value="RSA">RSA (Classical)</option>
                         </select>
-                      ) : (
-                        <select
-                          value={clientClassAlg}
-                          onChange={(e) => setClientClassAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
-                        >
-                          <option value="RSA-2048">RSA-2048</option>
-                          <option value="RSA-3072">RSA-3072</option>
-                          <option value="RSA-4096">RSA-4096</option>
-                        </select>
-                      )}
-                      <span className="text-[10px] text-muted-foreground">
-                        Keys generated in worker HSM on Start Daemon
-                      </span>
+                        {clientAlg === 'ML-DSA' ? (
+                          <select
+                            value={clientSize}
+                            onChange={(e) => setClientSize(e.target.value)}
+                            className="text-xs px-2 py-1 rounded border border-border bg-background"
+                          >
+                            <option value="44">ML-DSA-44</option>
+                            <option value="65">ML-DSA-65</option>
+                            <option value="87">ML-DSA-87</option>
+                          </select>
+                        ) : (
+                          <select
+                            value={clientClassAlg}
+                            onChange={(e) => setClientClassAlg(e.target.value)}
+                            className="text-xs px-2 py-1 rounded border border-border bg-background"
+                          >
+                            <option value="RSA-2048">RSA-2048</option>
+                            <option value="RSA-3072">RSA-3072</option>
+                            <option value="RSA-4096">RSA-4096</option>
+                          </select>
+                        )}
+                        <span className="text-[10px] text-muted-foreground">
+                          {authMode === 'psk'
+                            ? 'HSM keys generated but not used for PSK auth'
+                            : 'Keys generated in worker HSM on Start Daemon'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1416,7 +1463,7 @@ conn host-host
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
                     <span className="font-semibold">Client Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">
-                      leftauth=pubkey
+                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-slate-800 font-mono">
@@ -1452,41 +1499,62 @@ conn host-host
 
               <TabsContent value="server" className="space-y-4">
                 {ssState === 'UNINITIALIZED' && (
-                  <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30">
-                    <div className="text-xs font-semibold mb-2">Server Key Type</div>
-                    <div className="flex gap-2 items-center flex-wrap">
-                      <select
-                        value={serverAlg}
-                        onChange={(e) => setServerAlg(e.target.value)}
-                        className="text-xs px-2 py-1 rounded border border-border bg-background"
-                      >
-                        <option value="ML-DSA">ML-DSA (PQC)</option>
-                        <option value="RSA">RSA (Classical)</option>
-                      </select>
-                      {serverAlg === 'ML-DSA' ? (
+                  <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
+                    {authMode === 'psk' && (
+                      <div>
+                        <div className="text-xs font-semibold mb-1">Server PSK</div>
+                        <input
+                          type="text"
+                          value={serverPsk}
+                          onChange={(e) => setServerPsk(e.target.value)}
+                          className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
+                          placeholder="Pre-shared key"
+                        />
+                        {pskMismatch && (
+                          <p className="text-[10px] text-status-warning mt-1">
+                            PSK does not match client — IKE AUTH will fail
+                          </p>
+                        )}
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-xs font-semibold mb-2">Server Key Type</div>
+                      <div className="flex gap-2 items-center flex-wrap">
                         <select
-                          value={serverSize}
-                          onChange={(e) => setServerSize(e.target.value)}
+                          value={serverAlg}
+                          onChange={(e) => setServerAlg(e.target.value)}
                           className="text-xs px-2 py-1 rounded border border-border bg-background"
                         >
-                          <option value="44">ML-DSA-44</option>
-                          <option value="65">ML-DSA-65</option>
-                          <option value="87">ML-DSA-87</option>
+                          <option value="ML-DSA">ML-DSA (PQC)</option>
+                          <option value="RSA">RSA (Classical)</option>
                         </select>
-                      ) : (
-                        <select
-                          value={serverClassAlg}
-                          onChange={(e) => setServerClassAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
-                        >
-                          <option value="RSA-2048">RSA-2048</option>
-                          <option value="RSA-3072">RSA-3072</option>
-                          <option value="RSA-4096">RSA-4096</option>
-                        </select>
-                      )}
-                      <span className="text-[10px] text-muted-foreground">
-                        Keys generated in worker HSM on Start Daemon
-                      </span>
+                        {serverAlg === 'ML-DSA' ? (
+                          <select
+                            value={serverSize}
+                            onChange={(e) => setServerSize(e.target.value)}
+                            className="text-xs px-2 py-1 rounded border border-border bg-background"
+                          >
+                            <option value="44">ML-DSA-44</option>
+                            <option value="65">ML-DSA-65</option>
+                            <option value="87">ML-DSA-87</option>
+                          </select>
+                        ) : (
+                          <select
+                            value={serverClassAlg}
+                            onChange={(e) => setServerClassAlg(e.target.value)}
+                            className="text-xs px-2 py-1 rounded border border-border bg-background"
+                          >
+                            <option value="RSA-2048">RSA-2048</option>
+                            <option value="RSA-3072">RSA-3072</option>
+                            <option value="RSA-4096">RSA-4096</option>
+                          </select>
+                        )}
+                        <span className="text-[10px] text-muted-foreground">
+                          {authMode === 'psk'
+                            ? 'HSM keys generated but not used for PSK auth'
+                            : 'Keys generated in worker HSM on Start Daemon'}
+                        </span>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -1496,7 +1564,7 @@ conn host-host
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
                     <span className="font-semibold">Server Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-secondary/20 text-secondary px-2 py-0.5 rounded">
-                      rightauth=pubkey
+                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-slate-800 font-mono">
