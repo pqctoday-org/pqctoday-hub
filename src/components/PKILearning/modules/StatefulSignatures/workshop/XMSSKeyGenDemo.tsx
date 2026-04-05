@@ -10,12 +10,26 @@ import {
   formatBytes,
   type XMSSParameterSet,
 } from '../data/statefulSigsConstants'
-import { CKM_XMSS_KEY_PAIR_GEN, CKK_XMSS, CKM_XMSS } from '@/wasm/softhsm/constants'
+import {
+  CKM_XMSS_KEY_PAIR_GEN,
+  CKK_XMSS,
+  CKM_XMSS,
+  CKP_XMSS_SHA2_10_256,
+  CKP_XMSS_SHA2_16_256,
+  CKP_XMSS_SHA2_20_256,
+} from '@/wasm/softhsm/constants'
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
+import type { UseHSMResult } from '@/hooks/useHSM'
+
+interface SignatureBreakdown {
+  xmssPayload: string
+  authPath: string
+  totalSize: number
+}
 
 interface XMSSKeyGenDemoProps {
   initialParamId?: string
-  hsm: any // Pass the active parent HSM instance
+  hsm: UseHSMResult
 }
 
 export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
@@ -29,11 +43,11 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   // Interactive State
   const [isGenerating, setIsGenerating] = useState(false)
   const [activeKeyHandle, setActiveKeyHandle] = useState<number | null>(null)
-  
+
   // Signing State
   const [messageToSign, setMessageToSign] = useState<string>('Hello PQC World')
   const [signatureHex, setSignatureHex] = useState<string | null>(null)
-  const [signatureBreakdown, setSignatureBreakdown] = useState<any | null>(null)
+  const [signatureBreakdown, setSignatureBreakdown] = useState<SignatureBreakdown | null>(null)
 
   const displayParams = useMemo(() => {
     if (showAllParams) return XMSS_PARAMETER_SETS
@@ -58,25 +72,31 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
     if (!hsm.isReady || !hsm.hSessionRef.current || !hsm.moduleRef.current) return
     setIsGenerating(true)
     try {
-      await new Promise(r => setTimeout(r, 100))
-      
+      await new Promise((r) => setTimeout(r, 100))
+
       const { privHandle } = hsm_generateStatefulKeyPair(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
         CKM_XMSS_KEY_PAIR_GEN,
         CKK_XMSS,
-        selected.treeHeight === 10 ? 1 /* CKP_XMSS_SHA2_10_256 */ : 1
+        selected.treeHeight === 10
+          ? CKP_XMSS_SHA2_10_256
+          : selected.treeHeight === 16
+            ? CKP_XMSS_SHA2_16_256
+            : selected.treeHeight === 20
+              ? CKP_XMSS_SHA2_20_256
+              : CKP_XMSS_SHA2_10_256
       )
-      
+
       setActiveKeyHandle(privHandle)
       hsm.addKey({
         handle: privHandle,
-        family: 'slh-dsa' as any, // Mapped for display 
+        family: 'slh-dsa',
         role: 'private',
         label: `XMSS Key (${selected.name})`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e)
     } finally {
       setIsGenerating(false)
@@ -84,10 +104,11 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   }, [hsm, selected])
 
   const handleSign = useCallback(() => {
-    if (!hsm.isReady || !activeKeyHandle || !hsm.moduleRef.current || !hsm.hSessionRef.current) return
+    if (!hsm.isReady || !activeKeyHandle || !hsm.moduleRef.current || !hsm.hSessionRef.current)
+      return
     try {
       const msgBytes = new TextEncoder().encode(messageToSign)
-      
+
       const sig = hsm_statefulSignBytes(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
@@ -99,17 +120,17 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
       if (sig.length > 0) {
         const hex = Buffer.from(sig).toString('hex')
         setSignatureHex(hex)
-        
+
         setSignatureBreakdown({
           totalSize: sig.length,
           xmssPayload: hex.substring(0, 100) + '...',
           authPath: hex.substring(100, 200) + '...',
         })
       }
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e)
     }
-  }, [hsm, activeKeyHandle, messageToSign, selected])
+  }, [hsm, activeKeyHandle, messageToSign])
 
   return (
     <div className="space-y-6">
@@ -255,13 +276,15 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
           )}
 
           <div className="mt-6 pt-4 border-t border-border">
-            <Button 
-               onClick={handleGenerateKey} 
-               disabled={!hsm.isReady || isGenerating} 
-               className="w-full font-bold bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+            <Button
+              onClick={handleGenerateKey}
+              disabled={!hsm.isReady || isGenerating}
+              className="w-full font-bold bg-secondary hover:bg-secondary/90 text-secondary-foreground"
             >
-               <Key className="mr-2 h-4 w-4" />
-               {isGenerating ? 'Generating Merkle Tree...' : `Generate ${selected.variant === 'multi-tree' ? 'MT' : 'XMSS'} Key`}
+              <Key className="mr-2 h-4 w-4" />
+              {isGenerating
+                ? 'Generating Merkle Tree...'
+                : `Generate ${selected.variant === 'multi-tree' ? 'MT' : 'XMSS'} Key`}
             </Button>
           </div>
         </div>
@@ -383,49 +406,72 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
       </div>
 
       {activeKeyHandle && (
-         <div className="p-6 border border-secondary/30 bg-secondary/5 rounded-lg space-y-6 mt-6">
-            <h3 className="text-lg font-bold flex items-center gap-2">
-               <PenLine className="h-5 w-5" /> Interactive Signature Dashboard
-            </h3>
-            <div className="grid grid-cols-2 gap-6">
-               <div className="space-y-4">
-                  <div className="space-y-2">
-                     <label className="text-xs font-bold text-muted-foreground">Input Data (String)</label>
-                     <input type="text" value={messageToSign} onChange={(e) => setMessageToSign(e.target.value)}
-                         className="w-full bg-background border border-input rounded px-3 py-2 text-sm" />
-                  </div>
-                  <div className="space-y-2">
-                     <label className="text-xs font-bold text-muted-foreground">Pre-Signature Breakdown (Hex)</label>
-                     <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-border/50 break-all whitespace-pre-wrap">
-                        {Buffer.from(messageToSign).toString('hex')}
-                     </pre>
-                  </div>
-                  <Button onClick={handleSign} className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground">
-                     <PenLine className="mr-2 h-4 w-4"/> Sign with CKM_XMSS
-                  </Button>
-               </div>
-
-               {signatureHex && (
-                  <div className="space-y-4">
-                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-success">Signature Payload ({signatureHex.length / 2} bytes)</label>
-                        <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-success/30 break-all whitespace-pre-wrap h-32 overflow-y-auto">
-                           {signatureHex}
-                        </pre>
-                     </div>
-                     <div className="space-y-2">
-                        <label className="text-xs font-bold text-muted-foreground">Decoded Format</label>
-                        <div className="bg-background border border-border rounded p-3 text-[10px] space-y-1 font-mono">
-                           <div className="text-muted-foreground mt-2 border-t border-border pt-1">XMSS WOTS+ Payload Signature</div>
-                           <div className="break-all opacity-70 mb-2">{signatureBreakdown.xmssPayload}</div>
-                           <div className="text-muted-foreground border-t border-border pt-1">Authentication Path (Nodes)</div>
-                           <div className="break-all opacity-70">{signatureBreakdown.authPath}</div>
-                        </div>
-                     </div>
-                  </div>
-               )}
+        <div className="p-6 border border-secondary/30 bg-secondary/5 rounded-lg space-y-6 mt-6">
+          <h3 className="text-lg font-bold flex items-center gap-2">
+            <PenLine className="h-5 w-5" /> Interactive Signature Dashboard
+          </h3>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <label
+                  htmlFor="xmss-sign-input"
+                  className="text-xs font-bold text-muted-foreground"
+                >
+                  Input Data (String)
+                </label>
+                <input
+                  id="xmss-sign-input"
+                  type="text"
+                  value={messageToSign}
+                  onChange={(e) => setMessageToSign(e.target.value)}
+                  className="w-full bg-background border border-input rounded px-3 py-2 text-sm"
+                />
+              </div>
+              <div className="space-y-2">
+                <span className="text-xs font-bold text-muted-foreground">
+                  Pre-Signature Breakdown (Hex)
+                </span>
+                <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-border/50 break-all whitespace-pre-wrap">
+                  {Buffer.from(messageToSign).toString('hex')}
+                </pre>
+              </div>
+              <Button
+                onClick={handleSign}
+                className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
+              >
+                <PenLine className="mr-2 h-4 w-4" /> Sign with CKM_XMSS
+              </Button>
             </div>
-         </div>
+
+            {signatureHex && (
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-success">
+                    Signature Payload ({signatureHex.length / 2} bytes)
+                  </span>
+                  <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-success/30 break-all whitespace-pre-wrap h-32 overflow-y-auto">
+                    {signatureHex}
+                  </pre>
+                </div>
+                <div className="space-y-2">
+                  <span className="text-xs font-bold text-muted-foreground">Decoded Format</span>
+                  <div className="bg-background border border-border rounded p-3 text-[10px] space-y-1 font-mono">
+                    <div className="text-muted-foreground mt-2 border-t border-border pt-1">
+                      XMSS WOTS+ Payload Signature
+                    </div>
+                    <div className="break-all opacity-70 mb-2">
+                      {signatureBreakdown.xmssPayload}
+                    </div>
+                    <div className="text-muted-foreground border-t border-border pt-1">
+                      Authentication Path (Nodes)
+                    </div>
+                    <div className="break-all opacity-70">{signatureBreakdown.authPath}</div>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       )}
     </div>
   )

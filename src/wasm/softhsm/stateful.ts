@@ -27,7 +27,6 @@ import {
   CKA_DECRYPT,
   CKA_UNWRAP,
   CKA_DERIVE,
-  CKA_PARAMETER_SET,
   // Standard HSS attributes (PKCS#11 v3.2 §6.14)
   CKA_HSS_LEVELS,
   CKA_HSS_LMS_TYPE,
@@ -65,23 +64,16 @@ import {
 
 // ── LMS/HSS signature size helpers ───────────────────────────────────────────
 
-/** Map CKP_LMS_SHA256_M32_H* value to tree height H. */
+/** Map any LMS IANA type ID to tree height H.
+ *  0x05–0x09: SHA-256 N32, 0x0A–0x0E: SHA-256 N24,
+ *  0x0F–0x13: SHAKE N32,  0x14–0x18: SHAKE N24 */
 export const lmsTypeToHeight = (lmsType: number): number => {
-  // RFC 8554 §5.1 LMS type codes: H5=5, H10=6, H15=7, H20=8, H25=9
-  switch (lmsType) {
-    case 5:
-      return 5
-    case 6:
-      return 10
-    case 7:
-      return 15
-    case 8:
-      return 20
-    case 9:
-      return 25
-    default:
-      return 5
-  }
+  const heights = [5, 10, 15, 20, 25]
+  if (lmsType >= 0x05 && lmsType <= 0x09) return heights[lmsType - 0x05]
+  if (lmsType >= 0x0a && lmsType <= 0x0e) return heights[lmsType - 0x0a]
+  if (lmsType >= 0x0f && lmsType <= 0x13) return heights[lmsType - 0x0f]
+  if (lmsType >= 0x14 && lmsType <= 0x18) return heights[lmsType - 0x14]
+  return 5
 }
 
 /** Max leaves for an LMS type (2^H). */

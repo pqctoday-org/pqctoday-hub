@@ -174,19 +174,52 @@ export const CKA_HSS_LMS_TYPES = 0x0000061a // packed CK_ULONG[] for multi-level
 export const CKA_HSS_LMOTS_TYPES = 0x0000061b // packed CK_ULONG[] for multi-level
 export const CKA_HSS_KEYS_REMAINING = 0x0000061c // remaining signature operations
 
-// LMS parameter set values (RFC 8554 §5.1 — tree height naming)
-// Used as CKA_HSS_LMS_TYPE / CKA_HSS_LMS_TYPES values
-export const CKP_LMS_SHA256_M32_H5 = 5
-export const CKP_LMS_SHA256_M32_H10 = 6
-export const CKP_LMS_SHA256_M32_H15 = 7
-export const CKP_LMS_SHA256_M32_H20 = 8
-export const CKP_LMS_SHA256_M32_H25 = 9
+// LMS parameter set values — IANA registry type IDs (RFC 8554 + SP 800-208)
+// https://www.iana.org/assignments/leighton-micali-signatures/
+export const CKP_LMS_SHA256_M32_H5 = 0x05
+export const CKP_LMS_SHA256_M32_H10 = 0x06
+export const CKP_LMS_SHA256_M32_H15 = 0x07
+export const CKP_LMS_SHA256_M32_H20 = 0x08
+export const CKP_LMS_SHA256_M32_H25 = 0x09
+// SP 800-208 §4 — SHA-256 N24 (192-bit truncated)
+export const CKP_LMS_SHA256_M24_H5 = 0x0a
+export const CKP_LMS_SHA256_M24_H10 = 0x0b
+export const CKP_LMS_SHA256_M24_H15 = 0x0c
+export const CKP_LMS_SHA256_M24_H20 = 0x0d
+export const CKP_LMS_SHA256_M24_H25 = 0x0e
+// SP 800-208 §4 — SHAKE-256 N32
+export const CKP_LMS_SHAKE_M32_H5 = 0x0f
+export const CKP_LMS_SHAKE_M32_H10 = 0x10
+export const CKP_LMS_SHAKE_M32_H15 = 0x11
+export const CKP_LMS_SHAKE_M32_H20 = 0x12
+export const CKP_LMS_SHAKE_M32_H25 = 0x13
+// SP 800-208 §4 — SHAKE-256 N24
+export const CKP_LMS_SHAKE_M24_H5 = 0x14
+export const CKP_LMS_SHAKE_M24_H10 = 0x15
+export const CKP_LMS_SHAKE_M24_H15 = 0x16
+export const CKP_LMS_SHAKE_M24_H20 = 0x17
+export const CKP_LMS_SHAKE_M24_H25 = 0x18
 
-// LMOTS parameter set values (RFC 8554 §4.2)
-export const CKP_LMOTS_SHA256_N32_W1 = 1
-export const CKP_LMOTS_SHA256_N32_W2 = 2
-export const CKP_LMOTS_SHA256_N32_W4 = 4
-export const CKP_LMOTS_SHA256_N32_W8 = 8
+// LMOTS parameter set values — IANA registry type IDs (RFC 8554 + SP 800-208)
+export const CKP_LMOTS_SHA256_N32_W1 = 0x01
+export const CKP_LMOTS_SHA256_N32_W2 = 0x02
+export const CKP_LMOTS_SHA256_N32_W4 = 0x03
+export const CKP_LMOTS_SHA256_N32_W8 = 0x04
+// SP 800-208 §4 — SHA-256 N24
+export const CKP_LMOTS_SHA256_N24_W1 = 0x05
+export const CKP_LMOTS_SHA256_N24_W2 = 0x06
+export const CKP_LMOTS_SHA256_N24_W4 = 0x07
+export const CKP_LMOTS_SHA256_N24_W8 = 0x08
+// SP 800-208 §4 — SHAKE-256 N32
+export const CKP_LMOTS_SHAKE_N32_W1 = 0x09
+export const CKP_LMOTS_SHAKE_N32_W2 = 0x0a
+export const CKP_LMOTS_SHAKE_N32_W4 = 0x0b
+export const CKP_LMOTS_SHAKE_N32_W8 = 0x0c
+// SP 800-208 §4 — SHAKE-256 N24
+export const CKP_LMOTS_SHAKE_N24_W1 = 0x0d
+export const CKP_LMOTS_SHAKE_N24_W2 = 0x0e
+export const CKP_LMOTS_SHAKE_N24_W4 = 0x0f
+export const CKP_LMOTS_SHAKE_N24_W8 = 0x10
 
 // XMSS parameter set values (RFC 8391 §5.3 — OID-derived integers)
 export const CKP_XMSS_SHA2_10_256 = 0x00000001
@@ -215,18 +248,27 @@ export const CKP_XMSSMT_SHA2_60_12_256 = 0x00000008
 // Standard PKCS#11 v3.2 error code (key state exhausted)
 export const CKR_KEY_EXHAUSTED = 0x00000203
 
-// LMS/HSS signature sizes (RFC 8554) — indexed by [lmsType][lmotsType]
-// LMOTS sig = 4+32+p*32; LMS sig = 4+lmots_sig+4+h*32
+// LMS/HSS signature sizes (RFC 8554) — indexed by [lmsTypeIANA][lmotsTypeIANA]
+// LMOTS sig = 4 + n + p*n; LMS sig = 4 + lmots_sig + 4 + h*n
+// SHA-256 N32: keyed by IANA LMS IDs (0x05–0x09) × IANA LMOTS IDs (0x01–0x04)
 export const LMS_SIG_BYTES: Record<number, Record<number, number>> = {
-  [5]: { 1: 8649, 2: 4457, 4: 2313, 8: 1257 }, // H5
-  [10]: { 1: 8809, 2: 4617, 4: 2473, 8: 1417 }, // H10
-  [15]: { 1: 8969, 2: 4777, 4: 2633, 8: 1577 }, // H15
-  [20]: { 1: 9129, 2: 4937, 4: 2793, 8: 1737 }, // H20
-  [25]: { 1: 9289, 2: 5097, 4: 2953, 8: 1897 }, // H25
+  [0x05]: { 0x01: 8649, 0x02: 4457, 0x03: 2313, 0x04: 1257 }, // H5  N32
+  [0x06]: { 0x01: 8809, 0x02: 4617, 0x03: 2473, 0x04: 1417 }, // H10 N32
+  [0x07]: { 0x01: 8969, 0x02: 4777, 0x03: 2633, 0x04: 1577 }, // H15 N32
+  [0x08]: { 0x01: 9129, 0x02: 4937, 0x03: 2793, 0x04: 1737 }, // H20 N32
+  [0x09]: { 0x01: 9289, 0x02: 5097, 0x03: 2953, 0x04: 1897 }, // H25 N32
+  // SHA-256 N24: sig = 4 + 24 + p*24 + 4 + h*24
+  [0x0a]: { 0x05: 5004, 0x06: 2596, 0x07: 1380, 0x08: 784 }, // H5  N24
+  [0x0b]: { 0x05: 5124, 0x06: 2716, 0x07: 1500, 0x08: 904 }, // H10 N24
+  [0x0c]: { 0x05: 5244, 0x06: 2836, 0x07: 1620, 0x08: 1024 }, // H15 N24
+  [0x0d]: { 0x05: 5364, 0x06: 2956, 0x07: 1740, 0x08: 1144 }, // H20 N24
+  [0x0e]: { 0x05: 5484, 0x06: 3076, 0x07: 1860, 0x08: 1264 }, // H25 N24
 }
 
-/** LMS public key size is always 52 bytes (typecode=4 + I=16 + T[1]=32). */
-export const LMS_PUB_BYTES = 52
+/** LMS public key size: N32 = 56 bytes (type=4 + otsType=4 + I=16 + T[1]=32), N24 = 48 bytes. */
+export const LMS_PUB_BYTES_N32 = 56
+export const LMS_PUB_BYTES_N24 = 48
+export const LMS_PUB_BYTES = LMS_PUB_BYTES_N32 // default for backwards compat
 
 // Keccak-256 — vendor extension (no standard PKCS#11 v3.2 equivalent for Keccak-256)
 // Used exclusively by the Rust engine for Ethereum address derivation (G11).

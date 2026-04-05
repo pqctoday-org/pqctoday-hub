@@ -6,6 +6,26 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.78.0] - 2026-04-05
+
+### Added
+
+- **IKEv2 ECDH + RNG through softhsmv3 — zero OpenSSL**: The VPN simulation now routes all ECDH key exchange (`CKM_ECDH1_DERIVE`) and random number generation (`C_GenerateRandom`) through the statically-linked softhsmv3 PKCS#11 module inside the charon WASM worker. The OpenSSL plugin is no longer loaded for IKE crypto — softhsmv3 is the sole crypto provider.
+- **PKCS#11 logging wrapper for IKEv2**: A C-side `EM_ASM` logging wrapper captures all real `C_*` calls (GenerateKeyPair, DeriveKey, GenerateRandom, SignInit, Sign) during the IKE handshake. Configurable via `WASM_PKCS11_LOG` environment variable.
+- **Full IANA LMS/LMOTS parameter registry**: Expanded `constants.ts` from 9 LMS + 4 LMOTS constants to the complete IANA registry — 20 LMS types (SHA-256 N32, SHA-256 N24, SHAKE N32, SHAKE N24) and 16 LMOTS types, with correct IANA type IDs and signature size tables for all N24 variants.
+- **IKEv2 ↔ softhsmv3 RPC implementation plan**: Detailed analysis (`ikev2softhsmv3rpc.md`) for replacing the static C→C PKCS#11 path with SAB-based RPC so every `C_*` call from charon routes through the main thread's softhsmv3 instance, populating the PKCS#11 log panel and keys section.
+
+### Fixed
+
+- **LMS workshop magic numbers replaced with PKCS#11 constants**: `LMSKeyGenDemo`, `XMSSKeyGenDemo`, and `StateManagementVisualizer` now import and use proper `CKP_LMS_SHA256_M32_H*`, `CKP_XMSS_SHA2_*_256`, `CKM_HSS`, `CKM_HSS_KEY_PAIR_GEN` constants instead of hardcoded numeric literals. XMSS keygen now correctly maps H10/H16/H20 to their respective `CKP_*` OIDs.
+- **LMOTS W4 constant corrected**: `CKP_LMOTS_SHA256_N32_W4` was `4` (wrong), now `0x03` per IANA registry — fixes signature size lookups for the W4 Winternitz parameter.
+- **`lmsTypeToHeight` generalized**: Handles all 4 LMS families (20 IANA type IDs) instead of only SHA-256 N32.
+
+### Changed
+
+- **softhsmv3 WASM binaries rebuilt (C++ 0.4.7 + Rust)**: Both `public/wasm/softhsm.{js,wasm}` and `src/vendor/softhsm-wasm/wasm/` updated with full IANA LMS/LMOTS support. Rust engine binaries (`softhsmrustv3.*`) vendored for the first time.
+- **RAG corpus regenerated**: Updated search index.
+
 ## [2.77.0] - 2026-04-05
 
 ### Added

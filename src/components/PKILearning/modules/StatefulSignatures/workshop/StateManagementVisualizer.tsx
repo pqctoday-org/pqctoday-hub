@@ -6,6 +6,7 @@ import {
   formatSignatureCount,
   type LMSParameterSet,
 } from '../data/statefulSigsConstants'
+import type { UseHSMResult } from '@/hooks/useHSM'
 
 const DEMO_PARAMS = [
   { id: 'lms-h5-w8', label: 'H5 (32 sigs)', maxSigs: 32 },
@@ -22,7 +23,7 @@ interface SignatureLogEntry {
 }
 
 interface StateManagementVisualizerProps {
-  hsm?: any
+  hsm?: UseHSMResult
 }
 
 export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps> = ({ hsm }) => {
@@ -48,67 +49,73 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
     if (!hsm || !hsm.isReady || !hsm.hSessionRef?.current || !hsm.moduleRef?.current) return null
     try {
       const { hsm_generateStatefulKeyPair } = await import('@/wasm/softhsm/pqc')
+      const { CKM_HSS_KEY_PAIR_GEN, CKK_HSS, CKP_LMS_SHA256_M32_H5 } =
+        await import('@/wasm/softhsm/constants')
       const { privHandle } = hsm_generateStatefulKeyPair(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
-        0x80000001, // CKM_LMS_KEY_PAIR_GEN
-        0x80000001, // CKK_LMS
-        0x00000005  // CKP_LMS_SHA256_M32_H5
+        CKM_HSS_KEY_PAIR_GEN,
+        CKK_HSS,
+        CKP_LMS_SHA256_M32_H5
       )
       return privHandle
-    } catch (e: any) {
+    } catch (e: unknown) {
       console.error(e)
       return null
     }
   }, [hsm])
 
-  const signBackend = useCallback(async (handle: number) => {
-    if (!hsm || !hsm.isReady || !hsm.moduleRef?.current) return false
-    try {
-      const { hsm_statefulSignBytes, hsm_getKeysRemaining } = await import('@/wasm/softhsm/pqc')
-      hsm_statefulSignBytes(
-        hsm.moduleRef.current,
-        hsm.hSessionRef.current,
-        0x80000002, // CKM_LMS
-        handle,
-        new Uint8Array([1, 2, 3])
-      )
-      const remainingBytes = hsm_getKeysRemaining(
-        hsm.moduleRef.current, 
-        hsm.hSessionRef.current, 
-        handle
-      )
-      return { success: true, remaining: remainingBytes ?? 0 }
-    } catch (e: any) {
-      if (e.message?.includes('0x00000203') || e.message?.includes('CKR_KEY_EXHAUSTED')) {
-        return { success: false, remaining: 0 }
+  const signBackend = useCallback(
+    async (handle: number) => {
+      if (!hsm || !hsm.isReady || !hsm.moduleRef?.current) return false
+      try {
+        const { hsm_statefulSignBytes, hsm_getKeysRemaining } = await import('@/wasm/softhsm/pqc')
+        hsm_statefulSignBytes(
+          hsm.moduleRef.current,
+          hsm.hSessionRef.current,
+          0x00004033, // CKM_HSS (PKCS#11 v3.2 §6.14)
+          handle,
+          new Uint8Array([1, 2, 3])
+        )
+        const remainingBytes = hsm_getKeysRemaining(
+          hsm.moduleRef.current,
+          hsm.hSessionRef.current,
+          handle
+        )
+        return { success: true, remaining: remainingBytes ?? 0 }
+      } catch (e: unknown) {
+        const msg = e instanceof Error ? e.message : String(e)
+        if (msg.includes('0x00000203') || msg.includes('CKR_KEY_EXHAUSTED')) {
+          return { success: false, remaining: 0 }
+        }
+        throw e
       }
-      throw e
-    }
-  }, [hsm])
+    },
+    [hsm]
+  )
 
   const handleSign = useCallback(async () => {
     if (isExhausted) return
 
     let currentHandle = activeKeyHandle
     if (!currentHandle) {
-       currentHandle = await generateBackendKey()
-       setActiveKeyHandle(currentHandle)
+      currentHandle = await generateBackendKey()
+      setActiveKeyHandle(currentHandle)
     }
     if (!currentHandle) return
 
     const result = await signBackend(currentHandle)
-    
+
     if (!result || !result.success) {
       setIsExhausted(true)
       return
     }
 
-    // Instead of raw manual mock counter, we determine current signatures 
+    // Instead of raw manual mock counter, we determine current signatures
     // strictly from what WASM tells us is remaining!
     const backendRemaining = result.remaining
     const newCounter = maxSigs - backendRemaining
-    
+
     const newEntry: SignatureLogEntry = {
       index: counter,
       message: `Document_${String(newCounter).padStart(4, '0')}.pdf`,
@@ -129,23 +136,23 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
       let currentHandle = activeKeyHandle
       if (!currentHandle) {
-         currentHandle = await generateBackendKey()
-         setActiveKeyHandle(currentHandle)
+        currentHandle = await generateBackendKey()
+        setActiveKeyHandle(currentHandle)
       }
       if (!currentHandle) return
 
       const actualCount = Math.min(count, remainingSigs)
       let successCount = 0
       let lastRemaining = remainingSigs
-      
+
       for (let i = 0; i < actualCount; i++) {
-         const result = await signBackend(currentHandle)
-         if (!result || !result.success) {
-            setIsExhausted(true)
-            break
-         }
-         successCount++
-         lastRemaining = result.remaining
+        const result = await signBackend(currentHandle)
+        if (!result || !result.success) {
+          setIsExhausted(true)
+          break
+        }
+        successCount++
+        lastRemaining = result.remaining
       }
 
       const newCounter = maxSigs - lastRemaining
