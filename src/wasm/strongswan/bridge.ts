@@ -11,11 +11,11 @@ export interface Pkcs11RpcCallback {
   (sab: SharedArrayBuffer, role: 'initiator' | 'responder'): void
 }
 
-const RESPONDER_IP_U32 = 0xC0A80002 // 192.168.0.2
+const RESPONDER_IP_U32 = 0xc0a80002 // 192.168.0.2
 
 export class StrongSwanEngine {
-  private initWorker: Worker | null = null   // 192.168.0.1
-  private respWorker: Worker | null = null   // 192.168.0.2
+  private initWorker: Worker | null = null // 192.168.0.1
+  private respWorker: Worker | null = null // 192.168.0.2
 
   private initPkcs11Sab: SharedArrayBuffer | null = null
   private respPkcs11Sab: SharedArrayBuffer | null = null
@@ -31,7 +31,12 @@ export class StrongSwanEngine {
   private state: StrongSwanState = 'UNINITIALIZED'
   private _readyCount = 0
   private _keysReadyCount = 0
-  private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = { algType: 1, slot0Size: 3072, slot1Size: 3072 }
+  private _epoch = 0 // Guards against late messages from terminated workers
+  private _keySpec: { algType: number; slot0Size: number; slot1Size: number } = {
+    algType: 1,
+    slot0Size: 3072,
+    slot1Size: 3072,
+  }
 
   constructor() {}
 
@@ -73,8 +78,11 @@ export class StrongSwanEngine {
     role: 'initiator' | 'responder'
   ): Worker {
     const worker = new Worker(`/wasm/strongswan_worker.js?v=${Date.now()}`)
+    const spawnEpoch = this._epoch // Capture epoch at spawn time
 
     worker.onmessage = (e) => {
+      // Drop messages from workers belonging to a previous session
+      if (spawnEpoch !== this._epoch) return
       const { type, payload } = e.data
       switch (type) {
         case 'LOG':
@@ -84,7 +92,10 @@ export class StrongSwanEngine {
           if (this.rpcHandler) {
             this.rpcHandler(pkcs11Sab, role)
           } else {
-            this.dispatchLog({ level: 'error', text: '[RPC] Received PKCS11_RPC but no handler is configured!' })
+            this.dispatchLog({
+              level: 'error',
+              text: '[RPC] Received PKCS11_RPC but no handler is configured!',
+            })
           }
           break
         case 'READY':
@@ -93,14 +104,20 @@ export class StrongSwanEngine {
             // Both workers loaded WASM. Generate keys, then start daemons.
             const keySpec = this._keySpec
             const algName = keySpec.algType === 1 ? 'RSA' : 'ML-DSA'
-            this.dispatchLog({ level: 'info', text: `[BRIDGE] Both workers ready. Generating keys (${algName}-${keySpec.slot0Size}/${keySpec.slot1Size})...` })
+            this.dispatchLog({
+              level: 'info',
+              text: `[BRIDGE] Both workers ready. Generating keys (${algName}-${keySpec.slot0Size}/${keySpec.slot1Size})...`,
+            })
             this.initWorker?.postMessage({ type: 'GEN_KEYS', payload: keySpec })
             this.respWorker?.postMessage({ type: 'GEN_KEYS', payload: keySpec })
           }
           break
         case 'KEYS_READY':
           this._keysReadyCount = (this._keysReadyCount || 0) + 1
-          this.dispatchLog({ level: 'info', text: `[BRIDGE] ${role} keys ready (${this._keysReadyCount}/2)` })
+          this.dispatchLog({
+            level: 'info',
+            text: `[BRIDGE] ${role} keys ready (${this._keysReadyCount}/2)`,
+          })
           if (this._keysReadyCount === 2) {
             this.dispatchLog({ level: 'info', text: '[BRIDGE] Starting charon daemons...' })
             this.initWorker?.postMessage({ type: 'START' })
@@ -114,12 +131,15 @@ export class StrongSwanEngine {
           break
         case 'PACKET_OUT': {
           const { srcIp, srcPort, destIp, data } = payload
-          const destIsResponder = (destIp >>> 0) === RESPONDER_IP_U32
+          const destIsResponder = destIp >>> 0 === RESPONDER_IP_U32
           const targetSab = destIsResponder ? this.respNetSab : this.initNetSab
           const target = destIsResponder ? 'responder' : 'initiator'
           const destIpStr = `${(destIp >>> 24) & 0xff}.${(destIp >> 16) & 0xff}.${(destIp >> 8) & 0xff}.${destIp & 0xff}`
           if (!targetSab) {
-            this.dispatchLog({ level: 'error', text: `[ROUTE] PACKET_OUT → ${destIpStr} but ${target} SAB is null — dropping` })
+            this.dispatchLog({
+              level: 'error',
+              text: `[ROUTE] PACKET_OUT → ${destIpStr} but ${target} SAB is null — dropping`,
+            })
             break
           }
 
@@ -131,10 +151,13 @@ export class StrongSwanEngine {
           i32[2] = srcIp
           i32[3] = srcPort
           bytes.set(pkt, 16)
-          Atomics.store(i32, 0, 1)      // PACKET_READY
-          Atomics.notify(i32, 0, 1)     // wake blocked poll/recvfrom
+          Atomics.store(i32, 0, 1) // PACKET_READY
+          Atomics.notify(i32, 0, 1) // wake blocked poll/recvfrom
           this.packetCount++
-          this.dispatchLog({ level: 'info', text: `[ROUTE] pkt #${this.packetCount} → ${target} (${destIpStr}) len=${pkt.length}` })
+          this.dispatchLog({
+            level: 'info',
+            text: `[ROUTE] pkt #${this.packetCount} → ${target} (${destIpStr}) len=${pkt.length}`,
+          })
           break
         }
       }
@@ -151,6 +174,7 @@ export class StrongSwanEngine {
   public init(initConfigs: Record<string, string>, respConfigs: Record<string, string>) {
     if (this.initWorker) return
 
+    this._epoch++
     this.setState('LOADING')
     this._readyCount = 0
     this._keysReadyCount = 0
@@ -158,11 +182,21 @@ export class StrongSwanEngine {
 
     this.initPkcs11Sab = new SharedArrayBuffer(65536)
     this.respPkcs11Sab = new SharedArrayBuffer(65536)
-    this.initNetSab    = new SharedArrayBuffer(65536)
-    this.respNetSab    = new SharedArrayBuffer(65536)
+    this.initNetSab = new SharedArrayBuffer(65536)
+    this.respNetSab = new SharedArrayBuffer(65536)
 
-    this.initWorker = this._spawnWorker(initConfigs, this.initPkcs11Sab, this.initNetSab, 'initiator')
-    this.respWorker = this._spawnWorker(respConfigs, this.respPkcs11Sab, this.respNetSab, 'responder')
+    this.initWorker = this._spawnWorker(
+      initConfigs,
+      this.initPkcs11Sab,
+      this.initNetSab,
+      'initiator'
+    )
+    this.respWorker = this._spawnWorker(
+      respConfigs,
+      this.respPkcs11Sab,
+      this.respNetSab,
+      'responder'
+    )
   }
 
   public destroy() {

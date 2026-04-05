@@ -711,8 +711,8 @@ conn host-host
               M.setValue(ctLenPtr, 4096, 'i32')
               const ctBufPtr = M._malloc(4096)
               const hSecretKeyPtr = M._malloc(4)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
               rv =
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
                 (M as any)._C_EncapsulateKey(
                   hSess68,
                   mechPtr68,
@@ -759,8 +759,8 @@ conn host-host
             }
 
             const hSecretKeyPtr69 = M._malloc(4)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
             rv =
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
               (M as any)._C_DecapsulateKey(
                 hSess69,
                 mechPtr69,
@@ -888,6 +888,9 @@ conn host-host
   }, [])
 
   const handleModeChange = useCallback((mode: IKEv2Mode) => {
+    // Destroy running daemon — config changes require restart
+    strongSwanEngine.destroy()
+    setSsLogs([])
     setSelectedMode(mode)
     setCurrentStep(0)
   }, [])
@@ -1214,9 +1217,13 @@ conn host-host
                   // algType: 1=RSA, 2=ML-DSA. size: RSA bits or ML-DSA level.
                   const algType = clientAlg === 'ML-DSA' ? 2 : 1
                   const slot0Size =
-                    algType === 2 ? parseInt(clientSize) : parseInt(clientClassAlg.split('-')[1])
+                    algType === 2
+                      ? parseInt(clientSize) || 65
+                      : parseInt(clientClassAlg.split('-')[1] || '3072') || 3072
                   const slot1Size =
-                    algType === 2 ? parseInt(serverSize) : parseInt(serverClassAlg.split('-')[1])
+                    algType === 2
+                      ? parseInt(serverSize) || 65
+                      : parseInt(serverClassAlg.split('-')[1] || '3072') || 3072
                   strongSwanEngine.setKeySpec(algType, slot0Size, slot1Size)
 
                   strongSwanEngine.init(
