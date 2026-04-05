@@ -6,6 +6,13 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.79.0] - 2026-04-05
+
+### Fixed
+
+- **Stateful Signatures workshop — switch to Rust WASM engine**: `LMSKeyGenDemo`, `XMSSKeyGenDemo`, and `StatefulSignaturesDemo` now use `useHSM('rust')` instead of the C++ engine. The C++ WASM module has an internal TRAP in its `hss_generate_private_key` path; the Rust engine handles `CKM_HSS_KEY_PAIR_GEN` and `CKM_XMSS_KEY_PAIR_GEN` correctly. `useHSM` now accepts an optional `moduleEngine: 'cpp' | 'rust'` parameter (default `'cpp'`); all other learning modules are unaffected.
+- **Stateful Signatures workshop — self-contained HSM lifecycle**: `LMSKeyGenDemo` and `XMSSKeyGenDemo` each call `useHSM()` directly (no prop drilling from parent); `LiveHSMToggle`, `Pkcs11LogPanel`, and `HsmKeyInspector` are rendered inside each component. Resolved WASM TRAP caused by undefined `hsm` prop and `Buffer.from()` browser crash.
+
 ## [2.78.0] - 2026-04-05
 
 ### Added

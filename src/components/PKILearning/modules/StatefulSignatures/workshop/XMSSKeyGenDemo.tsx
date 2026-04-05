@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useCallback } from 'react'
-import { Info, ChevronDown, ChevronUp, Key, PenLine } from 'lucide-react'
+import { Info, ChevronDown, ChevronUp, Key, PenLine, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import {
   XMSS_PARAMETER_SETS,
   LMS_PARAMETER_SETS,
@@ -19,7 +21,15 @@ import {
   CKP_XMSS_SHA2_20_256,
 } from '@/wasm/softhsm/constants'
 import { hsm_generateStatefulKeyPair, hsm_statefulSignBytes } from '@/wasm/softhsm/pqc'
-import type { UseHSMResult } from '@/hooks/useHSM'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+
+const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
+
+const toHex = (bytes: Uint8Array): string =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 
 interface SignatureBreakdown {
   xmssPayload: string
@@ -29,13 +39,12 @@ interface SignatureBreakdown {
 
 interface XMSSKeyGenDemoProps {
   initialParamId?: string
-  hsm: UseHSMResult
 }
 
 export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   initialParamId = WORKSHOP_DISPLAY_PARAMS.xmss[0],
-  hsm,
 }) => {
+  const hsm = useHSM('rust')
   const [selectedParamId, setSelectedParamId] = useState<string>(initialParamId)
   const [showAllParams, setShowAllParams] = useState(false)
   const [showComparison, setShowComparison] = useState(true)
@@ -43,6 +52,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   // Interactive State
   const [isGenerating, setIsGenerating] = useState(false)
   const [activeKeyHandle, setActiveKeyHandle] = useState<number | null>(null)
+  const [opError, setOpError] = useState<string | null>(null)
 
   // Signing State
   const [messageToSign, setMessageToSign] = useState<string>('Hello PQC World')
@@ -71,6 +81,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   const handleGenerateKey = useCallback(async () => {
     if (!hsm.isReady || !hsm.hSessionRef.current || !hsm.moduleRef.current) return
     setIsGenerating(true)
+    setOpError(null)
     try {
       await new Promise((r) => setTimeout(r, 100))
 
@@ -97,7 +108,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
     } catch (e: unknown) {
-      console.error(e)
+      setOpError(e instanceof Error ? e.message : String(e))
     } finally {
       setIsGenerating(false)
     }
@@ -106,6 +117,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
   const handleSign = useCallback(() => {
     if (!hsm.isReady || !activeKeyHandle || !hsm.moduleRef.current || !hsm.hSessionRef.current)
       return
+    setOpError(null)
     try {
       const msgBytes = new TextEncoder().encode(messageToSign)
 
@@ -118,7 +130,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
       )
 
       if (sig.length > 0) {
-        const hex = Buffer.from(sig).toString('hex')
+        const hex = toHex(sig)
         setSignatureHex(hex)
 
         setSignatureBreakdown({
@@ -128,12 +140,13 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
         })
       }
     } catch (e: unknown) {
-      console.error(e)
+      setOpError(e instanceof Error ? e.message : String(e))
     }
   }, [hsm, activeKeyHandle, messageToSign])
 
   return (
     <div className="space-y-6">
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">XMSS Key Generation</h3>
         <p className="text-sm text-muted-foreground">
@@ -432,7 +445,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
                   Pre-Signature Breakdown (Hex)
                 </span>
                 <pre className="text-[10px] font-mono bg-black/40 text-muted-foreground p-3 rounded border border-border/50 break-all whitespace-pre-wrap">
-                  {Buffer.from(messageToSign).toString('hex')}
+                  {toHex(new TextEncoder().encode(messageToSign))}
                 </pre>
               </div>
               <Button
@@ -443,7 +456,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
               </Button>
             </div>
 
-            {signatureHex && (
+            {signatureHex && signatureBreakdown && (
               <div className="space-y-4">
                 <div className="space-y-2">
                   <span className="text-xs font-bold text-success">
@@ -471,6 +484,33 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({
               </div>
             )}
           </div>
+        </div>
+      )}
+
+      {opError && (
+        <div className="flex items-start gap-2 p-3 rounded-md border border-destructive/40 bg-destructive/5 text-destructive text-sm">
+          <AlertCircle className="h-4 w-4 shrink-0 mt-0.5" />
+          <span className="font-mono break-all">{opError}</span>
+        </div>
+      )}
+
+      {hsm.isReady && (
+        <div className="space-y-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log"
+            defaultOpen={true}
+            filterFns={LIVE_OPERATIONS}
+          />
+          {hsm.keys.length > 0 && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
         </div>
       )}
     </div>

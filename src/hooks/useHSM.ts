@@ -18,6 +18,7 @@
 import { useCallback, useRef, useState } from 'react'
 import {
   getSoftHSMCppModule,
+  getSoftHSMRustModule,
   createLoggingProxy,
   hsm_getFirstSlot,
   hsm_initToken,
@@ -71,7 +72,7 @@ export interface UseHSMResult {
   finalize: () => void
 }
 
-export function useHSM(): UseHSMResult {
+export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
   const moduleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
@@ -131,7 +132,9 @@ export function useHSM(): UseHSMResult {
     clearLog()
     clearKeys()
     try {
-      const rawModule = await getSoftHSMCppModule()
+      const rawModule = await (moduleEngine === 'rust'
+        ? getSoftHSMRustModule()
+        : getSoftHSMCppModule())
       const proxy = createLoggingProxy(rawModule, (e) => addLog(e))
       moduleRef.current = proxy as unknown as SoftHSMModule
 
@@ -161,7 +164,7 @@ export function useHSM(): UseHSMResult {
       setError(msg)
       setPhase('error')
     }
-  }, [phase, clearLog, clearKeys, addLog])
+  }, [phase, moduleEngine, clearLog, clearKeys, addLog])
 
   const finalize = useCallback(() => {
     if (moduleRef.current && hSessionRef.current) {
