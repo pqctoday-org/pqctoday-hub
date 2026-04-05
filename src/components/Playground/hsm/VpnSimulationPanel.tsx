@@ -116,6 +116,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     pkcs11 {
       use_hasher = yes
       use_rng = yes
+      use_dh = yes
       modules {
         softhsm {
           path = libsofthsmv3.so
@@ -126,11 +127,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   filelog {
     stderr {
       time_format = %H:%M:%S
-      default = 2
-      mgr = 2
+      default = 1
+      mgr = 1
       ike = 2
-      enc = 2
+      net = 1
+      enc = 1
       cfg = 2
+      lib = 2
     }
   }
 }`
