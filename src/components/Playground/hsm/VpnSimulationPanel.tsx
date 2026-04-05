@@ -111,12 +111,13 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const charonConfig = `charon {
   integrity_test = no
   load_modular = no
-  load = pkcs11 nonce aes sha1 sha2 hmac openssl
+  load = pkcs11 nonce aes sha1 sha2 hmac kdf
   plugins {
     pkcs11 {
       use_hasher = no
       use_rng = yes
       use_dh = yes
+      use_ecc = yes
       modules {
         softhsm {
           path = libsofthsmv3.so
