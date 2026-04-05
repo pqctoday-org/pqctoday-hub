@@ -111,10 +111,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const charonConfig = `charon {
   integrity_test = no
   load_modular = no
-  load = openssl random nonce aes sha1 sha2 hmac pkcs11
+  load = pkcs11 nonce aes sha1 sha2 hmac openssl
   plugins {
     pkcs11 {
-      use_hasher = yes
+      use_hasher = no
       use_rng = yes
       use_dh = yes
       modules {

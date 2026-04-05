@@ -9,23 +9,40 @@ PKCS#11 log panel is empty — no real C_Sign, C_Encrypt, C_Digest calls during 
 
 **Selected Proposal:** `IKE:AES_CBC_128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/ECP_256`
 
-## Crypto Operation Mapping (13 operations, all replaceable by softhsmv3)
+## strongSwan pkcs11 Plugin Limitation
 
-| #   | IKE Phase   | Operation                                               | Current Engine        | PKCS#11 Mechanism                         | softhsmv3 Support         | Config Location                                                   |
-| --- | ----------- | ------------------------------------------------------- | --------------------- | ----------------------------------------- | ------------------------- | ----------------------------------------------------------------- |
-| 1   | IKE_SA_INIT | Nonce generation (Ni/Nr, 32 bytes)                      | `random` plugin       | `C_GenerateRandom`                        | Yes (both engines)        | `charon.load = ... random nonce ...` in strongswan.conf           |
-| 2   | IKE_SA_INIT | ECDH key pair gen (ECP-256)                             | `openssl` plugin      | `CKM_EC_KEY_PAIR_GEN`                     | Yes (Rust + C++ engines)  | IKE proposal `ecp256` — `ike_cfg->add_proposal()` in charon.c:115 |
-| 3   | IKE_SA_INIT | ECDH shared secret derivation                           | `openssl` plugin      | `CKM_ECDH1_DERIVE`                        | Yes (both engines, P-256) | Same proposal — KE method from SA negotiation                     |
-| 4   | IKE_SA_INIT | SKEYSEED = PRF(Ni\|Nr, secret)                          | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | Yes (HMAC-SHA256)         | Proposal `prfsha256` — `PRF_HMAC_SHA2_256` in SA                  |
-| 5   | IKE_SA_INIT | SK_d\|SK_ai\|SK_ar\|SK_ei\|SK_er\|SK_pi\|SK_pr via PRF+ | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC` (iterative)             | Yes                       | Same PRF from proposal                                            |
-| 6   | IKE_SA_INIT | NAT detection hash (SHA-256)                            | `sha2` plugin         | `CKM_SHA256`                              | Yes                       | Hardcoded in IKE NAT-D notify payload                             |
-| 7   | IKE_AUTH    | IV generation (16 bytes for AES-CBC)                    | `random` plugin       | `C_GenerateRandom`                        | Yes                       | `charon.load = ... random ...` in strongswan.conf                 |
-| 8   | IKE_AUTH    | AES-CBC-128 encrypt (IKE_AUTH payload)                  | `aes` plugin          | `CKM_AES_CBC_PAD`                         | Yes (all engines)         | Proposal `aes128` — `ENCR_AES_CBC` in SA                          |
-| 9   | IKE_AUTH    | HMAC-SHA2-256-128 integrity tag                         | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC` (truncated to 128 bits) | Yes                       | Proposal `sha256` — `AUTH_HMAC_SHA2_256_128` in SA                |
-| 10  | IKE_AUTH    | PSK AUTH payload computation                            | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | Yes                       | `AUTH_CLASS_PSK` in charon.c:130, PSK from `getenv("WASM_PSK")`   |
-| 11  | IKE_AUTH    | PSK AUTH verification                                   | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | Yes                       | Same — responder verifies initiator's AUTH                        |
-| 12  | IKE_AUTH    | AES-CBC-128 decrypt (received payload)                  | `aes` plugin          | `CKM_AES_CBC_PAD`                         | Yes                       | Same encryption proposal                                          |
-| 13  | IKE_AUTH    | HMAC integrity verify (received)                        | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | Yes                       | Same integrity proposal                                           |
+strongSwan's pkcs11 plugin only implements **4 of 7 crypto categories**. This is by design —
+real HSMs don't expose bulk symmetric crypto through PKCS#11 either.
+
+| Crypto Category            | pkcs11 plugin provides?  | Config flag        | Notes                                |
+| -------------------------- | ------------------------ | ------------------ | ------------------------------------ |
+| **HASHER** (SHA-256)       | YES                      | `use_hasher = yes` | C_DigestInit/C_Digest                |
+| **RNG** (random bytes)     | YES                      | `use_rng = yes`    | C_GenerateRandom                     |
+| **KE/DH** (ECDH, MODP)     | YES                      | `use_dh = yes`     | C_GenerateKeyPair + C_DeriveKey      |
+| **PRIVKEY** (sign/decrypt) | YES                      | always             | C_SignInit/C_Sign (pubkey auth only) |
+| **PRF** (HMAC-SHA-256)     | **NO — not implemented** | —                  | Permanently software-only            |
+| **SIGNER/MAC** (HMAC)      | **NO — not implemented** | —                  | Permanently software-only            |
+| **CRYPTER** (AES-CBC)      | **NO — not implemented** | —                  | Permanently software-only            |
+
+## Crypto Operation Mapping (13 operations)
+
+| #   | IKE Phase   | Operation                                               | Current Engine        | PKCS#11 Mechanism                         | pkcs11 plugin routes? | softhsmv3 supports? | Config Location            |
+| --- | ----------- | ------------------------------------------------------- | --------------------- | ----------------------------------------- | --------------------- | ------------------- | -------------------------- |
+| 1   | IKE_SA_INIT | Nonce generation (Ni/Nr, 32 bytes)                      | `random` plugin       | `C_GenerateRandom`                        | **YES** (use_rng)     | Yes                 | strongswan.conf            |
+| 2   | IKE_SA_INIT | ECDH key pair gen (ECP-256)                             | `openssl` plugin      | `CKM_EC_KEY_PAIR_GEN`                     | **YES** (use_dh)      | Yes                 | IKE proposal in charon.c   |
+| 3   | IKE_SA_INIT | ECDH shared secret derivation                           | `openssl` plugin      | `CKM_ECDH1_DERIVE`                        | **YES** (use_dh)      | Yes                 | Same proposal              |
+| 4   | IKE_SA_INIT | SKEYSEED = PRF(Ni\|Nr, secret)                          | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | NO (no PRF)           | Yes                 | PRF in SA proposal         |
+| 5   | IKE_SA_INIT | SK_d\|SK_ai\|SK_ar\|SK_ei\|SK_er\|SK_pi\|SK_pr via PRF+ | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC` (iterative)             | NO (no PRF)           | Yes                 | Same PRF                   |
+| 6   | IKE_SA_INIT | NAT detection hash (SHA-256)                            | `sha2` plugin         | `CKM_SHA256`                              | **YES** (use_hasher)  | Yes                 | Hardcoded in IKE           |
+| 7   | IKE_AUTH    | IV generation (16 bytes for AES-CBC)                    | `random` plugin       | `C_GenerateRandom`                        | **YES** (use_rng)     | Yes                 | strongswan.conf            |
+| 8   | IKE_AUTH    | AES-CBC-128 encrypt (IKE_AUTH payload)                  | `aes` plugin          | `CKM_AES_CBC_PAD`                         | NO (no CRYPTER)       | Yes                 | ENCR proposal              |
+| 9   | IKE_AUTH    | HMAC-SHA2-256-128 integrity tag                         | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC` (truncated to 128 bits) | NO (no SIGNER)        | Yes                 | AUTH proposal              |
+| 10  | IKE_AUTH    | PSK AUTH payload computation                            | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | NO (no PRF)           | Yes                 | AUTH_CLASS_PSK in charon.c |
+| 11  | IKE_AUTH    | PSK AUTH verification                                   | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | NO (no PRF)           | Yes                 | Same                       |
+| 12  | IKE_AUTH    | AES-CBC-128 decrypt (received payload)                  | `aes` plugin          | `CKM_AES_CBC_PAD`                         | NO (no CRYPTER)       | Yes                 | Same ENCR proposal         |
+| 13  | IKE_AUTH    | HMAC integrity verify (received)                        | `hmac`+`sha2` plugins | `CKM_SHA256_HMAC`                         | NO (no SIGNER)        | Yes                 | Same AUTH proposal         |
+
+**Summary: 4 of 13 IKE operations can route through PKCS#11 (#1, #2, #3, #6, #7). The remaining 9 must use software plugins.** This matches how real HSM deployments work — HSMs handle key exchange and signing, software handles bulk crypto.
 
 ## Config File Locations
 
