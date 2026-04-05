@@ -111,7 +111,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const charonConfig = `charon {
   integrity_test = no
   load_modular = no
-  load = random nonce aes sha1 sha2 hmac pkcs11 socket-wasm
+  load = openssl random nonce aes sha1 sha2 hmac pkcs11
   plugins {
     pkcs11 {
       use_hasher = yes
@@ -1208,6 +1208,28 @@ conn host-host
           >
             <RotateCcw size={16} />
           </button>
+          {currentStep === 0 && ssState === 'UNINITIALIZED' && (
+            <div className="flex gap-2 items-center">
+              <label
+                htmlFor="vpn-psk"
+                className="text-[10px] text-muted-foreground whitespace-nowrap"
+              >
+                PSK:
+              </label>
+              <input
+                id="vpn-psk"
+                type="text"
+                value={clientPsk}
+                onChange={(e) => {
+                  setClientPsk(e.target.value)
+                  setServerPsk(e.target.value)
+                }}
+                className="w-40 text-[11px] px-1.5 py-0.5 rounded border border-border bg-background font-mono"
+                placeholder="Pre-shared key"
+              />
+              {pskMismatch && <span className="text-[10px] text-status-warning">mismatch</span>}
+            </div>
+          )}
           {currentStep === 0 && ssState === 'UNINITIALIZED' ? (
             <button
               onClick={async () => {

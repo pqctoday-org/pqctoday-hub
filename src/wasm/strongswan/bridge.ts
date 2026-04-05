@@ -144,14 +144,16 @@ export class StrongSwanEngine {
             break
           }
 
-          const i32 = new Int32Array(targetSab, 0, 4)
+          const i32 = new Int32Array(targetSab, 0, 6)
           const bytes = new Uint8Array(targetSab)
           const pkt = new Uint8Array(data)
 
           i32[1] = pkt.length
           i32[2] = srcIp
           i32[3] = srcPort
-          bytes.set(pkt, 16)
+          i32[4] = destIp
+          i32[5] = payload.destPort || 500
+          bytes.set(pkt, 24)
           Atomics.store(i32, 0, 1) // PACKET_READY
           Atomics.notify(i32, 0, 1) // wake blocked poll/recvfrom
           this.packetCount++
