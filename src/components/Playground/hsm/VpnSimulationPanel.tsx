@@ -845,9 +845,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               const ctLenPtr = M._malloc(4)
               const dummyKeyPtr68 = M._malloc(4) // phKey must be non-NULL even for size query (softhsmv3 guards phKey before size-query path)
               // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate=NULL, ulAttrCount=0, pCiphertext=NULL, pulCtLen, phKey=NULL)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               rv =
-                (M as any)._C_EncapsulateKey(
+                M._C_EncapsulateKey(
                   hSess68,
                   mechPtr68,
                   hKey68,
@@ -883,9 +882,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               M.setValue(secretTmpl68 + 16, bTrue68, 'i32') // pValue → &CK_TRUE
               M.setValue(secretTmpl68 + 20, 1, 'i32') // ulValueLen = sizeof(CK_BBOOL)
               // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate, ulAttrCount, pCiphertext, pulCtLen, phKey)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               rv =
-                (M as any)._C_EncapsulateKey(
+                M._C_EncapsulateKey(
                   hSess68,
                   mechPtr68,
                   hKey68,
@@ -949,9 +947,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             M.setValue(secretTmpl69 + 16, bTrue69, 'i32') // pValue → &CK_TRUE
             M.setValue(secretTmpl69 + 20, 1, 'i32') // ulValueLen
             // softhsmv3 8-param: (hSess, pMech, hPrivKey, pTemplate, ulAttrCount, pCiphertext, ulCtLen, phKey)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             rv =
-              (M as any)._C_DecapsulateKey(
+              M._C_DecapsulateKey(
                 hSess69,
                 mechPtr69,
                 hKey69,
@@ -1129,9 +1126,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               const dummyKeyPtr92 = M._malloc(4) // phKey must be non-NULL even for size query (softhsmv3 guards phKey before size-query path)
               // softhsmv3 C_EncapsulateKey has 8 params (PKCS#11 v3.2):
               // (hSession, pMechanism, hPublicKey, pTemplate, ulAttrCount, pCiphertext, pulCiphertextLen, phKey)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               rv =
-                (M as any)._C_EncapsulateKey(
+                M._C_EncapsulateKey(
                   hSess92,
                   mechPtr92,
                   hKey92,
@@ -1167,9 +1163,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               M.setValue(secretTmpl92 + 16, bTrue92, 'i32') // pValue → &CK_TRUE
               M.setValue(secretTmpl92 + 20, 1, 'i32') // ulValueLen = sizeof(CK_BBOOL)
               // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate, ulAttrCount, pCiphertext, pulCtLen, phKey)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               rv =
-                (M as any)._C_EncapsulateKey(
+                M._C_EncapsulateKey(
                   hSess92,
                   mechPtr92,
                   hKey92,
@@ -1241,9 +1236,8 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             M.setValue(secretTmpl93 + 16, bTrue93, 'i32') // pValue → &CK_TRUE
             M.setValue(secretTmpl93 + 20, 1, 'i32') // ulValueLen
             // softhsmv3 8-param: (hSess, pMech, hPrivKey, pTemplate, ulAttrCount, pCiphertext, ulCtLen, phKey)
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             rv =
-              (M as any)._C_DecapsulateKey(
+              M._C_DecapsulateKey(
                 hSess93,
                 mechPtr93,
                 hKey93,
