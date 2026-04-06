@@ -101,6 +101,16 @@ export const STATUS_BADGE_CLASSES: Record<string, string> = {
   muted: 'bg-muted/10 text-muted-foreground border-border',
 }
 
+/** Static Tailwind text classes for ASN.1 structure lines — avoids purging of dynamic text-${color} */
+export const STRUCTURE_LINE_COLOR_CLASSES: Record<string, string> = {
+  foreground: 'text-foreground',
+  muted: 'text-muted-foreground',
+  success: 'text-success',
+  primary: 'text-primary',
+  secondary: 'text-secondary',
+  warning: 'text-warning',
+}
+
 export interface HybridCertFormat {
   id: HybridFormatId
   label: string
@@ -208,7 +218,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'primary', indent: 2 },
       { text: '}', color: 'muted', indent: 1 },
       {
-        text: 'signatureAlgorithm  MLDSA65-ECDSA-P256 (1.3.6.1.5.5.7.6.45),',
+        text: 'signatureAlgorithm  MLDSA65-ECDSA-P256-SHA512 (1.3.6.1.5.5.7.6.45),',
         color: 'primary',
         indent: 1,
       },

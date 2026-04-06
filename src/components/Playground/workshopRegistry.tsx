@@ -269,7 +269,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'hybrid-certs',
     name: 'Hybrid Certificates',
-    description: 'Generate PQC and composite X.509v3 certificates via OpenSSL',
+    description:
+      'Generate and compare six X.509 hybrid certificate formats via SoftHSM PKCS#11 + real DER encoding',
     category: 'Certificates & Proofs',
     algorithms: ['SLH-DSA', 'ML-DSA-65', 'ECDSA-P256'],
     icon: ShieldCheck,

@@ -3,7 +3,7 @@
 import React, { useState } from 'react'
 import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info, Loader2 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { ENVELOPE_ENCRYPTION_STEPS } from '../data/kmsConstants'
+import { ENVELOPE_ENCRYPTION_STEPS, type EnvelopeEncryptionStep } from '../data/kmsConstants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -558,11 +558,13 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
   const classicalPkBytes = isRSA ? (RSA_PK_BYTES[kekAlgo] ?? 256) : 256
   const mlKemSizes = !isRSA ? ML_KEM_SIZES[kekAlgo] : null
-  const pqcPkStr = mlKemSizes ? `${mlKemSizes.pk.toLocaleString()} B` : `${classicalPkBytes} B`
-  const pqcCtStr = mlKemSizes ? `${mlKemSizes.ct.toLocaleString()} + 32 B` : `${classicalPkBytes} B`
-  const totalPqcStr = mlKemSizes
-    ? `${mlKemSizes.ct.toLocaleString()} + ${wrapMech === 'aes-gcm' ? '60' : '40'} B`
-    : `${classicalPkBytes} B`
+  // When RSA is selected for the live demo the PQC column shows ML-KEM-768 reference values
+  const pqcRefSizes = mlKemSizes ?? ML_KEM_SIZES['ml-kem-768']
+  // AES-KW: 40 B · AES-KWP: 48 B (RFC 5649 §4.2 AIV, softhsmv3 aes_kw crate) · AES-GCM: 60 B (48 B ct + 12 B nonce)
+  const wrapOverheadBytes = wrapMech === 'aes-gcm' ? 60 : wrapMech === 'aes-kwp' ? 48 : 40
+  const pqcPkStr = `${pqcRefSizes.pk.toLocaleString()} B`
+  const pqcCtStr = `${pqcRefSizes.ct.toLocaleString()} + 32 B`
+  const totalPqcStr = `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} B`
 
   const classicalTotalSizes = [
     `${classicalPkBytes} B`,
@@ -581,6 +583,57 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
     const ratio = (pk / rsaRef).toFixed(1)
     return `${kekAlgo.toUpperCase()} encapsulation keys are ${ratio}x larger than RSA-2048 public keys (${pk.toLocaleString()} B vs 256 B). This impacts certificate sizes and key distribution bandwidth.`
   })()
+
+  // Dynamic overrides for the step card side-by-side panel — reflect kekAlgo + wrapMech selection.
+  // Only variant-sensitive fields are overridden; static fields fall through from kmsConstants.
+  const rsaBits = isRSA ? parseInt(kekAlgo.split('-')[1]) : 2048
+  const mechLabel = WRAP_MECH_META[wrapMech].label
+  const mechStd = WRAP_MECH_META[wrapMech].standard
+  const stepCardOverrides: Partial<EnvelopeEncryptionStep>[] = [
+    // Step 1 — Generate KEK Pair
+    {
+      classicalDescription: `Generate RSA-${rsaBits} key pair. Public key is used by clients to wrap DEKs.`,
+      classicalArtifact: `RSA-${rsaBits} Public Key`,
+      classicalSize: `${rsaBits / 8} bytes`,
+      pqcDescription: isRSA
+        ? `Generate RSA-${rsaBits} key pair. Public key is used by clients to wrap DEKs.`
+        : `Generate ${kekAlgo.toUpperCase()} key pair. Public encapsulation key is distributed to clients.`,
+      pqcArtifact: isRSA
+        ? `RSA-${rsaBits} Public Key`
+        : `${kekAlgo.toUpperCase()} Encapsulation Key`,
+      pqcSize: isRSA ? `${rsaBits / 8} bytes` : `${pqcRefSizes.pk.toLocaleString()} bytes`,
+    },
+    // Step 2 — Encapsulate / Wrap
+    {
+      pqcArtifact: isRSA
+        ? 'RSA-OAEP Ciphertext (wrapped DEK)'
+        : `${kekAlgo.toUpperCase()} Ciphertext + 32-byte Shared Secret`,
+      pqcSize: isRSA
+        ? `${rsaBits / 8} bytes ciphertext`
+        : `${pqcRefSizes.ct.toLocaleString()} bytes ciphertext + 32 bytes ss`,
+    },
+    // Step 3 — Derive Wrapping Key (no variant-sensitive fields)
+    {},
+    // Step 4 — Wrap DEK
+    {
+      pqcDescription: isRSA
+        ? '(DEK is already wrapped in step 2 via RSA-OAEP)'
+        : `Use ${mechLabel} (${mechStd}) to wrap the 32-byte DEK with the derived wrapping key. Store the KEM ciphertext alongside the wrapped DEK.`,
+      pqcArtifact: isRSA
+        ? 'Wrapped DEK (from step 2)'
+        : `${mechLabel} Wrapped DEK (${wrapOverheadBytes} bytes)`,
+      pqcSize: isRSA
+        ? `${rsaBits / 8} bytes total`
+        : `${pqcRefSizes.ct.toLocaleString()} + ${wrapOverheadBytes} = ${pqcRefSizes.ct + wrapOverheadBytes} bytes total`,
+    },
+    // Step 5 — Decapsulate / Unwrap
+    {
+      pqcDescription: isRSA
+        ? 'Server uses RSA-OAEP private key to decrypt the ciphertext → recovers the 32-byte DEK directly.'
+        : `Server runs ML-KEM.Decaps(dk, ct) → shared secret → HKDF → wrapping key → ${mechLabel} unwrap → DEK. Multi-step but all happens server-side.`,
+    },
+  ]
+  const displayStep = step ? { ...step, ...(stepCardOverrides[currentStep] ?? {}) } : step
 
   return (
     <div className="space-y-6">
@@ -793,7 +846,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       </div>
 
       {/* Current step detail */}
-      {step && (
+      {displayStep && (
         <div className="glass-panel p-6">
           <div className="flex items-start gap-4 mb-4">
             <div className="p-3 rounded-lg bg-primary/10 shrink-0">
@@ -802,10 +855,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 mb-1 flex-wrap">
                 <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
-                  Step {step.step} of {ENVELOPE_ENCRYPTION_STEPS.length}
+                  Step {displayStep.step} of {ENVELOPE_ENCRYPTION_STEPS.length}
                 </span>
               </div>
-              <h4 className="text-xl font-bold text-foreground">{step.title}</h4>
+              <h4 className="text-xl font-bold text-foreground">{displayStep.title}</h4>
             </div>
           </div>
 
@@ -819,13 +872,15 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                 </span>
                 <span className="text-xs text-muted-foreground">RSA-OAEP</span>
               </div>
-              <p className="text-xs text-foreground/80 mb-3">{step.classicalDescription}</p>
+              <p className="text-xs text-foreground/80 mb-3">{displayStep.classicalDescription}</p>
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-[10px] font-bold text-foreground mb-1">Artifact</div>
-                <p className="text-xs text-muted-foreground">{step.classicalArtifact}</p>
+                <p className="text-xs text-muted-foreground">{displayStep.classicalArtifact}</p>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-[10px] font-bold text-foreground">Size:</span>
-                  <span className="text-xs font-mono text-destructive">{step.classicalSize}</span>
+                  <span className="text-xs font-mono text-destructive">
+                    {displayStep.classicalSize}
+                  </span>
                 </div>
               </div>
             </div>
@@ -840,13 +895,13 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   {isRSA ? 'RSA-OAEP' : kekAlgo.toUpperCase()}
                 </span>
               </div>
-              <p className="text-xs text-foreground/80 mb-3">{step.pqcDescription}</p>
+              <p className="text-xs text-foreground/80 mb-3">{displayStep.pqcDescription}</p>
               <div className="bg-background rounded p-3 border border-border">
                 <div className="text-[10px] font-bold text-foreground mb-1">Artifact</div>
-                <p className="text-xs text-muted-foreground">{step.pqcArtifact}</p>
+                <p className="text-xs text-muted-foreground">{displayStep.pqcArtifact}</p>
                 <div className="mt-2 flex items-center gap-2">
                   <span className="text-[10px] font-bold text-foreground">Size:</span>
-                  <span className="text-xs font-mono text-primary">{step.pqcSize}</span>
+                  <span className="text-xs font-mono text-primary">{displayStep.pqcSize}</span>
                 </div>
               </div>
             </div>
@@ -857,23 +912,24 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             <div className="flex items-start gap-2">
               <Info size={14} className="text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground/80">
-                {step.step === 1 &&
+                {displayStep.step === 1 &&
                   (step1ComparisonNote ??
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
-                {step.step === 2 &&
+                {displayStep.step === 2 &&
                   'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference.'}
-                {step.step === 3 &&
+                {displayStep.step === 3 &&
                   (isRSA
                     ? 'RSA-OAEP is a direct encryption scheme — the decrypted output IS the DEK. No KDF step is needed. This step is skipped in the classical path.'
                     : 'This KDF step is unique to KEMs. The shared secret from ML-KEM.Encaps() is a random 32-byte value — not directly usable as a wrapping key without domain separation. ' +
                       'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is isolated to this protocol and version, preventing cross-protocol key reuse (RFC 5869 §3.2).')}
-                {step.step === 4 &&
+                {displayStep.step === 4 &&
                   `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (NIST SP 800-38D) wraps the 32-byte DEK. ` +
                     `AES-KW produces 40 B (8-byte A value / ICV per RFC 3394 §2.2.3, not an IV). ` +
+                    `AES-KWP produces 48 B (RFC 5649 §4.2 — 8-byte AIV over padded plaintext, softhsmv3 aes_kw crate). ` +
                     `AES-GCM produces 48 B ciphertext + 12-byte random nonce. ` +
                     `Store the KEM ciphertext alongside the wrapped DEK. ` +
                     `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (OASIS 2023) — classic PKCS#11 had no native KEM primitives.`}
-                {step.step === 5 &&
+                {displayStep.step === 5 &&
                   'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms key integrity across the wrap/unwrap cycle. ' +
                     'Envelope encryption enables DEK rotation without re-encrypting any data — just generate a new DEK and re-wrap it with the same or new KEK. ' +
                     "To rotate the KEK, re-wrap the existing DEK with the new KEK; data blocks remain untouched. This is envelope encryption's primary operational advantage at scale."}
@@ -898,7 +954,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   label: `1. Generate RSA-${isRSA ? kekAlgo.split('-')[1] : '2048'} key pair`,
                   active: currentStep === 0,
                 },
-                { label: '2. RSA-OAEP wrap DEK → 256 B', active: currentStep === 1 },
+                {
+                  label: `2. RSA-OAEP wrap DEK → ${classicalPkBytes} B`,
+                  active: currentStep === 1,
+                },
                 { label: '3. (no KDF step)', active: currentStep === 2 },
                 { label: '4. (DEK already wrapped)', active: currentStep === 3 },
                 { label: '5. RSA-OAEP unwrap → DEK · KCV ✓', active: currentStep === 4 },
@@ -972,9 +1031,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           <h4 className="text-sm font-bold text-foreground mb-3">Size Comparison Summary</h4>
           {(() => {
             const classRef = classicalPkBytes
-            const pqcTotal = mlKemSizes
-              ? mlKemSizes.ct + (wrapMech === 'aes-gcm' ? 60 : 40)
-              : classRef
+            const pqcTotal = mlKemSizes ? mlKemSizes.ct + wrapOverheadBytes : classRef
             const ratio = mlKemSizes ? (pqcTotal / classRef).toFixed(1) : '—'
             const pqcTotalLabel = mlKemSizes ? `${pqcTotal.toLocaleString()} B` : `${classRef} B`
             const pqcDesc = mlKemSizes

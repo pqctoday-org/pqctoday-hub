@@ -6,6 +6,33 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.81.0] - 2026-04-06
+
+### Added
+
+- **KDF `handleOut` parameter**: All four KDF helpers (`hsm_pbkdf2`, `hsm_hkdf`, `hsm_kbkdf`, `hsm_kbkdfFeedback`) now accept an optional `handleOut?: { current: number }` parameter — callers can capture the derived key handle without re-deriving or separately tracking it.
+- **`STRUCTURE_LINE_COLOR_CLASSES` in HybridCrypto constants**: Static Tailwind class map (`text-foreground`, `text-primary`, etc.) for ASN.1 structure line colours — prevents Tailwind v4 CSS purging of dynamic `text-${color}` strings.
+- **Download button on Hybrid Cert Formats**: Each certificate card now has a download button alongside the copy button — saves PEM or parsed text as `.pem` / `.txt` depending on the active view.
+- **`extractCompressedSecp256k1` helper in BitcoinFlow**: Parses an SPKI DER blob to a 33-byte compressed secp256k1 public key; used in the "Extract Public Key" step.
+
+### Changed
+
+- **Rust WASM vendor updated**: `softhsmrustv3` binaries refreshed in both `public/wasm/rust/` and `src/vendor/softhsm-wasm/wasm/` (`.js`, `.d.ts`, `_bg.wasm`, `_bg.wasm.d.ts`).
+- **HsmKdfPanel**: KBKDF spec labels include the revision date ("SP 800-108 Rev1 (Aug 2022)"); PBKDF2 use-case wording updated ("low-entropy key stretching"); `CKM_SP800_108_COUNTER_KDF` / `CKM_SP800_108_FEEDBACK_KDF` imported directly.
+- **HybridCryptoService — public key tracking**: `KeyTracker` type extended with `role?: HsmKeyRole`; `onKey` fires for both private and public handles in ECDSA, ML-DSA-65, and SLH-DSA keygen paths. `buildParsedText` accepts a `formatHint` parameter for format-specific SPKI output.
+- **`certBuilder.ts` `buildParsedText`**: Format-hint-aware SPKI section — `composite` shows `CompositePublicKey SEQUENCE`; `alt-sig` shows primary key + `SubjectAltPublicKeyInfo` extension; `chameleon` shows primary PQC key + `DeltaCertificateDescriptor` extension; other formats fall through to generic output.
+- **HybridCertFormats**: `generateAll` passes `skipStateReset=true` to suppress per-format spinner flicker; `onKeyTracked` forwards `role` so public keys appear in `HsmKeyInspector`; structure line colours use the static `STRUCTURE_LINE_COLOR_CLASSES` map; OID label corrected to `MLDSA65-ECDSA-P256-SHA512`.
+- **5G SUCI Flow**: `encrypt_msin` imports the K_enc bytes from the prior HKDF step via `hsm_importAESKey` (was generating a fresh random key); `compute_mac` uses actual ciphertext as MAC input and K_mac via `hsm_importHMACKey`; HN key family corrected `'ecdsa'` → `'ecdh'`; K_enc/K_mac bytes stored in `hsmHandlesRef` for downstream steps; KAT panel moved below HSM log panel; "ML-KEM (Kyber)" → "ML-KEM (FIPS 203)".
+- **Envelope Encryption Demo — dynamic step cards**: Step card descriptions, artifacts, and sizes reflect the active `kekAlgo` + `wrapMech` via `stepCardOverrides`; PQC column always shows ML-KEM reference sizes even when RSA is selected; AES-KWP wrap overhead corrected to 48 B (RFC 5649 §4.2; was 40 B).
+- **BitcoinFlow — pure HSM path**: Removed `openSSLService`, `useKeyGeneration`, `useArtifactManagement`, and `useFileRetrieval` dependencies; public key extracted via `C_GetAttributeValue(CKA_PUBLIC_KEY_INFO)` SPKI parsing; step descriptions and code snippets updated to reflect the PKCS#11 flow.
+- **FirmwareSigningMigrator — StepWizard refactor**: Custom wizard state (`WizardStep` type, `STEP_TITLES`, `STEP_ICONS`, `handleNext/Back`) replaced with the reusable `StepWizard` / `useStepWizard` pattern; new `executeCurrentStep` callback provides per-step output and error messages.
+- **workshopRegistry**: Hybrid Certificates description updated to reflect six X.509 format generation via SoftHSM PKCS#11 + real DER encoding.
+- **Comment fix**: `CKM_HKDF_DERIVE` comment corrected "PKCS#11 v3.0" → "PKCS#11 v3.2" in `src/wasm/softhsm/constants.ts` and `src/wasm/softhsm.ts`.
+
+### Data
+
+- **RAG corpus regenerated**.
+
 ## [2.80.0] - 2026-04-05
 
 ### Added

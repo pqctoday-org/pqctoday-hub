@@ -99,7 +99,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Digital Assets Program** (Learn | Workshop | Exercises): Blockchain cryptography deep-dive
     - **Architecture Overview**: Blockchain cryptographic requirements table (Bitcoin secp256k1/ECDSA, Ethereum Keccak-256, Solana Ed25519) with OpenSSL 3.6.0 support matrix per operation and chain
     - **Learn**: Blockchain crypto introduction covering key generation, address derivation, signing, and PQC threat analysis per chain
-    - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing, double SHA256
+    - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing via SoftHSMv3 PKCS#11 (pure HSM path — private key never leaves the token; public key extracted via `C_GetAttributeValue(CKA_PUBLIC_KEY_INFO)` SPKI parse)
     - **Ethereum (ETH)**: Keccak-256, EIP-55 checksummed addresses, EIP-1559 transactions, signature recovery
     - **Solana (SOL)**: Ed25519, Base58 addresses, EdDSA signing
     - **HD Wallet**: BIP32/39/44 multi-chain derivation (m/44'/0'/0'/0/0 for BTC, m/44'/60'/0'/0/0 for ETH, m/44'/501'/0'/0' for SOL)
@@ -107,7 +107,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
   - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
     - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat
-    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768 PQC) with hybrid and pure modes
+    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; `encrypt_msin` and `compute_mac` steps now use the K_enc/K_mac bytes derived in the HKDF step (imported via `hsm_importAESKey` / `hsm_importHMACKey`) so the full 5G SUCI flow is end-to-end connected
     - **5G-AKA Authentication**: MILENAGE algorithm set (f1-f5 functions) with HSM integration
     - **Exercises**: 5 scenarios (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA Authentication)
   - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with Remote HSM architecture
@@ -141,7 +141,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
       (ITU-T X.509 §9.8, extensions 2.5.29.72-74), Related Certificates (RFC 9763, two-pass
       bidirectional binding), and Chameleon (draft-bonnell-lamps-chameleon-certs-07,
       DeltaCertificateDescriptor). ASN.1 encoding via `@peculiar/asn1-schema`; all signing
-      via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`)
+      via SoftHSMv3 PKCS#11 (`C_GenerateKeyPair` + `C_Sign`/`C_MessageSign`); format-specific
+      SPKI breakdown in parsed view; PEM and parsed text downloadable per certificate
     - Hybrid Cert Inspector: DER structure viewer with five IETF/RFC reference certificates
       including real SLH-DSA cert from RFC 9909 Appendix C.3
   - **Crypto Agility & Architecture**:
@@ -187,7 +188,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Secure Boot Chain: 4-stage firmware signing comparison (LMS vs XMSS vs ML-DSA) with stateful signature counter tracking and CNSA 2.0 mandate timelines
   - **Secure Boot PQC** (5-step workshop):
     - Secure Boot Chain Analyzer: UEFI PK/KEK/db key hierarchy quantum vulnerability
-    - **Firmware Signing Migrator**: multi-algorithm wizard (RSA-2048/3072, ECDSA P-256/P-384, ML-DSA-44/65/87, SLH-DSA-SHA2-128S) with 4-step flow — key gen, sign, verify, KAT validation; per-key PKCS#11 attribute inspector
+    - **Firmware Signing Migrator**: multi-algorithm wizard (RSA-2048/3072, ECDSA P-256/P-384, ML-DSA-44/65/87, SLH-DSA-SHA2-128S) with 4-step flow — key gen, sign, verify, KAT validation; per-key PKCS#11 attribute inspector; refactored to reusable `StepWizard` component with per-step output/error reporting
   - **API Security & JWT** (5-step workshop):
     - JWT Inspector: decode and flag quantum-vulnerable algorithms (RS256/HS256)
     - PQC JWT Signing with ML-DSA-87 vs RS256 signature byte size comparison

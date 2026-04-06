@@ -629,7 +629,8 @@ export function buildParsedText(
   der: Uint8Array,
   subject: string,
   notBefore: Date,
-  notAfter: Date
+  notAfter: Date,
+  formatHint?: string
 ): string {
   const info = parseCertificateInfo(der)
   const algLabel = oidToLabel(info.algorithmOID)
@@ -644,6 +645,32 @@ export function buildParsedText(
     }
   }
 
+  // Build SPKI section — format-specific breakdown for composite/alt-sig/chameleon
+  const spkiLines: string[] = ['    Subject Public Key Info:']
+  if (formatHint === 'composite') {
+    spkiLines.push(
+      '        Public Key Algorithm: MLDSA65-ECDSA-P256-SHA512 [Composite OID 1.3.6.1.5.5.7.6.45]'
+    )
+    spkiLines.push('        CompositePublicKey ::= SEQUENCE {')
+    spkiLines.push('            [0] ML-DSA-65  — 1952 bytes  (FIPS 204, lattice-based)')
+    spkiLines.push('            [1] EC P-256   — 65 bytes   (NIST P-256, uncompressed)')
+    spkiLines.push('        }  -- verifier MUST validate BOTH signatures')
+  } else if (formatHint === 'alt-sig') {
+    spkiLines.push(`        Public Key Algorithm: ${algLabel}  [primary classical key]`)
+    spkiLines.push(`            Public-Key: (${info.publicKeySizeBytes * 8} bit)`)
+    spkiLines.push('        [SubjectAltPublicKeyInfo extension OID 2.5.29.72]')
+    spkiLines.push('            Public Key Algorithm: ML-DSA-65  [PQC key in extension]')
+    spkiLines.push('            Public-Key: 1952 bytes')
+  } else if (formatHint === 'chameleon') {
+    spkiLines.push(`        Public Key Algorithm: ${algLabel}  [primary PQC key]`)
+    spkiLines.push(`            Public-Key: (${info.publicKeySizeBytes * 8} bit)`)
+    spkiLines.push('        [DeltaCertificateDescriptor extension]')
+    spkiLines.push('            Delta key: EC P-256  — 65 bytes  (classical, in extension)')
+  } else {
+    spkiLines.push(`        Public Key Algorithm: ${algLabel}`)
+    spkiLines.push(`            Public-Key: (${info.publicKeySizeBytes * 8} bit)`)
+  }
+
   return [
     'Certificate:',
     '    Data:',
@@ -655,9 +682,7 @@ export function buildParsedText(
     `        Not Before: ${formatDate(notBefore)}`,
     `        Not After : ${formatDate(notAfter)}`,
     `    Subject: ${dnDisplay}`,
-    '    Subject Public Key Info:',
-    `        Public Key Algorithm: ${algLabel}`,
-    `            Public-Key: (${info.publicKeySizeBytes * 8} bit)`,
+    ...spkiLines,
     ...extLines,
     `    Signature Algorithm: ${algLabel}`,
     `    Signature Value: ${info.signatureSizeBytes} bytes`,

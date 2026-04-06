@@ -1,11 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
-import { Loader2, Play, FileText, ExternalLink, Link2, Copy, Check } from 'lucide-react'
+import { Loader2, Play, FileText, ExternalLink, Link2, Copy, Check, Download } from 'lucide-react'
 import { hybridCryptoService } from '../services/HybridCryptoService'
-import { HYBRID_CERT_FORMATS, STATUS_BADGE_CLASSES, type HybridFormatId } from '../constants'
+import {
+  HYBRID_CERT_FORMATS,
+  STATUS_BADGE_CLASSES,
+  STRUCTURE_LINE_COLOR_CLASSES,
+  type HybridFormatId,
+} from '../constants'
 import { useHSM } from '@/hooks/useHSM'
-import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
+import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -48,12 +53,22 @@ export const HybridCertFormats: React.FC = () => {
     setTimeout(() => setCopiedKey(null), 2000)
   }, [])
 
+  const downloadContent = useCallback((text: string, filename: string) => {
+    const blob = new Blob([text], { type: 'text/plain' })
+    const url = URL.createObjectURL(blob)
+    const a = document.createElement('a')
+    a.href = url
+    a.download = filename
+    a.click()
+    URL.revokeObjectURL(url)
+  }, [])
+
   const onKeyTracked = useCallback(
-    (handle: number, family: HsmFamily, label: string) => {
+    (handle: number, family: HsmFamily, label: string, role: HsmKeyRole = 'private') => {
       hsm.addKey({
         handle,
         family,
-        role: 'private',
+        role,
         label,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
@@ -62,12 +77,12 @@ export const HybridCertFormats: React.FC = () => {
   )
 
   const generateFormat = useCallback(
-    async (formatId: HybridFormatId) => {
+    async (formatId: HybridFormatId, skipStateReset = false) => {
       if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) return
       const M = hsm.moduleRef.current
       const hSession = hsm.hSessionRef.current
 
-      setGenerating(formatId)
+      if (!skipStateReset) setGenerating(formatId)
       const start = performance.now()
       const subject = '/CN=Hybrid Certificate Demo/O=PQC Today/OU=Hybrid Certificate Sandbox'
 
@@ -98,7 +113,7 @@ export const HybridCertFormats: React.FC = () => {
               error: certResult.error,
             },
           }))
-          setGenerating(null)
+          if (!skipStateReset) setGenerating(null)
           return
         } else if (formatId === 'pure-pqc') {
           const certResult = await hybridCryptoService.generatePurePQCCertMLDSA(
@@ -248,7 +263,7 @@ export const HybridCertFormats: React.FC = () => {
         }))
       }
 
-      setGenerating(null)
+      if (!skipStateReset) setGenerating(null)
     },
     [hsm, onKeyTracked]
   )
@@ -256,7 +271,7 @@ export const HybridCertFormats: React.FC = () => {
   const generateAll = useCallback(async () => {
     setGenerating('all')
     for (const fmt of HYBRID_CERT_FORMATS) {
-      await generateFormat(fmt.id)
+      await generateFormat(fmt.id, true)
     }
     setGenerating(null)
   }, [generateFormat])
@@ -354,7 +369,7 @@ export const HybridCertFormats: React.FC = () => {
                   {fmt.structureLines.map((line, i) => (
                     <div
                       key={i}
-                      className={`text-${line.color}`}
+                      className={STRUCTURE_LINE_COLOR_CLASSES[line.color]}
                       style={{ paddingLeft: `${line.indent * 12}px` }}
                     >
                       {line.text || '\u00A0'}
@@ -477,25 +492,44 @@ export const HybridCertFormats: React.FC = () => {
                                   PEM
                                 </Button>
                                 {currentView && (
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    onClick={() =>
-                                      copyToClipboard(
-                                        currentView === 'pem'
-                                          ? cert.pem.trim()
-                                          : cert.parsed.trim(),
-                                        copyKey
-                                      )
-                                    }
-                                    className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30 ml-auto"
-                                  >
-                                    {isCopied ? (
-                                      <Check size={11} className="text-success" />
-                                    ) : (
-                                      <Copy size={11} />
-                                    )}
-                                  </Button>
+                                  <>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        copyToClipboard(
+                                          currentView === 'pem'
+                                            ? cert.pem.trim()
+                                            : cert.parsed.trim(),
+                                          copyKey
+                                        )
+                                      }
+                                      className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30 ml-auto"
+                                    >
+                                      {isCopied ? (
+                                        <Check size={11} className="text-success" />
+                                      ) : (
+                                        <Copy size={11} />
+                                      )}
+                                    </Button>
+                                    <Button
+                                      variant="ghost"
+                                      size="sm"
+                                      onClick={() =>
+                                        downloadContent(
+                                          currentView === 'pem'
+                                            ? cert.pem.trim()
+                                            : cert.parsed.trim(),
+                                          currentView === 'pem'
+                                            ? `${fmt.id}-${cert.type}.pem`
+                                            : `${fmt.id}-${cert.type}-parsed.txt`
+                                        )
+                                      }
+                                      className="text-[10px] h-7 px-2 text-muted-foreground border border-border hover:border-primary/30"
+                                    >
+                                      <Download size={11} />
+                                    </Button>
+                                  </>
                                 )}
                               </div>
                               {currentView && (

@@ -58,8 +58,8 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
 ]
 import {
   hsm_generateECKeyPair,
-  hsm_generateAESKey,
-  hsm_generateHMACKey,
+  hsm_importAESKey,
+  hsm_importHMACKey,
   hsm_generateMLKEMKeyPair,
   hsm_pqcEncap,
   hsm_pqcDecap,
@@ -256,14 +256,14 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             hsm.addKey({
               handle: pubHandle,
               label: `HN Key (${curve})`,
-              family: 'ecdsa',
+              family: 'ecdh',
               role: 'public',
               generatedAt: new Date().toISOString(),
             })
             hsm.addKey({
               handle: privHandle,
               label: `HN Key (${curve})`,
-              family: 'ecdsa',
+              family: 'ecdh',
               role: 'private',
               generatedAt: new Date().toISOString(),
             })
@@ -289,21 +289,26 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const aesHandle = hsm_generateAESKey(
+          const kEncRaw = hsmHandlesRef.current.kEncBytes
+          const keyBits = profile === 'C' ? 256 : 128
+          const keyBytes = kEncRaw
+            ? kEncRaw.slice(0, keyBits / 8)
+            : crypto.getRandomValues(new Uint8Array(keyBits / 8))
+          // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=true
+          const aesHandle = hsm_importAESKey(
             M,
             hSession,
-            profile === 'C' ? 256 : 128,
+            keyBytes,
+            true,
             true,
             false,
             false,
             false,
-            false,
-            false,
-            '5G MSIN Encryption Key'
+            true
           )
           hsm.addKey({
             handle: aesHandle,
-            label: `MSIN Enc Key (AES-${profile === 'C' ? 256 : 128})`,
+            label: `MSIN Enc Key (AES-${keyBits})`,
             family: 'aes',
             role: 'secret',
             purpose: 'application',
@@ -322,7 +327,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const ctHex = Array.from(ct.ciphertext)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `MSIN plaintext:  ${msinString}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM (AES-GCM; CTR not yet in bridge). (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          const keySource = kEncRaw ? 'K_enc from HKDF' : 'ephemeral key (run derive_keys first)'
+          hsmResult = `MSIN plaintext:  ${msinString}\nKey source: ${keySource}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM (AES-GCM; CTR not yet in bridge). (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.encryptMSIN()
@@ -338,7 +344,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const hmacHandle = hsm_generateHMACKey(M, hSession, 32)
+          const kMacRaw = hsmHandlesRef.current.kMacBytes
+          const macKeyBytes = kMacRaw ?? crypto.getRandomValues(new Uint8Array(32))
+          const hmacHandle = hsm_importHMACKey(M, hSession, macKeyBytes)
           hsm.addKey({
             handle: hmacHandle,
             label: 'MAC Key (HMAC-SHA256)',
@@ -347,12 +355,15 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             purpose: 'application',
             generatedAt: new Date().toISOString(),
           })
-          const data = new TextEncoder().encode('suci-mac-input-data')
-          const mac = hsm_hmac(M, hSession, hmacHandle, data)
+          // MAC input = ciphertext from encrypt_msin (or placeholder if not yet executed)
+          const macInput =
+            hsmHandlesRef.current.ciphertext ?? new TextEncoder().encode('suci-mac-input-data')
+          const mac = hsm_hmac(M, hSession, hmacHandle, macInput)
           const macHex = Array.from(mac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `MAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          const macKeySource = kMacRaw ? 'K_mac from HKDF' : 'ephemeral key (run derive_keys first)'
+          hsmResult = `Key source: ${macKeySource}\nMAC input: ${macInput.length} bytes\nMAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.computeMAC()
@@ -558,13 +569,15 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             infoMac,
             32
           )
+          hsmHandlesRef.current.kEncBytes = kEnc
+          hsmHandlesRef.current.kMacBytes = kMac
           const kEncHex = Array.from(kEnc)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
           const kMacHex = Array.from(kMac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n→ K_enc (${kEnc.length} bytes): ${kEncHex}\n→ K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived via SoftHSM3 WASM. (Derived)`
+          hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n→ K_enc (${kEnc.length} bytes): ${kEncHex}\n→ K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived and stored for subsequent steps. (Derived)`
         }
 
         const osslResult = await fiveGService.deriveKeys(profile)
@@ -754,7 +767,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               <Radio size={16} className={profile === 'C' ? 'fill-tertiary' : ''} />
               Profile C (PQC)
             </div>
-            <div className="text-xs opacity-70 mt-1">ML-KEM (Kyber) + AES-256</div>
+            <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
             <div className="text-xs italic text-muted-foreground mt-1">
               Under 3GPP SA3 study (TR 33.841) — Not yet standardized
             </div>
@@ -845,12 +858,6 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         }
       />
 
-      <KatValidationPanel
-        specs={FIVEG_KAT_SPECS}
-        label="5G PQC Known Answer Tests"
-        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
-      />
-
       {hsm.isReady && (
         <div className="space-y-4">
           <Pkcs11LogPanel
@@ -870,6 +877,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           )}
         </div>
       )}
+
+      <KatValidationPanel
+        specs={FIVEG_KAT_SPECS}
+        label="5G PQC Known Answer Tests"
+        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
+      />
     </div>
   )
 }

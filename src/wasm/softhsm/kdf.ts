@@ -43,7 +43,8 @@ export const hsm_pbkdf2 = (
   salt: Uint8Array,
   iterations: number,
   keyLen: number,
-  prf: number = CKP_PKCS5_PBKD2_HMAC_SHA512
+  prf: number = CKP_PKCS5_PBKD2_HMAC_SHA512,
+  handleOut?: { current: number }
 ): Uint8Array => {
   const CKZ_SALT_SPECIFIED = 0x00000001
   const saltPtr = M._malloc(Math.max(salt.length, 1))
@@ -79,6 +80,7 @@ export const hsm_pbkdf2 = (
       'C_DeriveKey(PBKDF2)'
     )
     const keyHandle = readUlong(M, derivedHPtr)
+    if (handleOut) handleOut.current = keyHandle
     return hsm_extractKeyValue(M, hSession, keyHandle)
   } finally {
     M._free(mech)
@@ -93,7 +95,7 @@ export const hsm_pbkdf2 = (
 // ── HKDF helpers ──────────────────────────────────────────────────────────────
 
 /**
- * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.0+ §2.43).
+ * HKDF key derivation via C_DeriveKey(CKM_HKDF_DERIVE) (PKCS#11 v3.2 §2.43).
  *
  * @param baseKeyHandle  Key handle providing IKM (input key material).
  * @param prf            Hash mechanism for HMAC PRF: CKM_SHA256 | CKM_SHA384 | CKM_SHA512 | CKM_SHA3_256 | CKM_SHA3_512
@@ -125,7 +127,8 @@ export const hsm_hkdf = (
   bExpand: boolean,
   salt?: Uint8Array,
   info?: Uint8Array,
-  keyLen = 32
+  keyLen = 32,
+  handleOut?: { current: number }
 ): Uint8Array => {
   const saltPtr = salt && salt.length > 0 ? writeBytes(M, salt) : 0
   const infoPtr = info && info.length > 0 ? writeBytes(M, info) : 0
@@ -160,6 +163,7 @@ export const hsm_hkdf = (
       'C_DeriveKey(HKDF)'
     )
     const keyHandle = readUlong(M, derivedHPtr)
+    if (handleOut) handleOut.current = keyHandle
     return hsm_extractKeyValue(M, hSession, keyHandle)
   } finally {
     M._free(mech)
@@ -193,7 +197,8 @@ export const hsm_kbkdf = (
   baseKeyHandle: number,
   prfType: number,
   fixedInput?: Uint8Array,
-  keyLen = 32
+  keyLen = 32,
+  handleOut?: { current: number }
 ): Uint8Array => {
   // CK_SP800_108_COUNTER_FORMAT: bLittleEndian(CK_BBOOL=1B) + pad(3B) + ulWidthInBits(CK_ULONG=4B) = 8 bytes
   const counterFmt = M._malloc(8)
@@ -247,6 +252,7 @@ export const hsm_kbkdf = (
       'C_DeriveKey(SP800-108 Counter KDF)'
     )
     const keyHandle = readUlong(M, derivedHPtr)
+    if (handleOut) handleOut.current = keyHandle
     return hsm_extractKeyValue(M, hSession, keyHandle)
   } finally {
     M._free(mech)
@@ -275,7 +281,8 @@ export const hsm_kbkdfFeedback = (
   prfType: number,
   fixedInput?: Uint8Array,
   iv?: Uint8Array,
-  keyLen = 32
+  keyLen = 32,
+  handleOut?: { current: number }
 ): Uint8Array => {
   // CK_SP800_108_FEEDBACK_KDF_PARAMS layout (28 bytes on 32-bit WASM):
   //   prfType          CK_ULONG  (4)
@@ -337,6 +344,7 @@ export const hsm_kbkdfFeedback = (
       'C_DeriveKey(SP800-108 Feedback KDF)'
     )
     const keyHandle = readUlong(M, derivedHPtr)
+    if (handleOut) handleOut.current = keyHandle
     return hsm_extractKeyValue(M, hSession, keyHandle)
   } finally {
     M._free(mech)

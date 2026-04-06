@@ -368,8 +368,8 @@ export const CKD_SHA256_KDF = 0x00000006 // ANSI X9.63 KDF with SHA-256 (SUCI Pr
 export const CKD_SHA384_KDF = 0x00000007 // ANSI X9.63 KDF with SHA-384
 export const CKD_SHA512_KDF = 0x00000008 // ANSI X9.63 KDF with SHA-512
 
-// HKDF derive (PKCS#11 v3.0+ §2.43)
-export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.0 §2.43
+// HKDF derive (PKCS#11 v3.2 §2.43)
+export const CKM_HKDF_DERIVE = 0x0000402a // PKCS#11 v3.2 §2.43
 export const CKF_HKDF_SALT_NULL = 0x00000001 // No salt
 export const CKF_HKDF_SALT_DATA = 0x00000002 // Salt as explicit bytes
 

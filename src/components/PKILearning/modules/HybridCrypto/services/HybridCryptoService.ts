@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
+import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
@@ -75,7 +75,12 @@ export interface CertResult {
   error?: string
 }
 
-export type KeyTracker = (handle: number, family: HsmFamily, label: string) => void
+export type KeyTracker = (
+  handle: number,
+  family: HsmFamily,
+  label: string,
+  role?: HsmKeyRole
+) => void
 
 export class HybridCryptoService {
   private getGenCommand(algorithm: string, filename: string): string {
@@ -631,7 +636,8 @@ export class HybridCryptoService {
     signerFn: SignerFn
   }> {
     const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
-    if (onKey) onKey(privHandle, 'ecdsa', 'ECDSA P-256 (Cert Gen)')
+    if (onKey) onKey(privHandle, 'ecdsa', 'ECDSA P-256 (Cert Gen)', 'private')
+    if (onKey) onKey(pubHandle, 'ecdsa', 'ECDSA P-256 Public (Cert Gen)', 'public')
     const ecPoint = hsm_extractECPoint(M, hSession, pubHandle)
     // CKA_EC_POINT is DER OCTET STRING wrapping the uncompressed point — strip the DER header
     const rawPub = ecPoint.length === 67 ? ecPoint.slice(2) : ecPoint // 04 41 04...
@@ -654,7 +660,8 @@ export class HybridCryptoService {
     signerFn: SignerFn
   }> {
     const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
-    if (onKey) onKey(privHandle, 'ml-dsa', 'ML-DSA-65 (Cert Gen)')
+    if (onKey) onKey(privHandle, 'ml-dsa', 'ML-DSA-65 (Cert Gen)', 'private')
+    if (onKey) onKey(pubHandle, 'ml-dsa', 'ML-DSA-65 Public (Cert Gen)', 'public')
     const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
       return hsm_signBytesMLDSA(M, hSession, privHandle, tbs)
@@ -679,7 +686,7 @@ export class HybridCryptoService {
       const { publicKey, signerFn } = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
       const derBytes = await buildSelfSignedX509(publicKey, signerFn, ML_DSA_65_OID, subject)
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'pure-pqc')
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {
@@ -718,7 +725,7 @@ export class HybridCryptoService {
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'composite')
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {
@@ -755,7 +762,7 @@ export class HybridCryptoService {
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'alt-sig')
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {
@@ -806,12 +813,18 @@ export class HybridCryptoService {
       return {
         classical: {
           pem: derToPem(result.certA, 'CERTIFICATE'),
-          parsed: buildParsedText(result.certA, classicalSubject, notBefore, notAfter),
+          parsed: buildParsedText(
+            result.certA,
+            classicalSubject,
+            notBefore,
+            notAfter,
+            'related-classical'
+          ),
           timingMs: performance.now() - start,
         },
         pqc: {
           pem: derToPem(result.certB, 'CERTIFICATE'),
-          parsed: buildParsedText(result.certB, pqcSubject, notBefore, notAfter),
+          parsed: buildParsedText(result.certB, pqcSubject, notBefore, notAfter, 'related-pqc'),
           timingMs: performance.now() - start,
         },
         bindingHash: result.bindingHashA,
@@ -853,7 +866,7 @@ export class HybridCryptoService {
         subject
       )
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'chameleon')
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {
       return {
@@ -882,7 +895,8 @@ export class HybridCryptoService {
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
       const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSession)
-      if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s (Cert Gen)')
+      if (onKey) onKey(privHandle, 'slh-dsa', 'SLH-DSA-128s (Cert Gen)', 'private')
+      if (onKey) onKey(pubHandle, 'slh-dsa', 'SLH-DSA-128s Public (Cert Gen)', 'public')
       const publicKey = hsm_extractKeyValue(M, hSession, pubHandle)
 
       const derBytes = await buildSelfSignedX509(
@@ -893,7 +907,7 @@ export class HybridCryptoService {
       )
 
       const pem = derToPem(derBytes, 'CERTIFICATE')
-      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter)
+      const parsed = buildParsedText(derBytes, subject, notBefore, notAfter, 'pure-pqc-slh')
 
       return { pem, parsed, timingMs: performance.now() - start }
     } catch (e) {

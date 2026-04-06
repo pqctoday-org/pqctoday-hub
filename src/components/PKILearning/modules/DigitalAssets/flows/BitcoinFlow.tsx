@@ -2,19 +2,15 @@
 import React, { useMemo } from 'react'
 import type { Step } from '../components/StepWizard'
 import { StepWizard } from '../components/StepWizard'
-import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { sha256 } from '@noble/hashes/sha2.js'
 import { ripemd160 } from '@noble/hashes/legacy.js'
 import { createBase58check } from '@scure/base'
 import { bytesToHex } from '@noble/hashes/utils.js'
 import { useStepWizard } from '../hooks/useStepWizard'
-import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
 import { BitcoinFlowDiagram } from '../components/CryptoFlowDiagram'
 import { InfoTooltip } from '../components/InfoTooltip'
-import { useKeyGeneration } from '../hooks/useKeyGeneration'
-import { useArtifactManagement } from '../hooks/useArtifactManagement'
-import { useFileRetrieval } from '../hooks/useFileRetrieval'
 import { hsm_generateECKeyPair, hsm_ecdsaSign, hsm_ecdsaVerify } from '@/wasm/softhsm/classical'
+import { hsm_getPublicKeyInfo } from '@/wasm/softhsm/objects'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -25,41 +21,47 @@ interface BitcoinFlowProps {
   onBack: () => void
 }
 
+/**
+ * Extract the compressed secp256k1 public key (33 bytes) from an SPKI DER blob.
+ *
+ * SPKI structure for secp256k1:
+ *   SEQUENCE(2) + inner SEQUENCE(18: ecPublicKey OID + secp256k1 OID) + BIT STRING header(3)
+ *   = 23 bytes before the EC point.
+ *
+ * If the extracted point is uncompressed (0x04 prefix, 65 bytes) it is compressed
+ * by keeping the x-coordinate and deriving the prefix from y-parity.
+ */
+function extractCompressedSecp256k1(spki: Uint8Array): Uint8Array {
+  const point = spki.slice(23)
+  if (point[0] === 0x04 && point.length === 65) {
+    const prefix = (point[64] & 1) === 0 ? 0x02 : 0x03
+    const compressed = new Uint8Array(33)
+    compressed[0] = prefix
+    compressed.set(point.slice(1, 33), 1)
+    return compressed
+  }
+  return point // already compressed (0x02 / 0x03)
+}
+
 export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
-  // Shared Hooks
-  const keyGen = useKeyGeneration('bitcoin')
-  const recipientKeyGen = useKeyGeneration('bitcoin') // Separate hook instance for recipient
-  const artifacts = useArtifactManagement()
-  const fileRetrieval = useFileRetrieval()
-
-  // Local State
-  const [sourceAddress, setSourceAddress] = React.useState<string | null>(null)
-  const [recipientAddress, setRecipientAddress] = React.useState<string | null>(null)
-  const [editableRecipientAddress, setEditableRecipientAddress] = React.useState<string>('')
-  const [transactionBytes, setTransactionBytes] = React.useState<Uint8Array | null>(null)
-
-  // SoftHSM State linked to interactive UI
   const hsm = useHSM()
+
   const hsmHandlesRef = React.useRef<{
     srcPrivHandle?: number
     srcPubHandle?: number
     dstPrivHandle?: number
     dstPubHandle?: number
   }>({})
-  // Holds the raw SoftHSMv3 signature (r||s, 64 bytes) from the sign step
-  // so the verify step can use the correct format for CKM_ECDSA (not OpenSSL DER)
+  // Extracted public key bytes (from HSM via CKA_PUBLIC_KEY_INFO) — used for address derivation
+  const srcPubKeyRef = React.useRef<Uint8Array | null>(null)
+  const dstPubKeyRef = React.useRef<Uint8Array | null>(null)
+  // Raw SoftHSMv3 signature (r||s, 64 bytes) — CKM_ECDSA format, persisted for verify step
   const hsmSigRef = React.useRef<Uint8Array | null>(null)
-  // Filenames (Memoized constants)
-  const filenames = useMemo(() => {
-    const src = DIGITAL_ASSETS_CONSTANTS.getFilenames('SRC_bitcoin')
-    const dst = DIGITAL_ASSETS_CONSTANTS.getFilenames('DST_bitcoin')
-    return {
-      SRC_PRIVATE_KEY: src.PRIVATE_KEY,
-      SRC_PUBLIC_KEY: src.PUBLIC_KEY,
-      DST_PRIVATE_KEY: dst.PRIVATE_KEY,
-      DST_PUBLIC_KEY: dst.PUBLIC_KEY,
-    }
-  }, [])
+
+  const [sourceAddress, setSourceAddress] = React.useState<string | null>(null)
+  const [recipientAddress, setRecipientAddress] = React.useState<string | null>(null)
+  const [editableRecipientAddress, setEditableRecipientAddress] = React.useState<string>('')
+  const [transactionBytes, setTransactionBytes] = React.useState<Uint8Array | null>(null)
 
   const steps: Step[] = useMemo(
     () => [
@@ -69,54 +71,65 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
         description: (
           <>
             Generate a <InfoTooltip term="secp256k1" /> key pair for the sender inside SoftHSMv3
-            (PKCS#11 via WebAssembly) with OpenSSL as a reference engine. Note:{' '}
-            <InfoTooltip term="shors" /> breaks secp256k1 — this algorithm will require migration
-            when a cryptographically relevant quantum computer (CRQC) arrives.
+            (PKCS#11 via WebAssembly). The private key is created inside the HSM token and never
+            leaves it. Note: <InfoTooltip term="shors" /> breaks secp256k1 — this algorithm will
+            require migration when a cryptographically relevant quantum computer (CRQC) arrives.
           </>
         ),
-        code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
-, false, 'sign');`,
+        code: `// Generate secp256k1 key pair inside the SoftHSMv3 token
+const { pubHandle, privHandle } = hsm_generateECKeyPair(
+  module, hSession,
+  'secp256k1',
+  false,   // extractable = false — private key stays in HSM
+  'sign'   // usage: CKA_SIGN on private, CKA_VERIFY on public
+)`,
         language: 'javascript',
         actionLabel: 'Generate Source Key',
         diagram: <BitcoinFlowDiagram />,
       },
       {
         id: 'pub_key',
-        title: '2. Derive Source Public Key',
+        title: '2. Extract Source Public Key',
         description: (
           <>
-            Derive the sender&apos;s public key using standard elliptic curve cryptography (ECC) on{' '}
-            <InfoTooltip term="secp256k1" />. This is a one-way trapdoor function: Public Key =
-            Private Key × G (where G is the generator point). It&apos;s computationally easy to
-            derive the public key from the private key, but practically impossible to reverse.
-            Bitcoin uses compressed public keys (33 bytes) which store only the x-coordinate plus a
-            prefix byte (0x02 or 0x03) indicating y-coordinate parity, instead of the full
-            uncompressed format (65 bytes with both x and y coordinates).
+            Extract the sender&apos;s <InfoTooltip term="secp256k1" /> public key from the HSM token
+            via{' '}
+            <code className="text-xs font-mono text-primary">
+              C_GetAttributeValue(CKA_PUBLIC_KEY_INFO)
+            </code>
+            . This returns the SPKI DER blob; the raw EC point is parsed out and compressed to 33
+            bytes. The private key is not involved and never leaves the token.
           </>
         ),
-        code: `// SoftHSMv3 Key Extraction
-// The public key handle is used to retrieve CKA_VALUE
-const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, CKA_VALUE);
+        code: `// PKCS#11 C_GetAttributeValue(CKA_PUBLIC_KEY_INFO) — returns SPKI DER bytes
+const spki = module._C_GetAttributeValue(hSession, pubHandle, CKA_PUBLIC_KEY_INFO)
 
-// Standard ECC Process:
-// 1. Private key (scalar) × Generator point G = Public key point (x, y)
-// 2. Compress: Use x-coordinate + prefix (0x02 if y is even, 0x03 if y is odd)
-// 3. Result: 33-byte compressed public key (vs 65-byte uncompressed)`,
+// Parse the EC point out of SPKI and compress it
+// SPKI offset 23 = SEQUENCE(2) + inner SEQUENCE(18) + BIT STRING header(3)
+const point = spki.slice(23) // 65 bytes uncompressed or 33 bytes compressed
+const prefix = (point[64] & 1) === 0 ? 0x02 : 0x03   // y-parity → prefix byte
+const pubKeyBytes = new Uint8Array([prefix, ...point.slice(1, 33)]) // 33 bytes`,
         language: 'javascript',
-        actionLabel: 'Derive Public Key',
+        actionLabel: 'Extract Public Key',
       },
       {
         id: 'address',
         title: '3. Create Source Address',
         description: (
           <>
-            Hash the sender's public key (<InfoTooltip term="sha256" /> +{' '}
+            Hash the sender&apos;s public key (<InfoTooltip term="sha256" /> +{' '}
             <InfoTooltip term="ripemd160" />) and encode with <InfoTooltip term="base58check" /> to
             create a <InfoTooltip term="p2pkh" /> address.
           </>
         ),
-        code: `// 1. SHA256\nconst sha = sha256(pubKeyBytes);\n\n// 2. RIPEMD160\nconst ripemd = ripemd160(sha);\n\n// 3. Base58Check Encode\nconst address = base58check(ripemd);`,
+        code: `// 1. SHA256
+const sha = sha256(pubKeyBytes)
+
+// 2. RIPEMD160
+const ripemd = ripemd160(sha)
+
+// 3. Base58Check(version=0x00) → P2PKH address
+const address = base58check.encode([0x00, ...ripemd])`,
         language: 'javascript',
         actionLabel: 'Create Source Address',
         diagram: <BitcoinFlowDiagram />,
@@ -131,17 +144,29 @@ const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, C
             key is generated inside the HSM and never exposed.
           </>
         ),
-        code: `// SoftHSMv3 WebAssembly API
-const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
-, false, 'sign');`,
+        code: `const { pubHandle, privHandle } = hsm_generateECKeyPair(
+  module, hSession, 'secp256k1', false, 'sign'
+)`,
         language: 'javascript',
         actionLabel: 'Generate Recipient Key',
       },
       {
         id: 'recipient_address',
         title: '5. Create Recipient Address',
-        description: "Derive the recipient's address from their public key.",
-        code: `// Derive recipient address\nconst recipientAddress = createAddress(recipientPubKeyBytes);`,
+        description: (
+          <>
+            Extract the recipient&apos;s public key from the HSM token, then derive their{' '}
+            <InfoTooltip term="p2pkh" /> address using the same <InfoTooltip term="sha256" /> →{' '}
+            <InfoTooltip term="ripemd160" /> → <InfoTooltip term="base58check" /> pipeline as step
+            3.
+          </>
+        ),
+        code: `// Extract recipient public key from HSM token
+const spki = C_GetAttributeValue(hSession, dstPubHandle, CKA_PUBLIC_KEY_INFO)
+const pubKeyBytes = extractCompressedPoint(spki)
+
+// Derive P2PKH address — same pipeline as step 3
+const address = base58check.encode([0x00, ...ripemd160(sha256(pubKeyBytes))])`,
         language: 'javascript',
         actionLabel: 'Create Recipient Address',
       },
@@ -150,7 +175,12 @@ const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionH
         title: '6. Format Transaction',
         description:
           'Define the transaction details including amount, fee, and addresses. Bitcoin transactions follow a specific binary format with multiple fields. Verify the recipient address carefully!',
-        code: `const transaction = {\n  amount: 0.5,\n  fee: 0.0001,\n  sourceAddress: "${sourceAddress || '...'}",\n  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"\n};`,
+        code: `const transaction = {
+  amount: 0.5,
+  fee: 0.0001,
+  sourceAddress: "${sourceAddress || '...'}",
+  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"
+}`,
         language: 'javascript',
         actionLabel: 'Format Transaction',
         explanationTable: [
@@ -272,20 +302,15 @@ const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionH
           <>
             Sign the transaction hash (Double <InfoTooltip term="sha256" />) using the sender&apos;s
             private key via <InfoTooltip term="ecdsa" /> (CKM_ECDSA — raw hash input, no internal
-            hashing).
+            hashing). The private key never leaves the HSM token.
           </>
         ),
-        code: `// 1. Double SHA256 of message
-const sighashBytes = sha256(sha256(rawTxBytes));
+        code: `// 1. Double SHA256 sighash — computed in JS, passed raw to HSM
+const sighash = sha256(sha256(rawTxBytes))
 
-// 2. SoftHSMv3 Signing (CKM_ECDSA)
-const signature = hsm_ecdsaSign(
-  hsm.module, 
-  hsm.sessionHandle, 
-  privHandle, 
-  sighashBytes, 
-  CKM_ECDSA
-);`,
+// 2. C_SignInit + C_Sign with CKM_ECDSA (raw: HSM does NOT hash internally)
+const signature = hsm_ecdsaSign(module, hSession, privHandle, sighash, CKM_ECDSA)
+// Returns raw r||s (64 bytes) — NOT DER-encoded`,
         language: 'javascript',
         actionLabel: 'Sign Transaction',
       },
@@ -303,15 +328,10 @@ const signature = hsm_ecdsaSign(
             quantum-unsafe.
           </>
         ),
-        code: `// SoftHSMv3 Verification (CKM_ECDSA)
-const isValid = hsm_ecdsaVerify(
-  hsm.module, 
-  hsm.sessionHandle, 
-  pubHandle, 
-  hashBytes, 
-  sigBytes, 
-  CKM_ECDSA
-);`,
+        code: `// C_VerifyInit + C_Verify with CKM_ECDSA (raw r||s, no DER)
+// Recompute sighash to match what was signed in step 8
+const sighash = sha256(sha256(rawTxBytes))
+const isValid = hsm_ecdsaVerify(module, hSession, pubHandle, sighash, sig, CKM_ECDSA)`,
         language: 'javascript',
         actionLabel: 'Verify Signature',
       },
@@ -319,161 +339,122 @@ const isValid = hsm_ecdsaVerify(
     [sourceAddress, recipientAddress, editableRecipientAddress]
   )
 
-  const executeStep = async () => {
+  const executeStep = async (): Promise<string | Record<string, string>> => {
     const step = steps[wizard.currentStep]
-    let result: Record<string, string> | string = {}
-    const CKM_ECDSA = 0x1040 // Raw ECDSA PKCS#11 Mechanism ID
+    const CKM_ECDSA = 0x1040
+
+    if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) {
+      throw new Error('SoftHSMv3 session not ready — waiting for initialization to complete.')
+    }
+    const M = hsm.moduleRef.current
+    const hSession = hsm.hSessionRef.current
 
     if (step.id === 'gen_key') {
-      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
-      if (hsmActive) {
-        try {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(
-            M,
-            hSession,
-            'secp256k1',
-            false,
-            'sign'
-          )
-          hsmHandlesRef.current.srcPrivHandle = privHandle
-          hsmHandlesRef.current.srcPubHandle = pubHandle
-
-          hsm.addKey({
-            handle: pubHandle,
-            label: 'Bitcoin Source Key (secp256k1)',
-            family: 'ecdsa',
-            role: 'public',
-            generatedAt: new Date().toISOString(),
-          })
-          hsm.addKey({
-            handle: privHandle,
-            label: 'Bitcoin Source Key (secp256k1)',
-            family: 'ecdsa',
-            role: 'private',
-            generatedAt: new Date().toISOString(),
-          })
-
-          result.SoftHSMv3 = `Keys internally generated via SoftHSM3 C_GenerateKeyPair.\nInspect the actual key parameters in the HSM Key Registry below.\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
-        } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
-        }
-      }
-
-      const { keyPair } = await keyGen.generateKeyPair(
-        filenames.SRC_PRIVATE_KEY,
-        filenames.SRC_PUBLIC_KEY
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(
+        M,
+        hSession,
+        'secp256k1',
+        false,
+        'sign'
       )
+      hsmHandlesRef.current.srcPrivHandle = privHandle
+      hsmHandlesRef.current.srcPubHandle = pubHandle
+      hsm.addKey({
+        handle: pubHandle,
+        label: 'Bitcoin Sender (secp256k1)',
+        family: 'ecdsa',
+        role: 'public',
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        label: 'Bitcoin Sender (secp256k1)',
+        family: 'ecdsa',
+        role: 'private',
+        generatedAt: new Date().toISOString(),
+      })
+      return `secp256k1 key pair generated inside SoftHSMv3 token via C_GenerateKeyPair.\n\nPub handle: ${pubHandle}  ·  Priv handle: ${privHandle}\n\nThe private key never leaves the HSM token.\nFull trace in PKCS#11 Call Log below.`
+    }
 
-      const files = fileRetrieval.prepareFilesForExecution([filenames.SRC_PRIVATE_KEY])
-      const readRes = await openSSLService.execute(
-        `openssl enc -base64 -in ${filenames.SRC_PRIVATE_KEY}`,
-        files
-      )
-      const keyContent = atob(readRes.stdout.replace(/\n/g, ''))
+    if (step.id === 'pub_key') {
+      const pubHandle = hsmHandlesRef.current.srcPubHandle
+      if (!pubHandle) throw new Error('Source key not found — execute Step 1 first.')
+      const spki = hsm_getPublicKeyInfo(M, hSession, pubHandle)
+      const compressed = extractCompressedSecp256k1(spki)
+      srcPubKeyRef.current = compressed
+      return `Sender public key extracted via C_GetAttributeValue(CKA_PUBLIC_KEY_INFO).\n\nSPKI DER (${spki.length} bytes, hex):\n${bytesToHex(spki)}\n\nCompressed secp256k1 public key (33 bytes, hex):\n${bytesToHex(compressed)}\n\nFull C_GetAttributeValue trace in PKCS#11 Call Log below.`
+    }
 
-      result.OpenSSL = `Generated Source Private Key (Hex):\n${keyPair.privateKeyHex}\n\nPEM Format:\n${keyContent}`
-    } else if (step.id === 'pub_key') {
-      if (!keyGen.publicKeyHex) {
-        throw new Error('Public key not found. Please execute Step 1 first.')
-      }
-
-      const files = fileRetrieval.prepareFilesForExecution([filenames.SRC_PUBLIC_KEY])
-      const readRes = await openSSLService.execute(
-        `openssl enc -base64 -in ${filenames.SRC_PUBLIC_KEY}`,
-        files
-      )
-      const pubKeyPem = atob(readRes.stdout.replace(/\n/g, ''))
-
-      result.OpenSSL = `Derived Source Public Key (Hex):\n${keyGen.publicKeyHex}\n\nPEM Format:\n${pubKeyPem}`
-      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
-      if (hsmActive && hsmHandlesRef.current?.srcPubHandle) {
-        result.SoftHSMv3 = `Public Key derived via C_GetAttributeValue(CKA_VALUE).\n\nExtracted: ${keyGen.publicKeyHex}\n\n[VERIFICATION] Extraction matches expected Hex exactly. Trace available in PKCS#11 log.`
-      }
-    } else if (step.id === 'address') {
-      if (!keyGen.publicKey) throw new Error('Public key not found')
-
-      const shaHash = sha256(keyGen.publicKey)
+    if (step.id === 'address') {
+      if (!srcPubKeyRef.current)
+        throw new Error('Sender public key not found — execute Step 2 first.')
+      const shaHash = sha256(srcPubKeyRef.current)
       const ripemdHash = ripemd160(shaHash)
       const base58check = createBase58check(sha256)
       const address = base58check.encode(Uint8Array.from([0x00, ...ripemdHash]))
-
       setSourceAddress(address)
+      return `Sender Public Key (hex):\n${bytesToHex(srcPubKeyRef.current)}\n\nSHA256:\n${bytesToHex(shaHash)}\n\nRIPEMD160:\n${bytesToHex(ripemdHash)}\n\nBitcoin Address (P2PKH):\n${address}`
+    }
 
-      result = `Source Public Key (Hex):\n${keyGen.publicKeyHex}\n\nSHA256 Hash:\n${bytesToHex(shaHash)}\n\nRIPEMD160 Hash:\n${bytesToHex(ripemdHash)}\n\nBitcoin Address (P2PKH):\n${address}`
-    } else if (step.id === 'gen_recipient_key') {
-      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
-      if (hsmActive) {
-        try {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(
-            M,
-            hSession,
-            'secp256k1',
-            false,
-            'sign'
-          )
-          hsmHandlesRef.current.dstPrivHandle = privHandle
-          hsmHandlesRef.current.dstPubHandle = pubHandle
-
-          hsm.addKey({
-            handle: pubHandle,
-            label: 'Bitcoin Recipient Key (secp256k1)',
-            family: 'ecdsa',
-            role: 'public',
-            generatedAt: new Date().toISOString(),
-          })
-          hsm.addKey({
-            handle: privHandle,
-            label: 'Bitcoin Recipient Key (secp256k1)',
-            family: 'ecdsa',
-            role: 'private',
-            generatedAt: new Date().toISOString(),
-          })
-
-          result.SoftHSMv3 = `Recipient keys internally generated via SoftHSM3 C_GenerateKeyPair.\nInspect the actual key parameters in the HSM Key Registry below.\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
-        } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
-        }
-      }
-
-      const { keyPair } = await recipientKeyGen.generateKeyPair(
-        filenames.DST_PRIVATE_KEY,
-        filenames.DST_PUBLIC_KEY
+    if (step.id === 'gen_recipient_key') {
+      const { pubHandle, privHandle } = hsm_generateECKeyPair(
+        M,
+        hSession,
+        'secp256k1',
+        false,
+        'sign'
       )
+      hsmHandlesRef.current.dstPrivHandle = privHandle
+      hsmHandlesRef.current.dstPubHandle = pubHandle
+      hsm.addKey({
+        handle: pubHandle,
+        label: 'Bitcoin Recipient (secp256k1)',
+        family: 'ecdsa',
+        role: 'public',
+        generatedAt: new Date().toISOString(),
+      })
+      hsm.addKey({
+        handle: privHandle,
+        label: 'Bitcoin Recipient (secp256k1)',
+        family: 'ecdsa',
+        role: 'private',
+        generatedAt: new Date().toISOString(),
+      })
+      return `Recipient secp256k1 key pair generated inside SoftHSMv3 via C_GenerateKeyPair.\n\nPub handle: ${pubHandle}  ·  Priv handle: ${privHandle}\n\nFull trace in PKCS#11 Call Log below.`
+    }
 
-      result.OpenSSL = `Generated Recipient Keys:\n${filenames.DST_PRIVATE_KEY}\n${filenames.DST_PUBLIC_KEY}\n\nRecipient Public Key (Hex):\n${keyPair.publicKeyHex}`
-    } else if (step.id === 'recipient_address') {
-      if (!recipientKeyGen.publicKey) throw new Error('Recipient public key not found')
-
-      const shaHash = sha256(recipientKeyGen.publicKey)
+    if (step.id === 'recipient_address') {
+      const pubHandle = hsmHandlesRef.current.dstPubHandle
+      if (!pubHandle) throw new Error('Recipient key not found — execute Step 4 first.')
+      const spki = hsm_getPublicKeyInfo(M, hSession, pubHandle)
+      const compressed = extractCompressedSecp256k1(spki)
+      dstPubKeyRef.current = compressed
+      const shaHash = sha256(compressed)
       const ripemdHash = ripemd160(shaHash)
       const base58check = createBase58check(sha256)
       const address = base58check.encode(Uint8Array.from([0x00, ...ripemdHash]))
-
       setRecipientAddress(address)
       setEditableRecipientAddress(address)
+      return `Recipient Public Key (hex):\n${bytesToHex(compressed)}\n\nSHA256:\n${bytesToHex(shaHash)}\n\nRIPEMD160:\n${bytesToHex(ripemdHash)}\n\nRecipient Bitcoin Address (P2PKH):\n${address}`
+    }
 
-      result = `Recipient Bitcoin Address (P2PKH):\n${address}`
-    } else if (step.id === 'format_tx') {
-      if (!sourceAddress || !recipientAddress) throw new Error('Addresses not generated')
-
+    if (step.id === 'format_tx') {
+      if (!sourceAddress || !recipientAddress)
+        throw new Error('Addresses not generated — execute Steps 3 and 5 first.')
       const txData = {
         amount: 0.5,
         fee: 0.0001,
-        sourceAddress: sourceAddress,
+        sourceAddress,
         recipientAddress: editableRecipientAddress || recipientAddress,
       }
-
       const isModified = editableRecipientAddress !== recipientAddress
       const warning = isModified
         ? '\n\n⚠️ WARNING: Recipient address has been modified! Signing this transaction may result in loss of funds.'
         : ''
+      return `Transaction Details:\n${JSON.stringify(txData, null, 2)}${warning}`
+    }
 
-      result = `Transaction Details:\n${JSON.stringify(txData, null, 2)}${warning}`
-    } else if (step.id === 'visualize_msg') {
+    if (step.id === 'visualize_msg') {
       const rawTx = {
         version: 1,
         inputCount: 1,
@@ -495,128 +476,49 @@ const isValid = hsm_ecdsaVerify(
         ],
         locktime: 0,
       }
-
-      const txJson = JSON.stringify(rawTx, null, 2)
-      const txBytes = new TextEncoder().encode(txJson)
+      const txBytes = new TextEncoder().encode(JSON.stringify(rawTx, null, 2))
       setTransactionBytes(txBytes)
-
-      const transFilename = artifacts.saveTransaction('bitcoin', txBytes)
-
-      result = `Raw Transaction Structure (to be hashed):\n${JSON.stringify(rawTx, null, 2)}\n\n📂 Artifact Saved: ${transFilename}`
-    } else if (step.id === 'sign') {
-      if (!transactionBytes) throw new Error('Transaction bytes not found')
-
-      const hash1Bytes = sha256(transactionBytes)
-      const sighashBytes = sha256(hash1Bytes)
-
-      const hashFilename = artifacts.saveHash('bitcoin', sighashBytes)
-
-      // SoftHSM execution
-      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
-      if (hsmActive) {
-        try {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const privHandle = hsmHandlesRef.current.srcPrivHandle
-          if (!privHandle) throw new Error('SoftHSM Source Private Key not found.')
-
-          // We sign the raw sighashBytes using CKM_ECDSA (returns raw r||s, not DER)
-          const hsmSig = hsm_ecdsaSign(M, hSession, privHandle, sighashBytes, CKM_ECDSA)
-          hsmSigRef.current = hsmSig // persist for verify step — CKM_ECDSA expects raw r||s
-          const hsmSigHex = bytesToHex(hsmSig)
-
-          result.SoftHSMv3 = `Signature exclusively computed within WebAssembly SoftHSM Environment via C_Sign.\nSignature Length: ${hsmSig.length} bytes\nSignature Result (Hex): ${hsmSigHex}\n\nFull C_SignInit + C_Sign trace logged to PKCS#11 panel below.`
-        } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
-        }
-      }
-
-      // OpenSSL Execution
-      const filesToPass = fileRetrieval.prepareFilesForExecution([filenames.SRC_PRIVATE_KEY])
-      filesToPass.push({ name: hashFilename, data: sighashBytes })
-
-      const sigFilename = `bitcoin_signdata_${artifacts.getTimestamp()}.sig`
-      const signCmd = `openssl pkeyutl -sign -inkey ${filenames.SRC_PRIVATE_KEY} -in ${hashFilename} -out ${sigFilename}`
-
-      const res = await openSSLService.execute(signCmd, filesToPass)
-      if (res.error) throw new Error(res.error)
-
-      const sigData = res.files.find((f) => f.name === sigFilename)?.data || new Uint8Array()
-      artifacts.saveSignature('bitcoin', sigData)
-
-      const readRes = await openSSLService.execute(
-        `openssl enc -base64 -in ${sigFilename}`,
-        res.files
-      )
-      const sigBase64 = readRes.stdout.replace(/\n/g, '')
-
-      result.OpenSSL = `Transaction Signed Successfully!\n\nSignature (Base64):\n${sigBase64}\n\n📂 Artifact Saved: ${sigFilename}`
-    } else if (step.id === 'verify') {
-      if (!transactionBytes) throw new Error('Transaction bytes not found')
-
-      const hashFilename = artifacts.filenames.hash || 'btc_sighash.bin'
-      const sigFilename = artifacts.filenames.sig || 'btc_sig.der'
-      const sigBytes = fileRetrieval.getFile(sigFilename)?.data
-      const hashBytes = fileRetrieval.getFile(hashFilename)?.data
-
-      if (!sigBytes || !hashBytes) throw new Error('Signature or Hash artifact not found.')
-
-      // SoftHSM execution — uses hsmSigRef (raw r||s) not the OpenSSL DER artifact
-      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
-      if (hsmActive) {
-        try {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const pubHandle = hsmHandlesRef.current.srcPubHandle
-          if (!pubHandle) throw new Error('SoftHSM Source Public Key not found.')
-          if (!hsmSigRef.current)
-            throw new Error('SoftHSM signature not found. Please execute Step 8 first.')
-
-          // Recompute sighash from the transaction bytes to match what was signed
-          const hsmSighash = sha256(sha256(transactionBytes))
-          const isValid = hsm_ecdsaVerify(
-            M,
-            hSession,
-            pubHandle,
-            hsmSighash,
-            hsmSigRef.current,
-            CKM_ECDSA
-          )
-          result.SoftHSMv3 = `Signature Evaluation: ${isValid ? '✅ VALID' : '❌ INVALID'}\nVerified strictly inside WebAssembly SoftHSM via C_Verify.\nTrace sent to PKCS#11 Log.`
-        } catch (e) {
-          result.SoftHSMv3 = `SoftHSM Error: ${e}`
-        }
-      }
-
-      // OpenSSL Execution
-      const filesToPass = fileRetrieval.prepareFilesForExecution([
-        filenames.SRC_PUBLIC_KEY,
-        hashFilename,
-        sigFilename,
-      ])
-
-      const verifyCmd = `openssl pkeyutl -verify -pubin -inkey ${filenames.SRC_PUBLIC_KEY} -in ${hashFilename} -sigfile ${sigFilename}`
-      const res = await openSSLService.execute(verifyCmd, filesToPass)
-
-      if (res.error) throw new Error(`Verification failed: ${res.error}`)
-
-      result.OpenSSL = `Verification Result: ✅ VALID\n\n${res.stdout || 'Signature verified successfully using OpenSSL'}`
+      return `Raw Transaction Structure (to be double-SHA256 hashed and signed):\n${JSON.stringify(rawTx, null, 2)}`
     }
 
-    return result
+    if (step.id === 'sign') {
+      if (!transactionBytes) throw new Error('Transaction bytes not found — execute Step 7 first.')
+      const privHandle = hsmHandlesRef.current.srcPrivHandle
+      if (!privHandle) throw new Error('Sender private key not found — execute Step 1 first.')
+      const sighashBytes = sha256(sha256(transactionBytes))
+      const hsmSig = hsm_ecdsaSign(M, hSession, privHandle, sighashBytes, CKM_ECDSA)
+      hsmSigRef.current = hsmSig
+      return `Double SHA256 sighash (32 bytes):\n${bytesToHex(sighashBytes)}\n\nSignature via C_SignInit + C_Sign (CKM_ECDSA):\n${bytesToHex(hsmSig)}\n\n${hsmSig.length} bytes — raw r||s, not DER-encoded.\nFull trace in PKCS#11 Call Log below.`
+    }
+
+    if (step.id === 'verify') {
+      if (!transactionBytes) throw new Error('Transaction bytes not found — execute Step 7 first.')
+      if (!hsmSigRef.current) throw new Error('Signature not found — execute Step 8 first.')
+      const pubHandle = hsmHandlesRef.current.srcPubHandle
+      if (!pubHandle) throw new Error('Sender public key not found — execute Step 1 first.')
+      const hsmSighash = sha256(sha256(transactionBytes))
+      const isValid = hsm_ecdsaVerify(
+        M,
+        hSession,
+        pubHandle,
+        hsmSighash,
+        hsmSigRef.current,
+        CKM_ECDSA
+      )
+      return `Sighash recomputed (32 bytes):\n${bytesToHex(hsmSighash)}\n\nSignature Evaluation via C_VerifyInit + C_Verify (CKM_ECDSA):\n${isValid ? '✅ VALID' : '❌ INVALID'}\n\nVerified using sender public key handle ${pubHandle}.\nFull trace in PKCS#11 Call Log below.`
+    }
+
+    return ''
   }
 
-  const wizard = useStepWizard({
-    steps,
-    onBack,
-  })
+  const wizard = useStepWizard({ steps, onBack })
 
   return (
     <div className="flex flex-col h-full relative">
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 rounded-t-xl">
         <LiveHSMToggle
           hsm={hsm}
-          operations={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
+          operations={['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_Sign', 'C_Verify']}
         />
       </div>
       <p className="text-xs text-muted-foreground px-6 py-2 mb-4 border-b border-border">
@@ -642,7 +544,7 @@ const isValid = hsm_ecdsaVerify(
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log — Bitcoin Flow"
           emptyMessage="Execute a step to see live PKCS#11 operations."
-          filterFns={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
+          filterFns={['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_Sign', 'C_Verify']}
         />
       )}
 
