@@ -117,7 +117,12 @@
         ]
       }
     </script>
-    <!-- Cross-Origin Isolation via service worker (enables SharedArrayBuffer on GitHub Pages) -->
+    <!-- Cross-Origin Isolation via service worker (enables SharedArrayBuffer on GitHub Pages).
+         coepDegrade:false skips the require-corp → credentialless degrade cycle that causes
+         an infinite reload loop on GitHub Pages. credentialless mode works in Chrome/Edge 96+. -->
+    <script>
+      window.coi = { coepDegrade: () => false }
+    </script>
     <script src="/coi-serviceworker.js"></script>
   </head>
   <body>
