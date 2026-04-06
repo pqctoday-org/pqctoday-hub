@@ -1883,7 +1883,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
 
       {/* LiveHSMToggle — per hsm-ui-layout-pattern.md §2.1 */}
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
-        <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} engineMode="rust" />
+        <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
         <Button
           onClick={handleReset}
           variant="ghost"

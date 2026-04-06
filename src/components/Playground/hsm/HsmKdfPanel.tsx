@@ -370,7 +370,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               removeHsmKey(derivedHandle)
               setDerivedHandle(null)
             }
-            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+            const h = hsm_generateAESKey(M, hSession, 256, false, false, false, false, true, false)
             addHsmKey({
               handle: h,
               label: 'IKM (AES-256)',
@@ -678,7 +678,7 @@ const KbkdfPanel = ({
               removeHsmKey(derivedHandle)
               setDerivedHandle(null)
             }
-            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+            const h = hsm_generateAESKey(M, hSession, 256, false, false, false, false, true, false)
             addHsmKey({
               handle: h,
               label: 'Ki (AES-256 base key)',
