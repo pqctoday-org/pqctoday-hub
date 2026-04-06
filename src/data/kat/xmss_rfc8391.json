@@ -1,0 +1,19 @@
+{
+  "source": "NIST SP 800-208 / RFC 8391",
+  "description": "XMSS-SHA2_10_256 Deterministic Keygen Self-Test",
+  "parameter_set": "XMSS-SHA2_10_256",
+  "oid": "0x00000001",
+  "notes": "RFC 8391 (informational) and NIST SP 800-208 (normative) specify XMSS-SHA2_10_256 but do not publish KAT vectors. This test uses the _set_kat_seed hook (softhsmv3 Rust WASM) to inject a known 96-byte seed (SK_SEED||SK_PRF||PUB_SEED = all zeros) and prove that keygen is deterministic — the derived public key must match expected_pub_key_hex on every run. Height h=10 (2^10=1024 signatures), n=32, w=16. Signature length: 2500 bytes (RFC 8391 §4 formula: 4+4+67×32+10×32 = 2500).",
+  "kat_seed_hex": "000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+  "kat_seed_structure": "SK_SEED(32 bytes, zeros) || SK_PRF(32 bytes, zeros) || PUB_SEED(32 bytes, zeros)",
+  "test_cases": [
+    {
+      "id": "Test Case 1 (XMSS-SHA2_10_256, zero seed, index 0)",
+      "message_hex": "54686520706f77657273206e6f742064656c65676174656420746f2074686520556e69746564205374617465732062792074686520436f6e737469747574696f6e2c206e6f722070726f6869626974656420627920697420746f20746865205374617465732c2061726520726573657276656420746f207468652053746174657320726573706563746976656c792c206f7220746f207468652070656f706c652e0a",
+      "expected_pub_key_hex": "000000010ed35860b07c2a5d6c3a2825953012b7d05dd2c799c1480411421db587bd7c8f0000000000000000000000000000000000000000000000000000000000000000",
+      "expected_pub_key_len": 68,
+      "expected_sig_len": 2500,
+      "parameter_set_id": "XMSS-SHA2_10_256"
+    }
+  ]
+}
