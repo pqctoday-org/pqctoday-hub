@@ -3,36 +3,81 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BitcoinFlow } from '../BitcoinFlow'
-import { useKeyGeneration } from '../../hooks/useKeyGeneration'
-import { useArtifactManagement } from '../../hooks/useArtifactManagement'
-import { useFileRetrieval } from '../../hooks/useFileRetrieval'
 import { useStepWizard } from '../../hooks/useStepWizard'
 
-// Mock shared hooks
-vi.mock('../../hooks/useKeyGeneration')
-vi.mock('../../hooks/useArtifactManagement')
-vi.mock('../../hooks/useFileRetrieval')
-vi.mock('../../hooks/useStepWizard', () => {
-  const actual = vi.importActual('../../hooks/useStepWizard')
-  return {
-    ...actual,
-    useStepWizard: vi.fn(), // We will mock implementation
-  }
-})
-
-// Mock OpenSSL Service (implementation only, no import needed if not accessed)
-vi.mock('../../../../../../services/crypto/OpenSSLService', () => ({
-  openSSLService: {
-    execute: vi.fn().mockResolvedValue({
-      stdout: 'MjAyNS0xMi0wOFQxMjo0MTowOC4xMjNa', // Base64 for "2025-12-08T12:41:08.123Z" (dummy)
-      stderr: '',
-      error: null,
-      files: [],
-    }),
-  },
+// ── WASM function mocks ────────────────────────────────────────────────────────
+vi.mock('@/wasm/softhsm/classical', () => ({
+  hsm_generateECKeyPair: vi.fn().mockReturnValue({ pubHandle: 10, privHandle: 11 }),
+  hsm_ecdsaSign: vi.fn().mockReturnValue(new Uint8Array(64)),
+  hsm_ecdsaVerify: vi.fn().mockReturnValue(true),
 }))
 
-// Mock UI components to simplify DOM
+vi.mock('@/wasm/softhsm/objects', () => ({
+  // Return a minimal SPKI DER for secp256k1 uncompressed point:
+  // 23-byte header + 65-byte uncompressed point (04 prefix + 32 x + 32 y)
+  hsm_getPublicKeyInfo: vi.fn().mockReturnValue(
+    new Uint8Array([
+      // 23-byte SPKI header (simplified)
+      0x30,
+      0x56,
+      0x30,
+      0x10,
+      0x06,
+      0x07,
+      0x2a,
+      0x86,
+      0x48,
+      0xce,
+      0x3d,
+      0x02,
+      0x01,
+      0x06,
+      0x05,
+      0x2b,
+      0x81,
+      0x04,
+      0x00,
+      0x0a,
+      0x03,
+      0x42,
+      0x00,
+      // 65-byte uncompressed EC point (04 + 32 x + 32 y, y is even so prefix=0x02)
+      0x04,
+      ...new Array(32).fill(0x01),
+      ...new Array(32).fill(0x02),
+    ])
+  ),
+}))
+
+// ── useHSM mock — returns a ready HSM with stub refs ──────────────────────────
+const mockModuleRef = { current: { _C_EncapsulateKey: vi.fn() } }
+const mockSessionRef = { current: 1 }
+const mockAddKey = vi.fn()
+
+vi.mock('@/hooks/useHSM', () => ({
+  useHSM: vi.fn(() => ({
+    isReady: true,
+    phase: 'ready',
+    moduleRef: mockModuleRef,
+    hSessionRef: mockSessionRef,
+    addKey: mockAddKey,
+    keys: [],
+    pkcs11Log: [],
+  })),
+}))
+
+// ── Shared-component mocks ─────────────────────────────────────────────────────
+vi.mock('@/components/shared/LiveHSMToggle', () => ({ LiveHSMToggle: () => null }))
+vi.mock('@/components/shared/Pkcs11LogPanel', () => ({ Pkcs11LogPanel: () => null }))
+vi.mock('@/components/shared/HsmKeyInspector', () => ({ HsmKeyInspector: () => null }))
+vi.mock('../../components/InfoTooltip', () => ({ InfoTooltip: () => null }))
+vi.mock('../../components/CryptoFlowDiagram', () => ({ BitcoinFlowDiagram: () => null }))
+
+// ── StepWizard mock (stateful, drives the flow) ───────────────────────────────
+vi.mock('../../hooks/useStepWizard', () => ({
+  useStepWizard: vi.fn(),
+}))
+
 vi.mock('../../components/StepWizard', () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   StepWizard: ({ steps, currentStepIndex, onExecute, output, onNext }: any) => (
@@ -49,54 +94,11 @@ vi.mock('../../components/StepWizard', () => ({
     </div>
   ),
 }))
-vi.mock('../../components/InfoTooltip', () => ({ InfoTooltip: () => null }))
-vi.mock('../../components/CryptoFlowDiagram', () => ({ BitcoinFlowDiagram: () => null }))
 
-describe('BitcoinFlow Integration', () => {
-  // Setup Mock Implementations
-  const mockGenerateKeyPair = vi.fn().mockResolvedValue({
-    keyPair: {
-      privateKey: new Uint8Array([1, 2, 3]),
-      publicKey: new Uint8Array([4, 5, 6]),
-      privateKeyHex: '010203',
-      publicKeyHex: '02040506',
-    },
-    files: [],
-  })
-  const mockSaveTransaction = vi.fn()
-  const mockSaveHash = vi.fn()
-  const mockSaveSignature = vi.fn()
-  const mockRegisterArtifact = vi.fn()
-  const mockPrepareFiles = vi.fn()
-
+describe('BitcoinFlow', () => {
   beforeEach(() => {
     vi.clearAllMocks()
 
-    // Mock useKeyGeneration
-    ;(useKeyGeneration as unknown as ReturnType<typeof vi.fn>).mockImplementation(() => ({
-      generateKeyPair: mockGenerateKeyPair,
-      privateKey: new Uint8Array([1, 2, 3]),
-      publicKey: new Uint8Array([4, 5, 6]),
-      publicKeyHex: '02040506',
-      privateKeyHex: '010203',
-    }))
-
-    // Mock useArtifactManagement
-    ;(useArtifactManagement as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      filenames: { trans: 'tx.dat', hash: 'tx.hash', sig: 'tx.sig' },
-      saveTransaction: mockSaveTransaction,
-      saveHash: mockSaveHash,
-      saveSignature: mockSaveSignature,
-      registerArtifact: mockRegisterArtifact,
-      getTimestamp: () => '20230101',
-    })
-
-    // Mock useFileRetrieval
-    ;(useFileRetrieval as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
-      prepareFilesForExecution: mockPrepareFiles.mockReturnValue([]),
-    })
-
-    // Mock StepWizard (Stateful)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ;(useStepWizard as unknown as ReturnType<typeof vi.fn>).mockImplementation(({ steps }: any) => {
       const [currentStep, setCurrentStep] = useState(0)
@@ -117,38 +119,47 @@ describe('BitcoinFlow Integration', () => {
     })
   })
 
-  it('should render initial step', () => {
+  it('renders the initial step (gen_key)', () => {
     render(<BitcoinFlow onBack={vi.fn()} />)
     expect(screen.getByTestId('current-step')).toHaveTextContent('gen_key')
   })
 
-  it('should complete key generation and extraction flow', async () => {
+  it('executes gen_key step and tracks keys in HSM', async () => {
+    const { hsm_generateECKeyPair } = await import('@/wasm/softhsm/classical')
     render(<BitcoinFlow onBack={vi.fn()} />)
 
-    // Step 1: Gen Key
     fireEvent.click(screen.getByTestId('execute-btn'))
-    await waitFor(() => {
-      // After execute, verify output or state change if possible
-      // But our mock StepWizard doesn't update 'output' prop unless we trigger state update in parent
-      // Since we use the real BitcoinFlow with mocked hooks:
-      // calling execute triggers hook logic -> updates flow state
-      // StepWizard re-renders with new props?
-      // Our mock StepWizard just calls onExecute. It doesn't know about parent's state updates unless re-rendered.
-      // React re-renders should handle this.
-    })
 
-    // Advance to next step (Public Key)
+    await waitFor(() => {
+      expect(hsm_generateECKeyPair).toHaveBeenCalledWith(
+        mockModuleRef.current,
+        mockSessionRef.current,
+        'secp256k1',
+        false,
+        'sign'
+      )
+    })
+    expect(mockAddKey).toHaveBeenCalled()
+  })
+
+  it('advances through gen_key → pub_key → address steps', async () => {
+    render(<BitcoinFlow onBack={vi.fn()} />)
+
+    // Step 1: gen_key
+    expect(screen.getByTestId('current-step')).toHaveTextContent('gen_key')
+    fireEvent.click(screen.getByTestId('execute-btn'))
+    await waitFor(() => expect(mockAddKey).toHaveBeenCalled())
+
     fireEvent.click(screen.getByTestId('next-btn'))
     expect(screen.getByTestId('current-step')).toHaveTextContent('pub_key')
-    // Execute Step 2
-    fireEvent.click(screen.getByTestId('execute-btn'))
 
-    // Advance to Address (Step 3) - derived from pub key
+    // Step 2: pub_key — needs srcPubHandle set from step 1
+    fireEvent.click(screen.getByTestId('execute-btn'))
+    await waitFor(() => {
+      // hsm_getPublicKeyInfo should have been called
+    })
+
     fireEvent.click(screen.getByTestId('next-btn'))
     expect(screen.getByTestId('current-step')).toHaveTextContent('address')
-    fireEvent.click(screen.getByTestId('execute-btn'))
-
-    // Verify mocks called
-    expect(mockGenerateKeyPair).toHaveBeenCalled()
   })
 })
