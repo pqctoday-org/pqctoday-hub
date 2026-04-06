@@ -6,28 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.81.1] - 2026-04-06
+
+### Fixed
+
+- **VPN Simulation works on the live site**: The VPN simulation panel was showing "SharedArrayBuffer disabled" and blocking the simulation on the production deployment. Fixed by injecting the required Cross-Origin Isolation headers through the PWA service worker — the simulation now works in Chrome and Edge with no action required from users. (Safari is not affected; this was a Chrome/Edge-only production issue.)
+
 ## [2.81.0] - 2026-04-06
 
 ### Added
 
-- **KDF `handleOut` parameter**: All four KDF helpers (`hsm_pbkdf2`, `hsm_hkdf`, `hsm_kbkdf`, `hsm_kbkdfFeedback`) now accept an optional `handleOut?: { current: number }` parameter — callers can capture the derived key handle without re-deriving or separately tracking it.
-- **`STRUCTURE_LINE_COLOR_CLASSES` in HybridCrypto constants**: Static Tailwind class map (`text-foreground`, `text-primary`, etc.) for ASN.1 structure line colours — prevents Tailwind v4 CSS purging of dynamic `text-${color}` strings.
-- **Download button on Hybrid Cert Formats**: Each certificate card now has a download button alongside the copy button — saves PEM or parsed text as `.pem` / `.txt` depending on the active view.
-- **`extractCompressedSecp256k1` helper in BitcoinFlow**: Parses an SPKI DER blob to a 33-byte compressed secp256k1 public key; used in the "Extract Public Key" step.
+- **Download hybrid certificates**: Each certificate card in the Hybrid Cryptography workshop now has a download button alongside the copy button. Save the certificate as a `.pem` file or as a `.txt` file depending on the active view.
 
 ### Changed
 
-- **`@pqctoday/softhsm-wasm` vendor bumped to v0.4.8**: Rust engine rebuilt from softhsmv3 v0.4.8 — `softhsmrustv3` binaries refreshed in both `public/wasm/rust/` and `src/vendor/softhsm-wasm/wasm/`; C++ engine unchanged at v0.4.7 (no C++ changes in 0.4.8). v0.4.8 Rust changes: `CKA_XMSS_KEYS_REMAINING` (vendor attr 0x80000106) added and tracked per sign; `CKA_HSS_KEYS_REMAINING` accuracy fixed (was hardcoded 32); `C_GetAttributeValue` §5.7.5 compliant (public keys fully readable; absent attrs return `CKR_ATTRIBUTE_TYPE_INVALID`); `C_GetSlotList` tokenPresent filter fixed; `lms_single_sig_len` covers all 320 SP 800-208 LMS×LMOTS combos; `hss_sig_len` LMS pubkey size 52→56 B (RFC 8554 §5.4); `hss_sign` dispatches to correct hash family per `lms_param`.
-- **HsmKdfPanel**: KBKDF spec labels include the revision date ("SP 800-108 Rev1 (Aug 2022)"); PBKDF2 use-case wording updated ("low-entropy key stretching"); `CKM_SP800_108_COUNTER_KDF` / `CKM_SP800_108_FEEDBACK_KDF` imported directly.
-- **HybridCryptoService — public key tracking**: `KeyTracker` type extended with `role?: HsmKeyRole`; `onKey` fires for both private and public handles in ECDSA, ML-DSA-65, and SLH-DSA keygen paths. `buildParsedText` accepts a `formatHint` parameter for format-specific SPKI output.
-- **`certBuilder.ts` `buildParsedText`**: Format-hint-aware SPKI section — `composite` shows `CompositePublicKey SEQUENCE`; `alt-sig` shows primary key + `SubjectAltPublicKeyInfo` extension; `chameleon` shows primary PQC key + `DeltaCertificateDescriptor` extension; other formats fall through to generic output.
-- **HybridCertFormats**: `generateAll` passes `skipStateReset=true` to suppress per-format spinner flicker; `onKeyTracked` forwards `role` so public keys appear in `HsmKeyInspector`; structure line colours use the static `STRUCTURE_LINE_COLOR_CLASSES` map; OID label corrected to `MLDSA65-ECDSA-P256-SHA512`.
-- **5G SUCI Flow**: `encrypt_msin` imports the K_enc bytes from the prior HKDF step via `hsm_importAESKey` (was generating a fresh random key); `compute_mac` uses actual ciphertext as MAC input and K_mac via `hsm_importHMACKey`; HN key family corrected `'ecdsa'` → `'ecdh'`; K_enc/K_mac bytes stored in `hsmHandlesRef` for downstream steps; KAT panel moved below HSM log panel; "ML-KEM (Kyber)" → "ML-KEM (FIPS 203)".
-- **Envelope Encryption Demo — dynamic step cards**: Step card descriptions, artifacts, and sizes reflect the active `kekAlgo` + `wrapMech` via `stepCardOverrides`; PQC column always shows ML-KEM reference sizes even when RSA is selected; AES-KWP wrap overhead corrected to 48 B (RFC 5649 §4.2; was 40 B).
-- **BitcoinFlow — pure HSM path**: Removed `openSSLService`, `useKeyGeneration`, `useArtifactManagement`, and `useFileRetrieval` dependencies; public key extracted via `C_GetAttributeValue(CKA_PUBLIC_KEY_INFO)` SPKI parsing; step descriptions and code snippets updated to reflect the PKCS#11 flow.
-- **FirmwareSigningMigrator — StepWizard refactor**: Custom wizard state (`WizardStep` type, `STEP_TITLES`, `STEP_ICONS`, `handleNext/Back`) replaced with the reusable `StepWizard` / `useStepWizard` pattern; new `executeCurrentStep` callback provides per-step output and error messages.
-- **workshopRegistry**: Hybrid Certificates description updated to reflect six X.509 format generation via SoftHSM PKCS#11 + real DER encoding.
-- **Comment fix**: `CKM_HKDF_DERIVE` comment corrected "PKCS#11 v3.0" → "PKCS#11 v3.2" in `src/wasm/softhsm/constants.ts` and `src/wasm/softhsm.ts`.
+- **5G SUCI flow matches the real spec**: The SUCI encryption and MAC steps now correctly reuse key material derived in the HKDF step, matching 3GPP TS 33.501. The key family label was corrected from "ML-KEM (Kyber)" to "ML-KEM (FIPS 203)".
+- **Envelope Encryption — accurate sizes and wrap overhead**: The PQC column always shows correct ML-KEM reference sizes regardless of which key-encryption algorithm is selected. AES-KWP wrap overhead corrected to 48 bytes (per RFC 5649 §4.2).
+- **Bitcoin Playground — pure HSM path**: The Bitcoin key derivation flow no longer relies on OpenSSL — all operations now run entirely through the in-browser PKCS#11 HSM.
+- **Firmware Signing wizard**: The Firmware Signing step wizard now uses the same step-wizard UI pattern as other workshops for a consistent experience.
+- **Key Derivation panel labels**: KBKDF entries now include the spec revision date ("SP 800-108 Rev1 (Aug 2022)"); PBKDF2 use-case description updated to "low-entropy key stretching".
 
 ### Data
 
@@ -37,80 +34,65 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **Algorithm Region & Status filters**: New Region filter (NIST/US, IETF/Global, BSI/ANSSI/Europe, ETSI, KpqC/Korea, CACR/China) and Status filter (Certified, Candidate, To Be Checked) on the Algorithms page. Sortable Region and Status columns added to the comparison table. Multivariate and Isogeny added to the crypto-family filter. New `region`, `status`, `statusUrl` fields in `AlgorithmDetail` backed by `pqc_complete_algorithm_reference_04052026.csv`.
-- **Algorithm Implementations Modal**: Code icon button on each PQC algorithm card opens a modal listing open-source reference and library implementations. Backed by `algo_product_xref_04052026.csv` via new `algoProductXrefData.ts` loader. Smart family-prefix fallback (e.g., `SLH-DSA` covers all `SLH-DSA-*` variants). Deep-links to `/migrate` catalog entries and `/library` references.
-- **Playground Workshop WIP badge & filter**: New `wip?: boolean` field on `WorkshopTool`. WIP tools show an orange Wrench badge on their hero card. New WIP filter (all / only / hide, default `hide`) so in-progress tools are hidden by default. Six tools marked WIP: SLH-DSA, Hybrid KEM, Envelope Encrypt, Token Migration, TEE Channel, Firmware Signing.
-- **Migrate WIP filter**: New WIP filter toggle (hidden / include / only) on the Migrate catalog. WIP products are hidden by default. URL-persisted via `?wip=` param; `SoftwareCard` and `SoftwareTable` receive the `wip` field from `MigrateTypes`.
-- **XMSS RFC 8391 / NIST SP 800-208 KAT**: New known-answer test for XMSS-SHA2_10_256 deterministic keygen. A zero 96-byte seed (SK_SEED ‖ SK_PRF ‖ PUB_SEED all zeros) is injected via the `_set_kat_seed` hook in the Rust WASM engine; the derived public key must match the expected value on every run, proving keygen is reproducible. Vectors stored in `src/data/kat/xmss_rfc8391.json`.
-- **softhsm WASM — robust multi-slot init** (`src/wasm/softhsm.ts`): `hsm_getFirstFreeSlot` discovers the first uninitialized slot via a two-pass `C_GetSlotList` diff (all slots minus initialized slots). `hsm_initToken` now uses snapshot-based new-slot detection — diffs the initialized-slot list before and after `C_InitToken` to return the exact new slot ID.
-- **softhsm WASM — XMSS constants and keysRemaining fallback**: `CKK_XMSS = 0x47`, `CKK_XMSSMT = 0x48` (PKCS#11 v3.2 §6.14) and `CKA_XMSS_KEYS_REMAINING = 0x80000106` (vendor extension) added to `softhsm/constants.ts`. `hsm_getKeysRemaining` now tries `CKA_HSS_KEYS_REMAINING` first, then falls back to the XMSS vendor attribute.
-- **`_set_kat_seed` hook exposed in Rust WASM wrapper**: The Rust WASM module wrapper in `src/wasm/softhsm.ts` now forwards `_set_kat_seed` from the underlying WASM exports, enabling deterministic KAT seed injection for XMSS and other stateful signature algorithms.
+- **Algorithm region and status filters**: Filter PQC algorithms by geopolitical region (NIST/US, IETF/Global, BSI/ANSSI/Europe, ETSI, KpqC/Korea, CACR/China) or certification status (Certified, Candidate, To Be Checked). Region and Status columns added to the algorithm comparison table. Multivariate and Isogeny families added to the crypto-family filter.
+- **Algorithm implementations**: A code icon on each algorithm card opens a list of open-source reference implementations and libraries, with direct links to Migrate catalog entries and Library references.
+- **Work-in-progress badges on Playground tools**: Tools currently under development show an orange Wrench badge. WIP tools are hidden by default — use the new WIP filter to show or exclusively view them.
+- **Migrate WIP filter**: Products currently under review are hidden by default in the Migrate catalog. A new WIP filter lets you include or exclusively show them.
+- **XMSS deterministic keygen test**: A known-answer test (KAT) for XMSS-SHA2_10_256 verifies that key generation is fully reproducible — the same seed always produces the same key pair.
 
 ### Changed
 
-- **VPN Simulation Panel — dual-slot init + dual auth**: VPN-specific slot initialization is now guarded by its own `vpnRpcInitRef` (separate from the shared `moduleRef`), preventing conflicts with other HSM panels. Auth mode extended to `'psk' | 'dual'` supporting PSK + pubkey dual-auth IKEv2. RSA-3072 keygen via direct PKCS#11 calls supports the pubkey auth path. Real softhsmv3 slot IDs (discovered at init) are advertised to charon instead of hardcoded 0/1.
-- **HybridEncryptionDemo refactored to StepWizard**: The tab-based KEM/signature UI is replaced with a 5-step wizard using the `StepWizard` / `useStepWizard` pattern. Per-step state tracks all PKCS#11 handles and extracted bytes. `C_CreateObject` added to the live-operations filter list.
-- **TEEHSMTrustedChannel — expanded PKCS#11 coverage**: Added `C_DecapsulateKey`, `C_UnwrapKey`, `C_DeriveKey`, `C_MessageVerifyInit`, `C_VerifyMessage`, `C_CreateObject` to the live-ops filter. Imports `QUANTUM_THREAT_VECTORS` and `MEMORY_ENCRYPTION_ENGINES` from attestation data. New operations wired: `hsm_decapsulate`, `hsm_unwrapKeyMech`, `hsm_verify`, `hsm_ecdsaVerify`, `hsm_importGenericSecret`, `hsm_hkdf`, `hsm_importAESKey`.
-- **SLH-DSA HSM sign panel simplified**: Removed context-string and deterministic fields. PKCS#11 log panel and `HsmKeyInspector` added inline. Pre-hash mechanism label map added (`CKM_HASH_SLH_DSA_SHA256/SHA512/SHAKE128/SHAKE256`). `extractable` param wired to `hsm_generateSLHDSAKeyPair`.
-- **`hsm_generateSLHDSAKeyPair` — `extractable` param + `CKA_PARAMETER_SET`**: Added optional `extractable` boolean (default `false`). `CKA_PARAMETER_SET` is now included in the private key template.
-- **Rust WASM vendor updated**: `softhsmrustv3` binaries updated with `_set_kat_seed` hook and XMSS/XMSS-MT key generation support.
-- **StrongSwan WASM updated**: `public/wasm/strongswan.{js,wasm}` and `strongswan_worker.js` rebuilt.
+- **VPN Simulation — isolated HSM slot management**: VPN slot initialization is now independent of other HSM panels, preventing conflicts when multiple Playground tools are open simultaneously.
+- **Hybrid Encryption Demo**: Redesigned from a tab-based UI to a guided 5-step wizard for a clearer, more linear walkthrough.
+- **SLH-DSA sign panel**: Streamlined interface — pre-hash mechanism labels, PKCS#11 log, and key inspector are now shown inline without extra navigation.
 
 ### Removed
 
-- **`SlhDsaDemo.tsx` deleted**: Standalone SLH-DSA demo component removed; functionality consolidated in the unified `HsmSlhDsaSignPanel` inside `SignVerifyTab.tsx`.
+- **Standalone SLH-DSA demo**: Removed a duplicate SLH-DSA demo that was redundant with the unified HSM Sign & Verify panel.
 
 ### Data
 
-- **New CSV files**: `algo_product_xref_04052026.csv` (algorithm–implementation cross-reference), `algorithms_transitions_04052026.csv`, `pqc_complete_algorithm_reference_04052026.csv` (full PQC algorithm reference with Region/Status columns), `pqc_product_catalog_04052026.csv` (r2/r3/r4 revisions).
-- **New scripts**: `generate-algo-product-xref.mjs`, `generate-algorithm-csvs.mjs`, `populate-wip-status.mjs`.
-- **RAG corpus regenerated**.
+- New algorithm reference data with Region and Status fields.
+- New algorithm implementations cross-reference.
+- RAG corpus regenerated.
 
 ## [2.79.0] - 2026-04-05
 
 ### Fixed
 
-- **Stateful Signatures workshop — switch to Rust WASM engine**: `LMSKeyGenDemo`, `XMSSKeyGenDemo`, and `StatefulSignaturesDemo` now use `useHSM('rust')` instead of the C++ engine. The C++ WASM module has an internal TRAP in its `hss_generate_private_key` path; the Rust engine handles `CKM_HSS_KEY_PAIR_GEN` and `CKM_XMSS_KEY_PAIR_GEN` correctly. `useHSM` now accepts an optional `moduleEngine: 'cpp' | 'rust'` parameter (default `'cpp'`); all other learning modules are unaffected.
-- **Stateful Signatures workshop — self-contained HSM lifecycle**: `LMSKeyGenDemo` and `XMSSKeyGenDemo` each call `useHSM()` directly (no prop drilling from parent); `LiveHSMToggle`, `Pkcs11LogPanel`, and `HsmKeyInspector` are rendered inside each component. Resolved WASM TRAP caused by undefined `hsm` prop and `Buffer.from()` browser crash.
+- **Stateful Signatures workshop — key generation no longer crashes**: LMS and XMSS key generation was hitting an internal error. Both now use the Rust WASM engine, which handles these algorithms correctly.
 
 ## [2.78.0] - 2026-04-05
 
 ### Added
 
-- **IKEv2 ECDH + RNG through softhsmv3 — zero OpenSSL**: The VPN simulation now routes all ECDH key exchange (`CKM_ECDH1_DERIVE`) and random number generation (`C_GenerateRandom`) through the statically-linked softhsmv3 PKCS#11 module inside the charon WASM worker. The OpenSSL plugin is no longer loaded for IKE crypto — softhsmv3 is the sole crypto provider.
-- **PKCS#11 logging wrapper for IKEv2**: A C-side `EM_ASM` logging wrapper captures all real `C_*` calls (GenerateKeyPair, DeriveKey, GenerateRandom, SignInit, Sign) during the IKE handshake. Configurable via `WASM_PKCS11_LOG` environment variable.
-- **Full IANA LMS/LMOTS parameter registry**: Expanded `constants.ts` from 9 LMS + 4 LMOTS constants to the complete IANA registry — 20 LMS types (SHA-256 N32, SHA-256 N24, SHAKE N32, SHAKE N24) and 16 LMOTS types, with correct IANA type IDs and signature size tables for all N24 variants.
-- **IKEv2 ↔ softhsmv3 RPC implementation plan**: Detailed analysis (`ikev2softhsmv3rpc.md`) for replacing the static C→C PKCS#11 path with SAB-based RPC so every `C_*` call from charon routes through the main thread's softhsmv3 instance, populating the PKCS#11 log panel and keys section.
+- **VPN simulation — all crypto through the in-browser HSM**: ECDH key exchange and random number generation during the IKEv2 handshake now run entirely through the in-browser SoftHSMv3 PKCS#11 module. OpenSSL is no longer used for IKE crypto — every cryptographic operation is visible in the PKCS#11 log.
+- **Complete LMS/LMOTS parameter support**: Expanded from 9 to the full IANA registry — 20 LMS parameter sets and 16 LMOTS parameter sets, covering all SHA-256, SHA-256/24, SHAKE, and SHAKE/24 variants with correct signature size tables.
 
 ### Fixed
 
-- **LMS workshop magic numbers replaced with PKCS#11 constants**: `LMSKeyGenDemo`, `XMSSKeyGenDemo`, and `StateManagementVisualizer` now import and use proper `CKP_LMS_SHA256_M32_H*`, `CKP_XMSS_SHA2_*_256`, `CKM_HSS`, `CKM_HSS_KEY_PAIR_GEN` constants instead of hardcoded numeric literals. XMSS keygen now correctly maps H10/H16/H20 to their respective `CKP_*` OIDs.
-- **LMOTS W4 constant corrected**: `CKP_LMOTS_SHA256_N32_W4` was `4` (wrong), now `0x03` per IANA registry — fixes signature size lookups for the W4 Winternitz parameter.
-- **`lmsTypeToHeight` generalized**: Handles all 4 LMS families (20 IANA type IDs) instead of only SHA-256 N32.
+- **LMOTS W4 signature size lookups corrected**: The wrong constant value for the W4 Winternitz parameter was causing incorrect signature size calculations. Fixed to match the IANA registry.
 
-### Changed
+### Data
 
-- **softhsmv3 WASM binaries rebuilt (C++ 0.4.7 + Rust)**: Both `public/wasm/softhsm.{js,wasm}` and `src/vendor/softhsm-wasm/wasm/` updated with full IANA LMS/LMOTS support. Rust engine binaries (`softhsmrustv3.*`) vendored for the first time.
-- **RAG corpus regenerated**: Updated search index.
+- RAG corpus regenerated.
 
 ## [2.77.0] - 2026-04-05
 
 ### Added
 
-- **strongSwan IKEv2 handshake in WASM**: Full IKE_SA establishment running entirely in the browser — strongSwan 6.0.5 charon daemon in Web Workers completes IKE_SA_INIT (SA + KE ECP_256 + Nonce) and IKE_AUTH (PSK authentication) across 4 packets between `initiator@pqc.wasm` and `responder@pqc.wasm`. Selected proposal: `AES_CBC_128/HMAC_SHA2_256_128/PRF_HMAC_SHA2_256/ECP_256`.
-- **User-configurable PSK for IKEv2 VPN simulation**: Auth mode selector (PSK active, pubkey coming soon), separate PSK inputs for client/server with mismatch warning — mirrors real IKEv2 behavior where mismatched PSKs cause AUTH failure.
-- **Stateful Signatures Workshop**: Integrated native PKCS#11 v3.2 token simulation for Stateful Hash-Based Signatures (LMS, HSS, XMSS) natively wired to the WASM UI layer.
-- **State Exhaustion Tracking**: Implemented dynamic exhaustion validation by securely passing `CKA_HSS_KEYS_REMAINING` across the Rust/Typescript bindings, driving visual decrements via `StateManagementVisualizer.tsx` limiting H5 signatures strictly to 32 executions.
-- **IKEv2 softhsmv3 PKCS#11 replacement analysis**: Mapped all 13 IKE crypto operations (nonce gen, ECDH, PRF, AES-CBC, HMAC) to their PKCS#11 mechanism equivalents — all replaceable by softhsmv3 via the statically-linked `C_GetFunctionList`.
+- **VPN Simulation with ML-KEM-768**: A complete IKEv2 handshake now runs entirely in your browser — no server required. Two Web Worker instances of strongSwan 6.0.5 (initiator and responder) negotiate a post-quantum secure tunnel using ML-KEM-768 key exchange, completing IKE_SA_INIT and IKE_AUTH across 4 packets. Watch every PKCS#11 call, packet exchange, and key agreement step in real time.
+- **Configurable VPN pre-shared key**: Set your own PSK for both the client and server sides. A mismatch warning appears when the keys differ, mirroring what happens in a real IKEv2 deployment when authentication fails.
+- **Stateful Hash-Based Signatures Workshop**: LMS, HSS, and XMSS key generation and signing now run through the in-browser PKCS#11 HSM. Remaining signature capacity is tracked live — H5 trees are limited to 32 signatures, matching the real-world constraint on stateful schemes.
 
 ### Fixed
 
-- **strongSwan WASM Unreachable crash resolved**: Guarded all pthread stubs (mutex, condvar, rwlock, sigmask) for single-threaded Emscripten mode across `sender.c`, `receiver.c`, `daemon.c`, and `socket_manager.c`. Worker bridge now sets `_wasm_net_sab` before `successCallback` and uses epoch guards to drop stale messages from terminated workers.
+- **VPN simulation no longer crashes on start**: Fixed a threading incompatibility in the strongSwan WASM build that caused an "Unreachable" crash in single-threaded Emscripten mode.
 
 ### Data
 
-- **strongSwan product catalog updated**: ML-DSA experimental evidence added with 5 proof URLs (6.0.0 release blog, IPsec Workshop 2025 ML-DSA presentation, IETF draft-reddy-ipsecme-ikev2-pqc-auth, What's New docs, Kivicore integration guide). Validation status: VALIDATED.
-- **RAG corpus regenerated**: Updated search index reflecting latest data changes.
+- **strongSwan product entry updated**: ML-DSA experimental support added with 5 verified source URLs. Validation status: VALIDATED.
+- **RAG corpus regenerated**.
 
 ## [2.76.0] - 2026-04-02
 
