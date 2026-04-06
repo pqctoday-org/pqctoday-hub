@@ -1,5 +1,5 @@
 /*! coi-serviceworker v0.1.7 - Guido Zuidhof and contributors, licensed under MIT */
-let coepCredentialless = false
+let coepCredentialless = true
 if (typeof window === 'undefined') {
   self.addEventListener('install', () => self.skipWaiting())
   self.addEventListener('activate', (event) => event.waitUntil(self.clients.claim()))
