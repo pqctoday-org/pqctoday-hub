@@ -615,7 +615,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
-  - `@pqctoday/softhsm-wasm` v0.4.0 — SoftHSMv3 PKCS#11 v3.2 WASM (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, EdDSA)
+  - `@pqctoday/softhsm-wasm` v0.4.8 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine v0.4.7 (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine v0.4.8 (XMSS/LMS stateful signatures, CKA_XMSS_KEYS_REMAINING, CKA_HSS_KEYS_REMAINING accuracy, PKCS#11 v3.2 §5.7.5 C_GetAttributeValue compliance)
   - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations

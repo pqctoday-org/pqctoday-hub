@@ -1,6 +1,6 @@
 {
   "name": "@pqctoday/softhsm-wasm",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "SoftHSMv3 compiled to WebAssembly — PKCS#11 v3.2 token with ML-KEM, ML-DSA, SLH-DSA for browsers and Node.js",
   "keywords": [
     "pkcs11",
