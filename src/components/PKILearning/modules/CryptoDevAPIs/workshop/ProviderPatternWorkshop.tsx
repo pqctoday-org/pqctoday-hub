@@ -98,20 +98,20 @@ export const ProviderPatternWorkshop: React.FC = () => {
       // Generate ML-DSA-65 key pair
       const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 65)
       const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
-      
+
       hsm.addKey({
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
         label: 'ML-DSA-65 Provider Root (Pub)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
       hsm.addKey({
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
         label: 'ML-DSA-65 Provider Root (Priv)',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
 
       addLine(

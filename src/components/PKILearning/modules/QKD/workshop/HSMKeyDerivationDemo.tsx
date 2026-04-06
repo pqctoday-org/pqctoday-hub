@@ -59,10 +59,7 @@ function getRandomUUID(): string {
   })
 }
 
-import {
-  hsm_importGenericSecret,
-  hsm_kbkdf,
-} from '../../../../../wasm/softhsm'
+import { hsm_importGenericSecret, hsm_kbkdf } from '../../../../../wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 
 function sp800108CounterKDF(
@@ -82,12 +79,12 @@ function sp800108CounterKDF(
   const baseKeyHandle = hsm_importGenericSecret(M, hSession, ikm)
   // Call HSM C_DeriveKey via CKM_SP800_108_COUNTER_KDF with PRF CKM_SHA256_HMAC (0x251)
   const derived = hsm_kbkdf(M, hSession, baseKeyHandle, 0x00000251, fixedInput, outputBytes)
-  
+
   return {
     derivedKeyHex: Array.from(derived)
       .map((b) => b.toString(16).padStart(2, '0'))
       .join(''),
-    baseKeyHandle
+    baseKeyHandle,
   }
 }
 
@@ -160,7 +157,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
         label: 'QKD Imported Master Secret',
         family: 'ml-kem', // conceptual mapping for QKD
         role: 'private',
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
     } else {
       // Mock if HSM is disabled
@@ -188,7 +185,10 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']} />
+      <LiveHSMToggle
+        hsm={hsm}
+        operations={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']}
+      />
       {/* Broader KDF context */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">

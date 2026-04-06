@@ -197,16 +197,18 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
     }
   }, [currentStep, wallet, navigateTo])
 
-
   const workshopContent = (
     <div className="max-w-7xl mx-auto space-y-6">
       <div className="flex justify-between items-center bg-muted/10 p-4 border-b border-border rounded-t-xl mb-6">
-         <h2 className="text-xl font-bold">EUDI Wallet Architecture</h2>
-         {onBack && (
-           <button onClick={onBack} className="text-sm border border-border px-4 py-2 hover:bg-muted rounded text-muted-foreground transition-colors">
-             &larr; Back to Tools
-           </button>
-         )}
+        <h2 className="text-xl font-bold">EUDI Wallet Architecture</h2>
+        {onBack && (
+          <button
+            onClick={onBack}
+            className="text-sm border border-border px-4 py-2 hover:bg-muted rounded text-muted-foreground transition-colors"
+          >
+            &larr; Back to Tools
+          </button>
+        )}
       </div>
       <div className="flex justify-end">
         <button
@@ -283,9 +285,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
           </button>
         ) : (
           <button
-            onClick={() =>
-              setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))
-            }
+            onClick={() => setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))}
             className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Next Step &rarr;
@@ -295,23 +295,22 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
 
       <div className="text-center text-xs text-muted-foreground max-w-2xl mx-auto">
         <p>
-          This is an educational simulation of the EUDI Wallet Architecture and Reference
-          Framework (ARF). Cryptographic keys are generated in-browser using WebCrypto/WASM
-          (OpenSSL) and stored in memory.
+          This is an educational simulation of the EUDI Wallet Architecture and Reference Framework
+          (ARF). Cryptographic keys are generated in-browser using WebCrypto/WASM (OpenSSL) and
+          stored in memory.
         </p>
       </div>
     </div>
-  );
+  )
 
   if (onBack) {
-    return workshopContent;
+    return workshopContent
   }
 
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
-          
           {onBack && (
             <button
               onClick={onBack}
@@ -352,9 +351,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
           <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
-        <TabsContent value="workshop">
-          {workshopContent}
-        </TabsContent>
+        <TabsContent value="workshop">{workshopContent}</TabsContent>
 
         {/* Exercises Tab */}
         <TabsContent value="exercises">

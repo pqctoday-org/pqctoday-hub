@@ -338,7 +338,9 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
           <h5 className="text-sm font-bold text-foreground uppercase tracking-wider">
             Generate Classical Keys
           </h5>
-          {!hideSnippets && <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>}
+          {!hideSnippets && (
+            <span className="text-xs text-muted-foreground ml-auto">(Web Crypto API)</span>
+          )}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

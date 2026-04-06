@@ -266,10 +266,15 @@ export const createLoggingProxy = (
             const rvUnsigned = rv >>> 0
             const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
             const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
-            
+
             let hSession: number | undefined
             const names = PKCS11_PARAMS[specName]
-            if (names && names[0] === 'hSession' && args.length > 0 && typeof args[0] === 'number') {
+            if (
+              names &&
+              names[0] === 'hSession' &&
+              args.length > 0 &&
+              typeof args[0] === 'number'
+            ) {
               hSession = args[0]
             }
 

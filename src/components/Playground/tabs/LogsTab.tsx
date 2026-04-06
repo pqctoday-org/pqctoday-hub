@@ -34,7 +34,12 @@ const LogsTabSoftware: React.FC = () => {
         <div className="flex items-center gap-4">
           <button
             onClick={() => {
-              const textOutput = sortedLogs.map((log) => `[${log.timestamp}] ${log.keyLabel} - ${log.operation}: ${log.result} (${log.executionTime.toFixed(2)}ms)`).join('\n')
+              const textOutput = sortedLogs
+                .map(
+                  (log) =>
+                    `[${log.timestamp}] ${log.keyLabel} - ${log.operation}: ${log.result} (${log.executionTime.toFixed(2)}ms)`
+                )
+                .join('\n')
               navigator.clipboard.writeText(textOutput)
             }}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-border px-2 py-1 rounded"

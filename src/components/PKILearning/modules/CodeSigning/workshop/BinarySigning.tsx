@@ -162,14 +162,14 @@ export const BinarySigning: React.FC = () => {
           family: 'ml-dsa',
           role: 'public',
           label: `${selectedAlgorithm} Public`,
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
         })
         hsm.addKey({
           handle: privHandle,
           family: 'ml-dsa',
           role: 'private',
           label: `${selectedAlgorithm} Private`,
-          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+          generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
         })
 
         setKeyPair({
@@ -521,7 +521,6 @@ export const BinarySigning: React.FC = () => {
               </p>
             </div>
           </div>
-
         </div>
       )}
 
@@ -614,8 +613,6 @@ export const BinarySigning: React.FC = () => {
           </div>
         </div>
       </div>
-
-
 
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">

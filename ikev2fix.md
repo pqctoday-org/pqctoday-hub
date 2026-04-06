@@ -34,22 +34,22 @@ Same path in reverse for B→A.
 
 These are the minified keys in `imports.env.*` that we intercept via `instantiateWasm`:
 
-| Key | Syscall             | Why we intercept                              |
-|-----|---------------------|-----------------------------------------------|
-| `f` | `___syscall_socket` | Detect IKE socket creation; return fake fd    |
-| `q` | `___syscall_bind`   | Note bound address/port; return 0             |
-| `p` | `___syscall_connect`| No-op (UDP connect just sets default dest)    |
-| `m` | `___syscall_sendto` | Capture outbound IKE packet → main thread     |
-| `n` | `___syscall_recvfrom`| Deliver buffered inbound packet; block if none|
-| `A` | `___syscall_poll`   | Block on Atomics.wait until packet arrives    |
-| `j` | `___syscall_ioctl`  | Return 0 (FIONBIO no-op)                      |
+| Key | Syscall               | Why we intercept                               |
+| --- | --------------------- | ---------------------------------------------- |
+| `f` | `___syscall_socket`   | Detect IKE socket creation; return fake fd     |
+| `q` | `___syscall_bind`     | Note bound address/port; return 0              |
+| `p` | `___syscall_connect`  | No-op (UDP connect just sets default dest)     |
+| `m` | `___syscall_sendto`   | Capture outbound IKE packet → main thread      |
+| `n` | `___syscall_recvfrom` | Deliver buffered inbound packet; block if none |
+| `A` | `___syscall_poll`     | Block on Atomics.wait until packet arrives     |
+| `j` | `___syscall_ioctl`    | Return 0 (FIONBIO no-op)                       |
 
 Already intercepted (PKCS#11 bridge):
 
-| Key | Syscall          |
-|-----|------------------|
-| `l` | `wasm_dlopen`    |
-| `k` | `wasm_dlsym`     |
+| Key | Syscall       |
+| --- | ------------- |
+| `l` | `wasm_dlopen` |
+| `k` | `wasm_dlsym`  |
 
 ---
 
@@ -69,21 +69,23 @@ Offset  Size  Field
 ```
 
 **Main thread → worker delivery sequence:**
+
 ```js
 netInboxI32[1] = pkt.length
 netInboxI32[2] = srcIp
 netInboxI32[3] = srcPort
-netInboxBytes.set(pkt, 16)          // write packet
-Atomics.store(netInboxI32, 0, 1)    // mark PACKET_READY
-Atomics.notify(netInboxI32, 0, 1)   // wake blocked poll/recvfrom
+netInboxBytes.set(pkt, 16) // write packet
+Atomics.store(netInboxI32, 0, 1) // mark PACKET_READY
+Atomics.notify(netInboxI32, 0, 1) // wake blocked poll/recvfrom
 ```
 
 **Worker read sequence (inside recvfrom override):**
+
 ```js
-Atomics.wait(netInboxI32, 0, 0)       // block until != EMPTY
+Atomics.wait(netInboxI32, 0, 0) // block until != EMPTY
 const len = netInboxI32[1]
 const pkt = netInboxBytes.slice(16, 16 + len)
-Atomics.store(netInboxI32, 0, 0)      // mark EMPTY → ready for next
+Atomics.store(netInboxI32, 0, 0) // mark EMPTY → ready for next
 return len
 ```
 
@@ -98,20 +100,20 @@ Each worker gets its own SAB so their PKCS#11 calls don't collide.
 
 ### Main → Worker
 
-| type            | payload                          | meaning                        |
-|-----------------|----------------------------------|--------------------------------|
-| `INIT`          | `{ configs, pkcs11Sab, netSab, role }` | existing + new fields    |
+| type   | payload                                | meaning               |
+| ------ | -------------------------------------- | --------------------- |
+| `INIT` | `{ configs, pkcs11Sab, netSab, role }` | existing + new fields |
 
 `role`: `'initiator'` or `'responder'` — used for logging only.
 
 ### Worker → Main
 
-| type         | payload                                         | meaning                     |
-|--------------|-------------------------------------------------|-----------------------------|
-| `LOG`        | `{ level, text }`                               | unchanged                   |
-| `PKCS11_RPC` | —                                               | unchanged                   |
-| `READY`      | —                                               | unchanged                   |
-| `ERROR`      | string                                          | unchanged                   |
+| type         | payload                                                   | meaning             |
+| ------------ | --------------------------------------------------------- | ------------------- |
+| `LOG`        | `{ level, text }`                                         | unchanged           |
+| `PKCS11_RPC` | —                                                         | unchanged           |
+| `READY`      | —                                                         | unchanged           |
+| `ERROR`      | string                                                    | unchanged           |
 | `PACKET_OUT` | `{ destIp, destPort, srcIp, srcPort, data: ArrayBuffer }` | outbound IKE packet |
 
 ---
@@ -123,12 +125,12 @@ Each worker gets its own SAB so their PKCS#11 calls don't collide.
 Add network state variables at the top:
 
 ```js
-let netInboxSab = null      // network inbox SAB (main→worker delivery)
-let netInboxI32 = null      // Int32Array view of netInboxSab
-let netInboxBytes = null    // Uint8Array view of netInboxSab
-let ikeSocketFd = -1        // fd charon assigned to IKE UDP socket
-let boundIp = 0             // our bound IPv4 (from bind() call)
-let boundPort = 0           // our bound port (500 or 4500)
+let netInboxSab = null // network inbox SAB (main→worker delivery)
+let netInboxI32 = null // Int32Array view of netInboxSab
+let netInboxBytes = null // Uint8Array view of netInboxSab
+let ikeSocketFd = -1 // fd charon assigned to IKE UDP socket
+let boundIp = 0 // our bound IPv4 (from bind() call)
+let boundPort = 0 // our bound port (500 or 4500)
 ```
 
 In the `INIT` handler, extract `netSab`:
@@ -136,7 +138,7 @@ In the `INIT` handler, extract `netSab`:
 ```js
 if (initPayload.netSab) {
   netInboxSab = initPayload.netSab
-  netInboxI32   = new Int32Array(netInboxSab, 0, 4)
+  netInboxI32 = new Int32Array(netInboxSab, 0, 4)
   netInboxBytes = new Uint8Array(netInboxSab, 0)
 }
 ```
@@ -148,12 +150,14 @@ In `instantiateWasm`, after the existing dlopen/dlsym overrides, add:
 // domain=2=AF_INET, type=2=SOCK_DGRAM → IKE UDP socket
 imports.env.f = (domain, type, _protocol) => {
   if (domain === 2 && type === 2) {
-    ikeSocketFd = 42          // fake fd; consistent across all syscalls
-    self.postMessage({ type: 'LOG', payload: { level: 'info',
-      text: `[NET] socket(AF_INET, SOCK_DGRAM) → fd=${ikeSocketFd}` }})
+    ikeSocketFd = 42 // fake fd; consistent across all syscalls
+    self.postMessage({
+      type: 'LOG',
+      payload: { level: 'info', text: `[NET] socket(AF_INET, SOCK_DGRAM) → fd=${ikeSocketFd}` },
+    })
     return ikeSocketFd
   }
-  return -1  // ENOTSUP for anything else
+  return -1 // ENOTSUP for anything else
 }
 
 // ── bind (imports.env.q) ──────────────────────────────────────────
@@ -163,16 +167,21 @@ imports.env.q = (fd, addrPtr, _addrLen) => {
   try {
     const heap8 = self.Module.HEAPU8
     boundPort = (heap8[addrPtr + 2] << 8) | heap8[addrPtr + 3]
-    boundIp   = (heap8[addrPtr + 4] << 24) | (heap8[addrPtr + 5] << 16)
-              | (heap8[addrPtr + 6] << 8)  |  heap8[addrPtr + 7]
-    self.postMessage({ type: 'LOG', payload: { level: 'info',
-      text: `[NET] bind fd=${fd} port=${boundPort}` }})
-  } catch(_) {}
+    boundIp =
+      (heap8[addrPtr + 4] << 24) |
+      (heap8[addrPtr + 5] << 16) |
+      (heap8[addrPtr + 6] << 8) |
+      heap8[addrPtr + 7]
+    self.postMessage({
+      type: 'LOG',
+      payload: { level: 'info', text: `[NET] bind fd=${fd} port=${boundPort}` },
+    })
+  } catch (_) {}
   return 0
 }
 
 // ── connect (imports.env.p) ───────────────────────────────────────
-imports.env.p = (fd, _addr, _addrLen) => fd === ikeSocketFd ? 0 : -1
+imports.env.p = (fd, _addr, _addrLen) => (fd === ikeSocketFd ? 0 : -1)
 
 // ── ioctl (imports.env.j) ─────────────────────────────────────────
 imports.env.j = (_fd, _req, _arg) => 0
@@ -183,21 +192,30 @@ imports.env.m = (fd, bufPtr, len, _flags, destAddrPtr, _destAddrLen) => {
   if (fd !== ikeSocketFd) return -1
   try {
     const heap8 = self.Module.HEAPU8
-    let destIp = 0, destPort = 0
+    let destIp = 0,
+      destPort = 0
     if (destAddrPtr) {
       destPort = (heap8[destAddrPtr + 2] << 8) | heap8[destAddrPtr + 3]
-      destIp   = (heap8[destAddrPtr + 4] << 24) | (heap8[destAddrPtr + 5] << 16)
-               | (heap8[destAddrPtr + 6] << 8)  |  heap8[destAddrPtr + 7]
+      destIp =
+        (heap8[destAddrPtr + 4] << 24) |
+        (heap8[destAddrPtr + 5] << 16) |
+        (heap8[destAddrPtr + 6] << 8) |
+        heap8[destAddrPtr + 7]
     }
-    const data = heap8.slice(bufPtr, bufPtr + len)  // copy before WASM heap moves
-    self.postMessage({ type: 'PACKET_OUT',
-      payload: { srcIp: boundIp, srcPort: boundPort, destIp, destPort,
-                 data: data.buffer } }, [data.buffer])
-    self.postMessage({ type: 'LOG', payload: { level: 'info',
-      text: `[NET] sendto fd=${fd} len=${len} destPort=${destPort}` }})
-  } catch(e) {
-    self.postMessage({ type: 'LOG', payload: { level: 'error',
-      text: `[NET] sendto error: ${e}` }})
+    const data = heap8.slice(bufPtr, bufPtr + len) // copy before WASM heap moves
+    self.postMessage(
+      {
+        type: 'PACKET_OUT',
+        payload: { srcIp: boundIp, srcPort: boundPort, destIp, destPort, data: data.buffer },
+      },
+      [data.buffer]
+    )
+    self.postMessage({
+      type: 'LOG',
+      payload: { level: 'info', text: `[NET] sendto fd=${fd} len=${len} destPort=${destPort}` },
+    })
+  } catch (e) {
+    self.postMessage({ type: 'LOG', payload: { level: 'error', text: `[NET] sendto error: ${e}` } })
   }
   return len
 }
@@ -207,26 +225,29 @@ imports.env.m = (fd, bufPtr, len, _flags, destAddrPtr, _destAddrLen) => {
 imports.env.n = (fd, bufPtr, len, _flags, srcAddrPtr, srcAddrLenPtr) => {
   if (fd !== ikeSocketFd || !netInboxI32) return -1
   // Block until PACKET_READY
-  Atomics.wait(netInboxI32, 0, 0)  // wait while state === 0 (EMPTY)
+  Atomics.wait(netInboxI32, 0, 0) // wait while state === 0 (EMPTY)
   const pktLen = netInboxI32[1]
-  const srcIp  = netInboxI32[2] >>> 0
+  const srcIp = netInboxI32[2] >>> 0
   const srcPort = netInboxI32[3] >>> 0
   const copyLen = Math.min(pktLen, len)
   const heap8 = self.Module.HEAPU8
   heap8.set(netInboxBytes.subarray(16, 16 + copyLen), bufPtr)
   if (srcAddrPtr) {
-    heap8[srcAddrPtr]     = 0;  heap8[srcAddrPtr + 1] = 2  // AF_INET
+    heap8[srcAddrPtr] = 0
+    heap8[srcAddrPtr + 1] = 2 // AF_INET
     heap8[srcAddrPtr + 2] = (srcPort >> 8) & 0xff
     heap8[srcAddrPtr + 3] = srcPort & 0xff
     heap8[srcAddrPtr + 4] = (srcIp >> 24) & 0xff
     heap8[srcAddrPtr + 5] = (srcIp >> 16) & 0xff
-    heap8[srcAddrPtr + 6] = (srcIp >> 8)  & 0xff
+    heap8[srcAddrPtr + 6] = (srcIp >> 8) & 0xff
     heap8[srcAddrPtr + 7] = srcIp & 0xff
     if (srcAddrLenPtr) self.Module.setValue(srcAddrLenPtr, 16, 'i32')
   }
-  Atomics.store(netInboxI32, 0, 0)  // mark EMPTY → ready for next delivery
-  self.postMessage({ type: 'LOG', payload: { level: 'info',
-    text: `[NET] recvfrom → ${pktLen} bytes from port ${srcPort}` }})
+  Atomics.store(netInboxI32, 0, 0) // mark EMPTY → ready for next delivery
+  self.postMessage({
+    type: 'LOG',
+    payload: { level: 'info', text: `[NET] recvfrom → ${pktLen} bytes from port ${srcPort}` },
+  })
   return copyLen
 }
 
@@ -239,7 +260,10 @@ imports.env.A = (fdsPtr, nfds, timeout) => {
   let hasIkeFd = false
   for (let i = 0; i < nfds; i++) {
     const fd = self.Module.getValue(fdsPtr + i * 8, 'i32')
-    if (fd === ikeSocketFd) { hasIkeFd = true; break }
+    if (fd === ikeSocketFd) {
+      hasIkeFd = true
+      break
+    }
   }
   if (!hasIkeFd) return 0
 
@@ -249,7 +273,7 @@ imports.env.A = (fdsPtr, nfds, timeout) => {
     for (let i = 0; i < nfds; i++) {
       const fd = self.Module.getValue(fdsPtr + i * 8, 'i32')
       if (fd === ikeSocketFd) {
-        self.Module.setValue(fdsPtr + i * 8 + 6, 1, 'i16')  // revents = POLLIN
+        self.Module.setValue(fdsPtr + i * 8 + 6, 1, 'i16') // revents = POLLIN
       }
     }
     return 1
@@ -257,20 +281,19 @@ imports.env.A = (fdsPtr, nfds, timeout) => {
 
   // Block with timeout (timeout=-1 means infinite)
   const waitMs = timeout < 0 ? 'infinite' : timeout
-  const result = timeout < 0
-    ? Atomics.wait(netInboxI32, 0, 0)
-    : Atomics.wait(netInboxI32, 0, 0, timeout)
+  const result =
+    timeout < 0 ? Atomics.wait(netInboxI32, 0, 0) : Atomics.wait(netInboxI32, 0, 0, timeout)
 
   if (result === 'ok' && Atomics.load(netInboxI32, 0) === 1) {
     for (let i = 0; i < nfds; i++) {
       const fd = self.Module.getValue(fdsPtr + i * 8, 'i32')
       if (fd === ikeSocketFd) {
-        self.Module.setValue(fdsPtr + i * 8 + 6, 1, 'i16')  // revents = POLLIN
+        self.Module.setValue(fdsPtr + i * 8 + 6, 1, 'i16') // revents = POLLIN
       }
     }
     return 1
   }
-  return 0  // timeout
+  return 0 // timeout
 }
 ```
 
@@ -484,11 +507,11 @@ strongSwanEngine.init(
 ```ts
 const INITIATOR_IP = '192.168.0.1'
 const RESPONDER_IP = '192.168.0.2'
-const IKE_PORT     = 500
+const IKE_PORT = 500
 
 // As uint32 (big-endian for comparison with what charon reports):
-const RESPONDER_IP_U32 = 0xC0A80002  // 192.168.0.2
-const INITIATOR_IP_U32 = 0xC0A80001  // 192.168.0.1
+const RESPONDER_IP_U32 = 0xc0a80002 // 192.168.0.2
+const INITIATOR_IP_U32 = 0xc0a80001 // 192.168.0.1
 ```
 
 ---
@@ -515,6 +538,7 @@ Initiator                              Responder
 ### PKCS#11 calls expected per side:
 
 **Initiator (client module / slot 0):**
+
 - `C_Initialize` → CKR_OK
 - `C_GetSlotList` → [0, 1]
 - `C_GetTokenInfo` slotId=0
@@ -524,6 +548,7 @@ Initiator                              Responder
 - `C_SignInit` / `C_Sign` → signs IKE_AUTH
 
 **Responder (server module / slot 0 from its perspective):**
+
 - Same sequence, using serverPriv for signing
 - `C_FindObjects` for client's PUBLIC key (for verification)
 
@@ -570,15 +595,15 @@ Initiator                              Responder
 
 ## Known Risks / Pre-flight Checks
 
-| Risk | Mitigation |
-|------|-----------|
-| Emscripten validates fd before syscall | fd=42 is arbitrary; test that sendto/poll actually receive fd=42 |
-| poll() struct pollfd size wrong | struct is 8 bytes (fd:4, events:2, revents:2); verify with actual charon call |
-| Initiator sends before responder is listening | READY gate (both workers → RUNNING) ensures responder is bound first |
-| IKEv2 retransmit floods before response arrives | Routing is synchronous; response delivers in same JS task as send |
-| Two PKCS#11 RPCs race (both workers call simultaneously) | Each has its own SAB; main thread handles them independently |
-| `Atomics.wait` timeout units | timeout in `poll()` is milliseconds; `Atomics.wait` also takes ms — no conversion needed |
-| WASM heap grows and invalidates heap8 slice | Use `heap8.slice()` (copies) in sendto before any async; use `subarray` (live view) only in recvfrom |
+| Risk                                                     | Mitigation                                                                                           |
+| -------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Emscripten validates fd before syscall                   | fd=42 is arbitrary; test that sendto/poll actually receive fd=42                                     |
+| poll() struct pollfd size wrong                          | struct is 8 bytes (fd:4, events:2, revents:2); verify with actual charon call                        |
+| Initiator sends before responder is listening            | READY gate (both workers → RUNNING) ensures responder is bound first                                 |
+| IKEv2 retransmit floods before response arrives          | Routing is synchronous; response delivers in same JS task as send                                    |
+| Two PKCS#11 RPCs race (both workers call simultaneously) | Each has its own SAB; main thread handles them independently                                         |
+| `Atomics.wait` timeout units                             | timeout in `poll()` is milliseconds; `Atomics.wait` also takes ms — no conversion needed             |
+| WASM heap grows and invalidates heap8 slice              | Use `heap8.slice()` (copies) in sendto before any async; use `subarray` (live view) only in recvfrom |
 
 ---
 

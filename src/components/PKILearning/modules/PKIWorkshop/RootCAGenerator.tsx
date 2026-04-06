@@ -295,22 +295,22 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
               : algoId.startsWith('slh')
                 ? 'slh-dsa'
                 : algoId === 'rsa'
-                ? 'rsa'
-                : 'ecdsa'
-                
+                  ? 'rsa'
+                  : 'ecdsa'
+
             hsm.addKey({
               handle: handles.pubHandle,
               family: algoFamily,
               role: 'public',
               label: `${algo.name} Root Public`,
-              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
             })
             hsm.addKey({
               handle: handles.privHandle,
               family: algoFamily,
               role: 'private',
               label: `${algo.name} Root Private`,
-              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+              generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
             })
 
             setOutput(
@@ -700,7 +700,6 @@ x509_extensions = v3_ca
               />
             </div>
 
-
             {isKeyGenerating && (
               <div className="flex items-center gap-2 mt-3 text-sm text-muted-foreground">
                 <Loader2 size={14} className="animate-spin text-primary" />
@@ -850,8 +849,6 @@ x509_extensions = v3_ca
           </div>
         </div>
       </div>
-
-
 
       {/* Profile Info Modal */}
       {showProfileInfo && (

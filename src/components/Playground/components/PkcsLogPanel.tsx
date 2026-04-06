@@ -82,7 +82,7 @@ const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMod
 export const PkcsLogPanel = ({ filterFn }: { filterFn?: (entry: Pkcs11LogEntry) => boolean }) => {
   const { hsmLog, clearHsmLog, inspectMode, toggleInspect } = useHsmContext()
   const [copied, setCopied] = useState(false)
-  
+
   const filteredLogs = filterFn ? hsmLog.filter(filterFn) : hsmLog
 
   const copyAll = () => {
@@ -106,7 +106,9 @@ export const PkcsLogPanel = ({ filterFn }: { filterFn?: (entry: Pkcs11LogEntry) 
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-sm flex items-center gap-2">
           PKCS#11 Call Log
-          <span className="text-xs text-muted-foreground font-normal">({filteredLogs.length} calls)</span>
+          <span className="text-xs text-muted-foreground font-normal">
+            ({filteredLogs.length} calls)
+          </span>
         </h3>
         <div className="flex gap-2">
           <Button
