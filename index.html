@@ -117,13 +117,21 @@
         ]
       }
     </script>
-    <!-- Cross-Origin Isolation via service worker (enables SharedArrayBuffer on GitHub Pages).
-         coepDegrade:false skips the require-corp → credentialless degrade cycle that causes
-         an infinite reload loop on GitHub Pages. credentialless mode works in Chrome/Edge 96+. -->
     <script>
-      window.coi = { coepDegrade: () => false }
+      // Reload once after the PWA service worker takes control so it can inject
+      // Cross-Origin Isolation headers (COEP:credentialless + COOP:same-origin),
+      // enabling SharedArrayBuffer for WASM threading on GitHub Pages.
+      if (window.crossOriginIsolated === false && !sessionStorage.getItem('coi-reload')) {
+        sessionStorage.setItem('coi-reload', '1')
+        if (navigator.serviceWorker && navigator.serviceWorker.controller) {
+          location.reload()
+        } else if (navigator.serviceWorker) {
+          navigator.serviceWorker.addEventListener('controllerchange', function () {
+            location.reload()
+          })
+        }
+      }
     </script>
-    <script src="/coi-serviceworker.js"></script>
   </head>
   <body>
     <div id="root"></div>

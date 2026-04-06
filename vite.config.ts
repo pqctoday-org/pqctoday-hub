@@ -54,6 +54,9 @@ export default defineConfig({
     wasm(),
     topLevelAwait(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       includeAssets: [
         'favicon.svg',
@@ -65,30 +68,9 @@ export default defineConfig({
         'data/rag-corpus.json',
         'data/compliance-data.json',
       ],
-      workbox: {
+      injectManifest: {
         globPatterns: ['**/*.{js,css,html,svg,png,wasm,json}'],
         maximumFileSizeToCacheInBytes: 15 * 1024 * 1024, // 15 MB — accommodate WASM files
-        navigateFallback: 'index.html',
-        runtimeCaching: [
-          {
-            // Cache WASM files with cache-first strategy
-            urlPattern: /\.wasm$/,
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'wasm-cache',
-              expiration: { maxEntries: 20, maxAgeSeconds: 30 * 24 * 60 * 60 },
-            },
-          },
-          {
-            // Cache data files (JSON/CSV) with stale-while-revalidate
-            urlPattern: /\/(data|dist)\/.+\.(json|csv)$/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'data-cache',
-              expiration: { maxEntries: 50, maxAgeSeconds: 7 * 24 * 60 * 60 },
-            },
-          },
-        ],
       },
       manifest: {
         name: 'PQC Today',
