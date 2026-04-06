@@ -76,7 +76,9 @@ export class StrongSwanEngine {
     pkcs11Sab: SharedArrayBuffer,
     netSab: SharedArrayBuffer,
     role: 'initiator' | 'responder',
-    psk: string
+    psk: string,
+    rpcMode: boolean,
+    proposalMode: number
   ): Worker {
     const worker = new Worker(`/wasm/strongswan_worker.js?v=${Date.now()}`)
     const spawnEpoch = this._epoch // Capture epoch at spawn time
@@ -166,7 +168,10 @@ export class StrongSwanEngine {
       }
     }
 
-    worker.postMessage({ type: 'INIT', payload: { configs, sab: pkcs11Sab, netSab, role, psk } })
+    worker.postMessage({
+      type: 'INIT',
+      payload: { configs, sab: pkcs11Sab, netSab, role, psk, rpcMode, proposalMode },
+    })
     return worker
   }
 
@@ -177,7 +182,9 @@ export class StrongSwanEngine {
   public init(
     initConfigs: Record<string, string>,
     respConfigs: Record<string, string>,
-    pskOpts?: { initPsk: string; respPsk: string }
+    pskOpts?: { initPsk: string; respPsk: string },
+    rpcMode?: boolean,
+    proposalMode?: number
   ) {
     if (this.initWorker) return
 
@@ -195,19 +202,25 @@ export class StrongSwanEngine {
     this.initNetSab = new SharedArrayBuffer(65536)
     this.respNetSab = new SharedArrayBuffer(65536)
 
+    const useRpcMode = rpcMode ?? false
+    const usePropMode = proposalMode ?? 0
     this.initWorker = this._spawnWorker(
       initConfigs,
       this.initPkcs11Sab,
       this.initNetSab,
       'initiator',
-      initPsk
+      initPsk,
+      useRpcMode,
+      usePropMode
     )
     this.respWorker = this._spawnWorker(
       respConfigs,
       this.respPkcs11Sab,
       this.respNetSab,
       'responder',
-      respPsk
+      respPsk,
+      useRpcMode,
+      usePropMode
     )
   }
 

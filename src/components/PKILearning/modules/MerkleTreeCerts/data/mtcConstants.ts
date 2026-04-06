@@ -66,7 +66,11 @@ export const ALGORITHM_SIZES: AlgorithmSizes[] = [
 /** Approximate fixed overhead per SCT (Signed Certificate Timestamp) in CT logs */
 export const SCT_OVERHEAD_BYTES = 119
 
-/** Number of SCTs typically embedded in a certificate */
+/**
+ * Number of SCTs embedded in the end-entity (EE) certificate.
+ * Modern browsers require ≥2 SCTs; they appear in the EE cert only —
+ * not in the intermediate CA cert.
+ */
 export const TYPICAL_SCT_COUNT = 2
 
 /** Fixed certificate metadata overhead (serial, validity, extensions, etc.) */
@@ -93,13 +97,15 @@ export function computeProofBytes(batchSize: number): number {
 /**
  * Calculate total traditional TLS handshake authentication size.
  *
- * Components: Root CA sig + Intermediate CA sig + EE cert sig + 4 SCTs (2 per non-root cert)
- * + Root CA pubkey + Intermediate CA pubkey + EE pubkey + cert metadata × 3
+ * Components: Root CA sig + Intermediate CA sig + EE cert sig
+ * + Root CA pubkey + Intermediate CA pubkey + EE pubkey
+ * + SCTs embedded in EE cert (≥2 required by browsers; not in intermediate)
+ * + cert metadata × 3
  */
 export function traditionalChainSize(algo: AlgorithmSizes): number {
   const sigs = algo.signatureBytes * 3 // Root, Intermediate, EE
   const keys = algo.publicKeyBytes * 3
-  const scts = SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT * 2 // SCTs for Intermediate + EE
+  const scts = SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT // SCTs in EE cert only
   const metadata = CERT_METADATA_BYTES * 3
   return sigs + keys + scts + metadata
 }
@@ -148,7 +154,7 @@ export function getSizeBreakdown(algo: AlgorithmSizes, proofBytes?: number): Siz
     { component: 'Intermediate CA public key', bytes: algo.publicKeyBytes },
     { component: 'End-entity signature', bytes: algo.signatureBytes },
     { component: 'End-entity public key', bytes: algo.publicKeyBytes },
-    { component: 'CT SCTs (×4)', bytes: SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT * 2 },
+    { component: 'CT SCTs ×2 (EE cert)', bytes: SCT_OVERHEAD_BYTES * TYPICAL_SCT_COUNT },
     { component: 'Certificate metadata (×3)', bytes: CERT_METADATA_BYTES * 3 },
   ]
   const mtc = [

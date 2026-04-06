@@ -495,6 +495,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 {item.status}
                               </span>
                             )}
+                            {item.wip && (
+                              <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold border border-status-warning/40 bg-status-warning/10 text-status-warning">
+                                WIP
+                              </span>
+                            )}
                             {getProductExtraction(item.softwareName) && (
                               <span
                                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"

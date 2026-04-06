@@ -891,6 +891,7 @@ function processMigrateSoftware(): RAGChunk[] {
 
   const records = readCSVWithHeaders(file)
   const chunks: RAGChunk[] = []
+  const seenIds = new Set<string>()
 
   for (let i = 0; i < records.length; i++) {
     const r = records[i]
@@ -935,8 +936,12 @@ function processMigrateSoftware(): RAGChunk[] {
       ? `/migrate?q=${encodeParam(name)}&layer=${encodeParam(primaryLayer)}`
       : `/migrate?q=${encodeParam(name)}`
 
+    const chunkId = `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+    if (seenIds.has(chunkId)) continue
+    seenIds.add(chunkId)
+
     chunks.push({
-      id: `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`,
+      id: chunkId,
       source: 'migrate',
       title: name,
       content,

@@ -110,7 +110,16 @@ export async function buildMerkleTree(
     throw new Error('Cannot build tree with zero leaves')
   }
 
-  // Pad to next power of two
+  // Pad to next power of two by duplicating the last leaf.
+  //
+  // NOTE — simplified padding for visualization purposes:
+  // RFC 9162 §2.1.2 (Certificate Transparency v2.0) defines MTH(D[n]) as a
+  // recursive split at k = largest power of 2 < n, producing an unbalanced
+  // binary tree for non-power-of-two leaf counts.  That construction is harder
+  // to render as flat levels[], so this implementation uses the simpler
+  // "duplicate last leaf until power-of-two" strategy instead.  For leaf
+  // counts that are already a power of two (all preset demos use 4 or 8 certs)
+  // the two algorithms produce identical roots.
   const paddedCerts = [...certs]
   while (paddedCerts.length & (paddedCerts.length - 1)) {
     paddedCerts.push(paddedCerts[paddedCerts.length - 1])

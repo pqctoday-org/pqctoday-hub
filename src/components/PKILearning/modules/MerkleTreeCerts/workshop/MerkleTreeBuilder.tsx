@@ -2,6 +2,7 @@
 import React, { useState, useCallback, useMemo, useRef } from 'react'
 import { Plus, TreePine, Loader2, Trash2, Info } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { buildMerkleTree, type MerkleNode, type CertLeaf } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
@@ -152,12 +153,9 @@ export const MerkleTreeBuilder: React.FC = () => {
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-bold text-foreground">Certificate Leaves ({certs.length})</h4>
-          <button
-            onClick={handleLoadSample}
-            className="text-xs text-primary hover:text-primary/80 transition-colors"
-          >
+          <Button onClick={handleLoadSample} variant="link" className="text-xs h-auto p-0">
             Load 8 sample certs
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-3">
@@ -170,13 +168,14 @@ export const MerkleTreeBuilder: React.FC = () => {
                 <div className="text-xs font-medium text-foreground truncate">{cert.subject}</div>
                 <div className="text-[10px] text-muted-foreground">{cert.algorithm}</div>
               </div>
-              <button
+              <Button
                 onClick={() => handleRemoveCert(cert.id)}
-                className="text-muted-foreground hover:text-destructive transition-colors shrink-0 ml-1 opacity-0 group-hover:opacity-100"
+                variant="ghost"
+                className="h-auto p-0 text-muted-foreground hover:text-destructive shrink-0 ml-1 opacity-0 group-hover:opacity-100"
                 aria-label={`Remove ${cert.subject}`}
               >
                 <Trash2 size={12} />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -210,22 +209,23 @@ export const MerkleTreeBuilder: React.FC = () => {
               className="w-full"
             />
           </div>
-          <button
+          <Button
             onClick={handleAddCert}
             disabled={!newSubject.trim()}
-            className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 transition-colors disabled:opacity-50"
+            variant="outline"
+            className="flex items-center gap-1 px-3 py-1.5 h-auto text-xs bg-primary/10 text-primary border-primary/30 hover:bg-primary/20"
           >
             <Plus size={12} /> Add
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Build controls */}
       <div className="flex flex-wrap items-center gap-4">
-        <button
+        <Button
           onClick={handleBuildTree}
           disabled={certs.length < 2 || isBuilding}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm"
+          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
         >
           {isBuilding ? (
             <>
@@ -236,7 +236,7 @@ export const MerkleTreeBuilder: React.FC = () => {
               <TreePine size={16} /> Build Merkle Tree
             </>
           )}
-        </button>
+        </Button>
         {certs.length < 2 && (
           <span className="text-xs text-muted-foreground">Add at least 2 certificates</span>
         )}
@@ -246,17 +246,18 @@ export const MerkleTreeBuilder: React.FC = () => {
           <span className="text-[10px] text-muted-foreground">Build speed:</span>
           <div className="flex gap-1">
             {SPEED_OPTIONS.map((opt, idx) => (
-              <button
+              <Button
                 key={opt.label}
                 onClick={() => setSpeedIdx(idx)}
-                className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
+                variant="ghost"
+                className={`px-2 py-1 h-auto rounded text-[10px] font-medium transition-colors ${
                   speedIdx === idx
                     ? 'bg-primary/20 text-primary border border-primary/50'
                     : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
                 }`}
               >
                 {opt.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -334,6 +335,27 @@ export const MerkleTreeBuilder: React.FC = () => {
             <p className="text-[10px] text-muted-foreground mt-1">
               In the MTC model, only this root hash is signed by the CA &mdash; one PQ signature
               covers all {certs.length} certificates in the batch.
+            </p>
+          </div>
+
+          {/* E1 — Domain separation explanation */}
+          <div className="mt-3 bg-primary/5 rounded-lg p-3 border border-primary/20 space-y-1.5">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
+              <Info size={12} className="text-primary shrink-0" />
+              Why two different hash prefixes?
+            </div>
+            <p className="text-[10px] text-muted-foreground">
+              <strong className="text-foreground">Leaf nodes</strong> are hashed as{' '}
+              <span className="font-mono">SHA-256(0x00 ‖ data)</span> and{' '}
+              <strong className="text-foreground">internal nodes</strong> as{' '}
+              <span className="font-mono">SHA-256(0x01 ‖ left ‖ right)</span>.
+            </p>
+            <p className="text-[10px] text-muted-foreground">
+              Without these <strong className="text-foreground">domain-separation</strong> prefixes,
+              an attacker could present an internal node hash as if it were a valid leaf hash (a
+              &ldquo;second-preimage&rdquo; attack). The 0x00/0x01 byte makes the two hash spaces
+              disjoint, ensuring no internal node can ever equal a leaf hash — a requirement from{' '}
+              <span className="font-mono">RFC 9162 §2.1</span>.
             </p>
           </div>
         </div>

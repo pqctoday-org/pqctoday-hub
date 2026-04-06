@@ -46,6 +46,8 @@ const LICENSE_FILTER_ITEMS = [
   { id: 'Commercial', label: 'Commercial' },
 ]
 
+type WipFilter = 'hidden' | 'include' | 'only'
+
 const PRIORITY_ORDER: Record<string, number> = {
   Critical: 0,
   High: 1,
@@ -204,6 +206,9 @@ export const MigrateView: React.FC = () => {
   const [licenseFilter, setLicenseFilter] = useState(
     () => searchParams.get('licenseFilter') ?? 'All'
   )
+  const [wipFilter, setWipFilter] = useState<WipFilter>(
+    () => (searchParams.get('wip') as WipFilter | null) ?? 'hidden'
+  )
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
   )
@@ -258,6 +263,8 @@ export const MigrateView: React.FC = () => {
 
     const license = searchParams.get('licenseFilter')
     if (license !== null) setLicenseFilter((prev) => (prev !== license ? license : prev))
+    const wip = searchParams.get('wip') as WipFilter | null
+    if (wip !== null) setWipFilter((prev) => (prev !== wip ? wip : prev))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchParams])
 
@@ -271,6 +278,7 @@ export const MigrateView: React.FC = () => {
       vendor?: string
       verification?: string
       licenseFilter?: string
+      wip?: WipFilter
       sort?: MigrateSortOption
       mode?: 'stack' | 'cisaStack' | 'cards' | 'table'
       subcat?: string
@@ -288,6 +296,7 @@ export const MigrateView: React.FC = () => {
             overrides.verification !== undefined ? overrides.verification : verificationFilter
           const license =
             overrides.licenseFilter !== undefined ? overrides.licenseFilter : licenseFilter
+          const wip = overrides.wip !== undefined ? overrides.wip : wipFilter
           const sort = overrides.sort !== undefined ? overrides.sort : sortBy
           const mode = overrides.mode !== undefined ? overrides.mode : viewMode
           const subcat = overrides.subcat !== undefined ? overrides.subcat : activeSubCategory
@@ -316,6 +325,9 @@ export const MigrateView: React.FC = () => {
           if (license !== 'All') next.set('licenseFilter', license)
           else next.delete('licenseFilter')
 
+          if (wip !== 'hidden') next.set('wip', wip)
+          else next.delete('wip')
+
           if (sort !== 'name') next.set('sort', sort)
           else next.delete('sort')
 
@@ -339,6 +351,7 @@ export const MigrateView: React.FC = () => {
       vendorFilter,
       verificationFilter,
       licenseFilter,
+      wipFilter,
       sortBy,
       viewMode,
       activeSubCategory,
@@ -439,6 +452,9 @@ export const MigrateView: React.FC = () => {
             !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
           )
             return false
+          // WIP filter
+          if (wipFilter === 'hidden' && item.wip === true) return false
+          if (wipFilter === 'only' && item.wip !== true) return false
           // My Products filter
           if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
             return false
@@ -467,6 +483,7 @@ export const MigrateView: React.FC = () => {
     vendorFilter,
     verificationFilter,
     licenseFilter,
+    wipFilter,
     effectiveViewMode,
     activePartitions,
     showOnlyMyProducts,
@@ -484,6 +501,25 @@ export const MigrateView: React.FC = () => {
         {} as Partial<Record<string, number>>
       ),
     [perLayerData, activePartitions]
+  )
+
+  // Unfiltered product counts per layer (used as denominator in stack headers)
+  const layerRawCounts = useMemo(
+    () =>
+      activePartitions.reduce(
+        (acc, layer) => {
+          acc[layer.id as string] = softwareData.filter((item) => {
+            if (effectiveViewMode === 'cisaStack') return item.cisaCategory === layer.id
+            return item.infrastructureLayer
+              .split(',')
+              .map((l) => l.trim())
+              .includes(layer.id)
+          }).length
+          return acc
+        },
+        {} as Partial<Record<string, number>>
+      ),
+    [activePartitions, effectiveViewMode]
   )
 
   // Layer product keys (for restore-layer action)
@@ -638,6 +674,9 @@ export const MigrateView: React.FC = () => {
         !item.licenseType?.toLowerCase().includes(licenseFilter.toLowerCase())
       )
         return false
+      // WIP filter
+      if (wipFilter === 'hidden' && item.wip === true) return false
+      if (wipFilter === 'only' && item.wip !== true) return false
       // My Products filter
       if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
         return false
@@ -664,6 +703,7 @@ export const MigrateView: React.FC = () => {
     vendorFilter,
     verificationFilter,
     licenseFilter,
+    wipFilter,
     showOnlyMyProducts,
     myProductsSet,
   ])
@@ -818,19 +858,6 @@ export const MigrateView: React.FC = () => {
       return sum + items.length
     }, 0)
   }, [perLayerData, hiddenSet, filterText])
-
-  // Whether any filter is currently active
-  const hasActiveFilter =
-    !!filterText ||
-    !!stepFilter ||
-    !!industryFilter ||
-    vendorFilter !== 'All' ||
-    verificationFilter !== 'All' ||
-    licenseFilter !== 'All' ||
-    effectiveLayer !== 'All' ||
-    flatCategoryFilter !== 'All' ||
-    hiddenSet.size > 0 ||
-    showOnlyMyProducts
 
   const handleExportCsv = useCallback(() => {
     const csv = generateCsv(allFilteredProducts, MIGRATE_CSV_COLUMNS)
@@ -988,6 +1015,7 @@ export const MigrateView: React.FC = () => {
                   (vendorFilter !== 'All' ? 1 : 0) +
                   (verificationFilter !== 'All' ? 1 : 0) +
                   (licenseFilter !== 'All' ? 1 : 0) +
+                  (wipFilter !== 'hidden' ? 1 : 0) +
                   (hiddenSet.size > 0 ? 1 : 0) +
                   (sortBy !== 'pqcMigrationPriority' ? 1 : 0)
                 }
@@ -998,6 +1026,7 @@ export const MigrateView: React.FC = () => {
                   setVendorFilter('All')
                   setVerificationFilter('All')
                   setLicenseFilter('All')
+                  setWipFilter('hidden')
                   setSortBy('pqcMigrationPriority')
                   if (hiddenSet.size > 0) restoreAll()
                   syncFiltersToUrl({
@@ -1007,6 +1036,7 @@ export const MigrateView: React.FC = () => {
                     vendor: 'All',
                     verification: 'All',
                     licenseFilter: 'All',
+                    wip: 'hidden',
                     sort: 'pqcMigrationPriority',
                   })
                 }}
@@ -1100,6 +1130,29 @@ export const MigrateView: React.FC = () => {
                         }}
                         defaultLabel="All Licenses"
                       />
+                      <button
+                        onClick={() => {
+                          const next: WipFilter =
+                            wipFilter === 'hidden'
+                              ? 'include'
+                              : wipFilter === 'include'
+                                ? 'only'
+                                : 'hidden'
+                          setWipFilter(next)
+                          syncFiltersToUrl({ wip: next })
+                          logMigrateAction('Filter WIP', next)
+                        }}
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                          wipFilter === 'only'
+                            ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                            : wipFilter === 'hidden'
+                              ? 'bg-muted text-muted-foreground border-border line-through'
+                              : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                        }`}
+                      >
+                        <Wrench size={12} aria-hidden="true" />
+                        {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
+                      </button>
                     </div>
 
                     <div className="space-y-3">
@@ -1228,6 +1281,34 @@ export const MigrateView: React.FC = () => {
               />
             </div>
 
+            {/* WIP filter — same cycling pill as Playground */}
+            <button
+              onClick={() => {
+                const next: WipFilter =
+                  wipFilter === 'hidden' ? 'include' : wipFilter === 'include' ? 'only' : 'hidden'
+                setWipFilter(next)
+                syncFiltersToUrl({ wip: next })
+                logMigrateAction('Filter WIP', next)
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors shrink-0 ${
+                wipFilter === 'only'
+                  ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                  : wipFilter === 'hidden'
+                    ? 'bg-muted text-muted-foreground border-border line-through'
+                    : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+              }`}
+              title={
+                wipFilter === 'include'
+                  ? 'Click to show only WIP products'
+                  : wipFilter === 'only'
+                    ? 'Click to hide WIP products'
+                    : 'Click to show all products'
+              }
+            >
+              <Wrench size={12} aria-hidden="true" />
+              {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
+            </button>
+
             {/* Search */}
             <div className="relative flex-1 min-w-[150px]">
               <Search
@@ -1300,21 +1381,42 @@ export const MigrateView: React.FC = () => {
       {/* Results count — always visible in all modes */}
       <div className="flex flex-col sm:flex-row items-baseline justify-between mb-2">
         {(() => {
+          const layerLabel =
+            effectiveLayer !== 'All'
+              ? (activePartitions.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer)
+              : null
+
+          if (isStackMode && effectiveLayer !== 'All') {
+            // Specific layer open: show filtered / raw-layer-total
+            const filteredInLayer = perLayerData[effectiveLayer]?.length ?? 0
+            const rawInLayer = softwareData.filter((item) => {
+              if (effectiveViewMode === 'cisaStack') return item.cisaCategory === effectiveLayer
+              return item.infrastructureLayer
+                .split(',')
+                .map((l) => l.trim())
+                .includes(effectiveLayer)
+            }).length
+            const hasLayerFilter = filteredInLayer < rawInLayer
+            return (
+              <p className="text-xs text-muted-foreground">
+                {hasLayerFilter ? (
+                  <>
+                    Showing {filteredInLayer} of {rawInLayer} products in {layerLabel}
+                  </>
+                ) : (
+                  <>
+                    {rawInLayer} product{rawInLayer !== 1 ? 's' : ''} in {layerLabel}
+                  </>
+                )}
+              </p>
+            )
+          }
+
           const visibleCount = isStackMode ? stackFilteredCount : flatVisibleCount
-          const total = softwareData.length
           return (
             <p className="text-xs text-muted-foreground">
-              {hasActiveFilter ? (
-                <>
-                  Showing {visibleCount} of {total} product{total !== 1 ? 's' : ''}
-                  {effectiveLayer !== 'All' &&
-                    ` in ${activePartitions.find((l) => l.id === effectiveLayer)?.label ?? effectiveLayer}`}
-                </>
-              ) : (
-                <>
-                  {total} product{total !== 1 ? 's' : ''}
-                </>
-              )}
+              {visibleCount} product{visibleCount !== 1 ? 's' : ''}
+              {layerLabel && ` in ${layerLabel}`}
             </p>
           )
         })()}
@@ -1357,6 +1459,7 @@ export const MigrateView: React.FC = () => {
                 logMigrateAction('Filter Category', cat)
               }}
               layerProductCounts={layerProductCounts}
+              layerRawCounts={layerRawCounts}
               layerHiddenCounts={layerHiddenCounts}
               layerProductKeys={layerProductKeys}
               onRestoreLayer={(keys) => restoreLayerProducts(keys)}

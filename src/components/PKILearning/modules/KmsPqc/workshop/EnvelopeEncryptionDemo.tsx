@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState } from 'react'
 import { ChevronRight, ChevronLeft, CheckCircle, Circle, Lock, Info, Loader2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { ENVELOPE_ENCRYPTION_STEPS } from '../data/kmsConstants'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
@@ -179,8 +180,23 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const bits = parseInt(kekAlgo.split('-')[1]) as 2048 | 3072 | 4096
 
         // Step 1: Generate AES-256 DEK
-        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=false
-        const dekHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false, 'AES-256 DEK')
+        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=true
+        // NOTE: extractable=true here is intentional for this educational demo so we can
+        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
+        // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
+        // KCV would be the only integrity verification method.
+        const dekHandle = hsm_generateAESKey(
+          M,
+          hSession,
+          256,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          'AES-256 DEK'
+        )
         hsm.addKey({
           handle: dekHandle,
           family: 'aes',
@@ -188,9 +204,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           label: 'AES-256 DEK',
           generatedAt: ts(),
         })
-        addLine(
-          `DEK: C_GenerateKey(CKM_AES_KEY_GEN, 256-bit) → handle=0x${dekHandle.toString(16).padStart(8, '0')}`
-        )
+        addLine(`DEK: AES-256 key generated (32 B, for data encryption)`)
         hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate RSA key pair (KEK)
@@ -209,10 +223,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           label: `RSA-${bits} KEK (Private)`,
           generatedAt: ts(),
         })
-        addLine(
-          `KEK: C_GenerateKeyPair(CKM_RSA_PKCS_KEY_PAIR_GEN, ${bits}-bit, e=65537)` +
-            ` → pub=0x${pubHandle.toString(16)}, priv=0x${privHandle.toString(16)}`
-        )
+        addLine(`KEK: RSA-${bits} key pair — public key ${bits / 8} B (e=65537)`)
         hsm.addStepLog(
           `── Step 2: Generate RSA-${bits} Key Pair (CKM_RSA_PKCS_KEY_PAIR_GEN) ──────────`
         )
@@ -223,10 +234,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
         // Step 3: Wrap DEK with RSA-OAEP public key
         const wrappedDek = hsm_rsaOaepWrapKey(M, hSession, pubHandle, dekHandle)
-        addLine(
-          `Wrap: C_WrapKey(CKM_RSA_PKCS_OAEP, rsaPub, dek)` +
-            ` → ${wrappedDek.length} B wrapped DEK  [${RSA_OAEP_STANDARD}]`
-        )
+        addLine(`Wrapped DEK: ${wrappedDek.length} B (RSA-OAEP, ${RSA_OAEP_STANDARD})`)
         hsm.addStepLog(
           `── Step 3: Wrap DEK (CKM_RSA_PKCS_OAEP / ${RSA_OAEP_STANDARD}) ─────────────`
         )
@@ -265,13 +273,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         })
 
         addLine(
-          `Unwrap: C_UnwrapKey(CKM_RSA_PKCS_OAEP, rsaPriv)` +
-            ` → DEK recovered, KCV=${kcvAfter}, ${kcvMatch ? '✓ MATCH' : '✗ MISMATCH'}`
+          `DEK round-trip: ${kcvMatch ? '✓ Integrity verified' : '✗ Keys differ — check above'}`
         )
         hsm.addStepLog('── Step 4: Unwrap DEK (CKM_RSA_PKCS_OAEP) · KCV Verified ────────────')
 
         addLine(
-          `Total stored: RSA ciphertext = ${wrappedDek.length} B (modulus ${bits / 8} B = ${bits}-bit key)`
+          `Storage overhead: RSA-${bits} ciphertext = ${wrappedDek.length} B total (1 wrapped blob)`
         )
       } else {
         // ── ML-KEM path ────────────────────────────────────────────────────────
@@ -279,8 +286,23 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const mechMeta = WRAP_MECH_META[wrapMech]
 
         // Step 1: Generate AES-256 DEK
-        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=false
-        const dekHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false, 'AES-256 DEK')
+        // encrypt=true, decrypt=true, wrap=false, unwrap=false, derive=false, extractable=true
+        // NOTE: extractable=true here is intentional for this educational demo so we can
+        // fall back to raw byte comparison when CKA_CHECK_VALUE is unavailable (C_UnwrapKey
+        // gap in SoftHSMv3). In production, DEKs would be extractable=false, sensitive=true;
+        // KCV would be the only integrity verification method.
+        const dekHandle = hsm_generateAESKey(
+          M,
+          hSession,
+          256,
+          true,
+          true,
+          false,
+          false,
+          false,
+          true,
+          'AES-256 DEK'
+        )
         hsm.addKey({
           handle: dekHandle,
           family: 'aes',
@@ -288,9 +310,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           label: 'AES-256 DEK',
           generatedAt: ts(),
         })
-        addLine(
-          `DEK: C_GenerateKey(CKM_AES_KEY_GEN, 256-bit) → handle=0x${dekHandle.toString(16).padStart(8, '0')}`
-        )
+        addLine(`DEK: AES-256 key generated (32 B, for data encryption)`)
         hsm.addStepLog('── Step 1: Generate AES-256 DEK (CKM_AES_KEY_GEN) ─────────────────')
 
         // Step 2: Generate ML-KEM key pair (KEK)
@@ -311,8 +331,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         })
         const pubKeyBytes = hsm_extractKeyValue(M, hSession, pubHandle)
         addLine(
-          `KEK: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN, CKP_ML_KEM_${variant})` +
-            ` → pub=0x${pubHandle.toString(16)} (${pubKeyBytes.length} B), priv=0x${privHandle.toString(16)}`
+          `KEK: ML-KEM-${variant} key pair — encapsulation key ${pubKeyBytes.length} B (FIPS 203)`
         )
         hsm.addStepLog(`── Step 2: Generate ML-KEM-${variant} Key Pair (FIPS 203) ──────────────`)
 
@@ -327,8 +346,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         })
         const secretBytes = hsm_extractKeyValue(M, hSession, secretHandle)
         addLine(
-          `Encaps: C_EncapsulateKey(CKM_ML_KEM, variant=${variant})` +
-            ` → ciphertext=${ciphertextBytes.length} B, shared_secret=${secretBytes.length} B`
+          `Encapsulation: ciphertext ${ciphertextBytes.length} B, shared secret ${secretBytes.length} B (random, FIPS 203)`
         )
         hsm.addStepLog('── Step 3: KEM Encapsulate (CKM_ML_KEM / FIPS 203) ─────────────────')
 
@@ -347,8 +365,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           32
         )
         addLine(
-          `HKDF: C_DeriveKey(CKM_HKDF_DERIVE, SHA-256, info="kms-envelope-v1")` +
-            ` → ${wrapKeyBytes.length} B wrapping key  [RFC 5869]`
+          `HKDF-SHA256 (RFC 5869): derived ${wrapKeyBytes.length} B wrapping key — info="kms-envelope-v1"`
         )
         hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / RFC 5869) ────────')
 
@@ -357,7 +374,17 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         const dekBytesOrig = hsm_extractKeyValue(M, hSession, dekHandle)
 
         // Step 5: Wrap DEK using selected mechanism
-        const wrapKeyHandle = hsm_importAESKey(M, hSession, wrapKeyBytes, false, false, true, true, false, false)
+        const wrapKeyHandle = hsm_importAESKey(
+          M,
+          hSession,
+          wrapKeyBytes,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        )
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
@@ -380,16 +407,11 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           wrappedDek = gcmResult.wrapped
           gcmIv = gcmResult.iv
           addLine(
-            `Wrap: C_WrapKeyAuthenticated(CKM_AES_GCM, wrapKey, dek)` +
-              ` → ${wrappedDek.length} B + IV=${gcmIv.length} B  [NIST SP 800-38D]`
+            `Wrapped DEK: ${wrappedDek.length} B ciphertext + ${gcmIv.length} B nonce (AES-GCM, NIST SP 800-38D)`
           )
         } else {
           wrappedDek = hsm_wrapKeyMech(M, hSession, mechMeta.ckm!, wrapKeyHandle, dekHandle)
-          const ckmName = wrapMech === 'aes-kw' ? 'CKM_AES_KEY_WRAP' : 'CKM_AES_KEY_WRAP_KWP'
-          addLine(
-            `Wrap: C_WrapKey(${ckmName}, wrapKey, dek)` +
-              ` → ${wrappedDek.length} B wrapped DEK  [${mechMeta.standard}]`
-          )
+          addLine(`Wrapped DEK: ${wrappedDek.length} B (${mechMeta.label}, ${mechMeta.standard})`)
         }
         hsm.addStepLog(
           `── Step 5: Wrap DEK (${mechMeta.label} / ${mechMeta.standard}) ─────────────`
@@ -415,8 +437,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           secretBytes.length === recoveredSecretBytes.length &&
           secretBytes.every((b, i) => b === recoveredSecretBytes[i])
         addLine(
-          `Decaps: C_DecapsulateKey(CKM_ML_KEM, priv, ciphertext)` +
-            ` → ${recoveredSecretBytes.length} B, KEM round-trip=${secretMatch ? '✓' : '✗'}`
+          `KEM round-trip: ${secretMatch ? '✓ shared secrets match' : '✗ shared secrets differ'} (${recoveredSecretBytes.length} B)`
         )
 
         // Re-derive the same wrapping key from the recovered secret
@@ -432,7 +453,17 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           envelopeInfo,
           32
         )
-        const unwrapKeyHandle = hsm_importAESKey(M, hSession, unwrapKeyBytes, false, false, true, true, false, false)
+        const unwrapKeyHandle = hsm_importAESKey(
+          M,
+          hSession,
+          unwrapKeyBytes,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        )
         hsm.addKey({
           handle: unwrapKeyHandle,
           family: 'aes',
@@ -488,21 +519,17 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           method: useRaw ? 'raw' : 'kcv',
         })
 
-        const unwrapCkm =
-          wrapMech === 'aes-gcm'
-            ? 'C_UnwrapKeyAuthenticated(CKM_AES_GCM)'
-            : `C_UnwrapKey(${wrapMech === 'aes-kw' ? 'CKM_AES_KEY_WRAP' : 'CKM_AES_KEY_WRAP_KWP'})`
         addLine(
-          `Unwrap: ${unwrapCkm} → DEK recovered, KCV=${kcvAfter}, ${kcvMatch ? '✓ MATCH' : '✗ MISMATCH'}`
+          `DEK round-trip: ${kcvMatch ? '✓ Integrity verified' : '✗ Keys differ — check above'}`
         )
         hsm.addStepLog('── Step 6: Decapsulate + Unwrap DEK · KCV Verified ─────────────────')
 
         const totalBytes = ciphertextBytes.length + wrappedDek.length + (gcmIv?.length ?? 0)
         addLine(
-          `Total stored: KEM ciphertext (${ciphertextBytes.length} B)` +
-            ` + wrapped DEK (${wrappedDek.length} B)` +
-            (gcmIv ? ` + GCM IV (${gcmIv.length} B)` : '') +
-            ` = ${totalBytes} B`
+          `Storage overhead: KEM ciphertext ${ciphertextBytes.length} B` +
+            ` + wrapped DEK ${wrappedDek.length} B` +
+            (gcmIv ? ` + GCM nonce ${gcmIv.length} B` : '') +
+            ` = ${totalBytes} B total (2 blobs)`
         )
       }
     } catch (e) {
@@ -521,9 +548,39 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
     }
   }
 
-  // Artifact size table values (static, for ML-KEM-768 reference)
-  const classicalTotalSizes = ['256 B', '256 B', 'N/A', '256 B', '32 B']
-  const pqcTotalSizes = ['1,184 B', '1,088 + 32 B', '32 B', '1,128 B', '32 B']
+  // Artifact size table values — computed dynamically from the selected KEK algorithm
+  const ML_KEM_SIZES: Record<string, { pk: number; ct: number }> = {
+    'ml-kem-512': { pk: 800, ct: 768 },
+    'ml-kem-768': { pk: 1184, ct: 1088 },
+    'ml-kem-1024': { pk: 1568, ct: 1568 },
+  }
+  const RSA_PK_BYTES: Record<string, number> = { 'rsa-2048': 256, 'rsa-4096': 512 }
+
+  const classicalPkBytes = isRSA ? (RSA_PK_BYTES[kekAlgo] ?? 256) : 256
+  const mlKemSizes = !isRSA ? ML_KEM_SIZES[kekAlgo] : null
+  const pqcPkStr = mlKemSizes ? `${mlKemSizes.pk.toLocaleString()} B` : `${classicalPkBytes} B`
+  const pqcCtStr = mlKemSizes ? `${mlKemSizes.ct.toLocaleString()} + 32 B` : `${classicalPkBytes} B`
+  const totalPqcStr = mlKemSizes
+    ? `${mlKemSizes.ct.toLocaleString()} + ${wrapMech === 'aes-gcm' ? '60' : '40'} B`
+    : `${classicalPkBytes} B`
+
+  const classicalTotalSizes = [
+    `${classicalPkBytes} B`,
+    `${classicalPkBytes} B`,
+    'N/A',
+    `${classicalPkBytes} B`,
+    '32 B',
+  ]
+  const pqcTotalSizes = [pqcPkStr, pqcCtStr, '32 B', totalPqcStr, '32 B']
+
+  // Step 1 comparison multiplier for the info note
+  const step1ComparisonNote = (() => {
+    if (isRSA) return null // RSA vs RSA — no meaningful cross-comparison
+    const { pk } = ML_KEM_SIZES[kekAlgo] ?? { pk: 1184 }
+    const rsaRef = 256 // RSA-2048 public key baseline
+    const ratio = (pk / rsaRef).toFixed(1)
+    return `${kekAlgo.toUpperCase()} encapsulation keys are ${ratio}x larger than RSA-2048 public keys (${pk.toLocaleString()} B vs 256 B). This impacts certificate sizes and key distribution bandwidth.`
+  })()
 
   return (
     <div className="space-y-6">
@@ -531,8 +588,8 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         <h3 className="text-lg font-bold text-foreground mb-2">Envelope Encryption Demo</h3>
         <p className="text-sm text-muted-foreground">
           Step through the complete envelope encryption flow. Compare how RSA-OAEP directly wraps a
-          DEK in one step versus the 3-step ML-KEM process: encapsulate &rarr; KDF &rarr; AES-KW
-          wrap.
+          DEK in one step versus the 3-step ML-KEM process: encapsulate &rarr; KDF &rarr; AES wrap
+          (AES-KW / AES-KWP / AES-GCM).
         </p>
       </div>
 
@@ -558,19 +615,20 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                     'rsa-4096',
                   ] as KekAlgorithm[]
                 ).map((alg) => (
-                  <button
+                  <Button
                     key={alg}
-                    type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={() => setKekAlgo(alg)}
                     disabled={liveRunning}
-                    className={`px-2.5 py-1 text-xs rounded border font-mono transition-colors disabled:opacity-50 ${
+                    className={`font-mono text-xs h-auto py-1 px-2.5 ${
                       kekAlgo === alg
                         ? 'bg-primary/20 text-primary border-primary/50 font-semibold'
-                        : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
+                        : 'bg-muted/50 text-muted-foreground'
                     }`}
                   >
-                    {alg.toUpperCase().replace(/-/g, '-')}
-                  </button>
+                    {alg.toUpperCase()}
+                  </Button>
                 ))}
               </div>
             </div>
@@ -595,23 +653,24 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                       (typeof WRAP_MECH_META)[WrapMechanism],
                     ][]
                   ).map(([key, meta]) => (
-                    <button
+                    <Button
                       key={key}
-                      type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => setWrapMech(key)}
                       disabled={liveRunning}
-                      className={`px-2.5 py-1 text-xs rounded border font-mono transition-colors disabled:opacity-50 ${
+                      title={meta.standard}
+                      className={`font-mono text-xs h-auto py-1 px-2.5 ${
                         wrapMech === key
                           ? 'bg-primary/20 text-primary border-primary/50 font-semibold'
-                          : 'bg-muted/50 text-muted-foreground border-border hover:border-primary/30'
+                          : 'bg-muted/50 text-muted-foreground'
                       }`}
-                      title={meta.standard}
                     >
                       {meta.label}
                       <span className="ml-1 text-[10px] font-normal opacity-70 hidden sm:inline">
                         {meta.standard}
                       </span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
@@ -627,10 +686,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                 : `${kekAlgo.toUpperCase()} / ${WRAP_MECH_META[wrapMech].label}`}{' '}
               Envelope Encryption
             </p>
-            <button
+            <Button
+              variant="gradient"
+              size="sm"
               onClick={runLiveDemo}
               disabled={liveRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 text-xs"
             >
               {liveRunning ? (
                 <>
@@ -639,7 +700,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
               ) : (
                 'Execute (Live WASM)'
               )}
-            </button>
+            </Button>
           </div>
 
           {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
@@ -689,11 +750,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
               <p className="text-[10px] text-muted-foreground mt-1.5">
                 {kcvResult.method === 'kcv'
                   ? 'CKA_CHECK_VALUE = first 3 bytes of AES-ECB(key, 0x00…) — PKCS#11 §9'
-                  : 'Showing first 3 bytes of CKA_VALUE (C_UnwrapKey does not populate CKA_CHECK_VALUE in SoftHSM3)'}
+                  : 'SoftHSMv3 implementation note: C_GenerateKey populates CKA_CHECK_VALUE but C_UnwrapKey does not (this is an implementation gap, not a PKCS#11 requirement). Falling back to first 3 bytes of CKA_VALUE for comparison. In production HSMs, CKA_CHECK_VALUE is the correct verification method.'}
               </p>
             </div>
           )}
-
         </div>
       )}
 
@@ -701,21 +761,23 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       <div className="overflow-x-auto">
         <div className="flex gap-1 min-w-max">
           {ENVELOPE_ENCRYPTION_STEPS.map((s, idx) => (
-            <button
+            <Button
               key={s.id}
+              variant="outline"
+              size="sm"
               onClick={() => setCurrentStep(idx)}
-              className={`flex items-center gap-1.5 px-3 py-2 rounded text-xs font-medium transition-colors ${
+              className={`flex items-center gap-1.5 text-xs font-medium h-auto py-2 px-3 ${
                 idx === currentStep
-                  ? 'bg-primary/20 text-primary border border-primary/50'
+                  ? 'bg-primary/20 text-primary border-primary/50'
                   : completedSteps.has(idx)
-                    ? 'bg-success/10 text-success border border-success/20'
-                    : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
+                    ? 'bg-status-success/10 text-status-success border-status-success/20'
+                    : 'bg-muted/50 text-muted-foreground'
               }`}
             >
               {completedSteps.has(idx) ? <CheckCircle size={12} /> : <Circle size={12} />}
               <span className="hidden sm:inline">Step {s.step}</span>
               <span className="sm:hidden">{s.step}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -774,7 +836,9 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                 <span className="text-xs px-2 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-bold">
                   PQC
                 </span>
-                <span className="text-xs text-muted-foreground">ML-KEM-768</span>
+                <span className="text-xs text-muted-foreground">
+                  {isRSA ? 'RSA-OAEP' : kekAlgo.toUpperCase()}
+                </span>
               </div>
               <p className="text-xs text-foreground/80 mb-3">{step.pqcDescription}</p>
               <div className="bg-background rounded p-3 border border-border">
@@ -794,17 +858,25 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
               <Info size={14} className="text-primary shrink-0 mt-0.5" />
               <p className="text-xs text-foreground/80">
                 {step.step === 1 &&
-                  'ML-KEM-768 encapsulation keys are 4.6x larger than RSA-2048 public keys. This impacts certificate sizes and key distribution bandwidth.'}
+                  (step1ComparisonNote ??
+                    'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {step.step === 2 &&
                   'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference.'}
                 {step.step === 3 &&
-                  'This KDF step is unique to KEMs. The shared secret from ML-KEM.Encaps() is random, not directly usable as a wrapping key. HKDF provides domain separation and key derivation (RFC 5869).'}
+                  (isRSA
+                    ? 'RSA-OAEP is a direct encryption scheme — the decrypted output IS the DEK. No KDF step is needed. This step is skipped in the classical path.'
+                    : 'This KDF step is unique to KEMs. The shared secret from ML-KEM.Encaps() is a random 32-byte value — not directly usable as a wrapping key without domain separation. ' +
+                      'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is isolated to this protocol and version, preventing cross-protocol key reuse (RFC 5869 §3.2).')}
                 {step.step === 4 &&
                   `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (NIST SP 800-38D) wraps the 32-byte DEK. ` +
-                    `AES-KW produces 40 B (8-byte IV + key), AES-GCM produces 48 B + 12-byte IV. ` +
-                    `Store the KEM ciphertext alongside the wrapped DEK.`}
+                    `AES-KW produces 40 B (8-byte A value / ICV per RFC 3394 §2.2.3, not an IV). ` +
+                    `AES-GCM produces 48 B ciphertext + 12-byte random nonce. ` +
+                    `Store the KEM ciphertext alongside the wrapped DEK. ` +
+                    `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (OASIS 2023) — classic PKCS#11 had no native KEM primitives.`}
                 {step.step === 5 &&
-                  'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms the key survived the wrap/unwrap cycle intact. The PQC path has more steps but all happen server-side.'}
+                  'Both paths recover the same 32-byte DEK. The KCV (CKA_CHECK_VALUE) confirms key integrity across the wrap/unwrap cycle. ' +
+                    'Envelope encryption enables DEK rotation without re-encrypting any data — just generate a new DEK and re-wrap it with the same or new KEK. ' +
+                    "To rotate the KEK, re-wrap the existing DEK with the new KEK; data blocks remain untouched. This is envelope encryption's primary operational advantage at scale."}
               </p>
             </div>
           </div>
@@ -822,7 +894,10 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             </div>
             <div className="space-y-2 text-center">
               {[
-                { label: '1. Generate RSA-2048 key pair', active: currentStep === 0 },
+                {
+                  label: `1. Generate RSA-${isRSA ? kekAlgo.split('-')[1] : '2048'} key pair`,
+                  active: currentStep === 0,
+                },
                 { label: '2. RSA-OAEP wrap DEK → 256 B', active: currentStep === 1 },
                 { label: '3. (no KDF step)', active: currentStep === 2 },
                 { label: '4. (DEK already wrapped)', active: currentStep === 3 },
@@ -834,7 +909,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                     item.active
                       ? 'bg-destructive/20 text-destructive border-destructive/50'
                       : completedSteps.has(idx)
-                        ? 'bg-success/10 text-success border-success/20'
+                        ? 'bg-status-success/10 text-status-success border-status-success/20'
                         : 'bg-muted/50 text-muted-foreground border-border'
                   }`}
                 >
@@ -893,27 +968,45 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
       {/* Total comparison — shown when all steps complete */}
       {completedSteps.size === ENVELOPE_ENCRYPTION_STEPS.length && (
-        <div className="glass-panel p-6 border-success/20 animate-fade-in">
+        <div className="glass-panel p-6 border-status-success/20 animate-fade-in">
           <h4 className="text-sm font-bold text-foreground mb-3">Size Comparison Summary</h4>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
-              <div className="text-lg font-bold text-destructive">256 B</div>
-              <div className="text-[10px] text-muted-foreground">RSA-OAEP Total</div>
-            </div>
-            <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
-              <div className="text-lg font-bold text-primary">1,128 B</div>
-              <div className="text-[10px] text-muted-foreground">ML-KEM-768 + AES-KW Total</div>
-            </div>
-            <div className="bg-warning/5 rounded-lg p-3 border border-warning/20 text-center">
-              <div className="text-lg font-bold text-warning">4.4x</div>
-              <div className="text-[10px] text-muted-foreground">Size Increase</div>
-            </div>
-          </div>
-          <p className="text-[10px] text-muted-foreground mt-3">
-            The 4.4x increase in wrapped key storage is the cost of quantum-safe envelope
-            encryption. For most applications, this overhead is manageable. The larger concern is
-            the operational complexity of the 3-step KEM flow.
-          </p>
+          {(() => {
+            const classRef = classicalPkBytes
+            const pqcTotal = mlKemSizes
+              ? mlKemSizes.ct + (wrapMech === 'aes-gcm' ? 60 : 40)
+              : classRef
+            const ratio = mlKemSizes ? (pqcTotal / classRef).toFixed(1) : '—'
+            const pqcTotalLabel = mlKemSizes ? `${pqcTotal.toLocaleString()} B` : `${classRef} B`
+            const pqcDesc = mlKemSizes
+              ? `${kekAlgo.toUpperCase()} + ${WRAP_MECH_META[wrapMech].label} Total`
+              : 'PQC Total (select ML-KEM variant)'
+            return (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  <div className="bg-destructive/5 rounded-lg p-3 border border-destructive/20 text-center">
+                    <div className="text-lg font-bold text-destructive">{classRef} B</div>
+                    <div className="text-[10px] text-muted-foreground">
+                      RSA-{isRSA ? kekAlgo.split('-')[1] : '2048'} Total
+                    </div>
+                  </div>
+                  <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-center">
+                    <div className="text-lg font-bold text-primary">{pqcTotalLabel}</div>
+                    <div className="text-[10px] text-muted-foreground">{pqcDesc}</div>
+                  </div>
+                  <div className="bg-status-warning/5 rounded-lg p-3 border border-status-warning/20 text-center">
+                    <div className="text-lg font-bold text-status-warning">{ratio}x</div>
+                    <div className="text-[10px] text-muted-foreground">Size Increase</div>
+                  </div>
+                </div>
+                <p className="text-[10px] text-muted-foreground mt-3">
+                  The {ratio}x increase in wrapped key storage is the cost of quantum-safe envelope
+                  encryption. For most applications, this overhead is manageable. The larger concern
+                  is the operational complexity of the 3-step KEM flow versus RSA-OAEP's single
+                  operation — though all steps occur server-side.
+                </p>
+              </>
+            )
+          })()}
         </div>
       )}
 
@@ -930,7 +1023,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   Classical
                 </th>
                 <th className="text-right py-2 px-2 text-muted-foreground font-medium">
-                  PQC (ML-KEM-768)
+                  {isRSA ? 'PQC (ML-KEM-768 ref)' : `PQC (${kekAlgo.toUpperCase()})`}
                 </th>
               </tr>
             </thead>
@@ -957,16 +1050,20 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
       {/* Navigation */}
       <div className="flex items-center justify-between pt-4 border-t border-border">
-        <button
+        <Button
+          variant="outline"
+          size="sm"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
-          className="flex items-center gap-1 px-4 py-2 text-sm rounded border border-border hover:bg-muted disabled:opacity-50 transition-colors"
+          className="flex items-center gap-1"
         >
           <ChevronLeft size={14} /> Previous
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="gradient"
+          size="sm"
           onClick={markComplete}
-          className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors"
+          className="flex items-center gap-2"
         >
           {completedSteps.has(currentStep) ? (
             <>
@@ -981,7 +1078,29 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
               Complete &amp; Next <ChevronRight size={14} />
             </>
           )}
-        </button>
+        </Button>
+      </div>
+
+      {/* Hybrid migration callout — NIST SP 800-227 guidance */}
+      <div className="glass-panel p-4 border border-primary/20">
+        <div className="flex items-start gap-3">
+          <Info size={16} className="text-primary shrink-0 mt-0.5" />
+          <div className="space-y-1.5">
+            <p className="text-sm font-semibold text-foreground">
+              Migration Path: Use Hybrid (Classical + PQC)
+            </p>
+            <p className="text-xs text-muted-foreground">
+              This demo shows a binary choice — RSA-OAEP <em>or</em> ML-KEM. NIST SP 800-227 and
+              current migration guidance recommend running <strong>both simultaneously</strong>{' '}
+              during the transition period: combine classical ECDH or RSA with ML-KEM so that
+              security holds even if one scheme is broken. A combined shared secret is derived via
+              HKDF from both outputs (e.g. P-256 ECDH ‖ ML-KEM-768 → HKDF → AES-256 KEK). This
+              hybrid approach is available in the{' '}
+              <span className="font-mono text-primary">HSM / PKCS#11 → Key Wrapping</span> tool
+              which supports P-256+ML-KEM and X25519+ML-KEM combiner modes per SP 800-227.
+            </p>
+          </div>
+        </div>
       </div>
 
       <KatValidationPanel
@@ -1007,6 +1126,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             moduleRef={hsm.moduleRef}
             hSessionRef={hsm.hSessionRef}
             onRemoveKey={hsm.removeKey}
+            onClear={hsm.clearKeys}
           />
         </div>
       )}

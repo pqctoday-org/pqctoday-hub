@@ -44,6 +44,8 @@ interface InfrastructureStackProps {
   onSelectSubCategory?: (cat: string) => void
   expandedContent?: React.ReactNode
   layerProductCounts?: Partial<Record<InfrastructureLayerType, number>>
+  /** Unfiltered product counts per layer — used as the denominator in "X of Y" display */
+  layerRawCounts?: Partial<Record<InfrastructureLayerType, number>>
   layerHiddenCounts?: Partial<Record<InfrastructureLayerType, number>>
   onRestoreLayer?: (keysToRestore: string[]) => void
   layerProductKeys?: Partial<Record<InfrastructureLayerType, string[]>>
@@ -314,6 +316,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   onSelectSubCategory,
   expandedContent,
   layerProductCounts,
+  layerRawCounts,
   layerHiddenCounts,
   onRestoreLayer,
   layerProductKeys,
@@ -454,11 +457,18 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
 
                   {/* Product count + hidden badge + status */}
                   <div className="hidden md:flex items-center gap-2 flex-shrink-0">
-                    {layerProductCounts !== undefined && (
-                      <span className="text-xs px-2.5 py-1 rounded-full bg-background/50 text-muted-foreground border border-border/40 tabular-nums">
-                        {layerProductCounts[layer.id as InfrastructureLayerType] ?? 0} products
-                      </span>
-                    )}
+                    {layerProductCounts !== undefined &&
+                      (() => {
+                        const filtered =
+                          layerProductCounts[layer.id as InfrastructureLayerType] ?? 0
+                        const raw = layerRawCounts?.[layer.id as InfrastructureLayerType]
+                        const showRatio = raw !== undefined && filtered !== raw
+                        return (
+                          <span className="text-xs px-2.5 py-1 rounded-full bg-background/50 text-muted-foreground border border-border/40 tabular-nums">
+                            {showRatio ? `${filtered} of ${raw}` : filtered} products
+                          </span>
+                        )
+                      })()}
                     {(layerSelectedCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (
                       <span className="text-xs px-2.5 py-1 rounded-full bg-primary/10 text-primary border border-primary/30 tabular-nums">
                         {layerSelectedCounts?.[layer.id as InfrastructureLayerType]} selected

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import { X, Search, Loader2, ChevronDown, ChevronRight, AlertTriangle } from 'lucide-react'
+import { X, Search, Loader2, ChevronDown, ChevronRight, AlertTriangle, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 
@@ -203,6 +203,69 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
     return <div className="space-y-1">{nodes.map((node, idx) => renderNode(node, idx, 0))}</div>
   }
 
+  // --- PQC Size Annotation ---
+
+  // Detected PQC algorithm name in the parsed output (case-insensitive)
+  const detectPqcAlgo = (output: string): string | null => {
+    const lower = output.toLowerCase()
+    if (lower.includes('mldsa87') || lower.includes('ml-dsa-87')) return 'ML-DSA-87'
+    if (lower.includes('mldsa65') || lower.includes('ml-dsa-65')) return 'ML-DSA-65'
+    if (lower.includes('mldsa44') || lower.includes('ml-dsa-44')) return 'ML-DSA-44'
+    if (lower.includes('mlkem1024') || lower.includes('ml-kem-1024')) return 'ML-KEM-1024'
+    if (lower.includes('mlkem768') || lower.includes('ml-kem-768')) return 'ML-KEM-768'
+    if (lower.includes('mlkem512') || lower.includes('ml-kem-512')) return 'ML-KEM-512'
+    if (lower.includes('slhdsa') || lower.includes('sphincs')) return 'SLH-DSA'
+    return null
+  }
+
+  const PQC_ALGO_INFO: Record<
+    string,
+    { sigSize?: string; pubKeySize: string; level: string; classical: string }
+  > = {
+    'ML-DSA-44': {
+      sigSize: '2,420 B',
+      pubKeySize: '1,312 B',
+      level: 'NIST L2',
+      classical: 'ECDSA P-256 sig: ~72 B, pub key: 64 B',
+    },
+    'ML-DSA-65': {
+      sigSize: '3,293 B',
+      pubKeySize: '1,952 B',
+      level: 'NIST L3',
+      classical: 'ECDSA P-384 sig: ~96 B, pub key: 96 B',
+    },
+    'ML-DSA-87': {
+      sigSize: '4,595 B',
+      pubKeySize: '2,592 B',
+      level: 'NIST L5',
+      classical: 'ECDSA P-521 sig: ~139 B, pub key: 132 B',
+    },
+    'ML-KEM-768': {
+      pubKeySize: '1,184 B',
+      level: 'NIST L3',
+      classical: 'X25519 key share: 32 B',
+    },
+    'ML-KEM-1024': {
+      pubKeySize: '1,568 B',
+      level: 'NIST L5',
+      classical: 'P-384 key share: 97 B',
+    },
+    'ML-KEM-512': {
+      pubKeySize: '800 B',
+      level: 'NIST L2',
+      classical: 'X25519 key share: 32 B',
+    },
+    'SLH-DSA': {
+      sigSize: '7,856 – 50,208 B (varies by params)',
+      pubKeySize: '32 B',
+      level: 'NIST L1–L5',
+      classical: 'ECDSA sig: ~72 B',
+    },
+  }
+
+  const pqcAlgo = parsedOutput ? detectPqcAlgo(parsedOutput) : null
+  const pqcInfo = pqcAlgo ? PQC_ALGO_INFO[pqcAlgo] : null
+
   // --- Main Render ---
 
   return (
@@ -279,6 +342,33 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                 </div>
               ) : parsedOutput ? (
                 <div className="h-full overflow-auto p-6 font-mono text-xs custom-scrollbar">
+                  {pqcInfo && (
+                    <div className="mb-4 p-3 rounded-lg bg-primary/5 border border-primary/20 font-sans text-xs not-prose">
+                      <div className="flex items-center gap-2 mb-2">
+                        <Info size={14} className="text-primary shrink-0" />
+                        <span className="font-semibold text-foreground">
+                          PQC Certificate — {pqcAlgo} ({pqcInfo.level})
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-[10px]">
+                        <div className="text-muted-foreground">Public Key Size</div>
+                        <div className="font-mono text-foreground">
+                          {pqcInfo.pubKeySize}
+                          <span className="text-muted-foreground ml-1">
+                            (classical: {pqcInfo.classical.split(':')[1]?.trim()})
+                          </span>
+                        </div>
+                        {pqcInfo.sigSize && (
+                          <>
+                            <div className="text-muted-foreground">Signature Size</div>
+                            <div className="font-mono text-foreground">{pqcInfo.sigSize}</div>
+                          </>
+                        )}
+                        <div className="text-muted-foreground">Classical equivalent</div>
+                        <div className="font-mono text-muted-foreground">{pqcInfo.classical}</div>
+                      </div>
+                    </div>
+                  )}
                   {viewMode === 'tree' ? (
                     <ParsedTree output={parsedOutput} />
                   ) : (

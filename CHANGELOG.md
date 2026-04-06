@@ -6,6 +6,39 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.80.0] - 2026-04-05
+
+### Added
+
+- **Algorithm Region & Status filters**: New Region filter (NIST/US, IETF/Global, BSI/ANSSI/Europe, ETSI, KpqC/Korea, CACR/China) and Status filter (Certified, Candidate, To Be Checked) on the Algorithms page. Sortable Region and Status columns added to the comparison table. Multivariate and Isogeny added to the crypto-family filter. New `region`, `status`, `statusUrl` fields in `AlgorithmDetail` backed by `pqc_complete_algorithm_reference_04052026.csv`.
+- **Algorithm Implementations Modal**: Code icon button on each PQC algorithm card opens a modal listing open-source reference and library implementations. Backed by `algo_product_xref_04052026.csv` via new `algoProductXrefData.ts` loader. Smart family-prefix fallback (e.g., `SLH-DSA` covers all `SLH-DSA-*` variants). Deep-links to `/migrate` catalog entries and `/library` references.
+- **Playground Workshop WIP badge & filter**: New `wip?: boolean` field on `WorkshopTool`. WIP tools show an orange Wrench badge on their hero card. New WIP filter (all / only / hide, default `hide`) so in-progress tools are hidden by default. Six tools marked WIP: SLH-DSA, Hybrid KEM, Envelope Encrypt, Token Migration, TEE Channel, Firmware Signing.
+- **Migrate WIP filter**: New WIP filter toggle (hidden / include / only) on the Migrate catalog. WIP products are hidden by default. URL-persisted via `?wip=` param; `SoftwareCard` and `SoftwareTable` receive the `wip` field from `MigrateTypes`.
+- **XMSS RFC 8391 / NIST SP 800-208 KAT**: New known-answer test for XMSS-SHA2_10_256 deterministic keygen. A zero 96-byte seed (SK_SEED ‖ SK_PRF ‖ PUB_SEED all zeros) is injected via the `_set_kat_seed` hook in the Rust WASM engine; the derived public key must match the expected value on every run, proving keygen is reproducible. Vectors stored in `src/data/kat/xmss_rfc8391.json`.
+- **softhsm WASM — robust multi-slot init** (`src/wasm/softhsm.ts`): `hsm_getFirstFreeSlot` discovers the first uninitialized slot via a two-pass `C_GetSlotList` diff (all slots minus initialized slots). `hsm_initToken` now uses snapshot-based new-slot detection — diffs the initialized-slot list before and after `C_InitToken` to return the exact new slot ID.
+- **softhsm WASM — XMSS constants and keysRemaining fallback**: `CKK_XMSS = 0x47`, `CKK_XMSSMT = 0x48` (PKCS#11 v3.2 §6.14) and `CKA_XMSS_KEYS_REMAINING = 0x80000106` (vendor extension) added to `softhsm/constants.ts`. `hsm_getKeysRemaining` now tries `CKA_HSS_KEYS_REMAINING` first, then falls back to the XMSS vendor attribute.
+- **`_set_kat_seed` hook exposed in Rust WASM wrapper**: The Rust WASM module wrapper in `src/wasm/softhsm.ts` now forwards `_set_kat_seed` from the underlying WASM exports, enabling deterministic KAT seed injection for XMSS and other stateful signature algorithms.
+
+### Changed
+
+- **VPN Simulation Panel — dual-slot init + dual auth**: VPN-specific slot initialization is now guarded by its own `vpnRpcInitRef` (separate from the shared `moduleRef`), preventing conflicts with other HSM panels. Auth mode extended to `'psk' | 'dual'` supporting PSK + pubkey dual-auth IKEv2. RSA-3072 keygen via direct PKCS#11 calls supports the pubkey auth path. Real softhsmv3 slot IDs (discovered at init) are advertised to charon instead of hardcoded 0/1.
+- **HybridEncryptionDemo refactored to StepWizard**: The tab-based KEM/signature UI is replaced with a 5-step wizard using the `StepWizard` / `useStepWizard` pattern. Per-step state tracks all PKCS#11 handles and extracted bytes. `C_CreateObject` added to the live-operations filter list.
+- **TEEHSMTrustedChannel — expanded PKCS#11 coverage**: Added `C_DecapsulateKey`, `C_UnwrapKey`, `C_DeriveKey`, `C_MessageVerifyInit`, `C_VerifyMessage`, `C_CreateObject` to the live-ops filter. Imports `QUANTUM_THREAT_VECTORS` and `MEMORY_ENCRYPTION_ENGINES` from attestation data. New operations wired: `hsm_decapsulate`, `hsm_unwrapKeyMech`, `hsm_verify`, `hsm_ecdsaVerify`, `hsm_importGenericSecret`, `hsm_hkdf`, `hsm_importAESKey`.
+- **SLH-DSA HSM sign panel simplified**: Removed context-string and deterministic fields. PKCS#11 log panel and `HsmKeyInspector` added inline. Pre-hash mechanism label map added (`CKM_HASH_SLH_DSA_SHA256/SHA512/SHAKE128/SHAKE256`). `extractable` param wired to `hsm_generateSLHDSAKeyPair`.
+- **`hsm_generateSLHDSAKeyPair` — `extractable` param + `CKA_PARAMETER_SET`**: Added optional `extractable` boolean (default `false`). `CKA_PARAMETER_SET` is now included in the private key template.
+- **Rust WASM vendor updated**: `softhsmrustv3` binaries updated with `_set_kat_seed` hook and XMSS/XMSS-MT key generation support.
+- **StrongSwan WASM updated**: `public/wasm/strongswan.{js,wasm}` and `strongswan_worker.js` rebuilt.
+
+### Removed
+
+- **`SlhDsaDemo.tsx` deleted**: Standalone SLH-DSA demo component removed; functionality consolidated in the unified `HsmSlhDsaSignPanel` inside `SignVerifyTab.tsx`.
+
+### Data
+
+- **New CSV files**: `algo_product_xref_04052026.csv` (algorithm–implementation cross-reference), `algorithms_transitions_04052026.csv`, `pqc_complete_algorithm_reference_04052026.csv` (full PQC algorithm reference with Region/Status columns), `pqc_product_catalog_04052026.csv` (r2/r3/r4 revisions).
+- **New scripts**: `generate-algo-product-xref.mjs`, `generate-algorithm-csvs.mjs`, `populate-wip-status.mjs`.
+- **RAG corpus regenerated**.
+
 ## [2.79.0] - 2026-04-05
 
 ### Fixed

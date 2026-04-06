@@ -59,6 +59,25 @@ export const MobileAlgorithmList = ({ data }: MobileAlgorithmListProps) => {
                     {algo.keySize}
                   </span>
                 )}
+                {algo.region && (
+                  <span className="text-[10px] px-1.5 py-0.5 rounded bg-muted border border-border text-muted-foreground">
+                    {algo.region}
+                  </span>
+                )}
+                {algo.status &&
+                  (algo.status !== 'Candidate' && algo.status !== 'To Be Checked' ? (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
+                      {algo.status}
+                    </span>
+                  ) : algo.status === 'Candidate' ? (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
+                      {algo.status}
+                    </span>
+                  ) : (
+                    <span className="text-[10px] px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
+                      {algo.status}
+                    </span>
+                  ))}
               </div>
             </div>
           </div>

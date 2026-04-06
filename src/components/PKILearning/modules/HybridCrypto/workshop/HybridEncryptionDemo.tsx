@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState, useCallback } from 'react'
-import { Loader2, Play, CheckCircle, XCircle, Lock, PenTool } from 'lucide-react'
-import { hybridCryptoService, type HybridKemResult } from '../services/HybridCryptoService'
+import React, { useCallback, useRef } from 'react'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
+import { StepWizard } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
+import type { Step } from '@/components/PKILearning/modules/DigitalAssets/components/StepWizard'
+import { useStepWizard } from '@/components/PKILearning/modules/DigitalAssets/hooks/useStepWizard'
 import {
   hsm_generateECKeyPair,
   hsm_generateMLKEMKeyPair,
@@ -20,926 +20,605 @@ import {
   CKM_SHA256,
 } from '@/wasm/softhsm'
 
+// ── PKCS#11 operations exercised by this demo ────────────────────────────────
 const HYBRID_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
   'C_GetAttributeValue',
   'C_DeriveKey',
   'C_EncapsulateKey',
   'C_DecapsulateKey',
+  'C_CreateObject',
 ]
 
-interface HybridEncryptionDemoProps {
-  initialMode?: 'kem' | 'signature'
+// ── Per-step state (handles + extracted bytes) ───────────────────────────────
+interface HybridState {
+  alicePubHandle: number
+  alicePrivHandle: number
+  bobPubHandle: number
+  bobPrivHandle: number
+  ecdhSSHandle: number
+  ecdhSSBytes: Uint8Array
+  kemPubHandle: number
+  kemPrivHandle: number
+  ciphertextBytes: Uint8Array
+  kemSSBytes: Uint8Array
+  hybridKey: Uint8Array
 }
 
-interface KemDemoResult {
-  algorithm: string
-  keyGenMs: number
-  encapMs: number
-  decapMs: number
-  ciphertextHex: string
-  encapSecretHex: string
-  decapSecretHex: string
-  secretsMatch: boolean
-  error?: string
-}
+const toHex = (bytes: Uint8Array) =>
+  Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join('')
 
-interface SignDemoResult {
-  algorithm: string
-  keyGenMs: number
-  signMs: number
-  verifyMs: number
-  signatureHex: string
-  verified: boolean
-  error?: string
-}
+// ── Step definitions ─────────────────────────────────────────────────────────
+const STEPS: Step[] = [
+  {
+    id: 'alice-keygen',
+    title: 'Step 1 — Alice X25519 Keypair',
+    description:
+      'Alice generates an ephemeral X25519 (Curve25519) keypair. The 32-byte public key will be shared with Bob for ECDH key agreement.',
+    code: `const { pubHandle, privHandle } = hsm_generateECKeyPair(\n  module, session,\n  'X25519', false, 'Alice X25519'\n)`,
+    language: 'javascript',
+    actionLabel: 'Generate Alice Keypair',
+    explanationTable: [
+      {
+        label: 'Mechanism',
+        value: 'CKM_EC_MONTGOMERY_KEY_PAIR_GEN (0x1056)',
+        description: 'PKCS#11 v3.2 mechanism for Curve25519/Curve448 keypair generation',
+      },
+      {
+        label: 'Curve',
+        value: 'X25519 (Curve25519)',
+        description: 'Montgomery-form elliptic curve; public key is the 32-byte u-coordinate',
+      },
+      {
+        label: 'CKA_DERIVE',
+        value: 'true',
+        description: 'Key is authorized for CKM_ECDH1_DERIVE — required for ECDH key agreement',
+      },
+      {
+        label: 'Public Key Size',
+        value: '32 bytes',
+        description: 'Compact vs 65 bytes for an uncompressed P-256 public key',
+      },
+    ],
+  },
+  {
+    id: 'bob-keygen',
+    title: 'Step 2 — Bob X25519 Keypair',
+    description:
+      'Bob generates his own X25519 keypair. Both parties now hold key material for bidirectional ECDH. The Diffie-Hellman property guarantees they will arrive at the same shared secret.',
+    code: `const { pubHandle, privHandle } = hsm_generateECKeyPair(\n  module, session,\n  'X25519', false, 'Bob X25519'\n)`,
+    language: 'javascript',
+    actionLabel: 'Generate Bob Keypair',
+    explanationTable: [
+      {
+        label: 'Protocol Role',
+        value: 'Recipient',
+        description:
+          'Bob publishes his X25519 public key; Alice uses it to compute the shared secret',
+      },
+      {
+        label: 'Key Usage',
+        value: 'Derive-only',
+        description:
+          'Montgomery keys have no CKA_SIGN/CKA_VERIFY — X25519 is not a signature algorithm. CKA_DERIVE=true is set automatically.',
+      },
+    ],
+  },
+  {
+    id: 'ecdh-agree',
+    title: 'Step 3 — ECDH Key Agreement',
+    description:
+      'ECDH is computed in both directions (Alice→Bob and Bob→Alice) and the 32-byte shared secrets are compared. The Diffie-Hellman property guarantees both parties arrive at the same value without ever transmitting the secret.',
+    code: `const ssA = hsm_ecdhDerive(module, session, alicePriv, bobPubBytes)\nconst ssB = hsm_ecdhDerive(module, session, bobPriv, alicePubBytes)\n// assert toHex(ssA) === toHex(ssB)`,
+    language: 'javascript',
+    actionLabel: 'Compute ECDH',
+    explanationTable: [
+      {
+        label: 'Mechanism',
+        value: 'CKM_ECDH1_DERIVE (0x1050)',
+        description:
+          'Works for both Weierstrass (P-256) and Montgomery (X25519) curves in softhsmv3',
+      },
+      {
+        label: 'KDF',
+        value: 'CKD_NULL',
+        description: 'Raw DH u-coordinate output; domain separation applied via HKDF in Step 6',
+      },
+      {
+        label: 'Output',
+        value: '32-byte CKK_GENERIC_SECRET (CKA_DERIVE=true)',
+        description: 'Stored in HSM session for direct use as HKDF base key in Step 6',
+      },
+      {
+        label: 'Verification',
+        value: 'Both-ways match',
+        description: 'Alice→Bob secret === Bob→Alice secret — confirms correct DH behaviour',
+      },
+    ],
+  },
+  {
+    id: 'mlkem-keygen',
+    title: 'Step 4 — ML-KEM-768 Keypair',
+    description:
+      "The recipient (Bob) generates an ML-KEM-768 keypair. ML-KEM is a lattice-based Key Encapsulation Mechanism standardised in FIPS 203, resistant to both Grover's algorithm (symmetric) and Shor's algorithm (asymmetric).",
+    code: `const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(\n  module, session, 768\n)`,
+    language: 'javascript',
+    actionLabel: 'Generate ML-KEM Keypair',
+    explanationTable: [
+      {
+        label: 'Mechanism',
+        value: 'CKM_ML_KEM_KEY_PAIR_GEN',
+        description: 'PKCS#11 v3.2 keypair generation for ML-KEM (FIPS 203)',
+      },
+      {
+        label: 'Public Key (ek)',
+        value: '1,184 bytes',
+        description: 'FIPS 203 §7.2 ML-KEM-768 encapsulation key size',
+      },
+      {
+        label: 'Decapsulation Key (dk)',
+        value: '2,400 bytes',
+        description: 'Includes ek for implicit rejection (FIPS 203 §7.1)',
+      },
+      {
+        label: 'Shared Secret',
+        value: 'Always 32 bytes',
+        description: 'All ML-KEM parameter sets produce a 32-byte shared secret (FIPS 203 §7)',
+      },
+    ],
+  },
+  {
+    id: 'mlkem-encap',
+    title: 'Step 5 — ML-KEM Encapsulation',
+    description:
+      "Alice encapsulates a fresh random shared secret using Bob's ML-KEM-768 public key. The 1,088-byte ciphertext is sent to Bob. Only Bob (holding the private decapsulation key) can recover the same 32-byte shared secret.",
+    code: `const { ciphertextBytes, secretHandle } =\n  hsm_encapsulate(module, session, kemPubHandle, 768)`,
+    language: 'javascript',
+    actionLabel: 'Encapsulate',
+    explanationTable: [
+      {
+        label: 'Ciphertext',
+        value: '1,088 bytes',
+        description: 'ML-KEM-768 ciphertext size (FIPS 203 §7)',
+      },
+      {
+        label: 'Security',
+        value: 'IND-CCA2',
+        description:
+          'Indistinguishable under adaptive chosen-ciphertext attack — secure against harvest-now-decrypt-later (HNDL)',
+      },
+      {
+        label: 'Randomness',
+        value: 'HSM-internal',
+        description:
+          "Encapsulation randomness generated inside softhsmv3 WASM; Alice's random coins are never exported",
+      },
+    ],
+  },
+  {
+    id: 'hkdf-combine',
+    title: 'Step 6 — Decapsulate & HKDF Combine',
+    description:
+      'Bob decapsulates the ML-KEM ciphertext, then HKDF-SHA-256 combines both shared secrets into a 32-byte hybrid session key. Defense-in-depth: if X25519 is broken by a quantum computer, the ML-KEM secret still protects. If ML-KEM has an unforeseen flaw, the X25519 secret still protects.',
+    code: `const kemSS = hsm_extractKeyValue(module, session,\n  hsm_decapsulate(module, session, kemPriv, ct, 768))\nconst hybridKey = hsm_hkdf(\n  module, session, ecdhHandle,\n  CKM_SHA256, true, true,\n  kemSS,\n  encode('hybrid-kem-x25519-mlkem768-v1'),\n  32\n)`,
+    language: 'javascript',
+    actionLabel: 'Decapsulate & Combine',
+    explanationTable: [
+      {
+        label: 'HKDF-Extract IKM',
+        value: 'ECDH shared secret (base key)',
+        description: 'X25519 DH output used as input key material (RFC 5869 §2.2)',
+      },
+      {
+        label: 'HKDF-Extract Salt',
+        value: 'ML-KEM shared secret',
+        description:
+          'KEM output used as salt — both secrets must be secret for the output to be secret',
+      },
+      {
+        label: 'Info',
+        value: '"hybrid-kem-x25519-mlkem768-v1"',
+        description:
+          'Domain-separation string prevents hybrid key material from being reused in other contexts',
+      },
+      {
+        label: 'Output',
+        value: '32 bytes (256-bit hybrid session key)',
+        description: 'Quantum-safe if either X25519 ECDH or ML-KEM-768 remains secure',
+      },
+    ],
+  },
+]
 
-export const HybridEncryptionDemo: React.FC<HybridEncryptionDemoProps> = ({
-  initialMode = 'kem',
-}) => {
-  const [mode, setMode] = useState<'kem' | 'signature'>(initialMode)
-  const [pqcKemResult, setPqcKemResult] = useState<KemDemoResult | null>(null)
-  const [hybridKemResult, setHybridKemResult] = useState<HybridKemResult | null>(null)
-  const [sigResults, setSigResults] = useState<SignDemoResult[]>([])
-  const [isRunning, setIsRunning] = useState(false)
-  const message = 'Hello, Post-Quantum World!'
-
-  const runKemDemo = useCallback(async () => {
-    setIsRunning(true)
-    setPqcKemResult(null)
-    setHybridKemResult(null)
-
-    try {
-      // 1. Pure PQC: ML-KEM-768
-      const prefix = 'ml_kem_768'
-      const keyFile = `${prefix}_enc_key.pem`
-      const pubFile = `${prefix}_enc_pub.pem`
-
-      const keyResult = await hybridCryptoService.generateKey('ML-KEM-768', keyFile)
-      if (keyResult.error) {
-        setPqcKemResult({
-          algorithm: 'ML-KEM-768',
-          keyGenMs: keyResult.timingMs,
-          encapMs: 0,
-          decapMs: 0,
-          ciphertextHex: '',
-          encapSecretHex: '',
-          decapSecretHex: '',
-          secretsMatch: false,
-          error: keyResult.error,
-        })
-      } else {
-        const pubResult = await hybridCryptoService.extractPublicKey(
-          keyFile,
-          pubFile,
-          keyResult.fileData
-        )
-        if (pubResult.error) {
-          setPqcKemResult({
-            algorithm: 'ML-KEM-768',
-            keyGenMs: keyResult.timingMs,
-            encapMs: 0,
-            decapMs: 0,
-            ciphertextHex: '',
-            encapSecretHex: '',
-            decapSecretHex: '',
-            secretsMatch: false,
-            error: pubResult.error,
-          })
-        } else {
-          const encapResult = await hybridCryptoService.kemEncapsulate(
-            pubFile,
-            prefix,
-            pubResult.fileData
-          )
-          if (encapResult.error) {
-            setPqcKemResult({
-              algorithm: 'ML-KEM-768',
-              keyGenMs: keyResult.timingMs,
-              encapMs: encapResult.timingMs,
-              decapMs: 0,
-              ciphertextHex: '',
-              encapSecretHex: '',
-              decapSecretHex: '',
-              secretsMatch: false,
-              error: encapResult.error,
-            })
-          } else {
-            const ctFile = `${prefix}_ct.bin`
-            const decapInputFiles: { name: string; data: Uint8Array }[] = []
-            if (keyResult.fileData) decapInputFiles.push(keyResult.fileData)
-            if (encapResult.ctFileData) decapInputFiles.push(encapResult.ctFileData)
-            const decapResult = await hybridCryptoService.kemDecapsulate(
-              keyFile,
-              ctFile,
-              prefix,
-              decapInputFiles
-            )
-
-            const secretsMatch =
-              encapResult.sharedSecretHex === decapResult.sharedSecretHex &&
-              encapResult.sharedSecretHex.length > 0
-
-            setPqcKemResult({
-              algorithm: 'ML-KEM-768',
-              keyGenMs: keyResult.timingMs,
-              encapMs: encapResult.timingMs,
-              decapMs: decapResult.timingMs,
-              ciphertextHex: encapResult.ciphertextHex,
-              encapSecretHex: encapResult.sharedSecretHex,
-              decapSecretHex: decapResult.sharedSecretHex,
-              secretsMatch,
-              error: decapResult.error,
-            })
-          }
-        }
-      }
-
-      // 2. Hybrid: X25519 + ML-KEM-768 (simulated via separate ops + HKDF)
-      const hybrid = await hybridCryptoService.hybridKemEncapDecap()
-      setHybridKemResult(hybrid)
-    } catch {
-      // handled by individual result.error checks above
-    } finally {
-      setIsRunning(false)
-    }
-  }, [])
-
-  const runSignatureDemo = useCallback(async () => {
-    setIsRunning(true)
-    try {
-      const algorithms = [
-        { name: 'ECDSA P-256', opensslAlg: 'EC' },
-        { name: 'ML-DSA-65', opensslAlg: 'ML-DSA-65' },
-      ]
-      const results: SignDemoResult[] = []
-
-      for (const algo of algorithms) {
-        const prefix = algo.name.toLowerCase().replace(/[^a-z0-9]/g, '_')
-        const keyFile = `${prefix}_sig_key.pem`
-        const pubFile = `${prefix}_sig_pub.pem`
-
-        const keyResult = await hybridCryptoService.generateKey(algo.opensslAlg, keyFile)
-        if (keyResult.error) {
-          results.push({
-            algorithm: algo.name,
-            keyGenMs: keyResult.timingMs,
-            signMs: 0,
-            verifyMs: 0,
-            signatureHex: '',
-            verified: false,
-            error: keyResult.error,
-          })
-          continue
-        }
-
-        const pubResult = await hybridCryptoService.extractPublicKey(
-          keyFile,
-          pubFile,
-          keyResult.fileData
-        )
-
-        const signResult = await hybridCryptoService.signData(
-          keyFile,
-          message,
-          prefix,
-          keyResult.fileData
-        )
-        if (signResult.error) {
-          results.push({
-            algorithm: algo.name,
-            keyGenMs: keyResult.timingMs,
-            signMs: signResult.timingMs,
-            verifyMs: 0,
-            signatureHex: '',
-            verified: false,
-            error: signResult.error,
-          })
-          continue
-        }
-
-        const sigFile = `${prefix}_sig.bin`
-        const verifyInputFiles: { name: string; data: Uint8Array }[] = []
-        if (pubResult.fileData) verifyInputFiles.push(pubResult.fileData)
-        if (signResult.sigFileData) verifyInputFiles.push(signResult.sigFileData)
-        const verifyResult = await hybridCryptoService.verifySignature(
-          pubFile,
-          message,
-          sigFile,
-          prefix,
-          verifyInputFiles
-        )
-
-        results.push({
-          algorithm: algo.name,
-          keyGenMs: keyResult.timingMs,
-          signMs: signResult.timingMs,
-          verifyMs: verifyResult.timingMs,
-          signatureHex: signResult.signatureHex,
-          verified: verifyResult.verified,
-          error: verifyResult.error,
-        })
-      }
-
-      setSigResults(results)
-    } catch {
-      // results array was built with individual error handling above
-    } finally {
-      setIsRunning(false)
-    }
-  }, [message])
-
-  const handleRun = mode === 'kem' ? runKemDemo : runSignatureDemo
-
-  // Live HSM hybrid KEM
+// ── Component ────────────────────────────────────────────────────────────────
+export const HybridEncryptionDemo: React.FC = () => {
   const hsm = useHSM()
-  const [liveLines, setLiveLines] = useState<string[]>([])
-  const [liveRunning, setLiveRunning] = useState(false)
-  const [liveError, setLiveError] = useState<string | null>(null)
+  const stateRef = useRef<Partial<HybridState>>({})
+  const wizard = useStepWizard({ steps: STEPS, onBack: () => {} })
 
-  const runLiveHybridKem = useCallback(async () => {
-    if (!hsm.moduleRef.current) return
-    setLiveRunning(true)
-    setLiveLines([])
-    setLiveError(null)
-    hsm.clearLog()
-
-    const addLine = (line: string) => setLiveLines((prev) => [...prev, line])
-
-    try {
-      const M = hsm.moduleRef.current
-      const hSession = hsm.hSessionRef.current
-
-      // ── ECDH leg (P-256) ───────────────────────────────────────────────
-      // Alice's EC key pair
-      const alice = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
-      const alicePoint = hsm_extractECPoint(M, hSession, alice.pubHandle)
-      hsm.addKey({
-        handle: alice.pubHandle,
-        family: 'ecdsa' as HsmFamily,
-        role: 'public',
-        label: "Alice X25519 Pub",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      hsm.addKey({
-        handle: alice.privHandle,
-        family: 'ecdsa' as HsmFamily,
-        role: 'private',
-        label: "Alice X25519 Priv",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      addLine(
-        `Alice EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${alicePoint.length} B`
-      )
-
-      // Bob's EC key pair
-      const bob = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'derive')
-      const bobPoint = hsm_extractECPoint(M, hSession, bob.pubHandle)
-      hsm.addKey({
-        handle: bob.pubHandle,
-        family: 'ecdsa' as HsmFamily,
-        role: 'public',
-        label: "Bob X25519 Pub",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      hsm.addKey({
-        handle: bob.privHandle,
-        family: 'ecdsa' as HsmFamily,
-        role: 'private',
-        label: "Bob X25519 Priv",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      addLine(`Bob EC: C_GenerateKeyPair(CKM_EC_KEY_PAIR_GEN, P-256) → pub=${bobPoint.length} B`)
-
-      // ECDH derivation — both sides must get the same shared secret
-      const aliceECDHHandle = hsm_ecdhDerive(M, hSession, alice.privHandle, bobPoint)
-      const bobECDHHandle = hsm_ecdhDerive(M, hSession, bob.privHandle, alicePoint)
-      const aliceECDH = hsm_extractKeyValue(M, hSession, aliceECDHHandle)
-      const bobECDH = hsm_extractKeyValue(M, hSession, bobECDHHandle)
-      const ecdhMatch =
-        aliceECDH.length === bobECDH.length && aliceECDH.every((b, i) => b === bobECDH[i])
-      addLine(
-        `ECDH: C_DeriveKey(CKM_ECDH1_DERIVE) × 2 → ${aliceECDH.length} B each, match=${ecdhMatch ? '✓' : '✗'}`
-      )
-
-      // ── ML-KEM leg (768) ────────────────────────────────────────────────
-      const kem = hsm_generateMLKEMKeyPair(M, hSession, 768)
-      const kemPubBytes = hsm_extractKeyValue(M, hSession, kem.pubHandle)
-      hsm.addKey({
-        handle: kem.pubHandle,
-        family: 'ml-kem' as HsmFamily,
-        role: 'public',
-        label: "KEM Encap Pub",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      hsm.addKey({
-        handle: kem.privHandle,
-        family: 'ml-kem' as HsmFamily,
-        role: 'private',
-        label: "KEM Decap Priv",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      addLine(
-        `ML-KEM: C_GenerateKeyPair(CKM_ML_KEM_KEY_PAIR_GEN, CKP_ML_KEM_768) → pub=${kemPubBytes.length} B`
-      )
-
-      const { ciphertextBytes, secretHandle } = hsm_encapsulate(M, hSession, kem.pubHandle, 768)
-      const kemSS = hsm_extractKeyValue(M, hSession, secretHandle)
-      hsm.addKey({
-        handle: secretHandle,
-        family: 'ml-kem' as HsmFamily,
-        role: 'secret',
-        label: "Encap Shared Secret",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      addLine(
-        `Encaps: C_EncapsulateKey(CKM_ML_KEM) → ct=${ciphertextBytes.length} B, ss=${kemSS.length} B`
-      )
-
-      const recoveredHandle = hsm_decapsulate(M, hSession, kem.privHandle, ciphertextBytes, 768)
-      const recoveredKemSS = hsm_extractKeyValue(M, hSession, recoveredHandle)
-      hsm.addKey({
-        handle: recoveredHandle,
-        family: 'ml-kem' as HsmFamily,
-        role: 'secret',
-        label: "Decap Shared Secret",
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
-      })
-      const kemMatch =
-        kemSS.length === recoveredKemSS.length && kemSS.every((b, i) => b === recoveredKemSS[i])
-      addLine(
-        `Decaps: C_DecapsulateKey(CKM_ML_KEM) → ${recoveredKemSS.length} B, match=${kemMatch ? '✓' : '✗'}`
-      )
-
-      // ── HKDF combine ─────────────────────────────────────────────────────
-      // Re-import ECDH secret as a derivable key (CKA_DERIVE=true)
-      const derivableECDH = hsm_importGenericSecret(M, hSession, aliceECDH)
-      const info = new TextEncoder().encode('X-Wing-hybrid-KEM-v1')
-      const hybridKey = hsm_hkdf(
-        M,
-        hSession,
-        derivableECDH,
-        CKM_SHA256,
-        true,
-        true,
-        kemSS,
-        info,
-        32
-      )
-      addLine(
-        `HKDF: C_DeriveKey(CKM_HKDF_DERIVE, salt=ML-KEM_ss, info="X-Wing-hybrid-KEM-v1") → ${hybridKey.length} B hybrid key`
-      )
-      addLine(
-        `Result: hybrid_key[0..7] = ${Array.from(hybridKey.slice(0, 8))
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('')}…`
-      )
-    } catch (e) {
-      setLiveError(e instanceof Error ? e.message : String(e))
-    } finally {
-      setLiveRunning(false)
+  const executeCurrentStep = useCallback(async (): Promise<string> => {
+    if (!hsm.isReady || !hsm.moduleRef.current || !hsm.hSessionRef.current) {
+      throw new Error('HSM session is not ready. Enable the HSM toggle above first.')
     }
-  }, [hsm])
+    const M = hsm.moduleRef.current
+    const hSession = hsm.hSessionRef.current
 
-  const truncateHex = (hex: string, max = 64): string => {
-    if (hex.length <= max) return hex
-    return hex.slice(0, max) + '\u2026'
-  }
+    switch (wizard.currentStep) {
+      case 0: {
+        // Alice X25519 keypair
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(
+          M,
+          hSession,
+          'X25519',
+          false,
+          'Alice X25519'
+        )
+        stateRef.current.alicePubHandle = pubHandle
+        stateRef.current.alicePrivHandle = privHandle
+        hsm.addKey({
+          handle: pubHandle,
+          label: 'Alice X25519 Pub',
+          family: 'ecdh',
+          role: 'public',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addKey({
+          handle: privHandle,
+          label: 'Alice X25519 Priv',
+          family: 'ecdh',
+          role: 'private',
+          generatedAt: new Date().toISOString(),
+        })
+        const alicePubBytes = hsm_extractECPoint(M, hSession, pubHandle)
+        hsm.addStepLog('Step 1 — Alice X25519 Keypair')
+        return (
+          `Alice X25519 pub handle : ${pubHandle}\n` +
+          `Alice X25519 priv handle: ${privHandle}\n\n` +
+          `Public key (32 B):\n${toHex(alicePubBytes)}\n\n` +
+          `Mechanism: CKM_EC_MONTGOMERY_KEY_PAIR_GEN (0x1056)`
+        )
+      }
 
-  const hasKemResults = pqcKemResult !== null || hybridKemResult !== null
+      case 1: {
+        // Bob X25519 keypair
+        const { pubHandle, privHandle } = hsm_generateECKeyPair(
+          M,
+          hSession,
+          'X25519',
+          false,
+          'Bob X25519'
+        )
+        stateRef.current.bobPubHandle = pubHandle
+        stateRef.current.bobPrivHandle = privHandle
+        hsm.addKey({
+          handle: pubHandle,
+          label: 'Bob X25519 Pub',
+          family: 'ecdh',
+          role: 'public',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addKey({
+          handle: privHandle,
+          label: 'Bob X25519 Priv',
+          family: 'ecdh',
+          role: 'private',
+          generatedAt: new Date().toISOString(),
+        })
+        const bobPubBytes = hsm_extractECPoint(M, hSession, pubHandle)
+        hsm.addStepLog('Step 2 — Bob X25519 Keypair')
+        return (
+          `Bob X25519 pub handle : ${pubHandle}\n` +
+          `Bob X25519 priv handle: ${privHandle}\n\n` +
+          `Public key (32 B):\n${toHex(bobPubBytes)}\n\n` +
+          `Mechanism: CKM_EC_MONTGOMERY_KEY_PAIR_GEN (0x1056)`
+        )
+      }
+
+      case 2: {
+        // ECDH in both directions
+        if (
+          stateRef.current.alicePubHandle == null ||
+          stateRef.current.alicePrivHandle == null ||
+          stateRef.current.bobPubHandle == null ||
+          stateRef.current.bobPrivHandle == null
+        ) {
+          throw new Error('Complete Steps 1 and 2 first.')
+        }
+        const alicePubBytes = hsm_extractECPoint(M, hSession, stateRef.current.alicePubHandle)
+        const bobPubBytes = hsm_extractECPoint(M, hSession, stateRef.current.bobPubHandle)
+
+        // Alice priv × Bob pub
+        const ssAHandle = hsm_ecdhDerive(
+          M,
+          hSession,
+          stateRef.current.alicePrivHandle,
+          bobPubBytes,
+          undefined,
+          undefined,
+          { keyLen: 32, derive: true, extractable: true }
+        )
+        const ssABytes = hsm_extractKeyValue(M, hSession, ssAHandle)
+
+        // Bob priv × Alice pub
+        const ssBHandle = hsm_ecdhDerive(
+          M,
+          hSession,
+          stateRef.current.bobPrivHandle,
+          alicePubBytes,
+          undefined,
+          undefined,
+          { keyLen: 32, derive: true, extractable: true }
+        )
+        const ssBBytes = hsm_extractKeyValue(M, hSession, ssBHandle)
+
+        const match = toHex(ssABytes) === toHex(ssBBytes)
+        stateRef.current.ecdhSSHandle = ssAHandle
+        stateRef.current.ecdhSSBytes = ssABytes
+
+        hsm.addKey({
+          handle: ssAHandle,
+          label: 'ECDH Shared Secret',
+          family: 'aes',
+          role: 'secret',
+          purpose: 'application',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addStepLog('Step 3 — ECDH Key Agreement')
+        return (
+          `Alice→Bob ECDH shared secret:\n${toHex(ssABytes)}\n\n` +
+          `Bob→Alice ECDH shared secret:\n${toHex(ssBBytes)}\n\n` +
+          `Match: ${match ? '✓ Verified — both parties derive identical 32-byte shared secret' : '✗ MISMATCH — unexpected error'}\n\n` +
+          `Mechanism: CKM_ECDH1_DERIVE (0x1050), KDF: CKD_NULL`
+        )
+      }
+
+      case 3: {
+        // ML-KEM-768 keypair
+        const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+          M,
+          hSession,
+          768,
+          false,
+          'ML-KEM-768 Recipient'
+        )
+        stateRef.current.kemPubHandle = pubHandle
+        stateRef.current.kemPrivHandle = privHandle
+        hsm.addKey({
+          handle: pubHandle,
+          label: 'ML-KEM-768 Pub',
+          family: 'ml-kem',
+          role: 'public',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addKey({
+          handle: privHandle,
+          label: 'ML-KEM-768 Priv',
+          family: 'ml-kem',
+          role: 'private',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addStepLog('Step 4 — ML-KEM-768 Keypair')
+        return (
+          `ML-KEM-768 pub handle : ${pubHandle}  (1,184-byte encapsulation key)\n` +
+          `ML-KEM-768 priv handle: ${privHandle} (2,400-byte decapsulation key)\n\n` +
+          `Mechanism: CKM_ML_KEM_KEY_PAIR_GEN\n` +
+          `Standard:  FIPS 203 (Module-Lattice-Based Key-Encapsulation Mechanism Standard)`
+        )
+      }
+
+      case 4: {
+        // ML-KEM encapsulation
+        if (stateRef.current.kemPubHandle == null) {
+          throw new Error('Complete Step 4 (ML-KEM keygen) first.')
+        }
+        const { ciphertextBytes, secretHandle } = hsm_encapsulate(
+          M,
+          hSession,
+          stateRef.current.kemPubHandle,
+          768
+        )
+        const kemSSBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+        stateRef.current.ciphertextBytes = ciphertextBytes
+        stateRef.current.kemSSBytes = kemSSBytes
+
+        hsm.addKey({
+          handle: secretHandle,
+          label: 'ML-KEM Encap Secret',
+          family: 'aes',
+          role: 'secret',
+          purpose: 'application',
+          generatedAt: new Date().toISOString(),
+        })
+        hsm.addStepLog('Step 5 — ML-KEM Encapsulation')
+        return (
+          `Ciphertext (${ciphertextBytes.length} bytes):\n` +
+          `${toHex(ciphertextBytes).slice(0, 128)}...[truncated]\n\n` +
+          `Encapsulated KEM shared secret (32 B):\n${toHex(kemSSBytes)}\n\n` +
+          `Mechanism: C_EncapsulateKey(CKM_ML_KEM)\n` +
+          `Security: IND-CCA2 — quantum-resistant under MLWE hardness assumption`
+        )
+      }
+
+      case 5: {
+        // Decapsulate + HKDF combine
+        if (
+          stateRef.current.kemPrivHandle == null ||
+          stateRef.current.ciphertextBytes == null ||
+          stateRef.current.kemSSBytes == null ||
+          stateRef.current.ecdhSSBytes == null
+        ) {
+          throw new Error('Complete Steps 1–5 first.')
+        }
+
+        // Decapsulate
+        const decapSSHandle = hsm_decapsulate(
+          M,
+          hSession,
+          stateRef.current.kemPrivHandle,
+          stateRef.current.ciphertextBytes,
+          768
+        )
+        const decapSSBytes = hsm_extractKeyValue(M, hSession, decapSSHandle)
+        const kemMatch = toHex(stateRef.current.kemSSBytes) === toHex(decapSSBytes)
+
+        // Import ECDH SS as a derivable generic secret for HKDF
+        const ecdhDerivableHandle = hsm_importGenericSecret(
+          M,
+          hSession,
+          stateRef.current.ecdhSSBytes
+        )
+
+        // HKDF-SHA-256: IKM = ECDH SS (base key), salt = KEM SS, info = domain separator
+        const info = new TextEncoder().encode('hybrid-kem-x25519-mlkem768-v1')
+        const hybridKey = hsm_hkdf(
+          M,
+          hSession,
+          ecdhDerivableHandle,
+          CKM_SHA256,
+          true,
+          true,
+          decapSSBytes,
+          info,
+          32
+        )
+        stateRef.current.hybridKey = hybridKey
+
+        hsm.addStepLog('Step 6 — Decapsulate & HKDF Combine')
+        return (
+          `Decapsulated KEM secret (32 B):\n${toHex(decapSSBytes)}\n` +
+          `Encapsulated KEM secret (32 B):\n${toHex(stateRef.current.kemSSBytes)}\n` +
+          `KEM match: ${kemMatch ? '✓ Verified' : '✗ MISMATCH'}\n\n` +
+          `─────────────────────────────────────────────\n` +
+          `HKDF-SHA-256 inputs\n` +
+          `  IKM  (ECDH SS):  ${toHex(stateRef.current.ecdhSSBytes)}\n` +
+          `  Salt (KEM SS):   ${toHex(decapSSBytes)}\n` +
+          `  Info:            "hybrid-kem-x25519-mlkem768-v1"\n\n` +
+          `32-byte hybrid session key:\n${toHex(hybridKey)}\n\n` +
+          `Defense-in-depth: this key is quantum-safe if either\n` +
+          `  • X25519 ECDH remains secure (classical assumption), or\n` +
+          `  • ML-KEM-768 remains secure (MLWE lattice assumption)`
+        )
+      }
+
+      default:
+        throw new Error(`Unknown step index: ${wizard.currentStep}`)
+    }
+  }, [hsm, wizard.currentStep])
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h3 className="text-lg font-bold text-foreground mb-2">Encrypt &amp; Sign</h3>
-        <p className="text-sm text-muted-foreground">
-          Run end-to-end KEM encapsulation/decapsulation and digital signature sign/verify
-          operations. Compare pure PQC against hybrid to see performance and correctness.
+    <div className="flex flex-col h-full relative">
+      {/* Top control */}
+      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
+        <LiveHSMToggle hsm={hsm} operations={HYBRID_LIVE_OPERATIONS} />
+      </div>
+
+      {/* Section header */}
+      <div className="px-6 mb-4">
+        <h2 className="text-lg font-semibold text-foreground">
+          Hybrid Key Establishment (X25519 + ML-KEM-768)
+        </h2>
+        <p className="text-sm text-muted-foreground mt-1">
+          Live PKCS#11 demo: X25519 ECDH + ML-KEM-768 encapsulation + HKDF-SHA-256 combiner. Both
+          secrets contribute to the 32-byte hybrid session key — quantum-safe if either component
+          remains secure (
+          <a
+            href="/library?ref=FIPS-203"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FIPS 203
+          </a>
+          {' · '}
+          <a
+            href="/library?ref=RFC-5869"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            RFC 5869
+          </a>
+          ).
         </p>
       </div>
 
-      {/* Live HSM Hybrid KEM Demo */}
-      <LiveHSMToggle hsm={hsm} operations={HYBRID_LIVE_OPERATIONS} />
-
-      {hsm.isReady && (
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold">Run ECDH + ML-KEM Hybrid KEM (X-Wing Style)</p>
-            <button
-              onClick={runLiveHybridKem}
-              disabled={liveRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
-              {liveRunning ? (
-                <>
-                  <Loader2 size={11} className="animate-spin" /> Running…
-                </>
-              ) : (
-                'Execute (Live WASM)'
-              )}
-            </button>
-          </div>
-
-          {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
-
-          {liveLines.length > 0 && (
-            <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 space-y-1">
-              {liveLines.map((line, i) => (
-                <p key={i} className="text-xs font-mono text-foreground/80 break-all">
-                  {line}
-                </p>
-              ))}
-              <p className="text-[10px] text-muted-foreground pt-1 border-t border-border/30">
-                Real output from SoftHSM3 WASM · PKCS#11 v3.2
-              </p>
-            </div>
-          )}
-
-        </div>
-      )}
-
-      {/* Mode toggle */}
-      <div className="flex gap-2">
-        <button
-          onClick={() => setMode('kem')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === 'kem'
-              ? 'bg-primary/20 text-primary border border-primary/50'
-              : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
-          }`}
-        >
-          <Lock size={14} /> KEM Operations
-        </button>
-        <button
-          onClick={() => setMode('signature')}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-            mode === 'signature'
-              ? 'bg-primary/20 text-primary border border-primary/50'
-              : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
-          }`}
-        >
-          <PenTool size={14} /> Signature Operations
-        </button>
+      {/* Step executor */}
+      <div className="px-6">
+        <StepWizard
+          steps={STEPS}
+          currentStepIndex={wizard.currentStep}
+          onNext={wizard.handleNext}
+          onBack={wizard.handleBack}
+          onExecute={async () => {
+            await wizard.execute(executeCurrentStep)
+          }}
+          isExecuting={wizard.isExecuting}
+          output={wizard.output}
+          error={wizard.error}
+          isStepComplete={wizard.isStepComplete}
+        />
       </div>
 
-      {/* Message display for signatures */}
-      {mode === 'signature' && (
-        <div className="bg-muted/50 rounded-lg p-3 border border-border">
-          <span className="text-xs text-muted-foreground">Message to sign: </span>
-          <span className="text-sm font-mono text-foreground">&quot;{message}&quot;</span>
+      {/* PKCS#11 call log */}
+      {hsm.isReady && (
+        <div className="px-6 mt-4">
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — Hybrid KEM + ECDH"
+            emptyMessage="Enable the HSM toggle and execute steps to see PKCS#11 traces."
+            filterFns={HYBRID_LIVE_OPERATIONS}
+            defaultOpen={true}
+          />
         </div>
       )}
 
-      {/* Run button */}
-      <button
-        onClick={handleRun}
-        disabled={isRunning}
-        className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
-      >
-        {isRunning ? (
-          <>
-            <Loader2 size={18} className="animate-spin" />
-            Running...
-          </>
-        ) : (
-          <>
-            <Play size={18} fill="currentColor" />
-            Run {mode === 'kem' ? 'KEM Demo' : 'Signature Demo'}
-          </>
-        )}
-      </button>
-
-      {/* KEM Results */}
-      {mode === 'kem' && hasKemResults && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {/* ML-KEM-768 (Pure PQC) Card */}
-            {pqcKemResult && (
-              <div className="glass-panel p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-foreground">{pqcKemResult.algorithm}</h4>
-                    <span className="text-xs px-2 py-0.5 rounded border bg-success/10 text-success border-success/20 font-bold">
-                      PQC
-                    </span>
-                  </div>
-                  {pqcKemResult.error ? (
-                    <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
-                      ERROR
-                    </span>
-                  ) : pqcKemResult.secretsMatch ? (
-                    <span className="flex items-center gap-1 text-xs text-success">
-                      <CheckCircle size={14} /> Secrets Match
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-xs text-destructive">
-                      <XCircle size={14} /> Mismatch
-                    </span>
-                  )}
-                </div>
-
-                {pqcKemResult.error ? (
-                  <p className="text-xs text-destructive">{pqcKemResult.error}</p>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-foreground">
-                          {pqcKemResult.keyGenMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Key Gen (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-primary">
-                          {pqcKemResult.encapMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Encap (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-secondary">
-                          {pqcKemResult.decapMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Decap (ms)</div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div>
-                        <span className="text-[10px] text-muted-foreground block mb-1">
-                          Ciphertext
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-border block overflow-x-auto">
-                          {truncateHex(pqcKemResult.ciphertextHex)}
-                        </code>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-muted-foreground block mb-1">
-                          Shared Secret (encap)
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-border block overflow-x-auto text-success">
-                          {truncateHex(pqcKemResult.encapSecretHex)}
-                        </code>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-muted-foreground block mb-1">
-                          Shared Secret (decap)
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-border block overflow-x-auto text-success">
-                          {truncateHex(pqcKemResult.decapSecretHex)}
-                        </code>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-
-            {/* Hybrid KEM Card */}
-            {hybridKemResult && (
-              <div className="glass-panel p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-bold text-foreground">X25519 + ML-KEM-768</h4>
-                    <span className="text-xs px-2 py-0.5 rounded border bg-primary/10 text-primary border-primary/20 font-bold">
-                      HYBRID
-                    </span>
-                  </div>
-                  {hybridKemResult.error ? (
-                    <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
-                      ERROR
-                    </span>
-                  ) : hybridKemResult.pqcSecretsMatch ? (
-                    <span className="flex items-center gap-1 text-xs text-success">
-                      <CheckCircle size={14} /> Secrets Match
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-xs text-destructive">
-                      <XCircle size={14} /> Mismatch
-                    </span>
-                  )}
-                </div>
-
-                {hybridKemResult.error ? (
-                  <p className="text-xs text-destructive">{hybridKemResult.error}</p>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-foreground">
-                          {hybridKemResult.keyGenMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Key Gen (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-primary">
-                          {hybridKemResult.encapMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Encap+ECDH (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-secondary">
-                          {hybridKemResult.decapMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Decap (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-muted-foreground">
-                          {hybridKemResult.hkdfMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">HKDF (ms)</div>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div>
-                        <span className="text-[10px] text-muted-foreground block mb-1">
-                          PQC Ciphertext (ML-KEM-768)
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-border block overflow-x-auto">
-                          {truncateHex(hybridKemResult.pqcCiphertextHex)}
-                        </code>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-success block mb-1">
-                          PQC Shared Secret
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-success/30 block overflow-x-auto text-success">
-                          {truncateHex(hybridKemResult.pqcSecretHex)}
-                        </code>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-warning block mb-1">
-                          Classical Shared Secret (X25519)
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-warning/30 block overflow-x-auto text-warning">
-                          {truncateHex(hybridKemResult.classicalSecretHex)}
-                        </code>
-                      </div>
-                      <div>
-                        <span className="text-[10px] text-primary block mb-1 font-bold">
-                          Combined Hybrid Secret (HKDF-Extract)
-                        </span>
-                        <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-primary/30 block overflow-x-auto text-primary">
-                          {truncateHex(hybridKemResult.combinedSecretHex)}
-                        </code>
-                      </div>
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          {/* KEM comparison table */}
-          {pqcKemResult && hybridKemResult && !pqcKemResult.error && !hybridKemResult.error && (
-            <div className="glass-panel p-4">
-              <h4 className="text-sm font-bold text-foreground mb-3">Timing Comparison</h4>
-              <div className="overflow-x-auto">
-                <table className="w-full text-sm">
-                  <thead>
-                    <tr className="border-b border-border">
-                      <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
-                      <th className="text-right p-2 text-muted-foreground font-medium">
-                        Key Gen (ms)
-                      </th>
-                      <th className="text-right p-2 text-muted-foreground font-medium">
-                        Encap (ms)
-                      </th>
-                      <th className="text-right p-2 text-muted-foreground font-medium">
-                        Decap (ms)
-                      </th>
-                      <th className="text-right p-2 text-muted-foreground font-medium">
-                        HKDF (ms)
-                      </th>
-                      <th className="text-right p-2 text-muted-foreground font-medium">
-                        Total (ms)
-                      </th>
-                      <th className="text-center p-2 text-muted-foreground font-medium">Match</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr className="border-b border-border/50">
-                      <td className="p-2 font-medium">ML-KEM-768</td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {pqcKemResult.keyGenMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {pqcKemResult.encapMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {pqcKemResult.decapMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs text-muted-foreground">
-                        {'\u2014'}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs font-bold">
-                        {(
-                          pqcKemResult.keyGenMs +
-                          pqcKemResult.encapMs +
-                          pqcKemResult.decapMs
-                        ).toFixed(0)}
-                      </td>
-                      <td className="p-2 text-center">
-                        {pqcKemResult.secretsMatch ? (
-                          <CheckCircle size={14} className="inline text-success" />
-                        ) : (
-                          <XCircle size={14} className="inline text-destructive" />
-                        )}
-                      </td>
-                    </tr>
-                    <tr className="border-b border-border/50">
-                      <td className="p-2 font-medium">X25519 + ML-KEM-768</td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {hybridKemResult.keyGenMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {hybridKemResult.encapMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {hybridKemResult.decapMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {hybridKemResult.hkdfMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs font-bold">
-                        {hybridKemResult.totalMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-center">
-                        {hybridKemResult.pqcSecretsMatch ? (
-                          <CheckCircle size={14} className="inline text-success" />
-                        ) : (
-                          <XCircle size={14} className="inline text-destructive" />
-                        )}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
-
-      {/* Signature Results */}
-      {mode === 'signature' && sigResults.length > 0 && (
-        <div className="space-y-4">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            {sigResults.map((result) => (
-              <div key={result.algorithm} className="glass-panel p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <h4 className="font-bold text-foreground">{result.algorithm}</h4>
-                  {result.error ? (
-                    <span className="text-xs px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
-                      ERROR
-                    </span>
-                  ) : result.verified ? (
-                    <span className="flex items-center gap-1 text-xs text-success">
-                      <CheckCircle size={14} /> Verified
-                    </span>
-                  ) : (
-                    <span className="flex items-center gap-1 text-xs text-destructive">
-                      <XCircle size={14} /> Failed
-                    </span>
-                  )}
-                </div>
-
-                {result.error ? (
-                  <p className="text-xs text-destructive">{result.error}</p>
-                ) : (
-                  <>
-                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-foreground">
-                          {result.keyGenMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Key Gen (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-primary">
-                          {result.signMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Sign (ms)</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-bold text-secondary">
-                          {result.verifyMs.toFixed(0)}
-                        </div>
-                        <div className="text-[10px] text-muted-foreground">Verify (ms)</div>
-                      </div>
-                    </div>
-
-                    <div>
-                      <span className="text-[10px] text-muted-foreground block mb-1">
-                        Signature ({Math.ceil(result.signatureHex.length / 2)} bytes)
-                      </span>
-                      <code className="text-[10px] font-mono bg-background p-1.5 rounded border border-border block overflow-x-auto">
-                        {truncateHex(result.signatureHex)}
-                      </code>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-
-          {/* Signature comparison table */}
-          <div className="glass-panel p-4">
-            <h4 className="text-sm font-bold text-foreground mb-3">Timing Comparison</h4>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-border">
-                    <th className="text-left p-2 text-muted-foreground font-medium">Algorithm</th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">
-                      Key Gen (ms)
-                    </th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">Sign (ms)</th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">
-                      Verify (ms)
-                    </th>
-                    <th className="text-right p-2 text-muted-foreground font-medium">Total (ms)</th>
-                    <th className="text-center p-2 text-muted-foreground font-medium">Verified</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {sigResults.map((r) => (
-                    <tr key={r.algorithm} className="border-b border-border/50">
-                      <td className="p-2 font-medium">{r.algorithm}</td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {r.error ? '\u2014' : r.keyGenMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {r.error ? '\u2014' : r.signMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs">
-                        {r.error ? '\u2014' : r.verifyMs.toFixed(0)}
-                      </td>
-                      <td className="p-2 text-right font-mono text-xs font-bold">
-                        {r.error ? '\u2014' : (r.keyGenMs + r.signMs + r.verifyMs).toFixed(0)}
-                      </td>
-                      <td className="p-2 text-center">
-                        {r.error ? (
-                          '\u2014'
-                        ) : r.verified ? (
-                          <CheckCircle size={14} className="inline text-success" />
-                        ) : (
-                          <XCircle size={14} className="inline text-destructive" />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
+      {/* Key inspector */}
+      {hsm.keys.length > 0 && (
+        <div className="px-6 mt-4">
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
+            title="Key Registry — Hybrid KEM Session"
+          />
         </div>
       )}
 
       {/* Educational note */}
-      <div className="bg-muted/50 rounded-lg p-4 border border-border">
-        <p className="text-xs text-muted-foreground">
-          {mode === 'kem' ? (
-            <>
-              <strong>What&apos;s happening:</strong> KEM (Key Encapsulation Mechanism) is the
-              quantum-safe replacement for ECDH key exchange. The sender <em>encapsulates</em>{' '}
-              against the recipient&apos;s public key to produce a ciphertext and a shared secret.
-              The recipient <em>decapsulates</em> with their private key to recover the same shared
-              secret. The hybrid X25519 + ML-KEM-768 demo performs both X25519 ECDH and ML-KEM-768
-              encapsulation separately, then combines the shared secrets via HKDF-Extract for
-              defense in depth.
-            </>
-          ) : (
-            <>
-              <strong>What&apos;s happening:</strong> Both ECDSA and ML-DSA produce digital
-              signatures, but ML-DSA signatures are based on lattice problems rather than elliptic
-              curves. ML-DSA-65 signatures (~3.3 KB) are significantly larger than ECDSA (~72 bytes)
-              but provide quantum resistance. A composite signature scheme would produce both
-              signatures and package them together.
-            </>
-          )}
-        </p>
-      </div>
-
-      {hsm.isReady && (
-        <div className="mt-4 space-y-4">
-          <Pkcs11LogPanel
-            log={hsm.log}
-            onClear={hsm.clearLog}
-            defaultOpen={true}
-            title="PKCS#11 Call Log — Hybrid Crypto Operations"
-            emptyMessage="Click 'Execute' to run the flow."
-            filterFns={HYBRID_LIVE_OPERATIONS}
-          />
-          {hsm.keys.length > 0 && (
-            <HsmKeyInspector
-              keys={hsm.keys}
-              moduleRef={hsm.moduleRef}
-              hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
-            />
-          )}
+      <div className="px-6 mt-6 mb-6">
+        <div className="glass-panel p-4 text-sm text-muted-foreground space-y-2">
+          <p className="font-semibold text-foreground">Why combine ECDH and ML-KEM?</p>
+          <p>
+            A Key Encapsulation Mechanism (KEM) is a one-sided primitive: the sender encapsulates a
+            random shared secret for the receiver. Unlike ECDH, the sender cannot inject a chosen
+            value.
+          </p>
+          <p>
+            Combining X25519 ECDH with ML-KEM-768 via HKDF provides{' '}
+            <strong>defense-in-depth</strong>:
+          </p>
+          <ul className="list-disc list-inside space-y-1 pl-2">
+            <li>
+              If a cryptographically-relevant quantum computer (CRQC) breaks X25519 via Shor&apos;s
+              algorithm, the ML-KEM shared secret remains secret.
+            </li>
+            <li>
+              If ML-KEM-768 has an unforeseen algebraic weakness, the X25519 shared secret remains
+              secret.
+            </li>
+          </ul>
+          <p className="text-xs text-muted-foreground mt-2">
+            Note: softhsmv3 WASM uses X25519 (Montgomery) for the classical leg via{' '}
+            <code>CKM_EC_MONTGOMERY_KEY_PAIR_GEN</code> + <code>CKM_ECDH1_DERIVE</code>. This demo
+            is for educational use only — keys generated here must not be used in production
+            systems.
+          </p>
         </div>
-      )}
+      </div>
     </div>
   )
 }

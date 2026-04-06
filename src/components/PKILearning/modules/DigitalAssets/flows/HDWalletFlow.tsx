@@ -22,12 +22,23 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useHSM } from '@/hooks/useHSM'
-import { hsm_importGenericSecret, hsm_extractKeyValue, hsm_generateRandom, hsm_pbkdf2 } from '@/wasm/softhsm'
+import {
+  hsm_importGenericSecret,
+  hsm_extractKeyValue,
+  hsm_generateRandom,
+  hsm_pbkdf2,
+} from '@/wasm/softhsm'
 import { hsm_bip32MasterDerive, hsm_bip32ChildDerive } from '@/wasm/softhsm/classical'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { HDWalletFlowDiagram } from '../components/CryptoFlowDiagram'
 
-function derivePathWasm(M: SoftHSMModule, hSession: number, hMaster: number, path: string, curve: 'secp256k1' | 'ed25519'): number {
+function derivePathWasm(
+  M: SoftHSMModule,
+  hSession: number,
+  hMaster: number,
+  path: string,
+  curve: 'secp256k1' | 'ed25519'
+): number {
   const segments = path.split('/').slice(1)
   let currentHandle = hMaster
   for (const s of segments) {
@@ -38,7 +49,6 @@ function derivePathWasm(M: SoftHSMModule, hSession: number, hMaster: number, pat
   return currentHandle
 }
 
-const CKM_SHA512_HMAC = 0x00000251;
 // SLIP-0010 Ed25519 Derivation (Hardened only)
 // https://github.com/satoshilabs/slips/blob/master/slip-0010.md
 function deriveSLIP0010(seed: Uint8Array, path: string): Uint8Array {
@@ -116,7 +126,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
 
   const executeStep = async () => {
     const step = steps[wizard.currentStep]
-    let result = ''
+    let result: string | Record<string, string> = ''
 
     if (step.id === 'mnemonic') {
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
@@ -126,7 +136,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         entropy = hsm_generateRandom(hsm.moduleRef.current!, hsm.hSessionRef.current!, 32)
         entropySource = 'SoftHSM3 (C_GenerateRandom)'
       } else {
-        const res = await openSSLService.execute(DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY)
+        const res = await openSSLService.execute(
+          DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY
+        )
         if (res.error) throw new Error(res.error)
         entropy = hexToBytes(res.stdout.trim())
         entropySource = 'OpenSSL (rand -hex 32)'
@@ -148,9 +160,9 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const hSession = hsm.hSessionRef.current!
         const passBytes = new TextEncoder().encode(mnemonic)
         const saltBytes = new TextEncoder().encode('mnemonic') // BIP39 base salt
-        
+
         // PBKDF2-HMAC-SHA512, 2048 iterations, 64 bytes output
-        newSeed = hsm_pbkdf2(M, hSession, passBytes, saltBytes, 2048, CKM_SHA512_HMAC, 64)
+        newSeed = hsm_pbkdf2(M, hSession, passBytes, saltBytes, 2048, 64)
         seedSource = 'SoftHSM3 (C_DeriveKey PBKDF2-SHA512)'
       } else {
         newSeed = mnemonicToSeedSync(mnemonic)
@@ -172,14 +184,26 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
 
         // Import seed as generic secret
         const seedHandle = hsm_importGenericSecret(M, hSession, seed)
-        hsm.addKey({ handle: seedHandle, family: 'sha', role: 'secret', label: 'BIP39 Master Seed', generatedAt: new Date().toISOString() })
+        hsm.addKey({
+          handle: seedHandle,
+          family: 'sha',
+          role: 'secret',
+          label: 'BIP39 Master Seed',
+          generatedAt: new Date().toISOString(),
+        })
 
         // BITCOIN
         const btcPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN
         const btcMasterHandle = hsm_bip32MasterDerive(M, hSession, seedHandle, 'secp256k1', true)
         const btcLeafHandle = derivePathWasm(M, hSession, btcMasterHandle, btcPath, 'secp256k1')
-        hsm.addKey({ handle: btcLeafHandle, family: 'ecdsa', role: 'private', label: 'BTC Node (m/44/0/0/0/0)', generatedAt: new Date().toISOString() })
-        
+        hsm.addKey({
+          handle: btcLeafHandle,
+          family: 'ecdsa',
+          role: 'private',
+          label: 'BTC Node (m/44/0/0/0/0)',
+          generatedAt: new Date().toISOString(),
+        })
+
         const btcPriv = hsm_extractKeyValue(M, hSession, btcLeafHandle)
         const btcPub = secp256k1.getPublicKey(btcPriv, true)
         const btcHash160 = ripemd160(sha256(btcPub))
@@ -190,8 +214,14 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const ethPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM
         const ethMasterHandle = hsm_bip32MasterDerive(M, hSession, seedHandle, 'secp256k1', true)
         const ethLeafHandle = derivePathWasm(M, hSession, ethMasterHandle, ethPath, 'secp256k1')
-        hsm.addKey({ handle: ethLeafHandle, family: 'ecdsa', role: 'private', label: "ETH Node (m/44'/60'/0'/0/0)", generatedAt: new Date().toISOString() })
-        
+        hsm.addKey({
+          handle: ethLeafHandle,
+          family: 'ecdsa',
+          role: 'private',
+          label: "ETH Node (m/44'/60'/0'/0/0)",
+          generatedAt: new Date().toISOString(),
+        })
+
         const ethPriv = hsm_extractKeyValue(M, hSession, ethLeafHandle)
         const ethPubKey = secp256k1.getPublicKey(ethPriv, false).slice(1)
         const ethAddrWasm = toChecksumAddress(bytesToHex(keccak_256(ethPubKey).slice(-20)))
@@ -201,7 +231,13 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const solPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA
         const solMasterHandle = hsm_bip32MasterDerive(M, hSession, seedHandle, 'ed25519', true)
         const solLeafHandle = derivePathWasm(M, hSession, solMasterHandle, solPath, 'ed25519')
-        hsm.addKey({ handle: solLeafHandle, family: 'eddsa', role: 'private', label: "SOL Node (m/44'/501'/0'/0')", generatedAt: new Date().toISOString() })
+        hsm.addKey({
+          handle: solLeafHandle,
+          family: 'eddsa',
+          role: 'private',
+          label: "SOL Node (m/44'/501'/0'/0')",
+          generatedAt: new Date().toISOString(),
+        })
 
         const solPriv = hsm_extractKeyValue(M, hSession, solLeafHandle)
         const solAddrWasm = base58.encode(ed25519.getPublicKey(solPriv))
@@ -234,8 +270,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       if (hsmActive) {
         result = {
           'SoftHSM3 (KAT)': hsmOutput,
-          'Software Wallet': output
-        } as any
+          'Software Wallet': output,
+        }
       } else {
         result = output
       }
@@ -254,12 +290,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle
           hsm={hsm}
-          operations={[
-            'C_GenerateRandom',
-            'C_DeriveKey',
-            'C_CreateObject',
-            'C_GetAttributeValue'
-          ]}
+          operations={['C_GenerateRandom', 'C_DeriveKey', 'C_CreateObject', 'C_GetAttributeValue']}
         />
       </div>
 
@@ -282,12 +313,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
           onClear={hsm.clearLog}
           title="PKCS#11 Logic traces — HD Wallet"
           emptyMessage="Execute a step to trace cryptographic derivation inside WebAssembly SoftHSM."
-          filterFns={[
-            'C_GenerateRandom',
-            'C_DeriveKey',
-            'C_CreateObject',
-            'C_GetAttributeValue'
-          ]}
+          filterFns={['C_GenerateRandom', 'C_DeriveKey', 'C_CreateObject', 'C_GetAttributeValue']}
         />
       )}
 

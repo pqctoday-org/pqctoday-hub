@@ -1,6 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import { Settings, FileText, Check, Shield, Key, Import, Copy, Eye } from 'lucide-react'
+import {
+  Settings,
+  FileText,
+  Check,
+  Shield,
+  Key,
+  Import,
+  Copy,
+  Eye,
+  AlertTriangle,
+} from 'lucide-react'
 import { clsx } from 'clsx'
 import { useTLSStore } from '@/store/tls-learning.store'
 import { FileSelectionModal } from './components/FileSelectionModal'
@@ -54,6 +64,48 @@ const CERTS = [
   { id: 'none', label: 'None' },
   { id: 'custom', label: 'Custom from OpenSSL Studio' },
 ]
+
+// NIST security level labels — source: FIPS 203, 204, 205
+const NIST_LEVEL: Record<string, string> = {
+  'ML-KEM-512': 'NIST L2',
+  'ML-KEM-768': 'NIST L3',
+  'ML-KEM-1024': 'NIST L5',
+  X25519MLKEM768: 'L3 hybrid',
+  SecP256r1MLKEM768: 'L3 hybrid',
+  mldsa44: 'NIST L2',
+  mldsa65: 'NIST L3',
+  mldsa87: 'NIST L5',
+  'slhdsa-sha2-128s': 'NIST L1',
+  'slhdsa-sha2-128f': 'NIST L1',
+}
+
+// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, IETF hybrid drafts
+const GROUP_SIZE: Record<string, string> = {
+  X25519: 'key share: 32 B',
+  'P-256': 'key share: 65 B',
+  'P-384': 'key share: 97 B',
+  'P-521': 'key share: 133 B',
+  'ML-KEM-512': 'pk: 800 B · ct: 768 B',
+  'ML-KEM-768': 'pk: 1,184 B · ct: 1,088 B',
+  'ML-KEM-1024': 'pk: 1,568 B · ct: 1,568 B',
+  X25519MLKEM768: '~1,216 B combined (X25519 32 + ML-KEM-768 1,184)',
+  SecP256r1MLKEM768: '~1,249 B combined (P-256 65 + ML-KEM-768 1,184)',
+}
+
+// Signature and public key sizes — source: FIPS 204, FIPS 205
+const SIG_SIZE: Record<string, { sig: string; pub: string }> = {
+  mldsa44: { sig: '2,420 B', pub: '1,312 B' },
+  mldsa65: { sig: '3,293 B', pub: '1,952 B' },
+  mldsa87: { sig: '4,595 B', pub: '2,592 B' },
+  'slhdsa-sha2-128s': { sig: '7,856 B', pub: '32 B' },
+  'slhdsa-sha2-128f': { sig: '17,088 B', pub: '32 B' },
+  ecdsa_secp256r1_sha256: { sig: '~72 B', pub: '64 B' },
+  rsa_pss_rsae_sha256: { sig: '256 B', pub: '256 B' },
+  rsa_pss_pss_sha256: { sig: '256 B', pub: '256 B' },
+  ed25519: { sig: '64 B', pub: '32 B' },
+}
+
+const SLH_DSA_ALGS = ['slhdsa-sha2-128s', 'slhdsa-sha2-128f']
 
 export const TLSClientPanel: React.FC = () => {
   const {
@@ -528,14 +580,18 @@ export const TLSClientPanel: React.FC = () => {
                     <button
                       key={group}
                       onClick={() => toggleGroup(group)}
+                      title={GROUP_SIZE[group]}
                       className={clsx(
-                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all flex items-center gap-1',
                         clientConfig.groups.includes(group)
                           ? 'bg-success/20 border-success/50 text-foreground'
                           : 'bg-muted border-border text-muted-foreground hover:border-border/80'
                       )}
                     >
                       {group}
+                      <span className="text-[9px] font-sans font-normal opacity-60">
+                        ({NIST_LEVEL[group]})
+                      </span>
                     </button>
                   ))}
                 </div>
@@ -551,18 +607,61 @@ export const TLSClientPanel: React.FC = () => {
                     <button
                       key={group}
                       onClick={() => toggleGroup(group)}
+                      title={GROUP_SIZE[group]}
                       className={clsx(
-                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all',
+                        'px-3 py-1.5 rounded-md text-sm font-mono border transition-all flex items-center gap-1',
                         clientConfig.groups.includes(group)
                           ? 'bg-warning/20 border-warning/50 text-foreground'
                           : 'bg-muted border-border text-muted-foreground hover:border-border/80'
                       )}
                     >
                       {group}
+                      <span className="text-[9px] font-sans font-normal opacity-60">
+                        ({NIST_LEVEL[group]})
+                      </span>
                     </button>
                   ))}
                 </div>
               </div>
+              {/* Key share size reference */}
+              <details className="mt-2 text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
+                  ▸ Key share size reference (FIPS 203, RFC 8446)
+                </summary>
+                <div className="mt-1 rounded-lg border border-border overflow-hidden">
+                  <table className="w-full text-[10px]">
+                    <thead>
+                      <tr className="bg-muted text-muted-foreground">
+                        <th className="p-1.5 text-left font-medium">Group</th>
+                        <th className="p-1.5 text-right font-medium">Key Share (ClientHello)</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[...CLASSICAL_GROUPS, ...PQC_GROUPS, ...HYBRID_GROUPS].map((group, i) => (
+                        <tr
+                          key={group}
+                          className={clsx(
+                            'border-t border-border',
+                            i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
+                          )}
+                        >
+                          <td
+                            className={clsx(
+                              'p-1.5 font-mono',
+                              clientConfig.groups.includes(group) && 'text-primary font-bold'
+                            )}
+                          >
+                            {group}
+                          </td>
+                          <td className="p-1.5 text-right font-mono text-muted-foreground">
+                            {GROUP_SIZE[group] ?? '—'}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
             </div>
 
             <hr className="border-border" />
@@ -577,17 +676,80 @@ export const TLSClientPanel: React.FC = () => {
                   <button
                     key={alg}
                     onClick={() => toggleSigAlg(alg)}
+                    title={
+                      SIG_SIZE[alg]
+                        ? `sig: ${SIG_SIZE[alg].sig} · pub key: ${SIG_SIZE[alg].pub}`
+                        : undefined
+                    }
                     className={clsx(
-                      'px-3 py-1.5 rounded-md text-xs font-mono border transition-all',
+                      'px-3 py-1.5 rounded-md text-xs font-mono border transition-all flex items-center gap-1',
                       clientConfig.signatureAlgorithms.includes(alg)
                         ? 'bg-primary/10 border-primary/50 text-foreground'
                         : 'bg-muted border-border text-muted-foreground hover:border-border/80'
                     )}
                   >
+                    {SLH_DSA_ALGS.includes(alg) && (
+                      <AlertTriangle size={10} className="text-warning shrink-0" />
+                    )}
                     {alg}
+                    {NIST_LEVEL[alg] && (
+                      <span className="text-[9px] font-sans font-normal opacity-60">
+                        ({NIST_LEVEL[alg]})
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>
+              {clientConfig.signatureAlgorithms.some((a) => SLH_DSA_ALGS.includes(a)) && (
+                <div className="flex items-start gap-2 p-2 rounded-lg bg-warning/10 border border-warning/30 text-xs mb-2">
+                  <AlertTriangle size={12} className="text-warning shrink-0 mt-0.5" />
+                  <span>
+                    <strong className="text-warning">SLH-DSA is experimental in TLS.</strong>{' '}
+                    Signatures are 7–50 KB — far larger than ML-DSA. No IETF draft standardizes
+                    SLH-DSA for TLS 1.3. Selecting it may cause oversized handshakes or negotiation
+                    failures.
+                  </span>
+                </div>
+              )}
+              <details className="text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground list-none select-none py-0.5">
+                  ▸ Signature size reference (FIPS 204/205)
+                </summary>
+                <div className="mt-1 rounded-lg border border-border overflow-hidden">
+                  <table className="w-full text-[10px]">
+                    <thead>
+                      <tr className="bg-muted text-muted-foreground">
+                        <th className="p-1.5 text-left font-medium">Algorithm</th>
+                        <th className="p-1.5 text-right font-medium">Signature</th>
+                        <th className="p-1.5 text-right font-medium">Public Key</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {SIG_ALGS.filter((a) => SIG_SIZE[a]).map((alg, i) => (
+                        <tr
+                          key={alg}
+                          className={clsx(
+                            'border-t border-border',
+                            i % 2 === 0 ? 'bg-card' : 'bg-muted/30'
+                          )}
+                        >
+                          <td
+                            className={clsx(
+                              'p-1.5 font-mono',
+                              clientConfig.signatureAlgorithms.includes(alg) &&
+                                'text-primary font-bold'
+                            )}
+                          >
+                            {alg}
+                          </td>
+                          <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].sig}</td>
+                          <td className="p-1.5 text-right font-mono">{SIG_SIZE[alg].pub}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </details>
             </div>
 
             <div className="p-4 rounded-lg bg-primary/5 border border-primary/10 text-sm text-foreground/80">

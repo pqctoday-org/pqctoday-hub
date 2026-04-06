@@ -21,7 +21,11 @@ import {
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
-import { TEE_HSM_INTEGRATIONS } from '../data/attestationData'
+import {
+  TEE_HSM_INTEGRATIONS,
+  QUANTUM_THREAT_VECTORS,
+  MEMORY_ENCRYPTION_ENGINES,
+} from '../data/attestationData'
 import { TEE_ARCHITECTURES } from '../data/teeArchitectureData'
 import type { TEEVendor } from '../data/ccConstants'
 import { useHSM } from '@/hooks/useHSM'
@@ -34,21 +38,54 @@ import {
   hsm_generateMLKEMKeyPair,
   hsm_generateAESKey,
   hsm_encapsulate,
+  hsm_decapsulate,
   hsm_aesWrapKey,
+  hsm_unwrapKeyMech,
   hsm_sign,
+  hsm_verify,
   hsm_ecdsaSign,
+  hsm_ecdsaVerify,
   hsm_extractKeyValue,
   hsm_generateECKeyPair,
+  hsm_importGenericSecret,
+  hsm_hkdf,
+  hsm_importAESKey,
+  CKM_SHA256,
+  CKM_AES_KEY_WRAP,
+  CKA_CLASS,
+  CKA_KEY_TYPE,
+  CKO_SECRET_KEY,
+  CKK_AES,
+  CKA_TOKEN,
+  CKA_ENCRYPT,
+  CKA_DECRYPT,
+  type AttrDef,
 } from '@/wasm/softhsm'
 
 const TEE_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
   'C_EncapsulateKey',
+  'C_DecapsulateKey',
   'C_WrapKey',
+  'C_UnwrapKey',
+  'C_DeriveKey',
   'C_MessageSignInit',
   'C_SignMessage',
   'C_MessageSignFinal',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
   'C_GenerateKey',
+  'C_CreateObject',
+]
+
+/** Unwrap template for the recovered AES-256 provisioning key.
+ *  NOTE: CKA_VALUE_LEN must NOT be included — length is derived from the unwrapped bytes. */
+const AES_UNWRAP_TEMPLATE: AttrDef[] = [
+  { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+  { type: CKA_KEY_TYPE, ulongVal: CKK_AES },
+  { type: CKA_TOKEN, boolVal: false },
+  { type: CKA_ENCRYPT, boolVal: true },
+  { type: CKA_DECRYPT, boolVal: true },
 ]
 
 interface ProvisioningResult {
@@ -281,15 +318,50 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           note: 'ML-KEM replaces ECDH for the TLS 1.3 key exchange. The encapsulated shared secret is used to derive the session wrapping key.',
         })
 
-        // wrapKeyHandle is a KEK, so wrap=true, unwrap=true, encrypt/decrypt=false, extractable=false
-        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
-        // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
-        const provKeyHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false)
+        // Derive KEK from ML-KEM shared secret via HKDF-SHA256 (RFC 5869)
+        const teeKekInfo = new TextEncoder().encode('tee-hsm-kek-v1')
+        const sharedSecretBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+        const derivableHandle = hsm_importGenericSecret(M, hSession, sharedSecretBytes)
+        const kekBytes = hsm_hkdf(
+          M,
+          hSession,
+          derivableHandle,
+          CKM_SHA256,
+          true,
+          true,
+          undefined,
+          teeKekInfo,
+          32
+        )
+        // wrapKeyHandle is KEK: wrap=true, unwrap=true, encrypt/decrypt=false, extractable=true (needed for HKDF re-derivation check)
+        const wrapKeyHandle = hsm_importAESKey(
+          M,
+          hSession,
+          kekBytes,
+          false,
+          false,
+          true,
+          true,
+          false,
+          true
+        )
+        // provKeyHandle is a DEK: encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
+        const provKeyHandle = hsm_generateAESKey(
+          M,
+          hSession,
+          256,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        )
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
           role: 'secret',
-          label: 'AES-256 Key Encryption Key (KEK)',
+          label: 'AES-256 KEK (HKDF from ML-KEM secret)',
           purpose: 'kek',
           generatedAt: now(),
         })
@@ -305,10 +377,10 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         addResult({
           step: 3,
           purpose: 'kek',
-          title: 'KEK Wraps Provisioning Key (AES-256)',
-          pkcs11Call: `C_GenerateKey(CKM_AES_KEY_GEN, 256) → KEK handle\nC_GenerateKey(CKM_AES_KEY_GEN, 256) → prov key handle\nC_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`,
-          detail: `KEK = 32 B · provisioning key = 32 B · wrapped blob = ${wrappedKey.length} B`,
-          note: 'The Key Encryption Key (KEK) is derived from the ML-KEM shared secret via HKDF. It wraps the provisioning key before transmission to the enclave.',
+          title: 'KEK from ML-KEM Secret (HKDF) Wraps Provisioning Key',
+          pkcs11Call: `C_CreateObject(CKK_GENERIC_SECRET) → derivable handle\nC_DeriveKey(CKM_HKDF, info="tee-hsm-kek-v1") → 32 B KEK\nC_GenerateKey(CKM_AES_KEY_GEN, 256) → prov key\nC_WrapKey(CKM_AES_KEY_WRAP) → ${wrappedKey.length} B`,
+          detail: `shared secret = ${sharedSecretBytes.length} B → HKDF → KEK = 32 B · wrapped blob = ${wrappedKey.length} B`,
+          note: 'KEK is derived from the ML-KEM-768 shared secret via HKDF-SHA256 (RFC 5869, info="tee-hsm-kek-v1"). The enclave re-derives the same KEK after decapsulating — no KEK is ever transmitted.',
         })
 
         // Step 4: Sign attestation report
@@ -320,7 +392,66 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           title: 'Attestation Report Signed (ML-DSA)',
           pkcs11Call: `C_MessageSignInit(CKM_ML_DSA) + C_SignMessage("${teeReport.slice(0, 40)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature = ${sigBytes.length} B`,
-          note: 'The HSM signs the TEE attestation report with the attestation private key. The enclave verifies this signature to confirm the HSM identity before unsealing.',
+          note: 'Simplified attestation payload — real SGX/TDX/CCA tokens use CBOR-encoded COSE_Sign1 structures (RFC 9360). The HSM signs the report; the enclave verifies before unsealing.',
+        })
+
+        // Step 5: Receiver side — verify signature, decapsulate, re-derive KEK, unwrap provisioning key
+        const verifyOk = hsm_verify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        const recoveredSecretHandle = hsm_decapsulate(
+          M,
+          hSession,
+          kemKeys.privHandle,
+          ciphertextBytes,
+          768
+        )
+        const recoveredSecretBytes = hsm_extractKeyValue(M, hSession, recoveredSecretHandle)
+        const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
+        const kekBytes2 = hsm_hkdf(
+          M,
+          hSession,
+          derivableHandle2,
+          CKM_SHA256,
+          true,
+          true,
+          undefined,
+          teeKekInfo,
+          32
+        )
+        const unwrapKeyHandle = hsm_importAESKey(
+          M,
+          hSession,
+          kekBytes2,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        )
+        const recoveredProvHandle = hsm_unwrapKeyMech(
+          M,
+          hSession,
+          CKM_AES_KEY_WRAP,
+          unwrapKeyHandle,
+          wrappedKey,
+          AES_UNWRAP_TEMPLATE
+        )
+        hsm.addKey({
+          handle: recoveredProvHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Recovered Provisioning Key (Enclave)',
+          purpose: 'application',
+          generatedAt: now(),
+        })
+        addResult({
+          step: 5,
+          purpose: 'application',
+          title: 'Enclave: Verify + Decap + Re-derive KEK + Unwrap',
+          pkcs11Call: `C_MessageVerifyInit(CKM_ML_DSA) → C_VerifyMessage → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_DecapsulateKey(CKM_ML_KEM) → shared secret = ${recoveredSecretBytes.length} B\nC_DeriveKey(CKM_HKDF) → KEK (same derivation)\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
+          // eslint-disable-next-line security/detect-object-injection
+          detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · recovered secret match = ${recoveredSecretBytes.every((b, i) => b === sharedSecretBytes[i]) ? 'YES ✓' : 'NO ✗'} · prov key handle = 0x${recoveredProvHandle.toString(16)}`,
+          note: 'Protocol complete. The enclave verified the HSM attestation, decapsulated the KEM ciphertext to recover the shared secret, re-derived the KEK via HKDF (same info string), and unwrapped the provisioning key — all without the KEK ever leaving either party.',
         })
       } else {
         // ── Classical flow ────────────────────────────────────────────────────
@@ -380,9 +511,29 @@ export const TEEHSMTrustedChannel: React.FC = () => {
         })
 
         // wrapKeyHandle is a KEK, so wrap=true, unwrap=true, encrypt/decrypt=false, extractable=false
-        const wrapKeyHandle = hsm_generateAESKey(M, hSession, 256, false, false, true, true, false, false)
+        const wrapKeyHandle = hsm_generateAESKey(
+          M,
+          hSession,
+          256,
+          false,
+          false,
+          true,
+          true,
+          false,
+          false
+        )
         // provKeyHandle is a DEK, so encrypt=true, decrypt=true, wrap/unwrap=false, extractable=false
-        const provKeyHandle = hsm_generateAESKey(M, hSession, 256, true, true, false, false, false, false)
+        const provKeyHandle = hsm_generateAESKey(
+          M,
+          hSession,
+          256,
+          true,
+          true,
+          false,
+          false,
+          false,
+          false
+        )
         hsm.addKey({
           handle: wrapKeyHandle,
           family: 'aes',
@@ -418,7 +569,34 @@ export const TEEHSMTrustedChannel: React.FC = () => {
           title: 'Attestation Report Signed (ECDSA)',
           pkcs11Call: `C_MessageSignInit(CKM_ECDSA) + C_SignMessage("${teeReport.slice(0, 35)}…")`,
           detail: `message = "${teeReport.slice(0, 50)}…" · signature ≈ ${sigBytes.length} B`,
-          note: 'ECDSA signature on the attestation report. In PQC mode this uses ML-DSA, producing a ~3.3 KB signature vs ~72 B here.',
+          note: 'Simplified attestation payload — real SGX/TDX tokens use CBOR-encoded COSE_Sign1 structures. ECDSA signature on the attestation report. In PQC mode this uses ML-DSA (~3.3 KB sig vs ~72 B here).',
+        })
+
+        // Step 5: Receiver side — verify signature + unwrap provisioning key
+        const verifyOk = hsm_ecdsaVerify(M, hSession, dsaKeys.pubHandle, teeReport, sigBytes)
+        const recoveredProvHandle = hsm_unwrapKeyMech(
+          M,
+          hSession,
+          CKM_AES_KEY_WRAP,
+          wrapKeyHandle,
+          wrappedKey,
+          AES_UNWRAP_TEMPLATE
+        )
+        hsm.addKey({
+          handle: recoveredProvHandle,
+          family: 'aes',
+          role: 'secret',
+          label: 'AES-256 Recovered Provisioning Key (Enclave)',
+          purpose: 'application',
+          generatedAt: now(),
+        })
+        addResult({
+          step: 5,
+          purpose: 'application',
+          title: 'Enclave: Verify ECDSA + Unwrap Provisioning Key',
+          pkcs11Call: `C_Verify(CKM_ECDSA_SHA256) → ${verifyOk ? '✓ PASS' : '✗ FAIL'}\nC_UnwrapKey(CKM_AES_KEY_WRAP) → prov key handle`,
+          detail: `sig verify = ${verifyOk ? 'PASS ✓' : 'FAIL ✗'} · recovered prov key handle = 0x${recoveredProvHandle.toString(16)}`,
+          note: 'Protocol complete (classical). The enclave verified the HSM ECDSA attestation, then unwrapped the provisioning key using the ECDH-derived session KEK. Switch to PQC mode to see ML-DSA verify + ML-KEM decapsulate + HKDF key derivation.',
         })
       }
     } catch (e) {
@@ -607,7 +785,7 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                   {pqcMode ? 'PQC Public Key' : 'Classical Public Key'}
                 </div>
                 <div className="text-sm font-mono font-bold text-foreground">
-                  {pqcMode ? '~2,528 B' : '~64 B'}
+                  {pqcMode ? '~1,952 B' : '~64 B'}
                 </div>
               </div>
               <div className="text-center p-2 bg-muted/20 rounded border border-border">
@@ -782,20 +960,18 @@ export const TEEHSMTrustedChannel: React.FC = () => {
       {hsm.isReady && (
         <div className="glass-panel p-4 space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold">Run TEE-HSM Key Provisioning (PQC)</p>
-            <button
-              onClick={runLiveDemo}
-              disabled={liveRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
-            >
+            <p className="text-sm font-semibold">
+              Run TEE-HSM Key Provisioning ({pqcMode ? 'PQC' : 'Classical'})
+            </p>
+            <Button variant="default" size="sm" onClick={runLiveDemo} disabled={liveRunning}>
               {liveRunning ? (
                 <>
-                  <Loader2 size={11} className="animate-spin" /> Running…
+                  <Loader2 size={11} className="animate-spin mr-1" /> Running…
                 </>
               ) : (
                 'Execute (Live WASM)'
               )}
-            </button>
+            </Button>
           </div>
 
           {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}
@@ -836,7 +1012,10 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                 </div>
               ))}
               <p className="text-[10px] text-muted-foreground">
-                Real output from SoftHSM3 WASM · PKCS#11 v3.2
+                Real output from SoftHSM3 WASM · PKCS#11 v3.2 ·{' '}
+                {pqcMode
+                  ? 'Live demo uses ML-DSA-65 + ML-KEM-768; select a vendor above to see algorithm differences.'
+                  : 'Switch to PQC mode to run ML-DSA-65 + ML-KEM-768 + HKDF.'}
               </p>
             </div>
           )}
@@ -896,11 +1075,102 @@ export const TEEHSMTrustedChannel: React.FC = () => {
               )}
             </div>
           )}
-
         </div>
       )}
 
+      {/* ── Quantum Threat Analysis ──────────────────────────────── */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="text-sm font-bold text-foreground flex items-center gap-2">
+          <Shield size={14} className="text-status-error" />
+          Quantum Threat Analysis — TEE &amp; HSM Components
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Each component of a TEE-HSM deployment faces distinct quantum risks. Vectors marked{' '}
+          <span className="font-semibold text-status-warning">HNDL</span> are subject to
+          harvest-now-decrypt-later attacks — adversaries recording traffic today can decrypt it
+          once a cryptographically-relevant quantum computer (CRQC) is available.
+        </p>
+        <div className="space-y-2">
+          {QUANTUM_THREAT_VECTORS.map((threat) => (
+            <div
+              key={threat.id}
+              className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+            >
+              <div className="flex items-start gap-2 flex-wrap">
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${
+                    threat.severity === 'critical'
+                      ? 'bg-status-error/20 text-status-error'
+                      : threat.severity === 'high'
+                        ? 'bg-status-warning/20 text-status-warning'
+                        : 'bg-status-info/20 text-status-info'
+                  }`}
+                >
+                  {threat.severity.toUpperCase()}
+                </span>
+                {threat.hndlExposure && (
+                  <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
+                    HNDL
+                  </span>
+                )}
+                <span className="text-xs font-semibold text-foreground">{threat.name}</span>
+                <span className="text-[10px] text-muted-foreground ml-auto">
+                  {threat.component}
+                </span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">{threat.vulnerability}</p>
+              <div className="flex items-start gap-1 text-[10px]">
+                <span className="text-status-success font-medium shrink-0">PQC fix:</span>
+                <span className="text-foreground/80">{threat.pqcSolution}</span>
+              </div>
+              <div className="flex items-center gap-2 text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                <span>Timeline: {threat.vendorTimeline}</span>
+                <span>· Effort: {threat.migrationEffort}/5</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
+      {/* ── Memory Encryption Quantum Impact ─────────────────────── */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="text-sm font-bold text-foreground flex items-center gap-2">
+          <Cpu size={14} className="text-status-warning" />
+          Memory Encryption Engines — Quantum Impact
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Enclave sealing keys and memory encryption are often AES-128, which Grover&apos;s
+          algorithm halves to 64-bit effective post-quantum security — below NIST Level 1 (128-bit).
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {MEMORY_ENCRYPTION_ENGINES.map((eng) => (
+            <div
+              key={eng.id}
+              className="rounded-lg border border-border bg-muted/20 p-3 space-y-1.5"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-xs font-semibold text-foreground">{eng.name}</span>
+                <span
+                  className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${
+                    eng.quantumImpact === 'grover-halved'
+                      ? 'bg-status-warning/20 text-status-warning'
+                      : 'bg-status-success/20 text-status-success'
+                  }`}
+                >
+                  {eng.quantumImpact === 'grover-halved' ? 'Grover Halved' : 'Quantum Safe'}
+                </span>
+              </div>
+              <div className="text-[10px] font-mono text-muted-foreground">
+                {eng.algorithm} · {eng.keyWidth}-bit key
+              </div>
+              <p className="text-[10px] text-muted-foreground">{eng.quantumNotes}</p>
+              <div className="text-[10px] text-muted-foreground border-t border-border/30 pt-1">
+                <span className="font-medium">Sealing:</span> {eng.sealingKeyDerivation}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
 
       {/* ── Cross-reference callout ───────────────────────────────── */}
       <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground">

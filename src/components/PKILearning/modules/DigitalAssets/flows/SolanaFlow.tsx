@@ -19,8 +19,8 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
-
-// RFC 8032 Test Vector 2 (Ed25519)
+import { Input } from '@/components/ui/input'
+// RFC 8032 Section 7.1 Test Vector 2 (Ed25519) — fixed seed + 1-byte message
 const RFC8032_SEED_HEX = '4ccd089b28ff96da9db6c346ec114e0f5b8a319f35aba624da8cf6ed4fb8a6fb'
 const RFC8032_MSG_HEX = '72'
 const RFC8032_SIG_HEX =
@@ -62,6 +62,8 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
     dstPrivHandle?: number
     dstPubHandle?: number
   }>({})
+  // Saved in step 7 so step 8 signs exactly what was visualized
+  const msgBytesRef = React.useRef<Uint8Array | null>(null)
 
   // Filenames (Memoized constants)
   const filenames = useMemo(() => {
@@ -75,215 +77,273 @@ export const SolanaFlow: React.FC<SolanaFlowProps> = ({ onBack }) => {
     }
   }, [])
 
-  const steps: Step[] = [
-    {
-      id: 'keygen',
-      title: '1. Generate Source Keypair',
-      description: (
-        <>
-          Generate an Ed25519 <InfoTooltip term="ed25519" /> private key for the sender using
-          OpenSSL. Solana uses Ed25519 for high-performance, deterministic signatures with strong
-          security guarantees.
-          <br />
-          <br />
-          <strong>Why Ed25519?</strong> Unlike Bitcoin's secp256k1 (ECDSA), Ed25519 uses EdDSA{' '}
-          <InfoTooltip term="eddsa" /> which is faster, more secure against side-channel attacks,
-          and produces deterministic signatures (no random k value needed).
-        </>
-      ),
-      code: `// SoftHSMv3 WebAssembly API
+  const steps = useMemo<Step[]>(
+    () => [
+      {
+        id: 'keygen',
+        title: '1. Generate Source Keypair',
+        description: (
+          <>
+            Generate an Ed25519 <InfoTooltip term="ed25519" /> private key for the sender using
+            OpenSSL. Solana uses Ed25519 for high-performance, deterministic signatures with strong
+            security guarantees.
+            <br />
+            <br />
+            <strong>Why Ed25519?</strong> Unlike Bitcoin's secp256k1 (ECDSA), Ed25519 uses EdDSA{' '}
+            <InfoTooltip term="eddsa" /> which is faster, more secure against side-channel attacks,
+            and produces deterministic signatures (no random k value needed).
+          </>
+        ),
+        code: `// SoftHSMv3 WebAssembly API
 const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(
   hsm.module,
   hsm.sessionHandle,
   'Ed25519',
   true // extractable
 );`,
-      language: 'javascript',
-      actionLabel: 'Generate Source Key',
-      diagram: <SolanaFlowDiagram />,
-    },
-    {
-      id: 'pubkey',
-      title: '2. Extract Source Public Key',
-      description: (
-        <>
-          Derive the public key from the private key using Ed25519 scalar multiplication on the
-          Edwards curve. This is a <strong>one-way function</strong> - you cannot derive the private
-          key from the public key.
-          <br />
-          <br />
-          <strong>Ed25519 Public Key Derivation:</strong> Unlike ECDSA which uses point
-          multiplication on a Weierstrass curve, Ed25519 uses the twisted Edwards curve for faster
-          computation. The public key is exactly 32 bytes (256 bits).
-        </>
-      ),
-      code: `// SoftHSMv3 Key Extraction
-// The public key handle is used to retrieve CKA_VALUE
-const pubKeyBytes = hsm_getAttribute(hsm.module, session, pubHandle, CKA_VALUE);`,
-      language: 'javascript',
-      actionLabel: 'Extract Public Key',
-    },
-    {
-      id: 'address',
-      title: '3. Generate Source Address',
-      description: (
-        <>
-          The Solana address is simply the Base58 <InfoTooltip term="base58" /> encoding of the
-          32-byte public key. Unlike Bitcoin (which hashes the public key) or Ethereum (which hashes
-          and takes last 20 bytes), Solana uses the raw public key directly.
-          <br />
-          <br />
-          <strong>Why Direct Encoding?</strong> Solana prioritizes performance and simplicity. The
-          32-byte Ed25519 public key is already compact and secure, so no additional hashing is
-          needed.
-        </>
-      ),
-      code: `// JavaScript Execution\nconst pubKeyBytes = ...; // 32 bytes\nconst address = base58.encode(pubKeyBytes);`,
-      language: 'javascript',
-      actionLabel: 'Generate Source Address',
-    },
-    {
-      id: 'gen_recipient_key',
-      title: '4. Generate Recipient Keypair',
-      description: (
-        <>
-          Generate an Ed25519 <InfoTooltip term="ed25519" /> keypair for the recipient to receive
-          funds. This follows the same process as step 1.
-          <br />
-          <br />
-          <strong>Key Security:</strong> In production, the recipient would generate their own keys
-          and only share the public key/address. Never share private keys!
-        </>
-      ),
-      code: `// SoftHSMv3 WebAssembly API
+        language: 'javascript',
+        actionLabel: 'Generate Source Key',
+        diagram: <SolanaFlowDiagram />,
+      },
+      {
+        id: 'pubkey',
+        title: '2. Extract Source Public Key',
+        description: (
+          <>
+            Derive the public key from the private key using Ed25519 scalar multiplication on the
+            Edwards curve. This is a <strong>one-way function</strong> - you cannot derive the
+            private key from the public key.
+            <br />
+            <br />
+            <strong>Ed25519 Public Key Derivation:</strong> Unlike ECDSA which uses point
+            multiplication on a Weierstrass curve, Ed25519 uses the twisted Edwards curve for faster
+            computation. The public key is exactly 32 bytes (256 bits).
+          </>
+        ),
+        code: `// SoftHSMv3 Key Extraction via C_GetAttributeValue
+const template = [{ type: CKA_VALUE, pValue: null, ulValueLen: 0 }]
+M._C_GetAttributeValue(hSession, pubHandle, template, 1)
+const pubKeyBytes = template[0].pValue // 32 bytes (Ed25519 raw public key)`,
+        language: 'javascript',
+        actionLabel: 'Extract Public Key',
+      },
+      {
+        id: 'address',
+        title: '3. Generate Source Address',
+        description: (
+          <>
+            The Solana address is simply the Base58 <InfoTooltip term="base58" /> encoding of the
+            32-byte public key. Unlike Bitcoin (which hashes the public key) or Ethereum (which
+            hashes and takes last 20 bytes), Solana uses the raw public key directly.
+            <br />
+            <br />
+            <strong>Why Direct Encoding?</strong> Solana prioritizes performance and simplicity. The
+            32-byte Ed25519 public key is already compact and secure, so no additional hashing is
+            needed.
+          </>
+        ),
+        code: `// JavaScript Execution\nconst pubKeyBytes = ...; // 32 bytes\nconst address = base58.encode(pubKeyBytes);`,
+        language: 'javascript',
+        actionLabel: 'Generate Source Address',
+      },
+      {
+        id: 'gen_recipient_key',
+        title: '4. Generate Recipient Keypair',
+        description: (
+          <>
+            Generate an Ed25519 <InfoTooltip term="ed25519" /> keypair for the recipient to receive
+            funds. This follows the same process as step 1.
+            <br />
+            <br />
+            <strong>Key Security:</strong> In production, the recipient would generate their own
+            keys and only share the public key/address. Never share private keys!
+          </>
+        ),
+        code: `// SoftHSMv3 WebAssembly API
 const { pubHandle, privHandle } = hsm_generateEdDSAKeyPair(
   hsm.module,
   hsm.sessionHandle,
   'Ed25519',
   true // extractable
 );`,
-      language: 'javascript',
-      actionLabel: 'Generate Recipient Key',
-    },
-    {
-      id: 'recipient_address',
-      title: '5. Generate Recipient Address',
-      description: (
-        <>
-          Derive the recipient's address from their public key using Base58{' '}
-          <InfoTooltip term="base58" /> encoding.
-          <br />
-          <br />
-          <strong>Address Verification:</strong> Always verify the recipient address before sending
-          funds. Solana addresses are case-sensitive and exactly 32-44 characters long.
-        </>
-      ),
-      code: `// JavaScript Execution\nconst recipientAddress = base58.encode(recipientPubKeyBytes);`,
-      language: 'javascript',
-      actionLabel: 'Generate Recipient Address',
-    },
-    {
-      id: 'format_tx',
-      title: '6. Format Transaction',
-      description: (
-        <>
-          Define the transaction details including <InfoTooltip term="recentBlockhash" /> recent
-          blockhash and <InfoTooltip term="instruction" /> instructions. Verify the recipient
-          address carefully!
-          <br />
-          <br />
-          <strong>Transaction Structure:</strong> Solana transactions contain a recent blockhash
-          (for deduplication/expiration) and one or more instructions. Each instruction specifies a
-          program to call, accounts to use, and data to pass.
-          <br />
-          <br />
-          <strong>Lamports:</strong> The amount is specified in <InfoTooltip term="lamports" /> (1
-          SOL = 1 billion lamports).
-        </>
-      ),
-      code: `const transaction = {\n  recentBlockhash: "Gh9...",\n  instructions: [\n    {\n      programIdIndex: 2,\n      accounts: [0, 1],\n      data: "020000000065cd1d00000000" // Transfer instruction (type 2) + 0.5 SOL in lamports\n    }\n  ]\n};`,
-      language: 'javascript',
-      actionLabel: 'Format Transaction',
-    },
-    {
-      id: 'visualize_msg',
-      title: '7. Visualize Message',
-      description:
-        'View the Solana Message structure that will be serialized and signed. This demo uses a simplified JSON representation for readability. Production Solana transactions use a compact binary format.',
-      code: '',
-      language: 'javascript',
-      actionLabel: 'Visualize Message',
-      explanationTable: [
-        {
-          label: 'Header',
-          value: '{ numRequiredSignatures: 1, ... }',
-          description: 'Specifies which accounts must sign the transaction.',
-        },
-        {
-          label: 'Account Keys',
-          value: `1. ${sourceAddress || '...'} (Signer)\n2. ${editableRecipientAddress || recipientAddress || '...'} (Writable)\n3. 111...111 (System Program)`,
-          description:
-            'Array containing actual addresses. This transaction transfers SOL from source (index 0) to destination (index 1).',
-        },
-        {
-          label: 'Recent Blockhash',
-          value: transactionData?.recentBlockhash || '...',
-          description:
-            'A recent blockhash (max 150 blocks old) to prevent replay and ensure liveness.',
-        },
-        {
-          label: 'Instructions',
-          value: '[{ programIdIndex: 2, accounts: [0, 1], data: ... }]',
-          description: 'List of instructions executed atomically.',
-        },
-        {
-          label: 'Real Binary Format',
-          value: 'Header(3B) | compact-u16 | Keys(32B each) | Blockhash(32B) | Instructions',
-          description:
-            'Production Solana messages use a compact binary format: 3-byte header, compact-u16 encoded counts, 32-byte account keys, 32-byte blockhash, and tightly packed instructions with 1-byte program index + compact-u16 account indices + compact-u16 data length + raw data bytes.',
-        },
-      ],
-    },
-    {
-      id: 'sign',
-      title: '8. Sign Message',
-      description: (
-        <>
-          Sign the serialized message using the private key with Ed25519{' '}
-          <InfoTooltip term="eddsa" /> signature algorithm.
-          <br />
-          <br />
-          <strong>Ed25519 Signing Process:</strong>
-          <br />
-          1. Hash the message using SHA-512
-          <br />
-          2. Generate deterministic signature (R || S format, 64 bytes total)
-        </>
-      ),
-      code: `// SoftHSMv3 Signing (CKM_EDDSA)
+        language: 'javascript',
+        actionLabel: 'Generate Recipient Key',
+      },
+      {
+        id: 'recipient_address',
+        title: '5. Generate Recipient Address',
+        description: (
+          <>
+            Derive the recipient's address from their public key using Base58{' '}
+            <InfoTooltip term="base58" /> encoding.
+            <br />
+            <br />
+            <strong>Address Verification:</strong> Always verify the recipient address before
+            sending funds. Solana addresses are case-sensitive and exactly 32-44 characters long.
+          </>
+        ),
+        code: `// JavaScript Execution\nconst recipientAddress = base58.encode(recipientPubKeyBytes);`,
+        language: 'javascript',
+        actionLabel: 'Generate Recipient Address',
+      },
+      {
+        id: 'format_tx',
+        title: '6. Format Transaction',
+        description: (
+          <>
+            Define the transaction details including <InfoTooltip term="recentBlockhash" /> recent
+            blockhash and <InfoTooltip term="instruction" /> instructions. Verify the recipient
+            address carefully!
+            <br />
+            <br />
+            <strong>Transaction Structure:</strong> Solana transactions contain a recent blockhash
+            (for deduplication/expiration) and one or more instructions. Each instruction specifies
+            a program to call, accounts to use, and data to pass.
+            <br />
+            <br />
+            <strong>Lamports:</strong> The amount is specified in <InfoTooltip term="lamports" /> (1
+            SOL = 1 billion lamports).
+          </>
+        ),
+        code: `const transaction = {\n  recentBlockhash: "Gh9...",\n  instructions: [\n    {\n      programIdIndex: 2,\n      accounts: [0, 1],\n      data: "020000000065cd1d00000000" // Transfer instruction (type 2) + 0.5 SOL in lamports\n    }\n  ]\n};`,
+        language: 'javascript',
+        actionLabel: 'Format Transaction',
+        customControls: (
+          <div className="mb-4 p-3 bg-muted/20 border border-border rounded-lg">
+            <label
+              htmlFor="edit-recipient"
+              className="text-xs font-medium text-muted-foreground block mb-1.5"
+            >
+              Recipient Address{' '}
+              <span className="text-status-warning font-normal">(verify before signing)</span>
+            </label>
+            <Input
+              id="edit-recipient"
+              type="text"
+              value={editableRecipientAddress}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setEditableRecipientAddress(e.target.value)
+              }
+              className="font-mono text-xs"
+              placeholder="Run steps 4–5 to generate recipient address"
+            />
+            {editableRecipientAddress && editableRecipientAddress !== recipientAddress && (
+              <p className="text-xs text-status-error mt-1.5">
+                ⚠️ Address modified — the signed transaction will commit to this recipient, not the
+                generated one.
+              </p>
+            )}
+          </div>
+        ),
+      },
+      {
+        id: 'visualize_msg',
+        title: '7. Visualize Message',
+        description:
+          'View the Solana Message structure that will be serialized and signed. This demo uses a simplified JSON representation for readability. Production Solana transactions use a compact binary format.',
+        code: '',
+        language: 'javascript',
+        actionLabel: 'Visualize Message',
+        explanationTable: [
+          {
+            label: 'Header',
+            value: '{ numRequiredSignatures: 1, ... }',
+            description: 'Specifies which accounts must sign the transaction.',
+          },
+          {
+            label: 'Account Keys',
+            value: `1. ${sourceAddress || '...'} (Signer)\n2. ${editableRecipientAddress || recipientAddress || '...'} (Writable)\n3. 111...111 (System Program)`,
+            description:
+              'Array containing actual addresses. This transaction transfers SOL from source (index 0) to destination (index 1).',
+          },
+          {
+            label: 'Recent Blockhash',
+            value: transactionData?.recentBlockhash || '...',
+            description:
+              'A recent blockhash (max 150 blocks old) to prevent replay and ensure liveness.',
+          },
+          {
+            label: 'Instructions',
+            value: '[{ programIdIndex: 2, accounts: [0, 1], data: ... }]',
+            description: 'List of instructions executed atomically.',
+          },
+          {
+            label: 'Real Binary Format',
+            value: 'Header(3B) | compact-u16 | Keys(32B each) | Blockhash(32B) | Instructions',
+            description:
+              'Production Solana messages use a compact binary format: 3-byte header, compact-u16 encoded counts, 32-byte account keys, 32-byte blockhash, and tightly packed instructions with 1-byte program index + compact-u16 account indices + compact-u16 data length + raw data bytes.',
+          },
+        ],
+      },
+      {
+        id: 'sign',
+        title: '8. Sign Message',
+        description: (
+          <>
+            Sign the serialized message using the source private key with{' '}
+            <InfoTooltip term="eddsa" /> (EdDSA). Unlike ECDSA, no random nonce is needed — the
+            nonce is deterministically derived from the key and message, eliminating nonce-reuse
+            vulnerabilities.
+            <br />
+            <br />
+            <strong>EdDSA Signing Steps (RFC 8032):</strong>
+            <br />
+            1. Expand the 32-byte seed with SHA-512 → scalar{' '}
+            <code className="text-xs font-mono bg-muted px-1 rounded">s</code> + nonce prefix
+            <br />
+            2. Compute nonce{' '}
+            <code className="text-xs font-mono bg-muted px-1 rounded">
+              r = SHA-512(nonce_prefix ‖ message)
+            </code>
+            <br />
+            3. Commitment point{' '}
+            <code className="text-xs font-mono bg-muted px-1 rounded">R = r·B</code> (Edwards scalar
+            multiplication)
+            <br />
+            4. Challenge{' '}
+            <code className="text-xs font-mono bg-muted px-1 rounded">
+              k = SHA-512(R ‖ pubkey ‖ message)
+            </code>
+            <br />
+            5. Scalar{' '}
+            <code className="text-xs font-mono bg-muted px-1 rounded">S = (r + k·s) mod ℓ</code>
+            <br />
+            6. Signature = R (32 bytes) ‖ S (32 bytes) = <strong>64 bytes total</strong>
+          </>
+        ),
+        code: `// SoftHSMv3 Signing (CKM_EDDSA)
 const signature = hsm_eddsaSign(
   hsm.module, 
   hsm.sessionHandle, 
   privHandle, 
   msgBytes
 );`,
-      language: 'javascript',
-      actionLabel: 'Sign Message',
-    },
-    {
-      id: 'verify',
-      title: '9. Verify Signature',
-      description: (
-        <>
-          Verify the Ed25519 signature using the public key. This ensures the message was signed by
-          the holder of the corresponding private key.
-          <br />
-          <br />
-          <strong>Security:</strong> Ed25519 verification is faster than ECDSA and provides strong
-          protection against signature malleability attacks.
-        </>
-      ),
-      code: `// SoftHSMv3 Verification (CKM_EDDSA)
+        language: 'javascript',
+        actionLabel: 'Sign Message',
+      },
+      {
+        id: 'verify',
+        title: '9. Verify Signature',
+        description: (
+          <>
+            Verify the Ed25519 signature using the public key. This ensures the message was signed
+            by the holder of the corresponding private key.
+            <br />
+            <br />
+            <strong>Security:</strong> Ed25519 verification is faster than ECDSA and provides strong
+            protection against signature malleability attacks.
+            <br />
+            <br />
+            <strong>Quantum Threat:</strong> <InfoTooltip term="shors" /> can break Ed25519 on a
+            sufficiently powerful quantum computer (CRQC). All Solana wallet public keys are visible
+            on-chain, making them targets for <InfoTooltip term="hnfl" /> attacks — adversaries
+            harvest keys today to forge signatures after <InfoTooltip term="qday" />. Post-quantum
+            signature standards (Falcon, ML-DSA/FIPS 204) are being standardized as replacements for
+            Ed25519; any Ed25519-based blockchain will require a protocol migration before
+            cryptographically relevant quantum computers emerge.
+          </>
+        ),
+        code: `// SoftHSMv3 Verification (CKM_EDDSA)
 const isValid = hsm_eddsaVerify(
   hsm.module, 
   hsm.sessionHandle, 
@@ -291,30 +351,32 @@ const isValid = hsm_eddsaVerify(
   msgBytes, 
   signature
 );`,
-      language: 'javascript',
-      actionLabel: 'Verify Signature',
-      customControls: (
-        <div className="flex items-center gap-2 mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
-          <input
-            type="checkbox"
-            id="simulate-error"
-            checked={simulateError}
-            onChange={(e) => setSimulateError(e.target.checked)}
-            className="w-4 h-4 rounded border-input text-primary focus:ring-primary"
-          />
-          <label
-            htmlFor="simulate-error"
-            className="text-sm font-medium cursor-pointer select-none"
-          >
-            Simulate Invalid Signature (Proof of Verification)
-            <span className="block text-xs text-muted-foreground font-normal mt-0.5">
-              Intentionally corrupts the signature to prove that verification actually fails.
-            </span>
-          </label>
-        </div>
-      ),
-    },
-  ]
+        language: 'javascript',
+        actionLabel: 'Verify Signature',
+        customControls: (
+          <div className="flex items-center gap-2 mb-4 p-3 bg-warning/10 border border-warning/20 rounded-lg">
+            <input
+              type="checkbox"
+              id="simulate-error"
+              checked={simulateError}
+              onChange={(e) => setSimulateError(e.target.checked)}
+              className="w-4 h-4 rounded border-input text-primary focus:ring-primary"
+            />
+            <label
+              htmlFor="simulate-error"
+              className="text-sm font-medium cursor-pointer select-none"
+            >
+              Simulate Invalid Signature (Proof of Verification)
+              <span className="block text-xs text-muted-foreground font-normal mt-0.5">
+                Intentionally corrupts the signature to prove that verification actually fails.
+              </span>
+            </label>
+          </div>
+        ),
+      },
+    ],
+    [sourceAddress, editableRecipientAddress, recipientAddress, transactionData, simulateError]
+  )
 
   const wizard = useStepWizard({
     steps,
@@ -352,7 +414,7 @@ const isValid = hsm_eddsaVerify(
           })
 
           if (katMode) {
-            result.SoftHSMv3 = `[SIMULATION NOTE] Standard PKCS#11 C_GenerateKeyPair does not support deterministic seeds.\nTo pass the RFC 8032 Known Answer Test, we simulate a C_CreateObject call to inject the exact deterministic KAT Private Key into the HSM token.\n\nKeys injected! Inspect the keys in the HSM Key Registry below.`
+            result.SoftHSMv3 = `[PKCS#11 LIMITATION] C_GenerateKeyPair cannot accept a deterministic seed — a fresh random keypair was generated in the HSM.\n\nRFC 8032 KAT comparison runs only in the OpenSSL tab (which uses the fixed seed).\nThe HSM tab signs with its own random key; the signature will not match the RFC 8032 expected value.\n\nInspect the generated key parameters in the HSM Key Registry below.`
           } else {
             result.SoftHSMv3 = `Keys internally generated via SoftHSM3 C_GenerateKeyPair.\nInspect the actual key parameters in the HSM Key Registry below.\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
           }
@@ -509,6 +571,8 @@ const isValid = hsm_eddsaVerify(
 
       const msgString = JSON.stringify(message, null, 2)
       const msgBytes = katMode ? hexToBytes(RFC8032_MSG_HEX) : new TextEncoder().encode(msgString)
+      // Persist so step 8 signs exactly the bytes that were visualized here
+      msgBytesRef.current = msgBytes
 
       const transFilename = artifacts.saveTransaction('solana', msgBytes)
 
@@ -531,7 +595,10 @@ const isValid = hsm_eddsaVerify(
         instructions: transactionData?.instructions,
       }
       const msgString = JSON.stringify(message, null, 2)
-      const msgBytes = katMode ? hexToBytes(RFC8032_MSG_HEX) : new TextEncoder().encode(msgString)
+      // Reuse bytes from step 7 so sign operates on exactly what was visualized
+      const msgBytes =
+        msgBytesRef.current ??
+        (katMode ? hexToBytes(RFC8032_MSG_HEX) : new TextEncoder().encode(msgString))
 
       const transFilename =
         artifacts.filenames.trans || artifacts.saveTransaction('solana', msgBytes)
@@ -588,15 +655,18 @@ const isValid = hsm_eddsaVerify(
         artifacts.saveSignature('solana', sigBytes)
       }
 
-      if (katMode) {
-        const matches = sigHex.toLowerCase() === RFC8032_SIG_HEX.toLowerCase()
-        const katLog = `\n\n[SIMULATION NOTE] Since the KAT Private Key was injected deterministically, this signature is perfectly reproducible.\n\n========================================\nRFC 8032 KAT VERIFICATION\n========================================\nExpected (KAT): ${RFC8032_SIG_HEX}\nActual C_Sign : ${sigHex}\nMatch: ${matches ? '✅ EXACT MATCH' : '❌ MISMATCH'}\n========================================\n`
-
-        result.SoftHSMv3 += katLog
+      if (katMode && result.SoftHSMv3) {
+        result.SoftHSMv3 += `\n\n[KAT NOTE] PKCS#11 C_GenerateKeyPair uses a random seed — this HSM signature cannot match the RFC 8032 vector.\nSee the RFC8032 Output tab for the deterministic KAT result.`
       }
 
-      result['OpenSSL'] =
-        `Ed25519 Signature Generated Successfully!\n\nSignature (Ed25519 Hex):\n${sigHex}\n\nSignature (Base58 - Solana Standard):\n${sigBase58}\n\n📂 Artifact Saved: ${sigFilename}`
+      const baseOutput = `Ed25519 Signature Generated Successfully!\n\nSignature (Ed25519 Hex):\n${sigHex}\n\nSignature (Base58 - Solana Standard):\n${sigBase58}\n\n📂 Artifact Saved: ${sigFilename}`
+      if (katMode) {
+        const matches = sigHex.toLowerCase() === RFC8032_SIG_HEX.toLowerCase()
+        result['RFC8032 Output'] =
+          `${baseOutput}\n\n========================================\nRFC 8032 KAT VERIFICATION\n========================================\nExpected : ${RFC8032_SIG_HEX}\nActual   : ${sigHex}\nMatch    : ${matches ? '✅ EXACT MATCH — implementation correct' : '❌ MISMATCH — check seed or message'}\n========================================`
+      } else {
+        result['OpenSSL'] = baseOutput
+      }
     } else if (step.id === 'verify') {
       const transFilename = artifacts.filenames.trans || 'solana_transdata.dat'
       const sigFilename = artifacts.filenames.sig || 'solana_signdata.sig'
@@ -604,7 +674,10 @@ const isValid = hsm_eddsaVerify(
       const transFile = useOpenSSLStore.getState().getFile(transFilename)
       const sigFile = useOpenSSLStore.getState().getFile(sigFilename)
 
-      if (!transFile || !sigFile) throw new Error('Missing artifacts for verification')
+      if (!transFile || !sigFile)
+        throw new Error(
+          'Missing artifacts for verification — please run step 7 (Visualize Message) and step 8 (Sign Message) first.'
+        )
 
       let verifyResult = ''
       let corruptMsg = ''
@@ -634,10 +707,12 @@ const isValid = hsm_eddsaVerify(
           )
           if (simulateError) {
             result.SoftHSMv3 = `Signature Verification FAILED locally within SoftHSM environment.\nNative execution intercepted corrupt signature bit.\nTrace sent to PKCS#11 Log.`
-          } else {
+          } else if (isValid) {
             result.SoftHSMv3 = `Signature Evaluation: ✅ VALID\nVerified strictly inside WebAssembly SoftHSM via C_Verify.\nTrace sent to PKCS#11 Log.`
+          } else {
+            result.SoftHSMv3 = `Signature Evaluation: ❌ INVALID\nC_Verify returned false — signature does not match.\nTrace sent to PKCS#11 Log.`
+            throw new Error('C_Verify: signature verification failed')
           }
-          if (isValid === undefined) throw new Error('C_Verify crashed internally')
         } catch (e) {
           result.SoftHSMv3 = `SoftHSM Error: ${e}`
         }
@@ -685,13 +760,7 @@ const isValid = hsm_eddsaVerify(
       <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
         <LiveHSMToggle
           hsm={hsm}
-          operations={[
-            'C_GenerateKeyPair',
-            'C_Sign',
-            'C_Verify',
-            'C_GetAttributeValue',
-            'C_CreateObject',
-          ]}
+          operations={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
         />
 
         <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-lg border border-border">
@@ -709,13 +778,16 @@ const isValid = hsm_eddsaVerify(
             >
               RFC 8032 KAT Mode
             </label>
+            <span className="text-[10px] text-muted-foreground leading-tight mt-0.5">
+              Known Answer Test — fixed seed, deterministic result
+            </span>
             <a
               href="https://datatracker.ietf.org/doc/html/rfc8032#section-7.1"
               target="_blank"
               rel="noreferrer"
-              className="text-[10px] text-primary hover:underline leading-none"
+              className="text-[10px] text-primary hover:underline leading-none mt-0.5"
             >
-              View Test Vectors
+              View Test Vectors →
             </a>
           </div>
         </div>
@@ -740,13 +812,7 @@ const isValid = hsm_eddsaVerify(
           onClear={hsm.clearLog}
           title="PKCS#11 Call Log — Solana Flow"
           emptyMessage="Execute a step to see live PKCS#11 operations."
-          filterFns={[
-            'C_GenerateKeyPair',
-            'C_Sign',
-            'C_Verify',
-            'C_GetAttributeValue',
-            'C_CreateObject',
-          ]}
+          filterFns={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
         />
       )}
 

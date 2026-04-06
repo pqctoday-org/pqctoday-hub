@@ -20,6 +20,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - Mobile-responsive layout with accessible `aria-sort` attributes; separate mobile list view
   - AI-powered context button on each row for classical↔PQC migration rationale
   - **Deep-linkable sub-tabs**: performance/security/sizes/usecases sub-tabs URL-persisted via `?subtab=` param
+  - **Region filter**: filter algorithms by standardisation body — NIST (US), IETF (Global), BSI/ANSSI (Europe), ETSI, KpqC (Korea), CACR (China); sortable Region column
+  - **Status filter**: filter by certification status — Certified, Candidate, To Be Checked; sortable Status column; Multivariate and Isogeny added to crypto-family filter
+  - **Algorithm Implementations Modal**: click the code icon on any PQC algorithm to see its open-source reference implementations; backed by `algo_product_xref` CSV; smart family-prefix fallback (SLH-DSA covers all SLH-DSA-\* variants); deep-links to `/migrate` catalog and `/library` entries
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - **Software ↔ PKCS#11 HSM mode toggle**: switch all tabs between the software stack and a
     SoftHSMv3 WASM engine backed by PKCS#11 v3.2 — run ML-KEM and ML-DSA through a real HSM
@@ -34,7 +37,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Sign & Verify**: Unified PQC/Classical panel — PQC (ML-DSA-44/65/87, SLH-DSA) and classical
     (RSA, ECDSA, EdDSA) signing share a single tab with a PQC/Classical toggle in software;
     ML-DSA-44/65/87 via `C_SignInit + C_Sign` / `C_VerifyInit + C_Verify` in HSM mode —
-    hedging mode, context string, pre-hash options
+    hedging mode, pre-hash options; SLH-DSA HSM panel includes PKCS#11 log and key inspector;
+    pre-hash mechanism labels (CKM_HASH_SLH_DSA_SHA256/SHA512/SHAKE128/SHAKE256)
   - **Key Wrap / Unwrap**: Dedicated PKCS#11 key wrapping tab with four mechanisms — AES-KW
     (RFC 3394), AES-KWP (RFC 5649), AES-GCM wrap, and RSA-OAEP wrap. Wrap symmetric or
     asymmetric keys, inspect wrapped blobs, and unwrap them back — all logged to the PKCS#11
@@ -65,7 +69,9 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (SP 800-38D), AES-CBC, AES-CTR, AES Key Wrap, HMAC-SHA-256/384/512 (FIPS 198-1),
     SHA-256, RSA-PSS-2048 signature verify, ECDSA P-256/SHA-256, ECDSA P-384, EdDSA (Ed25519),
     ML-KEM-768 key decapsulation (FIPS 203), and ML-DSA-65 sign/verify (FIPS 204); runs on both
-    C++ and Rust engines in Dual Mode simultaneously
+    C++ and Rust engines in Dual Mode simultaneously; **XMSS-SHA2_10_256 KAT** (RFC 8391 / NIST SP 800-208):
+    deterministic keygen self-test via `_set_kat_seed` seed injection hook — zero-seed produces a
+    known public key on every run, proving XMSS keygen is reproducible
   - **Key size display**: Software Key Store and HSM Key Registry both show per-key material
     sizes (B/KB) with sortable Size column and aggregate totals in the header
   - **Persona-aware simplification**: Curious and Executive personas see a streamlined Playground
@@ -78,6 +84,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
   - **TLS 1.3 Simulator** (Playground workshop tool): interactive client/server TLS 1.3 handshake simulator — configure cipher suites, key exchange groups (X25519, ML-KEM-768, X25519MLKEM768), mTLS, and PQC/hybrid certificate options; step-through handshake visualization with PKCS#11 log
+  - **Playground Workshop WIP badges**: tools under active development show a WIP badge (Wrench icon); WIP tools are hidden by default with a toggle to reveal or show only WIP tools — 6 tools currently marked WIP (SLH-DSA, Hybrid KEM, Envelope Encrypt, Token Migration, TEE Channel, Firmware Signing)
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
@@ -331,6 +338,8 @@ Test your PQC readiness with this interactive web application visualizing the gl
     comparison table (PQC Support, FIPS, License, Priority, Platforms, Capability, Version)
   - **Filtering**: Contextual cascading filters by category, PQC support status, and infrastructure
     layer with search; selected layer and sub-category persist across sessions
+  - **WIP filter**: toggle for work-in-progress catalog entries — hidden by default, `?wip=include`
+    shows WIP products alongside standard entries, `?wip=only` shows only WIP products; URL-persisted
 - **PQC Risk Assessment** (`/assess`): Comprehensive 14-step quantum risk evaluation wizard
   - **Country/Jurisdiction Picker**: select your regulatory jurisdiction to align deadlines with the PQC timeline
   - **Multi-select Sensitivity & Retention**: pick all applicable levels; scoring uses worst-case HNDL risk

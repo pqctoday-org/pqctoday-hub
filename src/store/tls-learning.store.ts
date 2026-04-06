@@ -27,6 +27,7 @@ export interface SimulationResult {
     side: 'client' | 'server' | 'connection' | 'system'
     event: string
     details: string
+    timestamp?: string
   }[]
   status: 'success' | 'failed' | 'error' | 'idle'
   error?: string

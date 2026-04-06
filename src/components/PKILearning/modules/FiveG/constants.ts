@@ -14,47 +14,50 @@ const { pubHandle, privHandle } = hsm_generateECKeyPair(hsmd, sessionHandle, 'X2
 const hnPrivHandle = await hsm_injectTestKey(
   hsmd, sessionHandle, hnPrivBytes, 'X25519'
 );`,
-      output: `[Home Network] Generating Profile B Key Pair...
-[Home Network] NIST P-256 Key generated.
-[Home Network] Public Key: 0x04...... (65 bytes) ready.`,
+      output: `[Home Network] Generating Profile A/B Key Pair...
+[Home Network] X25519 / P-256 Key generated.
+[Home Network] Public Key ready.`,
     },
     {
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The P-256 Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the Profile B identifier.',
+        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256).',
       code: `# Simulated Provisioning API
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pub.key'),
-  ProtectionScheme: 'Profile B (P-256)',
-  KeyId: 2
+  ProtectionScheme: 'Profile A (X25519) / Profile B (P-256)',
+  KeyId: 1 // 1 = Profile A (X25519), 2 = Profile B (P-256)
 });`,
       output: `[Provisioning] Writing to USIM EF_SUCI_Calc_Info...
-[Provisioning] Success. USIM configured for Profile B.`,
+[Provisioning] Success. USIM configured for selected protection scheme.`,
     },
     {
       id: 'retrieve_key',
       title: '3. Retrieve Home Network Public Key',
       description:
-        'The USIM reads the Home Network Public Key (HN_PubKey) for Profile B (P-256) from EF_SUCI_Calc_Info.',
-      code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // P-256 Public Key`,
-      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Scheme: Profile B (secp256r1)\n[USIM] HN Public Key: 0x04...... (65 bytes)`,
+        'The USIM reads the Home Network Public Key from EF_SUCI_Calc_Info. Profile A uses X25519 (Curve25519, 32 bytes); Profile B uses P-256 (secp256r1, 65-byte uncompressed point).',
+      code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // X25519 (32 bytes) or P-256 (65 bytes)`,
+      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Profile A: X25519 (Curve25519) | Profile B: P-256 (secp256r1)\n[USIM] HN Public Key: ready for ECDH key agreement`,
     },
     {
       id: 'gen_ephemeral_key',
       title: '4. Generate Ephemeral Key Pair',
       description:
-        'Generate a fresh ephemeral key pair using NIST P-256. This key pair is unique to this connection attempt.',
+        'Generate a fresh ephemeral key pair using the selected curve (X25519 for Profile A, P-256 for Profile B). This key pair is unique to this connection attempt and provides forward secrecy.',
       code: `// SoftHSMv3 WASM: Generate Ephemeral Key
-const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(hsmd, sessionHandle, 'P-256'
-, false, 'sign');`,
-      output: `[USIM] Generating Ephemeral Key Pair (P-256)...\n[USIM] Ephemeral PubKey: 0x04...... (65 bytes)`,
+// Profile A uses X25519; Profile B uses P-256
+const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
+  hsmd, sessionHandle,
+  'X25519' /* or 'P-256' for Profile B */
+);`,
+      output: `[USIM] Generating Ephemeral Key Pair (X25519 or P-256)...\n[USIM] Ephemeral key pair generated and stored in SoftHSM3.`,
     },
     {
       id: 'compute_shared_secret',
       title: '5. Compute Shared Secret (ECDH)',
       description:
-        "Perform P-256 Diffie-Hellman Key Agreement. The USIM combines its ephemeral private key with the network's public key.",
+        "Perform Diffie-Hellman Key Agreement using the selected curve (X25519 for Profile A, P-256 for Profile B). The USIM combines its ephemeral private key with the Home Network's public key to derive the shared secret Z.",
       code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (ECDH)
 const sharedSecretHandle = hsm_ecdhDerive(
   hsmd, 
@@ -84,9 +87,10 @@ const kMac = rawKDFBytes.slice(16, 48);`,
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
       description: 'This is the Encryption Point where the MSIN becomes ciphertext.',
-      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-GCM)
+// Note: 3GPP TS 33.501 specifies AES-CTR; GCM used pending CTR bridge support
 const ciphertext = hsm_aesEncrypt(
-  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'CTR'
+  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'gcm'
 );`,
       output: `[USIM] Encrypting MSIN...\n[USIM] Ciphertext: 0x4f8a2b1c9d... (5 bytes)`,
     },
@@ -121,7 +125,7 @@ const macTagFull = hsm_hmac(
         {
           label: 'Ciphertext',
           value: '0x4F 0x8A 0x2B ...',
-          description: 'Encrypted MSIN (AES-128-CTR).',
+          description: 'Encrypted MSIN (AES-128-GCM; CTR pending bridge support).',
         },
         {
           label: 'MAC Tag',
@@ -130,8 +134,9 @@ const macTagFull = hsm_hmac(
         },
         {
           label: 'SUCI (Output)',
-          value: 'suci-0-310-260-2-1-0x04...-0x4f...-0xa1...',
-          description: 'Concealed Identifier (Profile B).',
+          value: 'suci-0-310-260-{1|2}-1-{ephPub}-{ciphertext}-{mac}',
+          description:
+            'Concealed Identifier. Scheme ID: 1 = Profile A (X25519), 2 = Profile B (P-256).',
         },
         {
           label: 'SUCI Hex',
@@ -142,10 +147,11 @@ const macTagFull = hsm_hmac(
     },
     {
       id: 'assemble_suci',
-      title: '10. Assemble SUCI (Profile B)',
-      description: 'Combine parameters. Note the different scheme ID (2) and Public Key format.',
-      code: `const suci = {\n  scheme: 2,\n  eccPubKey: ephPubKey,\n  ciphertext: encryptedMSIN,\n  macTag: macTag\n};`,
-      output: `[USIM] SUCI-0-310-260-2-1-0x04...-0x4f8a...-0xa1b2...`,
+      title: '10. Assemble SUCI',
+      description:
+        'Combine parameters into the final SUCI. Profile A uses scheme ID 1 (X25519 ephemeral key, 32 bytes); Profile B uses scheme ID 2 (P-256 uncompressed point, 65 bytes).',
+      code: `const suci = {\n  scheme: 1, // Profile A (X25519); use 2 for Profile B (P-256)\n  eccPubKey: ephPubKey,\n  ciphertext: encryptedMSIN,\n  macTag: macTag\n};`,
+      output: `[USIM] SUCI-0-310-260-{1|2}-1-{ephPub}-0x4f8a...-0xa1b2...`,
     },
     {
       id: 'sidf_decryption',
@@ -158,7 +164,7 @@ const sidfSecretHandle = hsm_ecdhDerive(
 const msin = hsm_aesDecrypt(
   hsmd, sessionHandle, hKenc, ciphertext, iv, 'CTR'
 );`,
-      output: `[SIDF] Processing SUCI (Profile B)...
+      output: `[SIDF] Processing SUCI...
 [SIDF] SUPI Recovered: 310260123456789`,
     },
   ],
@@ -168,7 +174,7 @@ const msin = hsm_aesDecrypt(
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile C)',
       description:
-        'For Profile C (Post-Quantum), the home network operator provisions a key pair using ML-KEM (Kyber), a lattice-based algorithm resistant to quantum attacks. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment.',
+        'For Profile C (Post-Quantum), the home network operator provisions a key pair using ML-KEM (FIPS 203), a lattice-based key encapsulation mechanism resistant to quantum attacks. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment.',
       code: `// SoftHSMv3 WASM: Generate ML-KEM-768 Key Pair
 const { pubHandle, privHandle } = hsm_pqcGenerateKeyPair(
   hsmd, sessionHandle, 'ML-KEM-768'
@@ -194,9 +200,9 @@ USIM.write('EF_SUCI_Calc_Info', {
     {
       id: 'retrieve_key',
       title: '3. Retrieve Home Network Public Key',
-      description: 'The USIM reads the HN Public Key for Profile C (ML-KEM / Kyber PQC).',
-      code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // ML-KEM Public Key`,
-      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Scheme: Profile C (ML-KEM/Kyber)\n[USIM] HN Public Key: 0x... (1184 bytes)`,
+      description: 'The USIM reads the HN Public Key for Profile C (ML-KEM-768, FIPS 203).',
+      code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // ML-KEM-768 Public Key (1184 bytes)`,
+      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Scheme: Profile C (ML-KEM-768, FIPS 203)\n[USIM] HN Public Key: 0x... (1184 bytes)`,
     },
     {
       id: 'gen_ephemeral_key',
@@ -236,9 +242,10 @@ mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
       description: 'This is the Encryption Point (AES-256-CTR).',
-      code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-CTR)
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-GCM)
+// Note: 3GPP TS 33.501 specifies AES-CTR; GCM used pending CTR bridge support
 const ciphertext = hsm_aesEncrypt(
-  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'CTR'
+  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'gcm'
 );`,
       output: `[USIM] Encrypting MSIN (AES-256)...\n[USIM] Ciphertext: 0x...`,
     },

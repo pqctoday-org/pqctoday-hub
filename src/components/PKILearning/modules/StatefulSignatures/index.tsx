@@ -210,12 +210,7 @@ export const StatefulSignaturesModule: React.FC = () => {
               {currentPart === 0 && (
                 <LMSKeyGenDemo key={`lms-${configKey}`} initialParamId={workshopConfig?.paramId} />
               )}
-              {currentPart === 1 && (
-                <XMSSKeyGenDemo
-                  key={`xmss-${configKey}`}
-                  initialParamId={workshopConfig?.paramId}
-                />
-              )}
+              {currentPart === 1 && <XMSSKeyGenDemo key={`xmss-${configKey}`} />}
               {currentPart === 2 && <StateManagementVisualizer key={`state-${configKey}`} />}
               {currentPart === 3 && <SLHDSALiveDemo key={`slhdsa-${configKey}`} />}
             </div>

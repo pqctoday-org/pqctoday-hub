@@ -135,19 +135,65 @@ export const TLSSummary: React.FC<TLSSummaryProps> = ({ events, status, mTLSEnab
               )}
               {isHRR && (
                 <p className="mt-1 text-status-warning">
-                  HelloRetryRequest occurred — the server requested a different key exchange group,
-                  adding an extra round trip ({roundTrips?.details || '2'}-RTT instead of 1-RTT).
-                  This happens during PQC migration when client and server group preferences differ.
+                  HelloRetryRequest occurred — the server did not support the client&apos;s
+                  initially preferred group
+                  {keyExchange ? (
+                    <>
+                      {' '}
+                      and retried using <strong className="text-foreground">{keyExchange}</strong>
+                    </>
+                  ) : null}
+                  , adding an extra round trip ({roundTrips?.details || '2'}-RTT instead of 1-RTT).
+                  To avoid HRR, make sure both sides list a common group (e.g. X25519) first.
                 </p>
               )}
             </>
           ) : (
-            <p>
-              The TLS handshake failed.{' '}
-              {events.find((e) => e.event === 'cert_verify_error')
-                ? 'A certificate verification error occurred. Check that the trusted Root CA matches the peer certificate.'
-                : 'Check the protocol log below for details on the negotiation failure.'}
-            </p>
+            <>
+              {(() => {
+                const certError = events.find((e) => e.event === 'cert_verify_error')
+                const errorEvent = events.find((e) => e.event === 'error')
+                const errorDetails = errorEvent?.details?.toLowerCase() ?? ''
+                const noGroupMatch =
+                  errorDetails.includes('no shared group') ||
+                  errorDetails.includes('no supported groups') ||
+                  errorDetails.includes('no protocols available')
+                const noCipherMatch =
+                  errorDetails.includes('no cipher') ||
+                  errorDetails.includes('no shared cipher') ||
+                  errorDetails.includes('no suitable cipher')
+
+                return (
+                  <div>
+                    <p className="font-medium">The TLS handshake failed.</p>
+                    {certError ? (
+                      <p className="mt-1 text-status-error">
+                        Certificate verification error — the server&apos;s certificate could not be
+                        validated. Make sure the Trusted Root CA in the client panel matches the CA
+                        that signed the server certificate.
+                      </p>
+                    ) : noGroupMatch ? (
+                      <p className="mt-1 text-status-error">
+                        No key exchange group in common — client and server have no shared group.
+                        Add a common group (e.g. <strong>X25519</strong>) to both sides.
+                      </p>
+                    ) : noCipherMatch ? (
+                      <p className="mt-1 text-status-error">
+                        No cipher suite in common — client and server offered no matching ciphers.
+                        Ensure both sides include at least one shared cipher (e.g.{' '}
+                        <strong>TLS_AES_256_GCM_SHA384</strong>).
+                      </p>
+                    ) : (
+                      <p className="mt-1 text-muted-foreground">
+                        Check the Protocol Log tab below for detailed error messages.
+                        {hrrEvent &&
+                          ' A HelloRetryRequest occurred but the handshake still failed — the server may not support any of the offered groups.'}
+                      </p>
+                    )}
+                  </div>
+                )
+              })()}
+            </>
           )}
         </div>
       </div>

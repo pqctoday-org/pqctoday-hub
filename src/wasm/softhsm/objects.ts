@@ -22,6 +22,8 @@ import {
   CKA_VALUE_LEN,
   CKA_VERIFY,
   CKA_WRAP,
+  CKA_HSS_KEYS_REMAINING,
+  CKA_XMSS_KEYS_REMAINING,
 } from './constants'
 import {
   type AttrDef,
@@ -153,6 +155,10 @@ export interface KeyAttributeSet {
   ckValueLen: number | null
   /** CKA_CHECK_VALUE (KCV) bytes; present on symmetric/secret keys */
   ckCheckValue?: Uint8Array | null
+  /** CKA_HSS_KEYS_REMAINING: remaining sign ops for HSS keys (PKCS#11 v3.2 §6.14) */
+  ckHssKeysRemaining: number | null
+  /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
+  ckXmssKeysRemaining: number | null
 }
 
 /** Read common PKCS#11 attributes for any key object in the current session. */
@@ -185,6 +191,8 @@ export const hsm_getKeyAttributes = (
     ckEncapsulate: b(CKA_ENCAPSULATE),
     ckDecapsulate: b(CKA_DECAPSULATE),
     ckValueLen: u(CKA_VALUE_LEN),
+    ckHssKeysRemaining: u(CKA_HSS_KEYS_REMAINING),
+    ckXmssKeysRemaining: u(CKA_XMSS_KEYS_REMAINING),
     ckCheckValue: (() => {
       try {
         return hsm_getKeyCheckValue(M, hSession, handle)

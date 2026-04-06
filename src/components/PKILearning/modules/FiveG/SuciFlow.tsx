@@ -58,13 +58,13 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
 ]
 import {
   hsm_generateECKeyPair,
+  hsm_generateAESKey,
+  hsm_generateHMACKey,
   hsm_generateMLKEMKeyPair,
   hsm_pqcEncap,
   hsm_pqcDecap,
-  hsm_generateAESKey,
   hsm_aesEncrypt,
   hsm_hmac,
-  hsm_generateHMACKey,
   hsm_extractKeyValue,
   hsm_extractECPoint,
   hsm_ecdhDerive,
@@ -132,7 +132,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
   const [customSupi, setCustomSupi] = useState('310260123456789')
   const hsm = useHSM()
 
-  // Track HSM key handles across steps for ECDH derive + HKDF
+  // Track HSM key handles and derived key bytes across steps
   const hsmHandlesRef = useRef<{
     ciphertext?: Uint8Array
     hnPubHandle?: number
@@ -140,6 +140,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
     ephPubHandle?: number
     ephPrivHandle?: number
     sharedSecretHandle?: number
+    kEncBytes?: Uint8Array
+    kMacBytes?: Uint8Array
   }>({})
 
   // Wrap setters to also clear crypto state when switching profiles/modes
@@ -157,7 +159,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
   }
 
   // Select steps based on profile
-  const rawSteps = profile === 'A' ? FIVE_G_CONSTANTS.SUCI_STEPS_A : FIVE_G_CONSTANTS.SUCI_STEPS_C
+  const rawSteps = profile === 'C' ? FIVE_G_CONSTANTS.SUCI_STEPS_C : FIVE_G_CONSTANTS.SUCI_STEPS_A
 
   // Map to Step interface
   const steps: Step[] = rawSteps.map((step, index) => ({
@@ -238,35 +240,35 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               generatedAt: new Date().toISOString(),
             })
             hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          } else {
+            const M = hsm.moduleRef.current!
+            const hSession = hsm.hSessionRef.current!
+            const curve = (profile === 'A' ? 'X25519' : 'P-256') as 'X25519' | 'P-256'
+            const { pubHandle, privHandle } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              curve,
+              false,
+              '5G Home Network Key (Telecom)'
+            )
+            hsmHandlesRef.current.hnPubHandle = pubHandle
+            hsmHandlesRef.current.hnPrivHandle = privHandle
+            hsm.addKey({
+              handle: pubHandle,
+              label: `HN Key (${curve})`,
+              family: 'ecdsa',
+              role: 'public',
+              generatedAt: new Date().toISOString(),
+            })
+            hsm.addKey({
+              handle: privHandle,
+              label: `HN Key (${curve})`,
+              family: 'ecdsa',
+              role: 'private',
+              generatedAt: new Date().toISOString(),
+            })
+            hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
           }
-        } else {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const curve = (profile === 'A' ? 'X25519' : 'P-256') as 'X25519' | 'P-256'
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(
-            M,
-            hSession,
-            curve,
-            false,
-            '5G Home Network Key (Telecom)'
-          )
-          hsmHandlesRef.current.hnPubHandle = pubHandle
-          hsmHandlesRef.current.hnPrivHandle = privHandle
-          hsm.addKey({
-            handle: pubHandle,
-            label: `HN Key (${curve})`,
-            family: 'ecdsa',
-            role: 'public',
-            generatedAt: new Date().toISOString(),
-          })
-          hsm.addKey({
-            handle: privHandle,
-            label: `HN Key (${curve})`,
-            family: 'ecdsa',
-            role: 'private',
-            generatedAt: new Date().toISOString(),
-          })
-          hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const res = await fiveGService.generateNetworkKey(profile, pqcMode)
@@ -287,7 +289,18 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const aesHandle = hsm_generateAESKey(M, hSession, profile === 'C' ? 256 : 128, true, false, false, false, false, false, '5G MSIN Encryption Key')
+          const aesHandle = hsm_generateAESKey(
+            M,
+            hSession,
+            profile === 'C' ? 256 : 128,
+            true,
+            false,
+            false,
+            false,
+            false,
+            false,
+            '5G MSIN Encryption Key'
+          )
           hsm.addKey({
             handle: aesHandle,
             label: `MSIN Enc Key (AES-${profile === 'C' ? 256 : 128})`,
@@ -299,11 +312,17 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const supiStr = customSupi || '310260123456789'
           const msinString = supiStr.length > 6 ? supiStr.slice(6) : supiStr
           const msin = new TextEncoder().encode(msinString)
-          const ct = hsm_aesEncrypt(M, hSession, aesHandle, msin, 'cbc')
+          // CTR not yet in hsm_aesEncrypt; GCM is the closest (stream, no padding)
+          const ct = hsm_aesEncrypt(M, hSession, aesHandle, msin, 'gcm')
+          // Store ciphertext + IV concatenated so sidf_decryption can round-trip
+          const combined = new Uint8Array(ct.iv.length + ct.ciphertext.length)
+          combined.set(ct.iv, 0)
+          combined.set(ct.ciphertext, ct.iv.length)
+          hsmHandlesRef.current.ciphertext = combined
           const ctHex = Array.from(ct.ciphertext)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `MSIN plaintext:  ${msinString}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          hsmResult = `MSIN plaintext:  ${msinString}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM (AES-GCM; CTR not yet in bridge). (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.encryptMSIN()
@@ -351,16 +370,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsmHandlesRef.current.hnPubHandle
         let hsmResult = ''
         if (hsmActive) {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const pubBytes =
-            profile === 'C'
-              ? hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-              : hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-          const pubHex = Array.from(pubBytes)
-            .map((b: number) => b.toString(16).padStart(2, '0'))
-            .join('')
-          hsmResult = `Public key bytes: ${pubBytes.length}\nKey (hex): ${pubHex.slice(0, 64)}...\n\nHN public key extracted from SoftHSM3 → provisioned to USIM. (Completed)`
+          const curve = profile === 'A' ? 'X25519' : profile === 'B' ? 'P-256' : 'ML-KEM-768'
+          hsmResult = `HN Public Key Handle:  ${hsmHandlesRef.current.hnPubHandle}\nHN Private Key Handle: ${hsmHandlesRef.current.hnPrivHandle}\nKey type: ${curve}\n\nHome Network public key provisioned to USIM via PKCS#11 handle.\nKey available for ECDH/KEM operations in subsequent steps.`
         }
 
         const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
@@ -379,13 +390,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsmHandlesRef.current.hnPubHandle
         let hsmResult = ''
         if (hsmActive) {
-          const M = hsm.moduleRef.current!
-          const hSession = hsm.hSessionRef.current!
-          const pubBytes =
-            profile === 'C'
-              ? hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-              : hsm_extractECPoint(M, hSession, hsmHandlesRef.current.hnPubHandle!)
-          hsmResult = `Public key size: ${pubBytes.length} bytes\nProfile ${profile}: ${profile === 'A' ? 'X25519' : 'P-256'} curve\n\nUE retrieved HN public key from USIM (HSM-backed). (Completed)`
+          const curve = profile === 'A' ? 'X25519' : profile === 'B' ? 'P-256' : 'ML-KEM-768'
+          hsmResult = `HN Public Key Handle: ${hsmHandlesRef.current.hnPubHandle}\nKey type: ${curve}\n\nUE retrieved HN public key from USIM (HSM-backed). Key ready for ${profile === 'C' ? 'ML-KEM encapsulation' : 'ECDH key agreement'}. (Completed)`
         }
 
         const targetFile = artifacts.hnPubFile || 'sim_hn_pub.key'
@@ -418,7 +424,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsm.addKey({
             handle: pubHandle,
             label: `Eph Key (${curve})`,
-            family: 'ecdsa',
+            family: 'ecdh',
             role: 'public',
             purpose: 'tls',
             generatedAt: new Date().toISOString(),
@@ -426,16 +432,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsm.addKey({
             handle: privHandle,
             label: `Eph Key (${curve})`,
-            family: 'ecdsa',
+            family: 'ecdh',
             role: 'private',
             purpose: 'tls',
             generatedAt: new Date().toISOString(),
           })
-          const ephPubBytes = hsm_extractECPoint(M, hSession, pubHandle)
-          const ephPubHex = Array.from(ephPubBytes)
-            .map((b: number) => b.toString(16).padStart(2, '0'))
-            .join('')
-          hsmResult = `→ Ephemeral pub handle:  ${pubHandle}\n→ Ephemeral priv handle: ${privHandle}\n→ Ephemeral pub key: ${ephPubHex.slice(0, 64)}...\n\nEphemeral key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+          hsmResult = `→ Ephemeral pub handle:  ${pubHandle}\n→ Ephemeral priv handle: ${privHandle}\nKey type: ${curve}\n\nEphemeral key pair generated via SoftHSM3 WASM.\nKey handles ready for ECDH in next step.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const res = await fiveGService.generateEphemeralKey(profile, pqcMode)
@@ -603,7 +605,49 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             .join('')
           hsmResult = `Ciphertext length: ${hsmHandlesRef.current.ciphertext.length} bytes\n→ Decapsulated Secret Handle: ${secretHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nML-KEM Decapsulation executed via SoftHSM3 WASM.`
         } else if (hsmActive && hsmHandlesRef.current.ephPubHandle) {
-          hsmResult = '(Decryption using ECDH in SoftHSM3...)'
+          const M = hsm.moduleRef.current!
+          const hSession = hsm.hSessionRef.current!
+          // SIDF uses the HN private key + UE ephemeral public key to re-derive Z
+          const ephPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
+          const sidfSecretHandle = hsm_ecdhDerive(
+            M,
+            hSession,
+            hsmHandlesRef.current.hnPrivHandle!,
+            ephPubBytes,
+            undefined,
+            undefined,
+            { keyLen: 32, derive: true, extractable: true }
+          )
+          hsm.addKey({
+            handle: sidfSecretHandle,
+            label: 'SIDF Z (ECDH)',
+            family: 'aes',
+            role: 'secret',
+            purpose: 'application',
+            generatedAt: new Date().toISOString(),
+          })
+          const sidfSecretBytes = hsm_extractKeyValue(M, hSession, sidfSecretHandle)
+          const sidfSecretHex = Array.from(sidfSecretBytes)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          // Re-derive K_enc from shared secret (mirrors derive_keys step)
+          const salt = new TextEncoder().encode('5G-SUCI-KDF-salt')
+          const infoEnc = new TextEncoder().encode('encryption-key')
+          const kEncSidf = hsm_hkdf(
+            M,
+            hSession,
+            sidfSecretHandle,
+            CKM_SHA256,
+            true,
+            true,
+            salt,
+            infoEnc,
+            16
+          )
+          const kEncHex = Array.from(kEncSidf)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          hsmResult = `hnPriv handle: ${hsmHandlesRef.current.hnPrivHandle}\nephPub bytes: ${ephPubBytes.length}\n→ SIDF Shared Secret Handle: ${sidfSecretHandle}\n→ Z (hex): ${sidfSecretHex.slice(0, 64)}...\n→ K_enc re-derived (hex): ${kEncHex}\n\nSIDF ECDH executed via SoftHSM3 WASM.\nMSIN would be decrypted with K_enc above.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.sidfDecrypt(profile)
@@ -800,8 +844,6 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
                 : 'Finish & View Dashboard'
         }
       />
-
-
 
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}

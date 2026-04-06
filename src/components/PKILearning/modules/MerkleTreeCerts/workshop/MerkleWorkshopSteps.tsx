@@ -2,6 +2,7 @@
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback } from 'react'
 import { Trash2, TreePine, Search, ShieldCheck, BarChart3, FileCheck } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import { MerkleTreeBuilder } from './MerkleTreeBuilder'
 import { InclusionProofGenerator } from './InclusionProofGenerator'
 import { ProofVerifier } from './ProofVerifier'
@@ -76,13 +77,14 @@ export const MerkleWorkshopSteps: React.FC = () => {
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Reset button */}
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={handleReset}
-          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+          variant="outline"
+          className="flex items-center gap-2 bg-destructive/10 text-destructive border-destructive/20 hover:bg-destructive/20 text-sm"
         >
           <Trash2 size={16} />
           Reset
-        </button>
+        </Button>
       </div>
 
       {/* Part Progress Steps */}
@@ -94,10 +96,11 @@ export const MerkleWorkshopSteps: React.FC = () => {
             const Icon = part.icon
             const isCompleted = completedSteps.has(idx)
             return (
-              <button
+              <Button
                 key={part.id}
                 onClick={() => handlePartChange(idx)}
-                className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                variant="ghost"
+                className={`flex flex-col items-center gap-2 group h-auto px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
@@ -114,7 +117,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
                 <span className="text-sm font-medium hidden md:block">
                   {part.title.split(':')[0]}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -130,6 +133,13 @@ export const MerkleWorkshopSteps: React.FC = () => {
           stepIndex={currentPart}
           totalSteps={PARTS.length}
         />
+        {/* E4 — Steps 1 & 2 are independent exercises, not a continuous pipeline */}
+        {(currentPart === 0 || currentPart === 1) && (
+          <p className="text-[10px] text-muted-foreground mb-4 italic">
+            Note: Steps 1 and 2 are independent exercises. Step 2 uses its own built-in
+            8-certificate tree — the tree you build in Step 1 is separate.
+          </p>
+        )}
         {currentPart === 0 && <MerkleTreeBuilder key={`build-${configKey}`} />}
         {currentPart === 1 && <InclusionProofGenerator key={`proof-${configKey}`} />}
         {currentPart === 2 && <ProofVerifier key={`verify-${configKey}`} />}
@@ -139,27 +149,28 @@ export const MerkleWorkshopSteps: React.FC = () => {
 
       {/* Part Navigation */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
-        <button
+        <Button
           onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
           disabled={currentPart === 0}
-          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+          variant="outline"
+          className="px-6 min-h-[44px] rounded-lg text-foreground"
         >
           &larr; Previous Step
-        </button>
+        </Button>
         {currentPart === PARTS.length - 1 ? (
-          <button
+          <Button
             onClick={() => setCompletedSteps((prev) => new Set(prev).add(currentPart))}
-            className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+            className="px-6 min-h-[44px] bg-accent text-accent-foreground font-bold hover:bg-accent/90"
           >
             Complete ✓
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             onClick={() => handlePartChange(currentPart + 1)}
-            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 min-h-[44px] bg-primary text-black font-bold hover:bg-primary/90"
           >
             Next Step &rarr;
-          </button>
+          </Button>
         )}
       </div>
     </div>

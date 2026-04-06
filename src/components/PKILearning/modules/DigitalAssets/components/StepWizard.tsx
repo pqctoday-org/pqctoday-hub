@@ -3,6 +3,8 @@ import React, { useEffect, useRef } from 'react'
 import { ChevronRight, ChevronLeft, Play, CheckCircle, AlertCircle } from 'lucide-react'
 import { OutputFormatter } from './OutputFormatter'
 import { CopyButton } from '@/components/ui/CopyButton'
+import { Button } from '@/components/ui/button'
+import { CodeBlock } from '@/components/ui/code-block'
 
 export interface Step {
   id: string
@@ -133,36 +135,35 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             </table>
           </div>
         ) : (
-          <div className="bg-muted/40 rounded-lg p-3 sm:p-4 font-mono text-xs sm:text-sm border border-border mb-4 overflow-x-auto">
-            <div className="flex items-center justify-between mb-2 border-b border-border pb-2">
-              <span className="text-xs text-muted-foreground uppercase">{step.language}</span>
-            </div>
-            <pre className="text-primary whitespace-pre-wrap break-all break-words max-w-full">
-              {step.code}
-            </pre>
-          </div>
+          <CodeBlock
+            code={step.code}
+            language={step.language}
+            className="mb-4 mt-0 text-xs sm:text-sm"
+          />
         )}
 
         {/* Custom Controls (if any) */}
         {step.customControls}
 
         <div className="mt-auto flex flex-col sm:flex-row gap-3 sm:gap-4 pt-6 border-t border-border">
-          <button
+          <Button
+            variant="outline"
             onClick={onBack}
             disabled={isExecuting}
             aria-label="Go to previous step"
-            className="px-4 py-3 min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-muted/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+            className="min-h-[44px] min-w-[44px] gap-2"
           >
             <ChevronLeft size={16} />
             <span className="hidden sm:inline">Back</span>
-          </button>
+          </Button>
 
           {!isStepComplete ? (
             <>
-              <button
+              <Button
+                variant="default"
                 onClick={onExecute}
                 disabled={isExecuting}
-                className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-primary hover:bg-primary/90 text-primary-foreground font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="flex-1 min-h-[44px] gap-2"
               >
                 {isExecuting ? (
                   <>
@@ -175,34 +176,35 @@ export const StepWizard: React.FC<StepWizardProps> = ({
                     {step.actionLabel || 'Execute Command'}
                   </>
                 )}
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={onNext}
                 disabled={currentStepIndex === steps.length - 1 || isExecuting}
-                className="px-4 py-3 min-h-[44px] min-w-[44px] rounded-lg border border-border text-foreground hover:bg-muted/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 title="Skip this step"
                 aria-label="Proceed to next step"
+                className="min-h-[44px] min-w-[44px] gap-2"
               >
                 <span className="hidden sm:inline">Skip</span>
                 <ChevronRight size={16} />
-              </button>
+              </Button>
             </>
           ) : currentStepIndex === steps.length - 1 ? (
-            <button
+            <Button
               onClick={onComplete || onBack}
-              className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
             >
               <CheckCircle size={16} />
               {completeLabel || 'Completed'}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               onClick={onNext}
-              className="flex-1 px-4 py-3 min-h-[44px] rounded-lg bg-success hover:bg-success/90 text-success-foreground font-medium transition-colors flex items-center justify-center gap-2"
+              className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
             >
               Next Step
               <ChevronRight size={16} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -227,17 +229,18 @@ export const StepWizard: React.FC<StepWizardProps> = ({
           {output && typeof output === 'object' && (
             <div className="flex px-2 gap-1 border-t border-border bg-background/50">
               {Object.keys(output).map((tab) => (
-                <button
+                <Button
                   key={tab}
+                  variant="ghost"
                   onClick={() => setActiveTabOverride(tab)}
-                  className={`px-3 py-1.5 text-xs font-medium rounded-t-lg border-b-2 transition-colors ${
+                  className={`px-3 py-1.5 h-auto text-xs font-medium rounded-t-lg border-b-2 transition-colors ${
                     activeTab === tab
                       ? 'border-primary text-primary bg-muted/40'
                       : 'border-transparent text-muted-foreground hover:text-foreground hover:bg-muted/20'
                   }`}
                 >
                   {tab}
-                </button>
+                </Button>
               ))}
             </div>
           )}

@@ -20,7 +20,7 @@ import {
   getSoftHSMCppModule,
   getSoftHSMRustModule,
   createLoggingProxy,
-  hsm_getFirstSlot,
+  hsm_getFirstFreeSlot,
   hsm_initToken,
   hsm_openUserSession,
 } from '../wasm/softhsm'
@@ -51,6 +51,11 @@ export interface UseHSMResult {
   /** Slot index holding the initialized token */
   slotRef: React.MutableRefObject<number>
 
+  // ── Engine ────────────────────────────────────────────────────────────────
+  /** Currently selected engine ('cpp' | 'rust'). Change before calling initialize(). */
+  engine: 'cpp' | 'rust'
+  setEngine: (e: 'cpp' | 'rust') => void
+
   // ── PKCS#11 call log ───────────────────────────────────────────────────────
   /** All PKCS#11 calls since initialize() (newest first) */
   log: Pkcs11LogEntry[]
@@ -72,10 +77,19 @@ export interface UseHSMResult {
   finalize: () => void
 }
 
-export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
+export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
   const moduleRef = useRef<SoftHSMModule | null>(null)
   const hSessionRef = useRef<number>(0)
   const slotRef = useRef<number>(0)
+
+  // engineRef always holds the latest selection so initialize() never needs
+  // to be re-created when the user changes engine between sessions.
+  const engineRef = useRef<'cpp' | 'rust'>(moduleEngine)
+  const [engine, setEngineState] = useState<'cpp' | 'rust'>(moduleEngine)
+  const setEngine = useCallback((e: 'cpp' | 'rust') => {
+    engineRef.current = e
+    setEngineState(e)
+  }, [])
 
   const [phase, setPhase] = useState<HsmPhase>('idle')
   const [error, setError] = useState<string | null>(null)
@@ -132,7 +146,7 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
     clearLog()
     clearKeys()
     try {
-      const rawModule = await (moduleEngine === 'rust'
+      const rawModule = await (engineRef.current === 'rust'
         ? getSoftHSMRustModule()
         : getSoftHSMCppModule())
       const proxy = createLoggingProxy(rawModule, (e) => addLog(e))
@@ -144,9 +158,14 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
         throw new Error(`C_Initialize failed: 0x${initRv.toString(16).padStart(8, '0')}`)
       }
 
-      // C_GetSlotList → C_InitToken → C_GetSlotList (re-enumerate)
-      const slot0 = hsm_getFirstSlot(proxy as unknown as SoftHSMModule)
-      const newSlot = hsm_initToken(proxy as unknown as SoftHSMModule, slot0, SO_PIN, TOKEN_LABEL)
+      // C_GetSlotList (free slot) → C_InitToken → C_GetSlotList (re-enumerate)
+      const freeSlot = hsm_getFirstFreeSlot(proxy as unknown as SoftHSMModule)
+      const newSlot = hsm_initToken(
+        proxy as unknown as SoftHSMModule,
+        freeSlot,
+        SO_PIN,
+        TOKEN_LABEL
+      )
       slotRef.current = newSlot
 
       // C_OpenSession → C_Login(SO) → C_InitPIN → C_Login(USER)
@@ -164,7 +183,7 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
       setError(msg)
       setPhase('error')
     }
-  }, [phase, moduleEngine, clearLog, clearKeys, addLog])
+  }, [phase, clearLog, clearKeys, addLog])
 
   const finalize = useCallback(() => {
     if (moduleRef.current && hSessionRef.current) {
@@ -188,6 +207,8 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'cpp'): UseHSMResult {
     moduleRef,
     hSessionRef,
     slotRef,
+    engine,
+    setEngine,
     log,
     addLog,
     clearLog,

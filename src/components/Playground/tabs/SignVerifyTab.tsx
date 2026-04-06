@@ -28,6 +28,8 @@ import {
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
 import { HsmReadyGuard } from '../hsm/shared'
+import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { SLH_DSA_PARAM_SET_OPTIONS } from './softhsm/SoftHsmUI'
 
 // FIPS 205 §11 HashSLH-DSA approved hash functions only
@@ -498,11 +500,30 @@ const HsmSignPanel: React.FC<{ initialAlgo?: string; onAlgoChange?: (algo: strin
 
 // ── HSM SLH-DSA Sign Panel ────────────────────────────────────────────────────
 
+// Map FIPS205_SLH_PREHASH_OPTIONS id → display mechanism name
+const SLH_DSA_PREHASH_MECH_LABEL: Record<string, string> = {
+  sha256: 'CKM_HASH_SLH_DSA_SHA256',
+  sha512: 'CKM_HASH_SLH_DSA_SHA512',
+  shake128: 'CKM_HASH_SLH_DSA_SHAKE128',
+  shake256: 'CKM_HASH_SLH_DSA_SHAKE256',
+}
+
 const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = ({
   onAlgoChange,
 }) => {
-  const { moduleRef, crossCheckModuleRef, hSessionRef, addHsmKey, engineMode, addHsmLog } =
-    useHsmContext()
+  const {
+    moduleRef,
+    crossCheckModuleRef,
+    hSessionRef,
+    addHsmKey,
+    engineMode,
+    addHsmLog,
+    hsmLog,
+    clearHsmLog,
+    keysForFamily,
+    removeHsmKey,
+    isReady,
+  } = useHsmContext()
 
   const [paramSetId, setParamSetId] = useState('sha2-128s')
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
@@ -510,8 +531,6 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   const [signature, setSignature] = useState<Uint8Array | null>(null)
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
   const [preHash, setPreHash] = useState<'' | SLHDSAPreHash>('')
-  const [context, setContext] = useState('')
-  const [deterministic, setDeterministic] = useState(false)
   const [extractable, setExtractable] = useState(false)
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
@@ -541,16 +560,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     }
   }
 
-  const buildOpts = (): SLHDSASignOptions | undefined => {
-    const opts: SLHDSASignOptions = {}
-    if (preHash) opts.preHash = preHash
-    // Context and deterministic only apply to pure SLH-DSA (not pre-hash variants)
-    if (!preHash) {
-      if (context) opts.context = new TextEncoder().encode(context)
-      if (deterministic) opts.deterministic = true
-    }
-    return Object.keys(opts).length > 0 ? opts : undefined
-  }
+  const buildOpts = (): SLHDSASignOptions | undefined => (preHash ? { preHash } : undefined)
 
   const doGenKeyPair = () =>
     withLoading('gen', async () => {
@@ -560,8 +570,12 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
       try {
         const M = moduleRef.current
         if (!M) throw new Error('Module not loaded — complete Token Setup first')
-        const ckp = getParamSetCkp()
-        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(M, hSessionRef.current, ckp)
+        const { pubHandle, privHandle } = hsm_generateSLHDSAKeyPair(
+          M,
+          hSessionRef.current,
+          getParamSetCkp(),
+          extractable
+        )
         setHandles({ pub: pubHandle, priv: privHandle })
         const ts = new Date().toLocaleTimeString([], {
           hour12: false,
@@ -581,7 +595,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           handle: privHandle,
           family: 'slh-dsa',
           role: 'private',
-          label: `SLH-DSA-${paramSetId} Private Key${extractable ? ' (extractable)' : ''}`,
+          label: `SLH-DSA-${paramSetId} Private Key`,
           variant: paramSetId,
           generatedAt: ts,
         })
@@ -653,12 +667,25 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     })
 
   const ps = getParamSet()
+  const secLevel = paramSetId.includes('128') ? 128 : paramSetId.includes('192') ? 192 : 256
+  const isSlow = paramSetId.endsWith('s')
+  const hashFamily = paramSetId.startsWith('sha2') ? 'SHA-2' : 'SHAKE-256'
+  const activeMech = preHash
+    ? (SLH_DSA_PREHASH_MECH_LABEL[preHash] ?? 'CKM_HASH_SLH_DSA')
+    : 'CKM_SLH_DSA'
+  const slhKeys = [...keysForFamily('slh-dsa', 'public'), ...keysForFamily('slh-dsa', 'private')]
 
   return (
-    <div className="space-y-4">
-      <div className="glass-panel p-4 space-y-4">
+    <div className="space-y-3">
+      {/* ── Step 1: Parameter Set ─────────────────────────────────────── */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+            1
+          </span>
+          <span className="text-sm font-semibold">Parameter Set</span>
+        </div>
         <div className="flex items-center justify-between flex-wrap gap-2">
-          <h3 className="font-semibold text-sm">SLH-DSA Sign &amp; Verify (FIPS 205)</h3>
           <FilterDropdown
             selectedId={paramSetId}
             onSelect={(id) => {
@@ -668,14 +695,146 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
             defaultLabel="SHA2-128s"
             noContainer
           />
+          <span className="text-xs text-muted-foreground font-mono">
+            pk: {ps.pub} B · sk: {ps.sk} B · sig: {ps.sig.toLocaleString()} B
+          </span>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-[11px]">
+          <div className="bg-muted/40 rounded px-2 py-1.5">
+            <span className="text-muted-foreground block mb-0.5">Security</span>
+            <span className="font-semibold">
+              {secLevel}-bit · NIST Cat.&nbsp;{secLevel === 128 ? 1 : secLevel === 192 ? 3 : 5}
+            </span>
+          </div>
+          <div className="bg-muted/40 rounded px-2 py-1.5">
+            <span className="text-muted-foreground block mb-0.5">Speed / Sig size</span>
+            <span className="font-semibold">
+              {isSlow ? 'Small sig, slower' : 'Fast sign, larger sig'}
+            </span>
+          </div>
+          <div className="bg-muted/40 rounded px-2 py-1.5">
+            <span className="text-muted-foreground block mb-0.5">Hash tree</span>
+            <span className="font-semibold">{hashFamily}</span>
+          </div>
+        </div>
+        <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
+          SLH-DSA is <strong className="text-foreground">stateless</strong> — no per-key signing
+          counter. Safe to reuse the same key across sessions without risk of state exhaustion.
+          (FIPS 205)
+        </div>
+      </div>
+
+      {/* ── Step 2: Key Generation ────────────────────────────────────── */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+            2
+          </span>
+          <span className="text-sm font-semibold">Generate Key Pair</span>
+          <span className="ml-auto font-mono text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+            CKM_SLH_DSA_KEY_PAIR_GEN
+          </span>
+        </div>
+        <div className="flex flex-wrap items-center gap-3">
+          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
+            {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+            {handles ? '✓ Key Pair Generated' : 'Generate Key Pair'}
+          </Button>
+          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={extractable}
+              onChange={(e) => setExtractable(e.target.checked)}
+              className="accent-primary"
+            />
+            CKA_EXTRACTABLE
+          </label>
+        </div>
+        {handles && (
+          <div className="flex flex-wrap gap-3 text-xs font-mono text-muted-foreground">
+            <span>pubH={handles.pub}</span>
+            <span>privH={handles.priv}</span>
+            <span className="text-muted-foreground/60">→ visible in HSM Key Registry ↓</span>
+          </div>
+        )}
+        <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
+          <strong className="text-foreground">
+            CKA_SENSITIVE = {extractable ? 'false' : 'true'}
+          </strong>{' '}
+          —{' '}
+          {extractable
+            ? 'Key bytes readable via C_GetAttributeValue. Use for cross-engine inspection or export scenarios.'
+            : 'Prevents C_GetAttributeValue from revealing private key bytes. Production-safe default.'}
+        </div>
+      </div>
+
+      {/* ── Step 3: Sign ─────────────────────────────────────────────── */}
+      <div
+        className={`glass-panel p-4 space-y-3 transition-opacity ${!handles ? 'opacity-40 pointer-events-none select-none' : ''}`}
+        aria-disabled={!handles}
+      >
+        <div className="flex items-center gap-2 flex-wrap">
+          <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+            3
+          </span>
+          <span className="text-sm font-semibold">Sign</span>
+          <span className="ml-auto font-mono text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded">
+            {activeMech}
+          </span>
         </div>
 
-        <p className="text-xs text-muted-foreground font-mono">
-          pub: {ps.pub} B · sig: {ps.sig.toLocaleString()} B
-        </p>
+        {/* Mode selector */}
+        <div className="flex items-center gap-2 flex-wrap text-xs">
+          <span className="text-muted-foreground">Mode:</span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              setPreHash('')
+              setSignature(null)
+              setVerifyResult(null)
+            }}
+            className={`text-xs h-6 px-2 ${!preHash ? 'bg-primary/20 text-primary' : 'text-muted-foreground'}`}
+          >
+            Pure SLH-DSA
+          </Button>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => {
+              if (!preHash) {
+                setPreHash('sha256')
+                setSignature(null)
+                setVerifyResult(null)
+              }
+            }}
+            className={`text-xs h-6 px-2 ${preHash ? 'bg-primary/20 text-primary' : 'text-muted-foreground'}`}
+          >
+            HashSLH-DSA
+          </Button>
+        </div>
 
-        <div className="space-y-1.5">
-          <label htmlFor="hsm-slhdsa-message" className="text-xs text-muted-foreground">
+        {preHash && (
+          <div className="flex items-center gap-2 flex-wrap text-xs">
+            <span className="text-muted-foreground">Hash function:</span>
+            <FilterDropdown
+              selectedId={preHash}
+              onSelect={(id) => {
+                if (id !== 'All') {
+                  setPreHash(id as SLHDSAPreHash)
+                  setSignature(null)
+                  setVerifyResult(null)
+                }
+              }}
+              items={[...FIPS205_SLH_PREHASH_OPTIONS]}
+              defaultLabel="SHA-256"
+              noContainer
+            />
+          </div>
+        )}
+
+        <div>
+          <label htmlFor="hsm-slhdsa-message" className="text-xs text-muted-foreground mb-1 block">
             Message
           </label>
           <Input
@@ -691,134 +850,97 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           />
         </div>
 
-        <div className="flex flex-wrap gap-3 text-xs">
-          <div className="flex items-center gap-1.5">
-            <span className="text-muted-foreground">Pre-hash:</span>
-            <FilterDropdown
-              selectedId={preHash || 'All'}
-              onSelect={(id) => {
-                setPreHash(id === 'All' ? '' : (id as SLHDSAPreHash))
-                setSignature(null)
-                setVerifyResult(null)
-              }}
-              items={[...FIPS205_SLH_PREHASH_OPTIONS]}
-              defaultLabel="Pure SLH-DSA"
-              noContainer
-            />
+        <Button variant="outline" size="sm" disabled={!handles || anyLoading} onClick={doSign}>
+          {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+          Sign
+        </Button>
+
+        {signature && (
+          <div className="flex gap-3 bg-muted rounded px-2 py-1 text-xs font-mono">
+            <span className="text-muted-foreground w-16 shrink-0">Signature</span>
+            <span className="truncate">{toHexSnippetDsa(signature)}</span>
+            <span className="text-muted-foreground shrink-0">
+              {signature.length.toLocaleString()} B
+            </span>
           </div>
-          {!preHash && (
+        )}
+
+        <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
+          {!preHash ? (
             <>
-              <div className="flex flex-col gap-0.5">
-                <div className="flex items-center gap-1.5">
-                  <label
-                    htmlFor="hsm-slhdsa-context"
-                    className="text-muted-foreground"
-                    title="FIPS 205 §9.2: 0–255 bytes. Used to domain-separate signatures across protocols or applications."
-                  >
-                    Context:
-                  </label>
-                  <Input
-                    id="hsm-slhdsa-context"
-                    value={context}
-                    onChange={(e) => {
-                      setContext(e.target.value)
-                      setSignature(null)
-                      setVerifyResult(null)
-                    }}
-                    placeholder="optional, e.g. app-v1"
-                    className="h-6 text-xs px-2 w-32"
-                  />
-                  <span
-                    className={`text-[10px] font-mono ${new TextEncoder().encode(context).length > 255 ? 'text-status-error' : 'text-muted-foreground'}`}
-                  >
-                    {new TextEncoder().encode(context).length}/255B
-                  </span>
-                </div>
-              </div>
-              <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
-                <input
-                  type="checkbox"
-                  checked={deterministic}
-                  onChange={(e) => {
-                    setDeterministic(e.target.checked)
-                    setSignature(null)
-                    setVerifyResult(null)
-                  }}
-                  className="accent-primary"
-                />
-                Deterministic
-              </label>
+              <strong className="text-foreground">SLH-DSA.sign(SK, M)</strong> — FIPS 205 §9.
+              Randomized by default (opt_rand from RNG). Same message produces a{' '}
+              <strong className="text-foreground">different signature each time</strong>.
+            </>
+          ) : (
+            <>
+              <strong className="text-foreground">HashSLH-DSA.sign(SK, M, PH)</strong> — FIPS 205
+              §11. Pre-hashes M with{' '}
+              {FIPS205_SLH_PREHASH_OPTIONS.find((o) => o.id === preHash)?.label ?? preHash} before
+              signing. Use when message size is unbounded or the protocol mandates pre-hashing.
             </>
           )}
         </div>
-
-        <div className="flex flex-wrap gap-2 items-center">
-          <Button variant="outline" size="sm" disabled={anyLoading} onClick={doGenKeyPair}>
-            {loadingOp === 'gen' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
-            {handles ? '✓ Key Pair' : 'Generate Key Pair'}
-          </Button>
-          <label className="flex items-center gap-1.5 text-xs text-muted-foreground cursor-pointer select-none">
-            <input
-              type="checkbox"
-              checked={extractable}
-              onChange={(e) => setExtractable(e.target.checked)}
-              className="accent-primary"
-            />
-            CKA_EXTRACTABLE
-          </label>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!handles || anyLoading || new TextEncoder().encode(context).length > 255}
-            onClick={doSign}
-          >
-            {loadingOp === 'sign' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
-            Sign
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            disabled={!signature || anyLoading || new TextEncoder().encode(context).length > 255}
-            onClick={doVerify}
-          >
-            {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
-            Verify
-          </Button>
-        </div>
-
-        <div className="space-y-1.5 text-xs font-mono">
-          {handles && (
-            <div className="flex gap-3 text-muted-foreground">
-              <span>pubH={handles.pub}</span>
-              <span>privH={handles.priv}</span>
-            </div>
-          )}
-          {signature && (
-            <div className="flex gap-3 bg-muted rounded px-2 py-1">
-              <span className="text-muted-foreground w-16 shrink-0">Signature</span>
-              <span className="truncate">{toHexSnippetDsa(signature)}</span>
-              <span className="text-muted-foreground shrink-0">
-                {signature.length.toLocaleString()} B
-              </span>
-            </div>
-          )}
-          {verifyResult !== null && (
-            <div
-              role="status"
-              aria-live="polite"
-              aria-atomic="true"
-              className={`flex items-center gap-2 rounded px-2 py-1 ${verifyResult ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
-            >
-              {verifyResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
-              {verifyResult
-                ? 'Signature valid — SLH-DSA verify passed'
-                : 'Signature invalid — verification failed'}
-            </div>
-          )}
-        </div>
-
-        {error && <ErrorAlert message={error} />}
       </div>
+
+      {/* ── Step 4: Verify ───────────────────────────────────────────── */}
+      <div
+        className={`glass-panel p-4 space-y-3 transition-opacity ${!signature ? 'opacity-40 pointer-events-none select-none' : ''}`}
+        aria-disabled={!signature}
+      >
+        <div className="flex items-center gap-2">
+          <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+            4
+          </span>
+          <span className="text-sm font-semibold">Verify</span>
+        </div>
+
+        <Button variant="outline" size="sm" disabled={!signature || anyLoading} onClick={doVerify}>
+          {loadingOp === 'verify' && <Loader2 size={13} className="mr-1.5 animate-spin" />}
+          Verify Signature
+        </Button>
+
+        {verifyResult !== null && (
+          <div
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+            className={`flex items-center gap-2 rounded px-2 py-1 text-sm font-medium ${verifyResult ? 'bg-status-success/10 text-status-success' : 'bg-status-error/10 text-status-error'}`}
+          >
+            {verifyResult ? <CheckCircle size={13} /> : <XCircle size={13} />}
+            {verifyResult
+              ? 'Signature valid — SLH-DSA verify passed'
+              : 'Signature invalid — verification failed'}
+          </div>
+        )}
+
+        <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
+          Verification uses the same mechanism as signing. A different hash function, mismatched
+          message, or wrong key returns{' '}
+          <strong className="text-foreground">CKR_SIGNATURE_INVALID</strong>.
+        </div>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+
+      {/* ── Inline PKCS#11 log ──────────────────────────────────────── */}
+      {isReady && (
+        <Pkcs11LogPanel
+          log={hsmLog}
+          onClear={clearHsmLog}
+          title="PKCS#11 Call Log — SLH-DSA Sign & Verify"
+        />
+      )}
+
+      {/* ── HSM Key Inspector (SLH-DSA keys) ───────────────────────── */}
+      {isReady && slhKeys.length > 0 && (
+        <HsmKeyInspector
+          keys={slhKeys}
+          moduleRef={moduleRef}
+          hSessionRef={hSessionRef}
+          onRemoveKey={removeHsmKey}
+        />
+      )}
     </div>
   )
 }

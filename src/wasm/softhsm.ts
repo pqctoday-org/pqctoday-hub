@@ -210,6 +210,11 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_SeedRandom: () => 0,
         _C_GenerateRandom: wasmExports._C_GenerateRandom,
 
+        // ── KAT testing hook (Rust-only) ──────────────────────────────────
+        _set_kat_seed: (
+          wasmExports as unknown as Record<string, (ptr: number, len: number) => void>
+        )._set_kat_seed,
+
         // ── Misc (stubs) ──────────────────────────────────────────────────
         _C_GetFunctionStatus: () => CKR_NOT_IMPL,
         _C_CancelFunction: () => CKR_NOT_IMPL,
@@ -535,10 +540,15 @@ export const createLoggingProxy = (
             const rvUnsigned = rv >>> 0
             const ok = rvUnsigned === 0 || rvUnsigned === 0x150 // CKR_OK or CKR_BUFFER_TOO_SMALL (size query)
             const inspect = buildInspect(target, specName, args as number[], rvUnsigned)
-            
+
             let hSession: number | undefined
             const names = PKCS11_PARAMS[specName]
-            if (names && names[0] === 'hSession' && args.length > 0 && typeof args[0] === 'number') {
+            if (
+              names &&
+              names[0] === 'hSession' &&
+              args.length > 0 &&
+              typeof args[0] === 'number'
+            ) {
               hSession = args[0]
             }
 
@@ -588,6 +598,9 @@ const CKU_USER = 1
 const CKO_PUBLIC_KEY = 0x02
 export const CKO_PRIVATE_KEY = 0x03
 export const CKO_SECRET_KEY = 0x04
+export const CKK_HSS = 0x00000046 // PKCS#11 v3.2 §6.14 — HSS/LMS
+export const CKK_XMSS = 0x00000047 // PKCS#11 v3.2 §6.14 — XMSS single-tree
+export const CKK_XMSSMT = 0x00000048 // PKCS#11 v3.2 §6.14 — XMSS-MT multi-tree
 export const CKK_ML_KEM = 0x49 // PKCS#11 v3.2
 export const CKK_ML_DSA = 0x4a // PKCS#11 v3.2
 const CKM_ML_KEM_KEY_PAIR_GEN = 0x0000000f
@@ -614,6 +627,8 @@ export const CKA_ALWAYS_SENSITIVE = 0x00000165
 export const CKA_KEY_GEN_MECHANISM = 0x00000166
 export const CKA_ENCAPSULATE = 0x00000633
 export const CKA_DECAPSULATE = 0x00000634
+export const CKA_HSS_KEYS_REMAINING = 0x0000061c // PKCS#11 v3.2 §6.14
+export const CKA_XMSS_KEYS_REMAINING = 0x80000106 // vendor extension
 
 // ML-DSA pre-hash mechanisms (CKM_HASH_ML_DSA_*, PKCS#11 v3.2, pkcs11t.h:1221-1231)
 const CKM_HASH_ML_DSA_SHA224 = 0x23
@@ -781,7 +796,49 @@ export const hsm_getFirstSlot = (M: SoftHSMModule): number => {
   }
 }
 
-/** C_InitToken → re-enumerate slots → return new slot id */
+/** C_GetSlotList → first uninitialized slot id (two-step count + fill for both lists) */
+export const hsm_getFirstFreeSlot = (M: SoftHSMModule): number => {
+  const countPtr = allocUlong(M)
+  try {
+    // Step 1: all slots (token_present=0) — also triggers Rust auto-advance if all slots full
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(all,count)')
+    const allCount = readUlong(M, countPtr)
+    if (allCount === 0) throw new Error('C_GetSlotList: no slots available')
+    const allListPtr = M._malloc(allCount * 4)
+    writeUlong(M, countPtr, allCount)
+    const allSlots: number[] = []
+    try {
+      checkRV(M._C_GetSlotList(0, allListPtr, countPtr), 'C_GetSlotList(all)')
+      for (let i = 0; i < allCount; i++) allSlots.push(readUlong(M, allListPtr + i * 4))
+    } finally {
+      M._free(allListPtr)
+    }
+
+    // Step 2: initialized slots (token_present=1)
+    checkRV(M._C_GetSlotList(1, 0, countPtr), 'C_GetSlotList(initialized,count)')
+    const initCount = readUlong(M, countPtr)
+    const initializedSlots = new Set<number>()
+    if (initCount > 0) {
+      const initListPtr = M._malloc(initCount * 4)
+      writeUlong(M, countPtr, initCount)
+      try {
+        checkRV(M._C_GetSlotList(1, initListPtr, countPtr), 'C_GetSlotList(initialized)')
+        for (let i = 0; i < initCount; i++) initializedSlots.add(readUlong(M, initListPtr + i * 4))
+      } finally {
+        M._free(initListPtr)
+      }
+    }
+
+    // Step 3: first slot not yet initialized
+    const freeSlot = allSlots.find((s) => !initializedSlots.has(s))
+    if (freeSlot === undefined) throw new Error('C_GetSlotList: no free slot available')
+    return freeSlot
+  } finally {
+    M._free(countPtr)
+  }
+}
+
+/** C_InitToken → re-enumerate slots → return the newly initialized slot id */
 export const hsm_initToken = (
   M: SoftHSMModule,
   slot: number,
@@ -793,17 +850,46 @@ export const hsm_initToken = (
   const lb = new TextEncoder().encode(label.slice(0, 32))
   M.HEAPU8.set(lb, labelPtr)
   const pinPtr = writeStr(M, soPin)
+
+  // Snapshot initialized slots before C_InitToken so we can diff after
+  const snapCountPtr = allocUlong(M)
+  const beforeSlots = new Set<number>()
+  try {
+    checkRV(M._C_GetSlotList(1, 0, snapCountPtr), 'C_GetSlotList(before,count)')
+    const beforeCount = readUlong(M, snapCountPtr)
+    if (beforeCount > 0) {
+      const beforeListPtr = M._malloc(beforeCount * 4)
+      writeUlong(M, snapCountPtr, beforeCount)
+      try {
+        checkRV(M._C_GetSlotList(1, beforeListPtr, snapCountPtr), 'C_GetSlotList(before)')
+        for (let i = 0; i < beforeCount; i++) beforeSlots.add(readUlong(M, beforeListPtr + i * 4))
+      } finally {
+        M._free(beforeListPtr)
+      }
+    }
+  } finally {
+    M._free(snapCountPtr)
+  }
+
+  let sessionExists = false
   try {
     const initRv = M._C_InitToken(slot, pinPtr, soPin.length, labelPtr)
-    // CKR_SESSION_EXISTS (0xb6): token is already initialized with active sessions;
-    // skip re-initialization and fall through to re-enumerate the existing slot.
-    if (initRv !== 0 && initRv >>> 0 !== 0x000000b6) checkRV(initRv, 'C_InitToken')
+    // CKR_SESSION_EXISTS (0xb6): token is already initialized with active sessions —
+    // skip re-initialization, the slot is already usable.
+    if (initRv >>> 0 === 0x000000b6) {
+      sessionExists = true
+    } else if (initRv !== 0) {
+      checkRV(initRv, 'C_InitToken')
+    }
   } finally {
     M._free(labelPtr)
     M._free(pinPtr)
   }
 
-  // Re-enumerate: initialized token appears in a new slot (two-step)
+  // If the session already existed, `slot` is the initialized token — return it directly
+  if (sessionExists) return slot
+
+  // Re-enumerate: find the newly initialized slot (differs between C++ and Rust backends)
   const countPtr = allocUlong(M)
   try {
     checkRV(M._C_GetSlotList(1, 0, countPtr), 'C_GetSlotList(initialized,count)')
@@ -812,7 +898,13 @@ export const hsm_initToken = (
     writeUlong(M, countPtr, slotCount)
     try {
       checkRV(M._C_GetSlotList(1, slotListPtr, countPtr), 'C_GetSlotList(initialized)')
-      return readUlong(M, slotListPtr)
+      // Return the slot that is newly in the initialized list (not in beforeSlots)
+      for (let i = 0; i < slotCount; i++) {
+        const s = readUlong(M, slotListPtr + i * 4)
+        if (!beforeSlots.has(s)) return s
+      }
+      // Fallback: return the `slot` we initialized (Rust: slot ID is stable)
+      return slot
     } finally {
       M._free(slotListPtr)
     }
@@ -4065,12 +4157,9 @@ export const hsm_generateSLHDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   paramSet: number = CKP_SLH_DSA_SHA2_128S,
-  label?: string
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
-
-  const labelBytes = label ? new TextEncoder().encode(label) : null
-  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
 
   const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
@@ -4079,21 +4168,17 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_VERIFY, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ]
-  if (labelBytes)
-    pubAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
 
   const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ]
-  if (labelBytes)
-    prvAttrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
 
   const pubTpl = buildTemplate(M, pubAttrs)
   const prvTpl = buildTemplate(M, prvAttrs)
@@ -4117,7 +4202,6 @@ export const hsm_generateSLHDSAKeyPair = (
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
-    if (labelPtr) M._free(labelPtr)
     freeTemplate(M, pubTpl, pubAttrs.length)
     freeTemplate(M, prvTpl, prvAttrs.length)
     M._free(pubHPtr)
@@ -4302,6 +4386,10 @@ export interface KeyAttributeSet {
   ckValueLen: number | null
   /** CKA_CHECK_VALUE (KCV) bytes; present on symmetric/secret keys */
   ckCheckValue?: Uint8Array | null
+  /** CKA_HSS_KEYS_REMAINING: remaining sign ops for HSS keys (PKCS#11 v3.2 §6.14) */
+  ckHssKeysRemaining: number | null
+  /** CKA_XMSS_KEYS_REMAINING: remaining sign ops for XMSS keys (vendor extension 0x8000_0106) */
+  ckXmssKeysRemaining: number | null
 }
 
 /** Read common PKCS#11 attributes for any key object in the current session.
@@ -4363,6 +4451,9 @@ export const hsm_getKeyAttributes = (
           }
         })()
       : null,
+    ckHssKeysRemaining: ckKeyType === CKK_HSS ? u(CKA_HSS_KEYS_REMAINING) : null,
+    ckXmssKeysRemaining:
+      ckKeyType === CKK_XMSS || ckKeyType === CKK_XMSSMT ? u(CKA_XMSS_KEYS_REMAINING) : null,
   }
 }
 
@@ -5517,5 +5608,83 @@ export const hsm_getKeyCheckValue = (
   } finally {
     freeTemplate(M, valTpl, 1)
     M._free(valPtr)
+  }
+}
+
+/**
+ * Inject a KAT seed into the Rust XMSS keygen path.
+ * The seed is 96 bytes: SK_SEED(32) || SK_PRF(32) || PUB_SEED(32).
+ * This is a no-op on the C++ engine (function not present).
+ * Must be called immediately before C_GenerateKeyPair(CKM_XMSS_KEY_PAIR_GEN).
+ */
+export const hsm_setKatSeed = (M: SoftHSMModule, seedHex: string): void => {
+  const setFn = (M as unknown as { _set_kat_seed?: (ptr: number, len: number) => void })
+    ._set_kat_seed
+  if (!setFn) return
+  const seedBytes = Uint8Array.from(seedHex.match(/.{2}/g)!.map((b) => parseInt(b, 16)))
+  const ptr = M._malloc(seedBytes.length)
+  M.HEAPU8.set(seedBytes, ptr)
+  try {
+    setFn(ptr, seedBytes.length)
+  } finally {
+    M._free(ptr)
+  }
+}
+
+/**
+ * Import a raw stateful-signature public key (HSS or XMSS) via C_CreateObject.
+ * keyType must be CKK_HSS (0x46) or CKK_XMSS (0x47).
+ * Returns the new public-key object handle.
+ */
+export const hsm_importStatefulPublicKey = (
+  M: SoftHSMModule,
+  hSession: number,
+  keyType: number,
+  pubKeyBytes: Uint8Array
+): number => {
+  const valPtr = M._malloc(pubKeyBytes.length)
+  M.HEAPU8.set(pubKeyBytes, valPtr)
+  const tpl = buildTemplate(M, [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: keyType },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_EXTRACTABLE, boolVal: true },
+    { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pubKeyBytes.length },
+  ])
+  const hPtr = allocUlong(M)
+  try {
+    checkRV(M._C_CreateObject(hSession, tpl.ptr, 6, hPtr), 'C_CreateObject(stateful pubkey)')
+    return readUlong(M, hPtr)
+  } finally {
+    freeTemplate(M, tpl, 6)
+    M._free(hPtr)
+    M._free(valPtr)
+  }
+}
+
+/**
+ * Single-part verify using C_VerifyInit + C_Verify (not the message API).
+ * Used for HSS and XMSS which use the traditional single-part verify path.
+ * Returns the raw CKR return value (0 = CKR_OK = valid signature).
+ */
+export const hsm_statefulVerifyBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  pubHandle: number,
+  msgBytes: Uint8Array,
+  sigBytes: Uint8Array
+): number => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigPtr = writeBytes(M, sigBytes)
+  try {
+    checkRV(M._C_VerifyInit(hSession, mech, pubHandle), 'C_VerifyInit(stateful)')
+    return M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigPtr)
   }
 }

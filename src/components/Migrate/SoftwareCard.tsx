@@ -90,6 +90,12 @@ export const SoftwareCard = ({
           </span>
         )}
 
+        {item.wip && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded-full font-bold border border-status-warning/40 bg-status-warning/10 text-status-warning">
+            WIP
+          </span>
+        )}
+
         <div className="ml-auto flex items-center">
           <button
             type="button"

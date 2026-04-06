@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.79.0",
+  "version": "2.80.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -9,7 +9,7 @@
   },
   "lint-staged": {
     "**/*.{ts,tsx,js,jsx,cjs,mjs}": [
-      "eslint --fix",
+      "eslint --fix --no-error-on-unmatched-pattern",
       "prettier --write"
     ],
     "**/*.{json,md,css,html}": "prettier --write",

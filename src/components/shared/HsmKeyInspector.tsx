@@ -183,108 +183,128 @@ const KeyAttrModal = ({
   onClose: () => void
 }) => {
   return createPortal(
-  <div
-    role="presentation"
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4"
-    onClick={(e) => e.target === e.currentTarget && onClose()}
-    onKeyDown={(e) => e.key === 'Escape' && onClose()}
-  >
-    <div className="glass-panel w-full max-w-md p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div>
-          <h3 className="font-semibold text-sm">{hsmKey.label}</h3>
-          <p className="text-xs text-muted-foreground font-mono mt-0.5">handle = {hsmKey.handle}</p>
-          {hsmKey.purpose && hsmKey.purpose !== 'general' && (
-            <div className="mt-1">
-              <PurposeBadge purpose={hsmKey.purpose} />
-            </div>
-          )}
+    <div
+      role="presentation"
+      className="fixed inset-0 bg-black/60 flex items-center justify-center z-[100] p-4"
+      onClick={(e) => e.target === e.currentTarget && onClose()}
+      onKeyDown={(e) => e.key === 'Escape' && onClose()}
+    >
+      <div className="glass-panel w-full max-w-md p-5 space-y-4 shadow-xl z-[101] bg-background border border-border">
+        {/* Header */}
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <h3 className="font-semibold text-sm">{hsmKey.label}</h3>
+            <p className="text-xs text-muted-foreground font-mono mt-0.5">
+              handle = {hsmKey.handle}
+            </p>
+            {hsmKey.purpose && hsmKey.purpose !== 'general' && (
+              <div className="mt-1">
+                <PurposeBadge purpose={hsmKey.purpose} />
+              </div>
+            )}
+          </div>
+          <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0" onClick={onClose}>
+            <X size={14} />
+          </Button>
         </div>
-        <Button variant="ghost" size="sm" className="h-7 w-7 p-0 shrink-0" onClick={onClose}>
-          <X size={14} />
-        </Button>
-      </div>
 
-      {/* Identity attributes */}
-      <div className="space-y-1">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Identity
-        </p>
-        <table className="w-full table-fixed text-xs font-mono border-collapse">
-          <tbody>
-            <tr className="border-b border-border/40">
-              <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
-              <td className="py-1.5 text-foreground break-all">
-                {fmtUlong(attrs.ckClass, CKO_NAMES)}
-              </td>
-            </tr>
-            <tr className="border-b border-border/40">
-              <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
-              <td className="py-1.5 text-foreground break-all">
-                {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
-              </td>
-            </tr>
-            {attrs.ckKeyGenMechanism !== null && (
+        {/* Identity attributes */}
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Identity
+          </p>
+          <table className="w-full table-fixed text-xs font-mono border-collapse">
+            <tbody>
               <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
+                <td className="py-1.5 pr-4 text-muted-foreground w-44">CKA_CLASS</td>
                 <td className="py-1.5 text-foreground break-all">
-                  {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
+                  {fmtUlong(attrs.ckClass, CKO_NAMES)}
                 </td>
               </tr>
-            )}
-            {attrs.ckParameterSet !== null && (
               <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
+                <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_TYPE</td>
                 <td className="py-1.5 text-foreground break-all">
-                  {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                  {fmtUlong(attrs.ckKeyType, CKK_NAMES)}
                 </td>
               </tr>
-            )}
-            {attrs.ckValueLen !== null && (
-              <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>
-                <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
-              </tr>
-            )}
-            {attrs.ckCheckValue && (
-              <tr className="border-b border-border/40">
-                <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
-                <td className="py-1.5 text-status-success font-bold font-mono break-all">
-                  {Array.from(attrs.ckCheckValue.slice(0, 3))
-                    .map((b) => b.toString(16).padStart(2, '0'))
-                    .join('')
-                    .toUpperCase()}
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+              {attrs.ckKeyGenMechanism !== null && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_KEY_GEN_MECHANISM</td>
+                  <td className="py-1.5 text-foreground break-all">
+                    {fmtUlong(attrs.ckKeyGenMechanism, CKM_KEYGEN_NAMES)}
+                  </td>
+                </tr>
+              )}
+              {attrs.ckParameterSet !== null && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_PARAMETER_SET</td>
+                  <td className="py-1.5 text-foreground break-all">
+                    {'0x' + attrs.ckParameterSet.toString(16).padStart(2, '0')}
+                  </td>
+                </tr>
+              )}
+              {attrs.ckValueLen !== null && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_VALUE_LEN</td>
+                  <td className="py-1.5 text-foreground">{attrs.ckValueLen} bytes</td>
+                </tr>
+              )}
+              {attrs.ckCheckValue && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_CHECK_VALUE (KCV)</td>
+                  <td className="py-1.5 text-status-success font-bold font-mono break-all">
+                    {Array.from(attrs.ckCheckValue.slice(0, 3))
+                      .map((b) => b.toString(16).padStart(2, '0'))
+                      .join('')
+                      .toUpperCase()}
+                  </td>
+                </tr>
+              )}
+              {attrs.ckHssKeysRemaining !== null && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_HSS_KEYS_REMAINING</td>
+                  <td className="py-1.5 text-foreground tabular-nums">
+                    {attrs.ckHssKeysRemaining.toLocaleString()} remaining
+                  </td>
+                </tr>
+              )}
+              {attrs.ckXmssKeysRemaining !== null && (
+                <tr className="border-b border-border/40">
+                  <td className="py-1.5 pr-4 text-muted-foreground">CKA_XMSS_KEYS_REMAINING</td>
+                  <td className="py-1.5 text-foreground tabular-nums">
+                    {attrs.ckXmssKeysRemaining.toLocaleString()} remaining
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
 
-      {/* Boolean capabilities */}
-      <div className="space-y-1">
-        <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-          Capabilities
+        {/* Boolean capabilities */}
+        <div className="space-y-1">
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            Capabilities
+          </p>
+          <table className="w-full text-xs font-mono border-collapse">
+            <tbody>
+              {BOOL_ATTRS.map(({ label, key }) => (
+                <tr key={key} className="border-b border-border/40">
+                  <td className="py-1 pr-4 text-muted-foreground w-40">{label}</td>
+                  <td className="py-1">
+                    <BoolCell value={attrs[key] as boolean | null} />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <p className="text-xs text-muted-foreground">
+          Session object · read via C_GetAttributeValue
         </p>
-        <table className="w-full text-xs font-mono border-collapse">
-          <tbody>
-            {BOOL_ATTRS.map(({ label, key }) => (
-              <tr key={key} className="border-b border-border/40">
-                <td className="py-1 pr-4 text-muted-foreground w-40">{label}</td>
-                <td className="py-1">
-                  <BoolCell value={attrs[key] as boolean | null} />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
-
-      <p className="text-xs text-muted-foreground">Session object · read via C_GetAttributeValue</p>
-    </div>
-  </div>,
-  document.body
+    </div>,
+    document.body
   )
 }
 
@@ -313,6 +333,9 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x49: 'ml-kem',
   0x4a: 'ml-dsa',
   0x4b: 'slh-dsa',
+  0x46: 'hss',
+  0x47: 'xmss',
+  0x48: 'xmss',
 }
 
 const CKO_TO_ROLE: Record<number, HsmKeyRole> = {
@@ -328,6 +351,7 @@ export interface HsmKeyInspectorProps {
   moduleRef: React.MutableRefObject<SoftHSMModule | null>
   hSessionRef: React.MutableRefObject<number>
   onRemoveKey?: (handle: number) => void
+  onClear?: () => void
   /** Optional title override (default: "HSM Key Registry") */
   title?: string
 }
@@ -339,6 +363,7 @@ export const HsmKeyInspector = ({
   moduleRef,
   hSessionRef,
   onRemoveKey,
+  onClear,
   title = 'HSM Key Registry',
 }: HsmKeyInspectorProps) => {
   const [inspectedKey, setInspectedKey] = useState<HsmKey | null>(null)
@@ -364,7 +389,7 @@ export const HsmKeyInspector = ({
         map.set(k.handle, null)
       }
     }
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+
     setKeySizeMap(map)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [keyTracker]) // moduleRef and hSessionRef are stable refs — intentionally omitted
@@ -457,6 +482,15 @@ export const HsmKeyInspector = ({
               {totalBytes > 0 && <> &middot; {formatBytes(totalBytes)}</>}
             </p>
           </div>
+          {onClear && keys.length > 0 && (
+            <button
+              onClick={onClear}
+              className="text-[10px] px-2 py-0.5 rounded border border-border hover:bg-muted text-muted-foreground transition-colors"
+              title="Clear all key objects from the Key Inspector"
+            >
+              Clear Keys
+            </button>
+          )}
         </div>
 
         <div className="overflow-x-auto">

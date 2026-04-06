@@ -499,6 +499,14 @@ const LogColumn = ({
         </button>
       </div>
 
+      {/* C7: Tab description bar */}
+      <div className="px-3 py-1 border-b bg-muted/20 text-[10px] text-muted-foreground italic">
+        {view === 'protocol' && 'High-level handshake messages exchanged between client and server'}
+        {view === 'wire' && 'Raw encrypted bytes as they appear on the network wire'}
+        {view === 'crypto' &&
+          'HKDF key derivation steps, traffic secrets, and internal crypto operations'}
+      </div>
+
       <div className="flex-grow overflow-auto relative">
         {view === 'protocol' ? (
           <div className="p-4 space-y-3">

@@ -5,6 +5,7 @@ import {
   type ConfigSelection,
 } from '@/components/PKILearning/common/OpsConfigGenerator'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
+import { CodeBlock } from '@/components/ui/code-block'
 import type { KatTestSpec } from '@/utils/katRunner'
 
 const TLS_KAT_SPECS: KatTestSpec[] = [
@@ -304,7 +305,7 @@ function generateCaddyConfig(mode: string): string {
 example.com {
     tls {
         # TLS 1.3 only
-        protocols tls1.3 tls1.3
+        protocols tls1.3
 
         # Classical key exchange curves
         curves x25519 p256
@@ -322,7 +323,7 @@ example.com {
 example.com {
     tls {
         # TLS 1.3 only
-        protocols tls1.3 tls1.3
+        protocols tls1.3
 
         # Hybrid PQC + classical key exchange
         # x25519_mlkem768: ML-KEM-768 combined with X25519
@@ -342,7 +343,7 @@ example.com {
 example.com {
     tls {
         # TLS 1.3 only
-        protocols tls1.3 tls1.3
+        protocols tls1.3
 
         # Pure PQC key exchange — no classical fallback
         # mlkem768: FIPS 203 ML-KEM at 128-bit security level
@@ -374,6 +375,47 @@ function generateConfig(values: Record<string, string>): string {
   }
 }
 
+const SSLKEYLOG_EXAMPLE = `# Enable TLS key logging for Wireshark/tshark decryption
+export SSLKEYLOGFILE=/tmp/tls-keys.log
+
+# Connect with openssl s_client (PQC groups)
+openssl s_client \\
+  -connect example.com:443 \\
+  -groups X25519MLKEM768:X25519:P-256 \\
+  -sigalgs mldsa65:ecdsa_secp256r1_sha256 \\
+  -tls1_3
+
+# Decrypt traffic in Wireshark:
+#   Edit → Preferences → Protocols → TLS → (Pre)-Master-Secret log filename
+#   Point to /tmp/tls-keys.log`
+
+const CLIENT_EXAMPLES = `# curl — hybrid PQC key exchange
+curl --curves X25519MLKEM768:X25519 \\
+     --tlsv1.3 --tls-max 1.3 \\
+     https://example.com
+
+# curl — verify against custom CA (mTLS client cert)
+curl --curves X25519MLKEM768:X25519 \\
+     --cacert /path/to/ca.crt \\
+     --cert /path/to/client.crt \\
+     --key /path/to/client.key \\
+     https://example.com
+
+# Python ssl module — TLS 1.3 with PQC groups
+import ssl, socket
+
+ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+ctx.minimum_version = ssl.TLSVersion.TLSv1_3
+ctx.set_ciphers('TLS_AES_256_GCM_SHA384:TLS_AES_128_GCM_SHA256')
+# Note: Python ssl exposes group config via OpenSSL's set_groups()
+# Requires Python 3.12+ and OpenSSL 3.5+ with PQC support
+ctx.load_verify_locations('/path/to/ca.crt')
+
+with socket.create_connection(('example.com', 443)) as sock:
+    with ctx.wrap_socket(sock, server_hostname='example.com') as tls:
+        print(f'Cipher: {tls.cipher()}')
+        tls.sendall(b'GET / HTTP/1.1\\r\\nHost: example.com\\r\\n\\r\\n')`
+
 export const TLSConfigGenerator: React.FC = () => {
   const stableGenerateConfig = useCallback(
     (values: Record<string, string>) => generateConfig(values),
@@ -390,6 +432,37 @@ export const TLSConfigGenerator: React.FC = () => {
         selections={stableSelections}
         generateConfig={stableGenerateConfig}
       />
+
+      <details className="glass-panel p-4 group">
+        <summary className="cursor-pointer text-sm font-semibold text-foreground flex items-center gap-2 select-none list-none">
+          <span className="text-primary group-open:rotate-90 transition-transform inline-block">
+            ▶
+          </span>
+          Debugging — SSLKEYLOGFILE &amp; Client Examples
+        </summary>
+        <div className="mt-4 space-y-4">
+          <p className="text-xs text-muted-foreground">
+            Use <code className="font-mono bg-muted px-1 rounded">SSLKEYLOGFILE</code> to log TLS
+            session secrets so Wireshark can decrypt captured traffic — essential for debugging PQC
+            handshakes.
+          </p>
+          <div>
+            <p className="text-xs font-semibold text-foreground mb-2">
+              Key Logging &amp; openssl s_client
+            </p>
+            <CodeBlock code={SSLKEYLOG_EXAMPLE} />
+          </div>
+          <div>
+            <p className="text-xs font-semibold text-foreground mb-2">Client Examples</p>
+            <CodeBlock code={CLIENT_EXAMPLES} />
+          </div>
+          <p className="text-xs text-muted-foreground italic">
+            PQC group names (X25519MLKEM768, MLKEM768) require OpenSSL 3.5+ compiled with liboqs or
+            the OQS provider.
+          </p>
+        </div>
+      </details>
+
       <KatValidationPanel
         specs={TLS_KAT_SPECS}
         label="TLS Basics Known Answer Tests"

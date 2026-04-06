@@ -220,9 +220,7 @@ export const HybridCryptoModule: React.FC = () => {
                   initialCategory={workshopConfig?.category}
                 />
               )}
-              {currentPart === 1 && (
-                <HybridEncryptionDemo key={`enc-${configKey}`} initialMode={workshopConfig?.mode} />
-              )}
+              {currentPart === 1 && <HybridEncryptionDemo key={`enc-${configKey}`} />}
               {currentPart === 2 && <HybridCASetup key={`ca-${configKey}`} />}
               {currentPart === 3 && <HybridCertFormats key={`formats-${configKey}`} />}
               {currentPart === 4 && <HybridCertInspector key={`inspect-${configKey}`} />}

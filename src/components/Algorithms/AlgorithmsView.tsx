@@ -102,6 +102,8 @@ export function AlgorithmsView() {
   const [filterSecurityLevel, setFilterSecurityLevel] = useState(
     () => searchParams.get('level') || 'All'
   )
+  const [filterRegion, setFilterRegion] = useState(() => searchParams.get('region') || 'All')
+  const [filterStatus, setFilterStatus] = useState(() => searchParams.get('status') || 'All')
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('q') || '')
 
   // --- Comparison state (synced to URL) ---
@@ -186,6 +188,22 @@ export function AlgorithmsView() {
     [updateSearchParams]
   )
 
+  const handleRegionChange = useCallback(
+    (id: string) => {
+      setFilterRegion(id)
+      updateSearchParams({ region: id === 'All' ? null : id })
+    },
+    [updateSearchParams]
+  )
+
+  const handleStatusChange = useCallback(
+    (id: string) => {
+      setFilterStatus(id)
+      updateSearchParams({ status: id === 'All' ? null : id })
+    },
+    [updateSearchParams]
+  )
+
   const handleSearchChange = useCallback(
     (q: string) => {
       setSearchQuery(q)
@@ -237,6 +255,16 @@ export function AlgorithmsView() {
     }, 100)
   }, [])
 
+  // Status filter helper: "Certified" matches anything that isn't Candidate or To Be Checked
+  const matchesStatusFilter = useCallback(
+    (status: string) => {
+      if (filterStatus === 'All') return true
+      if (filterStatus === 'Certified') return status !== 'Candidate' && status !== 'To Be Checked'
+      return status === filterStatus
+    },
+    [filterStatus]
+  )
+
   // --- Filtered data (Detailed Comparison) ---
   const filteredAlgorithms = useMemo(() => {
     return algorithmData.filter((algo) => {
@@ -247,6 +275,8 @@ export function AlgorithmsView() {
       }
       if (filterSecurityLevel !== 'All' && algo.securityLevel !== parseInt(filterSecurityLevel))
         return false
+      if (filterRegion !== 'All' && algo.region !== filterRegion) return false
+      if (!matchesStatusFilter(algo.status)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
         if (
@@ -259,7 +289,15 @@ export function AlgorithmsView() {
       }
       return true
     })
-  }, [algorithmData, filterCryptoFamily, filterFunction, filterSecurityLevel, searchQuery])
+  }, [
+    algorithmData,
+    filterCryptoFamily,
+    filterFunction,
+    filterSecurityLevel,
+    filterRegion,
+    matchesStatusFilter,
+    searchQuery,
+  ])
 
   // --- Filtered data (Transition Guide) ---
   const filteredTransitions = useMemo(() => {
@@ -272,13 +310,22 @@ export function AlgorithmsView() {
         const family = getCryptoFamilyFromPQCName(t.pqc)
         if (family !== filterCryptoFamily) return false
       }
+      if (filterRegion !== 'All' && t.region !== filterRegion) return false
+      if (!matchesStatusFilter(t.status)) return false
       if (searchQuery) {
         const q = searchQuery.toLowerCase()
         if (!t.classical.toLowerCase().includes(q) && !t.pqc.toLowerCase().includes(q)) return false
       }
       return true
     })
-  }, [transitionData, filterFunction, filterCryptoFamily, searchQuery])
+  }, [
+    transitionData,
+    filterFunction,
+    filterCryptoFamily,
+    filterRegion,
+    matchesStatusFilter,
+    searchQuery,
+  ])
 
   // --- Available security levels ---
   const availableLevels = useMemo(() => {
@@ -338,6 +385,10 @@ export function AlgorithmsView() {
             onFunctionGroupChange={handleFunctionChange}
             securityLevel={filterSecurityLevel}
             onSecurityLevelChange={handleSecurityLevelChange}
+            region={filterRegion}
+            onRegionChange={handleRegionChange}
+            status={filterStatus}
+            onStatusChange={handleStatusChange}
             searchQuery={searchQuery}
             onSearchChange={handleSearchChange}
             filteredCount={filteredCount}

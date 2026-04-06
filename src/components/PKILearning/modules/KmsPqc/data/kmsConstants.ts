@@ -118,7 +118,7 @@ export const ENVELOPE_ENCRYPTION_STEPS: EnvelopeEncryptionStep[] = [
     classicalDescription:
       'Not needed — RSA-OAEP directly encrypts the DEK. The decrypted output IS the DEK.',
     pqcDescription:
-      'Run HKDF-SHA-256(shared_secret, info="envelope-kek") → 256-bit wrapping key. This extra KDF step is required because KEMs produce a random shared secret, not a direct encryption.',
+      'Run HKDF-SHA-256(shared_secret, info="kms-envelope-v1") → 256-bit wrapping key. This extra KDF step is required because KEMs produce a random shared secret, not a direct encryption.',
     classicalArtifact: '(skipped)',
     pqcArtifact: '256-bit AES Wrapping Key',
     classicalSize: 'N/A',

@@ -8,6 +8,7 @@ import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
 import { PkcsLogPanel } from '../components/PkcsLogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
+import { getSoftHSMCppModule, hsm_initToken, hsm_openUserSession } from '@/wasm/softhsm'
 
 import {
   IKE_V2_MODES,
@@ -21,9 +22,53 @@ import {
   type StrongSwanState,
 } from '@/wasm/strongswan/bridge'
 import { useHsmContext } from './HsmContext'
+import { openSSLService } from '@/services/crypto/OpenSSLService'
 
 export interface VpnSimulationPanelProps {
   initialMode?: IKEv2Mode
+}
+
+type SoftHSMWasmModule = NonNullable<
+  ReturnType<typeof getSoftHSMCppModule> extends Promise<infer T> ? T : never
+>
+
+function hsm_generateRsaKeyPair(
+  M: SoftHSMWasmModule,
+  hSession: number
+): { pubHandle: number; privHandle: number } | null {
+  const CKM_RSA_PKCS_KEY_PAIR_GEN = 0x00000000
+  const CKA_MODULUS_BITS = 0x00000121
+  const mechPtr = M._malloc(12)
+  M.setValue(mechPtr, CKM_RSA_PKCS_KEY_PAIR_GEN, 'i32')
+  M.setValue(mechPtr + 4, 0, 'i32')
+  M.setValue(mechPtr + 8, 0, 'i32')
+  const modBitsPtr = M._malloc(4)
+  M.setValue(modBitsPtr, 3072, 'i32')
+  const pubTpl = M._malloc(12)
+  M.setValue(pubTpl, CKA_MODULUS_BITS, 'i32')
+  M.setValue(pubTpl + 4, modBitsPtr, 'i32')
+  M.setValue(pubTpl + 8, 4, 'i32')
+  const privTpl = M._malloc(4)
+  const pubKeyPtr = M._malloc(4)
+  const privKeyPtr = M._malloc(4)
+  const rv =
+    M._C_GenerateKeyPair(hSession, mechPtr, pubTpl, 1, privTpl, 0, pubKeyPtr, privKeyPtr) >>> 0
+  M._free(mechPtr)
+  M._free(modBitsPtr)
+  M._free(pubTpl)
+  M._free(privTpl)
+  if (rv !== 0) {
+    M._free(pubKeyPtr)
+    M._free(privKeyPtr)
+    return null
+  }
+  const result = {
+    pubHandle: M.getValue(pubKeyPtr, 'i32') >>> 0,
+    privHandle: M.getValue(privKeyPtr, 'i32') >>> 0,
+  }
+  M._free(pubKeyPtr)
+  M._free(privKeyPtr)
+  return result
 }
 
 const PayloadCard: React.FC<{
@@ -57,7 +102,8 @@ const PayloadCard: React.FC<{
 )
 
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {
-  const { moduleRef, hSessionRef, addHsmLog, hsmKeys } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmLog, addHsmKey, hsmKeys, clearHsmKeys, removeHsmKey } =
+    useHsmContext()
   const hsmKeysRef = React.useRef(hsmKeys)
   React.useEffect(() => {
     hsmKeysRef.current = hsmKeys
@@ -69,9 +115,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   const [ssState, setSsState] = useState<StrongSwanState>('UNINITIALIZED')
   const [charonFailed, setCharonFailed] = useState(false)
   const [sabError, setSabError] = useState<string | null>(null)
+  const [rpcMode, setRpcMode] = useState(true)
+  const [showQkdNote, setShowQkdNote] = useState(false)
   const [ssLogs, setSsLogs] = useState<StrongSwanLog[]>([])
 
   const serverSessionRef = React.useRef(0)
+  const vpnSlotsRef = React.useRef<{ init: number; resp: number }>({ init: 0, resp: 1 })
+  // Guards VPN-specific slot init — separate from moduleRef since other panels share that ref.
+  const vpnRpcInitRef = React.useRef(false)
 
   // VPN RPC state: session mapping + per-call sign/verify context
   const vpnStateRef = React.useRef<{
@@ -89,20 +140,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   })
 
   // Auth mode: PSK works now, pubkey is future
-  const [authMode, setAuthMode] = useState<'psk' | 'pubkey'>('psk')
+  const [authMode, setAuthMode] = useState<'psk' | 'dual'>('psk')
   const [clientPsk, setClientPsk] = useState('pqc-wasm-demo-key-2026')
   const [serverPsk, setServerPsk] = useState('pqc-wasm-demo-key-2026')
   const pskMismatch = clientPsk !== serverPsk
-
-  // Key Gen State for Client
-  const [clientAlg, setClientAlg] = useState('RSA')
-  const [clientSize, setClientSize] = useState('65')
-  const [clientClassAlg, setClientClassAlg] = useState('RSA-3072')
-
-  // Key Gen State for Server
-  const [serverAlg, setServerAlg] = useState('ML-DSA')
-  const [serverSize, setServerSize] = useState('65')
-  const [serverClassAlg, setServerClassAlg] = useState('RSA-3072')
 
   const scrollRef = React.useRef<HTMLDivElement>(null)
 
@@ -139,64 +180,48 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
   }
 }`
 
-  const initiatorIpsec = `config setup
-  strictcrlpolicy=no
-conn %default
-  ikelifetime=60m
-  keylife=20m
-  rekeymargin=3m
-  keyingtries=1
-conn host-host
-  left=192.168.0.1
-  leftauth=pubkey
-  leftsigkey=%smartcard1
-  right=192.168.0.2
-  rightauth=pubkey
-  rightsigkey=%smartcard2
-  ike=aes256-mlkem768-sha384!
-  esp=aes256gcm16!
-  auto=start`
-
-  const responderIpsec = `config setup
-  strictcrlpolicy=no
-conn %default
-  ikelifetime=60m
-  keylife=20m
-  rekeymargin=3m
-  keyingtries=1
-conn host-host
-  left=192.168.0.2
-  leftauth=pubkey
-  leftsigkey=%smartcard1
-  right=192.168.0.1
-  rightauth=pubkey
-  rightsigkey=%smartcard2
-  ike=aes256-mlkem768-sha384!
-  esp=aes256gcm16!
-  auto=route`
+  // Build ipsec.conf from role + KE mode + auth mode.
+  const buildIpsecConf = useCallback(
+    (role: 'initiator' | 'responder', mode: IKEv2Mode, auth: 'psk' | 'dual') => {
+      let modeIke = 'aes256-mlkem768-sha384!'
+      if (mode === 'classical') modeIke = 'aes256-sha256-modp3072!'
+      if (mode === 'hybrid') modeIke = 'aes256-mlkem768-x25519-sha384!'
+      const left = role === 'initiator' ? '192.168.0.1' : '192.168.0.2'
+      const right = role === 'initiator' ? '192.168.0.2' : '192.168.0.1'
+      const auto = role === 'initiator' ? 'start' : 'route'
+      const myCert = role === 'initiator' ? 'initiator' : 'responder'
+      const peerCert = role === 'initiator' ? 'responder' : 'initiator'
+      const authLines =
+        auth === 'psk'
+          ? `  leftauth=psk\n  right=${right}\n  rightauth=psk`
+          : `  leftauth=psk\n  leftauth2=pubkey\n  leftcert=/etc/ipsec.d/certs/${myCert}.crt\n  right=${right}\n  rightauth=psk\n  rightauth2=pubkey\n  rightcert=/etc/ipsec.d/certs/${peerCert}.crt`
+      return `config setup\n  strictcrlpolicy=no\nconn %default\n  ikelifetime=60m\n  keylife=20m\n  rekeymargin=3m\n  keyingtries=1\nconn host-host\n  left=${left}\n${authLines}\n  ike=${modeIke}\n  esp=aes256gcm16!\n  auto=${auto}`
+    },
+    []
+  )
 
   const [activeInitConfig, setActiveInitConfig] = useState(charonConfig)
   const [activeRespConfig, setActiveRespConfig] = useState(charonConfig)
-  const [activeInitIpsec, setActiveInitIpsec] = useState(initiatorIpsec)
-  const [activeRespIpsec, setActiveRespIpsec] = useState(responderIpsec)
+  const [activeInitIpsec, setActiveInitIpsec] = useState(() =>
+    buildIpsecConf('initiator', selectedMode, 'psk')
+  )
+  const [activeRespIpsec, setActiveRespIpsec] = useState(() =>
+    buildIpsecConf('responder', selectedMode, 'psk')
+  )
 
-  // Bidirectional UI -> Config sync
+  // Rebuild ipsec.conf and strongswan.conf whenever KE mode or auth mode changes.
   React.useEffect(() => {
-    let modeike = 'aes256-mlkem768-sha384!'
-    if (selectedMode === 'classical') modeike = 'aes256-sha256-modp3072!'
-    if (selectedMode === 'hybrid') modeike = 'aes256-mlkem768-x25519-sha384!'
-
-    const replaceIke = (prev: string) => {
-      if (/ike=.*/.test(prev)) {
-        return prev.replace(/ike=.*/, `ike=${modeike}`)
-      } else {
-        // If the user deleted the ike= line, we safely inject it back under the host-host connection block
-        return prev.replace(/conn host-host/, `conn host-host\n  ike=${modeike}`)
-      }
-    }
-    setActiveInitIpsec(replaceIke)
-    setActiveRespIpsec(replaceIke)
-  }, [selectedMode])
+    setActiveInitIpsec(buildIpsecConf('initiator', selectedMode, authMode))
+    setActiveRespIpsec(buildIpsecConf('responder', selectedMode, authMode))
+    // Dual auth requires the openssl plugin for certificate parsing/verification.
+    const pluginList =
+      authMode === 'dual'
+        ? 'pkcs11 nonce aes sha1 sha2 hmac kdf openssl'
+        : 'pkcs11 nonce aes sha1 sha2 hmac kdf'
+    const updatedCharon = charonConfig.replace('pkcs11 nonce aes sha1 sha2 hmac kdf', pluginList)
+    setActiveInitConfig(updatedCharon)
+    setActiveRespConfig(updatedCharon)
+  }, [selectedMode, authMode, buildIpsecConf, charonConfig])
 
   React.useEffect(() => {
     const handleLog = (log: StrongSwanLog) => {
@@ -220,11 +245,9 @@ conn host-host
       ) {
         setCurrentStep(2)
       } else if (text.includes('authentication of') && text.includes('successful')) {
-        setCurrentStep(3)
+        setCurrentStep(stepsLengthRef.current - 1)
       } else if (text.includes('ike_sa') && text.includes('established between')) {
-        // Find the length of steps so we can set it to max.
-        // Usually established is the final step.
-        setCurrentStep((prev) => Math.max(prev, 3)) // Fallback, will be maxed later
+        setCurrentStep(stepsLengthRef.current - 1)
         setCharonFailed(false)
       } else if (
         text.includes('establishing ike_sa failed') ||
@@ -243,15 +266,26 @@ conn host-host
     // Wire up RPC handler — dispatches charon's PKCS#11 calls into softhsmv3 in real time.
     // Both arrays alias the same SharedArrayBuffer so writes are immediately visible to the worker.
     strongSwanEngine.setRpcHandler((sab, workerRole) => {
-      const M = moduleRef.current
-      if (!M) return
-
       const flagView = new Int32Array(sab, 0, 12)
       const p = new Int32Array(sab, 48) // payload i32 view (same as rpcPayloadI32 in worker)
       const payloadView = new Uint8Array(sab, 48) // payload byte view
-
       const cmdId = Atomics.load(flagView, 0)
+
+      const M = moduleRef.current
+      if (!M) {
+        Atomics.store(flagView, 2, 0x05) // CKR_GENERAL_ERROR
+        Atomics.store(flagView, 1, 2)
+        Atomics.notify(flagView, 1, 1)
+        strongSwanEngine.dispatchLog({
+          level: 'error',
+          text: `[RPC] cmd=${cmdId}: softhsmv3 not initialized — please initialize the HSM first`,
+        })
+        return
+      }
+
       const state = vpnStateRef.current
+      const argP0 = p[0] >>> 0 // capture BEFORE switch mutates p[0]
+      const argP2 = p[2] >>> 0 // capture BEFORE switch mutates p[2] (used by cmdId 4 wantList)
       let rv = 0 // CKR_OK default
 
       try {
@@ -273,14 +307,14 @@ conn host-host
             break
 
           // ── C_GetSlotList ────────────────────────────────────────────────────
-          // Always advertise slots [0, 1] so charon loads both client and server modules.
+          // Advertise real softhsmv3 slot IDs discovered during auto-init.
           case 4: {
             const wantList = p[2]
-            p[0] = 2 // count = 2 slots (client slot 0, server slot 1)
+            p[0] = 2
             if (wantList) {
-              p[1] = 0
-              p[2] = 1
-            } // slot IDs; both map to softhsmv3 slot 0 internally
+              p[1] = vpnSlotsRef.current.init
+              p[2] = vpnSlotsRef.current.resp
+            }
             rv = 0
             break
           }
@@ -315,7 +349,18 @@ conn host-host
 
           // ── C_GetMechanismList ───────────────────────────────────────────────
           case 7: {
-            const mechs = [0x00, 0x01, 0x06, 0x40, 0x43, 0x1058] // RSA_PKCS_KEY_PAIR_GEN, RSA_PKCS, SHA1_RSA_PKCS, SHA256_RSA_PKCS, SHA256_RSA_PKCS_PSS, CKM_ML_KEM
+            const mechs = [
+              0x00,
+              0x01,
+              0x06,
+              0x40,
+              0x43, // RSA_PKCS_KEY_PAIR_GEN, RSA_PKCS, SHA1_RSA_PKCS, SHA256_RSA_PKCS, SHA256_RSA_PKCS_PSS
+              0x1040,
+              0x1050, // EC_KEY_PAIR_GEN, ECDH1_DERIVE — required by pkcs11_dh for ECP_256 key exchange
+              0x000f,
+              0x0017, // CKM_ML_KEM_KEY_PAIR_GEN, CKM_ML_KEM
+              0x001c, // CKM_ML_DSA_KEY_PAIR_GEN
+            ]
             const wantList7 = p[2]
             p[0] = mechs.length
             if (wantList7)
@@ -331,9 +376,14 @@ conn host-host
           case 12: {
             const slotId12 = p[0] >>> 0
             const flags12 = p[1] >>> 0
+            // Map charon's logical slot (init slot ID or resp slot ID) to the real softhsmv3 slot
+            const realSlot12 =
+              slotId12 === vpnSlotsRef.current.init
+                ? vpnSlotsRef.current.init
+                : vpnSlotsRef.current.resp
             const sessPtr = M._malloc(4)
             const r12 =
-              M._C_OpenSession(slotId12, CKF_RW_SESSION | CKF_SERIAL_SESSION, 0, 0, sessPtr) >>> 0
+              M._C_OpenSession(realSlot12, CKF_RW_SESSION | CKF_SERIAL_SESSION, 0, 0, sessPtr) >>> 0
             if (r12 === 0) {
               const hSess = M.getValue(sessPtr, 'i32') >>> 0
               const pinBytes = new TextEncoder().encode('user1234')
@@ -343,6 +393,9 @@ conn host-host
               M._free(pinPtr)
               p[0] = hSess
               state.sessions.set(hSess, slotId12)
+              // Capture first responder-slot session for server HsmKeyInspector
+              if (slotId12 === vpnSlotsRef.current.resp && !serverSessionRef.current)
+                serverSessionRef.current = hSess
               strongSwanEngine.dispatchLog({
                 level: 'info',
                 text: `[RPC] C_OpenSession slotId=${slotId12} flags=0x${flags12.toString(16)} → hSess=${hSess} loginRv=0x${loginRv.toString(16)}`,
@@ -657,21 +710,103 @@ conn host-host
             const pubKeyPtr = M._malloc(4)
             const privKeyPtr = M._malloc(4)
 
+            // Inject CKA_TOKEN=CK_TRUE into both templates so generated keys are token
+            // objects that survive C_CloseSession and can be inspected afterwards.
+            // Strategy: allocate an extended array (n+1 entries), copy the original entries
+            // (sharing their valPtrs — do NOT free them via the extended array), then add the
+            // CKA_TOKEN entry with its own boolPtr at the end.
+            const injectTokenFlag = (srcTplPtr: number, srcCount: number) => {
+              const extTplPtr = M._malloc((srcCount + 1) * 12)
+              M.HEAPU8.set(M.HEAPU8.subarray(srcTplPtr, srcTplPtr + srcCount * 12), extTplPtr)
+              const boolPtr = M._malloc(1)
+              M.HEAPU8[boolPtr] = 1 // CK_TRUE
+              M.setValue(extTplPtr + srcCount * 12, 0x00000001, 'i32') // CKA_TOKEN
+              M.setValue(extTplPtr + srcCount * 12 + 4, boolPtr, 'i32') // pValue
+              M.setValue(extTplPtr + srcCount * 12 + 8, 1, 'i32') // ulValueLen (CK_BBOOL)
+              return { extTplPtr, boolPtr }
+            }
+            const extPub = injectTokenFlag(pubTpl.tplPtr, pubCount59)
+            const extPriv = injectTokenFlag(privTpl.tplPtr, privCount59)
+
+            // ML-KEM public key: CKA_PARAMETER_SET (0x061d) has ck3 flag = MUST be in generate template.
+            // charon's pkcs11_kem.c only sends {CKA_DERIVE=CK_TRUE} — inject CKP_ML_KEM_768 (2) here.
+            const CKA_PARAMETER_SET_ID = 0x0000061d
+            let finalPubPtr = extPub.extTplPtr
+            let finalPubCount = pubCount59 + 1
+            let paramSetValPtr: number | null = null
+
+            if (mechType59 === 0x000f) {
+              finalPubCount = pubCount59 + 2
+              const newPubPtr = M._malloc(finalPubCount * 12)
+              M.HEAPU8.set(
+                M.HEAPU8.subarray(extPub.extTplPtr, extPub.extTplPtr + (pubCount59 + 1) * 12),
+                newPubPtr
+              )
+              paramSetValPtr = M._malloc(4)
+              M.setValue(paramSetValPtr, 2, 'i32') // CKP_ML_KEM_768 = 2
+              M.setValue(newPubPtr + (pubCount59 + 1) * 12, CKA_PARAMETER_SET_ID, 'i32')
+              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 4, paramSetValPtr, 'i32')
+              M.setValue(newPubPtr + (pubCount59 + 1) * 12 + 8, 4, 'i32')
+              M._free(extPub.boolPtr)
+              M._free(extPub.extTplPtr)
+              finalPubPtr = newPubPtr
+            }
+
             rv =
               M._C_GenerateKeyPair(
                 hSess59,
                 mechPtr59,
-                pubTpl.tplPtr,
-                pubCount59,
-                privTpl.tplPtr,
-                privCount59,
+                finalPubPtr,
+                finalPubCount,
+                extPriv.extTplPtr,
+                privCount59 + 1,
                 pubKeyPtr,
                 privKeyPtr
               ) >>> 0
 
+            // Free extended arrays only (NOT their shared valPtrs 0..n-1 — those belong to originals)
+            if (paramSetValPtr !== null) {
+              M._free(paramSetValPtr)
+              M._free(finalPubPtr)
+            } else {
+              M._free(extPub.boolPtr)
+              M._free(extPub.extTplPtr)
+            }
+            M._free(extPriv.boolPtr)
+            M._free(extPriv.extTplPtr)
+
             if (rv === 0) {
               p[0] = M.getValue(pubKeyPtr, 'i32') >>> 0
               p[1] = M.getValue(privKeyPtr, 'i32') >>> 0
+              // Register keys in the context so the Key Inspector populates
+              const isEC = mechType59 === 0x1040
+              const isMlDsa = mechType59 === 0x001c
+              const isMlKem = mechType59 === 0x000f
+              const family = isEC ? 'ecdh' : isMlDsa ? 'ml-dsa' : isMlKem ? 'ml-kem' : 'rsa'
+              const variant = isEC ? 'P-256' : isMlDsa ? 'ML-DSA' : isMlKem ? 'ML-KEM' : 'RSA'
+              const keyLabel = isEC ? 'ECDH' : isMlDsa ? 'ML-DSA' : isMlKem ? 'ML-KEM' : 'RSA'
+              const ts = new Date().toISOString()
+              const keySlotId = workerRole === 'initiator' ? 0 : 1
+              addHsmKey({
+                handle: p[0],
+                family,
+                role: 'public',
+                label: `${keyLabel} Public Key`,
+                variant,
+                engine: 'cpp',
+                generatedAt: ts,
+                slotId: keySlotId,
+              })
+              addHsmKey({
+                handle: p[1],
+                family,
+                role: 'private',
+                label: `${keyLabel} Private Key`,
+                variant,
+                engine: 'cpp',
+                generatedAt: ts,
+                slotId: keySlotId,
+              })
             }
 
             M._free(mechPtr59)
@@ -708,10 +843,23 @@ conn host-host
 
             if (!wantCt) {
               const ctLenPtr = M._malloc(4)
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
-              rv = (M as any)._C_EncapsulateKey(hSess68, mechPtr68, hKey68, 0, ctLenPtr, 0) >>> 0
+              const dummyKeyPtr68 = M._malloc(4) // phKey must be non-NULL even for size query (softhsmv3 guards phKey before size-query path)
+              // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate=NULL, ulAttrCount=0, pCiphertext=NULL, pulCtLen, phKey=NULL)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              rv =
+                (M as any)._C_EncapsulateKey(
+                  hSess68,
+                  mechPtr68,
+                  hKey68,
+                  0,
+                  0,
+                  0,
+                  ctLenPtr,
+                  dummyKeyPtr68
+                ) >>> 0
               if (rv === 0) p[0] = M.getValue(ctLenPtr, 'i32') >>> 0
               M._free(ctLenPtr)
+              M._free(dummyKeyPtr68)
               strongSwanEngine.dispatchLog({
                 level: rv === 0 ? 'info' : 'error',
                 text: `[RPC] C_EncapsulateKey SizeQuery hSess=${hSess68} hKey=${hKey68} → rv=0x${rv.toString(16)} len=${p[0]}`,
@@ -721,12 +869,28 @@ conn host-host
               M.setValue(ctLenPtr, 4096, 'i32')
               const ctBufPtr = M._malloc(4096)
               const hSecretKeyPtr = M._malloc(4)
+              // Build 2-attr template: CKA_VALUE_LEN=32 + CKA_EXTRACTABLE=TRUE
+              // CKA_EXTRACTABLE must be explicit: softhsmv3 setDefault() sets it FALSE
+              const secretValLen68 = M._malloc(4)
+              M.setValue(secretValLen68, 32, 'i32')
+              const bTrue68 = M._malloc(1)
+              M.setValue(bTrue68, 1, 'i8')
+              const secretTmpl68 = M._malloc(24) // 2 × CK_ATTRIBUTE {type, pValue, ulValueLen}
+              M.setValue(secretTmpl68 + 0, 0x161, 'i32') // CKA_VALUE_LEN
+              M.setValue(secretTmpl68 + 4, secretValLen68, 'i32') // pValue → &32
+              M.setValue(secretTmpl68 + 8, 4, 'i32') // ulValueLen = sizeof(CK_ULONG)
+              M.setValue(secretTmpl68 + 12, 0x162, 'i32') // CKA_EXTRACTABLE
+              M.setValue(secretTmpl68 + 16, bTrue68, 'i32') // pValue → &CK_TRUE
+              M.setValue(secretTmpl68 + 20, 1, 'i32') // ulValueLen = sizeof(CK_BBOOL)
+              // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate, ulAttrCount, pCiphertext, pulCtLen, phKey)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               rv =
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
                 (M as any)._C_EncapsulateKey(
                   hSess68,
                   mechPtr68,
                   hKey68,
+                  secretTmpl68,
+                  2,
                   ctBufPtr,
                   ctLenPtr,
                   hSecretKeyPtr
@@ -742,6 +906,9 @@ conn host-host
               M._free(ctLenPtr)
               M._free(ctBufPtr)
               M._free(hSecretKeyPtr)
+              M._free(secretValLen68)
+              M._free(bTrue68)
+              M._free(secretTmpl68)
               strongSwanEngine.dispatchLog({
                 level: rv === 0 ? 'info' : 'error',
                 text: `[RPC] C_EncapsulateKey Exec hSess=${hSess68} hKey=${hKey68} → rv=0x${rv.toString(16)} len=${p[0]} secKey=${p[1]}`,
@@ -769,12 +936,27 @@ conn host-host
             }
 
             const hSecretKeyPtr69 = M._malloc(4)
+            // Build 2-attr template: CKA_VALUE_LEN=32 + CKA_EXTRACTABLE=TRUE
+            const secretValLen69 = M._malloc(4)
+            M.setValue(secretValLen69, 32, 'i32')
+            const bTrue69 = M._malloc(1)
+            M.setValue(bTrue69, 1, 'i8')
+            const secretTmpl69 = M._malloc(24) // 2 × CK_ATTRIBUTE
+            M.setValue(secretTmpl69 + 0, 0x161, 'i32') // CKA_VALUE_LEN
+            M.setValue(secretTmpl69 + 4, secretValLen69, 'i32') // pValue → &32
+            M.setValue(secretTmpl69 + 8, 4, 'i32') // ulValueLen
+            M.setValue(secretTmpl69 + 12, 0x162, 'i32') // CKA_EXTRACTABLE
+            M.setValue(secretTmpl69 + 16, bTrue69, 'i32') // pValue → &CK_TRUE
+            M.setValue(secretTmpl69 + 20, 1, 'i32') // ulValueLen
+            // softhsmv3 8-param: (hSess, pMech, hPrivKey, pTemplate, ulAttrCount, pCiphertext, ulCtLen, phKey)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             rv =
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any -- charon RPC proxy uses different arity than direct PKCS#11
               (M as any)._C_DecapsulateKey(
                 hSess69,
                 mechPtr69,
                 hKey69,
+                secretTmpl69,
+                2,
                 ctBufPtr69,
                 ctLen69,
                 hSecretKeyPtr69
@@ -787,9 +969,313 @@ conn host-host
             M._free(mechPtr69)
             M._free(ctBufPtr69)
             M._free(hSecretKeyPtr69)
+            M._free(secretValLen69)
+            M._free(bTrue69)
+            M._free(secretTmpl69)
             strongSwanEngine.dispatchLog({
               level: rv === 0 ? 'info' : 'error',
               text: `[RPC] C_DecapsulateKey Exec hSess=${hSess69} hKey=${hKey69} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
+            })
+            break
+          }
+
+          case 90: {
+            // C_GenerateRandom — p[0]=hSess, p[1]=len → bytes at payloadView[8..]
+            const hSess90 = p[0] >>> 0
+            const len90 = p[1] >>> 0
+            if (len90 > 0) {
+              const bufPtr90 = M._malloc(len90)
+              rv = M._C_GenerateRandom(hSess90, bufPtr90, len90) >>> 0
+              if (rv === 0) payloadView.set(M.HEAPU8.subarray(bufPtr90, bufPtr90 + len90), 8)
+              M._free(bufPtr90)
+            }
+            strongSwanEngine.dispatchLog({
+              level: rv === 0 ? 'info' : 'error',
+              text: `[RPC] C_GenerateRandom hSess=${hSess90} len=${len90} → rv=0x${rv.toString(16)}`,
+            })
+            break
+          }
+
+          case 91: {
+            // C_DeriveKey (ECDH1_DERIVE) — p[0..7]=hSess/mechType/baseKey/attrCount/mechParamType/kdf/sharedDataLen/pubDataLen
+            // pubkey bytes at payloadView[byteBase..], template values follow
+            const hSess91 = p[0] >>> 0
+            const mechType91 = p[1] >>> 0
+            const baseKey91 = p[2] >>> 0
+            const attrCount91 = p[3] >>> 0
+            const mechParamType91 = p[4] >>> 0 // 1 = ECDH1_DERIVE_PARAMS
+            const kdf91 = p[5] >>> 0
+            const pubDataLen91 = p[7] >>> 0
+            const byteBase91 = (8 + attrCount91 * 2) * 4
+
+            if (mechParamType91 === 1 && pubDataLen91 > 0) {
+              const PARAMS_SIZE = 20 // sizeof(CK_ECDH1_DERIVE_PARAMS) in 32-bit WASM
+              const paramsPtr91 = M._malloc(PARAMS_SIZE + pubDataLen91)
+              const pubkeyPtr91 = paramsPtr91 + PARAMS_SIZE
+              M.HEAPU8.set(new Uint8Array(sab, 48 + byteBase91, pubDataLen91), pubkeyPtr91)
+              M.setValue(paramsPtr91, kdf91, 'i32')
+              M.setValue(paramsPtr91 + 4, 0, 'i32') // ulSharedDataLen
+              M.setValue(paramsPtr91 + 8, 0, 'i32') // pSharedData = NULL
+              M.setValue(paramsPtr91 + 12, pubDataLen91, 'i32')
+              M.setValue(paramsPtr91 + 16, pubkeyPtr91, 'i32')
+
+              const mechPtr91 = M._malloc(12)
+              M.setValue(mechPtr91, mechType91, 'i32')
+              M.setValue(mechPtr91 + 4, paramsPtr91, 'i32')
+              M.setValue(mechPtr91 + 8, PARAMS_SIZE, 'i32')
+
+              const tplPtr91 = M._malloc(attrCount91 * 12)
+              let byteOff91 = pubDataLen91
+              for (let i = 0; i < attrCount91; i++) {
+                const t91 = p[8 + i * 2] >>> 0
+                const l91 = p[9 + i * 2] >>> 0
+                M.setValue(tplPtr91 + i * 12, t91, 'i32')
+                if (l91 > 0) {
+                  const vPtr91 = M._malloc(l91)
+                  M.HEAPU8.set(new Uint8Array(sab, 48 + byteBase91 + byteOff91, l91), vPtr91)
+                  M.setValue(tplPtr91 + i * 12 + 4, vPtr91, 'i32')
+                  byteOff91 += l91
+                } else {
+                  M.setValue(tplPtr91 + i * 12 + 4, 0, 'i32')
+                }
+                M.setValue(tplPtr91 + i * 12 + 8, l91, 'i32')
+              }
+
+              const newKeyPtr91 = M._malloc(4)
+              rv =
+                M._C_DeriveKey(
+                  hSess91,
+                  mechPtr91,
+                  baseKey91,
+                  tplPtr91,
+                  attrCount91,
+                  newKeyPtr91
+                ) >>> 0
+              if (rv === 0) p[0] = M.getValue(newKeyPtr91, 'i32') >>> 0
+
+              M._free(paramsPtr91)
+              M._free(mechPtr91)
+              M._free(tplPtr91)
+              M._free(newKeyPtr91)
+            } else {
+              rv = 0x50 // CKR_FUNCTION_NOT_SUPPORTED — unsupported mech param type
+            }
+
+            strongSwanEngine.dispatchLog({
+              level: rv === 0 ? 'info' : 'error',
+              text: `[RPC] C_DeriveKey hSess=${hSess91} mech=0x${mechType91.toString(16)} base=${baseKey91} attrCnt=${attrCount91} → rv=0x${rv.toString(16)} newKey=${p[0]}`,
+            })
+            break
+          }
+
+          // ── C_CreateObject (cmdId 30) ─────────────────────────────────────────
+          // Responder imports initiator's ML-KEM public key before C_EncapsulateKey.
+          // p[0]=hSess, p[1]=attrCount; p[2+i*2]=type, p[3+i*2]=len per attr.
+          // Byte values at byteBase=(2+attrCount*2)*4. Output: p[0]=hObject.
+          case 30: {
+            const hSess30 = p[0] >>> 0
+            const cnt30 = p[1] >>> 0
+            const byteBase30 = (2 + cnt30 * 2) * 4
+            const tplPtr30 = M._malloc(cnt30 * 12)
+            let byteOff30 = 0
+            for (let i = 0; i < cnt30; i++) {
+              const attrType30 = p[2 + i * 2] >>> 0
+              const attrLen30 = p[3 + i * 2] >>> 0
+              M.setValue(tplPtr30 + i * 12, attrType30, 'i32')
+              if (attrLen30 > 0) {
+                const valPtr30 = M._malloc(attrLen30)
+                M.HEAPU8.set(
+                  payloadView.subarray(byteBase30 + byteOff30, byteBase30 + byteOff30 + attrLen30),
+                  valPtr30
+                )
+                M.setValue(tplPtr30 + i * 12 + 4, valPtr30, 'i32')
+                byteOff30 += attrLen30
+              } else {
+                M.setValue(tplPtr30 + i * 12 + 4, 0, 'i32')
+              }
+              M.setValue(tplPtr30 + i * 12 + 8, attrLen30, 'i32')
+            }
+            const hObjPtr30 = M._malloc(4)
+            rv = M._C_CreateObject(hSess30, tplPtr30, cnt30, hObjPtr30) >>> 0
+            if (rv === 0) p[0] = M.getValue(hObjPtr30, 'i32') >>> 0
+            for (let i = 0; i < cnt30; i++) {
+              const vp = M.getValue(tplPtr30 + i * 12 + 4, 'i32')
+              if (vp) M._free(vp)
+            }
+            M._free(tplPtr30)
+            M._free(hObjPtr30)
+            strongSwanEngine.dispatchLog({
+              level: rv === 0 ? 'info' : 'error',
+              text: `[RPC] C_CreateObject hSess=${hSess30} attrCount=${cnt30} → rv=0x${rv.toString(16)} hObject=${p[0]}`,
+            })
+            break
+          }
+
+          // ── C_EncapsulateKey (cmdId 92, PKCS#11 v3.0) ────────────────────────
+          // Responder-side ML-KEM encapsulation against imported initiator pubkey.
+          // p[0]=hSess, p[1]=mechType, p[2]=hPublicKey, p[3]=wantCt (0=sizeQuery, 1=full).
+          // Output: p[0]=ctLen, p[1]=hSecretKey; ciphertext at payloadView[16..].
+          case 92: {
+            const hSess92 = p[0] >>> 0
+            const mechType92 = p[1] >>> 0
+            const hKey92 = p[2] >>> 0
+            const wantCt92 = p[3]
+            const mechPtr92 = M._malloc(12)
+            M.setValue(mechPtr92, mechType92, 'i32')
+            M.setValue(mechPtr92 + 4, 0, 'i32')
+            M.setValue(mechPtr92 + 8, 0, 'i32')
+            if (!wantCt92) {
+              const ctLenPtr92 = M._malloc(4)
+              const dummyKeyPtr92 = M._malloc(4) // phKey must be non-NULL even for size query (softhsmv3 guards phKey before size-query path)
+              // softhsmv3 C_EncapsulateKey has 8 params (PKCS#11 v3.2):
+              // (hSession, pMechanism, hPublicKey, pTemplate, ulAttrCount, pCiphertext, pulCiphertextLen, phKey)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              rv =
+                (M as any)._C_EncapsulateKey(
+                  hSess92,
+                  mechPtr92,
+                  hKey92,
+                  0,
+                  0,
+                  0,
+                  ctLenPtr92,
+                  dummyKeyPtr92
+                ) >>> 0
+              if (rv === 0) p[0] = M.getValue(ctLenPtr92, 'i32') >>> 0
+              M._free(ctLenPtr92)
+              M._free(dummyKeyPtr92)
+              strongSwanEngine.dispatchLog({
+                level: rv === 0 ? 'info' : 'error',
+                text: `[RPC] C_EncapsulateKey(92) SizeQuery hSess=${hSess92} hKey=${hKey92} → rv=0x${rv.toString(16)} len=${p[0]}`,
+              })
+            } else {
+              const ctLenPtr92 = M._malloc(4)
+              M.setValue(ctLenPtr92, 4096, 'i32')
+              const ctBufPtr92 = M._malloc(4096)
+              const hSecretKeyPtr92 = M._malloc(4)
+              // Build 2-attr template: CKA_VALUE_LEN=32 + CKA_EXTRACTABLE=TRUE
+              // CKA_EXTRACTABLE must be explicit: softhsmv3 setDefault() sets it FALSE
+              const secretValLen92 = M._malloc(4)
+              M.setValue(secretValLen92, 32, 'i32')
+              const bTrue92 = M._malloc(1)
+              M.setValue(bTrue92, 1, 'i8')
+              const secretTmpl92 = M._malloc(24) // 2 × CK_ATTRIBUTE {type, pValue, ulValueLen}
+              M.setValue(secretTmpl92 + 0, 0x161, 'i32') // CKA_VALUE_LEN
+              M.setValue(secretTmpl92 + 4, secretValLen92, 'i32') // pValue → &32
+              M.setValue(secretTmpl92 + 8, 4, 'i32') // ulValueLen = sizeof(CK_ULONG)
+              M.setValue(secretTmpl92 + 12, 0x162, 'i32') // CKA_EXTRACTABLE
+              M.setValue(secretTmpl92 + 16, bTrue92, 'i32') // pValue → &CK_TRUE
+              M.setValue(secretTmpl92 + 20, 1, 'i32') // ulValueLen = sizeof(CK_BBOOL)
+              // softhsmv3 8-param: (hSess, pMech, hPubKey, pTemplate, ulAttrCount, pCiphertext, pulCtLen, phKey)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              rv =
+                (M as any)._C_EncapsulateKey(
+                  hSess92,
+                  mechPtr92,
+                  hKey92,
+                  secretTmpl92,
+                  2,
+                  ctBufPtr92,
+                  ctLenPtr92,
+                  hSecretKeyPtr92
+                ) >>> 0
+              if (rv === 0) {
+                const ctLen92 = M.getValue(ctLenPtr92, 'i32') >>> 0
+                p[0] = ctLen92
+                p[1] = M.getValue(hSecretKeyPtr92, 'i32') >>> 0
+                if (ctLen92 > 0)
+                  payloadView.set(M.HEAPU8.subarray(ctBufPtr92, ctBufPtr92 + ctLen92), 16)
+                const keySlotId92 = workerRole === 'initiator' ? 0 : 1
+                addHsmKey({
+                  handle: p[1],
+                  family: 'ml-kem',
+                  role: 'secret',
+                  label: 'ML-KEM Session Key',
+                  variant: 'ML-KEM',
+                  engine: 'cpp',
+                  generatedAt: new Date().toISOString(),
+                  slotId: keySlotId92,
+                })
+              }
+              M._free(ctLenPtr92)
+              M._free(ctBufPtr92)
+              M._free(hSecretKeyPtr92)
+              M._free(secretValLen92)
+              M._free(bTrue92)
+              M._free(secretTmpl92)
+              strongSwanEngine.dispatchLog({
+                level: rv === 0 ? 'info' : 'error',
+                text: `[RPC] C_EncapsulateKey(92) Exec hSess=${hSess92} hKey=${hKey92} → rv=0x${rv.toString(16)} ctLen=${p[0]} secKey=${p[1]}`,
+              })
+            }
+            M._free(mechPtr92)
+            break
+          }
+
+          // ── C_DecapsulateKey (cmdId 93, PKCS#11 v3.0) ────────────────────────
+          // Initiator-side ML-KEM decapsulation of ciphertext from responder.
+          // p[0]=hSess, p[1]=mechType, p[2]=hPrivKey, p[3]=ctLen; CT at payloadView[16..].
+          // Output: p[0]=hSecretKey.
+          case 93: {
+            const hSess93 = p[0] >>> 0
+            const mechType93 = p[1] >>> 0
+            const hKey93 = p[2] >>> 0
+            const ctLen93 = p[3] >>> 0
+            const mechPtr93 = M._malloc(12)
+            M.setValue(mechPtr93, mechType93, 'i32')
+            M.setValue(mechPtr93 + 4, 0, 'i32')
+            M.setValue(mechPtr93 + 8, 0, 'i32')
+            const ctBufPtr93 = M._malloc(Math.max(ctLen93, 1))
+            if (ctLen93 > 0) M.HEAPU8.set(payloadView.subarray(16, 16 + ctLen93), ctBufPtr93)
+            const hSecretKeyPtr93 = M._malloc(4)
+            // Build 2-attr template: CKA_VALUE_LEN=32 + CKA_EXTRACTABLE=TRUE
+            const secretValLen93 = M._malloc(4)
+            M.setValue(secretValLen93, 32, 'i32')
+            const bTrue93 = M._malloc(1)
+            M.setValue(bTrue93, 1, 'i8')
+            const secretTmpl93 = M._malloc(24) // 2 × CK_ATTRIBUTE
+            M.setValue(secretTmpl93 + 0, 0x161, 'i32') // CKA_VALUE_LEN
+            M.setValue(secretTmpl93 + 4, secretValLen93, 'i32') // pValue → &32
+            M.setValue(secretTmpl93 + 8, 4, 'i32') // ulValueLen
+            M.setValue(secretTmpl93 + 12, 0x162, 'i32') // CKA_EXTRACTABLE
+            M.setValue(secretTmpl93 + 16, bTrue93, 'i32') // pValue → &CK_TRUE
+            M.setValue(secretTmpl93 + 20, 1, 'i32') // ulValueLen
+            // softhsmv3 8-param: (hSess, pMech, hPrivKey, pTemplate, ulAttrCount, pCiphertext, ulCtLen, phKey)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            rv =
+              (M as any)._C_DecapsulateKey(
+                hSess93,
+                mechPtr93,
+                hKey93,
+                secretTmpl93,
+                2,
+                ctBufPtr93,
+                ctLen93,
+                hSecretKeyPtr93
+              ) >>> 0
+            if (rv === 0) {
+              p[0] = M.getValue(hSecretKeyPtr93, 'i32') >>> 0
+              const keySlotId93 = workerRole === 'initiator' ? 0 : 1
+              addHsmKey({
+                handle: p[0],
+                family: 'ml-kem',
+                role: 'secret',
+                label: 'ML-KEM Session Key',
+                variant: 'ML-KEM',
+                engine: 'cpp',
+                generatedAt: new Date().toISOString(),
+                slotId: keySlotId93,
+              })
+            }
+            M._free(mechPtr93)
+            M._free(ctBufPtr93)
+            M._free(hSecretKeyPtr93)
+            M._free(secretValLen93)
+            M._free(bTrue93)
+            M._free(secretTmpl93)
+            strongSwanEngine.dispatchLog({
+              level: rv === 0 ? 'info' : 'error',
+              text: `[RPC] C_DecapsulateKey(93) hSess=${hSess93} hKey=${hKey93} ctLen=${ctLen93} → rv=0x${rv.toString(16)} secKey=${p[0]}`,
             })
             break
           }
@@ -803,11 +1289,66 @@ conn host-host
         rv = 0x50 // CKR_FUNCTION_NOT_SUPPORTED
       }
 
+      const PKCS11_FN: Record<number, string> = {
+        0: 'C_Initialize',
+        1: 'C_Finalize',
+        4: 'C_GetSlotList',
+        6: 'C_GetTokenInfo',
+        7: 'C_GetMechanismList',
+        12: 'C_OpenSession',
+        13: 'C_CloseSession',
+        18: 'C_Login',
+        19: 'C_Logout',
+        24: 'C_GetAttributeValue',
+        26: 'C_FindObjectsInit',
+        27: 'C_FindObjects',
+        28: 'C_FindObjectsFinal',
+        30: 'C_CreateObject',
+        42: 'C_SignInit',
+        43: 'C_Sign',
+        48: 'C_VerifyInit',
+        49: 'C_Verify',
+        59: 'C_GenerateKeyPair',
+        68: 'C_EncapsulateKey',
+        69: 'C_DecapsulateKey',
+        90: 'C_GenerateRandom',
+        91: 'C_DeriveKey',
+        92: 'C_EncapsulateKey(v3)',
+        93: 'C_DecapsulateKey(v3)',
+      }
+      // Per-function label for the first argument (captured before switch mutated p[0])
+      const PKCS11_ARG0: Record<number, string> = {
+        0: '',
+        1: '',
+        4: `tokenPresent=${argP2}`,
+        6: `slotId=${argP0}`,
+        7: `slotId=${argP0}`,
+        12: `slotId=${argP0}`,
+        13: `hSession=${argP0}`,
+        18: `hSession=${argP0}`,
+        19: `hSession=${argP0}`,
+        24: `hSession=${argP0}`,
+        26: `hSession=${argP0}`,
+        27: `hSession=${argP0}`,
+        28: `hSession=${argP0}`,
+        30: `hSession=${argP0}`,
+        42: `hSession=${argP0}`,
+        43: `hSession=${argP0}`,
+        48: `hSession=${argP0}`,
+        49: `hSession=${argP0}`,
+        59: `hSession=${argP0}`,
+        68: `hSession=${argP0}`,
+        69: `hSession=${argP0}`,
+        90: `hSession=${argP0}`,
+        91: `hSession=${argP0}`,
+        92: `hSession=${argP0}`,
+        93: `hSession=${argP0}`,
+      }
       addHsmLog({
         id: Date.now() + Math.floor(Math.random() * 1000),
         timestamp: new Date().toISOString().split('T')[1]?.split('.')[0] || '',
-        fn: `PKCS11_C${cmdId}`,
-        args: `hSession=${p[0]}`,
+        fn: PKCS11_FN[cmdId] ?? `C_Unknown_${cmdId}`,
+        args: `[${workerRole}] ${PKCS11_ARG0[cmdId] ?? `arg0=${argP0}`}`,
         rvName: rv === 0 ? 'CKR_OK' : `0x${rv.toString(16)}`,
         rvHex: `0x${rv.toString(16).padStart(8, '0')}`,
         ok: rv === 0,
@@ -825,7 +1366,7 @@ conn host-host
       strongSwanEngine.setRpcHandler(() => {})
       strongSwanEngine.destroy()
     }
-  }, [moduleRef, hSessionRef, addHsmLog])
+  }, [moduleRef, hSessionRef, addHsmLog, addHsmKey])
 
   const exchange = IKE_V2_EXCHANGES[selectedMode]
   const modeConfig = IKE_V2_MODES.find((m) => m.id === selectedMode)
@@ -875,6 +1416,11 @@ conn host-host
     return result
   }, [exchange])
 
+  // Keep a ref to steps.length that is always current without adding steps to the
+  // useEffect dependency array (which would re-subscribe log/state listeners on every mode change).
+  const stepsLengthRef = React.useRef(steps.length)
+  stepsLengthRef.current = steps.length
+
   const hasCrashed = useMemo(() => {
     if (charonFailed) return true
     if (exchange && steps.length > 0) {
@@ -903,6 +1449,7 @@ conn host-host
     setSsLogs([])
     setSelectedMode(mode)
     setCurrentStep(0)
+    setCharonFailed(false)
   }, [])
 
   return (
@@ -1234,6 +1781,17 @@ conn host-host
               {pskMismatch && <span className="text-[10px] text-status-warning">mismatch</span>}
             </div>
           )}
+          {currentStep === 0 && ssState === 'UNINITIALIZED' && (
+            <label className="flex items-center gap-1.5 text-[10px] text-muted-foreground cursor-pointer select-none">
+              <input
+                type="checkbox"
+                checked={rpcMode}
+                onChange={(e) => setRpcMode(e.target.checked)}
+                className="accent-primary"
+              />
+              HSM RPC
+            </label>
+          )}
           {currentStep === 0 && ssState === 'UNINITIALIZED' ? (
             <button
               onClick={async () => {
@@ -1245,24 +1803,273 @@ conn host-host
                 }
 
                 try {
-                  // Pass user's key algorithm selection to the worker
-                  // algType: 1=RSA, 2=ML-DSA. size: RSA bits or ML-DSA level.
-                  const algType = clientAlg === 'ML-DSA' ? 2 : 1
-                  const slot0Size =
-                    algType === 2
-                      ? parseInt(clientSize) || 65
-                      : parseInt(clientClassAlg.split('-')[1] || '3072') || 3072
-                  const slot1Size =
-                    algType === 2
-                      ? parseInt(serverSize) || 65
-                      : parseInt(serverClassAlg.split('-')[1] || '3072') || 3072
-                  strongSwanEngine.setKeySpec(algType, slot0Size, slot1Size)
+                  // RSA-3072 is the only auth key type supported by strongSwan charon
+                  // in this WASM build. ML-DSA auth requires an IANA IKEv2 AUTH method
+                  // that does not exist yet — wired when upstream support lands.
+                  // The handshake always completes via PSK (WASM_PSK env var).
+                  strongSwanEngine.setKeySpec(1, 3072, 3072)
 
-                  strongSwanEngine.init(
-                    { 'strongswan.conf': activeInitConfig, 'ipsec.conf': activeInitIpsec },
-                    { 'strongswan.conf': activeRespConfig, 'ipsec.conf': activeRespIpsec },
-                    { initPsk: clientPsk, respPsk: serverPsk }
-                  )
+                  // In RPC mode, ensure the main-thread softhsmv3 is initialized and
+                  // both VPN tokens (initiator + responder) are ready in their own slots.
+                  // NOTE: moduleRef.current may already be set by another HSM panel —
+                  // we guard with vpnRpcInitRef, not moduleRef.
+                  if (rpcMode) {
+                    const rawM = moduleRef.current ?? (await getSoftHSMCppModule())
+                    rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
+
+                    if (!vpnRpcInitRef.current) {
+                      // ── Slot discovery facts ───────────────────────────────────────────────
+                      // softhsmv3 WASM uses sequential integer slot IDs (0, 1, 2, ...).
+                      // isTokenPresent() always returns true, so C_GetSlotList(1) and (0)
+                      // return the same slots. Uninitialized tokens appear at the BACK of
+                      // the list. A direct list query (skip NULL/count query first) has no
+                      // side effects — the count query is what adds new empty slots.
+                      // After C_InitToken(slotId), the slot ID is UNCHANGED.
+
+                      // Direct list query: pass a large buffer, skip the NULL/count call.
+                      // This reads the current slot list without triggering new-slot insertion.
+                      const getRawSlots = (M: typeof rawM) => {
+                        const MAX = 32
+                        const listPtr = M._malloc(MAX * 4)
+                        const cntPtr = M._malloc(4)
+                        M.setValue(cntPtr, MAX, 'i32')
+                        const rv = M._C_GetSlotList(0, listPtr, cntPtr) >>> 0
+                        const cnt = rv === 0 ? M.getValue(cntPtr, 'i32') >>> 0 : 0
+                        const ids: number[] = []
+                        for (let i = 0; i < cnt; i++)
+                          ids.push(M.getValue(listPtr + i * 4, 'i32') >>> 0)
+                        M._free(listPtr)
+                        M._free(cntPtr)
+                        return ids
+                      }
+
+                      // NULL/count query: triggers softhsmv3 to add a new empty slot if
+                      // all current tokens are initialized (so there's always one free slot).
+                      const ensureEmptySlot = (M: typeof rawM) => {
+                        const cntPtr = M._malloc(4)
+                        M._C_GetSlotList(0, 0, cntPtr)
+                        M._free(cntPtr)
+                      }
+
+                      // Guarantee at least one free (uninitialized) slot exists.
+                      ensureEmptySlot(rawM)
+
+                      // The LAST slot in the direct-query list is always uninitialized.
+                      const slots0 = getRawSlots(rawM)
+                      const uninitSlot0 = slots0[slots0.length - 1]
+                      hsm_initToken(rawM, uninitSlot0, '1234', 'PQC VPN Initiator')
+                      // C_InitToken leaves the slot ID unchanged → uninitSlot0 IS the init slot.
+                      const realInitSlot = uninitSlot0
+
+                      const hSessInit = hsm_openUserSession(rawM, realInitSlot, '1234', 'user1234')
+
+                      // hsm_initToken internally calls C_GetSlotList(NULL) which may have already
+                      // added a new empty slot; ensureEmptySlot is idempotent when one exists.
+                      ensureEmptySlot(rawM)
+                      const slots1 = getRawSlots(rawM)
+                      const uninitSlot1 = slots1[slots1.length - 1]
+                      hsm_initToken(rawM, uninitSlot1, '1234', 'PQC VPN Responder')
+                      const realRespSlot = uninitSlot1
+
+                      const hSessResp = hsm_openUserSession(rawM, realRespSlot, '1234', 'user1234')
+
+                      vpnSlotsRef.current = { init: realInitSlot, resp: realRespSlot }
+                      hSessionRef.current = hSessInit
+                      serverSessionRef.current = hSessResp
+                      vpnRpcInitRef.current = true
+
+                      // When dual auth: generate RSA key pairs on main-thread module so
+                      // charon's C_FindObjects (via RPC) can locate them for cert auth.
+                      if (authMode === 'dual') {
+                        const ts = new Date().toISOString()
+                        const initKeys = hsm_generateRsaKeyPair(rawM, hSessInit)
+                        const respKeys = hsm_generateRsaKeyPair(rawM, hSessResp)
+                        if (initKeys) {
+                          addHsmKey({
+                            handle: initKeys.pubHandle,
+                            family: 'rsa',
+                            role: 'public',
+                            label: 'RSA-3072 Public Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: realInitSlot,
+                          })
+                          addHsmKey({
+                            handle: initKeys.privHandle,
+                            family: 'rsa',
+                            role: 'private',
+                            label: 'RSA-3072 Private Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: realInitSlot,
+                          })
+                        }
+                        if (respKeys) {
+                          addHsmKey({
+                            handle: respKeys.pubHandle,
+                            family: 'rsa',
+                            role: 'public',
+                            label: 'RSA-3072 Public Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: realRespSlot,
+                          })
+                          addHsmKey({
+                            handle: respKeys.privHandle,
+                            family: 'rsa',
+                            role: 'private',
+                            label: 'RSA-3072 Private Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: realRespSlot,
+                          })
+                        }
+                        strongSwanEngine.dispatchLog({
+                          level: 'info',
+                          text: `[RPC] RSA-3072 key pairs generated — init=${initKeys ? 'ok' : 'fail'} resp=${respKeys ? 'ok' : 'fail'}`,
+                        })
+                      }
+
+                      strongSwanEngine.dispatchLog({
+                        level: 'info',
+                        text: `[RPC] softhsmv3 ready — initSlot=${realInitSlot} respSlot=${realRespSlot}`,
+                      })
+                    } else {
+                      strongSwanEngine.dispatchLog({
+                        level: 'info',
+                        text: `[RPC] reusing VPN slots — initSlot=${vpnSlotsRef.current.init} respSlot=${vpnSlotsRef.current.resp}`,
+                      })
+                      if (authMode === 'dual') {
+                        const ts = new Date().toISOString()
+                        const initKeys = hsm_generateRsaKeyPair(rawM, hSessionRef.current)
+                        const respKeys = hsm_generateRsaKeyPair(rawM, serverSessionRef.current)
+                        if (initKeys) {
+                          addHsmKey({
+                            handle: initKeys.pubHandle,
+                            family: 'rsa',
+                            role: 'public',
+                            label: 'RSA-3072 Public Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: vpnSlotsRef.current.init,
+                          })
+                          addHsmKey({
+                            handle: initKeys.privHandle,
+                            family: 'rsa',
+                            role: 'private',
+                            label: 'RSA-3072 Private Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: vpnSlotsRef.current.init,
+                          })
+                        }
+                        if (respKeys) {
+                          addHsmKey({
+                            handle: respKeys.pubHandle,
+                            family: 'rsa',
+                            role: 'public',
+                            label: 'RSA-3072 Public Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: vpnSlotsRef.current.resp,
+                          })
+                          addHsmKey({
+                            handle: respKeys.privHandle,
+                            family: 'rsa',
+                            role: 'private',
+                            label: 'RSA-3072 Private Key',
+                            variant: 'RSA-3072',
+                            engine: 'cpp',
+                            generatedAt: ts,
+                            slotId: vpnSlotsRef.current.resp,
+                          })
+                        }
+                        strongSwanEngine.dispatchLog({
+                          level: 'info',
+                          text: `[RPC] RSA-3072 key pairs (reuse) — init=${initKeys ? 'ok' : 'fail'} resp=${respKeys ? 'ok' : 'fail'}`,
+                        })
+                      }
+                    }
+
+                    if (!moduleRef.current) moduleRef.current = rawM
+                  }
+
+                  const proposalMode =
+                    selectedMode === 'pure-pqc' ? 1 : selectedMode === 'hybrid' ? 2 : 0
+
+                  if (authMode === 'dual') {
+                    strongSwanEngine.dispatchLog({
+                      level: 'info',
+                      text: '[CERT] Generating self-signed RSA-3072 certificates...',
+                    })
+                    const initKeyRes = await openSSLService.execute(
+                      'openssl genrsa -out initiator.key 3072'
+                    )
+                    const initKeyFile = initKeyRes.files.find((f) => f.name === 'initiator.key')
+                    if (!initKeyFile) throw new Error('Failed to generate initiator key')
+                    const initCertRes = await openSSLService.execute(
+                      'openssl req -x509 -new -nodes -key initiator.key -sha256 -days 3650 -out initiator.crt -subj "/CN=vpn-initiator/O=PQC-Simulation"',
+                      [{ name: 'initiator.key', data: initKeyFile.data }]
+                    )
+                    const initCertFile = initCertRes.files.find((f) => f.name === 'initiator.crt')
+                    if (!initCertFile) throw new Error('Failed to generate initiator certificate')
+                    const respKeyRes = await openSSLService.execute(
+                      'openssl genrsa -out responder.key 3072'
+                    )
+                    const respKeyFile = respKeyRes.files.find((f) => f.name === 'responder.key')
+                    if (!respKeyFile) throw new Error('Failed to generate responder key')
+                    const respCertRes = await openSSLService.execute(
+                      'openssl req -x509 -new -nodes -key responder.key -sha256 -days 3650 -out responder.crt -subj "/CN=vpn-responder/O=PQC-Simulation"',
+                      [{ name: 'responder.key', data: respKeyFile.data }]
+                    )
+                    const respCertFile = respCertRes.files.find((f) => f.name === 'responder.crt')
+                    if (!respCertFile) throw new Error('Failed to generate responder certificate')
+                    const dec = (d: Uint8Array) => new TextDecoder().decode(d)
+                    strongSwanEngine.dispatchLog({
+                      level: 'info',
+                      text: '[CERT] CN=vpn-initiator + CN=vpn-responder ready (self-signed RSA-3072)',
+                    })
+                    // ipsec.secrets: PSK entry + RSA private key path so strongSwan can
+                    // find the correct private key for leftauth2=pubkey (RFC 4739).
+                    const initSecrets = `: PSK "${clientPsk}"\n: RSA /etc/ipsec.d/private/initiator.key\n`
+                    const respSecrets = `: PSK "${serverPsk}"\n: RSA /etc/ipsec.d/private/responder.key\n`
+                    strongSwanEngine.init(
+                      {
+                        'strongswan.conf': activeInitConfig,
+                        'ipsec.conf': activeInitIpsec,
+                        'ipsec.secrets': initSecrets,
+                        '/etc/ipsec.d/certs/initiator.crt': dec(initCertFile.data),
+                        '/etc/ipsec.d/certs/responder.crt': dec(respCertFile.data),
+                        '/etc/ipsec.d/private/initiator.key': dec(initKeyFile.data),
+                      },
+                      {
+                        'strongswan.conf': activeRespConfig,
+                        'ipsec.conf': activeRespIpsec,
+                        'ipsec.secrets': respSecrets,
+                        '/etc/ipsec.d/certs/responder.crt': dec(respCertFile.data),
+                        '/etc/ipsec.d/certs/initiator.crt': dec(initCertFile.data),
+                        '/etc/ipsec.d/private/responder.key': dec(respKeyFile.data),
+                      },
+                      { initPsk: clientPsk, respPsk: serverPsk },
+                      rpcMode,
+                      proposalMode
+                    )
+                  } else {
+                    strongSwanEngine.init(
+                      { 'strongswan.conf': activeInitConfig, 'ipsec.conf': activeInitIpsec },
+                      { 'strongswan.conf': activeRespConfig, 'ipsec.conf': activeRespIpsec },
+                      { initPsk: clientPsk, respPsk: serverPsk },
+                      rpcMode,
+                      proposalMode
+                    )
+                  }
                   setCurrentStep(1)
                 } catch (err: unknown) {
                   setSabError(err instanceof Error ? err.message : String(err))
@@ -1387,6 +2194,78 @@ conn host-host
           </div>
 
           <div className="p-4">
+            {ssState === 'UNINITIALIZED' && (
+              <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-2">
+                <div className="text-xs font-semibold">Authentication Mode</div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => setAuthMode('psk')}
+                    className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
+                  >
+                    PSK Only
+                  </button>
+                  <button
+                    onClick={() => setAuthMode('dual')}
+                    className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'dual' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
+                  >
+                    PSK + Certificate (RFC 4739)
+                  </button>
+                </div>
+                {authMode === 'dual' && (
+                  <div className="text-[10px] text-muted-foreground space-y-0.5 pt-1">
+                    <p>
+                      Dual auth per RFC 4739 — PSK + certificate. Self-signed RSA-3072 certs
+                      generated automatically (simulation only).
+                    </p>
+                    <p>
+                      In production, use CA-signed certificates from a trusted PKI. Hybrid
+                      certificates (ML-DSA + RSA composite) — coming soon.
+                    </p>
+                  </div>
+                )}
+                <label className="flex items-center gap-2 cursor-pointer pt-1">
+                  <input
+                    type="checkbox"
+                    checked={showQkdNote}
+                    onChange={(e) => setShowQkdNote(e.target.checked)}
+                    className="w-3 h-3 accent-primary"
+                  />
+                  <span className="text-xs text-muted-foreground">
+                    PSK distribution via QKD / quantum-safe methods
+                  </span>
+                </label>
+                {showQkdNote && (
+                  <div className="text-[10px] text-muted-foreground space-y-1 p-2 bg-muted/20 rounded border border-border">
+                    <p className="font-semibold text-foreground">Quantum-Safe PSK Distribution</p>
+                    <p>
+                      <span className="font-medium">QKD (Quantum Key Distribution)</span> — uses
+                      quantum optics (BB84, E91) to distribute symmetric key material over a
+                      dedicated optical channel. Eavesdropping disturbs the quantum state and is
+                      detectable. Requires dedicated QKD hardware and fibre links between peers; not
+                      suitable for internet-scale deployment.
+                    </p>
+                    <p>
+                      <span className="font-medium">QRNG-seeded PSK</span> — a Quantum Random Number
+                      Generator (e.g. ID Quantique, QuintessenceLabs) produces entropy from a
+                      physical quantum source. The resulting key material is distributed out-of-band
+                      (courier, secure channel) and is computationally indistinguishable from QKD
+                      output to an adversary without the channel.
+                    </p>
+                    <p>
+                      <span className="font-medium">PQC-wrapped PSK (hybrid)</span> — the PSK is
+                      encapsulated under a post-quantum KEM (e.g. ML-KEM-768, BIKE, HQC) over a
+                      standard IP network. Combines quantum-resistant confidentiality with scalable
+                      deployment. Used in ETSI GS QKD 014 and IETF RFC 9370 hybrid IKEv2.
+                    </p>
+                    <p className="text-muted-foreground/70">
+                      NIST SP 800-232, ETSI GS QKD 014, and RFC 9370 cover these distribution
+                      models. In this simulation the PSK is entered manually — in production, inject
+                      it from your QKD appliance or PQC-wrapped key transport.
+                    </p>
+                  </div>
+                )}
+              </div>
+            )}
             <Tabs defaultValue="client" className="w-full">
               <TabsList className="mb-4 grid grid-cols-2 w-[400px]">
                 <TabsTrigger
@@ -1407,77 +2286,34 @@ conn host-host
                 {ssState === 'UNINITIALIZED' && (
                   <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
                     <div>
-                      <div className="text-xs font-semibold mb-2">Authentication Mode</div>
-                      <div className="flex gap-2">
-                        <button
-                          onClick={() => setAuthMode('psk')}
-                          className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
-                        >
-                          Pre-Shared Key (PSK)
-                        </button>
-                        <button
-                          onClick={() => setAuthMode('pubkey')}
-                          disabled
-                          className="px-3 py-1 rounded text-xs font-medium border bg-muted/30 border-border text-muted-foreground opacity-50 cursor-not-allowed"
-                          title="Public key authentication requires certificate wiring — coming soon"
-                        >
-                          Public Key (RSA / ML-DSA) — soon
-                        </button>
-                      </div>
+                      <div className="text-xs font-semibold mb-1">Client PSK</div>
+                      <input
+                        type="text"
+                        value={clientPsk}
+                        onChange={(e) => setClientPsk(e.target.value)}
+                        className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
+                        placeholder="Pre-shared key"
+                      />
+                      {pskMismatch && (
+                        <p className="text-[10px] text-status-warning mt-1">
+                          PSK does not match server — IKE AUTH will fail
+                        </p>
+                      )}
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        PSK can be distributed via QKD for quantum-safe key establishment.
+                      </p>
                     </div>
-                    {authMode === 'psk' && (
-                      <div>
-                        <div className="text-xs font-semibold mb-1">Client PSK</div>
-                        <input
-                          type="text"
-                          value={clientPsk}
-                          onChange={(e) => setClientPsk(e.target.value)}
-                          className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
-                          placeholder="Pre-shared key"
-                        />
-                        {pskMismatch && (
-                          <p className="text-[10px] text-status-warning mt-1">
-                            PSK does not match server — IKE AUTH will fail
-                          </p>
-                        )}
-                      </div>
-                    )}
                     <div>
-                      <div className="text-xs font-semibold mb-2">Client Key Type</div>
+                      <div className="text-xs font-semibold mb-2">Authentication Key Type</div>
                       <div className="flex gap-2 items-center flex-wrap">
-                        <select
-                          value={clientAlg}
-                          onChange={(e) => setClientAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
+                        <span className="text-xs px-2 py-1 rounded border border-primary/40 bg-primary/10 text-primary font-medium">
+                          RSA-3072 (active)
+                        </span>
+                        <span
+                          className="text-xs px-2 py-1 rounded border border-border bg-muted/50 text-muted-foreground opacity-60 cursor-not-allowed"
+                          title="ML-DSA IKEv2 authentication requires an IANA AUTH method not yet assigned"
                         >
-                          <option value="ML-DSA">ML-DSA (PQC)</option>
-                          <option value="RSA">RSA (Classical)</option>
-                        </select>
-                        {clientAlg === 'ML-DSA' ? (
-                          <select
-                            value={clientSize}
-                            onChange={(e) => setClientSize(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="44">ML-DSA-44</option>
-                            <option value="65">ML-DSA-65</option>
-                            <option value="87">ML-DSA-87</option>
-                          </select>
-                        ) : (
-                          <select
-                            value={clientClassAlg}
-                            onChange={(e) => setClientClassAlg(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="RSA-2048">RSA-2048</option>
-                            <option value="RSA-3072">RSA-3072</option>
-                            <option value="RSA-4096">RSA-4096</option>
-                          </select>
-                        )}
-                        <span className="text-[10px] text-muted-foreground">
-                          {authMode === 'psk'
-                            ? 'HSM keys generated but not used for PSK auth'
-                            : 'Keys generated in worker HSM on Start Daemon'}
+                          ML-DSA — coming soon
                         </span>
                       </div>
                     </div>
@@ -1489,7 +2325,7 @@ conn host-host
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
                     <span className="font-semibold">Client Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=pubkey'}
+                      {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=psk + leftauth2=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-slate-800 font-mono">
@@ -1506,19 +2342,13 @@ conn host-host
                       keys={hsmKeys.filter((k) => k.slotId === 0 || k.slotId === undefined)}
                       moduleRef={moduleRef}
                       hSessionRef={hSessionRef}
+                      onRemoveKey={removeHsmKey}
+                      onClear={clearHsmKeys}
                       title="Client Token (Slot 1)"
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-slate-50 text-slate-800">
-                    <PkcsLogPanel
-                      filterFn={(e) => {
-                        if (e.fn.includes('RESPONDER')) return false
-                        // Enforce telemetry routing by hSession for native C++ calls
-                        if (e.hSession !== undefined && e.hSession !== hSessionRef.current)
-                          return false
-                        return true
-                      }}
-                    />
+                    <PkcsLogPanel filterFn={(e) => e.args.includes('[initiator]')} />
                   </div>
                 </div>
               </TabsContent>
@@ -1526,59 +2356,35 @@ conn host-host
               <TabsContent value="server" className="space-y-4">
                 {ssState === 'UNINITIALIZED' && (
                   <div className="mb-4 p-3 border border-border rounded-lg bg-muted/30 space-y-3">
-                    {authMode === 'psk' && (
-                      <div>
-                        <div className="text-xs font-semibold mb-1">Server PSK</div>
-                        <input
-                          type="text"
-                          value={serverPsk}
-                          onChange={(e) => setServerPsk(e.target.value)}
-                          className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
-                          placeholder="Pre-shared key"
-                        />
-                        {pskMismatch && (
-                          <p className="text-[10px] text-status-warning mt-1">
-                            PSK does not match client — IKE AUTH will fail
-                          </p>
-                        )}
-                      </div>
-                    )}
                     <div>
-                      <div className="text-xs font-semibold mb-2">Server Key Type</div>
+                      <div className="text-xs font-semibold mb-1">Server PSK</div>
+                      <input
+                        type="text"
+                        value={serverPsk}
+                        onChange={(e) => setServerPsk(e.target.value)}
+                        className="w-full text-xs px-2 py-1.5 rounded border border-border bg-background font-mono"
+                        placeholder="Pre-shared key"
+                      />
+                      {pskMismatch && (
+                        <p className="text-[10px] text-status-warning mt-1">
+                          PSK does not match client — IKE AUTH will fail
+                        </p>
+                      )}
+                      <p className="text-[10px] text-muted-foreground mt-1">
+                        PSK can be distributed via QKD for quantum-safe key establishment.
+                      </p>
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold mb-2">Authentication Key Type</div>
                       <div className="flex gap-2 items-center flex-wrap">
-                        <select
-                          value={serverAlg}
-                          onChange={(e) => setServerAlg(e.target.value)}
-                          className="text-xs px-2 py-1 rounded border border-border bg-background"
+                        <span className="text-xs px-2 py-1 rounded border border-secondary/40 bg-secondary/10 text-secondary font-medium">
+                          RSA-3072 (active)
+                        </span>
+                        <span
+                          className="text-xs px-2 py-1 rounded border border-border bg-muted/50 text-muted-foreground opacity-60 cursor-not-allowed"
+                          title="ML-DSA IKEv2 authentication requires an IANA AUTH method not yet assigned"
                         >
-                          <option value="ML-DSA">ML-DSA (PQC)</option>
-                          <option value="RSA">RSA (Classical)</option>
-                        </select>
-                        {serverAlg === 'ML-DSA' ? (
-                          <select
-                            value={serverSize}
-                            onChange={(e) => setServerSize(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="44">ML-DSA-44</option>
-                            <option value="65">ML-DSA-65</option>
-                            <option value="87">ML-DSA-87</option>
-                          </select>
-                        ) : (
-                          <select
-                            value={serverClassAlg}
-                            onChange={(e) => setServerClassAlg(e.target.value)}
-                            className="text-xs px-2 py-1 rounded border border-border bg-background"
-                          >
-                            <option value="RSA-2048">RSA-2048</option>
-                            <option value="RSA-3072">RSA-3072</option>
-                            <option value="RSA-4096">RSA-4096</option>
-                          </select>
-                        )}
-                        <span className="text-[10px] text-muted-foreground">
-                          {authMode === 'psk'
-                            ? 'HSM keys generated but not used for PSK auth'
-                            : 'Keys generated in worker HSM on Start Daemon'}
+                          ML-DSA — coming soon
                         </span>
                       </div>
                     </div>
@@ -1590,7 +2396,7 @@ conn host-host
                   <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
                     <span className="font-semibold">Server Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-secondary/20 text-secondary px-2 py-0.5 rounded">
-                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=pubkey'}
+                      {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=psk + rightauth2=pubkey'}
                     </span>
                   </div>
                   <pre className="text-xs text-slate-800 font-mono">
@@ -1607,23 +2413,13 @@ conn host-host
                       keys={hsmKeys.filter((k) => k.slotId === 1)}
                       moduleRef={moduleRef}
                       hSessionRef={serverSessionRef}
+                      onRemoveKey={removeHsmKey}
+                      onClear={clearHsmKeys}
                       title="Server Token (Slot 2)"
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-slate-50 text-slate-800">
-                    <PkcsLogPanel
-                      filterFn={(e) => {
-                        if (e.fn.includes('INITIATOR')) return false
-                        // Enforce telemetry routing by hSession for native C++ calls
-                        if (
-                          e.hSession !== undefined &&
-                          serverSessionRef.current &&
-                          e.hSession !== serverSessionRef.current
-                        )
-                          return false
-                        return true
-                      }}
-                    />
+                    <PkcsLogPanel filterFn={(e) => e.args.includes('[responder]')} />
                   </div>
                 </div>
               </TabsContent>

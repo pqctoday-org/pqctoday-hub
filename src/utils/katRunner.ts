@@ -440,7 +440,7 @@ async function runAESGCMDecryptKAT(
   ctWithTag.set(ctBytes)
   ctWithTag.set(tagBytes, ctBytes.length)
 
-  const keyHandle = hsm_importAESKey(M, hSession, keyBytes, false, 'encrypt')
+  const keyHandle = hsm_importAESKey(M, hSession, keyBytes)
   const recoveredPt = hsm_aesDecrypt(M, hSession, keyHandle, ctWithTag, ivBytes, 'gcm')
 
   const matches =
@@ -474,7 +474,7 @@ async function runAESCBCDecryptKAT(
   const expectedPt = hexToBytes(test.pt)
   const ctBytes = hexToBytes(test.ct)
 
-  const keyHandle = hsm_importAESKey(M, hSession, keyBytes, false, 'encrypt')
+  const keyHandle = hsm_importAESKey(M, hSession, keyBytes)
   const recoveredPt = hsm_aesDecrypt(M, hSession, keyHandle, ctBytes, ivBytes, 'cbc')
 
   const matches =
@@ -508,7 +508,7 @@ async function runAESCTRRoundtripKAT(
   const ptBytes = hexToBytes(test.pt)
   const expectedCt = hexToBytes(test.ct)
 
-  const keyHandle = hsm_importAESKey(M, hSession, keyBytes, false, 'encrypt')
+  const keyHandle = hsm_importAESKey(M, hSession, keyBytes)
   const ct = hsm_aesCtrEncrypt(M, hSession, keyHandle, ivBytes, 128, ptBytes)
 
   const ctMatches =
@@ -551,7 +551,7 @@ async function runAESKWWrapKAT(
   const expectedWrapped = hexToBytes(test.wrapped)
 
   const kekHandle = hsm_importAESKey(M, hSession, kekBytes, false, false, true, true)
-  const dataHandle = hsm_importAESKey(M, hSession, keyDataBytes, false, 'encrypt')
+  const dataHandle = hsm_importAESKey(M, hSession, keyDataBytes)
   const wrapped = hsm_aesWrapKey(M, hSession, kekHandle, dataHandle)
 
   const matches =
@@ -581,7 +581,7 @@ async function runAESGCMFunctionalKAT(
   const message = customMessage ?? 'NIST KAT validation — AES-256-GCM functional round-trip'
   const ptBytes = new TextEncoder().encode(message)
 
-  const keyHandle = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+  const keyHandle = hsm_generateAESKey(M, hSession, 256)
   const { ciphertext, iv } = hsm_aesEncrypt(M, hSession, keyHandle, ptBytes, 'gcm')
   const recovered = hsm_aesDecrypt(M, hSession, keyHandle, ciphertext, iv, 'gcm')
 
@@ -751,7 +751,7 @@ async function runRSAPSSSigVerKAT(
       ? test.msg
       : new TextDecoder().decode(hexToBytes(test.msg))
 
-  const pubHandle = hsm_importRSAPublicKey(M, hSession, nBytes, eBytes, 'encrypt')
+  const pubHandle = hsm_importRSAPublicKey(M, hSession, nBytes, eBytes)
   const isValid = hsm_rsaVerify(M, hSession, pubHandle, message, sigBytes, CKM_SHA256_RSA_PKCS_PSS)
 
   if (isValid) {
@@ -1102,8 +1102,20 @@ async function runECDHDeriveKAT(
   hSession: number,
   curve: 'P-256' | 'P-384'
 ): Promise<{ status: 'pass' | 'fail'; details: string }> {
-  const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(M, hSession, curve, true, 'derive')
-  const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(M, hSession, curve, true, 'derive')
+  const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+    M,
+    hSession,
+    curve,
+    true,
+    'derive'
+  )
+  const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+    M,
+    hSession,
+    curve,
+    true,
+    'derive'
+  )
 
   // Extract uncompressed EC points for peer public keys
   const pubBytesA = hsm_extractECPoint(M, hSession, pubA)
@@ -1227,7 +1239,7 @@ async function runAESKWPWrapKAT(
   const kekBytes = hexToBytes('000102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f')
 
   const kekHandle = hsm_importAESKey(M, hSession, kekBytes, false, false, true, true)
-  const dataHandle = hsm_importAESKey(M, hSession, keyData, false, 'encrypt')
+  const dataHandle = hsm_importAESKey(M, hSession, keyData)
 
   // Wrap with KWP
   const wrapped = hsm_aesWrapKeyKwp(M, hSession, kekHandle, dataHandle)
@@ -1366,7 +1378,7 @@ const runSUCIProfileBKAT = async (
 
   if (step === '5-encrypt') {
     const kEncBytes = hexToBytes(vectors.K_enc_hex)
-    const kEncHandle = hsm_importAESKey(M, hSession, kEncBytes, false, 'encrypt')
+    const kEncHandle = hsm_importAESKey(M, hSession, kEncBytes)
     const msinBytes = hexToBytes(vectors.msin_bcd_hex)
     const ctrIv = new Uint8Array(16) // TS 33.501 specifies all 0s
     const ct = hsm_aesCtrEncrypt(M, hSession, kEncHandle, ctrIv, 128, msinBytes)

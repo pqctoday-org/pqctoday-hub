@@ -1,5 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Filter, Shield, Search, ChevronDown, SlidersHorizontal } from 'lucide-react'
+import {
+  Filter,
+  Shield,
+  Search,
+  ChevronDown,
+  SlidersHorizontal,
+  Globe,
+  CheckCircle,
+} from 'lucide-react'
 import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
 import { useState } from 'react'
@@ -11,6 +19,8 @@ export const CRYPTO_FAMILY_ITEMS = [
   { id: 'Code-based', label: 'Code-based' },
   { id: 'Hash-based', label: 'Hash-based' },
   { id: 'Hybrid', label: 'Hybrid' },
+  { id: 'Multivariate', label: 'Multivariate' },
+  { id: 'Isogeny', label: 'Isogeny' },
   { id: 'Classical', label: 'Classical' },
 ]
 
@@ -18,6 +28,23 @@ export const FUNCTION_ITEMS = [
   { id: 'All', label: 'All Functions' },
   { id: 'KEM', label: 'KEM / Encryption' },
   { id: 'Signature', label: 'Signature' },
+]
+
+export const REGION_ITEMS = [
+  { id: 'All', label: 'All Regions' },
+  { id: 'NIST', label: 'NIST (US)' },
+  { id: 'IETF', label: 'IETF (Global)' },
+  { id: 'BSI/ANSSI', label: 'BSI/ANSSI (Europe)' },
+  { id: 'ETSI', label: 'ETSI (Europe)' },
+  { id: 'KpqC', label: 'KpqC (Korea)' },
+  { id: 'CACR', label: 'CACR (China)' },
+]
+
+export const STATUS_ITEMS = [
+  { id: 'All', label: 'All Statuses' },
+  { id: 'Certified', label: 'Certified' },
+  { id: 'Candidate', label: 'Candidate' },
+  { id: 'To Be Checked', label: 'To Be Checked' },
 ]
 
 const LEVEL_ITEMS = [
@@ -36,6 +63,10 @@ interface AlgorithmFiltersProps {
   onFunctionGroupChange: (id: string) => void
   securityLevel: string
   onSecurityLevelChange: (id: string) => void
+  region: string
+  onRegionChange: (id: string) => void
+  status: string
+  onStatusChange: (id: string) => void
   searchQuery: string
   onSearchChange: (q: string) => void
   filteredCount: number
@@ -50,6 +81,10 @@ export function AlgorithmFilters({
   onFunctionGroupChange,
   securityLevel,
   onSecurityLevelChange,
+  region,
+  onRegionChange,
+  status,
+  onStatusChange,
   searchQuery,
   onSearchChange,
   filteredCount,
@@ -65,6 +100,8 @@ export function AlgorithmFilters({
     cryptoFamily !== 'All' ||
     functionGroup !== 'All' ||
     securityLevel !== 'All' ||
+    region !== 'All' ||
+    status !== 'All' ||
     searchQuery !== ''
 
   return (
@@ -130,6 +167,26 @@ export function AlgorithmFilters({
             label="Security"
             defaultLabel="All Levels"
             defaultIcon={<Shield size={16} className="text-primary" />}
+            noContainer
+          />
+
+          <FilterDropdown
+            items={REGION_ITEMS}
+            selectedId={region}
+            onSelect={onRegionChange}
+            label="Region"
+            defaultLabel="All Regions"
+            defaultIcon={<Globe size={16} className="text-primary" />}
+            noContainer
+          />
+
+          <FilterDropdown
+            items={STATUS_ITEMS}
+            selectedId={status}
+            onSelect={onStatusChange}
+            label="Status"
+            defaultLabel="All Statuses"
+            defaultIcon={<CheckCircle size={16} className="text-primary" />}
             noContainer
           />
         </div>

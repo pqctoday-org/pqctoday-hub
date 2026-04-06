@@ -99,6 +99,13 @@ const CLASSICAL_PRIVKEY_BYTES: Record<ClassicalAlgo, number> = {
   'ECDSA-P256': 32,
   'ECDSA-P384': 48,
 }
+// DER-encoded signature sizes: RSA sig = modulus size; ECDSA DER(r,s) adds up to 8 bytes overhead
+const CLASSICAL_SIG_BYTES: Record<ClassicalAlgo, number> = {
+  'RSA-2048': 256,
+  'RSA-3072': 384,
+  'ECDSA-P256': 72, // r(32) + s(32) + DER overhead ≤ 8 B
+  'ECDSA-P384': 104, // r(48) + s(48) + DER overhead ≤ 8 B
+}
 const MLDSA_PUBKEY_BYTES: Record<string, number> = {
   'ML-DSA-44': 1312,
   'ML-DSA-65': 1952,
@@ -445,8 +452,6 @@ const HASH_ALGO_OPTIONS = ['SHA-256', 'SHA-384', 'SHA-512']
 // Key inspection row (inline, no full HsmKeyTable dependency)
 // ---------------------------------------------------------------------------
 
-
-
 // ---------------------------------------------------------------------------
 // Main component
 // ---------------------------------------------------------------------------
@@ -615,14 +620,14 @@ export const FirmwareSigningMigrator: React.FC = () => {
         family: classicalFamily as HsmFamily,
         role: 'public',
         label: `${classicalLabelSuffix} Public`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
       hsm.addKey({
         handle: classicalKeyRef.current.privHandle,
         family: classicalFamily as HsmFamily,
         role: 'private',
         label: `${classicalLabelSuffix} Private`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
 
       // --- PQC keygen ---
@@ -658,14 +663,14 @@ export const FirmwareSigningMigrator: React.FC = () => {
         family: pqcFamily as HsmFamily,
         role: 'public',
         label: `${pqcLabelSuffix} Public`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
       hsm.addKey({
         handle: pqcKeyRef.current.privHandle,
         family: pqcFamily as HsmFamily,
         role: 'private',
         label: `${pqcLabelSuffix} Private`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
     } catch (err) {
       console.error('[FirmwareSigningMigrator] keygen error:', err)
@@ -882,7 +887,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
   const classicalPrivDisplay = CLASSICAL_PRIVKEY_BYTES[classicalAlgo]
   const pqcExpectedSig =
     pqcAlgo === 'SLH-DSA-SHA2-128S' ? SLHDSA_SIG_BYTES : MLDSA_SIG_BYTES[pqcAlgo]
-  const classicalExpectedSig = CLASSICAL_PUBKEY_BYTES[classicalAlgo]
+  const classicalExpectedSig = CLASSICAL_SIG_BYTES[classicalAlgo]
 
   const displayPqcSig = pqcSigSize || pqcExpectedSig
   const displayClassicalSig = classicalSigSize || classicalExpectedSig
@@ -903,8 +908,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
       : hashAlgo === 'SHA-384'
         ? 'CKM_ECDSA_SHA384'
         : 'CKM_ECDSA_SHA512'
-
-
 
   return (
     <div className="space-y-6">
@@ -1273,8 +1276,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
                 </div>
               </div>
             </div>
-
-
 
             {/* Key size callout */}
             <div className="bg-muted/40 rounded-lg p-3 border border-border text-xs">
@@ -1770,8 +1771,6 @@ export const FirmwareSigningMigrator: React.FC = () => {
             </div>
           </div>
         )}
-
-
 
         {/* Navigation */}
         <div className="flex justify-between mt-6 pt-4 border-t border-border">

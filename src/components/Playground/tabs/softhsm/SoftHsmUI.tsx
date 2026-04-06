@@ -44,19 +44,62 @@ export const PREHASH_OPTIONS = [
 ]
 
 // SLH-DSA parameter sets (FIPS 205 / PKCS#11 v3.2 CKP_SLH_DSA_*)
+// sk = 4n bytes (SK.seed + SK.prf + PK.seed + PK.root, each n bytes; FIPS 205 §6)
 export const SLH_DSA_PARAM_SET_OPTIONS = [
-  { id: 'sha2-128s', label: 'SHA2-128s', ckp: CKP_SLH_DSA_SHA2_128S, pub: 32, sig: 7856 },
-  { id: 'shake-128s', label: 'SHAKE-128s', ckp: CKP_SLH_DSA_SHAKE_128S, pub: 32, sig: 7856 },
-  { id: 'sha2-128f', label: 'SHA2-128f', ckp: CKP_SLH_DSA_SHA2_128F, pub: 32, sig: 17088 },
-  { id: 'shake-128f', label: 'SHAKE-128f', ckp: CKP_SLH_DSA_SHAKE_128F, pub: 32, sig: 17088 },
-  { id: 'sha2-192s', label: 'SHA2-192s', ckp: CKP_SLH_DSA_SHA2_192S, pub: 48, sig: 16224 },
-  { id: 'shake-192s', label: 'SHAKE-192s', ckp: CKP_SLH_DSA_SHAKE_192S, pub: 48, sig: 16224 },
-  { id: 'sha2-192f', label: 'SHA2-192f', ckp: CKP_SLH_DSA_SHA2_192F, pub: 48, sig: 35664 },
-  { id: 'shake-192f', label: 'SHAKE-192f', ckp: CKP_SLH_DSA_SHAKE_192F, pub: 48, sig: 35664 },
-  { id: 'sha2-256s', label: 'SHA2-256s', ckp: CKP_SLH_DSA_SHA2_256S, pub: 64, sig: 29792 },
-  { id: 'shake-256s', label: 'SHAKE-256s', ckp: CKP_SLH_DSA_SHAKE_256S, pub: 64, sig: 29792 },
-  { id: 'sha2-256f', label: 'SHA2-256f', ckp: CKP_SLH_DSA_SHA2_256F, pub: 64, sig: 49856 },
-  { id: 'shake-256f', label: 'SHAKE-256f', ckp: CKP_SLH_DSA_SHAKE_256F, pub: 64, sig: 49856 },
+  { id: 'sha2-128s', label: 'SHA2-128s', ckp: CKP_SLH_DSA_SHA2_128S, pub: 32, sk: 64, sig: 7856 },
+  {
+    id: 'shake-128s',
+    label: 'SHAKE-128s',
+    ckp: CKP_SLH_DSA_SHAKE_128S,
+    pub: 32,
+    sk: 64,
+    sig: 7856,
+  },
+  { id: 'sha2-128f', label: 'SHA2-128f', ckp: CKP_SLH_DSA_SHA2_128F, pub: 32, sk: 64, sig: 17088 },
+  {
+    id: 'shake-128f',
+    label: 'SHAKE-128f',
+    ckp: CKP_SLH_DSA_SHAKE_128F,
+    pub: 32,
+    sk: 64,
+    sig: 17088,
+  },
+  { id: 'sha2-192s', label: 'SHA2-192s', ckp: CKP_SLH_DSA_SHA2_192S, pub: 48, sk: 96, sig: 16224 },
+  {
+    id: 'shake-192s',
+    label: 'SHAKE-192s',
+    ckp: CKP_SLH_DSA_SHAKE_192S,
+    pub: 48,
+    sk: 96,
+    sig: 16224,
+  },
+  { id: 'sha2-192f', label: 'SHA2-192f', ckp: CKP_SLH_DSA_SHA2_192F, pub: 48, sk: 96, sig: 35664 },
+  {
+    id: 'shake-192f',
+    label: 'SHAKE-192f',
+    ckp: CKP_SLH_DSA_SHAKE_192F,
+    pub: 48,
+    sk: 96,
+    sig: 35664,
+  },
+  { id: 'sha2-256s', label: 'SHA2-256s', ckp: CKP_SLH_DSA_SHA2_256S, pub: 64, sk: 128, sig: 29792 },
+  {
+    id: 'shake-256s',
+    label: 'SHAKE-256s',
+    ckp: CKP_SLH_DSA_SHAKE_256S,
+    pub: 64,
+    sk: 128,
+    sig: 29792,
+  },
+  { id: 'sha2-256f', label: 'SHA2-256f', ckp: CKP_SLH_DSA_SHA2_256F, pub: 64, sk: 128, sig: 49856 },
+  {
+    id: 'shake-256f',
+    label: 'SHAKE-256f',
+    ckp: CKP_SLH_DSA_SHAKE_256F,
+    pub: 64,
+    sk: 128,
+    sig: 49856,
+  },
 ] as const
 
 // ── Helpers ──────────────────────────────────────────────────────────────────

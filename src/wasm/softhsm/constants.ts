@@ -172,7 +172,9 @@ export const CKA_HSS_LMS_TYPE = 0x00000618 // CK_ULONG LMS type for single-level
 export const CKA_HSS_LMOTS_TYPE = 0x00000619 // CK_ULONG LMOTS type for single-level
 export const CKA_HSS_LMS_TYPES = 0x0000061a // packed CK_ULONG[] for multi-level
 export const CKA_HSS_LMOTS_TYPES = 0x0000061b // packed CK_ULONG[] for multi-level
-export const CKA_HSS_KEYS_REMAINING = 0x0000061c // remaining signature operations
+export const CKA_HSS_KEYS_REMAINING = 0x0000061c // remaining signature operations (HSS, PKCS#11 v3.2 §6.14)
+// Vendor extension — XMSS remaining signature operations (0x8000_0106, mirrors CKA_XMSS_KEYS_REMAINING in Rust)
+export const CKA_XMSS_KEYS_REMAINING = 0x80000106
 
 // LMS parameter set values — IANA registry type IDs (RFC 8554 + SP 800-208)
 // https://www.iana.org/assignments/leighton-micali-signatures/
@@ -221,16 +223,16 @@ export const CKP_LMOTS_SHAKE_N24_W2 = 0x0e
 export const CKP_LMOTS_SHAKE_N24_W4 = 0x0f
 export const CKP_LMOTS_SHAKE_N24_W8 = 0x10
 
-// XMSS parameter set values (RFC 8391 §5.3 — OID-derived integers)
+// XMSS parameter set values (PKCS#11 v3.2 §6.15 / softhsmv3 constants.rs)
 export const CKP_XMSS_SHA2_10_256 = 0x00000001
 export const CKP_XMSS_SHA2_16_256 = 0x00000002
 export const CKP_XMSS_SHA2_20_256 = 0x00000003
 export const CKP_XMSS_SHA2_10_512 = 0x00000004
 export const CKP_XMSS_SHA2_16_512 = 0x00000005
 export const CKP_XMSS_SHA2_20_512 = 0x00000006
-export const CKP_XMSS_SHAKE_10_256 = 0x00000007
-export const CKP_XMSS_SHAKE_16_256 = 0x00000008
-export const CKP_XMSS_SHAKE_20_256 = 0x00000009
+export const CKP_XMSS_SHAKE_10_256 = 0x00000011 // was 0x07 — must match Rust constants.rs 0x11
+export const CKP_XMSS_SHAKE_16_256 = 0x00000012 // was 0x08 — must match Rust constants.rs 0x12
+export const CKP_XMSS_SHAKE_20_256 = 0x00000013 // was 0x09 — must match Rust constants.rs 0x13
 export const CKP_XMSS_SHAKE_10_512 = 0x0000000a
 export const CKP_XMSS_SHAKE_16_512 = 0x0000000b
 export const CKP_XMSS_SHAKE_20_512 = 0x0000000c

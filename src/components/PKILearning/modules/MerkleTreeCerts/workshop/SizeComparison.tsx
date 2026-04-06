@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { BarChart3, Info } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   ALGORITHM_SIZES,
   getSizeBreakdown,
@@ -89,17 +90,18 @@ export const SizeComparison: React.FC = () => {
 
         <div className="flex justify-between mt-1">
           {BATCH_MARKS.map((mark) => (
-            <button
+            <Button
               key={mark.exp}
               onClick={() => setBatchExponent(mark.exp)}
-              className={`text-[9px] transition-colors ${
+              variant="link"
+              className={`text-[9px] h-auto p-0 transition-colors ${
                 batchExponent === mark.exp
                   ? 'text-primary font-bold'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {mark.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -109,10 +111,11 @@ export const SizeComparison: React.FC = () => {
         <span className="text-sm font-bold text-foreground mb-2 block">Signature Algorithm</span>
         <div className="flex flex-wrap gap-2">
           {ALGORITHM_SIZES.map((a) => (
-            <button
+            <Button
               key={a.shortName}
               onClick={() => setSelectedAlgo(a.shortName)}
-              className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+              variant="ghost"
+              className={`px-3 py-2 h-auto rounded-lg text-xs font-medium transition-colors ${
                 selectedAlgo === a.shortName
                   ? 'bg-primary/20 text-primary border border-primary/50'
                   : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
@@ -122,7 +125,7 @@ export const SizeComparison: React.FC = () => {
               <span className="ml-1 text-[10px] opacity-70">
                 ({formatBytes(a.signatureBytes)} sig)
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>

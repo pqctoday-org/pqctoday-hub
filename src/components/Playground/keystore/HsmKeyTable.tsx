@@ -59,6 +59,9 @@ const CKK_TO_FAMILY: Record<number, HsmFamily> = {
   0x49: 'ml-kem',
   0x4a: 'ml-dsa',
   0x4b: 'slh-dsa',
+  0x46: 'hss',
+  0x47: 'xmss',
+  0x48: 'xmss',
 }
 
 const CKO_TO_ROLE: Record<number, HsmKeyRole> = {

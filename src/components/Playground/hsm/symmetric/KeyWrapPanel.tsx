@@ -52,8 +52,11 @@ import {
   type SoftHSMModule,
   type Pkcs11LogEntry,
 } from '../../../../wasm/softhsm'
-import { useHsmContext } from '../HsmContext'
-import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from '../shared'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { HsmResultRow, toHex, hexSnippet } from '../shared'
 import { downloadCsv } from '@/utils/csvExport'
 
 // ── Types ─────────────────────────────────────────────────────────────────────
@@ -410,7 +413,8 @@ export const KeyWrapPanel = ({
   initialAlgo,
   onAlgoChange,
 }: { initialAlgo?: string; onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef, hsmKeys, keysForFamily, addHsmKey, addHsmLog } = useHsmContext()
+  const hsm = useHSM('rust')
+  const { moduleRef, hSessionRef, isReady } = hsm
 
   const [showInfo, setShowInfo] = useState(false)
 
@@ -476,22 +480,22 @@ export const KeyWrapPanel = ({
   const [error, setError] = useState<string | null>(null)
 
   // Derived
-  const aesKeys = keysForFamily('aes', 'secret')
+  const aesKeys = hsm.keys.filter((k) => k.family === 'aes' && k.role === 'secret')
   const anyLoading = loadingOp !== null
 
   // All wrappable keys: AES + any extractable private key (ML-KEM, ML-DSA, RSA, ECDSA, EdDSA)
   const wrappableKeys = [
     ...aesKeys,
-    ...hsmKeys.filter((k) => k.role === 'private' && k.label.includes('(extractable)')),
+    ...hsm.keys.filter((k) => k.role === 'private' && k.label.includes('(extractable)')),
   ]
 
   const targetKeyInfo =
-    targetKeyHandle !== null ? hsmKeys.find((k) => k.handle === targetKeyHandle) : null
+    targetKeyHandle !== null ? hsm.keys.find((k) => k.handle === targetKeyHandle) : null
   const isPqcTarget = targetKeyInfo?.family === 'ml-kem' || targetKeyInfo?.family === 'ml-dsa'
 
   const keyLabel = (handle: number | null): string => {
     if (handle === null) return 'unknown'
-    const k = hsmKeys.find((k) => k.handle === handle)
+    const k = hsm.keys.find((k) => k.handle === handle)
     return k ? `${k.label} (h=${handle})` : `h=${handle}`
   }
 
@@ -508,7 +512,7 @@ export const KeyWrapPanel = ({
       ok: entry.status === 'ok',
       engineName: 'cpp',
     }
-    addHsmLog(synthetic)
+    hsm.addLog(synthetic)
   }
 
   const emitAlgo = (
@@ -584,7 +588,7 @@ export const KeyWrapPanel = ({
       HKDF_INFO,
       32
     )
-    return hsm_importAESKey(M, hSession, kekBytes, false, 'wrap')
+    return hsm_importAESKey(M, hSession, kekBytes, false, false)
   }
 
   // ── Wrap operations ──────────────────────────────────────────────────────────
@@ -638,7 +642,7 @@ export const KeyWrapPanel = ({
       const hSession = hSessionRef.current
       const effTarget = resolveTargetHandle(M, hSession)
 
-      const tempKEKHandle = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+      const tempKEKHandle = hsm_generateAESKey(M, hSession, 256)
       const wrappedTarget = hsm_wrapKeyMech(
         M,
         hSession,
@@ -694,8 +698,13 @@ export const KeyWrapPanel = ({
 
       if (hybridCombiner === 'p256-mlkem') {
         // 2a. ECDH P-256: generate ephemeral pair, derive with recipient's pub
-        const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(M, hSession, 'P-256'
-        , false, 'sign')
+        const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
+          M,
+          hSession,
+          'P-256',
+          false,
+          'sign'
+        )
         const recipientPubBytes = hsm_extractECPoint(M, hSession, ecPubHandle!)
         const classicalSecretHandle = hsm_ecdhDerive(M, hSession, ephPriv, recipientPubBytes)
         classicalSS = hsm_extractKeyValue(M, hSession, classicalSecretHandle)
@@ -784,7 +793,7 @@ export const KeyWrapPanel = ({
       }
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      hsm.addKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -832,7 +841,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      hsm.addKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -902,7 +911,7 @@ export const KeyWrapPanel = ({
       )
 
       setUnwrappedHandle(newHandle)
-      addHsmKey({
+      hsm.addKey({
         handle: newHandle,
         family: 'aes',
         role: 'secret',
@@ -1038,7 +1047,7 @@ export const KeyWrapPanel = ({
       setRsaPubHandle(pubHandle)
       setRsaPrivHandle(privHandle)
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      hsm.addKey({
         handle: pubHandle,
         family: 'rsa',
         role: 'public',
@@ -1046,7 +1055,7 @@ export const KeyWrapPanel = ({
         variant: String(rsaKeyBits),
         generatedAt: ts,
       })
-      addHsmKey({
+      hsm.addKey({
         handle: privHandle,
         family: 'rsa',
         role: 'private',
@@ -1070,7 +1079,7 @@ export const KeyWrapPanel = ({
       )
       setMlkemPubHandle(mkPub)
       setMlkemPrivHandle(mkPriv)
-      addHsmKey({
+      hsm.addKey({
         handle: mkPub,
         family: 'ml-kem',
         role: 'public',
@@ -1078,7 +1087,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      addHsmKey({
+      hsm.addKey({
         handle: mkPriv,
         family: 'ml-kem',
         role: 'private',
@@ -1089,10 +1098,16 @@ export const KeyWrapPanel = ({
 
       if (hybridCombiner === 'p256-mlkem') {
         // P-256 ECDH pair
-        const { pubHandle: ecPub, privHandle: ecPriv } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
+        const { pubHandle: ecPub, privHandle: ecPriv } = hsm_generateECKeyPair(
+          M,
+          hSession,
+          'P-256',
+          false,
+          'sign'
+        )
         setEcPubHandle(ecPub)
         setEcPrivHandle(ecPriv)
-        addHsmKey({
+        hsm.addKey({
           handle: ecPub,
           family: 'ecdh',
           role: 'public',
@@ -1100,7 +1115,7 @@ export const KeyWrapPanel = ({
           variant: 'P-256',
           generatedAt: ts,
         })
-        addHsmKey({
+        hsm.addKey({
           handle: ecPriv,
           family: 'ecdh',
           role: 'private',
@@ -1127,7 +1142,7 @@ export const KeyWrapPanel = ({
         true
       )
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      hsm.addKey({
         handle: pubHandle,
         family: 'ml-kem',
         role: 'public',
@@ -1135,7 +1150,7 @@ export const KeyWrapPanel = ({
         variant: String(mlkemVariant),
         generatedAt: ts,
       })
-      addHsmKey({
+      hsm.addKey({
         handle: privHandle,
         family: 'ml-kem',
         role: 'private',
@@ -1156,7 +1171,7 @@ export const KeyWrapPanel = ({
         true
       )
       const ts = new Date().toLocaleTimeString([], { hour12: false })
-      addHsmKey({
+      hsm.addKey({
         handle: pubHandle,
         family: 'ml-dsa',
         role: 'public',
@@ -1164,7 +1179,7 @@ export const KeyWrapPanel = ({
         variant: String(variant),
         generatedAt: ts,
       })
-      addHsmKey({
+      hsm.addKey({
         handle: privHandle,
         family: 'ml-dsa',
         role: 'private',
@@ -1176,579 +1191,568 @@ export const KeyWrapPanel = ({
 
   // ── Render ───────────────────────────────────────────────────────────────────
 
-  const { isReady } = useHsmContext()
-
   return (
-    <HsmReadyGuard isReady={isReady}>
+    <div className="flex flex-col gap-4">
+      <LiveHSMToggle
+        hsm={hsm}
+        operations={[
+          'C_GenerateKey',
+          'C_GenerateKeyPair',
+          'C_WrapKey',
+          'C_UnwrapKey',
+          'C_EncapsulateKey',
+        ]}
+      />
+
       {showInfo && <WrapInfoModal onClose={() => setShowInfo(false)} />}
 
-      <div className="space-y-4">
-        {/* ── Mode selector ─────────────────────────────────────────────────── */}
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              Wrapping Mode
-            </p>
-            <div className="flex items-center gap-1">
-              <ShareButton title="HSM Key Wrap" variant="icon" />
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={() => setShowInfo(true)}
-              >
-                <Info size={12} className="mr-1" /> NIST refs &amp; cloud HSM
-              </Button>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {(
-              [
-                {
-                  id: 'direct' as const,
-                  icon: Lock,
-                  label: 'Direct KEK',
-                  sub: 'AES-KW · AES-KWP · AES-GCM',
-                },
-                {
-                  id: 'indirect' as const,
-                  icon: Shield,
-                  label: 'Indirect (RSA+KEK)',
-                  sub: 'RSA-OAEP + AES-KWP',
-                },
-                {
-                  id: 'pqc' as const,
-                  icon: Zap,
-                  label: 'PQC Hybrid',
-                  sub: 'ECDH + ML-KEM + HKDF → AES-KW',
-                },
-              ] as const
-            ).map(({ id, icon: Icon, label, sub }) => (
-              <button
-                key={id}
-                onClick={() => {
-                  setWrapMode(id)
-                  setWrapResult(null)
-                  setUnwrappedHandle(null)
-                  setError(null)
-                  emitAlgo(id, directMech, hybridCombiner, mlkemVariant)
-                }}
-                className={`flex flex-col items-start px-3 py-2 rounded border text-left transition-colors ${
-                  wrapMode === id
-                    ? 'border-primary bg-primary/10 text-primary'
-                    : 'border-border text-muted-foreground hover:border-primary/50'
-                }`}
-              >
-                <span className="flex items-center gap-1.5 text-xs font-semibold">
-                  <Icon size={12} /> {label}
-                </span>
-                <span className="text-[10px] mt-0.5 opacity-70">{sub}</span>
-              </button>
-            ))}
-          </div>
-          <p className="text-[10px] text-muted-foreground">
-            <span className="font-medium text-foreground/60">FIPS ref:</span> {FIPS_REFS[wrapMode]}
-          </p>
-        </div>
-
-        {/* ── Mode-specific config ───────────────────────────────────────────── */}
-
-        {wrapMode === 'direct' && (
-          <div className="glass-panel p-4 space-y-3">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              Mechanism
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  { id: 'aes-kw' as const, label: 'AES-KW', desc: 'RFC 3394' },
-                  { id: 'aes-kwp' as const, label: 'AES-KWP', desc: 'RFC 5649' },
-                  { id: 'aes-gcm' as const, label: 'AES-GCM', desc: 'SP 800-38D' },
-                ] as const
-              ).map(({ id, label, desc }) => (
-                <Button
-                  key={id}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setDirectMech(id)
-                    emitAlgo(wrapMode, id, hybridCombiner, mlkemVariant)
-                  }}
-                  className={`text-xs h-7 px-3 ${directMech === id ? 'bg-primary/20 text-primary' : ''}`}
-                >
-                  {label} <span className="ml-1 opacity-60">{desc}</span>
-                </Button>
-              ))}
-            </div>
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground w-24">Wrapping key:</span>
-              <FilterDropdown
-                items={aesKeys.map((k) => ({
-                  id: String(k.handle),
-                  label: `h=${k.handle} — ${k.label}`,
-                }))}
-                selectedId={wrapKeyHandle !== null ? String(wrapKeyHandle) : 'All'}
-                onSelect={(id) => setWrapKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)}
-                defaultLabel="Select AES key…"
-                noContainer
-              />
-            </div>
-            {aesKeys.length === 0 && (
-              <p className="text-xs text-muted-foreground">
-                Generate AES keys in AES-GCM/CBC/CTR mode first.
-              </p>
-            )}
-          </div>
-        )}
-
-        {wrapMode === 'indirect' && (
-          <div className="glass-panel p-4 space-y-3">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              RSA Wrap Key Pair
-            </p>
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted-foreground">Key size:</span>
-              {([2048, 3072, 4096] as const).map((b) => (
-                <Button
-                  key={b}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setRsaKeyBits(b)}
-                  className={`text-xs h-7 px-2 ${rsaKeyBits === b ? 'bg-primary/20 text-primary' : ''}`}
-                >
-                  RSA-{b}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={genRSAWrapPair}
-                disabled={anyLoading}
-                className="text-xs h-7"
-              >
-                {loadingOp === 'gen-rsa' ? (
-                  <Loader2 size={12} className="animate-spin mr-1" />
-                ) : (
-                  <Key size={12} className="mr-1" />
-                )}
-                Gen RSA Pair
-              </Button>
-            </div>
-            {rsaPubHandle !== null && (
-              <div className="text-xs text-muted-foreground space-y-0.5">
-                <div>
-                  Pub: h={rsaPubHandle} &nbsp;·&nbsp; Priv: h={rsaPrivHandle}
-                </div>
-              </div>
-            )}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted-foreground w-24">OAEP hash:</span>
-              {(['sha256', 'sha384', 'sha512'] as const).map((h) => (
-                <Button
-                  key={h}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setRsaHashAlgo(h)}
-                  className={`text-xs h-7 px-2 ${rsaHashAlgo === h ? 'bg-primary/20 text-primary' : ''}`}
-                >
-                  {h.toUpperCase()}
-                </Button>
-              ))}
-            </div>
-            {rsaPubHandle === null && (
-              <p className="text-xs text-muted-foreground">
-                Generate an RSA wrap key pair above to enable wrapping.
-              </p>
-            )}
-          </div>
-        )}
-
-        {wrapMode === 'pqc' && (
-          <div className="glass-panel p-4 space-y-3">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              Hybrid Combiner
-            </p>
-
-            {/* Combiner sub-mode selector */}
-            <div className="flex flex-wrap gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setHybridCombiner('p256-mlkem')
-                  emitAlgo(wrapMode, directMech, 'p256-mlkem', mlkemVariant)
-                }}
-                className={`text-xs h-7 px-3 ${hybridCombiner === 'p256-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
-              >
-                P-256 + ML-KEM <span className="ml-1 opacity-60">PKCS#11</span>
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setHybridCombiner('x25519-mlkem')
-                  emitAlgo(wrapMode, directMech, 'x25519-mlkem', mlkemVariant)
-                }}
-                className={`text-xs h-7 px-3 ${hybridCombiner === 'x25519-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
-              >
-                X25519 + ML-KEM <span className="ml-1 opacity-60">X-Wing</span>
-              </Button>
-            </div>
-
-            {/* ML-KEM variant */}
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="text-xs text-muted-foreground">ML-KEM:</span>
-              {([768, 1024] as const).map((v) => (
-                <Button
-                  key={v}
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setMlkemVariant(v)
-                    emitAlgo(wrapMode, directMech, hybridCombiner, v)
-                  }}
-                  className={`text-xs h-7 px-2 ${mlkemVariant === v ? 'bg-primary/20 text-primary' : ''}`}
-                >
-                  ML-KEM-{v}
-                </Button>
-              ))}
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={genHybridKeyPair}
-                disabled={anyLoading}
-                className="text-xs h-7"
-              >
-                {loadingOp === 'gen-hybrid' ? (
-                  <Loader2 size={12} className="animate-spin mr-1" />
-                ) : (
-                  <Zap size={12} className="mr-1" />
-                )}
-                Gen {hybridCombiner === 'p256-mlkem' ? 'EC+ML-KEM' : 'X25519+ML-KEM'} Pair
-              </Button>
-            </div>
-
-            {/* Show generated key handles */}
-            {mlkemPubHandle !== null && (
-              <div className="text-xs text-muted-foreground space-y-0.5">
-                <div>
-                  ML-KEM: pub h={mlkemPubHandle} · priv h={mlkemPrivHandle}
-                </div>
-                {hybridCombiner === 'p256-mlkem' && ecPubHandle !== null && (
-                  <div>
-                    EC P-256: pub h={ecPubHandle} · priv h={ecPrivHandle}
-                  </div>
-                )}
-                {hybridCombiner === 'x25519-mlkem' && x25519KeyPair && (
-                  <div>X25519: Web Crypto key pair ready</div>
-                )}
-              </div>
-            )}
-
-            <p className="text-[10px] text-muted-foreground opacity-70">
-              {hybridCombiner === 'p256-mlkem'
-                ? 'ECDH P-256 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'
-                : 'X25519 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'}
-            </p>
-          </div>
-        )}
-
-        {/* ── Target key + Wrap button ──────────────────────────────────────── */}
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              Target Key
-            </p>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={genWrappableMLKEM}
-                disabled={anyLoading}
-              >
-                {loadingOp === 'gen-wkem' ? (
-                  <Loader2 size={10} className="animate-spin mr-1" />
-                ) : (
-                  <Zap size={10} className="mr-1" />
-                )}
-                Gen ML-KEM
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={genWrappableMLDSA}
-                disabled={anyLoading}
-              >
-                {loadingOp === 'gen-wdsa' ? (
-                  <Loader2 size={10} className="animate-spin mr-1" />
-                ) : (
-                  <Key size={10} className="mr-1" />
-                )}
-                Gen ML-DSA
-              </Button>
-            </div>
-          </div>
-
-          {wrappableKeys.length === 0 ? (
-            <p className="text-xs text-muted-foreground">
-              No wrappable keys found. Generate AES keys or use buttons above to generate wrappable
-              PQC keys.
-            </p>
-          ) : (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground w-24">Key to wrap:</span>
-              <FilterDropdown
-                items={wrappableKeys.map((k) => ({
-                  id: String(k.handle),
-                  label: `h=${k.handle} — ${k.label}`,
-                }))}
-                selectedId={targetKeyHandle !== null ? String(targetKeyHandle) : 'All'}
-                onSelect={(id) => {
-                  setTargetKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)
-                  setWrapResult(null)
-                }}
-                defaultLabel="Select target key…"
-                noContainer
-              />
-            </div>
-          )}
-
-          {/* Seed / Expanded toggle for PQC targets */}
-          {isPqcTarget && (
-            <div className="flex items-center gap-3">
-              <span className="text-xs text-muted-foreground">Representation:</span>
-              {(['expanded', 'seed'] as const).map((r) => (
-                <button
-                  key={r}
-                  onClick={() => setPqcWrapRepr(r)}
-                  className={`text-xs px-2 py-1 rounded border transition-colors ${
-                    pqcWrapRepr === r
-                      ? 'border-primary bg-primary/10 text-primary'
-                      : 'border-border text-muted-foreground hover:border-primary/50'
-                  }`}
-                >
-                  {r === 'expanded' ? 'Expanded' : 'Seed'}
-                </button>
-              ))}
-              <span className="text-[10px] text-muted-foreground">
-                {pqcWrapRepr === 'seed'
-                  ? `${targetKeyInfo?.family === 'ml-kem' ? ML_KEM_SEED_LEN : ML_DSA_SEED_LEN} B seed`
-                  : 'Full key material'}
-              </span>
-            </div>
-          )}
-
-          <Button onClick={doWrap} disabled={!canWrap || anyLoading} className="w-full">
-            {loadingOp === 'wrap' ? (
-              <Loader2 size={14} className="mr-2 animate-spin" />
-            ) : (
-              <Lock size={14} className="mr-2" />
-            )}
-            Wrap Key
-          </Button>
-        </div>
-
-        {error && <ErrorAlert message={error} />}
-
-        {/* ── Wrap result ───────────────────────────────────────────────────── */}
-        {wrapResult && (
+      {isReady && (
+        <div className="space-y-4">
+          {/* ── Mode selector ─────────────────────────────────────────────────── */}
           <div className="glass-panel p-4 space-y-3">
             <div className="flex items-center justify-between">
               <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                Wrap Result
+                Wrapping Mode
               </p>
-              <span className="text-[10px] text-muted-foreground">{wrapResult.mechanism}</span>
-            </div>
-
-            <HsmResultRow label="Target" value={wrapResult.targetKeyLabel} mono={false} />
-
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">Wrapped key (hex)</p>
+              <div className="flex items-center gap-1">
+                <ShareButton title="HSM Key Wrap" variant="icon" />
                 <Button
                   variant="ghost"
                   size="sm"
                   className="h-6 px-2 text-xs"
-                  onClick={() => copyHex(wrapResult.wrappedHex, 'wrapped')}
+                  onClick={() => setShowInfo(true)}
                 >
-                  {copied === 'wrapped' ? (
-                    <Check size={12} className="text-status-success" />
-                  ) : (
-                    <Copy size={12} />
-                  )}
-                  <span className="ml-1">{copied === 'wrapped' ? 'Copied!' : 'Copy'}</span>
+                  <Info size={12} className="mr-1" /> NIST refs &amp; cloud HSM
                 </Button>
               </div>
-              <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
-                {wrapResult.wrappedHex}
-              </p>
             </div>
-
-            {wrapResult.auxHex && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">{wrapResult.auxLabel}</p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-2 text-xs"
-                    onClick={() => copyHex(wrapResult.auxHex!, 'aux')}
-                  >
-                    {copied === 'aux' ? (
-                      <Check size={12} className="text-status-success" />
-                    ) : (
-                      <Copy size={12} />
-                    )}
-                    <span className="ml-1">{copied === 'aux' ? 'Copied!' : 'Copy'}</span>
-                  </Button>
-                </div>
-                <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
-                  {wrapResult.auxHex}
-                </p>
-              </div>
-            )}
-
-            {wrapResult.aux2Hex && (
-              <div className="space-y-1">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs text-muted-foreground">{wrapResult.aux2Label}</p>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="h-6 px-2 text-xs"
-                    onClick={() => copyHex(wrapResult.aux2Hex!, 'aux2')}
-                  >
-                    {copied === 'aux2' ? (
-                      <Check size={12} className="text-status-success" />
-                    ) : (
-                      <Copy size={12} />
-                    )}
-                    <span className="ml-1">{copied === 'aux2' ? 'Copied!' : 'Copy'}</span>
-                  </Button>
-                </div>
-                <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
-                  {wrapResult.aux2Hex}
-                </p>
-              </div>
-            )}
-
-            <p className="text-[10px] text-muted-foreground">
-              Paste these values below to test unwrapping, or export to CSV.
-            </p>
-          </div>
-        )}
-
-        {/* ── Unwrap section ────────────────────────────────────────────────── */}
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-              Unwrap
-            </p>
-            <div className="flex gap-1">
-              {(['paste', 'csv'] as const).map((m) => (
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  {
+                    id: 'direct' as const,
+                    icon: Lock,
+                    label: 'Direct KEK',
+                    sub: 'AES-KW · AES-KWP · AES-GCM',
+                  },
+                  {
+                    id: 'indirect' as const,
+                    icon: Shield,
+                    label: 'Indirect (RSA+KEK)',
+                    sub: 'RSA-OAEP + AES-KWP',
+                  },
+                  {
+                    id: 'pqc' as const,
+                    icon: Zap,
+                    label: 'PQC Hybrid',
+                    sub: 'ECDH + ML-KEM + HKDF → AES-KW',
+                  },
+                ] as const
+              ).map(({ id, icon: Icon, label, sub }) => (
                 <Button
-                  key={m}
+                  key={id}
                   variant="ghost"
-                  size="sm"
-                  onClick={() => setUnwrapInputMode(m)}
-                  className={`h-6 px-2 text-xs ${unwrapInputMode === m ? 'bg-primary/20 text-primary' : ''}`}
+                  onClick={() => {
+                    setWrapMode(id)
+                    setWrapResult(null)
+                    setUnwrappedHandle(null)
+                    setError(null)
+                    emitAlgo(id, directMech, hybridCombiner, mlkemVariant)
+                  }}
+                  className={`flex flex-col items-start h-auto px-3 py-2 rounded border text-left transition-colors ${
+                    wrapMode === id
+                      ? 'border-primary bg-primary/10 text-primary'
+                      : 'border-border text-muted-foreground hover:border-primary/50'
+                  }`}
                 >
-                  {m === 'paste' ? (
-                    <Copy size={10} className="mr-1" />
-                  ) : (
-                    <Upload size={10} className="mr-1" />
-                  )}
-                  {m === 'paste' ? 'Paste hex' : 'Upload CSV'}
+                  <span className="flex items-center gap-1.5 text-xs font-semibold">
+                    <Icon size={12} /> {label}
+                  </span>
+                  <span className="text-[10px] mt-0.5 opacity-70">{sub}</span>
                 </Button>
               ))}
             </div>
+            <p className="text-[10px] text-muted-foreground">
+              <span className="font-medium text-foreground/60">FIPS ref:</span>{' '}
+              {FIPS_REFS[wrapMode]}
+            </p>
           </div>
 
-          {unwrapInputMode === 'csv' && (
-            <div>
-              <input
-                type="file"
-                accept=".csv"
-                ref={csvFileRef}
-                onChange={onCsvFile}
-                className="hidden"
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-xs w-full h-8"
-                onClick={() => csvFileRef.current?.click()}
-              >
-                <Upload size={12} className="mr-2" /> Choose CSV file…
-              </Button>
-              <p className="text-[10px] text-muted-foreground mt-1">
-                Expected columns: <span className="font-mono">wrapped_hex</span>,{' '}
-                <span className="font-mono">aux_hex</span>,{' '}
-                <span className="font-mono">aux2_hex</span> (optional),{' '}
-                <span className="font-mono">key_bits</span>
+          {/* ── Mode-specific config ───────────────────────────────────────────── */}
+
+          {wrapMode === 'direct' && (
+            <div className="glass-panel p-4 space-y-3">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                Mechanism
               </p>
+              <div className="flex flex-wrap gap-2">
+                {(
+                  [
+                    { id: 'aes-kw' as const, label: 'AES-KW', desc: 'RFC 3394' },
+                    { id: 'aes-kwp' as const, label: 'AES-KWP', desc: 'RFC 5649' },
+                    { id: 'aes-gcm' as const, label: 'AES-GCM', desc: 'SP 800-38D' },
+                  ] as const
+                ).map(({ id, label, desc }) => (
+                  <Button
+                    key={id}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setDirectMech(id)
+                      emitAlgo(wrapMode, id, hybridCombiner, mlkemVariant)
+                    }}
+                    className={`text-xs h-7 px-3 ${directMech === id ? 'bg-primary/20 text-primary' : ''}`}
+                  >
+                    {label} <span className="ml-1 opacity-60">{desc}</span>
+                  </Button>
+                ))}
+              </div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-muted-foreground w-24">Wrapping key:</span>
+                <FilterDropdown
+                  items={aesKeys.map((k) => ({
+                    id: String(k.handle),
+                    label: `h=${k.handle} — ${k.label}`,
+                  }))}
+                  selectedId={wrapKeyHandle !== null ? String(wrapKeyHandle) : 'All'}
+                  onSelect={(id) =>
+                    setWrapKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)
+                  }
+                  defaultLabel="Select AES key…"
+                  noContainer
+                />
+              </div>
+              {aesKeys.length === 0 && (
+                <p className="text-xs text-muted-foreground">
+                  Generate AES keys in AES-GCM/CBC/CTR mode first.
+                </p>
+              )}
             </div>
           )}
 
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <label htmlFor="unwrap-wrapped-hex" className="text-xs text-muted-foreground">
-                Wrapped key blob (hex) — raw hex, 0x-prefix, or colon-separated
-              </label>
-              {pastedWrappedHex && (
-                <span
-                  className={`text-[10px] font-mono ${!isValidHex(pastedWrappedHex) ? 'text-status-error' : 'text-muted-foreground'}`}
-                >
-                  {isValidHex(pastedWrappedHex)
-                    ? `${hexByteLen(pastedWrappedHex)}B`
-                    : 'invalid hex'}
-                </span>
-              )}
-            </div>
-            <textarea
-              id="unwrap-wrapped-hex"
-              value={pastedWrappedHex}
-              onChange={(e) => {
-                setPastedWrappedHex(e.target.value)
-                setUnwrappedHandle(null)
-              }}
-              placeholder="e.g. a0b1c2d3… or 0xa0:b1:c2 or a0 b1 c2"
-              className={`w-full h-16 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedWrappedHex && !isValidHex(pastedWrappedHex) ? 'border-status-error' : 'border-input'}`}
-            />
-          </div>
-
           {wrapMode === 'indirect' && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label htmlFor="unwrap-rsa-kek-hex" className="text-xs text-muted-foreground">
-                  RSA-encrypted KEK (hex)
-                </label>
-                {pastedAuxHex && (
-                  <span
-                    className={`text-[10px] font-mono ${!isValidHex(pastedAuxHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+            <div className="glass-panel p-4 space-y-3">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                RSA Wrap Key Pair
+              </p>
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted-foreground">Key size:</span>
+                {([2048, 3072, 4096] as const).map((b) => (
+                  <Button
+                    key={b}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRsaKeyBits(b)}
+                    className={`text-xs h-7 px-2 ${rsaKeyBits === b ? 'bg-primary/20 text-primary' : ''}`}
                   >
-                    {isValidHex(pastedAuxHex) ? `${hexByteLen(pastedAuxHex)}B` : 'invalid hex'}
-                  </span>
-                )}
+                    RSA-{b}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={genRSAWrapPair}
+                  disabled={anyLoading}
+                  className="text-xs h-7"
+                >
+                  {loadingOp === 'gen-rsa' ? (
+                    <Loader2 size={12} className="animate-spin mr-1" />
+                  ) : (
+                    <Key size={12} className="mr-1" />
+                  )}
+                  Gen RSA Pair
+                </Button>
               </div>
-              <textarea
-                id="unwrap-rsa-kek-hex"
-                value={pastedAuxHex}
-                onChange={(e) => setPastedAuxHex(e.target.value)}
-                placeholder="Paste the RSA-OAEP encrypted AES key…"
-                className={`w-full h-12 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAuxHex && !isValidHex(pastedAuxHex) ? 'border-status-error' : 'border-input'}`}
-              />
+              {rsaPubHandle !== null && (
+                <div className="text-xs text-muted-foreground space-y-0.5">
+                  <div>
+                    Pub: h={rsaPubHandle} &nbsp;·&nbsp; Priv: h={rsaPrivHandle}
+                  </div>
+                </div>
+              )}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted-foreground w-24">OAEP hash:</span>
+                {(['sha256', 'sha384', 'sha512'] as const).map((h) => (
+                  <Button
+                    key={h}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setRsaHashAlgo(h)}
+                    className={`text-xs h-7 px-2 ${rsaHashAlgo === h ? 'bg-primary/20 text-primary' : ''}`}
+                  >
+                    {h.toUpperCase()}
+                  </Button>
+                ))}
+              </div>
+              {rsaPubHandle === null && (
+                <p className="text-xs text-muted-foreground">
+                  Generate an RSA wrap key pair above to enable wrapping.
+                </p>
+              )}
             </div>
           )}
 
           {wrapMode === 'pqc' && (
-            <>
+            <div className="glass-panel p-4 space-y-3">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                Hybrid Combiner
+              </p>
+
+              {/* Combiner sub-mode selector */}
+              <div className="flex flex-wrap gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setHybridCombiner('p256-mlkem')
+                    emitAlgo(wrapMode, directMech, 'p256-mlkem', mlkemVariant)
+                  }}
+                  className={`text-xs h-7 px-3 ${hybridCombiner === 'p256-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
+                >
+                  P-256 + ML-KEM <span className="ml-1 opacity-60">PKCS#11</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setHybridCombiner('x25519-mlkem')
+                    emitAlgo(wrapMode, directMech, 'x25519-mlkem', mlkemVariant)
+                  }}
+                  className={`text-xs h-7 px-3 ${hybridCombiner === 'x25519-mlkem' ? 'bg-primary/20 text-primary' : ''}`}
+                >
+                  X25519 + ML-KEM <span className="ml-1 opacity-60">X-Wing</span>
+                </Button>
+              </div>
+
+              {/* ML-KEM variant */}
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs text-muted-foreground">ML-KEM:</span>
+                {([768, 1024] as const).map((v) => (
+                  <Button
+                    key={v}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setMlkemVariant(v)
+                      emitAlgo(wrapMode, directMech, hybridCombiner, v)
+                    }}
+                    className={`text-xs h-7 px-2 ${mlkemVariant === v ? 'bg-primary/20 text-primary' : ''}`}
+                  >
+                    ML-KEM-{v}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={genHybridKeyPair}
+                  disabled={anyLoading}
+                  className="text-xs h-7"
+                >
+                  {loadingOp === 'gen-hybrid' ? (
+                    <Loader2 size={12} className="animate-spin mr-1" />
+                  ) : (
+                    <Zap size={12} className="mr-1" />
+                  )}
+                  Gen {hybridCombiner === 'p256-mlkem' ? 'EC+ML-KEM' : 'X25519+ML-KEM'} Pair
+                </Button>
+              </div>
+
+              {/* Show generated key handles */}
+              {mlkemPubHandle !== null && (
+                <div className="text-xs text-muted-foreground space-y-0.5">
+                  <div>
+                    ML-KEM: pub h={mlkemPubHandle} · priv h={mlkemPrivHandle}
+                  </div>
+                  {hybridCombiner === 'p256-mlkem' && ecPubHandle !== null && (
+                    <div>
+                      EC P-256: pub h={ecPubHandle} · priv h={ecPrivHandle}
+                    </div>
+                  )}
+                  {hybridCombiner === 'x25519-mlkem' && x25519KeyPair && (
+                    <div>X25519: Web Crypto key pair ready</div>
+                  )}
+                </div>
+              )}
+
+              <p className="text-[10px] text-muted-foreground opacity-70">
+                {hybridCombiner === 'p256-mlkem'
+                  ? 'ECDH P-256 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'
+                  : 'X25519 → classical_ss (32 B) || ML-KEM → pqc_ss (32 B) → HKDF-SHA-256 → AES-256 KEK → AES-KW'}
+              </p>
+            </div>
+          )}
+
+          {/* ── Target key + Wrap button ──────────────────────────────────────── */}
+          <div className="glass-panel p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                Target Key
+              </p>
+              <div className="flex gap-1">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={genWrappableMLKEM}
+                  disabled={anyLoading}
+                >
+                  {loadingOp === 'gen-wkem' ? (
+                    <Loader2 size={10} className="animate-spin mr-1" />
+                  ) : (
+                    <Zap size={10} className="mr-1" />
+                  )}
+                  Gen ML-KEM
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={genWrappableMLDSA}
+                  disabled={anyLoading}
+                >
+                  {loadingOp === 'gen-wdsa' ? (
+                    <Loader2 size={10} className="animate-spin mr-1" />
+                  ) : (
+                    <Key size={10} className="mr-1" />
+                  )}
+                  Gen ML-DSA
+                </Button>
+              </div>
+            </div>
+
+            {wrappableKeys.length === 0 ? (
+              <p className="text-xs text-muted-foreground">
+                No wrappable keys found. Generate AES keys or use buttons above to generate
+                wrappable PQC keys.
+              </p>
+            ) : (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-muted-foreground w-24">Key to wrap:</span>
+                <FilterDropdown
+                  items={wrappableKeys.map((k) => ({
+                    id: String(k.handle),
+                    label: `h=${k.handle} — ${k.label}`,
+                  }))}
+                  selectedId={targetKeyHandle !== null ? String(targetKeyHandle) : 'All'}
+                  onSelect={(id) => {
+                    setTargetKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)
+                    setWrapResult(null)
+                  }}
+                  defaultLabel="Select target key…"
+                  noContainer
+                />
+              </div>
+            )}
+
+            {/* Seed / Expanded toggle for PQC targets */}
+            {isPqcTarget && (
+              <div className="flex items-center gap-3">
+                <span className="text-xs text-muted-foreground">Representation:</span>
+                {(['expanded', 'seed'] as const).map((r) => (
+                  <button
+                    key={r}
+                    onClick={() => setPqcWrapRepr(r)}
+                    className={`text-xs px-2 py-1 rounded border transition-colors ${
+                      pqcWrapRepr === r
+                        ? 'border-primary bg-primary/10 text-primary'
+                        : 'border-border text-muted-foreground hover:border-primary/50'
+                    }`}
+                  >
+                    {r === 'expanded' ? 'Expanded' : 'Seed'}
+                  </button>
+                ))}
+                <span className="text-[10px] text-muted-foreground">
+                  {pqcWrapRepr === 'seed'
+                    ? `${targetKeyInfo?.family === 'ml-kem' ? ML_KEM_SEED_LEN : ML_DSA_SEED_LEN} B seed`
+                    : 'Full key material'}
+                </span>
+              </div>
+            )}
+
+            <Button onClick={doWrap} disabled={!canWrap || anyLoading} className="w-full">
+              {loadingOp === 'wrap' ? (
+                <Loader2 size={14} className="mr-2 animate-spin" />
+              ) : (
+                <Lock size={14} className="mr-2" />
+              )}
+              Wrap Key
+            </Button>
+          </div>
+
+          {error && <ErrorAlert message={error} />}
+
+          {/* ── Wrap result ───────────────────────────────────────────────────── */}
+          {wrapResult && (
+            <div className="glass-panel p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                  Wrap Result
+                </p>
+                <span className="text-[10px] text-muted-foreground">{wrapResult.mechanism}</span>
+              </div>
+
+              <HsmResultRow label="Target" value={wrapResult.targetKeyLabel} mono={false} />
+
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="unwrap-mlkem-ct-hex" className="text-xs text-muted-foreground">
-                    ML-KEM ciphertext (hex)
+                  <p className="text-xs text-muted-foreground">Wrapped key (hex)</p>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 px-2 text-xs"
+                    onClick={() => copyHex(wrapResult.wrappedHex, 'wrapped')}
+                  >
+                    {copied === 'wrapped' ? (
+                      <Check size={12} className="text-status-success" />
+                    ) : (
+                      <Copy size={12} />
+                    )}
+                    <span className="ml-1">{copied === 'wrapped' ? 'Copied!' : 'Copy'}</span>
+                  </Button>
+                </div>
+                <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+                  {wrapResult.wrappedHex}
+                </p>
+              </div>
+
+              {wrapResult.auxHex && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">{wrapResult.auxLabel}</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-xs"
+                      onClick={() => copyHex(wrapResult.auxHex!, 'aux')}
+                    >
+                      {copied === 'aux' ? (
+                        <Check size={12} className="text-status-success" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
+                      <span className="ml-1">{copied === 'aux' ? 'Copied!' : 'Copy'}</span>
+                    </Button>
+                  </div>
+                  <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+                    {wrapResult.auxHex}
+                  </p>
+                </div>
+              )}
+
+              {wrapResult.aux2Hex && (
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-muted-foreground">{wrapResult.aux2Label}</p>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-xs"
+                      onClick={() => copyHex(wrapResult.aux2Hex!, 'aux2')}
+                    >
+                      {copied === 'aux2' ? (
+                        <Check size={12} className="text-status-success" />
+                      ) : (
+                        <Copy size={12} />
+                      )}
+                      <span className="ml-1">{copied === 'aux2' ? 'Copied!' : 'Copy'}</span>
+                    </Button>
+                  </div>
+                  <p className="text-xs font-mono bg-muted rounded px-3 py-2 break-all text-foreground/80 select-all">
+                    {wrapResult.aux2Hex}
+                  </p>
+                </div>
+              )}
+
+              <p className="text-[10px] text-muted-foreground">
+                Paste these values below to test unwrapping, or export to CSV.
+              </p>
+            </div>
+          )}
+
+          {/* ── Unwrap section ────────────────────────────────────────────────── */}
+          <div className="glass-panel p-4 space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                Unwrap
+              </p>
+              <div className="flex gap-1">
+                {(['paste', 'csv'] as const).map((m) => (
+                  <Button
+                    key={m}
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setUnwrapInputMode(m)}
+                    className={`h-6 px-2 text-xs ${unwrapInputMode === m ? 'bg-primary/20 text-primary' : ''}`}
+                  >
+                    {m === 'paste' ? (
+                      <Copy size={10} className="mr-1" />
+                    ) : (
+                      <Upload size={10} className="mr-1" />
+                    )}
+                    {m === 'paste' ? 'Paste hex' : 'Upload CSV'}
+                  </Button>
+                ))}
+              </div>
+            </div>
+
+            {unwrapInputMode === 'csv' && (
+              <div>
+                <input
+                  type="file"
+                  accept=".csv"
+                  ref={csvFileRef}
+                  onChange={onCsvFile}
+                  className="hidden"
+                />
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-xs w-full h-8"
+                  onClick={() => csvFileRef.current?.click()}
+                >
+                  <Upload size={12} className="mr-2" /> Choose CSV file…
+                </Button>
+                <p className="text-[10px] text-muted-foreground mt-1">
+                  Expected columns: <span className="font-mono">wrapped_hex</span>,{' '}
+                  <span className="font-mono">aux_hex</span>,{' '}
+                  <span className="font-mono">aux2_hex</span> (optional),{' '}
+                  <span className="font-mono">key_bits</span>
+                </p>
+              </div>
+            )}
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <label htmlFor="unwrap-wrapped-hex" className="text-xs text-muted-foreground">
+                  Wrapped key blob (hex) — raw hex, 0x-prefix, or colon-separated
+                </label>
+                {pastedWrappedHex && (
+                  <span
+                    className={`text-[10px] font-mono ${!isValidHex(pastedWrappedHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                  >
+                    {isValidHex(pastedWrappedHex)
+                      ? `${hexByteLen(pastedWrappedHex)}B`
+                      : 'invalid hex'}
+                  </span>
+                )}
+              </div>
+              <textarea
+                id="unwrap-wrapped-hex"
+                value={pastedWrappedHex}
+                onChange={(e) => {
+                  setPastedWrappedHex(e.target.value)
+                  setUnwrappedHandle(null)
+                }}
+                placeholder="e.g. a0b1c2d3… or 0xa0:b1:c2 or a0 b1 c2"
+                className={`w-full h-16 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedWrappedHex && !isValidHex(pastedWrappedHex) ? 'border-status-error' : 'border-input'}`}
+              />
+            </div>
+
+            {wrapMode === 'indirect' && (
+              <div className="space-y-1">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="unwrap-rsa-kek-hex" className="text-xs text-muted-foreground">
+                    RSA-encrypted KEK (hex)
                   </label>
                   {pastedAuxHex && (
                     <span
@@ -1759,300 +1763,352 @@ export const KeyWrapPanel = ({
                   )}
                 </div>
                 <textarea
-                  id="unwrap-mlkem-ct-hex"
+                  id="unwrap-rsa-kek-hex"
                   value={pastedAuxHex}
                   onChange={(e) => setPastedAuxHex(e.target.value)}
-                  placeholder="Paste the ML-KEM encapsulation ciphertext…"
+                  placeholder="Paste the RSA-OAEP encrypted AES key…"
                   className={`w-full h-12 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAuxHex && !isValidHex(pastedAuxHex) ? 'border-status-error' : 'border-input'}`}
                 />
               </div>
+            )}
+
+            {wrapMode === 'pqc' && (
+              <>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label htmlFor="unwrap-mlkem-ct-hex" className="text-xs text-muted-foreground">
+                      ML-KEM ciphertext (hex)
+                    </label>
+                    {pastedAuxHex && (
+                      <span
+                        className={`text-[10px] font-mono ${!isValidHex(pastedAuxHex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                      >
+                        {isValidHex(pastedAuxHex) ? `${hexByteLen(pastedAuxHex)}B` : 'invalid hex'}
+                      </span>
+                    )}
+                  </div>
+                  <textarea
+                    id="unwrap-mlkem-ct-hex"
+                    value={pastedAuxHex}
+                    onChange={(e) => setPastedAuxHex(e.target.value)}
+                    placeholder="Paste the ML-KEM encapsulation ciphertext…"
+                    className={`w-full h-12 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAuxHex && !isValidHex(pastedAuxHex) ? 'border-status-error' : 'border-input'}`}
+                  />
+                </div>
+                <div className="space-y-1">
+                  <div className="flex items-center justify-between">
+                    <label
+                      htmlFor="unwrap-eph-pubkey-hex"
+                      className="text-xs text-muted-foreground"
+                    >
+                      Ephemeral {hybridCombiner === 'p256-mlkem' ? 'EC P-256' : 'X25519'} pubkey
+                      (hex)
+                    </label>
+                    {pastedAux2Hex && (
+                      <span
+                        className={`text-[10px] font-mono ${!isValidHex(pastedAux2Hex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                      >
+                        {isValidHex(pastedAux2Hex)
+                          ? `${hexByteLen(pastedAux2Hex)}B`
+                          : 'invalid hex'}
+                      </span>
+                    )}
+                  </div>
+                  <textarea
+                    id="unwrap-eph-pubkey-hex"
+                    value={pastedAux2Hex}
+                    onChange={(e) => setPastedAux2Hex(e.target.value)}
+                    placeholder="Paste the ephemeral public key…"
+                    className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAux2Hex && !isValidHex(pastedAux2Hex) ? 'border-status-error' : 'border-input'}`}
+                  />
+                </div>
+              </>
+            )}
+
+            {wrapMode === 'direct' && directMech === 'aes-gcm' && (
               <div className="space-y-1">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="unwrap-eph-pubkey-hex" className="text-xs text-muted-foreground">
-                    Ephemeral {hybridCombiner === 'p256-mlkem' ? 'EC P-256' : 'X25519'} pubkey (hex)
+                  <label htmlFor="unwrap-gcm-iv-hex" className="text-xs text-muted-foreground">
+                    GCM IV (hex, 12 bytes)
                   </label>
-                  {pastedAux2Hex && (
+                  {pastedIvHex && (
                     <span
-                      className={`text-[10px] font-mono ${!isValidHex(pastedAux2Hex) ? 'text-status-error' : 'text-muted-foreground'}`}
+                      className={`text-[10px] font-mono ${hexByteLen(pastedIvHex) !== 12 ? 'text-status-error' : 'text-muted-foreground'}`}
                     >
-                      {isValidHex(pastedAux2Hex) ? `${hexByteLen(pastedAux2Hex)}B` : 'invalid hex'}
+                      {hexByteLen(pastedIvHex)}/12B
                     </span>
                   )}
                 </div>
                 <textarea
-                  id="unwrap-eph-pubkey-hex"
-                  value={pastedAux2Hex}
-                  onChange={(e) => setPastedAux2Hex(e.target.value)}
-                  placeholder="Paste the ephemeral public key…"
-                  className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedAux2Hex && !isValidHex(pastedAux2Hex) ? 'border-status-error' : 'border-input'}`}
+                  id="unwrap-gcm-iv-hex"
+                  value={pastedIvHex}
+                  onChange={(e) => setPastedIvHex(e.target.value)}
+                  placeholder="24-char hex (12 bytes)…"
+                  className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedIvHex && hexByteLen(pastedIvHex) !== 12 ? 'border-status-error' : 'border-input'}`}
                 />
               </div>
-            </>
-          )}
-
-          {wrapMode === 'direct' && directMech === 'aes-gcm' && (
-            <div className="space-y-1">
-              <div className="flex items-center justify-between">
-                <label htmlFor="unwrap-gcm-iv-hex" className="text-xs text-muted-foreground">
-                  GCM IV (hex, 12 bytes)
-                </label>
-                {pastedIvHex && (
-                  <span
-                    className={`text-[10px] font-mono ${hexByteLen(pastedIvHex) !== 12 ? 'text-status-error' : 'text-muted-foreground'}`}
-                  >
-                    {hexByteLen(pastedIvHex)}/12B
-                  </span>
-                )}
-              </div>
-              <textarea
-                id="unwrap-gcm-iv-hex"
-                value={pastedIvHex}
-                onChange={(e) => setPastedIvHex(e.target.value)}
-                placeholder="24-char hex (12 bytes)…"
-                className={`w-full h-10 text-xs font-mono bg-muted border rounded px-3 py-2 resize-none text-foreground/80 placeholder:text-muted-foreground/50 focus:outline-none focus:ring-1 focus:ring-primary ${pastedIvHex && hexByteLen(pastedIvHex) !== 12 ? 'border-status-error' : 'border-input'}`}
-              />
-            </div>
-          )}
-
-          <div className="flex items-center gap-2 flex-wrap">
-            <span className="text-xs text-muted-foreground">Unwrap as:</span>
-            {([128, 192, 256] as const).map((b) => (
-              <Button
-                key={b}
-                variant="ghost"
-                size="sm"
-                onClick={() => setUnwrapTargetBits(b)}
-                className={`h-6 px-2 text-xs ${unwrapTargetBits === b ? 'bg-primary/20 text-primary' : ''}`}
-              >
-                AES-{b}
-              </Button>
-            ))}
-          </div>
-
-          {/* Unwrap key selector — mode-specific */}
-          {wrapMode === 'direct' && (
-            <div className="flex items-center gap-2 flex-wrap">
-              <span className="text-xs text-muted-foreground w-24">Unwrap key:</span>
-              <FilterDropdown
-                items={aesKeys.map((k) => ({
-                  id: String(k.handle),
-                  label: `h=${k.handle} — ${k.label}`,
-                }))}
-                selectedId={wrapKeyHandle !== null ? String(wrapKeyHandle) : 'All'}
-                onSelect={(id) => setWrapKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)}
-                defaultLabel="Select AES key…"
-                noContainer
-              />
-            </div>
-          )}
-
-          {wrapMode === 'indirect' && rsaPrivHandle !== null && (
-            <p className="text-xs text-muted-foreground">
-              RSA priv: h={rsaPrivHandle} &nbsp;·&nbsp; OAEP-{rsaHashAlgo.toUpperCase()}
-            </p>
-          )}
-          {wrapMode === 'indirect' && rsaPrivHandle === null && (
-            <p className="text-xs text-status-warning">Generate RSA wrap key pair first.</p>
-          )}
-
-          {wrapMode === 'pqc' && mlkemPrivHandle !== null && (
-            <div className="text-xs text-muted-foreground space-y-0.5">
-              <div>
-                ML-KEM-{mlkemVariant} priv: h={mlkemPrivHandle}
-              </div>
-              {hybridCombiner === 'p256-mlkem' && ecPrivHandle !== null && (
-                <div>EC P-256 priv: h={ecPrivHandle}</div>
-              )}
-              {hybridCombiner === 'x25519-mlkem' && x25519KeyPair && (
-                <div>X25519: Web Crypto key pair ready</div>
-              )}
-            </div>
-          )}
-          {wrapMode === 'pqc' && mlkemPrivHandle === null && (
-            <p className="text-xs text-status-warning">Generate hybrid key pair first.</p>
-          )}
-
-          <Button
-            variant="outline"
-            onClick={doUnwrap}
-            disabled={!canUnwrap || anyLoading}
-            className="w-full"
-          >
-            {loadingOp === 'unwrap' ? (
-              <Loader2 size={14} className="mr-2 animate-spin" />
-            ) : (
-              <Unlock size={14} className="mr-2" />
             )}
-            Unwrap Key
-          </Button>
 
-          {unwrappedHandle !== null && (
-            <HsmResultRow
-              label="Unwrapped handle"
-              value={`h=${unwrappedHandle} (registered)`}
-              mono={false}
-            />
-          )}
-        </div>
-
-        {/* ── Session log ───────────────────────────────────────────────────── */}
-        {sessionLog.length > 0 && (
-          <div className="glass-panel p-4 space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-                Session Log ({sessionLog.length})
-              </p>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="h-6 px-2 text-xs"
-                onClick={exportSessionCsv}
-              >
-                <Download size={12} className="mr-1" /> Export CSV
-              </Button>
-            </div>
-            <div className="space-y-1.5 max-h-48 overflow-y-auto">
-              {sessionLog.map((e, i) => (
-                <div key={i} className="flex items-start gap-2 text-xs">
-                  <span
-                    className={`mt-0.5 shrink-0 ${e.op === 'wrap' ? 'text-primary' : 'text-status-success'}`}
-                  >
-                    {e.op === 'wrap' ? <Lock size={10} /> : <Unlock size={10} />}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <span className="font-mono text-[10px] text-muted-foreground">
-                      {e.timestamp.slice(11, 19)}
-                    </span>{' '}
-                    <span className="font-medium">{e.mechanism}</span>{' '}
-                    <span className="text-muted-foreground">
-                      →{' '}
-                      {hexSnippet(
-                        new Uint8Array(
-                          normalizeHex(e.wrappedHex)
-                            .match(/.{1,2}/g)
-                            ?.map((b) => parseInt(b, 16)) ?? []
-                        )
-                      )}
-                    </span>
-                    {e.status === 'error' && (
-                      <span className="text-status-error ml-1">{e.error}</span>
-                    )}
-                  </div>
-                </div>
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-xs text-muted-foreground">Unwrap as:</span>
+              {([128, 192, 256] as const).map((b) => (
+                <Button
+                  key={b}
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => setUnwrapTargetBits(b)}
+                  className={`h-6 px-2 text-xs ${unwrapTargetBits === b ? 'bg-primary/20 text-primary' : ''}`}
+                >
+                  AES-{b}
+                </Button>
               ))}
             </div>
-          </div>
-        )}
 
-        {/* ── PKCS#11 reference ─────────────────────────────────────────────── */}
-        <div className="glass-panel p-4 space-y-2">
-          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
-            PKCS#11 v3.2 Call Sequence
-          </p>
-          <div className="space-y-1 text-xs font-mono text-muted-foreground">
-            {wrapMode === 'direct' && directMech !== 'aes-gcm' && (
-              <>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(hSession, CKM_AES_KEY_WRAP[_KWP], hKEK, hTarget, pOut, &len) → '}
-                  <span className="text-status-success">CKR_OK</span>
-                </div>
-                <div>
-                  <span className="text-foreground">C_UnwrapKey</span>
-                  {'(hSession, CKM_AES_KEY_WRAP[_KWP], hKEK, pWrapped, len, tpl, n, &hNew) → '}
-                  <span className="text-status-success">CKR_OK</span>
-                </div>
-              </>
+            {/* Unwrap key selector — mode-specific */}
+            {wrapMode === 'direct' && (
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs text-muted-foreground w-24">Unwrap key:</span>
+                <FilterDropdown
+                  items={aesKeys.map((k) => ({
+                    id: String(k.handle),
+                    label: `h=${k.handle} — ${k.label}`,
+                  }))}
+                  selectedId={wrapKeyHandle !== null ? String(wrapKeyHandle) : 'All'}
+                  onSelect={(id) =>
+                    setWrapKeyHandle(id === 'All' ? null : parseInt(id, 10) || null)
+                  }
+                  defaultLabel="Select AES key…"
+                  noContainer
+                />
+              </div>
             )}
-            {wrapMode === 'direct' && directMech === 'aes-gcm' && (
-              <>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(hSession, CKM_AES_GCM+params, hKEK, hTarget, pOut, &len) → '}
-                  <span className="text-status-success">CKR_OK</span>
-                </div>
-                <div>
-                  <span className="text-foreground">C_UnwrapKey</span>
-                  {'(hSession, CKM_AES_GCM+params, hKEK, pWrapped, len, tpl, n, &hNew) → '}
-                  <span className="text-status-success">CKR_OK</span>
-                </div>
-              </>
+
+            {wrapMode === 'indirect' && rsaPrivHandle !== null && (
+              <p className="text-xs text-muted-foreground">
+                RSA priv: h={rsaPrivHandle} &nbsp;·&nbsp; OAEP-{rsaHashAlgo.toUpperCase()}
+              </p>
             )}
-            {wrapMode === 'indirect' && (
-              <>
-                <div>
-                  <span className="text-foreground">C_GenerateKey</span>
-                  {'(CKM_AES_KEY_GEN, AES-256) → hTempKEK'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(CKM_AES_KEY_WRAP_KWP, hTempKEK, hTarget) → wrappedTarget'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(CKM_RSA_PKCS_OAEP, hRSAPub, hTempKEK) → encryptedKEK'}
-                </div>
-              </>
+            {wrapMode === 'indirect' && rsaPrivHandle === null && (
+              <p className="text-xs text-status-warning">Generate RSA wrap key pair first.</p>
             )}
-            {wrapMode === 'pqc' && hybridCombiner === 'p256-mlkem' && (
-              <>
+
+            {wrapMode === 'pqc' && mlkemPrivHandle !== null && (
+              <div className="text-xs text-muted-foreground space-y-0.5">
                 <div>
-                  <span className="text-foreground">C_GenerateKeyPair</span>
-                  {'(CKM_EC_KEY_PAIR_GEN, P-256) → {hEphPub, hEphPriv}'}
+                  ML-KEM-{mlkemVariant} priv: h={mlkemPrivHandle}
                 </div>
-                <div>
-                  <span className="text-foreground">C_DeriveKey</span>
-                  {'(CKM_ECDH1_DERIVE, hEphPriv, peerPub) → hClassicalSS'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_EncapsulateKey</span>
-                  {'(CKM_ML_KEM, hRecipientPub) → {ct, hPqcSS}'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_CreateObject</span>
-                  {'(GENERIC_SECRET, classical||pqc) → hCombined'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_DeriveKey</span>
-                  {'(CKM_HKDF_DERIVE, hCombined, info="hybrid-wrap-kek") → kekBytes'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(CKM_AES_KEY_WRAP, hKEK, hTarget) → wrapped'}
-                </div>
-              </>
+                {hybridCombiner === 'p256-mlkem' && ecPrivHandle !== null && (
+                  <div>EC P-256 priv: h={ecPrivHandle}</div>
+                )}
+                {hybridCombiner === 'x25519-mlkem' && x25519KeyPair && (
+                  <div>X25519: Web Crypto key pair ready</div>
+                )}
+              </div>
             )}
-            {wrapMode === 'pqc' && hybridCombiner === 'x25519-mlkem' && (
-              <>
-                <div>
-                  <span className="text-foreground">WebCrypto.generateKey</span>
-                  {"('X25519') → ephKeyPair"}
-                </div>
-                <div>
-                  <span className="text-foreground">WebCrypto.deriveBits</span>
-                  {"('X25519', recipientPub) → classicalSS"}
-                </div>
-                <div>
-                  <span className="text-foreground">C_EncapsulateKey</span>
-                  {'(CKM_ML_KEM, hRecipientPub) → {ct, hPqcSS}'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_CreateObject</span>
-                  {'(GENERIC_SECRET, classical||pqc) → hCombined'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_DeriveKey</span>
-                  {'(CKM_HKDF_DERIVE, hCombined, info="hybrid-wrap-kek") → kekBytes'}
-                </div>
-                <div>
-                  <span className="text-foreground">C_WrapKey</span>
-                  {'(CKM_AES_KEY_WRAP, hKEK, hTarget) → wrapped'}
-                </div>
-              </>
+            {wrapMode === 'pqc' && mlkemPrivHandle === null && (
+              <p className="text-xs text-status-warning">Generate hybrid key pair first.</p>
             )}
+
+            <Button
+              variant="outline"
+              onClick={doUnwrap}
+              disabled={!canUnwrap || anyLoading}
+              className="w-full"
+            >
+              {loadingOp === 'unwrap' ? (
+                <Loader2 size={14} className="mr-2 animate-spin" />
+              ) : (
+                <Unlock size={14} className="mr-2" />
+              )}
+              Unwrap Key
+            </Button>
+
+            {unwrappedHandle !== null && (
+              <HsmResultRow
+                label="Unwrapped handle"
+                value={`h=${unwrappedHandle} (registered)`}
+                mono={false}
+              />
+            )}
+          </div>
+
+          {/* ── Session log ───────────────────────────────────────────────────── */}
+          {sessionLog.length > 0 && (
+            <div className="glass-panel p-4 space-y-3">
+              <div className="flex items-center justify-between">
+                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+                  Session Log ({sessionLog.length})
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 px-2 text-xs"
+                  onClick={exportSessionCsv}
+                >
+                  <Download size={12} className="mr-1" /> Export CSV
+                </Button>
+              </div>
+              <div className="space-y-1.5 max-h-48 overflow-y-auto">
+                {sessionLog.map((e, i) => (
+                  <div key={i} className="flex items-start gap-2 text-xs">
+                    <span
+                      className={`mt-0.5 shrink-0 ${e.op === 'wrap' ? 'text-primary' : 'text-status-success'}`}
+                    >
+                      {e.op === 'wrap' ? <Lock size={10} /> : <Unlock size={10} />}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <span className="font-mono text-[10px] text-muted-foreground">
+                        {e.timestamp.slice(11, 19)}
+                      </span>{' '}
+                      <span className="font-medium">{e.mechanism}</span>{' '}
+                      <span className="text-muted-foreground">
+                        →{' '}
+                        {hexSnippet(
+                          new Uint8Array(
+                            normalizeHex(e.wrappedHex)
+                              .match(/.{1,2}/g)
+                              ?.map((b) => parseInt(b, 16)) ?? []
+                          )
+                        )}
+                      </span>
+                      {e.status === 'error' && (
+                        <span className="text-status-error ml-1">{e.error}</span>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ── PKCS#11 reference ─────────────────────────────────────────────── */}
+          <div className="glass-panel p-4 space-y-2">
+            <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+              PKCS#11 v3.2 Call Sequence
+            </p>
+            <div className="space-y-1 text-xs font-mono text-muted-foreground">
+              {wrapMode === 'direct' && directMech !== 'aes-gcm' && (
+                <>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(hSession, CKM_AES_KEY_WRAP[_KWP], hKEK, hTarget, pOut, &len) → '}
+                    <span className="text-status-success">CKR_OK</span>
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_UnwrapKey</span>
+                    {'(hSession, CKM_AES_KEY_WRAP[_KWP], hKEK, pWrapped, len, tpl, n, &hNew) → '}
+                    <span className="text-status-success">CKR_OK</span>
+                  </div>
+                </>
+              )}
+              {wrapMode === 'direct' && directMech === 'aes-gcm' && (
+                <>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(hSession, CKM_AES_GCM+params, hKEK, hTarget, pOut, &len) → '}
+                    <span className="text-status-success">CKR_OK</span>
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_UnwrapKey</span>
+                    {'(hSession, CKM_AES_GCM+params, hKEK, pWrapped, len, tpl, n, &hNew) → '}
+                    <span className="text-status-success">CKR_OK</span>
+                  </div>
+                </>
+              )}
+              {wrapMode === 'indirect' && (
+                <>
+                  <div>
+                    <span className="text-foreground">C_GenerateKey</span>
+                    {'(CKM_AES_KEY_GEN, AES-256) → hTempKEK'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(CKM_AES_KEY_WRAP_KWP, hTempKEK, hTarget) → wrappedTarget'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(CKM_RSA_PKCS_OAEP, hRSAPub, hTempKEK) → encryptedKEK'}
+                  </div>
+                </>
+              )}
+              {wrapMode === 'pqc' && hybridCombiner === 'p256-mlkem' && (
+                <>
+                  <div>
+                    <span className="text-foreground">C_GenerateKeyPair</span>
+                    {'(CKM_EC_KEY_PAIR_GEN, P-256) → {hEphPub, hEphPriv}'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_DeriveKey</span>
+                    {'(CKM_ECDH1_DERIVE, hEphPriv, peerPub) → hClassicalSS'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_EncapsulateKey</span>
+                    {'(CKM_ML_KEM, hRecipientPub) → {ct, hPqcSS}'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_CreateObject</span>
+                    {'(GENERIC_SECRET, classical||pqc) → hCombined'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_DeriveKey</span>
+                    {'(CKM_HKDF_DERIVE, hCombined, info="hybrid-wrap-kek") → kekBytes'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(CKM_AES_KEY_WRAP, hKEK, hTarget) → wrapped'}
+                  </div>
+                </>
+              )}
+              {wrapMode === 'pqc' && hybridCombiner === 'x25519-mlkem' && (
+                <>
+                  <div>
+                    <span className="text-foreground">WebCrypto.generateKey</span>
+                    {"('X25519') → ephKeyPair"}
+                  </div>
+                  <div>
+                    <span className="text-foreground">WebCrypto.deriveBits</span>
+                    {"('X25519', recipientPub) → classicalSS"}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_EncapsulateKey</span>
+                    {'(CKM_ML_KEM, hRecipientPub) → {ct, hPqcSS}'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_CreateObject</span>
+                    {'(GENERIC_SECRET, classical||pqc) → hCombined'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_DeriveKey</span>
+                    {'(CKM_HKDF_DERIVE, hCombined, info="hybrid-wrap-kek") → kekBytes'}
+                  </div>
+                  <div>
+                    <span className="text-foreground">C_WrapKey</span>
+                    {'(CKM_AES_KEY_WRAP, hKEK, hTarget) → wrapped'}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </HsmReadyGuard>
+      )}
+
+      {isReady && (
+        <Pkcs11LogPanel
+          log={hsm.log}
+          onClear={hsm.clearLog}
+          title="PKCS#11 Call Log — Key Wrap"
+          defaultOpen
+        />
+      )}
+
+      {isReady && (
+        <HsmKeyInspector
+          keys={hsm.keys}
+          moduleRef={hsm.moduleRef}
+          hSessionRef={hsm.hSessionRef}
+          onRemoveKey={hsm.removeKey}
+        />
+      )}
+    </div>
   )
 }

@@ -61,7 +61,12 @@ vi.mock('../../../../services/crypto/OpenSSLService', () => ({
   },
 }))
 
-// vi.mock('src/utils/cryptoUtils', ...) removed as it referenced wrong path/file
+// Prevent LiveHSMToggle from auto-initializing the WASM HSM during unit tests.
+// Without this, PIDIssuerComponent uses the PKCS#11 path for key generation which produces
+// keys without a `privateKey` field — breaking `signData` in the RelyingParty step.
+vi.mock('@/components/shared/LiveHSMToggle', () => ({
+  LiveHSMToggle: () => null,
+}))
 
 // Stateful mock for OpenSSL Store
 const mockFiles = [

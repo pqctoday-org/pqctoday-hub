@@ -2,6 +2,8 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import {
   CKA_CLASS,
   CKA_DECAPSULATE,
+  CKA_HSS_KEYS_REMAINING,
+  CKA_XMSS_KEYS_REMAINING,
   CKA_DECRYPT,
   CKA_DERIVE,
   CKA_EC_POINT,
@@ -359,21 +361,23 @@ export const hsm_extractECPoint = (
   }
 }
 
-/** C_GetAttributeValue(CKA_HSS_KEYS_REMAINING) → number */
+/** C_GetAttributeValue(CKA_HSS_KEYS_REMAINING or CKA_XMSS_KEYS_REMAINING) → number */
 export const hsm_getKeysRemaining = (
   M: SoftHSMModule,
   hSession: number,
   keyHandle: number
 ): number | null => {
-  const { CKA_HSS_KEYS_REMAINING } = require('./constants')
-  const valTpl = buildTemplate(M, [{ type: CKA_HSS_KEYS_REMAINING, ulongVal: 0 }])
-  try {
-    const rv = M._C_GetAttributeValue(hSession, keyHandle, valTpl.ptr, 1)
-    if (rv !== 0) return null
-    return Math.abs(M.getValue(valTpl.ptr + 8, 'i32'))
-  } finally {
-    freeTemplate(M, valTpl, 1)
+  // Try HSS first, then fall back to XMSS vendor attribute (0x80000106)
+  for (const attrType of [CKA_HSS_KEYS_REMAINING, CKA_XMSS_KEYS_REMAINING]) {
+    const valTpl = buildTemplate(M, [{ type: attrType, ulongVal: 0 }])
+    try {
+      const rv = M._C_GetAttributeValue(hSession, keyHandle, valTpl.ptr, 1)
+      if (rv === 0) return Math.abs(M.getValue(valTpl.ptr + 8, 'i32'))
+    } finally {
+      freeTemplate(M, valTpl, 1)
+    }
   }
+  return null
 }
 
 /** Generate an ML-DSA key pair. Returns {pubHandle, privHandle}. */
@@ -898,11 +902,14 @@ export const hsm_getTokenInfo = (M: SoftHSMModule, slotId: number): TokenInfo =>
 /**
  * Generate an SLH-DSA key pair.
  * paramSet: one of the CKP_SLH_DSA_* constants (defaults to SHA2-128s).
+ * extractable: if true, CKA_EXTRACTABLE=true + CKA_SENSITIVE=false (key value readable via C_GetAttributeValue).
+ *              if false (default), CKA_EXTRACTABLE=false + CKA_SENSITIVE=true (production-safe).
  */
 export const hsm_generateSLHDSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  paramSet: number = CKP_SLH_DSA_SHA2_128S
+  paramSet: number = CKP_SLH_DSA_SHA2_128S,
+  extractable = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_SLH_DSA_KEY_PAIR_GEN)
   const pubTpl = buildTemplate(M, [
@@ -919,25 +926,26 @@ export const hsm_generateSLHDSAKeyPair = (
     { type: CKA_KEY_TYPE, ulongVal: CKK_SLH_DSA },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_PRIVATE, boolVal: true },
-    { type: CKA_SENSITIVE, boolVal: false },
-    { type: CKA_EXTRACTABLE, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
     { type: CKA_SIGN, boolVal: true },
     { type: CKA_DECRYPT, boolVal: false },
     { type: CKA_UNWRAP, boolVal: false },
     { type: CKA_DERIVE, boolVal: false },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
   ])
   const pubHPtr = allocUlong(M)
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 10, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 7, prvTpl.ptr, 11, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(SLH-DSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
   } finally {
     M._free(mech)
     freeTemplate(M, pubTpl, 7)
-    freeTemplate(M, prvTpl, 10)
+    freeTemplate(M, prvTpl, 11)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -1055,19 +1063,25 @@ export const hsm_generateStatefulKeyPair = (
   hSession: number,
   mechType: number,
   keyType: number,
-  paramSet: number
+  paramSet: number,
+  lmotsParamSet: number = 0x03, // CKP_LMOTS_SHA256_N32_W4 default
+  lmsParamsAll?: number[], // per-level lms type IDs (length = levels); overrides paramSet when provided
+  lmotsParamsAll?: number[] // per-level lmots type IDs (length = levels); overrides lmotsParamSet when provided
 ): { pubHandle: number; privHandle: number } => {
   const mech = M._malloc(12)
   M.setValue(mech, mechType, 'i32')
 
   let pParamPtr = 0
   if (mechType === CKM_HSS_KEY_PAIR_GEN) {
+    // CK_HSS_KEY_PAIR_GEN_PARAMS: levels(4) + lms_types[8](32) + lmots_types[8](32) = 68 bytes
+    const lmsAll = lmsParamsAll ?? [paramSet]
+    const lmotsAll = lmotsParamsAll ?? [lmotsParamSet]
+    const levels = Math.min(lmsAll.length, 8)
     pParamPtr = M._malloc(68)
-    const levels = 1
     M.setValue(pParamPtr, levels, 'i32')
     for (let i = 0; i < 8; i++) {
-      M.setValue(pParamPtr + 4 + i * 4, i === 0 ? paramSet : 0, 'i32')
-      M.setValue(pParamPtr + 36 + i * 4, i === 0 ? 4 : 0, 'i32')
+      M.setValue(pParamPtr + 4 + i * 4, lmsAll[i] ?? 0, 'i32')
+      M.setValue(pParamPtr + 36 + i * 4, lmotsAll[i] ?? 0, 'i32')
     }
     M.setValue(mech + 4, pParamPtr, 'i32')
     M.setValue(mech + 8, 68, 'i32')

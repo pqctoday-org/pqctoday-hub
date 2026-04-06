@@ -459,12 +459,12 @@ export function _C_GetOperationState(_h_session, _p_operation_state, _pul_operat
 }
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @param {number} p_info
  * @returns {number}
  */
-export function _C_GetSessionInfo(_h_session, p_info) {
-    const ret = wasm._C_GetSessionInfo(_h_session, p_info);
+export function _C_GetSessionInfo(h_session, p_info) {
+    const ret = wasm._C_GetSessionInfo(h_session, p_info);
     return ret >>> 0;
 }
 
@@ -481,13 +481,13 @@ export function _C_GetSlotInfo(_slot_id, p_info) {
 }
 
 /**
- * @param {number} _token_present
+ * @param {number} token_present
  * @param {number} p_slot_list
  * @param {number} pul_count
  * @returns {number}
  */
-export function _C_GetSlotList(_token_present, p_slot_list, pul_count) {
-    const ret = wasm._C_GetSlotList(_token_present, p_slot_list, pul_count);
+export function _C_GetSlotList(token_present, p_slot_list, pul_count) {
+    const ret = wasm._C_GetSlotList(token_present, p_slot_list, pul_count);
     return ret >>> 0;
 }
 
@@ -502,25 +502,25 @@ export function _C_GetTokenInfo(_slot_id, p_info) {
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _p_pin
- * @param {number} _ul_pin_len
+ * @param {number} h_session
+ * @param {number} p_pin
+ * @param {number} ul_pin_len
  * @returns {number}
  */
-export function _C_InitPIN(_h_session, _p_pin, _ul_pin_len) {
-    const ret = wasm._C_InitPIN(_h_session, _p_pin, _ul_pin_len);
+export function _C_InitPIN(h_session, p_pin, ul_pin_len) {
+    const ret = wasm._C_InitPIN(h_session, p_pin, ul_pin_len);
     return ret >>> 0;
 }
 
 /**
- * @param {number} _slot_id
- * @param {number} _p_pin
- * @param {number} _ul_pin_len
- * @param {number} _p_label
+ * @param {number} slot_id
+ * @param {number} p_pin
+ * @param {number} ul_pin_len
+ * @param {number} p_label
  * @returns {number}
  */
-export function _C_InitToken(_slot_id, _p_pin, _ul_pin_len, _p_label) {
-    const ret = wasm._C_InitToken(_slot_id, _p_pin, _ul_pin_len, _p_label);
+export function _C_InitToken(slot_id, p_pin, ul_pin_len, p_label) {
+    const ret = wasm._C_InitToken(slot_id, p_pin, ul_pin_len, p_label);
     return ret >>> 0;
 }
 
@@ -534,23 +534,23 @@ export function _C_Initialize(p_init_args) {
 }
 
 /**
- * @param {number} _h_session
- * @param {number} _user_type
- * @param {number} _p_pin
- * @param {number} _ul_pin_len
+ * @param {number} h_session
+ * @param {number} user_type
+ * @param {number} p_pin
+ * @param {number} ul_pin_len
  * @returns {number}
  */
-export function _C_Login(_h_session, _user_type, _p_pin, _ul_pin_len) {
-    const ret = wasm._C_Login(_h_session, _user_type, _p_pin, _ul_pin_len);
+export function _C_Login(h_session, user_type, p_pin, ul_pin_len) {
+    const ret = wasm._C_Login(h_session, user_type, p_pin, ul_pin_len);
     return ret >>> 0;
 }
 
 /**
- * @param {number} _h_session
+ * @param {number} h_session
  * @returns {number}
  */
-export function _C_Logout(_h_session) {
-    const ret = wasm._C_Logout(_h_session);
+export function _C_Logout(h_session) {
+    const ret = wasm._C_Logout(h_session);
     return ret >>> 0;
 }
 
@@ -599,15 +599,15 @@ export function _C_MessageVerifyInit(h_session, p_mechanism, h_key) {
 }
 
 /**
- * @param {number} _slot_id
- * @param {number} _flags
+ * @param {number} slot_id
+ * @param {number} flags
  * @param {number} _p_application
  * @param {number} _notify
  * @param {number} ph_session
  * @returns {number}
  */
-export function _C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_session) {
-    const ret = wasm._C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_session);
+export function _C_OpenSession(slot_id, flags, _p_application, _notify, ph_session) {
+    const ret = wasm._C_OpenSession(slot_id, flags, _p_application, _notify, ph_session);
     return ret >>> 0;
 }
 
@@ -863,6 +863,14 @@ export function _malloc(size) {
     return ret >>> 0;
 }
 
+/**
+ * @param {number} seed_ptr
+ * @param {number} seed_len
+ */
+export function _set_kat_seed(seed_ptr, seed_len) {
+    wasm._set_kat_seed(seed_ptr, seed_len);
+}
+
 export function wasm_start() {
     wasm.wasm_start();
 }
@@ -895,7 +903,7 @@ function __wbg_get_imports() {
             return ret;
         }, arguments); },
         __wbg_crypto_38df2bab126b63dc: function(arg0) {
-            const ret = arg0.crypto;
+            const ret = (arg0 ?? globalThis).crypto;
             return ret;
         },
         __wbg_error_a6fa202b58aa1cd3: function(arg0, arg1) {

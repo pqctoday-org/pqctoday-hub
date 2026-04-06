@@ -179,10 +179,10 @@ export const _C_SignFinal: (a: number, b: number, c: number) => number
 export const _C_SignUpdate: (a: number, b: number, c: number) => number
 export const _C_VerifyFinal: (a: number, b: number, c: number) => number
 export const _C_VerifyUpdate: (a: number, b: number, c: number) => number
-export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const _free: (a: number, b: number) => void
 export const _malloc: (a: number) => number
 export const wasm_start: () => void
+export const _C_GetMechanismList: (a: number, b: number, c: number) => number
 export const __wbindgen_exn_store: (a: number) => void
 export const __externref_table_alloc: () => number
 export const __wbindgen_externrefs: WebAssembly.Table

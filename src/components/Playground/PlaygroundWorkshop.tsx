@@ -11,6 +11,7 @@ import {
   BookOpen,
   BookmarkCheck,
   Bookmark,
+  Wrench,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
@@ -35,6 +36,13 @@ const DifficultyBadge = ({ level }: { level: ToolDifficulty }) => (
     className={`inline-block text-[10px] px-1.5 py-0.5 rounded font-medium ${DIFFICULTY_STYLES[level]}`}
   >
     {level}
+  </span>
+)
+
+const WipBadge = () => (
+  <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning font-medium border border-status-warning/30">
+    <Wrench className="w-2.5 h-2.5" aria-hidden="true" />
+    WIP
   </span>
 )
 
@@ -213,12 +221,14 @@ const HeroCard = ({
   title,
   description,
   badge,
+  wip,
 }: {
   to: string
   icon: React.ElementType
   title: string
   description: string
   badge?: string
+  wip?: boolean
 }) => (
   <Link
     to={to}
@@ -232,7 +242,8 @@ const HeroCard = ({
         <p className="font-semibold text-foreground group-hover:text-primary transition-colors">
           {title}
         </p>
-        {badge && (
+        {wip && <WipBadge />}
+        {badge && !wip && (
           <span className="inline-block text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary font-medium">
             {badge}
           </span>
@@ -251,6 +262,7 @@ export const PlaygroundWorkshop = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
+  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>('hide')
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
@@ -281,6 +293,8 @@ export const PlaygroundWorkshop = () => {
       )
     }
     if (showOnlyPlaygroundTools) tools = tools.filter((t) => myPlaygroundTools.includes(t.id))
+    if (wipFilter === 'only') tools = tools.filter((t) => t.wip)
+    if (wipFilter === 'hide') tools = tools.filter((t) => !t.wip)
     return tools
   }, [
     searchQuery,
@@ -290,6 +304,7 @@ export const PlaygroundWorkshop = () => {
     recommendedTools,
     showOnlyPlaygroundTools,
     myPlaygroundTools,
+    wipFilter,
   ])
 
   const groupedTools = useMemo(() => {
@@ -410,6 +425,35 @@ export const PlaygroundWorkshop = () => {
                 </button>
               )
             })}
+            <button
+              onClick={() =>
+                setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
+              }
+              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                wipFilter === 'only'
+                  ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                  : wipFilter === 'hide'
+                    ? 'bg-muted text-muted-foreground border-border line-through'
+                    : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+              }`}
+              title={
+                wipFilter === 'all'
+                  ? 'Click to show only WIP tools'
+                  : wipFilter === 'only'
+                    ? 'Click to hide WIP tools'
+                    : 'Click to show all tools'
+              }
+            >
+              <Wrench className="w-3 h-3" aria-hidden="true" />
+              {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
+              {wipFilter !== 'hide' && (
+                <span
+                  className={`text-[10px] px-1 rounded ${wipFilter === 'only' ? 'text-status-warning' : 'text-muted-foreground'}`}
+                >
+                  {WORKSHOP_TOOLS.filter((t) => t.wip).length}
+                </span>
+              )}
+            </button>
           </div>
         </div>
 
@@ -431,7 +475,6 @@ export const PlaygroundWorkshop = () => {
               icon={Cpu}
               title="PKCS#11 HSM Playground"
               description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
-              badge="WIP"
             />
           </div>
         </div>
@@ -470,6 +513,7 @@ export const PlaygroundWorkshop = () => {
                                 {tool.name}
                               </p>
                               <DifficultyBadge level={tool.difficulty} />
+                              {tool.wip && <WipBadge />}
                             </div>
                             <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
                               {tool.description}

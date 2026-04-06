@@ -198,6 +198,7 @@ const PREHASH_OPTIONS = [
   { id: 'sha384', label: 'SHA-384' },
   { id: 'sha512', label: 'SHA-512' },
   { id: 'sha3-256', label: 'SHA3-256' },
+  { id: 'sha3-384', label: 'SHA3-384' },
   { id: 'sha3-512', label: 'SHA3-512' },
   { id: 'shake128', label: 'SHAKE-128' },
   { id: 'shake256', label: 'SHAKE-256' },
@@ -229,9 +230,9 @@ const COMPARISON_ROWS = [
   { label: 'CNSA 2.0', lms: 'Required', slhdsa: 'Not listed', mldsa: 'Required' },
   {
     label: 'Best use',
-    lms: 'Firmware, code signing',
-    slhdsa: 'General-purpose',
-    mldsa: 'General-purpose',
+    lms: 'Firmware, code signing (CNSA 2.0)',
+    slhdsa: 'CA roots, stateless contexts, no persistent state',
+    mldsa: 'TLS, general-purpose signing',
   },
 ]
 
@@ -243,7 +244,7 @@ const toHex = (bytes: Uint8Array): string =>
 const formatBytes = (n: number): string => (n >= 1024 ? `${(n / 1024).toFixed(1)} KB` : `${n} B`)
 
 export const SLHDSALiveDemo: React.FC = () => {
-  const hsm = useHSM()
+  const hsm = useHSM('rust')
   const isLive = hsm.isReady && !!hsm.moduleRef.current
 
   // Parameter set & pre-hash selection
@@ -316,7 +317,7 @@ export const SLHDSALiveDemo: React.FC = () => {
       setError(err instanceof Error ? err.message : String(err))
     }
     setLoading(null)
-  }, [hsm, selectedParam.ckp])
+  }, [hsm, selectedParam.ckp, selectedParam.label])
 
   const handleSign = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current || !keyHandles) return
@@ -358,17 +359,18 @@ export const SLHDSALiveDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* Live HSM Toggle — MUST be first child per hsm-ui-layout-pattern.md §2 */}
+      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
+
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">SLH-DSA Live Demo (FIPS 205)</h3>
         <p className="text-sm text-muted-foreground">
           Generate SLH-DSA key pairs, sign messages, and verify signatures using a real PKCS#11 v3.2
-          HSM emulator in-browser. Compare SLH-DSA (stateless) with the stateful LMS/XMSS schemes
-          from Steps 1-3.
+          HSM emulator in-browser. SLH-DSA (standardized as FIPS 205, August 2024) is the NIST name
+          for SPHINCS+. Compare SLH-DSA (stateless) with the stateful LMS/XMSS schemes from Steps
+          1–3.
         </p>
       </div>
-
-      {/* Live HSM Toggle */}
-      <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
 
       {isLive ? (
         <div className="space-y-5">
@@ -564,7 +566,6 @@ export const SLHDSALiveDemo: React.FC = () => {
 
           {/* PKCS#11 Call Log */}
         </div>
-
       ) : (
         <div className="bg-muted/50 rounded-lg p-6 border border-border text-center">
           <p className="text-sm text-muted-foreground">

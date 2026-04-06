@@ -19,6 +19,7 @@ import {
   CKM_ECDSA_SHA256,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
 
@@ -202,7 +203,7 @@ export const TokenMigrationLab: React.FC = () => {
       const hSession = hsm.hSessionRef.current
 
       let result: KeyCache
-      let family: any
+      let family: HsmFamily
       let labelSuffix = ''
 
       if (algo === 'RS256') {
@@ -237,14 +238,14 @@ export const TokenMigrationLab: React.FC = () => {
         family,
         role: 'public',
         label: `${labelSuffix} Token Pub`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
       hsm.addKey({
         handle: result.privHandle,
         family,
         role: 'private',
         label: `${labelSuffix} Token Priv`,
-        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false })
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
       })
 
       keyCacheRef.current[algo] = result
@@ -448,8 +449,6 @@ export const TokenMigrationLab: React.FC = () => {
           )}
         </Button>
       </div>
-
-
 
       {/* Size Impact Analysis */}
       <div className="glass-panel p-5">

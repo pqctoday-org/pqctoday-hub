@@ -72,6 +72,15 @@
 }
 
 @layer base {
+  @keyframes keygen-fill {
+    from {
+      width: 0%;
+    }
+    to {
+      width: 95%;
+    }
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;

@@ -11,6 +11,7 @@ import {
   FileSignature,
   Radio,
   Bitcoin,
+  Zap,
   Workflow,
   Terminal,
   Shield,
@@ -36,6 +37,8 @@ export interface WorkshopTool {
   difficulty: ToolDifficulty
   /** Personas for whom this tool is a primary (★★) fit */
   recommendedPersonas: PersonaId[]
+  /** Tool is under active development — show WIP badge on card */
+  wip?: boolean
 }
 
 export const WORKSHOP_TOOLS: WorkshopTool[] = [
@@ -51,6 +54,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    wip: true,
   },
   {
     id: 'lms-hss',
@@ -75,6 +79,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    wip: true,
   },
   {
     id: 'envelope-encrypt',
@@ -87,6 +92,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['envelope', 'kms', 'key wrap', 'ml-kem', 'aes', 'dek', 'kek'],
     difficulty: 'intermediate',
     recommendedPersonas: ['architect', 'researcher', 'ops'],
+    wip: true,
   },
   {
     id: 'token-migration',
@@ -99,6 +105,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['token', 'migration', 'iam', 'ml-dsa', 'ecdsa', 'rsa', 'multi-algorithm', 'jwt'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    wip: true,
   },
   {
     id: 'tee-channel',
@@ -111,6 +118,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['tee', 'trusted execution', 'confidential', 'channel', 'attestation', 'hsm'],
     difficulty: 'advanced',
     recommendedPersonas: ['architect', 'researcher'],
+    wip: true,
   },
   {
     id: 'pkcs11-sim',
@@ -135,6 +143,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    wip: true,
   },
   {
     id: 'kdf-derivation',
@@ -159,19 +168,34 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    wip: true,
   },
   {
     id: 'vpn-sim',
     name: 'PQC VPN Simulator',
     description:
-      'Simulate IKEv2 RFC 7383 packet fragmentation and MTU breakage caused by massive ML-KEM keys.',
+      'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
     category: 'HSM / PKCS#11',
-    algorithms: ['ML-KEM-768', 'RFC 7383', 'IKEv2'],
+    algorithms: ['IKEv2', 'ECDH', 'AES-256-CBC', 'HMAC-SHA2-256', 'PKCS#11'],
     icon: Shield,
     moduleLink: '/learn/network-security-pqc',
-    keywords: ['vpn', 'ipsec', 'ikev2', 'mtu', 'fragmentation', 'ml-kem', 'pure pqc', 'hybrid'],
+    keywords: [
+      'vpn',
+      'ipsec',
+      'ikev2',
+      'pkcs11',
+      'hsm',
+      'softhsm',
+      'ecdh',
+      'wasm',
+      'charon',
+      'strongswan',
+      'pqc',
+      'hybrid',
+      'rpc',
+    ],
     difficulty: 'advanced',
-    recommendedPersonas: ['developer', 'architect', 'ops'],
+    recommendedPersonas: ['developer', 'architect', 'ops', 'researcher'],
   },
 
   // ── Entropy & Random ──────────────────────────────────────────────────────
@@ -186,6 +210,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
+    wip: true,
   },
   {
     id: 'entropy-test',
@@ -198,6 +223,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
     difficulty: 'intermediate',
     recommendedPersonas: ['researcher', 'architect', 'developer'],
+    wip: true,
   },
   {
     id: 'qrng-demo',
@@ -211,6 +237,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     recommendedPersonas: ['researcher', 'curious'],
+    wip: true,
   },
   {
     id: 'source-combining',
@@ -235,6 +262,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['researcher', 'architect', 'developer'],
+    wip: true,
   },
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
@@ -296,6 +324,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
+    wip: true,
   },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
@@ -304,6 +333,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: '5G SUCI Construction',
     description: 'ECDH + HKDF + AES subscriber concealment for 5G networks',
     category: 'Protocol Simulations',
+    wip: true,
     algorithms: ['ECDH', 'HKDF', 'AES-128/256'],
     icon: Radio,
     moduleLink: '/learn/network-security-pqc',
@@ -335,6 +365,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
+    wip: true,
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
@@ -356,7 +387,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
     algorithms: ['Ed25519'],
-    icon: Bitcoin,
+    icon: Zap,
     moduleLink: '/learn/digital-assets',
     keywords: ['solana', 'ed25519', 'eddsa', 'transaction', 'base58'],
     difficulty: 'intermediate',
@@ -373,6 +404,7 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher'],
+    wip: true,
   },
 
   // ── OpenSSL Studio ────────────────────────────────────────────────────────

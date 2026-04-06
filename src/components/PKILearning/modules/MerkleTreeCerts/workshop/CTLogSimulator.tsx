@@ -63,7 +63,7 @@ interface IssuedCert extends CertLeaf {
 interface SignedBatch {
   root: string
   treeSize: number
-  /** Bytes signed: SHA-256(root) — matches what the CA signed */
+  /** UTF-8 encoding of "MTC|<root>|<treeSize>|<ts>" — the raw message the CA signs */
   signedPayload: Uint8Array
   /** ML-DSA-44 signature from the CA over signedPayload */
   caSig: Uint8Array
@@ -208,15 +208,17 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               className="text-xs h-auto py-1.5"
             />
           </div>
-          <div className="min-w-[120px]">
+          <div className="min-w-[140px]">
+            <p className="text-[10px] text-muted-foreground block mb-1">Cert subject key algo</p>
             <FilterDropdown
-              label="Algorithm"
+              label="Subject key"
               items={ALGO_OPTIONS}
               selectedId={newAlgo}
               onSelect={setNewAlgo}
               noContainer
               className="w-full"
             />
+            <p className="text-[9px] text-muted-foreground mt-0.5">CA signs with ML-DSA-44</p>
           </div>
           <button
             onClick={handleAdd}
@@ -512,10 +514,10 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
       </div>
 
       {canCompute && (
-        <button
+        <Button
           onClick={handleCompute}
           disabled={isComputing}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 text-sm"
+          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90"
         >
           {isComputing ? (
             <>
@@ -526,7 +528,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
               <ShieldCheck size={16} /> Compute Consistency Proof
             </>
           )}
-        </button>
+        </Button>
       )}
 
       {proof && nodesByLevel && (
@@ -583,6 +585,32 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
                 )
               })}
             </div>
+          </div>
+
+          {/* Root hash comparison — key proof fact */}
+          <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
+            <div className="text-[10px] font-bold text-foreground">
+              Key proof fact: T1 root appears in T2 tree
+            </div>
+            <div className="grid grid-cols-1 gap-1.5 text-[10px]">
+              <div className="flex gap-2">
+                <span className="text-success font-bold w-16 shrink-0">T1 root:</span>
+                <span className="font-mono text-success break-all">
+                  {truncateHash(proof.oldRoot, 20)}
+                </span>
+              </div>
+              <div className="flex gap-2">
+                <span className="text-accent font-bold w-16 shrink-0">T2 root:</span>
+                <span className="font-mono text-accent break-all">
+                  {truncateHash(proof.newRoot, 20)}
+                </span>
+              </div>
+            </div>
+            <p className="text-[9px] text-muted-foreground">
+              Every <span className="text-success font-medium">green (shared)</span> node above
+              exists in both trees. The auditor confirms T1&apos;s root hash is present among
+              T2&apos;s shared nodes — proving no old entries were rewritten.
+            </p>
           </div>
 
           <div
@@ -922,7 +950,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
 // ---------------------------------------------------------------------------
 
 export const CTLogSimulator: React.FC = () => {
-  const hsm = useHSM()
+  const hsm = useHSM('rust')
   const [activePanel, setActivePanel] = useState<Panel>('submission')
 
   const [issuedCerts, setIssuedCerts] = useState<IssuedCert[]>([])
@@ -1103,6 +1131,12 @@ export const CTLogSimulator: React.FC = () => {
 
   return (
     <div className="space-y-6">
+      {/* HSM toggle anchors the top per layout pattern */}
+      <LiveHSMToggle
+        hsm={hsm}
+        operations={['C_GenerateKeyPair', 'C_Sign (ML-DSA-44)', 'C_Verify (ML-DSA-44)']}
+      />
+
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">
           Certificate Transparency Log Simulator
@@ -1114,26 +1148,21 @@ export const CTLogSimulator: React.FC = () => {
         </p>
       </div>
 
-      {/* HSM setup */}
-      <LiveHSMToggle
-        hsm={hsm}
-        operations={['C_GenerateKeyPair', 'C_Sign (ML-DSA-44)', 'C_Verify (ML-DSA-44)']}
-      />
-
       {/* Sub-panel tabs */}
       <div className="flex flex-wrap gap-2 border-b border-border pb-3">
         {PANELS.map((p) => (
-          <button
+          <Button
             key={p.id}
             onClick={() => setActivePanel(p.id)}
-            className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
+            variant="ghost"
+            className={`px-3 py-1.5 h-auto rounded text-xs font-medium transition-colors ${
               activePanel === p.id
                 ? 'bg-primary/10 text-primary border border-primary/30'
                 : 'text-muted-foreground hover:text-foreground border border-transparent hover:border-border'
             }`}
           >
             {p.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -1176,14 +1205,12 @@ export const CTLogSimulator: React.FC = () => {
       {hsm.isReady && (
         <div className="space-y-4 mt-6">
           <Pkcs11LogPanel log={hsm.log} onClear={hsm.clearLog} />
-          {hsm.keys.length > 0 && (
-            <HsmKeyInspector
-              keys={hsm.keys}
-              moduleRef={hsm.moduleRef}
-              hSessionRef={hsm.hSessionRef}
-              onRemoveKey={hsm.removeKey}
-            />
-          )}
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
+          />
         </div>
       )}
     </div>

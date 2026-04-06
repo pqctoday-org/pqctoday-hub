@@ -101,7 +101,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
       setActiveKeyHandle(privHandle)
       hsm.addKey({
         handle: privHandle,
-        family: 'slh-dsa',
+        family: 'hss',
         role: 'private',
         label: `HSS Key (${selected.name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
@@ -152,6 +152,13 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         <p className="text-sm text-muted-foreground">
           Select an LMS parameter set to visualize the Merkle tree structure, key sizes, and signing
           capacity. The tree height determines how many one-time signatures are available.
+          Parameters are defined in{' '}
+          <span className="text-foreground font-medium">NIST SP 800-208</span> and{' '}
+          <span className="text-foreground font-medium">RFC 8554</span>.
+        </p>
+        <p className="text-xs text-status-warning mt-2 flex items-center gap-1.5">
+          <span className="font-bold">NSA CNSA 2.0:</span> LMS is mandated for firmware and software
+          signing. Target: 2030.
         </p>
       </div>
 
@@ -175,23 +182,40 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
           </button>
         </div>
         <div className="flex flex-wrap gap-2">
-          {displayParams.map((param) => (
-            <button
-              key={param.id}
-              onClick={() => {
-                setSelectedParamId(param.id)
-                setActiveKeyHandle(null)
-                setSignatureHex(null)
-              }}
-              className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
-                selectedParamId === param.id
-                  ? 'bg-primary/20 text-primary border border-primary/50'
-                  : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
-              }`}
-            >
-              {param.name}
-            </button>
-          ))}
+          {displayParams.map((param) => {
+            const isProductionOnly = param.treeHeight > 15
+            return (
+              <div key={param.id} className="relative group">
+                <button
+                  onClick={() => {
+                    setSelectedParamId(param.id)
+                    setActiveKeyHandle(null)
+                    setSignatureHex(null)
+                  }}
+                  className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
+                    isProductionOnly
+                      ? selectedParamId === param.id
+                        ? 'bg-muted/30 text-muted-foreground/60 border border-border/50'
+                        : 'bg-muted/20 text-muted-foreground/40 border border-border/30'
+                      : selectedParamId === param.id
+                        ? 'bg-primary/20 text-primary border border-primary/50'
+                        : 'bg-muted/50 text-muted-foreground border border-border hover:border-primary/30'
+                  }`}
+                >
+                  {param.name}
+                  {isProductionOnly && (
+                    <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
+                  )}
+                </button>
+                {isProductionOnly && (
+                  <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
+                    H{param.treeHeight}: 2^{param.treeHeight} signatures — keygen takes minutes.
+                    Production deployments only.
+                  </div>
+                )}
+              </div>
+            )
+          })}
         </div>
       </div>
 
@@ -350,6 +374,11 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
           </div>
 
           <div className="mt-6 pt-4 border-t border-border">
+            <p className="text-[10px] text-status-warning mb-3 leading-relaxed">
+              <span className="font-bold">Stateful scheme:</span> each signature consumes one OTS
+              key. Once all 2^H signatures are used, this key is permanently exhausted and cannot
+              sign again.
+            </p>
             <Button
               onClick={handleGenerateKey}
               disabled={!hsm.isReady || isGenerating}

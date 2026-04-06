@@ -9,70 +9,87 @@ const MESSAGES = [
     sublabel: '+ key_share, supported_groups',
     direction: 'right' as const,
     encrypted: false,
+    mtls: false,
   },
   {
     label: 'ServerHello',
     sublabel: '+ key_share',
     direction: 'left' as const,
     encrypted: false,
+    mtls: false,
   },
   {
     label: '{EncryptedExtensions}',
     sublabel: '',
     direction: 'left' as const,
     encrypted: true,
+    mtls: false,
   },
   {
-    label: '{CertificateRequest}*',
-    sublabel: 'mTLS optional',
+    label: '{CertificateRequest}',
+    sublabel: 'mTLS: server requests client cert',
     direction: 'left' as const,
     encrypted: true,
+    mtls: true,
   },
   {
     label: '{Certificate}',
     sublabel: 'Server identity',
     direction: 'left' as const,
     encrypted: true,
+    mtls: false,
   },
   {
     label: '{CertificateVerify}',
     sublabel: 'Signature proof',
     direction: 'left' as const,
     encrypted: true,
+    mtls: false,
   },
   {
     label: '{Finished}',
     sublabel: 'Server handshake MAC',
     direction: 'left' as const,
     encrypted: true,
+    mtls: false,
   },
   {
-    label: '{Certificate}*',
+    label: '{Certificate}',
     sublabel: 'Client identity (mTLS)',
     direction: 'right' as const,
     encrypted: true,
+    mtls: true,
   },
   {
-    label: '{CertificateVerify}*',
+    label: '{CertificateVerify}',
     sublabel: 'Client signature (mTLS)',
     direction: 'right' as const,
     encrypted: true,
+    mtls: true,
   },
   {
     label: '{Finished}',
     sublabel: 'Client handshake MAC',
     direction: 'right' as const,
     encrypted: true,
+    mtls: false,
   },
   {
     label: 'Application Data',
     sublabel: 'Encrypted with traffic keys',
     direction: 'both' as const,
     encrypted: true,
+    mtls: false,
   },
 ]
 
-export const TLSHandshakeDiagram: React.FC = () => {
+interface TLSHandshakeDiagramProps {
+  /** When provided, mTLS-specific messages are highlighted (true) or dimmed (false).
+   *  When undefined (default), all messages render at full opacity with an mTLS indicator. */
+  mTLSEnabled?: boolean
+}
+
+export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEnabled }) => {
   return (
     <div className="bg-muted/30 rounded-lg border border-border p-6 overflow-x-auto">
       <div className="min-w-[400px]">
@@ -115,6 +132,14 @@ export const TLSHandshakeDiagram: React.FC = () => {
               // Insert encryption boundary before first encrypted message
               const showBoundary = i > 0 && msg.encrypted && !MESSAGES[i - 1].encrypted
 
+              // Visual state for mTLS messages
+              const isMtlsActive =
+                msg.mtls && mTLSEnabled === true
+                  ? true
+                  : msg.mtls && mTLSEnabled === false
+                    ? false
+                    : null // null = unknown/educational mode
+
               return (
                 <React.Fragment key={i}>
                   {showBoundary && (
@@ -131,6 +156,7 @@ export const TLSHandshakeDiagram: React.FC = () => {
                     sublabel={msg.sublabel}
                     direction={msg.direction}
                     encrypted={msg.encrypted}
+                    mtlsActive={isMtlsActive}
                   />
                 </React.Fragment>
               )
@@ -147,9 +173,16 @@ const MessageArrow: React.FC<{
   sublabel: string
   direction: 'left' | 'right' | 'both'
   encrypted: boolean
-}> = ({ label, sublabel, direction, encrypted }) => {
+  /** null = educational mode (show with indicator), true = active, false = inactive */
+  mtlsActive: boolean | null
+}> = ({ label, sublabel, direction, encrypted, mtlsActive }) => {
+  // When mTLS is explicitly disabled, dim this message
+  const isDimmed = mtlsActive === false
+  // When mTLS is active, use warning color to distinguish from standard messages
+  const isMtlsHighlighted = mtlsActive === true
+
   return (
-    <div className="flex items-center px-12 py-1.5 group">
+    <div className={clsx('flex items-center px-12 py-1.5 group', isDimmed && 'opacity-30')}>
       {/* Left dot (client) */}
       <div
         className={clsx(
@@ -189,11 +222,14 @@ const MessageArrow: React.FC<{
             <span
               className={clsx(
                 'text-xs font-mono font-bold whitespace-nowrap',
-                encrypted ? 'text-success' : 'text-foreground'
+                isMtlsHighlighted ? 'text-warning' : encrypted ? 'text-success' : 'text-foreground'
               )}
             >
               {label}
             </span>
+            {mtlsActive === null && (
+              <span className="text-[8px] text-warning ml-1 font-sans">(mTLS)</span>
+            )}
           </div>
           {sublabel && (
             <div className="text-[10px] text-muted-foreground text-center whitespace-nowrap">

@@ -141,7 +141,7 @@ export const HsmPlayground = () => {
       case 'key_wrap':
       case 'key_derive': {
         const bits: 128 | 192 | 256 = algo === 'AES-128' ? 128 : algo === 'AES-192' ? 192 : 256
-        const handle = hsm_generateAESKey(M, hSession, bits, false, 'encrypt')
+        const handle = hsm_generateAESKey(M, hSession, bits)
         addHsmKey({
           handle,
           family: 'aes',

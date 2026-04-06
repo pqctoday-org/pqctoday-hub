@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect } from 'react'
 import { useParams, useNavigate, Navigate } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Wrench } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
 import { WORKSHOP_TOOLS, TOOL_COMPONENTS, ONBACK_COMPONENTS } from './workshopRegistry'
@@ -72,6 +72,16 @@ export const PlaygroundToolRoute = () => {
           />
         </div>
       </div>
+
+      {tool.wip && (
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">
+          <Wrench className="w-4 h-4 shrink-0" aria-hidden="true" />
+          <span>
+            This tool is under active development — functionality may be incomplete or subject to
+            change.
+          </span>
+        </div>
+      )}
 
       <Suspense
         fallback={

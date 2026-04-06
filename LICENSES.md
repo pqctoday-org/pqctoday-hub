@@ -4286,7 +4286,7 @@ SOFTWARE.
 
 ---
 
-## @pqctoday/softhsm-wasm@0.4.0
+## @pqctoday/softhsm-wasm@0.4.7
 
 - **License:** BSD-2-Clause
 - **Repository:** https://github.com/pqctoday/softhsmv3

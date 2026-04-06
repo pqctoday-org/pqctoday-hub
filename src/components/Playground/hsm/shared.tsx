@@ -61,6 +61,8 @@ export const makeHsmKeyLabel = (family: HsmFamily, role: HsmKeyRole, variant?: s
     'ml-kem': 'ML-KEM',
     'ml-dsa': 'ML-DSA',
     'slh-dsa': 'SLH-DSA',
+    hss: 'HSS/LMS',
+    xmss: 'XMSS',
     rsa: 'RSA',
     ecdsa: 'ECDSA',
     eddsa: 'EdDSA',

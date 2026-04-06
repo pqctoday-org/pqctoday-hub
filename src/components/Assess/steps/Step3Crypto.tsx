@@ -69,7 +69,11 @@ const CRYPTO_CATEGORIES: CryptoCategory[] = [
 const FUNCTION_TO_CATEGORY: Record<AlgorithmTransition['function'], string> = {
   'Encryption/KEM': 'Key Exchange',
   'Hybrid KEM': 'Key Exchange',
+  'Composite KEM': 'Key Exchange',
+  'Hybrid KEM (HPKE)': 'Key Exchange',
+  'Hybrid KEM with Access Control': 'Key Exchange',
   Signature: 'Signatures',
+  'Composite Signature': 'Signatures',
   Symmetric: 'Symmetric Encryption',
   Hash: 'Hash & MAC',
 }

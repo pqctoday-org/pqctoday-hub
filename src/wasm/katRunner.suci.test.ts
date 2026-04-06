@@ -11,8 +11,9 @@ describe('Dual-Engine 5G SUCI Profile B (3GPP TS 33.501 Annex C.4) KATs', () => 
     hsmd = instance as any
 
     SoftHSM.hsm_initialize(hsmd)
-    const slotId = SoftHSM.hsm_getFirstSlot(hsmd)
-    sessionHandle = SoftHSM.hsm_openUserSession(hsmd, slotId, '1234', '1234')
+    const rawSlot = SoftHSM.hsm_getFirstFreeSlot(hsmd)
+    const slot = SoftHSM.hsm_initToken(hsmd, rawSlot, '1234', 'SUCI Test')
+    sessionHandle = SoftHSM.hsm_openUserSession(hsmd, slot, '1234', '1234')
   })
 
   afterAll(() => {

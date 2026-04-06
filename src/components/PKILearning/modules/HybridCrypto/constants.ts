@@ -93,6 +93,14 @@ export type HybridFormatId =
   | 'related-certs'
   | 'chameleon'
 
+/** Static Tailwind badge classes by status color — avoids dynamic class purging */
+export const STATUS_BADGE_CLASSES: Record<string, string> = {
+  success: 'bg-success/10 text-success border-success/20',
+  primary: 'bg-primary/10 text-primary border-primary/20',
+  warning: 'bg-warning/10 text-warning border-warning/20',
+  muted: 'bg-muted/10 text-muted-foreground border-border',
+}
+
 export interface HybridCertFormat {
   id: HybridFormatId
   label: string
@@ -103,7 +111,8 @@ export interface HybridCertFormat {
   oids: string[]
   status: 'Published' | 'IETF Last Call' | 'Active Draft' | 'Informational'
   statusColor: string
-  quantumSafe: boolean
+  /** Whether the format is quantum-safe. 'system' = only quantum-safe as a multi-cert system. */
+  quantumSafe: boolean | 'system'
   legacyCompat: boolean
   description: string
   structureLines: Array<{
@@ -222,8 +231,8 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     standard: 'ITU-T X.509 (2019) §9.8',
     standardUrl: 'https://www.itu.int/rec/T-REC-X.509-201910-I/en',
     oids: ['2.5.29.72', '2.5.29.73', '2.5.29.74'],
-    status: 'Active Draft',
-    statusColor: 'warning',
+    status: 'Published',
+    statusColor: 'success',
     quantumSafe: true,
     legacyCompat: true,
     description:
@@ -269,7 +278,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
     oids: ['1.3.6.1.5.5.7.1.36'],
     status: 'Published',
     statusColor: 'success',
-    quantumSafe: true,
+    quantumSafe: 'system',
     legacyCompat: true,
     description:
       'Two independent certificates bound by a RelatedCertificate extension containing a hash of the partner certificate.',

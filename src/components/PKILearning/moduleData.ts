@@ -116,6 +116,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
     duration: '60 min',
     difficulty: 'advanced',
+    workInProgress: true,
   },
   'digital-id': {
     id: 'digital-id',

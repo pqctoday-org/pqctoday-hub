@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo } from 'react'
 import { Search, TreePine, Loader2, Copy, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   buildMerkleTree,
   getInclusionProof,
@@ -131,10 +132,10 @@ export const InclusionProofGenerator: React.FC = () => {
 
       {/* Build tree */}
       {!levels ? (
-        <button
+        <Button
           onClick={handleBuildTree}
           disabled={isBuilding}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm"
+          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
         >
           {isBuilding ? (
             <>
@@ -145,7 +146,7 @@ export const InclusionProofGenerator: React.FC = () => {
               <TreePine size={16} /> Build Tree with 8 Certificates
             </>
           )}
-        </button>
+        </Button>
       ) : (
         <>
           {/* Instruction */}
@@ -233,10 +234,11 @@ export const InclusionProofGenerator: React.FC = () => {
                         }
 
                         return (
-                          <button
+                          <Button
                             key={`${levelIdx}-${node.index}`}
                             onClick={() => isLeaf && handleSelectLeaf(node.index)}
-                            className={`relative px-2 py-1.5 rounded text-[10px] font-mono border transition-all ${borderClass}`}
+                            variant="ghost"
+                            className={`relative px-2 py-1.5 h-auto rounded text-[10px] font-mono border transition-all ${borderClass}`}
                             disabled={!isLeaf}
                           >
                             {/* Annotation badge */}
@@ -281,7 +283,7 @@ export const InclusionProofGenerator: React.FC = () => {
                                 {annotation.label}
                               </div>
                             )}
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>
@@ -298,13 +300,14 @@ export const InclusionProofGenerator: React.FC = () => {
                 <h4 className="text-sm font-bold text-foreground">
                   Inclusion Proof for Cert {selectedLeaf! + 1} ({certs[selectedLeaf!]?.subject})
                 </h4>
-                <button
+                <Button
                   onClick={handleCopyProof}
-                  className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
+                  variant="link"
+                  className="flex items-center gap-1 text-xs h-auto p-0"
                 >
                   {copied ? <Check size={12} /> : <Copy size={12} />}
                   {copied ? 'Copied' : 'Copy JSON'}
-                </button>
+                </Button>
               </div>
 
               {/* Leaf hash */}
@@ -360,12 +363,12 @@ export const InclusionProofGenerator: React.FC = () => {
                   <div className="text-lg font-bold text-success">
                     {formatBytes(proof.proofSizeBytes)}
                   </div>
-                  <div className="text-[10px] text-muted-foreground">Inclusion proof size</div>
+                  <div className="text-[10px] text-muted-foreground">MTC inclusion proof</div>
                 </div>
                 <div className="bg-destructive/10 rounded-lg p-3 border border-destructive/20 text-center">
                   <div className="text-lg font-bold text-destructive">{formatBytes(2420 * 3)}</div>
                   <div className="text-[10px] text-muted-foreground">
-                    3&times; ML-DSA-44 signatures
+                    3&times; ML-DSA-44 sigs (Root&nbsp;CA + Intermediate&nbsp;CA + EE)
                   </div>
                 </div>
               </div>

@@ -28,7 +28,12 @@ interface LiveHSMToggleProps {
   className?: string
 }
 
-export const LiveHSMToggle = ({ hsm, operations, autoInit = true, className = '' }: LiveHSMToggleProps) => {
+export const LiveHSMToggle = ({
+  hsm,
+  operations,
+  autoInit = true,
+  className = '',
+}: LiveHSMToggleProps) => {
   const { liveHsmEnabled, setLiveHsm } = useHSMMode()
 
   // Auto-initialize when mounting
@@ -116,7 +121,7 @@ export const LiveHSMToggle = ({ hsm, operations, autoInit = true, className = ''
             <div className="min-w-0">
               <p className="text-sm font-semibold">Live HSM Mode Active</p>
               <p className="text-xs text-muted-foreground">
-                SoftHSM3 · PKCS#11 v3.2 · session open
+                SoftHSM3 · PKCS#11 v3.2 · {hsm.engine === 'rust' ? 'Rust' : 'C++'} · session open
               </p>
             </div>
           </div>
@@ -133,18 +138,39 @@ export const LiveHSMToggle = ({ hsm, operations, autoInit = true, className = ''
     )
   }
 
-  // ── Idle — show enable prompt ────────────────────────────────────────────────
+  // ── Idle — show engine selector + enable prompt ──────────────────────────────
 
   return (
     <div className={`glass-panel p-3 ${className}`}>
       <div className="flex items-start justify-between gap-3">
-        <div className="flex items-start gap-2 min-w-0">
+        <div className="flex items-start gap-2 min-w-0 flex-1">
           <Shield size={14} className="text-primary shrink-0 mt-0.5" />
-          <div className="min-w-0">
+          <div className="min-w-0 flex-1">
             <p className="text-sm font-semibold">Live HSM Mode</p>
             <p className="text-xs text-muted-foreground mt-0.5">
               Run real PKCS#11 v3.2 operations in SoftHSM3 WASM.
             </p>
+            {/* Engine selector — shown in idle so user can switch before (re-)enabling */}
+            <div className="flex items-center gap-3 mt-2">
+              <span className="text-xs text-muted-foreground">Engine:</span>
+              {(['rust', 'cpp'] as const).map((mode) => (
+                <label key={mode} className="flex items-center gap-1 cursor-pointer">
+                  <input
+                    type="radio"
+                    name={`hsm-engine-toggle-${operations[0] ?? 'default'}`}
+                    value={mode}
+                    checked={hsm.engine === mode}
+                    onChange={() => hsm.setEngine(mode)}
+                    className="accent-primary w-3 h-3"
+                  />
+                  <span
+                    className={`text-xs ${hsm.engine === mode ? 'text-primary font-semibold' : 'text-muted-foreground'}`}
+                  >
+                    {mode === 'rust' ? 'Rust' : 'C++'}
+                  </span>
+                </label>
+              ))}
+            </div>
             {operations.length > 0 && (
               <div className="flex flex-wrap gap-1 mt-1.5">
                 {operations.map((op) => (

@@ -17,6 +17,7 @@ import {
   CKM_AES_CMAC,
   hsm_pbkdf2,
   hsm_generateAESKey,
+  hsm_destroyObject,
   hsm_hkdf,
   hsm_kbkdf,
   hsm_kbkdfFeedback,
@@ -29,20 +30,39 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 type KdfMode = 'pbkdf2' | 'hkdf' | 'kbkdf-counter' | 'kbkdf-feedback'
 
-const KDF_MODES: { id: KdfMode; label: string; spec: string }[] = [
-  { id: 'pbkdf2', label: 'PBKDF2', spec: 'PKCS#11 v3.2 §5.7.3 / CKM_PKCS5_PBKD2' },
-  { id: 'hkdf', label: 'HKDF', spec: 'PKCS#11 v3.0 §2.43 / CKM_HKDF_DERIVE' },
-  {
-    id: 'kbkdf-counter',
-    label: 'KBKDF Counter',
-    spec: 'PKCS#11 v3.2 §2.44 / CKM_SP800_108_COUNTER_KDF',
-  },
-  {
-    id: 'kbkdf-feedback',
-    label: 'KBKDF Feedback',
-    spec: 'PKCS#11 v3.2 §2.44.2 / CKM_SP800_108_FEEDBACK_KDF',
-  },
-]
+const KDF_MODES: { id: KdfMode; label: string; spec: string; useCase: string; pqcNote: string }[] =
+  [
+    {
+      id: 'pbkdf2',
+      label: 'PBKDF2',
+      spec: 'PKCS#11 v3.2 §5.7.3 / CKM_PKCS5_PBKD2',
+      useCase: 'Password hashing · BIP39 mnemonic seed · low-entropy key material',
+      pqcNote: 'Use to derive AES keys from passphrase-protected PQC key vaults (SP 800-132)',
+    },
+    {
+      id: 'hkdf',
+      label: 'HKDF',
+      spec: 'PKCS#11 v3.2 §2.43 / CKM_HKDF_DERIVE',
+      useCase: 'KEM shared-secret expansion · TLS 1.3 key schedule (RFC 8446)',
+      pqcNote:
+        'SP 800-56C Rev2 §6.1 mandates HKDF to expand ML-KEM shared secrets in hybrid schemes',
+    },
+    {
+      id: 'kbkdf-counter',
+      label: 'KBKDF Counter',
+      spec: 'SP 800-108 Rev1 §4.1 / PKCS#11 v3.2 §2.44 / CKM_SP800_108_COUNTER_KDF',
+      useCase: 'PSK derivation · segmented key material · IKEv2 / QKD post-processing',
+      pqcNote:
+        'SP 800-56C Rev2 §6.2 recommends counter-mode KBKDF to expand ML-KEM secrets into session keys',
+    },
+    {
+      id: 'kbkdf-feedback',
+      label: 'KBKDF Feedback',
+      spec: 'SP 800-108 Rev1 §4.2 / PKCS#11 v3.2 §2.44.2 / CKM_SP800_108_FEEDBACK_KDF',
+      useCase: 'Chained derivation where each output feeds the next MAC input',
+      pqcNote: 'Suitable for deriving a chain of sub-keys from a single ML-KEM or QKD session key',
+    },
+  ]
 
 const PBKDF2_PRFS = [
   { label: 'HMAC-SHA-256', value: CKP_PKCS5_PBKD2_HMAC_SHA256 },
@@ -176,6 +196,11 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
           >
             {isValidHex(salt) ? `${hexByteLen(salt)}B` : 'invalid hex'}
           </p>
+          {isValidHex(salt) && hexByteLen(salt) < 16 && (
+            <p className="text-[10px] text-status-warning">
+              Below NIST SP 800-132 §5.1 minimum (16B / 128 bits)
+            </p>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -253,7 +278,6 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -262,11 +286,13 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
 // ── HKDF sub-panel ───────────────────────────────────────────────────────────
 
 const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } = {}) => {
-  const { moduleRef, hSessionRef } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [salt, setSalt] = useState(() => randomHex(16))
   const [info, setInfo] = useState('HKDF-example-context')
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
+  const [bExtract, setBExtract] = useState(true)
+  const [bExpand, setBExpand] = useState(true)
   const [derived, setDerived] = useState<Uint8Array | null>(null)
   const [ikmHandle, setIkmHandle] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
@@ -286,9 +312,24 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           try {
             const M = moduleRef.current!
             const hSession = hSessionRef.current
-            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+            if (ikmHandle !== null) {
+              try {
+                hsm_destroyObject(M, hSession, ikmHandle)
+              } catch {
+                /* ignore */
+              }
+              removeHsmKey(ikmHandle)
+            }
+            const h = hsm_generateAESKey(M, hSession, 256)
             setIkmHandle(h)
             setDerived(null)
+            addHsmKey({
+              handle: h,
+              label: 'IKM (AES-256)',
+              family: 'aes',
+              role: 'secret',
+              generatedAt: new Date().toISOString(),
+            })
             resolve()
           } catch (e) {
             setError(e instanceof Error ? e.message : String(e))
@@ -318,8 +359,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               hSession,
               ikmHandle,
               prf,
-              true,
-              true,
+              bExtract,
+              bExpand,
               saltBytes,
               infoBytes,
               outLen
@@ -390,6 +431,53 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           />
         </div>
 
+        <div className="space-y-1">
+          <p className="text-xs text-muted-foreground">Steps (RFC 5869 §2)</p>
+          <div className="flex gap-1">
+            {(
+              [
+                {
+                  key: 'extract',
+                  label: 'Extract',
+                  active: bExtract,
+                  toggle: () => setBExtract((v) => !v),
+                },
+                {
+                  key: 'expand',
+                  label: 'Expand',
+                  active: bExpand,
+                  toggle: () => setBExpand((v) => !v),
+                },
+              ] as const
+            ).map(({ key, label, active, toggle }) => (
+              <button
+                key={key}
+                onClick={toggle}
+                className={`flex-1 text-xs rounded-lg px-2 py-1.5 border transition-colors ${
+                  active
+                    ? 'bg-primary/20 border-primary text-primary'
+                    : 'bg-muted border-border text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+          {!bExtract && !bExpand && (
+            <p className="text-[10px] text-status-warning">Select at least one step</p>
+          )}
+          {!bExtract && bExpand && (
+            <p className="text-[10px] text-muted-foreground">
+              Expand-only: salt is ignored; IKM is treated as PRK directly
+            </p>
+          )}
+          {bExtract && !bExpand && (
+            <p className="text-[10px] text-muted-foreground">
+              Extract-only: outputs PRK; Info/context is ignored
+            </p>
+          )}
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">PRF Hash</p>
@@ -429,10 +517,11 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
         size="sm"
         className="w-full"
         onClick={handleDerive}
-        disabled={loading || !ikmHandle || (!!salt && !isValidHex(salt))}
+        disabled={loading || !ikmHandle || (!bExtract && !bExpand) || (!!salt && !isValidHex(salt))}
       >
         {loading && ikmHandle ? <Loader2 size={14} className="animate-spin mr-1" /> : null}
-        C_DeriveKey (HKDF — Extract+Expand)
+        C_DeriveKey (HKDF —{' '}
+        {bExtract && bExpand ? 'Extract+Expand' : bExtract ? 'Extract only' : 'Expand only'})
       </Button>
 
       {derived && (
@@ -440,8 +529,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
           <HsmResultRow label={`OKM (${derived.length}B)`} value={toHex(derived)} />
           <div className="bg-muted rounded-lg p-3 text-xs font-mono text-muted-foreground space-y-0.5">
             <div className="text-foreground font-semibold mb-1">CK_HKDF_PARAMS (RFC 5869)</div>
-            <div> bExtract = CK_TRUE</div>
-            <div> bExpand = CK_TRUE</div>
+            <div> bExtract = {bExtract ? 'CK_TRUE' : 'CK_FALSE'}</div>
+            <div> bExpand = {bExpand ? 'CK_TRUE' : 'CK_FALSE'}</div>
             <div>
               {' '}
               prfHashMechanism = {prfLabel} ({prf})
@@ -453,7 +542,6 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -468,7 +556,7 @@ const KbkdfPanel = ({
   feedback: boolean
   onAlgoChange?: (algo: string) => void
 }) => {
-  const { moduleRef, hSessionRef } = useHsmContext()
+  const { moduleRef, hSessionRef, addHsmKey, removeHsmKey } = useHsmContext()
   const [prf, setPrf] = useState(CKM_SHA256)
   const [label, setLabel] = useState('pqc-key-derivation')
   const [context, setContext] = useState(() => randomHex(8))
@@ -482,6 +570,7 @@ const KbkdfPanel = ({
   const [outLen, setOutLen] = useState<16 | 24 | 32>(32)
   const [baseKeyHandle, setBaseKeyHandle] = useState<number | null>(null)
   const [derived, setDerived] = useState<Uint8Array | null>(null)
+  const [fixedInputHex, setFixedInputHex] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
@@ -502,9 +591,25 @@ const KbkdfPanel = ({
           try {
             const M = moduleRef.current!
             const hSession = hSessionRef.current
-            const h = hsm_generateAESKey(M, hSession, 256, false, 'encrypt')
+            if (baseKeyHandle !== null) {
+              try {
+                hsm_destroyObject(M, hSession, baseKeyHandle)
+              } catch {
+                /* ignore */
+              }
+              removeHsmKey(baseKeyHandle)
+            }
+            const h = hsm_generateAESKey(M, hSession, 256)
             setBaseKeyHandle(h)
             setDerived(null)
+            setFixedInputHex(null)
+            addHsmKey({
+              handle: h,
+              label: `Ki (AES-256) — ${feedback ? 'KBKDF-Feedback' : 'KBKDF-Counter'}`,
+              family: 'aes',
+              role: 'secret',
+              generatedAt: new Date().toISOString(),
+            })
             resolve()
           } catch (e) {
             setError(e instanceof Error ? e.message : String(e))
@@ -543,6 +648,7 @@ const KbkdfPanel = ({
               key = hsm_kbkdf(M, hSession, baseKeyHandle, prf, fixedInput, outLen)
             }
             setDerived(key)
+            setFixedInputHex(toHex(fixedInput))
             resolve()
           } catch (e) {
             setError(e instanceof Error ? e.message : String(e))
@@ -628,7 +734,8 @@ const KbkdfPanel = ({
               <p
                 className={`text-[10px] font-mono ${hexByteLen(iv) !== (PRF_SEED_BYTES[prf] ?? 32) ? 'text-status-error' : 'text-muted-foreground'}`}
               >
-                {hexByteLen(iv)}/{PRF_SEED_BYTES[prf] ?? 32}B required
+                {hexByteLen(iv)}/{PRF_SEED_BYTES[prf] ?? 32}B — IV must equal PRF output size
+                (OpenSSL PROV_R_INVALID_SEED_LENGTH)
               </p>
             )}
           </div>
@@ -692,20 +799,38 @@ const KbkdfPanel = ({
               {mechName} ({mechCode})
             </div>
             <div> prfType = {prfLabel}</div>
-            <div> ulNumberOfDataParams = {2}</div>
-            <div> pDataParams[0] = ITERATION_VARIABLE (32-bit counter, big-endian)</div>
-            <div> pDataParams[1] = BYTE_ARRAY (label∥0x00∥context)</div>
-            {feedback && (
-              <div>
-                {' '}
-                pIV / ulIVLen = {iv ? `0x${iv.slice(0, 16)}… (${iv.length / 2}B)` : 'NULL'}
-              </div>
+            {feedback ? (
+              <>
+                <div> ulNumberOfDataParams = 1</div>
+                <div> pDataParams[0] = BYTE_ARRAY (label∥0x00∥context)</div>
+                {fixedInputHex && (
+                  <div className="text-primary/80">
+                    {' '}
+                    fixedData = 0x{fixedInputHex.slice(0, 32)}… ({label}∥0x00∥context)
+                  </div>
+                )}
+                <div>
+                  {' '}
+                  pIV / ulIVLen = {iv ? `0x${iv.slice(0, 16)}… (${hexByteLen(iv)}B)` : 'NULL'}
+                </div>
+              </>
+            ) : (
+              <>
+                <div> ulNumberOfDataParams = 2</div>
+                <div> pDataParams[0] = ITERATION_VARIABLE (32-bit counter, big-endian)</div>
+                <div> pDataParams[1] = BYTE_ARRAY (label∥0x00∥context)</div>
+                {fixedInputHex && (
+                  <div className="text-primary/80">
+                    {' '}
+                    fixedInput = 0x{fixedInputHex.slice(0, 32)}… ({label}∥0x00∥context)
+                  </div>
+                )}
+              </>
             )}
           </div>
         </div>
       )}
 
-      <MiniPkcsLog />
       {error && <ErrorAlert message={error} />}
     </div>
   )
@@ -765,6 +890,21 @@ export const HsmKdfPanel = ({
               {m.label}
             </button>
           ))}
+          {/* Double-Pipeline: defined in SP 800-108 Rev1 §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF
+              Not yet implemented in this WASM build */}
+          <button
+            disabled
+            title="SP 800-108 Rev1 §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF — not yet implemented in this WASM build"
+            className="flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] text-muted-foreground/40 cursor-not-allowed"
+          >
+            KBKDF DP
+          </button>
+        </div>
+
+        {/* Mode description */}
+        <div className="rounded-lg border border-border bg-muted/30 px-3 py-2 space-y-0.5">
+          <p className="text-xs text-foreground">{currentMode.useCase}</p>
+          <p className="text-[10px] text-primary/80">{currentMode.pqcNote}</p>
         </div>
 
         {/* Sub-panels */}
@@ -772,6 +912,9 @@ export const HsmKdfPanel = ({
         {mode === 'hkdf' && <HkdfPanel onAlgoChange={onAlgoChange} />}
         {mode === 'kbkdf-counter' && <KbkdfPanel feedback={false} onAlgoChange={onAlgoChange} />}
         {mode === 'kbkdf-feedback' && <KbkdfPanel feedback={true} onAlgoChange={onAlgoChange} />}
+
+        {/* Unified PKCS#11 call log — one instance for all KDF modes */}
+        <MiniPkcsLog />
       </div>
     </HsmReadyGuard>
   )

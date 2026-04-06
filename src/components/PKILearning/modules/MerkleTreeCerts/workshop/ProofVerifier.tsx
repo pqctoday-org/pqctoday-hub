@@ -10,6 +10,7 @@ import {
   Shuffle,
   TreePine,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 import {
   buildMerkleTree,
   getInclusionProof,
@@ -243,10 +244,10 @@ export const ProofVerifier: React.FC = () => {
 
       {/* Setup */}
       {!levels ? (
-        <button
+        <Button
           onClick={handleSetup}
           disabled={isBuilding}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50 text-sm"
+          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
         >
           {isBuilding ? (
             <>
@@ -257,7 +258,7 @@ export const ProofVerifier: React.FC = () => {
               <ShieldCheck size={16} /> Build Tree &amp; Select a Leaf
             </>
           )}
-        </button>
+        </Button>
       ) : !originalProof ? (
         /* Leaf picker — tree built but no leaf selected yet */
         <div className="space-y-4">
@@ -281,11 +282,12 @@ export const ProofVerifier: React.FC = () => {
                     </div>
                     <div className="flex justify-center gap-1 flex-wrap">
                       {level.map((node) => (
-                        <button
+                        <Button
                           key={`${levelIdx}-${node.index}`}
                           onClick={() => isLeaf && handleSelectLeaf(node.index)}
                           disabled={!isLeaf}
-                          className={`px-2 py-1.5 rounded text-[10px] font-mono border transition-all ${
+                          variant="ghost"
+                          className={`px-2 py-1.5 h-auto rounded text-[10px] font-mono border transition-all ${
                             isRoot
                               ? 'bg-accent/20 text-accent border-accent/50 cursor-default'
                               : isLeaf
@@ -302,7 +304,7 @@ export const ProofVerifier: React.FC = () => {
                               {PROOF_VERIFIER_CERTS[node.index].subject}
                             </div>
                           )}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>
@@ -376,10 +378,11 @@ export const ProofVerifier: React.FC = () => {
                         const key = `${sibIdx}-${charIdx}`
                         const isTampered = tamperedPositions.has(key)
                         return (
-                          <button
+                          <Button
                             key={key}
                             onClick={() => handleFlipChar(sibIdx, charIdx)}
-                            className={`w-[10px] text-center transition-colors hover:bg-primary/20 rounded-sm cursor-pointer ${
+                            variant="ghost"
+                            className={`w-[10px] h-auto p-0 text-[10px] font-mono leading-relaxed text-center hover:bg-primary/20 rounded-sm cursor-pointer ${
                               isTampered
                                 ? 'bg-destructive/30 text-destructive font-bold'
                                 : 'text-foreground'
@@ -391,7 +394,7 @@ export const ProofVerifier: React.FC = () => {
                             }
                           >
                             {char}
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>
@@ -554,10 +557,11 @@ export const ProofVerifier: React.FC = () => {
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-3">
-            <button
+            <Button
               onClick={() => handleVerify(true)}
               disabled={isVerifying}
-              className="flex items-center gap-2 px-4 py-2 bg-success/20 text-success border border-success/30 rounded-lg hover:bg-success/30 transition-colors text-sm font-medium disabled:opacity-50"
+              variant="outline"
+              className="flex items-center gap-2 bg-success/20 text-success border-success/30 hover:bg-success/30 text-sm font-medium"
             >
               {isVerifying && verificationResult?.usedOriginal !== false ? (
                 <Loader2 size={14} className="animate-spin" />
@@ -565,11 +569,12 @@ export const ProofVerifier: React.FC = () => {
                 <Play size={14} />
               )}
               Verify Original
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => handleVerify(false)}
               disabled={isVerifying || tamperCount === 0}
-              className="flex items-center gap-2 px-4 py-2 bg-destructive/20 text-destructive border border-destructive/30 rounded-lg hover:bg-destructive/30 transition-colors text-sm font-medium disabled:opacity-50"
+              variant="outline"
+              className="flex items-center gap-2 bg-destructive/20 text-destructive border-destructive/30 hover:bg-destructive/30 text-sm font-medium"
               title={tamperCount === 0 ? 'Click hex characters above to tamper first' : undefined}
             >
               {isVerifying && verificationResult?.usedOriginal === false ? (
@@ -578,21 +583,23 @@ export const ProofVerifier: React.FC = () => {
                 <AlertTriangle size={14} />
               )}
               Verify Tampered
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleAutoTamper}
               disabled={isVerifying}
-              className="flex items-center gap-2 px-3 py-2 bg-warning/10 text-warning border border-warning/30 rounded-lg hover:bg-warning/20 transition-colors text-sm disabled:opacity-50"
+              variant="outline"
+              className="flex items-center gap-2 bg-warning/10 text-warning border-warning/30 hover:bg-warning/20 text-sm"
             >
               <Shuffle size={14} /> Auto-Tamper
-            </button>
+            </Button>
             {tamperCount > 0 && (
-              <button
+              <Button
                 onClick={handleResetTampering}
-                className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+                variant="link"
+                className="flex items-center gap-1 text-xs h-auto p-0 text-muted-foreground hover:text-foreground"
               >
                 <RotateCcw size={12} /> Reset All
-              </button>
+              </Button>
             )}
           </div>
 

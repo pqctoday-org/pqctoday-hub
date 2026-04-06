@@ -19,6 +19,7 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { Input } from '@/components/ui/input'
 
 interface BitcoinFlowProps {
   onBack: () => void
@@ -45,6 +46,9 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     dstPrivHandle?: number
     dstPubHandle?: number
   }>({})
+  // Holds the raw SoftHSMv3 signature (r||s, 64 bytes) from the sign step
+  // so the verify step can use the correct format for CKM_ECDSA (not OpenSSL DER)
+  const hsmSigRef = React.useRef<Uint8Array | null>(null)
   // Filenames (Memoized constants)
   const filenames = useMemo(() => {
     const src = DIGITAL_ASSETS_CONSTANTS.getFilenames('SRC_bitcoin')
@@ -57,24 +61,41 @@ export const BitcoinFlow: React.FC<BitcoinFlowProps> = ({ onBack }) => {
     }
   }, [])
 
-  const steps: Step[] = [
-    {
-      id: 'gen_key',
-      title: '1. Generate Source Key',
-      description: 'Generate a secp256k1 private key for the sender using OpenSSL.',
-      code: `// SoftHSMv3 WebAssembly API
+  const steps: Step[] = useMemo(
+    () => [
+      {
+        id: 'gen_key',
+        title: '1. Generate Source Key',
+        description: (
+          <>
+            Generate a <InfoTooltip term="secp256k1" /> key pair for the sender inside SoftHSMv3
+            (PKCS#11 via WebAssembly) with OpenSSL as a reference engine. Note:{' '}
+            <InfoTooltip term="shors" /> breaks secp256k1 — this algorithm will require migration
+            when a cryptographically relevant quantum computer (CRQC) arrives.
+          </>
+        ),
+        code: `// SoftHSMv3 WebAssembly API
 const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
 , false, 'sign');`,
-      language: 'javascript',
-      actionLabel: 'Generate Source Key',
-      diagram: <BitcoinFlowDiagram />,
-    },
-    {
-      id: 'pub_key',
-      title: '2. Derive Source Public Key',
-      description:
-        "Derive the sender's public key using the standard elliptic curve cryptography (ECC) process. This is a one-way trapdoor function: Public Key = Private Key × G (where G is the generator point on secp256k1). It's computationally easy to derive the public key from the private key, but practically impossible to reverse (derive private key from public key). Bitcoin uses compressed public keys (33 bytes) which store only the x-coordinate plus a prefix byte (0x02 or 0x03) indicating y-coordinate parity, instead of the full uncompressed format (65 bytes with both x and y coordinates).",
-      code: `// SoftHSMv3 Key Extraction
+        language: 'javascript',
+        actionLabel: 'Generate Source Key',
+        diagram: <BitcoinFlowDiagram />,
+      },
+      {
+        id: 'pub_key',
+        title: '2. Derive Source Public Key',
+        description: (
+          <>
+            Derive the sender&apos;s public key using standard elliptic curve cryptography (ECC) on{' '}
+            <InfoTooltip term="secp256k1" />. This is a one-way trapdoor function: Public Key =
+            Private Key × G (where G is the generator point). It&apos;s computationally easy to
+            derive the public key from the private key, but practically impossible to reverse.
+            Bitcoin uses compressed public keys (33 bytes) which store only the x-coordinate plus a
+            prefix byte (0x02 or 0x03) indicating y-coordinate parity, instead of the full
+            uncompressed format (65 bytes with both x and y coordinates).
+          </>
+        ),
+        code: `// SoftHSMv3 Key Extraction
 // The public key handle is used to retrieve CKA_VALUE
 const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, CKA_VALUE);
 
@@ -82,143 +103,179 @@ const pubKeyBytes = hsm_getAttribute(hsm.module, hsm.sessionHandle, pubHandle, C
 // 1. Private key (scalar) × Generator point G = Public key point (x, y)
 // 2. Compress: Use x-coordinate + prefix (0x02 if y is even, 0x03 if y is odd)
 // 3. Result: 33-byte compressed public key (vs 65-byte uncompressed)`,
-      language: 'javascript',
-      actionLabel: 'Derive Public Key',
-    },
-    {
-      id: 'address',
-      title: '3. Create Source Address',
-      description: (
-        <>
-          Hash the sender's public key (SHA256 + RIPEMD160) and encode with Base58Check to create a{' '}
-          <InfoTooltip term="p2pkh" /> address.
-        </>
-      ),
-      code: `// 1. SHA256\nconst sha = sha256(pubKeyBytes);\n\n// 2. RIPEMD160\nconst ripemd = ripemd160(sha);\n\n// 3. Base58Check Encode\nconst address = base58check(ripemd);`,
-      language: 'javascript',
-      actionLabel: 'Create Source Address',
-      diagram: <BitcoinFlowDiagram />,
-    },
-    {
-      id: 'gen_recipient_key',
-      title: '4. Generate Recipient Key',
-      description: 'Generate a key pair for the recipient to receive funds.',
-      code: `// SoftHSMv3 WebAssembly API
+        language: 'javascript',
+        actionLabel: 'Derive Public Key',
+      },
+      {
+        id: 'address',
+        title: '3. Create Source Address',
+        description: (
+          <>
+            Hash the sender's public key (<InfoTooltip term="sha256" /> +{' '}
+            <InfoTooltip term="ripemd160" />) and encode with <InfoTooltip term="base58check" /> to
+            create a <InfoTooltip term="p2pkh" /> address.
+          </>
+        ),
+        code: `// 1. SHA256\nconst sha = sha256(pubKeyBytes);\n\n// 2. RIPEMD160\nconst ripemd = ripemd160(sha);\n\n// 3. Base58Check Encode\nconst address = base58check(ripemd);`,
+        language: 'javascript',
+        actionLabel: 'Create Source Address',
+        diagram: <BitcoinFlowDiagram />,
+      },
+      {
+        id: 'gen_recipient_key',
+        title: '4. Generate Recipient Key',
+        description: (
+          <>
+            Generate a <InfoTooltip term="secp256k1" /> key pair for the recipient using the same
+            process as step 1. Each participant needs their own independent key pair — the private
+            key is generated inside the HSM and never exposed.
+          </>
+        ),
+        code: `// SoftHSMv3 WebAssembly API
 const { pubHandle, privHandle } = hsm_generateECKeyPair(hsm.module, hsm.sessionHandle, 'secp256k1'
 , false, 'sign');`,
-      language: 'javascript',
-      actionLabel: 'Generate Recipient Key',
-    },
-    {
-      id: 'recipient_address',
-      title: '5. Create Recipient Address',
-      description: "Derive the recipient's address from their public key.",
-      code: `// Derive recipient address\nconst recipientAddress = createAddress(recipientPubKeyBytes);`,
-      language: 'javascript',
-      actionLabel: 'Create Recipient Address',
-    },
-    {
-      id: 'format_tx',
-      title: '6. Format Transaction',
-      description:
-        'Define the transaction details including amount, fee, and addresses. Bitcoin transactions follow a specific binary format with multiple fields. Verify the recipient address carefully!',
-      code: `const transaction = {\n  amount: 0.5,\n  fee: 0.0001,\n  sourceAddress: "${sourceAddress || '...'}",\n  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"\n};`,
-      language: 'javascript',
-      actionLabel: 'Format Transaction',
-      explanationTable: [
-        {
-          label: 'Version',
-          value: '4 bytes',
-          description: 'Transaction version (typically 1 or 2)',
-        },
-        {
-          label: 'Input Count',
-          value: 'VarInt',
-          description: 'Number of transaction inputs (1-9 bytes)',
-        },
-        {
-          label: 'Inputs',
-          value: '~180 bytes each',
-          description:
-            'Previous transaction hash (32B) + output index (4B) + script length + scriptSig + sequence (4B)',
-        },
-        {
-          label: 'Output Count',
-          value: 'VarInt',
-          description: 'Number of transaction outputs (1-9 bytes)',
-        },
-        {
-          label: 'Outputs',
-          value: '~34 bytes each',
-          description: 'Amount (8B) + script length + scriptPubKey (~25B for P2PKH)',
-        },
-        {
-          label: 'Locktime',
-          value: '4 bytes',
-          description: 'Block height or timestamp when tx becomes valid (0 = immediate)',
-        },
-        {
-          label: 'Total Size',
-          value: '~250 bytes',
-          description: 'Typical P2PKH transaction with 1 input, 2 outputs',
-        },
-      ],
-      diagram: <BitcoinFlowDiagram />,
-    },
-    {
-      id: 'visualize_msg',
-      title: '7. Visualize Message',
-      description:
-        'View the transaction structure that will be hashed and signed. This demo uses a simplified JSON representation for readability. Production Bitcoin transactions use a specific binary format with little-endian integers, VarInts, and script bytecode.',
-      code: '',
-      language: 'javascript',
-      actionLabel: 'Visualize Message',
-      explanationTable: [
-        {
-          label: 'Version',
-          value: '1',
-          description: 'Transaction version number (4 bytes). Currently version 1 or 2.',
-        },
-        {
-          label: 'Input Count',
-          value: '1',
-          description: 'Number of inputs in the transaction (VarInt).',
-        },
-        {
-          label: 'Inputs',
-          value: '[{ txid: "...", vout: 0, ... }]',
-          description: 'List of inputs referencing previous unspent outputs (UTXOs).',
-        },
-        {
-          label: 'Output Count',
-          value: '2',
-          description: 'Number of outputs (VarInt).',
-        },
-        {
-          label: 'Outputs',
-          value: `1. ${editableRecipientAddress || recipientAddress || '...'} (0.5 BTC)\n2. ${sourceAddress || '...'} (Change)`,
-          description:
-            'List of destinations and amounts. Includes the recipient and change back to sender.',
-        },
-        {
-          label: 'Locktime',
-          value: '0',
-          description:
-            'The block number or timestamp at which this transaction is locked (0 = immediate).',
-        },
-        {
-          label: 'Real Binary Format',
-          value: 'Version(4B) | VarInt | Inputs | VarInt | Outputs | Locktime(4B)',
-          description:
-            'Production Bitcoin transactions use a specific binary format: Version (4B little-endian) | VarInt(inputCount) | [txid(32B) + vout(4B LE) + scriptLen + scriptSig + sequence(4B)] per input | VarInt(outputCount) | [value(8B LE) + scriptLen + scriptPubKey] per output | Locktime(4B LE). This demo uses a simplified JSON representation.',
-        },
-      ],
-    },
-    {
-      id: 'sign',
-      title: '8. Sign Transaction',
-      description: "Sign the transaction hash (Double SHA256) using the sender's private key.",
-      code: `// 1. Double SHA256 of message
+        language: 'javascript',
+        actionLabel: 'Generate Recipient Key',
+      },
+      {
+        id: 'recipient_address',
+        title: '5. Create Recipient Address',
+        description: "Derive the recipient's address from their public key.",
+        code: `// Derive recipient address\nconst recipientAddress = createAddress(recipientPubKeyBytes);`,
+        language: 'javascript',
+        actionLabel: 'Create Recipient Address',
+      },
+      {
+        id: 'format_tx',
+        title: '6. Format Transaction',
+        description:
+          'Define the transaction details including amount, fee, and addresses. Bitcoin transactions follow a specific binary format with multiple fields. Verify the recipient address carefully!',
+        code: `const transaction = {\n  amount: 0.5,\n  fee: 0.0001,\n  sourceAddress: "${sourceAddress || '...'}",\n  recipientAddress: "${editableRecipientAddress || recipientAddress || '...'}"\n};`,
+        language: 'javascript',
+        actionLabel: 'Format Transaction',
+        explanationTable: [
+          {
+            label: 'Version',
+            value: '4 bytes',
+            description: 'Transaction version (typically 1 or 2)',
+          },
+          {
+            label: 'Input Count',
+            value: 'VarInt',
+            description: 'Number of transaction inputs (1-9 bytes)',
+          },
+          {
+            label: 'Inputs',
+            value: '~180 bytes each',
+            description:
+              'Previous transaction hash (32B) + output index (4B) + script length + scriptSig + sequence (4B)',
+          },
+          {
+            label: 'Output Count',
+            value: 'VarInt',
+            description: 'Number of transaction outputs (1-9 bytes)',
+          },
+          {
+            label: 'Outputs',
+            value: '~34 bytes each',
+            description: 'Amount (8B) + script length + scriptPubKey (~25B for P2PKH)',
+          },
+          {
+            label: 'Locktime',
+            value: '4 bytes',
+            description: 'Block height or timestamp when tx becomes valid (0 = immediate)',
+          },
+          {
+            label: 'Total Size',
+            value: '~250 bytes',
+            description: 'Typical P2PKH transaction with 1 input, 2 outputs',
+          },
+        ],
+        diagram: <BitcoinFlowDiagram />,
+        customControls: (
+          <div className="mt-3 mb-1">
+            <label
+              htmlFor="recipient-addr-input"
+              className="text-xs font-medium text-muted-foreground mb-1.5 block"
+            >
+              Recipient Address — edit to test the tampered-address warning:
+            </label>
+            <Input
+              id="recipient-addr-input"
+              value={editableRecipientAddress}
+              onChange={(e) => setEditableRecipientAddress(e.target.value)}
+              placeholder="Generate recipient address first (Step 5)"
+              className="font-mono text-xs"
+            />
+            {editableRecipientAddress && editableRecipientAddress !== recipientAddress && (
+              <p className="mt-1.5 text-xs text-status-warning">
+                ⚠️ Address differs from generated recipient — funds would be unrecoverable on a real
+                network.
+              </p>
+            )}
+          </div>
+        ),
+      },
+      {
+        id: 'visualize_msg',
+        title: '7. Visualize Message',
+        description:
+          'View the transaction structure that will be hashed and signed. This demo uses a simplified JSON representation for readability. Production Bitcoin transactions use a specific binary format with little-endian integers, VarInts, and script bytecode.',
+        code: '',
+        language: 'javascript',
+        actionLabel: 'Visualize Message',
+        explanationTable: [
+          {
+            label: 'Version',
+            value: '1',
+            description: 'Transaction version number (4 bytes). Currently version 1 or 2.',
+          },
+          {
+            label: 'Input Count',
+            value: '1',
+            description: 'Number of inputs in the transaction (VarInt).',
+          },
+          {
+            label: 'Inputs',
+            value: '[{ txid: "...", vout: 0, ... }]',
+            description: 'List of inputs referencing previous unspent outputs (UTXOs).',
+          },
+          {
+            label: 'Output Count',
+            value: '2',
+            description: 'Number of outputs (VarInt).',
+          },
+          {
+            label: 'Outputs',
+            value: `1. ${editableRecipientAddress || recipientAddress || '...'} (0.5 BTC)\n2. ${sourceAddress || '...'} (Change)`,
+            description:
+              'List of destinations and amounts. Includes the recipient and change back to sender.',
+          },
+          {
+            label: 'Locktime',
+            value: '0',
+            description:
+              'The block number or timestamp at which this transaction is locked (0 = immediate).',
+          },
+          {
+            label: 'Real Binary Format',
+            value: 'Version(4B) | VarInt | Inputs | VarInt | Outputs | Locktime(4B)',
+            description:
+              'Production Bitcoin transactions use a specific binary format: Version (4B little-endian) | VarInt(inputCount) | [txid(32B) + vout(4B LE) + scriptLen + scriptSig + sequence(4B)] per input | VarInt(outputCount) | [value(8B LE) + scriptLen + scriptPubKey] per output | Locktime(4B LE). This demo uses a simplified JSON representation.',
+          },
+        ],
+      },
+      {
+        id: 'sign',
+        title: '8. Sign Transaction',
+        description: (
+          <>
+            Sign the transaction hash (Double <InfoTooltip term="sha256" />) using the sender&apos;s
+            private key via <InfoTooltip term="ecdsa" /> (CKM_ECDSA — raw hash input, no internal
+            hashing).
+          </>
+        ),
+        code: `// 1. Double SHA256 of message
 const sighashBytes = sha256(sha256(rawTxBytes));
 
 // 2. SoftHSMv3 Signing (CKM_ECDSA)
@@ -229,15 +286,24 @@ const signature = hsm_ecdsaSign(
   sighashBytes, 
   CKM_ECDSA
 );`,
-      language: 'javascript',
-      actionLabel: 'Sign Transaction',
-    },
-    {
-      id: 'verify',
-      title: '9. Verify Signature',
-      description:
-        "Verify the transaction signature using the sender's public key with standard ECDSA verification. This is the same process used in all ECC-based systems (TLS, SSH, etc.). The verifier uses the public key, signature (r, s), and message hash to mathematically confirm the signature was created by the corresponding private key. Bitcoin's verification is identical to classical ECC verification - there's nothing blockchain-specific about this cryptographic operation. The verification equation checks: r ≡ x₁ (mod n), where x₁ is derived from s⁻¹ × (H(m) × G + r × PublicKey).",
-      code: `// SoftHSMv3 Verification (CKM_ECDSA)
+        language: 'javascript',
+        actionLabel: 'Sign Transaction',
+      },
+      {
+        id: 'verify',
+        title: '9. Verify Signature',
+        description: (
+          <>
+            Verify the transaction signature using the sender&apos;s public key with standard{' '}
+            <InfoTooltip term="ecdsa" /> verification. The verifier uses the public key, signature
+            (r, s), and message hash to confirm the signature was created by the corresponding
+            private key. The equation checks: r ≡ x₁ (mod n), where x₁ is derived from s⁻¹ × (H(m) ×
+            G + r × PublicKey). Quantum note: <InfoTooltip term="shors" /> can derive the private
+            key from the public key, forging any signature — making <InfoTooltip term="ecdsa" />{' '}
+            quantum-unsafe.
+          </>
+        ),
+        code: `// SoftHSMv3 Verification (CKM_ECDSA)
 const isValid = hsm_ecdsaVerify(
   hsm.module, 
   hsm.sessionHandle, 
@@ -246,10 +312,12 @@ const isValid = hsm_ecdsaVerify(
   sigBytes, 
   CKM_ECDSA
 );`,
-      language: 'javascript',
-      actionLabel: 'Verify Signature',
-    },
-  ]
+        language: 'javascript',
+        actionLabel: 'Verify Signature',
+      },
+    ],
+    [sourceAddress, recipientAddress, editableRecipientAddress]
+  )
 
   const executeStep = async () => {
     const step = steps[wizard.currentStep]
@@ -262,7 +330,13 @@ const isValid = hsm_ecdsaVerify(
         try {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(
+            M,
+            hSession,
+            'secp256k1',
+            false,
+            'sign'
+          )
           hsmHandlesRef.current.srcPrivHandle = privHandle
           hsmHandlesRef.current.srcPubHandle = pubHandle
 
@@ -334,7 +408,13 @@ const isValid = hsm_ecdsaVerify(
         try {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
+          const { pubHandle, privHandle } = hsm_generateECKeyPair(
+            M,
+            hSession,
+            'secp256k1',
+            false,
+            'sign'
+          )
           hsmHandlesRef.current.dstPrivHandle = privHandle
           hsmHandlesRef.current.dstPubHandle = pubHandle
 
@@ -426,22 +506,10 @@ const isValid = hsm_ecdsaVerify(
     } else if (step.id === 'sign') {
       if (!transactionBytes) throw new Error('Transaction bytes not found')
 
-      const inputTransFile =
-        artifacts.filenames.trans || artifacts.saveTransaction('bitcoin', transactionBytes)
-
       const hash1Bytes = sha256(transactionBytes)
       const sighashBytes = sha256(hash1Bytes)
 
       const hashFilename = artifacts.saveHash('bitcoin', sighashBytes)
-      const tempHashFile = 'temp_sha256.bin'
-
-      const transFile = fileRetrieval.getFile(inputTransFile)
-      if (transFile) {
-        await openSSLService.execute(
-          `openssl dgst -sha256 -binary -out ${tempHashFile} ${inputTransFile}`,
-          [transFile]
-        )
-      }
 
       // SoftHSM execution
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
@@ -452,8 +520,9 @@ const isValid = hsm_ecdsaVerify(
           const privHandle = hsmHandlesRef.current.srcPrivHandle
           if (!privHandle) throw new Error('SoftHSM Source Private Key not found.')
 
-          // We sign the raw sighashBytes using CKM_ECDSA
+          // We sign the raw sighashBytes using CKM_ECDSA (returns raw r||s, not DER)
           const hsmSig = hsm_ecdsaSign(M, hSession, privHandle, sighashBytes, CKM_ECDSA)
+          hsmSigRef.current = hsmSig // persist for verify step — CKM_ECDSA expects raw r||s
           const hsmSigHex = bytesToHex(hsmSig)
 
           result.SoftHSMv3 = `Signature exclusively computed within WebAssembly SoftHSM Environment via C_Sign.\nSignature Length: ${hsmSig.length} bytes\nSignature Result (Hex): ${hsmSigHex}\n\nFull C_SignInit + C_Sign trace logged to PKCS#11 panel below.`
@@ -492,7 +561,7 @@ const isValid = hsm_ecdsaVerify(
 
       if (!sigBytes || !hashBytes) throw new Error('Signature or Hash artifact not found.')
 
-      // SoftHSM execution
+      // SoftHSM execution — uses hsmSigRef (raw r||s) not the OpenSSL DER artifact
       const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
       if (hsmActive) {
         try {
@@ -500,8 +569,19 @@ const isValid = hsm_ecdsaVerify(
           const hSession = hsm.hSessionRef.current!
           const pubHandle = hsmHandlesRef.current.srcPubHandle
           if (!pubHandle) throw new Error('SoftHSM Source Public Key not found.')
+          if (!hsmSigRef.current)
+            throw new Error('SoftHSM signature not found. Please execute Step 8 first.')
 
-          const isValid = hsm_ecdsaVerify(M, hSession, pubHandle, hashBytes, sigBytes, CKM_ECDSA)
+          // Recompute sighash from the transaction bytes to match what was signed
+          const hsmSighash = sha256(sha256(transactionBytes))
+          const isValid = hsm_ecdsaVerify(
+            M,
+            hSession,
+            pubHandle,
+            hsmSighash,
+            hsmSigRef.current,
+            CKM_ECDSA
+          )
           result.SoftHSMv3 = `Signature Evaluation: ${isValid ? '✅ VALID' : '❌ INVALID'}\nVerified strictly inside WebAssembly SoftHSM via C_Verify.\nTrace sent to PKCS#11 Log.`
         } catch (e) {
           result.SoftHSMv3 = `SoftHSM Error: ${e}`
@@ -533,12 +613,15 @@ const isValid = hsm_ecdsaVerify(
 
   return (
     <div className="flex flex-col h-full relative">
-      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 mb-6 rounded-t-xl">
+      <div className="flex items-center justify-between px-6 py-3 border-b border-border bg-muted/10 rounded-t-xl">
         <LiveHSMToggle
           hsm={hsm}
           operations={['C_GenerateKeyPair', 'C_Sign', 'C_Verify', 'C_GetAttributeValue']}
         />
       </div>
+      <p className="text-xs text-muted-foreground px-6 py-2 mb-4 border-b border-border">
+        Educational demo — keys and transactions generated here are not for production use.
+      </p>
 
       <StepWizard
         steps={steps}

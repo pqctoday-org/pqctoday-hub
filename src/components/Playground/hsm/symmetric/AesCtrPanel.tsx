@@ -34,7 +34,7 @@ export const AesCtrPanel = () => {
   const doGenKey = () =>
     withLoading('gen', async () => {
       const M = moduleRef.current!
-      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits, false, 'encrypt')
+      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
       setKeyHandle(handle)
       setCiphertext(null)
       setDecrypted(null)

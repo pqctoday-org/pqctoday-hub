@@ -1,4 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
+import type { HsmFamily } from '@/components/Playground/hsm/HsmContext'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { generateX25519KeyPair, deriveSharedSecret, hkdfExtract } from '@/utils/webCrypto'
 import type { SoftHSMModule } from '@/wasm/softhsm'
@@ -11,6 +12,8 @@ import {
   hsm_signBytesMLDSA,
   hsm_signBytesECDSA,
   hsm_signBytesSLHDSA,
+  CKM_ECDSA_SHA256,
+  CKM_ECDSA_SHA512,
 } from '@/wasm/softhsm'
 import {
   buildSelfSignedX509,
@@ -24,8 +27,6 @@ import {
   ML_DSA_65_OID,
   type SignerFn,
 } from './certBuilder'
-
-
 
 export interface KeyGenResult {
   algorithm: string
@@ -74,7 +75,7 @@ export interface CertResult {
   error?: string
 }
 
-export type KeyTracker = (handle: number, family: string, label: string) => void
+export type KeyTracker = (handle: number, family: HsmFamily, label: string) => void
 
 export class HybridCryptoService {
   private getGenCommand(algorithm: string, filename: string): string {
@@ -623,7 +624,8 @@ export class HybridCryptoService {
   private async generateECKeyPairForCert(
     M: SoftHSMModule,
     hSession: number,
-    onKey?: KeyTracker
+    onKey?: KeyTracker,
+    mechType: number = CKM_ECDSA_SHA256
   ): Promise<{
     publicKeyRaw: Uint8Array
     signerFn: SignerFn
@@ -634,7 +636,7 @@ export class HybridCryptoService {
     // CKA_EC_POINT is DER OCTET STRING wrapping the uncompressed point — strip the DER header
     const rawPub = ecPoint.length === 67 ? ecPoint.slice(2) : ecPoint // 04 41 04...
     const signerFn: SignerFn = async (tbs: Uint8Array) => {
-      return hsm_signBytesECDSA(M, hSession, privHandle, tbs)
+      return hsm_signBytesECDSA(M, hSession, privHandle, tbs, mechType)
     }
     return { publicKeyRaw: rawPub, signerFn }
   }
@@ -704,7 +706,8 @@ export class HybridCryptoService {
     const notBefore = new Date()
     const notAfter = new Date(notBefore.getTime() + 365 * 24 * 60 * 60 * 1000)
     try {
-      const ec = await this.generateECKeyPairForCert(M, hSession, onKey)
+      // Composite OID 1.3.6.1.5.5.7.6.45 = id-MLDSA65-ECDSA-P256-SHA512 — ECDSA must use SHA-512
+      const ec = await this.generateECKeyPairForCert(M, hSession, onKey, CKM_ECDSA_SHA512)
       const mldsa = await this.generateMLDSAKeyPairForCert(M, hSession, onKey)
 
       const derBytes = await buildCompositeCert(

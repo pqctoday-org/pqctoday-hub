@@ -88,6 +88,7 @@ export interface SoftwareItem {
     | 'NOT_VALIDATED'
   correctionNotes?: string
   quantumTech?: 'QKD' | 'QRNG' | 'QKD,QRNG'
+  wip?: boolean
   status?: 'New' | 'Updated' | 'Deleted'
 }
 

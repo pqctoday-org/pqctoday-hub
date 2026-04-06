@@ -381,7 +381,7 @@ export const HsmAcvpTesting = () => {
             const sigBytes = hexToBytes(tv.signature)
 
             // Import known RSA public key — verify only (PKCS#11 v3.2 least privilege)
-            const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes, 'verify')
+            const rsaPubHandle = hsm_importRSAPublicKey(M, hSession, modBytes, expBytes, false)
             regKey({
               handle: rsaPubHandle,
               family: 'rsa',
@@ -1751,10 +1751,20 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] Testing X25519 ECDH Round-Trip (RFC 7748)...`)
           try {
             // Generate two X25519 keypairs
-            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(M, hSession, 'X25519', true
-            , 'sign')
-            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(M, hSession, 'X25519', true
-            , 'sign')
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true,
+              'sign'
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true,
+              'sign'
+            )
             regKey({
               handle: pubA,
               family: 'ecdh',
@@ -1864,10 +1874,20 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] Testing X448 ECDH Round-Trip (RFC 7748)...`)
           try {
             // Generate two X448 keypairs
-            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(M, hSession, 'X448', true
-            , 'sign')
-            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(M, hSession, 'X448', true
-            , 'sign')
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X448',
+              true,
+              'sign'
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X448',
+              true,
+              'sign'
+            )
             regKey({
               handle: pubA,
               family: 'ecdh',
@@ -1977,10 +1997,20 @@ export const HsmAcvpTesting = () => {
           addLog(`[${eName}] Testing X9.63 KDF SHA3-256/SHA3-512 (PKCS#11 v3.2 §5.2.12)...`)
           try {
             // Generate an X25519 keypair for each party
-            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(M, hSession, 'X25519', true
-            , 'sign')
-            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(M, hSession, 'X25519', true
-            , 'sign')
+            const { pubHandle: pubA, privHandle: privA } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true,
+              'sign'
+            )
+            const { pubHandle: pubB, privHandle: privB } = hsm_generateECKeyPair(
+              M,
+              hSession,
+              'X25519',
+              true,
+              'sign'
+            )
             regKey({
               handle: pubA,
               family: 'ecdh',

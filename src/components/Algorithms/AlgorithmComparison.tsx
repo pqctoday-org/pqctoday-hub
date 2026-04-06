@@ -14,14 +14,17 @@ import {
   ArrowUp,
   ArrowDown,
   Scale,
+  Code2,
 } from 'lucide-react'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { Button } from '../ui/button'
 import clsx from 'clsx'
 import { useState, useEffect, useMemo } from 'react'
 import { logEvent } from '../../utils/analytics'
 import { MobileAlgorithmList } from './MobileAlgorithmList'
+import { AlgorithmImplementationsModal } from './AlgorithmImplementationsModal'
 
-type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation'
+type SortColumn = 'function' | 'classical' | 'pqc' | 'deprecation' | 'region' | 'status'
 type SortDirection = 'asc' | 'desc' | null
 
 interface AlgorithmComparisonProps {
@@ -43,6 +46,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 }) => {
   const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
+  const [implModalAlgo, setImplModalAlgo] = useState<string | null>(null)
 
   useEffect(() => {
     loadPQCAlgorithmsData()
@@ -60,10 +64,12 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
 
   // Column widths state (in pixels)
   const [columnWidths, setColumnWidths] = useState({
-    function: 200,
-    classical: 250,
-    pqc: 300,
-    deprecation: 380,
+    function: 180,
+    classical: 220,
+    pqc: 260,
+    region: 130,
+    status: 150,
+    deprecation: 320,
   })
 
   // Sorting state
@@ -102,6 +108,14 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           // Entries with "Deprecated" phase sort before "Disallowed"-only (more urgent)
           if (a.deprecationDate.includes('Deprecated')) aValue = (parseInt(aValue) - 0.5).toString()
           if (b.deprecationDate.includes('Deprecated')) bValue = (parseInt(bValue) - 0.5).toString()
+          break
+        case 'region':
+          aValue = a.region
+          bValue = b.region
+          break
+        case 'status':
+          aValue = a.status
+          bValue = b.status
           break
       }
 
@@ -326,6 +340,62 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     <th
                       scope="col"
                       aria-sort={
+                        sortColumn === 'region'
+                          ? sortDirection === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                      }
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
+                      style={{ width: `${columnWidths.region}px` }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort('region')}
+                        aria-label={`Region column, ${sortColumn === 'region' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
+                        className="w-full h-full py-8 flex items-center justify-center gap-2 px-4 bg-transparent border-none text-inherit font-inherit cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/50"
+                      >
+                        <span>Region</span>
+                        {renderSortIcon('region')}
+                      </button>
+                      <div
+                        aria-hidden="true"
+                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+                        onMouseDown={(e) => handleResizeStart('region' as SortColumn, e)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </th>
+                    <th
+                      scope="col"
+                      aria-sort={
+                        sortColumn === 'status'
+                          ? sortDirection === 'asc'
+                            ? 'ascending'
+                            : 'descending'
+                          : 'none'
+                      }
+                      className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
+                      style={{ width: `${columnWidths.status}px` }}
+                    >
+                      <button
+                        type="button"
+                        onClick={() => handleSort('status')}
+                        aria-label={`Status column, ${sortColumn === 'status' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
+                        className="w-full h-full py-8 flex items-center justify-center gap-2 px-4 bg-transparent border-none text-inherit font-inherit cursor-pointer focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary/50"
+                      >
+                        <span>Status</span>
+                        {renderSortIcon('status')}
+                      </button>
+                      <div
+                        aria-hidden="true"
+                        className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
+                        onMouseDown={(e) => handleResizeStart('status' as SortColumn, e)}
+                        onClick={(e) => e.stopPropagation()}
+                      />
+                    </th>
+                    <th
+                      scope="col"
+                      aria-sort={
                         sortColumn === 'deprecation'
                           ? sortDirection === 'asc'
                             ? 'ascending'
@@ -459,12 +529,58 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 </span>
                               </div>
                             )}
-                            <AskAssistantButton
-                              variant="text"
-                              label="Ask about this"
-                              question={`How does ${algo.pqc} compare to ${algo.classical} in terms of security and performance, and why should organizations migrate?`}
-                            />
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <AskAssistantButton
+                                variant="text"
+                                label="Ask about this"
+                                question={`How does ${algo.pqc} compare to ${algo.classical} in terms of security and performance, and why should organizations migrate?`}
+                              />
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setImplModalAlgo(algo.pqc)}
+                                className="h-auto py-0.5 px-1.5 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
+                                title="View known implementations"
+                              >
+                                <Code2 size={12} />
+                                Implementations
+                              </Button>
+                            </div>
                           </div>
+                        </td>
+                        <td className="px-4 py-3" style={{ width: `${columnWidths.region}px` }}>
+                          {algo.region && (
+                            <span className="text-xs bg-muted text-muted-foreground rounded px-1.5 py-0.5 border border-border">
+                              {algo.region}
+                            </span>
+                          )}
+                        </td>
+                        <td className="px-4 py-3" style={{ width: `${columnWidths.status}px` }}>
+                          {algo.status &&
+                            (algo.status !== 'Candidate' && algo.status !== 'To Be Checked' ? (
+                              algo.statusUrl ? (
+                                <a
+                                  href={algo.statusUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-xs px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30 hover:underline"
+                                >
+                                  {algo.status}
+                                </a>
+                              ) : (
+                                <span className="text-xs px-1.5 py-0.5 rounded border bg-status-success/10 text-status-success border-status-success/30">
+                                  {algo.status}
+                                </span>
+                              )
+                            ) : algo.status === 'Candidate' ? (
+                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-warning/10 text-status-warning border-status-warning/30">
+                                {algo.status}
+                              </span>
+                            ) : (
+                              <span className="text-xs px-1.5 py-0.5 rounded border bg-status-info/10 text-status-info border-status-info/30">
+                                {algo.status}
+                              </span>
+                            ))}
                         </td>
                         <td
                           className="px-4 py-3"
@@ -497,6 +613,14 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
             </div>
           </div>
         </>
+      )}
+
+      {implModalAlgo && (
+        <AlgorithmImplementationsModal
+          algorithmName={implModalAlgo}
+          isOpen={true}
+          onClose={() => setImplModalAlgo(null)}
+        />
       )}
     </div>
   )

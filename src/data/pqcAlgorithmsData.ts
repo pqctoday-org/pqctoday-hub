@@ -18,6 +18,9 @@ export interface AlgorithmDetail {
   optimizationTarget: string
   fipsStandard: string
   useCaseNotes: string
+  region: string
+  status: string
+  statusUrl?: string
   type:
     | 'KEM'
     | 'Signature'
@@ -48,6 +51,9 @@ interface RawAlgorithmRow {
   trusted_source_id: string
   peer_reviewed: string
   vetting_body: string
+  Region: string
+  Status: string
+  'Status URL': string
 }
 
 // Import CSV data dynamically (lazy glob)
@@ -105,6 +111,9 @@ export async function loadPQCAlgorithmsData(): Promise<AlgorithmDetail[]> {
       optimizationTarget: row['Optimization Target'],
       fipsStandard: row['FIPS Standard'],
       useCaseNotes: row['Use Case Notes'] || '',
+      region: row['Region'] || '',
+      status: row['Status'] || '',
+      statusUrl: row['Status URL'] || undefined,
       type: row['Algorithm Family'] as AlgorithmDetail['type'],
     })
   )

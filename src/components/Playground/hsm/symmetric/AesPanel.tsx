@@ -43,7 +43,7 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
   const doGenKey = () =>
     withLoading('gen', async () => {
       const M = moduleRef.current!
-      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits, false, 'encrypt')
+      const handle = hsm_generateAESKey(M, hSessionRef.current, keyBits)
       setKeyHandle(handle)
       setCiphertext(null)
       setIv(null)
@@ -83,7 +83,7 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
         const checkM = crossCheckModuleRef.current
         try {
           const keyBytes = hsm_extractKeyValue(M, hSessionRef.current, keyHandle!)
-          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes, false, 'encrypt')
+          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes)
           const checkPlain = hsm_aesDecrypt(
             checkM,
             hSessionRef.current,
@@ -131,7 +131,7 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
         const checkM = crossCheckModuleRef.current
         try {
           const keyBytes = hsm_extractKeyValue(M, hSessionRef.current, keyHandle!)
-          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes, false, 'encrypt')
+          const checkKey = hsm_importAESKey(checkM, hSessionRef.current, keyBytes)
           const checkPlain = hsm_aesDecrypt(
             checkM,
             hSessionRef.current,

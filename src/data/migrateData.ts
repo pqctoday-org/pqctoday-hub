@@ -46,6 +46,7 @@ interface RawSoftwareItem {
   validation_result?: string
   correction_notes?: string
   quantum_tech?: string
+  wip?: string
 }
 
 function deriveCisaCategory(categoryName: string, layer: string): string {
@@ -124,6 +125,7 @@ const {
     validationResult: (row.validation_result as SoftwareItem['validationResult']) || undefined,
     correctionNotes: row.correction_notes || undefined,
     quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
+    wip: row.wip === 'true',
   }),
   true // withPrevious for status badges
 )
