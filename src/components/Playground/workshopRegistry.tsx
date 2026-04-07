@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   ShieldCheck,
   Lock,
@@ -493,20 +494,55 @@ export const CATEGORIES = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LazyComp = React.LazyExoticComponent<React.ComponentType<any>>
 
-// SuciFlow wrapper — reads ?profile= and ?pqcMode= from URL, handles onBack via history
+// SuciFlow wrapper — reads/writes ?profile= and ?pqcMode= via React Router search params
 const LazySuciFlow = lazyWithRetry(() =>
   import('@/components/PKILearning/modules/FiveG/SuciFlow').then((m) => {
     function SuciFlowRoute() {
-      const params = new URLSearchParams(window.location.search)
-      const p = params.get('profile')
-      const mode = params.get('pqcMode')
+      const [searchParams, setSearchParams] = useSearchParams()
+      const p = searchParams.get('profile')
+      const mode = searchParams.get('pqcMode')
       const profile = p === 'A' || p === 'B' || p === 'C' ? (p as 'A' | 'B' | 'C') : undefined
       const pqcMode = mode === 'hybrid' || mode === 'pure' ? (mode as 'hybrid' | 'pure') : undefined
+
+      const handleProfileChange = (newProfile: 'A' | 'B' | 'C') => {
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev)
+            if (newProfile === 'A') {
+              next.delete('profile')
+            } else {
+              next.set('profile', newProfile)
+            }
+            // reset pqcMode when switching away from C
+            if (newProfile !== 'C') next.delete('pqcMode')
+            return next
+          },
+          { replace: true }
+        )
+      }
+
+      const handlePqcModeChange = (newMode: 'hybrid' | 'pure') => {
+        setSearchParams(
+          (prev) => {
+            const next = new URLSearchParams(prev)
+            if (newMode === 'hybrid') {
+              next.delete('pqcMode')
+            } else {
+              next.set('pqcMode', newMode)
+            }
+            return next
+          },
+          { replace: true }
+        )
+      }
+
       return (
         <m.SuciFlow
           onBack={() => window.history.back()}
           initialProfile={profile}
           initialPqcMode={pqcMode}
+          onProfileChange={handleProfileChange}
+          onPqcModeChange={handlePqcModeChange}
         />
       )
     }

@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.4] - 2026-04-07
+
+### Fixed
+
+- **Playground — 5G SUCI URL stays in sync when switching profiles/modes**: `SuciFlowRoute`
+  now uses `useSearchParams` to both read initial values and write back changes via
+  `onProfileChange` / `onPqcModeChange` callbacks. Switching Profile A→B→C updates
+  `?profile=` in the URL in real time. Profile A (default) keeps a clean URL with no
+  param. `pqcMode=pure` is written only when Profile C pure is active; hybrid (default)
+  removes the param. All changes use `replace: true` to avoid polluting browser history.
+
 ## [2.89.3] - 2026-04-07
 
 ### Fixed
