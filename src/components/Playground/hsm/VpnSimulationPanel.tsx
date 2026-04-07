@@ -651,6 +651,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             state.sessions.delete(hSess13)
             M._C_CloseSession(hSess13)
             rv = 0
+            strongSwanEngine.dispatchLog({
+              level: 'info',
+              text: `[RPC] C_CloseSession hSess=${hSess13}`,
+            })
             break
           }
 
@@ -894,6 +898,10 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             rv = M._C_Verify(hSess49, dataPtr49, dataLen49, sigPtr49, sigLen49) >>> 0
             M._free(dataPtr49)
             M._free(sigPtr49)
+            strongSwanEngine.dispatchLog({
+              level: rv === 0 ? 'info' : 'error',
+              text: `[RPC] C_Verify hSess=${hSess49} dataLen=${dataLen49} sigLen=${sigLen49} → rv=0x${rv.toString(16)}`,
+            })
             break
           }
 
@@ -1583,16 +1591,27 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         92: `hSession=${argP0}`,
         93: `hSession=${argP0}`,
       }
-      addHsmLog({
-        id: Date.now() + Math.floor(Math.random() * 1000),
-        timestamp: new Date().toISOString().split('T')[1]?.split('.')[0] || '',
-        fn: PKCS11_FN[cmdId] ?? `C_Unknown_${cmdId}`,
-        args: `[${workerRole}] ${PKCS11_ARG0[cmdId] ?? `arg0=${argP0}`}`,
-        rvName: rv === 0 ? 'CKR_OK' : `0x${rv.toString(16)}`,
-        rvHex: `0x${rv.toString(16).padStart(8, '0')}`,
-        ok: rv === 0,
-        ms: 0,
-      })
+      // Skip internal plumbing from the PKCS#11 log panel — these are not crypto operations.
+      // C_GetAttributeValue is used for key material extraction and is already summarised in
+      // the crypto op log entries above. The others are bookkeeping with no educational value.
+      const VPN_LOG_SKIP = new Set([
+        24, // C_GetAttributeValue — key extraction plumbing
+        1, // C_Finalize — bookkeeping
+        19, // C_Logout — bookkeeping
+        28, // C_FindObjectsFinal — bookkeeping (FindInit/FindObjects still shown)
+      ])
+      if (!VPN_LOG_SKIP.has(cmdId)) {
+        addHsmLog({
+          id: Date.now() + Math.floor(Math.random() * 1000),
+          timestamp: new Date().toISOString().split('T')[1]?.split('.')[0] || '',
+          fn: PKCS11_FN[cmdId] ?? `C_Unknown_${cmdId}`,
+          args: `[${workerRole}] ${PKCS11_ARG0[cmdId] ?? `arg0=${argP0}`}`,
+          rvName: rv === 0 ? 'CKR_OK' : `0x${rv.toString(16)}`,
+          rvHex: `0x${rv.toString(16).padStart(8, '0')}`,
+          ok: rv === 0,
+          ms: 0,
+        })
+      }
 
       Atomics.store(flagView, 2, rv)
       Atomics.store(flagView, 1, 2)

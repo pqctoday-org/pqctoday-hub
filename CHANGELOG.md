@@ -6,6 +6,27 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.88.0] - 2026-04-07
+
+### Fixed
+
+- **VPN Simulation — C_CloseSession and C_Verify now emit RPC log entries**: The IKEv2 responder
+  thread previously dispatched no log for `C_CloseSession` (cmd 13) or `C_Verify` (cmd 49); both
+  now call `strongSwanEngine.dispatchLog` so the RPC trace is complete. `C_Verify` log level is
+  `error` when `rv !== 0` for immediate visibility of failed signature checks.
+
+- **VPN Simulation — PKCS#11 log panel no longer shows bookkeeping operations**: `C_GetAttributeValue`,
+  `C_Finalize`, `C_Logout`, and `C_FindObjectsFinal` are now filtered from the HSM log panel via a
+  `VPN_LOG_SKIP` set. These are internal plumbing calls with no educational value; key-extraction
+  detail is already captured in the crypto-op log entries above.
+
+### Data
+
+- **Compliance — ANSSI catalog re-scraped**: `compliance-data.json` refreshed (2,386 records); ANSSI
+  catalog hash updated to reflect the latest product catalog state.
+
+- **RAG corpus updated**: 5,818 chunks (was 5,817).
+
 ## [2.87.0] - 2026-04-07
 
 ### Added
