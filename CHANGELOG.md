@@ -6,6 +6,18 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.2] - 2026-04-07
+
+### Added
+
+- **Playground — 5G SUCI deep-link profile/pqcMode support**: `PlaygroundToolRoute`
+  now reads `?profile=` and `?pqcMode=` from the URL and passes them to `SuciFlow`
+  as `initialProfile` / `initialPqcMode`. Direct URLs now work from Playground:
+  - `/playground/suci-flow` → Profile A (default)
+  - `/playground/suci-flow?profile=B` → Profile B
+  - `/playground/suci-flow?profile=C` → Profile C hybrid
+  - `/playground/suci-flow?profile=C&pqcMode=pure` → Profile C pure PQC
+
 ## [2.89.1] - 2026-04-07
 
 ### Fixed

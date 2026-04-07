@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { Suspense, useEffect } from 'react'
-import { useParams, useNavigate, Navigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams, Navigate } from 'react-router-dom'
 import { ArrowLeft, Wrench } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Skeleton } from '../ui/skeleton'
@@ -13,6 +13,19 @@ import { FlagButton } from '../ui/FlagButton'
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  // 5G SUCI deep-link params
+  const profileParam = searchParams.get('profile')
+  const pqcModeParam = searchParams.get('pqcMode')
+  const suciProfile =
+    profileParam === 'A' || profileParam === 'B' || profileParam === 'C'
+      ? (profileParam as 'A' | 'B' | 'C')
+      : undefined
+  const suciPqcMode =
+    pqcModeParam === 'hybrid' || pqcModeParam === 'pure'
+      ? (pqcModeParam as 'hybrid' | 'pure')
+      : undefined
 
   const tool = toolId ? WORKSHOP_TOOLS.find((t) => t.id === toolId) : null
 
@@ -92,7 +105,16 @@ export const PlaygroundToolRoute = () => {
           </div>
         }
       >
-        {Comp && (isOnBack ? <Comp onBack={handleBack} /> : <Comp />)}
+        {Comp &&
+          (isOnBack ? (
+            toolId === 'suci-flow' ? (
+              <Comp onBack={handleBack} initialProfile={suciProfile} initialPqcMode={suciPqcMode} />
+            ) : (
+              <Comp onBack={handleBack} />
+            )
+          ) : (
+            <Comp />
+          ))}
       </Suspense>
     </div>
   )
