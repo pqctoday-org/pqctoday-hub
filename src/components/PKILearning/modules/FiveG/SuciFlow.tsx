@@ -81,10 +81,17 @@ const SUCI_LIVE_OPERATIONS = [
   'C_GetAttributeValue',
   'C_DeriveKey',
   'C_GenerateKey',
+  'C_CreateObject', // hsm_importAESKey / hsm_importHMACKey
   'C_EncryptInit',
   'C_Encrypt',
+  'C_DecryptInit',
+  'C_Decrypt',
   'C_SignInit',
   'C_Sign',
+  'C_DigestInit', // hsm_digest (SHA-256/SHA3-256 in KDF + hybrid combine)
+  'C_Digest',
+  'C_EncapsulateKey', // Profile C: ML-KEM encapsulation
+  'C_DecapsulateKey', // Profile C: ML-KEM decapsulation (SIDF)
 ]
 
 interface SuciFlowProps {
