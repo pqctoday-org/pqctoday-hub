@@ -6,6 +6,46 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.82.0] - 2026-04-06
+
+### Added
+
+- **5G SUCI — 3GPP TS 33.501 reference vectors modal**: A "Reference Vectors" button on the SUCI
+  flow panel opens an expandable modal with the official 3GPP TS 33.501 Annex C.4 test vectors
+  for Profile A (X25519) and Profile B (P-256) — including home network keys, ephemeral keys,
+  scheme output breakdown (EphPub ‖ Ciphertext ‖ MAC), and copyable hex fields.
+- **Profile C hybrid mode — full TR 33.841 §5.2.5.2 implementation**: Hybrid Profile C now
+  generates two separate HN keypairs (ML-KEM-768 + X25519), derives Z_ecdh via ECDH and Z_kem
+  via ML-KEM encapsulation, then combines them as `Z = SHA256(Z_ecdh ‖ Z_kem)` inside the HSM
+  using `C_Digest`. Key derivation uses ANSI X9.63-KDF with SHA3-256 producing AES-256 + HMAC-SHA3-256 keys.
+- **Stateful Signatures — cross-engine sign and verify**: The Stateful Signatures workshop can now
+  sign on the Rust engine and verify on the C++ engine. Public key bytes are cached at generation
+  time, imported into the C++ session via `C_CreateObject`, and verified with `C_VerifyInit` /
+  `C_Verify`. Includes tamper-detection toggles (flip message / flip signature) and a live
+  verification result indicator.
+- **VPN Simulation — RSA-3072 certificate generation and inspection**: The VPN panel now generates
+  a real RSA-3072 key pair via the HSM, constructs a TBS certificate using `@peculiar/asn1-x509`,
+  signs it with `C_Sign` (SHA256withRSA), and shows a certificate inspector modal with full field
+  breakdown. A warning badge notes that RSA-3072 is classical (not quantum-safe) per
+  draft-ietf-ipsecme-ikev2-mldsa.
+
+### Changed
+
+- **5G SUCI — spec-correct ANSI X9.63-KDF replaces HKDF**: Key derivation now follows 3GPP TS
+  33.501 §C.3.3 exactly — `block1 = SHA-256(Z ‖ 0x00000001 ‖ sharedInfo)`,
+  `K_enc = block1[0:16]`, `K_mac = block1[16:] ‖ block2[0:16]`. HKDF was never in the 3GPP spec.
+- **5G SUCI — AES-128-CTR with zero IV (was AES-GCM)**: MSIN encryption now uses AES-128-CTR per
+  TS 33.501 §C.3.3 with a zero 16-byte IV. BCD encoding (nibble-swap per TS 23.003) applied to
+  MSIN digits before encryption.
+- **5G SUCI — authenticate-then-decrypt at SIDF**: The SIDF decryption step now verifies the
+  MAC before decrypting — SUCI is rejected if the tag does not match. MSIN BCD decoding and
+  full SUPI reconstruction are shown in the result panel.
+- **HSM slot initialization — reuses existing slot on conflict**: The HSM context no longer
+  crashes with "no free slot" when all slots are already initialized (e.g. Playground page
+  reopened without reload). It now falls back to the first initialized slot automatically.
+- **softhsmv3 WASM updated**: C++ engine (v0.4.8+) and Rust engine rebuilt with latest
+  softhsmv3 changes.
+
 ## [2.81.1] - 2026-04-06
 
 ### Fixed

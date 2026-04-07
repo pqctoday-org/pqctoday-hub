@@ -496,6 +496,22 @@ export function buildKdfInput(
   return input
 }
 
+// Extract the raw public key bytes from a DER-encoded SubjectPublicKeyInfo blob.
+// Per 3GPP TS 33.501 §C.3.3, SharedInfo for ANSI X9.63 KDF must be the raw key bytes,
+// not the ASN.1 wrapper.
+//   X25519 SPKI DER: 44 bytes total — 12-byte OID header + 32-byte raw key
+//   P-256 SPKI DER:  91 bytes total — 26-byte OID/wrapper + 65-byte uncompressed EC point (04 prefix)
+//   Profile C hybrid: SharedInfo = raw X25519 ephemeral key (same offset as Profile A)
+//   Profile C pure PQC: SharedInfo = empty (no ephemeral EC key per 3GPP TR 33.841)
+function extractRawPubKeyBytes(spkiHex: string, profile: 'A' | 'B' | 'C'): Uint8Array {
+  const spki = (spkiHex.match(/.{1,2}/g) ?? []).map((b) => parseInt(b, 16))
+  if (profile === 'A' && spki.length === 44) return new Uint8Array(spki.slice(12)) // X25519: 32 bytes
+  if (profile === 'B' && spki.length === 91) return new Uint8Array(spki.slice(26)) // P-256: 65 bytes (incl. 04 prefix)
+  if (profile === 'C' && spki.length === 44) return new Uint8Array(spki.slice(12)) // hybrid: X25519 raw key
+  if (profile === 'C') return new Uint8Array(0) // pure PQC: SharedInfo = empty
+  return new Uint8Array(spki) // unexpected length fallback
+}
+
 export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
   const hashAlgo = profile === 'C' ? 'sha3-256' : 'sha256'
   const hashName = profile === 'C' ? 'SHA3-256' : 'SHA-256'
@@ -513,11 +529,10 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     if (!ctx.state.sharedSecretHex) window.crypto.getRandomValues(z)
     const zHex = bytesToHex(z)
 
-    // 2. Get SharedInfo = Ephemeral Public Key (per ANSI X9.63 spec)
+    // 2. SharedInfo = raw ephemeral public key bytes (per 3GPP TS 33.501 §C.3.3)
+    // Strip the ASN.1 SubjectPublicKeyInfo wrapper — X25519 offset=12, P-256 offset=26
     const ephPubHex = ctx.state.ephemeralPubKeyHex || ''
-    const sharedInfo = ephPubHex
-      ? new Uint8Array(ephPubHex.match(/.{1,2}/g)!.map((b) => parseInt(b, 16)))
-      : new Uint8Array(0)
+    const sharedInfo = ephPubHex ? extractRawPubKeyBytes(ephPubHex, profile) : new Uint8Array(0)
 
     // 3. Iteration 1: Hash(Z || 0x00000001 || SharedInfo) => K_enc (128 bits)
     const kdfInput1 = ctx.buildKdfInput(z, 1, sharedInfo)
@@ -552,14 +567,16 @@ export async function deriveKeys(ctx: FiveGService, profile: 'A' | 'B' | 'C') {
     ctx.state.kMacHex =
       profile === 'C' ? block2Hex : block1Hex.substring(32) + block2Hex.substring(0, 32)
 
+    const sharedInfoHex = bytesToHex(sharedInfo)
     return `${header}
 
 Step 1: Input Shared Secret (Z)
   (Reading from ECDH output...)
 Z: ${zHex}
 
-Step 2: SharedInfo (Ephemeral Public Key)
-${ephPubHex ? ephPubHex.substring(0, 64) + (ephPubHex.length > 64 ? '...' : '') : '(empty)'}
+Step 2: SharedInfo = raw ephemeral public key (per 3GPP TS 33.501 §C.3.3)
+  Note: ASN.1/SPKI wrapper stripped — ${profile === 'A' ? '32-byte X25519 key' : profile === 'B' ? '65-byte uncompressed P-256 point' : sharedInfo.length > 0 ? '32-byte X25519 key (hybrid mode)' : 'empty (pure PQC mode)'}
+${sharedInfoHex ? sharedInfoHex.substring(0, 64) + (sharedInfoHex.length > 64 ? '...' : '') : '(empty)'}
 
 Step 3: KDF Iteration 1 — ${hashName}(Z || 0x00000001 || SharedInfo)
 > hsm_deriveKey(...)

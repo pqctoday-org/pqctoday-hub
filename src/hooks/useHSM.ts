@@ -21,6 +21,7 @@ import {
   getSoftHSMRustModule,
   createLoggingProxy,
   hsm_getFirstFreeSlot,
+  hsm_getFirstInitializedSlot,
   hsm_initToken,
   hsm_openUserSession,
 } from '../wasm/softhsm'
@@ -159,13 +160,23 @@ export function useHSM(moduleEngine: 'cpp' | 'rust' = 'rust'): UseHSMResult {
       }
 
       // C_GetSlotList (free slot) → C_InitToken → C_GetSlotList (re-enumerate)
-      const freeSlot = hsm_getFirstFreeSlot(proxy as unknown as SoftHSMModule)
-      const newSlot = hsm_initToken(
-        proxy as unknown as SoftHSMModule,
-        freeSlot,
-        SO_PIN,
-        TOKEN_LABEL
-      )
+      // If all slots are already initialized (e.g. Playground reuses the same singleton),
+      // skip initToken and reuse the existing slot directly.
+      let newSlot: number
+      let slotCandidate: number
+      try {
+        slotCandidate = hsm_getFirstFreeSlot(proxy as unknown as SoftHSMModule)
+        newSlot = hsm_initToken(
+          proxy as unknown as SoftHSMModule,
+          slotCandidate,
+          SO_PIN,
+          TOKEN_LABEL
+        )
+      } catch (e) {
+        if (!(e instanceof Error) || !e.message.includes('no free slot')) throw e
+        // All slots already have tokens — reuse the first initialized slot
+        newSlot = hsm_getFirstInitializedSlot(proxy as unknown as SoftHSMModule)
+      }
       slotRef.current = newSlot
 
       // C_OpenSession → C_Login(SO) → C_InitPIN → C_Login(USER)

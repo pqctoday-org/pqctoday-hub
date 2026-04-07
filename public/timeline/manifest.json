@@ -858,6 +858,12 @@
       "file": "public/timeline/International_GRI_Quantum_Threat_Timeline_Report_2025.html",
       "sizeBytes": 223157,
       "contentType": "text/html; charset=utf-8"
+    },
+    {
+      "label": "Global:FS-ISAC — FS-ISAC PQC Migration Timeline Position Paper Published",
+      "url": "https://www.fsisac.com/hubfs/Knowledge/PQC/FS-ISAC-PQC-Timelines-White-Paper.pdf",
+      "status": "downloaded",
+      "file": "public/timeline/FS-ISAC_QSFF_PQC_Timeline_Position_Paper_2026.pdf"
     }
   ]
 }

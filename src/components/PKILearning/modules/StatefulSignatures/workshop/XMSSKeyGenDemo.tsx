@@ -40,6 +40,7 @@ import {
   hsm_statefulSignBytes,
   hsm_getKeysRemaining,
 } from '@/wasm/softhsm/pqc'
+import { hsm_extractKeyValue } from '@/wasm/softhsm'
 
 type XMSSHash = 'SHA-256' | 'SHAKE-256'
 type XMSSHeight = 10 | 16 | 20
@@ -190,12 +191,17 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
       // will continue even while the synchronous WASM call blocks JS).
       await new Promise((r) => setTimeout(r, 100))
 
-      const { privHandle } = hsm_generateStatefulKeyPair(
+      const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
         CKM_XMSS_KEY_PAIR_GEN,
         CKK_XMSS,
         ckpParam
+      )
+      const pubBytes = hsm_extractKeyValue(
+        hsm.moduleRef.current!,
+        hsm.hSessionRef.current,
+        pubHandle
       )
 
       setActiveKeyHandle(privHandle)
@@ -206,6 +212,15 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
         role: 'private',
         label: `XMSS Key (${selected.name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      })
+      hsm.addKey({
+        handle: pubHandle,
+        family: 'xmss',
+        role: 'public',
+        label: `XMSS Pubkey (${selected.name})`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        rawBytes: pubBytes,
+        paramSet: ckpParam,
       })
     } catch (e: unknown) {
       setOpError(e instanceof Error ? e.message : String(e))

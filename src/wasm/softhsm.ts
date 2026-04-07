@@ -325,6 +325,7 @@ const RV_NAMES: Record<number, string> = {
   0x000000d0: 'CKR_TEMPLATE_INCOMPLETE',
   0x000000d1: 'CKR_TEMPLATE_INCONSISTENT',
   0x000000e0: 'CKR_TOKEN_NOT_PRESENT',
+  0x000000e1: 'CKR_TOKEN_NOT_RECOGNIZED',
   0x000000e2: 'CKR_TOKEN_WRITE_PROTECTED',
   0x000000f0: 'CKR_UNWRAPPING_KEY_HANDLE_INVALID',
   0x00000100: 'CKR_USER_ALREADY_LOGGED_IN',
@@ -774,6 +775,82 @@ export const hsm_initialize = (M: SoftHSMModule, testSeed?: Uint8Array): void =>
   }
 }
 
+/**
+ * True iff the slot has a truly initialised token.
+ *
+ * Uses two independent checks (AND logic) to handle both engine bugs:
+ *   • C++ WASM (old): C_GetSlotList(1) wrongly includes the empty placeholder slot
+ *     → C_GetTokenInfo is the reliable discriminator there (no CKF_TOKEN_INITIALIZED on empty slots).
+ *   • Rust WASM: C_GetTokenInfo always sets CKF_TOKEN_INITIALIZED regardless of state
+ *     → C_GetSlotList(1) is the reliable discriminator there (correctly filters by initialized).
+ *
+ * A slot is considered initialized ONLY when both checks agree.
+ */
+const slotIsInitialized = (M: SoftHSMModule, slotId: number): boolean => {
+  const CKF_TOKEN_INITIALIZED = 0x00000400
+  const TOKEN_INFO_SIZE = 160
+  const FLAGS_OFFSET = 96 // label[32]+mfgID[32]+model[16]+serial[16]
+
+  // ── Check 1: CKF_TOKEN_INITIALIZED in C_GetTokenInfo ───────────────────────
+  const infoPtr = M._malloc(TOKEN_INFO_SIZE)
+  let hasInitFlag: boolean
+  try {
+    if (M._C_GetTokenInfo(slotId, infoPtr) >>> 0 !== 0) return false
+    hasInitFlag = (readUlong(M, infoPtr + FLAGS_OFFSET) & CKF_TOKEN_INITIALIZED) !== 0
+  } finally {
+    M._free(infoPtr)
+  }
+  // Fast path: if C++ engine says not initialized, trust it immediately
+  if (!hasInitFlag) return false
+
+  // ── Check 2: slot appears in C_GetSlotList(tokenPresent=1) ─────────────────
+  // The Rust engine always sets CKF_TOKEN_INITIALIZED (check 1 is unreliable there),
+  // but C_GetSlotList(1) correctly excludes uninitialized slots in the Rust engine.
+  const countPtr = allocUlong(M)
+  try {
+    if (M._C_GetSlotList(1, 0, countPtr) >>> 0 !== 0) return true // can't verify, trust check 1
+    const count = readUlong(M, countPtr)
+    if (count === 0) return false
+    const listPtr = M._malloc(count * 4)
+    writeUlong(M, countPtr, count)
+    try {
+      if (M._C_GetSlotList(1, listPtr, countPtr) >>> 0 !== 0) return true
+      for (let i = 0; i < count; i++) {
+        if (readUlong(M, listPtr + i * 4) === slotId) return true
+      }
+      return false // Rust: slot not in GetSlotList(1) → not yet initialized
+    } finally {
+      M._free(listPtr)
+    }
+  } finally {
+    M._free(countPtr)
+  }
+}
+
+/** C_GetSlotList(token_present=0) → first slot that has a truly initialized token */
+export const hsm_getFirstInitializedSlot = (M: SoftHSMModule): number => {
+  const countPtr = allocUlong(M)
+  try {
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(all,count)')
+    const count = readUlong(M, countPtr)
+    if (count === 0) throw new Error('C_GetSlotList: no initialized slots available')
+    const slotListPtr = M._malloc(count * 4)
+    writeUlong(M, countPtr, count)
+    try {
+      checkRV(M._C_GetSlotList(0, slotListPtr, countPtr), 'C_GetSlotList(all)')
+      for (let i = 0; i < count; i++) {
+        const s = readUlong(M, slotListPtr + i * 4)
+        if (slotIsInitialized(M, s)) return s
+      }
+      throw new Error('C_GetSlotList: no initialized slots available')
+    } finally {
+      M._free(slotListPtr)
+    }
+  } finally {
+    M._free(countPtr)
+  }
+}
+
 /** C_GetSlotList → first slot id (two-step: count then fill) */
 export const hsm_getFirstSlot = (M: SoftHSMModule): number => {
   const countPtr = allocUlong(M)
@@ -814,19 +891,12 @@ export const hsm_getFirstFreeSlot = (M: SoftHSMModule): number => {
       M._free(allListPtr)
     }
 
-    // Step 2: initialized slots (token_present=1)
-    checkRV(M._C_GetSlotList(1, 0, countPtr), 'C_GetSlotList(initialized,count)')
-    const initCount = readUlong(M, countPtr)
+    // Step 2: check each slot via C_GetTokenInfo + CKF_TOKEN_INITIALIZED.
+    // C_GetSlotList(tokenPresent=1) is NOT reliable in the C++ WASM — it includes
+    // the uninitialized free placeholder slot, which causes free-slot detection to fail.
     const initializedSlots = new Set<number>()
-    if (initCount > 0) {
-      const initListPtr = M._malloc(initCount * 4)
-      writeUlong(M, countPtr, initCount)
-      try {
-        checkRV(M._C_GetSlotList(1, initListPtr, countPtr), 'C_GetSlotList(initialized)')
-        for (let i = 0; i < initCount; i++) initializedSlots.add(readUlong(M, initListPtr + i * 4))
-      } finally {
-        M._free(initListPtr)
-      }
+    for (const s of allSlots) {
+      if (slotIsInitialized(M, s)) initializedSlots.add(s)
     }
 
     // Step 3: first slot not yet initialized
@@ -851,18 +921,23 @@ export const hsm_initToken = (
   M.HEAPU8.set(lb, labelPtr)
   const pinPtr = writeStr(M, soPin)
 
-  // Snapshot initialized slots before C_InitToken so we can diff after
+  // Snapshot truly-initialized slots before C_InitToken so we can diff after.
+  // Uses slotIsInitialized (C_GetTokenInfo + CKF_TOKEN_INITIALIZED) — NOT C_GetSlotList(1),
+  // which includes uninitialized free slots in the C++ WASM (CKF_TOKEN_PRESENT always true).
   const snapCountPtr = allocUlong(M)
   const beforeSlots = new Set<number>()
   try {
-    checkRV(M._C_GetSlotList(1, 0, snapCountPtr), 'C_GetSlotList(before,count)')
+    checkRV(M._C_GetSlotList(0, 0, snapCountPtr), 'C_GetSlotList(before,count)')
     const beforeCount = readUlong(M, snapCountPtr)
     if (beforeCount > 0) {
       const beforeListPtr = M._malloc(beforeCount * 4)
       writeUlong(M, snapCountPtr, beforeCount)
       try {
-        checkRV(M._C_GetSlotList(1, beforeListPtr, snapCountPtr), 'C_GetSlotList(before)')
-        for (let i = 0; i < beforeCount; i++) beforeSlots.add(readUlong(M, beforeListPtr + i * 4))
+        checkRV(M._C_GetSlotList(0, beforeListPtr, snapCountPtr), 'C_GetSlotList(before)')
+        for (let i = 0; i < beforeCount; i++) {
+          const s = readUlong(M, beforeListPtr + i * 4)
+          if (slotIsInitialized(M, s)) beforeSlots.add(s)
+        }
       } finally {
         M._free(beforeListPtr)
       }
@@ -889,21 +964,22 @@ export const hsm_initToken = (
   // If the session already existed, `slot` is the initialized token — return it directly
   if (sessionExists) return slot
 
-  // Re-enumerate: find the newly initialized slot (differs between C++ and Rust backends)
+  // Re-enumerate all slots and return the one that is now initialized but wasn't before.
+  // Uses C_GetSlotList(0) + slotIsInitialized (C_GetTokenInfo + CKF_TOKEN_INITIALIZED) —
+  // NOT C_GetSlotList(1), which incorrectly includes uninitialized free slots in C++ WASM.
   const countPtr = allocUlong(M)
   try {
-    checkRV(M._C_GetSlotList(1, 0, countPtr), 'C_GetSlotList(initialized,count)')
+    checkRV(M._C_GetSlotList(0, 0, countPtr), 'C_GetSlotList(all,count)')
     const slotCount = readUlong(M, countPtr)
     const slotListPtr = M._malloc(slotCount * 4)
     writeUlong(M, countPtr, slotCount)
     try {
-      checkRV(M._C_GetSlotList(1, slotListPtr, countPtr), 'C_GetSlotList(initialized)')
-      // Return the slot that is newly in the initialized list (not in beforeSlots)
+      checkRV(M._C_GetSlotList(0, slotListPtr, countPtr), 'C_GetSlotList(all)')
       for (let i = 0; i < slotCount; i++) {
         const s = readUlong(M, slotListPtr + i * 4)
-        if (!beforeSlots.has(s)) return s
+        if (!beforeSlots.has(s) && slotIsInitialized(M, s)) return s
       }
-      // Fallback: return the `slot` we initialized (Rust: slot ID is stable)
+      // Fallback: the slot we initialized is still the right answer
       return slot
     } finally {
       M._free(slotListPtr)
@@ -2183,6 +2259,22 @@ const buildPSSParams = (M: SoftHSMModule, mechType: number): { ptr: number; len:
   return { ptr, len: 12 }
 }
 
+/**
+ * Build CK_AES_CTR_PARAMS (20 bytes) in WASM heap.
+ * Layout: ulCounterBits (CK_ULONG, 4 bytes) + cb[16] (16-byte counter block).
+ * Per 3GPP TS 33.501: counterBits=128, cb=all zeros.
+ */
+const buildCTRParams = (
+  M: SoftHSMModule,
+  counterBlock: Uint8Array,
+  counterBits = 128
+): { ptr: number; len: number } => {
+  const ptr = M._malloc(20)
+  M.setValue(ptr, counterBits, 'i32') // ulCounterBits (4 bytes)
+  M.HEAPU8.set(counterBlock.slice(0, 16), ptr + 4) // cb[16]
+  return { ptr, len: 20 }
+}
+
 /** Build CK_GCM_PARAMS (24 bytes) in WASM heap. All returned allocPtrs must be freed. */
 const buildGCMParams = (
   M: SoftHSMModule,
@@ -2242,13 +2334,17 @@ const buildECDH1DeriveParams = (
 
 // ── RSA helpers ───────────────────────────────────────────────────────────────
 
-/** Generate an RSA key pair via CKM_RSA_PKCS_KEY_PAIR_GEN. */
+/** Generate an RSA key pair via CKM_RSA_PKCS_KEY_PAIR_GEN.
+ *  @param token  true → token object (cross-session, needed when a PKCS#11 daemon like
+ *                charon must find the key via C_FindObjects in its own session).
+ */
 export const hsm_generateRSAKeyPair = (
   M: SoftHSMModule,
   hSession: number,
   keyBits: 1024 | 2048 | 3072 | 4096,
   extractable = false,
-  label?: string
+  label?: string,
+  token = false
 ): { pubHandle: number; privHandle: number } => {
   const mech = buildMech(M, CKM_RSA_PKCS_KEY_PAIR_GEN)
   const exp = new Uint8Array([0x01, 0x00, 0x01]) // e=65537
@@ -2259,7 +2355,7 @@ export const hsm_generateRSAKeyPair = (
   const pubAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
-    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_TOKEN, boolVal: token },
     { type: CKA_MODULUS_BITS, ulongVal: keyBits },
     { type: CKA_PUBLIC_EXPONENT, bytesPtr: expPtr, bytesLen: 3 },
     { type: CKA_ENCRYPT, boolVal: true },
@@ -2271,7 +2367,7 @@ export const hsm_generateRSAKeyPair = (
   const prvAttrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_RSA },
-    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_TOKEN, boolVal: token },
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
@@ -3783,8 +3879,9 @@ export const hsm_importX448PublicKey = (
 }
 
 /**
- * AES encrypt (GCM or CBC-PAD). A random IV is generated internally.
- * GCM output: ciphertext bytes include the 16-byte auth tag appended by SoftHSM.
+ * AES encrypt (CTR, GCM, or CBC-PAD).
+ * CTR: iv is the 16-byte counter block (zero = spec default per 3GPP TS 33.501); length-preserving.
+ * GCM: iv is 12 bytes, random by default; output includes 16-byte auth tag appended by SoftHSM.
  * Returns { ciphertext, iv }.
  */
 export const hsm_aesEncrypt = (
@@ -3792,15 +3889,21 @@ export const hsm_aesEncrypt = (
   hSession: number,
   keyHandle: number,
   plaintext: Uint8Array,
-  mode: 'gcm' | 'cbc' = 'gcm',
+  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm',
   forcedIv?: Uint8Array,
   aad?: Uint8Array
 ): { ciphertext: Uint8Array; iv: Uint8Array } => {
-  const iv = forcedIv || new Uint8Array(mode === 'gcm' ? 12 : 16)
-  if (!forcedIv) crypto.getRandomValues(iv)
+  // CTR default = zero 16-byte counter block per spec; GCM/CBC get random IVs
+  const ivLen = mode === 'gcm' ? 12 : 16
+  const iv = forcedIv ?? new Uint8Array(ivLen)
+  if (!forcedIv && mode !== 'ctr') crypto.getRandomValues(iv)
   let mech: number
   const allocPtrs: number[] = []
-  if (mode === 'gcm') {
+  if (mode === 'ctr') {
+    const ctrP = buildCTRParams(M, iv)
+    allocPtrs.push(ctrP.ptr)
+    mech = buildMech(M, CKM_AES_CTR, ctrP.ptr, ctrP.len)
+  } else if (mode === 'gcm') {
     const gcmP = buildGCMParams(M, iv, aad)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
@@ -3830,8 +3933,9 @@ export const hsm_aesEncrypt = (
 }
 
 /**
- * AES decrypt (GCM or CBC-PAD).
- * For GCM: ciphertext must include the 16-byte auth tag at the end (as returned by hsm_aesEncrypt).
+ * AES decrypt (CTR, GCM, or CBC-PAD).
+ * CTR: iv is the 16-byte counter block used during encryption (CTR is its own inverse).
+ * GCM: ciphertext must include the 16-byte auth tag at the end (as returned by hsm_aesEncrypt).
  */
 export const hsm_aesDecrypt = (
   M: SoftHSMModule,
@@ -3839,11 +3943,15 @@ export const hsm_aesDecrypt = (
   keyHandle: number,
   ciphertext: Uint8Array,
   iv: Uint8Array,
-  mode: 'gcm' | 'cbc' = 'gcm'
+  mode: 'ctr' | 'gcm' | 'cbc' = 'gcm'
 ): Uint8Array => {
   let mech: number
   const allocPtrs: number[] = []
-  if (mode === 'gcm') {
+  if (mode === 'ctr') {
+    const ctrP = buildCTRParams(M, iv)
+    allocPtrs.push(ctrP.ptr)
+    mech = buildMech(M, CKM_AES_CTR, ctrP.ptr, ctrP.len)
+  } else if (mode === 'gcm') {
     const gcmP = buildGCMParams(M, iv)
     gcmP.allocPtrs.forEach((p) => allocPtrs.push(p))
     mech = buildMech(M, CKM_AES_GCM, gcmP.ptr, gcmP.len)
@@ -5642,30 +5750,38 @@ export const hsm_setKatSeed = (M: SoftHSMModule, seedHex: string): void => {
 /**
  * Import a raw stateful-signature public key (HSS or XMSS) via C_CreateObject.
  * keyType must be CKK_HSS (0x46) or CKK_XMSS (0x47).
+ * paramSet is required for XMSS (spec Table 273: CKA_PARAMETER_SET is ck1 for C_CreateObject).
  * Returns the new public-key object handle.
  */
 export const hsm_importStatefulPublicKey = (
   M: SoftHSMModule,
   hSession: number,
   keyType: number,
-  pubKeyBytes: Uint8Array
+  pubKeyBytes: Uint8Array,
+  paramSet?: number
 ): number => {
   const valPtr = M._malloc(pubKeyBytes.length)
   M.HEAPU8.set(pubKeyBytes, valPtr)
-  const tpl = buildTemplate(M, [
+  const attrs: AttrDef[] = [
     { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
     { type: CKA_KEY_TYPE, ulongVal: keyType },
     { type: CKA_TOKEN, boolVal: false },
     { type: CKA_VERIFY, boolVal: true },
-    { type: CKA_EXTRACTABLE, boolVal: true },
     { type: CKA_VALUE, bytesPtr: valPtr, bytesLen: pubKeyBytes.length },
-  ])
+  ]
+  if (paramSet !== undefined) {
+    attrs.push({ type: CKA_PARAMETER_SET, ulongVal: paramSet })
+  }
+  const tpl = buildTemplate(M, attrs)
   const hPtr = allocUlong(M)
   try {
-    checkRV(M._C_CreateObject(hSession, tpl.ptr, 6, hPtr), 'C_CreateObject(stateful pubkey)')
+    checkRV(
+      M._C_CreateObject(hSession, tpl.ptr, attrs.length, hPtr),
+      'C_CreateObject(stateful pubkey)'
+    )
     return readUlong(M, hPtr)
   } finally {
-    freeTemplate(M, tpl, 6)
+    freeTemplate(M, tpl, attrs.length)
     M._free(hPtr)
     M._free(valPtr)
   }

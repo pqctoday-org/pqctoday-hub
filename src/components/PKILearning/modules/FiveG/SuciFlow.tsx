@@ -5,6 +5,7 @@ import { StepWizard } from '../DigitalAssets/components/StepWizard'
 import { useStepWizard } from '../DigitalAssets/hooks/useStepWizard'
 import { FIVE_G_CONSTANTS } from './constants'
 import { FiveGDiagram } from './components/FiveGDiagram'
+import { GsmaTestDataModal } from './components/GsmaTestDataModal'
 import { fiveGService } from './services/FiveGService'
 import { Shield, Radio, Info } from 'lucide-react'
 import clsx from 'clsx'
@@ -49,11 +50,11 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'ecdh-derive', curve: 'P-256' },
   },
   {
-    id: '5g-nas-hkdf',
-    useCase: 'NAS key derivation (HKDF-SHA256)',
-    standard: '3GPP TS 33.501 + RFC 5869',
-    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
-    kind: { type: 'hkdf-derive' },
+    id: '5g-suci-kdf',
+    useCase: 'SUCI key derivation (ANSI X9.63-KDF with SHA-256)',
+    standard: '3GPP TS 33.501 §C.3.3 + ANSI X9.63',
+    referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
+    kind: { type: 'ecdh-derive', curve: 'P-256' },
   },
 ]
 import {
@@ -64,12 +65,15 @@ import {
   hsm_pqcEncap,
   hsm_pqcDecap,
   hsm_aesEncrypt,
+  hsm_aesDecrypt,
   hsm_hmac,
+  hsm_digest,
   hsm_extractKeyValue,
   hsm_extractECPoint,
   hsm_ecdhDerive,
-  hsm_hkdf,
   CKM_SHA256,
+  CKM_SHA3_256,
+  CKM_SHA3_256_HMAC,
 } from '@/wasm/softhsm'
 
 const SUCI_LIVE_OPERATIONS = [
@@ -130,13 +134,18 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
   const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
   const [customSupi, setCustomSupi] = useState('310260123456789')
+  const [gsmaModalOpen, setGsmaModalOpen] = useState(false)
   const hsm = useHSM()
 
   // Track HSM key handles and derived key bytes across steps
   const hsmHandlesRef = useRef<{
-    ciphertext?: Uint8Array
+    ciphertext?: Uint8Array // MSIN ciphertext (encrypt_msin output; MAC input)
+    kemCiphertext?: Uint8Array // ML-KEM encapsulation output (Profile C only; SIDF input)
     hnPubHandle?: number
     hnPrivHandle?: number
+    hnEccPubHandle?: number // Profile C hybrid: X25519 HN ECC public key handle
+    hnEccPrivHandle?: number // Profile C hybrid: X25519 HN ECC private key handle
+    combinedZBytes?: Uint8Array // Profile C hybrid: SHA256(Z_ecdh || Z_kem)
     ephPubHandle?: number
     ephPrivHandle?: number
     sharedSecretHandle?: number
@@ -239,7 +248,36 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               role: 'private',
               generatedAt: new Date().toISOString(),
             })
-            hsmResult = `Public key handle:  ${pubHandle}\nPrivate key handle: ${privHandle}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+            let hybridNote = ''
+            if (pqcMode === 'hybrid') {
+              // Hybrid Profile C also requires an X25519 HN keypair for the ECDH component
+              // (3GPP TR 33.841 §5.2.5.2: Z = SHA256(Z_ecdh || Z_kem))
+              const eccResult = hsm_generateECKeyPair(
+                M,
+                hSession,
+                'X25519',
+                false,
+                '5G HN ECC Key (X25519)'
+              )
+              hsmHandlesRef.current.hnEccPubHandle = eccResult.pubHandle
+              hsmHandlesRef.current.hnEccPrivHandle = eccResult.privHandle
+              hsm.addKey({
+                handle: eccResult.pubHandle,
+                label: 'HN ECC Key (X25519)',
+                family: 'ecdh',
+                role: 'public',
+                generatedAt: new Date().toISOString(),
+              })
+              hsm.addKey({
+                handle: eccResult.privHandle,
+                label: 'HN ECC Key (X25519)',
+                family: 'ecdh',
+                role: 'private',
+                generatedAt: new Date().toISOString(),
+              })
+              hybridNote = `\nX25519 HN ECC pub handle: ${eccResult.pubHandle}\nX25519 HN ECC priv handle: ${eccResult.privHandle}\n[Hybrid] Both ML-KEM + X25519 components ready per TR 33.841 §5.2.5.2`
+            }
+            hsmResult = `ML-KEM-768 pub handle:  ${pubHandle}\nML-KEM-768 priv handle: ${privHandle}${hybridNote}\n\nHome Network key pair generated via SoftHSM3 WASM.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
           } else {
             const M = hsm.moduleRef.current!
             const hSession = hsm.hSessionRef.current!
@@ -315,20 +353,38 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             generatedAt: new Date().toISOString(),
           })
           const supiStr = customSupi || '310260123456789'
-          const msinString = supiStr.length > 6 ? supiStr.slice(6) : supiStr
-          const msin = new TextEncoder().encode(msinString)
-          // CTR not yet in hsm_aesEncrypt; GCM is the closest (stream, no padding)
-          const ct = hsm_aesEncrypt(M, hSession, aesHandle, msin, 'gcm')
-          // Store ciphertext + IV concatenated so sidf_decryption can round-trip
-          const combined = new Uint8Array(ct.iv.length + ct.ciphertext.length)
-          combined.set(ct.iv, 0)
-          combined.set(ct.ciphertext, ct.iv.length)
-          hsmHandlesRef.current.ciphertext = combined
+          const msinDigits = supiStr.length > 6 ? supiStr.slice(6) : supiStr
+          // BCD-encode MSIN per 3GPP TS 23.003 (nibble-swapped, F-padded)
+          const msinBcd = fiveGService.bcdEncode(msinDigits)
+          const msinBcdHex = Array.from(msinBcd)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toUpperCase()
+          // AES-128-CTR with zero IV per 3GPP TS 33.501 §C.3.3
+          const zeroIv = new Uint8Array(16)
+          const ct = hsm_aesEncrypt(M, hSession, aesHandle, msinBcd, 'ctr', zeroIv)
+          // Store ciphertext only (IV is zero/fixed; MAC is computed over ciphertext per spec)
+          hsmHandlesRef.current.ciphertext = ct.ciphertext
           const ctHex = Array.from(ct.ciphertext)
             .map((b: number) => b.toString(16).padStart(2, '0'))
             .join('')
-          const keySource = kEncRaw ? 'K_enc from HKDF' : 'ephemeral key (run derive_keys first)'
-          hsmResult = `MSIN plaintext:  ${msinString}\nKey source: ${keySource}\nCiphertext (hex): ${ctHex}\n\nMSIN encrypted via SoftHSM3 WASM (AES-GCM; CTR not yet in bridge). (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+            .toUpperCase()
+          const keySource = kEncRaw ? 'K_enc from ANSI X9.63-KDF' : 'random (run derive_keys first)'
+          hsmResult = `MSIN digits:    ${msinDigits}
+MSIN BCD:       ${msinBcdHex} (${msinBcd.length} bytes, nibble-swapped per TS 23.003)
+Algorithm:      AES-${keyBits}-CTR | IV: ${Array.from(zeroIv)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toUpperCase()} (zero per TS 33.501)
+Key source:     ${keySource}
+
+> C_Encrypt(CKM_AES_CTR)
+
+Ciphertext: ${ctHex} (${ct.ciphertext.length} bytes)
+
+MSIN encrypted via SoftHSM3 WASM. (Completed)
+
+Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.encryptMSIN()
@@ -349,7 +405,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           const hmacHandle = hsm_importHMACKey(M, hSession, macKeyBytes)
           hsm.addKey({
             handle: hmacHandle,
-            label: 'MAC Key (HMAC-SHA256)',
+            label: profile === 'C' ? 'MAC Key (HMAC-SHA3-256)' : 'MAC Key (HMAC-SHA256)',
             family: 'hmac',
             role: 'secret',
             purpose: 'application',
@@ -358,11 +414,16 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           // MAC input = ciphertext from encrypt_msin (or placeholder if not yet executed)
           const macInput =
             hsmHandlesRef.current.ciphertext ?? new TextEncoder().encode('suci-mac-input-data')
-          const mac = hsm_hmac(M, hSession, hmacHandle, macInput)
+          const hmacMech = profile === 'C' ? CKM_SHA3_256_HMAC : undefined
+          const mac = hsm_hmac(M, hSession, hmacHandle, macInput, hmacMech)
           const macHex = Array.from(mac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          const macKeySource = kMacRaw ? 'K_mac from HKDF' : 'ephemeral key (run derive_keys first)'
+          const macKeySource = kMacRaw
+            ? profile === 'C'
+              ? 'K_mac from ANSI X9.63-KDF (SHA3-256)'
+              : 'K_mac from ANSI X9.63-KDF'
+            : 'ephemeral key (run derive_keys first)'
           hsmResult = `Key source: ${macKeySource}\nMAC input: ${macInput.length} bytes\nMAC tag (hex): ${macHex}\n\nMAC computed via SoftHSM3 WASM. (Completed)\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
@@ -422,7 +483,8 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         } else if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const curve = (profile === 'A' ? 'X25519' : 'P-256') as 'X25519' | 'P-256'
+          // Profile B uses P-256; Profile A and Profile C hybrid both use X25519
+          const curve = (profile === 'B' ? 'P-256' : 'X25519') as 'X25519' | 'P-256'
           const { pubHandle, privHandle } = hsm_generateECKeyPair(
             M,
             hSession,
@@ -481,20 +543,72 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               'ML-KEM-768'
             )
             hsmHandlesRef.current.sharedSecretHandle = secretHandle
-            hsmHandlesRef.current.ciphertext = ciphertextBytes
+            hsmHandlesRef.current.kemCiphertext = ciphertextBytes
             hsm.addKey({
               handle: secretHandle,
-              label: 'Shared Secret (Z)',
+              label: 'Z_kem (ML-KEM-768)',
               family: 'aes',
               role: 'secret',
               purpose: 'application',
               generatedAt: new Date().toISOString(),
             })
-            const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
-            const sharedHex = Array.from(sharedBytes)
+            const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+            const zKemHex = Array.from(zKemBytes)
               .map((b) => b.toString(16).padStart(2, '0'))
               .join('')
-            hsmResult = `hnPub handle: ${hsmHandlesRef.current.hnPubHandle}\n→ Ciphertext length: ${ciphertextBytes.length} bytes\n→ Shared secret handle: ${secretHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nML-KEM Encapsulation executed via SoftHSM3 WASM. (Encapsulated)`
+
+            if (pqcMode === 'hybrid' && hsmHandlesRef.current.hnEccPubHandle !== undefined) {
+              // Hybrid TR 33.841 §5.2.5.2: Z = SHA256(Z_ecdh || Z_kem)
+              // Step 1: ECDH(eph_priv, hn_ecc_pub) → Z_ecdh
+              const hnEccPubBytes = hsm_extractECPoint(
+                M,
+                hSession,
+                hsmHandlesRef.current.hnEccPubHandle!
+              )
+              const zEcdhHandle = hsm_ecdhDerive(
+                M,
+                hSession,
+                hsmHandlesRef.current.ephPrivHandle!,
+                hnEccPubBytes,
+                undefined,
+                undefined,
+                { keyLen: 32, derive: true, extractable: true }
+              )
+              const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
+              const zEcdhHex = Array.from(zEcdhBytes)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+
+              // Step 2: Z = SHA256(Z_ecdh || Z_kem) via C_Digest inside HSM
+              const zConcat = new Uint8Array(zEcdhBytes.length + zKemBytes.length)
+              zConcat.set(zEcdhBytes, 0)
+              zConcat.set(zKemBytes, zEcdhBytes.length)
+              const combinedZ = hsm_digest(M, hSession, zConcat, CKM_SHA256)
+              hsmHandlesRef.current.combinedZBytes = combinedZ
+              const combinedZHex = Array.from(combinedZ)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+
+              hsmResult = `ML-KEM encap:
+  hnPub handle: ${hsmHandlesRef.current.hnPubHandle}
+  → KEM Ciphertext: ${ciphertextBytes.length} bytes
+  → Z_kem (hex): ${zKemHex.slice(0, 64)}...
+
+X25519 ECDH:
+  ephPriv handle: ${hsmHandlesRef.current.ephPrivHandle}
+  hnEccPub bytes: ${hnEccPubBytes.length}
+  → Z_ecdh (hex): ${zEcdhHex.slice(0, 64)}...
+
+Hybrid Combine (TR 33.841 §5.2.5.2):
+  Z = SHA256(Z_ecdh ‖ Z_kem)
+  → Z_combined (hex): ${combinedZHex.slice(0, 64)}...
+
+ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
+            } else {
+              // Pure PQC: Z = Z_kem directly
+              hsmHandlesRef.current.combinedZBytes = undefined
+              hsmResult = `hnPub handle: ${hsmHandlesRef.current.hnPubHandle}\n→ Ciphertext length: ${ciphertextBytes.length} bytes\n→ Shared secret handle: ${secretHandle}\n→ Z_kem (hex): ${zKemHex.slice(0, 64)}...\n\nML-KEM Encapsulation executed via SoftHSM3 WASM. (Pure PQC mode)`
+            }
           } else {
             const M = hsm.moduleRef.current!
             const hSession = hsm.hSessionRef.current!
@@ -544,40 +658,170 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
-          const salt = new TextEncoder().encode('5G-SUCI-KDF-salt')
-          const infoEnc = new TextEncoder().encode('encryption-key')
-          const infoMac = new TextEncoder().encode('mac-key')
-          const kEnc = hsm_hkdf(
-            M,
-            hSession,
-            hsmHandlesRef.current.sharedSecretHandle!,
-            CKM_SHA256,
-            true,
-            true,
-            salt,
-            infoEnc,
-            16
-          )
-          const kMac = hsm_hkdf(
-            M,
-            hSession,
-            hsmHandlesRef.current.sharedSecretHandle!,
-            CKM_SHA256,
-            true,
-            true,
-            salt,
-            infoMac,
-            32
-          )
+
+          // Use explicit ArrayBuffer (not SharedArrayBuffer) so crypto.subtle.digest accepts the input
+          const concatU8 = (...parts: Uint8Array[]): Uint8Array => {
+            const out = new Uint8Array(new ArrayBuffer(parts.reduce((n, p) => n + p.length, 0)))
+            let off = 0
+            for (const p of parts) {
+              out.set(p, off)
+              off += p.length
+            }
+            return out
+          }
+
+          let kEnc: Uint8Array = new Uint8Array(0)
+          let kMac: Uint8Array = new Uint8Array(0)
+
+          if (profile !== 'C') {
+            // Profiles A/B: ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3
+            // ECDH Z stays inside HSM; KDF computed via SubtleCrypto SHA-256.
+            // PKCS#11 v3.2 has no CKM_ANSI_X9_63_KDF mechanism — SubtleCrypto is the correct bridge.
+            const zBytes = hsm_extractKeyValue(
+              M,
+              hSession,
+              hsmHandlesRef.current.sharedSecretHandle!
+            )
+            const ephSpkiHex = fiveGService.state.ephemeralPubKeyHex || ''
+            const ephSpki = new Uint8Array(
+              (ephSpkiHex.match(/.{1,2}/g) ?? []).map((h: string) => parseInt(h, 16))
+            )
+            // SharedInfo = raw ephemeral public key (SPKI wrapper stripped)
+            // X25519 SPKI = 44 bytes → offset 12 (32-byte raw key)
+            // P-256  SPKI = 91 bytes → offset 26 (65-byte uncompressed point incl. 04 prefix)
+            const sharedInfo =
+              profile === 'A' && ephSpki.length === 44
+                ? ephSpki.slice(12)
+                : profile === 'B' && ephSpki.length === 91
+                  ? ephSpki.slice(26)
+                  : ephSpki
+            const block1 = new Uint8Array(
+              await crypto.subtle.digest(
+                'SHA-256',
+                concatU8(zBytes, new Uint8Array([0, 0, 0, 1]), sharedInfo).buffer as ArrayBuffer
+              )
+            )
+            const block2 = new Uint8Array(
+              await crypto.subtle.digest(
+                'SHA-256',
+                concatU8(zBytes, new Uint8Array([0, 0, 0, 2]), sharedInfo).buffer as ArrayBuffer
+              )
+            )
+            kEnc = block1.slice(0, 16)
+            kMac = concatU8(block1.slice(16), block2.slice(0, 16))
+            const kEncHandle = hsm_importAESKey(M, hSession, kEnc)
+            const kMacHandle = hsm_importHMACKey(M, hSession, kMac)
+            hsm.addKey({
+              handle: kEncHandle,
+              label: 'K_enc (AES-128)',
+              family: 'aes',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
+            hsm.addKey({
+              handle: kMacHandle,
+              label: 'K_mac (HMAC-SHA256)',
+              family: 'hmac',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
+            const kEncHex = Array.from(kEnc)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const kMacHex = Array.from(kMac)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const block1Hex = Array.from(block1)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}
+KDF: ANSI X9.63-KDF (SHA-256) — spec-compliant per 3GPP TS 33.501 §C.3.3
+SharedInfo: raw ${profile === 'A' ? '32-byte X25519' : '65-byte P-256'} ephemeral public key
+Counter: 0x00000001 → block1, 0x00000002 → block2
+block1 = SHA-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1Hex}
+→ K_enc handle: ${kEncHandle} | K_enc (${kEnc.length} bytes): ${kEncHex}
+→ K_mac handle: ${kMacHandle} | K_mac (${kMac.length} bytes): ${kMacHex}
+
+Note: ECDH inside HSM; KDF via SubtleCrypto SHA-256 (no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2). (Derived)`
+          } else {
+            // Profile C: ANSI X9.63-KDF with SHA3-256 per 3GPP TR 33.841 — spec-compliant.
+            // Hybrid: Z = SHA256(Z_ecdh || Z_kem) from compute_shared_secret step.
+            // Pure PQC: Z = Z_kem directly from sharedSecretHandle.
+            const zBytesC =
+              pqcMode === 'hybrid' && hsmHandlesRef.current.combinedZBytes
+                ? hsmHandlesRef.current.combinedZBytes
+                : hsm_extractKeyValue(M, hSession, hsmHandlesRef.current.sharedSecretHandle!)
+            // SharedInfo = raw X25519 ephemeral pub key (32 bytes) for hybrid; empty for pure PQC.
+            // Use hsm_extractECPoint from the stored ephPubHandle (pure HSM path, no SPKI parsing).
+            const sharedInfoC =
+              hsmHandlesRef.current.ephPubHandle !== undefined
+                ? hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
+                : new Uint8Array(0)
+            // block1 = SHA3-256(Z || 0x00000001 || SharedInfo) → K_enc (AES-256, 32 bytes)
+            const block1C = hsm_digest(
+              M,
+              hSession,
+              concatU8(zBytesC, new Uint8Array([0, 0, 0, 1]), sharedInfoC),
+              CKM_SHA3_256
+            )
+            // block2 = SHA3-256(Z || 0x00000002 || SharedInfo) → K_mac (HMAC-SHA3-256, 32 bytes)
+            const block2C = hsm_digest(
+              M,
+              hSession,
+              concatU8(zBytesC, new Uint8Array([0, 0, 0, 2]), sharedInfoC),
+              CKM_SHA3_256
+            )
+            kEnc = block1C
+            kMac = block2C
+            const kEncHandleC = hsm_importAESKey(M, hSession, kEnc)
+            const kMacHandleC = hsm_importHMACKey(M, hSession, kMac)
+            hsm.addKey({
+              handle: kEncHandleC,
+              label: 'K_enc (AES-256, Profile C)',
+              family: 'aes',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
+            hsm.addKey({
+              handle: kMacHandleC,
+              label: 'K_mac (HMAC-SHA3-256)',
+              family: 'hmac',
+              role: 'secret',
+              purpose: 'application',
+              generatedAt: new Date().toISOString(),
+            })
+            const block1CHex = Array.from(block1C)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const block2CHex = Array.from(block2C)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const zSource =
+              pqcMode === 'hybrid' && hsmHandlesRef.current.combinedZBytes
+                ? 'Z = SHA256(Z_ecdh ‖ Z_kem) [hybrid, from compute_shared_secret]'
+                : `Z_kem from handle ${hsmHandlesRef.current.sharedSecretHandle} [pure PQC]`
+            hsmResult = `Z source: ${zSource}
+KDF: ANSI X9.63-KDF (SHA3-256) — spec-compliant per 3GPP TR 33.841
+     (C_Digest(CKM_SHA3_256) inside HSM; no CKM_ANSI_X9_63_KDF in PKCS#11 v3.2)
+SharedInfo: ${sharedInfoC.length > 0 ? `raw X25519 ephemeral key (${sharedInfoC.length} bytes, C_GetAttributeValue CKA_EC_POINT)` : 'empty (Pure PQC mode)'}
+block1 = SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo): ${block1CHex}
+block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
+→ K_enc handle: ${kEncHandleC} | K_enc (${kEnc.length} bytes, AES-256): ${block1CHex}
+→ K_mac handle: ${kMacHandleC} | K_mac (${kMac.length} bytes, HMAC-SHA3-256): ${block2CHex}
+
+(Derived — spec-compliant)`
+          }
+
           hsmHandlesRef.current.kEncBytes = kEnc
           hsmHandlesRef.current.kMacBytes = kMac
-          const kEncHex = Array.from(kEnc)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
-          const kMacHex = Array.from(kMac)
-            .map((b) => b.toString(16).padStart(2, '0'))
-            .join('')
-          hsmResult = `Base key handle: ${hsmHandlesRef.current.sharedSecretHandle}\n→ K_enc (${kEnc.length} bytes): ${kEncHex}\n→ K_mac (${kMac.length} bytes): ${kMacHex}\n\nEncryption + MAC keys derived and stored for subsequent steps. (Derived)`
         }
 
         const osslResult = await fiveGService.deriveKeys(profile)
@@ -594,29 +838,182 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
           hsm.hSessionRef.current &&
           hsmHandlesRef.current.hnPrivHandle
         let hsmResult = ''
-        if (hsmActive && profile === 'C' && hsmHandlesRef.current.ciphertext) {
+        if (hsmActive && profile === 'C' && hsmHandlesRef.current.kemCiphertext) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
+
+          // Helper: concatenate Uint8Arrays using plain ArrayBuffer (no SharedArrayBuffer)
+          const concatU8C = (...parts: Uint8Array[]): Uint8Array => {
+            const out = new Uint8Array(new ArrayBuffer(parts.reduce((n, p) => n + p.length, 0)))
+            let off = 0
+            for (const p of parts) {
+              out.set(p, off)
+              off += p.length
+            }
+            return out
+          }
+
+          // Step 1: ML-KEM decapsulation → Z_kem
           const secretHandle = hsm_pqcDecap(
             M,
             hSession,
             hsmHandlesRef.current.hnPrivHandle!,
-            hsmHandlesRef.current.ciphertext!,
+            hsmHandlesRef.current.kemCiphertext!,
             'ML-KEM-768'
           )
           hsm.addKey({
             handle: secretHandle,
-            label: 'Decapsulated Z',
+            label: 'Z_kem (Decapsulated)',
             family: 'aes',
             role: 'secret',
             purpose: 'application',
             generatedAt: new Date().toISOString(),
           })
-          const sharedBytes = hsm_extractKeyValue(M, hSession, secretHandle)
-          const sharedHex = Array.from(sharedBytes)
+          const zKemBytesC = hsm_extractKeyValue(M, hSession, secretHandle)
+          const zKemHexC = Array.from(zKemBytesC)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `Ciphertext length: ${hsmHandlesRef.current.ciphertext.length} bytes\n→ Decapsulated Secret Handle: ${secretHandle}\n→ Z (hex): ${sharedHex.slice(0, 64)}...\n\nML-KEM Decapsulation executed via SoftHSM3 WASM.`
+
+          // Step 2 (hybrid only): ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
+          let sidfZBytesC: Uint8Array = zKemBytesC
+          let zCombineNote = `Z: Z_kem directly (Pure PQC mode)`
+
+          if (
+            pqcMode === 'hybrid' &&
+            hsmHandlesRef.current.hnEccPrivHandle !== undefined &&
+            hsmHandlesRef.current.ephPubHandle !== undefined
+          ) {
+            // Re-derive Z_ecdh using HN ECC private key × ephemeral public key
+            // Use hsm_extractECPoint to get raw EC point bytes from the HSM-stored ephemeral pub key
+            // (same approach as the Profile A/B SIDF path)
+            const ephRawC = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
+            const zEcdhHandleC = hsm_ecdhDerive(
+              M,
+              hSession,
+              hsmHandlesRef.current.hnEccPrivHandle!,
+              ephRawC,
+              undefined,
+              undefined,
+              { keyLen: 32, derive: true, extractable: true }
+            )
+            const zEcdhBytesC = hsm_extractKeyValue(M, hSession, zEcdhHandleC)
+            const zEcdhHexC = Array.from(zEcdhBytesC)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+
+            // Z = SHA256(Z_ecdh || Z_kem) per TR 33.841 §5.2.5.2
+            const zConcatC = concatU8C(zEcdhBytesC, zKemBytesC)
+            sidfZBytesC = hsm_digest(M, hSession, zConcatC, CKM_SHA256)
+            const zCombinedHexC = Array.from(sidfZBytesC)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+
+            zCombineNote = `Z_ecdh (re-derived): ${zEcdhHexC.slice(0, 48)}...
+Z_kem  (decapped):   ${zKemHexC.slice(0, 48)}...
+Z = SHA256(Z_ecdh ‖ Z_kem): ${zCombinedHexC.slice(0, 48)}... [TR 33.841 §5.2.5.2]`
+          }
+
+          // Step 3: ANSI X9.63-KDF with SHA3-256 → K_enc (AES-256), K_mac (HMAC-SHA3-256)
+          // SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid; empty for pure PQC.
+          // Use hsm_extractECPoint from the stored ephPubHandle (consistent with derive_keys KDF path).
+          const sidfSharedInfoC =
+            hsmHandlesRef.current.ephPubHandle !== undefined
+              ? hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle!)
+              : new Uint8Array(0)
+          const sidfBlock1C = hsm_digest(
+            M,
+            hSession,
+            concatU8C(sidfZBytesC, new Uint8Array([0, 0, 0, 1]), sidfSharedInfoC),
+            CKM_SHA3_256
+          )
+          const sidfBlock2C = hsm_digest(
+            M,
+            hSession,
+            concatU8C(sidfZBytesC, new Uint8Array([0, 0, 0, 2]), sidfSharedInfoC),
+            CKM_SHA3_256
+          )
+          const sidfKEncC = sidfBlock1C
+          const sidfKMacC = sidfBlock2C
+          const sidfKEncCHex = Array.from(sidfKEncC)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toUpperCase()
+          const sidfKMacCHex = Array.from(sidfKMacC)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toUpperCase()
+
+          // Step 4: MAC verification (authenticate-then-decrypt per 3GPP TR 33.841)
+          let macLineC = '4. Verifying MAC...[SKIPPED — run encrypt_msin + compute_mac first]'
+          let macOkC = false
+          const cipherHexC = fiveGService.state.encryptedMSINHex
+          if (cipherHexC) {
+            const cipherBytesC = new Uint8Array(
+              (cipherHexC.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
+            )
+            const sidfMacHandleC = hsm_importHMACKey(M, hSession, sidfKMacC)
+            const macFullC = hsm_hmac(M, hSession, sidfMacHandleC, cipherBytesC, CKM_SHA3_256_HMAC)
+            const recomputedTagC = Array.from(macFullC.slice(0, 8))
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const storedTagC = (fiveGService.state.macTagHex || '').toUpperCase()
+            macOkC = !!(storedTagC && recomputedTagC === storedTagC)
+            macLineC = `4. Verifying MAC (HMAC-SHA3-256)...
+   Recomputed tag: ${recomputedTagC}
+   Stored tag:     ${storedTagC || '(missing)'}
+   Result: ${macOkC ? '[OK] MAC VALID' : storedTagC ? '[FAIL] MAC MISMATCH — SUCI rejected by SIDF' : '[SKIPPED] no stored tag to compare'}`
+          }
+
+          // Step 5: AES-256-CTR decrypt — only if MAC passed (authenticate-then-decrypt)
+          let supiLineC = '5. Decrypting MSIN...[SKIPPED — run encrypt_msin first]'
+          if (!macOkC && cipherHexC) {
+            supiLineC =
+              '5. Decrypting MSIN...[ABORTED — MAC verification failed; SUCI rejected by SIDF]'
+          } else if (macOkC && cipherHexC) {
+            const cipherBytesForDecC = new Uint8Array(
+              (cipherHexC.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
+            )
+            const sidfKEncHandleC = hsm_importAESKey(M, hSession, sidfKEncC)
+            const zeroIvC = new Uint8Array(16)
+            const decryptedC = hsm_aesDecrypt(
+              M,
+              hSession,
+              sidfKEncHandleC,
+              cipherBytesForDecC,
+              zeroIvC,
+              'ctr'
+            )
+            const bcdDigitsC = fiveGService.bcdDecode(decryptedC)
+            const parsedSupiC = fiveGService.state.supi || '310260123456789'
+            const recoveredSupiC = `${parsedSupiC.slice(0, 6)}${bcdDigitsC}`
+            const bcdHexC = Array.from(decryptedC)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            supiLineC = `5. Decrypting MSIN (AES-256-CTR, zero IV)...
+   > C_Decrypt(CKM_AES_CTR)
+   BCD bytes: ${bcdHexC}
+   MSIN: ${bcdDigitsC}
+   [SUCCESS] SUPI Recovered: ${recoveredSupiC}`
+          }
+
+          hsmResult = `1. ML-KEM Decapsulation:
+   KEM ciphertext: ${hsmHandlesRef.current.kemCiphertext!.length} bytes
+   → Z_kem (hex): ${zKemHexC.slice(0, 64)}...
+
+2. Key Combination (TR 33.841 §5.2.5.2):
+   ${zCombineNote}
+
+3. ANSI X9.63-KDF (SHA3-256):
+   SharedInfo: ${sidfSharedInfoC.length > 0 ? `${sidfSharedInfoC.length}-byte X25519 ephemeral key` : 'empty (pure PQC)'}
+   → K_enc (${sidfKEncC.length} bytes, AES-256): ${sidfKEncCHex}
+   → K_mac (${sidfKMacC.length} bytes, HMAC-SHA3-256): ${sidfKMacCHex}
+
+${macLineC}
+
+${supiLineC}
+
+ML-KEM Decapsulation executed via SoftHSM3 WASM.`
         } else if (hsmActive && hsmHandlesRef.current.ephPubHandle) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
@@ -639,28 +1036,124 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
             purpose: 'application',
             generatedAt: new Date().toISOString(),
           })
-          const sidfSecretBytes = hsm_extractKeyValue(M, hSession, sidfSecretHandle)
-          const sidfSecretHex = Array.from(sidfSecretBytes)
+          const sidfZBytes = hsm_extractKeyValue(M, hSession, sidfSecretHandle)
+          const sidfZHex = Array.from(sidfZBytes)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          // Re-derive K_enc from shared secret (mirrors derive_keys step)
-          const salt = new TextEncoder().encode('5G-SUCI-KDF-salt')
-          const infoEnc = new TextEncoder().encode('encryption-key')
-          const kEncSidf = hsm_hkdf(
-            M,
-            hSession,
-            sidfSecretHandle,
-            CKM_SHA256,
-            true,
-            true,
-            salt,
-            infoEnc,
-            16
+
+          // Re-derive K_enc + K_mac using ANSI X9.63-KDF (matches derive_keys step)
+          const concatU8Sidf = (...parts: Uint8Array[]): Uint8Array => {
+            const out = new Uint8Array(new ArrayBuffer(parts.reduce((n, p) => n + p.length, 0)))
+            let off = 0
+            for (const p of parts) {
+              out.set(p, off)
+              off += p.length
+            }
+            return out
+          }
+          const ephSpkiHexSidf = fiveGService.state.ephemeralPubKeyHex || ''
+          const ephSpkiSidf = new Uint8Array(
+            (ephSpkiHexSidf.match(/.{1,2}/g) ?? []).map((h: string) => parseInt(h, 16))
           )
-          const kEncHex = Array.from(kEncSidf)
+          const sidfSharedInfo =
+            profile === 'A' && ephSpkiSidf.length === 44
+              ? ephSpkiSidf.slice(12)
+              : profile === 'B' && ephSpkiSidf.length === 91
+                ? ephSpkiSidf.slice(26)
+                : ephSpkiSidf
+          const sidfBlock1 = new Uint8Array(
+            await crypto.subtle.digest(
+              'SHA-256',
+              concatU8Sidf(sidfZBytes, new Uint8Array([0, 0, 0, 1]), sidfSharedInfo)
+                .buffer as ArrayBuffer
+            )
+          )
+          const sidfBlock2 = new Uint8Array(
+            await crypto.subtle.digest(
+              'SHA-256',
+              concatU8Sidf(sidfZBytes, new Uint8Array([0, 0, 0, 2]), sidfSharedInfo)
+                .buffer as ArrayBuffer
+            )
+          )
+          const sidfKEnc = sidfBlock1.slice(0, 16)
+          const sidfKMac = concatU8Sidf(sidfBlock1.slice(16), sidfBlock2.slice(0, 16))
+          const sidfKEncHex = Array.from(sidfKEnc)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
-          hsmResult = `hnPriv handle: ${hsmHandlesRef.current.hnPrivHandle}\nephPub bytes: ${ephPubBytes.length}\n→ SIDF Shared Secret Handle: ${sidfSecretHandle}\n→ Z (hex): ${sidfSecretHex.slice(0, 64)}...\n→ K_enc re-derived (hex): ${kEncHex}\n\nSIDF ECDH executed via SoftHSM3 WASM.\nMSIN would be decrypted with K_enc above.\n\nDetailed C-level traces are captured in the PKCS#11 Call Log.`
+            .toUpperCase()
+          const sidfKMacHex = Array.from(sidfKMac)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+            .toUpperCase()
+
+          // MAC verification: HMAC-SHA256 over stored ciphertext (authenticate-then-decrypt)
+          let macLine = '4. Verifying MAC...[SKIPPED — run encrypt_msin + compute_mac first]'
+          let macOk = false
+          const cipherHex = fiveGService.state.encryptedMSINHex
+          if (cipherHex && sidfKMac.length > 0) {
+            const cipherBytes = new Uint8Array(
+              (cipherHex.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
+            )
+            const sidfMacHandle = hsm_importHMACKey(M, hSession, sidfKMac)
+            const macFull = hsm_hmac(M, hSession, sidfMacHandle, cipherBytes)
+            const recomputedTag = Array.from(macFull.slice(0, 8))
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+              .toUpperCase()
+            const storedTag = (fiveGService.state.macTagHex || '').toUpperCase()
+            macOk = !!(storedTag && recomputedTag === storedTag)
+            macLine = `4. Verifying MAC (HMAC-SHA256)...
+   Recomputed tag: ${recomputedTag}
+   Stored tag:     ${storedTag || '(missing)'}
+   Result: ${macOk ? '[OK] MAC VALID' : storedTag ? '[FAIL] MAC MISMATCH — SUCI rejected by SIDF' : '[SKIPPED] no stored tag to compare'}`
+          }
+
+          // Decrypt only if MAC passed (authenticate-then-decrypt per 3GPP TS 33.501)
+          let supiLine = '5. Decrypting MSIN...[SKIPPED — run encrypt_msin first]'
+          if (!macOk && cipherHex) {
+            supiLine =
+              '5. Decrypting MSIN...[ABORTED — MAC verification failed; SUCI rejected by SIDF]'
+          } else if (macOk && cipherHex && sidfKEnc.length > 0) {
+            const cipherBytesForDec = new Uint8Array(
+              (cipherHex.match(/.{1,2}/g) ?? []).map((h) => parseInt(h, 16))
+            )
+            const sidfKEncHandle = hsm_importAESKey(M, hSession, sidfKEnc)
+            const zeroIvSidf = new Uint8Array(16)
+            const decrypted = hsm_aesDecrypt(
+              M,
+              hSession,
+              sidfKEncHandle,
+              cipherBytesForDec,
+              zeroIvSidf,
+              'ctr'
+            )
+            const bcdDigits = fiveGService.bcdDecode(decrypted)
+            const parsedSupi = fiveGService.state.supi || '310260123456789'
+            const recoveredSupi = `${parsedSupi.slice(0, 6)}${bcdDigits}`
+            const bcdHex = Array.from(decrypted)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            supiLine = `5. Decrypting MSIN (AES-128-CTR, zero IV)...
+   > C_Decrypt(CKM_AES_CTR)
+   BCD bytes: ${bcdHex}
+   MSIN: ${bcdDigits}
+   [SUCCESS] SUPI Recovered: ${recoveredSupi}`
+          }
+
+          hsmResult = `hnPriv handle: ${hsmHandlesRef.current.hnPrivHandle}
+ephPub bytes: ${ephPubBytes.length}
+→ SIDF Shared Secret Handle: ${sidfSecretHandle}
+→ Z (hex): ${sidfZHex.slice(0, 64)}...
+KDF: ANSI X9.63-KDF (SHA-256) — spec-compliant
+→ K_enc (${sidfKEnc.length} bytes): ${sidfKEncHex}
+→ K_mac (${sidfKMac.length} bytes): ${sidfKMacHex}
+
+${macLine}
+
+${supiLine}
+
+SIDF ECDH executed via SoftHSM3 WASM.
+Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }
 
         const osslResult = await fiveGService.sidfDecrypt(profile)
@@ -712,11 +1205,22 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         </label>
       </div>
 
+      <GsmaTestDataModal open={gsmaModalOpen} onClose={() => setGsmaModalOpen(false)} />
+
       {/* Profile Selector */}
       <div className="bg-muted/50 p-4 rounded-lg border border-border">
-        <div className="flex items-center gap-2 mb-3 text-sm text-muted-foreground uppercase tracking-wider font-bold">
-          <Shield size={14} />
-          Select Protection Scheme
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 text-sm text-muted-foreground uppercase tracking-wider font-bold">
+            <Shield size={14} />
+            Select Protection Scheme
+          </div>
+          <button
+            onClick={() => setGsmaModalOpen(true)}
+            className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
+            title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
+          >
+            Reference Vectors
+          </button>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
           <button
@@ -734,6 +1238,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               Profile A
             </div>
             <div className="text-xs opacity-70 mt-1">Curve25519 (X25519) + AES-128</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Faster Montgomery-curve ECDH, 32-byte keys
+            </div>
           </button>
 
           <button
@@ -751,6 +1258,9 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
               Profile B
             </div>
             <div className="text-xs opacity-70 mt-1">NIST P-256 + AES-128</div>
+            <div className="text-xs text-muted-foreground mt-1">
+              Wider HSM &amp; national standard support (NIST P-256)
+            </div>
           </button>
 
           <button

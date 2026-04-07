@@ -11,8 +11,8 @@ import sys
 from html.parser import HTMLParser
 from urllib.parse import unquote
 
-CSV_IN = "src/data/library_03312026_r2.csv"
-CSV_OUT = "src/data/library_03312026_r2.csv"  # overwrite in place (it's the new copy)
+CSV_IN = "src/data/library_04062026.csv"
+CSV_OUT = "src/data/library_04062026.csv"  # overwrite in place (it's the new copy)
 
 # ── HTML title extractor ──────────────────────────────────────────────────────
 

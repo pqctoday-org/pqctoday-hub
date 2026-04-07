@@ -8,7 +8,7 @@ export const FIVE_G_CONSTANTS = {
         'The home network operator provisions a long-term asymmetric key pair. For Profile A, 5G mandates the use of Curve25519 (X25519), a state-of-the-art elliptic curve tailored for speed and security. The private key is securely stored for use by the SIDF (Subscription Identifier De-concealing Function) at the UDM for SUCI deconcealment, while the public key (32 bytes) is distributed to USIMs during SIM personalization.',
       code: `// SoftHSMv3 WASM: Generate Home Network X25519 Key
 const { pubHandle, privHandle } = hsm_generateECKeyPair(hsmd, sessionHandle, 'X25519'
-, false, 'sign');
+, false, 'derive');
 
 // Or inject Profile A explicit test vectors for KAT validation:
 const hnPrivHandle = await hsm_injectTestKey(
@@ -22,7 +22,7 @@ const hnPrivHandle = await hsm_injectTestKey(
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256).',
+        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The EF_SUCI_Calc_Info also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
       code: `# Simulated Provisioning API
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pub.key'),
@@ -36,7 +36,7 @@ USIM.write('EF_SUCI_Calc_Info', {
       id: 'retrieve_key',
       title: '3. Retrieve Home Network Public Key',
       description:
-        'The USIM reads the Home Network Public Key from EF_SUCI_Calc_Info. Profile A uses X25519 (Curve25519, 32 bytes); Profile B uses P-256 (secp256r1, 65-byte uncompressed point).',
+        'The USIM reads the Home Network Public Key from EF_SUCI_Calc_Info. Profile A uses X25519 (Curve25519, 32 bytes); Profile B uses P-256 (secp256r1, 65-byte uncompressed point). SUCI can conceal two SUPI types: IMSI (type 0 — 15-digit numeric identity, MSIN is 5–9 BCD bytes) or NAI (type 1 — a network-specific identifier that may be longer; the full identifier is encrypted, producing more ciphertext bytes than an IMSI).',
       code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // X25519 (32 bytes) or P-256 (65 bytes)`,
       output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Profile A: X25519 (Curve25519) | Profile B: P-256 (secp256r1)\n[USIM] HN Public Key: ready for ECDH key agreement`,
     },
@@ -73,31 +73,34 @@ const sharedSecretHandle = hsm_ecdhDerive(
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
         'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
-      code: `// SoftHSMv3 WASM: ANSI X9.63 KDF (using HKDF internally for KAT)
-const derivedHandle = hsm_deriveKey(
-  hsmd, sessionHandle, sharedSecretHandle, ephPubKeyBytes, CKM_SHA256, 48
-);
+      code: `// ANSI X9.63-KDF: Z ‖ counter ‖ SharedInfo (raw ephemeral public key)
+block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes — sharedInfo = raw eph pub key
+block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
 
-// Extract encryption key (AES) and MAC key (HMAC)
-const kEnc = rawRawKDFBytes.slice(0, 16);
-const kMac = rawKDFBytes.slice(16, 48);`,
+// K_enc = first 128 bits of block1 (AES-128)
+const kEnc = block1.slice(0, 16);
+// K_mac = trailing 128 bits of block1 + first 128 bits of block2 (256-bit HMAC)
+const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
       output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
     },
     {
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
-      description: 'This is the Encryption Point where the MSIN becomes ciphertext.',
-      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-GCM)
-// Note: 3GPP TS 33.501 specifies AES-CTR; GCM used pending CTR bridge support
+      description:
+        'This is the Encryption Point where the MSIN becomes ciphertext. AES-CTR mode is chosen deliberately: it is length-preserving — the ciphertext is exactly the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
+// 3GPP TS 33.501 §C.3.3 mandates AES-128-CTR with zero IV
+const iv = new Uint8Array(16) // zero per TS 33.501 — all 16 bytes = 0x00
 const ciphertext = hsm_aesEncrypt(
-  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'gcm'
+  hsmd, sessionHandle, hKenc, msinBcd, iv, 'ctr'
 );`,
       output: `[USIM] Encrypting MSIN...\n[USIM] Ciphertext: 0x4f8a2b1c9d... (5 bytes)`,
     },
     {
       id: 'compute_mac',
       title: '8. Compute MAC Tag',
-      description: 'Compute and truncate HMAC-SHA-256 tag.',
+      description:
+        'Compute HMAC-SHA-256 over the ciphertext using K_mac, then truncate to 8 bytes (64 bits). Truncation is intentional: SUCI is an over-the-air identifier where space is constrained, and a 64-bit authentication code provides sufficient integrity protection for this use case.',
       code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA256)
 const macTagFull = hsm_hmac(
   hsmd, sessionHandle, hKmac, ciphertext, 'SHA256'
@@ -125,7 +128,8 @@ const macTagFull = hsm_hmac(
         {
           label: 'Ciphertext',
           value: '0x4F 0x8A 0x2B ...',
-          description: 'Encrypted MSIN (AES-128-GCM; CTR pending bridge support).',
+          description:
+            'Encrypted MSIN (AES-128-CTR, zero IV). Length-preserving — same byte count as BCD-encoded MSIN.',
         },
         {
           label: 'MAC Tag',
@@ -157,13 +161,28 @@ const macTagFull = hsm_hmac(
       id: 'sidf_decryption',
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
-      code: `// SoftHSMv3 WASM: Network SIDF Validation
-const sidfSecretHandle = hsm_ecdhDerive(
-  hsmd, sessionHandle, hnPrivHandle, hPeerPub, false
-);
-const msin = hsm_aesDecrypt(
-  hsmd, sessionHandle, hKenc, ciphertext, iv, 'CTR'
-);`,
+      code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profiles A/B)
+// 1. Re-derive Z (ECDH: HN private key + UE ephemeral public key)
+const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
+
+// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
+const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
+const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
+const kMac = [...block1.slice(16), ...block2.slice(0, 16)] // 256-bit HMAC-SHA-256 key
+
+// 3. Authenticate-then-decrypt: verify MAC BEFORE decryption (per 3GPP TS 33.501)
+const macBytes = hsm_hmac(M, hSession, kMacHandle, ciphertext)
+const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
+if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
+
+// 4. Decrypt MSIN only after MAC passes (AES-128-CTR, zero IV per TS 33.501)
+const iv = new Uint8Array(16) // all zeros
+const msinBcd = hsm_aesDecrypt(hsmd, hSession, kEncHandle, ciphertext, iv, 'ctr')
+
+// 5. BCD decode → MSIN digits → full SUPI
+const msin = bcdDecode(msinBcd)  // e.g. '123456789'
+const supi = mcc + mnc + msin    // e.g. '310260123456789'`,
       output: `[SIDF] Processing SUCI...
 [SIDF] SUPI Recovered: 310260123456789`,
     },
@@ -174,11 +193,15 @@ const msin = hsm_aesDecrypt(
       id: 'init_network_key',
       title: '1. Home Network Key Generation (Profile C)',
       description:
-        'For Profile C (Post-Quantum), the home network operator provisions a key pair using ML-KEM (FIPS 203), a lattice-based key encapsulation mechanism resistant to quantum attacks. The private key is securely stored for use by the SIDF at the UDM for SUCI deconcealment.',
-      code: `// SoftHSMv3 WASM: Generate ML-KEM-768 Key Pair
-const { pubHandle, privHandle } = hsm_pqcGenerateKeyPair(
-  hsmd, sessionHandle, 'ML-KEM-768'
-);`,
+        'For Profile C (Post-Quantum), the home network provisions key material per 3GPP TR 33.841. In Hybrid mode, two keypairs are generated: an ML-KEM-768 keypair (FIPS 203, lattice-based, quantum-resistant) for the KEM component, and an X25519 keypair for the classical ECDH component. The combined shared secret Z = SHA256(Z_ecdh ‖ Z_kem) provides security against both classical and quantum adversaries. In Pure PQC mode, only the ML-KEM-768 keypair is generated. Both private keys are held in the HSM for SIDF deconcealment.',
+      code: `// SoftHSMv3 WASM: Generate ML-KEM-768 + X25519 HN keypairs (Hybrid mode)
+const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+  hsmd, sessionHandle, 768, false, '5G HN Key (ML-KEM)'
+)
+// Hybrid only: also generate X25519 HN ECC keypair
+const { pubHandle: eccPub, privHandle: eccPriv } = hsm_generateECKeyPair(
+  hsmd, sessionHandle, 'X25519', false, '5G HN ECC Key (X25519)'
+)`,
       output: `[Home Network] Generating Profile C (PQC) Key Pair...
 [Home Network] ML-KEM-768 Keys generated.
 [Home Network] Public Key: 1184 bytes.`,
@@ -187,7 +210,7 @@ const { pubHandle, privHandle } = hsm_pqcGenerateKeyPair(
       id: 'provision_usim',
       title: '2. Provision USIM',
       description:
-        'The large ML-KEM Public Key (1184 bytes) is provisioned to the USIM secure file system.',
+        'The large ML-KEM Public Key (1184 bytes) is provisioned to the USIM secure file system (EF_SUCI_Calc_Info). The file also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
       code: `# Provisioning Logic
 USIM.write('EF_SUCI_Calc_Info', {
   HN_PubKey: readFile('hn_pqc.pub'),
@@ -218,10 +241,18 @@ USIM.write('EF_SUCI_Calc_Info', {
       title: '5. Compute Shared Secret (Hybrid / Encap)',
       description:
         'Hybrid: Compute ECDH shared secret (Z_ecdh) AND Encapsulate PQC shared secret (Z_kem). Derive final Z = SHA256(Z_ecdh || Z_kem). Pure: Encapsulate only.',
-      code: `// SoftHSMv3 WASM: ML-KEM-768 Encapsulation
-const { ciphertext, sharedSecretHandle } = hsm_pqcEncap(
-  hsmd, sessionHandle, hnPubHandle, 'ML-KEM-768'
-);`,
+      code: `// SoftHSMv3 WASM: Profile C Hybrid — ML-KEM Encap + ECDH + Z Combination
+// Step A: ML-KEM-768 Encapsulation → Z_kem + KEM ciphertext
+const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
+const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+
+// Step B (hybrid only): ECDH(ephPriv, hnEccPub) → Z_ecdh
+const hnEccPubBytes = hsm_extractECPoint(M, hSession, hnEccPubHandle)
+const zEcdhHandle = hsm_ecdhDerive(M, hSession, ephPrivHandle, hnEccPubBytes)
+const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
+
+// Step C: Z = SHA256(Z_ecdh || Z_kem) per 3GPP TR 33.841 §5.2.5.2
+const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       output: `[USIM] Computing Hybrid Shared Secret...`,
     },
     {
@@ -241,18 +272,20 @@ mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
     {
       id: 'encrypt_msin',
       title: '7. Encrypt MSIN (Encryption Point)',
-      description: 'This is the Encryption Point (AES-256-CTR).',
-      code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-GCM)
-// Note: 3GPP TS 33.501 specifies AES-CTR; GCM used pending CTR bridge support
+      description:
+        'This is the Encryption Point (AES-256-CTR). AES-CTR is length-preserving — the ciphertext has the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-256-CTR)
+// 3GPP TR 33.841 Profile C uses AES-256-CTR with zero IV
 const ciphertext = hsm_aesEncrypt(
-  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'gcm'
+  hsmd, sessionHandle, hKenc, Buffer.from(msin), iv, 'ctr'
 );`,
       output: `[USIM] Encrypting MSIN (AES-256)...\n[USIM] Ciphertext: 0x...`,
     },
     {
       id: 'compute_mac',
       title: '8. Compute MAC Tag (HMAC-SHA3)',
-      description: 'Compute HMAC-SHA3-256 tag.',
+      description:
+        'Compute HMAC-SHA3-256 over the ciphertext using K_mac, then truncate to 8 bytes (64 bits). Truncation is intentional: SUCI is an over-the-air identifier where space is constrained, and a 64-bit authentication code provides sufficient integrity protection for this use case.',
       code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA3-256)
 const macTagFull = hsm_hmac(
   hsmd, sessionHandle, hKmac, ciphertext, 'SHA3-256'
@@ -285,7 +318,8 @@ const macTagFull = hsm_hmac(
         {
           label: 'Encrypted MSIN',
           value: '0x...',
-          description: 'AES-256-CTR Encrypted.',
+          description:
+            'Encrypted MSIN (AES-256-CTR, zero IV). Length-preserving — same byte count as BCD-encoded MSIN.',
         },
         {
           label: 'SUCI',
@@ -310,16 +344,31 @@ const macTagFull = hsm_hmac(
       id: 'sidf_decryption',
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description:
-        'For Post-Quantum Profile C, the SIDF Decapsulates the shared secret using the ML-KEM Private Key and decrypts the MSIN.',
-      code: `// SoftHSMv3 WASM: ML-KEM-768 Decapsulation
-const sidfSecretHandle = hsm_pqcDecap(
-  hsmd, sessionHandle, hnPrivHandle, ciphertext, 'ML-KEM-768'
-);
+        'For Profile C, the SIDF re-derives the same combined shared secret and verifies integrity before decrypting. Authenticate-then-decrypt is mandatory per 3GPP TR 33.841: MAC MUST pass before decryption begins.',
+      code: `// SoftHSMv3 WASM: Profile C SIDF — Hybrid Deconcealment (TR 33.841)
 
-// Re-derive keys and Decrypt
-const msin = hsm_aesDecrypt(
-  hsmd, sessionHandle, hKenc, encMsin, iv, 'CTR'
-);`,
+// 1. ML-KEM-768 Decapsulation → Z_kem
+const zKemHandle = hsm_pqcDecap(M, hSession, hnPrivHandle, kemCiphertext, 'ML-KEM-768')
+const zKemBytes = hsm_extractKeyValue(M, hSession, zKemHandle)
+
+// 2. Hybrid only: ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
+const ephPubBytes = hsm_extractECPoint(M, hSession, ephPubHandle)
+const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPubBytes)
+const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
+const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)
+
+// 3. ANSI X9.63-KDF (SHA3-256) per 3GPP TR 33.841
+const kEnc = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA3_256)
+const kMac = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA3_256)
+
+// 4. Authenticate-then-decrypt: verify MAC BEFORE decryption
+const macBytes = hsm_hmac(M, hSession, kMacHandle, encMsin, CKM_SHA3_256_HMAC)
+const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
+if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
+
+// 5. Decrypt MSIN only after MAC passes (AES-256-CTR, zero IV)
+const msinBcd = hsm_aesDecrypt(M, hSession, kEncHandle, encMsin, zeroIv, 'ctr')
+const supi = mcc + mnc + bcdDecode(msinBcd)`,
       output: `[SIDF] Decapsulating ML-KEM Secret...
 [SIDF] Keys Derived.
 [SIDF] SUPI Recovered: 310260123456789`,

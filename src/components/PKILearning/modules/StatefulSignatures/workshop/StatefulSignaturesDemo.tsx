@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Info, CheckCircle2, XCircle, ShieldCheck } from 'lucide-react'
+import { Info, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from 'lucide-react'
+import { Input } from '@/components/ui/input'
 import { useHSM } from '@/hooks/useHSM'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
@@ -42,16 +43,98 @@ type KatRow = {
 }
 
 const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
+const VERIFY_OPERATIONS = [
+  'C_GenerateKeyPair',
+  'C_SignInit',
+  'C_Sign',
+  'C_VerifyInit',
+  'C_Verify',
+  'C_GetAttributeValue',
+]
 
 export function StatefulSignaturesDemo() {
-  const hsm = useHSM('rust')
-  const [activeTab, setActiveTab] = useState<'hss' | 'xmss' | 'kat' | 'comparison'>('hss')
+  const hsm = useHSM('rust') // signing engine
+  const hsmCpp = useHSM('cpp') // verification engine
+  const [activeTab, setActiveTab] = useState<'hss' | 'xmss' | 'comparison' | 'kat'>('hss')
   const [katScheme, setKatScheme] = useState<'hss' | 'xmss'>('hss')
   const [hssKatStatus, setHssKatStatus] = useState<string | null>(null)
   const [xmssKatStatus, setXmssKatStatus] = useState<string | null>(null)
 
   const [hssHexRows, setHssHexRows] = useState<KatRow[]>([])
   const [xmssHexRows, setXmssHexRows] = useState<KatRow[]>([])
+
+  // Auto-initialize the C++ verification engine on mount.
+  // The Rust engine is already handled by LiveHSMToggle — do NOT call hsm.initialize() here
+  // or it races with LiveHSMToggle's effect, corrupts the WASM session, and permanently
+  // sets isExhausted=true (signBackend returns false → setIsExhausted(true)).
+  useEffect(() => {
+    if (hsmCpp.phase === 'idle') hsmCpp.initialize()
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ── Cross-engine verify state ─────────────────────────────────────────────
+  const [selectedPubHandle, setSelectedPubHandle] = useState<number | null>(null)
+  const [verifyMessage, setVerifyMessage] = useState('Hello, quantum-safe world!')
+  const [verifySignatureHex, setVerifySignatureHex] = useState('')
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [tamperMessage, setTamperMessage] = useState(false)
+  const [tamperSignature, setTamperSignature] = useState(false)
+  const [isVerifying, setIsVerifying] = useState(false)
+  const [verifyError, setVerifyError] = useState<string | null>(null)
+
+  // Rust pubHandle → C++ pubHandle
+  const importedRustHandles = useRef(new Set<number>())
+  const [cppHandleMap, setCppHandleMap] = useState<Record<number, number>>({})
+  const [importError, setImportError] = useState<string | null>(null)
+
+  // Selecting a key just updates state — the useEffect below does the actual import
+  // so it retries automatically if C++ isn't ready yet at click time.
+  const handleSelectKey = useCallback((rustHandle: number) => {
+    setSelectedPubHandle(rustHandle)
+    setVerifyResult(null)
+    setImportError(null)
+  }, [])
+
+  // Import effect: runs whenever selectedPubHandle or hsmCpp.isReady changes.
+  // Uses key.rawBytes (cached at generation time) — no C_GetAttributeValue call needed.
+  // Retries automatically once hsmCpp.isReady flips to true if C++ wasn't ready at click time.
+  useEffect(() => {
+    if (selectedPubHandle === null || !hsmCpp.isReady) return
+    if (importedRustHandles.current.has(selectedPubHandle)) return
+
+    const M_cpp = hsmCpp.moduleRef.current
+    if (!M_cpp) return
+
+    const key = hsm.keys.find((k) => k.handle === selectedPubHandle)
+    if (!key?.rawBytes) {
+      setImportError('Public key bytes not cached — regenerate the key pair.')
+      return
+    }
+
+    try {
+      const keyType = key.family === 'xmss' ? CKK_XMSS : CKK_HSS
+      const cppHandle = hsm_importStatefulPublicKey(
+        M_cpp,
+        hsmCpp.hSessionRef.current,
+        keyType,
+        key.rawBytes,
+        key.paramSet
+      )
+      hsmCpp.addKey({
+        handle: cppHandle,
+        family: key.family,
+        role: 'public',
+        label: key.label,
+        generatedAt: key.generatedAt,
+      })
+      importedRustHandles.current.add(selectedPubHandle)
+      setCppHandleMap((prev) => ({ ...prev, [selectedPubHandle]: cppHandle }))
+      setImportError(null)
+    } catch (e) {
+      const msg = e instanceof Error ? e.message : String(e)
+      console.warn('[StatefulSignaturesDemo] C_CreateObject failed:', msg)
+      setImportError(`C_CreateObject (C++) failed: ${msg}`)
+    }
+  }, [selectedPubHandle, hsmCpp.isReady]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleHssKAT = useCallback(() => {
     if (!hsm.isReady || !hsm.hSessionRef.current || !hsm.moduleRef.current) return
@@ -277,6 +360,60 @@ export function StatefulSignaturesDemo() {
     }
   }, [hsm])
 
+  // ── Cross-engine verify handler ───────────────────────────────────────────
+
+  const handleVerify = useCallback(() => {
+    if (selectedPubHandle === null || !verifySignatureHex) return
+    const cppHandle = cppHandleMap[selectedPubHandle]
+    if (cppHandle === undefined || !hsmCpp.isReady || !hsmCpp.moduleRef.current) return
+    setIsVerifying(true)
+    setVerifyError(null)
+    const selectedPubKey = hsm.keys.find((k) => k.handle === selectedPubHandle)
+    const M = hsmCpp.moduleRef.current
+    const session = hsmCpp.hSessionRef.current
+    try {
+      let msgBytes = new TextEncoder().encode(verifyMessage)
+      let sigBytes = hexToBytes(verifySignatureHex)
+      if (tamperMessage) {
+        const tmp = new Uint8Array(msgBytes)
+        tmp[4] ^= 0xff
+        msgBytes = tmp
+      }
+      if (tamperSignature) {
+        const tmp = new Uint8Array(sigBytes)
+        tmp[8] ^= 0xff
+        sigBytes = tmp
+      }
+      const mechType = selectedPubKey?.family === 'xmss' ? CKM_XMSS : CKM_HSS
+      const schemeNote =
+        selectedPubKey?.family === 'xmss'
+          ? 'XMSS: WOTS+ chain reconstruction + bitmask XOR path'
+          : 'HSS: walking LMS Merkle tree(s)'
+      hsmCpp.addStepLog(`[C++] C_VerifyInit + C_Verify (${schemeNote})`)
+      const ckrCode = hsm_statefulVerifyBytes(M, session, mechType, cppHandle, msgBytes, sigBytes)
+      const ok = ckrCode === 0
+      setVerifyResult(ok)
+      hsmCpp.addStepLog(
+        ok
+          ? '[C++] Result: CKR_OK (0x00000000) — Rust signature validated by C++ engine ✓'
+          : `[C++] Result: 0x${ckrCode.toString(16).padStart(8, '0')} — signature invalid`
+      )
+    } catch (e) {
+      setVerifyError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setIsVerifying(false)
+    }
+  }, [
+    hsmCpp,
+    hsm.keys,
+    selectedPubHandle,
+    cppHandleMap,
+    verifyMessage,
+    verifySignatureHex,
+    tamperMessage,
+    tamperSignature,
+  ])
+
   return (
     <div className="space-y-6 max-h-[85vh] overflow-y-auto pr-2 pb-16">
       <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />
@@ -294,8 +431,8 @@ export function StatefulSignaturesDemo() {
             {['hss', 'xmss', 'comparison', 'kat'].map((tab) => (
               <button
                 key={tab}
-                onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'kat' | 'comparison')}
-                className={`flex-1 min-w-[200px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
+                onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'comparison' | 'kat')}
+                className={`flex-1 min-w-[160px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
                   activeTab === tab
                     ? 'border-b-2 border-primary text-primary bg-primary/5'
                     : 'text-muted-foreground hover:bg-muted/50'
@@ -338,22 +475,239 @@ export function StatefulSignaturesDemo() {
                   <StateManagementVisualizer hsm={hsm} />
                 </div>
 
-                {hsm.isReady && (
-                  <Pkcs11LogPanel
-                    log={hsm.log}
-                    onClear={hsm.clearLog}
-                    title="PKCS#11 Call Log — HSS / LMS Engine"
-                    filterFns={LIVE_OPERATIONS}
-                  />
-                )}
-                {hsm.isReady && (
-                  <HsmKeyInspector
-                    keys={hsm.keys}
-                    moduleRef={hsm.moduleRef}
-                    hSessionRef={hsm.hSessionRef}
-                    onRemoveKey={hsm.removeKey}
-                  />
-                )}
+                {/* ── Cross-Engine Verification (HSS) ── */}
+                <div className="pt-4 border-t border-border space-y-5">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-primary" />
+                    Cross-Engine Verification — Rust Signs · C++ Verifies
+                  </h3>
+                  {hsmCpp.phase === 'loading' && (
+                    <p className="text-xs text-muted-foreground">
+                      C++ verification engine initializing…
+                    </p>
+                  )}
+                  {hsmCpp.phase === 'error' && (
+                    <div className="flex items-center gap-2 text-xs text-status-error">
+                      <XCircle size={13} className="shrink-0" />
+                      C++ engine failed: {hsmCpp.error}
+                      <button
+                        onClick={() => hsmCpp.initialize()}
+                        className="underline ml-1 text-primary"
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
+                  {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
+                  {importError && <p className="text-xs text-status-error">{importError}</p>}
+
+                  {/* Step 1 — Select key pair */}
+                  <div className="glass-panel p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        1
+                      </span>
+                      <span className="text-sm font-semibold">Select Key Pair</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground">
+                        generated above · public key imported into C++ on selection
+                      </span>
+                    </div>
+                    {hsm.keys.filter((k) => k.role === 'public').length === 0 ? (
+                      <p className="text-xs text-muted-foreground">
+                        No keys yet — generate a key pair in the HSS / LMS Explorer above first.
+                      </p>
+                    ) : (
+                      <div className="space-y-1">
+                        {hsm.keys
+                          .filter((k) => k.role === 'public')
+                          .map((k) => {
+                            const cppHandle = cppHandleMap[k.handle]
+                            return (
+                              <label
+                                key={k.handle}
+                                className="flex items-center gap-2 text-xs cursor-pointer"
+                              >
+                                <input
+                                  type="radio"
+                                  name="hss-verify-pubkey"
+                                  checked={selectedPubHandle === k.handle}
+                                  onChange={() => handleSelectKey(k.handle)}
+                                  className="accent-primary w-3 h-3"
+                                />
+                                <span className="font-mono">{k.label}</span>
+                                <span className="text-muted-foreground font-mono">
+                                  [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
+                                </span>
+                                {cppHandle !== undefined ? (
+                                  <span className="text-status-success font-mono text-[10px]">
+                                    [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                                  </span>
+                                ) : selectedPubHandle === k.handle ? (
+                                  <span className="text-status-warning text-[10px]">
+                                    importing into C++…
+                                  </span>
+                                ) : null}
+                              </label>
+                            )
+                          })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Step 2 — Message + paste signature hex */}
+                  <div
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'opacity-50 pointer-events-none' : ''}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        2
+                      </span>
+                      <span className="text-sm font-semibold">Message &amp; Signature</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground">
+                        copy signature hex from signing log above
+                      </span>
+                    </div>
+                    <Input
+                      value={verifyMessage}
+                      onChange={(e) => {
+                        setVerifyMessage(e.target.value)
+                        setVerifyResult(null)
+                      }}
+                      placeholder="Message that was signed"
+                      className="font-mono text-xs"
+                    />
+                    <textarea
+                      value={verifySignatureHex}
+                      onChange={(e) => {
+                        setVerifySignatureHex(e.target.value.trim())
+                        setVerifyResult(null)
+                      }}
+                      placeholder="Paste signature hex here (copy from signature log above)"
+                      className="w-full font-mono text-[10px] bg-muted/30 rounded p-2 h-20 resize-none border border-input text-foreground"
+                    />
+                    {verifySignatureHex && (
+                      <p className="text-[10px] text-muted-foreground">
+                        {verifySignatureHex.length / 2} bytes
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Step 3 — Tamper controls + Verify */}
+                  <div
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'opacity-50 pointer-events-none' : ''}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        3
+                      </span>
+                      <span className="text-sm font-semibold">Verify Signature</span>
+                      <span className="ml-auto font-mono text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                        C_VerifyInit + C_Verify · C++
+                      </span>
+                    </div>
+                    <div className="p-3 border border-amber-500/30 bg-amber-50/5 dark:bg-amber-900/10 rounded-md space-y-2">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldAlert size={13} className="text-status-warning shrink-0" />
+                        <span className="text-[11px] font-semibold text-status-warning">
+                          Tamper Controls
+                        </span>
+                      </div>
+                      <label className="flex items-center gap-2 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={tamperMessage}
+                          onChange={(e) => {
+                            setTamperMessage(e.target.checked)
+                            setVerifyResult(null)
+                          }}
+                          className="accent-primary w-3 h-3"
+                        />
+                        Tamper with message — flip byte[4] before C_Verify
+                      </label>
+                      <label className="flex items-center gap-2 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={tamperSignature}
+                          onChange={(e) => {
+                            setTamperSignature(e.target.checked)
+                            setVerifyResult(null)
+                          }}
+                          className="accent-primary w-3 h-3"
+                        />
+                        Tamper with signature — flip byte[8] before C_Verify
+                      </label>
+                      {(tamperMessage || tamperSignature) && (
+                        <p className="text-[10px] text-status-warning font-mono">
+                          Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="gradient"
+                      disabled={
+                        selectedPubHandle === null ||
+                        !verifySignatureHex ||
+                        cppHandleMap[selectedPubHandle] === undefined ||
+                        isVerifying ||
+                        !hsmCpp.isReady
+                      }
+                      onClick={handleVerify}
+                    >
+                      Verify Signature (C++ engine)
+                    </Button>
+                    {verifyResult !== null && (
+                      <div
+                        className={`flex items-center gap-2 text-sm font-semibold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
+                      >
+                        {verifyResult ? (
+                          <>
+                            <CheckCircle2 size={16} /> Cross-Engine Parity: Rust signature verified
+                            by C++ — CKR_OK
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={16} /> Signature Invalid — CKR_SIGNATURE_INVALID —
+                            tampered data detected
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Dual PKCS#11 logs + key inspectors */}
+                  {(hsm.isReady || hsmCpp.isReady) && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <Pkcs11LogPanel
+                        log={hsm.log}
+                        onClear={hsm.clearLog}
+                        title="Rust Engine · PKCS#11 Log"
+                        filterFns={VERIFY_OPERATIONS}
+                      />
+                      <Pkcs11LogPanel
+                        log={hsmCpp.log}
+                        onClear={hsmCpp.clearLog}
+                        title="C++ Engine · PKCS#11 Log"
+                        filterFns={VERIFY_OPERATIONS}
+                      />
+                    </div>
+                  )}
+                  {(hsm.isReady || hsmCpp.isReady) && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <HsmKeyInspector
+                        keys={hsm.keys}
+                        moduleRef={hsm.moduleRef}
+                        hSessionRef={hsm.hSessionRef}
+                        onRemoveKey={hsm.removeKey}
+                      />
+                      <HsmKeyInspector
+                        keys={hsmCpp.keys}
+                        moduleRef={hsmCpp.moduleRef}
+                        hSessionRef={hsmCpp.hSessionRef}
+                        onRemoveKey={hsmCpp.removeKey}
+                      />
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
@@ -371,6 +725,240 @@ export function StatefulSignaturesDemo() {
                 </div>
                 <div className="pt-2 border-t border-border">
                   <XMSSKeyGenDemo hsm={hsm} />
+                </div>
+
+                {/* ── Cross-Engine Verification (XMSS) ── */}
+                <div className="pt-4 border-t border-border space-y-5">
+                  <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-primary" />
+                    Cross-Engine Verification — Rust Signs · C++ Verifies
+                  </h3>
+                  {hsmCpp.phase === 'loading' && (
+                    <p className="text-xs text-muted-foreground">
+                      C++ verification engine initializing…
+                    </p>
+                  )}
+                  {hsmCpp.phase === 'error' && (
+                    <div className="flex items-center gap-2 text-xs text-status-error">
+                      <XCircle size={13} className="shrink-0" />
+                      C++ engine failed: {hsmCpp.error}
+                      <button
+                        onClick={() => hsmCpp.initialize()}
+                        className="underline ml-1 text-primary"
+                      >
+                        Retry
+                      </button>
+                    </div>
+                  )}
+                  {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
+                  {importError && <p className="text-xs text-status-error">{importError}</p>}
+
+                  {/* Step 1 — Select key pair */}
+                  <div className="glass-panel p-4 space-y-3">
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        1
+                      </span>
+                      <span className="text-sm font-semibold">Select Key Pair</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground">
+                        generated above · public key imported into C++ on selection
+                      </span>
+                    </div>
+                    {hsm.keys.filter((k) => k.role === 'public').length === 0 ? (
+                      <p className="text-xs text-muted-foreground">
+                        No keys yet — generate a key pair in the XMSS / MT Explorer above first.
+                      </p>
+                    ) : (
+                      <div className="space-y-1">
+                        {hsm.keys
+                          .filter((k) => k.role === 'public')
+                          .map((k) => {
+                            const cppHandle = cppHandleMap[k.handle]
+                            return (
+                              <label
+                                key={k.handle}
+                                className="flex items-center gap-2 text-xs cursor-pointer"
+                              >
+                                <input
+                                  type="radio"
+                                  name="xmss-verify-pubkey"
+                                  checked={selectedPubHandle === k.handle}
+                                  onChange={() => handleSelectKey(k.handle)}
+                                  className="accent-primary w-3 h-3"
+                                />
+                                <span className="font-mono">{k.label}</span>
+                                <span className="text-muted-foreground font-mono">
+                                  [Rust h=0x{k.handle.toString(16).padStart(2, '0')}]
+                                </span>
+                                {cppHandle !== undefined ? (
+                                  <span className="text-status-success font-mono text-[10px]">
+                                    [C++ h=0x{cppHandle.toString(16).padStart(2, '0')} ✓]
+                                  </span>
+                                ) : selectedPubHandle === k.handle ? (
+                                  <span className="text-status-warning text-[10px]">
+                                    importing into C++…
+                                  </span>
+                                ) : null}
+                              </label>
+                            )
+                          })}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Step 2 — Message + paste signature hex */}
+                  <div
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null ? 'opacity-50 pointer-events-none' : ''}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        2
+                      </span>
+                      <span className="text-sm font-semibold">Message &amp; Signature</span>
+                      <span className="ml-auto text-[10px] text-muted-foreground">
+                        copy signature hex from signing log above
+                      </span>
+                    </div>
+                    <Input
+                      value={verifyMessage}
+                      onChange={(e) => {
+                        setVerifyMessage(e.target.value)
+                        setVerifyResult(null)
+                      }}
+                      placeholder="Message that was signed"
+                      className="font-mono text-xs"
+                    />
+                    <textarea
+                      value={verifySignatureHex}
+                      onChange={(e) => {
+                        setVerifySignatureHex(e.target.value.trim())
+                        setVerifyResult(null)
+                      }}
+                      placeholder="Paste signature hex here (copy from signature log above)"
+                      className="w-full font-mono text-[10px] bg-muted/30 rounded p-2 h-20 resize-none border border-input text-foreground"
+                    />
+                    {verifySignatureHex && (
+                      <p className="text-[10px] text-muted-foreground">
+                        {verifySignatureHex.length / 2} bytes
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Step 3 — Tamper controls + Verify */}
+                  <div
+                    className={`glass-panel p-4 space-y-3 ${selectedPubHandle === null || !verifySignatureHex ? 'opacity-50 pointer-events-none' : ''}`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-5 h-5 rounded-full bg-primary/20 text-primary text-[10px] font-bold flex items-center justify-center shrink-0">
+                        3
+                      </span>
+                      <span className="text-sm font-semibold">Verify Signature</span>
+                      <span className="ml-auto font-mono text-[10px] bg-primary/20 text-primary px-1.5 py-0.5 rounded">
+                        C_VerifyInit + C_Verify · C++
+                      </span>
+                    </div>
+                    <div className="p-3 border border-amber-500/30 bg-amber-50/5 dark:bg-amber-900/10 rounded-md space-y-2">
+                      <div className="flex items-center gap-1.5">
+                        <ShieldAlert size={13} className="text-status-warning shrink-0" />
+                        <span className="text-[11px] font-semibold text-status-warning">
+                          Tamper Controls
+                        </span>
+                      </div>
+                      <label className="flex items-center gap-2 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={tamperMessage}
+                          onChange={(e) => {
+                            setTamperMessage(e.target.checked)
+                            setVerifyResult(null)
+                          }}
+                          className="accent-primary w-3 h-3"
+                        />
+                        Tamper with message — flip byte[4] before C_Verify
+                      </label>
+                      <label className="flex items-center gap-2 text-xs cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={tamperSignature}
+                          onChange={(e) => {
+                            setTamperSignature(e.target.checked)
+                            setVerifyResult(null)
+                          }}
+                          className="accent-primary w-3 h-3"
+                        />
+                        Tamper with signature — flip byte[8] before C_Verify
+                      </label>
+                      {(tamperMessage || tamperSignature) && (
+                        <p className="text-[10px] text-status-warning font-mono">
+                          Expected result: CKR_SIGNATURE_INVALID (0x000000C0)
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      variant="gradient"
+                      disabled={
+                        selectedPubHandle === null ||
+                        !verifySignatureHex ||
+                        cppHandleMap[selectedPubHandle] === undefined ||
+                        isVerifying ||
+                        !hsmCpp.isReady
+                      }
+                      onClick={handleVerify}
+                    >
+                      Verify Signature (C++ engine)
+                    </Button>
+                    {verifyResult !== null && (
+                      <div
+                        className={`flex items-center gap-2 text-sm font-semibold ${verifyResult ? 'text-status-success' : 'text-status-error'}`}
+                      >
+                        {verifyResult ? (
+                          <>
+                            <CheckCircle2 size={16} /> Cross-Engine Parity: Rust signature verified
+                            by C++ — CKR_OK
+                          </>
+                        ) : (
+                          <>
+                            <XCircle size={16} /> Signature Invalid — CKR_SIGNATURE_INVALID —
+                            tampered data detected
+                          </>
+                        )}
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Dual PKCS#11 logs + key inspectors */}
+                  {(hsm.isReady || hsmCpp.isReady) && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <Pkcs11LogPanel
+                        log={hsm.log}
+                        onClear={hsm.clearLog}
+                        title="Rust Engine · PKCS#11 Log"
+                        filterFns={VERIFY_OPERATIONS}
+                      />
+                      <Pkcs11LogPanel
+                        log={hsmCpp.log}
+                        onClear={hsmCpp.clearLog}
+                        title="C++ Engine · PKCS#11 Log"
+                        filterFns={VERIFY_OPERATIONS}
+                      />
+                    </div>
+                  )}
+                  {(hsm.isReady || hsmCpp.isReady) && (
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                      <HsmKeyInspector
+                        keys={hsm.keys}
+                        moduleRef={hsm.moduleRef}
+                        hSessionRef={hsm.hSessionRef}
+                        onRemoveKey={hsm.removeKey}
+                      />
+                      <HsmKeyInspector
+                        keys={hsmCpp.keys}
+                        moduleRef={hsmCpp.moduleRef}
+                        hSessionRef={hsmCpp.hSessionRef}
+                        onRemoveKey={hsmCpp.removeKey}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             )}

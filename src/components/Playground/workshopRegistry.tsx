@@ -332,10 +332,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   {
     id: 'suci-flow',
     name: '5G SUCI Construction',
-    description: 'ECDH + HKDF + AES subscriber concealment for 5G networks',
+    description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
     category: 'Protocol Simulations',
     wip: true,
-    algorithms: ['ECDH', 'HKDF', 'AES-128/256'],
+    algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
     moduleLink: '/learn/network-security-pqc',
     keywords: ['5g', 'suci', 'supi', 'subscriber', 'concealment', 'ecdh', 'hkdf', 'aes'],

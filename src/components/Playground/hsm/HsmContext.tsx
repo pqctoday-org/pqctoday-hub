@@ -53,6 +53,10 @@ export interface HsmKey {
   purpose?: HsmKeyPurpose
   /** Which crypto token slot this key belongs to (e.g., Slot 1 = Client, Slot 2 = Server) */
   slotId?: number
+  /** Raw public key bytes (CKA_VALUE), cached at generation time for cross-engine transport */
+  rawBytes?: Uint8Array
+  /** CKA_PARAMETER_SET value (e.g. CKP_XMSS_*), required for C_CreateObject on XMSS public keys */
+  paramSet?: number
 }
 
 export interface HsmContextValue {

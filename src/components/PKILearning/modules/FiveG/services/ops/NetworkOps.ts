@@ -298,9 +298,12 @@ Public Key Hex: ${pubHex} `,
       } else {
         pqcPubHex = 'ERROR_READING_KEY_BYTES'
       }
+      // Store PQC private key PEM content for SIDF decapsulation (readFileHex returns hex of PEM bytes)
+      ctx.state.hnPqcPrivHex = await ctx.readFileHex(pqcPriv)
     } catch (e) {
       console.error('ML-KEM Generation Failed:', e)
       pqcPubHex = 'ERROR_GENERATING_PQC_KEY'
+      ctx.state.hnPqcPrivHex = ''
     }
 
     // Store in state (JIT)

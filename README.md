@@ -107,7 +107,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
   - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
     - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat
-    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; `encrypt_msin` and `compute_mac` steps now use the K_enc/K_mac bytes derived in the HKDF step (imported via `hsm_importAESKey` / `hsm_importHMACKey`) so the full 5G SUCI flow is end-to-end connected
+    - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; full spec-correct implementation — ANSI X9.63-KDF (SHA-256 for A/B, SHA3-256 for C), AES-128/256-CTR with zero IV, HMAC-SHA-256/SHA3-256, BCD MSIN encoding per TS 23.003, authenticate-then-decrypt at SIDF with full SUPI recovery; Profile C hybrid combines Z_ecdh ‖ Z_kem via SHA-256 per TR 33.841 §5.2.5.2; official 3GPP TS 33.501 Annex C.4 reference vectors accessible via "Reference Vectors" button
     - **5G-AKA Authentication**: MILENAGE algorithm set (f1-f5 functions) with HSM integration
     - **Exercises**: 5 scenarios (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA Authentication)
   - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with Remote HSM architecture
@@ -156,12 +156,14 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Stateful Hash Signatures**:
     - Deep-dives into LMS and XMSS key generation
     - Visualizes catastrophic state loss and signature state management
+    - **Cross-engine sign and verify**: sign on Rust engine, verify on C++ engine — public key bytes cached and imported via `C_CreateObject`; tamper-detection toggles (flip message / flip signature)
   - **Email & Document Signing**:
     - Explores S/MIME certificates and CMS signing/encryption workflows
     - Compares RSA key transport with KEM-based encryption (RFC 9629)
   - **VPN/IPsec & SSH**:
     - Walkthroughs for IKEv2 handshakes and SSH key exchanges using classical, hybrid, and PQC modes
     - WireGuard vs TLS 1.3 vs IPsec protocol comparisons
+    - **VPN Simulation certificate generation**: RSA-3072 key pair generated in HSM, TBS certificate signed via `C_Sign` (SHA256withRSA), full DER construction and certificate inspector; warning badge for classical auth per draft-ietf-ipsecme-ikev2-mldsa
   - **Key Management & HSM**:
     - Explores the 7 stages of the key lifecycle and PQC impact
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises

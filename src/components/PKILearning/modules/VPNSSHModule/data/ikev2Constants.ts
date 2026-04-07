@@ -37,7 +37,8 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
   {
     id: 'classical',
     label: 'Classical (DH Group 14/19)',
-    description: 'Traditional IKEv2 using Diffie-Hellman key exchange with MODP or ECP groups.',
+    description:
+      'Traditional IKEv2 using Diffie-Hellman key exchange with MODP or ECP groups. Vulnerable to HNDL (Harvest Now, Decrypt Later): traffic captured today can be decrypted retroactively by a future CRQC. Provides no quantum-safe forward secrecy.',
     dhGroup: 'DH Group 19 (ECP-256)',
     encAlgorithm: 'AES-256-GCM',
     integrityAlgorithm: 'SHA-256 (built into GCM)',
@@ -47,7 +48,7 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
     id: 'hybrid',
     label: 'Hybrid (ECP-256 + ML-KEM-768)',
     description:
-      'Hybrid IKEv2 per draft-ietf-ipsecme-ikev2-mlkem. Uses Additional Key Exchange (AKE) payloads to combine classical ECDH with ML-KEM.',
+      'Hybrid IKEv2 per draft-ietf-ipsecme-ikev2-mlkem (RFC 9370 IKE_INTERMEDIATE). Combines classical ECDH (DH Group 19) with ML-KEM-768 (NIST Level 3) via AKE payloads. HNDL-safe: the combined SKEYSEED requires breaking both algorithms. Tradeoff: 1 extra round-trip and ~2.4 KB larger handshake.',
     dhGroup: 'DH Group 19 (ECP-256) + ML-KEM-768 (AKE)',
     encAlgorithm: 'AES-256-GCM',
     integrityAlgorithm: 'SHA-256 (built into GCM)',
@@ -57,8 +58,8 @@ export const IKE_V2_MODES: IKEv2ModeConfig[] = [
     id: 'pure-pqc',
     label: 'Pure PQC (ML-KEM-768)',
     description:
-      'Pure post-quantum IKEv2 using ML-KEM for key exchange via Additional Key Exchange (RFC 9370).',
-    dhGroup: 'ML-KEM-768 (AKE, Transform Type 6)',
+      'Pure post-quantum IKEv2 using ML-KEM-768 in the primary KE slot — no classical DH. Specified in draft-ietf-ipsecme-ikev2-mlkem. HNDL-safe: session key material is fully quantum-resistant from the first exchange. Auth uses ML-DSA-65 (draft-ietf-ipsecme-ikev2-mldsa) — awaiting IANA AUTH method assignment.',
+    dhGroup: 'ML-KEM-768 (primary KE slot, Transform Type 4 — proposed)',
     encAlgorithm: 'AES-256-GCM',
     integrityAlgorithm: 'SHA-256 (built into GCM)',
     prfAlgorithm: 'PRF-HMAC-SHA-256',

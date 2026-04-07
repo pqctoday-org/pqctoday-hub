@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { formatSignatureCount, formatBytes } from '../data/statefulSigsConstants'
 import { CKM_HSS_KEY_PAIR_GEN, CKM_HSS, CKK_HSS } from '@/wasm/softhsm/constants'
+import { hsm_extractKeyValue } from '@/wasm/softhsm'
 import type { UseHSMResult } from '@/hooks/useHSM'
 
 type LMSHash = 'SHA-256' | 'SHAKE-256'
@@ -172,7 +173,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       // begins — the compositor thread continues the animation while WASM blocks JS.
       await new Promise((r) => setTimeout(r, 100))
       const { hsm_generateStatefulKeyPair } = await import('@/wasm/softhsm/pqc')
-      const { privHandle } = hsm_generateStatefulKeyPair(
+      const { privHandle, pubHandle } = hsm_generateStatefulKeyPair(
         hsm.moduleRef.current,
         hsm.hSessionRef.current,
         CKM_HSS_KEY_PAIR_GEN,
@@ -182,6 +183,11 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         lmsParamsAll,
         lmotsParamsAll
       )
+      const pubBytes = hsm_extractKeyValue(
+        hsm.moduleRef.current!,
+        hsm.hSessionRef.current,
+        pubHandle
+      )
       setKeygenPhase('done')
       hsm.addKey({
         handle: privHandle,
@@ -189,6 +195,14 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
         role: 'private',
         label: `HSS Key (${pkcs11Name})`,
         generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      })
+      hsm.addKey({
+        handle: pubHandle,
+        family: 'hss',
+        role: 'public',
+        label: `HSS Pubkey (${pkcs11Name})`,
+        generatedAt: new Date().toLocaleTimeString('en-US', { hour12: false }),
+        rawBytes: pubBytes,
       })
       return privHandle
     } catch (e: unknown) {

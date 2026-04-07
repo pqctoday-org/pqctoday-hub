@@ -64,6 +64,7 @@ export class FiveGService {
     // Profile C specific (JIT)
     hnPubEccHex?: string
     hnPubPqcHex?: string
+    hnPqcPrivHex?: string // Profile C: ML-KEM private key PEM bytes as hex (for SIDF decapsulation)
   } = {}
 
   // Track generated files for cleanup
