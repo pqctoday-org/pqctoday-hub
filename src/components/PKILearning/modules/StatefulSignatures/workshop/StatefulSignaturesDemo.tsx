@@ -73,7 +73,7 @@ export function StatefulSignaturesDemo() {
 
   // ── Cross-engine verify state ─────────────────────────────────────────────
   const [selectedPubHandle, setSelectedPubHandle] = useState<number | null>(null)
-  const [verifyMessage, setVerifyMessage] = useState('Hello, quantum-safe world!')
+  const [verifyMessage, setVerifyMessage] = useState('Hello, world!')
   const [verifySignatureHex, setVerifySignatureHex] = useState('')
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
   const [tamperMessage, setTamperMessage] = useState(false)

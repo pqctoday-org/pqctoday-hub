@@ -10,7 +10,6 @@ import { PkcsLogPanel } from '../components/PkcsLogPanel'
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
 import {
   getSoftHSMCppModule,
-  getSoftHSMRustModule,
   hsm_generateRSAKeyPair,
   hsm_initToken,
   hsm_openUserSession,
@@ -154,61 +153,37 @@ function hsmSign(
 }
 
 // ── PKCS#11 v3.2 §5.19.6 — KEM shared secret key template ────────────────────
-// C_EncapsulateKey / C_DecapsulateKey output is CKO_SECRET_KEY with CKK_GENERIC_SECRET.
-// softhsmv3's C_EncapsulateKey loop skips CKA_CLASS, CKA_TOKEN, CKA_KEY_TYPE (extracts
-// them into the header separately). Only the remaining attrs are passed into CreateObject's
-// extra secretAttribs. CKA_SENSITIVE and CKA_DERIVE cause CKR_ATTRIBUTE_VALUE_INVALID —
-// softhsmv3 rejects them in the encapsulation path. Keep the template minimal:
-// { CKA_CLASS, CKA_KEY_TYPE, CKA_TOKEN, CKA_EXTRACTABLE, CKA_VALUE_LEN }
-// → only CKA_EXTRACTABLE + CKA_VALUE_LEN enter secretAttribs (proven working combination).
-// CKA_SENSITIVE defaults to FALSE for CKK_GENERIC_SECRET objects in softhsmv3.
+// Minimal 2-attr template proven to work with softhsmv3 C_EncapsulateKey/C_DecapsulateKey.
+// softhsmv3 builds its own base attrs (CKA_CLASS, CKA_TOKEN, CKA_PRIVATE, CKA_KEY_TYPE)
+// internally — caller only needs to supply attrs that differ from defaults:
+//   CKA_VALUE_LEN = 32  (required by ck3 for OBJECT_OP_GENERATE; ML-KEM-768 = 32 bytes)
+//   CKA_EXTRACTABLE = TRUE  (default is FALSE; must be explicit to allow C_GetAttributeValue)
 function buildKemSecretKeyTmpl(M: SoftHSMWasmModule): {
   tpl: number
   count: number
   free: () => void
 } {
-  const pClass = M._malloc(4)
-  M.setValue(pClass, 3, 'i32') // CKO_SECRET_KEY
-  const pKeyType = M._malloc(4)
-  M.setValue(pKeyType, 0x10, 'i32') // CKK_GENERIC_SECRET — required by softhsmv3 C_EncapsulateKey
-  const pFalse = M._malloc(1)
-  M.setValue(pFalse, 0, 'i8')
-  const pTrue = M._malloc(1)
-  M.setValue(pTrue, 1, 'i8')
   const pValLen = M._malloc(4)
-  M.setValue(pValLen, 32, 'i32') // 32-byte (256-bit) ML-KEM-768 shared secret
+  M.setValue(pValLen, 32, 'i32') // 32-byte ML-KEM-768 shared secret
+  const pTrue = M._malloc(1)
+  M.setValue(pTrue, 1, 'i8') // CK_TRUE
 
-  const tpl = M._malloc(5 * 12) // 5 × CK_ATTRIBUTE { CK_ULONG type, CK_VOID_PTR pValue, CK_ULONG ulValueLen }
-  // [0] CKA_CLASS = CKO_SECRET_KEY — extracted by C_EncapsulateKey header logic (skipped in extra loop)
-  M.setValue(tpl + 0, 0x000, 'i32')
-  M.setValue(tpl + 4, pClass, 'i32')
+  const tpl = M._malloc(2 * 12) // 2 × CK_ATTRIBUTE { CK_ULONG type, CK_VOID_PTR pValue, CK_ULONG ulValueLen }
+  // [0] CKA_VALUE_LEN = 32
+  M.setValue(tpl + 0, 0x161, 'i32')
+  M.setValue(tpl + 4, pValLen, 'i32')
   M.setValue(tpl + 8, 4, 'i32')
-  // [1] CKA_KEY_TYPE = CKK_GENERIC_SECRET — extracted by C_EncapsulateKey header logic (skipped in extra loop)
-  M.setValue(tpl + 12, 0x100, 'i32')
-  M.setValue(tpl + 16, pKeyType, 'i32')
-  M.setValue(tpl + 20, 4, 'i32')
-  // [2] CKA_TOKEN = FALSE (session object) — skipped in extra loop
-  M.setValue(tpl + 24, 0x001, 'i32')
-  M.setValue(tpl + 28, pFalse, 'i32')
-  M.setValue(tpl + 32, 1, 'i32')
-  // [3] CKA_EXTRACTABLE = TRUE — enters secretAttribs; allows C_GetAttributeValue(CKA_VALUE) readback
-  M.setValue(tpl + 36, 0x162, 'i32')
-  M.setValue(tpl + 40, pTrue, 'i32')
-  M.setValue(tpl + 44, 1, 'i32')
-  // [4] CKA_VALUE_LEN = 32 — enters secretAttribs; hints object size before KEM fills CKA_VALUE
-  M.setValue(tpl + 48, 0x161, 'i32')
-  M.setValue(tpl + 52, pValLen, 'i32')
-  M.setValue(tpl + 56, 4, 'i32')
+  // [1] CKA_EXTRACTABLE = TRUE
+  M.setValue(tpl + 12, 0x162, 'i32')
+  M.setValue(tpl + 16, pTrue, 'i32')
+  M.setValue(tpl + 20, 1, 'i32')
 
   return {
     tpl,
-    count: 5,
+    count: 2,
     free() {
-      M._free(pClass)
-      M._free(pKeyType)
-      M._free(pFalse)
-      M._free(pTrue)
       M._free(pValLen)
+      M._free(pTrue)
       M._free(tpl)
     },
   }
@@ -1693,7 +1668,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     try {
       // ── 1. Initialize softhsmv3 slots (first run only; idempotent on regenerate) ─
       if (!vpnRpcInitRef.current) {
-        const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
+        const rawM = moduleRef.current ?? (await getSoftHSMCppModule())
         rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
         const getRawSlots = (M: typeof rawM) => {
@@ -2267,7 +2242,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     // NOTE: moduleRef.current may already be set by another HSM panel —
                     // we guard with vpnRpcInitRef, not moduleRef.
                     if (rpcMode) {
-                      const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
+                      const rawM = moduleRef.current ?? (await getSoftHSMCppModule())
                       rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
                       if (!vpnRpcInitRef.current) {

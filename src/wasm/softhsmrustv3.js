@@ -71,6 +71,41 @@ export class SoftHsmRust {
 if (Symbol.dispose) SoftHsmRust.prototype[Symbol.dispose] = SoftHsmRust.prototype.free;
 
 /**
+ * @param {number} _h_session
+ * @param {number} _p_function_name
+ * @param {number} _p_result
+ * @returns {number}
+ */
+export function _C_AsyncComplete(_h_session, _p_function_name, _p_result) {
+    const ret = wasm._C_AsyncComplete(_h_session, _p_function_name, _p_result);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_function_name
+ * @param {number} _pul_id
+ * @returns {number}
+ */
+export function _C_AsyncGetID(_h_session, _p_function_name, _pul_id) {
+    const ret = wasm._C_AsyncGetID(_h_session, _p_function_name, _pul_id);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} _h_session
+ * @param {number} _p_function_name
+ * @param {number} _ul_id
+ * @param {number} _p_data
+ * @param {number} _ul_data_len
+ * @returns {number}
+ */
+export function _C_AsyncJoin(_h_session, _p_function_name, _ul_id, _p_data, _ul_data_len) {
+    const ret = wasm._C_AsyncJoin(_h_session, _p_function_name, _ul_id, _p_data, _ul_data_len);
+    return ret >>> 0;
+}
+
+/**
  * @param {number} h_session
  * @returns {number}
  */
@@ -469,6 +504,17 @@ export function _C_GetSessionInfo(h_session, p_info) {
 }
 
 /**
+ * @param {number} _h_session
+ * @param {number} _type
+ * @param {number} _p_flags
+ * @returns {number}
+ */
+export function _C_GetSessionValidationFlags(_h_session, _type, _p_flags) {
+    const ret = wasm._C_GetSessionValidationFlags(_h_session, _type, _p_flags);
+    return ret >>> 0;
+}
+
+/**
  * C_GetSlotInfo: returns basic slot info for slot 0.
  * CK_SLOT_INFO: slotDescription(64) + manufacturerID(32) + flags(4) + hardwareVersion(2) + firmwareVersion(2) = 104 bytes
  * @param {number} _slot_id
@@ -802,6 +848,50 @@ export function _C_VerifyInit(h_session, p_mechanism, h_key) {
  */
 export function _C_VerifyMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, ul_signature_len) {
     const ret = wasm._C_VerifyMessage(h_session, _p_param, _ul_param_len, p_data, ul_data_len, p_signature, ul_signature_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_data
+ * @param {number} ul_data_len
+ * @returns {number}
+ */
+export function _C_VerifySignature(h_session, p_data, ul_data_len) {
+    const ret = wasm._C_VerifySignature(h_session, p_data, ul_data_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} h_session
+ * @returns {number}
+ */
+export function _C_VerifySignatureFinal(h_session) {
+    const ret = wasm._C_VerifySignatureFinal(h_session);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_mechanism
+ * @param {number} h_key
+ * @param {number} p_signature
+ * @param {number} ul_signature_len
+ * @returns {number}
+ */
+export function _C_VerifySignatureInit(h_session, p_mechanism, h_key, p_signature, ul_signature_len) {
+    const ret = wasm._C_VerifySignatureInit(h_session, p_mechanism, h_key, p_signature, ul_signature_len);
+    return ret >>> 0;
+}
+
+/**
+ * @param {number} h_session
+ * @param {number} p_part
+ * @param {number} ul_part_len
+ * @returns {number}
+ */
+export function _C_VerifySignatureUpdate(h_session, p_part, ul_part_len) {
+    const ret = wasm._C_VerifySignatureUpdate(h_session, p_part, ul_part_len);
     return ret >>> 0;
 }
 
