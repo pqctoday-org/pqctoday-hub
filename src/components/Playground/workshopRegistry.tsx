@@ -334,7 +334,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: '5G SUCI Construction',
     description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
     category: 'Protocol Simulations',
-    wip: true,
     algorithms: ['ECDH', 'ANSI X9.63-KDF', 'AES-128/256'],
     icon: Radio,
     moduleLink: '/learn/network-security-pqc',

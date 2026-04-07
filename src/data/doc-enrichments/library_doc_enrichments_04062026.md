@@ -8453,13 +8453,13 @@ documents_processed: 390
 
 ---
 
-## 1775309727973
+## arXiv-2603-28728
 
-- **Reference ID**: 1775309727973
-- **Title**: 1775309727973
-- **Authors**: 1775309727973.pdf
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
+- **Reference ID**: arXiv-2603-28728
+- **Title**: Study of Post Quantum Status of Widely Used Protocols
+- **Authors**: Tushin Mallick; Ashish Kundu; Ramana Kompella (Cisco Research)
+- **Publication Date**: 2026-03-30
+- **Last Updated**: 2026-03-30
 - **Document Status**: Published
 - **Main Topic**: A survey of the post-quantum cryptography status, vulnerabilities, and migration challenges across nine widely deployed network and security protocols.
 - **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, HQC, CRYSTALS-Kyber, NTRU, SABER, FRODOKem, CRYSTALS-Dilithium, FALCON, Classic McEliece, BIKE, SPHINCS+, XMSS, Rainbow, GeMSS, SIKE, PICNIC
@@ -8480,18 +8480,18 @@ documents_processed: 390
 - **Target Audience**: Security Architect, Developer, Researcher, Policy Maker, Compliance Officer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats, Algorithms, Migrate, Assess, hybrid-crypto, tls-basics, vpn-ssh-pqc
-- **Source Document**: 1775309727973.pdf (602,835 bytes, 15,000 extracted chars)
+- **Source Document**: arXiv-2603-28728.pdf (602,835 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-06T21:26:15
 
 ---
 
-## 1775362994566
+## Google-QuantumAI-EC-Crypto-Quantum-2026
 
-- **Reference ID**: 1775362994566
-- **Title**: 1775362994566
-- **Authors**: 1775362994566.pdf
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
+- **Reference ID**: Google-QuantumAI-EC-Crypto-Quantum-2026
+- **Title**: Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities: Resource Estimates and Mitigations
+- **Authors**: Ryan Babbush; Adam Zalcman; Craig Gidney; Michael Broughton; Tanuj Khattar; Hartmut Neven; Thiago Bergamaschi (Google Quantum AI); Justin Drake (Ethereum Foundation); Dan Boneh (Stanford)
+- **Publication Date**: 2026-03-30
+- **Last Updated**: 2026-03-30
 - **Document Status**: Published
 - **Main Topic**: Updated resource estimates for breaking secp256k1 Elliptic Curve cryptography using Shor's algorithm and analysis of quantum vulnerabilities in blockchain systems.
 - **PQC Algorithms Covered**: None detected
@@ -8512,18 +8512,18 @@ documents_processed: 390
 - **Target Audience**: Researcher; Policy Maker; Security Architect; Developer
 - **Implementation Prerequisites**: None detected
 - **Relevant PQC Today Features**: Threats; digital-assets; Algorithms; Leaders; pqc-risk-management
-- **Source Document**: 1775362994566.pdf (1,672,456 bytes, 15,000 extracted chars)
+- **Source Document**: Google-QuantumAI-EC-Crypto-Quantum-2026.pdf (1,672,456 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-06T21:29:11
 
 ---
 
-## 5gsuci-NIST.CSWP.36A.ipd
+## NIST-CSWP-36A
 
-- **Reference ID**: 5gsuci-NIST.CSWP.36A.ipd
-- **Title**: 5gsuci NIST.CSWP.36A.ipd
-- **Authors**: NIST
-- **Publication Date**: Not specified
-- **Last Updated**: Not specified
+- **Reference ID**: NIST-CSWP-36A
+- **Title**: Protecting Subscriber Identifiers with Subscription Concealed Identifier (SUCI): Applying 5G Cybersecurity and Privacy Capabilities
+- **Authors**: Michael Bartock; Jeffrey Cichonski; Murugiah Souppaya (NIST); Karen Scarfone (Scarfone Cybersecurity); Parisa Grayeli; Sanjeev Sharma; Charles Teague (MITRE Corporation)
+- **Publication Date**: 2024-08-01
+- **Last Updated**: 2024-08-01
 - **Document Status**: Published
 - **Main Topic**: This white paper describes enabling Subscription Concealed Identifier (SUCI) protection, an optional 5G capability that encrypts subscriber identifiers using elliptic curve cryptography to prevent tracking and eavesdropping.
 - **PQC Algorithms Covered**: None detected
@@ -8544,7 +8544,7 @@ documents_processed: 390
 - **Target Audience**: Technology, cybersecurity, and privacy professionals; commercial mobile network operators; potential private 5G network operators; end-user organizations
 - **Implementation Prerequisites**: 5G devices and network functions compliant with 3GPP release 15 or later; SIM card supporting SUCI calculation; non-null encryption cipher scheme specified by operator; public keys pre-provisioned on SIM or updated over-the-air
 - **Relevant PQC Today Features**: 5g-security, digital-id, tls-basics
-- **Source Document**: 5gsuci-NIST.CSWP.36A.ipd.pdf (2,515,223 bytes, 15,000 extracted chars)
+- **Source Document**: NIST-CSWP-36A.pdf (2,515,223 bytes, 15,000 extracted chars)
 - **Extraction Timestamp**: 2026-04-06T21:31:05
 
 ---

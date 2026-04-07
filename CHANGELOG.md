@@ -10,79 +10,88 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 
-- **5G SUCI — Profile C SUCI visualization fix**: `visualizeStructure()` now correctly renders the
-  Profile C `schemeOutput` as `kemCiphertext || msinCiphertext || macTag` instead of the Profile
-  A/B format. The abbreviated SUCI string shows the KEM ciphertext prefix rather than an ephemeral
-  key prefix. SPKI-stripping logic annotated with per-profile byte offsets (12 B X25519, 26 B
-  P-256) per 3GPP TS 23.003 §8.3.
+- **5G SUCI — Profile C visualization corrected**: The SUCI structure panel now correctly shows
+  the hybrid Profile C output format — the scheme output starts with the ML-KEM ciphertext, not
+  an ephemeral key. The abbreviated SUCI string and description both reflect the actual
+  `kemCiphertext ‖ msinCiphertext ‖ macTag` layout per 3GPP TS 23.003.
+
+- **Library — 3 new records with proper titles and download links**:
+  - _Study of Post Quantum Status of Widely Used Protocols_ (Cisco Research, arXiv 2603.28728, Mar 2026) — PQC migration survey across TLS, IPsec, BGP, DNSSEC, SSH, QUIC, OpenID Connect, OpenVPN, and Signal.
+  - _Securing Elliptic Curve Cryptocurrencies against Quantum Vulnerabilities_ (Google Quantum AI + Ethereum Foundation, Mar 2026) — new resource estimates for breaking secp256k1 with a quantum computer; on-spend attack analysis.
+  - _Protecting Subscriber Identifiers with SUCI_ (NIST CSWP 36A ipd, Aug 2024) — NIST guidance on enabling 5G subscriber identity concealment to prevent IMSI-catching.
+
+- **5G SUCI — removed WIP badge**: The 5G SUCI Construction tool is now complete and no longer
+  marked as Work in Progress in the Playground.
 
 ### Fixed
 
-- **5G SUCI — HSM ephemeral EC point state sync (Gap 1)**: The OpenSSL cross-check KDF path now
-  uses the same ephemeral public key bytes as the HSM KDF path. After the HSM generates the
-  ephemeral keypair, the raw EC point is extracted via `hsm_extractECPoint` and written into
-  `fiveGService.state.ephemeralPubKeyHex`, replacing the OpenSSL SPKI hex that was previously
-  stored there. This ensures the `SharedInfo` fed to the ANSI X9.63-KDF is identical between
-  HSM and OpenSSL, eliminating KDF divergence in the dual-engine comparison.
+- **5G SUCI — HSM and OpenSSL cross-check now agree on key derivation**: The dual-engine
+  comparison was previously using different ephemeral key bytes for the KDF — the HSM used its
+  internal EC point while OpenSSL used an SPKI-wrapped version. The HSM key bytes are now synced
+  into the shared state before derivation runs, so both engines produce matching output.
 
-- **Rust engine Message Encrypt/Decrypt API wired in `softhsm.ts`**: The 10 per-message AEAD
-  functions (`C_MessageEncryptInit`, `C_EncryptMessage`, `C_EncryptMessageBegin`,
-  `C_EncryptMessageNext`, `C_MessageEncryptFinal` and their decrypt counterparts) were previously
-  stubbed as `() => CKR_NOT_IMPL`. They now forward to live `wasmExports.*` bindings, activating
-  the AES-GCM per-message AEAD surface that was implemented in softhsmv3 v0.4.10.
+- **HSM — AES-GCM per-message encrypt/decrypt enabled on Rust engine**: The per-message AEAD
+  functions (`C_MessageEncryptInit`, `C_EncryptMessage`, etc.) are now fully wired to the Rust
+  WASM engine, which implements them in softhsmv3 v0.4.10. Previously they returned an error.
 
 ## [2.84.0] - 2026-04-07
 
 ### Added
 
-- **VPN Simulation — SKEYSEED Key Derivation panel (C1)**: After ML-KEM shared secret
-  verification, a SKEYSEED panel shows the full PRF derivation — `prf(Ni ‖ Nr, ss_kem)` for pure
-  PQC mode and `prf(Ni ‖ Nr, ss_ecdh ‖ ss_kem)` for hybrid mode — with actual KEM secret hex and
-  spec citations (RFC 9370, draft-ietf-ipsecme-ikev2-mldsa).
-- **VPN Simulation — IKE phase badges on charon.log (C6)**: Log entries are annotated with IKE
-  exchange phase badges (SETUP / IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH) derived by
-  pattern-matching log text. KEM encap/decap maps to IKE_INTERMEDIATE in hybrid mode,
-  IKE_SA_INIT in pure-PQC mode.
-- **VPN Simulation — PQC fragmentation note (E3)**: A fragmentation note explains that PQC KE
-  payloads are 10–16× larger than classical DH (ML-KEM-768: 1,184 B vs ECP-256: 64 B) and that
-  IKEv2 ML-KEM uses the IKE_INTERMEDIATE exchange to split large payloads per RFC 9370.
-- **VPN Simulation — QKD informational label (E4)**: The QKD PSK toggle now shows
-  "(informational — not simulated)" to clarify it is a demonstration label only.
+- **VPN Simulation — SKEYSEED key derivation step**: After the ML-KEM shared secret is verified,
+  a new panel shows exactly how IKEv2 derives the session master key (SKEYSEED) — using
+  `prf(Ni ‖ Nr, shared_secret)` with the actual KEM secret bytes displayed. Pure-PQC and hybrid
+  modes each show their respective PRF inputs. References RFC 9370 and the ML-DSA IKEv2 draft.
+
+- **VPN Simulation — IKE exchange phase labels on logs**: Each line in the charon.log panel is now
+  tagged with its IKE exchange phase (SETUP / IKE_SA_INIT / IKE_INTERMEDIATE / IKE_AUTH). This
+  makes it easy to see where ML-KEM fits into the handshake — encapsulation happens during
+  IKE_INTERMEDIATE in hybrid mode, IKE_SA_INIT in pure-PQC mode.
+
+- **VPN Simulation — payload size note**: A callout explains that PQC key exchange payloads are
+  10–16× larger than classical ECDH (ML-KEM-768 public key: 1,184 bytes vs P-256: 64 bytes),
+  and why IKEv2 uses the IKE_INTERMEDIATE exchange to handle the extra fragmentation load.
+
+- **VPN Simulation — QKD toggle clarified**: The QKD PSK option now shows
+  "(informational — not simulated)" so it is clear this is a display label, not an active feature.
 
 ### Fixed
 
-- **5G SUCI — HSM state sync after encrypt_msin and compute_mac steps**: The HSM-produced
-  ciphertext now overrides `encryptedMSINHex` and the HSM MAC tag overrides `macTagHex` (truncated
-  to 8 bytes per 3GPP TS 33.501 §C.3.4) so the dual-engine comparison uses actual HSM output
-  rather than the parallel OpenSSL result.
-- **5G SUCI — HSM KEM ciphertext synced (Profile C)**: After the shared secret step on the
-  Profile C hybrid path, the HSM KEM ciphertext is written into `fiveGService.state.ciphertextHex`
-  for use in downstream visualization and SUCI assembly.
-- **StatefulSignaturesDemo / XMSSKeyGenDemo — default sign message normalized**: Both components
-  now default to `"Hello, world!"` for consistent cross-engine verification in the default state.
+- **5G SUCI — dual-engine comparison uses real HSM output**: The encrypted MSIN and MAC tag
+  shown in the comparison panel now come directly from the HSM rather than the parallel
+  OpenSSL computation, giving an accurate side-by-side result. The MAC tag is correctly
+  truncated to 8 bytes per 3GPP TS 33.501.
+
+- **5G SUCI Profile C — KEM ciphertext carried forward correctly**: The HSM-produced ML-KEM
+  ciphertext is now stored in the shared state after the key encapsulation step, so downstream
+  SUCI assembly and visualization use the real ciphertext.
+
+- **Stateful Signatures — default message aligned across panels**: Both the XMSS key generation
+  demo and the Stateful Signatures workshop now default to `"Hello, world!"`, making cross-engine
+  verification work without any manual input change.
 
 ## [2.83.0] - 2026-04-07
 
 ### Added
 
-- **IKEv2 ML-KEM-768 handshake — end-to-end PKCS#11 working**: The VPN simulation panel now
-  completes a full IKEv2 ML-KEM-768 key encapsulation through the C++ HSM engine. The KEM secret
-  key template uses the minimum required attributes (`CKA_VALUE_LEN=32`, `CKA_EXTRACTABLE=TRUE`),
-  proving softhsmv3 defaults `CKA_EXTRACTABLE=FALSE` and requires explicit `VALUE_LEN` on the
-  `CKM_GENERIC_SECRET_KEY_GEN` path.
+- **VPN Simulation — full IKEv2 + ML-KEM-768 handshake working end-to-end**: The VPN simulator
+  now completes a real PKCS#11-based ML-KEM-768 key encapsulation through the HSM, including
+  key generation, encapsulation, shared secret extraction, and SKEYSEED derivation. This is the
+  first full IKEv2 post-quantum handshake running entirely inside the browser HSM.
 
 ### Fixed
 
-- **VPN Simulation — reverted Rust engine fallback to C++ module**: The Rust WASM engine fails in
-  the browser RPC context (wasm-bindgen environment checks + missing `i8` `setValue` support).
-  Reverted to the C++ Emscripten module for VPN simulation.
-- **softhsmv3 C++ WASM rebuilt**: Fixed `C_EncapsulateKey` switch fall-through where
-  `CKA_CLASS/TOKEN/PRIVATE/KEY_TYPE` fell through to `case CKA_VALUE` returning
-  `CKR_ATTRIBUTE_VALUE_INVALID` (0x13). Rebuilt from softhsmv3 commit `f001794`.
-- **`softhsm.ts` — 8 Rust PKCS#11 v3.2 functions activated**: `C_VerifySignatureInit`,
-  `C_VerifySignature`, `C_VerifySignatureFinal`, `C_VerifySignatureUpdate`,
-  `C_GetSessionValidationFlags`, `C_AsyncComplete`, `C_AsyncGetID`, and `C_AsyncJoin` were
-  previously stubbed as `CKR_NOT_IMPL`; they now forward to live `wasmExports.*` bindings.
+- **VPN Simulation — engine stability**: Switched back to the C++ HSM engine for VPN simulation
+  after finding that the Rust WASM engine has compatibility issues in the browser's secure context
+  that prevent it from running correctly in this scenario.
+
+- **HSM — encapsulation bug fixed in softhsmv3**: A bug in the C++ HSM engine caused key
+  encapsulation to return an error when reading standard key attributes. The WASM binary has been
+  updated with the fix.
+
+- **HSM — 8 additional Rust engine functions now active**: Pre-bound signature verification
+  (`C_VerifySignatureInit/Final/Update`) and PKCS#11 v3.2 session functions that were previously
+  disabled are now fully wired to the Rust engine.
 
 ## [2.82.0] - 2026-04-06
 
