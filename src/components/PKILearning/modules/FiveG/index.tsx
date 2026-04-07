@@ -9,7 +9,7 @@ import { FiveGIntroduction } from './components/FiveGIntroduction'
 import { FiveGExercises } from './components/FiveGExercises'
 import type { SimulationConfig } from './components/FiveGExercises'
 import { useModuleStore } from '@/store/useModuleStore'
-import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
+import { getModuleDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { ModuleReferencesTab } from '../../common/ModuleReferencesTab'
 import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
@@ -42,11 +42,60 @@ const PARTS = [
 
 export const FiveGModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+
+  // Parse 5G-specific deep-link params on mount
+  const urlParams = new URLSearchParams(window.location.search)
+  const profileParam = urlParams.get('profile')
+  const pqcModeParam = urlParams.get('pqcMode')
+  const parsedProfile =
+    profileParam === 'A' || profileParam === 'B' || profileParam === 'C'
+      ? (profileParam as 'A' | 'B' | 'C')
+      : undefined
+  const parsedPqcMode =
+    pqcModeParam === 'hybrid' || pqcModeParam === 'pure'
+      ? (pqcModeParam as 'hybrid' | 'pure')
+      : undefined
+
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentPart, setCurrentPart] = useState(deepLink.initialStep)
-  useSyncDeepLink(activeTab, currentPart)
-  const [initialProfile, setInitialProfile] = useState<'A' | 'B' | 'C' | undefined>(undefined)
-  const [initialPqcMode, setInitialPqcMode] = useState<'hybrid' | 'pure' | undefined>(undefined)
+  const [initialProfile, setInitialProfile] = useState<'A' | 'B' | 'C' | undefined>(parsedProfile)
+  const [initialPqcMode, setInitialPqcMode] = useState<'hybrid' | 'pure' | undefined>(parsedPqcMode)
+  // Track current SuciFlow profile/pqcMode to keep URL in sync
+  const [currentProfile, setCurrentProfile] = useState<'A' | 'B' | 'C'>(parsedProfile ?? 'A')
+  const [currentPqcMode, setCurrentPqcMode] = useState<'hybrid' | 'pure'>(parsedPqcMode ?? 'hybrid')
+
+  // Sync tab, step, profile, pqcMode to URL (replaces useSyncDeepLink)
+  useEffect(() => {
+    const url = new URL(window.location.href)
+    if (activeTab !== 'learn') {
+      url.searchParams.set('tab', activeTab)
+    } else {
+      url.searchParams.delete('tab')
+    }
+    if (currentPart > 0) {
+      url.searchParams.set('step', String(currentPart))
+    } else {
+      url.searchParams.delete('step')
+    }
+    // Only include profile/pqcMode when on the simulate tab showing SUCI (part 0)
+    if (activeTab === 'simulate' && currentPart === 0) {
+      if (currentProfile !== 'A') {
+        url.searchParams.set('profile', currentProfile)
+      } else {
+        url.searchParams.delete('profile')
+      }
+      if (currentProfile === 'C' && currentPqcMode !== 'hybrid') {
+        url.searchParams.set('pqcMode', currentPqcMode)
+      } else {
+        url.searchParams.delete('pqcMode')
+      }
+    } else {
+      url.searchParams.delete('profile')
+      url.searchParams.delete('pqcMode')
+    }
+    window.history.replaceState(null, '', url.toString())
+  }, [activeTab, currentPart, currentProfile, currentPqcMode])
+
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)
   const { updateModuleProgress, markStepComplete } = useModuleStore()
@@ -92,9 +141,11 @@ export const FiveGModule: React.FC = () => {
     setCurrentPart(config.part)
     if (config.profile !== undefined) {
       setInitialProfile(config.profile)
+      setCurrentProfile(config.profile)
     }
     if (config.pqcMode !== undefined) {
       setInitialPqcMode(config.pqcMode)
+      setCurrentPqcMode(config.pqcMode)
     }
     setConfigKey((prev) => prev + 1)
   }, [])
@@ -224,6 +275,8 @@ export const FiveGModule: React.FC = () => {
                   onBack={() => {}}
                   initialProfile={initialProfile}
                   initialPqcMode={initialPqcMode}
+                  onProfileChange={setCurrentProfile}
+                  onPqcModeChange={setCurrentPqcMode}
                 />
               )}
               {currentPart === 1 && <AuthFlow onBack={() => setCurrentPart(0)} />}

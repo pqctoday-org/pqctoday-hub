@@ -101,6 +101,8 @@ interface SuciFlowProps {
   onBack: () => void
   initialProfile?: 'A' | 'B' | 'C'
   initialPqcMode?: 'hybrid' | 'pure'
+  onProfileChange?: (profile: 'A' | 'B' | 'C') => void
+  onPqcModeChange?: (mode: 'hybrid' | 'pure') => void
 }
 
 type Profile = 'A' | 'B' | 'C'
@@ -136,7 +138,13 @@ function getGsmaVector(profile: 'A' | 'B' | 'C', stepId: string) {
   }
 }
 
-export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, initialPqcMode }) => {
+export const SuciFlow: React.FC<SuciFlowProps> = ({
+  onBack,
+  initialProfile,
+  initialPqcMode,
+  onProfileChange,
+  onPqcModeChange,
+}) => {
   const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
   const [customSupi, setCustomSupi] = useState('310260123456789')
@@ -167,8 +175,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
     hsm.clearLog()
     hsm.clearKeys()
     setProfile(p)
+    onProfileChange?.(p)
     // Profile C always enters hybrid mode; reset pqcMode to avoid stale pure state
-    if (p === 'C') setPqcMode('hybrid')
+    if (p === 'C') {
+      setPqcMode('hybrid')
+      onPqcModeChange?.('hybrid')
+    }
   }
   const changePqcMode = (m: 'hybrid' | 'pure') => {
     void fiveGService.cleanup()
@@ -177,6 +189,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
     hsm.clearLog()
     hsm.clearKeys()
     setPqcMode(m)
+    onPqcModeChange?.(m)
   }
 
   // Select steps based on profile
@@ -187,12 +200,38 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
         ? FIVE_G_CONSTANTS.SUCI_STEPS_B
         : FIVE_G_CONSTANTS.SUCI_STEPS_A
 
+  // Pure PQC overrides — Profile C static steps default to hybrid; patch them here.
+  const PURE_PQC_TITLES: Record<string, string> = {
+    init_network_key: '1. Home Network Key Generation (Profile C — Pure PQC)',
+    compute_shared_secret: '5. Compute Shared Secret (ML-KEM Encap only)',
+  }
+  const PURE_PQC_CODE: Record<string, string> = {
+    init_network_key: `// SoftHSMv3 WASM: Generate ML-KEM-768 HN keypair (Pure PQC mode)
+const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
+  hsmd, sessionHandle, 768, false, '5G HN Key (ML-KEM)'
+)
+// Pure PQC: no classical ECC keypair is generated`,
+    compute_shared_secret: `// SoftHSMv3 WASM: Profile C Pure PQC — ML-KEM Encapsulation only
+// → C_EncapsulateKey(CKM_ML_KEM)
+const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
+const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
+
+// Z = Z_kem directly (no ECDH component in pure PQC mode)
+const Z = zKemBytes`,
+  }
+
   // Map to Step interface
   const steps: Step[] = rawSteps.map((step, index) => ({
     id: step.id,
-    title: step.title,
+    title:
+      profile === 'C' && pqcMode === 'pure' && PURE_PQC_TITLES[step.id]
+        ? PURE_PQC_TITLES[step.id]
+        : step.title,
     description: step.description,
-    code: step.code,
+    code:
+      profile === 'C' && pqcMode === 'pure' && PURE_PQC_CODE[step.id]
+        ? PURE_PQC_CODE[step.id]
+        : step.code,
     language: 'bash',
     actionLabel: 'Execute Step',
     explanationTable: step.explanationTable,

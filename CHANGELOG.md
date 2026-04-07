@@ -6,6 +6,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.0] - 2026-04-07
+
+### Fixed
+
+- **5G SUCI — Profile C pure PQC no longer shows hybrid code snippets**: Step 1
+  (Home Network Key Generation) and Step 5 (Compute Shared Secret) now display
+  pure-PQC-specific code when `pqcMode === 'pure'`. Step titles are also patched
+  to reflect the pure mode context. The static `SUCI_STEPS_C` array defaults to
+  hybrid; overrides are applied in `SuciFlow` at the step-mapping layer.
+
+### Added
+
+- **5G SUCI — deep-link URL encodes profile and pqcMode**: The URL now reflects
+  the active profile and PQC mode when on the SUCI Workshop tab:
+  - Profile A: no `?profile=` param (default)
+  - Profile B: `?tab=simulate&profile=B`
+  - Profile C hybrid: `?tab=simulate&profile=C`
+  - Profile C pure PQC: `?tab=simulate&profile=C&pqcMode=pure`
+    Navigating to any of these URLs restores the correct profile and mode
+    immediately. The Share button picks up the live URL, so shared links land
+    directly on the right profile/mode combination.
+
 ## [2.88.0] - 2026-04-07
 
 ### Fixed
