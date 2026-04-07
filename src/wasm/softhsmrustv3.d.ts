@@ -31,6 +31,12 @@ export function _C_DecryptFinal(_h_session: number, _p_last_part: number, _pul_l
 
 export function _C_DecryptInit(h_session: number, p_mechanism: number, h_key: number): number;
 
+export function _C_DecryptMessage(h_session: number, p_parameter: number, _ul_parameter_len: number, p_associated_data: number, ul_associated_data_len: number, p_ciphertext: number, ul_ciphertext_len: number, p_plaintext: number, pul_plaintext_len: number): number;
+
+export function _C_DecryptMessageBegin(h_session: number, p_parameter: number, _ul_parameter_len: number, p_associated_data: number, ul_associated_data_len: number): number;
+
+export function _C_DecryptMessageNext(h_session: number, p_parameter: number, _ul_parameter_len: number, p_ciphertext_part: number, ul_ciphertext_part_len: number, p_plaintext_part: number, pul_plaintext_part_len: number, flags: number): number;
+
 export function _C_DecryptUpdate(_h_session: number, _p_encrypted_part: number, _ul_encrypted_part_len: number, _p_part: number, _pul_part_len: number): number;
 
 export function _C_DeriveKey(_h_session: number, p_mechanism: number, h_base_key: number, p_template: number, ul_attribute_count: number, ph_key: number): number;
@@ -54,6 +60,12 @@ export function _C_Encrypt(h_session: number, p_data: number, ul_data_len: numbe
 export function _C_EncryptFinal(_h_session: number, _p_last_encrypted_part: number, _pul_last_encrypted_part_len: number): number;
 
 export function _C_EncryptInit(h_session: number, p_mechanism: number, h_key: number): number;
+
+export function _C_EncryptMessage(h_session: number, p_parameter: number, _ul_parameter_len: number, p_associated_data: number, ul_associated_data_len: number, p_plaintext: number, ul_plaintext_len: number, p_ciphertext: number, pul_ciphertext_len: number): number;
+
+export function _C_EncryptMessageBegin(h_session: number, p_parameter: number, _ul_parameter_len: number, p_associated_data: number, ul_associated_data_len: number): number;
+
+export function _C_EncryptMessageNext(h_session: number, p_parameter: number, _ul_parameter_len: number, p_plaintext_part: number, ul_plaintext_part_len: number, p_ciphertext_part: number, pul_ciphertext_part_len: number, flags: number): number;
 
 export function _C_EncryptUpdate(_h_session: number, _p_part: number, _ul_part_len: number, _p_encrypted_part: number, _pul_encrypted_part_len: number): number;
 
@@ -109,6 +121,14 @@ export function _C_Initialize(p_init_args: number): number;
 export function _C_Login(h_session: number, user_type: number, p_pin: number, ul_pin_len: number): number;
 
 export function _C_Logout(h_session: number): number;
+
+export function _C_MessageDecryptFinal(h_session: number): number;
+
+export function _C_MessageDecryptInit(h_session: number, p_mechanism: number, h_key: number): number;
+
+export function _C_MessageEncryptFinal(h_session: number): number;
+
+export function _C_MessageEncryptInit(h_session: number, p_mechanism: number, h_key: number): number;
 
 export function _C_MessageSignFinal(h_session: number, _p_param: number, _ul_param_len: number, _p_signature: number, _pul_signature_len: number): number;
 
@@ -183,6 +203,9 @@ export interface InitOutput {
     readonly _C_DecapsulateKey: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _C_Decrypt: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_DecryptInit: (a: number, b: number, c: number) => number;
+    readonly _C_DecryptMessage: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => number;
+    readonly _C_DecryptMessageBegin: (a: number, b: number, c: number, d: number, e: number) => number;
+    readonly _C_DecryptMessageNext: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _C_DeriveKey: (a: number, b: number, c: number, d: number, e: number, f: number) => number;
     readonly _C_DestroyObject: (a: number, b: number) => number;
     readonly _C_Digest: (a: number, b: number, c: number, d: number, e: number) => number;
@@ -193,6 +216,9 @@ export interface InitOutput {
     readonly _C_EncapsulateKey: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _C_Encrypt: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_EncryptInit: (a: number, b: number, c: number) => number;
+    readonly _C_EncryptMessage: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number, i: number) => number;
+    readonly _C_EncryptMessageBegin: (a: number, b: number, c: number, d: number, e: number) => number;
+    readonly _C_EncryptMessageNext: (a: number, b: number, c: number, d: number, e: number, f: number, g: number, h: number) => number;
     readonly _C_Finalize: (a: number) => number;
     readonly _C_FindObjects: (a: number, b: number, c: number, d: number) => number;
     readonly _C_FindObjectsFinal: (a: number) => number;
@@ -212,6 +238,10 @@ export interface InitOutput {
     readonly _C_Initialize: (a: number) => number;
     readonly _C_Login: (a: number, b: number, c: number, d: number) => number;
     readonly _C_Logout: (a: number) => number;
+    readonly _C_MessageDecryptFinal: (a: number) => number;
+    readonly _C_MessageDecryptInit: (a: number, b: number, c: number) => number;
+    readonly _C_MessageEncryptFinal: (a: number) => number;
+    readonly _C_MessageEncryptInit: (a: number, b: number, c: number) => number;
     readonly _C_MessageSignFinal: (a: number, b: number, c: number, d: number, e: number) => number;
     readonly _C_MessageSignInit: (a: number, b: number, c: number) => number;
     readonly _C_MessageVerifyFinal: (a: number) => number;
@@ -255,10 +285,10 @@ export interface InitOutput {
     readonly _C_SignUpdate: (a: number, b: number, c: number) => number;
     readonly _C_VerifyFinal: (a: number, b: number, c: number) => number;
     readonly _C_VerifyUpdate: (a: number, b: number, c: number) => number;
-    readonly wasm_start: () => void;
-    readonly _C_GetMechanismList: (a: number, b: number, c: number) => number;
     readonly _free: (a: number, b: number) => void;
     readonly _malloc: (a: number) => number;
+    readonly _C_GetMechanismList: (a: number, b: number, c: number) => number;
+    readonly wasm_start: () => void;
     readonly __wbindgen_exn_store: (a: number) => void;
     readonly __externref_table_alloc: () => number;
     readonly __wbindgen_externrefs: WebAssembly.Table;

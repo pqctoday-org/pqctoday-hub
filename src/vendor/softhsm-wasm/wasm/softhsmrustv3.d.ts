@@ -11,6 +11,22 @@ export class SoftHsmRust {
   constructor()
 }
 
+export function _C_AsyncComplete(
+  _h_session: number,
+  _p_function_name: number,
+  _p_result: number
+): number
+
+export function _C_AsyncGetID(_h_session: number, _p_function_name: number, _pul_id: number): number
+
+export function _C_AsyncJoin(
+  _h_session: number,
+  _p_function_name: number,
+  _ul_id: number,
+  _p_data: number,
+  _ul_data_len: number
+): number
+
 export function _C_CloseSession(h_session: number): number
 
 export function _C_CopyObject(
@@ -54,6 +70,37 @@ export function _C_DecryptFinal(
 ): number
 
 export function _C_DecryptInit(h_session: number, p_mechanism: number, h_key: number): number
+
+export function _C_DecryptMessage(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number,
+  p_ciphertext: number,
+  ul_ciphertext_len: number,
+  p_plaintext: number,
+  pul_plaintext_len: number
+): number
+
+export function _C_DecryptMessageBegin(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number
+): number
+
+export function _C_DecryptMessageNext(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_ciphertext_part: number,
+  ul_ciphertext_part_len: number,
+  p_plaintext_part: number,
+  pul_plaintext_part_len: number,
+  flags: number
+): number
 
 export function _C_DecryptUpdate(
   _h_session: number,
@@ -116,6 +163,37 @@ export function _C_EncryptFinal(
 ): number
 
 export function _C_EncryptInit(h_session: number, p_mechanism: number, h_key: number): number
+
+export function _C_EncryptMessage(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number,
+  p_plaintext: number,
+  ul_plaintext_len: number,
+  p_ciphertext: number,
+  pul_ciphertext_len: number
+): number
+
+export function _C_EncryptMessageBegin(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_associated_data: number,
+  ul_associated_data_len: number
+): number
+
+export function _C_EncryptMessageNext(
+  h_session: number,
+  p_parameter: number,
+  _ul_parameter_len: number,
+  p_plaintext_part: number,
+  ul_plaintext_part_len: number,
+  p_ciphertext_part: number,
+  pul_ciphertext_part_len: number,
+  flags: number
+): number
 
 export function _C_EncryptUpdate(
   _h_session: number,
@@ -193,6 +271,12 @@ export function _C_GetOperationState(
 
 export function _C_GetSessionInfo(h_session: number, p_info: number): number
 
+export function _C_GetSessionValidationFlags(
+  _h_session: number,
+  _type: number,
+  _p_flags: number
+): number
+
 /**
  * C_GetSlotInfo: returns basic slot info for slot 0.
  * CK_SLOT_INFO: slotDescription(64) + manufacturerID(32) + flags(4) + hardwareVersion(2) + firmwareVersion(2) = 104 bytes
@@ -226,6 +310,14 @@ export function _C_Login(
 ): number
 
 export function _C_Logout(h_session: number): number
+
+export function _C_MessageDecryptFinal(h_session: number): number
+
+export function _C_MessageDecryptInit(h_session: number, p_mechanism: number, h_key: number): number
+
+export function _C_MessageEncryptFinal(h_session: number): number
+
+export function _C_MessageEncryptInit(h_session: number, p_mechanism: number, h_key: number): number
 
 export function _C_MessageSignFinal(
   h_session: number,
@@ -352,6 +444,24 @@ export function _C_VerifyMessage(
   ul_signature_len: number
 ): number
 
+export function _C_VerifySignature(h_session: number, p_data: number, ul_data_len: number): number
+
+export function _C_VerifySignatureFinal(h_session: number): number
+
+export function _C_VerifySignatureInit(
+  h_session: number,
+  p_mechanism: number,
+  h_key: number,
+  p_signature: number,
+  ul_signature_len: number
+): number
+
+export function _C_VerifySignatureUpdate(
+  h_session: number,
+  p_part: number,
+  ul_part_len: number
+): number
+
 export function _C_VerifyUpdate(_h_session: number, _p_part: number, _ul_part_len: number): number
 
 export function _C_WrapKey(
@@ -386,8 +496,9 @@ export type InitInput = RequestInfo | URL | Response | BufferSource | WebAssembl
 
 export interface InitOutput {
   readonly memory: WebAssembly.Memory
+  readonly _C_AsyncComplete: (a: number, b: number, c: number) => number
+  readonly _C_AsyncJoin: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_CloseSession: (a: number) => number
-  readonly _C_CopyObject: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_CreateObject: (a: number, b: number, c: number, d: number) => number
   readonly _C_DecapsulateKey: (
     a: number,
@@ -400,8 +511,29 @@ export interface InitOutput {
     h: number
   ) => number
   readonly _C_Decrypt: (a: number, b: number, c: number, d: number, e: number) => number
-  readonly _C_DecryptFinal: (a: number, b: number, c: number) => number
   readonly _C_DecryptInit: (a: number, b: number, c: number) => number
+  readonly _C_DecryptMessage: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+    g: number,
+    h: number,
+    i: number
+  ) => number
+  readonly _C_DecryptMessageBegin: (a: number, b: number, c: number, d: number, e: number) => number
+  readonly _C_DecryptMessageNext: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+    g: number,
+    h: number
+  ) => number
   readonly _C_DeriveKey: (
     a: number,
     b: number,
@@ -428,6 +560,28 @@ export interface InitOutput {
   ) => number
   readonly _C_Encrypt: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_EncryptInit: (a: number, b: number, c: number) => number
+  readonly _C_EncryptMessage: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+    g: number,
+    h: number,
+    i: number
+  ) => number
+  readonly _C_EncryptMessageBegin: (a: number, b: number, c: number, d: number, e: number) => number
+  readonly _C_EncryptMessageNext: (
+    a: number,
+    b: number,
+    c: number,
+    d: number,
+    e: number,
+    f: number,
+    g: number,
+    h: number
+  ) => number
   readonly _C_Finalize: (a: number) => number
   readonly _C_FindObjects: (a: number, b: number, c: number, d: number) => number
   readonly _C_FindObjectsFinal: (a: number) => number
@@ -456,6 +610,10 @@ export interface InitOutput {
   readonly _C_Initialize: (a: number) => number
   readonly _C_Login: (a: number, b: number, c: number, d: number) => number
   readonly _C_Logout: (a: number) => number
+  readonly _C_MessageDecryptFinal: (a: number) => number
+  readonly _C_MessageDecryptInit: (a: number, b: number, c: number) => number
+  readonly _C_MessageEncryptFinal: (a: number) => number
+  readonly _C_MessageEncryptInit: (a: number, b: number, c: number) => number
   readonly _C_MessageSignFinal: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_MessageSignInit: (a: number, b: number, c: number) => number
   readonly _C_MessageVerifyFinal: (a: number) => number
@@ -506,6 +664,10 @@ export interface InitOutput {
     f: number,
     g: number
   ) => number
+  readonly _C_VerifySignature: (a: number, b: number, c: number) => number
+  readonly _C_VerifySignatureFinal: (a: number) => number
+  readonly _C_VerifySignatureInit: (a: number, b: number, c: number, d: number, e: number) => number
+  readonly _C_VerifySignatureUpdate: (a: number, b: number, c: number) => number
   readonly _C_WrapKey: (a: number, b: number, c: number, d: number, e: number, f: number) => number
   readonly _C_WrapKeyAuthenticated: (
     a: number,
@@ -545,13 +707,17 @@ export interface InitOutput {
     f: number
   ) => number
   readonly softhsmrust_new: () => number
+  readonly _C_CopyObject: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_DecryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_EncryptUpdate: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_SetOperationState: (a: number, b: number, c: number, d: number, e: number) => number
   readonly _C_SetPIN: (a: number, b: number, c: number, d: number, e: number) => number
+  readonly _C_AsyncGetID: (a: number, b: number, c: number) => number
+  readonly _C_DecryptFinal: (a: number, b: number, c: number) => number
   readonly _C_EncryptFinal: (a: number, b: number, c: number) => number
   readonly _C_GetObjectSize: (a: number, b: number, c: number) => number
   readonly _C_GetOperationState: (a: number, b: number, c: number) => number
+  readonly _C_GetSessionValidationFlags: (a: number, b: number, c: number) => number
   readonly _C_SeedRandom: (a: number, b: number, c: number) => number
   readonly _C_SignFinal: (a: number, b: number, c: number) => number
   readonly _C_SignUpdate: (a: number, b: number, c: number) => number
@@ -559,8 +725,8 @@ export interface InitOutput {
   readonly _C_VerifyUpdate: (a: number, b: number, c: number) => number
   readonly _free: (a: number, b: number) => void
   readonly _malloc: (a: number) => number
-  readonly wasm_start: () => void
   readonly _C_GetMechanismList: (a: number, b: number, c: number) => number
+  readonly wasm_start: () => void
   readonly __wbindgen_exn_store: (a: number) => void
   readonly __externref_table_alloc: () => number
   readonly __wbindgen_externrefs: WebAssembly.Table

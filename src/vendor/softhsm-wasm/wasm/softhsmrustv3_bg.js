@@ -1,5 +1,3 @@
-/* @ts-self-types="./softhsmrustv3.d.ts" */
-
 export class SoftHsmRust {
   __destroy_into_raw() {
     const ptr = this.__wbg_ptr
@@ -69,41 +67,6 @@ export class SoftHsmRust {
   }
 }
 if (Symbol.dispose) SoftHsmRust.prototype[Symbol.dispose] = SoftHsmRust.prototype.free
-
-/**
- * @param {number} _h_session
- * @param {number} _p_function_name
- * @param {number} _p_result
- * @returns {number}
- */
-export function _C_AsyncComplete(_h_session, _p_function_name, _p_result) {
-  const ret = wasm._C_AsyncComplete(_h_session, _p_function_name, _p_result)
-  return ret >>> 0
-}
-
-/**
- * @param {number} _h_session
- * @param {number} _p_function_name
- * @param {number} _pul_id
- * @returns {number}
- */
-export function _C_AsyncGetID(_h_session, _p_function_name, _pul_id) {
-  const ret = wasm._C_AsyncGetID(_h_session, _p_function_name, _pul_id)
-  return ret >>> 0
-}
-
-/**
- * @param {number} _h_session
- * @param {number} _p_function_name
- * @param {number} _ul_id
- * @param {number} _p_data
- * @param {number} _ul_data_len
- * @returns {number}
- */
-export function _C_AsyncJoin(_h_session, _p_function_name, _ul_id, _p_data, _ul_data_len) {
-  const ret = wasm._C_AsyncJoin(_h_session, _p_function_name, _ul_id, _p_data, _ul_data_len)
-  return ret >>> 0
-}
 
 /**
  * @param {number} h_session
@@ -217,102 +180,6 @@ export function _C_DecryptFinal(_h_session, _p_last_part, _pul_last_part_len) {
  */
 export function _C_DecryptInit(h_session, p_mechanism, h_key) {
   const ret = wasm._C_DecryptInit(h_session, p_mechanism, h_key)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_associated_data
- * @param {number} ul_associated_data_len
- * @param {number} p_ciphertext
- * @param {number} ul_ciphertext_len
- * @param {number} p_plaintext
- * @param {number} pul_plaintext_len
- * @returns {number}
- */
-export function _C_DecryptMessage(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_associated_data,
-  ul_associated_data_len,
-  p_ciphertext,
-  ul_ciphertext_len,
-  p_plaintext,
-  pul_plaintext_len
-) {
-  const ret = wasm._C_DecryptMessage(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_associated_data,
-    ul_associated_data_len,
-    p_ciphertext,
-    ul_ciphertext_len,
-    p_plaintext,
-    pul_plaintext_len
-  )
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_associated_data
- * @param {number} ul_associated_data_len
- * @returns {number}
- */
-export function _C_DecryptMessageBegin(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_associated_data,
-  ul_associated_data_len
-) {
-  const ret = wasm._C_DecryptMessageBegin(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_associated_data,
-    ul_associated_data_len
-  )
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_ciphertext_part
- * @param {number} ul_ciphertext_part_len
- * @param {number} p_plaintext_part
- * @param {number} pul_plaintext_part_len
- * @param {number} flags
- * @returns {number}
- */
-export function _C_DecryptMessageNext(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_ciphertext_part,
-  ul_ciphertext_part_len,
-  p_plaintext_part,
-  pul_plaintext_part_len,
-  flags
-) {
-  const ret = wasm._C_DecryptMessageNext(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_ciphertext_part,
-    ul_ciphertext_part_len,
-    p_plaintext_part,
-    pul_plaintext_part_len,
-    flags
-  )
   return ret >>> 0
 }
 
@@ -516,102 +383,6 @@ export function _C_EncryptInit(h_session, p_mechanism, h_key) {
 }
 
 /**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_associated_data
- * @param {number} ul_associated_data_len
- * @param {number} p_plaintext
- * @param {number} ul_plaintext_len
- * @param {number} p_ciphertext
- * @param {number} pul_ciphertext_len
- * @returns {number}
- */
-export function _C_EncryptMessage(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_associated_data,
-  ul_associated_data_len,
-  p_plaintext,
-  ul_plaintext_len,
-  p_ciphertext,
-  pul_ciphertext_len
-) {
-  const ret = wasm._C_EncryptMessage(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_associated_data,
-    ul_associated_data_len,
-    p_plaintext,
-    ul_plaintext_len,
-    p_ciphertext,
-    pul_ciphertext_len
-  )
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_associated_data
- * @param {number} ul_associated_data_len
- * @returns {number}
- */
-export function _C_EncryptMessageBegin(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_associated_data,
-  ul_associated_data_len
-) {
-  const ret = wasm._C_EncryptMessageBegin(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_associated_data,
-    ul_associated_data_len
-  )
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_parameter
- * @param {number} _ul_parameter_len
- * @param {number} p_plaintext_part
- * @param {number} ul_plaintext_part_len
- * @param {number} p_ciphertext_part
- * @param {number} pul_ciphertext_part_len
- * @param {number} flags
- * @returns {number}
- */
-export function _C_EncryptMessageNext(
-  h_session,
-  p_parameter,
-  _ul_parameter_len,
-  p_plaintext_part,
-  ul_plaintext_part_len,
-  p_ciphertext_part,
-  pul_ciphertext_part_len,
-  flags
-) {
-  const ret = wasm._C_EncryptMessageNext(
-    h_session,
-    p_parameter,
-    _ul_parameter_len,
-    p_plaintext_part,
-    ul_plaintext_part_len,
-    p_ciphertext_part,
-    pul_ciphertext_part_len,
-    flags
-  )
-  return ret >>> 0
-}
-
-/**
  * @param {number} _h_session
  * @param {number} _p_part
  * @param {number} _ul_part_len
@@ -802,23 +573,12 @@ export function _C_GetOperationState(_h_session, _p_operation_state, _pul_operat
 }
 
 /**
- * @param {number} h_session
+ * @param {number} _h_session
  * @param {number} p_info
  * @returns {number}
  */
-export function _C_GetSessionInfo(h_session, p_info) {
-  const ret = wasm._C_GetSessionInfo(h_session, p_info)
-  return ret >>> 0
-}
-
-/**
- * @param {number} _h_session
- * @param {number} _type
- * @param {number} _p_flags
- * @returns {number}
- */
-export function _C_GetSessionValidationFlags(_h_session, _type, _p_flags) {
-  const ret = wasm._C_GetSessionValidationFlags(_h_session, _type, _p_flags)
+export function _C_GetSessionInfo(_h_session, p_info) {
+  const ret = wasm._C_GetSessionInfo(_h_session, p_info)
   return ret >>> 0
 }
 
@@ -835,13 +595,13 @@ export function _C_GetSlotInfo(_slot_id, p_info) {
 }
 
 /**
- * @param {number} token_present
+ * @param {number} _token_present
  * @param {number} p_slot_list
  * @param {number} pul_count
  * @returns {number}
  */
-export function _C_GetSlotList(token_present, p_slot_list, pul_count) {
-  const ret = wasm._C_GetSlotList(token_present, p_slot_list, pul_count)
+export function _C_GetSlotList(_token_present, p_slot_list, pul_count) {
+  const ret = wasm._C_GetSlotList(_token_present, p_slot_list, pul_count)
   return ret >>> 0
 }
 
@@ -856,25 +616,25 @@ export function _C_GetTokenInfo(_slot_id, p_info) {
 }
 
 /**
- * @param {number} h_session
- * @param {number} p_pin
- * @param {number} ul_pin_len
+ * @param {number} _h_session
+ * @param {number} _p_pin
+ * @param {number} _ul_pin_len
  * @returns {number}
  */
-export function _C_InitPIN(h_session, p_pin, ul_pin_len) {
-  const ret = wasm._C_InitPIN(h_session, p_pin, ul_pin_len)
+export function _C_InitPIN(_h_session, _p_pin, _ul_pin_len) {
+  const ret = wasm._C_InitPIN(_h_session, _p_pin, _ul_pin_len)
   return ret >>> 0
 }
 
 /**
- * @param {number} slot_id
- * @param {number} p_pin
- * @param {number} ul_pin_len
- * @param {number} p_label
+ * @param {number} _slot_id
+ * @param {number} _p_pin
+ * @param {number} _ul_pin_len
+ * @param {number} _p_label
  * @returns {number}
  */
-export function _C_InitToken(slot_id, p_pin, ul_pin_len, p_label) {
-  const ret = wasm._C_InitToken(slot_id, p_pin, ul_pin_len, p_label)
+export function _C_InitToken(_slot_id, _p_pin, _ul_pin_len, _p_label) {
+  const ret = wasm._C_InitToken(_slot_id, _p_pin, _ul_pin_len, _p_label)
   return ret >>> 0
 }
 
@@ -888,63 +648,23 @@ export function _C_Initialize(p_init_args) {
 }
 
 /**
- * @param {number} h_session
- * @param {number} user_type
- * @param {number} p_pin
- * @param {number} ul_pin_len
+ * @param {number} _h_session
+ * @param {number} _user_type
+ * @param {number} _p_pin
+ * @param {number} _ul_pin_len
  * @returns {number}
  */
-export function _C_Login(h_session, user_type, p_pin, ul_pin_len) {
-  const ret = wasm._C_Login(h_session, user_type, p_pin, ul_pin_len)
+export function _C_Login(_h_session, _user_type, _p_pin, _ul_pin_len) {
+  const ret = wasm._C_Login(_h_session, _user_type, _p_pin, _ul_pin_len)
   return ret >>> 0
 }
 
 /**
- * @param {number} h_session
+ * @param {number} _h_session
  * @returns {number}
  */
-export function _C_Logout(h_session) {
-  const ret = wasm._C_Logout(h_session)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @returns {number}
- */
-export function _C_MessageDecryptFinal(h_session) {
-  const ret = wasm._C_MessageDecryptFinal(h_session)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_mechanism
- * @param {number} h_key
- * @returns {number}
- */
-export function _C_MessageDecryptInit(h_session, p_mechanism, h_key) {
-  const ret = wasm._C_MessageDecryptInit(h_session, p_mechanism, h_key)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @returns {number}
- */
-export function _C_MessageEncryptFinal(h_session) {
-  const ret = wasm._C_MessageEncryptFinal(h_session)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_mechanism
- * @param {number} h_key
- * @returns {number}
- */
-export function _C_MessageEncryptInit(h_session, p_mechanism, h_key) {
-  const ret = wasm._C_MessageEncryptInit(h_session, p_mechanism, h_key)
+export function _C_Logout(_h_session) {
+  const ret = wasm._C_Logout(_h_session)
   return ret >>> 0
 }
 
@@ -1005,15 +725,15 @@ export function _C_MessageVerifyInit(h_session, p_mechanism, h_key) {
 }
 
 /**
- * @param {number} slot_id
- * @param {number} flags
+ * @param {number} _slot_id
+ * @param {number} _flags
  * @param {number} _p_application
  * @param {number} _notify
  * @param {number} ph_session
  * @returns {number}
  */
-export function _C_OpenSession(slot_id, flags, _p_application, _notify, ph_session) {
-  const ret = wasm._C_OpenSession(slot_id, flags, _p_application, _notify, ph_session)
+export function _C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_session) {
+  const ret = wasm._C_OpenSession(_slot_id, _flags, _p_application, _notify, ph_session)
   return ret >>> 0
 }
 
@@ -1296,62 +1016,6 @@ export function _C_VerifyMessage(
 }
 
 /**
- * @param {number} h_session
- * @param {number} p_data
- * @param {number} ul_data_len
- * @returns {number}
- */
-export function _C_VerifySignature(h_session, p_data, ul_data_len) {
-  const ret = wasm._C_VerifySignature(h_session, p_data, ul_data_len)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @returns {number}
- */
-export function _C_VerifySignatureFinal(h_session) {
-  const ret = wasm._C_VerifySignatureFinal(h_session)
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_mechanism
- * @param {number} h_key
- * @param {number} p_signature
- * @param {number} ul_signature_len
- * @returns {number}
- */
-export function _C_VerifySignatureInit(
-  h_session,
-  p_mechanism,
-  h_key,
-  p_signature,
-  ul_signature_len
-) {
-  const ret = wasm._C_VerifySignatureInit(
-    h_session,
-    p_mechanism,
-    h_key,
-    p_signature,
-    ul_signature_len
-  )
-  return ret >>> 0
-}
-
-/**
- * @param {number} h_session
- * @param {number} p_part
- * @param {number} ul_part_len
- * @returns {number}
- */
-export function _C_VerifySignatureUpdate(h_session, p_part, ul_part_len) {
-  const ret = wasm._C_VerifySignatureUpdate(h_session, p_part, ul_part_len)
-  return ret >>> 0
-}
-
-/**
  * @param {number} _h_session
  * @param {number} _p_part
  * @param {number} _ul_part_len
@@ -1441,166 +1105,147 @@ export function _malloc(size) {
   return ret >>> 0
 }
 
-/**
- * @param {number} seed_ptr
- * @param {number} seed_len
- */
-export function _set_kat_seed(seed_ptr, seed_len) {
-  wasm._set_kat_seed(seed_ptr, seed_len)
-}
-
 export function wasm_start() {
   wasm.wasm_start()
 }
-
-function __wbg_get_imports() {
-  const import0 = {
-    __proto__: null,
-    __wbg___wbindgen_is_function_3c846841762788c1: function (arg0) {
-      const ret = typeof arg0 === 'function'
-      return ret
-    },
-    __wbg___wbindgen_is_object_781bc9f159099513: function (arg0) {
-      const val = arg0
-      const ret = typeof val === 'object' && val !== null
-      return ret
-    },
-    __wbg___wbindgen_is_string_7ef6b97b02428fae: function (arg0) {
-      const ret = typeof arg0 === 'string'
-      return ret
-    },
-    __wbg___wbindgen_is_undefined_52709e72fb9f179c: function (arg0) {
-      const ret = arg0 === undefined
-      return ret
-    },
-    __wbg___wbindgen_throw_6ddd609b62940d55: function (arg0, arg1) {
-      throw new Error(getStringFromWasm0(arg0, arg1))
-    },
-    __wbg_call_2d781c1f4d5c0ef8: function () {
-      return handleError(function (arg0, arg1, arg2) {
-        const ret = arg0.call(arg1, arg2)
-        return ret
-      }, arguments)
-    },
-    __wbg_crypto_38df2bab126b63dc: function (arg0) {
-      const ret = arg0.crypto
-      return ret
-    },
-    __wbg_error_a6fa202b58aa1cd3: function (arg0, arg1) {
-      let deferred0_0
-      let deferred0_1
-      try {
-        deferred0_0 = arg0
-        deferred0_1 = arg1
-        console.error(getStringFromWasm0(arg0, arg1))
-      } finally {
-        wasm.__wbindgen_free(deferred0_0, deferred0_1, 1)
-      }
-    },
-    __wbg_getRandomValues_c44a50d8cfdaebeb: function () {
-      return handleError(function (arg0, arg1) {
-        arg0.getRandomValues(arg1)
-      }, arguments)
-    },
-    __wbg_length_ea16607d7b61445b: function (arg0) {
-      const ret = arg0.length
-      return ret
-    },
-    __wbg_msCrypto_bd5a034af96bcba6: function (arg0) {
-      const ret = arg0.msCrypto
-      return ret
-    },
-    __wbg_new_227d7c05414eb861: function () {
-      const ret = new Error()
-      return ret
-    },
-    __wbg_new_from_slice_22da9388ac046e50: function (arg0, arg1) {
-      const ret = new Uint8Array(getArrayU8FromWasm0(arg0, arg1))
-      return ret
-    },
-    __wbg_new_with_length_825018a1616e9e55: function (arg0) {
-      const ret = new Uint8Array(arg0 >>> 0)
-      return ret
-    },
-    __wbg_node_84ea875411254db1: function (arg0) {
-      const ret = arg0.node
-      return ret
-    },
-    __wbg_process_44c7a14e11e9f69e: function (arg0) {
-      const ret = arg0.process
-      return ret
-    },
-    __wbg_prototypesetcall_d62e5099504357e6: function (arg0, arg1, arg2) {
-      Uint8Array.prototype.set.call(getArrayU8FromWasm0(arg0, arg1), arg2)
-    },
-    __wbg_randomFillSync_6c25eac9869eb53c: function () {
-      return handleError(function (arg0, arg1) {
-        arg0.randomFillSync(arg1)
-      }, arguments)
-    },
-    __wbg_require_b4edbdcf3e2a1ef0: function () {
-      return handleError(function () {
-        const ret = module.require
-        return ret
-      }, arguments)
-    },
-    __wbg_stack_3b0d974bbf31e44f: function (arg0, arg1) {
-      const ret = arg1.stack
-      const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
-      const len1 = WASM_VECTOR_LEN
-      getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true)
-      getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true)
-    },
-    __wbg_static_accessor_GLOBAL_8adb955bd33fac2f: function () {
-      const ret = typeof global === 'undefined' ? null : global
-      return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
-    },
-    __wbg_static_accessor_GLOBAL_THIS_ad356e0db91c7913: function () {
-      const ret = typeof globalThis === 'undefined' ? null : globalThis
-      return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
-    },
-    __wbg_static_accessor_SELF_f207c857566db248: function () {
-      const ret = typeof self === 'undefined' ? null : self
-      return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
-    },
-    __wbg_static_accessor_WINDOW_bb9f1ba69d61b386: function () {
-      const ret = typeof window === 'undefined' ? null : window
-      return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
-    },
-    __wbg_subarray_a068d24e39478a8a: function (arg0, arg1, arg2) {
-      const ret = arg0.subarray(arg1 >>> 0, arg2 >>> 0)
-      return ret
-    },
-    __wbg_versions_276b2795b1c6a219: function (arg0) {
-      const ret = arg0.versions
-      return ret
-    },
-    __wbindgen_cast_0000000000000001: function (arg0, arg1) {
-      // Cast intrinsic for `Ref(Slice(U8)) -> NamedExternref("Uint8Array")`.
-      const ret = getArrayU8FromWasm0(arg0, arg1)
-      return ret
-    },
-    __wbindgen_cast_0000000000000002: function (arg0, arg1) {
-      // Cast intrinsic for `Ref(String) -> Externref`.
-      const ret = getStringFromWasm0(arg0, arg1)
-      return ret
-    },
-    __wbindgen_init_externref_table: function () {
-      const table = wasm.__wbindgen_externrefs
-      const offset = table.grow(4)
-      table.set(0, undefined)
-      table.set(offset + 0, undefined)
-      table.set(offset + 1, null)
-      table.set(offset + 2, true)
-      table.set(offset + 3, false)
-    },
-  }
-  return {
-    __proto__: null,
-    './softhsmrustv3_bg.js': import0,
+export function __wbg___wbindgen_is_function_3c846841762788c1(arg0) {
+  const ret = typeof arg0 === 'function'
+  return ret
+}
+export function __wbg___wbindgen_is_object_781bc9f159099513(arg0) {
+  const val = arg0
+  const ret = typeof val === 'object' && val !== null
+  return ret
+}
+export function __wbg___wbindgen_is_string_7ef6b97b02428fae(arg0) {
+  const ret = typeof arg0 === 'string'
+  return ret
+}
+export function __wbg___wbindgen_is_undefined_52709e72fb9f179c(arg0) {
+  const ret = arg0 === undefined
+  return ret
+}
+export function __wbg___wbindgen_throw_6ddd609b62940d55(arg0, arg1) {
+  throw new Error(getStringFromWasm0(arg0, arg1))
+}
+export function __wbg_call_2d781c1f4d5c0ef8() {
+  return handleError(function (arg0, arg1, arg2) {
+    const ret = arg0.call(arg1, arg2)
+    return ret
+  }, arguments)
+}
+export function __wbg_crypto_38df2bab126b63dc(arg0) {
+  const ret = arg0.crypto
+  return ret
+}
+export function __wbg_error_a6fa202b58aa1cd3(arg0, arg1) {
+  let deferred0_0
+  let deferred0_1
+  try {
+    deferred0_0 = arg0
+    deferred0_1 = arg1
+    console.error(getStringFromWasm0(arg0, arg1))
+  } finally {
+    wasm.__wbindgen_free(deferred0_0, deferred0_1, 1)
   }
 }
-
+export function __wbg_getRandomValues_c44a50d8cfdaebeb() {
+  return handleError(function (arg0, arg1) {
+    arg0.getRandomValues(arg1)
+  }, arguments)
+}
+export function __wbg_length_ea16607d7b61445b(arg0) {
+  const ret = arg0.length
+  return ret
+}
+export function __wbg_msCrypto_bd5a034af96bcba6(arg0) {
+  const ret = arg0.msCrypto
+  return ret
+}
+export function __wbg_new_227d7c05414eb861() {
+  const ret = new Error()
+  return ret
+}
+export function __wbg_new_from_slice_22da9388ac046e50(arg0, arg1) {
+  const ret = new Uint8Array(getArrayU8FromWasm0(arg0, arg1))
+  return ret
+}
+export function __wbg_new_with_length_825018a1616e9e55(arg0) {
+  const ret = new Uint8Array(arg0 >>> 0)
+  return ret
+}
+export function __wbg_node_84ea875411254db1(arg0) {
+  const ret = arg0.node
+  return ret
+}
+export function __wbg_process_44c7a14e11e9f69e(arg0) {
+  const ret = arg0.process
+  return ret
+}
+export function __wbg_prototypesetcall_d62e5099504357e6(arg0, arg1, arg2) {
+  Uint8Array.prototype.set.call(getArrayU8FromWasm0(arg0, arg1), arg2)
+}
+export function __wbg_randomFillSync_6c25eac9869eb53c() {
+  return handleError(function (arg0, arg1) {
+    arg0.randomFillSync(arg1)
+  }, arguments)
+}
+export function __wbg_require_b4edbdcf3e2a1ef0() {
+  return handleError(function () {
+    const ret = module.require
+    return ret
+  }, arguments)
+}
+export function __wbg_stack_3b0d974bbf31e44f(arg0, arg1) {
+  const ret = arg1.stack
+  const ptr1 = passStringToWasm0(ret, wasm.__wbindgen_malloc, wasm.__wbindgen_realloc)
+  const len1 = WASM_VECTOR_LEN
+  getDataViewMemory0().setInt32(arg0 + 4 * 1, len1, true)
+  getDataViewMemory0().setInt32(arg0 + 4 * 0, ptr1, true)
+}
+export function __wbg_static_accessor_GLOBAL_8adb955bd33fac2f() {
+  const ret = typeof global === 'undefined' ? null : global
+  return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
+}
+export function __wbg_static_accessor_GLOBAL_THIS_ad356e0db91c7913() {
+  const ret = typeof globalThis === 'undefined' ? null : globalThis
+  return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
+}
+export function __wbg_static_accessor_SELF_f207c857566db248() {
+  const ret = typeof self === 'undefined' ? null : self
+  return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
+}
+export function __wbg_static_accessor_WINDOW_bb9f1ba69d61b386() {
+  const ret = typeof window === 'undefined' ? null : window
+  return isLikeNone(ret) ? 0 : addToExternrefTable0(ret)
+}
+export function __wbg_subarray_a068d24e39478a8a(arg0, arg1, arg2) {
+  const ret = arg0.subarray(arg1 >>> 0, arg2 >>> 0)
+  return ret
+}
+export function __wbg_versions_276b2795b1c6a219(arg0) {
+  const ret = arg0.versions
+  return ret
+}
+export function __wbindgen_cast_0000000000000001(arg0, arg1) {
+  // Cast intrinsic for `Ref(Slice(U8)) -> NamedExternref("Uint8Array")`.
+  const ret = getArrayU8FromWasm0(arg0, arg1)
+  return ret
+}
+export function __wbindgen_cast_0000000000000002(arg0, arg1) {
+  // Cast intrinsic for `Ref(String) -> Externref`.
+  const ret = getStringFromWasm0(arg0, arg1)
+  return ret
+}
+export function __wbindgen_init_externref_table() {
+  const table = wasm.__wbindgen_externrefs
+  const offset = table.grow(4)
+  table.set(0, undefined)
+  table.set(offset + 0, undefined)
+  table.set(offset + 1, null)
+  table.set(offset + 2, true)
+  table.set(offset + 3, false)
+}
 const SoftHsmRustFinalization =
   typeof FinalizationRegistry === 'undefined'
     ? { register: () => {}, unregister: () => {} }
@@ -1731,106 +1376,7 @@ if (!('encodeInto' in cachedTextEncoder)) {
 
 let WASM_VECTOR_LEN = 0
 
-let wasmModule, wasm
-function __wbg_finalize_init(instance, module) {
-  wasm = instance.exports
-  wasmModule = module
-  cachedDataViewMemory0 = null
-  cachedUint8ArrayMemory0 = null
-  wasm.__wbindgen_start()
-  return wasm
+let wasm
+export function __wbg_set_wasm(val) {
+  wasm = val
 }
-
-async function __wbg_load(module, imports) {
-  if (typeof Response === 'function' && module instanceof Response) {
-    if (typeof WebAssembly.instantiateStreaming === 'function') {
-      try {
-        return await WebAssembly.instantiateStreaming(module, imports)
-      } catch (e) {
-        const validResponse = module.ok && expectedResponseType(module.type)
-
-        if (validResponse && module.headers.get('Content-Type') !== 'application/wasm') {
-          console.warn(
-            '`WebAssembly.instantiateStreaming` failed because your server does not serve Wasm with `application/wasm` MIME type. Falling back to `WebAssembly.instantiate` which is slower. Original error:\n',
-            e
-          )
-        } else {
-          throw e
-        }
-      }
-    }
-
-    const bytes = await module.arrayBuffer()
-    return await WebAssembly.instantiate(bytes, imports)
-  } else {
-    const instance = await WebAssembly.instantiate(module, imports)
-
-    if (instance instanceof WebAssembly.Instance) {
-      return { instance, module }
-    } else {
-      return instance
-    }
-  }
-
-  function expectedResponseType(type) {
-    switch (type) {
-      case 'basic':
-      case 'cors':
-      case 'default':
-        return true
-    }
-    return false
-  }
-}
-
-function initSync(module) {
-  if (wasm !== undefined) return wasm
-
-  if (module !== undefined) {
-    if (Object.getPrototypeOf(module) === Object.prototype) {
-      ;({ module } = module)
-    } else {
-      console.warn('using deprecated parameters for `initSync()`; pass a single object instead')
-    }
-  }
-
-  const imports = __wbg_get_imports()
-  if (!(module instanceof WebAssembly.Module)) {
-    module = new WebAssembly.Module(module)
-  }
-  const instance = new WebAssembly.Instance(module, imports)
-  return __wbg_finalize_init(instance, module)
-}
-
-async function __wbg_init(module_or_path) {
-  if (wasm !== undefined) return wasm
-
-  if (module_or_path !== undefined) {
-    if (Object.getPrototypeOf(module_or_path) === Object.prototype) {
-      ;({ module_or_path } = module_or_path)
-    } else {
-      console.warn(
-        'using deprecated parameters for the initialization function; pass a single object instead'
-      )
-    }
-  }
-
-  if (module_or_path === undefined) {
-    module_or_path = new URL('softhsmrustv3_bg.wasm', import.meta.url)
-  }
-  const imports = __wbg_get_imports()
-
-  if (
-    typeof module_or_path === 'string' ||
-    (typeof Request === 'function' && module_or_path instanceof Request) ||
-    (typeof URL === 'function' && module_or_path instanceof URL)
-  ) {
-    module_or_path = fetch(module_or_path)
-  }
-
-  const { instance, module } = await __wbg_load(await module_or_path, imports)
-
-  return __wbg_finalize_init(instance, module)
-}
-
-export { initSync, __wbg_init as default }
