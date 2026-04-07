@@ -120,13 +120,36 @@ export async function visualizeStructure(ctx: FiveGService) {
   const cipher = ctx.state.encryptedMSINHex || '[Missing Cipher]'
   const mac = ctx.state.macTagHex || '[Missing MAC]'
   const ephSpki = ctx.state.ephemeralPubKeyHex || ''
-  // Raw ephemeral key (SPKI header stripped) — this is what appears in the SUCI schemeOutput
+  const kemCt = ctx.state.ciphertextHex || ''
+
+  // Profile C: schemeOutput = kemCiphertext || msinCiphertext || macTag
+  // Profile A: schemeOutput = rawX25519Key(32B) || msinCiphertext || macTag
+  // Profile B: schemeOutput = rawP256Point(65B) || msinCiphertext || macTag
+  // Raw ephemeral key bytes — strip ASN.1 SPKI wrapper (12B for X25519, 26B for P-256).
+  // For Profile C the ephSpki is already the raw 32-byte EC point (synced from HSM extractECPoint).
   const rawEphPubHex =
     ctx.state.profile === 'A' && ephSpki.length === 88
-      ? ephSpki.substring(24)
+      ? ephSpki.substring(24) // X25519 SPKI: 12-byte header → skip 24 hex chars
       : ctx.state.profile === 'B' && ephSpki.length === 182
-        ? ephSpki.substring(52)
-        : ephSpki
+        ? ephSpki.substring(52) // P-256 SPKI: 26-byte header → skip 52 hex chars
+        : ctx.state.profile === 'C'
+          ? ephSpki // already raw (HSM extractECPoint gives raw bytes, not SPKI)
+          : ephSpki
+
+  // Prefix shown in the abbreviated SUCI string
+  const schemePrefix =
+    ctx.state.profile === 'C'
+      ? kemCt
+        ? kemCt.substring(0, 16) + '...'
+        : '[Missing KEM CT]'
+      : rawEphPubHex
+        ? rawEphPubHex.substring(0, 8) + '...'
+        : '[EphKey]'
+
+  const schemeOutputDesc =
+    ctx.state.profile === 'C'
+      ? 'kemCiphertext || msinCiphertext || macTag (hex concat)'
+      : 'rawEphPubKey || msinCiphertext || macTag (hex concat)'
 
   return `═══════════════════════════════════════════════════════════════
             SUCI STRUCTURE VISUALIZATION
@@ -147,10 +170,10 @@ export async function visualizeStructure(ctx: FiveGService) {
 [3. Assembled SUCI (Privacy Preserving ID)]
   Format per 3GPP TS 23.003 §8.3:
   suci-0-<mcc>-<mnc>-<routingIndicator>-<schemeID>-<keyId>-<schemeOutput>
-  where schemeOutput = rawEphPubKey || msinCiphertext || macTag (hex concat)
+  where schemeOutput = ${schemeOutputDesc}
 
   SUCI String (abbreviated):
-  suci-0-${mcc}-${mnc}-${routing}-${scheme}-${keyId}-${rawEphPubHex ? rawEphPubHex.substring(0, 8) + '...' : '[EphKey]'}${cipher}${mac}
+  suci-0-${mcc}-${mnc}-${routing}-${scheme}-${keyId}-${schemePrefix}${cipher}${mac}
 
 [SUCCESS] Structure Verified. Ready for Transmission.`
 }

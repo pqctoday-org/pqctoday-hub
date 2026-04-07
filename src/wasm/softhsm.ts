@@ -175,16 +175,16 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_MessageVerifyFinal: wasmExports._C_MessageVerifyFinal,
 
         // ── Message-based encrypt/decrypt (stubs) ─────────────────────────
-        _C_MessageEncryptInit: () => CKR_NOT_IMPL,
-        _C_EncryptMessage: () => CKR_NOT_IMPL,
-        _C_EncryptMessageBegin: () => CKR_NOT_IMPL,
-        _C_EncryptMessageNext: () => CKR_NOT_IMPL,
-        _C_MessageEncryptFinal: () => 0,
-        _C_MessageDecryptInit: () => CKR_NOT_IMPL,
-        _C_DecryptMessage: () => CKR_NOT_IMPL,
-        _C_DecryptMessageBegin: () => CKR_NOT_IMPL,
-        _C_DecryptMessageNext: () => CKR_NOT_IMPL,
-        _C_MessageDecryptFinal: () => 0,
+        _C_MessageEncryptInit: wasmExports._C_MessageEncryptInit,
+        _C_EncryptMessage: wasmExports._C_EncryptMessage,
+        _C_EncryptMessageBegin: wasmExports._C_EncryptMessageBegin,
+        _C_EncryptMessageNext: wasmExports._C_EncryptMessageNext,
+        _C_MessageEncryptFinal: wasmExports._C_MessageEncryptFinal,
+        _C_MessageDecryptInit: wasmExports._C_MessageDecryptInit,
+        _C_DecryptMessage: wasmExports._C_DecryptMessage,
+        _C_DecryptMessageBegin: wasmExports._C_DecryptMessageBegin,
+        _C_DecryptMessageNext: wasmExports._C_DecryptMessageNext,
+        _C_MessageDecryptFinal: wasmExports._C_MessageDecryptFinal,
 
         // ── Digest ───────────────────────────────────────────────────────
         _C_DigestInit: wasmExports._C_DigestInit,

@@ -537,6 +537,18 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         }))
 
         if (hsmActive) {
+          // Gap 1: sync HSM-canonical ephemeral public key into fiveGService.state.
+          // fiveGService.generateEphemeralKey() stores an OpenSSL SPKI hex there; override
+          // with the raw EC point bytes from the HSM so that derive_keys (OpenSSL cross-check)
+          // uses the same SharedInfo as the HSM KDF path.
+          if (hsmHandlesRef.current.ephPubHandle !== undefined) {
+            const M = hsm.moduleRef.current!
+            const hSession = hsm.hSessionRef.current!
+            const rawPubBytes = hsm_extractECPoint(M, hSession, hsmHandlesRef.current.ephPubHandle)
+            fiveGService.state.ephemeralPubKeyHex = Array.from(rawPubBytes)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+          }
           result = buildDualEngineResult(hsmResult, res.output, stepData.id)
         } else {
           result = res.output
