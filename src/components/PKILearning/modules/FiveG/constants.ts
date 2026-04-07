@@ -138,9 +138,9 @@ const macTagFull = hsm_hmac(
         },
         {
           label: 'SUCI (Output)',
-          value: 'suci-0-310-260-{1|2}-1-{ephPub}-{ciphertext}-{mac}',
+          value: 'suci-0-310-260-1-1-{rawX25519EphPub(32B)}-{ciphertext}-{mac}',
           description:
-            'Concealed Identifier. Scheme ID: 1 = Profile A (X25519), 2 = Profile B (P-256).',
+            'Concealed Identifier. Scheme ID: 1 = Profile A. The ephemeral public key is a raw 32-byte X25519 scalar — Montgomery curves do not use compressed/uncompressed encoding; the key is always 32 bytes in both internal ECDH use and over-the-air transmission.',
         },
         {
           label: 'SUCI Hex',
@@ -153,8 +153,26 @@ const macTagFull = hsm_hmac(
       id: 'assemble_suci',
       title: '10. Assemble SUCI',
       description:
-        'Combine parameters into the final SUCI. Profile A uses scheme ID 1 (X25519 ephemeral key, 32 bytes); Profile B uses scheme ID 2 (P-256 uncompressed point, 65 bytes).',
-      code: `const suci = {\n  scheme: 1, // Profile A (X25519); use 2 for Profile B (P-256)\n  eccPubKey: ephPubKey,\n  ciphertext: encryptedMSIN,\n  macTag: macTag\n};`,
+        'Combine parameters into the final SUCI. Profile A uses scheme ID 1: the ephemeral public key is transmitted as a raw 32-byte X25519 value (Montgomery curve — no compression concept applies). Profile B uses scheme ID 2: the P-256 ephemeral key is transmitted in COMPRESSED form (33 bytes: 02/03 prefix + 32-byte x-coordinate) per TS 33.501 Annex C.4 — not the 65-byte uncompressed form used internally for ECDH.',
+      code: `// Profile A: raw 32-byte X25519 key (no compression — Montgomery curves use raw scalars)
+const suciA = {
+  scheme: 1,
+  eccPubKey: ephPubKey, // 32 bytes, raw little-endian scalar
+  ciphertext: encryptedMSIN,
+  macTag: macTag
+};
+
+// Profile B: compressed P-256 key for over-the-air encoding
+// ECDH uses uncompressed (04 || x || y) internally — SUCI encodes compressed (02/03 || x)
+const yLastByte = parseInt(uncompressedPub.slice(-2), 16);
+const prefix = (yLastByte % 2 === 0) ? '02' : '03'; // 02=y even, 03=y odd
+const compressedPub = prefix + uncompressedPub.slice(2, 66); // 33 bytes
+const suciB = {
+  scheme: 2,
+  eccPubKey: compressedPub, // 33 bytes — saves 32 bytes on air interface vs uncompressed
+  ciphertext: encryptedMSIN,
+  macTag: macTag
+};`,
       output: `[USIM] SUCI-0-310-260-{1|2}-1-{ephPub}-0x4f8a...-0xa1b2...`,
     },
     {
@@ -163,6 +181,217 @@ const macTagFull = hsm_hmac(
       description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
       code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profiles A/B)
 // 1. Re-derive Z (ECDH: HN private key + UE ephemeral public key)
+const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
+
+// 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
+const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
+const block2 = hsm_digest(M, hSession, concat(Z, 0x00000002, sharedInfo), CKM_SHA256)
+const kEnc = block1.slice(0, 16)                          // 128-bit AES-128 key
+const kMac = [...block1.slice(16), ...block2.slice(0, 16)] // 256-bit HMAC-SHA-256 key
+
+// 3. Authenticate-then-decrypt: verify MAC BEFORE decryption (per 3GPP TS 33.501)
+const macBytes = hsm_hmac(M, hSession, kMacHandle, ciphertext)
+const recomputedTag = Array.from(macBytes.slice(0, 8)).map(b => b.toString(16).padStart(2,'0')).join('').toUpperCase()
+if (recomputedTag !== storedMacTag) throw new Error('MAC mismatch — SUCI rejected by SIDF')
+
+// 4. Decrypt MSIN only after MAC passes (AES-128-CTR, zero IV per TS 33.501)
+const iv = new Uint8Array(16) // all zeros
+const msinBcd = hsm_aesDecrypt(hsmd, hSession, kEncHandle, ciphertext, iv, 'ctr')
+
+// 5. BCD decode → MSIN digits → full SUPI
+const msin = bcdDecode(msinBcd)  // e.g. '123456789'
+const supi = mcc + mnc + msin    // e.g. '310260123456789'`,
+      output: `[SIDF] Processing SUCI...
+[SIDF] SUPI Recovered: 310260123456789`,
+    },
+  ],
+
+  SUCI_STEPS_B: [
+    {
+      id: 'init_network_key',
+      title: '1. Home Network Key Generation (Profile B)',
+      description:
+        'The home network operator provisions a long-term asymmetric key pair. For Profile B, 5G mandates the use of NIST P-256 (secp256r1), the standard NIST elliptic curve widely supported by HSMs and national standards. The private key is securely stored for use by the SIDF (Subscription Identifier De-concealing Function) at the UDM for SUCI deconcealment, while the public key (65-byte uncompressed point) is distributed to USIMs during SIM personalization.',
+      code: `// SoftHSMv3 WASM: Generate Home Network P-256 Key
+const { pubHandle, privHandle } = hsm_generateECKeyPair(hsmd, sessionHandle, 'P-256'
+, false, 'derive');
+
+// Or inject Profile B explicit test vectors for KAT validation:
+const hnPrivHandle = await hsm_injectTestKey(
+  hsmd, sessionHandle, hnPrivBytes, 'P-256'
+);`,
+      output: `[Home Network] Generating Profile B Key Pair...
+[Home Network] P-256 Key generated.
+[Home Network] Public Key ready.`,
+    },
+    {
+      id: 'provision_usim',
+      title: '2. Provision USIM',
+      description:
+        'The Home Network Public Key is provisioned to the USIM secure element (EF_SUCI_Calc_Info), along with the profile identifier (Profile A: scheme ID 1 / X25519, Profile B: scheme ID 2 / P-256). The EF_SUCI_Calc_Info also stores the Routing Indicator (0–4 decimal digits, default 0000) — a network-assigned value that routes the SUCI to the correct UDM/SIDF instance for deconcealment in roaming scenarios.',
+      code: `# Simulated Provisioning API
+USIM.write('EF_SUCI_Calc_Info', {
+  HN_PubKey: readFile('hn_pub.key'),
+  ProtectionScheme: 'Profile B (P-256)',
+  KeyId: 2 // 2 = Profile B (P-256)
+});`,
+      output: `[Provisioning] Writing to USIM EF_SUCI_Calc_Info...
+[Provisioning] Success. USIM configured for selected protection scheme.`,
+    },
+    {
+      id: 'retrieve_key',
+      title: '3. Retrieve Home Network Public Key',
+      description:
+        'The USIM reads the Home Network Public Key from EF_SUCI_Calc_Info. Profile A uses X25519 (Curve25519, 32 bytes); Profile B uses P-256 (secp256r1, 65-byte uncompressed point). SUCI can conceal two SUPI types: IMSI (type 0 — 15-digit numeric identity, MSIN is 5–9 BCD bytes) or NAI (type 1 — a network-specific identifier that may be longer; the full identifier is encrypted, producing more ciphertext bytes than an IMSI).',
+      code: `const suciInfo = USIM.readFile('EF_SUCI_Calc_Info');\nconst hnPubKey = suciInfo.HN_PubKey; // P-256 (65 bytes, uncompressed)`,
+      output: `[USIM] Reading EF_SUCI_Calc_Info...\n[USIM] Profile B: P-256 (secp256r1, 65-byte uncompressed point)\n[USIM] HN Public Key: ready for ECDH key agreement`,
+    },
+    {
+      id: 'gen_ephemeral_key',
+      title: '4. Generate Ephemeral Key Pair',
+      description:
+        'Generate a fresh ephemeral key pair using P-256 for Profile B (NIST secp256r1). This key pair is unique to this connection attempt and provides forward secrecy.',
+      code: `// SoftHSMv3 WASM: Generate Ephemeral Key
+// Profile B uses P-256
+const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
+  hsmd, sessionHandle,
+  'P-256'
+);`,
+      output: `[USIM] Generating Ephemeral Key Pair (P-256)...\n[USIM] Ephemeral key pair generated and stored in SoftHSM3.`,
+    },
+    {
+      id: 'compute_shared_secret',
+      title: '5. Compute Shared Secret (ECDH)',
+      description:
+        "Perform Diffie-Hellman Key Agreement using P-256 for Profile B. The USIM combines its ephemeral private key with the Home Network's public key to derive the shared secret Z.",
+      code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (ECDH P-256)
+const sharedSecretHandle = hsm_ecdhDerive(
+  hsmd,
+  sessionHandle,
+  ephPriv,      // Ephemeral Private Key
+  hnPubHandle,  // Network Public Key
+  false         // False = Raw Z extraction
+);`,
+      output: `[USIM] Executing ECDH (P-256)...\n[USIM] Shared Secret (Z): [PROTECTED]`,
+    },
+    {
+      id: 'derive_keys',
+      title: '6. Derive Keys (ANSI-X9.63-KDF)',
+      description:
+        'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
+      code: `// ANSI X9.63-KDF: Z ‖ counter ‖ SharedInfo (raw ephemeral public key)
+block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes — sharedInfo = raw eph pub key
+block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
+
+// K_enc = first 128 bits of block1 (AES-128)
+const kEnc = block1.slice(0, 16);
+// K_mac = trailing 128 bits of block1 + first 128 bits of block2 (256-bit HMAC)
+const kMac = [...block1.slice(16), ...block2.slice(0, 16)];`,
+      output: `[USIM] Deriving Keys...\n[USIM] K_enc: 128-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
+    },
+    {
+      id: 'encrypt_msin',
+      title: '7. Encrypt MSIN (Encryption Point)',
+      description:
+        'This is the Encryption Point where the MSIN becomes ciphertext. AES-CTR mode is chosen deliberately: it is length-preserving — the ciphertext is exactly the same byte length as the plaintext MSIN, keeping the SUCI compact over the air interface.',
+      code: `// SoftHSMv3 WASM: C_Encrypt (AES-128-CTR)
+// 3GPP TS 33.501 §C.3.3 mandates AES-128-CTR with zero IV
+const iv = new Uint8Array(16) // zero per TS 33.501 — all 16 bytes = 0x00
+const ciphertext = hsm_aesEncrypt(
+  hsmd, sessionHandle, hKenc, msinBcd, iv, 'ctr'
+);`,
+      output: `[USIM] Encrypting MSIN...\n[USIM] Ciphertext: 0x4f8a2b1c9d... (5 bytes)`,
+    },
+    {
+      id: 'compute_mac',
+      title: '8. Compute MAC Tag',
+      description:
+        'Compute HMAC-SHA-256 over the ciphertext using K_mac, then truncate to 8 bytes (64 bits). Truncation is intentional: SUCI is an over-the-air identifier where space is constrained, and a 64-bit authentication code provides sufficient integrity protection for this use case.',
+      code: `// SoftHSMv3 WASM: C_Sign (HMAC-SHA256)
+const macTagFull = hsm_hmac(
+  hsmd, sessionHandle, hKmac, ciphertext, 'SHA256'
+);`,
+      output: `[USIM] Computed MAC Tag: 0xa1b2c3d4...`,
+    },
+    {
+      id: 'visualize_suci',
+      title: '9. Visual Inspection: SUPI vs SUCI',
+      description:
+        'Compare the sensitive cleartext identity (SUPI) with the protected SUCI structure.',
+      code: '# Visual Verification',
+      output: '[Visualizing Data Structures...]',
+      explanationTable: [
+        {
+          label: 'SUPI (Input)',
+          value: 'IMSI: 310260123456789 (MCC=310, MNC=260, MSIN=123456789)',
+          description: 'Subscriber Permanent Identifier. No dashes per 3GPP TS 23.003.',
+        },
+        {
+          label: 'SUPI Hex',
+          value: '333130323630313233343536373839',
+          description: 'Raw Hexadecimal of IMSI digits.',
+        },
+        {
+          label: 'Ciphertext',
+          value: '0x4F 0x8A 0x2B ...',
+          description:
+            'Encrypted MSIN (AES-128-CTR, zero IV). Length-preserving — same byte count as BCD-encoded MSIN.',
+        },
+        {
+          label: 'MAC Tag',
+          value: '0xA1 0xB2 ...',
+          description: 'HMAC-SHA-256 Integrity Tag.',
+        },
+        {
+          label: 'SUCI (Output)',
+          value: 'suci-0-310-260-2-1-{compressedEphPub(33B)}-{ciphertext}-{mac}',
+          description:
+            'Concealed Identifier. Scheme ID: 2 = Profile B (P-256). The ephemeral public key in the SUCI is COMPRESSED (33 bytes: 02/03 prefix + x-coord). ECDH uses the uncompressed form (65 bytes) internally — only the over-the-air encoding compresses. SIDF decompresses by solving y²=x³-3x+b (mod p).',
+        },
+        {
+          label: 'SUCI Hex',
+          value: '737563692d302d3331302d3236302d322d31...',
+          description: 'Partial Raw Hex of SUCI.',
+        },
+      ],
+    },
+    {
+      id: 'assemble_suci',
+      title: '10. Assemble SUCI',
+      description:
+        'Combine parameters into the final Profile B SUCI. The P-256 ephemeral key has two representations: the 65-byte UNCOMPRESSED form (04 || x || y) used internally for ECDH, and the 33-byte COMPRESSED form (02/03 || x) used in the over-the-air SUCI encoding per TS 33.501 Annex C.4. Compression saves 32 bytes on the radio interface; the SIDF reconstructs y from x using the P-256 curve equation y²=x³-3x+b (mod p). This is application-layer math — the HSM has no C_CompressECPoint; the application derives prefix from y-parity and transmits x-only.',
+      code: `// P-256 EC point encoding — two forms, different purposes:
+//
+// UNCOMPRESSED (65 bytes) — used for ECDH key agreement inside the HSM:
+//   Format: 04 || x(32B) || y(32B)
+//   Why: Both x and y are required to place the point on the curve
+//        and compute the shared secret Z = ECDH(ephPriv, hnPub).
+const uncompressed = hsm_extractECPoint(M, hSession, ephPubHandle);
+// → "04 E8B452... 36E0265" (65 bytes)
+//
+// COMPRESSED (33 bytes) — used in SUCI scheme output over the air:
+//   Format: 02 (y even) or 03 (y odd) || x(32B)
+//   Why: SIDF can recover y from x via y²=x³-3x+b (mod p).
+//        Saves 32 bytes on the 5G radio interface (NAS message).
+//   Note: Compression is application-layer — PKCS#11 has no C_CompressECPoint.
+const y_last = parseInt(uncompressed.slice(-2), 16);
+const prefix = (y_last % 2 === 0) ? '02' : '03';
+const compressed = prefix + uncompressed.slice(2, 66); // 33 bytes
+//
+const suci = {
+  scheme: 2,                   // Profile B (P-256)
+  eccPubKey: compressed,       // 33 bytes over the air
+  ciphertext: encryptedMSIN,
+  macTag: macTag
+};`,
+      output: `[USIM] SUCI-0-310-260-2-1-{compressedEphPub}-0x4f8a...-0xa1b2...`,
+    },
+    {
+      id: 'sidf_decryption',
+      title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
+      description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
+      code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profile B)
+// 1. Re-derive Z (ECDH P-256: HN private key + UE ephemeral public key)
 const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
 
 // 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
@@ -229,7 +458,7 @@ USIM.write('EF_SUCI_Calc_Info', {
     },
     {
       id: 'gen_ephemeral_key',
-      title: '4. Generate Ephemeral Key (Hybrid)',
+      title: '4. Generate Ephemeral Key',
       description:
         'In Hybrid Mode, the USIM generates an X25519 ephemeral key pair. In Pure PQC mode, this step is skipped (or prepares for Encapsulation).',
       code: `// In ML-KEM, Ephemeral keys are generated dynamically during Encapsulation.

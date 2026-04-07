@@ -43,15 +43,17 @@ const FIVEG_KAT_SPECS: KatTestSpec[] = [
     kind: { type: 'mldsa-sigver', variant: 65 },
   },
   {
-    id: '5g-suci-ecdh',
-    useCase: 'SUCI Profile A ECIES key agreement',
+    // Profile A uses X25519 — no ecdh-derive KAT runner support for X25519 yet
+    id: '5g-suci-ecdh-b',
+    useCase: 'SUCI Profile B ECIES key agreement (P-256)',
     standard: '3GPP TS 33.501 + NIST SP 800-56A',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
     kind: { type: 'ecdh-derive', curve: 'P-256' },
   },
   {
-    id: '5g-suci-kdf',
-    useCase: 'SUCI key derivation (ANSI X9.63-KDF with SHA-256)',
+    // Profile A uses X25519 — no ecdh-derive KAT runner support for X25519 yet
+    id: '5g-suci-kdf-b',
+    useCase: 'SUCI Profile B key derivation (X9.63-KDF + SHA-256)',
     standard: '3GPP TS 33.501 §C.3.3 + ANSI X9.63',
     referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/56/a/r3/final',
     kind: { type: 'ecdh-derive', curve: 'P-256' },
@@ -105,14 +107,10 @@ type Profile = 'A' | 'B' | 'C'
 interface GsmaProfileB {
   hn_pub_hex: string
   eph_pub_hex: string
-  shared_secret_z_hex?: string
   Z_hex?: string
-  k_enc_hex?: string
   K_enc_hex?: string
-  k_mac_hex?: string
   K_mac_hex?: string
   cipher_msin_hex?: string
-  encrypted_msin_hex?: string
   mac_tag_hex?: string
 }
 function getGsmaVector(profile: 'A' | 'B' | 'C', stepId: string) {
@@ -124,12 +122,12 @@ function getGsmaVector(profile: 'A' | 'B' | 'C', stepId: string) {
       return 'HN Public Key: ' + b.hn_pub_hex
     case 'gen_ephemeral_key':
       return 'Ephemeral Public Key: ' + b.eph_pub_hex
-    case 'ecdh':
-      return 'Shared Secret (Z): ' + b.shared_secret_z_hex
-    case 'kdf':
-      return 'K_enc: ' + b.k_enc_hex + '\nK_mac: ' + b.k_mac_hex
+    case 'compute_shared_secret':
+      return 'Shared Secret (Z): ' + b.Z_hex
+    case 'derive_keys':
+      return 'K_enc: ' + b.K_enc_hex + '\nK_mac: ' + b.K_mac_hex
     case 'encrypt_msin':
-      return 'Ciphertext: ' + b.cipher_msin_hex || b.encrypted_msin_hex // Fixed to use cipher_msin_hex from json
+      return 'Ciphertext: ' + b.cipher_msin_hex
     case 'compute_mac':
       return 'MAC: ' + b.mac_tag_hex
     default:
@@ -162,20 +160,31 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
 
   // Wrap setters to also clear crypto state when switching profiles/modes
   const changeProfile = (p: Profile) => {
-    fiveGService.cleanup()
+    void fiveGService.cleanup()
     setArtifacts({})
     hsmHandlesRef.current = {}
+    hsm.clearLog()
+    hsm.clearKeys()
     setProfile(p)
+    // Profile C always enters hybrid mode; reset pqcMode to avoid stale pure state
+    if (p === 'C') setPqcMode('hybrid')
   }
   const changePqcMode = (m: 'hybrid' | 'pure') => {
-    fiveGService.cleanup()
+    void fiveGService.cleanup()
     setArtifacts({})
     hsmHandlesRef.current = {}
+    hsm.clearLog()
+    hsm.clearKeys()
     setPqcMode(m)
   }
 
   // Select steps based on profile
-  const rawSteps = profile === 'C' ? FIVE_G_CONSTANTS.SUCI_STEPS_C : FIVE_G_CONSTANTS.SUCI_STEPS_A
+  const rawSteps =
+    profile === 'C'
+      ? FIVE_G_CONSTANTS.SUCI_STEPS_C
+      : profile === 'B'
+        ? FIVE_G_CONSTANTS.SUCI_STEPS_B
+        : FIVE_G_CONSTANTS.SUCI_STEPS_A
 
   // Map to Step interface
   const steps: Step[] = rawSteps.map((step, index) => ({
@@ -202,9 +211,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
     const gsmaText = getGsmaVector(profile, stepId)
     let enhancedGsma = gsmaText
     if (gsmaText) {
+      // For multi-line vectors (derive_keys: "K_enc: …\nK_mac: …") split on the first line
+      // so we only match the first value — avoids "K_mac" leaking into the search string.
+      const firstLine = gsmaText.split('\n')[0]
       const isMatch = hsmRes
         .toLowerCase()
-        .includes(gsmaText.split(':')[1]?.trim().toLowerCase() || 'XXXXX')
+        .includes(firstLine.split(':')[1]?.trim().toLowerCase() || 'XXXXX')
       enhancedGsma =
         gsmaText +
         '\n\n' +
@@ -222,6 +234,7 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({ onBack, initialProfile, init
   const executeStep = async () => {
     const stepData = rawSteps[wizard.currentStep]
     fiveGService.state.supi = customSupi || '310260123456789'
+    fiveGService.state.profile = profile // ensure profile is always set before any step runs
     let result: string | Record<string, string> = ''
 
     try {
@@ -681,7 +694,19 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
         if (hsmActive) {
           // Sync HSM-canonical values into fiveGService.state (HSM is the primary engine).
           // OpenSSL runs only for cross-check display; its state writes are overridden here.
-          if (profile === 'C') {
+          if (profile === 'A' || profile === 'B') {
+            // Profiles A/B: override sharedSecretHex with HSM ECDH result so downstream
+            // derive_keys (HSM path) and SIDF use the same Z that the HSM computed.
+            const sharedHandle = hsmHandlesRef.current.sharedSecretHandle
+            if (sharedHandle !== undefined) {
+              const M = hsm.moduleRef.current!
+              const hSession = hsm.hSessionRef.current!
+              const zBytes = hsm_extractKeyValue(M, hSession, sharedHandle)
+              fiveGService.state.sharedSecretHex = Array.from(zBytes)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+            }
+          } else if (profile === 'C') {
             const ct = hsmHandlesRef.current.kemCiphertext
             if (ct) {
               fiveGService.state.ciphertextHex = Array.from(ct)
@@ -1114,6 +1139,12 @@ ML-KEM Decapsulation executed via SoftHSM3 WASM.`
             }
             return out
           }
+          // ephemeralPubKeyHex holds either:
+          //   • SPKI-wrapped DER (44B X25519 / 91B P-256) when OpenSSL generated the key, OR
+          //   • raw EC point bytes (32B X25519 / 65B P-256) when HSM generated the key
+          //     (gen_ephemeral_key overrides with hsm_extractECPoint output).
+          // The length checks below handle both: SPKI branch strips the header, raw-point
+          // branch falls through to `ephSpkiSidf` directly (already the correct SharedInfo).
           const ephSpkiHexSidf = fiveGService.state.ephemeralPubKeyHex || ''
           const ephSpkiSidf = new Uint8Array(
             (ephSpkiHexSidf.match(/.{1,2}/g) ?? []).map((h: string) => parseInt(h, 16))
@@ -1245,7 +1276,6 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
     steps,
     onBack,
   })
-
   return (
     <div className="space-y-6">
       <div className="bg-muted/50 p-4 rounded-lg border border-border">
@@ -1288,7 +1318,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         <div className="flex flex-col md:flex-row gap-4">
           <button
             data-testid="profile-a-btn"
-            onClick={() => changeProfile('A')}
+            onClick={() => {
+              wizard.reset()
+              changeProfile('A')
+            }}
             className={clsx(
               'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'A'
@@ -1308,7 +1341,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
 
           <button
             data-testid="profile-b-btn"
-            onClick={() => changeProfile('B')}
+            onClick={() => {
+              wizard.reset()
+              changeProfile('B')
+            }}
             className={clsx(
               'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'B'
@@ -1328,7 +1364,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
 
           <button
             data-testid="profile-c-btn"
-            onClick={() => changeProfile('C')}
+            onClick={() => {
+              wizard.reset()
+              changeProfile('C')
+            }}
             className={clsx(
               'flex-1 p-3 rounded border text-left transition-all hover:bg-muted',
               profile === 'C'
@@ -1360,7 +1399,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </p>
           <div className="flex gap-4">
             <button
-              onClick={() => changePqcMode('hybrid')}
+              onClick={() => {
+                wizard.reset()
+                changePqcMode('hybrid')
+              }}
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'hybrid'
@@ -1372,7 +1414,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
             </button>
             <button
-              onClick={() => changePqcMode('pure')}
+              onClick={() => {
+                wizard.reset()
+                changePqcMode('pure')
+              }}
               className={clsx(
                 'flex-1 p-3 rounded border text-left transition-all',
                 pqcMode === 'pure'
@@ -1410,11 +1455,13 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         onBack={wizard.handleBack}
         onComplete={() => {
           if (profile === 'A') {
+            wizard.reset()
             changeProfile('B')
           } else if (profile === 'B') {
-            changeProfile('C')
-            changePqcMode('hybrid')
+            wizard.reset()
+            changeProfile('C') // also resets pqcMode → 'hybrid' internally
           } else if (profile === 'C' && pqcMode === 'hybrid') {
+            wizard.reset()
             changePqcMode('pure')
           } else {
             onBack()
@@ -1424,9 +1471,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           profile === 'A'
             ? 'Proceed to Profile B (P-256)'
             : profile === 'B'
-              ? 'Proceed to Hybrid (PQC + ECC)'
+              ? 'Proceed to Profile C — Hybrid (PQC + ECC)'
               : profile === 'C' && pqcMode === 'hybrid'
-                ? 'Proceed to Pure PQC Target'
+                ? 'Proceed to Profile C — Pure PQC'
                 : 'Finish & View Dashboard'
         }
       />

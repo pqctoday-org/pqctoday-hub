@@ -90,6 +90,14 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
     }
   }
 
+  const reset = () => {
+    setCurrentStep(0)
+    setIsExecuting(false)
+    setOutput(null)
+    setError(null)
+    setIsStepComplete(false)
+  }
+
   return {
     currentStep,
     isExecuting,
@@ -99,6 +107,7 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
     handleNext,
     handleBack,
     execute,
+    reset,
     setOutput, // Expose setters if manual control is needed
     setError,
     setIsStepComplete,

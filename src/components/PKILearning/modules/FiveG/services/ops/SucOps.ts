@@ -124,17 +124,41 @@ export async function visualizeStructure(ctx: FiveGService) {
 
   // Profile C: schemeOutput = kemCiphertext || msinCiphertext || macTag
   // Profile A: schemeOutput = rawX25519Key(32B) || msinCiphertext || macTag
-  // Profile B: schemeOutput = rawP256Point(65B) || msinCiphertext || macTag
+  // Profile B: schemeOutput = compressedP256Key(33B) || msinCiphertext || macTag
+  //            (ECDH uses uncompressed internally; SUCI encoding uses compressed per TS 33.501 Annex C.4)
   // Raw ephemeral key bytes — strip ASN.1 SPKI wrapper (12B for X25519, 26B for P-256).
   // For Profile C the ephSpki is already the raw 32-byte EC point (synced from HSM extractECPoint).
+  const uncompressedBHexViz =
+    ctx.state.profile === 'B' && ephSpki.length === 182 ? ephSpki.substring(52) : null
+  const compressedBHexViz = (() => {
+    if (!uncompressedBHexViz || uncompressedBHexViz.length !== 130) return uncompressedBHexViz
+    const x = uncompressedBHexViz.substring(2, 66)
+    const yLastByte = parseInt(uncompressedBHexViz.substring(128, 130), 16)
+    return (yLastByte % 2 === 0 ? '02' : '03') + x
+  })()
+
   const rawEphPubHex =
     ctx.state.profile === 'A' && ephSpki.length === 88
       ? ephSpki.substring(24) // X25519 SPKI: 12-byte header → skip 24 hex chars
-      : ctx.state.profile === 'B' && ephSpki.length === 182
-        ? ephSpki.substring(52) // P-256 SPKI: 26-byte header → skip 52 hex chars
+      : ctx.state.profile === 'B'
+        ? (compressedBHexViz ?? ephSpki) // compressed 33-byte P-256 key per TS 33.501
         : ctx.state.profile === 'C'
           ? ephSpki // already raw (HSM extractECPoint gives raw bytes, not SPKI)
           : ephSpki
+
+  // Profile B educational block: show both compressed and uncompressed
+  const profileBKeyNote =
+    ctx.state.profile === 'B' && uncompressedBHexViz && compressedBHexViz
+      ? `
+  ── EC Point Encoding (Profile B) ──────────────────────────────
+  UNCOMPRESSED (65 bytes, 04 prefix) — used for ECDH internally:
+    04 || x(32B) || y(32B) — both coordinates required to compute Z
+    ${uncompressedBHexViz.substring(0, 64)}...
+  COMPRESSED (33 bytes, 02/03 prefix) — used in SUCI over-the-air:
+    ${compressedBHexViz.startsWith('02') ? '02' : '03'} (y is ${compressedBHexViz.startsWith('02') ? 'even' : 'odd'}) || x(32B) — 32 bytes saved; SIDF recovers y via curve equation
+    ${compressedBHexViz}
+  ────────────────────────────────────────────────────────────────`
+      : ''
 
   // Prefix shown in the abbreviated SUCI string
   const schemePrefix =
@@ -149,7 +173,9 @@ export async function visualizeStructure(ctx: FiveGService) {
   const schemeOutputDesc =
     ctx.state.profile === 'C'
       ? 'kemCiphertext || msinCiphertext || macTag (hex concat)'
-      : 'rawEphPubKey || msinCiphertext || macTag (hex concat)'
+      : ctx.state.profile === 'B'
+        ? 'compressedEphPub(33B) || msinCiphertext || macTag (hex concat)'
+        : 'rawX25519EphPub(32B) || msinCiphertext || macTag (hex concat)'
 
   return `═══════════════════════════════════════════════════════════════
             SUCI STRUCTURE VISUALIZATION
@@ -166,7 +192,7 @@ export async function visualizeStructure(ctx: FiveGService) {
     ${cipher}
   > MAC Tag (8-byte HMAC truncation):
     ${mac}
-
+${profileBKeyNote}
 [3. Assembled SUCI (Privacy Preserving ID)]
   Format per 3GPP TS 23.003 §8.3:
   suci-0-<mcc>-<mnc>-<routingIndicator>-<schemeID>-<keyId>-<schemeOutput>
@@ -193,15 +219,29 @@ export async function assembleSUCI(ctx: FiveGService, profile: 'A' | 'B' | 'C') 
 
   // Per 3GPP TS 33.501 §C.3.3 + TS 23.003 §8.3:
   // schemeOutput = rawEphemeralPublicKey || msinCiphertext || macTag (hex concat, no separators)
-  // Raw key = SPKI with header stripped:
-  //   X25519 SPKI = 44 bytes → offset 12 → 32-byte raw key (24 hex chars stripped)
-  //   P-256  SPKI = 91 bytes → offset 26 → 65-byte uncompressed point (52 hex chars stripped)
+  // Profile A: raw 32-byte X25519 key (strip 12-byte SPKI header)
+  // Profile B: COMPRESSED 33-byte P-256 key per spec (02/03 prefix + 32-byte x-coord)
+  //            ECDH uses the uncompressed key internally; only the SUCI encoding uses compressed.
+  // Raw uncompressed = strip 26-byte SPKI header from 91-byte SPKI → 65-byte (04 || x || y)
+  // Compressed = 02/03 prefix based on y parity + x-coord (32 bytes)
+  const uncompressedBHex =
+    profile === 'B' && ephSpki.length === 182
+      ? ephSpki.substring(52) // 65-byte uncompressed P-256 point (incl. 04 prefix)
+      : null
+  const compressedBHex = (() => {
+    if (!uncompressedBHex || uncompressedBHex.length !== 130) return uncompressedBHex
+    const x = uncompressedBHex.substring(2, 66) // skip 04 prefix → 32-byte x
+    const yLastByte = parseInt(uncompressedBHex.substring(128, 130), 16)
+    const prefix = yLastByte % 2 === 0 ? '02' : '03'
+    return prefix + x
+  })()
+
   const rawEphPubHex =
     profile === 'A' && ephSpki.length === 88
       ? ephSpki.substring(24) // 32-byte X25519 raw key
-      : profile === 'B' && ephSpki.length === 182
-        ? ephSpki.substring(52) // 65-byte P-256 uncompressed point (incl. 04 prefix)
-        : ephSpki // fallback
+      : profile === 'B'
+        ? (compressedBHex ?? ephSpki) // compressed 33-byte P-256 key per TS 33.501
+        : ephSpki // fallback (Profile C: not used)
 
   // Profile C: schemeOutput = kemCiphertext || msinCiphertext || macTag
   // Profile A/B: schemeOutput = rawEphPubKey || msinCiphertext || macTag
@@ -212,13 +252,38 @@ export async function assembleSUCI(ctx: FiveGService, profile: 'A' | 'B' | 'C') 
   const suciBytes = new TextEncoder().encode(suciString)
   const suciHex = bytesToHex(suciBytes)
 
+  // For Profile B: build educational block showing both key encodings
+  const profileBKeyBlock =
+    profile === 'B' && uncompressedBHex && compressedBHex
+      ? `
+── Profile B: Ephemeral Public Key Encoding ──────────────────────
+  Two valid EC point encodings exist for P-256 (secp256r1):
+
+  UNCOMPRESSED (65 bytes, prefix 04):
+    Used internally for ECDH key agreement (§C.3.2).
+    Format: 04 || x(32 bytes) || y(32 bytes)
+    Why: ECDH requires both x and y coordinates to compute the
+         shared secret. The full point is needed by the recipient.
+    ${uncompressedBHex}
+
+  COMPRESSED (33 bytes, prefix 02/03):
+    Used in the over-the-air SUCI scheme output (§C.4 reference vectors).
+    Format: 02 (y even) or 03 (y odd) || x(32 bytes)
+    Why: Saves 32 bytes on the radio interface. The receiver (SIDF)
+         can reconstruct y from x and the curve equation y²=x³-3x+b.
+    ${compressedBHex}
+
+  → SUCI scheme output uses COMPRESSED form per TS 33.501 Annex C.4
+────────────────────────────────────────────────────────────────`
+      : ''
+
   const displayKey =
     profile === 'C'
       ? kemCt
         ? `${kemCt.substring(0, 32)}... (${kemCt.length / 2} bytes, ML-KEM-768 ciphertext)`
         : '[Missing KEM Ciphertext]'
       : rawEphPubHex
-        ? `${rawEphPubHex.substring(0, 32)}... (${rawEphPubHex.length / 2} bytes, raw ${profile === 'A' ? 'X25519' : 'P-256'} key)`
+        ? `${rawEphPubHex.substring(0, 32)}... (${rawEphPubHex.length / 2} bytes, ${profile === 'A' ? '32-byte X25519 raw key' : '33-byte P-256 compressed key'})`
         : '[Missing EphKey]'
 
   return `═══════════════════════════════════════════════════════════════
@@ -231,13 +296,13 @@ Step 1: Gathering Components (per 3GPP TS 23.003 §8.3)
   > Routing Indicator: ${routing}
   > Scheme ID:        ${scheme} (${profile === 'A' ? 'ECIES Profile A' : profile === 'B' ? 'ECIES Profile B' : 'KEM Profile C'})
   > Key Identifier:   ${keyId}
-
+${profileBKeyBlock}
 Step 2: Scheme Output Fields (hex-concatenated, no separators)
-  > ${profile === 'C' ? 'KEM Ciphertext' : 'Raw Ephemeral Public Key'}: ${displayKey}
+  > ${profile === 'C' ? 'KEM Ciphertext' : 'Ephemeral Public Key'}: ${displayKey}
   > MSIN Ciphertext:  ${cipher || '[Missing]'} (${cipher.length / 2 || 0} bytes)
   > MAC Tag:          ${mac || '[Missing]'} (${mac.length / 2 || 0} bytes)
 
-Step 3: schemeOutput = ${profile === 'C' ? 'kemCt' : 'rawEphPub'} || msinCipher || macTag
+Step 3: schemeOutput = ${profile === 'C' ? 'kemCt' : profile === 'B' ? 'compressedEphPub(33B)' : 'rawX25519EphPub(32B)'} || msinCipher || macTag
   ${schemeOutputHex.substring(0, 64)}${schemeOutputHex.length > 64 ? '...' : ''}
 
 Step 4: Final SUCI String (3GPP TS 23.003 §8.3 format)
