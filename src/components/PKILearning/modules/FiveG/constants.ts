@@ -59,15 +59,17 @@ const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
       description:
         "Perform Diffie-Hellman Key Agreement using the selected curve (X25519 for Profile A, P-256 for Profile B). The USIM combines its ephemeral private key with the Home Network's public key to derive the shared secret Z.",
       code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (X25519)
-// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
-// Note: CKM_ECDH1_DERIVE is for Weierstrass curves (P-256/P-384) only.
+// PKCS#11 v3.2: Both X25519 and P-256 use CKM_ECDH1_DERIVE (0x1050).
+// SoftHSMv3 dispatches internally based on CKA_KEY_TYPE:
+//   CKK_EC_MONTGOMERY (0x41) → X25519 Montgomery DH (deriveEDDSA path)
+//   CKK_EC (0x03)            → P-256 Weierstrass DH (deriveECDH path)
 const sharedSecretHandle = hsm_ecdhDerive(
   hsmd,
   sessionHandle,
-  ephPriv,      // Ephemeral Private Key
+  ephPriv,      // Ephemeral Private Key (CKK_EC_MONTGOMERY for X25519)
   hnPubHandle,  // Network Public Key
   false         // False = Raw Z extraction
-); // → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)`,
+); // → C_DeriveKey(CKM_ECDH1_DERIVE) — routed to Montgomery DH by key type`,
       output: `[USIM] Executing ECDH (X25519)...\n[USIM] Shared Secret (Z): [PROTECTED]`,
     },
     {
@@ -183,9 +185,10 @@ const suciB = {
       description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
       code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profile A, X25519)
 // 1. Re-derive Z (X25519 ECDH: HN private key + UE ephemeral public key)
-// PKCS#11 v3.2: X25519 uses CKM_EC_MONTGOMERY_KEY_DERIVE (not CKM_ECDH1_DERIVE)
+// PKCS#11 v3.2: CKM_ECDH1_DERIVE (0x1050) is used for both X25519 and P-256.
+// SoftHSMv3 routes to Montgomery DH because hnPrivHandle has CKA_KEY_TYPE=CKK_EC_MONTGOMERY.
 const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
-// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
+// → C_DeriveKey(CKM_ECDH1_DERIVE) — X25519 path selected by key type
 
 // 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
@@ -481,8 +484,9 @@ const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle,
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
 // Step B (hybrid only): X25519 ECDH(ephPriv, hnEccPub) → Z_ecdh
-// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
-// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
+// PKCS#11 v3.2: CKM_ECDH1_DERIVE (0x1050) is used; SoftHSMv3 routes to
+// Montgomery DH because the private key has CKA_KEY_TYPE=CKK_EC_MONTGOMERY.
+// → C_DeriveKey(CKM_ECDH1_DERIVE) — X25519 path selected by key type
 const hnEccPubBytes = hsm_extractECPoint(M, hSession, hnEccPubHandle)
 const zEcdhHandle = hsm_ecdhDerive(M, hSession, ephPrivHandle, hnEccPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
@@ -589,8 +593,9 @@ const zKemHandle = hsm_pqcDecap(M, hSession, hnPrivHandle, kemCiphertext, 'ML-KE
 const zKemBytes = hsm_extractKeyValue(M, hSession, zKemHandle)
 
 // 2. Hybrid only: X25519 ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
-// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
-// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
+// PKCS#11 v3.2: CKM_ECDH1_DERIVE (0x1050) is used for both X25519 and P-256.
+// SoftHSMv3 routes to Montgomery DH because hnEccPrivHandle has CKA_KEY_TYPE=CKK_EC_MONTGOMERY.
+// → C_DeriveKey(CKM_ECDH1_DERIVE) — X25519 path selected by key type
 const ephPubBytes = hsm_extractECPoint(M, hSession, ephPubHandle)
 const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
