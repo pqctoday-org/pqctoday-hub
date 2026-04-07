@@ -66,7 +66,7 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
       badge: 'Analysis',
       badgeColor: 'bg-warning/20 text-warning border-warning/50',
       observe:
-        'The inclusion proof size (~96 bytes for this demo, ~736 bytes for production batches of 4.4M certs) is constant regardless of the signature algorithm. This means MTC savings grow proportionally: from ~27% for ECDSA to ~64% for SLH-DSA-128s. For ML-DSA-44 (the most likely PQC deployment), the reduction is ~62%.',
+        'The inclusion proof size (~96 bytes for this demo, ~736 bytes for production batches of 4.4M certs) is constant regardless of signature algorithm. MTC savings therefore scale with signature size: for ECDSA (64 B sig), standalone savings are only ~3% — the 736 B proof dwarfs the tiny 64 B signature it replaces, so the standalone cert is nearly the same size as a traditional chain. For ML-DSA-44 (2,420 B sig), savings are ~60% standalone and ~92% landmark. For SLH-DSA-128s (7,856 B sig), standalone savings reach ~63%. MTCs are designed for PQC migration — they solve a problem that barely exists for compact classical algorithms.',
       workshopStep: 3,
     },
   ]

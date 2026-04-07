@@ -6,6 +6,60 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.90.0] - 2026-04-07
+
+### Added
+
+- **MTC Workshop — shared tree state across Steps 1→2→3**: Steps 1, 2, and 3 now share a
+  continuous Merkle tree. When a tree is built in Step 1, `MerkleWorkshopSteps` captures it via
+  `onTreeBuilt` callback and passes `sharedLevels`/`sharedCerts` to both `InclusionProofGenerator`
+  (Step 2) and `ProofVerifier` (Step 3). Each step shows a "Your tree from Step 1 is loaded"
+  callout and adapts its button label (e.g. "Build Tree with 8 Certificates from Step 1"). Steps
+  fall back to 8 sample certificates when no prior tree is present.
+- **MTC Workshop — Landmark MTC column in Step 4 size comparison**: `SizeComparison` now shows a
+  third column alongside Traditional X.509 and Standalone MTC — Landmark MTC (proof + metadata
+  only, zero embedded signatures). Includes reduction badge for both standalone and landmark modes.
+- **MTC Workshop — Step 4→5 bridge text**: `SizeComparison` description now ends with "In Step 5,
+  you'll see the CA sign a real Merkle root with ML-DSA-44 — that single signature is what makes
+  these size savings possible." `CTLogSimulator` adds a "Bringing it together" paragraph at the top
+  of the Submission panel connecting Steps 1–4 to the live PKCS#11 signing demo.
+- **MTC Workshop — production-use context in ProofVerifier**: Added explanatory sentence that in
+  the MTC model the inclusion proof is embedded in the certificate and used by relying parties to
+  verify batch inclusion without downloading the full tree.
+- **MTC Workshop — padding divergence disclosure**: `MerkleTreeBuilder` now shows an amber callout
+  when the leaf count is not a power of two, explaining the simplified duplicate-last-leaf padding
+  vs. RFC 9162 §2.1.2's unbalanced binary tree and noting the root hashes will differ.
+- **MTC — Landmark MTC functions in `mtcConstants.ts`**: Added `mtcLandmarkChainSize()`,
+  `landmarkReductionPercent`, `mtcLandmark`, and `mtcLandmarkTotal` fields to `SizeBreakdown`
+  and `getSizeBreakdown()`. `mtcChainSize()` now accepts an optional `proofBytes` parameter.
+
+### Fixed
+
+- **MTC Workshop — KAT signing spec corrected**: `MerkleTreeBuilder` KAT for tree-root signing
+  was incorrectly referencing SLH-DSA (FIPS 205). Fixed to ML-DSA-44 (FIPS 204) with
+  `kind: { type: 'mldsa-functional', variant: 44 }` — matching the actual CT Log simulator which
+  signs with ML-DSA-44 via SoftHSMv3.
+- **MTC Workshop — ECDSA standalone savings corrected**: Static text in `MTCExercises` and
+  `rag-summary.md` now correctly states ~3% standalone savings for ECDSA P-256 (was incorrectly
+  ~15% after a prior round of fixes). Arithmetic: traditional 1,225 B → standalone 1,193 B = 2.6%.
+- **MTC Workshop — SCT count and traditional total corrected**: `MTCIntroduction` static table
+  footnote corrected from "4 SCTs (476 B)" to "2 SCTs (238 B)". Traditional ML-DSA-44 total
+  corrected from 12,272 B to 12,034 B throughout all static text.
+- **MTC Workshop — ML-DSA-44 savings corrected to 60%**: All static text references ("61%",
+  "62%") unified to 60% matching `getSizeBreakdown()` output.
+- **MTC Workshop — `PROOF_VERIFIER_CERTS` stabilised with `useMemo`**: The derived cert list in
+  `ProofVerifier` was recomputed as a new array reference on every render, causing `handleSetup`
+  (which had it in its `useCallback` deps) to be recreated unnecessarily. Wrapped in `useMemo`.
+- **MTC Workshop — "Step 1 — Generate CA Key" label conflict**: Label inside `CTLogSimulator`
+  SubmissionPanel renamed to "Generate CA Key" to avoid collision with the workshop's global Step 1.
+- **MTC Workshop — CA key label now includes size**: `CTLogSimulator` registers the CA public key
+  with label "CT Log CA Public Key (ML-DSA-44, 1,312 B)" in the key inspector.
+- **MTC Workshop — Step 1 stats bar clarified**: Bar label updated to "3× ML-DSA-44 Sigs (sig
+  bytes only)" and footnote updated to direct users to Step 4 for the full chain breakdown.
+- **MTC Workshop — draft status disclosed**: `MTCIntroduction` IETF section now includes an amber
+  "Draft — not yet an RFC" badge and a timeline note: "Status: Active IETF draft — not yet
+  standardized as an RFC. Not recommended for production deployment without vendor support."
+
 ## [2.89.5] - 2026-04-07
 
 ### Fixed

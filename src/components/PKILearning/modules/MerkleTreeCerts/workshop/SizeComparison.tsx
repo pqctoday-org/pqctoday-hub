@@ -59,7 +59,8 @@ export const SizeComparison: React.FC = () => {
         <p className="text-sm text-muted-foreground">
           Compare the total authentication data transmitted during a TLS handshake using traditional
           X.509 certificate chains versus Merkle Tree Certificates. Adjust the batch size to see how
-          proof size scales logarithmically.
+          proof size scales logarithmically. In Step 5, you&apos;ll see the CA sign a real Merkle
+          root with ML-DSA-44 — that single signature is what makes these size savings possible.
         </p>
       </div>
 
@@ -131,7 +132,7 @@ export const SizeComparison: React.FC = () => {
       </div>
 
       {/* Detailed breakdown for selected algorithm */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Traditional */}
         <div className="bg-destructive/5 rounded-lg p-4 border border-destructive/20">
           <h4 className="text-sm font-bold text-destructive mb-3">Traditional X.509 Chain</h4>
@@ -161,9 +162,12 @@ export const SizeComparison: React.FC = () => {
           </div>
         </div>
 
-        {/* MTC */}
+        {/* Standalone MTC */}
         <div className="bg-success/5 rounded-lg p-4 border border-success/20">
           <h4 className="text-sm font-bold text-success mb-3">Standalone MTC</h4>
+          <p className="text-[10px] text-muted-foreground mb-2">
+            Includes cosignatures — works without predistributed state.
+          </p>
           <div className="space-y-2">
             {breakdown.mtc.map((item, i) => (
               <div key={i}>
@@ -189,14 +193,59 @@ export const SizeComparison: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {/* Landmark MTC */}
+        <div className="bg-primary/5 rounded-lg p-4 border border-primary/20">
+          <h4 className="text-sm font-bold text-primary mb-3">
+            Landmark MTC{' '}
+            <span className="text-[10px] font-normal text-success">(no signatures)</span>
+          </h4>
+          <p className="text-[10px] text-muted-foreground mb-2">
+            Client pre-syncs trusted subtree — zero signatures in the TLS handshake.
+          </p>
+          <div className="space-y-2">
+            {breakdown.mtcLandmark.map((item, i) => (
+              <div key={i}>
+                <div className="flex justify-between items-center text-xs mb-0.5">
+                  <span className="text-muted-foreground">{item.component}</span>
+                  <span className="font-mono text-foreground">{formatBytes(item.bytes)}</span>
+                </div>
+                <div className="bg-muted rounded-full h-1.5 overflow-hidden">
+                  <div
+                    className="h-full bg-primary/40 rounded-full transition-all duration-500"
+                    style={{
+                      width: `${(item.bytes / breakdown.traditionalTotal) * 100}%`,
+                    }}
+                  />
+                </div>
+              </div>
+            ))}
+            <div className="border-t border-primary/20 pt-2 mt-2 flex justify-between items-center">
+              <span className="text-sm font-bold text-foreground">Total</span>
+              <span className="text-sm font-bold font-mono text-primary">
+                {formatBytes(breakdown.mtcLandmarkTotal)}
+              </span>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {/* Reduction badge */}
-      <div className="text-center bg-success/10 rounded-lg p-4 border border-success/30">
-        <span className="text-3xl font-bold text-success">{breakdown.reductionPercent}%</span>
-        <span className="text-sm text-muted-foreground ml-2">
-          smaller with MTC ({algo.shortName})
-        </span>
+      {/* Reduction badges */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="text-center bg-success/10 rounded-lg p-4 border border-success/30">
+          <span className="text-3xl font-bold text-success">{breakdown.reductionPercent}%</span>
+          <div className="text-sm text-muted-foreground mt-1">
+            smaller — Standalone MTC ({algo.shortName})
+          </div>
+        </div>
+        <div className="text-center bg-primary/10 rounded-lg p-4 border border-primary/30">
+          <span className="text-3xl font-bold text-primary">
+            {breakdown.landmarkReductionPercent}%
+          </span>
+          <div className="text-sm text-muted-foreground mt-1">
+            smaller — Landmark MTC ({algo.shortName})
+          </div>
+        </div>
       </div>
 
       {/* All algorithms comparison chart */}
@@ -220,12 +269,19 @@ export const SizeComparison: React.FC = () => {
                   >
                     {a.shortName}
                   </span>
-                  <span className="text-success font-bold">&minus;{b.reductionPercent}%</span>
+                  <div className="flex items-center gap-3">
+                    <span className="text-success font-bold text-[10px]">
+                      Standalone &minus;{b.reductionPercent}%
+                    </span>
+                    <span className="text-primary font-bold text-[10px]">
+                      Landmark &minus;{b.landmarkReductionPercent}%
+                    </span>
+                  </div>
                 </div>
                 {/* Traditional bar */}
                 <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] text-muted-foreground w-16 shrink-0">Trad.</span>
-                  <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
+                  <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
                     <div
                       className="h-full bg-destructive/50 rounded-full transition-all duration-500"
                       style={{ width: `${(b.traditionalTotal / globalMax) * 100}%` }}
@@ -235,10 +291,10 @@ export const SizeComparison: React.FC = () => {
                     {formatBytes(b.traditionalTotal)}
                   </span>
                 </div>
-                {/* MTC bar */}
-                <div className="flex items-center gap-2">
+                {/* Standalone MTC bar */}
+                <div className="flex items-center gap-2 mb-1">
                   <span className="text-[10px] text-muted-foreground w-16 shrink-0">MTC</span>
-                  <div className="flex-1 bg-muted rounded-full h-3 overflow-hidden">
+                  <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
                     <div
                       className="h-full bg-success/50 rounded-full transition-all duration-500"
                       style={{ width: `${(b.mtcTotal / globalMax) * 100}%` }}
@@ -246,6 +302,19 @@ export const SizeComparison: React.FC = () => {
                   </div>
                   <span className="text-[10px] font-mono text-muted-foreground w-14 text-right shrink-0">
                     {formatBytes(b.mtcTotal)}
+                  </span>
+                </div>
+                {/* Landmark MTC bar */}
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] text-muted-foreground w-16 shrink-0">Landmark</span>
+                  <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
+                    <div
+                      className="h-full bg-primary/50 rounded-full transition-all duration-500"
+                      style={{ width: `${(b.mtcLandmarkTotal / globalMax) * 100}%` }}
+                    />
+                  </div>
+                  <span className="text-[10px] font-mono text-muted-foreground w-14 text-right shrink-0">
+                    {formatBytes(b.mtcLandmarkTotal)}
                   </span>
                 </div>
               </div>
@@ -261,10 +330,13 @@ export const SizeComparison: React.FC = () => {
           <div className="text-xs text-muted-foreground">
             <strong className="text-foreground">Key insight:</strong> The MTC inclusion proof size (
             {formatBytes(proofBytes)} for {formatBatchSize(batchSize)} certs) grows{' '}
-            <em>logarithmically</em> with batch size &mdash; doubling the batch adds only 32 bytes
-            to the proof. Traditional X.509 chain size is unaffected by batch size, so MTC savings
-            grow proportionally with signature size: from ~{allBreakdowns[0].reductionPercent}% for
-            ECDSA to ~{allBreakdowns[allBreakdowns.length - 1].reductionPercent}% for SLH-DSA-128s.
+            <em>logarithmically</em> with batch size &mdash; doubling the batch adds only 32 bytes.
+            Standalone savings range from ~{allBreakdowns[0].reductionPercent}% (ECDSA) to ~
+            {allBreakdowns[allBreakdowns.length - 1].reductionPercent}% (SLH-DSA-128s). Landmark
+            mode eliminates all signatures from the handshake (client pre-syncs the trusted
+            subtree), raising savings to ~{allBreakdowns[0].landmarkReductionPercent}%–
+            {allBreakdowns[allBreakdowns.length - 1].landmarkReductionPercent}% regardless of
+            algorithm.
           </div>
         </div>
       </div>
@@ -277,11 +349,11 @@ export const SizeComparison: React.FC = () => {
             <tr className="text-muted-foreground border-b border-border">
               <th className="text-left py-2 pr-3">Algorithm</th>
               <th className="text-left py-2 px-2">Category</th>
-              <th className="text-right py-2 px-2">Sig Size</th>
-              <th className="text-right py-2 px-2">Key Size</th>
               <th className="text-right py-2 px-2">Traditional</th>
-              <th className="text-right py-2 px-2">MTC</th>
-              <th className="text-right py-2 pl-2">Saved</th>
+              <th className="text-right py-2 px-2">Standalone</th>
+              <th className="text-right py-2 px-2">Landmark</th>
+              <th className="text-right py-2 px-2">Standalone ↓</th>
+              <th className="text-right py-2 pl-2">Landmark ↓</th>
             </tr>
           </thead>
           <tbody>
@@ -313,17 +385,19 @@ export const SizeComparison: React.FC = () => {
                     </span>
                   </td>
                   <td className="text-right py-2 px-2 font-mono">
-                    {formatBytes(a.signatureBytes)}
-                  </td>
-                  <td className="text-right py-2 px-2 font-mono">
-                    {formatBytes(a.publicKeyBytes)}
-                  </td>
-                  <td className="text-right py-2 px-2 font-mono">
                     {formatBytes(b.traditionalTotal)}
                   </td>
-                  <td className="text-right py-2 px-2 font-mono">{formatBytes(b.mtcTotal)}</td>
-                  <td className="text-right py-2 pl-2 font-bold text-success">
+                  <td className="text-right py-2 px-2 font-mono text-success">
+                    {formatBytes(b.mtcTotal)}
+                  </td>
+                  <td className="text-right py-2 px-2 font-mono text-primary">
+                    {formatBytes(b.mtcLandmarkTotal)}
+                  </td>
+                  <td className="text-right py-2 px-2 font-bold text-success">
                     {b.reductionPercent}%
+                  </td>
+                  <td className="text-right py-2 pl-2 font-bold text-primary">
+                    {b.landmarkReductionPercent}%
                   </td>
                 </tr>
               )

@@ -144,7 +144,14 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
   return (
     <div className="space-y-5">
       {/* Educational context */}
-      <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-1">
+      <div className="bg-muted/50 rounded-lg p-3 border border-border text-xs text-muted-foreground space-y-2">
+        <p>
+          <strong className="text-foreground">Bringing it together:</strong> In Steps 1–3 you built
+          a Merkle tree, generated inclusion proofs, and verified them. In Step 4 you saw how that
+          proof replaces multiple large PQC signatures. Now watch the CA sign a real Merkle root
+          with ML-DSA-44 via SoftHSMv3 — that single signature (2,420 B) is what covers all N
+          certificates in the batch and makes those size savings real.
+        </p>
         <p>
           <strong className="text-foreground">MTC key insight:</strong> In traditional PKI, the CA
           signs every certificate individually — with ML-DSA-44 that&apos;s{' '}
@@ -153,6 +160,16 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           <strong className="text-success">only the tree root once</strong> — one ML-DSA-44
           signature covers all N certs in the batch.
         </p>
+        <p className="text-[10px] border-t border-border/50 pt-1.5">
+          <strong className="text-foreground">Simplified signed payload:</strong> This demo signs a
+          UTF-8 string{' '}
+          <span className="font-mono bg-muted rounded px-1">
+            &ldquo;MTC|&lt;root&gt;|&lt;treeSize&gt;|&lt;timestamp&gt;&rdquo;
+          </span>
+          . The actual <span className="font-mono">draft-ietf-plants-merkle-tree-certs</span> spec
+          (§5.3) defines a binary TLV-encoded <strong className="text-foreground">TreeHead</strong>{' '}
+          structure. The cryptographic principle — sign the root hash with ML-DSA-44 — is identical.
+        </p>
       </div>
 
       {/* CA Key state */}
@@ -160,7 +177,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
         <div className="bg-primary/5 rounded-lg p-3 border border-primary/20">
           <div className="flex items-center gap-2 mb-2">
             <Key size={14} className="text-primary" />
-            <span className="text-xs font-bold text-foreground">Step 1 — Generate CA Key</span>
+            <span className="text-xs font-bold text-foreground">Generate CA Key</span>
           </div>
           <p className="text-[10px] text-muted-foreground mb-2">
             Generate the CA&apos;s ML-DSA-44 key pair via SoftHSMv3. This key will sign the Merkle
@@ -741,6 +758,14 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
           {hsmReady ? 'fail via SoftHSMv3 C_VerifyMessage' : 'be flagged as invalid'}. Edit any cert
           below, then re-audit.
         </p>
+        <p className="text-[10px] text-muted-foreground mt-1">
+          <strong className="text-foreground">Monitor role:</strong> An independent CT monitor
+          continuously downloads each signed batch and compares the CA&apos;s published root against
+          its own recomputation. A mismatch — even a single modified certificate — produces a
+          different root hash, invalidating the ML-DSA signature. Because the STH is <em>public</em>
+          , any monitor in the world can detect and report the discrepancy, making undetected
+          misissuance computationally infeasible.
+        </p>
       </div>
 
       {/* Published STH */}
@@ -982,7 +1007,7 @@ export const CTLogSimulator: React.FC = () => {
       handle: pubHandle,
       family: 'ml-dsa',
       role: 'public',
-      label: 'CT Log CA Public Key (ML-DSA-44)',
+      label: 'CT Log CA Public Key (ML-DSA-44, 1,312 B)',
       variant: '44',
       generatedAt: new Date().toISOString(),
     })

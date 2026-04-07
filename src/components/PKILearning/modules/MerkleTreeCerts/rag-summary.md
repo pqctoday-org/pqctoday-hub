@@ -1,6 +1,6 @@
 # Merkle Tree Certificates Module
 
-This module addresses the certificate bloat problem created by post-quantum digital signatures and teaches how Merkle Tree Certificates (MTCs) solve it. PQC signatures are dramatically larger than classical ones: an ECDSA P-256 signature is 64 bytes while ML-DSA-44 is 2,420 bytes, a 37x increase. A typical PQC TLS certificate chain adds 18-36 KB of overhead, breaking constrained clients and degrading connection setup times. MTCs replace individual per-certificate signatures with a batch-signing approach using Merkle trees, achieving 27–64% size reduction depending on algorithm (62–64% for ML-DSA chains).
+This module addresses the certificate bloat problem created by post-quantum digital signatures and teaches how Merkle Tree Certificates (MTCs) solve it. PQC signatures are dramatically larger than classical ones: an ECDSA P-256 signature is 64 bytes while ML-DSA-44 is 2,420 bytes, a 37x increase. A typical PQC TLS certificate chain adds 18-36 KB of overhead, breaking constrained clients and degrading connection setup times. MTCs replace individual per-certificate signatures with a batch-signing approach using Merkle trees, achieving 3–63% standalone size reduction depending on algorithm (60–63% for ML-DSA/SLH-DSA chains; ~3% standalone for ECDSA P-256 where the 736 B proof dwarfs the 64 B signature it replaces).
 
 ## Key Concepts
 
@@ -13,7 +13,7 @@ This module addresses the certificate bloat problem created by post-quantum digi
 - **Tradeoffs**: Landmark certs require relying parties to pre-sync trusted subtrees periodically (not suitable for offline devices); revocation uses Revocation by Index (revoked ranges of indices per Section 7.5); trust requires meeting cosigner requirements; standalone certs work without pre-sync but carry additional cosigner signature overhead
 - **IETF standardization**: Originated as draft-davidben-tls-merkle-tree-certs (draft-10, January 2026), adopted by IETF PLANTS working group as draft-ietf-plants-merkle-tree-certs (currently draft-02, March 2026); authors from Google, Cloudflare, and Geomys
 - **Connection to hash-based signatures**: SLH-DSA (FIPS 205) uses a hyper-tree of XMSS trees internally (with FORS one-time signing at the leaves); LMS and XMSS use Merkle trees for one-time signing key pools; MTCs apply the same principle at the infrastructure level
-- **Landmark certificates (signatureless)**: Zero embedded signatures — relying parties periodically pre-sync trusted landmark subtrees out-of-band (e.g. every hour per Section 6.4); inclusion proof verified against cached landmark root. Size: ~936 bytes for ML-DSA-44 (92% reduction vs traditional 12,272 bytes)
+- **Landmark certificates (signatureless)**: Zero embedded signatures — relying parties periodically pre-sync trusted landmark subtrees out-of-band (e.g. every hour per Section 6.4); inclusion proof verified against cached landmark root. Size: ~936 bytes for ML-DSA-44 (92% reduction vs traditional 12,034 bytes)
 
 ## Workshop Activities
 

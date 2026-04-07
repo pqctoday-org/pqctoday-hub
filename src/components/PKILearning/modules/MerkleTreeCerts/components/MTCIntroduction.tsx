@@ -243,7 +243,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             <div className="text-sm font-bold text-success mb-2">Advantages (both types)</div>
             <ul className="text-xs text-muted-foreground space-y-1">
               <li>
-                &bull; Massive size reduction (62&ndash;64% standalone, 92% landmark for ML-DSA)
+                &bull; Massive size reduction (60&ndash;63% standalone, 92% landmark for ML-DSA)
               </li>
               <li>&bull; Single CA signing operation covers millions of certificates</li>
               <li>&bull; Inclusion proof is pure hash computation &mdash; fast to verify</li>
@@ -348,7 +348,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                     <td className="text-right py-2 px-2 font-mono">11,196 B</td>
                     <td className="text-right py-2 px-2 font-mono text-muted-foreground">—</td>
                     <td className="text-right py-2 px-2 font-mono text-destructive font-bold">
-                      12,272 B
+                      12,034 B
                     </td>
                     <td className="text-right py-2 pl-2 text-muted-foreground">baseline</td>
                   </tr>
@@ -359,7 +359,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                     <td className="text-right py-2 px-2 font-mono text-primary font-bold">
                       4,796 B
                     </td>
-                    <td className="text-right py-2 pl-2 text-success font-bold">61%</td>
+                    <td className="text-right py-2 pl-2 text-success font-bold">60%</td>
                   </tr>
                   <tr>
                     <td className="py-2 pr-3 font-medium text-foreground">
@@ -373,7 +373,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
                 </tbody>
               </table>
               <p className="text-[10px] text-muted-foreground mt-2">
-                Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 4 SCTs (476 B) + metadata (600
+                Traditional: 3 sigs (7,260 B) + 3 keys (3,936 B) + 2 SCTs (238 B) + metadata (600
                 B). Standalone: 1 CA sig (2,420 B) + 1 key (1,312 B) + cosigner sigs (~128 B) + 736
                 B proof + 200 B metadata. Landmark: 736 B proof + 200 B metadata only &mdash; client
                 has trusted subtree cached. Cosigner overhead is policy-dependent (minimum shown).
@@ -400,7 +400,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
           Merkle Tree Certificates originated as <em>draft-davidben-tls-merkle-tree-certs</em>{' '}
           (reaching draft-10, January 2026) and have since been adopted by the IETF PLANTS working
           group as <em>draft-ietf-plants-merkle-tree-certs</em>. The draft has five co-equal authors
-          across Google, Cloudflare, and Geomys.
+          across Google, Cloudflare, and Geomys.{' '}
+          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-bold bg-warning/20 text-warning border border-warning/40">
+            Draft — not yet an RFC
+          </span>
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="bg-muted/50 rounded-lg p-3 border border-border">
@@ -417,6 +420,10 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
               </li>
               <li>
                 &bull; March 2026: <code>draft-ietf-plants-merkle-tree-certs-02</code> published
+              </li>
+              <li className="text-warning font-medium pt-1">
+                &bull; Status: Active IETF draft — not yet standardized as an RFC. Not recommended
+                for production deployment without vendor support.
               </li>
             </ul>
           </div>

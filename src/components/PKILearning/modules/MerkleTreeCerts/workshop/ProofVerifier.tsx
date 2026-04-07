@@ -20,6 +20,7 @@ import {
   type VerificationStep,
 } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash } from '../data/mtcConstants'
+import type { CertLeaf } from '../utils/merkleTree'
 
 /** Compute the hex complement of a single hex character (0↔f, 1↔e, ...) */
 function hexComplement(char: string): string {
@@ -34,10 +35,19 @@ interface PathAnnotation {
 }
 
 const circledNumbers = ['\u2460', '\u2461', '\u2462', '\u2463', '\u2464', '\u2465']
-const PROOF_VERIFIER_CERTS = SAMPLE_CERTS.slice(0, 8)
+const DEFAULT_VERIFIER_CERTS = SAMPLE_CERTS.slice(0, 8)
 
-export const ProofVerifier: React.FC = () => {
-  const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
+interface ProofVerifierProps {
+  sharedLevels?: MerkleNode[][] | null
+  sharedCerts?: CertLeaf[] | null
+}
+
+export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, sharedCerts }) => {
+  const PROOF_VERIFIER_CERTS = useMemo(
+    () => (sharedCerts && sharedCerts.length > 0 ? sharedCerts : DEFAULT_VERIFIER_CERTS),
+    [sharedCerts]
+  )
+  const [levels, setLevels] = useState<MerkleNode[][] | null>(sharedLevels ?? null)
   const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null)
   const [originalProof, setOriginalProof] = useState<InclusionProof | null>(null)
   const [editableProof, setEditableProof] = useState<InclusionProof | null>(null)
@@ -71,7 +81,7 @@ export const ProofVerifier: React.FC = () => {
     } finally {
       setIsBuilding(false)
     }
-  }, [])
+  }, [PROOF_VERIFIER_CERTS])
 
   const handleSelectLeaf = useCallback(
     (leafIndex: number) => {
@@ -240,7 +250,27 @@ export const ProofVerifier: React.FC = () => {
           Click any hex character in the sibling hashes to tamper with it, then verify to see how
           the avalanche effect causes complete verification failure.
         </p>
+        <p className="text-sm text-muted-foreground mt-1">
+          In the MTC model, this proof is embedded in the certificate itself — relying parties use
+          it to verify the cert was included in the CA&apos;s signed batch without downloading the
+          full tree.
+        </p>
       </div>
+
+      {/* Step 1 continuity tip */}
+      {sharedCerts && sharedCerts.length > 0 ? (
+        <div className="bg-primary/5 rounded-lg p-3 border border-primary/20 text-xs text-foreground">
+          <ShieldCheck size={12} className="inline mr-1 text-primary" />
+          <strong>Your tree from Step 1 is loaded</strong> ({sharedCerts.length} certificates).
+          Build the tree below to verify proofs against the same certs you built.
+        </div>
+      ) : (
+        <div className="bg-muted/50 rounded-lg p-3 border border-border text-[10px] text-muted-foreground">
+          <strong className="text-foreground">Tip:</strong> Build your own tree in Step 1 first — it
+          will automatically load here so you can verify your own certificates&apos; inclusion
+          proofs.
+        </div>
+      )}
 
       {/* Setup */}
       {!levels ? (
@@ -255,7 +285,10 @@ export const ProofVerifier: React.FC = () => {
             </>
           ) : (
             <>
-              <ShieldCheck size={16} /> Build Tree &amp; Select a Leaf
+              <ShieldCheck size={16} />{' '}
+              {sharedCerts && sharedCerts.length > 0
+                ? `Build Tree with ${sharedCerts.length} Certificates from Step 1`
+                : 'Build Tree & Select a Leaf'}
             </>
           )}
         </Button>

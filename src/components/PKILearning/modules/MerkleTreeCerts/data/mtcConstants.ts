@@ -125,14 +125,25 @@ export const COSIGNER_SIGNATURE_OVERHEAD_BYTES = 128
  * Components: 1 CA signature + 1 CA public key + cosigner signatures + inclusion proof + metadata
  * Per Section 6.2, standalone certs carry sufficient cosignatures to meet relying party requirements.
  */
-export function mtcChainSize(algo: AlgorithmSizes): number {
+export function mtcChainSize(algo: AlgorithmSizes, proofBytes?: number): number {
   return (
     algo.signatureBytes +
     algo.publicKeyBytes +
     COSIGNER_SIGNATURE_OVERHEAD_BYTES +
-    MTC_INCLUSION_PROOF_BYTES +
+    (proofBytes ?? MTC_INCLUSION_PROOF_BYTES) +
     CERT_METADATA_BYTES
   )
+}
+
+/**
+ * Calculate landmark MTC TLS handshake authentication size.
+ *
+ * Landmark certificates carry ZERO embedded signatures — relying parties pre-sync
+ * trusted subtrees out-of-band. Per draft-ietf-plants-merkle-tree-certs §6.3:
+ * only the inclusion proof + certificate metadata are transmitted in the handshake.
+ */
+export function mtcLandmarkChainSize(proofBytes?: number): number {
+  return (proofBytes ?? MTC_INCLUSION_PROOF_BYTES) + CERT_METADATA_BYTES
 }
 
 /** Breakdown for display in the size comparison table */
@@ -140,9 +151,12 @@ export interface SizeBreakdown {
   label: string
   traditional: { component: string; bytes: number }[]
   mtc: { component: string; bytes: number }[]
+  mtcLandmark: { component: string; bytes: number }[]
   traditionalTotal: number
   mtcTotal: number
+  mtcLandmarkTotal: number
   reductionPercent: number
+  landmarkReductionPercent: number
 }
 
 export function getSizeBreakdown(algo: AlgorithmSizes, proofBytes?: number): SizeBreakdown {
@@ -164,18 +178,29 @@ export function getSizeBreakdown(algo: AlgorithmSizes, proofBytes?: number): Siz
     { component: 'Inclusion proof', bytes: proof },
     { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
   ]
+  const mtcLandmark = [
+    { component: 'Inclusion proof (to pre-synced subtree)', bytes: proof },
+    { component: 'Certificate metadata', bytes: CERT_METADATA_BYTES },
+  ]
 
   const traditionalTotal = traditional.reduce((sum, c) => sum + c.bytes, 0)
   const mtcTotal = mtc.reduce((sum, c) => sum + c.bytes, 0)
+  const mtcLandmarkTotal = mtcLandmark.reduce((sum, c) => sum + c.bytes, 0)
   const reductionPercent = Math.round(((traditionalTotal - mtcTotal) / traditionalTotal) * 100)
+  const landmarkReductionPercent = Math.round(
+    ((traditionalTotal - mtcLandmarkTotal) / traditionalTotal) * 100
+  )
 
   return {
     label: algo.name,
     traditional,
     mtc,
+    mtcLandmark,
     traditionalTotal,
     mtcTotal,
+    mtcLandmarkTotal,
     reductionPercent,
+    landmarkReductionPercent,
   }
 }
 

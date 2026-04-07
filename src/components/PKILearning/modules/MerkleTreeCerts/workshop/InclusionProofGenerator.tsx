@@ -7,6 +7,7 @@ import {
   getInclusionProof,
   type MerkleNode,
   type InclusionProof,
+  type CertLeaf,
 } from '../utils/merkleTree'
 import { SAMPLE_CERTS, truncateHash, formatBytes } from '../data/mtcConstants'
 
@@ -18,14 +19,24 @@ interface PathAnnotation {
   label: string
 }
 
-export const InclusionProofGenerator: React.FC = () => {
-  const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
+interface InclusionProofGeneratorProps {
+  /** If provided by Step 1, use this tree + cert list instead of building a fresh one. */
+  sharedLevels?: MerkleNode[][] | null
+  sharedCerts?: CertLeaf[] | null
+}
+
+export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = ({
+  sharedLevels,
+  sharedCerts,
+}) => {
+  const [levels, setLevels] = useState<MerkleNode[][] | null>(sharedLevels ?? null)
   const [isBuilding, setIsBuilding] = useState(false)
   const [selectedLeaf, setSelectedLeaf] = useState<number | null>(null)
   const [proof, setProof] = useState<InclusionProof | null>(null)
   const [copied, setCopied] = useState(false)
 
-  const certs = SAMPLE_CERTS.slice(0, 8)
+  // Use shared certs from Step 1 when available; fall back to 8 sample certs.
+  const certs = sharedCerts && sharedCerts.length > 0 ? sharedCerts : SAMPLE_CERTS.slice(0, 8)
 
   const handleBuildTree = useCallback(async () => {
     setIsBuilding(true)
@@ -37,7 +48,7 @@ export const InclusionProofGenerator: React.FC = () => {
     } finally {
       setIsBuilding(false)
     }
-  }, [])
+  }, [certs])
 
   const handleSelectLeaf = useCallback(
     (leafIndex: number) => {
@@ -125,28 +136,41 @@ export const InclusionProofGenerator: React.FC = () => {
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">Inclusion Proof Generator</h3>
         <p className="text-sm text-muted-foreground">
-          Build a tree with 8 sample certificates, then click any leaf to generate its inclusion
-          proof. The authentication path highlights in the tree with numbered verification steps.
+          {sharedLevels
+            ? 'Your tree from Step 1 is loaded — click any leaf to generate its inclusion proof.'
+            : 'Build a tree, then click any leaf to generate its inclusion proof.'}{' '}
+          The authentication path highlights in the tree with numbered verification steps.
         </p>
       </div>
 
       {/* Build tree */}
       {!levels ? (
-        <Button
-          onClick={handleBuildTree}
-          disabled={isBuilding}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
-        >
-          {isBuilding ? (
-            <>
-              <Loader2 size={16} className="animate-spin" /> Building...
-            </>
-          ) : (
-            <>
-              <TreePine size={16} /> Build Tree with 8 Certificates
-            </>
+        <div className="space-y-3">
+          {sharedLevels == null && sharedCerts == null && (
+            <div className="bg-muted/50 rounded-lg p-3 border border-border text-[10px] text-muted-foreground">
+              <strong className="text-foreground">Tip:</strong> Build your own tree in Step 1 first
+              — it will automatically load here so you can prove your own certificates.
+            </div>
           )}
-        </Button>
+          <Button
+            onClick={handleBuildTree}
+            disabled={isBuilding}
+            className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
+          >
+            {isBuilding ? (
+              <>
+                <Loader2 size={16} className="animate-spin" /> Building...
+              </>
+            ) : (
+              <>
+                <TreePine size={16} />{' '}
+                {sharedCerts && sharedCerts.length > 0
+                  ? `Build Tree with ${sharedCerts.length} Certificate${sharedCerts.length !== 1 ? 's' : ''} from Step 1`
+                  : 'Build Tree with 8 Sample Certificates'}
+              </>
+            )}
+          </Button>
+        </div>
       ) : (
         <>
           {/* Instruction */}

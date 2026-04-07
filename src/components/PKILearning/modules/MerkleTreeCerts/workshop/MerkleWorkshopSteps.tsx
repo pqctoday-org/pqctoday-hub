@@ -9,6 +9,7 @@ import { ProofVerifier } from './ProofVerifier'
 import { SizeComparison } from './SizeComparison'
 import { CTLogSimulator } from './CTLogSimulator'
 import { WorkshopStepHeader } from '../../../common/WorkshopStepHeader'
+import type { MerkleNode, CertLeaf } from '../utils/merkleTree'
 
 const MODULE_ID = 'merkle-tree-certs'
 
@@ -54,6 +55,9 @@ export const MerkleWorkshopSteps: React.FC = () => {
   const [currentPart, setCurrentPart] = useState(0)
   const [configKey, setConfigKey] = useState(0)
   const [completedSteps, setCompletedSteps] = useState<Set<number>>(new Set())
+  // Shared tree built in Step 1 — passed to Step 2 so the user proves their own certificates.
+  const [sharedLevels, setSharedLevels] = useState<MerkleNode[][] | null>(null)
+  const [sharedCerts, setSharedCerts] = useState<CertLeaf[] | null>(null)
 
   const handlePartChange = useCallback(
     (newPart: number) => {
@@ -70,6 +74,8 @@ export const MerkleWorkshopSteps: React.FC = () => {
       setCurrentPart(0)
       setConfigKey((prev) => prev + 1)
       setCompletedSteps(new Set())
+      setSharedLevels(null)
+      setSharedCerts(null)
     }
   }
 
@@ -133,16 +139,29 @@ export const MerkleWorkshopSteps: React.FC = () => {
           stepIndex={currentPart}
           totalSteps={PARTS.length}
         />
-        {/* E4 — Steps 1 & 2 are independent exercises, not a continuous pipeline */}
-        {(currentPart === 0 || currentPart === 1) && (
-          <p className="text-[10px] text-muted-foreground mb-4 italic">
-            Note: Steps 1 and 2 are independent exercises. Step 2 uses its own built-in
-            8-certificate tree — the tree you build in Step 1 is separate.
-          </p>
+        {currentPart === 0 && (
+          <MerkleTreeBuilder
+            key={`build-${configKey}`}
+            onTreeBuilt={(levels, certs) => {
+              setSharedLevels(levels)
+              setSharedCerts(certs)
+            }}
+          />
         )}
-        {currentPart === 0 && <MerkleTreeBuilder key={`build-${configKey}`} />}
-        {currentPart === 1 && <InclusionProofGenerator key={`proof-${configKey}`} />}
-        {currentPart === 2 && <ProofVerifier key={`verify-${configKey}`} />}
+        {currentPart === 1 && (
+          <InclusionProofGenerator
+            key={`proof-${configKey}`}
+            sharedLevels={sharedLevels}
+            sharedCerts={sharedCerts}
+          />
+        )}
+        {currentPart === 2 && (
+          <ProofVerifier
+            key={`verify-${configKey}`}
+            sharedLevels={sharedLevels}
+            sharedCerts={sharedCerts}
+          />
+        )}
         {currentPart === 3 && <SizeComparison key={`size-${configKey}`} />}
         {currentPart === 4 && <CTLogSimulator key={`ctlog-${configKey}`} />}
       </div>

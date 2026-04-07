@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useMemo, useRef } from 'react'
-import { Plus, TreePine, Loader2, Trash2, Info } from 'lucide-react'
+import { Plus, TreePine, Loader2, Trash2, Info, AlertTriangle } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
@@ -33,10 +33,10 @@ const MERKLE_KAT_SPECS: KatTestSpec[] = [
   },
   {
     id: 'merkle-tree-sign',
-    useCase: 'Tree root certificate signing (SLH-DSA)',
-    standard: 'FIPS 205',
-    referenceUrl: 'https://csrc.nist.gov/pubs/fips/205/final',
-    kind: { type: 'slhdsa-functional', variant: 'SHA2-128s' },
+    useCase: 'Tree root certificate signing (ML-DSA-44)',
+    standard: 'FIPS 204',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/204/final',
+    kind: { type: 'mldsa-functional', variant: 44 },
     message: 'Merkle tree root certificate hash for RFC PLANTS batch signing',
   },
 ]
@@ -48,7 +48,12 @@ const SPEED_OPTIONS = [
   { label: 'Instant', ms: 0 },
 ]
 
-export const MerkleTreeBuilder: React.FC = () => {
+interface MerkleTreeBuilderProps {
+  /** Called whenever a tree is successfully built, so Step 2 can use the same tree. */
+  onTreeBuilt?: (levels: MerkleNode[][], certs: CertLeaf[]) => void
+}
+
+export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuilt }) => {
   const [certs, setCerts] = useState<CertLeaf[]>(SAMPLE_CERTS.slice(0, 4))
   const [levels, setLevels] = useState<MerkleNode[][] | null>(null)
   const [isBuilding, setIsBuilding] = useState(false)
@@ -119,12 +124,15 @@ export const MerkleTreeBuilder: React.FC = () => {
         }
         if (!abortRef.current) {
           setAnimationLevel(null) // show all
+          onTreeBuilt?.(result.levels, certs)
         }
+      } else {
+        onTreeBuilt?.(result.levels, certs)
       }
     } finally {
       setIsBuilding(false)
     }
-  }, [certs, speedIdx])
+  }, [certs, speedIdx, onTreeBuilt])
 
   const treeHeight = levels ? levels.length - 1 : 0
   const isAnimating = animationLevel !== null
@@ -338,6 +346,28 @@ export const MerkleTreeBuilder: React.FC = () => {
             </p>
           </div>
 
+          {/* Padding notice — shown when cert count is not a power of two */}
+          {levels[0].length > certs.length && (
+            <div className="mt-3 bg-warning/5 rounded-lg p-3 border border-warning/20 space-y-1">
+              <div className="flex items-center gap-1.5 text-xs font-bold text-warning">
+                <AlertTriangle size={12} className="shrink-0" />
+                Padding added ({levels[0].length - certs.length} duplicate{' '}
+                {levels[0].length - certs.length === 1 ? 'leaf' : 'leaves'})
+              </div>
+              <p className="text-[10px] text-muted-foreground">
+                Binary Merkle trees require a power-of-two leaf count. This demo pads by duplicating
+                the last leaf until the count reaches {levels[0].length}. The actual{' '}
+                <span className="font-mono">draft-ietf-plants-merkle-tree-certs</span> spec (and RFC
+                9162 §2.1.2) instead uses an{' '}
+                <strong className="text-foreground">unbalanced binary tree</strong> via a recursive
+                split at <span className="font-mono">k = largest power of 2 &lt; n</span>. For
+                non-power-of-two leaf counts the two approaches produce{' '}
+                <strong className="text-foreground">different root hashes</strong>. Use a
+                power-of-two count (2, 4, 8, 16 …) for spec-accurate results.
+              </p>
+            </div>
+          )}
+
           {/* E1 — Domain separation explanation */}
           <div className="mt-3 bg-primary/5 rounded-lg p-3 border border-primary/20 space-y-1.5">
             <div className="flex items-center gap-1.5 text-xs font-bold text-foreground">
@@ -386,7 +416,9 @@ export const MerkleTreeBuilder: React.FC = () => {
               <div className="text-lg font-bold text-destructive">
                 {formatBytes(stats.chainSigBytes)}
               </div>
-              <div className="text-[10px] text-muted-foreground">3&times; ML-DSA-44 Sigs</div>
+              <div className="text-[10px] text-muted-foreground">
+                3&times; ML-DSA-44 Sigs (sig bytes only)
+              </div>
             </div>
           </div>
 
@@ -405,7 +437,7 @@ export const MerkleTreeBuilder: React.FC = () => {
               </span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-[10px] text-muted-foreground w-20 shrink-0">X.509 Sigs</span>
+              <span className="text-[10px] text-muted-foreground w-20 shrink-0">3&times; Sigs</span>
               <div className="flex-1 bg-muted rounded-full h-2.5 overflow-hidden">
                 <div className="h-full bg-destructive/60 rounded-full" style={{ width: '100%' }} />
               </div>
@@ -416,9 +448,10 @@ export const MerkleTreeBuilder: React.FC = () => {
           </div>
 
           <p className="text-[10px] text-muted-foreground mt-2">
-            This inclusion proof replaces 3 PQ signatures in the TLS handshake &mdash;{' '}
-            <strong className="text-success">{stats.reductionPercent}% smaller</strong> than a
-            traditional certificate chain.
+            Comparing signature bytes only. The full chain also includes public keys, SCTs, and
+            metadata &mdash; see Step 4 for a complete breakdown.{' '}
+            <strong className="text-success">{stats.reductionPercent}% smaller</strong> than 3
+            individual ML-DSA-44 signatures alone.
           </p>
         </div>
       )}
@@ -426,7 +459,7 @@ export const MerkleTreeBuilder: React.FC = () => {
       <KatValidationPanel
         specs={MERKLE_KAT_SPECS}
         label="Merkle Tree Certificates Known Answer Tests"
-        authorityNote="FIPS 180-4 · FIPS 205"
+        authorityNote="FIPS 180-4 · FIPS 204"
       />
     </div>
   )
