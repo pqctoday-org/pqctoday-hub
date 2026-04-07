@@ -78,9 +78,10 @@ import {
   CKM_SHA3_256_HMAC,
 } from '@/wasm/softhsm'
 
+// C_GetAttributeValue is intentionally excluded — it floods the log with internal
+// attribute probes that make the actual crypto operations hard to read.
 const SUCI_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
-  'C_GetAttributeValue',
   'C_DeriveKey',
   'C_GenerateKey',
   'C_CreateObject', // hsm_importAESKey / hsm_importHMACKey

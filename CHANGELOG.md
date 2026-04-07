@@ -6,6 +6,41 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.87.0] - 2026-04-07
+
+### Added
+
+- **5G SUCI — Profile B (P-256) dedicated step content**: Profile B now has its own `SUCI_STEPS_B`
+  constant with step titles, descriptions, and code snippets tailored to P-256 (secp256r1) —
+  previously it displayed Profile A (X25519) labels throughout.
+
+- **5G SUCI — Profile B compressed key encoding**: The scheme output for Profile B now uses the
+  33-byte COMPRESSED P-256 ephemeral public key (02/03 prefix + x-coordinate) per TS 33.501
+  Annex C.4, down from 65 bytes. ECDH inside the HSM still uses the full uncompressed form.
+
+- **5G SUCI — educational content: compressed vs uncompressed EC point encoding**: Steps 9, 10
+  and terminal output for Profile B now show both encoding forms side by side, explaining when each
+  is used and why. Includes the application-layer compression formula (no `C_CompressECPoint` in
+  PKCS#11) and how the SIDF recovers y via the P-256 curve equation y²=x³−3x+b (mod p).
+
+- **5G SUCI — PKCS#11 mechanism accuracy**: Code snippets for all X25519 operations now correctly
+  cite `C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)` per PKCS#11 v3.2, distinguishing it from
+  `CKM_ECDH1_DERIVE` which applies to Weierstrass curves (P-256/P-384). Affected: Profile A
+  step 5, Profile A step 11, Profile C hybrid steps 5 and 11.
+
+### Fixed
+
+- **5G SUCI — profile transitions always reset to step 1**: Switching between Profile A → B → C
+  (hybrid) → C (pure) now lands on step 1 each time. The `useStepWizard` hook gained a `reset()`
+  method called at all transition sites (onClick handlers and `onComplete`).
+
+- **5G SUCI — profile state set before every step executes**: `fiveGService.state.profile` is now
+  assigned at the top of every `executeStep` call, preventing `computeMAC` and
+  `visualizeStructure` from seeing a stale or undefined profile on early steps.
+
+- **5G SUCI — B→C transition no longer double-cleans**: `changeProfile('C')` now internally sets
+  `pqcMode` to `'hybrid'`, so `onComplete` can call it once without a redundant `changePqcMode`.
+
 ## [2.85.0] - 2026-04-07
 
 ### Added

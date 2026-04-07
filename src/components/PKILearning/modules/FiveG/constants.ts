@@ -58,15 +58,17 @@ const { pubHandle: ephPub, privHandle: ephPriv } = hsm_generateECKeyPair(
       title: '5. Compute Shared Secret (ECDH)',
       description:
         "Perform Diffie-Hellman Key Agreement using the selected curve (X25519 for Profile A, P-256 for Profile B). The USIM combines its ephemeral private key with the Home Network's public key to derive the shared secret Z.",
-      code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (ECDH)
+      code: `// SoftHSMv3 WASM: Diffie-Hellman Key Agreement (X25519)
+// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
+// Note: CKM_ECDH1_DERIVE is for Weierstrass curves (P-256/P-384) only.
 const sharedSecretHandle = hsm_ecdhDerive(
-  hsmd, 
-  sessionHandle, 
-  ephPriv,      // Ephemeral Private Key 
+  hsmd,
+  sessionHandle,
+  ephPriv,      // Ephemeral Private Key
   hnPubHandle,  // Network Public Key
   false         // False = Raw Z extraction
-);`,
-      output: `[USIM] Executing ECDH...\n[USIM] Shared Secret (Z): [PROTECTED]`,
+); // → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)`,
+      output: `[USIM] Executing ECDH (X25519)...\n[USIM] Shared Secret (Z): [PROTECTED]`,
     },
     {
       id: 'derive_keys',
@@ -179,9 +181,11 @@ const suciB = {
       id: 'sidf_decryption',
       title: '11. Network SIDF: Decrypt SUCI (Decryption Point)',
       description: 'The Home Network SIDF reverses the process using the Home Network Private Key.',
-      code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profiles A/B)
-// 1. Re-derive Z (ECDH: HN private key + UE ephemeral public key)
+      code: `// SoftHSMv3 WASM: Network SIDF — Full Deconcealment (Profile A, X25519)
+// 1. Re-derive Z (X25519 ECDH: HN private key + UE ephemeral public key)
+// PKCS#11 v3.2: X25519 uses CKM_EC_MONTGOMERY_KEY_DERIVE (not CKM_ECDH1_DERIVE)
 const Z = hsm_ecdhDerive(hsmd, hSession, hnPrivHandle, ephPubBytes)
+// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
 
 // 2. ANSI X9.63-KDF (SHA-256) per 3GPP TS 33.501 §C.3.3
 const block1 = hsm_digest(M, hSession, concat(Z, 0x00000001, sharedInfo), CKM_SHA256)
@@ -472,10 +476,13 @@ USIM.write('EF_SUCI_Calc_Info', {
         'Hybrid: Compute ECDH shared secret (Z_ecdh) AND Encapsulate PQC shared secret (Z_kem). Derive final Z = SHA256(Z_ecdh || Z_kem). Pure: Encapsulate only.',
       code: `// SoftHSMv3 WASM: Profile C Hybrid — ML-KEM Encap + ECDH + Z Combination
 // Step A: ML-KEM-768 Encapsulation → Z_kem + KEM ciphertext
+// → C_EncapsulateKey(CKM_ML_KEM)
 const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
-// Step B (hybrid only): ECDH(ephPriv, hnEccPub) → Z_ecdh
+// Step B (hybrid only): X25519 ECDH(ephPriv, hnEccPub) → Z_ecdh
+// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
+// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
 const hnEccPubBytes = hsm_extractECPoint(M, hSession, hnEccPubHandle)
 const zEcdhHandle = hsm_ecdhDerive(M, hSession, ephPrivHandle, hnEccPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
@@ -577,10 +584,13 @@ const macTagFull = hsm_hmac(
       code: `// SoftHSMv3 WASM: Profile C SIDF — Hybrid Deconcealment (TR 33.841)
 
 // 1. ML-KEM-768 Decapsulation → Z_kem
+// → C_DecapsulateKey(CKM_ML_KEM)
 const zKemHandle = hsm_pqcDecap(M, hSession, hnPrivHandle, kemCiphertext, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, zKemHandle)
 
-// 2. Hybrid only: ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
+// 2. Hybrid only: X25519 ECDH(hn_ecc_priv, eph_pub) → Z_ecdh, then combine
+// PKCS#11 v3.2: X25519 (Montgomery curve) uses CKM_EC_MONTGOMERY_KEY_DERIVE
+// → C_DeriveKey(CKM_EC_MONTGOMERY_KEY_DERIVE)
 const ephPubBytes = hsm_extractECPoint(M, hSession, ephPubHandle)
 const zEcdhHandle = hsm_ecdhDerive(M, hSession, hnEccPrivHandle, ephPubBytes)
 const zEcdhBytes = hsm_extractKeyValue(M, hSession, zEcdhHandle)
