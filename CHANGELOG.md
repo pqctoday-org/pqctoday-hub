@@ -6,6 +6,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.5] - 2026-04-07
+
+### Fixed
+
+- **Playground — 5G SUCI Profile C hybrid mode URL sync**: Profile C now always sets
+  `?pqcMode=hybrid` explicitly in the URL (previously omitted, causing the Hybrid button
+  to appear unselected). All four states now have fully explicit URLs:
+  - `/playground/suci-flow?profile=A` — Profile A
+  - `/playground/suci-flow?profile=B` — Profile B
+  - `/playground/suci-flow?profile=C&pqcMode=hybrid` — Profile C hybrid
+  - `/playground/suci-flow?profile=C&pqcMode=pure` — Profile C pure PQC
+- **Playground — fixed race condition on Profile C switch**: `changeProfile('C')` was
+  calling both `onProfileChange` and `onPqcModeChange`, triggering two concurrent
+  `setSearchParams` calls that could race and revert the profile update. Suppressed
+  the second call — `handleProfileChange` in `SuciFlowRoute` atomically sets both
+  `profile=C` and `pqcMode=hybrid` in a single update.
+- **Playground — SuciFlow pqcMode state sync**: Added `useEffect` in `SuciFlow` to
+  keep internal `pqcMode` in sync with the `initialPqcMode` prop when the same component
+  instance is reused across profile switches (React key reuse).
+- **Playground — SuciFlowRoute extracted to dedicated file**: Moved inline `SuciFlowRoute`
+  out of `workshopRegistry.tsx` lazy callback into `src/components/Playground/SuciFlowRoute.tsx`,
+  fixing hook instability under React StrictMode.
+
 ## [2.89.4] - 2026-04-07
 
 ### Fixed

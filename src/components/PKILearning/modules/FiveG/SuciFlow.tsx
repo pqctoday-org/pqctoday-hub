@@ -147,6 +147,17 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({
 }) => {
   const [profile, setProfile] = useState<Profile>(initialProfile ?? 'A')
   const [pqcMode, setPqcMode] = useState<'hybrid' | 'pure'>(initialPqcMode ?? 'hybrid')
+
+  // Keep internal pqcMode in sync with the prop (driven by URL in Playground).
+  // This fires when the same SuciFlow instance is reused across profile switches
+  // where the key doesn't change (e.g. C-hybrid → A → C-hybrid reuses the instance).
+  const prevInitialPqcModeRef = React.useRef(initialPqcMode)
+  React.useEffect(() => {
+    if (initialPqcMode !== prevInitialPqcModeRef.current) {
+      prevInitialPqcModeRef.current = initialPqcMode
+      setPqcMode(initialPqcMode ?? 'hybrid')
+    }
+  }, [initialPqcMode])
   const [customSupi, setCustomSupi] = useState('310260123456789')
   const [gsmaModalOpen, setGsmaModalOpen] = useState(false)
   const hsm = useHSM()
@@ -176,10 +187,12 @@ export const SuciFlow: React.FC<SuciFlowProps> = ({
     hsm.clearKeys()
     setProfile(p)
     onProfileChange?.(p)
-    // Profile C always enters hybrid mode; reset pqcMode to avoid stale pure state
+    // Profile C always enters hybrid mode internally; pqcMode URL reset is
+    // handled atomically inside onProfileChange (handleProfileChange in SuciFlowRoute)
+    // so we must NOT call onPqcModeChange here — that would fire a second
+    // setSearchParams that races with the first and can revert the profile update.
     if (p === 'C') {
       setPqcMode('hybrid')
-      onPqcModeChange?.('hybrid')
     }
   }
   const changePqcMode = (m: 'hybrid' | 'pure') => {
