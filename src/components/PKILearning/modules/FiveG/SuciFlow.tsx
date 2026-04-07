@@ -390,6 +390,13 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         const osslResult = await fiveGService.encryptMSIN()
 
         if (hsmActive) {
+          // HSM ciphertext is canonical — override OpenSSL's encryptedMSINHex in state.
+          const ct = hsmHandlesRef.current.ciphertext
+          if (ct) {
+            fiveGService.state.encryptedMSINHex = Array.from(ct)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+          }
           result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
@@ -397,6 +404,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       } else if (stepData.id === 'compute_mac') {
         const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
         let hsmResult = ''
+        let hsmMacBytes: Uint8Array | undefined
         if (hsmActive) {
           const M = hsm.moduleRef.current!
           const hSession = hsm.hSessionRef.current!
@@ -416,6 +424,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             hsmHandlesRef.current.ciphertext ?? new TextEncoder().encode('suci-mac-input-data')
           const hmacMech = profile === 'C' ? CKM_SHA3_256_HMAC : undefined
           const mac = hsm_hmac(M, hSession, hmacHandle, macInput, hmacMech)
+          hsmMacBytes = mac
           const macHex = Array.from(mac)
             .map((b) => b.toString(16).padStart(2, '0'))
             .join('')
@@ -430,6 +439,13 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         const osslResult = await fiveGService.computeMAC()
 
         if (hsmActive) {
+          // HSM MAC tag is canonical — override OpenSSL's macTagHex in state.
+          // Truncate to 8 bytes (64 bits) per 3GPP TS 33.501 §C.3.4.
+          if (hsmMacBytes) {
+            fiveGService.state.macTagHex = Array.from(hsmMacBytes.slice(0, 8))
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+          }
           result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
@@ -644,6 +660,22 @@ ML-KEM + ECDH hybrid executed via SoftHSM3 WASM. (Encapsulated + Derived)`
         const osslResult = await fiveGService.computeSharedSecret(profile, ephPriv, hnPub, pqcMode)
 
         if (hsmActive) {
+          // Sync HSM-canonical values into fiveGService.state (HSM is the primary engine).
+          // OpenSSL runs only for cross-check display; its state writes are overridden here.
+          if (profile === 'C') {
+            const ct = hsmHandlesRef.current.kemCiphertext
+            if (ct) {
+              fiveGService.state.ciphertextHex = Array.from(ct)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+            }
+            const combinedZ = hsmHandlesRef.current.combinedZBytes
+            if (combinedZ) {
+              fiveGService.state.sharedSecretHex = Array.from(combinedZ)
+                .map((b) => b.toString(16).padStart(2, '0'))
+                .join('')
+            }
+          }
           result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult
@@ -827,6 +859,18 @@ block2 = SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo): ${block2CHex}
         const osslResult = await fiveGService.deriveKeys(profile)
 
         if (hsmActive) {
+          // Override fiveGService.state with HSM-derived keys AFTER the OpenSSL call.
+          // fiveGService.deriveKeys() runs from a separate OpenSSL Z value and would
+          // produce a different K_enc/K_mac, causing MAC mismatch at SIDF decryption.
+          // The HSM keys are the authoritative values for all subsequent encrypt/MAC/verify steps.
+          const kEnc = hsmHandlesRef.current.kEncBytes!
+          const kMac = hsmHandlesRef.current.kMacBytes!
+          fiveGService.state.kEncHex = Array.from(kEnc)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
+          fiveGService.state.kMacHex = Array.from(kMac)
+            .map((b) => b.toString(16).padStart(2, '0'))
+            .join('')
           result = buildDualEngineResult(hsmResult, osslResult, stepData.id)
         } else {
           result = osslResult

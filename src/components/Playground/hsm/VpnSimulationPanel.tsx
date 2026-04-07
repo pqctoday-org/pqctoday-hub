@@ -1,7 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useCallback, useMemo } from 'react'
-import { ArrowRight, ArrowLeft, RotateCcw, ShieldAlert, Cpu, CheckCircle } from 'lucide-react'
+import {
+  ArrowRight,
+  ArrowLeft,
+  RotateCcw,
+  ShieldAlert,
+  Cpu,
+  CheckCircle,
+  KeyRound,
+} from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
@@ -291,6 +299,25 @@ const PayloadCard: React.FC<{
     )}
   </div>
 )
+
+// ── C6: IKE phase annotation for charon.log entries ───────────────────────────
+type IkePhase = 'SETUP' | 'IKE_SA_INIT' | 'IKE_INTERMEDIATE' | 'IKE_AUTH'
+
+function getIkePhase(text: string, mode: IKEv2Mode): IkePhase | null {
+  if (/C_Initialize|C_OpenSession|C_Login|C_GetSlotList|C_GetSlotInfo/.test(text)) return 'SETUP'
+  if (/C_GenerateKeyPair|C_GenerateKey/.test(text)) return 'IKE_SA_INIT'
+  if (/EncapsulateKey|DecapsulateKey/.test(text))
+    return mode === 'hybrid' ? 'IKE_INTERMEDIATE' : 'IKE_SA_INIT'
+  if (/C_Sign|C_Verify|C_Find|CERT/.test(text)) return 'IKE_AUTH'
+  return null
+}
+
+const IKE_PHASE_CLASS: Record<IkePhase, string> = {
+  SETUP: 'bg-muted text-muted-foreground',
+  IKE_SA_INIT: 'bg-primary/20 text-primary',
+  IKE_INTERMEDIATE: 'bg-secondary/20 text-secondary',
+  IKE_AUTH: 'bg-accent/20 text-accent-foreground',
+}
 
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {
   const { moduleRef, hSessionRef, addHsmLog, addHsmKey, hsmKeys, clearHsmKeys, removeHsmKey } =
@@ -1903,6 +1930,11 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   Enable IKE Message Fragmentation (RFC 7383)
                 </label>
               </div>
+              <p className="text-[10px] text-muted-foreground mt-1">
+                PQC key exchange payloads are 10–16× larger than classical DH (ML-KEM-768
+                encapsulation key: 1,184 B vs. ECP-256: 64 B), often exceeding UDP MTU. RFC 7383
+                splits oversized IKE messages into fragments reassembled before processing.
+              </p>
             </div>
           </div>
         </TabsContent>
@@ -2427,17 +2459,27 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           {ssLogs.length === 0 ? (
             <div className="text-muted-foreground/50 italic">Awaiting daemon initialization...</div>
           ) : (
-            ssLogs.map((log, i) => (
-              <div
-                key={i}
-                className={log.level === 'error' ? 'text-destructive' : 'text-success/80'}
-              >
-                <span className="opacity-50 mr-2">
-                  [{new Date().toISOString().split('T')[1]?.split('.')[0]}]
-                </span>
-                {log.text}
-              </div>
-            ))
+            ssLogs.map((log, i) => {
+              const phase = getIkePhase(log.text, selectedMode)
+              return (
+                <div
+                  key={i}
+                  className={log.level === 'error' ? 'text-destructive' : 'text-success/80'}
+                >
+                  <span className="opacity-50 mr-2">
+                    [{new Date().toISOString().split('T')[1]?.split('.')[0]}]
+                  </span>
+                  {phase && (
+                    <span
+                      className={`text-[9px] px-1 py-0.5 rounded mr-1.5 font-bold ${IKE_PHASE_CLASS[phase]}`}
+                    >
+                      {phase}
+                    </span>
+                  )}
+                  {log.text}
+                </div>
+              )
+            })
           )}
         </div>
       </div>
@@ -2600,6 +2642,45 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       )}
 
+      {(kemSecrets.responder || kemSecrets.initiator) && selectedMode !== 'classical' && (
+        <div className="pt-4 border-t border-border">
+          <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+            <KeyRound size={16} /> SKEYSEED Key Derivation
+          </h4>
+          <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+            <pre className="text-[11px] font-mono bg-muted/40 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap break-all leading-relaxed">
+              {selectedMode === 'pure-pqc'
+                ? `SKEYSEED = prf(Ni ‖ Nr, ss_kem)\n         = PRF-HMAC-SHA-256(Ni ‖ Nr,\n             0x${kemSecrets.responder?.hex ?? '…'})`
+                : `SKEYSEED = prf(Ni ‖ Nr, ss_ecdh ‖ ss_kem)\n                         ↑ ECDH      ↑ ML-KEM-768\n             0x<ecdh-secret> ‖ 0x${kemSecrets.responder?.hex ?? '…'}`}
+            </pre>
+            <div className="text-[11px] text-muted-foreground space-y-1">
+              {selectedMode === 'pure-pqc' ? (
+                <>
+                  <p>
+                    All session key material (SK_e, SK_a, SK_d) is derived exclusively from the
+                    ML-KEM shared secret — fully quantum-safe from the first exchange.
+                  </p>
+                  <p className="text-muted-foreground/70">
+                    Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 7296 §2.14
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p>
+                    The combined PRF input forces an attacker to break{' '}
+                    <span className="font-semibold text-foreground">both</span> the classical ECDH
+                    and ML-KEM-768 shared secrets to recover SKEYSEED. Either alone is insufficient.
+                  </p>
+                  <p className="text-muted-foreground/70">
+                    Spec: draft-ietf-ipsecme-ikev2-mlkem §5 · RFC 9370 §2.1 · RFC 7296 §2.14
+                  </p>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="pt-6 mt-6 border-t border-border">
         <div className="bg-card border rounded-lg overflow-hidden shadow-sm">
           <div className="bg-muted/30 px-4 py-2 border-b flex items-center justify-between">
@@ -2668,6 +2749,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   />
                   <span className="text-xs text-muted-foreground">
                     PSK distribution via QKD / quantum-safe methods
+                    <span className="ml-1 text-[10px] opacity-60">
+                      (informational — not simulated)
+                    </span>
                   </span>
                 </label>
                 {showQkdNote && (

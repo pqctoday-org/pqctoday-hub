@@ -120,7 +120,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
   const [opError, setOpError] = useState<string | null>(null)
 
   // Signing State
-  const [messageToSign, setMessageToSign] = useState<string>('Hello PQC World')
+  const [messageToSign, setMessageToSign] = useState<string>('Hello, world!')
   const [preHash, setPreHash] = useState(false)
   const [signatureLog, setSignatureLog] = useState<XMSSLogEntry[]>([])
   const [sigCounter, setSigCounter] = useState(0)
