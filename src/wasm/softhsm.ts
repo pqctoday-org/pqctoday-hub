@@ -77,7 +77,7 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
       const rustShim = await import('./softhsmrustv3.js')
       const isNode =
         typeof process !== 'undefined' && process.versions != null && process.versions.node != null
-      let wasmInput: any = '/wasm/rust/softhsmrustv3_bg.wasm'
+      let wasmInput: any = `/wasm/rust/softhsmrustv3_bg.wasm?v=${_WASM_VERSION}`
       if (isNode) {
         const fs = await import('fs')
         const path = await import('path')
