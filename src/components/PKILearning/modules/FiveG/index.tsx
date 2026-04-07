@@ -41,7 +41,10 @@ const PARTS = [
 ]
 
 export const FiveGModule: React.FC = () => {
-  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+  const deepLink = getModuleDeepLink({
+    maxStep: PARTS.length - 1,
+    validTabs: ['learn', 'visual', 'simulate', 'exercises', 'references', 'tools'],
+  })
 
   // Parse 5G-specific deep-link params on mount
   const urlParams = new URLSearchParams(window.location.search)

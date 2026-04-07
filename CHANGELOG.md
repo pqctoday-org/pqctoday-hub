@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.1] - 2026-04-07
+
+### Fixed
+
+- **5G SUCI — deep-link URL now actually updates in the browser**: `getModuleDeepLink`
+  was called without `validTabs`, so the default list contained `'workshop'` instead
+  of `'simulate'`. A direct load with `?tab=simulate&profile=C` fell back to `'learn'`,
+  leaving `activeTab !== 'simulate'` and suppressing the URL sync effect. Fixed by
+  passing the correct `validTabs` array explicitly.
+
 ## [2.89.0] - 2026-04-07
 
 ### Fixed
