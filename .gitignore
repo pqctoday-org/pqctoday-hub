@@ -197,6 +197,7 @@ docs/pqctoday-investor*
 
 # LLM enrichment scripts
 scripts/enrich-*.py
+scripts/__pycache__/
 scripts/summarize-library.py
 scripts/generate-notebooklm.ts
 
