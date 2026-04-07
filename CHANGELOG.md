@@ -6,6 +6,16 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.89.3] - 2026-04-07
+
+### Fixed
+
+- **Playground — suci-flow deep-link actually works now**: `suci-flow` was registered
+  in `ONBACK_COMPONENTS` via `makeLazyWithOnBack`, whose `WorkshopWrapper` only forwards
+  `onBack` — dropping `initialProfile` and `initialPqcMode`. Moved `suci-flow` to
+  `TOOL_COMPONENTS` as a self-contained `SuciFlowRoute` wrapper that reads `?profile=`
+  and `?pqcMode=` from the URL directly and passes them to `SuciFlow`.
+
 ## [2.89.2] - 2026-04-07
 
 ### Added

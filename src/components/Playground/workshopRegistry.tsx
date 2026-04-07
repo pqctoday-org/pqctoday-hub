@@ -493,7 +493,30 @@ export const CATEGORIES = [
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type LazyComp = React.LazyExoticComponent<React.ComponentType<any>>
 
+// SuciFlow wrapper — reads ?profile= and ?pqcMode= from URL, handles onBack via history
+const LazySuciFlow = lazyWithRetry(() =>
+  import('@/components/PKILearning/modules/FiveG/SuciFlow').then((m) => {
+    function SuciFlowRoute() {
+      const params = new URLSearchParams(window.location.search)
+      const p = params.get('profile')
+      const mode = params.get('pqcMode')
+      const profile = p === 'A' || p === 'B' || p === 'C' ? (p as 'A' | 'B' | 'C') : undefined
+      const pqcMode = mode === 'hybrid' || mode === 'pure' ? (mode as 'hybrid' | 'pure') : undefined
+      return (
+        <m.SuciFlow
+          onBack={() => window.history.back()}
+          initialProfile={profile}
+          initialPqcMode={pqcMode}
+        />
+      )
+    }
+    SuciFlowRoute.displayName = 'SuciFlowRoute'
+    return { default: SuciFlowRoute }
+  })
+)
+
 export const TOOL_COMPONENTS: Record<string, LazyComp> = {
+  'suci-flow': LazySuciFlow,
   'slh-dsa': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/StatefulSignatures/workshop/SLHDSALiveDemo').then(
       (m) => ({ default: m.SLHDSALiveDemo })
@@ -612,13 +635,6 @@ export function makeLazyWithOnBack(
 }
 
 export const ONBACK_COMPONENTS: Record<string, LazyComp> = {
-  'suci-flow': makeLazyWithOnBack(
-    () =>
-      import('@/components/PKILearning/modules/FiveG/SuciFlow') as Promise<
-        Record<string, React.ComponentType<{ onBack: () => void }>>
-      >,
-    'SuciFlow'
-  ),
   'bitcoin-flow': makeLazyWithOnBack(
     () =>
       import('@/components/PKILearning/modules/DigitalAssets/flows/BitcoinFlow') as Promise<
