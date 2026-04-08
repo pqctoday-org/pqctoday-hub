@@ -10,6 +10,7 @@ src/wasm/softhsmrustv3_bg.js
 src/wasm/softhsmrustv3.d.ts
 src/vendor/softhsm-wasm/wasm/softhsmrustv3_bg.js
 src/vendor/softhsm-wasm/wasm/softhsmrustv3.js
+public/wasm/rust/softhsmrustv3.js
 openssl-3.6.0-build
 public/wasm-new
 public/timeline
