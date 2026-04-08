@@ -8,6 +8,12 @@ All notable changes to this project will be documented in this file.
 
 ## [2.94.1] - 2026-04-08
 
+### Fixed
+
+- **About page SBOM — softhsmv3 link and version updated to v0.4.16**: The softhsmv3 entry
+  in the About page SBOM previously linked to v0.4.13 and the Rust WASM Bindings / Rust Crypto
+  Crates sections showed v0.4.15. All three references now point to v0.4.16.
+
 ### Internal
 
 - **SBOM: `@pqctoday/softhsm-wasm` updated to v0.4.16**: Synced vendor constants with
