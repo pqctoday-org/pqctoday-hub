@@ -723,10 +723,10 @@ export interface InitOutput {
   readonly _C_SignUpdate: (a: number, b: number, c: number) => number
   readonly _C_VerifyFinal: (a: number, b: number, c: number) => number
   readonly _C_VerifyUpdate: (a: number, b: number, c: number) => number
+  readonly wasm_start: () => void
   readonly _free: (a: number, b: number) => void
   readonly _malloc: (a: number) => number
   readonly _C_GetMechanismList: (a: number, b: number, c: number) => number
-  readonly wasm_start: () => void
   readonly __wbindgen_exn_store: (a: number) => void
   readonly __externref_table_alloc: () => number
   readonly __wbindgen_externrefs: WebAssembly.Table
