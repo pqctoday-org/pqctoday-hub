@@ -188,7 +188,7 @@ export const HsmPlayground = () => {
         const next = new URLSearchParams(prev)
         if (activeTab !== 'keystore') next.set('tab', activeTab)
         else next.delete('tab')
-        if (engineMode !== 'cpp') next.set('engine', engineMode)
+        if (engineMode !== 'rust') next.set('engine', engineMode)
         else next.delete('engine')
         if (algoParam) next.set('algo', algoParam)
         else next.delete('algo')

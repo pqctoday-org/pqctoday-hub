@@ -50,11 +50,10 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     category: 'HSM / PKCS#11',
     algorithms: ['SLH-DSA', 'SHA2', 'SHAKE'],
     icon: FileSignature,
-    moduleLink: '/learn/stateful-signatures',
+    moduleLink: '/learn/slh-dsa',
     keywords: ['slh-dsa', 'sphincs', 'fips 205', 'stateless', 'hash-based', 'sign', 'verify'],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    wip: true,
   },
   {
     id: 'lms-hss',

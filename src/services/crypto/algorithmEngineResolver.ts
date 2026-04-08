@@ -88,13 +88,13 @@ let hsmSession: { M: unknown; hSession: number } | null = null
 async function getHsmSession() {
   if (hsmSession) return hsmSession
   const {
-    getSoftHSMCppModule,
+    getSoftHSMRustModule,
     hsm_initialize,
     hsm_getFirstSlot,
     hsm_initToken,
     hsm_openUserSession,
   } = await import('../../wasm/softhsm')
-  const M = await getSoftHSMCppModule()
+  const M = await getSoftHSMRustModule()
   hsm_initialize(M)
   const slot = hsm_getFirstSlot(M)
   hsm_initToken(M, slot, 'bench-so-pin', 'BenchToken')

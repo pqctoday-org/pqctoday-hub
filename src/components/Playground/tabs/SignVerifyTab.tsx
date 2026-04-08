@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import { FileSignature, CheckCircle, XCircle, Loader2 } from 'lucide-react'
+import { FileSignature, CheckCircle, XCircle, Loader2, ChevronDown, ChevronUp } from 'lucide-react'
 import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
@@ -30,7 +30,7 @@ import { HsmClassicalSignPanel } from '../hsm/HsmClassicalSignPanel'
 import { HsmReadyGuard } from '../hsm/shared'
 import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
-import { SLH_DSA_PARAM_SET_OPTIONS } from './softhsm/SoftHsmUI'
+import { SLH_DSA_PARAM_SET_OPTIONS, SLH_DSA_INTERNAL_PARAMS } from './softhsm/SoftHsmUI'
 
 // FIPS 205 §11 HashSLH-DSA approved hash functions only
 const FIPS205_SLH_PREHASH_OPTIONS = [
@@ -531,7 +531,10 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   const [signature, setSignature] = useState<Uint8Array | null>(null)
   const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
   const [preHash, setPreHash] = useState<'' | SLHDSAPreHash>('')
+  const [contextStr, setContextStr] = useState('')
+  const [deterministic, setDeterministic] = useState(false)
   const [extractable, setExtractable] = useState(false)
+  const [showInternalParams, setShowInternalParams] = useState(false)
   const [loadingOp, setLoadingOp] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
 
@@ -548,6 +551,8 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     setSignature(null)
     setVerifyResult(null)
     setError(null)
+    setContextStr('')
+    setDeterministic(false)
     onAlgoChange?.(`SLH-DSA-${id}`)
   }
 
@@ -560,7 +565,14 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
     }
   }
 
-  const buildOpts = (): SLHDSASignOptions | undefined => (preHash ? { preHash } : undefined)
+  const buildOpts = (): SLHDSASignOptions | undefined => {
+    const ctx =
+      !preHash && contextStr.trim() ? new TextEncoder().encode(contextStr.slice(0, 255)) : undefined
+    const det = !preHash && deterministic ? true : undefined
+    if (!preHash && !ctx && !det) return undefined
+    if (preHash) return { preHash }
+    return { context: ctx, deterministic: det }
+  }
 
   const doGenKeyPair = () =>
     withLoading('gen', async () => {
@@ -715,6 +727,11 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           <div className="bg-muted/40 rounded px-2 py-1.5">
             <span className="text-muted-foreground block mb-0.5">Hash tree</span>
             <span className="font-semibold">{hashFamily}</span>
+            <span className="text-muted-foreground text-[10px] block mt-0.5 leading-snug">
+              {hashFamily === 'SHA-2'
+                ? 'Faster without SHA-3 hardware'
+                : 'Preferred with SHA-3 / SHAKE acceleration'}
+            </span>
           </div>
         </div>
         <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
@@ -722,6 +739,62 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           counter. Safe to reuse the same key across sessions without risk of state exhaustion.
           (FIPS 205)
         </div>
+
+        {/* FIPS 205 §6 internal parameters — collapsible */}
+        <button
+          type="button"
+          onClick={() => setShowInternalParams((v) => !v)}
+          className="flex items-center gap-1 text-[11px] text-primary/80 hover:text-primary transition-colors"
+        >
+          {showInternalParams ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
+          FIPS 205 §6 internal parameters (n, h, d, a, k, lg_w)
+        </button>
+        {showInternalParams &&
+          (() => {
+            const ip = SLH_DSA_INTERNAL_PARAMS[paramSetId]
+            if (!ip) return null
+            return (
+              <div className="overflow-x-auto">
+                <table className="w-full text-[11px] font-mono border-collapse">
+                  <thead>
+                    <tr className="text-muted-foreground">
+                      {['n', 'h', 'd', 'h/d', 'a', 'k', 'lg_w', 'm'].map((col) => (
+                        <th
+                          key={col}
+                          className="text-left px-2 py-1 border-b border-border font-medium"
+                        >
+                          {col}
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      {[ip.n, ip.h, ip.d, ip.hp, ip.a, ip.k, ip.lg_w, ip.m].map((v, i) => (
+                        <td key={i} className="px-2 py-1 text-foreground">
+                          {v}
+                        </td>
+                      ))}
+                    </tr>
+                  </tbody>
+                </table>
+                <p className="text-[10px] text-muted-foreground mt-1.5 leading-relaxed">
+                  <strong className="text-foreground">n</strong>=hash output bytes ·{' '}
+                  <strong className="text-foreground">h</strong>=hypertree height ·{' '}
+                  <strong className="text-foreground">d</strong>=layers ·{' '}
+                  <strong className="text-foreground">h/d</strong>=height per layer ·{' '}
+                  <strong className="text-foreground">a</strong>=FORS tree height ·{' '}
+                  <strong className="text-foreground">k</strong>=FORS trees ·{' '}
+                  <strong className="text-foreground">lg_w</strong>=WOTS+ Winternitz param ·{' '}
+                  <strong className="text-foreground">m</strong>=index bits. -s variants use fewer
+                  layers (small <strong className="text-foreground">d</strong>, large{' '}
+                  <strong className="text-foreground">h/d</strong>) → smaller signatures but more
+                  hash rounds per layer. -f variants use more layers → faster signing, larger
+                  proofs.
+                </p>
+              </div>
+            )
+          })()}
       </div>
 
       {/* ── Step 2: Key Generation ────────────────────────────────────── */}
@@ -833,6 +906,67 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
           </div>
         )}
 
+        {/* Context string — pure SLH-DSA only (FIPS 205 §9.2) */}
+        {!preHash && (
+          <div>
+            <label
+              htmlFor="hsm-slhdsa-context"
+              className="text-xs text-muted-foreground mb-1 block"
+            >
+              Context string{' '}
+              <span className="font-mono text-[10px] bg-primary/10 text-primary px-1 py-0.5 rounded">
+                FIPS 205 §9.2
+              </span>
+            </label>
+            <Input
+              id="hsm-slhdsa-context"
+              value={contextStr}
+              onChange={(e) => {
+                setContextStr(e.target.value.slice(0, 255))
+                setSignature(null)
+                setVerifyResult(null)
+              }}
+              className="text-sm font-mono"
+              placeholder="Optional domain separator, max 255 bytes (e.g. myapp:codesign)"
+            />
+            <p className="text-[10px] text-muted-foreground mt-1 leading-relaxed">
+              Binds the signature to a specific protocol or application context (domain separation).
+              The same context must be supplied at verify time, or verification returns{' '}
+              <span className="font-mono">CKR_SIGNATURE_INVALID</span>. Pure SLH-DSA only — not
+              available in HashSLH-DSA mode.
+            </p>
+          </div>
+        )}
+
+        {/* Deterministic mode toggle — pure SLH-DSA only (FIPS 205 §10) */}
+        {!preHash && (
+          <label className="flex items-start gap-2 text-xs cursor-pointer select-none">
+            <input
+              type="checkbox"
+              checked={deterministic}
+              onChange={(e) => {
+                setDeterministic(e.target.checked)
+                setSignature(null)
+                setVerifyResult(null)
+              }}
+              className="accent-primary mt-0.5 shrink-0"
+            />
+            <span>
+              <span className="font-semibold text-foreground">Deterministic signing</span>{' '}
+              <span className="font-mono text-[10px] bg-primary/10 text-primary px-1 py-0.5 rounded">
+                FIPS 205 §10
+              </span>
+              <br />
+              <span className="text-muted-foreground leading-relaxed">
+                When enabled, <span className="font-mono">opt_rand = none</span> — the same (SK, M,
+                context) triple always produces an{' '}
+                <strong className="text-foreground">identical signature</strong>. Toggle to observe
+                the difference: off = a new random signature each click; on = same bytes every time.
+              </span>
+            </span>
+          </label>
+        )}
+
         <div>
           <label htmlFor="hsm-slhdsa-message" className="text-xs text-muted-foreground mb-1 block">
             Message
@@ -868,9 +1002,35 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
         <div className="text-xs text-muted-foreground bg-muted/40 rounded-lg px-3 py-2 leading-relaxed">
           {!preHash ? (
             <>
-              <strong className="text-foreground">SLH-DSA.sign(SK, M)</strong> — FIPS 205 §9.
-              Randomized by default (opt_rand from RNG). Same message produces a{' '}
-              <strong className="text-foreground">different signature each time</strong>.
+              <strong className="text-foreground">
+                SLH-DSA.sign(SK, M{contextStr.trim() ? ', ctx' : ''})
+              </strong>{' '}
+              — FIPS 205 §9.{' '}
+              {deterministic ? (
+                <>
+                  <strong className="text-foreground">Deterministic mode</strong> (FIPS 205 §10):{' '}
+                  <span className="font-mono">opt_rand = none</span>. Same (SK, M
+                  {contextStr.trim() ? ', ctx' : ''}) always produces the{' '}
+                  <strong className="text-foreground">same signature</strong>.
+                </>
+              ) : (
+                <>
+                  Randomized (<span className="font-mono">opt_rand</span> from RNG). Same message
+                  produces a{' '}
+                  <strong className="text-foreground">different signature each time</strong>.
+                </>
+              )}
+              {contextStr.trim() && (
+                <>
+                  {' '}
+                  Context:{' '}
+                  <span className="font-mono">
+                    "{contextStr.slice(0, 32)}
+                    {contextStr.length > 32 ? '…' : ''}"
+                  </span>{' '}
+                  ({new TextEncoder().encode(contextStr.slice(0, 255)).length}B).
+                </>
+              )}
             </>
           ) : (
             <>

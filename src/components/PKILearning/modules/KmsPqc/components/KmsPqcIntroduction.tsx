@@ -248,7 +248,8 @@ export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNaviga
             </div>
             <div className="text-muted-foreground">&darr;</div>
             <div className="p-2 rounded bg-secondary/10 text-secondary text-xs font-bold">
-              HKDF-SHA-256(shared_secret, info=&quot;envelope-kek&quot;) &rarr; 256-bit wrapping key
+              HKDF-SHA-256(ss, salt=&quot;kms-envelope-salt-v1&quot;,
+              info=&quot;kms-envelope-v1&quot;) &rarr; 256-bit wrapping key
             </div>
             <div className="text-muted-foreground">&darr;</div>
             <div className="p-2 rounded bg-muted text-foreground text-xs font-bold">

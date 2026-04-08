@@ -173,7 +173,7 @@ export const HsmSetupPanel = () => {
             {isReady ? 'HSM Session Active' : 'HSM Setup — Token Lifecycle'}
           </p>
           <p className="text-xs text-muted-foreground mt-0.5">
-            SoftHSM3 WASM · OpenSSL 3.6 · PKCS#11 v3.2
+            SoftHSMv3 Rust WASM · OpenSSL 3.6 · PKCS#11 v3.2
           </p>
         </div>
         {(phase !== 'idle' || tokenCreated) && (

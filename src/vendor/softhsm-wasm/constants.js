@@ -495,9 +495,17 @@ module.exports = Object.freeze({
   CKP_SLH_DSA_SHA2_256F: 0x0000000b,
   CKP_SLH_DSA_SHAKE_256F: 0x0000000c,
 
+  // ── Hedge variant constants (CKH_*) — PKCS#11 v3.2 §5.3 ──────────────────
+  // Controls randomness behavior in signing (CK_SIGN_ADDITIONAL_CONTEXT.hedgeVariant)
+  CKH_HEDGE_PREFERRED: 0x00000000, // use randomized hedging when available (default)
+  CKH_HEDGE_REQUIRED: 0x00000001, // require randomized hedging; fail if unavailable
+  CKH_DETERMINISTIC_REQUIRED: 0x00000002, // FIPS 205 §10 deterministic mode (opt_rand = PK.seed)
+
   // ── Struct sizes for WASM buffer math ────────────────────────────────────
   // sizeof(CK_ATTRIBUTE) = type(4) + pValue(4) + ulValueLen(4) = 12 bytes
   CK_ATTRIBUTE_SIZE: 12,
   // sizeof(CK_MECHANISM) = mechanism(4) + pParameter(4) + ulParameterLen(4) = 12 bytes
   CK_MECHANISM_SIZE: 12,
+  // sizeof(CK_SIGN_ADDITIONAL_CONTEXT) = hedgeVariant(4) + pContext(4) + ulContextLen(4) = 12 bytes
+  CK_SIGN_ADDITIONAL_CONTEXT_SIZE: 12,
 })

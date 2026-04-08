@@ -30,6 +30,7 @@ import {
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { PREHASH_OPTIONS as PREHASH_OPTIONS_BASE } from '@/components/Playground/tabs/softhsm/SoftHsmUI'
 
 const STATEFUL_KAT_SPECS: KatTestSpec[] = [
   {
@@ -193,22 +194,16 @@ const PARAM_SETS: ParamSet[] = [
   },
 ]
 
-const PREHASH_OPTIONS = [
-  { id: 'sha256', label: 'SHA-256' },
-  { id: 'sha384', label: 'SHA-384' },
-  { id: 'sha512', label: 'SHA-512' },
-  { id: 'sha3-256', label: 'SHA3-256' },
-  { id: 'sha3-384', label: 'SHA3-384' },
-  { id: 'sha3-512', label: 'SHA3-512' },
-  { id: 'shake128', label: 'SHAKE-128' },
-  { id: 'shake256', label: 'SHAKE-256' },
-]
+// All PKCS#11 v3.2 pre-hash variants; non-FIPS 205 §11 entries are labeled for awareness
+const PREHASH_OPTIONS = PREHASH_OPTIONS_BASE.map((o) => ({
+  id: o.id,
+  label: o.fips205Slh ? o.label : `${o.label} (Non-FIPS 205)`,
+}))
 
 const DROPDOWN_ITEMS = PARAM_SETS.map((p) => ({ id: p.id, label: p.label }))
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
-  'C_GetAttributeValue',
   'C_MessageSignInit',
   'C_SignMessage',
   'C_MessageSignFinal',
@@ -397,6 +392,12 @@ export const SLHDSALiveDemo: React.FC = () => {
                 onSelect={(id) => setPreHash(id === 'All' ? '' : id)}
                 defaultLabel="Pure (no pre-hash)"
               />
+              {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
+                <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
+                  ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS-compliant choices: SHA-256,
+                  SHA-512, SHAKE-128, SHAKE-256.
+                </p>
+              )}
             </div>
           </div>
 

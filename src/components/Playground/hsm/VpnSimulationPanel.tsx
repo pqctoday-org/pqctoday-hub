@@ -17,7 +17,7 @@ import { PkcsLogPanel } from '../components/PkcsLogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
 import {
-  getSoftHSMCppModule,
+  getSoftHSMRustModule,
   hsm_generateRSAKeyPair,
   hsm_initToken,
   hsm_openUserSession,
@@ -53,7 +53,7 @@ export interface VpnSimulationPanelProps {
 }
 
 type SoftHSMWasmModule = NonNullable<
-  ReturnType<typeof getSoftHSMCppModule> extends Promise<infer T> ? T : never
+  ReturnType<typeof getSoftHSMRustModule> extends Promise<infer T> ? T : never
 >
 
 // ── Minimal DER helpers (RSAPublicKey BIT STRING content only) ────────────────
@@ -1035,7 +1035,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 role: 'public',
                 label: `${keyLabel} Public Key`,
                 variant,
-                engine: 'cpp',
+                engine: 'rust',
                 generatedAt: ts,
                 slotId: keySlotId,
               })
@@ -1045,7 +1045,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 role: 'private',
                 label: `${keyLabel} Private Key`,
                 variant,
-                engine: 'cpp',
+                engine: 'rust',
                 generatedAt: ts,
                 slotId: keySlotId,
               })
@@ -1417,7 +1417,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   role: 'secret',
                   label: `ML-KEM Session Key${fp92 ? ` FP:${fp92}` : secretHex92 ? ` — ${secretHex92.slice(0, 16)}…` : ''}`,
                   variant: 'ML-KEM-768',
-                  engine: 'cpp',
+                  engine: 'rust',
                   generatedAt: new Date().toISOString(),
                   slotId: keySlotId92,
                 })
@@ -1503,7 +1503,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 role: 'secret',
                 label: `ML-KEM Session Key${fp93 ? ` FP:${fp93}` : secretHex93 ? ` — ${secretHex93.slice(0, 16)}…` : ''}`,
                 variant: 'ML-KEM-768',
-                engine: 'cpp',
+                engine: 'rust',
                 generatedAt: new Date().toISOString(),
                 slotId: keySlotId93,
               })
@@ -1714,7 +1714,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
     try {
       // ── 1. Initialize softhsmv3 slots (first run only; idempotent on regenerate) ─
       if (!vpnRpcInitRef.current) {
-        const rawM = moduleRef.current ?? (await getSoftHSMCppModule())
+        const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
         rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
         const getRawSlots = (M: typeof rawM) => {
@@ -1775,7 +1775,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         role: 'public',
         label: 'RSA-3072 Public Key',
         variant: 'RSA-3072',
-        engine: 'cpp',
+        engine: 'rust',
         generatedAt: ts,
         slotId: 0,
       })
@@ -1785,7 +1785,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         role: 'private',
         label: 'RSA-3072 Private Key',
         variant: 'RSA-3072',
-        engine: 'cpp',
+        engine: 'rust',
         generatedAt: ts,
         slotId: 0,
       })
@@ -1795,7 +1795,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         role: 'public',
         label: 'RSA-3072 Public Key',
         variant: 'RSA-3072',
-        engine: 'cpp',
+        engine: 'rust',
         generatedAt: ts,
         slotId: 1,
       })
@@ -1805,7 +1805,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         role: 'private',
         label: 'RSA-3072 Private Key',
         variant: 'RSA-3072',
-        engine: 'cpp',
+        engine: 'rust',
         generatedAt: ts,
         slotId: 1,
       })
@@ -2293,7 +2293,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     // NOTE: moduleRef.current may already be set by another HSM panel —
                     // we guard with vpnRpcInitRef, not moduleRef.
                     if (rpcMode) {
-                      const rawM = moduleRef.current ?? (await getSoftHSMCppModule())
+                      const rawM = moduleRef.current ?? (await getSoftHSMRustModule())
                       rawM._C_Initialize(0) // idempotent — CKR_CRYPTOKI_ALREADY_INITIALIZED is OK
 
                       if (!vpnRpcInitRef.current) {

@@ -4,7 +4,7 @@ import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '../../../ui/button'
 import { ErrorAlert } from '../../../ui/error-alert'
 import {
-  getSoftHSMCppModule,
+  getSoftHSMRustModule,
   createLoggingProxy,
   hsm_initialize,
   hsm_getFirstSlot,
@@ -60,8 +60,8 @@ export const TokenSetupDemo = ({
     withLoading('initialize', async () => {
       setTokenError(null)
       try {
-        const M = await getSoftHSMCppModule()
-        const proxy = createLoggingProxy(M, addLog, 'cpp')
+        const M = await getSoftHSMRustModule()
+        const proxy = createLoggingProxy(M, addLog, 'rust')
         moduleRef.current = proxy
         hsm_initialize(proxy)
         setPhase('initialized')

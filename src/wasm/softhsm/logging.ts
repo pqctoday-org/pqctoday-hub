@@ -258,6 +258,8 @@ export const createLoggingProxy = (
       if (typeof prop === 'string' && prop.startsWith('_C_') && typeof val === 'function') {
         // Strip leading '_' to match the PKCS#11 v3.2 spec function name
         const specName = prop.slice(1) // e.g. 'C_EncapsulateKey'
+        // Skip attribute reads — internal plumbing, not crypto operations
+        if (specName === 'C_GetAttributeValue') return val
         return (...args: unknown[]) => {
           const t0 = performance.now()
           try {

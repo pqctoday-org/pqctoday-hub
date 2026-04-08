@@ -6,6 +6,97 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.94.0] - 2026-04-07
+
+### Added
+
+- **New SLH-DSA learning module** (`/learn/slh-dsa`): A dedicated 4-step module covering FIPS 205
+  SLH-DSA end-to-end — WOTS+, FORS, and hypertree architecture (§3–5); all 12 parameter sets with
+  the FIPS 205 §6 internal parameter table (n, h, d, h/d, a, k, lg_w, m); context strings for
+  domain separation (§9.2); deterministic signing mode (§10); and a side-by-side comparison of
+  LMS, XMSS, and SLH-DSA.
+
+- **SLH-DSA Playground — context string support (FIPS 205 §9.2)**: The Sign & Verify tab now
+  includes an optional context string field. The string is encoded as UTF-8 bytes (max 255 B) and
+  bound to the signature — supplying a mismatched context at verify time returns
+  `CKR_SIGNATURE_INVALID`. Only available in Pure SLH-DSA mode (not HashSLH-DSA).
+
+- **SLH-DSA Playground — deterministic mode toggle (FIPS 205 §10)**: A new checkbox switches
+  between randomized signing (`opt_rand` from RNG, default) and deterministic signing
+  (`opt_rand = PK.seed`). Toggle it to observe: off = a new signature each click; on = the same
+  bytes every time for the same (SK, M, context) triple. Pure SLH-DSA only.
+
+- **SLH-DSA Playground — FIPS 205 §6 internal parameter table**: Expand the collapsible
+  "FIPS 205 §6 internal parameters" row to see the full n/h/d/h′/a/k/lg_w/m values for the active
+  parameter set with explanations of the -s (small signature) vs -f (fast signing) trade-off.
+
+- **SLH-DSA — FIPS 205 §11 compliance labels on pre-hash options**: Pre-hash variants that are
+  not approved for HashSLH-DSA by FIPS 205 §11 (SHA-384, SHA3-\*, SHA-224) are now labelled
+  "(Non-FIPS 205)" in the dropdown. Selecting one shows an amber warning pointing to the four
+  approved hashes: SHA-256, SHA-512, SHAKE-128, SHAKE-256.
+
+- **KMS Envelope Encryption — three new KAT specs**: The KAT panel now includes an ML-KEM-512
+  encap/decap round-trip test, an ML-KEM-1024 encap/decap round-trip test, and an ML-KEM-768
+  decapsulation test against a NIST ACVP vector (FIPS 203 §7.2).
+
+- **KMS Envelope Encryption — envelope blob hex viewer**: After running the demo, a new
+  "Stored Envelope Blobs" section renders the raw hex of every blob the recipient would need to
+  store: KEM ciphertext, wrapped DEK, and GCM nonce. Includes a one-click "Copy hex" button for
+  each blob.
+
+- **PKCS#11 v3.2 hedge variant constants**: `CKH_HEDGE_PREFERRED` (0x00), `CKH_HEDGE_REQUIRED`
+  (0x01), and `CKH_DETERMINISTIC_REQUIRED` (0x02) are now exported from the vendor constants
+  module alongside `CK_SIGN_ADDITIONAL_CONTEXT_SIZE` (12 B) for correct WASM buffer allocation.
+
+- **SLH-DSA Playground — SHA-2 vs SHA-3 hardware hint**: The parameter set info panel now shows
+  a one-line note explaining when to prefer SHA-2 variants (no SHA-3 hardware) vs SHA-3/SHAKE
+  variants (with acceleration).
+
+### Fixed
+
+- **KMS Envelope Encryption — HKDF salt now follows SP 800-56C Rev 2 §4.1**: The wrapping key
+  derivation previously omitted the HKDF salt (`undefined`). It now uses a fixed 32-byte salt
+  (`"kms-envelope-salt-v1"` right-padded to 32 B), meeting the SP 800-56C requirement that the
+  salt length is ≥ the hash output length (SHA-256 → 32 B). Both the encapsulation and
+  re-derivation paths use the same salt.
+
+- **SLH-DSA Workshop — `C_GetAttributeValue` removed from live PKCS#11 log**: The logging proxy
+  now bypasses `C_GetAttributeValue` so internal attribute reads no longer appear as operations in
+  the step-by-step log, reducing noise.
+
+- **SLH-DSA Stateful Signatures Workshop — prehash options unified with Playground**: The
+  dropdown now reuses `PREHASH_OPTIONS` from `SoftHsmUI`, eliminating a duplicate list that could
+  drift out of sync.
+
+- **Playground — default engine in URL state changed from `cpp` to `rust`**: The URL param is now
+  omitted when the engine is `rust` (the default) and written when it differs, preventing stale
+  `?engine=cpp` links from appearing in shared URLs.
+
+- **VPN Simulation and Token Setup panels migrated to Rust WASM module**: `VpnSimulationPanel`,
+  `TokenSetupDemo`, and `algorithmEngineResolver` all now use `getSoftHSMRustModule()` instead of
+  `getSoftHSMCppModule()`, consistent with the rest of the Playground.
+
+- **HsmSetupPanel label corrected**: The subtitle now reads "SoftHSMv3 Rust WASM · OpenSSL 3.6 ·
+  PKCS#11 v3.2" (was "SoftHSM3 WASM").
+
+### Internal
+
+- **softhsmv3 Rust WASM** — updated C++ WASM module (`softhsm.js`) and Rust glue
+  (`softhsmrustv3_bg.js`). New PKCS#11 v3.2 functions: `_C_GetSessionValidationFlags`,
+  `_C_AsyncJoin`, `_C_AsyncGetID`, `_C_AsyncComplete`, `_C_MessageEncryptInit/Final`,
+  `_C_MessageDecryptInit/Final`, `_C_VerifySignatureInit/Update/Final/FinalWithSignature`, and
+  `_set_kat_seed`. Parameter names in `C_InitToken`, `C_Login`, `C_OpenSession`, `C_GetSlotList`
+  changed from `_`-prefixed stubs to real names, reflecting full Rust implementation.
+
+- **`index.d.ts` trailing-comma cleanup**: All parameter lists now use trailing commas for
+  consistent Prettier formatting. `_C_CreateObject` and `_C_FindObjects` reformatted to multi-line.
+
+- **SLH-DSA workshop link updated in Playground registry**: The SLH-DSA Sign & Verify tool now
+  links to the new `/learn/slh-dsa` module (was `/learn/stateful-signatures`) and the `wip: true`
+  flag is removed — the tool is production-ready.
+
+- **RAG corpus regenerated** to include the new SLH-DSA module content.
+
 ## [2.93.0] - 2026-04-07
 
 ### Added

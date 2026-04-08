@@ -94,6 +94,14 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
     duration: '60 min',
     difficulty: 'advanced',
   },
+  'slh-dsa': {
+    id: 'slh-dsa',
+    title: 'SLH-DSA: Stateless Hash Signatures',
+    description:
+      'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
+    duration: '45 min',
+    difficulty: 'advanced',
+  },
   'stateful-signatures': {
     id: 'stateful-signatures',
     title: 'Stateful Hash Signatures',
@@ -435,6 +443,7 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'quantum-threats': 5,
   'hybrid-crypto': 5,
   'crypto-agility': 3,
+  'slh-dsa': 4,
   'stateful-signatures': 4,
   'email-signing': 3,
   'vpn-ssh-pqc': 3,
@@ -554,6 +563,7 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
       MODULE_CATALOG['merkle-tree-certs'],
       MODULE_CATALOG['pki-workshop'],
       MODULE_CATALOG['stateful-signatures'],
+      MODULE_CATALOG['slh-dsa'],
     ],
   },
   {
@@ -664,6 +674,12 @@ export const LEARN_SECTIONS: Record<string, { id: string; label: string }[]> = {
     { id: 'vendors', label: 'HSM Vendor Landscape' },
     { id: 'migration', label: 'Firmware Migration & Dual-Partition Strategy' },
     { id: 'fips', label: 'FIPS 140-3 Validation & CMVP/CAVP' },
+  ],
+  'slh-dsa': [
+    { id: 'overview', label: 'SLH-DSA Overview & Why Stateless' },
+    { id: 'internals', label: 'WOTS+, FORS & Hypertree Architecture (§3–5)' },
+    { id: 'parameters', label: 'Parameter Sets, Tradeoffs & FIPS 205 §6' },
+    { id: 'advanced', label: 'Context Strings, Deterministic Mode & HashSLH-DSA' },
   ],
   'stateful-signatures': [
     { id: 'lms', label: 'LMS/HSS Merkle Tree Signatures' },
@@ -1010,6 +1026,12 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'vendor-comparison', label: 'Vendor Comparison' },
     { id: 'migration-planner', label: 'Migration Planner' },
     { id: 'fips-tracker', label: 'FIPS Tracker' },
+  ],
+  'slh-dsa': [
+    { id: 'keygen', label: 'Key Generation & Parameter Explorer' },
+    { id: 'sign-verify', label: 'Sign & Verify (Pure + HashSLH-DSA)' },
+    { id: 'context-deterministic', label: 'Context Strings & Deterministic Mode' },
+    { id: 'comparison', label: 'LMS vs XMSS vs SLH-DSA Comparison' },
   ],
   'stateful-signatures': [
     { id: 'lms-keygen', label: 'LMS Key Generation' },

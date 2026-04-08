@@ -61,6 +61,15 @@ const WRAP_MECH_META: Record<WrapMechanism, { label: string; standard: string; c
 
 const RSA_OAEP_STANDARD = 'PKCS #1 v2.2 §7.1 · RFC 8017'
 
+/** Fixed 32-byte HKDF salt for the KMS envelope encryption protocol.
+ *  SP 800-56C Rev 2 §4.1: salt length SHALL be ≥ L bits (SHA-256 → 32 B).
+ *  Value: UTF-8 "kms-envelope-salt-v1" right-padded with 0x00 to 32 bytes. */
+const ENVELOPE_HKDF_SALT: Uint8Array = (() => {
+  const buf = new Uint8Array(32)
+  new TextEncoder().encodeInto('kms-envelope-salt-v1', buf)
+  return buf
+})()
+
 /** Unwrap template for the recovered AES-256 DEK (sensitive=false so KCV is always readable).
  *  NOTE: CKA_VALUE_LEN must NOT be included — P11AttrValueLen::updateAttr rejects OBJECT_OP_UNWRAP
  *  (only OBJECT_OP_GENERATE/DERIVE allowed); the length is derived from the unwrapped bytes. */
@@ -76,11 +85,32 @@ const AES_UNWRAP_TEMPLATE: AttrDef[] = [
 
 const KMS_KAT_SPECS: KatTestSpec[] = [
   {
-    id: 'kms-envelope-kem',
-    useCase: 'Envelope encryption key transport (ML-KEM-768)',
-    standard: 'SP 800-57 + FIPS 203',
+    id: 'kms-envelope-kem-768',
+    useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-768)',
+    standard: 'FIPS 203 §7 (encap/decap round-trip)',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
     kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+  },
+  {
+    id: 'kms-envelope-kem-decap-768',
+    useCase: 'Envelope KEM decapsulation vs NIST ACVP vector (ML-KEM-768)',
+    standard: 'FIPS 203 §7.2 (NIST ACVP decap KAT)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-decap', variant: 768 },
+  },
+  {
+    id: 'kms-envelope-kem-512',
+    useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-512)',
+    standard: 'FIPS 203 §7 (encap/decap round-trip)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 512 },
+  },
+  {
+    id: 'kms-envelope-kem-1024',
+    useCase: 'Envelope KEM encap/decap round-trip (ML-KEM-1024)',
+    standard: 'FIPS 203 §7 (encap/decap round-trip)',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
+    kind: { type: 'mlkem-encap-roundtrip', variant: 1024 },
   },
   {
     id: 'kms-dek-encrypt',
@@ -136,6 +166,39 @@ const fmtKcv = (kcv: Uint8Array | null | undefined): string =>
 
 const ts = () => new Date().toLocaleTimeString()
 
+/** Collapsible hex panel for a raw cryptographic blob. */
+const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, bytes }) => {
+  const [copied, setCopied] = React.useState(false)
+  const hex = Array.from(bytes)
+    .map((b) => b.toString(16).padStart(2, '0'))
+    .join(' ')
+  const handleCopy = () => {
+    void navigator.clipboard.writeText(hex.replace(/ /g, '')).then(() => {
+      setCopied(true)
+      setTimeout(() => setCopied(false), 1500)
+    })
+  }
+  return (
+    <div className="space-y-1">
+      <div className="flex items-center justify-between">
+        <span className="text-xs font-semibold text-foreground">
+          {label}{' '}
+          <span className="font-normal text-muted-foreground font-mono">({bytes.length} B)</span>
+        </span>
+        <button
+          onClick={handleCopy}
+          className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-muted/80 text-muted-foreground border border-border transition-colors"
+        >
+          {copied ? '✓ Copied' : 'Copy hex'}
+        </button>
+      </div>
+      <pre className="text-[10px] font-mono bg-muted/50 rounded border border-border p-2 overflow-x-auto whitespace-pre-wrap break-all text-foreground/70 max-h-28 overflow-y-auto leading-relaxed">
+        {hex}
+      </pre>
+    </div>
+  )
+}
+
 // ── Component ─────────────────────────────────────────────────────────────────
 
 export const EnvelopeEncryptionDemo: React.FC = () => {
@@ -157,6 +220,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
     match: boolean
     method: 'kcv' | 'raw'
   } | null>(null)
+  const [envelopeBlob, setEnvelopeBlob] = useState<{
+    path: 'ml-kem' | 'rsa'
+    kemCt: Uint8Array | null
+    wrappedDek: Uint8Array
+    gcmIv: Uint8Array | null
+  } | null>(null)
 
   const isRSA = kekAlgo.startsWith('rsa')
 
@@ -166,6 +235,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
     setLiveLines([])
     setLiveError(null)
     setKcvResult(null)
+    setEnvelopeBlob(null)
     hsm.clearLog()
     hsm.clearKeys()
 
@@ -280,6 +350,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         addLine(
           `Storage overhead: RSA-${bits} ciphertext = ${wrappedDek.length} B total (1 wrapped blob)`
         )
+        setEnvelopeBlob({ path: 'rsa', kemCt: null, wrappedDek, gcmIv: null })
       } else {
         // ── ML-KEM path ────────────────────────────────────────────────────────
         const variant = parseInt(kekAlgo.split('-')[2]) as 512 | 768 | 1024
@@ -350,7 +421,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
         )
         hsm.addStepLog('── Step 3: KEM Encapsulate (CKM_ML_KEM / FIPS 203) ─────────────────')
 
-        // Step 4: HKDF-SHA256 → 32-byte wrapping key
+        // Step 4: HKDF-SHA256 → 32-byte wrapping key (SP 800-56C Rev 2 §4.1)
         const derivableHandle = hsm_importGenericSecret(M, hSession, secretBytes)
         const envelopeInfo = new TextEncoder().encode('kms-envelope-v1')
         const wrapKeyBytes = hsm_hkdf(
@@ -360,14 +431,14 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           CKM_SHA256,
           true,
           true,
-          undefined,
+          ENVELOPE_HKDF_SALT,
           envelopeInfo,
           32
         )
         addLine(
-          `HKDF-SHA256 (RFC 5869): derived ${wrapKeyBytes.length} B wrapping key — info="kms-envelope-v1"`
+          `HKDF-SHA256 (SP 800-56C §4.1): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
         )
-        hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / RFC 5869) ────────')
+        hsm.addStepLog('── Step 4: Derive Wrapping Key (CKM_HKDF_DERIVE / SP 800-56C + RFC 5869) ─')
 
         // Read KCV and raw bytes of original DEK (before wrap)
         const kcvBefore = fmtKcv(hsm_getKeyCheckValue(M, hSession, dekHandle))
@@ -440,7 +511,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           `KEM round-trip: ${secretMatch ? '✓ shared secrets match' : '✗ shared secrets differ'} (${recoveredSecretBytes.length} B)`
         )
 
-        // Re-derive the same wrapping key from the recovered secret
+        // Re-derive the same wrapping key from the recovered secret (same salt — SP 800-56C Rev 2 §4.1)
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
         const unwrapKeyBytes = hsm_hkdf(
           M,
@@ -449,7 +520,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           CKM_SHA256,
           true,
           true,
-          undefined,
+          ENVELOPE_HKDF_SALT,
           envelopeInfo,
           32
         )
@@ -531,6 +602,12 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
             (gcmIv ? ` + GCM nonce ${gcmIv.length} B` : '') +
             ` = ${totalBytes} B total (2 blobs)`
         )
+        setEnvelopeBlob({
+          path: 'ml-kem',
+          kemCt: ciphertextBytes,
+          wrappedDek,
+          gcmIv: gcmIv ?? null,
+        })
       }
     } catch (e) {
       setLiveError(e instanceof Error ? e.message : String(e))
@@ -805,6 +882,32 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   ? 'CKA_CHECK_VALUE = first 3 bytes of AES-ECB(key, 0x00…) — PKCS#11 §9'
                   : 'SoftHSMv3 implementation note: C_GenerateKey populates CKA_CHECK_VALUE but C_UnwrapKey does not (this is an implementation gap, not a PKCS#11 requirement). Falling back to first 3 bytes of CKA_VALUE for comparison. In production HSMs, CKA_CHECK_VALUE is the correct verification method.'}
               </p>
+            </div>
+          )}
+
+          {/* ── Envelope Blob Hex Viewer ──────────────────────────────────── */}
+          {envelopeBlob && (
+            <div className="space-y-3 pt-3 border-t border-border/40">
+              <div className="flex items-center gap-2 flex-wrap">
+                <h4 className="text-sm font-bold text-foreground">Stored Envelope Blobs</h4>
+                <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 font-mono">
+                  {envelopeBlob.kemCt
+                    ? `KEM\u202f+\u202fAES\u202f·\u202f${envelopeBlob.kemCt.length + envelopeBlob.wrappedDek.length + (envelopeBlob.gcmIv?.length ?? 0)}\u00a0B`
+                    : `RSA-OAEP\u202f·\u202f${envelopeBlob.wrappedDek.length}\u00a0B`}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                {envelopeBlob.kemCt
+                  ? 'Raw bytes that would be stored alongside the encrypted data. The recipient decapsulates the KEM ciphertext, re-derives the HKDF wrapping key (SP\u00a0800-56C), then unwraps the DEK.'
+                  : 'Raw RSA-OAEP ciphertext stored alongside encrypted data. The recipient decrypts with their RSA private key to recover the DEK.'}
+              </p>
+              {envelopeBlob.kemCt && (
+                <BlobHexPanel label="KEM Ciphertext" bytes={envelopeBlob.kemCt} />
+              )}
+              <BlobHexPanel label="Wrapped DEK" bytes={envelopeBlob.wrappedDek} />
+              {envelopeBlob.gcmIv && (
+                <BlobHexPanel label="GCM Nonce (IV)" bytes={envelopeBlob.gcmIv} />
+              )}
             </div>
           )}
         </div>
@@ -1163,7 +1266,7 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
       <KatValidationPanel
         specs={KMS_KAT_SPECS}
         label="KMS PQC Known Answer Tests"
-        authorityNote="SP 800-57 · FIPS 203 · SP 800-38D · RFC 3394 · RFC 5649 · RFC 5869"
+        authorityNote="FIPS 203 · SP 800-56C Rev 2 · SP 800-38D · RFC 3394 · RFC 5649 · RFC 5869"
       />
 
       {/* ── PKCS#11 log & Key Inspector (Bottom Layout) ────────────────────── */}

@@ -29,18 +29,20 @@ export const DSA_SIZES: Record<44 | 65 | 87, { pub: number; sig: number }> = {
   87: { pub: 2592, sig: 4627 },
 }
 
-// Pre-hash options shared by ML-DSA and SLH-DSA (PKCS#11 v3.2 CKM_HASH_*_DSA_* variants)
+// Pre-hash options shared by ML-DSA and SLH-DSA (PKCS#11 v3.2 CKM_HASH_*_DSA_* variants).
+// fips205Slh: true = approved for HashSLH-DSA per FIPS 205 §11; false = not approved for SLH-DSA
+// (FIPS 205 §11 approves only SHA-256, SHA-512, SHAKE-128, SHAKE-256 for HashSLH-DSA)
 export const PREHASH_OPTIONS = [
-  { id: 'sha224', label: 'SHA-224' },
-  { id: 'sha256', label: 'SHA-256' },
-  { id: 'sha384', label: 'SHA-384' },
-  { id: 'sha512', label: 'SHA-512' },
-  { id: 'sha3-224', label: 'SHA3-224' },
-  { id: 'sha3-256', label: 'SHA3-256' },
-  { id: 'sha3-384', label: 'SHA3-384' },
-  { id: 'sha3-512', label: 'SHA3-512' },
-  { id: 'shake128', label: 'SHAKE-128' },
-  { id: 'shake256', label: 'SHAKE-256' },
+  { id: 'sha224', label: 'SHA-224', fips205Slh: false },
+  { id: 'sha256', label: 'SHA-256', fips205Slh: true },
+  { id: 'sha384', label: 'SHA-384', fips205Slh: false },
+  { id: 'sha512', label: 'SHA-512', fips205Slh: true },
+  { id: 'sha3-224', label: 'SHA3-224', fips205Slh: false },
+  { id: 'sha3-256', label: 'SHA3-256', fips205Slh: false },
+  { id: 'sha3-384', label: 'SHA3-384', fips205Slh: false },
+  { id: 'sha3-512', label: 'SHA3-512', fips205Slh: false },
+  { id: 'shake128', label: 'SHAKE-128', fips205Slh: true },
+  { id: 'shake256', label: 'SHAKE-256', fips205Slh: true },
 ]
 
 // SLH-DSA parameter sets (FIPS 205 / PKCS#11 v3.2 CKP_SLH_DSA_*)
@@ -101,6 +103,27 @@ export const SLH_DSA_PARAM_SET_OPTIONS = [
     sig: 49856,
   },
 ] as const
+
+// FIPS 205 §6 Table 1 — internal parameters for each parameter set
+// n=hash output bytes, h=total tree height, d=hypertree layers,
+// hp=height per layer (h/d), a=FORS tree height, k=FORS trees, lg_w=Winternitz log, m=index bits
+export const SLH_DSA_INTERNAL_PARAMS: Record<
+  string,
+  { n: number; h: number; d: number; hp: number; a: number; k: number; lg_w: number; m: number }
+> = {
+  'sha2-128s': { n: 16, h: 63, d: 7, hp: 9, a: 12, k: 14, lg_w: 4, m: 30 },
+  'shake-128s': { n: 16, h: 63, d: 7, hp: 9, a: 12, k: 14, lg_w: 4, m: 30 },
+  'sha2-128f': { n: 16, h: 66, d: 22, hp: 3, a: 6, k: 33, lg_w: 4, m: 34 },
+  'shake-128f': { n: 16, h: 66, d: 22, hp: 3, a: 6, k: 33, lg_w: 4, m: 34 },
+  'sha2-192s': { n: 24, h: 63, d: 7, hp: 9, a: 14, k: 17, lg_w: 4, m: 39 },
+  'shake-192s': { n: 24, h: 63, d: 7, hp: 9, a: 14, k: 17, lg_w: 4, m: 39 },
+  'sha2-192f': { n: 24, h: 66, d: 22, hp: 3, a: 8, k: 33, lg_w: 4, m: 42 },
+  'shake-192f': { n: 24, h: 66, d: 22, hp: 3, a: 8, k: 33, lg_w: 4, m: 42 },
+  'sha2-256s': { n: 32, h: 64, d: 8, hp: 8, a: 14, k: 22, lg_w: 4, m: 47 },
+  'shake-256s': { n: 32, h: 64, d: 8, hp: 8, a: 14, k: 22, lg_w: 4, m: 47 },
+  'sha2-256f': { n: 32, h: 68, d: 17, hp: 4, a: 9, k: 35, lg_w: 4, m: 49 },
+  'shake-256f': { n: 32, h: 68, d: 17, hp: 4, a: 9, k: 35, lg_w: 4, m: 49 },
+}
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
