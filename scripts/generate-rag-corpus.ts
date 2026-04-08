@@ -2067,6 +2067,212 @@ async function processAchievementCatalog(): Promise<RAGChunk[]> {
 }
 
 // ---------------------------------------------------------------------------
+// Belt Ranks — judo grading system extracted from useAwarenessScore.ts
+// ---------------------------------------------------------------------------
+
+function processBeltRanks(): RAGChunk[] {
+  const filePath = path.join(process.cwd(), 'src', 'hooks', 'useAwarenessScore.ts')
+  if (!fs.existsSync(filePath)) return []
+
+  const raw = fs.readFileSync(filePath, 'utf-8')
+
+  // Parse BELT_RANKS array from source
+  interface BeltRank {
+    name: string
+    minScore: number
+    maxScore: number
+    tagline: string
+    thresholds: {
+      minQuizPct: number
+      minStepsPct: number
+      minArtifacts: number
+      minTimeMinutes: number
+      minStreak: number
+    }
+  }
+
+  const belts: BeltRank[] = []
+
+  // Extract BELT_RANKS array section, then split into individual belt objects by brace-counting
+  const arrStart = raw.indexOf('export const BELT_RANKS')
+  const arrBodyStart = raw.indexOf('[', arrStart)
+  if (arrStart === -1 || arrBodyStart === -1) return []
+
+  // Find each top-level object in the array by tracking brace depth
+  let depth = 0
+  let blockStart = -1
+  for (let i = arrBodyStart; i < raw.length; i++) {
+    if (raw[i] === '{') {
+      if (depth === 0) blockStart = i
+      depth++
+    }
+    if (raw[i] === '}') {
+      depth--
+      if (depth === 0 && blockStart >= 0) {
+        const block = raw.slice(blockStart, i + 1)
+        const name = block.match(/name:\s*'([^']+)'/)
+        const min = block.match(/minScore:\s*(\d+)/)
+        const max = block.match(/maxScore:\s*(\d+)/)
+        const tag = block.match(/tagline:\s*'([^']+)'/)
+        const quiz = block.match(/minQuizPct:\s*(\d+)/)
+        const steps = block.match(/minStepsPct:\s*(\d+)/)
+        const arts = block.match(/minArtifacts:\s*(\d+)/)
+        const time = block.match(/minTimeMinutes:\s*(\d+)/)
+        const streak = block.match(/minStreak:\s*(\d+)/)
+        if (name && min && max && tag && quiz && steps && arts && time && streak) {
+          belts.push({
+            name: name[1],
+            minScore: parseInt(min[1]),
+            maxScore: parseInt(max[1]),
+            tagline: tag[1],
+            thresholds: {
+              minQuizPct: parseInt(quiz[1]),
+              minStepsPct: parseInt(steps[1]),
+              minArtifacts: parseInt(arts[1]),
+              minTimeMinutes: parseInt(time[1]),
+              minStreak: parseInt(streak[1]),
+            },
+          })
+        }
+        blockStart = -1
+      }
+    }
+    // Stop after the array closes (back to depth -1 relative to the '[')
+    if (raw[i] === ']' && depth === 0 && i > arrBodyStart + 1) break
+  }
+
+  if (belts.length === 0) return []
+
+  // Build a structured chunk with all belt details
+  const beltTable = belts
+    .map((b) => {
+      const t = b.thresholds
+      return `- **${b.name}** (${b.minScore}–${b.maxScore} pts): "${b.tagline}" — Quiz ≥${t.minQuizPct}%, Steps ≥${t.minStepsPct}%, Artifacts ≥${t.minArtifacts}, Time ≥${t.minTimeMinutes}min, Streak ≥${t.minStreak} days`
+    })
+    .join('\n')
+
+  const chunks: RAGChunk[] = []
+
+  chunks.push({
+    id: 'gamification-belt-ranks',
+    source: 'achievements',
+    title: 'Judo Belt Grading System — 7 Tiers with Threshold Gates',
+    content: `Judo Belt Grading System\n\nPQC Today uses a 7-tier judo belt ranking system to measure learning progress. Each belt requires both a minimum composite awareness score AND meeting specific threshold gates (quiz mastery, step completion, artifacts generated, time invested, and daily streak).\n\nComposite Score Formula: Knowledge (40%) + Breadth (30%) + Practice (20%) + Time & Consistency (10%)\n- Knowledge: quiz questions correctly answered (cumulative mastery across sessions)\n- Breadth: learning module workshop steps completed\n- Practice: cryptographic artifacts generated (keys × 8pts, certs × 7pts, CSRs × 5pts, exec docs × 5pts)\n- Time & Consistency: total learning minutes (60%) + current daily streak (40%)\n\nBelt Ranks:\n${beltTable}\n\nThreshold gating: A learner can have the score for Brown Belt but be held at Blue Belt if they haven't generated enough artifacts or maintained a sufficient streak. Unmet gates produce actionable feedback messages (e.g., "Need 2 more artifacts for Brown Belt").\n\nThe belt system is persona-scoped: only modules in the active persona's learning path count toward breadth. Quiz mastery is filtered to persona-relevant questions.`,
+    category: 'gamification',
+    metadata: { beltCount: String(belts.length) },
+    deepLink: '/',
+  })
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
+// Assessment Methodology — wizard scoring, risk dimensions, section guides
+// extracted from sectionInfoContent.ts
+// ---------------------------------------------------------------------------
+
+function processAssessmentMethodology(): RAGChunk[] {
+  const filePath = path.join(process.cwd(), 'src', 'components', 'Report', 'sectionInfoContent.ts')
+  if (!fs.existsSync(filePath)) return []
+
+  const raw = fs.readFileSync(filePath, 'utf-8')
+  const chunks: RAGChunk[] = []
+
+  // Helper to clean unicode escapes from TS source strings
+  const cleanUnicode = (s: string): string =>
+    s
+      .replace(/\\u2019/g, String.fromCodePoint(0x2019))
+      .replace(/\\u00d7/g, String.fromCodePoint(0x00d7))
+      .replace(/\\u2212/g, String.fromCodePoint(0x2212))
+      .replace(/\\u2014/g, String.fromCodePoint(0x2014))
+      .replace(/\\u201c/g, String.fromCodePoint(0x201c))
+      .replace(/\\u201d/g, String.fromCodePoint(0x201d))
+
+  const sectionKeys = [
+    'riskScore',
+    'keyFindings',
+    'riskBreakdown',
+    'executiveSummary',
+    'assessmentProfile',
+    'hndlHnfl',
+    'algorithmMigration',
+    'complianceImpact',
+    'recommendedActions',
+    'migrationRoadmap',
+    'migrationToolkit',
+    'roiCalculator',
+    'kpiTrending',
+    'threatLandscape',
+    'countryTimeline',
+  ]
+
+  for (const key of sectionKeys) {
+    const startMarker = `  ${key}: {`
+    const startIdx = raw.indexOf(startMarker)
+    if (startIdx === -1) continue
+
+    let depth = 0
+    let endIdx = startIdx
+    for (let i = startIdx; i < raw.length; i++) {
+      if (raw[i] === '{') depth++
+      if (raw[i] === '}') {
+        depth--
+        if (depth === 0) {
+          endIdx = i
+          break
+        }
+      }
+    }
+
+    const block = raw.slice(startIdx, endIdx + 1)
+
+    const titleMatch = block.match(/title:\s*'([^']+)'/)
+    const title = titleMatch ? titleMatch[1] : key
+
+    const summaryMatch = block.match(/summary:\s*\n?\s*'([^']*(?:\\.[^']*)*)'/)
+    const summary = summaryMatch ? cleanUnicode(summaryMatch[1]) : ''
+
+    const inputParts: string[] = []
+    const inputRegex = /label:\s*'([^']+)'[^}]*detail:\s*\n?\s*'([^']*(?:\\.[^']*)*?)'/g
+    let inputMatch
+    while ((inputMatch = inputRegex.exec(block)) !== null) {
+      inputParts.push(`  - **${inputMatch[1]}**: ${cleanUnicode(inputMatch[2])}`)
+    }
+
+    const principles: string[] = []
+    const principleRegex = /scoringPrinciples:\s*\[([\s\S]*?)\]/
+    const princMatch = principleRegex.exec(block)
+    if (princMatch) {
+      const strRegex = /'([^']*(?:\\.[^']*)*?)'/g
+      let strMatch
+      while ((strMatch = strRegex.exec(princMatch[1])) !== null) {
+        principles.push(`  ${String.fromCodePoint(0x2022)} ${cleanUnicode(strMatch[1])}`)
+      }
+    }
+
+    const contentParts = [`Assessment Report Section: ${title}`, '', summary]
+    if (inputParts.length > 0) {
+      contentParts.push('', 'Wizard Inputs:', ...inputParts)
+    }
+    if (principles.length > 0) {
+      contentParts.push('', 'Scoring Principles:', ...principles)
+    }
+
+    chunks.push({
+      id: `assessment-method-${key}`,
+      source: 'assessment',
+      title: `Assessment Report: ${title}`,
+      content: contentParts.join('\n'),
+      category: 'assessment',
+      metadata: { section: key },
+      deepLink: '/assess',
+    })
+  }
+
+  return chunks
+}
+
+// ---------------------------------------------------------------------------
 // Business Center guide
 // ---------------------------------------------------------------------------
 
@@ -2982,6 +3188,8 @@ async function main() {
     { name: 'Playground Guide', fn: processPlaygroundGuide },
     { name: 'OpenSSL Studio Guide', fn: processOpenSSLStudioGuide },
     { name: 'Achievement Catalog', fn: processAchievementCatalog },
+    { name: 'Belt Ranks', fn: processBeltRanks },
+    { name: 'Assessment Methodology', fn: processAssessmentMethodology },
     { name: 'Business Center Guide', fn: processBusinessCenterGuide },
     { name: 'Right Panel Guide', fn: processRightPanelGuide },
     { name: 'Guided Tour Guide', fn: processGuidedTourGuide },
