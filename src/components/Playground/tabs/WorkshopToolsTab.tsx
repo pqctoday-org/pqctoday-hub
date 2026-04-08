@@ -187,6 +187,27 @@ const WORKSHOP_TOOLS: WorkshopTool[] = [
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
   {
+    id: 'pki-workshop',
+    name: 'PKI Workshop',
+    description:
+      'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
+    category: 'Certificates & Proofs',
+    algorithms: ['RSA', 'EC', 'ML-DSA', 'X.509', 'CRL'],
+    icon: ShieldCheck,
+    moduleLink: '/learn/pki-workshop',
+    keywords: [
+      'pki',
+      'x509',
+      'certificate',
+      'csr',
+      'root ca',
+      'signing',
+      'crl',
+      'revocation',
+      'chain',
+    ],
+  },
+  {
     id: 'hybrid-certs',
     name: 'Hybrid Certificates',
     description: 'Generate PQC and composite X.509v3 certificates via OpenSSL',
@@ -369,6 +390,15 @@ const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/PKILearning/modules/Entropy/workshop/SourceCombiningDemo').then((m) => ({
       default: m.SourceCombiningDemo,
     }))
+  ),
+  'pki-workshop': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PKIWorkshop').then((m) => {
+      function PKIWorkshopPlayground() {
+        return <m.PKIWorkshop playgroundMode />
+      }
+      PKIWorkshopPlayground.displayName = 'PKIWorkshopPlayground'
+      return { default: PKIWorkshopPlayground }
+    })
   ),
   'hybrid-certs': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/HybridCrypto/workshop/HybridCertFormats').then(

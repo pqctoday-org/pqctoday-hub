@@ -1,13 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useEffect } from 'react'
-import { PenTool, Loader2, Info, X } from 'lucide-react'
+import { PenTool, Loader2, Info, X, Check } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import remarkGfm from 'remark-gfm'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
-import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
-
 import { useCertProfile } from '@/hooks/useCertProfile'
 import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
@@ -24,14 +22,37 @@ const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.
 const PROFILE_DOC_MAP: Record<string, string> = {
   'Cert-Financial_ETSI_EN319412-2_2025.csv':
     '../../../../data/x509_profiles/ETSI_EN_319_412-2_Certificate_Overview.md',
+  'Cert-Financial_ETSI_EN319412-2_04072026.csv':
+    '../../../../data/x509_profiles/ETSI_EN_319_412-2_Certificate_Overview.md',
   'Cert-GeneralIT_CABF_TLSBR_2025.csv':
     '../../../../data/x509_profiles/CAB_Forum_TLS_Baseline_Requirements_Overview.md',
   'Cert-Telecom_3GPP_TS33310_2025.csv':
+    '../../../../data/x509_profiles/3GPP_TS_33.310_NDS_AF_Certificate_Overview.md',
+  'Cert-Telecom_3GPP_TS33310_04072026.csv':
     '../../../../data/x509_profiles/3GPP_TS_33.310_NDS_AF_Certificate_Overview.md',
 }
 
 interface CertSignerProps {
   onComplete: () => void
+}
+
+// Map from dotted OID → OpenSSL short name accepted in -subj (S3-C fix)
+// KNOWN_OIDS maps OID → long name (e.g. 'organizationName'); -subj needs the short abbrev (e.g. 'O')
+const OID_TO_SHORT: Record<string, string> = {
+  '2.5.4.3': 'CN',
+  '2.5.4.6': 'C',
+  '2.5.4.10': 'O',
+  '2.5.4.11': 'OU',
+  '2.5.4.8': 'ST',
+  '2.5.4.7': 'L',
+  '2.5.4.9': 'street',
+  '2.5.4.5': 'serialNumber',
+  '2.5.4.17': 'postalCode',
+  '2.5.4.97': 'organizationIdentifier',
+  '1.2.840.113549.1.9.1': 'emailAddress',
+  '0.9.2342.19200300.100.1.25': 'DC',
+  '2.5.4.4': 'SN',
+  '2.5.4.42': 'GN',
 }
 
 const INITIAL_ATTRIBUTES: X509Attribute[] = [
@@ -57,6 +78,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
   const [isSigning, setIsSigning] = useState(false)
   const [output, setOutput] = useState('')
   const [signedCert, setSignedCert] = useState<string | null>(null)
+  const [csrVerified, setCsrVerified] = useState(false)
   const [showProfileInfo, setShowProfileInfo] = useState(false)
   const [profileDocContent, setProfileDocContent] = useState<string>('')
 
@@ -101,12 +123,13 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       const csrFile = { name: 'temp.csr', data: new TextEncoder().encode(csr.pem) }
 
       // Parse Subject
+      // -nameopt RFC2253 is the OpenSSL flag name (kept for compatibility); the current standard is RFC 4514 (2006).
       const subjCmd = `openssl req -in temp.csr -noout -subject -nameopt RFC2253`
       const subjResult = await openSSLService.execute(subjCmd, [csrFile])
 
       if (!subjResult.error) {
         // Output format: subject=CN=example.com,O=My Org,C=US
-        // RFC2253 usually gives comma separated
+        // RFC 4514 (which obsoleted RFC 2253 in 2006) specifies the comma-separated DN string format.
         // Filter stdout to find the line starting with "subject=" to avoid debug logs
         const lines = subjResult.stdout.split('\n')
         const subjectLineRaw = lines.find((l) => l.trim().startsWith('subject='))
@@ -118,9 +141,9 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
         const subjectLine = subjectLineRaw.replace('subject=', '').trim()
 
-        // Simple parser for RFC2253 style DN (comma separated)
-        // Note: This is a basic parser and might fail on complex DNs with escaped commas
-        const parts = subjectLine.split(',')
+        // RFC 4514 DN parser: split on commas NOT preceded by a backslash
+        // Handles escaped commas like CN=Acme\, Inc.,O=Acme
+        const parts = subjectLine.split(/(?<!\\),/)
 
         // Create a deep copy to avoid direct state mutation
         const newAttributes = currentAttributes.map((attr) => ({ ...attr }))
@@ -148,8 +171,22 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
 
   const handleCsrSelect = async (csrId: string) => {
     setSelectedCsrId(csrId)
-    if (csrId) {
-      await importCsrValues(csrId, attributes)
+    setCsrVerified(false)
+    if (!csrId) return
+    await importCsrValues(csrId, attributes)
+    // S3-F: Pre-verify CSR self-signature on selection so badge shows before Sign is clicked
+    const csr = csrs.find((c) => c.id === csrId)
+    if (csr) {
+      try {
+        const csrFile = { name: csr.name, data: new TextEncoder().encode(csr.pem) }
+        const result = await openSSLService.execute(`openssl req -verify -in ${csr.name} -noout`, [
+          csrFile,
+        ])
+        const ok = !result.error && (result.stdout.includes('OK') || result.stderr.includes('OK'))
+        setCsrVerified(ok)
+      } catch {
+        // non-fatal — badge stays false
+      }
     }
   }
 
@@ -184,6 +221,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
     setIsSigning(true)
     setOutput('')
     setSignedCert(null)
+    setCsrVerified(false)
 
     try {
       const csr = csrs.find((c) => c.id === selectedCsrId)
@@ -192,24 +230,80 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       setOutput((prev) => prev + `Selected CSR: ${csr?.name || 'None'}\n`)
       setOutput((prev) => prev + `Selected CA Key: ${caKey?.name || 'None'}\n`)
 
-      // Find the certificate associated with this key
-      // We look for a certificate that has this keyPairId, OR fall back to name matching for old data
-      const caCert =
-        rootCAs.find((c) => c.keyPairId === selectedKeyId) ||
-        rootCAs.find((c) => c.name === caKey?.name.replace(' Key', ''))
+      // Find the Root CA certificate that matches the selected key.
+      // In Step 2, generating a Root CA links the key and cert via an internal keyPairId.
+      // Primary match: keyPairId (reliable — set when key + cert are generated together in Step 2).
+      // Fallback: name-based match (for artifacts generated before keyPairId tracking was added).
+      // If both fail, it means the CA key and CA certificate were not generated together in Step 2.
+      const byKeyPairId = rootCAs.find((c) => c.keyPairId === selectedKeyId)
+      const byName = rootCAs.find((c) => c.name === caKey?.name.replace(' Key', ''))
+      const caCert = byKeyPairId ?? byName
 
       if (caCert) {
-        setOutput((prev) => prev + `Found CA Certificate: ${caCert.name}\n`)
-      } else {
-        setOutput((prev) => prev + `Error: No Root CA Certificate found for this key.\n`)
         setOutput(
-          (prev) => prev + `Tip: Go back to Step 2 and generate a Root CA using "${caKey?.name}".\n`
+          (prev) =>
+            prev +
+            `Found CA Certificate: ${caCert.name}` +
+            (byKeyPairId ? ' (matched by keyPairId)\n' : ' (matched by name fallback)\n')
         )
+      } else {
+        setOutput(
+          (prev) => prev + `Error: No Root CA Certificate found for key "${caKey?.name}".\n`
+        )
+        if (rootCAs.length > 0) {
+          // Diagnostic: show why the match failed so the learner can debug
+          setOutput(
+            (prev) =>
+              prev +
+              `  Diagnostic: searched by keyPairId="${selectedKeyId}" — no match.\n` +
+              `  Searched by name="${caKey?.name.replace(' Key', '')}" — no match.\n` +
+              `  Available Root CAs (name / keyPairId):\n` +
+              rootCAs
+                .map((c) => `    • ${c.name} / keyPairId=${c.keyPairId ?? 'none'}\n`)
+                .join('') +
+              `  Tip: The CA key and CA certificate must be generated together in Step 2.\n` +
+              `  If you generated the key separately, go back to Step 2 and re-generate the Root CA using that key.\n`
+          )
+        } else {
+          setOutput(
+            (prev) =>
+              prev + `  No Root CA certificates exist yet. Go to Step 2 and generate one first.\n`
+          )
+        }
       }
 
       if (!csr || !caCert || !caKey) {
         throw new Error('Cannot proceed without CSR, CA Key, and CA Certificate.')
       }
+
+      // Step 0: Verify CSR self-signature (proof of possession)
+      // A CA must always confirm the applicant controls the private key before issuing.
+      setOutput(
+        (prev) => prev + `\n[Step 0] Verifying CSR self-signature (proof of possession)...\n`
+      )
+      const csrVerifyFile = { name: csr.name, data: new TextEncoder().encode(csr.pem) }
+      const csrVerifyResult = await openSSLService.execute(
+        `openssl req -verify -in ${csr.name} -noout`,
+        [csrVerifyFile]
+      )
+      const csrVerifyOk =
+        !csrVerifyResult.error &&
+        (csrVerifyResult.stdout.includes('OK') || csrVerifyResult.stderr.includes('OK'))
+      if (!csrVerifyOk) {
+        setOutput(
+          (prev) =>
+            prev +
+            `  CSR signature verification FAILED: ${csrVerifyResult.stderr || csrVerifyResult.stdout}\n` +
+            `  Rejecting — the CSR may have been tampered with or the key does not match the signature.\n`
+        )
+        throw new Error('CSR self-signature verification failed — cannot proceed')
+      }
+      setOutput(
+        (prev) =>
+          prev +
+          `  CSR signature verified. The applicant holds the private key matching this public key.\n\n`
+      )
+      setCsrVerified(true)
 
       // Prepare files using actual names
       const csrFileName = csr.name
@@ -242,15 +336,27 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       const hasKeyUsage = attributes.some(
         (a) => a.enabled && (a.id === 'keyUsage' || a.label === 'keyUsage')
       )
+      // S3-A: For RSA keys, TLS 1.2 key exchange requires keyEncipherment in addition to digitalSignature.
+      // For ECDSA/EdDSA/PQC, digitalSignature is the correct and only value.
+      const caAlgoForKeyUsage = caKey.algorithm.toLowerCase()
+      const isRsaCaKey = caAlgoForKeyUsage.includes('rsa')
       if (!hasKeyUsage) {
-        extContent += `keyUsage = digitalSignature\n`
+        extContent += isRsaCaKey
+          ? `keyUsage = digitalSignature, keyEncipherment\n`
+          : `keyUsage = digitalSignature\n`
       }
       setOutput(
         (prev) =>
           prev +
-          `  keyUsage = digitalSignature\n` +
-          `    Restricts this certificate to signing data (typical for TLS server certs using ECDSA or PQC algorithms).\n` +
-          `    Other values: keyCertSign (CA only), keyEncipherment (RSA only), nonRepudiation.\n\n`
+          (isRsaCaKey
+            ? `  keyUsage = digitalSignature, keyEncipherment\n` +
+              `    digitalSignature: required for TLS 1.3 (server signs the handshake transcript with its private key).\n` +
+              `    keyEncipherment: required only for TLS 1.2 RSA key exchange (client encrypts pre-master secret with server pubkey).\n` +
+              `    Note: TLS 1.3 (RFC 8446) removed RSA key exchange — keyEncipherment is a legacy value for TLS 1.2 backward compat only.\n` +
+              `    Note: RSA-PSS (RFC 8017) also uses only digitalSignature — keyEncipherment is an RSA PKCS#1 v1.5 concept.\n\n`
+            : `  keyUsage = digitalSignature\n` +
+              `    ECDSA and PQC algorithms authenticate via signature only — key exchange uses ephemeral ECDH or KEM.\n` +
+              `    keyEncipherment is not applicable: it applies only to RSA TLS 1.2 key transport, which was removed in TLS 1.3.\n\n`)
       )
 
       // Sanitize attribute values for OpenSSL config/command interpolation
@@ -259,20 +365,50 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       }
 
       // Add extensions from attributes
+      const hasExtensions = attributes.some((a) => a.enabled && a.elementType === 'Extension')
       attributes
         .filter((a) => a.enabled && a.elementType === 'Extension')
         .forEach((a) => {
           extContent += `${a.label} = ${escapeConfigValue(a.value)}\n`
         })
 
+      // Inject default TLS extensions when no profile is loaded
+      if (!selectedProfile && !hasExtensions) {
+        extContent += `subjectAltName = DNS:example.com\n`
+        extContent += `extendedKeyUsage = serverAuth\n`
+        extContent += `subjectKeyIdentifier = hash\n`
+        extContent += `authorityKeyIdentifier = keyid,issuer\n`
+        setOutput(
+          (prev) =>
+            prev +
+            `  No profile selected — applying default TLS extensions:\n` +
+            `    subjectAltName = DNS:example.com\n` +
+            `      Required by CAB Forum BR since 2017. The CN alone is no longer accepted for TLS hostname validation.\n` +
+            `    extendedKeyUsage = serverAuth\n` +
+            `      Restricts this cert to TLS server authentication (OID 1.3.6.1.5.5.7.3.1).\n` +
+            `    subjectKeyIdentifier = hash\n` +
+            `      OpenSSL's "hash" method computes a SHA-1 truncation of the SubjectPublicKeyInfo BIT STRING.\n` +
+            `      RFC 5280 §4.2.1.2 does not mandate SHA-1 — it allows any method that produces a unique identifier.\n` +
+            `      OpenSSL defaults to SHA-1 for historical compatibility; the RFC is algorithm-agnostic at this point.\n` +
+            `    authorityKeyIdentifier = keyid,issuer\n` +
+            `      Links this cert to its CA via the CA's subjectKeyIdentifier and issuer name.\n\n`
+        )
+      }
+
       const extFile = { name: 'ext.conf', data: new TextEncoder().encode(extContent) }
 
-      // Construct Subject DN
+      // Show ext.conf to learner so they can see exactly which extensions are injected
+      setOutput((prev) => prev + `[ext.conf — extension configuration]\n${extContent}\n`)
+
+      // Construct Subject DN (S3-C fix)
+      // a.id may be a dotted OID (from profile CSV) or a short name (CN, O, C).
+      // OpenSSL -subj requires short names (CN, O, C, OU, ST, L ...) NOT long names like 'organizationName'.
+      // Priority: OID_TO_SHORT[a.id] → a.id (if already a short name)
       const subjectParts: string[] = []
       attributes
         .filter((a) => a.enabled && a.elementType === 'SubjectRDN')
         .forEach((a) => {
-          const key = KNOWN_OIDS[a.id] || a.id
+          const key = OID_TO_SHORT[a.id] ?? a.id
           subjectParts.push(`/${key}=${escapeConfigValue(a.value)}`)
         })
       const subjArg = subjectParts.join('')
@@ -287,7 +423,31 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       // Use -extfile to add extensions
       cmd += ` -extfile ext.conf -extensions v3_ca`
 
-      setOutput((prev) => prev + `Command: ${cmd}\n\n`)
+      setOutput(
+        (prev) =>
+          prev +
+          `Command: ${cmd}\n\n` +
+          `  -CAcreateserial: creates/updates a .srl file alongside the CA cert, which tracks the\n` +
+          `  next serial number to assign. Each signed certificate gets a unique, monotonically\n` +
+          `  increasing serial within this CA's namespace — serials are what CRL entries reference.\n\n` +
+          `  CAB Forum BR (since 2023): maximum validity is 398 days for publicly-trusted TLS certs.\n` +
+          `  This workshop uses ${validityDays} days. Internal/private PKI certs have no mandated limit.\n\n`
+      )
+
+      // Note for PQC algorithms: -sha256 is ignored
+      const caAlgoLower = caKey.algorithm.toLowerCase()
+      const isPqcCaKey =
+        caAlgoLower.includes('ml-dsa') ||
+        caAlgoLower.includes('slh-dsa') ||
+        caAlgoLower.includes('fips 204') ||
+        caAlgoLower.includes('fips 205')
+      if (isPqcCaKey) {
+        setOutput(
+          (prev) =>
+            prev +
+            `  Note: -sha256 is ignored for PQC algorithms (ML-DSA, SLH-DSA). The algorithm defines its own digest internally — the hash flag has no effect on the signature scheme.\n\n`
+        )
+      }
 
       const result = await openSSLService.execute(cmd, [csrFile, caCertFile, caKeyFile, extFile])
 
@@ -311,6 +471,23 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       const timestamp = new Date().toISOString().replace(/[-:.]/g, '').slice(0, 14)
       const certName = `pkiworkshop_cert_${timestamp}.pem`
 
+      // Extract real serial number assigned by the CA
+      let actualSerial = 'unknown'
+      const serialResult = await openSSLService.execute(
+        `openssl x509 -in pkiworkshopcert.pem -serial -noout`,
+        [certFile]
+      )
+      if (!serialResult.error) {
+        const serialMatch = serialResult.stdout.match(/serial=([0-9A-Fa-f]+)/i)
+        if (serialMatch) actualSerial = serialMatch[1].toUpperCase()
+      }
+      setOutput(
+        (prev) =>
+          prev +
+          `Serial Number: ${actualSerial}\n` +
+          `  The CA assigned this serial via -CAcreateserial. It uniquely identifies this certificate within the CA's namespace and is what a CRL entry references.\n\n`
+      )
+
       addCertificate({
         id: `cert-${Date.now()}`,
         name: certName,
@@ -319,7 +496,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         metadata: {
           subject: subjArg || 'Extracted from CSR',
           issuer: caCert.name,
-          serial: 'Generated',
+          serial: actualSerial,
           notBefore: Date.now(),
           notAfter: Date.now() + parseInt(validityDays) * 24 * 60 * 60 * 1000,
         },
@@ -334,6 +511,19 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         size: certContent.length,
         timestamp: Date.now(),
       })
+
+      // Get SHA-256 fingerprint for out-of-band verification
+      const fpCmd = `openssl x509 -in pkiworkshopcert.pem -fingerprint -sha256 -noout`
+      const fpResult = await openSSLService.execute(fpCmd, [certFile])
+      if (!fpResult.error) {
+        const fpLine = fpResult.stdout.trim()
+        setOutput(
+          (prev) =>
+            prev +
+            `SHA-256 Fingerprint (for out-of-band verification):\n  ${fpLine}\n` +
+            `  This fingerprint uniquely identifies the certificate. Share it via a separate channel to let relying parties confirm they received the correct certificate.\n\n`
+        )
+      }
 
       setOutput((prev) => prev + 'Certificate signed successfully!\n')
       onComplete()
@@ -378,6 +568,12 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
             {csrs.length === 0 && (
               <p className="text-xs text-destructive">No CSRs found. Generate one in Step 1.</p>
             )}
+            {csrVerified && (
+              <div className="flex items-center gap-1.5 text-xs text-status-success mt-1">
+                <Check size={13} />
+                <span>CSR self-signature verified — applicant controls the private key</span>
+              </div>
+            )}
           </div>
         </div>
 
@@ -413,7 +609,10 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               <FilterDropdown
                 items={availableProfiles.map((profile) => ({
                   id: profile,
-                  label: profile.replace('Cert-', '').replace('.csv', ''),
+                  label: profile
+                    .replace('Cert-', '')
+                    .replace(/_\d{8}/, '')
+                    .replace('.csv', ''),
                 }))}
                 selectedId={selectedProfile}
                 onSelect={handleProfileSelect}
@@ -460,6 +659,20 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
         />
       </div>
 
+      {/* No profile selected — default TLS extensions banner */}
+      {!selectedProfile && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-status-info/10 border border-status-info/30 text-status-info text-sm">
+          <Info className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+          <span>
+            No profile selected — default TLS extensions will be applied:{' '}
+            <code className="font-mono text-xs bg-muted px-1 rounded">
+              subjectAltName, extendedKeyUsage, subjectKeyIdentifier, authorityKeyIdentifier
+            </code>
+            . Select a profile above for industry-specific values.
+          </span>
+        </div>
+      )}
+
       {/* Row 3: Step 4 & Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Step 4: Signing */}
@@ -490,6 +703,11 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 noContainer
                 className="w-full"
               />
+              {rootKeys.length === 0 && (
+                <p className="text-xs text-status-warning mt-1">
+                  No Root CA keys found. Go to Step 2 and generate a Root CA certificate first.
+                </p>
+              )}
             </div>
             <div className="space-y-2">
               <label htmlFor="validity-input" className="text-sm text-muted-foreground">

@@ -16,7 +16,7 @@ export interface Step {
   explanationTable?: {
     label: string
     value: string | React.ReactNode
-    description: string
+    description: string | React.ReactNode
   }[]
   diagram?: React.ReactNode
   customControls?: React.ReactNode

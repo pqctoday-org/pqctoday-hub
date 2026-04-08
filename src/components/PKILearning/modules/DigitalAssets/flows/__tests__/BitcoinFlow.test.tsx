@@ -61,8 +61,11 @@ vi.mock('@/hooks/useHSM', () => ({
     moduleRef: mockModuleRef,
     hSessionRef: mockSessionRef,
     addKey: mockAddKey,
+    addStepLog: vi.fn(),
+    removeKey: vi.fn(),
     keys: [],
-    pkcs11Log: [],
+    log: [],
+    clearLog: vi.fn(),
   })),
 }))
 

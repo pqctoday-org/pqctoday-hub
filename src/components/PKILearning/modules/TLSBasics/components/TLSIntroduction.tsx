@@ -318,9 +318,9 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             hash-based signature scheme standardized alongside ML-DSA. It relies on hash function
             security rather than lattice problems, providing{' '}
             <strong>cryptographic diversity</strong>— if lattices are broken, SLH-DSA remains
-            secure. The trade-off is significantly larger signatures (~7.9 KB for SLH-DSA-SHA2-128s
-            vs ~2.4 KB for ML-DSA-44). Both are available in the simulator&apos;s signature
-            algorithm options.
+            secure. The trade-off is significantly larger signatures (~7.9 KB (7,856 B) for
+            SLH-DSA-SHA2-128s vs ~2.4 KB for ML-DSA-44). Both are available in the simulator&apos;s
+            signature algorithm options.
           </p>
         </div>
         <button

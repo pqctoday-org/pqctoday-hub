@@ -267,6 +267,29 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
   {
+    id: 'pki-workshop',
+    name: 'PKI Workshop',
+    description:
+      'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
+    category: 'Certificates & Proofs',
+    algorithms: ['RSA', 'EC', 'ML-DSA', 'X.509', 'CRL'],
+    icon: ShieldCheck,
+    moduleLink: '/learn/pki-workshop',
+    keywords: [
+      'pki',
+      'x509',
+      'certificate',
+      'csr',
+      'root ca',
+      'signing',
+      'crl',
+      'revocation',
+      'chain',
+    ],
+    difficulty: 'intermediate',
+    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops', 'curious'],
+  },
+  {
     id: 'hybrid-certs',
     name: 'Hybrid Certificates',
     description:
@@ -374,7 +397,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'Bitcoin Transaction',
     description: 'secp256k1 ECDSA keypair, SHA256 + RIPEMD160, transaction signing',
     category: 'Blockchain & Digital Assets',
-    wip: true,
     algorithms: ['secp256k1', 'SHA-256', 'RIPEMD160'],
     icon: Bitcoin,
     moduleLink: '/learn/digital-assets',
@@ -387,7 +409,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
-    wip: true,
     algorithms: ['Ed25519'],
     icon: Zap,
     moduleLink: '/learn/digital-assets',
@@ -406,7 +427,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hd wallet', 'bip39', 'bip32', 'mnemonic', 'derivation', 'pbkdf2', 'slip-0010'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher'],
-    wip: true,
   },
 
   // ── OpenSSL Studio ────────────────────────────────────────────────────────
@@ -583,6 +603,15 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/Playground/workshop/HybridSigningDemo').then((m) => ({
       default: m.HybridSigningDemo,
     }))
+  ),
+  'pki-workshop': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/PKIWorkshop').then((m) => {
+      function PKIWorkshopPlayground() {
+        return <m.PKIWorkshop playgroundMode />
+      }
+      PKIWorkshopPlayground.displayName = 'PKIWorkshopPlayground'
+      return { default: PKIWorkshopPlayground }
+    })
   ),
   'openssl-studio': lazyWithRetry(() =>
     import('@/components/OpenSSLStudio/OpenSSLStudioView').then((m) => {

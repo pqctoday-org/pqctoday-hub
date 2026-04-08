@@ -30,6 +30,8 @@ const PROFILE_DOC_MAP: Record<string, string> = {
     '../../../../data/x509_profiles/CAB_Forum_TLS_Baseline_Requirements_Overview.md',
   'CSR-Telecom_3GPP_TS33310_2025.csv':
     '../../../../data/x509_profiles/3GPP_TS_33.310_NDS_AF_Certificate_Overview.md',
+  'CSR-Telecom_3GPP_TS33310_04072026.csv':
+    '../../../../data/x509_profiles/3GPP_TS_33.310_NDS_AF_Certificate_Overview.md',
 }
 
 interface CSRGeneratorProps {
@@ -62,6 +64,12 @@ interface ProfileMetadata {
   date: string
 }
 
+// Parse numeric key size from label; returns 0 for non-numeric labels (e.g. "Category 2")
+const parseKeySize = (label: string): number => {
+  const n = parseInt(label, 10)
+  return isNaN(n) ? 0 : n
+}
+
 const ALGORITHMS: AlgorithmOption[] = [
   {
     id: 'rsa',
@@ -86,42 +94,42 @@ const ALGORITHMS: AlgorithmOption[] = [
   },
   {
     id: 'mldsa',
-    name: 'ML-DSA-44 (Dilithium)',
+    name: 'ML-DSA-44 (FIPS 204)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-44',
     keySizeLabel: 'Category 2',
   },
   {
     id: 'mldsa65',
-    name: 'ML-DSA-65 (Dilithium)',
+    name: 'ML-DSA-65 (FIPS 204)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-65',
     keySizeLabel: 'Category 3',
   },
   {
     id: 'slhdsa128s',
-    name: 'SLH-DSA-SHA2-128s (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-128s (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128s',
     keySizeLabel: 'Category 1 (small sig)',
   },
   {
     id: 'slhdsa128f',
-    name: 'SLH-DSA-SHA2-128f (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-128f (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-128f',
     keySizeLabel: 'Category 1 (fast sign)',
   },
   {
     id: 'slhdsa192s',
-    name: 'SLH-DSA-SHA2-192s (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-192s (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192s',
     keySizeLabel: 'Category 3 (small sig)',
   },
   {
     id: 'slhdsa192f',
-    name: 'SLH-DSA-SHA2-192f (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-192f (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-192f',
     keySizeLabel: 'Category 3 (fast sign)',
@@ -138,6 +146,28 @@ const INITIAL_ATTRIBUTES: X509Attribute[] = [
     enabled: true,
     placeholder: 'e.g., example.com',
     description: 'The fully qualified domain name (FQDN) of your server.',
+    elementType: 'SubjectRDN',
+  },
+  {
+    id: 'O',
+    label: 'Organization',
+    oid: 'O',
+    status: 'recommended',
+    value: 'Example Org',
+    enabled: true,
+    placeholder: 'e.g., Example Corp',
+    description: 'Legal name of the organisation requesting the certificate.',
+    elementType: 'SubjectRDN',
+  },
+  {
+    id: 'C',
+    label: 'Country',
+    oid: 'C',
+    status: 'recommended',
+    value: 'US',
+    enabled: true,
+    placeholder: 'ISO 3166-1 alpha-2, e.g., US',
+    description: 'Two-letter ISO 3166-1 country code of the organisation.',
     elementType: 'SubjectRDN',
   },
 ]
@@ -375,7 +405,7 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
         id: keyId,
         name: keyName,
         algorithm: algo.name,
-        keySize: parseInt(algo.keySizeLabel) || 0,
+        keySize: parseKeySize(algo.keySizeLabel),
         created: Date.now(),
         publicKey: '',
         privateKey: keyContent,
@@ -448,7 +478,7 @@ export const CSRGenerator: React.FC<CSRGeneratorProps> = ({ onComplete }) => {
           id: keyId,
           name: keyName,
           algorithm: currentAlgo.name,
-          keySize: parseInt(currentAlgo.keySizeLabel) || 0, // Approximate
+          keySize: parseKeySize(currentAlgo.keySizeLabel),
           created: Date.now(),
           publicKey: '',
           privateKey: keyContent,
@@ -564,14 +594,27 @@ distinguished_name = dn
       setOutput((prev) => prev + `Generated Config:\n${configContent}\n`)
 
       // Detect PQC algorithm and add educational note about default_md
-      const algoId = selectedKeyId.startsWith('new-') ? selectedKeyId.replace('new-', '') : ''
-      const isPqcAlgo = algoId.startsWith('mldsa') || algoId.startsWith('slhdsa')
-      if (isPqcAlgo) {
+      // Works for both freshly generated keys and existing keys selected from artifacts
+      let isPqcAlgo = false
+      let pqcAlgoName = ''
+      if (selectedKeyId.startsWith('new-')) {
+        const algoId = selectedKeyId.replace('new-', '')
+        isPqcAlgo = algoId.startsWith('mldsa') || algoId.startsWith('slhdsa')
         const algoObj = ALGORITHMS.find((a) => a.id === algoId)
+        pqcAlgoName = algoObj?.name || 'this PQC algorithm'
+      } else {
+        const existingKey = availableKeys.find((k) => k.id === selectedKeyId)
+        if (existingKey) {
+          const algoLower = existingKey.algorithm.toLowerCase()
+          isPqcAlgo = algoLower.includes('ml-dsa') || algoLower.includes('slh-dsa')
+          pqcAlgoName = existingKey.algorithm
+        }
+      }
+      if (isPqcAlgo) {
         setOutput(
           (prev) =>
             prev +
-            `  Note: default_md = sha256 is set for OpenSSL compatibility, but ${algoObj?.name || 'this PQC algorithm'} uses its own internal hash function. SHA-256 is NOT the signature hash for this algorithm.\n\n`
+            `  Note: default_md is ignored by PQC algorithms. ${pqcAlgoName} uses its own internal hash function (SHAKE256 for ML-DSA, SHA2/SHAKE for SLH-DSA variants) defined within the algorithm specification. The config value has no effect on the actual signature.\n\n`
         )
       }
 
@@ -697,6 +740,52 @@ distinguished_name = dn
               Generating key…
             </div>
           )}
+          {(() => {
+            // Show NIST level for new PQC keys; also hint for existing PQC keys
+            let label = ''
+            let tradeoff = ''
+            if (selectedKeyId.startsWith('new-')) {
+              const algoId = selectedKeyId.replace('new-', '')
+              const algo = ALGORITHMS.find((a) => a.id === algoId)
+              if (!algo || algo.group !== 'Quantum-Safe') return null
+              const levelMap: Record<string, string> = {
+                '1': 'NIST Level 1 (~AES-128 security)',
+                '2': 'NIST Level 2 (~AES-128 target, Category 2)',
+                '3': 'NIST Level 3 (~AES-192 security)',
+                '5': 'NIST Level 5 (~AES-256 security)',
+              }
+              const catMatch = algo.keySizeLabel.match(/Category (\d)/)
+              label = catMatch ? (levelMap[catMatch[1]] ?? '') : ''
+              if (!label) return null
+              // SLH-DSA tradeoff hint
+              if (algo.keySizeLabel.includes('small sig')) {
+                tradeoff = 'Small signature, slower signing'
+              } else if (algo.keySizeLabel.includes('fast sign')) {
+                tradeoff = 'Larger signature, faster signing'
+              }
+            } else {
+              const existingKey = availableKeys.find((k) => k.id === selectedKeyId)
+              if (!existingKey) return null
+              const algoLower = existingKey.algorithm.toLowerCase()
+              if (!algoLower.includes('ml-dsa') && !algoLower.includes('slh-dsa')) return null
+              // Derive level from algorithm name
+              if (algoLower.includes('-44')) label = 'NIST Level 2 (~AES-128 target, Category 2)'
+              else if (algoLower.includes('-65')) label = 'NIST Level 3 (~AES-192 security)'
+              else if (algoLower.includes('-87')) label = 'NIST Level 5 (~AES-256 security)'
+              else if (algoLower.includes('128')) label = 'NIST Level 1 (~AES-128 security)'
+              else if (algoLower.includes('192')) label = 'NIST Level 3 (~AES-192 security)'
+              else if (algoLower.includes('256')) label = 'NIST Level 5 (~AES-256 security)'
+              if (!label) return null
+            }
+            return (
+              <div className="mt-2 space-y-0.5">
+                <p className="text-xs text-muted-foreground">
+                  Security: <span className="text-primary font-medium">{label}</span>
+                </p>
+                {tradeoff && <p className="text-xs text-muted-foreground italic">{tradeoff}</p>}
+              </div>
+            )
+          })()}
           {generatedKeyInfo && !isKeyGenerating && (
             <div className="mt-3 p-3 bg-muted/30 rounded-lg border border-border/30 text-xs space-y-2">
               <div
@@ -744,14 +833,24 @@ distinguished_name = dn
               <FilterDropdown
                 items={availableProfiles.map((profile) => ({
                   id: profile,
-                  label: profile.replace('CSR-', '').replace('.csv', ''),
+                  label: profile
+                    .replace('CSR-', '')
+                    .replace(/_\d{8}/, '')
+                    .replace('.csv', ''),
                 }))}
                 selectedId={selectedProfile}
                 onSelect={handleProfileSelect}
-                defaultLabel="-- Select a Profile --"
+                defaultLabel="-- Select a Profile (optional) --"
                 noContainer
                 className="w-full"
               />
+              {!selectedProfile && (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Without a profile the CSR will contain only the Subject DN — no extensions (SAN,
+                  EKU, keyUsage). Modern CAs require a subjectAltName per CAB Forum BR. Select a
+                  profile to inject the correct extensions for your use case.
+                </p>
+              )}
             </div>
 
             {profileMetadata && (
@@ -841,6 +940,21 @@ distinguished_name = dn
           </table>
         </div>
       </div>
+
+      {/* SAN callout — shown when no profile selected and no subjectAltName in attributes */}
+      {!selectedProfile && !attributes.some((a) => a.label === 'subjectAltName' && a.enabled) && (
+        <div className="flex items-start gap-3 px-4 py-3 rounded-lg bg-status-warning/10 border border-status-warning/30 text-status-warning text-sm">
+          <Info className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
+          <span>
+            <strong>No SAN loaded.</strong> Modern TLS certificates require a{' '}
+            <code className="font-mono text-xs bg-muted px-1 rounded">subjectAltName</code> (SAN)
+            extension per CAB Forum Baseline Requirements. The{' '}
+            <code className="font-mono text-xs bg-muted px-1 rounded">CN</code> alone has been
+            deprecated for TLS hostname validation since 2017. Select a profile above to load SAN
+            and other required extensions automatically.
+          </span>
+        </div>
+      )}
 
       {/* Row 3: Step 4 & Output */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">

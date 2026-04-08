@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import type { Step } from '../components/StepWizard'
 import { StepWizard } from '../components/StepWizard'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
@@ -17,6 +17,7 @@ import { bytesToHex, hexToBytes } from '@noble/hashes/utils.js'
 import { toChecksumAddress } from './ethereum/utils'
 import { useStepWizard } from '../hooks/useStepWizard'
 import { DIGITAL_ASSETS_CONSTANTS } from '../constants'
+import { HARDENED_DERIVATION } from '../utils/cryptoConstants'
 
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -85,44 +86,282 @@ function deriveSLIP0010(seed: Uint8Array, path: string): Uint8Array {
   return privateKey
 }
 
-const steps: Step[] = [
-  {
-    id: 'mnemonic',
-    title: '1. Generate Mnemonic',
-    description: 'Generate 256-bit entropy using OpenSSL and convert to BIP39 mnemonic.',
-    code: `// 1. Generate Entropy (OpenSSL)\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY}\n\n// 2. Convert to Mnemonic (JS)\nconst mnemonic = bip39.entropyToMnemonic(entropy, wordlist);\nconsole.log(mnemonic);`,
-    language: 'javascript',
-    actionLabel: 'Generate Mnemonic',
-    diagram: <HDWalletFlowDiagram />,
-  },
-  {
-    id: 'seed',
-    title: '2. Derive Seed',
-    description: 'Convert the mnemonic phrase into a 512-bit binary seed using PBKDF2.',
-    code: `// PBKDF2 Derivation (JS)\nconst seed = bip39.mnemonicToSeedSync(mnemonic);\nconsole.log('Seed:', bytesToHex(seed));`,
-    language: 'javascript',
-    actionLabel: 'Derive Seed',
-  },
-  {
-    id: 'derive',
-    title: '3. Derive Addresses',
-    description: 'Derive keys and addresses for Bitcoin, Ethereum, and Solana from the seed.',
-    code: `// Bitcoin (BIP32)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
-    language: 'javascript',
-    actionLabel: 'Derive Accounts',
-    diagram: <HDWalletFlowDiagram />,
-  },
-]
+// ──────────────────────────────────────────────────────────────────────────────
+// Key Derivation Tree — inline visualization after Step 4
+// ──────────────────────────────────────────────────────────────────────────────
+
+interface DerivedLeaf {
+  chain: 'bitcoin' | 'ethereum' | 'solana'
+  path: string
+  address: string
+}
+
+interface KeyDerivationTreeProps {
+  leaves: DerivedLeaf[]
+}
+
+const KeyDerivationTree: React.FC<KeyDerivationTreeProps> = ({ leaves }) => {
+  if (leaves.length === 0) return null
+
+  const btc = leaves.find((l) => l.chain === 'bitcoin')
+  const eth = leaves.find((l) => l.chain === 'ethereum')
+  const sol = leaves.find((l) => l.chain === 'solana')
+
+  const addr = (a: string) => `${a.slice(0, 10)}…${a.slice(-8)}`
+
+  return (
+    <div className="glass-panel border border-border rounded-xl p-4 mb-4">
+      <h3 className="text-sm font-semibold text-foreground mb-3">BIP44 Derivation Tree</h3>
+      <pre className="font-mono text-xs leading-relaxed text-muted-foreground overflow-x-auto">
+        <span className="text-foreground font-semibold">m</span>
+        {' (master — HMAC-SHA512 of seed)\n'}
+        {'└── '}
+        <span className="text-accent font-semibold">{"m/44'"}</span>
+        {' (BIP44 purpose, hardened)\n'}
+        {'    ├── '}
+        <span className="text-accent">{"m/44'/0'"}</span>
+        {' (Bitcoin coin type, hardened)\n'}
+        {'    │   └── '}
+        <span className="text-accent">{"m/44'/0'/0'"}</span>
+        {' (account #0, hardened)\n'}
+        {'    │       └── '}
+        <span className="text-muted-foreground">{"m/44'/0'/0'/0"}</span>
+        {' (external chain)\n'}
+        {'    │           └── '}
+        <span className="text-primary font-semibold">{"m/44'/0'/0'/0/0"}</span>
+        {btc ? (
+          <>
+            {' → '}
+            <span className="text-foreground">{addr(btc.address)}</span>
+            {' (P2PKH)\n'}
+          </>
+        ) : (
+          '\n'
+        )}
+        {'    ├── '}
+        <span className="text-accent">{"m/44'/60'"}</span>
+        {' (Ethereum coin type, hardened)\n'}
+        {'    │   └── '}
+        <span className="text-accent">{"m/44'/60'/0'"}</span>
+        {' (account #0, hardened)\n'}
+        {'    │       └── '}
+        <span className="text-muted-foreground">{"m/44'/60'/0'/0"}</span>
+        {' (external chain)\n'}
+        {'    │           └── '}
+        <span className="text-primary font-semibold">{"m/44'/60'/0'/0/0"}</span>
+        {eth ? (
+          <>
+            {' → '}
+            <span className="text-foreground">{addr(eth.address)}</span>
+            {' (EIP-55)\n'}
+          </>
+        ) : (
+          '\n'
+        )}
+        {'    └── '}
+        <span className="text-accent">{"m/44'/501'"}</span>
+        {' (Solana coin type, hardened — SLIP-0010 / Ed25519)\n'}
+        {'        └── '}
+        <span className="text-accent">{"m/44'/501'/0'"}</span>
+        {' (account #0, hardened)\n'}
+        {'            └── '}
+        <span className="text-primary font-semibold">{"m/44'/501'/0'/0'"}</span>
+        {sol ? (
+          <>
+            {' → '}
+            <span className="text-foreground">{addr(sol.address)}</span>
+            {' (Base58)\n'}
+          </>
+        ) : (
+          '\n'
+        )}
+      </pre>
+      <p className="text-xs text-muted-foreground mt-2">
+        <span className="text-accent font-mono">i'</span> = hardened index (i + 2³¹) — uses parent
+        private key in HMAC. <span className="text-muted-foreground font-mono">i</span> =
+        non-hardened — uses parent public key.
+      </p>
+    </div>
+  )
+}
+
+// ──────────────────────────────────────────────────────────────────────────────
+// HDWalletFlow
+// ──────────────────────────────────────────────────────────────────────────────
 
 interface HDWalletFlowProps {
   onBack: () => void
 }
 
 export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
-  // State for flow data
   const hsm = useHSM()
   const [mnemonic, setMnemonic] = useState<string>('')
   const [seed, setSeed] = useState<Uint8Array | null>(null)
+  const [derivedLeaves, setDerivedLeaves] = useState<DerivedLeaf[]>([])
+
+  const steps: Step[] = useMemo(
+    () => [
+      {
+        id: 'mnemonic',
+        title: '1. Generate Mnemonic',
+        description:
+          'Generate 256-bit entropy and convert it to a 24-word BIP39 mnemonic phrase. The mnemonic is the human-readable backup of your wallet — lose it and your funds are gone forever.',
+        code: `// 1. Generate Entropy (OpenSSL / SoftHSM3)\n${DIGITAL_ASSETS_CONSTANTS.COMMANDS.COMMON.GEN_ENTROPY}\n\n// 2. Convert to Mnemonic (JS)\nconst mnemonic = bip39.entropyToMnemonic(entropy, wordlist);\nconsole.log(mnemonic);`,
+        language: 'javascript',
+        actionLabel: 'Generate Mnemonic',
+        diagram: <HDWalletFlowDiagram />,
+        explanationTable: [
+          {
+            label: 'Entropy size',
+            value: '256 bits (32 bytes)',
+            description: 'More entropy → more words (256 bits → 24 words). 128 bits → 12 words.',
+          },
+          {
+            label: 'Entropy source',
+            value: 'OpenSSL rand / SoftHSM3 C_GenerateRandom',
+            description:
+              'Cryptographically secure pseudorandom number generator (CSPRNG). Never use Math.random().',
+          },
+          {
+            label: 'Checksum',
+            value: 'SHA-256(entropy)[0:8 bits]',
+            description:
+              'BIP39 appends 8 bits of SHA-256 checksum to the 256-bit entropy, giving 264 bits → 24 words of 11 bits each.',
+          },
+          {
+            label: 'Wordlist',
+            value: '2048 English words',
+            description:
+              'Each word encodes 11 bits. The wordlist is ordered so the first 4 letters uniquely identify each word.',
+          },
+          {
+            label: 'Output',
+            value: '24-word mnemonic phrase',
+            description:
+              'Example: "abandon abandon … art". Store offline. Never type into any website.',
+          },
+        ],
+      },
+      {
+        id: 'seed',
+        title: '2. Derive Seed (PBKDF2)',
+        description:
+          'Stretch the mnemonic into a 512-bit binary seed using PBKDF2-HMAC-SHA512. This seed is the root of the entire HD wallet tree.',
+        code: `// PBKDF2 Derivation\nconst seed = bip39.mnemonicToSeedSync(mnemonic);\n// PBKDF2-HMAC-SHA512, 2048 iterations, salt = "mnemonic"`,
+        language: 'javascript',
+        actionLabel: 'Derive Seed',
+        explanationTable: [
+          {
+            label: 'Algorithm',
+            value: 'PBKDF2-HMAC-SHA512',
+            description:
+              'Password-Based Key Derivation Function 2. Iteratively applies HMAC-SHA512 to slow brute-force attacks.',
+          },
+          {
+            label: 'Password',
+            value: 'mnemonic phrase (UTF-8)',
+            description: 'The 24-word phrase is treated as the password input.',
+          },
+          {
+            label: 'Salt',
+            value: '"mnemonic" + optional passphrase',
+            description:
+              'BIP39 uses the literal string "mnemonic" as salt (concatenated with optional passphrase). This prevents rainbow table attacks.',
+          },
+          {
+            label: 'Iterations',
+            value: '2 048',
+            description:
+              'Each iteration makes brute-force 2048× slower. Low by modern standards but set in the BIP39 spec.',
+          },
+          {
+            label: 'Output',
+            value: '512 bits (64 bytes)',
+            description:
+              'The seed. From this single value the entire tree of keys for Bitcoin, Ethereum, Solana and thousands of other coins is deterministically derived.',
+          },
+        ],
+      },
+      {
+        id: 'hardened',
+        title: '3. Hardened vs Non-Hardened Derivation',
+        description: HARDENED_DERIVATION.description,
+        code: `// BIP32 child key derivation\n// Hardened (i' = i + 2³¹): uses parent PRIVATE key\nHMAC-SHA512(key=chainCode, data=0x00 || privKey || i+0x80000000)\n// → child private key + child chain code\n\n// Non-Hardened (i): uses parent PUBLIC key\nHMAC-SHA512(key=chainCode, data=pubKey || i)\n// → child private key + child chain code\n// WARNING: If child privKey leaks → parent privKey recoverable!\n\n// Ed25519 (SLIP-0010): HARDENED ONLY\n// Non-hardened derivation is undefined → CKR_MECHANISM_PARAM_INVALID`,
+        language: 'javascript',
+        actionLabel: 'Run KAT',
+      },
+      {
+        id: 'derive',
+        title: '4. Derive Wallet Addresses',
+        description:
+          'Derive keys and addresses for Bitcoin, Ethereum, and Solana from the seed using BIP44 paths. Bitcoin and Ethereum use secp256k1 (BIP32); Solana uses Ed25519 (SLIP-0010, hardened-only).',
+        code: `// Bitcoin (BIP32 / secp256k1)\nconst btcKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN}");\n\n// Ethereum (BIP32 / secp256k1, same master)\nconst ethKey = HDKey.fromMasterSeed(seed).derive("${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM}");\n\n// Solana (SLIP-0010 / Ed25519, all-hardened)\nconst solKey = deriveSLIP0010(seed, "${DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA}");`,
+        language: 'javascript',
+        actionLabel: 'Derive Accounts',
+        diagram: <HDWalletFlowDiagram />,
+      },
+      {
+        id: 'quantum',
+        title: '5. Quantum Threat Assessment',
+        description:
+          "Assess which parts of the HD wallet stack are vulnerable to Shor's algorithm and which symmetric primitives remain quantum-safe.",
+        code: '',
+        language: 'javascript',
+        actionLabel: 'Show Assessment',
+        explanationTable: [
+          {
+            label: 'secp256k1 (BTC / ETH)',
+            value: '⚠ QUANTUM VULNERABLE',
+            description:
+              "Discrete log on elliptic curves is efficiently solved by Shor's algorithm on a CRQC. All Bitcoin and Ethereum public keys exposed on-chain are at risk once Q-Day arrives.",
+          },
+          {
+            label: 'Ed25519 (Solana)',
+            value: '⚠ QUANTUM VULNERABLE',
+            description:
+              "Ed25519 is also based on elliptic curve discrete log and is broken by Shor's algorithm. Solana addresses face the same threat as Bitcoin/Ethereum.",
+          },
+          {
+            label: 'HMAC-SHA512 (BIP32 derivation)',
+            value: '✓ Quantum-Safe',
+            description:
+              "HMAC-SHA512 is a symmetric primitive. Grover's algorithm provides at most a quadratic speedup, reducing effective security from 512 to 256 bits — still adequate.",
+          },
+          {
+            label: 'PBKDF2-HMAC-SHA512 (seed)',
+            value: '✓ Quantum-Safe',
+            description:
+              'Seed derivation is symmetric. Your 24-word mnemonic and the derived 512-bit seed remain safe. The risk is in the asymmetric keys derived FROM the seed.',
+          },
+          {
+            label: 'Migration path',
+            value: 'ML-DSA / SLH-DSA',
+            description:
+              "FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) are NIST-standardized post-quantum signature schemes resistant to Shor's algorithm. Both require new address formats at the L1 protocol level.",
+          },
+          {
+            label: 'Bitcoin BIP-360',
+            value: 'P2QRH (Pay-to-Quantum-Resistant-Hash)',
+            description:
+              'Active BIP proposal (2024) introducing a new output type using post-quantum signatures (SPHINCS+/SLH-DSA). Requires a soft-fork.',
+          },
+          {
+            label: 'Ethereum EIP-7932',
+            value: 'Account Abstraction + PQC',
+            description:
+              'EIP-7932 and related ERC-4337 extensions explore replacing ECDSA with ML-DSA or SLH-DSA in smart contract wallets. Native Ethereum accounts still require a hard-fork.',
+          },
+          {
+            label: 'HNDL Threat',
+            value: '⚠ Harvest Now, Decrypt Later',
+            description:
+              'Public keys are permanently recorded on-chain. Adversaries can harvest them today and forge signatures once a CRQC is available. Addresses that have never spent funds (keys not yet revealed) are safer.',
+          },
+        ],
+      },
+    ],
+    []
+  )
 
   const executeStep = async () => {
     const step = steps[wizard.currentStep]
@@ -172,6 +411,93 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       setSeed(newSeed)
 
       result = `Seed (${seedSource}):\n${bytesToHex(newSeed)}\n\nLength: ${newSeed.length} bytes`
+    } else if (step.id === 'hardened') {
+      if (!seed) throw new Error('Seed not found — complete Step 2 first')
+
+      const hsmActive = hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current
+      let output = 'Hardened vs Non-Hardened Derivation (secp256k1)\n'
+      output += '─'.repeat(50) + '\n\n'
+
+      if (hsmActive) {
+        const M = hsm.moduleRef.current!
+        const hSession = hsm.hSessionRef.current!
+
+        hsm.addStepLog('Step 3a — Import Seed')
+        const seedHandle = hsm_importGenericSecret(M, hSession, seed)
+
+        hsm.addStepLog('Step 3b — secp256k1 Master Key')
+        const secpMaster = hsm_bip32MasterDerive(M, hSession, seedHandle, 'secp256k1', true)
+
+        // Hardened child m/0'
+        hsm.addStepLog("Step 3c — Hardened child m/0' (secp256k1)")
+        const hardenedHandle = hsm_bip32ChildDerive(
+          M,
+          hSession,
+          secpMaster,
+          0,
+          true,
+          'secp256k1',
+          true
+        )
+        const hardenedPriv = hsm_extractKeyValue(M, hSession, hardenedHandle)
+        const hardenedPub = secp256k1.getPublicKey(hardenedPriv, true)
+
+        // Non-hardened child m/0
+        hsm.addStepLog('Step 3d — Non-hardened child m/0 (secp256k1)')
+        const normalHandle = hsm_bip32ChildDerive(
+          M,
+          hSession,
+          secpMaster,
+          0,
+          false,
+          'secp256k1',
+          true
+        )
+        const normalPriv = hsm_extractKeyValue(M, hSession, normalHandle)
+        const normalPub = secp256k1.getPublicKey(normalPriv, true)
+
+        output += `secp256k1 m/0' (hardened):\n  Pub: ${bytesToHex(hardenedPub)}\n  Derived using: parent PRIVATE key in HMAC\n\n`
+        output += `secp256k1 m/0 (non-hardened):\n  Pub: ${bytesToHex(normalPub)}\n  Derived using: parent PUBLIC key in HMAC\n\n`
+
+        // Ed25519: attempt non-hardened — must fail
+        hsm.addStepLog('Step 3e — Ed25519 Master + non-hardened attempt')
+        const edMaster = hsm_bip32MasterDerive(M, hSession, seedHandle, 'ed25519', true)
+        try {
+          hsm_bip32ChildDerive(M, hSession, edMaster, 0, false, 'ed25519', true)
+          output += `Ed25519 m/0 (non-hardened): UNEXPECTED SUCCESS — should have failed!\n`
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e)
+          output += `Ed25519 m/0 (non-hardened):\n  Error: ${msg}\n  ✓ Expected — SLIP-0010 / Ed25519 requires all indices to be hardened.\n`
+        }
+      } else {
+        // Software path
+        const master = HDKey.fromMasterSeed(seed)
+
+        const hardenedKey = master.derive("m/0'")
+        const normalKey = master.derive('m/0')
+
+        output += `secp256k1 m/0' (hardened):\n  Pub: ${bytesToHex(hardenedKey.publicKey!)}\n  Derived using: parent PRIVATE key in HMAC\n\n`
+        output += `secp256k1 m/0 (non-hardened):\n  Pub: ${bytesToHex(normalKey.publicKey!)}\n  Derived using: parent PUBLIC key in HMAC\n\n`
+
+        // Ed25519: attempt non-hardened derivation via SLIP-0010
+        try {
+          deriveSLIP0010(seed, 'm/0') // non-hardened → throws
+          output += `Ed25519 m/0 (non-hardened): UNEXPECTED SUCCESS — should have failed!\n`
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e)
+          output += `Ed25519 m/0 (non-hardened):\n  Error: ${msg}\n  ✓ Expected — SLIP-0010 / Ed25519 requires all indices to be hardened.\n`
+        }
+      }
+
+      output += '\nKey Insight:\n'
+      output +=
+        "  • Hardened: compromising m/0' cannot expose siblings or parent — full isolation.\n"
+      output +=
+        '  • Non-hardened: knowing m/0 privKey + parent chainCode → can compute parent privKey!\n'
+      output += '  • BIP44 uses hardened for purpose/coin/account; non-hardened for change/index.\n'
+      output += '  • Ed25519 / SLIP-0010 supports hardened derivation ONLY by design.\n'
+
+      result = output
     } else if (step.id === 'derive') {
       if (!seed) throw new Error('Seed not found')
 
@@ -185,7 +511,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const hSession = hsm.hSessionRef.current!
 
         // Import seed as generic secret
-        hsm.addStepLog('Step 3a — Import Seed')
+        hsm.addStepLog('Step 4a — Import Seed')
         const seedHandle = hsm_importGenericSecret(M, hSession, seed)
         hsm.addKey({
           handle: seedHandle,
@@ -196,7 +522,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         })
 
         // secp256k1 master — shared by Bitcoin and Ethereum (same curve, same HMAC key)
-        hsm.addStepLog('Step 3b — BIP32 Master (secp256k1) → Bitcoin + Ethereum')
+        hsm.addStepLog('Step 4b — BIP32 Master (secp256k1) → Bitcoin + Ethereum')
         const secp256k1MasterHandle = hsm_bip32MasterDerive(
           M,
           hSession,
@@ -213,7 +539,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         })
 
         // BITCOIN
-        hsm.addStepLog('Step 3c — BIP32 Path Derivation → Bitcoin')
+        hsm.addStepLog('Step 4c — BIP32 Path Derivation → Bitcoin')
         const btcPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.BITCOIN
         const btcLeafHandle = derivePathWasm(
           M,
@@ -237,7 +563,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         hsmOutput += `Bitcoin (Legacy P2PKH)\nPath: ${btcPath}\nHandle: ${btcLeafHandle}\nAddress: ${btcAddrWasm}\n\n`
 
         // ETHEREUM
-        hsm.addStepLog('Step 3d — BIP32 Path Derivation → Ethereum')
+        hsm.addStepLog('Step 4d — BIP32 Path Derivation → Ethereum')
         const ethPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.ETHEREUM
         const ethLeafHandle = derivePathWasm(
           M,
@@ -260,7 +586,7 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         hsmOutput += `Ethereum\nPath: ${ethPath}\nHandle: ${ethLeafHandle}\nAddress: ${ethAddrWasm}\n\n`
 
         // SOLANA
-        hsm.addStepLog('Step 3e — SLIP-0010 Master (Ed25519) + Path → Solana')
+        hsm.addStepLog('Step 4e — SLIP-0010 Master (Ed25519) + Path → Solana')
         const solPath = DIGITAL_ASSETS_CONSTANTS.DERIVATION_PATHS.SOLANA
         const solMasterHandle = hsm_bip32MasterDerive(M, hSession, seedHandle, 'ed25519', true)
         hsm.addKey({
@@ -282,6 +608,13 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         const solPriv = hsm_extractKeyValue(M, hSession, solLeafHandle)
         const solAddrWasm = base58.encode(ed25519.getPublicKey(solPriv))
         hsmOutput += `Solana\nPath: ${solPath}\nHandle: ${solLeafHandle}\nAddress: ${solAddrWasm}`
+
+        // Populate the tree
+        setDerivedLeaves([
+          { chain: 'bitcoin', path: btcPath, address: btcAddrWasm },
+          { chain: 'ethereum', path: ethPath, address: ethAddrWasm },
+          { chain: 'solana', path: solPath, address: solAddrWasm },
+        ])
       }
 
       // JAVASCRIPT EMULATION
@@ -307,6 +640,15 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
 
       output += `Solana\nPath: ${solPath}\nAddress: ${solAddr}`
 
+      // Always populate tree (software path)
+      if (!hsmActive) {
+        setDerivedLeaves([
+          { chain: 'bitcoin', path: btcPath, address: btcAddr },
+          { chain: 'ethereum', path: ethPath, address: ethAddr },
+          { chain: 'solana', path: solPath, address: solAddr },
+        ])
+      }
+
       if (hsmActive) {
         result = {
           'SoftHSM3 (KAT)': hsmOutput,
@@ -315,6 +657,28 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
       } else {
         result = output
       }
+    } else if (step.id === 'quantum') {
+      result =
+        'Quantum Threat Summary\n' +
+        '─'.repeat(50) +
+        '\n\n' +
+        '⚠  secp256k1 (Bitcoin, Ethereum) — VULNERABLE\n' +
+        "   Shor's algorithm breaks elliptic curve discrete log.\n" +
+        '   All on-chain public keys are at risk on Q-Day.\n\n' +
+        '⚠  Ed25519 (Solana) — VULNERABLE\n' +
+        "   Ed25519 is also an elliptic curve — Shor's applies.\n\n" +
+        '✓  HMAC-SHA512 (BIP32 derivation) — Quantum-Safe\n' +
+        "   Symmetric primitive. Grover's gives at best 2× speedup.\n\n" +
+        '✓  PBKDF2-HMAC-SHA512 (BIP39 seed) — Quantum-Safe\n' +
+        '   Your mnemonic and seed are safe; the derived EC keys are not.\n\n' +
+        'Migration Path:\n' +
+        '  • Bitcoin: BIP-360 (P2QRH) proposes SLH-DSA / SPHINCS+ support.\n' +
+        '  • Ethereum: EIP-7932 + ERC-4337 explore ML-DSA in smart contract wallets.\n' +
+        '  • Both require protocol-level changes (soft-fork or hard-fork).\n\n' +
+        'HNDL Risk (Harvest Now, Decrypt Later):\n' +
+        '  • Public keys are permanently on-chain.\n' +
+        "  • Addresses that haven't spent (keys unexposed) are safer.\n" +
+        '  • Reusing addresses exposes the public key — increases risk.'
     }
 
     return result
@@ -346,6 +710,8 @@ export const HDWalletFlow: React.FC<HDWalletFlowProps> = ({ onBack }) => {
         onBack={wizard.handleBack}
         onComplete={onBack}
       />
+
+      <KeyDerivationTree leaves={derivedLeaves} />
 
       {hsm.isReady && (
         <Pkcs11LogPanel

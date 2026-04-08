@@ -88,6 +88,18 @@ export function useArtifactManagement() {
     setFilenames((prev) => ({ ...prev, [type]: filename }))
   }
 
+  const getTransaction = (): Uint8Array | null => {
+    if (!filenames.trans) return null
+    const f = useOpenSSLStore.getState().getFile(filenames.trans)
+    return f ? (f.content as Uint8Array) : null
+  }
+
+  const getSignature = (): Uint8Array | null => {
+    if (!filenames.sig) return null
+    const f = useOpenSSLStore.getState().getFile(filenames.sig)
+    return f ? (f.content as Uint8Array) : null
+  }
+
   return {
     // State
     filenames,
@@ -99,5 +111,7 @@ export function useArtifactManagement() {
     resetArtifacts,
     registerArtifact,
     getTimestamp,
+    getTransaction,
+    getSignature,
   }
 }

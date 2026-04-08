@@ -1,6 +1,6 @@
 # Blockchain Cryptography Module
 
-The Blockchain Cryptography module teaches the cryptographic primitives underpinning major blockchain networks and analyzes their vulnerability to quantum computing attacks. Learners explore key generation, address derivation, transaction signing, and HD wallet construction across Bitcoin (secp256k1/ECDSA/SHA-256), Ethereum (secp256k1/ECDSA/Keccak-256), and Solana (Ed25519/EdDSA), then examine post-quantum threats and proposed defense strategies. All operations run in-browser using OpenSSL WASM and noble/scure cryptographic libraries, generating real keys and signatures for educational inspection.
+The Blockchain Cryptography module teaches the cryptographic primitives underpinning major blockchain networks and analyzes their vulnerability to quantum computing attacks. Learners explore key generation, address derivation, transaction signing, and HD wallet construction across Bitcoin (secp256k1/ECDSA/SHA-256), Ethereum (secp256k1/ECDSA/Keccak-256), and Solana (Ed25519/EdDSA), then examine post-quantum threats and proposed defense strategies. All operations run in-browser using SoftHSMv3 (PKCS#11 via WebAssembly), OpenSSL WASM, and noble/scure cryptographic libraries, generating real keys and signatures for educational inspection.
 
 ## Key Concepts
 
@@ -13,7 +13,7 @@ The Blockchain Cryptography module teaches the cryptographic primitives underpin
 
 ## Workshop Activities
 
-- **Bitcoin Flow**: Generate a secp256k1 key pair via OpenSSL, derive a Bitcoin address through the SHA-256/RIPEMD-160/Base58Check pipeline, format a transaction, sign it with ECDSA, and verify the signature
+- **Bitcoin Flow**: Generate a secp256k1 key pair inside SoftHSMv3 via PKCS#11 C_GenerateKeyPair (CKM_EC_KEY_PAIR_GEN), derive a Bitcoin address through the SHA-256/RIPEMD-160/Base58Check pipeline, format a transaction, sign it with CKM_ECDSA (raw pre-hashed ECDSA via C_Sign), and verify the signature with C_Verify
 - **Ethereum Flow**: Generate secp256k1 keys, derive an Ethereum address via Keccak-256 with EIP-55 checksumming, create and sign a transaction with recovery parameter, and verify
 - **Solana Flow**: Generate an Ed25519 key pair, derive a Solana address (direct Base58 encoding of the public key), sign a message with EdDSA, and verify
 - **HD Wallet Flow**: Generate a BIP-39 mnemonic, derive a master seed, walk the BIP-32/BIP-44 derivation tree for Bitcoin/Ethereum/Solana, and inspect child key relationships

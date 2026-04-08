@@ -22,7 +22,7 @@ import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWr
 
 const MODULE_ID = 'pki-workshop'
 
-const PARTS = [
+const ALL_PARTS = [
   {
     id: 'csr',
     title: 'Step 1: Generate CSR',
@@ -61,8 +61,15 @@ const PARTS = [
   },
 ]
 
-export const PKIWorkshop: React.FC = () => {
-  const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
+interface PKIWorkshopProps {
+  /** When true: renders only the 5-step workshop panel (no module tabs, no Step 6 MTC). */
+  playgroundMode?: boolean
+}
+
+export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false }) => {
+  const parts = playgroundMode ? ALL_PARTS.slice(0, 5) : ALL_PARTS
+
+  const deepLink = getModuleDeepLink({ maxStep: parts.length - 1 })
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
   const [currentStep, setCurrentStep] = useState(deepLink.initialStep)
   useSyncDeepLink(activeTab, currentStep)
@@ -112,11 +119,11 @@ export const PKIWorkshop: React.FC = () => {
   const handlePartChange = useCallback(
     (newStep: number) => {
       if (newStep > currentStep) {
-        markStepComplete(MODULE_ID, PARTS[currentStep].id, currentStep)
+        markStepComplete(MODULE_ID, parts[currentStep].id, currentStep)
       }
       setCurrentStep(newStep)
     },
-    [currentStep, markStepComplete]
+    [currentStep, markStepComplete, parts]
   )
 
   const handleReset = () => {
@@ -132,8 +139,118 @@ export const PKIWorkshop: React.FC = () => {
   }
 
   const handleComplete = () => {
-    markStepComplete(MODULE_ID, PARTS[currentStep].id, currentStep)
+    markStepComplete(MODULE_ID, parts[currentStep].id, currentStep)
     updateModuleProgress(MODULE_ID, { status: 'completed' })
+  }
+
+  const workshopPanel = (
+    <div className="max-w-7xl mx-auto space-y-6">
+      {/* Reset button */}
+      <div className="flex justify-end">
+        <button
+          onClick={handleReset}
+          className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+        >
+          <Trash2 size={16} />
+          Reset
+        </button>
+      </div>
+
+      {/* Part Progress Steps */}
+      <div className="overflow-x-auto px-2 sm:px-0">
+        <div className="flex justify-between relative min-w-max sm:min-w-0">
+          <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
+
+          {parts.map((part, idx) => {
+            const Icon = part.icon
+            return (
+              <button
+                key={part.id}
+                onClick={() => setCurrentStep(idx)}
+                className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
+              >
+                <div
+                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                    ${
+                      idx === currentStep
+                        ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
+                        : idx < currentStep
+                          ? 'border-success text-success'
+                          : 'border-border text-muted-foreground'
+                    }`}
+                >
+                  <Icon size={18} />
+                </div>
+                <span className="text-sm font-medium hidden md:block">
+                  {part.title.split(':')[0]}
+                </span>
+              </button>
+            )
+          })}
+        </div>
+      </div>
+
+      {/* Content Area */}
+      <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
+        <WorkshopStepHeader
+          moduleId={MODULE_ID}
+          stepId={parts[currentStep].id}
+          stepTitle={parts[currentStep].title}
+          stepDescription={parts[currentStep].description}
+          stepIndex={currentStep}
+          totalSteps={parts.length}
+        />
+
+        {currentStep === 0 && (
+          <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />
+        )}
+        {currentStep === 1 && (
+          <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca', 1)} />
+        )}
+        {currentStep === 2 && (
+          <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign', 2)} />
+        )}
+        {currentStep === 3 && (
+          <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse', 3)} />
+        )}
+        {currentStep === 4 && (
+          <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke', 4)} />
+        )}
+        {currentStep === 5 && (
+          <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc', 5)} />
+        )}
+      </div>
+
+      {/* Part Navigation */}
+      <div className="flex flex-col sm:flex-row justify-between gap-3">
+        <button
+          onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
+          disabled={currentStep === 0}
+          className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
+        >
+          &larr; Previous Step
+        </button>
+        {currentStep === parts.length - 1 ? (
+          <button
+            onClick={handleComplete}
+            className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+          >
+            Complete Module ✓
+          </button>
+        ) : (
+          <button
+            onClick={() => handlePartChange(Math.min(parts.length - 1, currentStep + 1))}
+            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          >
+            Next Step &rarr;
+          </button>
+        )}
+      </div>
+    </div>
+  )
+
+  if (playgroundMode) {
+    return workshopPanel
   }
 
   return (
@@ -161,126 +278,18 @@ export const PKIWorkshop: React.FC = () => {
           <TabsTrigger value="tools">Tools & Products</TabsTrigger>
         </TabsList>
 
-        {/* Learn Tab */}
         <TabsContent value="learn">
           <GlossaryAutoWrap>
             <PKIIntroduction onNavigateToWorkshop={navigateToWorkshop} />
           </GlossaryAutoWrap>
         </TabsContent>
 
-        {/* Workshop Tab */}
-
         <TabsContent value="visual">
           <ModuleVisualTab moduleId={MODULE_ID} />
         </TabsContent>
 
-        <TabsContent value="workshop">
-          <div className="max-w-7xl mx-auto space-y-6">
-            {/* Reset button */}
-            <div className="flex justify-end">
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
-              >
-                <Trash2 size={16} />
-                Reset
-              </button>
-            </div>
+        <TabsContent value="workshop">{workshopPanel}</TabsContent>
 
-            {/* Part Progress Steps */}
-            <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
-                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
-
-                {PARTS.map((part, idx) => {
-                  const Icon = part.icon
-                  return (
-                    <button
-                      key={part.id}
-                      onClick={() => setCurrentStep(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
-                    >
-                      <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
-                          ${
-                            idx === currentStep
-                              ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
-                              : idx < currentStep
-                                ? 'border-success text-success'
-                                : 'border-border text-muted-foreground'
-                          }`}
-                      >
-                        <Icon size={18} />
-                      </div>
-                      <span className="text-sm font-medium hidden md:block">
-                        {part.title.split(':')[0]}
-                      </span>
-                    </button>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Content Area */}
-            <div className="glass-panel p-4 sm:p-6 md:p-8 min-h-[400px] md:min-h-[600px] animate-fade-in">
-              <WorkshopStepHeader
-                moduleId={MODULE_ID}
-                stepId={PARTS[currentStep].id}
-                stepTitle={PARTS[currentStep].title}
-                stepDescription={PARTS[currentStep].description}
-                stepIndex={currentStep}
-                totalSteps={PARTS.length}
-              />
-
-              {currentStep === 0 && (
-                <CSRGenerator onComplete={() => markStepComplete(MODULE_ID, 'csr', 0)} />
-              )}
-              {currentStep === 1 && (
-                <RootCAGenerator onComplete={() => markStepComplete(MODULE_ID, 'root-ca', 1)} />
-              )}
-              {currentStep === 2 && (
-                <CertSigner onComplete={() => markStepComplete(MODULE_ID, 'sign', 2)} />
-              )}
-              {currentStep === 3 && (
-                <CertParser onComplete={() => markStepComplete(MODULE_ID, 'parse', 3)} />
-              )}
-              {currentStep === 4 && (
-                <CRLGenerator onComplete={() => markStepComplete(MODULE_ID, 'revoke', 4)} />
-              )}
-              {currentStep === 5 && (
-                <MTCComparison onComplete={() => markStepComplete(MODULE_ID, 'mtc', 5)} />
-              )}
-            </div>
-
-            {/* Part Navigation */}
-            <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
-                onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
-                disabled={currentStep === 0}
-                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
-              >
-                &larr; Previous Step
-              </button>
-              {currentStep === PARTS.length - 1 ? (
-                <button
-                  onClick={handleComplete}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
-                >
-                  Complete Module ✓
-                </button>
-              ) : (
-                <button
-                  onClick={() => handlePartChange(Math.min(PARTS.length - 1, currentStep + 1))}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
-                >
-                  Next Step &rarr;
-                </button>
-              )}
-            </div>
-          </div>
-        </TabsContent>
-
-        {/* Exercises Tab */}
         <TabsContent value="exercises">
           <PKIExercises
             onNavigateToWorkshop={navigateToWorkshop}
@@ -288,7 +297,6 @@ export const PKIWorkshop: React.FC = () => {
           />
         </TabsContent>
 
-        {/* References Tab */}
         <TabsContent value="references">
           <ModuleReferencesTab moduleId={MODULE_ID} />
         </TabsContent>

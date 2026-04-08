@@ -387,7 +387,7 @@ export const TLSExercises: React.FC<TLSExercisesProps> = ({ onNavigateToSimulate
                     {
                       alg: 'ML-DSA-65',
                       level: 'L3 (~AES-192)',
-                      sig: '3,293 B',
+                      sig: '3,309 B',
                       pub: '1,952 B',
                       speed: 'Medium',
                     },

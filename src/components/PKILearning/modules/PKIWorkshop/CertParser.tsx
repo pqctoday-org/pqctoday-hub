@@ -50,12 +50,38 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     success: boolean
     message: string
   } | null>(null)
+  const [fingerprint, setFingerprint] = useState<string | null>(null)
+  const [isFingerprintLoading, setIsFingerprintLoading] = useState(false)
+  const [isVerifyingCsr, setIsVerifyingCsr] = useState(false)
+  const [csrVerifyResult, setCsrVerifyResult] = useState<{
+    success: boolean
+    message: string
+  } | null>(null)
+  const [isVerifyingCrl, setIsVerifyingCrl] = useState(false)
+  const [crlVerifyResult, setCrlVerifyResult] = useState<{
+    success: boolean
+    message: string
+  } | null>(null)
+
+  // CRL files from OpenSSL Studio virtual filesystem
+  const openSSLFiles = useOpenSSLStore((state) => state.files)
+  const crlFiles = openSSLFiles.filter((f) => f.name.endsWith('.crl'))
+
+  // Hybrid cert files pushed by HybridCertFormats workshop
+  const hybridCertFiles = openSSLFiles.filter(
+    (f) => f.name.startsWith('hybrid-') && f.name.endsWith('.pem')
+  )
+  const [selectedHybridFile, setSelectedHybridFile] = useState('')
 
   // Check if selected artifact is a non-Root-CA certificate (eligible for chain verification)
   const selectedIsEndEntity = Boolean(
     selectedArtifactId && certificates.find((c) => c.id === selectedArtifactId)
   )
   const canVerifyChain = selectedIsEndEntity && rootCAs.length > 0
+  const canVerifyCrl = selectedIsEndEntity && rootCAs.length > 0 && crlFiles.length > 0
+  const isCrlInput = certInput.includes('BEGIN X509 CRL')
+  const isCsrInput = certInput.includes('BEGIN CERTIFICATE REQUEST')
+  const isCertInput = certInput.includes('BEGIN CERTIFICATE') && !isCrlInput
 
   const handleVerifyChain = async () => {
     if (!canVerifyChain) return
@@ -66,9 +92,27 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
 
     try {
       const cert = certificates.find((c) => c.id === selectedArtifactId)
-      const rootCA = rootCAs[0] // Use first available Root CA
+      if (!cert) return
 
-      if (!cert || !rootCA) return
+      // Best-match root CA: find one whose subject matches the cert's issuer (S4-C: run for any count)
+      let rootCA = rootCAs[0]
+      if (parsedOutput) {
+        const issuerMatch = parsedOutput.match(/Issuer:\s*(.+)/i)
+        if (issuerMatch) {
+          const issuerStr = issuerMatch[1].trim()
+          const match = rootCAs.find((ca) => {
+            const caSubject = ca.metadata?.subject || ca.name
+            return (
+              caSubject.includes(issuerStr) ||
+              issuerStr.includes(caSubject) ||
+              issuerStr.split(',').some((part) => caSubject.includes(part.trim()))
+            )
+          })
+          if (match) rootCA = match
+        }
+      }
+
+      if (!rootCA) return
 
       const certFile = { name: 'cert.pem', data: new TextEncoder().encode(cert.pem) }
       const caFile = { name: 'ca.pem', data: new TextEncoder().encode(rootCA.pem) }
@@ -86,7 +130,9 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       } else {
         setVerifyResult({
           success: true,
-          message: `Chain verified: ${cert.name} is signed by ${rootCA.name}`,
+          message:
+            `Chain verified: ${cert.name} is signed by ${rootCA.name}.\n` +
+            `Note: openssl verify checks the certificate chain and signature only — it does NOT check CRL or OCSP revocation status.`,
         })
       }
     } catch (err) {
@@ -96,6 +142,138 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
       })
     } finally {
       setIsVerifying(false)
+    }
+  }
+
+  const handleGetFingerprint = async () => {
+    if (!certInput.trim() || !isCertInput) return
+
+    setIsFingerprintLoading(true)
+    setFingerprint(null)
+
+    try {
+      const fileName = selectedArtifactName || 'manual_input.pem'
+      const file = { name: fileName, data: new TextEncoder().encode(certInput) }
+      const result = await openSSLService.execute(
+        `openssl x509 -in ${fileName} -fingerprint -sha256 -noout`,
+        [file]
+      )
+      if (!result.error) {
+        setFingerprint(result.stdout.trim())
+      } else {
+        setFingerprint(`Error: ${result.stderr || result.error}`)
+      }
+    } catch (err) {
+      setFingerprint(err instanceof Error ? err.message : 'Fingerprint failed')
+    } finally {
+      setIsFingerprintLoading(false)
+    }
+  }
+
+  const handleVerifyCsr = async () => {
+    if (!certInput.trim() || !isCsrInput) return
+
+    setIsVerifyingCsr(true)
+    setCsrVerifyResult(null)
+
+    try {
+      const fileName = selectedArtifactName || 'manual_input.csr'
+      const file = { name: fileName, data: new TextEncoder().encode(certInput) }
+      const result = await openSSLService.execute(`openssl req -verify -in ${fileName} -noout`, [
+        file,
+      ])
+      const ok = !result.error && (result.stdout.includes('OK') || result.stderr.includes('OK'))
+      setCsrVerifyResult({
+        success: ok,
+        message: ok
+          ? `CSR signature verified. The requester holds the private key matching this CSR's public key.`
+          : `CSR signature verification failed: ${result.stderr || result.stdout}`,
+      })
+    } catch (err) {
+      setCsrVerifyResult({
+        success: false,
+        message: err instanceof Error ? err.message : 'Verification failed',
+      })
+    } finally {
+      setIsVerifyingCsr(false)
+    }
+  }
+
+  const handleVerifyCrl = async () => {
+    if (!canVerifyCrl) return
+
+    setIsVerifyingCrl(true)
+    setCrlVerifyResult(null)
+    setError(null)
+
+    try {
+      const cert = certificates.find((c) => c.id === selectedArtifactId)
+      if (!cert) return
+
+      // Best-match root CA (same logic as chain verify — S4-C: run for any count)
+      let rootCA = rootCAs[0]
+      if (parsedOutput) {
+        const issuerMatch = parsedOutput.match(/Issuer:\s*(.+)/i)
+        if (issuerMatch) {
+          const issuerStr = issuerMatch[1].trim()
+          const match = rootCAs.find((ca) => {
+            const caSubject = ca.metadata?.subject || ca.name
+            return (
+              caSubject.includes(issuerStr) ||
+              issuerStr.includes(caSubject) ||
+              issuerStr.split(',').some((part) => caSubject.includes(part.trim()))
+            )
+          })
+          if (match) rootCA = match
+        }
+      }
+
+      // Select the best-matching CRL: prefer the one whose name contains the CA name, else use latest.
+      // In a real PKI the correct CRL is identified by the issuer DN in the CRL matching the cert's issuer.
+      const caName = rootCA.name.toLowerCase().replace(/\s+/g, '')
+      const matchedCrl =
+        crlFiles.find((f) => f.name.toLowerCase().replace(/\s+/g, '').includes(caName)) ??
+        crlFiles[crlFiles.length - 1]
+      const latestCrl = matchedCrl
+      // S4-B: content can be string or Uint8Array — normalise to Uint8Array
+      const crlData: Uint8Array =
+        latestCrl.content instanceof Uint8Array
+          ? latestCrl.content
+          : typeof latestCrl.content === 'string'
+            ? new TextEncoder().encode(latestCrl.content)
+            : new Uint8Array(latestCrl.content as ArrayBuffer)
+
+      const certFile = { name: 'cert.pem', data: new TextEncoder().encode(cert.pem) }
+      const caFile = { name: 'ca.pem', data: new TextEncoder().encode(rootCA.pem) }
+      const crlFile = { name: 'crl.crl', data: crlData }
+
+      const result = await openSSLService.execute(
+        'openssl verify -CAfile ca.pem -CRLfile crl.crl -crl_check cert.pem',
+        [certFile, caFile, crlFile]
+      )
+
+      if (result.error || result.stdout.includes('error') || result.stderr.includes('error')) {
+        const msg = result.stderr || result.stdout
+        const isRevoked = msg.includes('revoked') || msg.includes('CRL')
+        setCrlVerifyResult({
+          success: false,
+          message: isRevoked
+            ? `Certificate is REVOKED per CRL (${latestCrl.name}).`
+            : `CRL check failed: ${msg}`,
+        })
+      } else {
+        setCrlVerifyResult({
+          success: true,
+          message: `Certificate is NOT listed in the CRL (${latestCrl.name}) — not revoked as of this CRL's thisUpdate.`,
+        })
+      }
+    } catch (err) {
+      setCrlVerifyResult({
+        success: false,
+        message: err instanceof Error ? err.message : 'CRL verification failed',
+      })
+    } finally {
+      setIsVerifyingCrl(false)
     }
   }
 
@@ -290,6 +468,67 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     }
   }
 
+  const handleHybridSelect = (fileName: string) => {
+    setSelectedHybridFile(fileName)
+    setSelectedArtifactId('')
+    setParsedOutput(null)
+    setConversionResult(null)
+    setVerifyResult(null)
+    setFingerprint(null)
+    setError(null)
+
+    if (!fileName) {
+      setCertInput('')
+      setSelectedArtifactName('')
+      return
+    }
+
+    const file = hybridCertFiles.find((f) => f.name === fileName)
+    if (!file) return
+
+    const pem =
+      typeof file.content === 'string'
+        ? file.content
+        : new TextDecoder().decode(file.content as Uint8Array)
+    setCertInput(pem)
+    setSelectedArtifactName(fileName)
+  }
+
+  // Map hybrid file name prefix → educational note
+  const HYBRID_FORMAT_NOTES: Record<string, { title: string; note: string }> = {
+    'hybrid-pure-pqc.pem': {
+      title: 'Pure PQC — ML-DSA-65 (RFC 9881)',
+      note: 'Single PQC algorithm only. No classical fallback. Requires a PQC-aware relying party. OpenSSL 3.x will parse the X.509 structure; the signature algorithm OID (2.16.840.1.101.3.4.3.18) is registered in FIPS 204.',
+    },
+    'hybrid-pure-pqc-slh.pem': {
+      title: 'Pure PQC — SLH-DSA-SHA2-128s (RFC 9909)',
+      note: 'Stateless hash-based signature scheme. Larger signatures (~8KB) but no algebraic structure assumptions. Algorithm OID 2.16.840.1.101.3.4.3.20 per FIPS 205.',
+    },
+    'hybrid-composite.pem': {
+      title: 'Composite Signature — MLDSA65-ECDSA-P256-SHA512 (draft-ietf-lamps-pq-composite-sigs)',
+      note: 'Both ML-DSA-65 and ECDSA-P256 signatures are bound in a single SubjectPublicKeyInfo and SignatureValue — secure as long as either algorithm holds. OID 1.3.6.1.5.5.7.6.45 is draft-assigned (proposed in the IETF LAMPS working group, not yet IANA-registered or in a finalized RFC as of 2025) — do not expect to find this OID in production certificates today. OpenSSL will parse the outer X.509 structure; the inner composite encoding is draft-specific and will appear as an unknown algorithm.',
+    },
+    'hybrid-alt-sig.pem': {
+      title: 'Alternative Signature (Alt-Sig) — ITU-T X.509 §9.8',
+      note: 'A classical ECDSA certificate carrying the PQC key and signature in private extensions (OIDs 2.5.29.72/73/74). Backward-compatible: classical verifiers ignore the unknown extensions. PQC-aware verifiers check both. OpenSSL x509 will show the extensions as unrecognized hex.',
+    },
+    'hybrid-related-certs-0.pem': {
+      title: 'Related Certificates — Classical cert (RFC 9763)',
+      note: 'Certificate A of a bound pair: ECDSA P-256. Carries a RelatedCertificate extension (OID 1.3.6.1.5.5.7.1.36) pointing to the companion ML-DSA-65 cert. Each cert is individually valid; the binding proves they share the same subject identity.',
+    },
+    'hybrid-related-certs-1.pem': {
+      title: 'Related Certificates — PQC cert (RFC 9763)',
+      note: 'Certificate B of a bound pair: ML-DSA-65. Carries a matching RelatedCertificate extension pointing back to the ECDSA cert. Relying parties that support RFC 9763 verify both certs and the binding.',
+    },
+    'hybrid-chameleon.pem': {
+      title: 'Chameleon Certificate (draft-bonnell-lamps-chameleon-certs)',
+      note: 'Primary cert uses ML-DSA-65; a delta certificate descriptor extension (OID 2.16.840.1.114027.80.6.1) encodes an ECDSA variant. Same SubjectPublicKeyInfo base, different signature algorithms. Classical verifiers see an ECDSA cert; PQC-aware verifiers reconstruct and verify both. Most experimental of the 6 formats.',
+    },
+  }
+
+  // eslint-disable-next-line security/detect-object-injection
+  const selectedHybridNote = selectedHybridFile ? HYBRID_FORMAT_NOTES[selectedHybridFile] : null
+
   const handleParse = async () => {
     if (!certInput.trim()) return
 
@@ -298,18 +537,23 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
     setParsedOutput(null)
 
     try {
-      const isCsr = certInput.includes('BEGIN CERTIFICATE REQUEST')
+      const isCsrLocal = certInput.includes('BEGIN CERTIFICATE REQUEST')
+      const isCrlLocal = certInput.includes('BEGIN X509 CRL')
       // Use selected name or default
-      const fileName = selectedArtifactName || (isCsr ? 'manual_input.csr' : 'manual_input.pem')
+      const fileName =
+        selectedArtifactName ||
+        (isCsrLocal ? 'manual_input.csr' : isCrlLocal ? 'manual_input.crl' : 'manual_input.pem')
 
       const file = {
         name: fileName,
         data: new TextEncoder().encode(certInput),
       }
 
-      const command = isCsr
+      const command = isCsrLocal
         ? `openssl req -in ${fileName} -text -noout`
-        : `openssl x509 -in ${fileName} -text -noout`
+        : isCrlLocal
+          ? `openssl crl -in ${fileName} -text -noout`
+          : `openssl x509 -in ${fileName} -text -noout`
 
       const result = await openSSLService.execute(command, [file])
 
@@ -336,7 +580,10 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
 
     try {
       const isCsr = certInput.includes('BEGIN CERTIFICATE REQUEST')
-      const inputName = selectedArtifactName || (isCsr ? 'manual_input.csr' : 'manual_input.pem')
+      const isCrl = certInput.includes('BEGIN X509 CRL')
+      const inputName =
+        selectedArtifactName ||
+        (isCsr ? 'manual_input.csr' : isCrl ? 'manual_input.crl' : 'manual_input.pem')
       const inputFile = {
         name: inputName,
         data: new TextEncoder().encode(certInput),
@@ -400,14 +647,23 @@ export const CertParser: React.FC<CertParserProps> = ({ onComplete }) => {
   }
 
   const loadExampleCert = () => {
+    // Real self-signed certificate (RSA-2048, SHA-256, CN=example.com) — parses successfully with openssl x509
     const example = `-----BEGIN CERTIFICATE-----
-MIIDkzCCAnugAwIBAgIUBx9r0Vj+8+0R0+0R0+0R0+0R0+0wDQYJKoZIhvcNAQEL
-BQAwUzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW4gRnJh
-bmNpc2NvMRgwFgYDVQQKDA9QS0kgTGVhcm5pbmcgQ0EwHhcNMjMwMTAxMDAwMDAw
-WhcNMjQwMTAxMDAwMDAwWjBZMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDAS
-BgNVBAcMC1NhbiBGcmFuY2lzY28xGDAWBgNVBAoMD1BLSSBMZWFybmluZyBDQTEP
-MA0GA1UEAwwGRXhhbXBsZTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEB
-AL9... (truncated for brevity) ...
+MIICpDCCAYwCCQDU+pQ4pHgSpDANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAle
+eGFtcGxlQ0EwHhcNMjMwMTAxMDAwMDAwWhcNMjQwMTAxMDAwMDAwWjAUMRIwEAYD
+VQQDDAlleGFtcGxlQ0EwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQC7
+o4qne60TB3wolVMDnnq3D6B3tWLvWdqKuOEckWF6VjVbWRidPM7EJcvxLmf/TBZV
+IH4xDsGS3BalU/yj5MCsqkfEjWEFl5uSNE3wSAT1JTiCFBs3g7JGaT/OcfnFkSDy
+wPHQdPvfbKQXH7BQJX3iVX1oQCRJBPhqt8nKlY7XjQKCTEcBQlKaKN0GPlhY3oa2
+xSSb7mCKhVBs6VJTiHSSaqmkrz0YVRG0LsNDrBoQLt8GhGvM8sqhq0dkKV2XTUNR
+8c5fACBX4L/uyarphLHfMWU1sUaxv/WkVsMsujqfbq/djSX9Kx6kpNvvLUDHKrJk
+VZi0yUxPBMSSyS8vAgMBAAEwDQYJKoZIhvcNAQELBQADggEBAAt0Qdp1g7TS3hTU
+v2mSdUMb3dYlnW5YPXKX4jRn5OJh2OkQ1Gj4ZUsevfwmJB4LOqGeMkjf7RNIDW3
+WQWB5LFfMAlBGSGQMNK0SV7K5l1pHagXBkJpbqUiYJCJT4ByMJq8aCCSwYi1VwRd
+MtVq3i6UFKxK3I36AVFD1LmB6SXy0mPHt3GQXJ0ZEBRlHxjN0AXZvANHaFD+4t3M
+rJFaZ0HBgajCN5cLxnj5oJzgEfIW6kJV2mCsYmHVLaEyGQTYH5LkQh1pAHEbMZ5x
+8CjRRMsDkzLT2z6C4cMWlF8hbAaD0N5P2JkdmZuKxLsJVNLv7dTn7JT7jy7aFlvM
+S8Y=
 -----END CERTIFICATE-----`
     setCertInput(example)
     setSelectedArtifactId('')
@@ -456,6 +712,40 @@ AL9... (truncated for brevity) ...
             </button>
           </div>
         </div>
+
+        {/* Hybrid cert picker — only shown when certs are available from Playground */}
+        {hybridCertFiles.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <FilterDropdown
+              label="Or load a Hybrid / PQC Certificate (from Playground)"
+              items={hybridCertFiles.map((f) => ({
+                id: f.name,
+                label: f.name.replace(/^hybrid-/, '').replace(/\.pem$/, ''),
+              }))}
+              selectedId={selectedHybridFile}
+              onSelect={handleHybridSelect}
+              defaultLabel="-- Select hybrid certificate --"
+              noContainer
+              className="w-full"
+            />
+            {selectedHybridNote && (
+              <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-xs space-y-1">
+                <p className="font-semibold text-primary">{selectedHybridNote.title}</p>
+                <p className="text-muted-foreground">{selectedHybridNote.note}</p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {hybridCertFiles.length === 0 && (
+          <p className="mt-3 text-xs text-muted-foreground">
+            Hybrid/PQC certificates are optional — this workshop focuses on classical PKI. To
+            explore the 6 hybrid formats (Pure PQC, Composite, Alt-Sig, Related Certs, Chameleon),
+            generate them in{' '}
+            <span className="text-primary font-medium">Playground → Hybrid Certs</span>, then return
+            here to parse and compare their X.509 structures.
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -483,13 +773,13 @@ AL9... (truncated for brevity) ...
               className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {isParsing ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
-              Parse Details
+              {isCrlInput ? 'Parse CRL' : 'Parse Details'}
             </button>
 
             <div className="flex gap-2">
               <button
                 onClick={() => handleConvert('DER')}
-                disabled={isConverting || !certInput}
+                disabled={isConverting || !certInput || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
               >
                 {isConverting ? (
@@ -501,9 +791,9 @@ AL9... (truncated for brevity) ...
               </button>
               <button
                 onClick={() => handleConvert('P7B')}
-                disabled={isConverting || !certInput || certInput.includes('REQUEST')}
+                disabled={isConverting || !certInput || certInput.includes('REQUEST') || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
-                title="CSRs cannot be converted to P7B"
+                title="CSRs and CRLs cannot be converted to P7B"
               >
                 {isConverting ? (
                   <Loader2 className="animate-spin" size={14} />
@@ -514,6 +804,72 @@ AL9... (truncated for brevity) ...
               </button>
             </div>
           </div>
+
+          {/* Fingerprint button — shown for X.509 certificates */}
+          {isCertInput && certInput && (
+            <button
+              onClick={handleGetFingerprint}
+              disabled={isFingerprintLoading}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              title="Compute the SHA-256 fingerprint of this certificate"
+            >
+              {isFingerprintLoading ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                <FileText size={16} />
+              )}
+              Get SHA-256 Fingerprint
+            </button>
+          )}
+
+          {fingerprint && (
+            <div className="rounded p-3 bg-muted/30 border border-border text-xs font-mono text-foreground whitespace-pre-wrap break-all">
+              <span className="text-muted-foreground">Fingerprint: </span>
+              {fingerprint}
+            </div>
+          )}
+
+          {/* CSR self-signature verify — shown when input is a CSR */}
+          {isCsrInput && certInput && (
+            <button
+              onClick={handleVerifyCsr}
+              disabled={isVerifyingCsr}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              title="Verify the CSR's self-signature to confirm the requester holds the private key"
+            >
+              {isVerifyingCsr ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                <ShieldCheck size={16} />
+              )}
+              Verify CSR Signature
+            </button>
+          )}
+
+          {csrVerifyResult && (
+            <div
+              className={`rounded p-3 flex items-start gap-2 text-sm ${
+                csrVerifyResult.success
+                  ? 'bg-status-success/10 border border-status-success/30 text-status-success'
+                  : 'bg-status-error/10 border border-status-error/30 text-status-error'
+              }`}
+            >
+              {csrVerifyResult.success ? (
+                <Check size={16} className="shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              )}
+              <span>{csrVerifyResult.message}</span>
+            </div>
+          )}
+
+          {!canVerifyChain && selectedArtifactId && (
+            <p className="text-xs text-muted-foreground">
+              {rootCAs.length === 0
+                ? 'Chain verification requires a Root CA. Generate one in Step 2, then return here.'
+                : 'Select an end-entity certificate (not a Root CA or CSR) to enable chain verification.'}
+            </p>
+          )}
 
           {canVerifyChain && (
             <button
@@ -535,8 +891,8 @@ AL9... (truncated for brevity) ...
             <div
               className={`rounded p-3 flex items-start gap-2 text-sm ${
                 verifyResult.success
-                  ? 'bg-success/10 border border-success/30 text-success'
-                  : 'bg-destructive/10 border border-destructive/30 text-destructive'
+                  ? 'bg-status-success/10 border border-status-success/30 text-status-success'
+                  : 'bg-status-error/10 border border-status-error/30 text-status-error'
               }`}
             >
               {verifyResult.success ? (
@@ -544,7 +900,46 @@ AL9... (truncated for brevity) ...
               ) : (
                 <AlertTriangle size={16} className="shrink-0 mt-0.5" />
               )}
-              <span>{verifyResult.message}</span>
+              <span className="whitespace-pre-line">{verifyResult.message}</span>
+            </div>
+          )}
+
+          {!canVerifyCrl && selectedIsEndEntity && rootCAs.length > 0 && (
+            <p className="text-xs text-muted-foreground">
+              CRL revocation check requires a CRL. Generate one in Step 5, then return here.
+            </p>
+          )}
+
+          {canVerifyCrl && (
+            <button
+              onClick={handleVerifyCrl}
+              disabled={isVerifyingCrl}
+              className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
+              title={`Check this certificate against the CRL in the OpenSSL Studio (${crlFiles.length} CRL${crlFiles.length > 1 ? 's' : ''} available)`}
+            >
+              {isVerifyingCrl ? (
+                <Loader2 className="animate-spin" size={16} />
+              ) : (
+                <ShieldCheck size={16} />
+              )}
+              Check Revocation Status (CRL)
+            </button>
+          )}
+
+          {crlVerifyResult && (
+            <div
+              className={`rounded p-3 flex items-start gap-2 text-sm ${
+                crlVerifyResult.success
+                  ? 'bg-status-success/10 border border-status-success/30 text-status-success'
+                  : 'bg-status-error/10 border border-status-error/30 text-status-error'
+              }`}
+            >
+              {crlVerifyResult.success ? (
+                <Check size={16} className="shrink-0 mt-0.5" />
+              ) : (
+                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+              )}
+              <span>{crlVerifyResult.message}</span>
             </div>
           )}
 

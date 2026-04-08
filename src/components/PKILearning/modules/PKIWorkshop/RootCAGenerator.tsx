@@ -61,6 +61,28 @@ interface AlgorithmOption {
   keySizeLabel: string
 }
 
+// Parse numeric key size from label; returns 0 for non-numeric labels (e.g. "Category 5")
+const parseKeySize = (label: string): number => {
+  const n = parseInt(label, 10)
+  return isNaN(n) ? 0 : n
+}
+
+// Derive NIST security level label from algorithm id and keySizeLabel
+const getNistLevelLabel = (algoId: string, keySizeLabel: string): string | null => {
+  const levelMap: Record<string, string> = {
+    '1': 'NIST Level 1 (~AES-128 security)',
+    '2': 'NIST Level 2 (~AES-128 target, Category 2)',
+    '3': 'NIST Level 3 (~AES-192 security)',
+    '5': 'NIST Level 5 (~AES-256 security)',
+  }
+  const catMatch = keySizeLabel.match(/Category (\d)/)
+  if (catMatch) return levelMap[catMatch[1]] ?? null
+  // Fallback from algo id
+  if (algoId.includes('mldsa')) return 'NIST Level 5 (~AES-256 security)' // ML-DSA-87
+  if (algoId.includes('slhdsa256')) return 'NIST Level 5 (~AES-256 security)'
+  return null
+}
+
 const ALGORITHMS: AlgorithmOption[] = [
   {
     id: 'rsa',
@@ -85,21 +107,21 @@ const ALGORITHMS: AlgorithmOption[] = [
   },
   {
     id: 'mldsa',
-    name: 'ML-DSA-87 (Dilithium)',
+    name: 'ML-DSA-87 (FIPS 204)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm ml-dsa-87',
     keySizeLabel: 'Category 5',
   },
   {
     id: 'slhdsa256s',
-    name: 'SLH-DSA-SHA2-256s (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-256s (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256s',
     keySizeLabel: 'Category 5 (small sig)',
   },
   {
     id: 'slhdsa256f',
-    name: 'SLH-DSA-SHA2-256f (SPHINCS+)',
+    name: 'SLH-DSA-SHA2-256f (FIPS 205)',
     group: 'Quantum-Safe',
     genCommand: 'openssl genpkey -algorithm slh-dsa-sha2-256f',
     keySizeLabel: 'Category 5 (fast sign)',
@@ -235,7 +257,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
         id: keyId,
         name: keyName,
         algorithm: algo.name,
-        keySize: parseInt(algo.keySizeLabel) || 0,
+        keySize: parseKeySize(algo.keySizeLabel),
         created: Date.now(),
         publicKey: '',
         privateKey: keyContent,
@@ -382,7 +404,7 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
           id: keyId,
           name: keyName,
           algorithm: currentAlgo.name,
-          keySize: parseInt(currentAlgo.keySizeLabel) || 0,
+          keySize: parseKeySize(currentAlgo.keySizeLabel),
           created: Date.now(),
           publicKey: '',
           privateKey: keyContent,
@@ -492,13 +514,30 @@ x509_extensions = v3_ca
       )
       if (!hasBasicConstraints) {
         configContent += `basicConstraints = critical,CA:TRUE\n`
+        configContent += `keyUsage = critical, keyCertSign, cRLSign\n`
+        configContent += `subjectKeyIdentifier = hash\n`
+        configContent += `authorityKeyIdentifier = keyid:always\n`
       }
       setOutput(
         (prev) =>
           prev +
-          `  basicConstraints = critical,CA:TRUE\n` +
-          `    Marks this certificate as a Certificate Authority.\n` +
-          `    "critical" means any system that doesn't understand this extension must reject the certificate.\n\n`
+          `  basicConstraints = critical,CA:TRUE  (RFC 5280 §4.2.1.9)\n` +
+          `    CA:TRUE marks this certificate as a Certificate Authority allowed to sign other certs.\n` +
+          `    "critical" means any X.509 implementation that does not understand this extension MUST reject\n` +
+          `    the certificate — it cannot be silently ignored. This prevents a non-CA cert from being\n` +
+          `    misused as a trust anchor by an older or non-compliant implementation.\n` +
+          `    Note: end-entity certificates set basicConstraints CA:FALSE but do NOT mark it critical.\n` +
+          `    Marking CA:FALSE as critical would force all validators to understand the extension,\n` +
+          `    which adds no security benefit and can break interoperability with older clients.\n\n` +
+          (!hasBasicConstraints
+            ? `  keyUsage = critical, keyCertSign, cRLSign\n` +
+              `    keyCertSign: this CA is authorised to sign X.509 certificates.\n` +
+              `    cRLSign: this CA is authorised to sign Certificate Revocation Lists (CRLs).\n\n` +
+              `  subjectKeyIdentifier = hash\n` +
+              `    A hash of this CA's public key, used by issued certs as authorityKeyIdentifier (AKI) to chain back to this CA.\n\n` +
+              `  authorityKeyIdentifier = keyid:always\n` +
+              `    For self-signed roots, AKI points to the root's own SKI. Required by RFC 5280 §4.2.1.1 and expected by many validators.\n\n`
+            : '')
       )
 
       attributes
@@ -514,6 +553,13 @@ x509_extensions = v3_ca
 
       setOutput((prev) => prev + `Generated Config:\n${configContent}\n`)
 
+      // Educational note: Root CA key strength rationale
+      setOutput(
+        (prev) =>
+          prev +
+          `  Root CAs use stronger keys (RSA-4096, P-521, ML-DSA-87) because they have longer lifetimes and are harder to replace than end-entity certificates.\n\n`
+      )
+
       // Detect PQC algorithm and add educational note about default_md
       const currentAlgoId = selectedKeyId.startsWith('new-')
         ? selectedKeyId.replace('new-', '')
@@ -524,7 +570,7 @@ x509_extensions = v3_ca
         setOutput(
           (prev) =>
             prev +
-            `  Note: default_md = sha256 is set for OpenSSL compatibility, but ${algoObj?.name || 'this PQC algorithm'} uses its own internal hash function. SHA-256 is NOT the signature hash for this algorithm.\n\n`
+            `  Note: default_md is ignored by PQC algorithms. ${algoObj?.name || 'This PQC algorithm'} uses its own internal hash function (SHAKE256 for ML-DSA, SHA2/SHAKE for SLH-DSA variants) defined within the algorithm specification. The config value has no effect on the actual signature.\n\n`
         )
       }
 
@@ -543,6 +589,25 @@ x509_extensions = v3_ca
       const certCmd = `openssl req -x509 -new -nodes -key ${keyFilename} -sha256 -days 3650 -out ${certName} -config rootca.conf`
 
       setOutput((prev) => prev + `$ ${certCmd}\n`)
+
+      // Validity note (S2-F): explain why 3650 days is used for roots
+      setOutput(
+        (prev) =>
+          prev +
+          `  Validity: 3650 days (~10 years). Root CAs intentionally have long lifetimes because\n` +
+          `  replacing them requires re-issuing all subordinate CAs and end-entity certs that chain to them.\n` +
+          `  Offline/air-gapped roots may run 20–30 years. Online issuing CAs are typically 3–10 years.\n\n`
+      )
+
+      // PQC note about -sha256 (S2-E): placed after the command so context is clear
+      if (isPqcAlgo) {
+        setOutput(
+          (prev) =>
+            prev +
+            `  Note: -sha256 in the command above is ignored for PQC algorithms. The hash function is\n` +
+            `  defined within the algorithm spec itself and cannot be overridden by OpenSSL flags.\n\n`
+        )
+      }
 
       // Add 30s timeout
       const timeoutPromise = new Promise<never>((_, reject) =>
@@ -567,6 +632,17 @@ x509_extensions = v3_ca
         const cn = attributes.find((a) => a.id === 'CN')?.value || 'Unknown'
         const subj = `/CN=${cn}` // Simplified for metadata
 
+        // Extract actual serial number from the generated certificate
+        let actualSerial = '01'
+        const serialResult = await openSSLService.execute(
+          `openssl x509 -in ${certName} -serial -noout`,
+          [{ name: certName, data: certFile.data }]
+        )
+        if (!serialResult.error) {
+          const serialMatch = serialResult.stdout.match(/serial=([0-9A-Fa-f]+)/i)
+          if (serialMatch) actualSerial = serialMatch[1].toUpperCase()
+        }
+
         addCertificate({
           id: `root-cert-${Date.now()}`,
           name: certName,
@@ -575,12 +651,15 @@ x509_extensions = v3_ca
           metadata: {
             subject: subj,
             issuer: subj, // Self-signed
-            serial: '01', // Default
+            serial: actualSerial,
             notBefore: Date.now(),
             notAfter: Date.now() + 3650 * 24 * 60 * 60 * 1000,
           },
           tags: ['root', 'ca', algoName],
-          keyPairId: keyFile?.name === keyFilename ? keyId : undefined, // Link to the generated key
+          // keyPairId links this certificate to its signing key so Step 3 (CertSigner) can
+          // automatically find the correct CA certificate when you select the CA key.
+          // Always generate the Root CA key and certificate together in this step.
+          keyPairId: keyFile?.name === keyFilename ? keyId : undefined,
         })
 
         // Sync to OpenSSL Studio
@@ -601,7 +680,13 @@ x509_extensions = v3_ca
           timestamp: Date.now(),
         })
 
-        setOutput((prev) => prev + 'Root CA certificate generated and saved successfully!\n')
+        setOutput(
+          (prev) =>
+            prev +
+            'Root CA certificate generated and saved successfully!\n' +
+            '  The certificate and its signing key are now linked internally (keyPairId).\n' +
+            '  In Step 3, select this CA key and the matching certificate will be found automatically.\n'
+        )
 
         // HSM demo — certificate signing via PKCS#11 when live mode active
         if (hsm.isReady && hsm.moduleRef.current && liveKeyRef.current) {
@@ -720,8 +805,23 @@ x509_extensions = v3_ca
               </div>
             )}
 
+            {(() => {
+              if (!selectedKeyId.startsWith('new-')) return null
+              const algoId = selectedKeyId.replace('new-', '')
+              const algo = ALGORITHMS.find((a) => a.id === algoId)
+              if (!algo || algo.group !== 'Quantum-Safe') return null
+              const level = getNistLevelLabel(algo.id, algo.keySizeLabel)
+              if (!level) return null
+              return (
+                <p className="text-xs text-muted-foreground mt-1">
+                  Security: <span className="text-primary font-medium">{level}</span>
+                </p>
+              )
+            })()}
+
             <p className="text-xs text-muted-foreground">
-              Root CAs typically use larger key sizes for long-term security.
+              Root CAs use larger key sizes (RSA-4096, P-521, ML-DSA-87) because they have longer
+              lifetimes and are harder to replace than end-entity certificates.
             </p>
           </div>
         </div>
@@ -758,14 +858,23 @@ x509_extensions = v3_ca
               <FilterDropdown
                 items={availableProfiles.map((profile) => ({
                   id: profile,
-                  label: profile.replace('Cert-', '').replace('.csv', ''),
+                  label: profile
+                    .replace('Cert-', '')
+                    .replace(/_\d{8}/, '')
+                    .replace('.csv', ''),
                 }))}
                 selectedId={selectedProfile}
                 onSelect={handleProfileSelect}
-                defaultLabel="-- Select a Profile --"
+                defaultLabel="-- Select a Profile (optional) --"
                 noContainer
                 className="w-full"
               />
+              <p className="text-xs text-muted-foreground mt-1">
+                Profiles define end-entity certificate attributes (TLS Server, IoT, etc.). Root CAs
+                are self-signed trust anchors — leaving the profile blank is correct for most Root
+                CA use cases. Only load a profile if your PKI policy mandates specific Root CA
+                extensions.
+              </p>
             </div>
 
             {profileMetadata && (

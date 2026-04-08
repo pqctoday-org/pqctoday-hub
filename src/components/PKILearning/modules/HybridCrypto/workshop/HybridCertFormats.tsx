@@ -10,6 +10,7 @@ import {
   type HybridFormatId,
 } from '../constants'
 import { useHSM } from '@/hooks/useHSM'
+import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { HsmFamily, HsmKeyRole } from '@/components/Playground/hsm/HsmContext'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
@@ -63,6 +64,26 @@ export const HybridCertFormats: React.FC = () => {
     URL.revokeObjectURL(url)
   }, [])
 
+  const pushHybridFiles = useCallback(
+    (
+      formatId: HybridFormatId,
+      certs: Array<{ label: string; pem: string; parsed: string; type: 'classical' | 'pqc' }>
+    ) => {
+      const { addFile } = useOpenSSLStore.getState()
+      certs.forEach((cert, idx) => {
+        const name = certs.length === 1 ? `hybrid-${formatId}.pem` : `hybrid-${formatId}-${idx}.pem`
+        addFile({
+          name,
+          type: 'cert',
+          content: new TextEncoder().encode(cert.pem),
+          size: cert.pem.length,
+          timestamp: Date.now(),
+        })
+      })
+    },
+    []
+  )
+
   const onKeyTracked = useCallback(
     (handle: number, family: HsmFamily, label: string, role: HsmKeyRole = 'private') => {
       hsm.addKey({
@@ -95,24 +116,26 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const slhCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'SLH-DSA-128s Certificate',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: certResult.error
-                ? []
-                : [
-                    {
-                      label: 'SLH-DSA-128s Certificate',
-                      pem: certResult.pem,
-                      parsed: certResult.parsed,
-                      type: 'pqc',
-                    },
-                  ],
+              certs: slhCerts,
               timingMs: certResult.timingMs,
               error: certResult.error,
             },
           }))
+          if (!certResult.error) pushHybridFiles(formatId, slhCerts)
           if (!skipStateReset) setGenerating(null)
           return
         } else if (formatId === 'pure-pqc') {
@@ -122,24 +145,26 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const pqcCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'ML-DSA-65 Certificate (RFC 9881)',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: certResult.error
-                ? []
-                : [
-                    {
-                      label: 'ML-DSA-65 Certificate (RFC 9881)',
-                      pem: certResult.pem,
-                      parsed: certResult.parsed,
-                      type: 'pqc',
-                    },
-                  ],
+              certs: pqcCerts,
               timingMs: certResult.timingMs,
               error: certResult.error,
             },
           }))
+          if (!certResult.error) pushHybridFiles(formatId, pqcCerts)
         } else if (formatId === 'composite') {
           // Real composite certificate (draft-ietf-lamps-pq-composite-sigs-15)
           const certResult = await hybridCryptoService.generateCompositeCert(
@@ -148,24 +173,26 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const compCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'Composite: MLDSA65-ECDSA-P256-SHA512',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: certResult.error
-                ? []
-                : [
-                    {
-                      label: 'Composite: MLDSA65-ECDSA-P256-SHA512',
-                      pem: certResult.pem,
-                      parsed: certResult.parsed,
-                      type: 'pqc',
-                    },
-                  ],
+              certs: compCerts,
               timingMs: certResult.timingMs,
               error: certResult.error,
             },
           }))
+          if (!certResult.error) pushHybridFiles(formatId, compCerts)
         } else if (formatId === 'alt-sig') {
           // Real Alt-Sig certificate (ITU-T X.509 §9.8)
           const certResult = await hybridCryptoService.generateAltSigCert(
@@ -174,24 +201,26 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const altCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'Alt-Sig Certificate: ECDSA primary + ML-DSA-65 extensions',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'classical' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: certResult.error
-                ? []
-                : [
-                    {
-                      label: 'Alt-Sig Certificate: ECDSA primary + ML-DSA-65 extensions',
-                      pem: certResult.pem,
-                      parsed: certResult.parsed,
-                      type: 'classical',
-                    },
-                  ],
+              certs: altCerts,
               timingMs: certResult.timingMs,
               error: certResult.error,
             },
           }))
+          if (!certResult.error) pushHybridFiles(formatId, altCerts)
         } else if (formatId === 'related-certs') {
           const relResult = await hybridCryptoService.generateRelatedCertPairReal(
             subject,
@@ -199,31 +228,33 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const relCerts = relResult.error
+            ? []
+            : [
+                {
+                  label: 'Certificate A: ECDSA P-256 (Classical)',
+                  pem: relResult.classical.pem,
+                  parsed: relResult.classical.parsed,
+                  type: 'classical' as const,
+                },
+                {
+                  label: 'Certificate B: ML-DSA-65 (PQC)',
+                  pem: relResult.pqc.pem,
+                  parsed: relResult.pqc.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: relResult.error
-                ? []
-                : [
-                    {
-                      label: 'Certificate A: ECDSA P-256 (Classical)',
-                      pem: relResult.classical.pem,
-                      parsed: relResult.classical.parsed,
-                      type: 'classical',
-                    },
-                    {
-                      label: 'Certificate B: ML-DSA-65 (PQC)',
-                      pem: relResult.pqc.pem,
-                      parsed: relResult.pqc.parsed,
-                      type: 'pqc',
-                    },
-                  ],
+              certs: relCerts,
               timingMs: relResult.totalMs,
               bindingHash: relResult.bindingHash,
               error: relResult.error,
             },
           }))
+          if (!relResult.error) pushHybridFiles(formatId, relCerts)
         } else if (formatId === 'chameleon') {
           // Real Chameleon certificate (draft-bonnell-lamps-chameleon-certs-07)
           const certResult = await hybridCryptoService.generateChameleonCert(
@@ -232,24 +263,26 @@ export const HybridCertFormats: React.FC = () => {
             hSession,
             onKeyTracked
           )
+          const chamCerts = certResult.error
+            ? []
+            : [
+                {
+                  label: 'Chameleon: ML-DSA-65 primary + ECDSA delta',
+                  pem: certResult.pem,
+                  parsed: certResult.parsed,
+                  type: 'pqc' as const,
+                },
+              ]
           setResults((prev) => ({
             ...prev,
             [formatId]: {
               formatId,
-              certs: certResult.error
-                ? []
-                : [
-                    {
-                      label: 'Chameleon: ML-DSA-65 primary + ECDSA delta',
-                      pem: certResult.pem,
-                      parsed: certResult.parsed,
-                      type: 'pqc',
-                    },
-                  ],
+              certs: chamCerts,
               timingMs: certResult.timingMs,
               error: certResult.error,
             },
           }))
+          if (!certResult.error) pushHybridFiles(formatId, chamCerts)
         }
       } catch (e) {
         setResults((prev) => ({
@@ -265,7 +298,7 @@ export const HybridCertFormats: React.FC = () => {
 
       if (!skipStateReset) setGenerating(null)
     },
-    [hsm, onKeyTracked]
+    [hsm, onKeyTracked, pushHybridFiles]
   )
 
   const generateAll = useCallback(async () => {

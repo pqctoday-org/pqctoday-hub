@@ -117,15 +117,6 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
           {/* Server vertical line */}
           <div className="absolute right-12 top-0 bottom-0 w-px bg-tertiary/20" />
 
-          {/* Encryption boundary marker */}
-          <div className="relative flex items-center gap-2 py-2 my-1">
-            <div className="flex-1 border-t border-dashed border-success/30" />
-            <span className="text-[10px] text-success font-bold uppercase flex items-center gap-1 shrink-0">
-              <Lock size={10} /> Encrypted from here
-            </span>
-            <div className="flex-1 border-t border-dashed border-success/30" />
-          </div>
-
           {/* Messages */}
           <div className="space-y-2">
             {MESSAGES.map((msg, i) => {

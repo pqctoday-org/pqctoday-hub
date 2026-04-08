@@ -123,9 +123,28 @@ export const Pkcs11LogPanel = ({
   const visibleLog = filterFns ? log.filter((e) => e.isStepHeader || filterFns.includes(e.fn)) : log
   const inspectableCount = visibleLog.filter((e) => !!e.inspect).length
 
+  // Build display order: newest step first, header above its commands.
+  // visibleLog is newest-first, so we iterate oldest-first (reversed) to group
+  // correctly, then reverse the groups for newest-first output.
+  const orderedLog = (() => {
+    const groups: Pkcs11LogEntry[][] = []
+    let current: Pkcs11LogEntry[] = []
+    for (const e of [...visibleLog].reverse()) {
+      if (e.isStepHeader) {
+        if (current.length > 0) groups.push(current)
+        current = [e]
+      } else {
+        current.push(e)
+      }
+    }
+    if (current.length > 0) groups.push(current)
+    // Each group is [header, ...commands] in chronological order.
+    // Reverse groups so newest step is first; keep header at top of each group.
+    return groups.reverse().flatMap((g) => g)
+  })()
+
   const copyAll = () => {
-    const text = [...visibleLog]
-      .reverse()
+    const text = visibleLog
       .map((e) => `[${e.timestamp}] ${e.fn}(${e.args}) → ${e.rvName} ${e.rvHex} [${e.ms}ms]`)
       .join('\n')
     navigator.clipboard
@@ -210,11 +229,7 @@ export const Pkcs11LogPanel = ({
                 </p>
               )}
               <div className="space-y-0 max-h-80 overflow-y-auto">
-                {/* 
-                  Strictly LIFO (Newest First). Both Steps AND commands within steps 
-                  are rendered instantly at the top.
-                */}
-                {visibleLog.map((e) => (
+                {orderedLog.map((e) => (
                   <LogEntryRow key={e.id} entry={e} />
                 ))}
               </div>

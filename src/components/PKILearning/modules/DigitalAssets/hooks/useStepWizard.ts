@@ -53,9 +53,9 @@ export const useStepWizard = ({ steps, onBack }: UseStepWizardProps) => {
           return initialObj
         }
 
-        // If both strings, append text with a divider
+        // If both strings, prepend new result (newest at top)
         if (typeof prev === 'string' && typeof result === 'string') {
-          return prev + '\n\n' + '━'.repeat(50) + '\n\n' + stepHeader + '\n' + result
+          return stepHeader + '\n' + result + '\n\n' + '━'.repeat(50) + '\n\n' + prev
         }
 
         // If both are objects (e.g. tabs) or mixed, append correctly

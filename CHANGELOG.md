@@ -6,6 +6,119 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.93.0] - 2026-04-07
+
+### Added
+
+- **Playground — PKI Workshop tool**: PKI Workshop is now available as a first-class tool in the
+  Playground's Workshop Tools tab under "Certificates & Proofs". Launched via a new `playgroundMode`
+  prop on `PKIWorkshop` that renders only the 5-step chain-building panel (CSR → Root CA → Sign →
+  Parse → CRL), omitting the MTC step 6 and module-tab chrome. Both `WorkshopToolsTab` and
+  `workshopRegistry` register the tool with lazy-loading.
+- **Bitcoin Flow — HNFL attack-point callout**: Step 2 (Export Public Key) now shows an amber
+  warning panel (`Skull` icon) explaining that once a public key appears on-chain it becomes a
+  permanent target for a future quantum computer running Shor's algorithm (HNFL attack). References
+  the `hnfl` glossary tooltip.
+- **Bitcoin Flow — SPKI comment and version-prefix clarity**: Comment on SPKI DER parse updated to
+  clarify the encoding is SoftHSMv3-specific. Address derivation steps now explicitly annotate the
+  mainnet P2PKH version byte `0x00` and note testnet uses `0x6f`.
+- **Bitcoin Flow — UTXO model explanation in Step 6**: Format Transaction description now explains
+  Bitcoin's UTXO model (consume entire outputs, change address returns remainder) and adds the
+  `CKM_ECDSA` mechanism name to the code comment.
+- **Bitcoin Flow — `CKM_ECDSA` constant added to `constants.ts`**: `CKM_ECDSA = 0x1041` exported
+  with its PKCS#11 v3.2 §6.3.12 annotation (raw pre-hashed, no parameter, single-part).
+- **HD Wallet Flow — `KeyDerivationTree` inline visualization**: After Step 4 (Derive Addresses)
+  the flow renders an ASCII-art BIP44 derivation tree showing the full path for Bitcoin
+  (`m/44'/0'/0'/0/0`), Ethereum (`m/44'/60'/0'/0/0`), and Solana (`m/44'/501'/0'/0'`) with
+  truncated live addresses. Hardened vs non-hardened notation explained in a footer line.
+- **HD Wallet Flow — 5-step expand**: The flow now has 5 steps: (1) Generate Mnemonic, (2) Derive
+  Seed, (3) Hardened vs Non-Hardened KAT (live HMAC-SHA512 demo comparing hardened and
+  non-hardened derivation paths, including Ed25519 hardened-only enforcement), (4) Derive
+  Addresses with inline BIP44 tree, (5) Quantum Threat Assessment (secp256k1/Ed25519 quantum
+  threat surface, HNDL, and migration vectors). `useMemo` used for step array.
+- **HD Wallet Flow — `HARDENED_DERIVATION` constant**: Exported from `cryptoConstants.ts` with a
+  full description of hardened vs non-hardened key derivation semantics for use in the Step 3 KAT.
+- **Solana Flow — Ed25519 public key extraction via `CKA_PUBLIC_KEY_INFO`**: Step 2 now explains
+  that `CKA_PUBLIC_KEY_INFO` returns a DER-encoded SPKI structure; raw 32-byte pubkey is extracted
+  from the last 32 bytes. Explains why PKCS#11 v3.2 mandates `CKA_PUBLIC_KEY_INFO` over
+  `CKA_VALUE` for Ed25519 public key portability.
+- **Solana Flow — BIP-39/SLIP-0010 context in Step 1**: Step 1 description now contrasts direct
+  HSM seed generation with the full Solana wallet derivation flow (BIP-39 mnemonic → PBKDF2 →
+  SLIP-0010 `m/44'/501'/0'/0'`). Links to the HD Wallets module. `false` (non-extractable) set
+  in code comment and actionable code.
+- **Solana Flow — `msgDigestRef` for sign/verify continuity**: A `SHA-256` digest of the
+  serialized transaction bytes is saved in `msgDigestRef` after Step 7 (Format Transaction) to
+  prove in Step 8 (Sign) that the signed bytes match the visualized message.
+- **Solana Flow — Skull HNFL warning**: Imported and available for use in quantum-threat callouts.
+- **CRL Generator — RFC 5280 revocation reasons**: `REVOCATION_REASONS` array added with all 8
+  RFC 5280 §5.3.1 reason codes (0–8, excluding 7). `RevokedEntry` interface and `formatUtcTime`
+  helper (UTCTime: YYMMDDHHMMSSZ) added for multi-entry revocation workflow.
+- **CRL Generator — parsed CRL display**: `parsedCrl` state added; CRL output panel now shows both
+  PEM and parsed human-readable text side-by-side.
+- **CSR Generator / Cert Signer / Root CA Generator — updated algorithm labels**: ML-DSA variants
+  renamed from `ML-DSA-XX (Dilithium)` to `ML-DSA-XX (FIPS 204)` to reflect final NIST
+  standardization. SLH-DSA similarly updated.
+- **CSR Generator / Cert Signer — new profile file mappings**: `PROFILE_DOC_MAP` extended with
+  `CSR-Telecom_3GPP_TS33310_04072026.csv`, `Cert-Financial_ETSI_EN319412-2_04072026.csv`, and
+  `Cert-Telecom_3GPP_TS33310_04072026.csv` mapped to their existing overview `.md` files.
+- **Cert Signer — `OID_TO_SHORT` map**: Replaces the import of `KNOWN_OIDS` with an explicit
+  map of dotted OIDs → OpenSSL `-subj` short names (`CN`, `C`, `O`, `OU`, `ST`, `L`, etc.),
+  fixing `S3-C` incorrect subject attribute generation for profile-driven certificate requests.
+- **Root CA Generator — `getNistLevelLabel` helper**: Derives a NIST security level label
+  (`NIST Level 1/3/5`) from algorithm ID and key size label. Displayed alongside the algorithm
+  selector to give learners immediate security-level context.
+- **Root CA Generator / CSR Generator — `parseKeySize` helper**: Parses numeric key size from
+  label string; returns `0` for non-numeric labels like `"Category 2"` (ML-DSA categories).
+- **Cert Parser — fingerprint display and CSR/CRL verify**: Three new operations added: SHA-256
+  fingerprint computation (`isFingerprintLoading` state), CSR signature verification
+  (`isVerifyingCsr` / `csrVerifyResult`), and CRL signature verification against a loaded Root CA
+  (`isVerifyingCrl` / `crlVerifyResult`). Input type auto-detected (`isCrlInput`, `isCsrInput`,
+  `isCertInput`). CRL files and hybrid cert files from the OpenSSL Studio virtual filesystem
+  listed for selection.
+- **Cert Parser — best-match Root CA for chain verify**: Issuer field parsed from `parsedOutput`
+  to find the most likely Root CA from the `rootCAs` list by subject/issuer string matching,
+  rather than always using `rootCAs[0]`.
+- **Hybrid Cert Formats — push generated PEMs to OpenSSL Studio**: `pushHybridFiles` callback
+  added; after a successful certificate generation in any format (SLH-DSA, pure-PQC, composite,
+  dual), the resulting PEM file(s) are added to the OpenSSL Studio virtual filesystem for use in
+  Cert Parser and OpenSSL Studio.
+- **`useArtifactManagement` — `getTransaction` / `getSignature` helpers**: Two new helpers
+  retrieve the raw transaction bytes and signature bytes from the OpenSSL Studio virtual filesystem
+  by filename, used by BitcoinFlow and SolanaFlow to pass raw bytes to sign/verify steps.
+- **`cryptoConstants.ts` — new tooltips**: Added `ecdsaNonce`, `derEncoding`, `pda`,
+  `feepayer`, `systemprogram`, `compactu16`, `anchorDiscriminator` tooltip definitions for Solana
+  transaction structure education.
+- **`cryptoConstants.ts` — `slip0010` tooltip expanded**: Now explains hardened-only constraint,
+  HMAC-SHA512 split, and SLIP-0044 Solana path derivation in full.
+- **`StepWizard` — `description` field in `explanationTable` accepts `React.ReactNode`**:
+  Previously typed as `string` only; widened to `string | React.ReactNode` to support rich
+  inline content (tooltips, code spans) in explanation table descriptions.
+- **`CKA_PUBLIC_KEY_INFO` constant corrected**: Value updated from `0x248` (wrong) to `0x129`
+  (correct per PKCS#11 v3.2 §4.14, `pkcs11t.h`), with updated comment.
+- **Blockchain Registry — `wip` flags removed**: Bitcoin Transaction, Solana Transaction, and HD
+  Wallet tools no longer show the WIP badge in `workshopRegistry.tsx`. All three flows are
+  considered production-ready.
+
+### Fixed
+
+- **`Pkcs11LogPanel` — newest step first, header above its commands**: Log entries were displayed
+  strictly LIFO (newest first), causing step headers to appear below the commands of that step.
+  Entries are now grouped by step header, groups reversed so the newest step appears first, but
+  within each group the header leads its commands.
+- **`useStepWizard` — result accumulation order inverted**: String results were appended below
+  previous entries (oldest at top). Now newest result is prepended above the divider, matching
+  the PKCS#11 log panel's newest-first ordering.
+- **TLS Basics — ML-DSA-65 signature size corrected**: `TLSExercises` comparison table updated
+  from `3,293 B` to `3,309 B` to match the actual FIPS 204 spec value.
+- **TLS Introduction — SLH-DSA-SHA2-128s byte count added**: Description now reads
+  `~7.9 KB (7,856 B)` for SLH-DSA-SHA2-128s signature size, making the byte count explicit.
+- **TLS Handshake Diagram — "Encrypted from here" marker removed**: The dashed-border encryption
+  boundary marker was misplaced relative to the handshake message sequence; removed to avoid
+  educational inaccuracy.
+- **RAG corpus regenerated**: `public/data/rag-corpus.json` updated to reflect revised module
+  descriptions, updated workshop summaries for the Digital Assets module, and corrected
+  SoftHSMv3-specific SPKI extraction notes.
+
 ## [2.90.0] - 2026-04-07
 
 ### Added

@@ -74,7 +74,7 @@ export const CRYPTO_TOOLTIPS = {
   slip0010: {
     title: 'SLIP-0010',
     description:
-      'HD wallet standard for Ed25519 curves. Extends BIP32 to support curves like Ed25519 used by Solana.',
+      "HD wallet key derivation standard for Ed25519 (and other curves). Unlike BIP-32 which was designed for secp256k1, SLIP-0010 supports Ed25519 by using HMAC-SHA512 with hardened derivation only (all path components must use hardened indices, e.g. m/44'/501'/0'/0'). Solana wallets use path m/44'/501'/0'/0' per SLIP-0044. The 64-byte HMAC output is split: left 32 bytes → Ed25519 seed (private scalar), right 32 bytes → chain code for further derivation.",
   },
 
   // Signatures
@@ -82,6 +82,16 @@ export const CRYPTO_TOOLTIPS = {
     title: 'ECDSA',
     description:
       'Elliptic Curve Digital Signature Algorithm. Used by Bitcoin and Ethereum for signing transactions.',
+  },
+  ecdsaNonce: {
+    title: 'ECDSA Nonce (k)',
+    description:
+      'A random integer k used once per signature. If k is reused across two signatures with the same private key, the private key can be algebraically recovered. The Sony PS3 (2010) was compromised this way. RFC 6979 defines a deterministic derivation of k from the private key and message hash, eliminating the randomness requirement.',
+  },
+  derEncoding: {
+    title: 'DER Encoding',
+    description:
+      'Distinguished Encoding Rules (DER) — a strict ASN.1 subset. Bitcoin scripts carry ECDSA signatures in DER format: a 6-72 byte structure encoding r and s as signed big-endian integers. PKCS#11 CKM_ECDSA returns raw r||s (64 bytes, fixed-width) which is NOT DER; wallets must convert raw r||s to DER before broadcasting a transaction.',
   },
   eddsa: {
     title: 'EdDSA',
@@ -120,7 +130,32 @@ export const CRYPTO_TOOLTIPS = {
   recentBlockhash: {
     title: 'Recent Blockhash',
     description:
-      'Recent block hash included in Solana transactions for deduplication and expiration. Transactions expire after ~2 minutes.',
+      'Recent block hash included in Solana transactions for deduplication and expiration. Transactions expire after ~60 seconds (150 blocks × ~400ms block time). Using a stale blockhash causes the transaction to be rejected by validators.',
+  },
+  pda: {
+    title: 'Program-Derived Address (PDA)',
+    description:
+      'A Solana address derived deterministically from a program ID and seeds using SHA-256. PDAs are intentionally off the Ed25519 curve — they have no private key and can only be signed for by the program that owns them. Unlike wallet addresses (on-curve Ed25519 pubkeys), PDAs cannot initiate transactions themselves.',
+  },
+  feepayer: {
+    title: 'Fee Payer',
+    description:
+      "The account that pays transaction fees in Solana. By convention the fee payer is the first account in the transaction's account keys array and must be a signer. In simple transfers the sender is also the fee payer, but they can be separated (e.g., a relayer pays fees on behalf of a user).",
+  },
+  systemprogram: {
+    title: 'System Program',
+    description:
+      'The native Solana program at address 11111111111111111111111111111111 (32 zero bytes, Base58-encoded). It handles fundamental operations: creating accounts, allocating data space, assigning account ownership, and transferring SOL. Instruction type 2 (Transfer) moves lamports from the source to the destination. The System Program is the only program that can debit a user-owned account without explicit delegation.',
+  },
+  compactu16: {
+    title: 'Compact-u16 Encoding',
+    description:
+      "Solana's variable-length integer encoding for counts up to 65,535. Values 0–127 are encoded in 1 byte. Values 128–16,383 use 2 bytes with the MSB of the first byte set as a continuation flag. Values 16,384–65,535 use 3 bytes. This is distinct from standard LEB128 — Solana's variant is little-endian with a different bit layout. Used for account key counts, instruction counts, and data lengths in the wire format.",
+  },
+  anchorDiscriminator: {
+    title: 'Anchor Discriminator',
+    description:
+      'An 8-byte prefix prepended to instruction data by the Anchor framework (first 8 bytes of SHA-256("global:<instruction_name>")). Allows programs to route incoming instructions to the correct handler. This demo uses the legacy System Program format (4-byte little-endian type field) which predates Anchor — native programs have their own instruction schemas.',
   },
 
   // Ethereum Specific (additional to existing RLP, recoveryParam, eip55)
@@ -408,6 +443,17 @@ export const DERIVATION_PATH_EXPLANATIONS = {
       { segment: "0'", description: 'Ed25519 requires all hardened' },
     ],
   },
+}
+
+// Hardened vs Non-Hardened derivation explanation
+export const HARDENED_DERIVATION = {
+  label: 'Hardened Derivation',
+  description:
+    "Hardened child keys (index ≥ 2³¹, notated i') use the parent PRIVATE key in the HMAC — " +
+    'meaning a compromised child key cannot be used to recover sibling keys or the parent. ' +
+    'Non-hardened keys use the parent PUBLIC key, enabling watch-only wallets but creating a ' +
+    'gap: knowing a child private key + parent chain code reveals the parent private key (xprv gap). ' +
+    'Ed25519 (Solana/SLIP-0010) supports hardened derivation ONLY.',
 }
 
 // Security warnings

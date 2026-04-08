@@ -101,6 +101,7 @@ export const CKM_SHA512_RSA_PKCS_PSS = 0x45
 
 // EC mechanisms
 export const CKM_EC_KEY_PAIR_GEN = 0x1040
+export const CKM_ECDSA = 0x1041 // PKCS#11 v3.2 §6.3.12 — raw (pre-hashed), no parameter, single-part only
 export const CKM_ECDSA_SHA256 = 0x1044
 export const CKM_ECDSA_SHA384 = 0x1045
 export const CKM_ECDSA_SHA512 = 0x1046
@@ -305,7 +306,7 @@ export const CKA_UNWRAP = 0x107
 export const CKA_DERIVE = 0x10c
 export const CKA_EC_PARAMS = 0x180
 export const CKA_EC_POINT = 0x181 // DER-encoded ECPoint (uncompressed or compressed)
-export const CKA_PUBLIC_KEY_INFO = 0x248 // SPKI-encoded public key (PKCS#11 v3.2)
+export const CKA_PUBLIC_KEY_INFO = 0x129 // SPKI-encoded public key (PKCS#11 v3.2 §4.14, pkcs11t.h 0x00000129)
 
 // SLH-DSA signature and public key sizes (bytes), keyed by CKP_SLH_DSA_* constant
 // Ordering follows pkcs11t.h: interleaved SHA2/SHAKE per security level
