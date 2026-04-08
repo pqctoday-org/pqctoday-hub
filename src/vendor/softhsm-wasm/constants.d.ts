@@ -191,6 +191,8 @@ export declare const CKM_ECDSA_SHA384: number
 export declare const CKM_ECDSA_SHA512: number
 export declare const CKM_ECDH1_DERIVE: number
 export declare const CKM_EDDSA: number
+/** Ed25519ph pre-hash signing (RFC 8032 §5.1, PKCS#11 v3.2 §6.3.15) */
+export declare const CKM_EDDSA_PH: number
 export declare const CKM_AES_KEY_GEN: number
 export declare const CKM_AES_ECB: number
 export declare const CKM_AES_CBC: number
@@ -218,8 +220,38 @@ export declare const CKM_HASH_ML_DSA: number
 export declare const CKM_SLH_DSA_KEY_PAIR_GEN: number
 /** SLH-DSA pure sign/verify (FIPS 205) — PKCS#11 v3.2 */
 export declare const CKM_SLH_DSA: number
+/** HashML-DSA specific pre-hash variants (FIPS 204, PKCS#11 v3.2) */
+export declare const CKM_HASH_ML_DSA_SHA224: number
+export declare const CKM_HASH_ML_DSA_SHA256: number
+export declare const CKM_HASH_ML_DSA_SHA384: number
+export declare const CKM_HASH_ML_DSA_SHA512: number
+export declare const CKM_HASH_ML_DSA_SHA3_224: number
+export declare const CKM_HASH_ML_DSA_SHA3_256: number
+export declare const CKM_HASH_ML_DSA_SHA3_384: number
+export declare const CKM_HASH_ML_DSA_SHA3_512: number
+export declare const CKM_HASH_ML_DSA_SHAKE128: number
+export declare const CKM_HASH_ML_DSA_SHAKE256: number
 /** HashSLH-DSA pre-hash sign/verify (FIPS 205) — PKCS#11 v3.2 */
 export declare const CKM_HASH_SLH_DSA: number
+/** HashSLH-DSA specific pre-hash variants (FIPS 205, PKCS#11 v3.2) */
+export declare const CKM_HASH_SLH_DSA_SHA224: number
+export declare const CKM_HASH_SLH_DSA_SHA256: number
+export declare const CKM_HASH_SLH_DSA_SHA384: number
+export declare const CKM_HASH_SLH_DSA_SHA512: number
+export declare const CKM_HASH_SLH_DSA_SHA3_224: number
+export declare const CKM_HASH_SLH_DSA_SHA3_256: number
+export declare const CKM_HASH_SLH_DSA_SHA3_384: number
+export declare const CKM_HASH_SLH_DSA_SHA3_512: number
+export declare const CKM_HASH_SLH_DSA_SHAKE128: number
+export declare const CKM_HASH_SLH_DSA_SHAKE256: number
+/** SHA3-256 digest (FIPS 202) */
+export declare const CKM_SHA3_256: number
+/** HMAC-SHA3-256 (FIPS 202) */
+export declare const CKM_SHA3_256_HMAC: number
+/** KMAC-128 — keyed MAC using KECCAK-128 XOF (FIPS 202 / SP 800-185) */
+export declare const CKM_KMAC_128: number
+/** KMAC-256 — keyed MAC using KECCAK-256 XOF (FIPS 202 / SP 800-185) */
+export declare const CKM_KMAC_256: number
 export declare const CKM_VENDOR_DEFINED: number
 
 // ── Attributes (CKA_*) ──────────────────────────────────────────────────────

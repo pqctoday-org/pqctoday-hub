@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.94.1] - 2026-04-08
+
+### Internal
+
+- **SBOM: `@pqctoday/softhsm-wasm` updated to v0.4.16**: Synced vendor constants with
+  softhsmv3 v0.4.16 release. New mechanism constants now available in-app:
+  `CKM_HASH_ML_DSA` (base), `CKM_HASH_SLH_DSA` (base), `CKM_EDDSA_PH` (Ed25519ph),
+  `CKM_SHA3_256`, `CKM_SHA3_256_HMAC`, `CKM_KMAC_128`, `CKM_KMAC_256`, plus all 10
+  specific `CKM_HASH_ML_DSA_SHA*/SHAKE*` and `CKM_HASH_SLH_DSA_SHA*/SHAKE*` variants.
+  TypeScript declarations in `constants.d.ts` updated to match.
+
 ## [2.94.0] - 2026-04-07
 
 ### Added
