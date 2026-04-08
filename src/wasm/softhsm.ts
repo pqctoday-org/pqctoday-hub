@@ -85,113 +85,113 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
           path.resolve(process.cwd(), 'public/wasm/rust/softhsmrustv3_bg.wasm')
         )
       }
-      const wasmExports = await rustShim.default(wasmInput)
+      // wasm-bindgen 0.2.117: default export (init) returns raw WASM instance exports
+      // (memory, __wbindgen_malloc, etc). The JS-wrapped _C_* functions are named
+      // module exports that close over the internal `wasm` variable set during init.
+      const rawExports = await rustShim.default(wasmInput)
 
-      // Rust lib.rs uses #[wasm_bindgen(js_name = _C_*)] — exports match
-      // the PKCS#11 v3.2 C ABI names directly on the InitOutput object.
-      //
       // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
       // operations not yet implemented in the Rust binary.
       const CKR_NOT_IMPL = 0x70
 
       return {
         // ── Session management ────────────────────────────────────────────
-        _C_Initialize: wasmExports._C_Initialize,
-        _C_Finalize: wasmExports._C_Finalize,
+        _C_Initialize: rustShim._C_Initialize,
+        _C_Finalize: rustShim._C_Finalize,
         _C_GetInfo: () => 0,
         _C_GetFunctionList: () => 0,
-        _C_GetSlotList: wasmExports._C_GetSlotList,
+        _C_GetSlotList: rustShim._C_GetSlotList,
         _C_GetSlotInfo: () => 0,
-        _C_GetTokenInfo: wasmExports._C_GetTokenInfo,
-        _C_GetMechanismList: wasmExports._C_GetMechanismList,
-        _C_GetMechanismInfo: wasmExports._C_GetMechanismInfo,
-        _C_InitToken: wasmExports._C_InitToken,
-        _C_InitPIN: wasmExports._C_InitPIN,
+        _C_GetTokenInfo: rustShim._C_GetTokenInfo,
+        _C_GetMechanismList: rustShim._C_GetMechanismList,
+        _C_GetMechanismInfo: rustShim._C_GetMechanismInfo,
+        _C_InitToken: rustShim._C_InitToken,
+        _C_InitPIN: rustShim._C_InitPIN,
         _C_SetPIN: () => 0,
-        _C_OpenSession: wasmExports._C_OpenSession,
-        _C_CloseSession: wasmExports._C_CloseSession,
+        _C_OpenSession: rustShim._C_OpenSession,
+        _C_CloseSession: rustShim._C_CloseSession,
         _C_CloseAllSessions: () => 0,
-        _C_GetSessionInfo: wasmExports._C_GetSessionInfo,
+        _C_GetSessionInfo: rustShim._C_GetSessionInfo,
         _C_GetOperationState: () => CKR_NOT_IMPL,
         _C_SetOperationState: () => CKR_NOT_IMPL,
-        _C_Login: wasmExports._C_Login,
-        _C_Logout: wasmExports._C_Logout,
+        _C_Login: rustShim._C_Login,
+        _C_Logout: rustShim._C_Logout,
         _C_LoginUser: () => 0,
         _C_SessionCancel: () => 0,
 
         // ── Object management ─────────────────────────────────────────────
-        _C_CreateObject: wasmExports._C_CreateObject,
+        _C_CreateObject: rustShim._C_CreateObject,
         _C_CopyObject: () => CKR_NOT_IMPL,
-        _C_DestroyObject: wasmExports._C_DestroyObject,
+        _C_DestroyObject: rustShim._C_DestroyObject,
         _C_GetObjectSize: () => CKR_NOT_IMPL,
-        _C_GetAttributeValue: wasmExports._C_GetAttributeValue,
+        _C_GetAttributeValue: rustShim._C_GetAttributeValue,
         _C_SetAttributeValue: () => CKR_NOT_IMPL,
-        _C_FindObjectsInit: wasmExports._C_FindObjectsInit,
-        _C_FindObjects: wasmExports._C_FindObjects,
-        _C_FindObjectsFinal: wasmExports._C_FindObjectsFinal,
+        _C_FindObjectsInit: rustShim._C_FindObjectsInit,
+        _C_FindObjects: rustShim._C_FindObjects,
+        _C_FindObjectsFinal: rustShim._C_FindObjectsFinal,
 
         // ── Key generation ────────────────────────────────────────────────
-        _C_GenerateKey: wasmExports._C_GenerateKey,
-        _C_GenerateKeyPair: wasmExports._C_GenerateKeyPair,
+        _C_GenerateKey: rustShim._C_GenerateKey,
+        _C_GenerateKeyPair: rustShim._C_GenerateKeyPair,
 
         // ── ML-KEM encapsulate/decapsulate ────────────────────────────────
-        _C_EncapsulateKey: wasmExports._C_EncapsulateKey,
-        _C_DecapsulateKey: wasmExports._C_DecapsulateKey,
+        _C_EncapsulateKey: rustShim._C_EncapsulateKey,
+        _C_DecapsulateKey: rustShim._C_DecapsulateKey,
 
         // ── Encrypt/decrypt (AES, RSA OAEP) ──────────────────────────────
-        _C_EncryptInit: wasmExports._C_EncryptInit,
-        _C_Encrypt: wasmExports._C_Encrypt,
+        _C_EncryptInit: rustShim._C_EncryptInit,
+        _C_Encrypt: rustShim._C_Encrypt,
         _C_EncryptUpdate: () => CKR_NOT_IMPL,
         _C_EncryptFinal: () => CKR_NOT_IMPL,
-        _C_DecryptInit: wasmExports._C_DecryptInit,
-        _C_Decrypt: wasmExports._C_Decrypt,
+        _C_DecryptInit: rustShim._C_DecryptInit,
+        _C_Decrypt: rustShim._C_Decrypt,
         _C_DecryptUpdate: () => CKR_NOT_IMPL,
         _C_DecryptFinal: () => CKR_NOT_IMPL,
 
         // ── Sign/verify (ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA, HMAC) ─────
-        _C_SignInit: wasmExports._C_SignInit,
-        _C_Sign: wasmExports._C_Sign,
+        _C_SignInit: rustShim._C_SignInit,
+        _C_Sign: rustShim._C_Sign,
         _C_SignUpdate: () => CKR_NOT_IMPL,
         _C_SignFinal: () => CKR_NOT_IMPL,
         _C_SignRecoverInit: () => CKR_NOT_IMPL,
         _C_SignRecover: () => CKR_NOT_IMPL,
-        _C_VerifyInit: wasmExports._C_VerifyInit,
-        _C_Verify: wasmExports._C_Verify,
+        _C_VerifyInit: rustShim._C_VerifyInit,
+        _C_Verify: rustShim._C_Verify,
         _C_VerifyUpdate: () => CKR_NOT_IMPL,
         _C_VerifyFinal: () => CKR_NOT_IMPL,
         _C_VerifyRecoverInit: () => CKR_NOT_IMPL,
         _C_VerifyRecover: () => CKR_NOT_IMPL,
 
         // ── Message-based sign/verify (PKCS#11 v3.2) ─────────────────────
-        _C_MessageSignInit: wasmExports._C_MessageSignInit,
-        _C_SignMessage: wasmExports._C_SignMessage,
+        _C_MessageSignInit: rustShim._C_MessageSignInit,
+        _C_SignMessage: rustShim._C_SignMessage,
         _C_SignMessageBegin: () => CKR_NOT_IMPL,
         _C_SignMessageNext: () => CKR_NOT_IMPL,
-        _C_MessageSignFinal: wasmExports._C_MessageSignFinal,
-        _C_MessageVerifyInit: wasmExports._C_MessageVerifyInit,
-        _C_VerifyMessage: wasmExports._C_VerifyMessage,
+        _C_MessageSignFinal: rustShim._C_MessageSignFinal,
+        _C_MessageVerifyInit: rustShim._C_MessageVerifyInit,
+        _C_VerifyMessage: rustShim._C_VerifyMessage,
         _C_VerifyMessageBegin: () => CKR_NOT_IMPL,
         _C_VerifyMessageNext: () => CKR_NOT_IMPL,
-        _C_MessageVerifyFinal: wasmExports._C_MessageVerifyFinal,
+        _C_MessageVerifyFinal: rustShim._C_MessageVerifyFinal,
 
         // ── Message-based encrypt/decrypt (stubs) ─────────────────────────
-        _C_MessageEncryptInit: wasmExports._C_MessageEncryptInit,
-        _C_EncryptMessage: wasmExports._C_EncryptMessage,
-        _C_EncryptMessageBegin: wasmExports._C_EncryptMessageBegin,
-        _C_EncryptMessageNext: wasmExports._C_EncryptMessageNext,
-        _C_MessageEncryptFinal: wasmExports._C_MessageEncryptFinal,
-        _C_MessageDecryptInit: wasmExports._C_MessageDecryptInit,
-        _C_DecryptMessage: wasmExports._C_DecryptMessage,
-        _C_DecryptMessageBegin: wasmExports._C_DecryptMessageBegin,
-        _C_DecryptMessageNext: wasmExports._C_DecryptMessageNext,
-        _C_MessageDecryptFinal: wasmExports._C_MessageDecryptFinal,
+        _C_MessageEncryptInit: rustShim._C_MessageEncryptInit,
+        _C_EncryptMessage: rustShim._C_EncryptMessage,
+        _C_EncryptMessageBegin: rustShim._C_EncryptMessageBegin,
+        _C_EncryptMessageNext: rustShim._C_EncryptMessageNext,
+        _C_MessageEncryptFinal: rustShim._C_MessageEncryptFinal,
+        _C_MessageDecryptInit: rustShim._C_MessageDecryptInit,
+        _C_DecryptMessage: rustShim._C_DecryptMessage,
+        _C_DecryptMessageBegin: rustShim._C_DecryptMessageBegin,
+        _C_DecryptMessageNext: rustShim._C_DecryptMessageNext,
+        _C_MessageDecryptFinal: rustShim._C_MessageDecryptFinal,
 
         // ── Digest ───────────────────────────────────────────────────────
-        _C_DigestInit: wasmExports._C_DigestInit,
-        _C_Digest: wasmExports._C_Digest,
-        _C_DigestUpdate: wasmExports._C_DigestUpdate,
+        _C_DigestInit: rustShim._C_DigestInit,
+        _C_Digest: rustShim._C_Digest,
+        _C_DigestUpdate: rustShim._C_DigestUpdate,
         _C_DigestKey: () => CKR_NOT_IMPL,
-        _C_DigestFinal: wasmExports._C_DigestFinal,
+        _C_DigestFinal: rustShim._C_DigestFinal,
 
         // ── Dual-function (stubs) ─────────────────────────────────────────
         _C_DigestEncryptUpdate: () => CKR_NOT_IMPL,
@@ -200,20 +200,19 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_DecryptVerifyUpdate: () => CKR_NOT_IMPL,
 
         // ── Key wrapping/unwrapping/derivation ───────────────────────────
-        _C_WrapKey: wasmExports._C_WrapKey,
-        _C_UnwrapKey: wasmExports._C_UnwrapKey,
-        _C_DeriveKey: wasmExports._C_DeriveKey,
-        _C_WrapKeyAuthenticated: wasmExports._C_WrapKeyAuthenticated,
-        _C_UnwrapKeyAuthenticated: wasmExports._C_UnwrapKeyAuthenticated,
+        _C_WrapKey: rustShim._C_WrapKey,
+        _C_UnwrapKey: rustShim._C_UnwrapKey,
+        _C_DeriveKey: rustShim._C_DeriveKey,
+        _C_WrapKeyAuthenticated: rustShim._C_WrapKeyAuthenticated,
+        _C_UnwrapKeyAuthenticated: rustShim._C_UnwrapKeyAuthenticated,
 
         // ── Random ───────────────────────────────────────────────────────
         _C_SeedRandom: () => 0,
-        _C_GenerateRandom: wasmExports._C_GenerateRandom,
+        _C_GenerateRandom: rustShim._C_GenerateRandom,
 
         // ── KAT testing hook (Rust-only) ──────────────────────────────────
-        _set_kat_seed: (
-          wasmExports as unknown as Record<string, (ptr: number, len: number) => void>
-        )._set_kat_seed,
+        _set_kat_seed: (rustShim as unknown as Record<string, (ptr: number, len: number) => void>)
+          ._set_kat_seed,
 
         // ── Misc (stubs) ──────────────────────────────────────────────────
         _C_GetFunctionStatus: () => CKR_NOT_IMPL,
@@ -221,20 +220,21 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_WaitForSlotEvent: () => CKR_NOT_IMPL,
         _C_GetInterfaceList: () => CKR_NOT_IMPL,
         _C_GetInterface: () => CKR_NOT_IMPL,
-        _C_VerifySignatureInit: wasmExports._C_VerifySignatureInit,
-        _C_VerifySignature: wasmExports._C_VerifySignature,
-        _C_VerifySignatureUpdate: wasmExports._C_VerifySignatureUpdate,
-        _C_VerifySignatureFinal: wasmExports._C_VerifySignatureFinal,
-        _C_GetSessionValidationFlags: wasmExports._C_GetSessionValidationFlags,
-        _C_AsyncComplete: wasmExports._C_AsyncComplete,
-        _C_AsyncGetID: wasmExports._C_AsyncGetID,
-        _C_AsyncJoin: wasmExports._C_AsyncJoin,
+        _C_VerifySignatureInit: rustShim._C_VerifySignatureInit,
+        _C_VerifySignature: rustShim._C_VerifySignature,
+        _C_VerifySignatureUpdate: rustShim._C_VerifySignatureUpdate,
+        _C_VerifySignatureFinal: rustShim._C_VerifySignatureFinal,
+        _C_GetSessionValidationFlags: rustShim._C_GetSessionValidationFlags,
+        _C_AsyncComplete: rustShim._C_AsyncComplete,
+        _C_AsyncGetID: rustShim._C_AsyncGetID,
+        _C_AsyncJoin: rustShim._C_AsyncJoin,
 
         // ── Emscripten-compat memory layer ────────────────────────────────
-        _malloc: wasmExports._malloc,
-        _free: (ptr: number) => wasmExports._free(ptr, 1),
-        wasmMemory: { buffer: wasmExports.memory.buffer },
-        HEAP32: new Int32Array(wasmExports.memory.buffer),
+        // rawExports = raw WASM instance exports (memory, __wbindgen_malloc, etc.)
+        _malloc: rustShim._malloc,
+        _free: (ptr: number) => rustShim._free(ptr, 1),
+        wasmMemory: { buffer: rawExports.memory.buffer },
+        HEAP32: new Int32Array(rawExports.memory.buffer),
         FS: {
           mkdir: () => {},
           writeFile: () => {},
@@ -246,16 +246,16 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         stringToUTF8: () => 0,
         lengthBytesUTF8: () => 0,
         setValue: (ptr: number, val: number, type: string) => {
-          const mem = new DataView(wasmExports.memory.buffer)
+          const mem = new DataView(rawExports.memory.buffer)
           if (type === 'i32') mem.setUint32(ptr, val, true)
         },
         getValue: (ptr: number, type: string) => {
-          const mem = new DataView(wasmExports.memory.buffer)
+          const mem = new DataView(rawExports.memory.buffer)
           if (type === 'i32') return mem.getUint32(ptr, true)
           return 0
         },
         get HEAPU8() {
-          return new Uint8Array(wasmExports.memory.buffer)
+          return new Uint8Array(rawExports.memory.buffer)
         },
       } as unknown as SoftHSMModule
     })().catch((e) => {
