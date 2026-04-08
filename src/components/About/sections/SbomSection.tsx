@@ -272,7 +272,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.12"
+                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.13"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -285,7 +285,8 @@ export function SbomSection() {
                         BSD-2-Clause
                       </span>
                       <span className="text-xs text-muted-foreground/60">
-                        v0.4.12 — PKCS#11 v3.2 + PQC + CKM_ECDSA raw + BIP32 extractable, WASM
+                        v0.4.13 — PKCS#11 v3.2 + PQC + CKM_ECDSA raw + BIP32 extractable + child
+                        derive fix, WASM
                       </span>
                     </div>
                   </li>
@@ -418,7 +419,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust WASM Bindings{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.12)
+                    (softhsmrustv3 v0.4.13)
                   </span>
                 </h3>
                 <ul className="space-y-2">
@@ -473,7 +474,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust Crypto Crates{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.12)
+                    (softhsmrustv3 v0.4.13)
                   </span>
                 </h3>
                 <ul className="space-y-2">
