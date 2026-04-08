@@ -39,11 +39,10 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     this.keyRegistry = keyRegistry
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async generateKeyPair(
     alg: KeyAlgorithm,
     curve: KeyCurve,
-    onLog?: (log: string) => void
+    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<CryptoKey> {
     const safeCurve = curve === 'Ed25519' ? 'P-256' : curve
     const { pubHandle, privHandle } = hsm_generateECKeyPair(
@@ -106,11 +105,10 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     return toBase64Url(rawSig)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async signRaw(
     key: CryptoKey,
     tbs: Uint8Array,
-    onLog?: (log: string) => void
+    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<Uint8Array> {
     if (!key.privateKey || !key.privateKey.startsWith('[PKCS#11 handle:')) {
       throw new Error('SoftHSMCryptoProvider requires a PKCS#11 handle in the privateKey field')
@@ -129,12 +127,11 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     return sigBytes as Uint8Array
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   async verifySignature(
     key: CryptoKey,
     signature: string,
     data: string | Uint8Array,
-    onLog?: (log: string) => void
+    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
   ): Promise<boolean> {
     const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
     const sigBytes = base64ToBytes(signature.replace(/-/g, '+').replace(/_/g, '/'))
