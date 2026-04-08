@@ -272,7 +272,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.16"
+                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.17"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -285,8 +285,8 @@ export function SbomSection() {
                         BSD-2-Clause
                       </span>
                       <span className="text-xs text-muted-foreground/60">
-                        v0.4.16 — HashML-DSA/HashSLH-DSA/EDDSA_PH/SHA3/KMAC constants; ACVP +12
-                        vectors (74 total); TypeScript declarations
+                        v0.4.17 — Rust WASM rebuilt; CKM_HASH_ML_DSA/SLH-DSA/EDDSA_PH now in
+                        C_GetMechanismList; wasm-bindgen 0.2.117
                       </span>
                     </div>
                   </li>
@@ -419,7 +419,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust WASM Bindings{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.16)
+                    (softhsmrustv3 v0.4.17)
                   </span>
                 </h3>
                 <ul className="space-y-2">
@@ -429,7 +429,7 @@ export function SbomSection() {
                       <span className="text-xs text-muted-foreground/40 font-mono">
                         MIT / Apache-2.0
                       </span>
-                      <span className="text-xs text-muted-foreground/60">v0.2.92</span>
+                      <span className="text-xs text-muted-foreground/60">v0.2.117</span>
                     </div>
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
@@ -474,7 +474,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust Crypto Crates{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.16)
+                    (softhsmrustv3 v0.4.17)
                   </span>
                 </h3>
                 <ul className="space-y-2">

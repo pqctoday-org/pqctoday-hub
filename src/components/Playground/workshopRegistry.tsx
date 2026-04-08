@@ -120,18 +120,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     wip: true,
   },
   {
-    id: 'pkcs11-sim',
-    name: 'PKCS#11 Walkthrough',
-    description: 'Step-by-step PKCS#11 operations: keygen, encap, sign, wrap, mechanisms',
-    category: 'HSM / PKCS#11',
-    algorithms: ['ML-KEM', 'ML-DSA', 'AES', 'EC'],
-    icon: ShieldCheck,
-    moduleLink: '/learn/hsm-pqc',
-    keywords: ['pkcs11', 'pkcs#11', 'hsm', 'token', 'session', 'mechanism', 'slot', 'walkthrough'],
-    difficulty: 'intermediate',
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-  },
-  {
     id: 'firmware-signing',
     name: 'Firmware Signing',
     description: 'ML-DSA-87 UEFI secure boot firmware signing and verification',
@@ -547,11 +535,6 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/PKILearning/modules/ConfidentialComputing/workshop/TEEHSMTrustedChannel').then(
       (m) => ({ default: m.TEEHSMTrustedChannel })
     )
-  ),
-  'pkcs11-sim': lazyWithRetry(() =>
-    import('@/components/PKILearning/modules/HsmPqc/workshop/Pkcs11Simulator').then((m) => ({
-      default: m.Pkcs11Simulator,
-    }))
   ),
   'firmware-signing': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/SecureBootPQC/workshop/FirmwareSigningMigrator').then(

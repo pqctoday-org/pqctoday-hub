@@ -6,6 +6,28 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.94.2] - 2026-04-08
+
+### Fixed
+
+- **Rust WASM binary updated to v0.4.17**: The deployed `softhsmrustv3_bg.wasm` was built from
+  v0.4.15 source (v0.4.16 updated constants in Rust source but never rebuilt the binary).
+  The new binary, built with `wasm-bindgen 0.2.117`, correctly exposes `CKM_HASH_ML_DSA`,
+  `CKM_HASH_SLH_DSA`, and `CKM_EDDSA_PH` in `C_GetMechanismList`. This also fixes the
+  "Length out of range of buffer" crash in the VPN simulation cert generation flow — the
+  v0.4.15 RSA `CKA_MODULUS` / `CKA_PUBLIC_EXPONENT` fix is now active in the production
+  WASM binary.
+
+### Changed
+
+- **PKCS#11 Walkthrough removed from Playground**: The `pkcs11-sim` workshop entry has been
+  removed from the registry.
+
+### Internal
+
+- **SBOM: `@pqctoday/softhsm-wasm` updated to v0.4.17**: Vendor `package.json` bumped;
+  `wasm-bindgen` entry in About SBOM updated to v0.2.117.
+
 ## [2.94.1] - 2026-04-08
 
 ### Fixed
