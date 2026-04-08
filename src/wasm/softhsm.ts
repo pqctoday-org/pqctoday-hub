@@ -74,21 +74,14 @@ export const getSoftHSMCppModule = async (): Promise<SoftHSMModule> => {
 export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
   if (!rustModulePromise) {
     rustModulePromise = (async () => {
+      // wasm-bindgen --target bundler: Vite handles WASM loading at build time.
+      // import('./softhsmrustv3.js') boots the module synchronously — no async init needed.
+      // _C_* functions, _malloc/_free, and __wbg_get_memory are named exports on _bg.js,
+      // re-exported through softhsmrustv3.js.
       const rustShim = await import('./softhsmrustv3.js')
-      const isNode =
-        typeof process !== 'undefined' && process.versions != null && process.versions.node != null
-      let wasmInput: any = `/wasm/rust/softhsmrustv3_bg.wasm?v=${_WASM_VERSION}`
-      if (isNode) {
-        const fs = await import('fs')
-        const path = await import('path')
-        wasmInput = fs.readFileSync(
-          path.resolve(process.cwd(), 'public/wasm/rust/softhsmrustv3_bg.wasm')
-        )
-      }
-      // wasm-bindgen 0.2.117: default export (init) returns raw WASM instance exports
-      // (memory, __wbindgen_malloc, etc). The JS-wrapped _C_* functions are named
-      // module exports that close over the internal `wasm` variable set during init.
-      const rawExports = await rustShim.default(wasmInput)
+      const rawMemory = (
+        rustShim as unknown as { __wbg_get_memory: () => WebAssembly.Memory }
+      ).__wbg_get_memory()
 
       // CKR_MECHANISM_INVALID (0x70) is returned by graceful stubs for
       // operations not yet implemented in the Rust binary.
@@ -230,11 +223,11 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         _C_AsyncJoin: rustShim._C_AsyncJoin,
 
         // ── Emscripten-compat memory layer ────────────────────────────────
-        // rawExports = raw WASM instance exports (memory, __wbindgen_malloc, etc.)
+        // rawMemory = WebAssembly.Memory from the .wasm module import
         _malloc: rustShim._malloc,
         _free: (ptr: number) => rustShim._free(ptr, 1),
-        wasmMemory: { buffer: rawExports.memory.buffer },
-        HEAP32: new Int32Array(rawExports.memory.buffer),
+        wasmMemory: { buffer: rawMemory.buffer },
+        HEAP32: new Int32Array(rawMemory.buffer),
         FS: {
           mkdir: () => {},
           writeFile: () => {},
@@ -246,16 +239,16 @@ export const getSoftHSMRustModule = async (): Promise<SoftHSMModule> => {
         stringToUTF8: () => 0,
         lengthBytesUTF8: () => 0,
         setValue: (ptr: number, val: number, type: string) => {
-          const mem = new DataView(rawExports.memory.buffer)
+          const mem = new DataView(rawMemory.buffer)
           if (type === 'i32') mem.setUint32(ptr, val, true)
         },
         getValue: (ptr: number, type: string) => {
-          const mem = new DataView(rawExports.memory.buffer)
+          const mem = new DataView(rawMemory.buffer)
           if (type === 'i32') return mem.getUint32(ptr, true)
           return 0
         },
         get HEAPU8() {
-          return new Uint8Array(rawExports.memory.buffer)
+          return new Uint8Array(rawMemory.buffer)
         },
       } as unknown as SoftHSMModule
     })().catch((e) => {
