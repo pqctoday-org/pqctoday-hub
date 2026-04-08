@@ -419,7 +419,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust WASM Bindings{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.13)
+                    (softhsmrustv3 v0.4.15)
                   </span>
                 </h3>
                 <ul className="space-y-2">
@@ -474,7 +474,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust Crypto Crates{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.13)
+                    (softhsmrustv3 v0.4.15)
                   </span>
                 </h3>
                 <ul className="space-y-2">
