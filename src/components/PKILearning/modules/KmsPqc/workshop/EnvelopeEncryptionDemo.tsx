@@ -152,7 +152,8 @@ const LIVE_OPERATIONS = [
   'C_DecapsulateKey',
   'C_UnwrapKey',
   'C_UnwrapKeyAuthenticated',
-  'C_GetAttributeValue',
+  'C_DeriveKey',
+  'C_CreateObject',
 ]
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -423,7 +424,16 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
         // Step 4: HKDF-SHA256 → 32-byte wrapping key (SP 800-56C Rev 2 §4.1)
         const derivableHandle = hsm_importGenericSecret(M, hSession, secretBytes)
+        hsm.addKey({
+          handle: derivableHandle,
+          family: 'kdf',
+          role: 'secret',
+          label: 'ML-KEM SS (Derivable)',
+          generatedAt: ts(),
+        })
+
         const envelopeInfo = new TextEncoder().encode('kms-envelope-v1')
+        const rawWrapHandleOut = { current: 0 }
         const wrapKeyBytes = hsm_hkdf(
           M,
           hSession,
@@ -433,8 +443,16 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           true,
           ENVELOPE_HKDF_SALT,
           envelopeInfo,
-          32
+          32,
+          rawWrapHandleOut
         )
+        hsm.addKey({
+          handle: rawWrapHandleOut.current,
+          family: 'kdf',
+          role: 'secret',
+          label: 'HKDF Output (Generic)',
+          generatedAt: ts(),
+        })
         addLine(
           `HKDF-SHA256 (SP 800-56C §4.1): derived ${wrapKeyBytes.length} B wrapping key — salt=kms-envelope-salt-v1 info="kms-envelope-v1"`
         )
@@ -513,6 +531,15 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
 
         // Re-derive the same wrapping key from the recovered secret (same salt — SP 800-56C Rev 2 §4.1)
         const derivableHandle2 = hsm_importGenericSecret(M, hSession, recoveredSecretBytes)
+        hsm.addKey({
+          handle: derivableHandle2,
+          family: 'kdf',
+          role: 'secret',
+          label: 'Recovered SS (Derivable)',
+          generatedAt: ts(),
+        })
+
+        const rawUnwrapHandleOut = { current: 0 }
         const unwrapKeyBytes = hsm_hkdf(
           M,
           hSession,
@@ -522,8 +549,16 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
           true,
           ENVELOPE_HKDF_SALT,
           envelopeInfo,
-          32
+          32,
+          rawUnwrapHandleOut
         )
+        hsm.addKey({
+          handle: rawUnwrapHandleOut.current,
+          family: 'kdf',
+          role: 'secret',
+          label: 'HKDF Output (Generic)',
+          generatedAt: ts(),
+        })
         const unwrapKeyHandle = hsm_importAESKey(
           M,
           hSession,

@@ -5,8 +5,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Landmark, CheckCircle, Loader2, Eye } from 'lucide-react'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
-import { signData, verifySignature } from '../../utils/crypto-utils'
 import { createPresentation } from '../../utils/sdjwt-utils'
+import type { CryptoProvider } from '../../utils/crypto-provider'
+import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
+import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import type { CryptoKey } from '../../types'
 import type { SdJwtVc } from '../../utils/sdjwt-utils'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
@@ -28,6 +35,20 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
   } | null>(null)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
+  const hsm = useHSM()
+
+  const getCryptoProvider = (): CryptoProvider => {
+    const ossl = new OpenSSLCryptoProvider()
+    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+      const hsmProvider = new SoftHSMCryptoProvider(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        { addKey: hsm.addKey }
+      )
+      return new DualCryptoProvider(hsmProvider, ossl)
+    }
+    return ossl
+  }
 
   // Heuristic: Ensure we have at least one valid key to sign with
   const availableKey = wallet.keys.find((k) => k.usage === 'SIGN')
@@ -53,6 +74,10 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         throw new Error('No signing key found in wallet to create proof.')
       }
 
+      if (hsm.isReady) {
+        hsm.addStepLog('🔐 Generate Key Binding Proof (Presentation)')
+      }
+
       // Prefer diploma (SD-JWT VC), fall back to any vc+sd-jwt credential
       const sdJwtCred = wallet.credentials.find(
         (c) => c.type.includes('UniversityDegreeCredential') || c.format === 'vc+sd-jwt'
@@ -65,12 +90,14 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         const challenge = crypto.randomUUID()
         const audience = 'https://bank.example.com'
 
+        const provider = getCryptoProvider()
         const presentationString = await createPresentation(
           sdJwtVc,
           ['family_name', 'given_name', 'degree'],
           availableKey,
           audience,
           challenge,
+          provider,
           addOpenSSLLog
         )
 
@@ -92,7 +119,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         })
         addLog(`Signing Verification Payload: ${payload.substring(0, 60)}...`)
 
-        const signature = await signData(availableKey, payload, addOpenSSLLog)
+        const provider = getCryptoProvider()
+        const signature = await provider.signData(availableKey, payload, addOpenSSLLog)
         setPresentationData({ signature, payload, key: availableKey })
         addLog(`Signature generated: ${signature.substring(0, 20)}...`)
       }
@@ -117,6 +145,10 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
 
     try {
       if (presentationData) {
+        if (hsm.isReady) {
+          hsm.addStepLog('🏦 Bank Verification (Relying Party)')
+        }
+
         // SD-JWT presentations use '~' as separator; plain proofs do not
         const isSDJWT = presentationData.payload.includes('~')
 
@@ -129,7 +161,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             const signingInput = `${jwtParts[0]}.${jwtParts[1]}`
             const signature = jwtParts[2]
 
-            const isValid = await verifySignature(
+            const provider = getCryptoProvider()
+            const isValid = await provider.verifySignature(
               presentationData.key,
               signature,
               signingInput,
@@ -171,6 +204,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
         <CardDescription>Verify your identity to open a premium bank account</CardDescription>
       </CardHeader>
       <CardContent className="p-6">
+        <LiveHSMToggle hsm={hsm} operations={['C_Verify', 'C_Sign', 'C_Digest']} className="mb-4" />
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           <div className="space-y-6 lg:col-span-2">
             {/* Steps Visualization */}
@@ -329,6 +363,30 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
             </div>
           </div>
         </div>
+        {hsm.isReady && (
+          <Pkcs11LogPanel
+            log={hsm.log}
+            onClear={hsm.clearLog}
+            title="PKCS#11 Call Log — Verification"
+            className="mt-4"
+            filterFns={[
+              'C_VerifyInit',
+              'C_Verify',
+              'C_SignInit',
+              'C_Sign',
+              'C_DigestInit',
+              'C_Digest',
+            ]}
+          />
+        )}
+        {hsm.isReady && (
+          <HsmKeyInspector
+            keys={hsm.keys}
+            moduleRef={hsm.moduleRef}
+            hSessionRef={hsm.hSessionRef}
+            onRemoveKey={hsm.removeKey}
+          />
+        )}
       </CardContent>
     </Card>
   )

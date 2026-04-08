@@ -153,8 +153,13 @@ export const QRNGDemo: React.FC = () => {
       {/* Side-by-side Comparison */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* QRNG Card */}
-        <div className="glass-panel p-4 space-y-3">
-          <div className="flex items-center gap-2">
+        <div className="glass-panel p-4 space-y-3 relative">
+          <div className="absolute top-4 right-4 flex items-center">
+            <span className="inline-flex items-center text-[10px] uppercase font-bold tracking-wider bg-warning/10 text-warning border border-warning/20 px-2 py-0.5 rounded">
+              Simulated
+            </span>
+          </div>
+          <div className="flex items-center gap-2 pr-20">
             <Atom size={18} className="text-primary" />
             <h4 className="text-sm font-semibold text-foreground">QRNG (Quantum)</h4>
           </div>

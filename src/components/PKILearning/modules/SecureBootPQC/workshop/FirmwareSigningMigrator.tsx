@@ -420,7 +420,6 @@ const downloadBlob = (bytes: Uint8Array, filename: string) => {
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
-  'C_GetAttributeValue',
   'C_DigestInit',
   'C_Digest',
   'C_SignInit',

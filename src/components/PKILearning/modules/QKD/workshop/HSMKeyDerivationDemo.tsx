@@ -11,19 +11,18 @@ import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const QKD_KAT_SPECS: KatTestSpec[] = [
   {
-    id: 'qkd-postproc-decap',
-    useCase: 'QKD post-processing key confirmation',
-    standard: 'ETSI GS QKD 014 + FIPS 203 ACVP',
-    referenceUrl:
-      'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/ML-KEM-encapDecap-FIPS203',
-    kind: { type: 'mlkem-decap', variant: 768 },
+    id: 'qkd-hmac-sha256',
+    useCase: 'Underlying PRF validation (HMAC-SHA256)',
+    standard: 'FIPS 198-1',
+    referenceUrl: 'https://csrc.nist.gov/pubs/fips/198/1/final',
+    kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
   {
-    id: 'qkd-hsm-roundtrip',
-    useCase: 'HSM key derivation round-trip',
-    standard: 'ETSI GS QKD 014 + FIPS 203',
-    referenceUrl: 'https://csrc.nist.gov/pubs/fips/203/final',
-    kind: { type: 'mlkem-encap-roundtrip', variant: 768 },
+    id: 'qkd-hkdf',
+    useCase: 'Key derivation functional testing (HKDF)',
+    standard: 'SP 800-108 + RFC 5869',
+    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
+    kind: { type: 'hkdf-derive' },
   },
 ]
 
@@ -185,10 +184,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <LiveHSMToggle
-        hsm={hsm}
-        operations={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']}
-      />
+      <LiveHSMToggle hsm={hsm} operations={['C_CreateObject', 'C_DeriveKey']} />
       {/* Broader KDF context */}
       <div className="glass-panel p-4">
         <h4 className="text-sm font-bold text-foreground mb-2">
@@ -615,8 +611,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             log={hsm.log}
             onClear={hsm.clearLog}
             title="PKCS#11 Call Log"
-            defaultOpen={true}
-            filterFns={['C_CreateObject', 'C_DeriveKey', 'C_GetAttributeValue']}
+            filterFns={['C_CreateObject', 'C_DeriveKey']}
           />
           {hsm.keys.length > 0 && (
             <HsmKeyInspector

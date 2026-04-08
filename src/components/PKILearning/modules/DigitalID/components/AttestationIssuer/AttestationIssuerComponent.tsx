@@ -8,8 +8,16 @@ import type {
   VerifiableCredential,
   CredentialAttribute,
 } from '../../types'
-import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createSDJWT } from '../../utils/sdjwt-utils'
+import type { CryptoProvider } from '../../utils/crypto-provider'
+import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
+import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
+import { generateX509Certificate } from '../../utils/x509-utils'
+import { useHSM } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
+import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import { MARIA_IDENTITY } from '../../constants'
 import { Loader2, CheckCircle, GraduationCap, ShieldCheck, AlertTriangle } from 'lucide-react'
@@ -69,6 +77,20 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
   const [loading, setLoading] = useState(false)
   const { logs, opensslLogs, activeLogTab, setActiveLogTab, addLog, addOpenSSLLog } =
     useDigitalIDLogs()
+  const hsm = useHSM()
+
+  const getCryptoProvider = (): CryptoProvider => {
+    const ossl = new OpenSSLCryptoProvider()
+    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+      const hsmProvider = new SoftHSMCryptoProvider(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        { addKey: hsm.addKey }
+      )
+      return new DualCryptoProvider(hsmProvider, ossl)
+    }
+    return ossl
+  }
 
   // Check for PID availability
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
@@ -110,17 +132,15 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     // 2. Sign it with PID key to produce authentic crypto log
     const challengePayload = JSON.stringify({ nonce, aud: 'university' })
 
-    // HSM keys store a PKCS#11 handle string, not a base64 PEM — detect and handle separately
+    const provider = getCryptoProvider()
     const isHsmKey = pidKey.privateKey?.startsWith('[PKCS#11 handle') ?? false
     if (isHsmKey) {
       addLog('Key Binding Signature via PKCS#11 HSM (CKM_ECDSA_SHA256)')
-      addOpenSSLLog('[PKCS#11] C_Sign(CKM_ECDSA_SHA256) — signature generated via hardware token')
-    } else {
-      try {
-        await signData(pidKey, challengePayload, addOpenSSLLog)
-      } catch (e) {
-        addLog(`VP signing error: ${e instanceof Error ? e.message : 'unknown'}`)
-      }
+    }
+    try {
+      await provider.signData(pidKey, challengePayload, addOpenSSLLog)
+    } catch (e) {
+      addLog(`VP signing error: ${e instanceof Error ? e.message : 'unknown'}`)
     }
 
     addLog('Device binding signature verified.')
@@ -135,12 +155,30 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
     setLoading(true)
     addLog('Issuing Master of Science Diploma...')
 
+    const provider = getCryptoProvider()
+
     // 1. Generate Holder Key for Diploma Binding (P-384/ES384 per ARF attestation profile)
-    const holderKey = await generateKeyPair('ES384', 'P-384', addOpenSSLLog)
+    if (hsm.isReady) {
+      hsm.addStepLog("🔑 The Wallet's Proof of Possession (PoP) Key")
+    }
+    const holderKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog)
     addLog(`Generated Holder Key for Binding: ${holderKey.id} (P-384/ES384)`)
 
     // 2. University (Issuer) generates SD-JWT
-    const issuerKey = await generateKeyPair('ES384', 'P-384', addOpenSSLLog) // Mock issuer key
+    if (hsm.isReady) {
+      hsm.addStepLog('🛡️ The Wallet Instance Attestation (WIA) Key')
+    }
+    const issuerKey = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog) // Mock issuer key
+
+    // EUDI ARF QTSA Provider Certificate representation
+    const issuerCertPem = await generateX509Certificate(
+      issuerKey,
+      provider,
+      '/CN=Tech University Attestation Provider/C=EU',
+      addOpenSSLLog
+    )
+    addLog('Attestation Provider Certificate (X.509 DER) constructed via @peculiar.')
+    addOpenSSLLog(issuerCertPem)
 
     const claims: CredentialAttribute[] = [
       { name: 'given_name', value: MARIA_IDENTITY.given_name, type: 'sd' },
@@ -154,6 +192,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
       claims,
       issuerKey,
       holderKey,
+      provider,
       'https://university.edu',
       'eu.europa.ec.eudi.diploma.1',
       addOpenSSLLog
@@ -181,13 +220,19 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
         <CardHeader className="bg-secondary/5">
           <CardTitle className="text-secondary flex items-center gap-2">
             <GraduationCap className="w-6 h-6" />
-            Technical University (Attestation Issuer)
+            University Portal (Attestation Provider)
           </CardTitle>
           <CardDescription>
-            Request authentic digital formatted transcripts and diplomas
+            Request a verified{' '}
+            <InlineTooltip term="SD-JWT VC">SD-JWT Diploma Credential</InlineTooltip> using your PID
           </CardDescription>
         </CardHeader>
         <CardContent className="p-6">
+          <LiveHSMToggle
+            hsm={hsm}
+            operations={['C_GenerateKeyPair', 'C_Sign', 'C_Digest']}
+            className="mb-4"
+          />
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             <div className="space-y-6 lg:col-span-2">
               {/* Steps */}
@@ -257,9 +302,19 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
               )}
 
               {step === 'VERIFICATION' && (
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="flex items-center gap-2 text-success justify-center">
                     <ShieldCheck className="w-6 h-6" /> Identity Verified
+                  </div>
+                  <div className="bg-secondary/5 p-3 rounded-lg border border-secondary/20 text-sm text-muted-foreground">
+                    <p className="font-medium text-foreground mb-1">Format: RFC 9901 (SD-JWT VC)</p>
+                    <p>
+                      For online verification scenarios (like University Diplomas), EUDI ARF
+                      mandates
+                      <InlineTooltip term="SD-JWT VC"> SD-JWT </InlineTooltip> (Selective Disclosure
+                      JWT). Your attributes will be mapped into hashed disclosures safely bundled
+                      through strict Base64Url bindings.
+                    </p>
                   </div>
                   <Button onClick={handleIssuance} disabled={loading} className="w-full">
                     {loading && <Loader2 className="animate-spin mr-2" />} Issue Diploma
@@ -335,6 +390,23 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
               </div>
             </div>
           </div>
+          {hsm.isReady && (
+            <Pkcs11LogPanel
+              log={hsm.log}
+              onClear={hsm.clearLog}
+              title="PKCS#11 Call Log — Attestation Generation (WIA)"
+              className="mt-4"
+              filterFns={['C_GenerateKeyPair', 'C_SignInit', 'C_Sign', 'C_DigestInit', 'C_Digest']}
+            />
+          )}
+          {hsm.isReady && (
+            <HsmKeyInspector
+              keys={hsm.keys}
+              moduleRef={hsm.moduleRef}
+              hSessionRef={hsm.hSessionRef}
+              onRemoveKey={hsm.removeKey}
+            />
+          )}
         </CardContent>
       </Card>
       <KatValidationPanel

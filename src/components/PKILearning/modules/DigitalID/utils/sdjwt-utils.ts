@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import type { CryptoKey, CredentialAttribute } from '../types'
-import { signData, sha256Hash, bytesToBase64 } from './crypto-utils'
+import type { CryptoProvider } from './crypto-provider'
 
 interface Disclosure {
   raw: string // The full JSON array [salt, key, value] stringified
@@ -17,6 +17,11 @@ export interface SdJwtVc {
   raw: string // <jwt>~<d1>~<d2>...~
 }
 
+const bytesToBase64 = (bytes: Uint8Array): string => {
+  const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join('')
+  return btoa(binString)
+}
+
 const toBase64Url = (input: string | Uint8Array): string => {
   const bytes = typeof input === 'string' ? new TextEncoder().encode(input) : input
   return bytesToBase64(bytes).replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '')
@@ -26,13 +31,14 @@ const toBase64Url = (input: string | Uint8Array): string => {
 const createDisclosure = async (
   key: string,
   value: unknown,
+  provider: CryptoProvider,
   onLog?: (log: string) => void
 ): Promise<Disclosure> => {
   const salt = toBase64Url(new TextEncoder().encode(window.crypto.randomUUID())) // Simple salt
   const rawArray = [salt, key, value]
   const raw = JSON.stringify(rawArray)
   const encoded = toBase64Url(new TextEncoder().encode(raw))
-  const hash = await sha256Hash(encoded, onLog)
+  const hash = await provider.sha256Hash(encoded, onLog)
 
   return { raw, encoded, hash, key, value, salt }
 }
@@ -40,7 +46,8 @@ const createDisclosure = async (
 export const createSDJWT = async (
   claims: CredentialAttribute[],
   issuerKey: CryptoKey,
-  holderKey?: CryptoKey, // For CNF claim (key binding)
+  holderKey: CryptoKey | undefined, // For CNF claim (key binding)
+  provider: CryptoProvider,
   issuer: string = 'https://example.edu',
   vct: string = 'eu.europa.ec.eudi.diploma.1',
   onLog?: (log: string) => void
@@ -55,11 +62,14 @@ export const createSDJWT = async (
     if (claim.type === 'plain') {
       plainClaims[claim.name] = claim.value
     } else {
-      const d = await createDisclosure(claim.name, claim.value, onLog)
+      const d = await createDisclosure(claim.name, claim.value, provider, onLog)
       disclosures.push(d)
       sdHashes.push(d.hash)
     }
   }
+
+  // EUDI SD-JWT requires _sd array elements to be lexicographically sorted
+  sdHashes.sort()
 
   // Construct Issuer JWT Payload
   const now = Math.floor(Date.now() / 1000)
@@ -98,7 +108,7 @@ export const createSDJWT = async (
   const encodedPayload = toBase64Url(JSON.stringify(payload))
   const signingInput = `${encodedHeader}.${encodedPayload}`
 
-  const signature = await signData(issuerKey, signingInput, onLog)
+  const signature = await provider.signData(issuerKey, signingInput, onLog)
   const issuerJwt = `${signingInput}.${signature}`
 
   // Construct final SD-JWT string: <IssuerJWT>~<Disclosure1>~<Disclosure2>~...~
@@ -117,6 +127,7 @@ export const createPresentation = async (
   holderKey: CryptoKey,
   audience: string,
   nonce: string,
+  provider: CryptoProvider,
   onLog?: (log: string) => void
 ): Promise<string> => {
   // 1. Filter disclosures
@@ -133,7 +144,7 @@ export const createPresentation = async (
     ...selectedDisclosures.map((d) => d.encoded),
     '',
   ].join('~')
-  const sdHash = await sha256Hash(presentationPayload, onLog) // Hash of the presentation so far
+  const sdHash = await provider.sha256Hash(presentationPayload, onLog) // Hash of the presentation so far
 
   const kbHeader = {
     typ: 'kb+jwt',
@@ -152,7 +163,7 @@ export const createPresentation = async (
   const encodedPayload = toBase64Url(JSON.stringify(kbPayload))
   const signingInput = `${encodedHeader}.${encodedPayload}`
 
-  const signature = await signData(holderKey, signingInput, onLog)
+  const signature = await provider.signData(holderKey, signingInput, onLog)
   const kbJwt = `${signingInput}.${signature}`
 
   // Final Presentation: <IssuerJWT>~<SelectedDisclosures>~<KB-JWT>

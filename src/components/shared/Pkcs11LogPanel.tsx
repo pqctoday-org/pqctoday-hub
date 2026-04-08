@@ -120,27 +120,63 @@ export const Pkcs11LogPanel = ({
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
 
-  const visibleLog = filterFns ? log.filter((e) => e.isStepHeader || filterFns.includes(e.fn)) : log
+  const CRYPTO_OPS = [
+    'C_GenerateKeyPair',
+    'C_GenerateKey',
+    'C_DeriveKey',
+    'C_WrapKey',
+    'C_UnwrapKey',
+    'C_EncryptInit',
+    'C_Encrypt',
+    'C_EncryptUpdate',
+    'C_EncryptFinal',
+    'C_DecryptInit',
+    'C_Decrypt',
+    'C_DecryptUpdate',
+    'C_DecryptFinal',
+    'C_SignInit',
+    'C_Sign',
+    'C_SignUpdate',
+    'C_SignFinal',
+    'C_VerifyInit',
+    'C_Verify',
+    'C_VerifyUpdate',
+    'C_VerifyFinal',
+    'C_DigestInit',
+    'C_Digest',
+    'C_DigestUpdate',
+    'C_DigestFinal',
+  ]
+
+  const visibleLog = log.filter((e) => {
+    if (e.isStepHeader) return true
+    if (e.fn === 'C_GetAttributeValue') return false
+    if (CRYPTO_OPS.includes(e.fn)) return true
+    if (filterFns && filterFns.length > 0) return filterFns.includes(e.fn)
+    return true
+  })
+
   const inspectableCount = visibleLog.filter((e) => !!e.inspect).length
 
-  // Build display order: newest step first, header above its commands.
-  // visibleLog is newest-first, so we iterate oldest-first (reversed) to group
-  // correctly, then reverse the groups for newest-first output.
+  // Build display order: newest section first, but chronological inside the section.
   const orderedLog = (() => {
+    // 1. Convert to chronological (oldest-first) to group properly
+    const chronologicalLog = [...visibleLog].reverse()
     const groups: Pkcs11LogEntry[][] = []
-    let current: Pkcs11LogEntry[] = []
-    for (const e of [...visibleLog].reverse()) {
+    let currentGroup: Pkcs11LogEntry[] = []
+
+    for (const e of chronologicalLog) {
       if (e.isStepHeader) {
-        if (current.length > 0) groups.push(current)
-        current = [e]
+        if (currentGroup.length > 0) groups.push(currentGroup)
+        currentGroup = [e]
       } else {
-        current.push(e)
+        currentGroup.push(e)
       }
     }
-    if (current.length > 0) groups.push(current)
-    // Each group is [header, ...commands] in chronological order.
-    // Reverse groups so newest step is first; keep header at top of each group.
-    return groups.reverse().flatMap((g) => g)
+    if (currentGroup.length > 0) groups.push(currentGroup)
+
+    // 2. Reverse the groups so the newest section is at the top of the UI
+    return groups.reverse().flat()
   })()
 
   const copyAll = () => {
@@ -228,7 +264,15 @@ export const Pkcs11LogPanel = ({
                   PKCS#11 parameters &amp; attributes
                 </p>
               )}
-              <div className="space-y-0 max-h-80 overflow-y-auto">
+              <div className="space-y-0 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar relative">
+                <div className="grid grid-cols-[1rem_7rem_12rem_1fr_6rem_4rem] gap-x-2 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider py-1 mb-1 border-b border-border/30 px-1 sticky top-0 bg-background/95 backdrop-blur z-10">
+                  <span className="w-2.5" />
+                  <span>Time</span>
+                  <span>Function</span>
+                  <span>Arguments</span>
+                  <span>Return Value</span>
+                  <span className="text-right">Duration</span>
+                </div>
                 {orderedLog.map((e) => (
                   <LogEntryRow key={e.id} entry={e} />
                 ))}

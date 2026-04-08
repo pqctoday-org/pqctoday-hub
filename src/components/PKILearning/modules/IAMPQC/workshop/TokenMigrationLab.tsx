@@ -145,7 +145,6 @@ const ALGORITHM_NOTES: Record<SigningAlgorithm, string> = {
 
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
-  'C_GetAttributeValue',
   'C_MessageSignInit',
   'C_SignMessage',
   'C_MessageSignFinal',

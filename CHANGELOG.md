@@ -6,6 +6,69 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.95.0] - 2026-04-08
+
+### Added
+
+- **EUDI Wallet — pluggable CryptoProvider architecture**: All Digital ID components (PID Issuer,
+  Attestation Issuer, QES Provider, Relying Party, Wallet) now use a unified `CryptoProvider`
+  interface instead of inline HSM/OpenSSL branching. Three implementations: `OpenSSLCryptoProvider`,
+  `HsmCryptoProvider` (PKCS#11), and `DualCryptoProvider` (parallel execution of both). Factory
+  function `getCryptoProvider()` selects the active backend.
+
+- **EUDI Wallet — X.509 certificate generation**: New `generateX509Certificate()` utility produces
+  self-signed X.509 v3 certificates (ES256/ES384) via `@peculiar/asn1-schema`, used by the
+  Attestation Issuer and QES Provider for qualified certificate issuance.
+
+- **EUDI Wallet — native CBOR encoding**: mDoc structures now use `cborg` for ISO 18013-5 compliant
+  CBOR/COSE binary encoding. Added `cborg` v5.1.0 as a production dependency.
+
+- **Entropy — HMAC_DRBG Architecture Demo**: Interactive SP 800-90A HMAC_DRBG lifecycle visualization
+  with three phases (Instantiate → Generate → Reseed), real-time (K, V, reseed counter) state
+  tracking, configurable entropy/nonce/personalization inputs, and action history log. Available as
+  `drbg-demo` in the Playground workshop registry.
+
+- **Entropy — danger-zone gauge arc**: The entropy gauge visualization now includes a visual
+  "danger zone" arc highlighting sub-threshold entropy regions.
+
+- **Entropy — QRNG "Simulated" badge**: The QRNG demo card now shows a "Simulated" badge to
+  distinguish it from hardware-backed quantum random sources.
+
+- **Deep linking — `?flow=` URL parameter**: `useModuleDeepLink` now parses and syncs a `?flow=`
+  parameter, enabling direct navigation to specific sub-flows within modules (e.g., selecting a
+  blockchain chain in Digital Assets via `?flow=btc`).
+
+- **Digital ID E2E test**: New Playwright spec (`e2e/digitalid.spec.ts`) validates the Digital ID
+  module rendering and PID issuance workflow.
+
+### Changed
+
+- **Playground workshop registry**: Removed `wip` flags from 7 tools now considered production-ready
+  (Envelope Encrypt, Token Migration, TEE Channel, Firmware Signing, QRNG Demo, Entropy Test,
+  Source Combining). Removed `hybrid-signing` tool (consolidated into PKILearning modules). Added
+  `drbg-demo` tool.
+
+- **PKCS#11 Log Panel**: Refactored to exclude `C_GetAttributeValue` from default display,
+  reducing log noise. Added sticky column headers (Time, Function, Arguments, Return Value,
+  Duration), increased max height to 500px, and improved chronological grouping (newest sections
+  first).
+
+- **Workshop HSM key tracking**: HybridEncryptionDemo, EnvelopeEncryptionDemo, and
+  HSMKeyDerivationDemo now register intermediate derived secrets (ML-KEM decap, ECDH shared secret,
+  HKDF output) into the HSM key registry for inspection.
+
+- **EdDSA PKCS#11 bindings**: Added `buildEdDSAParams()` helper constructing `CK_EDDSA_PARAMS`
+  (phFlag, context data) and `CKA_EC_PARAMS` OID attribute in EdDSA key generation templates.
+
+### Fixed
+
+- **`useModuleDeepLink` test suite**: Updated all 11 test expectations to include the new
+  `initialFlow` field; added a `?flow=` parsing test.
+
+### Internal
+
+- **RAG corpus regenerated**: Updated to reflect new EUDI crypto provider content and DRBG demo.
+
 ## [2.94.2] - 2026-04-08
 
 ### Fixed

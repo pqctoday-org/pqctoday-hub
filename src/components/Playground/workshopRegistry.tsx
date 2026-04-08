@@ -78,7 +78,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['hybrid', 'kem', 'ecdh', 'hkdf', 'ml-kem', 'x25519', 'encryption', 'key agreement'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    wip: true,
   },
   {
     id: 'envelope-encrypt',
@@ -91,7 +90,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['envelope', 'kms', 'key wrap', 'ml-kem', 'aes', 'dek', 'kek'],
     difficulty: 'intermediate',
     recommendedPersonas: ['architect', 'researcher', 'ops'],
-    wip: true,
   },
   {
     id: 'token-migration',
@@ -104,7 +102,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['token', 'migration', 'iam', 'ml-dsa', 'ecdsa', 'rsa', 'multi-algorithm', 'jwt'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-    wip: true,
   },
   {
     id: 'tee-channel',
@@ -117,7 +114,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['tee', 'trusted execution', 'confidential', 'channel', 'attestation', 'hsm'],
     difficulty: 'advanced',
     recommendedPersonas: ['architect', 'researcher'],
-    wip: true,
   },
   {
     id: 'firmware-signing',
@@ -130,7 +126,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['firmware', 'uefi', 'secure boot', 'ml-dsa', 'signing', 'verification'],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-    wip: true,
   },
   {
     id: 'kdf-derivation',
@@ -155,7 +150,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    wip: true,
   },
   {
     id: 'vpn-sim',
@@ -197,7 +191,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['random', 'rng', 'drbg', 'web crypto', 'openssl', 'math.random', 'statistics'],
     difficulty: 'beginner',
     recommendedPersonas: ['researcher', 'developer', 'architect', 'ops'],
-    wip: true,
   },
   {
     id: 'entropy-test',
@@ -210,7 +203,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['entropy', 'testing', 'sp 800-90b', 'monobit', 'frequency', 'min-entropy', 'nist'],
     difficulty: 'intermediate',
     recommendedPersonas: ['researcher', 'architect', 'developer'],
-    wip: true,
   },
   {
     id: 'qrng-demo',
@@ -224,7 +216,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     keywords: ['qrng', 'quantum random', 'trng', 'true random', 'statistics'],
     difficulty: 'beginner',
     recommendedPersonas: ['researcher', 'curious'],
-    wip: true,
   },
   {
     id: 'source-combining',
@@ -249,7 +240,28 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'advanced',
     recommendedPersonas: ['researcher', 'architect', 'developer'],
-    wip: true,
+  },
+  {
+    id: 'drbg-demo',
+    name: 'SP 800-90A DRBG',
+    description:
+      'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
+    category: 'Entropy & Random',
+    algorithms: ['HMAC_DRBG', 'SHA-256'],
+    icon: Workflow,
+    moduleLink: '/learn/entropy-randomness',
+    keywords: [
+      'drbg',
+      'sp 800-90a',
+      'hmac_drbg',
+      'instantiate',
+      'generate',
+      'reseed',
+      'entropy',
+      'random',
+    ],
+    difficulty: 'advanced',
+    recommendedPersonas: ['architect', 'developer', 'researcher'],
   },
 
   // ── Certificates & Proofs ─────────────────────────────────────────────────
@@ -313,30 +325,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'researcher', 'curious'],
   },
-  {
-    id: 'hybrid-signing',
-    name: 'Hybrid Signature Demo',
-    description:
-      'Sign the same message with ECDSA-P256 and ML-DSA-65 in parallel — compare signature sizes and verify both. Demonstrates the PQC migration co-existence pattern.',
-    category: 'Certificates & Proofs',
-    algorithms: ['ML-DSA-65', 'ECDSA-P256', 'SHA-256'],
-    icon: FileSignature,
-    moduleLink: '/learn/hybrid-crypto',
-    keywords: [
-      'hybrid',
-      'dual signature',
-      'ml-dsa',
-      'ecdsa',
-      'migration',
-      'co-existence',
-      'comparison',
-      'pqc',
-      'classical',
-    ],
-    difficulty: 'intermediate',
-    recommendedPersonas: ['developer', 'architect', 'researcher', 'ops'],
-    wip: true,
-  },
 
   // ── Protocol Simulations ──────────────────────────────────────────────────
   {
@@ -375,7 +363,6 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
     ],
     difficulty: 'intermediate',
     recommendedPersonas: ['developer', 'architect', 'researcher'],
-    wip: true,
   },
 
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
@@ -571,6 +558,11 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
       default: m.SourceCombiningDemo,
     }))
   ),
+  'drbg-demo': lazyWithRetry(() =>
+    import('@/components/PKILearning/modules/Entropy/workshop/DrbgArchitectureDemo').then((m) => ({
+      default: m.DrbgArchitectureDemo,
+    }))
+  ),
   'hybrid-certs': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/HybridCrypto/workshop/HybridCertFormats').then(
       (m) => ({ default: m.HybridCertFormats })
@@ -580,11 +572,6 @@ export const TOOL_COMPONENTS: Record<string, LazyComp> = {
     import('@/components/PKILearning/modules/MerkleTreeCerts/workshop/MerkleWorkshopSteps').then(
       (m) => ({ default: m.MerkleWorkshopSteps })
     )
-  ),
-  'hybrid-signing': lazyWithRetry(() =>
-    import('@/components/Playground/workshop/HybridSigningDemo').then((m) => ({
-      default: m.HybridSigningDemo,
-    }))
   ),
   'pki-workshop': lazyWithRetry(() =>
     import('@/components/PKILearning/modules/PKIWorkshop').then((m) => {

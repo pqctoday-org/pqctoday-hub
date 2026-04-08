@@ -4,15 +4,18 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
-import { generateKeyPair, signData } from '../../utils/crypto-utils'
 import { createMdoc } from '../../utils/mdoc-utils'
+import type { CryptoProvider } from '../../utils/crypto-provider'
+import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
+import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
+import { generateX509Certificate } from '../../utils/x509-utils'
 import { Loader2, CheckCircle, Smartphone, Lock, UserCheck, CreditCard } from 'lucide-react'
 import { MARIA_IDENTITY } from '../../constants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
-import { hsm_generateECKeyPair, hsm_ecdsaSign, hsm_extractECPoint } from '@/wasm/softhsm'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const PID_LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_GetAttributeValue', 'C_SignInit', 'C_Sign']
@@ -70,80 +73,43 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
     setStep('KEY_GEN')
   }
 
-  const handleKeyGen = async () => {
-    setLoading(true)
-    addLog('Generating secure key pair in Wallet HSM...')
-
-    let key: CryptoKey
-
+  const getCryptoProvider = (): CryptoProvider => {
+    const ossl = new OpenSSLCryptoProvider()
     if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
-      // ── Live HSM Mode: real PKCS#11 operations ──
-      const M = hsm.moduleRef.current
-      const hSession = hsm.hSessionRef.current
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-256', false, 'sign')
-      const pubPoint = hsm_extractECPoint(M, hSession, pubHandle)
-      const pubHex = Array.from(pubPoint)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
-      addLog(`Key Generated via PKCS#11: P-256/ES256 (pub ${pubPoint.length} B)`)
-
-      key = {
-        id: `hsm-pid-${Date.now()}`,
-        type: 'P-256',
-        algorithm: 'ES256',
-        curve: 'P-256',
-        publicKey: pubHex,
-        privateKey: `[PKCS#11 handle: ${privHandle}]`,
-        created: new Date().toISOString(),
-        usage: 'SIGN',
-        status: 'ACTIVE',
-      }
-
-      // PoP signature via HSM
-      const nonce = 'nonce-' + Math.random().toString(36).substring(2)
-      addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
-      const popPayload = JSON.stringify({
-        iss: 'wallet-instance',
-        aud: 'https://pid-provider',
-        nonce: nonce,
-        cnonce: 'generated-cnonce',
-      })
-      const popSig = hsm_ecdsaSign(M, hSession, privHandle, popPayload)
-      const popHex = Array.from(popSig)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
-      addLog(`PoP Signed via C_Sign(CKM_ECDSA_SHA256): ${popHex.substring(0, 20)}...`)
-
-      hsm.addKey({
-        handle: pubHandle,
-        label: 'PID Wallet Key (P-256)',
-        family: 'ecdsa',
-        role: 'public',
-        generatedAt: new Date().toISOString(),
-      })
-      hsm.addKey({
-        handle: privHandle,
-        label: 'PID Wallet Key (P-256)',
-        family: 'ecdsa',
-        role: 'private',
-        generatedAt: new Date().toISOString(),
-      })
-    } else {
-      // ── Software Mode: OpenSSL WASM ──
-      key = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
-      addLog(`Key Generated: ${key.id} (P-256/ES256)`)
-
-      const nonce = 'nonce-' + Math.random().toString(36).substring(2)
-      addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
-      const popPayload = JSON.stringify({
-        iss: 'wallet-instance',
-        aud: 'https://pid-provider',
-        nonce: nonce,
-        cnonce: 'generated-cnonce',
-      })
-      const popSig = await signData(key, popPayload, addOpenSSLLog)
-      addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
+      const hsmProvider = new SoftHSMCryptoProvider(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        { addKey: hsm.addKey }
+      )
+      return new DualCryptoProvider(hsmProvider, ossl)
     }
+    return ossl
+  }
+
+  const handleKeyGen = async (): Promise<CryptoKey> => {
+    setLoading(true)
+    addLog('Generating secure key pair in Wallet...')
+
+    const provider = getCryptoProvider()
+    // Generate Wallet PoP Key
+    if (hsm.isReady) {
+      hsm.addStepLog("🔑 The Wallet's Proof of Possession (PoP) Key")
+    }
+
+    const key = await provider.generateKeyPair('ES256', 'P-256', addOpenSSLLog)
+    addLog(`Key Generated: ${key.id} (P-256/ES256)`)
+
+    const nonce = 'nonce-' + Math.random().toString(36).substring(2)
+    addLog(`Creating Proof of Possession (PoP) for nonce: ${nonce}`)
+    const popPayload = JSON.stringify({
+      iss: 'wallet-instance',
+      aud: 'https://pid-provider',
+      nonce: nonce,
+      cnonce: 'generated-cnonce',
+    })
+
+    const popSig = await provider.signData(key, popPayload, addOpenSSLLog)
+    addLog(`PoP Signed: ${popSig.substring(0, 20)}...`)
 
     setLoading(false)
     setStep('ISSUANCE')
@@ -165,8 +131,23 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       { name: 'issuing_country', value: 'ES' },
     ]
 
+    const provider = getCryptoProvider()
+
     // Mock Issuer Key
-    const issuerKey = await generateKeyPair('ES256', 'P-256', addOpenSSLLog)
+    if (hsm.isReady) {
+      hsm.addStepLog('🏛️ The PID Issuer Key')
+    }
+    const issuerKey = await provider.generateKeyPair('ES256', 'P-256', addOpenSSLLog)
+
+    // EUDI ARF Document Signer Certificate (DSC) representation
+    const issuerCertPem = await generateX509Certificate(
+      issuerKey,
+      provider,
+      '/CN=Member State PID Issuer DSC/C=EU',
+      addOpenSSLLog
+    )
+    addLog('Document Signer Certificate (X.509 DER) constructed via @peculiar.')
+    addOpenSSLLog(issuerCertPem)
 
     // Create mDoc (EU PID format)
     addLog('Issuer generating mdoc (eu.europa.ec.eudi.pid.1)...')
@@ -174,6 +155,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
       attributes,
       issuerKey,
       key,
+      provider,
       'eu.europa.ec.eudi.pid.1',
       addOpenSSLLog
     )
@@ -253,10 +235,25 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
               </div>
             )}
             {step === 'AUTH' && (
-              <Button onClick={runFlow} disabled={loading} className="w-full">
-                {loading ? <Loader2 className="animate-spin mr-2" /> : null}
-                Proceed with Authentication
-              </Button>
+              <div className="space-y-4">
+                <div className="bg-primary/5 p-3 rounded-lg border border-primary/20 text-sm text-muted-foreground">
+                  <p className="font-medium text-foreground mb-1">
+                    Format: ISO 18013-5 (mDoc) via CBOR
+                  </p>
+                  <p>
+                    Following the EUDI ARF, your PID will natively be constructed as a binary
+                    <InlineTooltip term="mso_mdoc">mso_mdoc</InlineTooltip> payload utilizing strict
+                    <InlineTooltip term="CBOR"> CBOR</InlineTooltip> (Concise Binary Object
+                    Representation) encoding, cryptographically securing your attributes within a{' '}
+                    <InlineTooltip term="COSE_Sign1">COSE_Sign1</InlineTooltip> signature container
+                    signed by the remote HSM.
+                  </p>
+                </div>
+                <Button onClick={runFlow} disabled={loading} className="w-full">
+                  {loading ? <Loader2 className="animate-spin mr-2" /> : null}
+                  Proceed with Authentication
+                </Button>
+              </div>
             )}
             {step === 'COMPLETE' && (
               <div className="text-center p-4 bg-success/5 rounded-lg border border-success/30">

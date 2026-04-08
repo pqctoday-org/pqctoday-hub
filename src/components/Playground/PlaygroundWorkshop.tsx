@@ -60,7 +60,7 @@ const PERSONA_META: Record<PersonaId, { label: string; subtitle: string; starter
     developer: {
       label: 'Developer / Engineer',
       subtitle: 'Protocol & implementation focus',
-      starterTools: ['binary-signing', 'hybrid-signing', 'openssl-studio'],
+      starterTools: ['binary-signing', 'openssl-studio'],
     },
     architect: {
       label: 'Security Architect',

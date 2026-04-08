@@ -163,6 +163,21 @@ export const EntropyGauge: React.FC<EntropyGaugeProps> = ({
             strokeLinecap="round"
           />
 
+          {/* Danger zone arc */}
+          <path
+            d={arcPath(
+              CENTER,
+              CENTER,
+              RADIUS,
+              higherIsBetter ? ARC_START : thresholdAngle,
+              higherIsBetter ? thresholdAngle : ARC_START + ARC_SWEEP
+            )}
+            fill="none"
+            className="stroke-destructive/20"
+            strokeWidth={STROKE_WIDTH}
+            strokeLinecap="round"
+          />
+
           {/* Value arc */}
           {ratio > 0.01 && (
             <path

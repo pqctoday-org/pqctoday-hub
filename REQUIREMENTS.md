@@ -19,7 +19,7 @@ The application is divided into the following main modules. Detailed requirement
    - **[PKI Workshop](requirements/learn.md#module-1-pki-workshop-implemented)**: 4-step certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
    - **[Digital Assets Program](requirements/digital_assets.md)**: Blockchain cryptography for Bitcoin (secp256k1, P2PKH/SegWit, ECDSA), Ethereum (Keccak-256, EIP-55, EIP-1559), Solana (Ed25519), and HD Wallet (BIP32/39/44)
    - **[5G Security Education](requirements/5G_Security_Educational_Module_Requirements.md)**: SUCI Deconcealment (Profiles A/B/C with ML-KEM-768) and 5G-AKA authentication with MILENAGE (f1–f5)
-   - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, OpenID4VCI/OpenID4VP flows, QEAA, Remote QES
+   - **[EU Digital Identity Wallet](requirements/EUDI_Wallet_Educational_Module_Requirements.md)**: EUDI Wallet ecosystem with Remote HSM architecture, OpenID4VCI/OpenID4VP flows, QEAA, Remote QES. Generates verified structural encodings natively including CBOR/COSE for mDocs (via `cborg`), SD-JWT strict base64url boundaries, and X.509 Qualified Certificates (via `@peculiar/asn1-schema`).
    - **[TLS 1.3 Basics](requirements/learn_openssltls13_requirement.md)**: Interactive TLS 1.3 handshake simulation with PQC support (ML-KEM, ML-DSA), certificate inspector
    - **PQC Testing Validation**: Passive/Active scanning with `pqcscan`, IKEv2 Performance cliffs, TVLA side-channel analysis, and NIST ACVP KAT vector simulations.
    - **PQC 101 Introduction**: Quantum threats, Shor's algorithm, at-risk sectors, HNDL and HNFL attacks
@@ -129,6 +129,7 @@ See **[Accessibility Requirements](requirements/accessibility.md)**.
   - `@noble/curves`, `@noble/hashes`, `@scure/bip32`, `@scure/bip39`, `@scure/base` (blockchain crypto)
   - `micro-eth-signer`, `ed25519-hd-key` (Ethereum/Solana)
   - Web Crypto API (`src/utils/webCrypto.ts`) — X25519, P-256, ECDH
+  - `cborg` — Strict deterministic binary CBOR encoding for EUDI ISO 18013-5 mDoc structures.
 - **State Management**: Zustand 5 with `persist` middleware
 - **Routing**: React Router v7 (lazy-loaded routes)
 - **Data**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)

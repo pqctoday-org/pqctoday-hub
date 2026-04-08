@@ -223,7 +223,8 @@ export function minEntropyEstimate(data: Uint8Array): TestResult {
     value: minEntropy,
     passed: minEntropy >= threshold,
     threshold,
-    description: 'Min-entropy should be close to 8.0 bits per byte',
+    description:
+      'Min-entropy should be close to 8.0 bits per byte. Note: SP 800-90B also utilizes Markov estimates to detect inter-byte dependencies.',
     detail: `Estimated: ${minEntropy.toFixed(2)} bits/byte. Most common byte appeared ${maxCount}/${n} times (p=${pMax.toFixed(4)})`,
   }
 }

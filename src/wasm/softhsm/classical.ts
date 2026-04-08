@@ -50,9 +50,10 @@ import {
   type AttrDef,
   type DerivedKeyProfile,
   allocUlong,
+  buildBIP32ChildDeriveParams,
   buildDerivedKeyTemplate,
   buildECDH1DeriveParams,
-  buildBIP32ChildDeriveParams,
+  buildEdDSAParams,
   buildMech,
   buildOAEPParams,
   buildPSSParams,
@@ -551,6 +552,7 @@ export const hsm_generateEdDSAKeyPair = (
     { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
     { type: CKA_KEY_TYPE, ulongVal: CKK_EC_EDWARDS },
     { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_EC_PARAMS, bytesPtr: oidPtr, bytesLen: oid.length },
     { type: CKA_PRIVATE, boolVal: true },
     { type: CKA_SENSITIVE, boolVal: !extractable },
     { type: CKA_EXTRACTABLE, boolVal: extractable },
@@ -560,7 +562,7 @@ export const hsm_generateEdDSAKeyPair = (
   const prvHPtr = allocUlong(M)
   try {
     checkRV(
-      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 7, pubHPtr, prvHPtr),
+      M._C_GenerateKeyPair(hSession, mech, pubTpl.ptr, 5, prvTpl.ptr, 8, pubHPtr, prvHPtr),
       'C_GenerateKeyPair(EdDSA)'
     )
     return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
@@ -568,7 +570,7 @@ export const hsm_generateEdDSAKeyPair = (
     M._free(mech)
     M._free(oidPtr)
     freeTemplate(M, pubTpl, 5)
-    freeTemplate(M, prvTpl, 7)
+    freeTemplate(M, prvTpl, 8)
     M._free(pubHPtr)
     M._free(prvHPtr)
   }
@@ -685,7 +687,8 @@ export const hsm_eddsaSign = (
   privHandle: number,
   message: string | Uint8Array
 ): Uint8Array => {
-  const mech = buildMech(M, CKM_EDDSA)
+  const params = buildEdDSAParams(M, false)
+  const mech = buildMech(M, CKM_EDDSA, params.ptr, params.len)
   const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
@@ -699,6 +702,7 @@ export const hsm_eddsaSign = (
     checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(EdDSA)')
     return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
   } finally {
+    params.allocPtrs.forEach((p) => M._free(p))
     M._free(mech)
     M._free(msgPtr)
     M._free(sigLenPtr)
@@ -714,7 +718,8 @@ export const hsm_eddsaVerify = (
   message: string | Uint8Array,
   sigBytes: Uint8Array
 ): boolean => {
-  const mech = buildMech(M, CKM_EDDSA)
+  const params = buildEdDSAParams(M, false)
+  const mech = buildMech(M, CKM_EDDSA, params.ptr, params.len)
   const msgBytes = typeof message === 'string' ? new TextEncoder().encode(message) : message
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
@@ -723,6 +728,7 @@ export const hsm_eddsaVerify = (
     const rv = M._C_Verify(hSession, msgPtr, msgBytes.length, sigPtr, sigBytes.length) >>> 0
     return rv === 0
   } finally {
+    params.allocPtrs.forEach((p) => M._free(p))
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
@@ -731,7 +737,8 @@ export const hsm_eddsaVerify = (
 
 /**
  * Multi-part sign via C_SignInit + C_SignUpdate × N + C_SignFinal.
- * Works with RSA-PKCS, RSA-PSS, ECDSA, EdDSA, or any mechanism that supports streaming.
+ * Works with RSA-PKCS, RSA-PSS, ECDSA, or any mechanism that supports streaming.
+ * Note: Pure EdDSA strict PKCS#11 v3.2 does NOT support multi-part signing.
  */
 export const hsm_signMultiPart = (
   M: SoftHSMModule,

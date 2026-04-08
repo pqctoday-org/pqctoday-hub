@@ -4,7 +4,11 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
-import { sha256Hash } from '../../utils/crypto-utils'
+import type { CryptoProvider } from '../../utils/crypto-provider'
+import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
+import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
+import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
+import { generateX509Certificate } from '../../utils/x509-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -12,7 +16,6 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
-import { hsm_digest, hsm_generateECKeyPair, hsm_ecdsaSign, CKM_ECDSA_SHA384 } from '@/wasm/softhsm'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 
 const QES_LIVE_OPERATIONS = [
@@ -36,6 +39,19 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
   const hsm = useHSM()
+
+  const getCryptoProvider = (): CryptoProvider => {
+    const ossl = new OpenSSLCryptoProvider()
+    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
+      const hsmProvider = new SoftHSMCryptoProvider(
+        hsm.moduleRef.current,
+        hsm.hSessionRef.current,
+        { addKey: hsm.addKey }
+      )
+      return new DualCryptoProvider(hsmProvider, ossl)
+    }
+    return ossl
+  }
 
   const pidCredential = wallet.credentials.find((c) => c.type.includes('PersonIdentificationData'))
 
@@ -61,24 +77,10 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
 
     try {
       const fileContent = `Content of ${docName} - ${Date.now()}`
-
-      if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
-        // ── Live HSM Mode: PKCS#11 digest ──
-        const M = hsm.moduleRef.current
-        const hSession = hsm.hSessionRef.current
-        const msgBytes = new TextEncoder().encode(fileContent)
-        const hashBytes = hsm_digest(M, hSession, msgBytes)
-        const hash = Array.from(hashBytes)
-          .map((b) => b.toString(16).padStart(2, '0'))
-          .join('')
-        setDocHash(hash)
-        addLog(`Hash calculated via C_Digest(CKM_SHA256): ${hash.substring(0, 16)}...`)
-      } else {
-        // ── Software Mode: OpenSSL WASM ──
-        const hash = await sha256Hash(fileContent, addOpenSSLLog)
-        setDocHash(hash)
-        addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
-      }
+      const provider = getCryptoProvider()
+      const hash = await provider.sha256Hash(fileContent, addOpenSSLLog)
+      setDocHash(hash)
+      addLog(`Hash calculated: ${hash.substring(0, 16)}...`)
     } catch (e) {
       addLog(`Error hashing document: ${e}`)
     }
@@ -102,41 +104,37 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
 
     await new Promise((r) => setTimeout(r, 800))
 
-    if (hsm.isReady && hsm.moduleRef.current && hsm.hSessionRef.current) {
-      // ── Live HSM Mode: real PKCS#11 signing ──
-      const M = hsm.moduleRef.current
-      const hSession = hsm.hSessionRef.current
-      addLog('Remote HSM: Generating ECC P-384 signing key via PKCS#11...')
-      const { pubHandle, privHandle } = hsm_generateECKeyPair(M, hSession, 'P-384', false, 'sign')
-      addLog('Sole Control Assurance: Validated.')
+    const provider = getCryptoProvider()
+    addLog('Remote HSM: Generating ECC P-384 signing key for QES...')
 
-      const sig = hsm_ecdsaSign(M, hSession, privHandle, docHash, CKM_ECDSA_SHA384)
-      const sigHex = Array.from(sig)
-        .map((b) => b.toString(16).padStart(2, '0'))
-        .join('')
-      addLog(`Signed via C_Sign(CKM_ECDSA_SHA384): ${sigHex.substring(0, 40)}...`)
-
-      hsm.addKey({
-        handle: pubHandle,
-        label: 'QES Signing Key (P-384)',
-        family: 'ecdsa',
-        role: 'public',
-        generatedAt: new Date().toISOString(),
-      })
-      hsm.addKey({
-        handle: privHandle,
-        label: 'QES Signing Key (P-384)',
-        family: 'ecdsa',
-        role: 'private',
-        generatedAt: new Date().toISOString(),
-      })
-    } else {
-      // ── Software Mode ──
-      addLog('Remote HSM: Key loaded (ECC P-384).')
-      addLog('Sole Control Assurance: Validated.')
-      addOpenSSLLog(`[Remote HSM] Signing hash: ${docHash.substring(0, 32)}...`)
-      addOpenSSLLog(`[Remote HSM] Algorithm: ecdsa-with-SHA384`)
+    if (hsm.isReady) {
+      hsm.addStepLog('✒️ The Qualified Electronic Signature (QES) Key')
     }
+    const key = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog)
+
+    addLog('Sole Control Assurance: Validated.')
+
+    // EUDI ARF Qualified Certificate Issue
+    let identName = 'Citizen'
+    if (pidCredential && pidCredential.credentialSubject) {
+      const subject = pidCredential.credentialSubject as Record<string, unknown>
+      if (subject.family_name && typeof subject.family_name === 'string') {
+        identName = subject.family_name
+      }
+    }
+    addLog(`Generating Qualified Certificate (X.509) for ${identName}...`)
+    const qesCert = await generateX509Certificate(
+      key,
+      provider,
+      `/CN=${identName} (Qualified Electronic Signature)/C=EU`,
+      addOpenSSLLog
+    )
+    addLog(`QTSA successfully issued Qualified Certificate.`)
+    addOpenSSLLog(qesCert)
+
+    const sig = await provider.signData(key, docHash, addOpenSSLLog)
+
+    addLog(`Signed document hash: ${sig.substring(0, 40)}...`)
 
     addLog('Signature returned by QTSP.')
     setLoading(false)

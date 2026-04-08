@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useState } from 'react'
 import type { WalletInstance } from '../../types'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -12,6 +12,8 @@ interface WalletComponentProps {
 }
 
 export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddCredential }) => {
+  const [inspectId, setInspectId] = useState<string | null>(null)
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -93,6 +95,27 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
                       <p>
                         <span className="font-semibold">Status:</span> Valid
                       </p>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="mt-4 text-xs h-8 w-full"
+                        onClick={() => setInspectId(inspectId === cred.id ? null : cred.id)}
+                      >
+                        {inspectId === cred.id ? 'Hide Raw Structure' : 'Inspect Structure'}
+                      </Button>
+
+                      {inspectId === cred.id && (
+                        <div className="mt-2 text-left">
+                          <p className="text-[10px] uppercase text-muted-foreground font-bold mb-1">
+                            {cred.format === 'mso_mdoc'
+                              ? 'BASE64 CBOR COSE_Sign1'
+                              : 'SD-JWT VC (~ DELIMITED)'}
+                          </p>
+                          <div className="p-3 bg-black/90 text-green-400 font-mono text-[10px] rounded overflow-x-auto break-all max-h-48 border border-green-500/20 shadow-inner">
+                            {cred.raw}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   </CardContent>
                 </Card>

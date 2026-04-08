@@ -11,7 +11,7 @@ export function getModuleDeepLink(
     maxStep?: number
     defaultTab?: string
   } = {}
-): { initialTab: string; initialStep: number } {
+): { initialTab: string; initialStep: number; initialFlow: string | null } {
   const {
     validTabs = ['learn', 'visual', 'workshop', 'exercises', 'references', 'tools'],
     maxStep,
@@ -31,14 +31,21 @@ export function getModuleDeepLink(
     }
   }
 
-  return { initialTab, initialStep }
+  const flowParam = params.get('flow')
+
+  return { initialTab, initialStep, initialFlow: flowParam }
 }
 
 /**
- * Keeps URL search params (?tab=, ?step=) in sync with module navigation state.
+ * Keeps URL search params (?tab=, ?step=, ?flow=) in sync with module navigation state.
  * Uses replaceState to avoid polluting browser history.
  */
-export function useSyncDeepLink(tab: string, step: number, defaultTab = 'learn') {
+export function useSyncDeepLink(
+  tab: string,
+  step: number,
+  flow?: string | null,
+  defaultTab = 'learn'
+) {
   useEffect(() => {
     const url = new URL(window.location.href)
 
@@ -54,6 +61,12 @@ export function useSyncDeepLink(tab: string, step: number, defaultTab = 'learn')
       url.searchParams.delete('step')
     }
 
+    if (flow) {
+      url.searchParams.set('flow', flow)
+    } else {
+      url.searchParams.delete('flow')
+    }
+
     window.history.replaceState(null, '', url.toString())
-  }, [tab, step, defaultTab])
+  }, [tab, step, flow, defaultTab])
 }

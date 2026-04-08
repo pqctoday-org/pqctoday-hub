@@ -23,7 +23,6 @@ import {
 // ── PKCS#11 operations exercised by this demo ────────────────────────────────
 const HYBRID_LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
-  'C_GetAttributeValue',
   'C_DeriveKey',
   'C_EncapsulateKey',
   'C_DecapsulateKey',
@@ -463,6 +462,15 @@ export const HybridEncryptionDemo: React.FC = () => {
         const decapSSBytes = hsm_extractKeyValue(M, hSession, decapSSHandle)
         const kemMatch = toHex(stateRef.current.kemSSBytes) === toHex(decapSSBytes)
 
+        hsm.addKey({
+          handle: decapSSHandle,
+          label: 'ML-KEM Decap Secret',
+          family: 'aes',
+          role: 'secret',
+          purpose: 'application',
+          generatedAt: new Date().toISOString(),
+        })
+
         // Import ECDH SS as a derivable generic secret for HKDF
         const ecdhDerivableHandle = hsm_importGenericSecret(
           M,
@@ -470,8 +478,18 @@ export const HybridEncryptionDemo: React.FC = () => {
           stateRef.current.ecdhSSBytes
         )
 
+        hsm.addKey({
+          handle: ecdhDerivableHandle,
+          label: 'ECDH SS (Derivable)',
+          family: 'aes',
+          role: 'secret',
+          purpose: 'application',
+          generatedAt: new Date().toISOString(),
+        })
+
         // HKDF-SHA-256: IKM = ECDH SS (base key), salt = KEM SS, info = domain separator
         const info = new TextEncoder().encode('hybrid-kem-x25519-mlkem768-v1')
+        const hybridKeyOut = { current: 0 }
         const hybridKey = hsm_hkdf(
           M,
           hSession,
@@ -481,9 +499,19 @@ export const HybridEncryptionDemo: React.FC = () => {
           true,
           decapSSBytes,
           info,
-          32
+          32,
+          hybridKeyOut
         )
         stateRef.current.hybridKey = hybridKey
+
+        hsm.addKey({
+          handle: hybridKeyOut.current,
+          label: 'Hybrid Session Key',
+          family: 'aes',
+          role: 'secret',
+          purpose: 'application',
+          generatedAt: new Date().toISOString(),
+        })
 
         hsm.addStepLog('Step 6 — Decapsulate & HKDF Combine')
         return (

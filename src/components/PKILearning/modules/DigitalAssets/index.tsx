@@ -69,8 +69,8 @@ const CHAINS: ChainOption[] = [
 export const DigitalAssetsModule: React.FC = () => {
   const deepLink = getModuleDeepLink()
   const [activeTab, setActiveTab] = useState(deepLink.initialTab)
-  useSyncDeepLink(activeTab, 0)
-  const [activeChain, setActiveChain] = useState<string | null>(null)
+  const [activeChain, setActiveChain] = useState<string | null>(deepLink.initialFlow)
+  useSyncDeepLink(activeTab, 0, activeChain)
   const [hasExploredAnyChain, setHasExploredAnyChain] = useState(false)
   const [configKey, setConfigKey] = useState(0)
   const startTimeRef = useRef(0)

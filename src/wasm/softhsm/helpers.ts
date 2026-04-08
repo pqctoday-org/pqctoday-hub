@@ -243,6 +243,28 @@ export const buildPSSParams = (
   return { ptr, len: 12 }
 }
 
+/** Build CK_EDDSA_PARAMS (12 bytes) in WASM heap. All allocPtrs must be freed. */
+export const buildEdDSAParams = (
+  M: SoftHSMModule,
+  prehash: boolean = false,
+  contextData?: Uint8Array
+): { ptr: number; len: number; allocPtrs: number[] } => {
+  const allocPtrs: number[] = []
+  let ctxPtr = 0
+  let ctxLen = 0
+  if (contextData && contextData.length > 0) {
+    ctxPtr = writeBytes(M, contextData)
+    allocPtrs.push(ctxPtr)
+    ctxLen = contextData.length
+  }
+  const ptr = M._malloc(12)
+  allocPtrs.push(ptr)
+  M.setValue(ptr, prehash ? 1 : 0, 'i32') // phFlag
+  M.setValue(ptr + 4, ctxLen, 'i32') // ulContextDataLen
+  M.setValue(ptr + 8, ctxPtr, 'i32') // pContextData
+  return { ptr, len: 12, allocPtrs }
+}
+
 /** Build CK_GCM_PARAMS (24 bytes) in WASM heap. All returned allocPtrs must be freed. */
 export const buildGCMParams = (
   M: SoftHSMModule,

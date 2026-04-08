@@ -84,7 +84,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Accessibility**: full `role="tablist/tab"` keyboard navigation (ArrowLeft/Right/Home/End),
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
   - **TLS 1.3 Simulator** (Playground workshop tool): interactive client/server TLS 1.3 handshake simulator — configure cipher suites, key exchange groups (X25519, ML-KEM-768, X25519MLKEM768), mTLS, and PQC/hybrid certificate options; step-through handshake visualization with PKCS#11 log
-  - **Playground Workshop WIP badges**: tools under active development show a WIP badge (Wrench icon); WIP tools are hidden by default with a toggle to reveal or show only WIP tools — 6 tools currently marked WIP (SLH-DSA, Hybrid KEM, Envelope Encrypt, Token Migration, TEE Channel, Firmware Signing)
+  - **Playground Workshop**: tools under active development show a WIP badge (Wrench icon); WIP tools are hidden by default with a toggle to reveal or show only WIP tools; includes DRBG Architecture demo
 - **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
@@ -110,11 +110,15 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **SUCI Deconcealment**: Profile A (Curve25519), Profile B (secp256r1), Profile C (ML-KEM-768, FIPS 203) with hybrid and pure modes; full spec-correct implementation — ANSI X9.63-KDF (SHA-256 for A/B, SHA3-256 for C), AES-128/256-CTR with zero IV, HMAC-SHA-256/SHA3-256, BCD MSIN encoding per TS 23.003, authenticate-then-decrypt at SIDF with full SUPI recovery; Profile C hybrid combines Z_ecdh ‖ Z_kem via SHA-256 per TR 33.841 §5.2.5.2; official 3GPP TS 33.501 Annex C.4 reference vectors accessible via "Reference Vectors" button
     - **5G-AKA Authentication**: MILENAGE algorithm set (f1-f5 functions) with HSM integration
     - **Exercises**: 5 scenarios (Profile A Classical, Profile B NIST, Profile C Hybrid, Profile C Pure PQC, 5G-AKA Authentication)
-  - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with Remote HSM architecture
-    - **PID Issuance**: Mobile Driving License (mDL) per ISO/IEC 18013-5
-    - **Attestations**: QEAA, PuB-EAA, and EAA issuance flows
-    - **Remote QES**: Qualified Electronic Signature via CSC API
+  - **EU Digital Identity Wallet**: EUDI Wallet ecosystem with pluggable crypto provider architecture
+    - **Pluggable CryptoProvider**: unified interface (`CryptoProvider`) with OpenSSL, SoftHSM PKCS#11,
+      and Dual-mode (parallel execution) backends — components call `getCryptoProvider()` instead of
+      branching on HSM readiness; provider implementations in `DigitalID/utils/`
+    - **PID Issuance**: Mobile Driving License (mDL) per ISO/IEC 18013-5 with native CBOR encoding via `cborg`
+    - **Attestations**: QEAA, PuB-EAA, and EAA issuance flows with X.509 qualified certificate generation
+    - **Remote QES**: Qualified Electronic Signature via CSC API with P-384 signing key and qualified certificate
     - **Protocols**: OpenID4VCI, OpenID4VP for credential exchange
+    - **X.509 Utilities**: self-signed X.509 v3 certificate generation (ES256/ES384) via `@peculiar/asn1-schema`
   - **TLS 1.3 Basics**: Interactive TLS 1.3 handshake simulation and cryptographic logging
     - **Dual Configuration**: GUI controls and raw OpenSSL config file editing
     - **Identity Options**: RSA, ML-DSA (Post-Quantum), and custom certificates
@@ -169,7 +173,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - Simulates PKCS#11 HSM operations and key rotation planning for enterprises
   - **Entropy & Randomness** (SP 800-90 A/B/C):
     - DRBG mechanism comparison: CTR_DRBG, Hash_DRBG, HMAC_DRBG, and XOF_DRBG (SHAKE-based, SP 800-90A Rev 2)
-    - TRNG vs QRNG comparison; min-entropy estimation; entropy source health monitoring
+    - **HMAC_DRBG Architecture Demo**: interactive SP 800-90A HMAC_DRBG lifecycle visualization —
+      Instantiate → Generate → Reseed phases with real-time (K, V, reseed counter) state tracking,
+      configurable entropy/nonce/personalization inputs, and action history log
+    - TRNG vs QRNG comparison; min-entropy estimation with danger-zone gauge arc; entropy source health monitoring
+    - QRNG demo with "Simulated" badge to distinguish from hardware-backed sources
     - FIPS 203 & 204 seed requirements (32-byte entropy for ML-KEM/ML-DSA; security strength matching per SP 800-131A)
     - LMS/XMSS stateful signature entropy failure analysis
   - **Quantum Key Distribution (QKD)**:
@@ -617,7 +625,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
   - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
-  - `@pqctoday/softhsm-wasm` v0.4.8 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine v0.4.7 (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine v0.4.8 (XMSS/LMS stateful signatures, CKA_XMSS_KEYS_REMAINING, CKA_HSS_KEYS_REMAINING accuracy, PKCS#11 v3.2 §5.7.5 C_GetAttributeValue compliance)
+  - `@pqctoday/softhsm-wasm` v0.4.17 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine v0.4.7 (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine v0.4.17 (XMSS/LMS stateful signatures, CKM_HASH_ML_DSA, CKM_HASH_SLH_DSA, CKM_EDDSA_PH, wasm-bindgen 0.2.117)
   - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
   - `@noble/curves` and `@noble/hashes` for blockchain operations
@@ -626,7 +634,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - `ed25519-hd-key` for Solana key derivation
 - **Styling**: Tailwind CSS 4.2.2 with custom design system and CSS variables
 - **State Management**: Zustand for module state and persistence
-- **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage)
+- **Data Processing**: Papa Parse (CSV), JSZip (file backup), LocalForage (storage), cborg (CBOR encoding for EUDI mDocs)
 - **UI/UX**: Framer Motion (animations), React Markdown (documentation)
 - **Testing**: Vitest + React Testing Library + Playwright
 - **Resilience**: `lazyWithRetry` wrapper retries failed chunk loads with exponential backoff; WASM
