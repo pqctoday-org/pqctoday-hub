@@ -5,12 +5,11 @@ import type { SoftHSMModule } from '@/wasm/softhsm'
 import {
   hsm_generateECKeyPair,
   hsm_extractECPoint,
-  hsm_ecdsaSign,
-  hsm_ecdsaVerify,
   hsm_digest,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
 } from '@/wasm/softhsm'
+import { hsm_ecdsaSign, hsm_ecdsaVerify } from '@/wasm/softhsm/classical'
 
 export const bytesToBase64 = (bytes: Uint8Array): string => {
   const binString = Array.from(bytes, (x) => String.fromCodePoint(x)).join('')
@@ -42,7 +41,8 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
   async generateKeyPair(
     alg: KeyAlgorithm,
     curve: KeyCurve,
-    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _onLog?: (log: string) => void
   ): Promise<CryptoKey> {
     const safeCurve = curve === 'Ed25519' ? 'P-256' : curve
     const { pubHandle, privHandle } = hsm_generateECKeyPair(
@@ -108,7 +108,8 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
   async signRaw(
     key: CryptoKey,
     tbs: Uint8Array,
-    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _onLog?: (log: string) => void
   ): Promise<Uint8Array> {
     if (!key.privateKey || !key.privateKey.startsWith('[PKCS#11 handle:')) {
       throw new Error('SoftHSMCryptoProvider requires a PKCS#11 handle in the privateKey field')
@@ -116,33 +117,20 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     const privHandle = parseInt(key.privateKey.match(/handle:\s*(\d+)/)?.[1] || '0', 10)
 
     const mechanism = key.curve === 'P-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
-    const sigBytes = hsm_ecdsaSign(
-      this.module,
-      this.hSession,
-      privHandle,
-      tbs as Uint8Array,
-      mechanism
-    )
+    const sigBytes = hsm_ecdsaSign(this.module, this.hSession, privHandle, tbs, mechanism)
 
-    return sigBytes as Uint8Array
+    return sigBytes
   }
 
   async verifySignature(
     key: CryptoKey,
     signature: string,
     data: string | Uint8Array,
-    onLog?: (log: string) => void // eslint-disable-line @typescript-eslint/no-unused-vars
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    _onLog?: (log: string) => void
   ): Promise<boolean> {
     const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
     const sigBytes = base64ToBytes(signature.replace(/-/g, '+').replace(/_/g, '/'))
-
-    // Reverse lookup handle from stored UI keys if we need to.
-    // Wait, hsm_ecdsaVerify requires the pubHandle!
-    // But CryptoKey object doesn't store pubHandle, it stores the raw public point hex.
-    // Let's find pubHandle via C_FindObjects or assume it was saved in key.meta?
-    // As a hack to align with standard web flows, if we can't find it easily we can
-    // import the generic mechanism.
-    // Let's modify generateKeyPair to store the pubHandle in key.meta
 
     let pubHandle = 0
     if (key.meta && typeof key.meta === 'object' && 'pubHandle' in key.meta) {
@@ -154,20 +142,13 @@ export class SoftHSMCryptoProvider implements CryptoProvider {
     }
 
     const mechanism = key.curve === 'P-384' ? CKM_ECDSA_SHA384 : CKM_ECDSA_SHA256
-    return hsm_ecdsaVerify(
-      this.module,
-      this.hSession,
-      pubHandle,
-      dataBytes as Uint8Array,
-      sigBytes as Uint8Array,
-      mechanism
-    )
+    return hsm_ecdsaVerify(this.module, this.hSession, pubHandle, dataBytes, sigBytes, mechanism)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async sha256Hash(data: string | Uint8Array, onLog?: (log: string) => void): Promise<string> {
+  async sha256Hash(data: string | Uint8Array, _onLog?: (log: string) => void): Promise<string> {
     const dataBytes = typeof data === 'string' ? new TextEncoder().encode(data) : data
-    const hashBytes = hsm_digest(this.module, this.hSession, dataBytes as Uint8Array)
-    return toBase64Url(hashBytes as Uint8Array)
+    const hashBytes = hsm_digest(this.module, this.hSession, dataBytes)
+    return toBase64Url(hashBytes)
   }
 }

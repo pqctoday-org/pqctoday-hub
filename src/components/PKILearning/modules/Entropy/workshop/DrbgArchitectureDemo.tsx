@@ -122,7 +122,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
         currentV = state.V
       }
 
-      let temp = new Uint8Array(0)
+      let temp: Uint8Array = new Uint8Array(0)
       while (temp.length < genBytesCount) {
         currentV = await hmac(currentK, currentV)
         temp = concat(temp, currentV)

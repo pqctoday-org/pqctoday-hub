@@ -103,7 +103,7 @@ export const createMdoc = async (
   return {
     docType,
     namespaces,
-    mobileSecurityObject: Object.fromEntries(mso), // Map extracted purely for UI inspection
+    mobileSecurityObject: Object.fromEntries(mso) as MsoMdoc['mobileSecurityObject'],
     issuerSignature: finalSignatureB64,
   }
 }
