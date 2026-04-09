@@ -8,6 +8,8 @@ export function useEmbedAuth() {
   const { allowedOrigins, userId, persistMode } = useEmbed()
   const [isAuthenticated, setIsAuthenticated] = useState(persistMode !== 'api') // Auto-authed if not API
   const tokenRef = useRef<string | null>(null)
+  // Stable target origin for postMessage — computed once from allowedOrigins (never changes in session)
+  const targetOrigin = allowedOrigins.includes('*') ? '*' : (allowedOrigins[0] ?? '*')
 
   // Listen for auth messages from parent
   useEffect(() => {
@@ -30,13 +32,13 @@ export function useEmbedAuth() {
 
     window.addEventListener('message', handleMessage)
 
-    // Signal readiness
+    // Signal readiness to parent
     if (window.parent !== window) {
-      window.parent.postMessage({ type: 'pqc:ready' }, '*')
+      window.parent.postMessage({ type: 'pqc:ready' }, targetOrigin)
     }
 
     return () => window.removeEventListener('message', handleMessage)
-  }, [allowedOrigins, persistMode, userId])
+  }, [allowedOrigins, persistMode, targetOrigin]) // userId intentionally excluded — not used in effect
 
   const getToken = useCallback(() => tokenRef.current, [])
 
@@ -44,9 +46,9 @@ export function useEmbedAuth() {
     setIsAuthenticated(false)
     tokenRef.current = null
     if (window.parent !== window) {
-      window.parent.postMessage({ type: 'pqc:authExpired', userId }, '*')
+      window.parent.postMessage({ type: 'pqc:authExpired', userId }, targetOrigin)
     }
-  }, [userId])
+  }, [userId, targetOrigin])
 
   return { isAuthenticated, getToken, triggerAuthExpired }
 }

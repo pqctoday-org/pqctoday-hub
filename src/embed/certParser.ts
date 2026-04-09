@@ -132,14 +132,28 @@ function getStringExtension(cert: x509.X509Certificate, oid: string, defaultValu
   if (!ext) return defaultValue
 
   try {
-    // Extension value is ASN.1 encoded — try to decode as UTF8String
-    const value = new TextDecoder().decode(ext.value)
-    // Strip ASN.1 tag+length prefix if present (UTF8String tag = 0x0C)
-    if (value.charCodeAt(0) === 0x0c) {
-      const len = value.charCodeAt(1)
-      return value.slice(2, 2 + len)
+    const bytes = new Uint8Array(ext.value)
+    // Strip ASN.1 DER tag+length prefix if present (UTF8String tag = 0x0C)
+    if (bytes[0] === 0x0c) {
+      let offset = 1
+      let len: number
+      if (bytes[offset] <= 0x7f) {
+        // Short form: length in single byte
+        len = bytes[offset]
+        offset += 1
+      } else {
+        // Long form: next byte indicates how many bytes encode the length
+        const numLenBytes = bytes[offset] & 0x7f
+        offset += 1
+        len = 0
+        for (let i = 0; i < numLenBytes; i++) {
+          len = (len << 8) | bytes[offset + i]
+        }
+        offset += numLenBytes
+      }
+      return new TextDecoder().decode(bytes.slice(offset, offset + len))
     }
-    return value
+    return new TextDecoder().decode(bytes)
   } catch {
     return defaultValue
   }

@@ -8,9 +8,11 @@ export function EmbedRouteGuard({ children }: { children: React.ReactNode }) {
   const { allowedRoutes } = useEmbed()
   const location = useLocation()
 
-  // The router has already stripped the "/embed" prefix by the time we get here,
-  // so location.pathname is "/learn" or "/assess" etc.
-  if (!matchesAllowedRoute(location.pathname, allowedRoutes)) {
+  // useLocation returns the full pathname including the /embed prefix.
+  // Strip it before checking against allowedRoutes (which use bare paths like /learn).
+  const strippedPath = location.pathname.replace(/^\/embed/, '') || '/'
+
+  if (!matchesAllowedRoute(strippedPath, allowedRoutes)) {
     const fallbackPath = getFirstAllowedRoute(allowedRoutes)
     return <Navigate to={fallbackPath} replace />
   }
