@@ -51,10 +51,14 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
 
           return (
             <li key={item.threatId}>
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => setSelectedThreat(item)}
-                className="w-full text-left glass-panel p-4 hover:border-primary/30 transition-colors active:scale-[0.99]"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') setSelectedThreat(item)
+                }}
+                className="w-full text-left glass-panel p-4 hover:border-primary/30 transition-colors active:scale-[0.99] cursor-pointer"
               >
                 {/* Header: criticality + industry + status */}
                 <div className="flex items-center justify-between gap-2 mb-2">
@@ -104,14 +108,7 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                   </div>
                 </div>
                 {/* Actions Footer */}
-                {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
-                <div
-                  className="flex pt-3 mt-3 border-t border-border/50 items-center justify-end gap-2"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                  }}
-                >
+                <div className="flex pt-3 mt-3 border-t border-border/50 items-center justify-end gap-2">
                   <EndorseButton
                     endorseUrl={buildEndorsementUrl({
                       category: 'threat-endorsement',
@@ -149,7 +146,7 @@ export const MobileThreatsList: React.FC<MobileThreatsListProps> = ({ items }) =
                     resourceType="Threat"
                   />
                 </div>
-              </button>
+              </div>
             </li>
           )
         })}

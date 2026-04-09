@@ -6,6 +6,56 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.96.0] - 2026-04-09
+
+### Added
+
+- **Embed SDK — vendor iframe integration**: New `/embed/*` route tree renders any app view inside a
+  slim `EmbedLayout` (compact nav, no full-page shell) for embedding in third-party vendor iframes.
+  Embed URLs are cryptographically signed with ECDSA P-256 and verified via X.509 vendor certificates
+  (`@peculiar/x509`). Vendor registry supports dev/prod separation (`vendorRegistry.dev.ts`).
+
+- **Embed SDK — persistence and auth**: `useEmbedPersistence` syncs all Zustand stores via
+  `api` (REST) or `postMessage` modes. `useEmbedAuth` handles token refresh on `pqc:authExpired`
+  events. `EmbedPersistenceService` provides three backends: `ApiPersistence`,
+  `PostMessagePersistence`, `NoPersistence`.
+
+- **Embed SDK — `PQCEmbed` JS client**: `public/embed/sdk.js` (ESM bundle) — drop-in vendor wrapper
+  for bridging auth, snapshot load/save, events, and resize messages across the iframe boundary.
+  Built via `npm run build:sdk` (esbuild, ES2020 target).
+
+- **Service worker — embed COOP header**: `withCOIHeaders()` now sets
+  `Cross-Origin-Opener-Policy: unsafe-none` for `/embed/*` paths (required for postMessage with
+  parent frames) and `same-origin` everywhere else.
+
+### Fixed
+
+- **Safari blank page**: Embed verification imports (`@peculiar/x509`, `certParser`, vendor registry)
+  are now lazy-loaded via dynamic `import()` only on `/embed/` paths, so they are never evaluated on
+  normal page loads. Fixes Safari's strict ES module binding resolution that caused a blank page.
+
+- **Safari `EmbedState` binding error**: `EmbedState`, `EmbedConfig`, `PqcMessage`,
+  `IEmbedPersistenceService`, and `PersonaId` were imported as values; corrected to `import type`
+  throughout the embed module tree.
+
+- **Nested `<button>` in MobileThreatsList**: The outer card element was a `<button>` containing
+  `EndorseButton` and `FlagButton` (also buttons). Replaced with a `<div role="button">` with
+  `tabIndex={0}` and keyboard handler for full accessibility compliance.
+
+- **Leader avatars — CORP violation**: `ui-avatars.com` images were blocked by
+  `Cross-Origin-Embedder-Policy: require-corp` (the service doesn't set CORP headers). External
+  avatar URLs are now stripped at data load time; components fall back to the local User icon.
+
+- **CSP — `flagcdn.com` and `frame-ancestors`**: Added `https://flagcdn.com` to `img-src` (country
+  flags in Assess step 2). Added `frame-ancestors *` to permit embedding in vendor iframes.
+
+- **Analytics noise**: Removed `console.log` from `analytics.ts` (localhost detection, GA init,
+  page view, event logging). Only the missing-ID warning remains.
+
+- **`sdk.ts` memory leak**: `PQCEmbed.destroy()` was calling `.bind(this)` again, creating a new
+  function reference that didn't match the registered listener. Bound function is now stored as an
+  instance property so `removeEventListener` correctly removes it.
+
 ## [2.95.0] - 2026-04-08
 
 ### Added

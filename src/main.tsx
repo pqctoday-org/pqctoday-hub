@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { createRoot } from 'react-dom/client'
+import { setEmbedState } from './embed/embedContext'
 import './styles/index.css'
 import AppRoot from './AppRoot'
 import { initGA } from './utils/analytics'
@@ -95,4 +96,22 @@ if (import.meta.env.DEV) {
 const rootElement = document.getElementById('root')
 if (!rootElement) throw new Error('Failed to find the root element')
 
-createRoot(rootElement).render(<AppRoot />)
+const mountApp = () => createRoot(rootElement).render(<AppRoot />)
+
+if (window.location.pathname.startsWith('/embed/')) {
+  // Lazy-import the embed verification chain so @peculiar/x509 and friends
+  // are never evaluated on normal (non-embed) page loads — Safari compat.
+  import('./embed/verifySignature')
+    .then(({ verifyEmbedUrl }) => verifyEmbedUrl(new URL(window.location.href)))
+    .then((config) => {
+      setEmbedState(config)
+      mountApp()
+    })
+    .catch((err) => {
+      console.error('Embed verification failed:', err)
+      const code = err.code || 'invalid_embed'
+      window.location.href = `https://pqctoday.com?error=${code}`
+    })
+} else {
+  mountApp()
+}

@@ -60,7 +60,7 @@ const {
     type: row.Type as Leader['type'],
     category: row.Category,
     bio: row.Contribution,
-    imageUrl: row.ImageUrl,
+    imageUrl: row.ImageUrl?.includes('ui-avatars.com') ? undefined : row.ImageUrl,
     websiteUrl: row.WebsiteUrl,
     linkedinUrl: row.LinkedinUrl,
     keyResourceUrl: row.KeyResourceUrl ? splitSemicolon(row.KeyResourceUrl) : undefined,

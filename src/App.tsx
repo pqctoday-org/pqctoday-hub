@@ -12,6 +12,8 @@ import { useAchievementChecker } from './hooks/useAchievementChecker'
 import { AchievementSectionTracker } from './components/AchievementSectionTracker'
 import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
+import { EmbedLayout } from './components/Layout/EmbedLayout'
+import { EmbedRouteGuard } from './embed/EmbedRouteGuard'
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -162,6 +164,156 @@ function HistorySeeder() {
 }
 
 function App() {
+  const commonRoutes = (
+    <>
+      <Route
+        path="timeline"
+        element={
+          <ErrorBoundary>
+            <TimelineView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="algorithms"
+        element={
+          <ErrorBoundary>
+            <AlgorithmsView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="library"
+        element={
+          <ErrorBoundary>
+            <LibraryView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="learn/*"
+        element={
+          <ErrorBoundary>
+            <PKILearningView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="playground"
+        element={
+          <ErrorBoundary>
+            <PlaygroundShell />
+          </ErrorBoundary>
+        }
+      >
+        <Route index element={<PlaygroundWorkshop />} />
+        <Route path="interactive" element={<PlaygroundView />} />
+        <Route path="hsm" element={<HsmPlayground />} />
+        <Route path=":toolId" element={<PlaygroundToolRoute />} />
+      </Route>
+      <Route
+        path="openssl"
+        element={
+          <ErrorBoundary>
+            <OpenSSLStudioView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="threats"
+        element={
+          <ErrorBoundary>
+            <ThreatsDashboard />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="leaders"
+        element={
+          <ErrorBoundary>
+            <LeadersGrid />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="compliance"
+        element={
+          <ErrorBoundary>
+            <ComplianceView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="changelog"
+        element={
+          <ErrorBoundary>
+            <ChangelogView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="migrate"
+        element={
+          <ErrorBoundary>
+            <MigrateView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="about"
+        element={
+          <ErrorBoundary>
+            <AboutView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="assess"
+        element={
+          <ErrorBoundary>
+            <AssessView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="report"
+        element={
+          <ErrorBoundary>
+            <ReportView />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="business"
+        element={
+          <ErrorBoundary>
+            <BusinessCenterShell />
+          </ErrorBoundary>
+        }
+      >
+        <Route index element={<BusinessCenterView />} />
+        <Route path="tools" element={<BusinessToolsGrid />} />
+        <Route path="tools/:toolId" element={<BusinessToolRoute />} />
+      </Route>
+      <Route
+        path="faq"
+        element={
+          <ErrorBoundary>
+            <FAQPage />
+          </ErrorBoundary>
+        }
+      />
+      <Route
+        path="terms"
+        element={
+          <ErrorBoundary>
+            <TermsView />
+          </ErrorBoundary>
+        }
+      />
+    </>
+  )
+
   return (
     <BrowserRouter>
       <ScrollToTop />
@@ -181,6 +333,18 @@ function App() {
         }
       >
         <Routes>
+          <Route
+            path="/embed/*"
+            element={
+              <EmbedRouteGuard>
+                <EmbedLayout />
+              </EmbedRouteGuard>
+            }
+          >
+            {commonRoutes}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Route>
+
           <Route element={<MainLayout />}>
             <Route
               path="/"
@@ -190,151 +354,7 @@ function App() {
                 </ErrorBoundary>
               }
             />
-            <Route
-              path="/timeline"
-              element={
-                <ErrorBoundary>
-                  <TimelineView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/algorithms"
-              element={
-                <ErrorBoundary>
-                  <AlgorithmsView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/library"
-              element={
-                <ErrorBoundary>
-                  <LibraryView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/learn/*"
-              element={
-                <ErrorBoundary>
-                  <PKILearningView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/playground"
-              element={
-                <ErrorBoundary>
-                  <PlaygroundShell />
-                </ErrorBoundary>
-              }
-            >
-              <Route index element={<PlaygroundWorkshop />} />
-              <Route path="interactive" element={<PlaygroundView />} />
-              <Route path="hsm" element={<HsmPlayground />} />
-              <Route path=":toolId" element={<PlaygroundToolRoute />} />
-            </Route>
-            <Route
-              path="/openssl"
-              element={
-                <ErrorBoundary>
-                  <OpenSSLStudioView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/threats"
-              element={
-                <ErrorBoundary>
-                  <ThreatsDashboard />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/leaders"
-              element={
-                <ErrorBoundary>
-                  <LeadersGrid />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/compliance"
-              element={
-                <ErrorBoundary>
-                  <ComplianceView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/changelog"
-              element={
-                <ErrorBoundary>
-                  <ChangelogView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/migrate"
-              element={
-                <ErrorBoundary>
-                  <MigrateView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/about"
-              element={
-                <ErrorBoundary>
-                  <AboutView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/assess"
-              element={
-                <ErrorBoundary>
-                  <AssessView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/report"
-              element={
-                <ErrorBoundary>
-                  <ReportView />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/business"
-              element={
-                <ErrorBoundary>
-                  <BusinessCenterShell />
-                </ErrorBoundary>
-              }
-            >
-              <Route index element={<BusinessCenterView />} />
-              <Route path="tools" element={<BusinessToolsGrid />} />
-              <Route path="tools/:toolId" element={<BusinessToolRoute />} />
-            </Route>
-            <Route
-              path="/faq"
-              element={
-                <ErrorBoundary>
-                  <FAQPage />
-                </ErrorBoundary>
-              }
-            />
-            <Route
-              path="/terms"
-              element={
-                <ErrorBoundary>
-                  <TermsView />
-                </ErrorBoundary>
-              }
-            />
+            {commonRoutes}
             {/* Fallback route */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Route>

@@ -260,3 +260,6 @@ splitpqctodayrepopubandpriv.md
 
 # Private data backups
 leadersbackup*.md
+
+# CA Tool root CA directory (private)
+embed-root-ca/

@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.95.0",
+  "version": "2.96.0",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -23,7 +23,8 @@
     "check:csv-count": "bash scripts/check-csv-count.sh",
     "archive:csv": "bash scripts/archive-csvs.sh",
     "prebuild": "npm run scrape && npm run generate-corpus",
-    "build": "cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
+    "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
+    "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
     "prerender": "node scripts/prerender.mjs",
     "lint": "eslint --no-error-on-unmatched-pattern src scripts e2e *.ts *.js *.cjs",
     "preview": "vite preview",
@@ -75,6 +76,7 @@
     "@peculiar/asn1-schema": "^2.6.0",
     "@peculiar/asn1-x509": "^2.6.1",
     "@peculiar/asn1-x509-post-quantum": "^2.6.1",
+    "@peculiar/x509": "^2.0.0",
     "@pqctoday/softhsm-wasm": "file:./src/vendor/softhsm-wasm",
     "@react-oauth/google": "^0.13.4",
     "@scure/base": "^2.0.0",
