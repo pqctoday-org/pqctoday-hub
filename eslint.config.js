@@ -51,6 +51,14 @@ export default defineConfig([
       '@typescript-eslint/no-explicit-any': 'error',
       '@typescript-eslint/no-unused-vars': 'error',
       'no-console': ['error', { allow: ['warn', 'error'] }],
+      'no-restricted-syntax': [
+        'error',
+        {
+          selector: "JSXElement[openingElement.name.name='button']",
+          message:
+            'Raw HTML <button> tags are blocked for UI consistency. Please import and use the <Button> component from `src/components/ui/button.tsx` instead.',
+        },
+      ],
     },
     languageOptions: {
       ecmaVersion: 2020,

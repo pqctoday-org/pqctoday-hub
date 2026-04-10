@@ -54,6 +54,12 @@
   --color-file-csr: hsl(var(--file-csr));
   --color-file-csr-foreground: hsl(var(--file-csr-foreground));
 
+  /* Embed Dynamic CSS Variables for Vendor-overridable Branding */
+  --color-embed-link: var(--embed-link-color, var(--color-primary));
+  --color-embed-table-header: var(--embed-table-header-bg, var(--color-muted));
+  --color-embed-table-row: var(--embed-table-row-bg, var(--color-background));
+  --color-embed-text: var(--embed-text-color, var(--color-foreground));
+
   --font-family-sans: Inter, system-ui, sans-serif;
 
   /* Z-index scale — centralised stacking order */

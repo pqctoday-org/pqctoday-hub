@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
+import { Button } from '@/components/ui/button'
 import { useSearchParams, Link } from 'react-router-dom'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs'
 import { ComplianceTable, type SortColumn, type SortDirection } from './ComplianceTable'
@@ -185,33 +186,41 @@ function MobileViewToggle({
   return (
     <div className="space-y-4">
       <div className="flex gap-1.5 overflow-x-auto pb-0.5 scrollbar-none">
-        <button
+        <Button
+          variant="ghost"
           className={btnClass(section === 'standards')}
           onClick={() => setSection('standards')}
         >
           Bodies
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           className={btnClass(section === 'technical')}
           onClick={() => setSection('technical')}
         >
           Tech Stds
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           className={btnClass(section === 'certification')}
           onClick={() => setSection('certification')}
         >
           Cert Schemes
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           className={btnClass(section === 'compliance')}
           onClick={() => setSection('compliance')}
         >
           Frameworks
-        </button>
-        <button className={btnClass(section === 'records')} onClick={() => setSection('records')}>
+        </Button>
+        <Button
+          variant="ghost"
+          className={btnClass(section === 'records')}
+          onClick={() => setSection('records')}
+        >
           Records
-        </button>
+        </Button>
       </div>
       {section === 'standards' && (
         <ComplianceLandscape
@@ -330,7 +339,10 @@ export const ComplianceView = () => {
   // Landscape filter state
   const [lsOrg, setLsOrg] = useState(() => searchParams.get('org') ?? 'All')
   const [lsIndustry, setLsIndustry] = useState(
-    () => searchParams.get('ind') ?? selectedIndustries[0] ?? 'All'
+    // Only pre-select an industry when exactly one is active (cert restricts to single industry).
+    // Multiple industries (including "all allowed") → default to 'All' so nothing is filtered out.
+    () =>
+      searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
   )
   const [lsSearch, setLsSearch] = useState(() => searchParams.get('q') ?? '')
   const [lsSearchInput, setLsSearchInput] = useState(() => searchParams.get('q') ?? '')
@@ -501,7 +513,8 @@ export const ComplianceView = () => {
 
     if (isLandscapeTab(tab)) {
       const nextOrg = searchParams.get('org') ?? 'All'
-      const nextInd = searchParams.get('ind') ?? selectedIndustries[0] ?? 'All'
+      const nextInd =
+        searchParams.get('ind') ?? (selectedIndustries.length === 1 ? selectedIndustries[0] : 'All')
       const nextQ = searchParams.get('q') ?? ''
       const nextSort = (searchParams.get('sort') as FrameworkSortOption) ?? 'deadline'
       const nextView = (searchParams.get('view') as ViewMode) ?? 'cards'

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useMemo } from 'react'
+import { Button } from '@/components/ui/button'
 import { Link } from 'react-router-dom'
 import {
   ShieldCheck,
@@ -264,21 +265,23 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
             )}
           </div>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           aria-label={isSelected ? 'Remove from My Frameworks' : 'Add to My Frameworks'}
           onClick={(e) => {
             e.stopPropagation()
             toggleMyFramework(fw.id)
           }}
-          className={`p-1 rounded transition-colors shrink-0 ${
+          className={`p-1 h-auto shrink-0 ${
             isSelected
               ? 'text-primary hover:text-primary/80'
               : 'text-muted-foreground/40 hover:text-primary'
           }`}
         >
           {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-        </button>
+        </Button>
       </div>
 
       <div className={`flex items-center gap-1.5 text-xs ${urgencyColor(urgency)}`}>
@@ -353,13 +356,15 @@ function FrameworkCard({ fw }: { fw: ComplianceFramework }) {
             </Link>
           )}
           {fw.notes && (
-            <button
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => setExpanded(!expanded)}
-              className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors ml-auto"
+              className="flex items-center gap-1 h-auto py-0 text-xs text-primary hover:text-primary/80 ml-auto"
             >
               {expanded ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
               {expanded ? 'Hide' : 'Details'}
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -416,21 +421,23 @@ function FrameworkTableRow({ fw }: { fw: ComplianceFramework }) {
   return (
     <tr className="border-b border-border hover:bg-muted/20 transition-colors">
       <td className="py-2.5 px-2 w-8 text-center">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           aria-label={isSelected ? 'Remove from My Frameworks' : 'Add to My Frameworks'}
           onClick={(e) => {
             e.stopPropagation()
             toggleMyFramework(fw.id)
           }}
-          className={`p-1 rounded transition-colors ${
+          className={`p-1 h-auto ${
             isSelected
               ? 'text-primary hover:text-primary/80'
               : 'text-muted-foreground/40 hover:text-primary'
           }`}
         >
           {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-        </button>
+        </Button>
       </td>
       <td className="py-2.5 px-3">
         <div className="flex items-center gap-2">
@@ -595,7 +602,9 @@ export function ComplianceLandscape({
 
   // Filter state — controlled from parent when props provided, local fallback otherwise
   const [localOrg, setLocalOrg] = useState<string>('All')
-  const [localIndustry, setLocalIndustry] = useState<string>(selectedIndustries[0] ?? 'All')
+  const [localIndustry, setLocalIndustry] = useState<string>(
+    selectedIndustries.length === 1 ? selectedIndustries[0] : 'All'
+  )
   const [localSearch, setLocalSearch] = useState<string>('')
   const [localSort, setLocalSort] = useState<FrameworkSortOption>('deadline')
   const [localView, setLocalView] = useState<ViewMode>('cards')
@@ -713,16 +722,29 @@ export function ComplianceLandscape({
           />
         </div>
 
-        {/* Industry dropdown */}
-        <div className="min-w-[140px]">
-          <FilterDropdown
-            items={industryItems}
-            selectedId={industryFilter}
-            onSelect={setIndustryFilter}
-            defaultLabel="Industry"
-            noContainer
-            opaque
-          />
+        {/* Industry dropdown + clear */}
+        <div className="flex items-center gap-1">
+          <div className="min-w-[140px]">
+            <FilterDropdown
+              items={industryItems}
+              selectedId={industryFilter}
+              onSelect={setIndustryFilter}
+              defaultLabel="Industry"
+              noContainer
+              opaque
+            />
+          </div>
+          {industryFilter !== 'All' && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setIndustryFilter('All')}
+              className="h-auto py-1 px-2 text-xs bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20"
+              aria-label="Clear industry filter"
+            >
+              All
+            </Button>
+          )}
         </div>
 
         {/* Search input */}
@@ -759,10 +781,12 @@ export function ComplianceLandscape({
 
         {/* "Show mine" toggle — visible when user has selections */}
         {myFrameworks.length > 0 && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowOnlyMine(!showOnlyMine)}
-            className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
+            className={`h-auto text-xs px-3 py-1.5 border font-medium whitespace-nowrap ${
               showOnlyMine
                 ? 'border-primary bg-primary/10 text-primary'
                 : 'border-border bg-muted/30 text-muted-foreground hover:text-foreground hover:border-primary/30'
@@ -771,7 +795,7 @@ export function ComplianceLandscape({
           >
             <BookmarkCheck size={12} />
             My ({myFrameworks.length})
-          </button>
+          </Button>
         )}
       </div>
 
