@@ -19,6 +19,7 @@ export default defineConfig([
       'src/vendor',
       '**/*.min.js',
       'public/coi-serviceworker.js',
+      'public/embed/sdk.js',
     ],
   },
 

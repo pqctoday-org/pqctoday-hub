@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
+import { logModuleTabSwitch } from '@/utils/analytics'
 
 /**
  * Parses ?tab= and ?step= from the current URL for module deep-linking.
@@ -46,6 +47,8 @@ export function useSyncDeepLink(
   flow?: string | null,
   defaultTab = 'learn'
 ) {
+  const isMounted = useRef(false)
+
   useEffect(() => {
     const url = new URL(window.location.href)
 
@@ -68,5 +71,16 @@ export function useSyncDeepLink(
     }
 
     window.history.replaceState(null, '', url.toString())
+
+    // Track tab switches — skip the initial mount (deep-link or default)
+    if (isMounted.current) {
+      const segments = window.location.pathname.split('/')
+      // pathname: /learn/<moduleId>/... or /embed/learn/<moduleId>/...
+      const learnIdx = segments.indexOf('learn')
+      const moduleId = learnIdx !== -1 ? (segments[learnIdx + 1] ?? '') : ''
+      if (moduleId) logModuleTabSwitch(moduleId, tab)
+    } else {
+      isMounted.current = true
+    }
   }, [tab, step, flow, defaultTab])
 }

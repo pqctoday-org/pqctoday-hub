@@ -6,6 +6,55 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.97.0] - 2026-04-09
+
+### Added
+
+- **Embed SDK — policy enforcement**: VendorPolicy is now fully enforced at runtime.
+  `EmbedRouteGuard` enforces route, module, tool, and `maxDifficulty` restrictions from the cert.
+  `EmbedLayout` seeds the persona/region/industry stores from cert policy on mount (single source of
+  truth). `PersonalizationSection` filters persona/region/industry pickers to cert-allowed values in
+  embed mode. `verifySignature` clamps the URL `persona` param to cert-allowed personas.
+
+- **Embed SDK — VendorPolicy X.509 format**: `certParser.ts` now reads a single JSON-encoded
+  `VendorPolicy` object from OID `.1`, with backward-compatible fallback to the legacy 8-OID CSV
+  format. `vendorRegistry.ts` auto-discovers vendor certs from `pki/vendors/*.pem` at build time.
+
+- **Embed SDK — module/tool path validation**: `verifySignature` validates `/learn/<moduleId>` and
+  `/playground/<toolId>` paths against cert `policy.routes.modules` / `policy.routes.tools` at
+  verification time (Step 6). `EmbedRouteGuard` enforces the same restrictions at navigation time.
+
+- **GA4 analytics — embed mode coverage**: New events `Embed / Session Start`, `Embed /
+Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Policy Applied`
+  wired to `main.tsx`, `EmbedRouteGuard`, and `EmbedLayout`. Captures vendor ID, kid, presets,
+  test mode flag, and policy restrictions.
+
+- **GA4 analytics — assessment wizard**: `Assessment / Start`, `Assessment / Step` (step
+  number + label), `Assessment / Complete` (persona result), `Assessment / Reset` wired to
+  `AssessWizard.tsx`.
+
+- **GA4 analytics — persona/personalization**: `Persona / Selected` (with `picker`/`assessment`/
+  `embed` source), `Persona / Region`, `Persona / Industry` wired to `PersonalizationSection.tsx`
+  handlers.
+
+- **GA4 analytics — module tab switches**: `Learning / Tab Switch` fires via `useSyncDeepLink` on
+  every learn↔workshop tab change across all 51 PKI learning modules. Skips the initial mount to
+  avoid counting deep-link navigations as user tab switches.
+
+### Fixed
+
+- **`EmbedVerificationError` TypeScript compile error**: `public readonly` constructor parameter
+  shorthand rejected by `erasableSyntaxOnly` strict mode. Fields now declared explicitly.
+
+- **`crypto.subtle.verify()` type error**: `Uint8Array<ArrayBufferLike>` not assignable to
+  `BufferSource`. Fixed by passing `.buffer as ArrayBuffer`.
+
+- **Pre-existing analytics test failures**: Three tests asserted `console.log/warn` output that
+  analytics helpers silently suppress on localhost. Tests updated to assert `ReactGA` method calls.
+
+- **`consoleLogSpy` unused variable lint error** in `analytics.test.ts`: Removed the unused spy
+  after test assertions were corrected to not depend on console output.
+
 ## [2.96.0] - 2026-04-09
 
 ### Added

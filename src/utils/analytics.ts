@@ -208,3 +208,76 @@ export const logBusinessToolOpen = (toolId: string, toolName: string) => {
 export const logBusinessToolExport = (toolId: string, format: string) => {
   logEvent('Business', 'Tool Export', `${toolId}:${format}`)
 }
+
+// --- Embed mode tracking ---
+
+export const logEmbedSession = (
+  vendorId: string,
+  kid: string,
+  presets: string[],
+  isTest: boolean
+) => {
+  logEvent('Embed', 'Session Start', `${vendorId}:${presets.join('+')}|kid=${kid}|test=${isTest}`)
+}
+
+export const logEmbedError = (code: string, kid?: string) => {
+  logEvent('Embed', 'Verification Error', kid ? `${code}|kid=${kid}` : code)
+}
+
+export const logEmbedRouteBlocked = (
+  attempted: string,
+  reason: 'route' | 'module' | 'tool' | 'difficulty'
+) => {
+  logEvent('Embed', 'Route Blocked', `${attempted}|reason=${reason}`)
+}
+
+export const logEmbedPolicyApplied = (
+  vendorId: string,
+  personas: string[],
+  regions: string[],
+  industries: string[]
+) => {
+  const parts = [`vendor=${vendorId}`]
+  if (personas.length) parts.push(`personas=${personas.join(',')}`)
+  if (regions.length) parts.push(`regions=${regions.join(',')}`)
+  if (industries.length) parts.push(`industries=${industries.join(',')}`)
+  logEvent('Embed', 'Policy Applied', parts.join('|'))
+}
+
+// --- Assessment wizard tracking ---
+
+export const logAssessStart = () => {
+  logEvent('Assessment', 'Start')
+}
+
+export const logAssessStep = (step: number, label: string) => {
+  logEvent('Assessment', 'Step', `${step}:${label}`)
+}
+
+export const logAssessComplete = (personaResult: string) => {
+  logEvent('Assessment', 'Complete', personaResult)
+}
+
+export const logAssessReset = () => {
+  logEvent('Assessment', 'Reset')
+}
+
+// --- Persona / personalization tracking ---
+
+export const logPersonaSelected = (persona: string, source: 'picker' | 'assessment' | 'embed') => {
+  logEvent('Persona', 'Selected', `${persona}:${source}`)
+}
+
+export const logRegionSelected = (region: string) => {
+  logEvent('Persona', 'Region', region)
+}
+
+export const logIndustrySelected = (industry: string) => {
+  logEvent('Persona', 'Industry', industry)
+}
+
+// --- Learning module tab tracking ---
+
+export const logModuleTabSwitch = (moduleId: string, tab: 'learn' | 'workshop' | string) => {
+  logEvent('Learning', 'Tab Switch', `${moduleId}:${tab}`)
+}

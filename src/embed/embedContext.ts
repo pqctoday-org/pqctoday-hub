@@ -9,6 +9,8 @@
  * See PRD §7.2 for the EmbedConfig interface.
  */
 
+import type { VendorPolicy } from './vendorPolicy'
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -27,9 +29,19 @@ export interface EmbedConfig {
   theme?: 'dark' | 'light'
   persona?: string
   allowedOrigins: string[]
-  allowedRegions: string[]
-  allowedIndustries: string[]
-  allowedRoles: string[]
+  /** Full vendor access policy from the certificate */
+  policy: VendorPolicy
+  /** Restricted module IDs; undefined = all modules in preset are allowed */
+  allowedModules?: string[]
+  /** Restricted tool IDs; undefined = all tools in preset are allowed */
+  allowedTools?: string[]
+  /** Personas allowed by cert; undefined = all personas permitted */
+  allowedPersonas?: string[]
+  /** Regions allowed by cert; undefined = all regions permitted */
+  allowedRegions?: string[]
+  /** Industries allowed by cert; undefined = all industries permitted */
+  allowedIndustries?: string[]
+  isTestMode?: boolean
 }
 
 export type EmbedState = { isEmbedded: false } | EmbedConfig

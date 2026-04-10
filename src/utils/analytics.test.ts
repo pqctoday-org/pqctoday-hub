@@ -13,7 +13,6 @@ vi.mock('react-ga4', () => ({
 }))
 
 // Mock console methods
-const consoleLogSpy = vi.spyOn(console, 'log').mockImplementation(() => {})
 const consoleWarnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {})
 
 describe('analytics', () => {
@@ -67,7 +66,6 @@ describe('analytics', () => {
       initGA()
 
       expect(ReactGA.initialize).not.toHaveBeenCalled()
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Localhost detected'))
     })
 
     it('does NOT initialize Google Analytics when on 127.0.0.1', () => {
@@ -83,11 +81,11 @@ describe('analytics', () => {
       expect(ReactGA.initialize).not.toHaveBeenCalled()
     })
 
-    it('logs appropriate message when initializing', () => {
+    it('calls ReactGA.initialize when measurement ID is set and not on localhost', () => {
       initGA()
 
-      // Should log either initialization or warning
-      expect(consoleLogSpy.mock.calls.length + consoleWarnSpy.mock.calls.length).toBeGreaterThan(0)
+      // initGA() silently calls ReactGA.initialize — no console output by design
+      expect(ReactGA.initialize).toHaveBeenCalledWith('test-measurement-id')
     })
   })
 
@@ -260,14 +258,16 @@ describe('analytics', () => {
       expect(totalCalls).toBeGreaterThan(0)
     })
 
-    it('logs console messages for tracking', () => {
+    it('calls ReactGA functions when on non-localhost origin', () => {
+      // Integration test runs on example.com (set in beforeEach)
       vi.clearAllMocks()
 
       logPageView('/test')
       logEvent('Test', 'Action')
 
-      // Should have logged something to console
-      expect(consoleLogSpy.mock.calls.length).toBeGreaterThan(0)
+      // logPageView and logEvent call ReactGA.send/event — no console output by design
+      expect(ReactGA.send).toHaveBeenCalled()
+      expect(ReactGA.event).toHaveBeenCalled()
     })
   })
 })

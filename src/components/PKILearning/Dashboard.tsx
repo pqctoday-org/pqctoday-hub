@@ -20,6 +20,7 @@ import { ModuleTable, type ModuleTableItem } from './ModuleTable'
 import { MODULE_CATALOG, MODULE_TRACKS, MODULE_STEP_COUNTS, MODULE_TO_TRACK } from './moduleData'
 import { MobileLearnFilterDrawer } from './MobileLearnFilterDrawer'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -170,6 +171,7 @@ const LearnSortControl = ({
 
 export const Dashboard: React.FC = () => {
   const navigate = useNavigate()
+  const isEmbedded = useIsEmbedded()
   const { modules } = useModuleStore()
 
   const activeModules = MODULE_TRACKS.flatMap((t) => t.modules)
@@ -233,7 +235,10 @@ export const Dashboard: React.FC = () => {
       )}
 
       {/* Module Tracks Grid — always visible */}
-      <ModuleTracksGrid navigate={navigate} onGoHome={() => navigate('/')} />
+      <ModuleTracksGrid
+        navigate={navigate}
+        onGoHome={isEmbedded ? undefined : () => navigate('/')}
+      />
     </div>
   )
 }

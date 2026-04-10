@@ -263,3 +263,6 @@ leadersbackup*.md
 
 # CA Tool root CA directory (private)
 embed-root-ca/
+
+# Standalone tools repo (managed separately at pqctoday/pqc-tools)
+tools/

@@ -9,6 +9,7 @@ export const TEST_VENDOR_REGISTRY: readonly VendorRegistryEntry[] = [
     vendorName: 'Test Vendor Full',
     certPem: testVendorCertFull,
     revoked: false,
+    isTest: true,
   },
   {
     kid: 'test-vendor-restricted',
@@ -16,5 +17,6 @@ export const TEST_VENDOR_REGISTRY: readonly VendorRegistryEntry[] = [
     vendorName: 'Test Vendor Restricted',
     certPem: testVendorCertRestricted,
     revoked: false,
+    isTest: true,
   },
 ]

@@ -5,6 +5,7 @@ import { PKILearningView as PKILearning } from './PKILearningView'
 import { MemoryRouter, Routes, Route } from 'react-router-dom'
 import '@testing-library/jest-dom'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import { EmbedProvider } from '../../embed/EmbedProvider'
 
 // Mock sub-components
 vi.mock('./modules/DigitalAssets', () => ({
@@ -14,14 +15,16 @@ vi.mock('./modules/PKIWorkshop', () => ({
   PKIWorkshop: () => <div data-testid="module-pki-workshop">PKIWorkshop Module</div>,
 }))
 
-// Helper to render with routing context
+// Helper to render with routing context + embed context
 const renderWithRouter = () => {
   return render(
-    <MemoryRouter initialEntries={['/learn']}>
-      <Routes>
-        <Route path="/learn/*" element={<PKILearning />} />
-      </Routes>
-    </MemoryRouter>
+    <EmbedProvider>
+      <MemoryRouter initialEntries={['/learn']}>
+        <Routes>
+          <Route path="/learn/*" element={<PKILearning />} />
+        </Routes>
+      </MemoryRouter>
+    </EmbedProvider>
   )
 }
 

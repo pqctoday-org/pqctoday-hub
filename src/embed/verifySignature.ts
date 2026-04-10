@@ -9,8 +9,8 @@
  *   3. Parse X.509 certificate
  *   4. Validate certificate time window
  *   5. Validate URL expiry (5-min clock skew tolerance)
- *   6. Validate routes against certificate
- *   7. Validate persist mode against certificate
+ *   6. Validate routes against certificate policy
+ *   7. Validate persist mode against certificate policy
  *   8. Verify ECDSA P-256 signature
  *   9. Construct EmbedConfig
  */
@@ -34,18 +34,20 @@ export type EmbedErrorCode =
   | 'url_expired'
   | 'session_too_long'
   | 'unauthorized_routes'
+  | 'unauthorized_module'
+  | 'unauthorized_tool'
   | 'unauthorized_persist'
   | 'invalid_signature'
   | 'verification_error'
 
 export class EmbedVerificationError extends Error {
-  constructor(
-    public readonly code: EmbedErrorCode,
-    message: string,
-    public readonly kid?: string
-  ) {
+  readonly code: EmbedErrorCode
+  readonly kid?: string
+  constructor(code: EmbedErrorCode, message: string, kid?: string) {
     super(message)
     this.name = 'EmbedVerificationError'
+    this.code = code
+    this.kid = kid
   }
 }
 
@@ -95,7 +97,7 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const sig = params.get('sig')!
     const apiBase = params.get('apiBase') ?? undefined
     const theme = (params.get('theme') as 'dark' | 'light' | undefined) ?? undefined
-    const persona = params.get('persona') ?? undefined
+    const personaParam = params.get('persona') ?? undefined
 
     // Validate nonce length (min 16 chars as per PRD)
     if (nonce.length < 16) {
@@ -147,20 +149,20 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       throw new EmbedVerificationError('url_expired', 'Embed URL has expired', kid)
     }
     // Check that the URL doesn't grant a session longer than the cert allows
-    if (exp - nowSeconds > cert.maxSessionDuration) {
+    if (exp - nowSeconds > cert.policy.session.maxDuration) {
       throw new EmbedVerificationError(
         'session_too_long',
-        `URL expiry exceeds max session duration (${cert.maxSessionDuration}s)`,
+        `URL expiry exceeds max session duration (${cert.policy.session.maxDuration}s)`,
         kid
       )
     }
 
     // -----------------------------------------------------------------------
-    // Step 6: Validate routes against certificate
+    // Step 6: Validate routes against certificate policy
     // -----------------------------------------------------------------------
     let allowedRoutes: string[]
     try {
-      allowedRoutes = resolveRoutes(routes, cert.allowedRoutePresets)
+      allowedRoutes = resolveRoutes(routes, cert.policy.routes.presets)
     } catch (e) {
       throw new EmbedVerificationError(
         'unauthorized_routes',
@@ -169,10 +171,19 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       )
     }
 
+    // Validate current path against module/tool restrictions if present
+    const pathname = url.pathname
+    if (cert.policy.routes.modules) {
+      validateModulePath(pathname, cert.policy.routes.modules, kid)
+    }
+    if (cert.policy.routes.tools) {
+      validateToolPath(pathname, cert.policy.routes.tools, kid)
+    }
+
     // -----------------------------------------------------------------------
-    // Step 7: Validate persist mode against certificate
+    // Step 7: Validate persist mode against certificate policy
     // -----------------------------------------------------------------------
-    if (!cert.persistModes.includes(persist)) {
+    if (!cert.policy.session.persistModes.includes(persist)) {
       throw new EmbedVerificationError(
         'unauthorized_persist',
         `Persist mode "${persist}" not authorized by vendor certificate`,
@@ -190,8 +201,8 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const isValid = await crypto.subtle.verify(
       { name: 'ECDSA', hash: 'SHA-256' },
       cert.publicKey,
-      signatureBytes,
-      canonicalBytes
+      signatureBytes.buffer as ArrayBuffer,
+      canonicalBytes.buffer as ArrayBuffer
     )
 
     if (!isValid) {
@@ -201,6 +212,15 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     // -----------------------------------------------------------------------
     // Step 9: Construct EmbedConfig
     // -----------------------------------------------------------------------
+
+    // Clamp persona URL param to cert-allowed set; fall back to first allowed
+    const certPersonas = cert.policy.content.personas
+    const resolvedPersona = personaParam
+      ? !certPersonas || certPersonas.includes(personaParam)
+        ? personaParam
+        : certPersonas[0]
+      : (certPersonas?.[0] ?? personaParam)
+
     return {
       isEmbedded: true,
       vendorId: cert.subjectO,
@@ -213,17 +233,66 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       persistMode: persist,
       apiBase,
       theme,
-      persona,
+      persona: resolvedPersona,
       allowedOrigins: cert.allowedOrigins,
-      allowedRegions: cert.allowedRegions,
-      allowedIndustries: cert.allowedIndustries,
-      allowedRoles: cert.allowedRoles,
+      policy: cert.policy,
+      allowedModules: cert.policy.routes.modules,
+      allowedTools: cert.policy.routes.tools,
+      allowedPersonas: cert.policy.content.personas,
+      allowedRegions: cert.policy.content.regions,
+      allowedIndustries: cert.policy.content.industries,
+      isTestMode: vendor.isTest || false,
     }
   } catch (e) {
     if (e instanceof EmbedVerificationError) throw e
     throw new EmbedVerificationError(
       'verification_error',
       e instanceof Error ? e.message : 'Unknown verification error',
+      kid
+    )
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Module / tool path validators
+// ---------------------------------------------------------------------------
+
+/**
+ * If the current path is under /learn/, verify the module ID is in the allowed list.
+ * No-op for paths outside /learn/.
+ */
+function validateModulePath(pathname: string, allowedModules: string[], kid?: string): void {
+  const LEARN_PREFIX = '/learn/'
+  if (!pathname.startsWith(LEARN_PREFIX)) return
+  const moduleId = pathname.slice(LEARN_PREFIX.length).split('/')[0]
+  if (moduleId && !allowedModules.includes(moduleId)) {
+    throw new EmbedVerificationError(
+      'unauthorized_module',
+      `Module "${moduleId}" not authorized by vendor certificate`,
+      kid
+    )
+  }
+}
+
+/**
+ * If the current path is under /playground/ or /business/tools/, verify the
+ * tool ID is in the allowed list. No-op for paths outside these prefixes.
+ */
+function validateToolPath(pathname: string, allowedTools: string[], kid?: string): void {
+  const PLAYGROUND_PREFIX = '/playground/'
+  const BUSINESS_PREFIX = '/business/tools/'
+
+  let toolId: string | undefined
+  if (pathname.startsWith(PLAYGROUND_PREFIX)) {
+    toolId = pathname.slice(PLAYGROUND_PREFIX.length).split('/')[0]
+  } else if (pathname.startsWith(BUSINESS_PREFIX)) {
+    toolId = pathname.slice(BUSINESS_PREFIX.length).split('/')[0]
+  }
+
+  if (toolId && !allowedTools.includes(toolId)) {
+    throw new EmbedVerificationError(
+      'unauthorized_tool',
+      `Tool "${toolId}" not authorized by vendor certificate`,
       kid
     )
   }

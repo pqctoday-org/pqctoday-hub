@@ -3,41 +3,42 @@ import React from 'react'
 import { Outlet, NavLink, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import {
-  Shield,
   Globe,
-  Users,
   FlaskConical,
-  BookOpen,
-  AlertTriangle,
-  Info,
   GraduationCap,
-  ShieldCheck,
   ArrowRightLeft,
-  Home,
   ClipboardCheck,
-  FileBarChart,
   LayoutDashboard,
+  Terminal,
+  HelpCircle,
 } from 'lucide-react'
 import { Button } from '../ui/button'
 import { Breadcrumb } from '../common/Breadcrumb'
 import { PoweredByBadge } from '../ui/PoweredByBadge'
 import { useEmbed } from '../../embed/EmbedProvider'
-import { matchesAllowedRoute } from '../../embed/routePresets'
+import { getActivePresets } from '../../embed/routePresets'
 import { useThemeStore } from '../../store/useThemeStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import type { PersonaId } from '../../data/learningPersonas'
-import { PERSONA_NAV_PATHS, ALWAYS_VISIBLE_PATHS } from '../../data/personaConfig'
 import { useEmbedPersistence } from '../../embed/useEmbedPersistence'
+import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
+import { useRightPanelStore } from '../../store/useRightPanelStore'
+import { logEmbedPolicyApplied } from '../../utils/analytics'
+
+const RightPanel = React.lazy(() =>
+  import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
+)
 
 export const EmbedLayout = () => {
   const location = useLocation()
   const embedConfig = useEmbed()
+  const { isOpen: isPanelOpen } = useRightPanelStore()
 
   // Initialize persistence and auth flows
   useEmbedPersistence()
 
   const { setTheme } = useThemeStore()
-  const { setPersona, selectedPersona } = usePersonaStore()
+  const { setPersona, setRegion, setIndustries } = usePersonaStore()
 
   // Layout forces theme if provided in embed URL
   React.useEffect(() => {
@@ -46,12 +47,32 @@ export const EmbedLayout = () => {
     }
   }, [embedConfig.theme, setTheme])
 
-  // Layout forces persona if provided in embed URL
+  // Seed persona/region/industry from cert policy once at mount.
+  // These become the locked active values for the session.
   React.useEffect(() => {
+    // Persona: resolved persona from URL (already clamped to cert-allowed in verifySignature)
     if (embedConfig.persona) {
       setPersona(embedConfig.persona as PersonaId)
+    } else if (embedConfig.allowedPersonas?.[0]) {
+      setPersona(embedConfig.allowedPersonas[0] as PersonaId)
     }
-  }, [embedConfig.persona, setPersona])
+    // Region: first cert-allowed region becomes active
+    if (embedConfig.allowedRegions?.[0]) {
+      setRegion(embedConfig.allowedRegions[0] as import('@/store/usePersonaStore').Region)
+    }
+    // Industries: all cert-allowed industries become the active set
+    if (embedConfig.allowedIndustries?.length) {
+      setIndustries(embedConfig.allowedIndustries)
+    }
+    // Track policy restrictions applied by this vendor session
+    logEmbedPolicyApplied(
+      embedConfig.vendorId,
+      embedConfig.allowedPersonas ?? [],
+      embedConfig.allowedRegions ?? [],
+      embedConfig.allowedIndustries ?? []
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intentionally run once at mount — cert values are immutable for the session
 
   // Resize Observer for postMessage communication
   React.useEffect(() => {
@@ -82,85 +103,94 @@ export const EmbedLayout = () => {
     }
   }, [])
 
-  // Map of all possible nav items
-  const allNavItems = [
-    { path: '/', label: 'Home', icon: Home, end: true },
-    { path: '/learn', label: 'Learn', icon: GraduationCap },
-    { path: '/timeline', label: 'Timeline', icon: Globe },
-    { path: '/algorithms', label: 'Algorithms', icon: Shield },
-    { path: '/migrate', label: 'Migrate', icon: ArrowRightLeft },
-    { path: '/compliance', label: 'Compliance', icon: ShieldCheck },
-    { path: '/assess', label: 'Assess', icon: ClipboardCheck },
-    { path: '/report', label: 'Report', icon: FileBarChart },
-    { path: '/business', label: 'Business Center', icon: LayoutDashboard },
-    { path: '/playground', label: 'Playground', icon: FlaskConical },
-    { path: '/threats', label: 'Threats', icon: AlertTriangle },
-    { path: '/library', label: 'Library', icon: BookOpen },
-    { path: '/leaders', label: 'Leaders', icon: Users },
-    { path: '/about', label: 'About', icon: Info },
-  ]
+  // Preset → nav item definition (icon + label + base path)
+  const PRESET_NAV_ITEMS: Record<
+    string,
+    { label: string; icon: React.ElementType; basePath: string }
+  > = {
+    learn: { label: 'Learn', icon: GraduationCap, basePath: '/learn' },
+    explore: { label: 'Explore', icon: Globe, basePath: '/timeline' },
+    assess: { label: 'Assess', icon: ClipboardCheck, basePath: '/assess' },
+    migrate: { label: 'Migrate', icon: ArrowRightLeft, basePath: '/migrate' },
+    playground: { label: 'Playground', icon: FlaskConical, basePath: '/playground' },
+    business: { label: 'Business', icon: LayoutDashboard, basePath: '/business' },
+    openssl: { label: 'OpenSSL', icon: Terminal, basePath: '/openssl' },
+    faq: { label: 'FAQ', icon: HelpCircle, basePath: '/faq' },
+    all: { label: 'Learn', icon: GraduationCap, basePath: '/learn' }, // 'all' → default to learn
+  }
 
-  // Filter 1: Persona visibility (if selected)
-  // eslint-disable-next-line security/detect-object-injection
-  const personaAllowed = selectedPersona ? PERSONA_NAV_PATHS[selectedPersona] : null
-  const personaNavItems = personaAllowed
-    ? allNavItems.filter(
-        (item) => ALWAYS_VISIBLE_PATHS.includes(item.path) || personaAllowed.includes(item.path)
-      )
-    : allNavItems
-
-  // Filter 2: Embed allowed routes
-  const visibleNavItems = personaNavItems.filter((item) =>
-    matchesAllowedRoute(item.path, embedConfig.allowedRoutes)
-  )
+  // Build nav from active presets — exactly what the vendor licensed, no Home tab
+  const activePresets = getActivePresets(embedConfig.allowedRoutes)
+  const visibleNavItems = activePresets
+    .filter((preset) => preset !== 'all' || activePresets.length === 1) // 'all' only shows if it's the only preset
+    // eslint-disable-next-line security/detect-object-injection
+    .map((preset) => PRESET_NAV_ITEMS[preset])
+    .filter(Boolean)
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
-      <header
-        className="sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b"
-        role="banner"
-      >
-        <div className="h-12 px-4 flex w-full justify-between items-center relative">
-          {/* Slim Header Brand linking out */}
-          <a
-            href="https://pqctoday.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center gap-2 flex-shrink-0"
-            title="Open PQC Today in a new tab"
-          >
-            <span className="text-lg font-bold text-gradient">PQC Today</span>
-          </a>
+      {/* Conditionally render header based on policy.features.hideNav */}
+      {!embedConfig.policy.features.hideNav && (
+        <header
+          className="sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b"
+          role="banner"
+        >
+          <div className="h-12 px-4 flex w-full justify-between items-center relative">
+            <a
+              href="https://pqctoday.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-2 flex-shrink-0"
+              title="Open PQC Today in a new tab"
+            >
+              <span className="text-lg font-bold text-gradient">PQC Today</span>
+            </a>
 
-          {/* Navigation - horizontal scrolling for allowed routes */}
-          <nav
-            className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto items-center h-full hide-scrollbar flex-grow justify-end pl-4"
-            role="navigation"
-            aria-label="Main navigation"
-          >
-            {visibleNavItems.map((item) => (
-              <NavLink key={item.path} to={item.path} end={item.end} className="flex-shrink-0">
-                {({ isActive }) => (
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    aria-label={`${item.label} view`}
-                    aria-current={isActive ? 'page' : undefined}
-                    className={
-                      isActive
-                        ? 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
-                        : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
-                    }
+            <nav
+              className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto h-full hide-scrollbar flex-grow justify-end pl-4"
+              role="navigation"
+              aria-label="Main navigation"
+            >
+              {visibleNavItems.map((item) => {
+                const embedUrl = `/embed${item.basePath}`
+                return (
+                  <NavLink
+                    key={item.basePath}
+                    to={embedUrl}
+                    className="flex-shrink-0"
+                    // isActive if current path starts with the embed URL
+                    end={false}
                   >
-                    <item.icon size={16} aria-hidden="true" className="mr-1.5" />
-                    <span className="text-[13px]">{item.label}</span>
-                  </Button>
-                )}
-              </NavLink>
-            ))}
-          </nav>
+                    {({ isActive }) => (
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        aria-label={`${item.label} view`}
+                        aria-current={isActive ? 'page' : undefined}
+                        className={
+                          isActive
+                            ? 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
+                            : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
+                        }
+                      >
+                        <item.icon size={16} aria-hidden="true" className="mr-1.5" />
+                        <span className="text-[13px]">{item.label}</span>
+                      </Button>
+                    )}
+                  </NavLink>
+                )
+              })}
+            </nav>
+          </div>
+        </header>
+      )}
+
+      {/* Test Mode Overlay */}
+      {embedConfig.isTestMode && (
+        <div className="bg-destructive text-destructive-foreground px-4 py-2 text-center text-xs sm:text-sm font-bold shadow-sm z-[40]">
+          TEST ONLY PLEASE REACH OUT TO GET YOUR PRIVATE CERTIFICATE FOR PRODUCTION DEPLOYMENT
         </div>
-      </header>
+      )}
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-grow container py-4 px-4 md:py-6 md:px-6" role="main">
@@ -186,6 +216,14 @@ export const EmbedLayout = () => {
       </main>
 
       <PoweredByBadge />
+
+      {/* PQC AI Assistant — shown only if cert policy grants assistantEnabled=true */}
+      {embedConfig.policy.features.assistantEnabled && (
+        <>
+          <RightPanelFAB />
+          <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
+        </>
+      )}
     </div>
   )
 }

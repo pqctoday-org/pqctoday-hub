@@ -1,0 +1,2 @@
+# Physical Vendor Certificates for embedded trust
+# Any .pem file dropped in this folder will be automatically compiled into the internal registry.

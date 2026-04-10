@@ -226,7 +226,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    exclude: ['@oqs/liboqs-js', '@pqctoday/softhsm-wasm'],
+    exclude: ['@oqs/liboqs-js', '@pqctoday/softhsm-wasm', '@peculiar/x509'],
   },
   build: {
     rollupOptions: {

@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { setEmbedState } from './embed/embedContext'
 import './styles/index.css'
 import AppRoot from './AppRoot'
-import { initGA } from './utils/analytics'
+import { initGA, logEmbedSession, logEmbedError } from './utils/analytics'
 import { registerSW } from 'virtual:pwa-register'
 
 // Initialize Google Analytics
@@ -105,12 +105,27 @@ if (window.location.pathname.startsWith('/embed/')) {
     .then(({ verifyEmbedUrl }) => verifyEmbedUrl(new URL(window.location.href)))
     .then((config) => {
       setEmbedState(config)
+      const presets = config.policy?.routes?.presets ?? []
+      logEmbedSession(config.vendorId, config.kid, presets, config.isTestMode ?? false)
       mountApp()
     })
     .catch((err) => {
       console.error('Embed verification failed:', err)
       const code = err.code || 'invalid_embed'
-      window.location.href = `https://pqctoday.com?error=${code}`
+      logEmbedError(code, err.kid)
+      const message = err.message || String(err)
+      // In dev, render the error visibly instead of redirecting so we can debug
+      if (import.meta.env.DEV) {
+        document.body.innerHTML = `
+          <div style="font-family:monospace;padding:2rem;background:#1a0000;color:#ff6b6b;min-height:100vh">
+            <h2 style="color:#ff4444">⚠ Embed Verification Failed</h2>
+            <p><strong>Code:</strong> ${code}</p>
+            <p><strong>Message:</strong> ${message}</p>
+            <pre style="background:#0d0000;padding:1rem;overflow:auto;font-size:0.8rem">${err.stack || 'No stack trace'}</pre>
+          </div>`
+      } else {
+        window.location.href = `https://pqctoday.com?error=${code}`
+      }
     })
 } else {
   mountApp()

@@ -25,6 +25,12 @@ import { Step9OrgScale } from './steps/Step9OrgScale'
 import { Step10CryptoAgility } from './steps/Step10CryptoAgility'
 import { Step11Infrastructure } from './steps/Step11Infrastructure'
 import { Step13TimelinePressure } from './steps/Step13TimelinePressure'
+import {
+  logAssessStart,
+  logAssessStep,
+  logAssessComplete,
+  logAssessReset,
+} from '../../utils/analytics'
 
 const STEP_TITLES_FULL = [
   'Industry',
@@ -273,12 +279,18 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
   }
 
   const handleNext = () => {
+    if (currentStep === 0) {
+      logAssessStart()
+    }
+    const stepLabel = stepTitles[currentStep] ?? String(currentStep + 1)
+    logAssessStep(currentStep + 1, stepLabel)
     if (currentStep < steps.length - 1) {
       setStep(currentStep + 1)
     } else {
       setIsGenerating(true)
       setTimeout(() => {
         markComplete()
+        logAssessComplete(selectedPersona ?? 'unknown')
         onComplete()
       }, 300)
     }
@@ -348,7 +360,10 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
 
           <Button
             variant="ghost"
-            onClick={reset}
+            onClick={() => {
+              logAssessReset()
+              reset()
+            }}
             className="text-xs min-h-[44px] text-muted-foreground hover:text-destructive"
             title="Clear all answers and start over"
           >

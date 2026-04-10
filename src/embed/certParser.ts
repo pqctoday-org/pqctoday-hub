@@ -4,28 +4,31 @@
  * X.509 certificate parser for vendor embed certificates.
  *
  * Uses @peculiar/x509 to parse PEM certificates and extract the public key,
- * validity window, and custom OID extensions that encode vendor capabilities.
+ * validity window, and the vendor policy extension (OID .1) that encodes
+ * all access restrictions as a JSON-encoded VendorPolicy object.
+ *
+ * Backward compatible: certs with the old 8 CSV OID format are automatically
+ * reconstructed into VendorPolicy shape.
  *
  * See PRD §3.1–3.2 for the certificate architecture and OID assignments.
  */
 
+import 'reflect-metadata'
 import * as x509 from '@peculiar/x509'
+import {
+  VENDOR_POLICY_OID,
+  ALLOWED_ORIGINS_OID,
+  LEGACY_OIDS,
+  defaultVendorPolicy,
+  type VendorPolicy,
+} from './vendorPolicy'
 
-// ---------------------------------------------------------------------------
-// Custom OID arc — placeholder until PEN is assigned
-// ---------------------------------------------------------------------------
-
-const OID_PREFIX = '1.3.6.1.4.1.99999' // placeholder PEN arc
-
-export const CUSTOM_OIDS = {
-  allowedRoutePresets: `${OID_PREFIX}.1`,
-  allowedOrigins: `${OID_PREFIX}.2`,
-  maxSessionDuration: `${OID_PREFIX}.3`,
-  persistModes: `${OID_PREFIX}.4`,
-  allowedRegions: `${OID_PREFIX}.5`,
-  allowedIndustries: `${OID_PREFIX}.6`,
-  allowedRoles: `${OID_PREFIX}.7`,
-} as const
+// Explicitly bind the browser Web Crypto API to @peculiar/x509.
+// This prevents 'Cannot read properties of undefined (reading importKey)'
+// errors caused by Vite's ESM bundler hiding the global scope from the module.
+if (typeof window !== 'undefined' && window.crypto) {
+  x509.cryptoProvider.set(window.crypto)
+}
 
 // ---------------------------------------------------------------------------
 // Parsed certificate type
@@ -38,20 +41,10 @@ export interface ParsedVendorCert {
   notBefore: Date
   /** Certificate validity end */
   notAfter: Date
-  /** Comma-separated route preset names from cert extension */
-  allowedRoutePresets: string[]
-  /** Allowed parent origins from cert extension */
+  /** Full vendor access policy decoded from OID .1 */
+  policy: VendorPolicy
+  /** Allowed parent origins decoded from OID .2 */
   allowedOrigins: string[]
-  /** Maximum session duration in seconds */
-  maxSessionDuration: number
-  /** Allowed persistence modes */
-  persistModes: string[]
-  /** Allowed geographic regions */
-  allowedRegions: string[]
-  /** Allowed industry verticals */
-  allowedIndustries: string[]
-  /** Allowed persona roles */
-  allowedRoles: string[]
   /** Subject Common Name (vendorName) */
   subjectCN: string
   /** Subject Organization (vendorId) */
@@ -70,42 +63,90 @@ export interface ParsedVendorCert {
 export async function parsePemCertificate(pem: string): Promise<ParsedVendorCert> {
   const cert = new x509.X509Certificate(pem)
 
-  // Extract the public key as a CryptoKey for Web Crypto API verification
-  const publicKey = await cert.publicKey.export({
-    name: 'ECDSA',
-    namedCurve: 'P-256',
-  } as EcKeyImportParams)
+  // Extract the public key via native WebCrypto — avoids relying on @peculiar/x509's
+  // internal cryptoProvider binding which breaks under Vite's Node-context pre-bundling.
+  // cert.publicKey.rawData is the raw SubjectPublicKeyInfo DER bytes — no crypto needed.
+  const spkiBytes = new Uint8Array(cert.publicKey.rawData)
+  const publicKey = await window.crypto.subtle.importKey(
+    'spki',
+    spkiBytes,
+    { name: 'ECDSA', namedCurve: 'P-256' },
+    false,
+    ['verify']
+  )
 
   // Extract subject fields
   const subjectCN = getSubjectField(cert, 'CN') || 'Unknown Vendor'
   const subjectO = getSubjectField(cert, 'O') || 'Unknown Organization'
 
-  // Extract custom extensions — all are optional with sensible defaults
-  const allowedRoutePresets = getStringExtension(cert, CUSTOM_OIDS.allowedRoutePresets, 'all')
-  const allowedOrigins = getStringExtension(cert, CUSTOM_OIDS.allowedOrigins, '*')
-  const maxSessionDuration = getIntExtension(cert, CUSTOM_OIDS.maxSessionDuration, 86400)
-  const persistModes = getStringExtension(cert, CUSTOM_OIDS.persistModes, 'api,postMessage,none')
-  const allowedRegions = getStringExtension(cert, CUSTOM_OIDS.allowedRegions, 'global')
-  const allowedIndustries = getStringExtension(
-    cert,
-    CUSTOM_OIDS.allowedIndustries,
-    'finance,healthcare,government,telecom,energy,defense,technology,education'
-  )
-  const allowedRoles = getStringExtension(cert, CUSTOM_OIDS.allowedRoles, 'curious,basics,expert')
+  // Origins are always separate (needed at postMessage boundary before JSON parse)
+  const allowedOrigins = splitCsv(getStringExtension(cert, ALLOWED_ORIGINS_OID, '*'))
+
+  // Decode policy — try new JSON format first, fall back to legacy CSV OIDs
+  const policy = decodePolicy(cert)
 
   return {
     publicKey,
     notBefore: cert.notBefore,
     notAfter: cert.notAfter,
-    allowedRoutePresets: splitCsv(allowedRoutePresets),
-    allowedOrigins: splitCsv(allowedOrigins),
-    maxSessionDuration,
-    persistModes: splitCsv(persistModes),
-    allowedRegions: splitCsv(allowedRegions),
-    allowedIndustries: splitCsv(allowedIndustries),
-    allowedRoles: splitCsv(allowedRoles),
+    policy,
+    allowedOrigins,
     subjectCN,
     subjectO,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Policy decoding
+// ---------------------------------------------------------------------------
+
+/**
+ * Decode VendorPolicy from the certificate.
+ *
+ * New format: OID .1 contains JSON.stringify(VendorPolicy)
+ * Legacy format: OIDs .1/.3-.8 contain individual CSV values
+ */
+function decodePolicy(cert: x509.X509Certificate): VendorPolicy {
+  const rawPolicy = getStringExtension(cert, VENDOR_POLICY_OID, '')
+
+  if (rawPolicy) {
+    // Attempt JSON decode (new format)
+    try {
+      const parsed = JSON.parse(rawPolicy) as VendorPolicy
+      // Validate minimum required shape
+      if (parsed.routes?.presets && parsed.session?.persistModes && parsed.features) {
+        return parsed
+      }
+    } catch {
+      // Fall through to legacy decode
+    }
+  }
+
+  // Legacy CSV OID fallback — reconstruct VendorPolicy from old 8-OID format
+  return {
+    routes: {
+      presets: splitCsv(getStringExtension(cert, LEGACY_OIDS.allowedRoutePresets, 'all')),
+    },
+    content: {
+      regions: splitCsv(getStringExtension(cert, LEGACY_OIDS.allowedRegions, 'global')),
+      industries: splitCsv(
+        getStringExtension(
+          cert,
+          LEGACY_OIDS.allowedIndustries,
+          'finance,healthcare,government,telecom,energy,defense,technology,education'
+        )
+      ),
+      roles: splitCsv(getStringExtension(cert, LEGACY_OIDS.allowedRoles, 'curious,basics,expert')),
+    },
+    session: {
+      maxDuration: getIntExtension(cert, LEGACY_OIDS.maxSessionDuration, 86400),
+      persistModes: splitCsv(
+        getStringExtension(cert, LEGACY_OIDS.persistModes, 'api,postMessage,none')
+      ),
+    },
+    features: {
+      assistantEnabled: getStringExtension(cert, LEGACY_OIDS.assistantEnabled, 'true') !== 'false',
+    },
   }
 }
 
@@ -165,9 +206,12 @@ function getIntExtension(cert: x509.X509Certificate, oid: string, defaultValue: 
   return isNaN(parsed) ? defaultValue : parsed
 }
 
-function splitCsv(value: string): string[] {
+export function splitCsv(value: string): string[] {
   return value
     .split(',')
     .map((s) => s.trim())
     .filter(Boolean)
 }
+
+// Re-export for consumers that only need the default policy
+export { defaultVendorPolicy }

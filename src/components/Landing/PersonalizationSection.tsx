@@ -49,6 +49,8 @@ import { REGION_COUNTRIES_MAP } from '@/data/personaConfig'
 import { AVAILABLE_INDUSTRIES } from '@/hooks/assessmentData'
 import { PersonalizedAvatar } from './PersonalizedAvatar'
 import { ScoreCard } from './ScoreCard'
+import { useEmbedState } from '@/embed/EmbedProvider'
+import { logPersonaSelected, logRegionSelected, logIndustrySelected } from '@/utils/analytics'
 
 type ActiveModal = 'experience' | 'role' | 'region' | 'industry' | null
 
@@ -583,6 +585,21 @@ export const PersonalizationSection = () => {
     editFromStep,
   } = useAssessmentStore()
 
+  // Embed mode: restrict pickers to cert-allowed options
+  const embedState = useEmbedState()
+  const embedPersonas = embedState.isEmbedded ? (embedState.allowedPersonas ?? null) : null
+  const embedRegions = embedState.isEmbedded ? (embedState.allowedRegions ?? null) : null
+  const embedIndustries = embedState.isEmbedded ? (embedState.allowedIndustries ?? null) : null
+
+  // Filtered options — in embed mode, restrict to cert-allowed values; otherwise full list
+  const visiblePersonaOrder = embedPersonas
+    ? PERSONA_ORDER.filter((id) => embedPersonas.includes(id))
+    : PERSONA_ORDER
+  const visibleRegions = embedRegions ? REGIONS.filter((r) => embedRegions.includes(r.id)) : REGIONS
+  const visibleIndustries = embedIndustries
+    ? AVAILABLE_INDUSTRIES.filter((ind) => embedIndustries.includes(ind))
+    : AVAILABLE_INDUSTRIES
+
   const [activeModal, setActiveModal] = useState<ActiveModal>(null)
   const [currentStep, setCurrentStep] = useState(0)
 
@@ -640,6 +657,7 @@ export const PersonalizationSection = () => {
   const handlePersona = (id: PersonaId) => {
     const next = id === selectedPersona ? null : id
     setPersona(next)
+    if (next) logPersonaSelected(next, embedState.isEmbedded ? 'embed' : 'picker')
     if (next === 'curious') {
       // Auto-set experience level, region (Global), and industry (All) — then complete wizard
       setExperienceLevel('curious')
@@ -656,6 +674,7 @@ export const PersonalizationSection = () => {
     setRegion(next)
     const country = next ? (REGION_COUNTRIES_MAP[next]?.[0] ?? null) : null
     setCountry(country ?? '')
+    if (next) logRegionSelected(next)
     if (next && assessmentStatus === 'complete') editFromStep(0)
   }
 
@@ -663,6 +682,7 @@ export const PersonalizationSection = () => {
     const next = selectedIndustries[0] === industry ? [] : [industry]
     setIndustries(next)
     setAssessIndustry(next[0] ?? '')
+    if (next[0]) logIndustrySelected(next[0])
     if (assessmentStatus === 'complete') editFromStep(0)
   }
 
@@ -894,7 +914,7 @@ export const PersonalizationSection = () => {
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-                        {PERSONA_ORDER.map((id) => {
+                        {visiblePersonaOrder.map((id) => {
                           const persona = PERSONAS[id]
                           const Icon = PERSONA_ICONS[persona.icon]
                           const CornerIcon = PERSONA_CORNER_ICONS[id]
@@ -939,17 +959,19 @@ export const PersonalizationSection = () => {
                         </button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                        {REGIONS.map(({ id, label, description, Icon, cornerIcon: CornerIcon }) => (
-                          <SelectionCard
-                            key={id}
-                            isActive={selectedRegion === id}
-                            onClick={() => handleRegion(id)}
-                            icon={<Icon size={16} />}
-                            cornerIcon={<CornerIcon size={13} />}
-                            title={label}
-                            description={description}
-                          />
-                        ))}
+                        {visibleRegions.map(
+                          ({ id, label, description, Icon, cornerIcon: CornerIcon }) => (
+                            <SelectionCard
+                              key={id}
+                              isActive={selectedRegion === id}
+                              onClick={() => handleRegion(id)}
+                              icon={<Icon size={16} />}
+                              cornerIcon={<CornerIcon size={13} />}
+                              title={label}
+                              description={description}
+                            />
+                          )
+                        )}
                       </div>
                     </div>
                   )}
@@ -970,17 +992,19 @@ export const PersonalizationSection = () => {
                         </button>
                       </div>
                       <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
-                        <SelectionCard
-                          isActive={selectedIndustries.length === 0}
-                          onClick={() => {
-                            setIndustries([])
-                            setAssessIndustry('')
-                          }}
-                          icon={<Globe size={16} />}
-                          cornerIcon={<Globe2 size={13} />}
-                          title="All Industries"
-                        />
-                        {AVAILABLE_INDUSTRIES.map((industry) => {
+                        {!embedIndustries && (
+                          <SelectionCard
+                            isActive={selectedIndustries.length === 0}
+                            onClick={() => {
+                              setIndustries([])
+                              setAssessIndustry('')
+                            }}
+                            icon={<Globe size={16} />}
+                            cornerIcon={<Globe2 size={13} />}
+                            title="All Industries"
+                          />
+                        )}
+                        {visibleIndustries.map((industry) => {
                           const Icon = INDUSTRY_ICONS[industry] ?? Layers
                           return (
                             <SelectionCard

@@ -1,0 +1,587 @@
+{
+  "version": "2.96.0",
+  "generatedAt": "2026-04-10T01:32:19.139Z",
+  "resources": {
+    "routePresets": [
+      {
+        "id": "learn",
+        "paths": ["/learn", "/learn/*"]
+      },
+      {
+        "id": "assess",
+        "paths": ["/assess", "/report"]
+      },
+      {
+        "id": "explore",
+        "paths": ["/timeline", "/algorithms", "/library", "/threats", "/leaders", "/compliance"]
+      },
+      {
+        "id": "migrate",
+        "paths": ["/migrate"]
+      },
+      {
+        "id": "playground",
+        "paths": ["/playground", "/playground/*"]
+      },
+      {
+        "id": "business",
+        "paths": ["/business", "/business/*"]
+      },
+      {
+        "id": "openssl",
+        "paths": ["/openssl"]
+      },
+      {
+        "id": "faq",
+        "paths": ["/faq"]
+      },
+      {
+        "id": "all",
+        "paths": ["/*"]
+      }
+    ],
+    "modules": [
+      {
+        "id": "pqc-101",
+        "title": "PQC 101",
+        "difficulty": "beginner",
+        "duration": "10 min"
+      },
+      {
+        "id": "quantum-threats",
+        "title": "Quantum Threats",
+        "difficulty": "beginner",
+        "duration": "40 min"
+      },
+      {
+        "id": "hybrid-crypto",
+        "title": "Hybrid Cryptography",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "crypto-agility",
+        "title": "Crypto Agility",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "tls-basics",
+        "title": "TLS Basics",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "vpn-ssh-pqc",
+        "title": "VPN/IPsec & SSH",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "email-signing",
+        "title": "Email & Document Signing",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "pki-workshop",
+        "title": "PKI",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "kms-pqc",
+        "title": "KMS & PQC Key Management",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "hsm-pqc",
+        "title": "HSM & PQC Operations",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "slh-dsa",
+        "title": "SLH-DSA: Stateless Hash Signatures",
+        "difficulty": "advanced",
+        "duration": "45 min"
+      },
+      {
+        "id": "stateful-signatures",
+        "title": "Stateful Hash Signatures",
+        "difficulty": "advanced",
+        "duration": "40 min"
+      },
+      {
+        "id": "digital-assets",
+        "title": "Digital Assets",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "5g-security",
+        "title": "5G Security",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "digital-id",
+        "title": "Digital ID",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "entropy-randomness",
+        "title": "Entropy & Randomness",
+        "difficulty": "advanced",
+        "duration": "40 min"
+      },
+      {
+        "id": "merkle-tree-certs",
+        "title": "Merkle Tree Certificates",
+        "difficulty": "advanced",
+        "duration": "40 min"
+      },
+      {
+        "id": "qkd",
+        "title": "Quantum Key Distribution",
+        "difficulty": "advanced",
+        "duration": "100 min"
+      },
+      {
+        "id": "code-signing",
+        "title": "Code Signing",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "api-security-jwt",
+        "title": "API Security & JWT",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "crypto-dev-apis",
+        "title": "Cryptographic APIs & Developer Languages",
+        "difficulty": "intermediate",
+        "duration": "80 min"
+      },
+      {
+        "id": "web-gateway-pqc",
+        "title": "Web Gateway PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "iot-ot-pqc",
+        "title": "IoT & OT Security",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "pqc-risk-management",
+        "title": "PQC Risk Management",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "pqc-business-case",
+        "title": "PQC Business Case",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "pqc-governance",
+        "title": "PQC Governance & Policy",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "vendor-risk",
+        "title": "Vendor & Supply Chain Risk",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "migration-program",
+        "title": "Migration Program Mgmt",
+        "difficulty": "intermediate",
+        "duration": "30 min"
+      },
+      {
+        "id": "compliance-strategy",
+        "title": "Compliance & Regulatory Strategy",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "data-asset-sensitivity",
+        "title": "Data & Asset Sensitivity",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "standards-bodies",
+        "title": "Standards, Certification & Compliance Bodies",
+        "difficulty": "intermediate",
+        "duration": "40 min"
+      },
+      {
+        "id": "confidential-computing",
+        "title": "Confidential Computing & TEEs",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "database-encryption-pqc",
+        "title": "Database Encryption & PQC",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      },
+      {
+        "id": "energy-utilities-pqc",
+        "title": "Energy & Utilities PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "emv-payment-pqc",
+        "title": "EMV Payment Systems & PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "ai-security-pqc",
+        "title": "AI Security & PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "platform-eng-pqc",
+        "title": "Platform Engineering & PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "healthcare-pqc",
+        "title": "Healthcare PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "aerospace-pqc",
+        "title": "Aerospace PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "automotive-pqc",
+        "title": "Automotive PQC",
+        "difficulty": "advanced",
+        "duration": "80 min"
+      },
+      {
+        "id": "exec-quantum-impact",
+        "title": "Executive Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "30 min"
+      },
+      {
+        "id": "dev-quantum-impact",
+        "title": "Developer Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "arch-quantum-impact",
+        "title": "Architect Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "ops-quantum-impact",
+        "title": "Ops Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "research-quantum-impact",
+        "title": "Researcher Quantum Impact",
+        "difficulty": "beginner",
+        "duration": "20 min"
+      },
+      {
+        "id": "secrets-management-pqc",
+        "title": "Secrets Management & PQC",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "network-security-pqc",
+        "title": "Network Security & PQC Migration",
+        "difficulty": "advanced",
+        "duration": "90 min"
+      },
+      {
+        "id": "pqc-testing-validation",
+        "title": "PQC Network Testing & Validation",
+        "difficulty": "advanced",
+        "duration": "120 min"
+      },
+      {
+        "id": "iam-pqc",
+        "title": "Identity & Access Management with PQC",
+        "difficulty": "intermediate",
+        "duration": "60 min"
+      },
+      {
+        "id": "secure-boot-pqc",
+        "title": "Secure Boot & Firmware PQC",
+        "difficulty": "advanced",
+        "duration": "60 min"
+      },
+      {
+        "id": "os-pqc",
+        "title": "Operating System & Platform Crypto PQC",
+        "difficulty": "intermediate",
+        "duration": "50 min"
+      }
+    ],
+    "playgroundTools": [
+      {
+        "id": "slh-dsa",
+        "name": "SLH-DSA Sign & Verify",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "lms-hss",
+        "name": "Stateful Hash Signatures",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "hybrid-encrypt",
+        "name": "Hybrid KEM + ECDH",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "envelope-encrypt",
+        "name": "Envelope Encryption",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "token-migration",
+        "name": "Multi-Algorithm Signing",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "tee-channel",
+        "name": "TEE-HSM Secure Channel",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "firmware-signing",
+        "name": "Firmware Signing",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "kdf-derivation",
+        "name": "SP 800-108 KDF",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "vpn-sim",
+        "name": "PQC VPN Simulator",
+        "category": "HSM / PKCS#11",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "rng-demo",
+        "name": "Random Generation",
+        "category": "Entropy & Random",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "entropy-test",
+        "name": "Entropy Testing",
+        "category": "Entropy & Random",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "qrng-demo",
+        "name": "QRNG Demo",
+        "category": "Entropy & Random",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "source-combining",
+        "name": "Source Combining",
+        "category": "Entropy & Random",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "drbg-demo",
+        "name": "SP 800-90A DRBG",
+        "category": "Entropy & Random",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "pki-workshop",
+        "name": "PKI Workshop",
+        "category": "Certificates & Proofs",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "hybrid-certs",
+        "name": "Hybrid Certificates",
+        "category": "Certificates & Proofs",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "merkle-proof",
+        "name": "Merkle Tree Workshop",
+        "category": "Certificates & Proofs",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "suci-flow",
+        "name": "5G SUCI Construction",
+        "category": "Protocol Simulations",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "digital-id",
+        "name": "EUDI Wallet Architecture",
+        "category": "Digital Identity",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "bitcoin-flow",
+        "name": "Bitcoin Transaction",
+        "category": "Blockchain & Digital Assets",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "solana-flow",
+        "name": "Solana Transaction",
+        "category": "Blockchain & Digital Assets",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "hd-wallet",
+        "name": "HD Wallet Derivation",
+        "category": "Blockchain & Digital Assets",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "openssl-studio",
+        "name": "OpenSSL Studio",
+        "category": "OpenSSL Studio",
+        "difficulty": "intermediate"
+      },
+      {
+        "id": "tls-simulator",
+        "name": "TLS 1.3 Simulator",
+        "category": "OpenSSL Studio",
+        "difficulty": "intermediate"
+      }
+    ],
+    "businessTools": [
+      {
+        "id": "roi-calculator",
+        "name": "ROI Calculator",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "board-pitch",
+        "name": "Board Pitch Builder",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "crqc-scenario",
+        "name": "CRQC Scenario Planner",
+        "category": "Risk & Strategy"
+      },
+      {
+        "id": "audit-checklist",
+        "name": "Audit Readiness Checklist",
+        "category": "Compliance & Audit"
+      },
+      {
+        "id": "raci-builder",
+        "name": "RACI Builder",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "policy-generator",
+        "name": "Policy Template Generator",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "kpi-dashboard",
+        "name": "KPI Dashboard Builder",
+        "category": "Governance & Policy"
+      },
+      {
+        "id": "vendor-scorecard",
+        "name": "Vendor Scorecard Builder",
+        "category": "Vendor & Supply Chain"
+      },
+      {
+        "id": "contract-clause",
+        "name": "Contract Clause Generator",
+        "category": "Vendor & Supply Chain"
+      },
+      {
+        "id": "supply-chain-matrix",
+        "name": "Supply Chain Risk Matrix",
+        "category": "Vendor & Supply Chain"
+      },
+      {
+        "id": "roadmap-builder",
+        "name": "Roadmap Builder",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "stakeholder-comms",
+        "name": "Stakeholder Comms Planner",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "kpi-tracker",
+        "name": "KPI Tracker Template",
+        "category": "Migration Planning"
+      },
+      {
+        "id": "deployment-playbook",
+        "name": "Deployment Playbook",
+        "category": "Migration Planning"
+      }
+    ],
+    "personas": ["executive", "developer", "architect", "researcher", "ops", "curious"]
+  },
+  "policy": {
+    "regions": ["global", "us", "eu", "apac", "latam", "mena"],
+    "industries": [
+      "finance",
+      "healthcare",
+      "government",
+      "telecom",
+      "energy",
+      "defense",
+      "technology",
+      "education"
+    ],
+    "roles": ["curious", "basics", "expert"],
+    "persistModes": ["api", "postMessage", "none"],
+    "difficulties": ["beginner", "intermediate", "advanced"]
+  }
+}

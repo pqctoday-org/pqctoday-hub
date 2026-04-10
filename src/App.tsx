@@ -14,6 +14,7 @@ import { lazyWithRetry } from './utils/lazyWithRetry'
 import { PageMeta } from './seo/PageMeta'
 import { EmbedLayout } from './components/Layout/EmbedLayout'
 import { EmbedRouteGuard } from './embed/EmbedRouteGuard'
+import { EmbedNavigationGuard } from './embed/EmbedNavigationGuard'
 
 // Lazy load route components with automatic retry on chunk fetch failures
 const TimelineView = lazyWithRetry(() =>
@@ -318,6 +319,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
+      <EmbedNavigationGuard />
       <AchievementChecker />
       <AchievementSectionTracker />
       <DailyVisitTracker />
@@ -334,15 +336,16 @@ function App() {
       >
         <Routes>
           <Route
-            path="/embed/*"
+            path="/embed"
             element={
               <EmbedRouteGuard>
                 <EmbedLayout />
               </EmbedRouteGuard>
             }
           >
+            <Route index element={<Navigate to="learn" replace />} />
             {commonRoutes}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/embed" replace />} />
           </Route>
 
           <Route element={<MainLayout />}>
