@@ -1,6 +1,6 @@
 import type { VendorRegistryEntry } from './vendorRegistry'
-import testVendorCertFull from '../../tools/embed-test-site/test-fixtures/test-vendor.crt?raw'
-import testVendorCertRestricted from '../../tools/embed-test-site/test-fixtures/test-vendor-restricted.crt?raw'
+import testVendorCertFull from '../../../../pqc-tools/embed-test-site/test-fixtures/test-vendor.crt?raw'
+import testVendorCertRestricted from '../../../../pqc-tools/embed-test-site/test-fixtures/test-vendor-restricted.crt?raw'
 
 export const TEST_VENDOR_REGISTRY: readonly VendorRegistryEntry[] = [
   {

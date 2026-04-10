@@ -101,6 +101,10 @@ export default defineConfig({
   server: {
     port: 5175,
     strictPort: false,
+    fs: {
+      // Allow importing test fixtures from pqc-tools sibling repo (dev only)
+      allow: ['..'],
+    },
     proxy: {
       '/api/nist-search': {
         target: 'https://csrc.nist.gov',
