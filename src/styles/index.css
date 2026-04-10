@@ -595,6 +595,84 @@
   background: hsl(var(--background));
 }
 
+/* ── Embed mode density override ──────────────────────────────────────────
+   Scoped to [data-embed] so standard mode is completely unaffected.
+   --embed-table-py is written by applyEmbedTheme() only when VendorTheme.density
+   is explicitly set. When unset the var is never defined and 'unset' resolves to
+   the inherited/initial value — Tailwind hardcoded classes win as normal.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-embed] table td,
+[data-embed] table th {
+  padding-top: var(--embed-table-py, unset);
+  padding-bottom: var(--embed-table-py, unset);
+}
+
+[data-embed] [role='option'],
+[data-embed] [role='listbox'] button {
+  padding-top: var(--embed-table-py, unset);
+  padding-bottom: var(--embed-table-py, unset);
+}
+
+/* ── Embed mode nav bar (sidebar) override ────────────────────────────────
+   Scoped to [data-embed]. --embed-nav-bg/fg are set by applyEmbedTheme() only
+   when VendorTheme.sidebar is specified. When unset the vars are never defined
+   and 'unset' resolves to inherited/initial — standard bg-background wins.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-embed] header[role='banner'] {
+  background-color: var(--embed-nav-bg, unset) !important;
+  border-bottom-color: color-mix(
+    in srgb,
+    var(--embed-nav-bg, transparent) 0%,
+    var(--color-border) 100%
+  );
+}
+
+[data-embed] header[role='banner'] a,
+[data-embed] header[role='banner'] button,
+[data-embed] header[role='banner'] span {
+  color: var(--embed-nav-fg, unset);
+}
+
+[data-embed] header[role='banner'] button:hover {
+  background-color: color-mix(in srgb, var(--embed-nav-fg, white) 10%, transparent) !important;
+}
+
+[data-embed] header[role='banner'] button[aria-current='page'] {
+  background-color: color-mix(in srgb, var(--embed-nav-fg, white) 15%, transparent) !important;
+  border-color: color-mix(in srgb, var(--embed-nav-fg, white) 25%, transparent) !important;
+}
+
+/* ── Embed mode badge fill override ──────────────────────────────────────
+   When VendorTheme.badgeFill === 'solid', --embed-badge-fill is set to '1'.
+   The CSS custom property acts as a flag: when defined, we override the /10
+   opacity tint so badges render as solid filled pills (DigiCert/Sectigo style).
+   ──────────────────────────────────────────────────────────────────────── */
+
+@supports (color: color-mix(in srgb, red 0%, red)) {
+  [data-embed][style*='--embed-badge-fill'] .bg-status-success {
+    background-color: var(--color-success) !important;
+    color: var(--color-success-foreground) !important;
+    border-color: transparent !important;
+  }
+  [data-embed][style*='--embed-badge-fill'] .bg-status-error {
+    background-color: var(--color-destructive) !important;
+    color: var(--color-destructive-foreground) !important;
+    border-color: transparent !important;
+  }
+  [data-embed][style*='--embed-badge-fill'] .bg-status-warning {
+    background-color: var(--color-warning) !important;
+    color: var(--color-warning-foreground) !important;
+    border-color: transparent !important;
+  }
+  [data-embed][style*='--embed-badge-fill'] .bg-status-info {
+    background-color: var(--color-info) !important;
+    color: var(--color-info-foreground) !important;
+    border-color: transparent !important;
+  }
+}
+
 /* Unlayered — highest !important cascade priority, beats any @layer rule.
    Belt-and-suspenders: force all animated elements visible in print. */
 @media print {

@@ -2454,7 +2454,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
       </div>
 
-      <div className="border border-border/50 rounded-xl overflow-hidden bg-slate-50 pb-2">
+      <div className="border border-border/50 rounded-xl overflow-hidden bg-muted/30 pb-2">
         <div className="bg-muted px-4 py-1.5 text-xs font-mono font-bold border-b border-border text-muted-foreground flex justify-between items-center">
           <span>charon.log</span>
           <div className="flex items-center gap-2">
@@ -2859,9 +2859,9 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   </div>
                 )}
 
-                <div className="mb-4 p-4 border border-border bg-slate-50 rounded-xl relative overflow-hidden">
+                <div className="mb-4 p-4 border border-border bg-muted/30 rounded-xl relative overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary"></div>
-                  <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
+                  <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Client Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-primary/20 text-primary px-2 py-0.5 rounded">
                       {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=psk + leftauth2=pubkey'}
@@ -2886,7 +2886,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       title="Client Token (Slot 1)"
                     />
                   </div>
-                  <div className="border border-border/50 rounded-lg p-3 bg-slate-50 text-slate-800">
+                  <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
                     <PkcsLogPanel filterFn={(e) => e.args.includes('[initiator]')} />
                   </div>
                 </div>
@@ -2930,15 +2930,15 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   </div>
                 )}
 
-                <div className="mb-4 p-4 border border-border bg-slate-50 rounded-xl relative overflow-hidden">
+                <div className="mb-4 p-4 border border-border bg-muted/30 rounded-xl relative overflow-hidden">
                   <div className="absolute left-0 top-0 bottom-0 w-1 bg-secondary"></div>
-                  <div className="text-xs font-mono mb-2 flex items-center justify-between text-slate-800">
+                  <div className="text-xs font-mono mb-2 flex items-center justify-between text-foreground">
                     <span className="font-semibold">Server Identity Parameter Mapping</span>
                     <span className="text-[10px] bg-secondary/20 text-secondary px-2 py-0.5 rounded">
                       {authMode === 'psk' ? 'rightauth=psk' : 'rightauth=psk + rightauth2=pubkey'}
                     </span>
                   </div>
-                  <pre className="text-xs text-slate-800 font-mono">
+                  <pre className="text-xs text-foreground font-mono">
                     {activeInitIpsec
                       .split('\n')
                       .filter((l: string) => l.includes('right'))
@@ -2957,7 +2957,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       title="Server Token (Slot 2)"
                     />
                   </div>
-                  <div className="border border-border/50 rounded-lg p-3 bg-slate-50 text-slate-800">
+                  <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
                     <PkcsLogPanel filterFn={(e) => e.args.includes('[responder]')} />
                   </div>
                 </div>

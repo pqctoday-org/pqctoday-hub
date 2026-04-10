@@ -22,11 +22,14 @@ import { useEmbed } from '../../embed/EmbedProvider'
 import { getActivePresets } from '../../embed/routePresets'
 import { useThemeStore } from '../../store/useThemeStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
+import type { Region } from '../../store/usePersonaStore'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useEmbedPersistence } from '../../embed/useEmbedPersistence'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
+import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
+import { useSearchParams } from 'react-router-dom'
 
 const RightPanel = React.lazy(() =>
   import('../RightPanel/RightPanel').then((m) => ({ default: m.RightPanel }))
@@ -34,6 +37,7 @@ const RightPanel = React.lazy(() =>
 
 export const EmbedLayout = () => {
   const location = useLocation()
+  const [searchParams, setSearchParams] = useSearchParams()
   const embedConfig = useEmbed()
   const { isOpen: isPanelOpen } = useRightPanelStore()
 
@@ -50,6 +54,9 @@ export const EmbedLayout = () => {
     }
   }, [embedConfig.theme, setTheme])
 
+  // Valid region slugs accepted by usePersonaStore
+  const VALID_EMBED_REGIONS = ['global', 'us', 'eu', 'apac', 'latam', 'mena', 'americas'] as const
+
   // Seed persona/region/industry from cert policy once at mount.
   // These become the locked active values for the session.
   React.useEffect(() => {
@@ -59,13 +66,20 @@ export const EmbedLayout = () => {
     } else if (embedConfig.allowedPersonas?.[0]) {
       setPersona(embedConfig.allowedPersonas[0] as PersonaId)
     }
-    // Region: first cert-allowed region becomes active
+    // Region: validate slug is a known Region before seeding
     if (embedConfig.allowedRegions?.[0]) {
-      setRegion(embedConfig.allowedRegions[0] as import('@/store/usePersonaStore').Region)
+      const r = embedConfig.allowedRegions[0]
+      if ((VALID_EMBED_REGIONS as readonly string[]).includes(r)) {
+        setRegion(r as Region)
+      }
     }
-    // Industries: all cert-allowed industries become the active set
+    // Industries: translate cert slugs ('finance') → display labels ('Finance & Banking')
+    // so every page (Compliance, Assess, etc.) gets the format it expects.
     if (embedConfig.allowedIndustries?.length) {
-      setIndustries(embedConfig.allowedIndustries)
+      const labels = embedConfig.allowedIndustries
+        .map((s) => INDUSTRY_SLUG_TO_LABEL[s.toLowerCase()] ?? null)
+        .filter((l): l is string => l !== null)
+      setIndustries(labels.length ? labels : embedConfig.allowedIndustries)
     }
     // Track policy restrictions applied by this vendor session
     logEmbedPolicyApplied(
@@ -76,6 +90,37 @@ export const EmbedLayout = () => {
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // intentionally run once at mount — cert values are immutable for the session
+
+  // Sanitize URL params against cert policy once at mount.
+  // Prevents manual URL manipulation to access restricted industries/personas.
+  React.useEffect(() => {
+    const next = new URLSearchParams(searchParams)
+    let changed = false
+
+    // ?ind= must be a cert-allowed industry label or 'All'
+    const ind = next.get('ind')
+    if (ind && ind !== 'All' && embedConfig.allowedIndustries?.length) {
+      const allowedLabels = embedConfig.allowedIndustries.map(
+        (s) => INDUSTRY_SLUG_TO_LABEL[s.toLowerCase()] ?? s
+      )
+      if (!allowedLabels.includes(ind)) {
+        next.delete('ind')
+        changed = true
+      }
+    }
+
+    // ?persona= must be cert-allowed
+    const persona = next.get('persona')
+    if (persona && embedConfig.allowedPersonas?.length) {
+      if (!embedConfig.allowedPersonas.includes(persona)) {
+        next.delete('persona')
+        changed = true
+      }
+    }
+
+    if (changed) setSearchParams(next, { replace: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // intentionally run once at mount
 
   // Resize Observer for postMessage communication
   React.useEffect(() => {

@@ -6,6 +6,56 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.99.0] - 2026-04-10
+
+### Added
+
+- **Embed SDK — `VendorTheme` full component theming**: Vendors can now control 15 visual
+  properties in their embedded certificate: colors (11 tokens), border radius, font family,
+  table row density (`compact`/`normal`/`relaxed`), navigation bar background/text color
+  (`sidebar`/`sidebarForeground`), and status badge fill style (`solid`/`tinted`). All overrides
+  are scoped to `[data-embed]` and have zero impact on standard mode.
+
+- **Embed SDK — nav bar color (`sidebar`/`sidebarForeground`)**: Vendors can set a custom
+  navigation bar background (e.g. dark navy `#1A2332`) with matching text/icon color. Active and
+  hover states are derived automatically via `color-mix()`.
+
+- **Embed SDK — solid status badges (`badgeFill: 'solid'`)**: Vendors can switch status badges
+  from the default subtle tinted style (`/10` opacity) to fully opaque filled pills, matching
+  enterprise CLM UI conventions (DigiCert ONE / Sectigo Trust Lifecycle Manager style).
+
+- **Embed SDK — `INDUSTRY_SLUG_TO_LABEL` mapping**: A single canonical map in `personaConfig.ts`
+  translates cert industry slugs (`'finance'`) to display labels (`'Finance & Banking'`) at the
+  embed boundary, ensuring all pages receive the format they expect.
+
+- **`test-vendor-custom-design` cert preset**: Dev registry now includes a third test certificate
+  (`kid: test-vendor-custom-design`) encoding a full Trust Lifecycle Manager brand theme: deep
+  blue primary, light gray background, dark navy nav bar, compact density, solid badges.
+
+### Fixed
+
+- **Embed mode — Compliance tables empty**: The industry filter initialized to a cert slug
+  (`'finance'`) that never matched compliance CSV display labels (`'Finance & Banking'`),
+  producing 0 entries. Fixed by translating slugs to display labels in `EmbedLayout` before
+  seeding `usePersonaStore`.
+
+- **Embed mode — Assessment industry not pre-populated**: Same slug/label mismatch prevented the
+  Assess wizard from pre-selecting the correct industry from the cert policy.
+
+- **Embed mode — region validation**: `allowedRegions[0]` is now validated against a known
+  `Region` set before being passed to `setRegion()`, preventing an unsafe type-cast with
+  unexpected cert values.
+
+- **Embed mode — URL param bypass**: `?ind=` and `?persona=` query parameters are now sanitized
+  at mount against cert-allowed values, preventing manual URL manipulation from accessing
+  restricted content.
+
+- **Semantic token consistency**: Replaced raw palette classes (`bg-amber-500/10`,
+  `text-amber-500`, `bg-slate-50`, `text-slate-800`, `bg-red-50`, `text-red-900`,
+  `bg-blue-50/10`, `text-blue-300`) with semantic tokens across `WasmFallback`,
+  `StatefulSignaturesDemo`, and `VpnSimulationPanel` for correct rendering in vendor-themed
+  embed contexts.
+
 ## [2.98.0] - 2026-04-10
 
 ### Added

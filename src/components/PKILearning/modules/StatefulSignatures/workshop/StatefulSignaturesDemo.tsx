@@ -450,7 +450,7 @@ export function StatefulSignaturesDemo() {
             {activeTab === 'hss' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="p-4 border rounded-md bg-blue-50/10 text-blue-800 dark:text-blue-300 dark:bg-blue-900/20">
+                  <div className="p-4 border border-status-info/30 rounded-md bg-status-info/10 text-status-info">
                     <h4 className="font-semibold flex items-center gap-2 mb-1">
                       <Info className="h-4 w-4" /> Strict PKCS#11 v3.2 Compliance
                     </h4>
@@ -460,7 +460,7 @@ export function StatefulSignaturesDemo() {
                       (<i>L=1</i>).
                     </p>
                   </div>
-                  <div className="p-4 border rounded-md border-red-200 bg-red-50 text-red-900 dark:bg-red-900/20 dark:border-red-900 dark:text-red-300">
+                  <div className="p-4 border border-status-error/30 rounded-md bg-status-error/10 text-status-error">
                     <h4 className="font-semibold flex items-center gap-2 mb-1">
                       <Info className="h-4 w-4" /> State Exhaustion Handling
                     </h4>
@@ -605,7 +605,7 @@ export function StatefulSignaturesDemo() {
                         C_VerifyInit + C_Verify · C++
                       </span>
                     </div>
-                    <div className="p-3 border border-amber-500/30 bg-amber-50/5 dark:bg-amber-900/10 rounded-md space-y-2">
+                    <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
                       <div className="flex items-center gap-1.5">
                         <ShieldAlert size={13} className="text-status-warning shrink-0" />
                         <span className="text-[11px] font-semibold text-status-warning">
@@ -857,7 +857,7 @@ export function StatefulSignaturesDemo() {
                         C_VerifyInit + C_Verify · C++
                       </span>
                     </div>
-                    <div className="p-3 border border-amber-500/30 bg-amber-50/5 dark:bg-amber-900/10 rounded-md space-y-2">
+                    <div className="p-3 border border-status-warning/30 bg-status-warning/5 rounded-md space-y-2">
                       <div className="flex items-center gap-1.5">
                         <ShieldAlert size={13} className="text-status-warning shrink-0" />
                         <span className="text-[11px] font-semibold text-status-warning">

@@ -255,6 +255,25 @@ export const ALWAYS_VISIBLE_PATHS = ['/', '/learn', '/timeline', '/threats', '/a
  * Empty array = no matching threat category.
  * Multiple values = fold those CSV industries under this landing-page category.
  */
+/**
+ * Maps VendorPolicy cert industry slugs (e.g. 'finance') to the canonical
+ * display labels used by compliance CSV, assessment data, and persona store.
+ * Single source of truth — used in EmbedLayout to translate before seeding store.
+ */
+export const INDUSTRY_SLUG_TO_LABEL: Record<string, string> = {
+  finance: 'Finance & Banking',
+  healthcare: 'Healthcare',
+  government: 'Government & Defense',
+  defense: 'Government & Defense',
+  telecom: 'Telecommunications',
+  energy: 'Energy & Utilities',
+  technology: 'Technology',
+  education: 'Education',
+  automotive: 'Automotive',
+  aerospace: 'Aerospace',
+  retail: 'Retail & E-Commerce',
+}
+
 export const INDUSTRY_TO_THREATS_MAP: Record<string, string[]> = {
   'Finance & Banking': [
     'Financial Services / Banking',

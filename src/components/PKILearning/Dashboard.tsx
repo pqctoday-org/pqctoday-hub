@@ -192,7 +192,7 @@ export const Dashboard: React.FC = () => {
   return (
     <div className="space-y-8">
       {/* Continue Learning — single most-recent in-progress module */}
-      {resumeModule && (
+      {resumeModule && !isEmbedded && (
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}

@@ -25,6 +25,46 @@ export const LEGACY_OIDS = {
 // VendorPolicy — the access policy encoded in the vendor certificate
 // ---------------------------------------------------------------------------
 
+export interface VendorTheme {
+  /** Primary brand color, e.g. "#2563EB" */
+  primary?: string
+  /** Text color on primary buttons/backgrounds, e.g. "#FFFFFF" */
+  primaryForeground?: string
+  /** Page background color, e.g. "#F8F9FA" */
+  background?: string
+  /** Card/panel background color, e.g. "#FFFFFF" */
+  card?: string
+  /** Main text color, e.g. "#1A1A2A" */
+  foreground?: string
+  /** Muted section background (table headers, zebra rows), e.g. "#F3F4F6" */
+  muted?: string
+  /** Secondary/muted text color, e.g. "#6B7280" */
+  mutedForeground?: string
+  /** Border color, e.g. "#E5E7EB" */
+  border?: string
+  /** Accent color for highlights, e.g. "#3B82F6" */
+  accent?: string
+  /** Border radius base value, e.g. "4px" */
+  radius?: string
+  /** Font family stack, e.g. "Inter, system-ui, sans-serif" */
+  fontFamily?: string
+  /** Table/filter row density: 'compact' (6px), 'normal' (12px), 'relaxed' (16px) */
+  density?: 'compact' | 'normal' | 'relaxed'
+  /**
+   * Navigation bar background color, e.g. "#1A2332" (dark navy).
+   * When set, the embed top nav uses this color instead of --color-background.
+   * Navigation text/icons automatically use sidebarForeground (or white if unset).
+   */
+  sidebar?: string
+  /** Text/icon color for the navigation bar when sidebar is set, e.g. "#FFFFFF" */
+  sidebarForeground?: string
+  /**
+   * Badge fill style: 'solid' renders status badges with full opacity background
+   * (e.g. solid green "Online" pill). 'tinted' (default) uses the subtle /10 tint.
+   */
+  badgeFill?: 'solid' | 'tinted'
+}
+
 export interface VendorPolicy {
   routes: {
     /** Section-level route presets (e.g. ["learn", "playground"]) */
@@ -58,6 +98,8 @@ export interface VendorPolicy {
     /** Whether to hide the main navigation shell */
     hideNav?: boolean
   }
+  /** Optional vendor brand theme — applies CSS custom properties before React mounts */
+  theme?: VendorTheme
 }
 
 // ---------------------------------------------------------------------------

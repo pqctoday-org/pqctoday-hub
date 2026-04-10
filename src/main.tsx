@@ -5,6 +5,53 @@ import './styles/index.css'
 import AppRoot from './AppRoot'
 import { initGA, logEmbedSession, logEmbedError } from './utils/analytics'
 import { registerSW } from 'virtual:pwa-register'
+import type { VendorTheme } from './embed/vendorPolicy'
+
+/**
+ * Apply vendor theme CSS custom properties to :root before React mounts.
+ * Inline styles on documentElement override @theme declarations in the CSS cascade
+ * (Tailwind v4 @theme tokens are CSS custom properties — highest-specificity override).
+ */
+function applyEmbedTheme(theme: VendorTheme | undefined): void {
+  if (!theme) return
+  const root = document.documentElement
+  const map: Record<string, string | undefined> = {
+    '--color-primary': theme.primary,
+    '--color-primary-foreground': theme.primaryForeground,
+    '--color-background': theme.background,
+    '--color-card': theme.card,
+    '--color-popover': theme.card, // popover matches card
+    '--color-foreground': theme.foreground,
+    '--color-muted': theme.muted, // table headers, zebra rows
+    '--color-muted-foreground': theme.mutedForeground,
+    '--color-border': theme.border,
+    '--color-input': theme.border, // input border matches border
+    '--color-accent': theme.accent,
+    '--color-secondary': theme.accent, // secondary buttons/badges
+    '--color-ring': theme.primary, // focus ring
+    '--radius-lg': theme.radius,
+    '--radius-md': theme.radius ? `calc(${theme.radius} - 2px)` : undefined,
+    '--radius-sm': theme.radius ? `calc(${theme.radius} - 4px)` : undefined,
+    '--font-family-sans': theme.fontFamily,
+    // Table/filter row density — only set in embed mode, never in standard mode
+    '--embed-table-py':
+      theme.density === 'compact'
+        ? '0.375rem' // ≈ py-1.5
+        : theme.density === 'relaxed'
+          ? '1rem' // ≈ py-4
+          : theme.density
+            ? '0.75rem' // normal / ≈ py-3
+            : undefined,
+    // Nav bar colors — only set when vendor provides a sidebar color
+    '--embed-nav-bg': theme.sidebar,
+    '--embed-nav-fg': theme.sidebarForeground ?? (theme.sidebar ? '#FFFFFF' : undefined),
+    // Badge fill — set a flag var; CSS rule reads it to override opacity
+    '--embed-badge-fill': theme.badgeFill === 'solid' ? '1' : undefined,
+  }
+  for (const [prop, val] of Object.entries(map)) {
+    if (val) root.style.setProperty(prop, val)
+  }
+}
 
 // Initialize Google Analytics
 initGA()
@@ -105,6 +152,8 @@ if (window.location.pathname.startsWith('/embed/')) {
     .then(({ verifyEmbedUrl }) => verifyEmbedUrl(new URL(window.location.href)))
     .then((config) => {
       setEmbedState(config)
+      applyEmbedTheme(config.policy?.theme)
+      document.documentElement.setAttribute('data-embed', '1')
       const presets = config.policy?.routes?.presets ?? []
       logEmbedSession(config.vendorId, config.kid, presets, config.isTestMode ?? false)
       mountApp()
