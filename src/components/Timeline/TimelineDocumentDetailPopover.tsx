@@ -18,6 +18,8 @@ import {
 } from '../../data/timelineEnrichmentData'
 import type { Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 export interface TimelineDocumentRow {
   countryName: string
@@ -45,6 +47,8 @@ export const TimelineDocumentDetailPopover = ({
   row,
 }: TimelineDocumentDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -66,7 +70,7 @@ export const TimelineDocumentDetailPopover = ({
 
   if (!isOpen || !row) return null
 
-  const style: React.CSSProperties = { zIndex: 9999 }
+  const style: React.CSSProperties = { zIndex: 9999, ...positionStyle }
   const colors = phaseColors[row.phase as Phase] || {
     start: 'hsl(var(--muted-foreground))',
     end: 'hsl(var(--muted))',
@@ -91,7 +95,7 @@ export const TimelineDocumentDetailPopover = ({
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
         style={style}
         role="dialog"
         aria-modal="true"

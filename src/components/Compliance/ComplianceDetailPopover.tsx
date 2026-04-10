@@ -14,6 +14,8 @@ import {
 import type { ComplianceRecord, ComplianceStatus } from './types'
 import clsx from 'clsx'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 interface ComplianceDetailPopoverProps {
   isOpen: boolean
@@ -56,6 +58,8 @@ export const ComplianceDetailPopover = ({
 }: ComplianceDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const closeButtonRef = useRef<HTMLButtonElement>(null)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   // Close on click outside
   useEffect(() => {
@@ -104,8 +108,8 @@ export const ComplianceDetailPopover = ({
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm" aria-hidden="true">
       <div
         ref={popoverRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-        style={{ zIndex: 9999 }}
+        className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        style={{ zIndex: 9999, ...positionStyle }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="popover-title"

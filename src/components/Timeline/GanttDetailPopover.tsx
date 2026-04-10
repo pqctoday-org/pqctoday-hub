@@ -15,6 +15,8 @@ import {
   getTimelineEnrichmentKey,
 } from '../../data/timelineEnrichmentData'
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -24,6 +26,9 @@ interface GanttDetailPopoverProps {
 
 export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
+
   // Track which phase's analysis panel is expanded so it auto-collapses on phase change
   const [analysisOpenForPhase, setAnalysisOpenForPhase] = useState<string | null>(null)
   const analysisOpen = analysisOpenForPhase === phase?.title
@@ -87,12 +92,13 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
 
   const style: React.CSSProperties = {
     zIndex: 9999,
+    ...positionStyle,
   }
 
   const content = (
     <div
       ref={popoverRef}
-      className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[90vw] max-w-[36rem] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
+      className="w-[90vw] max-w-[36rem] bg-popover text-popover-foreground shadow-2xl border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200"
       style={style}
     >
       {/* Header with Phase Color */}

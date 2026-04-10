@@ -98,6 +98,7 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const apiBase = params.get('apiBase') ?? undefined
     const theme = (params.get('theme') as 'dark' | 'light' | undefined) ?? undefined
     const personaParam = params.get('persona') ?? undefined
+    const assistantParam = params.get('assistant') ?? undefined
 
     // Validate nonce length (min 16 chars as per PRD)
     if (nonce.length < 16) {
@@ -235,7 +236,14 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       theme,
       persona: resolvedPersona,
       allowedOrigins: cert.allowedOrigins,
-      policy: cert.policy,
+      policy: {
+        ...cert.policy,
+        features: {
+          ...cert.policy.features,
+          assistantEnabled:
+            assistantParam === 'false' ? false : cert.policy.features.assistantEnabled,
+        },
+      },
       allowedModules: cert.policy.routes.modules,
       allowedTools: cert.policy.routes.tools,
       allowedPersonas: cert.policy.content.personas,

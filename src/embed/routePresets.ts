@@ -13,11 +13,15 @@
 export const ROUTE_PRESETS: Record<string, string[]> = {
   learn: ['/learn', '/learn/*'],
   assess: ['/assess', '/report'],
-  explore: ['/timeline', '/algorithms', '/library', '/threats', '/leaders', '/compliance'],
+  timeline: ['/timeline'],
+  algorithms: ['/algorithms'],
+  library: ['/library'],
+  threats: ['/threats'],
+  leaders: ['/leaders'],
+  compliance: ['/compliance'],
   migrate: ['/migrate'],
   playground: ['/playground', '/playground/*'],
   business: ['/business', '/business/*'],
-  openssl: ['/openssl'],
   faq: ['/faq'],
   all: ['/*'],
 }
@@ -29,11 +33,15 @@ export const ROUTE_PRESETS: Record<string, string[]> = {
 export const ROUTE_PRESET_LABELS: Record<string, string> = {
   learn: 'Learn',
   assess: 'Assess',
-  explore: 'Explore',
+  timeline: 'Timeline',
+  algorithms: 'Algorithms',
+  library: 'Library',
+  threats: 'Threats',
+  leaders: 'Leaders',
+  compliance: 'Compliance',
   migrate: 'Migrate',
   playground: 'Playground',
   business: 'Business',
-  openssl: 'OpenSSL',
   faq: 'FAQ',
 }
 

@@ -255,33 +255,31 @@ export const CuriousSummaryBanner = ({
             </Tabs>
           </div>
 
-          {/* Desktop Layout: 2-Column Side-by-Side */}
-          <div className="hidden md:grid md:grid-cols-[1.2fr_1fr] gap-x-6 lg:gap-x-8 items-start">
-            {/* Left Column: Infographic */}
-            <div className="flex flex-col">
-              <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center">
-                <a
-                  href={imgSrc}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="block w-full"
-                  title="Click to view full size"
-                >
-                  <img
-                    src={`${imgSrc}?v=conversational_v2`}
-                    alt={altText}
-                    loading="lazy"
-                    onError={handleImgError}
-                    className="w-full h-auto max-h-[70vh] object-contain rounded-md shadow-md cursor-zoom-in"
-                  />
-                </a>
-                <p className="text-center text-[11px] text-muted-foreground mt-2">
-                  Click image to view full size
-                </p>
-              </div>
+          {/* Desktop Layout: Full-width visual, then full-width In Simple Terms below */}
+          <div className="hidden md:flex md:flex-col gap-y-6">
+            {/* Full-width Infographic */}
+            <div className="w-full bg-muted/30 rounded-lg border border-border p-3 flex flex-col items-center">
+              <a
+                href={imgSrc}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full"
+                title="Click to view full size"
+              >
+                <img
+                  src={`${imgSrc}?v=conversational_v2`}
+                  alt={altText}
+                  loading="lazy"
+                  onError={handleImgError}
+                  className="w-full h-auto object-contain rounded-md shadow-md cursor-zoom-in"
+                />
+              </a>
+              <p className="text-center text-[11px] text-muted-foreground mt-2">
+                Click image to view full size
+              </p>
             </div>
 
-            {/* Right Column: In Simple Terms Text (with Tooltips automatically rendered) */}
+            {/* Full-width In Simple Terms */}
             <div className="prose prose-sm max-w-none text-muted-foreground prose-headings:text-foreground prose-headings:text-sm prose-headings:font-semibold prose-p:text-sm prose-p:leading-relaxed prose-strong:text-foreground prose-ul:text-sm prose-li:text-sm">
               <h3 className="text-lg font-bold text-foreground mb-4 border-b border-border pb-2 mt-0 flex items-center gap-2">
                 <Lightbulb size={20} className="text-warning" />

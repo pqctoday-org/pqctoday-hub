@@ -9,11 +9,14 @@ import {
   ArrowRightLeft,
   ClipboardCheck,
   LayoutDashboard,
-  Terminal,
   HelpCircle,
+  BookOpen,
+  Users,
+  Info,
+  Shield,
+  AlertTriangle,
 } from 'lucide-react'
 import { Button } from '../ui/button'
-import { Breadcrumb } from '../common/Breadcrumb'
 import { PoweredByBadge } from '../ui/PoweredByBadge'
 import { useEmbed } from '../../embed/EmbedProvider'
 import { getActivePresets } from '../../embed/routePresets'
@@ -109,12 +112,16 @@ export const EmbedLayout = () => {
     { label: string; icon: React.ElementType; basePath: string }
   > = {
     learn: { label: 'Learn', icon: GraduationCap, basePath: '/learn' },
-    explore: { label: 'Explore', icon: Globe, basePath: '/timeline' },
+    timeline: { label: 'Timeline', icon: Globe, basePath: '/timeline' },
+    algorithms: { label: 'Algorithms', icon: Shield, basePath: '/algorithms' },
+    library: { label: 'Library', icon: BookOpen, basePath: '/library' },
+    threats: { label: 'Threats', icon: AlertTriangle, basePath: '/threats' },
+    leaders: { label: 'Leaders', icon: Users, basePath: '/leaders' },
+    compliance: { label: 'Compliance', icon: ClipboardCheck, basePath: '/compliance' },
     assess: { label: 'Assess', icon: ClipboardCheck, basePath: '/assess' },
     migrate: { label: 'Migrate', icon: ArrowRightLeft, basePath: '/migrate' },
     playground: { label: 'Playground', icon: FlaskConical, basePath: '/playground' },
     business: { label: 'Business', icon: LayoutDashboard, basePath: '/business' },
-    openssl: { label: 'OpenSSL', icon: Terminal, basePath: '/openssl' },
     faq: { label: 'FAQ', icon: HelpCircle, basePath: '/faq' },
     all: { label: 'Learn', icon: GraduationCap, basePath: '/learn' }, // 'all' → default to learn
   }
@@ -126,6 +133,9 @@ export const EmbedLayout = () => {
     // eslint-disable-next-line security/detect-object-injection
     .map((preset) => PRESET_NAV_ITEMS[preset])
     .filter(Boolean)
+
+  // Ensure "About" is permanently attached at the very end.
+  visibleNavItems.push({ label: 'About', icon: Info, basePath: '/about' })
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
@@ -156,7 +166,7 @@ export const EmbedLayout = () => {
                 return (
                   <NavLink
                     key={item.basePath}
-                    to={embedUrl}
+                    to={`${embedUrl}${location.search}`}
                     className="flex-shrink-0"
                     // isActive if current path starts with the embed URL
                     end={false}
@@ -188,7 +198,7 @@ export const EmbedLayout = () => {
       {/* Test Mode Overlay */}
       {embedConfig.isTestMode && (
         <div className="bg-destructive text-destructive-foreground px-4 py-2 text-center text-xs sm:text-sm font-bold shadow-sm z-[40]">
-          TEST ONLY PLEASE REACH OUT TO GET YOUR PRIVATE CERTIFICATE FOR PRODUCTION DEPLOYMENT
+          TEST ONLY — PLEASE REACH OUT TO PQCTODAY@GMAIL.COM TO GET YOUR PRIVATE BANNER
         </div>
       )}
 
@@ -209,7 +219,6 @@ export const EmbedLayout = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.2 }}
           >
-            <Breadcrumb />
             <Outlet />
           </motion.div>
         </React.Suspense>

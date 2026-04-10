@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import {
   Bookmark,
   BookmarkX,
@@ -34,6 +34,20 @@ export const BookmarksPanel = () => {
     toggleMyPlaygroundTool,
     clearAll,
   } = useBookmarkStore()
+
+  const location = useLocation()
+  const isEmbedded = location.pathname.startsWith('/embed')
+
+  const getHref = (path: string, searchParams: string = '') => {
+    if (isEmbedded) {
+      const existing = new URLSearchParams(location.search)
+      const additional = new URLSearchParams(searchParams)
+      additional.forEach((v, k) => existing.set(k, v))
+      const qs = existing.toString()
+      return `/embed${path}${qs ? `?${qs}` : ''}`
+    }
+    return `${path}${searchParams}`
+  }
 
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
   const toggleMyProduct = useMigrateSelectionStore((s) => s.toggleMyProduct)
@@ -147,7 +161,7 @@ export const BookmarksPanel = () => {
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                 >
                   <Link
-                    to={`/library?ref=${encodeURIComponent(refId)}`}
+                    to={getHref('/library', `?ref=${encodeURIComponent(refId)}`)}
                     className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                   >
                     <span className="font-mono text-xs truncate">{refId}</span>
@@ -184,7 +198,7 @@ export const BookmarksPanel = () => {
                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                   >
                     <Link
-                      to={`/migrate?q=${encodeURIComponent(name)}`}
+                      to={getHref('/migrate', `?q=${encodeURIComponent(name)}`)}
                       className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                     >
                       <span className="truncate">{name}</span>
@@ -222,7 +236,7 @@ export const BookmarksPanel = () => {
                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                   >
                     <Link
-                      to={`/learn/${encodeURIComponent(id)}`}
+                      to={getHref(`/learn/${encodeURIComponent(id)}`)}
                       className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                     >
                       <span className="truncate">{mod?.title ?? id}</span>
@@ -258,7 +272,7 @@ export const BookmarksPanel = () => {
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                 >
                   <Link
-                    to={`/timeline?country=${encodeURIComponent(country)}`}
+                    to={getHref('/timeline', `?country=${encodeURIComponent(country)}`)}
                     className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                   >
                     <span className="truncate">{country}</span>
@@ -293,7 +307,7 @@ export const BookmarksPanel = () => {
                   className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                 >
                   <Link
-                    to={`/threats?id=${encodeURIComponent(id)}`}
+                    to={getHref('/threats', `?id=${encodeURIComponent(id)}`)}
                     className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                   >
                     <span className="font-mono text-xs truncate">{id}</span>
@@ -330,7 +344,7 @@ export const BookmarksPanel = () => {
                     className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted/30 transition-colors group"
                   >
                     <Link
-                      to={`/playground/${encodeURIComponent(id)}`}
+                      to={getHref(`/playground/${encodeURIComponent(id)}`)}
                       className="flex-1 flex items-center gap-2 min-w-0 text-sm text-foreground hover:text-primary transition-colors"
                     >
                       <span className="truncate">{tool?.name ?? id}</span>

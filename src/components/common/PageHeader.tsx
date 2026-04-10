@@ -12,6 +12,7 @@ import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { ViewType } from '@/data/authoritativeSourcesData'
+import { useEmbedState } from '@/embed/EmbedProvider'
 import type { PageId } from '@/data/userManualData'
 
 interface PageHeaderProps {
@@ -76,6 +77,10 @@ export const PageHeader = ({
   const hasActions =
     dataSource || viewType || shareTitle || onExport || endorseUrl || flagUrl || pageId
 
+  const embedState = useEmbedState()
+  const showAssistant =
+    !embedState.isEmbedded || embedState.policy.features.assistantEnabled !== false
+
   return (
     <div className="text-center mb-2 md:mb-12" data-testid={testId}>
       <h2 className="text-xl md:text-4xl font-bold mb-1 md:mb-4 text-gradient flex items-center justify-center gap-2 md:gap-3">
@@ -131,19 +136,21 @@ export const PageHeader = ({
                 <GlossaryButton />
                 {pageId && <UserManualButton pageId={pageId} />}
                 {onExport && <ExportButton onExport={onExport} />}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => {
-                    setMobileMenuOpen(false)
-                    openChat('chat')
-                  }}
-                  className="w-full justify-start gap-2 min-h-[44px]"
-                  role="menuitem"
-                >
-                  <MessageCircle size={15} aria-hidden="true" />
-                  PQC Assistant
-                </Button>
+                {showAssistant && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setMobileMenuOpen(false)
+                      openChat('chat')
+                    }}
+                    className="w-full justify-start gap-2 min-h-[44px]"
+                    role="menuitem"
+                  >
+                    <MessageCircle size={15} aria-hidden="true" />
+                    Assistant
+                  </Button>
+                )}
               </div>
             )}
           </div>
@@ -173,14 +180,16 @@ export const PageHeader = ({
               resourceType={flagResourceType ?? 'Page'}
             />
           )}
-          <Button
-            variant="gradient"
-            onClick={() => openChat('chat')}
-            className="w-8 h-8 rounded-full shadow-md shadow-primary/25 p-0 shrink-0"
-            aria-label="Open PQC Assistant"
-          >
-            <MessageCircle size={15} aria-hidden="true" />
-          </Button>
+          {showAssistant && (
+            <button
+              onClick={() => openChat('chat')}
+              className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
+              aria-label="Open PQC Assistant"
+            >
+              <MessageCircle size={14} aria-hidden="true" />
+              <span>Assistant</span>
+            </button>
+          )}
         </div>
       )}
     </div>

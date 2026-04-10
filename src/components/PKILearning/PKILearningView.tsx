@@ -17,6 +17,7 @@ import { CuriousModuleView } from './common/CuriousModuleView'
 import { MODULE_CATALOG } from './moduleData'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { WipModuleBadge } from './common/WipModuleBadge'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 const PKIWorkshop = lazyWithRetry(() =>
   import('./modules/PKIWorkshop').then((module) => ({ default: module.PKIWorkshop }))
@@ -254,6 +255,8 @@ export const PKILearningView: React.FC = () => {
   const location = useLocation()
   const isDashboard = location.pathname === '/learn' || location.pathname === '/learn/'
 
+  const isEmbed = useIsEmbedded()
+
   // Derive moduleId from URL path (e.g. '/learn/pqc-101' → 'pqc-101')
   const moduleId = location.pathname.replace(/^\/learn\/?/, '')
   // Show progress sidebar for module pages (not dashboard, not quiz)
@@ -280,7 +283,7 @@ export const PKILearningView: React.FC = () => {
   return (
     <div className="animate-fade-in">
       <div className="flex items-center justify-between mb-6">
-        {!isDashboard ? (
+        {!isDashboard && !isEmbed ? (
           <button
             onClick={() => navigate('/learn')}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"

@@ -39,6 +39,8 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { ProductExtractionModal } from './ProductExtractionModal'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 import {
   CertBadges,
   EvidenceWarnings,
@@ -115,6 +117,8 @@ interface ProofModalProps {
 
 function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -146,7 +150,8 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
         role="dialog"
         aria-modal="true"
         aria-labelledby="proof-modal-title"
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-[9999] w-[95vw] sm:w-[80vw] md:w-[520px] max-h-[85vh] bg-popover border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        className="w-[95vw] sm:w-[80vw] md:w-[520px] max-h-[85vh] bg-popover border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+        style={{ zIndex: 9999, ...positionStyle }}
       >
         {/* Header */}
         <div className="flex items-start justify-between gap-3 p-4 border-b border-border bg-muted/20 shrink-0">

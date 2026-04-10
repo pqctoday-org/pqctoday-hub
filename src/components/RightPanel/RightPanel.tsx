@@ -4,6 +4,8 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { PanelHeader } from './PanelHeader'
 import { ChatPanelContent } from './ChatPanelContent'
+import { useEmbedState } from '@/embed/EmbedProvider'
+import clsx from 'clsx'
 
 const HistoryPanel = React.lazy(() =>
   import('./HistoryPanel').then((m) => ({ default: m.HistoryPanel }))
@@ -17,6 +19,7 @@ const BookmarksPanel = React.lazy(() =>
 
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close } = useRightPanelStore()
+  const { isEmbedded } = useEmbedState()
 
   // Close on Escape
   useEffect(() => {
@@ -58,7 +61,13 @@ export const RightPanel: React.FC = () => {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden"
+            className={clsx(
+              'z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden',
+              isEmbedded
+                ? 'absolute right-0 top-[48px] rounded-bl-xl border-b'
+                : 'fixed right-0 top-0 bottom-0'
+            )}
+            style={isEmbedded ? { height: 'min(800px, calc(100% - 48px))' } : {}}
             role="dialog"
             aria-label={
               activeTab === 'chat'

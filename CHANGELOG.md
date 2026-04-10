@@ -6,6 +6,58 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [2.98.0] - 2026-04-10
+
+### Added
+
+- **Embed SDK — granular route presets**: The `explore` bundle preset has been replaced with
+  individual presets — `timeline`, `algorithms`, `library`, `threats`, `leaders`, `compliance` —
+  giving vendors precise control over which pages appear in the embedded nav. Certificates using
+  `"presets":["all"]` (full access) automatically show all pages.
+
+- **Embed SDK — Algorithms and Threats nav items**: The Embed layout now shows Algorithms and
+  Threats as first-class nav entries when the vendor certificate permits those routes, matching
+  the full-site navigation.
+
+- **Embed SDK — `assistant` URL param**: Vendors can suppress the PQC Assistant at embed URL
+  level by appending `assistant=false` (e.g. for read-only kiosk deployments), without requiring
+  a new certificate.
+
+- **Embed SDK — About page always accessible**: `/about` is now exempt from route-guard
+  enforcement so embedded users can always reach the About page regardless of cert presets.
+
+- **Embed SDK — Right Panel scoped to iframe**: The assistant/bookmarks panel now opens as an
+  in-frame overlay (not a full-screen takeover) when running in embed mode, and the Knowledge
+  Graph tab is hidden in embed contexts where it would be disruptive.
+
+- **Embed SDK — query-string passthrough on nav**: Embed nav links and internal redirects now
+  preserve the `?token=…` query string so the vendor token is never lost on in-app navigation.
+
+- **CuriousSummaryBanner layout**: Desktop view switched from a 2-column side-by-side layout to
+  full-width stacked (infographic on top, "In Simple Terms" below) for better readability on
+  medium-width screens.
+
+### Fixed
+
+- **Embed modal positioning**: All detail popovers (Compliance, Leader, Library, Migrate,
+  Timeline, WhatsNew) now use a shared `useModalPosition` hook so they render correctly inside
+  an iframe without clipping outside the embed container.
+
+- **Bookmark links in embed mode**: Clicking a bookmarked item now navigates within the embed
+  (`/embed/library?ref=…`) instead of escaping to the full-site URL.
+
+- **Theme not applied in embed mode**: Dark/light theme preference is now applied on load inside
+  the embed layout via a dedicated `ThemeApplier` component.
+
+- **Embed vendor cert import path**: Dev registry now resolves the test certificate path relative
+  to the correct directory depth (`pqc-tools/…` instead of `../../../../pqc-tools/…`).
+
+- **Assistant button styling**: The "Assistant" button in page headers is now a compact
+  pill-style button (icon + label) consistent with other action buttons in the row.
+
+- **Back-to-modules button hidden in embed**: The "← Back to modules" button on individual
+  learning module pages is hidden in embed mode to avoid confusing navigation out of context.
+
 ## [2.97.0] - 2026-04-09
 
 ### Added

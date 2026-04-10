@@ -12,8 +12,28 @@
         "paths": ["/assess", "/report"]
       },
       {
-        "id": "explore",
-        "paths": ["/timeline", "/algorithms", "/library", "/threats", "/leaders", "/compliance"]
+        "id": "timeline",
+        "paths": ["/timeline"]
+      },
+      {
+        "id": "algorithms",
+        "paths": ["/algorithms"]
+      },
+      {
+        "id": "library",
+        "paths": ["/library"]
+      },
+      {
+        "id": "threats",
+        "paths": ["/threats"]
+      },
+      {
+        "id": "leaders",
+        "paths": ["/leaders"]
+      },
+      {
+        "id": "compliance",
+        "paths": ["/compliance"]
       },
       {
         "id": "migrate",
@@ -26,10 +46,6 @@
       {
         "id": "business",
         "paths": ["/business", "/business/*"]
-      },
-      {
-        "id": "openssl",
-        "paths": ["/openssl"]
       },
       {
         "id": "faq",

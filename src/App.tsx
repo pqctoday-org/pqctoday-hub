@@ -143,6 +143,12 @@ function AnalyticsTracker() {
 }
 
 import { ScrollToTop } from './components/Router/ScrollToTop'
+import { useTheme } from './hooks/useTheme'
+
+function ThemeApplier() {
+  useTheme()
+  return null
+}
 
 function AchievementChecker() {
   useAchievementChecker()
@@ -319,6 +325,7 @@ function App() {
     <BrowserRouter>
       <ScrollToTop />
       <AnalyticsTracker />
+      <ThemeApplier />
       <EmbedNavigationGuard />
       <AchievementChecker />
       <AchievementSectionTracker />
@@ -343,9 +350,9 @@ function App() {
               </EmbedRouteGuard>
             }
           >
-            <Route index element={<Navigate to="learn" replace />} />
+            <Route index element={<Navigate to={`learn${window.location.search}`} replace />} />
             {commonRoutes}
-            <Route path="*" element={<Navigate to="/embed" replace />} />
+            <Route path="*" element={<Navigate to={`/embed${window.location.search}`} replace />} />
           </Route>
 
           <Route element={<MainLayout />}>

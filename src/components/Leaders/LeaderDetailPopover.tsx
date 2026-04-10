@@ -13,6 +13,8 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 interface LeaderDetailPopoverProps {
   isOpen: boolean
@@ -23,6 +25,8 @@ interface LeaderDetailPopoverProps {
 export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const [imgError, setImgError] = useState(false)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -54,8 +58,8 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-        style={{ zIndex: 9999 }}
+        className="w-[95vw] sm:w-[75vw] md:w-[50vw] max-w-[700px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        style={{ zIndex: 9999, ...positionStyle }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="leader-popover-title"

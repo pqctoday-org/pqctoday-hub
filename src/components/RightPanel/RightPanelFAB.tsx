@@ -5,11 +5,16 @@ import { MessageCircle, Clock } from 'lucide-react'
 import { Button } from '../ui/button'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { logChatOpened } from '@/utils/analytics'
+import { useEmbedState } from '@/embed/EmbedProvider'
 
 export const RightPanelFAB: React.FC = () => {
   const { isOpen, activeTab, toggle } = useRightPanelStore()
+  const embedConfig = useEmbedState()
 
   if (isOpen) return null
+
+  if (embedConfig.isEmbedded && embedConfig.policy?.features?.assistantEnabled === false)
+    return null
 
   const isChat = activeTab !== 'history'
   const Icon = isChat ? MessageCircle : Clock

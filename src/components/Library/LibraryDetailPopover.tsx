@@ -13,6 +13,9 @@ import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndors
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import { leadersData } from '../../data/leadersData'
+import clsx from 'clsx'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 /** Strip parenthetical annotations and honorific prefixes, then lowercase. */
 function normalizeLeaderName(raw: string): string {
@@ -35,6 +38,8 @@ interface LibraryDetailPopoverProps {
 export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPopoverProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
   const [pngVisible, setPngVisible] = useState(false)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   // Close on click outside
   useEffect(() => {
@@ -126,8 +131,21 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
         <div
-          className="fixed inset-0 flex items-end justify-center md:items-center pointer-events-none"
-          style={{ zIndex: 9999 }}
+          className={clsx(
+            'pointer-events-none flex justify-center',
+            isEmbedded ? 'absolute inset-x-0' : 'fixed inset-0 items-end md:items-center'
+          )}
+          style={{
+            zIndex: 9999,
+            ...(isEmbedded
+              ? {
+                  position: 'absolute',
+                  // Instead of transform -50%, we manually offset top a bit to fake vertical centering
+                  // and use 0 bottom/left/right so the flex row naturally horizontal centers
+                  top: `max(20px, calc(${positionStyle.top} - 350px))`,
+                }
+              : {}),
+          }}
         >
           <motion.div
             ref={popoverRef}

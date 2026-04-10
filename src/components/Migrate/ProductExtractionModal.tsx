@@ -6,6 +6,8 @@ import FocusLock from 'react-focus-lock'
 import clsx from 'clsx'
 import type { ProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useModalPosition } from '../../hooks/useModalPosition'
 
 interface ProductExtractionModalProps {
   isOpen: boolean
@@ -125,6 +127,8 @@ export const ProductExtractionModal = ({
   softwareName,
 }: ProductExtractionModalProps) => {
   const popoverRef = useRef<HTMLDivElement>(null)
+  const isEmbedded = useIsEmbedded()
+  const positionStyle = useModalPosition(isEmbedded)
 
   // Close on click outside
   useEffect(() => {
@@ -183,8 +187,8 @@ export const ProductExtractionModal = ({
     <FocusLock returnFocus>
       <div
         ref={popoverRef}
-        className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[900px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-        style={style}
+        className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[900px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+        style={{ ...style, ...positionStyle }}
         role="dialog"
         aria-modal="true"
         aria-labelledby="extraction-modal-title"
