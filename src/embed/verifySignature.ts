@@ -93,9 +93,8 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const exp = parseInt(params.get('exp')!, 10)
     const nonce = params.get('nonce')!
     const routes = params.get('routes')!
-    const persist = params.get('persist')! as 'api' | 'postMessage' | 'none'
+    const persist = params.get('persist')! as 'postMessage' | 'none'
     const sig = params.get('sig')!
-    const apiBase = params.get('apiBase') ?? undefined
     const theme = (params.get('theme') as 'dark' | 'light' | undefined) ?? undefined
     const personaParam = params.get('persona') ?? undefined
     const assistantParam = params.get('assistant') ?? undefined
@@ -106,19 +105,36 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     }
 
     // Validate persist mode is a known value
-    if (!['api', 'postMessage', 'none'].includes(persist)) {
+    if (!['postMessage', 'none'].includes(persist)) {
       throw new EmbedVerificationError('missing_params', `Unknown persist mode: ${persist}`)
-    }
-
-    // Validate apiBase is provided when persist=api
-    if (persist === 'api' && !apiBase) {
-      throw new EmbedVerificationError('missing_params', 'apiBase required when persist=api')
     }
 
     // -----------------------------------------------------------------------
     // Step 2: Lookup vendor in registry
+    // In dev mode, the SDK test site may pass the cert inline as ?cert=<base64>
+    // so we don't need cross-origin localStorage.
     // -----------------------------------------------------------------------
-    const vendor = await findVendor(kid)
+    let vendor = await findVendor(kid)
+
+    if (!vendor && import.meta.env.DEV) {
+      const inlineCert = params.get('cert')
+      if (inlineCert) {
+        try {
+          const certPem = atob(inlineCert)
+          vendor = {
+            kid,
+            vendorId: 'SDK Preview',
+            vendorName: 'SDK Preview',
+            certPem,
+            revoked: false,
+            isTest: true,
+          }
+        } catch {
+          // malformed base64 — fall through to unknown_vendor
+        }
+      }
+    }
+
     if (!vendor) {
       throw new EmbedVerificationError('unknown_vendor', `Unknown vendor: ${kid}`, kid)
     }
@@ -232,7 +248,6 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       expiresAt: exp,
       allowedRoutes,
       persistMode: persist,
-      apiBase,
       theme,
       persona: resolvedPersona,
       allowedOrigins: cert.allowedOrigins,
@@ -319,8 +334,10 @@ function validateToolPath(pathname: string, allowedTools: string[], kid?: string
 function buildCanonicalString(params: URLSearchParams): string {
   const entries: [string, string][] = []
 
+  // 'sig' is the signature itself; 'ind' and 'cert' are post-verification secondary params
+  const EXCLUDED = new Set(['sig', 'ind', 'cert'])
   for (const [key, value] of params.entries()) {
-    if (key === 'sig') continue
+    if (EXCLUDED.has(key)) continue
     entries.push([key, value])
   }
 
