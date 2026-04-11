@@ -47,7 +47,7 @@ export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSection
                 type="button"
                 onClick={() => toggleLearnSection(moduleId, section.id)}
                 className={
-                  'w-full min-w-0 flex items-start gap-2 text-left text-xs rounded px-2 py-1.5 transition-colors ' +
+                  'w-full min-w-0 whitespace-normal flex items-start gap-2 text-left text-xs rounded px-2 py-1.5 transition-colors ' +
                   (isChecked
                     ? 'text-status-success bg-status-success/15 hover:bg-status-success/20'
                     : 'text-foreground hover:bg-muted')
