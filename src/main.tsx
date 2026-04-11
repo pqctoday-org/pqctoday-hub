@@ -57,6 +57,9 @@ function applyEmbedTheme(theme: VendorTheme | undefined): void {
   for (const [prop, val] of Object.entries(map)) {
     if (val) root.style.setProperty(prop, val)
   }
+  if (theme.navLayout) {
+    document.documentElement.setAttribute('data-nav-layout', theme.navLayout)
+  }
 }
 
 // Initialize Google Analytics

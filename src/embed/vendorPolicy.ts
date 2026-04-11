@@ -76,6 +76,8 @@ export interface VendorTheme {
   warningColor?: string
   /** Override destructive/error status color. e.g. "#DC2626" */
   destructiveColor?: string
+  /** Navigation layout. 'top' = horizontal header (default). 'sidebar' = fixed left panel. */
+  navLayout?: 'top' | 'sidebar'
 }
 
 export interface VendorPolicy {

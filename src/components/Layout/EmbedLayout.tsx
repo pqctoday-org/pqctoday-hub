@@ -54,7 +54,8 @@ export const EmbedLayout = () => {
     } else if (embedConfig.policy?.theme?.colorMode) {
       setTheme(embedConfig.policy.theme.colorMode)
     }
-  }, [embedConfig.theme, setTheme])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [embedConfig.theme, setTheme]) // cert colorMode is immutable for the session; only re-run on URL param change
 
   // Valid region slugs accepted by usePersonaStore
   const VALID_EMBED_REGIONS = ['global', 'us', 'eu', 'apac', 'latam', 'mena', 'americas'] as const
@@ -185,7 +186,7 @@ export const EmbedLayout = () => {
   visibleNavItems.push({ label: 'About', icon: Info, basePath: '/about' })
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
+    <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
         <header
@@ -244,7 +245,7 @@ export const EmbedLayout = () => {
 
       {/* Test Mode Overlay */}
       {embedConfig.isTestMode && (
-        <div className="bg-destructive text-destructive-foreground px-4 py-2 text-center text-xs sm:text-sm font-bold shadow-sm z-[40]">
+        <div className="embed-test-banner bg-destructive text-destructive-foreground px-4 py-2 text-center text-xs sm:text-sm font-bold shadow-sm z-[40]">
           TEST ONLY — PLEASE REACH OUT TO PQCTODAY@GMAIL.COM TO GET YOUR PRIVATE BANNER
         </div>
       )}

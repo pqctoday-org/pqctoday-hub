@@ -6,6 +6,36 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.0.0] - 2026-04-10
+
+### Added
+
+- **Embed SDK — left sidebar nav layout (`navLayout: 'sidebar'`)**: Vendors can now opt into a
+  fixed left-panel navigation instead of the default horizontal top bar. Set `navLayout: 'sidebar'`
+  in the cert's VendorTheme to activate a 200px fixed left sidebar with vertically stacked nav
+  items and a logo/divider at the top. Main content automatically offsets right by the sidebar
+  width. Zero impact on standard mode — the layout is gated behind the `[data-embed][data-nav-layout="sidebar"]`
+  CSS selector and the `data-nav-layout` DOM attribute, which are only set in the embed bootstrap
+  path.
+
+- **Embed SDK — VendorTheme v2 status/link color overrides**: Five new VendorTheme fields are
+  now supported: `colorMode` (default light/dark mode, user can still toggle), `linkColor`
+  (overrides link/anchor color), `successColor`, `warningColor`, `destructiveColor` (override
+  status badge and indicator colors). Status color overrides are scoped to `[data-embed]` via
+  intermediate `--embed-success/warning/destructive` CSS vars and never pollute global tokens.
+
+- **Embed SDK — cert color mode default (`colorMode`)**: The vendor cert can now specify a
+  default color mode (`'light'` or `'dark'`). The URL param `?theme=` still takes priority; the
+  cert value is the fallback when no param is present. The user can always toggle manually.
+
+- **pqc-admin CertIssueWizard — Nav Layout control**: New Nav Layout select (Top / Sidebar) in
+  the Embed Theme panel, alongside the existing Color Mode control. The CLM/DigiCert preset now
+  applies `navLayout: 'sidebar'` automatically.
+
+- **`test-vendor-custom-design` cert updated**: Now encodes the full VendorTheme v2 field set,
+  including `navLayout: 'sidebar'`, `colorMode: 'light'`, `linkColor`, `successColor`,
+  `warningColor`, and `destructiveColor`.
+
 ## [2.99.0] - 2026-04-10
 
 ### Added
