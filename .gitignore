@@ -160,7 +160,10 @@ FACTCHECK_AI_SECURITY_PQC_QA.md
 
 # Requirements & planning
 requirements/
-REQUIREMENTS.md
+docs/requirements/
+# IKEv2 / VPN development notes
+ikev2*.md
+vpn_*.md
 QandA_pqctoday.md
 QandA_app-pages.md
 QandA_learn-modules.md
