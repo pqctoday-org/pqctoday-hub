@@ -199,38 +199,46 @@ export const Dashboard: React.FC = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="glass-panel p-6 border-primary/30"
+          className="glass-panel px-4 py-3 border-primary/30"
         >
-          <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <PlayCircle className="text-primary" size={24} />
-                <h3 className="text-xl font-bold">Continue Learning</h3>
-              </div>
-              <p className="text-lg text-foreground font-semibold mb-1">{resumeModule.title}</p>
-              <p className="text-sm text-muted-foreground mb-3">{resumeModule.description}</p>
-              <div className="flex items-center gap-4 text-sm mb-3">
-                <span className="text-muted-foreground">
-                  Progress: {getProgressPercentage(resumeModule.id)}%
-                </span>
-                <span className="text-muted-foreground">
-                  Time spent: {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
-                </span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
-                  role="progressbar"
-                  aria-label="Module completion progress"
-                  aria-valuenow={getProgressPercentage(resumeModule.id)}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <PlayCircle className="text-primary shrink-0" size={18} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Continue Learning
+                  </span>
+                  <span className="text-sm font-semibold text-foreground truncate">
+                    {resumeModule.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mt-1">
+                  <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all"
+                      style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
+                      role="progressbar"
+                      aria-label="Module completion progress"
+                      aria-valuenow={getProgressPercentage(resumeModule.id)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {getProgressPercentage(resumeModule.id)}% ·{' '}
+                    {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
+                  </span>
+                </div>
               </div>
             </div>
-            <Button variant="gradient" onClick={() => navigate(resumeModule.id)}>
-              Resume Module
+            <Button
+              variant="gradient"
+              size="sm"
+              onClick={() => navigate(resumeModule.id)}
+              className="shrink-0"
+            >
+              Resume
             </Button>
           </div>
         </motion.div>
