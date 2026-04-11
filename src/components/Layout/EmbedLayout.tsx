@@ -222,9 +222,9 @@ export const EmbedLayout = () => {
                   ? isNarrowSidebar
                     ? isActive
                       ? navActiveBg
-                        ? 'w-full justify-center text-foreground h-auto py-2 px-0 rounded-md'
-                        : 'w-full justify-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-0'
-                      : 'w-full justify-center text-muted-foreground hover:text-foreground h-auto py-2 px-0'
+                        ? 'w-full flex-col justify-center items-center text-foreground h-auto py-2 px-1 rounded-md gap-0.5'
+                        : 'w-full flex-col justify-center items-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-1 gap-0.5'
+                      : 'w-full flex-col justify-center items-center text-muted-foreground hover:text-foreground h-auto py-2 px-1 gap-0.5'
                     : isActive
                       ? navActiveBg
                         ? 'w-full justify-start text-foreground h-auto py-2 px-3 rounded-md'
@@ -241,8 +241,22 @@ export const EmbedLayout = () => {
                 ...(navFg && !isActive ? { color: `${navFg}99` } : {}),
               }}
             >
-              <item.icon size={16} aria-hidden="true" className={isNarrowSidebar ? '' : 'mr-1.5'} />
-              {!isNarrowSidebar && <span className="text-[13px]">{item.label}</span>}
+              <item.icon
+                size={isNarrowSidebar ? 18 : 16}
+                aria-hidden="true"
+                className={isNarrowSidebar ? '' : 'mr-1.5'}
+              />
+              {isSidebarLayout ? (
+                <span
+                  className={
+                    isNarrowSidebar ? 'text-[10px] leading-tight text-center' : 'text-[13px]'
+                  }
+                >
+                  {item.label}
+                </span>
+              ) : (
+                <span className="text-[13px]">{item.label}</span>
+              )}
             </Button>
           )}
         </NavLink>
@@ -250,30 +264,44 @@ export const EmbedLayout = () => {
     })
 
   // Shared wordmark / logo
+  const brandName = embedConfig.policy.theme?.brandName ?? 'PQC Today'
+  const brandParts = brandName.split(' ')
   const renderBrand = () => (
     <a
       href="https://pqctoday.com"
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 flex-shrink-0"
+      className={`flex flex-shrink-0 ${isNarrowSidebar ? 'flex-col items-center justify-center w-full' : 'flex-row items-center gap-2'}`}
       title="Open PQC Today in a new tab"
     >
       {embedConfig.policy.theme?.logoUrl ? (
         <img
           src={embedConfig.policy.theme.logoUrl}
-          alt={embedConfig.policy.theme.brandName ?? 'Vendor logo'}
+          alt={brandName}
           className="w-auto object-contain"
           style={{
             height: embedConfig.policy.theme.logoHeight ?? '28px',
-            maxWidth: embedConfig.policy.theme.logoMaxWidth ?? '120px',
+            maxWidth: isNarrowSidebar ? '100%' : (embedConfig.policy.theme.logoMaxWidth ?? '120px'),
           }}
         />
+      ) : isNarrowSidebar ? (
+        // Narrow sidebar: each word on its own line, centered
+        <span
+          className="font-bold text-center leading-tight"
+          style={{ fontSize: '11px', ...(navFg ? { color: navFg } : {}) }}
+        >
+          {brandParts.map((part, i) => (
+            <span key={i} className="block">
+              {part}
+            </span>
+          ))}
+        </span>
       ) : (
         <span
           className={navBg ? 'text-lg font-bold' : 'text-lg font-bold text-gradient'}
           style={navFg ? { color: navFg } : undefined}
         >
-          {embedConfig.policy.theme?.brandName ?? 'PQC Today'}
+          {brandName}
         </span>
       )}
     </a>
@@ -344,16 +372,16 @@ export const EmbedLayout = () => {
                   href={embedConfig.policy.features.helpUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors text-[13px]"
+                  className={`${isNarrowSidebar ? 'flex-col gap-0.5 px-1' : 'flex-row gap-2 px-3'} flex items-center justify-center w-full py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors`}
                   aria-label="Help"
                   style={navFg ? { color: `${navFg}99` } : undefined}
                 >
                   <HelpCircle
-                    size={16}
+                    size={isNarrowSidebar ? 18 : 16}
                     aria-hidden="true"
                     className={isNarrowSidebar ? '' : 'mr-1.5'}
                   />
-                  {!isNarrowSidebar && <span>Help</span>}
+                  <span className={isNarrowSidebar ? 'text-[10px] leading-tight' : ''}>Help</span>
                 </a>
               </div>
             )}

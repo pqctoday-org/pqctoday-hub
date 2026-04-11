@@ -116,14 +116,14 @@ const TRACK_META: {
     track: 'Role Guides',
     icon: Compass,
     description: 'Role-specific quantum impact: why it matters, what to learn, how to act',
-    colorClass: 'from-accent/15 to-accent/5 border-accent/30',
+    colorClass: 'from-accent/30 to-accent/15 border-accent/40',
     activeClass: 'bg-card border-accent/60',
   },
   {
     track: 'Foundations',
     icon: BookOpen,
     description: 'Quantum threats, PQC fundamentals, entropy & randomness',
-    colorClass: 'from-primary/15 to-primary/5 border-primary/30',
+    colorClass: 'from-primary/30 to-primary/15 border-primary/40',
     activeClass:
       'bg-card border-primary/60 shadow-[0_0_12px_rgba(var(--primary-rgb,99,102,241),0.3)]',
   },
@@ -131,7 +131,7 @@ const TRACK_META: {
     track: 'Strategy',
     icon: Lightbulb,
     description: 'Hybrid crypto, crypto agility, data sensitivity, standards bodies',
-    colorClass: 'from-secondary/15 to-secondary/5 border-secondary/30',
+    colorClass: 'from-secondary/30 to-secondary/15 border-secondary/40',
     activeClass:
       'bg-card border-secondary/60 shadow-[0_0_12px_rgba(var(--secondary-rgb,139,92,246),0.3)]',
   },
@@ -140,14 +140,14 @@ const TRACK_META: {
     icon: Network,
     description:
       'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security, PQC testing & validation',
-    colorClass: 'from-info/20 to-info/10 border-info/30',
+    colorClass: 'from-info/30 to-info/15 border-info/40',
     activeClass: 'bg-card border-info/60',
   },
   {
     track: 'Hardware Infrastructure',
     icon: Cpu,
     description: 'HSMs, KMS, QKD, secure boot & firmware, confidential computing & TEEs',
-    colorClass: 'from-warning/20 to-warning/10 border-warning/30',
+    colorClass: 'from-warning/30 to-warning/15 border-warning/40',
     activeClass: 'bg-card border-warning/60',
   },
   {
@@ -155,21 +155,21 @@ const TRACK_META: {
     icon: Server,
     description:
       'PKI, secrets management, stateful sigs, Merkle tree certs, crypto APIs, database encryption, OS PQC',
-    colorClass: 'from-warning/15 to-warning/8 border-warning/25',
+    colorClass: 'from-warning/25 to-warning/12 border-warning/35',
     activeClass: 'bg-card border-warning/50',
   },
   {
     track: 'Applications',
     icon: Layers,
     description: 'Digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
-    colorClass: 'from-success/20 to-success/10 border-success/30',
+    colorClass: 'from-success/30 to-success/15 border-success/40',
     activeClass: 'bg-card border-success/60',
   },
   {
     track: 'Executive',
     icon: Briefcase,
     description: 'Risk management, business case, governance, compliance, vendor risk, migration',
-    colorClass: 'from-destructive/20 to-destructive/10 border-destructive/30',
+    colorClass: 'from-destructive/30 to-destructive/15 border-destructive/40',
     activeClass: 'bg-card border-destructive/60',
   },
   {
@@ -177,7 +177,7 @@ const TRACK_META: {
     icon: Factory,
     description:
       'Digital assets, 5G, energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC',
-    colorClass: 'from-tertiary/20 to-tertiary/10 border-tertiary/30',
+    colorClass: 'from-tertiary/30 to-tertiary/15 border-tertiary/40',
     activeClass: 'bg-card border-tertiary/60',
   },
 ]
