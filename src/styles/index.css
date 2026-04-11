@@ -662,119 +662,13 @@
 }
 
 /* ── Embed mode sidebar nav layout ───────────────────────────────────────
-   Activated when VendorTheme.navLayout === 'sidebar'. Sets data-nav-layout="sidebar"
-   on <html> before React mounts. Scoped to [data-embed][data-nav-layout="sidebar"]
-   so standard mode and top-nav embeds are completely unaffected.
+   Sidebar layout is now handled entirely in React (EmbedLayout.tsx).
+   When navLayout === 'sidebar', EmbedLayout renders an <aside> instead of
+   a <header>, using a flex-row structure with sticky positioning.
+   The data-nav-layout and data-nav-narrow attributes are still set on <html>
+   by applyEmbedTheme() for any custom CSS consumers, but no built-in rules
+   depend on them anymore.
    ──────────────────────────────────────────────────────────────────────── */
-
-[data-embed][data-nav-layout='sidebar'] {
-  --embed-sidebar-width: 200px;
-}
-
-/* Root wrapper: allow main content to sit beside the sidebar */
-[data-embed][data-nav-layout='sidebar'] .embed-root {
-  flex-direction: row !important;
-}
-
-/* Header becomes a fixed left sidebar panel */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] {
-  position: fixed !important;
-  top: 0 !important;
-  left: 0 !important;
-  width: var(--embed-sidebar-width) !important;
-  height: 100dvh !important;
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  border-bottom: none !important;
-  border-right: 1px solid var(--color-border) !important;
-  z-index: 50 !important;
-  overflow-y: auto !important;
-}
-
-/* Inner header div: flex-col, full height */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] > div {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  height: 100% !important;
-  width: 100% !important;
-  padding: 1rem 0.75rem !important;
-  gap: 0.25rem !important;
-}
-
-/* Logo: full width, bottom divider */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] > div > a {
-  width: 100% !important;
-  margin-bottom: 0.75rem !important;
-  padding-bottom: 0.75rem !important;
-  border-bottom: 1px solid
-    color-mix(in srgb, var(--embed-nav-fg, var(--color-border)) 20%, transparent) !important;
-}
-
-/* Nav: vertical stack, full width */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] nav {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  width: 100% !important;
-  height: auto !important;
-  overflow: visible !important;
-  padding: 0 !important;
-  justify-content: flex-start !important;
-  flex-grow: 1 !important;
-}
-
-/* Nav link wrappers: full width */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] nav a {
-  width: 100% !important;
-}
-
-/* Nav buttons: full width, left-aligned */
-[data-embed][data-nav-layout='sidebar'] header[role='banner'] nav button {
-  width: 100% !important;
-  justify-content: flex-start !important;
-  padding-left: 0.75rem !important;
-  padding-right: 0.75rem !important;
-}
-
-/* Main content: offset right by sidebar width */
-[data-embed][data-nav-layout='sidebar'] main[role='main'] {
-  padding-left: calc(var(--embed-sidebar-width) + 1rem) !important;
-}
-
-/* Test mode banner: offset right by sidebar width */
-[data-embed][data-nav-layout='sidebar'] .embed-test-banner {
-  margin-left: var(--embed-sidebar-width) !important;
-}
-
-/* ── Sidebar icon-only mode (narrow sidebar ≤ 64px) ─────────────────────
-   When navWidth is set to a narrow value (e.g. "56px"), hide text labels
-   and center icons so the sidebar renders as an icon-only rail.
-   Uses container-style query on --embed-sidebar-width via @supports.
-   Fallback: explicit [data-nav-narrow] attribute set by applyEmbedTheme.
-   ──────────────────────────────────────────────────────────────────────── */
-
-[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] > div > a span {
-  display: none !important;
-}
-
-[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] > div > a {
-  justify-content: center !important;
-  padding-bottom: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
-}
-
-[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button span {
-  display: none !important;
-}
-
-[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button {
-  justify-content: center !important;
-  padding-left: 0 !important;
-  padding-right: 0 !important;
-}
-
-[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button svg {
-  margin-right: 0 !important;
-}
 
 /* ── Embed mode badge fill override ──────────────────────────────────────
    When VendorTheme.badgeFill === 'solid', --embed-badge-fill is set to '1'.

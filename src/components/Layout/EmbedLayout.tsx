@@ -189,129 +189,230 @@ export const EmbedLayout = () => {
     visibleNavItems.push({ label: 'About', icon: Info, basePath: '/about' })
   }
 
+  const isSidebarLayout =
+    !embedConfig.policy.features.hideNav && embedConfig.policy.theme?.navLayout === 'sidebar'
+  const sidebarWidth = embedConfig.policy.theme?.navWidth ?? '200px'
+  // Icon-only mode when sidebar width is narrow (≤ 64px)
+  const isNarrowSidebar = isSidebarLayout && parseInt(sidebarWidth, 10) <= 64
+  const navBg = embedConfig.policy.theme?.sidebar
+  const navFg = embedConfig.policy.theme?.sidebarForeground
+  const navActiveBg = embedConfig.policy.theme?.navActiveBackground
+  const headerHeight = embedConfig.policy.theme?.headerHeight ?? '48px'
+
+  // Shared nav items renderer (used in both top and sidebar layouts)
+  const renderNavItems = () =>
+    visibleNavItems.map((item) => {
+      const embedUrl = `/embed${item.basePath}`
+      return (
+        <NavLink
+          key={item.basePath}
+          to={`${embedUrl}${location.search}`}
+          className={isSidebarLayout ? 'w-full' : 'flex-shrink-0'}
+          end={false}
+        >
+          {({ isActive }) => (
+            <Button
+              variant="ghost"
+              size="sm"
+              aria-label={`${item.label} view`}
+              aria-current={isActive ? 'page' : undefined}
+              title={item.label}
+              className={
+                isSidebarLayout
+                  ? isNarrowSidebar
+                    ? isActive
+                      ? navActiveBg
+                        ? 'w-full justify-center text-foreground h-auto py-2 px-0 rounded-md'
+                        : 'w-full justify-center bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-0'
+                      : 'w-full justify-center text-muted-foreground hover:text-foreground h-auto py-2 px-0'
+                    : isActive
+                      ? navActiveBg
+                        ? 'w-full justify-start text-foreground h-auto py-2 px-3 rounded-md'
+                        : 'w-full justify-start bg-primary/10 text-foreground border border-primary/20 h-auto py-2 px-3'
+                      : 'w-full justify-start text-muted-foreground hover:text-foreground h-auto py-2 px-3'
+                  : isActive
+                    ? navActiveBg
+                      ? 'text-foreground h-auto py-1.5 px-3 rounded-md'
+                      : 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
+                    : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
+              }
+              style={{
+                ...(isActive && navActiveBg ? { backgroundColor: navActiveBg } : {}),
+                ...(navFg && !isActive ? { color: `${navFg}99` } : {}),
+              }}
+            >
+              <item.icon size={16} aria-hidden="true" className={isNarrowSidebar ? '' : 'mr-1.5'} />
+              {!isNarrowSidebar && <span className="text-[13px]">{item.label}</span>}
+            </Button>
+          )}
+        </NavLink>
+      )
+    })
+
+  // Shared wordmark / logo
+  const renderBrand = () => (
+    <a
+      href="https://pqctoday.com"
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center gap-2 flex-shrink-0"
+      title="Open PQC Today in a new tab"
+    >
+      {embedConfig.policy.theme?.logoUrl ? (
+        <img
+          src={embedConfig.policy.theme.logoUrl}
+          alt={embedConfig.policy.theme.brandName ?? 'Vendor logo'}
+          className="w-auto object-contain"
+          style={{
+            height: embedConfig.policy.theme.logoHeight ?? '28px',
+            maxWidth: embedConfig.policy.theme.logoMaxWidth ?? '120px',
+          }}
+        />
+      ) : (
+        <span
+          className={navBg ? 'text-lg font-bold' : 'text-lg font-bold text-gradient'}
+          style={navFg ? { color: navFg } : undefined}
+        >
+          {embedConfig.policy.theme?.brandName ?? 'PQC Today'}
+        </span>
+      )}
+    </a>
+  )
+
+  // Shared help button
+  const renderHelpButton = () =>
+    embedConfig.policy.features.showHelpButton && embedConfig.policy.features.helpUrl ? (
+      <a
+        href={embedConfig.policy.features.helpUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex-shrink-0 ml-1 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+        aria-label="Help"
+        title="Help"
+        style={navFg ? { color: `${navFg}99` } : undefined}
+      >
+        <HelpCircle size={16} aria-hidden="true" />
+      </a>
+    ) : null
+
+  // Shared page content
+  const renderContent = () => (
+    <React.Suspense
+      fallback={
+        <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+          </div>
+        </div>
+      }
+    >
+      <motion.div
+        key={location.pathname}
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        <Outlet />
+      </motion.div>
+    </React.Suspense>
+  )
+
+  // ── Sidebar layout ──────────────────────────────────────────────────────────
+  if (isSidebarLayout) {
+    return (
+      <div className="flex min-h-screen bg-background text-foreground print:min-h-0 embed-root">
+        {/* Left sidebar — sticky, scrolls independently */}
+        <aside
+          className="flex-shrink-0 sticky top-0 h-screen overflow-y-auto z-50 border-r border-border flex flex-col"
+          style={{
+            width: sidebarWidth,
+            backgroundColor: navBg ?? 'var(--color-background)',
+            borderColor: navBg ? `${navBg}33` : undefined,
+          }}
+          role="navigation"
+          aria-label="Main navigation"
+        >
+          <div className="flex flex-col flex-1 px-3 py-4 gap-1">
+            {/* Brand */}
+            <div className="mb-3 pb-3 border-b border-border/30">{renderBrand()}</div>
+            {/* Nav items */}
+            {renderNavItems()}
+            {/* Help button at bottom */}
+            {embedConfig.policy.features.showHelpButton && embedConfig.policy.features.helpUrl && (
+              <div className="mt-auto pt-2">
+                <a
+                  href={embedConfig.policy.features.helpUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 w-full px-3 py-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors text-[13px]"
+                  aria-label="Help"
+                  style={navFg ? { color: `${navFg}99` } : undefined}
+                >
+                  <HelpCircle
+                    size={16}
+                    aria-hidden="true"
+                    className={isNarrowSidebar ? '' : 'mr-1.5'}
+                  />
+                  {!isNarrowSidebar && <span>Help</span>}
+                </a>
+              </div>
+            )}
+          </div>
+        </aside>
+
+        {/* Right side: test banner + main content */}
+        <div className="flex flex-col flex-1 min-w-0">
+          {embedConfig.isTestMode && (
+            <div className="bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
+              ⚠ Sandbox / Test Mode — not for production use
+            </div>
+          )}
+          <main
+            id="main-content"
+            className="flex-grow w-full py-4 px-4 md:py-6 md:px-6"
+            role="main"
+          >
+            {renderContent()}
+          </main>
+          <PoweredByBadge />
+        </div>
+
+        {embedConfig.policy.features.assistantEnabled && (
+          <>
+            <RightPanelFAB />
+            <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
+          </>
+        )}
+      </div>
+    )
+  }
+
+  // ── Top nav layout (default) ────────────────────────────────────────────────
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
         <header
           className={
-            embedConfig.policy.theme?.sidebar
+            navBg
               ? 'sticky top-0 z-50 transition-all duration-300 border-b'
               : 'sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b'
           }
-          style={
-            embedConfig.policy.theme?.sidebar
-              ? {
-                  backgroundColor: embedConfig.policy.theme.sidebar,
-                  borderColor: `${embedConfig.policy.theme.sidebar}33`,
-                }
-              : undefined
-          }
+          style={navBg ? { backgroundColor: navBg, borderColor: `${navBg}33` } : undefined}
           role="banner"
         >
           <div
             className="px-4 flex w-full justify-between items-center relative"
-            style={{ height: embedConfig.policy.theme?.headerHeight ?? '48px' }}
+            style={{ height: headerHeight }}
           >
-            {/* Vendor logo or brand name */}
-            <a
-              href="https://pqctoday.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex items-center gap-2 flex-shrink-0"
-              title="Open PQC Today in a new tab"
-            >
-              {embedConfig.policy.theme?.logoUrl ? (
-                <img
-                  src={embedConfig.policy.theme.logoUrl}
-                  alt={embedConfig.policy.theme.brandName ?? 'Vendor logo'}
-                  className="w-auto object-contain"
-                  style={{
-                    height: embedConfig.policy.theme.logoHeight ?? '28px',
-                    maxWidth: embedConfig.policy.theme.logoMaxWidth ?? '120px',
-                  }}
-                />
-              ) : (
-                <span
-                  className={
-                    embedConfig.policy.theme?.sidebar
-                      ? 'text-lg font-bold'
-                      : 'text-lg font-bold text-gradient'
-                  }
-                  style={
-                    embedConfig.policy.theme?.sidebarForeground
-                      ? { color: embedConfig.policy.theme.sidebarForeground }
-                      : undefined
-                  }
-                >
-                  {embedConfig.policy.theme?.brandName ?? 'PQC Today'}
-                </span>
-              )}
-            </a>
-
+            {renderBrand()}
             <nav
               className="flex flex-row flex-nowrap items-center gap-1 overflow-x-auto h-full hide-scrollbar flex-grow justify-end pl-4"
               role="navigation"
               aria-label="Main navigation"
             >
-              {visibleNavItems.map((item) => {
-                const embedUrl = `/embed${item.basePath}`
-                const navActiveBg = embedConfig.policy.theme?.navActiveBackground
-                return (
-                  <NavLink
-                    key={item.basePath}
-                    to={`${embedUrl}${location.search}`}
-                    className="flex-shrink-0"
-                    end={false}
-                  >
-                    {({ isActive }) => (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        aria-label={`${item.label} view`}
-                        aria-current={isActive ? 'page' : undefined}
-                        title={item.label}
-                        className={
-                          isActive
-                            ? navActiveBg
-                              ? 'text-foreground h-auto py-1.5 px-3 rounded-md'
-                              : 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
-                            : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
-                        }
-                        style={{
-                          ...(isActive && navActiveBg ? { backgroundColor: navActiveBg } : {}),
-                          ...(embedConfig.policy.theme?.sidebarForeground && !isActive
-                            ? { color: `${embedConfig.policy.theme.sidebarForeground}99` }
-                            : {}),
-                        }}
-                      >
-                        <item.icon size={16} aria-hidden="true" className="mr-1.5" />
-                        <span className="text-[13px]">{item.label}</span>
-                      </Button>
-                    )}
-                  </NavLink>
-                )
-              })}
-
-              {/* Help button — shown when vendor enables it via cert policy */}
-              {embedConfig.policy.features.showHelpButton &&
-                embedConfig.policy.features.helpUrl && (
-                  <a
-                    href={embedConfig.policy.features.helpUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex-shrink-0 ml-1 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
-                    aria-label="Help"
-                    title="Help"
-                    style={
-                      embedConfig.policy.theme?.sidebarForeground
-                        ? { color: `${embedConfig.policy.theme.sidebarForeground}99` }
-                        : undefined
-                    }
-                  >
-                    <HelpCircle size={16} aria-hidden="true" />
-                  </a>
-                )}
+              {renderNavItems()}
+              {renderHelpButton()}
             </nav>
           </div>
         </header>
@@ -326,24 +427,7 @@ export const EmbedLayout = () => {
 
       {/* Main Content Area */}
       <main id="main-content" className="flex-grow w-full py-4 px-4 md:py-6 md:px-6" role="main">
-        <React.Suspense
-          fallback={
-            <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-              </div>
-            </div>
-          }
-        >
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
-          >
-            <Outlet />
-          </motion.div>
-        </React.Suspense>
+        {renderContent()}
       </main>
 
       <PoweredByBadge />
