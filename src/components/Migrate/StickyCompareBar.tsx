@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { X, Scale, ArrowRightLeft, Table } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 interface StickyCompareBarProps {
   compareKeys: string[]
@@ -20,13 +21,16 @@ export function StickyCompareBar({
   showBrowseHint,
   onBrowseAll,
 }: StickyCompareBarProps) {
+  const isEmbedded = useIsEmbedded()
   if (compareKeys.length === 0) return null
 
   const MAX = 3
   const canCompare = compareKeys.length >= 2
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[var(--z-index-panel)] bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]">
+    <div
+      className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-0 left-0 right-0 z-[var(--z-index-panel)] bg-card border-t border-border shadow-lg pb-[env(safe-area-inset-bottom)]`}
+    >
       <div className="max-w-7xl mx-auto px-4 py-3 flex flex-wrap items-center gap-3">
         <Scale size={15} className="text-secondary shrink-0" />
         <span className="text-sm font-medium text-foreground shrink-0">Compare:</span>

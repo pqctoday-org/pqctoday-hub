@@ -337,7 +337,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   }
 
   return (
-    <div className="w-full mb-10">
+    <div className="w-full mb-10 relative">
       <div className="text-center mb-6">
         <h3 className="text-xl font-semibold text-foreground mb-2">
           Enterprise Infrastructure Stack
@@ -354,11 +354,11 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
         )}
       </div>
 
-      <div className="flex flex-col gap-3 p-6 bg-card border border-border rounded-2xl shadow-2xl relative">
+      <div className="flex flex-col gap-3 p-6 bg-card border border-border rounded-2xl shadow-2xl relative isolate">
         {/* Connection Line */}
         <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
 
-        {partitions.map((layer, index) => {
+        {partitions.map((layer) => {
           const productCount = layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0
           const isEmptyAndHidden = hideEmptyLayers && productCount === 0
           const isActive = activeLayer === layer.id
@@ -368,19 +368,21 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           return (
             <div
               key={layer.id}
-              style={{
-                zIndex: isActive ? partitions.length + 10 : partitions.length - index,
-              }}
               className={`transition-all duration-500 ease-in-out relative flex flex-col ${
                 isEmptyAndHidden
                   ? 'max-h-0 opacity-0 overflow-hidden !m-0'
                   : 'max-h-[3000px] opacity-100'
               }`}
             >
-              <Button
-                variant="ghost"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleSelect(layer.id as InfrastructureLayerType)
+                  }
                   if (e.key === 'Escape' && isActive) {
                     e.preventDefault()
                     onSelectLayer('All')
@@ -388,7 +390,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 }}
                 className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer
+                transition-all duration-300 ease-in-out cursor-pointer select-none
                 ${
                   isActive
                     ? layer.activeColor
@@ -398,7 +400,6 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               `}
                 style={{
                   transformOrigin: 'center',
-                  zIndex: isActive ? partitions.length + 10 : partitions.length - index,
                 }}
               >
                 {/* Shine effect — isolated so it doesn't clip expandedContent */}
@@ -410,10 +411,10 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 <div className="flex flex-col md:flex-row items-center justify-between w-full">
                   <div className="flex items-center gap-4 w-full md:w-auto">
                     <div
-                      className={`p-3 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
+                      className={`p-3 rounded-lg border shadow-inner transition-colors shrink-0 ${
                         isActive
-                          ? layer.iconColor
-                          : 'text-muted-foreground group-hover:text-foreground'
+                          ? `bg-background/50 backdrop-blur border-border/30 ${layer.iconColor}`
+                          : `bg-background/70 backdrop-blur border-border/40 ${layer.iconColor} opacity-80 group-hover:opacity-100`
                       }`}
                     >
                       <IconInfo size={24} className={isActive ? 'animate-pulse' : ''} />
@@ -550,7 +551,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     </Button>
                   </div>
                 )}
-              </Button>
+              </div>
             </div>
           )
         })}

@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { BookText, X, Lightbulb } from 'lucide-react'
 import { pageManuals, type PageId } from '../../data/userManualData'
 import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 export const UserManualPanel: React.FC<{
   isOpen: boolean
@@ -11,6 +12,7 @@ export const UserManualPanel: React.FC<{
   pageId: PageId
 }> = ({ isOpen, onClose, pageId }) => {
   const manual = pageManuals[pageId]
+  const isEmbedded = useIsEmbedded()
 
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -29,7 +31,7 @@ export const UserManualPanel: React.FC<{
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-50 bg-black/60 backdrop-blur-sm`}
             onClick={onClose}
           />
 
@@ -39,7 +41,7 @@ export const UserManualPanel: React.FC<{
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 300 }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden"
+            className={`${isEmbedded ? 'absolute' : 'fixed'} right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden`}
             role="dialog"
             aria-label="Page guide"
             aria-modal="true"

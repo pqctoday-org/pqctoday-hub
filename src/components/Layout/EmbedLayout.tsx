@@ -128,13 +128,15 @@ export const EmbedLayout = () => {
   // Resize Observer for postMessage communication
   React.useEffect(() => {
     let timeoutId: ReturnType<typeof setTimeout>
+    const mainEl = document.getElementById('main-content')
+    if (!mainEl) return
 
     const resizeObserver = new ResizeObserver((entries) => {
-      // Debounce window resize messages
+      // Debounce resize messages
       clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
         for (const entry of entries) {
-          if (entry.target === document.body && window.parent !== window) {
+          if (window.parent !== window) {
             window.parent.postMessage(
               {
                 type: 'pqc:resize',
@@ -147,7 +149,7 @@ export const EmbedLayout = () => {
       }, 100)
     })
 
-    resizeObserver.observe(document.body)
+    resizeObserver.observe(mainEl)
     return () => {
       resizeObserver.disconnect()
       clearTimeout(timeoutId)
@@ -296,7 +298,7 @@ export const EmbedLayout = () => {
       )}
 
       {/* Main Content Area */}
-      <main id="main-content" className="flex-grow container py-4 px-4 md:py-6 md:px-6" role="main">
+      <main id="main-content" className="flex-grow w-full py-4 px-4 md:py-6 md:px-6" role="main">
         <React.Suspense
           fallback={
             <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">

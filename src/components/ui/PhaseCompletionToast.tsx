@@ -5,12 +5,14 @@ import { CheckCircle, X, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useJourneyMap } from '@/hooks/useJourneyMap'
 import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 /**
  * Watches journey map phases and shows a brief toast when a learning phase
  * transitions to 'completed'. Provides a link to the next phase or milestone.
  */
 export function PhaseCompletionToast() {
+  const isEmbedded = useIsEmbedded()
   const { phases, hasPersona } = useJourneyMap()
   const prevCompletedRef = useRef<Set<string>>(new Set())
   const [toast, setToast] = useState<{
@@ -83,7 +85,7 @@ export function PhaseCompletionToast() {
           transition={{ duration: 0.3, ease: 'easeOut' }}
           role="status"
           aria-live="polite"
-          className="fixed bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg"
+          className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg`}
         >
           <Button
             variant="ghost"

@@ -6,6 +6,37 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.1.1] - 2026-04-11
+
+### Fixed
+
+- **Migrate layer stack — navigation restored (both standard and embed mode)**: Layer row buttons
+  (Cloud, Network, Application Servers, etc.) were completely unresponsive. Root cause: the entire
+  row was a `<Button>` (`<button>`) containing nested `<Button>` elements (restore, sub-category
+  chips, collapse). Nested `<button>` inside `<button>` is invalid HTML — browsers silently drop
+  inner elements, making the outer row unclickable. Fixed by converting the outer row to a
+  `<div role="button" tabIndex={0}>` with full keyboard support (`Enter`/`Space` to select,
+  `Escape` to collapse). Inner buttons remain valid and their `stopPropagation()` handlers work.
+
+- **Migrate layer stack — sticky filter bar z-index overlap**: Removed inline
+  `style={{ zIndex: ... }}` from each layer row (values up to 19) that created stacking contexts
+  escaping the container and overlapping the `z-40` sticky filter bar. Added `isolate` to the
+  stack container to scope internal z-indices correctly.
+
+- **Embed mode — fixed-position UI elements**: 13 components that use `fixed` positioning now
+  switch to `absolute` in embed mode, preventing them from escaping the iframe viewport:
+  `ArtifactDrawer` (backdrop + panel), `DisclaimerModal` (bottom banner),
+  `AlgorithmCompareBar`, `StickyCompareBar`, `RightPanel` (backdrop; body scroll lock disabled),
+  `AchievementToast`, `AirplaneModeToast`, `PhaseCompletionToast`,
+  `UserManualPanel`, `Glossary` (backdrop + panel).
+
+- **Embed mode — layout and resize observer**: Main content area changed from `container`
+  (max-w-7xl) to `w-full` to fill the embed frame. `ResizeObserver` now watches `#main-content`
+  instead of `document.body` for accurate `pqc:resize` postMessage height reporting.
+
+- **Embed mode — navigation guard search param preservation**: `EmbedNavigationGuard` now
+  preserves `location.search` on escape-prevention redirects (cert/theme params no longer dropped).
+
 ## [3.1.0] - 2026-04-11
 
 ### Changed

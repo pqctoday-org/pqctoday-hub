@@ -30,8 +30,9 @@ export const RightPanel: React.FC = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, close])
 
-  // Lock body scroll when panel is open (mobile drawer)
+  // Lock body scroll when panel is open (mobile drawer, standard mode only)
   useEffect(() => {
+    if (isEmbedded) return
     if (isOpen) {
       document.body.style.overflow = 'hidden'
     } else {
@@ -40,7 +41,7 @@ export const RightPanel: React.FC = () => {
     return () => {
       document.body.style.overflow = ''
     }
-  }, [isOpen])
+  }, [isOpen, isEmbedded])
 
   return (
     <AnimatePresence>
@@ -51,7 +52,7 @@ export const RightPanel: React.FC = () => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-panel bg-black/60 backdrop-blur-sm print:hidden"
+            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-panel bg-black/60 backdrop-blur-sm print:hidden`}
             onClick={close}
           />
 

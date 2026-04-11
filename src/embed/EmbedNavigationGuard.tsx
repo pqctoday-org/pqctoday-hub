@@ -27,10 +27,10 @@ export function EmbedNavigationGuard() {
     if (!embedState.isEmbedded) return
     if (location.pathname.startsWith('/embed')) return
 
-    // Escaped — redirect to the first allowed embed route
+    // Escaped — redirect to the first allowed embed route, preserving search params
     const firstPath = getFirstAllowedRoute(embedState.allowedRoutes)
     const target = firstPath === '/' ? '/embed' : `/embed${firstPath}`
-    navigate(target, { replace: true })
+    navigate(`${target}${location.search}`, { replace: true })
   }, [location.pathname, embedState, navigate])
 
   return null

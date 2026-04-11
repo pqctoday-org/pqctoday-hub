@@ -7,6 +7,7 @@ import { glossaryTerms, type GlossaryTerm } from '../../data/glossaryData'
 import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'
 import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -53,6 +54,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
+  const isEmbedded = useIsEmbedded()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
@@ -108,7 +110,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+              className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-50 bg-black/60 backdrop-blur-sm`}
               onClick={onClose}
             />
 
@@ -118,7 +120,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden"
+              className={`${isEmbedded ? 'absolute' : 'fixed'} right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden`}
               role="dialog"
               aria-label="PQC Glossary"
               aria-modal="true"

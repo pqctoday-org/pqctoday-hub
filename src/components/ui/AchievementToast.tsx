@@ -7,6 +7,7 @@ import { ACHIEVEMENT_MAP } from '@/data/achievementCatalog'
 import { achievementIconMap } from '@/data/achievementIcons'
 import type { AchievementRarity } from '@/types/AchievementTypes'
 import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 const RARITY_STYLES: Record<AchievementRarity, string> = {
   common: 'border-border',
@@ -23,6 +24,7 @@ const RARITY_LABELS: Record<AchievementRarity, string> = {
 }
 
 export function AchievementToast() {
+  const isEmbedded = useIsEmbedded()
   const dequeueToast = useAchievementStore((s) => s.dequeueToast)
   const markSeen = useAchievementStore((s) => s.markSeen)
   const toastQueue = useAchievementStore((s) => s.toastQueue)
@@ -86,7 +88,7 @@ export function AchievementToast() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="fixed bottom-6 left-4 right-4 md:right-auto md:left-6 z-toast max-w-xs print:hidden"
+          className={`${isEmbedded ? 'absolute' : 'fixed'} bottom-6 left-4 right-4 md:right-auto md:left-6 z-toast max-w-xs print:hidden`}
           role="status"
           aria-live="polite"
           aria-label={`Achievement unlocked: ${achievement.title}`}

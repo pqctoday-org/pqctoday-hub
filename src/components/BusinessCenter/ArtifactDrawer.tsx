@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useModuleStore } from '@/store/useModuleStore'
 import type { ExecutiveDocument, ExecutiveDocumentType } from '@/services/storage/types'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 // ── Lazy builder imports ────────────────────────────────────────────────
 // Each builder is lazy-loaded from its learn module directory.
@@ -146,6 +147,7 @@ export interface ArtifactDrawerProps {
 export function ArtifactDrawer({ document, mode, onClose, onModeChange }: ArtifactDrawerProps) {
   const [deleteConfirm, setDeleteConfirm] = useState(false)
   const deleteExecutiveDocument = useModuleStore((s) => s.deleteExecutiveDocument)
+  const isEmbedded = useIsEmbedded()
 
   const handleExportMarkdown = useCallback(() => {
     if (!document) return
@@ -172,7 +174,7 @@ export function ArtifactDrawer({ document, mode, onClose, onModeChange }: Artifa
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 z-50"
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 bg-black/60 z-50`}
         onClick={onClose}
         onKeyDown={(e) => {
           if (e.key === 'Escape') onClose()
@@ -183,7 +185,9 @@ export function ArtifactDrawer({ document, mode, onClose, onModeChange }: Artifa
       />
 
       {/* Drawer panel */}
-      <div className="fixed inset-y-0 right-0 w-full sm:w-[600px] lg:w-[720px] z-50 bg-background border-l border-border shadow-xl flex flex-col animate-in slide-in-from-right duration-200">
+      <div
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-y-0 right-0 w-full sm:w-[600px] lg:w-[720px] z-50 bg-background border-l border-border shadow-xl flex flex-col animate-in slide-in-from-right duration-200`}
+      >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-border shrink-0">
           <div className="flex-1 min-w-0">
