@@ -254,6 +254,7 @@ const ModuleTracksGrid = ({
   navigate: (path: string) => void
   onGoHome?: () => void
 }) => {
+  const isEmbedded = useIsEmbedded()
   const { modules } = useModuleStore()
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
@@ -432,6 +433,7 @@ const ModuleTracksGrid = ({
     modules,
     showOnlyLearnModules,
     myLearnModules,
+    isEmbedded,
   ])
 
   // For stack mode: which module IDs pass the current filters
