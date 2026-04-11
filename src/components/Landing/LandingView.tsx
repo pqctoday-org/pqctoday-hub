@@ -447,7 +447,7 @@ export const LandingView = () => {
   const heading = SECTION_HEADING[selectedPersona ?? 'default'] ?? SECTION_HEADING.default
 
   return (
-    <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
+    <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
