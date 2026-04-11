@@ -39,9 +39,9 @@ export function useEmbed(): EmbedConfig {
 }
 
 /**
- * Convenience check.
+ * Convenience check. Returns false when called outside EmbedProvider (standard mode).
  */
 export function useIsEmbedded(): boolean {
-  const state = useEmbedState()
-  return state.isEmbedded
+  const context = useContext(EmbedContext)
+  return context?.isEmbedded ?? false
 }
