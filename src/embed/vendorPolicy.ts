@@ -91,6 +91,21 @@ export interface VendorTheme {
    * Must be an absolute HTTPS URL hosted on the vendor's own origin.
    */
   logoUrl?: string
+  /** Logo image height override, e.g. "36px". Default: "28px". */
+  logoHeight?: string
+  /** Logo max-width override, e.g. "150px". Default: "120px". */
+  logoMaxWidth?: string
+  /** Nav bar height override, e.g. "56px". Default: "48px". */
+  headerHeight?: string
+  /** Secondary brand color, e.g. "#6366F1". Overrides --color-secondary. */
+  secondary?: string
+  /** Text color on secondary backgrounds, e.g. "#FFFFFF". */
+  secondaryForeground?: string
+  /**
+   * Active nav item background color override, e.g. "rgba(99,102,241,0.15)".
+   * When set, replaces the default bg-primary/10 highlight on the active nav button.
+   */
+  navActiveBackground?: string
 }
 
 export interface VendorPolicy {
@@ -127,6 +142,12 @@ export interface VendorPolicy {
     hideNav?: boolean
     /** Whether to hide the About route from the navigation and block access */
     hideAbout?: boolean
+    /** Whether to hide the "Powered by PQC Today" attribution badge */
+    hidePoweredBy?: boolean
+    /** Whether to show a help (?) icon in the top-right nav area */
+    showHelpButton?: boolean
+    /** URL the help button links to. Required when showHelpButton is true. */
+    helpUrl?: string
   }
   /** Optional vendor brand theme — applies CSS custom properties before React mounts */
   theme?: VendorTheme

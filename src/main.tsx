@@ -27,7 +27,8 @@ function applyEmbedTheme(theme: VendorTheme | undefined): void {
     '--color-border': theme.border,
     '--color-input': theme.border, // input border matches border
     '--color-accent': theme.accent,
-    '--color-secondary': theme.accent, // secondary buttons/badges
+    '--color-secondary': theme.secondary ?? theme.accent, // secondary buttons/badges; explicit secondary wins
+    '--color-secondary-foreground': theme.secondaryForeground,
     '--color-ring': theme.primary, // focus ring
     '--radius-lg': theme.radius,
     '--radius-md': theme.radius ? `calc(${theme.radius} - 2px)` : undefined,
@@ -67,6 +68,9 @@ function applyEmbedTheme(theme: VendorTheme | undefined): void {
     if (!isNaN(px) && px <= 64) {
       document.documentElement.setAttribute('data-nav-narrow', '1')
     }
+  }
+  if (theme.headerHeight) {
+    root.style.setProperty('--embed-header-height', theme.headerHeight)
   }
 }
 

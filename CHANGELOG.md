@@ -6,6 +6,25 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.1.2] - 2026-04-11
+
+### Added
+
+- **Embed SDK — extended vendor configuration (Tier 1)**: Nine new fields in the embed cert policy
+  give vendors granular control over branding and features:
+  - `theme.secondary` / `theme.secondaryForeground` — independent secondary brand color and text
+    color; overrides `--color-secondary` / `--color-secondary-foreground` CSS vars.
+  - `theme.navActiveBackground` — active nav item highlight color replaces the hardcoded
+    `bg-primary/10` tint (supports any CSS color including `rgba(…)`).
+  - `theme.brandName` — vendor brand name shown in the nav header instead of "PQC Today".
+  - `theme.logoUrl` — vendor logo image URL; replaces the text wordmark when set.
+  - `theme.logoHeight` / `theme.logoMaxWidth` — logo sizing overrides (defaults: `28px` / `120px`).
+  - `theme.headerHeight` — nav bar height override (default `48px`); RightPanel top offset follows.
+  - `features.hidePoweredBy` — hide the "Powered by PQC Today" attribution badge (embed only;
+    standard mode is never affected).
+  - `features.showHelpButton` + `features.helpUrl` — render a `?` help icon in the nav that links
+    to vendor documentation.
+
 ## [3.1.1] - 2026-04-11
 
 ### Fixed

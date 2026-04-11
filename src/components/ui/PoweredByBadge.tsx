@@ -1,9 +1,16 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { useIsEmbedded } from '../../embed/EmbedProvider'
+import { useEmbedState } from '../../embed/EmbedProvider'
 
 export function PoweredByBadge() {
-  const isEmbedded = useIsEmbedded()
+  const embedState = useEmbedState()
+  const isEmbedded = embedState.isEmbedded
+
+  // Embed-only: vendor can suppress attribution via hidePoweredBy cert flag.
+  // Standard mode is never affected — the guard is behind isEmbedded.
+  if (embedState.isEmbedded && embedState.policy.features.hidePoweredBy) {
+    return null
+  }
 
   return (
     <a

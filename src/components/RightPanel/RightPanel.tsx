@@ -19,7 +19,9 @@ const BookmarksPanel = React.lazy(() =>
 
 export const RightPanel: React.FC = () => {
   const { isOpen, activeTab, setTab, close } = useRightPanelStore()
-  const { isEmbedded } = useEmbedState()
+  const embedState = useEmbedState()
+  const { isEmbedded } = embedState
+  const headerH = isEmbedded ? (embedState.policy?.theme?.headerHeight ?? '48px') : '48px'
 
   // Close on Escape
   useEffect(() => {
@@ -65,10 +67,12 @@ export const RightPanel: React.FC = () => {
             className={clsx(
               'z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden',
               isEmbedded
-                ? 'absolute right-0 top-[48px] rounded-bl-xl border-b'
+                ? 'absolute right-0 rounded-bl-xl border-b'
                 : 'fixed right-0 top-0 bottom-0'
             )}
-            style={isEmbedded ? { height: 'min(800px, calc(100% - 48px))' } : {}}
+            style={
+              isEmbedded ? { top: headerH, height: `min(800px, calc(100% - ${headerH}))` } : {}
+            }
             role="dialog"
             aria-label={
               activeTab === 'chat'

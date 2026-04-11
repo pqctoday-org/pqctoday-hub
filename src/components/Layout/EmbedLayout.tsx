@@ -209,7 +209,10 @@ export const EmbedLayout = () => {
           }
           role="banner"
         >
-          <div className="h-12 px-4 flex w-full justify-between items-center relative">
+          <div
+            className="px-4 flex w-full justify-between items-center relative"
+            style={{ height: embedConfig.policy.theme?.headerHeight ?? '48px' }}
+          >
             {/* Vendor logo or brand name */}
             <a
               href="https://pqctoday.com"
@@ -222,7 +225,11 @@ export const EmbedLayout = () => {
                 <img
                   src={embedConfig.policy.theme.logoUrl}
                   alt={embedConfig.policy.theme.brandName ?? 'Vendor logo'}
-                  className="h-7 w-auto object-contain max-w-[120px]"
+                  className="w-auto object-contain"
+                  style={{
+                    height: embedConfig.policy.theme.logoHeight ?? '28px',
+                    maxWidth: embedConfig.policy.theme.logoMaxWidth ?? '120px',
+                  }}
                 />
               ) : (
                 <span
@@ -249,6 +256,7 @@ export const EmbedLayout = () => {
             >
               {visibleNavItems.map((item) => {
                 const embedUrl = `/embed${item.basePath}`
+                const navActiveBg = embedConfig.policy.theme?.navActiveBackground
                 return (
                   <NavLink
                     key={item.basePath}
@@ -265,18 +273,17 @@ export const EmbedLayout = () => {
                         title={item.label}
                         className={
                           isActive
-                            ? 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
+                            ? navActiveBg
+                              ? 'text-foreground h-auto py-1.5 px-3 rounded-md'
+                              : 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
                             : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
                         }
-                        style={
-                          embedConfig.policy.theme?.sidebarForeground
-                            ? {
-                                color: isActive
-                                  ? undefined
-                                  : `${embedConfig.policy.theme.sidebarForeground}99`,
-                              }
-                            : undefined
-                        }
+                        style={{
+                          ...(isActive && navActiveBg ? { backgroundColor: navActiveBg } : {}),
+                          ...(embedConfig.policy.theme?.sidebarForeground && !isActive
+                            ? { color: `${embedConfig.policy.theme.sidebarForeground}99` }
+                            : {}),
+                        }}
                       >
                         <item.icon size={16} aria-hidden="true" className="mr-1.5" />
                         <span className="text-[13px]">{item.label}</span>
@@ -285,6 +292,26 @@ export const EmbedLayout = () => {
                   </NavLink>
                 )
               })}
+
+              {/* Help button — shown when vendor enables it via cert policy */}
+              {embedConfig.policy.features.showHelpButton &&
+                embedConfig.policy.features.helpUrl && (
+                  <a
+                    href={embedConfig.policy.features.helpUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-shrink-0 ml-1 p-1.5 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
+                    aria-label="Help"
+                    title="Help"
+                    style={
+                      embedConfig.policy.theme?.sidebarForeground
+                        ? { color: `${embedConfig.policy.theme.sidebarForeground}99` }
+                        : undefined
+                    }
+                  >
+                    <HelpCircle size={16} aria-hidden="true" />
+                  </a>
+                )}
             </nav>
           </div>
         </header>
