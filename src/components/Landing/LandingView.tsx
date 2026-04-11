@@ -829,10 +829,6 @@ export const LandingView = () => {
                           ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
                           : 'Auto-sync active — changes save to your Drive'}
                   </p>
-                  <div className="mt-1 bg-muted/30 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/30">
-                    <strong>Multiple devices?</strong> Refresh when switching to pull your latest
-                    save.
-                  </div>
                   <Button
                     variant="ghost"
                     type="button"
@@ -855,7 +851,7 @@ export const LandingView = () => {
                     <Cloud size={18} aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 flex-wrap">
                       Sync to Google Drive
                       <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
                         WIP
@@ -864,13 +860,6 @@ export const LandingView = () => {
                     <p className="text-xs text-muted-foreground leading-snug">
                       Auto-save progress across devices.
                     </p>
-                    <p className="text-[10px] text-muted-foreground/60 leading-snug mt-1">
-                      Google shows your account info — PQC Today never stores it.
-                    </p>
-                    <div className="mt-2 bg-muted/40 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/40">
-                      <strong>Multiple devices?</strong> Refresh when switching to pull your latest
-                      save.
-                    </div>
                   </div>
                 </Button>
               )}
