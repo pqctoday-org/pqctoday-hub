@@ -10,6 +10,12 @@ All notable changes to this project will be documented in this file.
 
 ### Changed
 
+- **Phase 10 UI refactor — CTA gradient unification**: All 175+ flat solid-color primary CTA
+  buttons (`bg-primary`, `bg-accent`) across PKILearning modules, workshop components, Report,
+  Library, Playground, About, Migrate, and Landing converted to `variant="gradient"` (purple→teal).
+  Affects ~113 files. `<Link>` elements styled as CTAs receive equivalent `bg-gradient-to-r
+from-secondary to-primary` inline classes.
+
 - **Phase 10 UI refactor — `<Button>` component enforcement**: All 1,253 raw `<button>` HTML
   elements across 462 source files have been replaced with the shared `<Button>` component,
   enforcing the `no-restricted-syntax` ESLint rule introduced in v3.0.0. UI primitive files
