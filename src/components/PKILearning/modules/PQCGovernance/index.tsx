@@ -237,6 +237,7 @@ export const PQCGovernanceModule: React.FC = () => {
                   const Icon = part.icon
                   return (
                     <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
                       className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
@@ -297,6 +298,7 @@ export const PQCGovernanceModule: React.FC = () => {
                 </Button>
               ) : (
                 <Button
+                  variant="ghost"
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px]"
                 >

@@ -43,6 +43,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <section className="glass-panel p-6">
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left"
       >
@@ -488,6 +489,7 @@ export const NetworkSecurityIntroduction: React.FC<NetworkSecurityIntroductionPr
       {/* CTA */}
       <div className="text-center">
         <Button
+          variant="ghost"
           onClick={onNavigateToWorkshop}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
         >

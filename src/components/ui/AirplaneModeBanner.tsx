@@ -22,6 +22,7 @@ export function AirplaneModeBanner() {
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-sm font-semibold text-foreground">Airplane Mode</h3>
             <Button
+              variant="ghost"
               type="button"
               onClick={() => setDismissed(true)}
               className="text-muted-foreground hover:text-foreground shrink-0"

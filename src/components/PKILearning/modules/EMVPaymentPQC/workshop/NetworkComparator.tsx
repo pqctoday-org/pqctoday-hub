@@ -311,6 +311,7 @@ export const NetworkComparator: React.FC = () => {
                 <div className="flex items-center gap-2">
                   {compareMode && (
                     <Button
+                      variant="ghost"
                       onClick={() => toggleSelected(net.id)}
                       className="shrink-0"
                       aria-label={isChecked ? `Deselect ${net.name}` : `Select ${net.name}`}

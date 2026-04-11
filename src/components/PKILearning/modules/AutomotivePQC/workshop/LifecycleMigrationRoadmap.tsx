@@ -138,6 +138,7 @@ const ConfigPanel: React.FC<{
       </span>
       <div className="flex flex-wrap gap-2">
         <Button
+          variant="ghost"
           onClick={() => setSelectedRegion('all')}
           className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
             selectedRegion === 'all'
@@ -149,6 +150,7 @@ const ConfigPanel: React.FC<{
         </Button>
         {REGION_KEYS.map((r) => (
           <Button
+            variant="ghost"
             key={r}
             onClick={() => setSelectedRegion(r)}
             className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
@@ -517,6 +519,7 @@ const LifecyclePhaseDetail: React.FC<{
 }> = ({ phase, isExpanded, onToggle }) => (
   <div className="glass-panel overflow-hidden">
     <Button
+      variant="ghost"
       onClick={onToggle}
       className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
     >

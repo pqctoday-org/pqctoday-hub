@@ -286,6 +286,7 @@ export const PKILearningView: React.FC = () => {
       <div className="flex items-center justify-between mb-6">
         {!isDashboard && !isEmbed ? (
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn')}
             className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >

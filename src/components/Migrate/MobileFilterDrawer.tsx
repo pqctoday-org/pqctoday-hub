@@ -32,6 +32,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
     <div className="md:hidden">
       {/* Trigger Button */}
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(true)}
         className={`flex items-center gap-2 px-4 py-2 w-full justify-between rounded-lg border transition-colors min-h-[44px] ${
           activeFilterCount > 0
@@ -88,6 +89,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 Refine Results
               </h2>
               <Button
+                variant="ghost"
                 onClick={() => setIsOpen(false)}
                 className="p-2 rounded-full hover:bg-muted transition-colors"
                 aria-label="Close filters"
@@ -102,6 +104,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             {/* Footer Actions */}
             <div className="p-6 border-t border-border/50 bg-muted/20 flex gap-4">
               <Button
+                variant="ghost"
                 onClick={() => {
                   onClearAll()
                 }}
@@ -110,6 +113,7 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 Clear All
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => setIsOpen(false)}
                 className="flex-1 py-3 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
               >

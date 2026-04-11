@@ -133,6 +133,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <div className="grid sm:grid-cols-4 gap-2">
           {PHASE_OPTIONS.map((p) => (
             <Button
+              variant="ghost"
               key={p.id}
               onClick={() => setPhase(p.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -154,6 +155,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <div className="grid sm:grid-cols-2 gap-2">
           {ENV_OPTIONS.map((e) => (
             <Button
+              variant="ghost"
               key={e.id}
               onClick={() => setEnvironment(e.id)}
               className={`text-left p-3 rounded-lg border transition-all flex items-center gap-3 ${
@@ -175,6 +177,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {DEADLINE_OPTIONS.map((d) => (
             <Button
+              variant="ghost"
               key={d.id}
               onClick={() => setDeadline(d.id)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${

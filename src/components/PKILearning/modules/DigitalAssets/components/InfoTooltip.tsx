@@ -39,6 +39,7 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
   return (
     <span className={`inline ${className}`}>
       <Button
+        variant="ghost"
         ref={triggerRef}
         onClick={() => setIsOpen((prev) => !prev)}
         onMouseEnter={open}

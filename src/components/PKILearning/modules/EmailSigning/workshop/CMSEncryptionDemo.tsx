@@ -173,6 +173,7 @@ export const CMSEncryptionDemo: React.FC = () => {
       {/* Mode Toggle */}
       <div className="flex flex-wrap gap-2">
         <Button
+          variant="ghost"
           onClick={() => setEncryptionMode('classical')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             encryptionMode === 'classical'
@@ -184,6 +185,7 @@ export const CMSEncryptionDemo: React.FC = () => {
           RSA Key Transport
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setEncryptionMode('kem')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             encryptionMode === 'kem'
@@ -200,6 +202,7 @@ export const CMSEncryptionDemo: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {ENCRYPTION_STEPS.map((step) => (
           <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${

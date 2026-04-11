@@ -43,6 +43,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <section className="glass-panel p-6">
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left"
       >
@@ -534,7 +535,11 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button onClick={onNavigateToWorkshop} className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={onNavigateToWorkshop}
+            className="flex items-center gap-2"
+          >
             Start Workshop <ArrowRight size={16} />
           </Button>
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground items-center">

@@ -75,6 +75,7 @@ export const HybridJWT: React.FC = () => {
       {/* Approach Selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <Button
+          variant="ghost"
           onClick={() => {
             setSelectedApproach('nested')
             setResult(null)
@@ -100,6 +101,7 @@ export const HybridJWT: React.FC = () => {
           </p>
         </Button>
         <Button
+          variant="ghost"
           onClick={() => {
             setSelectedApproach('composite')
             setResult(null)
@@ -183,6 +185,7 @@ export const HybridJWT: React.FC = () => {
       {/* Create Button */}
       <div className="flex justify-center">
         <Button
+          variant="ghost"
           onClick={handleCreate}
           disabled={isCreating}
           className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"

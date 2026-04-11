@@ -691,6 +691,7 @@ export const PQC101Module: React.FC = () => {
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
           {steps.map((step, idx) => (
             <Button
+              variant="ghost"
               key={step.id}
               onClick={() => setCurrentStep(idx)}
               className={`flex flex-col items-center gap-2 group ${
@@ -729,6 +730,7 @@ export const PQC101Module: React.FC = () => {
       {/* Navigation */}
       <div className="flex justify-between mt-6">
         <Button
+          variant="ghost"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
@@ -738,6 +740,7 @@ export const PQC101Module: React.FC = () => {
 
         {currentStep === steps.length - 1 ? (
           <Button
+            variant="ghost"
             onClick={handleFinalComplete}
             className="px-6 py-2 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
@@ -745,6 +748,7 @@ export const PQC101Module: React.FC = () => {
           </Button>
         ) : (
           <Button
+            variant="ghost"
             onClick={() => {
               const step = steps[currentStep]
 

@@ -114,6 +114,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             Quiz filtered for: <span className="font-semibold">{industryFilter}</span>
           </span>
           <Button
+            variant="ghost"
             onClick={onClearIndustryFilter}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
@@ -200,6 +201,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             const isActive = selectedDifficulties.includes(opt.id)
             return (
               <Button
+                variant="ghost"
                 key={opt.id}
                 onClick={() => onToggleDifficulty(opt.id)}
                 className={clsx(

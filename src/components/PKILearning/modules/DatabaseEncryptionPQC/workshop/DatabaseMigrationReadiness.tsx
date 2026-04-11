@@ -191,6 +191,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                   const isChecked = checked.has(item.id)
                   return (
                     <Button
+                      variant="ghost"
                       key={item.id}
                       type="button"
                       className={`w-full text-left rounded-lg border p-3 transition-colors ${

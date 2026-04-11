@@ -89,6 +89,7 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
           const isCurrent = idx === currentIdx
           return (
             <Button
+              variant="ghost"
               key={s.id}
               onClick={() => setCurrentIdx(idx)}
               className={`w-9 h-9 rounded-full border-2 text-sm font-bold transition-colors flex items-center justify-center
@@ -268,6 +269,7 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
 
             <div className="flex flex-col sm:flex-row gap-2">
               <Button
+                variant="ghost"
                 onClick={resetAnswer}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
               >

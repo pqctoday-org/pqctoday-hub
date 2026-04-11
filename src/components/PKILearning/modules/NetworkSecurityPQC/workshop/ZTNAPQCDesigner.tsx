@@ -260,6 +260,7 @@ export const ZTNAPQCDesigner: React.FC = () => {
                 <div className="flex gap-1 mt-3">
                   {(['classical', 'hybrid', 'pure-pqc'] as MigrationApproach[]).map((approach) => (
                     <Button
+                      variant="ghost"
                       key={approach}
                       onClick={() => setApproach(comp.id, approach)}
                       className={`flex-1 py-1.5 text-[10px] font-medium rounded border transition-colors ${

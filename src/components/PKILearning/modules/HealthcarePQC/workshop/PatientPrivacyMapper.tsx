@@ -74,6 +74,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ profile, selected, onToggle
 
   return (
     <Button
+      variant="ghost"
       onClick={onToggle}
       className={`relative w-full text-left rounded-lg border p-4 transition-all ${
         selected

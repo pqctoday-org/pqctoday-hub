@@ -132,6 +132,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
             </div>
 
             <Button
+              variant="ghost"
               onClick={() => handleTryIt(scenario)}
               className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
             >

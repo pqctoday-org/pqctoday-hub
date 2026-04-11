@@ -56,6 +56,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
               </span>
             ) : (
               <Button
+                variant="ghost"
                 onClick={handleRun}
                 disabled={isProcessing || !isReady}
                 className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
@@ -78,6 +79,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
             $ {command}
           </code>
           <Button
+            variant="ghost"
             onClick={() => navigator.clipboard.writeText(command)}
             className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-muted rounded"
             title="Copy to clipboard"

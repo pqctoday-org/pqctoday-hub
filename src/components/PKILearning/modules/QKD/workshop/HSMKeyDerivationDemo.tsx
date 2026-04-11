@@ -295,6 +295,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             were produced by the QKD hardware.
           </p>
           <Button
+            variant="ghost"
             onClick={stepHandlers[0]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
@@ -347,6 +348,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={stepHandlers[1]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
@@ -403,6 +405,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             </a>
           </div>
           <Button
+            variant="ghost"
             onClick={stepHandlers[2]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
@@ -468,6 +471,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             the quantum channel.
           </div>
           <Button
+            variant="ghost"
             onClick={stepHandlers[3]}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
           >
@@ -590,6 +594,7 @@ export const HSMKeyDerivationDemo: React.FC = () => {
       {/* Run next step */}
       {currentStep > 0 && currentStep < 5 && (
         <Button
+          variant="ghost"
           onClick={stepHandlers[currentStep]}
           disabled={processing || (!hsm.isReady && currentStep === 2)}
           className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"

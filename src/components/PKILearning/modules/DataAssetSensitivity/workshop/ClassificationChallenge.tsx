@@ -58,6 +58,7 @@ export const ClassificationChallenge: React.FC<ClassificationChallengeProps> = (
       {/* Reference Panel — user's Step 1 assets */}
       <div className="border border-border rounded-lg overflow-hidden">
         <Button
+          variant="ghost"
           onClick={() => setReferenceOpen((v) => !v)}
           className="w-full flex items-center justify-between px-4 py-3 bg-muted hover:bg-muted/80 transition-colors text-sm font-medium text-foreground"
         >
@@ -132,6 +133,7 @@ export const ClassificationChallenge: React.FC<ClassificationChallengeProps> = (
           )}
         </div>
         <Button
+          variant="ghost"
           onClick={revealAll}
           disabled={revealed.size === CLASSIFICATION_SCENARIOS.length}
           className="flex items-center gap-2 text-sm px-3 py-1.5 border border-border rounded-lg hover:bg-muted transition-colors disabled:opacity-40 text-foreground"
@@ -194,6 +196,7 @@ export const ClassificationChallenge: React.FC<ClassificationChallengeProps> = (
                       const cfg = SENSITIVITY_TIERS.find((t) => t.id === tier)
                       return (
                         <Button
+                          variant="ghost"
                           key={tier}
                           onClick={() => handleSelect(scenario.id, tier)}
                           className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors min-w-[70px] ${cfg?.bgClass ?? ''} ${cfg?.colorClass ?? ''} ${cfg?.borderClass ?? ''} hover:opacity-80`}

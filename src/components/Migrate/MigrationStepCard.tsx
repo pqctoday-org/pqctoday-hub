@@ -113,6 +113,7 @@ export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onVi
 
           {step.relevantSoftwareCategories.length > 0 && (
             <Button
+              variant="ghost"
               onClick={() => onViewSoftware(step)}
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mt-2 cursor-pointer"
             >

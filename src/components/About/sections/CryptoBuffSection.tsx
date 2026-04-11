@@ -28,6 +28,7 @@ export function CryptoBuffSection() {
 
         {/* Websites & Blogs subsection */}
         <Button
+          variant="ghost"
           onClick={() => setIsCryptoBuffSitesOpen(!isCryptoBuffSitesOpen)}
           className="flex items-center gap-2 w-full text-left cursor-pointer"
         >
@@ -78,6 +79,7 @@ export function CryptoBuffSection() {
 
         {/* Essential Books subsection */}
         <Button
+          variant="ghost"
           onClick={() => setIsCryptoBuffBooksOpen(!isCryptoBuffBooksOpen)}
           className="flex items-center gap-2 w-full text-left cursor-pointer mt-4 pt-4 border-t border-border"
         >

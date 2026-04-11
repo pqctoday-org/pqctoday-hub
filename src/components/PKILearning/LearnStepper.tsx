@@ -44,6 +44,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
           <div className="absolute top-4 left-0 w-full h-0.5 bg-border -z-10" />
           {steps.map((step, idx) => (
             <Button
+              variant="ghost"
               key={step.label}
               type="button"
               onClick={() => setCurrent(idx)}
@@ -81,6 +82,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
       {/* Navigation — Previous | Next or Mark as Read */}
       <div className="flex flex-col sm:flex-row justify-between mt-6 gap-3">
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setCurrent((c) => Math.max(0, c - 1))}
           disabled={isFirst}
@@ -97,6 +99,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
             </div>
           ) : (
             <Button
+              variant="ghost"
               type="button"
               onClick={() => moduleId && markAllLearnSectionsComplete(moduleId)}
               className="px-6 py-3 min-h-[44px] bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
@@ -106,6 +109,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
           )
         ) : (
           <Button
+            variant="ghost"
             type="button"
             onClick={() => setCurrent((c) => Math.min(steps.length - 1, c + 1))}
             className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"

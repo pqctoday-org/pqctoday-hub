@@ -70,6 +70,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
       <div className="flex flex-wrap gap-2">
         {CHAIN_SCENARIOS.map((scenario, idx) => (
           <Button
+            variant="ghost"
             key={scenario.id}
             onClick={() => setActiveScenarioIdx(idx)}
             className={`px-3 py-1.5 rounded-lg text-sm border transition-colors
@@ -134,6 +135,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
 
                 {/* Reveal button */}
                 <Button
+                  variant="ghost"
                   onClick={() => toggleNode(activeScenario.id, node.id)}
                   className={`w-full flex items-center justify-center gap-1.5 text-xs py-1.5 rounded border transition-colors
                     ${

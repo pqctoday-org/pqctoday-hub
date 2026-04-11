@@ -59,6 +59,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
   return (
     <>
       <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen(true)}
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-status-warning/60 rounded-full"
@@ -75,6 +76,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
         <>
           {/* Backdrop — click to close */}
           <Button
+            variant="ghost"
             type="button"
             aria-label="Close"
             className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
@@ -97,6 +99,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
                   </h2>
                 </div>
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setOpen(false)}
                   className="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"

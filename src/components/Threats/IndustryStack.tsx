@@ -85,6 +85,7 @@ export const IndustryStack = ({
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
               <Button
+                variant="ghost"
                 onClick={() => handleSelect(layer.id)}
                 className={`
                   group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
@@ -151,6 +152,7 @@ export const IndustryStack = ({
                   >
                     <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()

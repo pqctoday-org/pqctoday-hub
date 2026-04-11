@@ -217,6 +217,7 @@ export const TLSClientPanel: React.FC = () => {
         </h2>
         <div role="tablist" className="flex bg-muted/50 rounded-lg p-1">
           <Button
+            variant="ghost"
             onClick={() => {
               setActiveTab('ui')
               setMode('client', 'ui')
@@ -235,6 +236,7 @@ export const TLSClientPanel: React.FC = () => {
             <Settings size={14} /> UI
           </Button>
           <Button
+            variant="ghost"
             onClick={() => {
               setActiveTab('raw')
               setMode('client', 'raw')
@@ -287,6 +289,7 @@ export const TLSClientPanel: React.FC = () => {
                   <span className="text-xs text-muted-foreground">Received from Server</span>
                   <div role="tablist" className="flex bg-muted rounded p-0.5 border border-border">
                     <Button
+                      variant="ghost"
                       onClick={() => setMessageView('text')}
                       className={clsx(
                         'px-2 py-0.5 text-[10px] rounded transition-colors',
@@ -300,6 +303,7 @@ export const TLSClientPanel: React.FC = () => {
                       TXT
                     </Button>
                     <Button
+                      variant="ghost"
                       onClick={() => setMessageView('hex')}
                       className={clsx(
                         'px-2 py-0.5 text-[10px] rounded transition-colors',
@@ -338,6 +342,7 @@ export const TLSClientPanel: React.FC = () => {
                               &lt; {display}
                             </span>
                             <Button
+                              variant="ghost"
                               onClick={() => navigator.clipboard.writeText(display)}
                               className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                               title="Copy"
@@ -371,6 +376,7 @@ export const TLSClientPanel: React.FC = () => {
                   />
                   {clientConfig.certificates.certPem && (
                     <Button
+                      variant="ghost"
                       onClick={() =>
                         setInspectCert({
                           pem: clientConfig.certificates.certPem!,
@@ -395,6 +401,7 @@ export const TLSClientPanel: React.FC = () => {
                           <FileText size={12} /> Certificate (PEM)
                         </label>
                         <Button
+                          variant="ghost"
                           onClick={() => setShowImport({ isOpen: true, type: 'cert' })}
                           className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                         >
@@ -419,6 +426,7 @@ export const TLSClientPanel: React.FC = () => {
                           <Key size={12} /> Private Key (PEM)
                         </label>
                         <Button
+                          variant="ghost"
                           onClick={() => setShowImport({ isOpen: true, type: 'key' })}
                           className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                         >
@@ -468,6 +476,7 @@ export const TLSClientPanel: React.FC = () => {
                   <div className="flex gap-2">
                     {clientConfig.certificates.caPem && (
                       <Button
+                        variant="ghost"
                         onClick={() =>
                           setInspectCert({
                             pem: clientConfig.certificates.caPem!,
@@ -481,6 +490,7 @@ export const TLSClientPanel: React.FC = () => {
                       </Button>
                     )}
                     <Button
+                      variant="ghost"
                       onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
                       className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                     >
@@ -558,6 +568,7 @@ export const TLSClientPanel: React.FC = () => {
                 <div className="flex flex-wrap gap-2">
                   {CLASSICAL_GROUPS.map((group) => (
                     <Button
+                      variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
                       className={clsx(
@@ -579,6 +590,7 @@ export const TLSClientPanel: React.FC = () => {
                 <div className="flex flex-wrap gap-2">
                   {PQC_GROUPS.map((group) => (
                     <Button
+                      variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
                       title={GROUP_SIZE[group]}
@@ -606,6 +618,7 @@ export const TLSClientPanel: React.FC = () => {
                 <div className="flex flex-wrap gap-2">
                   {HYBRID_GROUPS.map((group) => (
                     <Button
+                      variant="ghost"
                       key={group}
                       onClick={() => toggleGroup(group)}
                       title={GROUP_SIZE[group]}
@@ -675,6 +688,7 @@ export const TLSClientPanel: React.FC = () => {
               <div className="flex flex-wrap gap-2 mb-2">
                 {SIG_ALGS.map((alg) => (
                   <Button
+                    variant="ghost"
                     key={alg}
                     onClick={() => toggleSigAlg(alg)}
                     title={
@@ -764,6 +778,7 @@ export const TLSClientPanel: React.FC = () => {
               <div className="flex items-center gap-2">
                 <span className="text-warning">Experimental Editor</span>
                 <Button
+                  variant="ghost"
                   onClick={() => {
                     navigator.clipboard.writeText(clientConfig.rawConfig || '')
                     // Visual feedback via button text change handled inline

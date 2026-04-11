@@ -81,6 +81,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           <div className="flex gap-1">
             {QUBIT_OPTIONS.map((n) => (
               <Button
+                variant="ghost"
                 key={n}
                 onClick={() => handleQubitChange(n)}
                 disabled={!isIdle}
@@ -98,6 +99,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
 
         <div className="flex items-center gap-2">
           <Button
+            variant="ghost"
             onClick={handleEveToggle}
             disabled={!isIdle}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors ${
@@ -366,6 +368,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
       <div className="flex gap-3">
         {isIdle ? (
           <Button
+            variant="ghost"
             onClick={handleAdvance}
             className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
             aria-label="Start BB84 protocol simulation"
@@ -374,6 +377,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           </Button>
         ) : canAdvance ? (
           <Button
+            variant="ghost"
             onClick={handleAdvance}
             className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
           >
@@ -382,6 +386,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
         ) : null}
         {!isIdle && (
           <Button
+            variant="ghost"
             onClick={handleReset}
             className="px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
             aria-label="Reset simulation"

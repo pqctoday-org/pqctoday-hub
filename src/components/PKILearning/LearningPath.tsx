@@ -259,6 +259,7 @@ export const LearningPath = () => {
       {remainingModules.length > 0 && (
         <div>
           <Button
+            variant="ghost"
             onClick={() => setShowAllExpanded((prev) => !prev)}
             className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors py-2"
           >

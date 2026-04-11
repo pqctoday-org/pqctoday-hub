@@ -56,6 +56,7 @@ export const JWTInspector: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {(Object.keys(SAMPLE_JWTS) as SampleKey[]).map((key) => (
           <Button
+            variant="ghost"
             key={key}
             onClick={() => handleSampleChange(key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -76,6 +77,7 @@ export const JWTInspector: React.FC = () => {
             JWT Token
           </label>
           <Button
+            variant="ghost"
             onClick={handleCopy}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >

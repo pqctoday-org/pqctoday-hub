@@ -86,6 +86,7 @@ const EditableDataDisplay: React.FC<{
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
           aria-label={`Switch to ${viewMode === 'hex' ? 'ASCII' : 'HEX'} view`}
@@ -742,6 +743,7 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
 
         {/* FIPS 205 §6 internal parameters — collapsible */}
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setShowInternalParams((v) => !v)}
           className="flex items-center gap-1 text-[11px] text-primary/80 hover:text-primary transition-colors"
@@ -1367,6 +1369,7 @@ const SignVerifyTabSoftware: React.FC = () => {
 
             <div className="mt-auto pt-4">
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('sign')
@@ -1494,6 +1497,7 @@ const SignVerifyTabSoftware: React.FC = () => {
 
             <div className="mt-auto pt-4">
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('verify')

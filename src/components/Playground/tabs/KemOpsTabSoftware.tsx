@@ -165,6 +165,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 Step 2: Run Operation
               </div>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('encapsulate')
@@ -407,6 +408,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 Step 2: Run Operation
               </div>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('decapsulate')
@@ -641,6 +643,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 )}
               </div>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('encrypt')
@@ -693,6 +696,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 )}
               </div>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('decrypt')

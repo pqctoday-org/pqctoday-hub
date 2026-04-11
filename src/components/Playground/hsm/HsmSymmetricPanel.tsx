@@ -267,6 +267,7 @@ const AesPanel = ({
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
           className="flex-1"
@@ -442,6 +443,7 @@ const HmacPanel = () => {
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doComputeHmac}
           disabled={keyHandle === null || anyLoading || !input.length}
           className="flex-1"
@@ -700,6 +702,7 @@ const AesCtrPanel = ({
 
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
           className="flex-1"
@@ -936,6 +939,7 @@ const AesCmacPanel = ({
 
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doComputeMac}
           disabled={keyHandle === null || anyLoading || !input.length}
           className="flex-1"

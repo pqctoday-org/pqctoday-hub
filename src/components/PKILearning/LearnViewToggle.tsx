@@ -25,6 +25,7 @@ export const LearnViewToggle = ({ mode, onChange }: LearnViewToggleProps) => {
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => (
         <Button
+          variant="ghost"
           key={value}
           onClick={() => onChange(value)}
           role="radio"

@@ -430,6 +430,7 @@ export function StatefulSignaturesDemo() {
           <div className="flex border-b overflow-x-auto">
             {['hss', 'xmss', 'comparison', 'kat'].map((tab) => (
               <Button
+                variant="ghost"
                 key={tab}
                 onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'comparison' | 'kat')}
                 className={`flex-1 min-w-[160px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
@@ -491,6 +492,7 @@ export function StatefulSignaturesDemo() {
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
                       <Button
+                        variant="ghost"
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >
@@ -743,6 +745,7 @@ export function StatefulSignaturesDemo() {
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
                       <Button
+                        variant="ghost"
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >

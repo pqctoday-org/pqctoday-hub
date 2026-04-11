@@ -134,6 +134,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
         {isEnriched && enrichment && (
           <div className="border-t border-border">
             <Button
+              variant="ghost"
               type="button"
               onClick={toggleAnalysis}
               className="w-full flex items-center justify-between pt-2 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-accent transition-colors group"

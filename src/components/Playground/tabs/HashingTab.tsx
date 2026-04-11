@@ -85,6 +85,7 @@ export const HashingTab: React.FC = () => {
             <span>Enter any text to compute its cryptographic hash</span>
           </div>
           <Button
+            variant="ghost"
             onClick={() => runOperation('hash')}
             disabled={!hashInput || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -116,6 +117,7 @@ export const HashingTab: React.FC = () => {
             </div>
           )}
           <Button
+            variant="ghost"
             onClick={() => {
               if (hashOutput) {
                 navigator.clipboard.writeText(hashOutput)

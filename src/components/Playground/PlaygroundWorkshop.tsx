@@ -198,6 +198,7 @@ const PersonaBanner = ({
         </div>
       </div>
       <Button
+        variant="ghost"
         onClick={onToggle}
         className={`shrink-0 text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors ${
           showingPersona
@@ -366,6 +367,7 @@ export const PlaygroundWorkshop = () => {
                 {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}
                 {isPersonaFiltered && (
                   <Button
+                    variant="ghost"
                     onClick={() => setShowPersonaFilter(false)}
                     className="ml-2 text-xs text-primary hover:underline"
                   >
@@ -375,6 +377,7 @@ export const PlaygroundWorkshop = () => {
               </span>
               {myPlaygroundTools.length > 0 && (
                 <Button
+                  variant="ghost"
                   onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
                   className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                     showOnlyPlaygroundTools
@@ -393,6 +396,7 @@ export const PlaygroundWorkshop = () => {
           {/* Category filter pills */}
           <div className="flex flex-wrap gap-2">
             <Button
+              variant="ghost"
               onClick={() => setActiveCategory(null)}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                 activeCategory === null
@@ -412,6 +416,7 @@ export const PlaygroundWorkshop = () => {
               const isActive = activeCategory === cat
               return (
                 <Button
+                  variant="ghost"
                   key={cat}
                   onClick={() => setActiveCategory(isActive ? null : cat)}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
@@ -431,6 +436,7 @@ export const PlaygroundWorkshop = () => {
             })}
             {!isEmbedded && (
               <Button
+                variant="ghost"
                 onClick={() =>
                   setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
                 }
@@ -538,6 +544,7 @@ export const PlaygroundWorkshop = () => {
                         </div>
                       </Link>
                       <Button
+                        variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation()
                           toggleMyPlaygroundTool(tool.id)

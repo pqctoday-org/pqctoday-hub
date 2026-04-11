@@ -99,6 +99,7 @@ const Step12VendorDependency = () => {
           {stepContent.title ?? 'How do you manage cryptographic dependencies?'}
         </h3>
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setImportProductSelection(!importProductSelection)}
           className={clsx(
@@ -156,6 +157,7 @@ const Step12VendorDependency = () => {
                       <span className="text-primary/60 font-normal">· {item.category}</span>
                     )}
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => handleRemoveProduct(item.key)}
                       className="ml-0.5 hover:text-status-error transition-colors"

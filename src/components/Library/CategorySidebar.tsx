@@ -59,6 +59,7 @@ export const CategorySidebar = ({
       aria-label="Library categories"
     >
       <Button
+        variant="ghost"
         onClick={() => onSelect('All')}
         className={clsx(
           'flex items-center shrink-0 gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
@@ -78,6 +79,7 @@ export const CategorySidebar = ({
 
       {categories.map((cat) => (
         <Button
+          variant="ghost"
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(

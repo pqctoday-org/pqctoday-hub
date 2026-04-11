@@ -94,6 +94,7 @@ const SecretCard: React.FC<SecretCardProps> = ({ category, selected, onToggle })
       </div>
 
       <Button
+        variant="ghost"
         className="text-[10px] text-primary hover:underline"
         onClick={(e) => {
           e.stopPropagation()
@@ -190,6 +191,7 @@ export const SecretsArchitectureMapper: React.FC = () => {
       {/* Controls */}
       <div className="flex flex-wrap gap-2">
         <Button
+          variant="ghost"
           onClick={selectAllCritical}
           className="flex items-center gap-2 px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm border border-status-error/30 font-medium"
         >
@@ -197,6 +199,7 @@ export const SecretsArchitectureMapper: React.FC = () => {
           Select All Critical ({totalCritical})
         </Button>
         <Button
+          variant="ghost"
           onClick={clearAll}
           className="px-3 py-2 rounded-lg border border-border hover:bg-muted transition-colors text-sm text-muted-foreground"
         >

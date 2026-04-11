@@ -42,6 +42,7 @@ export function StickyCompareBar({
               >
                 <span className="truncate max-w-[120px]">{name}</span>
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => onRemove(key)}
                   aria-label={`Remove ${name} from comparison`}
@@ -65,6 +66,7 @@ export function StickyCompareBar({
         {/* Browse hint */}
         {showBrowseHint && onBrowseAll && compareKeys.length < MAX && (
           <Button
+            variant="ghost"
             type="button"
             onClick={onBrowseAll}
             className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0"

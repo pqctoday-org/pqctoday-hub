@@ -52,6 +52,7 @@ export const UserManualPanel: React.FC<{
                   {manual.title}
                 </h2>
                 <Button
+                  variant="ghost"
                   onClick={onClose}
                   className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                   aria-label="Close guide"

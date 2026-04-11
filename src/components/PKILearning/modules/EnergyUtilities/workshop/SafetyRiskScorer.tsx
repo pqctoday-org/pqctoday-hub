@@ -367,6 +367,7 @@ export const SafetyRiskScorer: React.FC<SafetyRiskScorerProps> = ({
 
           return (
             <Button
+              variant="ghost"
               key={scenario.id}
               onClick={() => handleSelectScenario(scenario.id)}
               className={`text-left rounded-lg border p-3 transition-all ${

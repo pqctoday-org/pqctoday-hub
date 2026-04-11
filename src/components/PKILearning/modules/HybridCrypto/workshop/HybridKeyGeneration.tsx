@@ -161,6 +161,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
       {/* Category toggle */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={() => {
             setCategory('kem')
             setResults(new Map())
@@ -174,6 +175,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
           KEM (Key Encapsulation)
         </Button>
         <Button
+          variant="ghost"
           onClick={() => {
             setCategory('signature')
             setResults(new Map())
@@ -190,6 +192,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
 
       {/* Generate button */}
       <Button
+        variant="ghost"
         onClick={generateAll}
         disabled={isGenerating}
         className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
@@ -276,6 +279,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
 
                           {/* PEM toggle */}
                           <Button
+                            variant="ghost"
                             onClick={() =>
                               setExpandedPem(expandedPem === algo.name ? null : algo.name)
                             }

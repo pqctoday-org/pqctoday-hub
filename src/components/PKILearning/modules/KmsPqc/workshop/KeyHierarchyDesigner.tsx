@@ -178,6 +178,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                     <div className="flex gap-1 shrink-0">
                       {(['classical', 'hybrid', 'pqc'] as AlgorithmMode[]).map((mode) => (
                         <Button
+                          variant="ghost"
                           key={mode}
                           onClick={() => setMode(level.id, mode)}
                           className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${

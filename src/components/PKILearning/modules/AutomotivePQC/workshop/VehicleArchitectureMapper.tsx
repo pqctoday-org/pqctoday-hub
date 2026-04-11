@@ -147,6 +147,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {VEHICLE_TYPES.map((vt) => (
             <Button
+              variant="ghost"
               key={vt.id}
               onClick={() => handleVehicleChange(vt.id)}
               className={`p-3 rounded-lg border text-left transition-all ${
@@ -174,6 +175,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
         <div className="flex gap-2">
           {(['domain-based', 'zonal'] as const).map((style) => (
             <Button
+              variant="ghost"
               key={style}
               onClick={() => setSelectedArchitecture(style)}
               className={`flex-1 p-3 rounded-lg border text-left transition-all ${
@@ -215,6 +217,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
 
             return (
               <Button
+                variant="ghost"
                 key={zone.id}
                 onClick={() => handleZoneClick(zone.id)}
                 className={`p-4 rounded-lg border text-left transition-all ${
@@ -278,6 +281,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
               <p className="text-sm text-muted-foreground mt-1">{selectedZoneConfig.description}</p>
             </div>
             <Button
+              variant="ghost"
               onClick={() => setSelectedZone(null)}
               className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
               aria-label="Close zone detail"

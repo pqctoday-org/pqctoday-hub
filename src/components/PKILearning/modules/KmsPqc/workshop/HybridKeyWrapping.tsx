@@ -141,6 +141,7 @@ export const HybridKeyWrapping: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {(['classical', 'pqc', 'hybrid'] as WrapMode[]).map((mode) => (
           <Button
+            variant="ghost"
             key={mode}
             onClick={() => setWrapMode(mode)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -240,6 +241,7 @@ export const HybridKeyWrapping: React.FC = () => {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               {HYBRID_COMBINER_MODES.map((mode) => (
                 <Button
+                  variant="ghost"
                   key={mode.id}
                   onClick={() => setSelectedMode(mode.id)}
                   className={`text-left p-4 rounded-lg border transition-colors ${
@@ -324,6 +326,7 @@ export const HybridKeyWrapping: React.FC = () => {
             const status = KMS_STATUS_LABELS[provider.pqcStatus]
             return (
               <Button
+                variant="ghost"
                 key={provider.id}
                 onClick={() => setSelectedProvider(provider.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${

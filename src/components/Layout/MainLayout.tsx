@@ -159,6 +159,7 @@ export const MainLayout = () => {
           <div className="flex flex-row items-center gap-4">
             {/* Mobile brand — always a button; toggles Airplane Mode on/off */}
             <Button
+              variant="ghost"
               type="button"
               onClick={() => setAirplaneMode(!airplaneMode)}
               className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
@@ -174,6 +175,7 @@ export const MainLayout = () => {
             </Button>
             {/* Desktop brand — always a button; toggles Airplane Mode on/off */}
             <Button
+              variant="ghost"
               type="button"
               onClick={() => setAirplaneMode(!airplaneMode)}
               className="hidden lg:flex flex-col items-start"
@@ -328,6 +330,7 @@ export const MainLayout = () => {
 
               {/* Airplane Mode toggle */}
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   setAirplaneMode(!airplaneMode)
@@ -351,6 +354,7 @@ export const MainLayout = () => {
 
               {/* Journey History shortcut */}
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   setMoreMenuOpen(false)
@@ -364,6 +368,7 @@ export const MainLayout = () => {
 
               {/* Knowledge Graph shortcut */}
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   setMoreMenuOpen(false)

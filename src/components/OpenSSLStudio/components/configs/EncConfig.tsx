@@ -52,6 +52,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
           <Button
+            variant="ghost"
             onClick={() => setEncAction('encrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -63,6 +64,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             Encrypt
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setEncAction('decrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',

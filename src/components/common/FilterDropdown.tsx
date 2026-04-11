@@ -206,6 +206,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         <div className="max-h-60 overflow-y-auto">
           {/* All / Clear Option */}
           <Button
+            variant="ghost"
             role="option"
             aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
             onClick={() => {
@@ -246,6 +247,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 : selectedId === item.id
               return (
                 <Button
+                  variant="ghost"
                   key={item.id}
                   role="option"
                   aria-selected={isSelected}
@@ -284,6 +286,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
 
   const renderButton = () => (
     <Button
+      variant="ghost"
       ref={buttonRef}
       data-testid="filter-dropdown"
       onClick={() => {

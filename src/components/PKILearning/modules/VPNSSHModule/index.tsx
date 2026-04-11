@@ -172,6 +172,7 @@ export const VPNSSHModule: React.FC = () => {
             {/* Reset button */}
             <div className="flex justify-end">
               <Button
+                variant="ghost"
                 onClick={handleReset}
                 className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
@@ -189,6 +190,7 @@ export const VPNSSHModule: React.FC = () => {
                   const Icon = part.icon
                   return (
                     <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
                       className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
@@ -239,6 +241,7 @@ export const VPNSSHModule: React.FC = () => {
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
               <Button
+                variant="ghost"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
@@ -247,6 +250,7 @@ export const VPNSSHModule: React.FC = () => {
               </Button>
               {currentPart === PARTS.length - 1 ? (
                 <Button
+                  variant="ghost"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
@@ -254,6 +258,7 @@ export const VPNSSHModule: React.FC = () => {
                 </Button>
               ) : (
                 <Button
+                  variant="ghost"
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >

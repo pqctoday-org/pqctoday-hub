@@ -184,7 +184,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                     Enter any name to simulate a file upload.
                   </p>
                 </div>
-                <Button onClick={handleUpload} className="w-full">
+                <Button variant="ghost" onClick={handleUpload} className="w-full">
                   Proceed to Sign
                 </Button>
               </div>
@@ -212,7 +212,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                   </h4>
                   <p className="text-sm mt-1">Authorize the QTSP to access your signing key.</p>
                 </div>
-                <Button onClick={handleAuth} disabled={loading} className="w-full">
+                <Button variant="ghost" onClick={handleAuth} disabled={loading} className="w-full">
                   {loading && <Loader2 className="animate-spin mr-2" />} Authorize Access
                 </Button>
               </div>
@@ -227,7 +227,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                 <div className="flex items-center gap-2 text-sm text-muted-foreground justify-center">
                   <PenTool className="w-4 h-4" /> Ready to apply Qualified Electronic Signature
                 </div>
-                <Button onClick={handleSign} disabled={loading} className="w-full">
+                <Button variant="ghost" onClick={handleSign} disabled={loading} className="w-full">
                   {loading && <Loader2 className="animate-spin mr-2" />} Sign Document
                 </Button>
               </div>
@@ -256,6 +256,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
             {/* Tabs */}
             <div className="flex items-center border-b border-border bg-muted/30">
               <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
@@ -266,6 +267,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                 PROTOCOL LOG
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'

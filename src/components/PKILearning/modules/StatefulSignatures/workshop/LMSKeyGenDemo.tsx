@@ -167,6 +167,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-foreground">Parameter Set</span>
           <Button
+            variant="ghost"
             onClick={() => setShowAllParams(!showAllParams)}
             className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
           >
@@ -187,6 +188,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
             return (
               <div key={param.id} className="relative group">
                 <Button
+                  variant="ghost"
                   onClick={() => {
                     setSelectedParamId(param.id)
                     setActiveKeyHandle(null)
@@ -380,6 +382,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               sign again.
             </p>
             <Button
+              variant="ghost"
               onClick={handleGenerateKey}
               disabled={!hsm.isReady || isGenerating}
               className="w-full font-bold"
@@ -489,7 +492,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   {toHex(new TextEncoder().encode(messageToSign))}
                 </pre>
               </div>
-              <Button onClick={handleSign} className="w-full">
+              <Button variant="ghost" onClick={handleSign} className="w-full">
                 <PenLine className="mr-2 h-4 w-4" /> Sign with CKM_HSS
               </Button>
             </div>

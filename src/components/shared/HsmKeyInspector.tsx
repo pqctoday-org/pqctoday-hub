@@ -484,6 +484,7 @@ export const HsmKeyInspector = ({
           </div>
           {onClear && keys.length > 0 && (
             <Button
+              variant="ghost"
               onClick={onClear}
               className="text-[10px] px-2 py-0.5 rounded border border-border hover:bg-muted text-muted-foreground transition-colors"
               title="Clear all key objects from the Key Inspector"
@@ -514,6 +515,7 @@ export const HsmKeyInspector = ({
                 <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => openInspect(k)}
                       className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
@@ -547,6 +549,7 @@ export const HsmKeyInspector = ({
                     {confirmHandle === k.handle ? (
                       <div className="flex items-center gap-1">
                         <Button
+                          variant="ghost"
                           type="button"
                           onClick={() => destroyKey(k)}
                           className="text-status-error text-[10px] font-sans font-medium hover:underline"
@@ -555,6 +558,7 @@ export const HsmKeyInspector = ({
                           destroy?
                         </Button>
                         <Button
+                          variant="ghost"
                           type="button"
                           onClick={() => setConfirmHandle(null)}
                           className="text-muted-foreground text-[10px] font-sans hover:underline"
@@ -564,6 +568,7 @@ export const HsmKeyInspector = ({
                       </div>
                     ) : (
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => setConfirmHandle(k.handle)}
                         className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"

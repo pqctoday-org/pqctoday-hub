@@ -665,6 +665,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Button
+              variant="ghost"
               onClick={() => setGapExpanded((prev) => !prev)}
               className="flex items-center gap-2"
             >

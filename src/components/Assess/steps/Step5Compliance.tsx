@@ -145,6 +145,7 @@ const Step5Compliance = () => {
           Which compliance frameworks apply to you?
         </h3>
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setImportComplianceSelection(!importComplianceSelection)}
           className={clsx(

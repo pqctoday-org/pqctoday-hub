@@ -294,6 +294,7 @@ export const VendorScorecardBuilder: React.FC = () => {
             <div key={d.id} className="glass-panel overflow-hidden">
               {/* Header row */}
               <Button
+                variant="ghost"
                 type="button"
                 className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
                 onClick={() => setExpandedDim(isExpanded ? null : d.id)}
@@ -347,6 +348,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                           : 'Pick products that meet this requirement'}
                       </span>
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -395,6 +397,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                         const isChecked = checked.has(key)
                         return (
                           <Button
+                            variant="ghost"
                             key={key}
                             type="button"
                             onClick={() => toggleProductForDimension(d.id, key)}

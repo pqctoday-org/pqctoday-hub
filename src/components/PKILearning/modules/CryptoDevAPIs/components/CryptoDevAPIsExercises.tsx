@@ -127,6 +127,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
               </div>
 
               <Button
+                variant="ghost"
                 onClick={() => {
                   if (onSetWorkshopConfig) {
                     onSetWorkshopConfig(scenario.config)

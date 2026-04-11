@@ -54,6 +54,7 @@ const SortHeader = ({
 }) => (
   <th className={clsx('text-left', className)}>
     <Button
+      variant="ghost"
       onClick={() => onSort(sk)}
       className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-3 px-4 w-full"
     >
@@ -187,6 +188,7 @@ export const ModuleTable = ({
                 <tr key={item.id} className="border-b border-border last:border-0">
                   <td colSpan={7} className="px-4 py-3">
                     <Button
+                      variant="ghost"
                       onClick={() => navigateToQuiz(item.categories)}
                       className="w-full flex items-center gap-3 text-left group"
                     >

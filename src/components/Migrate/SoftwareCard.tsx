@@ -99,6 +99,7 @@ export const SoftwareCard = ({
 
         <div className="ml-auto flex items-center">
           <Button
+            variant="ghost"
             type="button"
             aria-label={
               isBookmarked
@@ -117,6 +118,7 @@ export const SoftwareCard = ({
           </Button>
           {onHide && (
             <Button
+              variant="ghost"
               type="button"
               aria-label="Hide this product"
               title="Hide this product"
@@ -166,6 +168,7 @@ export const SoftwareCard = ({
         {/* Expandable Mobile Toggle */}
         <div className="md:hidden mt-3 mb-1">
           <Button
+            variant="ghost"
             onClick={() => setIsExpandedMobile(!isExpandedMobile)}
             className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-medium transition-colors"
           >
@@ -242,6 +245,7 @@ export const SoftwareCard = ({
 
         {onToggleCompare && (
           <Button
+            variant="ghost"
             type="button"
             aria-label={isCompared ? 'Remove from comparison' : 'Add to comparison'}
             title={
@@ -264,6 +268,7 @@ export const SoftwareCard = ({
         )}
         {onToggleSelect && (
           <Button
+            variant="ghost"
             type="button"
             aria-label={isSelected ? 'Remove from My Products' : 'Add to My Products'}
             title={isSelected ? 'Remove from My Products' : 'Add to My Products'}

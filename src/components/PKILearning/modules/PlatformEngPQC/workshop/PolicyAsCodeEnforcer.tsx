@@ -125,6 +125,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           noContainer
         />
         <Button
+          variant="ghost"
           onClick={() => setShowSlsa((prev) => !prev)}
           className="ml-auto text-xs text-primary underline underline-offset-2 hover:opacity-80"
         >
@@ -141,6 +142,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           <div className="flex gap-2 flex-wrap">
             {SLSA_LEVELS.map((level) => (
               <Button
+                variant="ghost"
                 key={level}
                 onClick={() => setSelectedSlsaLevel(level)}
                 className={`px-3 py-1.5 rounded text-xs font-bold border transition-colors ${
@@ -186,6 +188,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           return (
             <div key={rule.id} className="glass-panel overflow-hidden">
               <Button
+                variant="ghost"
                 onClick={() => toggleExpand(rule.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >

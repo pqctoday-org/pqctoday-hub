@@ -16,6 +16,7 @@ export function DataPrivacySection() {
       className="glass-panel p-4 md:p-6"
     >
       <Button
+        variant="ghost"
         onClick={() => setIsDataPrivacyOpen(!isDataPrivacyOpen)}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >

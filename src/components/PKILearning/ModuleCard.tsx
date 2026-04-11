@@ -135,6 +135,7 @@ export const ModuleCard = ({
         <div className="flex items-center gap-2 flex-wrap justify-end">
           {/* Bookmark toggle */}
           <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleMyLearnModule(module.id)

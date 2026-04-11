@@ -325,6 +325,7 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
           </p>
         </div>
         <Button
+          variant="ghost"
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >

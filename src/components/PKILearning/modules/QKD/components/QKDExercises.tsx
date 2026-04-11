@@ -156,6 +156,7 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
                 </div>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => handleLoadScenario(scenario)}
                 className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
               >

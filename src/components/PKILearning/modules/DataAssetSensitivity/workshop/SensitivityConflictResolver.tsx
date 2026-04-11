@@ -97,6 +97,7 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
       {/* Resolution Rules */}
       <div className="border border-border rounded-lg overflow-hidden">
         <Button
+          variant="ghost"
           onClick={() => setRulesOpen((v) => !v)}
           className="w-full flex items-center justify-between px-4 py-3 bg-muted hover:bg-muted/80 transition-colors text-sm font-semibold text-foreground"
         >
@@ -235,6 +236,7 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                         const cfg = SENSITIVITY_TIERS.find((t) => t.id === tier)
                         return (
                           <Button
+                            variant="ghost"
                             key={tier}
                             onClick={() => handleSelect(scenario.id, tier)}
                             className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors min-w-[70px] ${cfg?.bgClass ?? ''} ${cfg?.colorClass ?? ''} ${cfg?.borderClass ?? ''} hover:opacity-80`}

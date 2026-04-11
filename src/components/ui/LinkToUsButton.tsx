@@ -36,6 +36,7 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
     return (
       <>
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setIsOpen(true)}
           className="glass-panel p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
@@ -59,6 +60,7 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
   return (
     <>
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
       >

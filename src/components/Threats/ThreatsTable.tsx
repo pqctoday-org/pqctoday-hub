@@ -181,6 +181,7 @@ export const ThreatsTable = ({
                       onClick={(e) => e.stopPropagation()}
                     >
                       <Button
+                        variant="ghost"
                         onClick={() => toggleMyThreat(item.threatId)}
                         className={`p-1 rounded transition-colors ${
                           myThreats.includes(item.threatId)

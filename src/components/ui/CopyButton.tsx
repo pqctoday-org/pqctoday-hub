@@ -48,6 +48,7 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
 
   return (
     <Button
+      variant="ghost"
       onClick={handleCopy}
       className={`inline-flex items-center gap-2 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors ${className}`}
       aria-label={copied ? 'Copied!' : label}

@@ -220,6 +220,7 @@ export function CoverageView({ graph }: CoverageViewProps) {
 
           return (
             <Button
+              variant="ghost"
               key={type}
               className={`glass-panel p-3 text-left transition-all ${isExpanded ? 'ring-2 ring-primary' : 'hover:shadow-md'}`}
               onClick={() => setExpandedType((prev) => (prev === type ? null : type))}

@@ -220,6 +220,7 @@ const AttackScenarioCard: React.FC<{
   return (
     <div className={`glass-panel overflow-hidden transition-all duration-200`}>
       <Button
+        variant="ghost"
         onClick={onToggle}
         className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/20 transition-colors"
       >
@@ -407,6 +408,7 @@ const FDAChecklistSection: React.FC<{
           const isChecked = checkedItems.has(item.id)
           return (
             <Button
+              variant="ghost"
               key={item.id}
               onClick={() => onToggle(item.id)}
               className={`w-full text-left p-3 rounded-lg border transition-colors ${

@@ -87,6 +87,7 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
             {banner === 'learn' ? 'Reading Complete!' : 'Workshop Complete!'}
           </span>
           <Button
+            variant="ghost"
             type="button"
             onClick={() => setBanner(null)}
             className="text-status-success/70 hover:text-status-success transition-colors"
@@ -108,6 +109,7 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
             Standard technical module.
           </span>
           <Button
+            variant="ghost"
             onClick={() => navigate(location.pathname)}
             className="flex items-center gap-1.5 text-[10px] text-foreground font-medium bg-background border border-border px-2 py-1 rounded-md hover:bg-muted transition-colors"
           >

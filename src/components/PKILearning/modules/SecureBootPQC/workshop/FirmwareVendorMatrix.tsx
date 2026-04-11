@@ -101,6 +101,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
         />
         {(selectedTier !== 'All' || selectedStatus !== 'All') && (
           <Button
+            variant="ghost"
             onClick={() => {
               setSelectedTier('All')
               setSelectedStatus('All')
@@ -133,6 +134,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
                 className="rounded-lg border border-border bg-muted/30 overflow-hidden"
               >
                 <Button
+                  variant="ghost"
                   onClick={() => setExpandedVendor(isExpanded ? null : vendor.id)}
                   className="flex items-start gap-3 w-full p-4 text-left"
                 >

@@ -220,6 +220,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                       >
                         {cellVectors.map((v) => (
                           <Button
+                            variant="ghost"
                             key={v.id}
                             onClick={() =>
                               setSelectedComponentId(selectedComponentId === v.id ? null : v.id)
@@ -297,6 +298,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                         const vec = filteredVectors.find((v) => v.component === item.id)
                         return (
                           <Button
+                            variant="ghost"
                             key={item.id}
                             onClick={() => {
                               const v = filteredVectors.find((fv) => fv.component === item.id)
@@ -450,6 +452,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                   const depVec = MIGRATION_VECTORS.find((v) => v.component === dep)
                   return (
                     <Button
+                      variant="ghost"
                       key={dep}
                       onClick={() => {
                         if (depVec) setSelectedComponentId(depVec.id)
@@ -551,6 +554,7 @@ export const MigrationRiskMatrix: React.FC = () => {
 
               return (
                 <Button
+                  variant="ghost"
                   key={v.id}
                   onClick={() => setSelectedComponentId(selectedComponentId === v.id ? null : v.id)}
                   className={`flex items-center gap-2 w-full text-left transition-colors rounded ${

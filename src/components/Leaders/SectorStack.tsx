@@ -74,6 +74,7 @@ export const SectorStack = ({
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
               <Button
+                variant="ghost"
                 onClick={() => handleSelect(layer.id)}
                 className={`group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl transition-all duration-300 ease-in-out cursor-pointer ${isActive ? layer.activeColor : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`} ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}`}
                 style={{ transformOrigin: 'center' }}
@@ -132,6 +133,7 @@ export const SectorStack = ({
                       {expandedContent}
                     </div>
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()

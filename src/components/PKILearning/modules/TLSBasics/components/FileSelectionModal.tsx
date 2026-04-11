@@ -58,6 +58,7 @@ export const FileSelectionModal: React.FC<Props> = ({
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-bold text-lg">{title}</h3>
           <Button
+            variant="ghost"
             onClick={onClose}
             aria-label="Close"
             className="p-1 hover:bg-muted rounded-full transition-colors"
@@ -84,6 +85,7 @@ export const FileSelectionModal: React.FC<Props> = ({
           ) : (
             filteredFiles.map((file) => (
               <Button
+                variant="ghost"
                 key={file.name}
                 onClick={() => handleSelect(file)}
                 className="w-full flex items-center gap-3 p-3 rounded hover:bg-muted transition-colors text-left group"

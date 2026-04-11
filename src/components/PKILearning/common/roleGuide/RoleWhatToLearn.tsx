@@ -143,6 +143,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
                     <div className="flex flex-wrap gap-2">
                       {LEVEL_ORDER.map((level) => (
                         <Button
+                          variant="ghost"
                           key={level}
                           onClick={() => setRating(skill.id, level)}
                           className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${

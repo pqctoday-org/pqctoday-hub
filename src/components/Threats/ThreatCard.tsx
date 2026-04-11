@@ -50,6 +50,7 @@ export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
 
         <div className="ml-auto flex items-center gap-2">
           <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleMyThreat(item.threatId)

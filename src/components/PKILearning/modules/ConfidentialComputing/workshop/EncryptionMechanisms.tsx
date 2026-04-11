@@ -135,6 +135,7 @@ export const EncryptionMechanisms: React.FC = () => {
             <div key={engine.id} className="glass-panel overflow-hidden">
               {/* Collapsed Row */}
               <Button
+                variant="ghost"
                 onClick={() => toggleExpand(engine.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >

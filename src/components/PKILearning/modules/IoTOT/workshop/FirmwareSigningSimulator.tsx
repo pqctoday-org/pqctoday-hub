@@ -104,6 +104,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {IOT_DEVICE_TYPES.map((d, idx) => (
             <Button
+              variant="ghost"
               key={d.id}
               onClick={() => {
                 setDeviceIdx(idx)
@@ -135,6 +136,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {IOT_FIRMWARE_ALGORITHMS.map((a, idx) => (
             <Button
+              variant="ghost"
               key={a.id}
               onClick={() => {
                 setAlgoIdx(idx)
@@ -176,6 +178,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
       {/* Sign Button */}
       <div className="text-center">
         <Button
+          variant="ghost"
           onClick={runSimulation}
           disabled={phase !== 'idle' && phase !== 'done'}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"

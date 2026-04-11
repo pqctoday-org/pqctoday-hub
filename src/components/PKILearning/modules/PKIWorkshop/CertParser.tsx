@@ -706,6 +706,7 @@ S8Y=
           </div>
           <div className="flex items-end">
             <Button
+              variant="ghost"
               onClick={loadExampleCert}
               className="text-sm text-primary hover:text-primary/80 underline mb-2"
             >
@@ -769,6 +770,7 @@ S8Y=
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button
+              variant="ghost"
               onClick={handleParse}
               disabled={isParsing || !certInput}
               className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -779,6 +781,7 @@ S8Y=
 
             <div className="flex gap-2">
               <Button
+                variant="ghost"
                 onClick={() => handleConvert('DER')}
                 disabled={isConverting || !certInput || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
@@ -791,6 +794,7 @@ S8Y=
                 To DER
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => handleConvert('P7B')}
                 disabled={isConverting || !certInput || certInput.includes('REQUEST') || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
@@ -809,6 +813,7 @@ S8Y=
           {/* Fingerprint button — shown for X.509 certificates */}
           {isCertInput && certInput && (
             <Button
+              variant="ghost"
               onClick={handleGetFingerprint}
               disabled={isFingerprintLoading}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -833,6 +838,7 @@ S8Y=
           {/* CSR self-signature verify — shown when input is a CSR */}
           {isCsrInput && certInput && (
             <Button
+              variant="ghost"
               onClick={handleVerifyCsr}
               disabled={isVerifyingCsr}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -874,6 +880,7 @@ S8Y=
 
           {canVerifyChain && (
             <Button
+              variant="ghost"
               onClick={handleVerifyChain}
               disabled={isVerifying}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -913,6 +920,7 @@ S8Y=
 
           {canVerifyCrl && (
             <Button
+              variant="ghost"
               onClick={handleVerifyCrl}
               disabled={isVerifyingCrl}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -979,6 +987,7 @@ S8Y=
             {parsedOutput && (
               <div className="flex gap-2">
                 <Button
+                  variant="ghost"
                   onClick={() => setViewMode('tree')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'tree'
@@ -990,6 +999,7 @@ S8Y=
                   Tree View
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => setViewMode('raw')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'raw'

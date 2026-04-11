@@ -75,6 +75,7 @@ const OperationSimulator: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {KMIP_OPERATIONS.map((op) => (
           <Button
+            variant="ghost"
             key={op.id}
             onClick={() => {
               setSelectedOp(op)
@@ -102,6 +103,7 @@ const OperationSimulator: React.FC = () => {
               KMIP v2.1 XML
             </span>
             <Button
+              variant="ghost"
               onClick={() => setShowResponse(!showResponse)}
               className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
@@ -123,6 +125,7 @@ const OperationSimulator: React.FC = () => {
             <div className="flex gap-1 ml-auto">
               {Object.keys(PROVIDER_LABELS).map((id) => (
                 <Button
+                  variant="ghost"
                   key={id}
                   onClick={() => setSelectedProvider(id)}
                   className={`px-2 py-0.5 rounded text-xs font-medium border transition-colors ${
@@ -194,6 +197,7 @@ const PqcKeyTypeMapping: React.FC = () => {
       <div className="flex gap-2">
         {(['all', 'KEM', 'Signature'] as const).map((f) => (
           <Button
+            variant="ghost"
             key={f}
             onClick={() => setFamilyFilter(f)}
             className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
@@ -311,6 +315,7 @@ const CrossProviderSync: React.FC = () => {
       <div className="flex gap-1 overflow-x-auto">
         {KMIP_SYNC_SCENARIO.map((step) => (
           <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${
@@ -377,6 +382,7 @@ const CrossProviderSync: React.FC = () => {
 
           {activeStep.id < KMIP_SYNC_SCENARIO.length && (
             <Button
+              variant="ghost"
               onClick={() => {
                 const next = KMIP_SYNC_SCENARIO.find((s) => s.id === activeStep.id + 1)
                 if (next) setActiveStep(next)
@@ -461,6 +467,7 @@ const ReadinessChecklist: React.FC = () => {
           <div className="space-y-2">
             {items.map((item) => (
               <Button
+                variant="ghost"
                 key={item.id}
                 onClick={() => toggleItem(item.id)}
                 className={`w-full text-left flex items-start gap-3 p-3 rounded-lg border transition-colors ${
@@ -530,6 +537,7 @@ export const KmipProtocolExplorer: React.FC = () => {
           const Icon = s.icon
           return (
             <Button
+              variant="ghost"
               key={s.label}
               onClick={() => setActiveSection(idx)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${

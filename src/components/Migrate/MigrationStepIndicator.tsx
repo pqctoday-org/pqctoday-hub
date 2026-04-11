@@ -25,6 +25,7 @@ export const MigrationStepIndicator: React.FC<MigrationStepIndicatorProps> = ({
           return (
             <React.Fragment key={step.id}>
               <Button
+                variant="ghost"
                 onClick={() => onStepClick(step.id)}
                 className="flex flex-col items-center gap-1.5 group cursor-pointer"
                 aria-label={`Step ${step.stepNumber}: ${step.title}`}

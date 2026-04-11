@@ -364,6 +364,7 @@ authorityKeyIdentifier = keyid:always
           </div>
 
           <Button
+            variant="ghost"
             onClick={handleAddToRevocationList}
             disabled={isExtractingSerial || !selectedCertToRevoke}
             className="flex items-center justify-center gap-2 px-4 py-2 bg-status-warning/20 text-status-warning border border-status-warning/40 font-medium rounded hover:bg-status-warning/30 transition-colors disabled:opacity-50 text-sm"
@@ -401,6 +402,7 @@ authorityKeyIdentifier = keyid:always
                       </span>
                     </div>
                     <Button
+                      variant="ghost"
                       onClick={() => handleRemoveEntry(entry.certId)}
                       className="text-muted-foreground hover:text-status-error transition-colors ml-3"
                       title="Remove from revocation list"
@@ -443,6 +445,7 @@ authorityKeyIdentifier = keyid:always
           />
 
           <Button
+            variant="ghost"
             onClick={handleGenerate}
             disabled={isGenerating || !selectedKeyId}
             className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"

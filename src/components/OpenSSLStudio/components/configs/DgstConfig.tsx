@@ -50,6 +50,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
       {/* Test Helper */}
       <div className="flex justify-end">
         <Button
+          variant="ghost"
           onClick={() =>
             files.find((f) => f.name === 'data.txt')
               ? null
@@ -71,6 +72,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
           <Button
+            variant="ghost"
             onClick={() => setSignAction('sign')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -82,6 +84,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             Sign
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setSignAction('verify')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',

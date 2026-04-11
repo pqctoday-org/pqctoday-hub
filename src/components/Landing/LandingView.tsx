@@ -834,6 +834,7 @@ export const LandingView = () => {
                     when switching to pull your latest save.
                   </div>
                   <Button
+                    variant="ghost"
                     type="button"
                     onClick={signOut}
                     className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
@@ -844,6 +845,7 @@ export const LandingView = () => {
                 </div>
               ) : (
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={signIn}
                   className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"

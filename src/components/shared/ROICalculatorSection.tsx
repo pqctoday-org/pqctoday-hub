@@ -172,6 +172,7 @@ function ComputationBreakdown({
   return (
     <div className="print:hidden mb-5">
       <Button
+        variant="ghost"
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors w-full"
       >

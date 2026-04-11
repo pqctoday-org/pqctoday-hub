@@ -373,6 +373,7 @@ export const WhatsNewModal = () => {
                       </>
                     )}
                     <Button
+                      variant="ghost"
                       onClick={() => setShowPersonaInfo((prev) => !prev)}
                       aria-label={showPersonaInfo ? 'Hide filtering info' : 'How filtering works'}
                       className={clsx(
@@ -400,6 +401,7 @@ export const WhatsNewModal = () => {
                     )}
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => setShowAllPersona((prev) => !prev)}
                     className="text-primary hover:text-primary/80 transition-colors underline"
                   >
@@ -432,6 +434,7 @@ export const WhatsNewModal = () => {
               {changelogSections.length > 0 && (
                 <div>
                   <Button
+                    variant="ghost"
                     onClick={() => toggleSection('changelog')}
                     className="flex items-center gap-2 w-full text-left py-1.5 group"
                   >
@@ -499,6 +502,7 @@ export const WhatsNewModal = () => {
                   <div key={summary.sourceId}>
                     {/* Source header (clickable to expand) */}
                     <Button
+                      variant="ghost"
                       onClick={() => toggleSection(summary.sourceId)}
                       className="flex items-center gap-2 w-full text-left py-1.5 group"
                     >
@@ -538,6 +542,7 @@ export const WhatsNewModal = () => {
                         ))}
                         {hasOverflow && (
                           <Button
+                            variant="ghost"
                             onClick={() => toggleItemList(summary.sourceId)}
                             className="text-xs text-primary hover:text-primary/80 pl-2 py-1 transition-colors"
                           >
@@ -563,6 +568,7 @@ export const WhatsNewModal = () => {
             {/* Footer */}
             <div className="flex items-center gap-2 p-3 sm:p-4 pt-3 border-t border-border shrink-0">
               <Button
+                variant="ghost"
                 onClick={handleViewChangelog}
                 className="text-sm text-primary hover:text-primary/80 transition-colors underline"
               >
@@ -599,6 +605,7 @@ function DataChangeRow({
   return (
     <div>
       <Button
+        variant="ghost"
         onClick={hasPreview ? onToggle : () => onNavigate(item.deepLink)}
         className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded hover:bg-muted/30 transition-colors group"
       >
@@ -651,6 +658,7 @@ function DataChangeRow({
                 </div>
               )}
               <Button
+                variant="ghost"
                 onClick={() => onNavigate(item.deepLink)}
                 className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-medium pt-0.5"
               >

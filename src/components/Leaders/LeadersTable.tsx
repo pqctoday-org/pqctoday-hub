@@ -241,6 +241,7 @@ const LeaderRow = ({
       {/* Actions */}
       <td className="px-3 py-3 text-right">
         <Button
+          variant="ghost"
           onClick={() => onViewDetails(leader)}
           className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
           aria-label={`View details for ${leader.name}`}

@@ -136,6 +136,7 @@ export const PlatformEngExercises: React.FC<ExercisesProps> = ({
           </details>
 
           <Button
+            variant="ghost"
             onClick={() => {
               if (onSetWorkshopConfig) onSetWorkshopConfig(scenario.config)
               onNavigateToWorkshop()

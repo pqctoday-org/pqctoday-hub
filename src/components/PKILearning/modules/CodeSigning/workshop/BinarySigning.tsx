@@ -280,6 +280,7 @@ export const BinarySigning: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {ALGORITHM_OPTIONS.map((alg) => (
             <Button
+              variant="ghost"
               key={alg.name}
               onClick={() => {
                 setSelectedAlgorithm(alg.name)
@@ -350,6 +351,7 @@ export const BinarySigning: React.FC = () => {
                   Public Key ({keyPair.algorithm})
                 </span>
                 <Button
+                  variant="ghost"
                   onClick={() => handleCopy(keyPair.publicKey, 'pubkey')}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -376,6 +378,7 @@ export const BinarySigning: React.FC = () => {
                 </span>
                 {!keyPair.isLive && (
                   <Button
+                    variant="ghost"
                     onClick={() => handleCopy(keyPair.privateKey, 'privkey')}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
@@ -479,6 +482,7 @@ export const BinarySigning: React.FC = () => {
                   )}
                 </span>
                 <Button
+                  variant="ghost"
                   onClick={() => handleCopy(signatureResult.signature, 'sig')}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >

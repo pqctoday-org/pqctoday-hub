@@ -30,6 +30,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
         <div className="flex items-center gap-1" role="tablist">
           {tabs.map((tab) => (
             <Button
+              variant="ghost"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${

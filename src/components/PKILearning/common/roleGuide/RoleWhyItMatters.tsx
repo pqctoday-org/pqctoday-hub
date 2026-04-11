@@ -96,6 +96,7 @@ export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
                     </div>
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => setExpandedId(isExpanded ? null : impact.id)}
                     className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                     aria-label={isExpanded ? 'Collapse scenario' : 'Expand scenario'}

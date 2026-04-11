@@ -204,6 +204,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         <h2 className="text-xl font-bold">EUDI Wallet Architecture</h2>
         {onBack && (
           <Button
+            variant="ghost"
             onClick={onBack}
             className="text-sm border border-border px-4 py-2 hover:bg-muted rounded text-muted-foreground transition-colors"
           >
@@ -213,6 +214,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       </div>
       <div className="flex justify-end">
         <Button
+          variant="ghost"
           onClick={handleReset}
           className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
@@ -230,6 +232,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
             const Icon = step.icon
             return (
               <Button
+                variant="ghost"
                 key={step.id}
                 onClick={() => setCurrentStep(idx)}
                 className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
@@ -271,6 +274,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       {/* Navigation */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
         <Button
+          variant="ghost"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
@@ -279,6 +283,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         </Button>
         {currentStep === WORKSHOP_STEPS.length - 1 ? (
           <Button
+            variant="ghost"
             onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
             className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
           >
@@ -286,6 +291,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
           </Button>
         ) : (
           <Button
+            variant="ghost"
             onClick={() => setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))}
             className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
@@ -314,6 +320,7 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
         <div>
           {onBack && (
             <Button
+              variant="ghost"
               onClick={onBack}
               className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-2 text-sm transition-colors"
             >

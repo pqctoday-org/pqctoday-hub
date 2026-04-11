@@ -197,6 +197,7 @@ export const HsmKeyAgreementPanel = ({
             <div className="flex gap-1">
               {(['P-256', 'P-384', 'P-521'] as KaCurve[]).map((c) => (
                 <Button
+                  variant="ghost"
                   key={c}
                   onClick={() => {
                     setCurve(c)
@@ -235,6 +236,7 @@ export const HsmKeyAgreementPanel = ({
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Mode</p>
             <Button
+              variant="ghost"
               onClick={() => {
                 setCofactorMode((m) => !m)
                 setAliceSecret(null)

@@ -739,6 +739,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
             return (
               <React.Fragment key={part.id}>
                 <Button
+                  variant="ghost"
                   onClick={() => setCurrentPart(idx)}
                   className={`flex flex-col items-center gap-1 group ${
                     idx === currentPart
@@ -801,6 +802,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
       {currentPart < 4 && (
         <div className="flex justify-between gap-3">
           <Button
+            variant="ghost"
             onClick={() => setCurrentPart((p) => Math.max(0, p - 1))}
             disabled={currentPart === 0}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
@@ -810,6 +812,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
           </Button>
           {currentPart < PARTS.length - 1 ? (
             <Button
+              variant="ghost"
               onClick={() => setCurrentPart((p) => Math.min(PARTS.length - 1, p + 1))}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
             >
@@ -818,6 +821,7 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
             </Button>
           ) : (
             <Button
+              variant="ghost"
               onClick={onBack}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
             >

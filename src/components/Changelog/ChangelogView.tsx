@@ -276,6 +276,7 @@ export const ChangelogView = () => {
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
             <Button
+              variant="ghost"
               onClick={() => toggleFilter('added')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -288,6 +289,7 @@ export const ChangelogView = () => {
               <span>New Features</span>
             </Button>
             <Button
+              variant="ghost"
               onClick={() => toggleFilter('changed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -300,6 +302,7 @@ export const ChangelogView = () => {
               <span>Improvements</span>
             </Button>
             <Button
+              variant="ghost"
               onClick={() => toggleFilter('fixed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -313,6 +316,7 @@ export const ChangelogView = () => {
             </Button>
             {HAS_DATA_SECTIONS && (
               <Button
+                variant="ghost"
                 onClick={() => toggleFilter('data')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -327,6 +331,7 @@ export const ChangelogView = () => {
             )}
             {HAS_SECURITY_SECTIONS && (
               <Button
+                variant="ghost"
                 onClick={() => toggleFilter('security')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -341,6 +346,7 @@ export const ChangelogView = () => {
             )}
             {!allFiltersActive && (
               <Button
+                variant="ghost"
                 onClick={() =>
                   setFilters({
                     added: true,
@@ -357,6 +363,7 @@ export const ChangelogView = () => {
             )}
           </div>
           <Button
+            variant="ghost"
             onClick={() => setShowDetails((prev) => !prev)}
             className={clsx(
               'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all text-sm whitespace-nowrap',

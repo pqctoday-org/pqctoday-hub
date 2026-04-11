@@ -90,7 +90,11 @@ export const BuildBuyAnalyzer: React.FC = () => {
             const isExpanded = expandedStrategies.has(s.id)
             return (
               <div key={s.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
-                <Button className="w-full text-left p-4" onClick={() => toggleStrategy(s.id)}>
+                <Button
+                  variant="ghost"
+                  className="w-full text-left p-4"
+                  onClick={() => toggleStrategy(s.id)}
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className={`font-bold text-base ${colors.text}`}>{s.name}</div>
@@ -177,6 +181,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
               <div className="flex flex-wrap gap-2">
                 {q.options.map((opt, idx) => (
                   <Button
+                    variant="ghost"
                     key={idx}
                     onClick={() => {
                       setAnswers((prev) => ({ ...prev, [q.id]: idx }))
@@ -254,7 +259,11 @@ export const BuildBuyAnalyzer: React.FC = () => {
             const isExpanded = expandedCases.has(cs.id)
             return (
               <div key={cs.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
-                <Button className="w-full text-left p-4" onClick={() => toggleCase(cs.id)}>
+                <Button
+                  variant="ghost"
+                  className="w-full text-left p-4"
+                  onClick={() => toggleCase(cs.id)}
+                >
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">

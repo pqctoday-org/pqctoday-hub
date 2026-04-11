@@ -85,6 +85,7 @@ const LangCard: React.FC<LangCardProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           {compareMode && (
             <Button
+              variant="ghost"
               onClick={onToggleSelect}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
@@ -96,6 +97,7 @@ const LangCard: React.FC<LangCardProps> = ({
             </Button>
           )}
           <Button
+            variant="ghost"
             onClick={onToggleExpand}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
@@ -294,6 +296,7 @@ export const LanguageEcosystemComparator: React.FC = () => {
           onSelect={(id) => setMemFilter(id as MemFilter)}
         />
         <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())

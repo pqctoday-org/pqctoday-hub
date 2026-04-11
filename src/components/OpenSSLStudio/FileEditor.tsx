@@ -112,6 +112,7 @@ export const FileEditor = () => {
 
         <div className="flex items-center gap-2">
           <Button
+            variant="ghost"
             onClick={handleToggleMode}
             className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors border border-input"
             title={`Switch to ${viewMode === 'ascii' ? 'Hex' : 'ASCII'} mode`}
@@ -121,6 +122,7 @@ export const FileEditor = () => {
           </Button>
           <div className="w-px h-4 bg-border mx-1" />
           <Button
+            variant="ghost"
             onClick={() => setEditingFile(null)}
             className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Editor"
@@ -155,12 +157,14 @@ export const FileEditor = () => {
       {/* Footer */}
       <div className="p-3 border-t border-border bg-muted flex justify-end gap-2">
         <Button
+          variant="ghost"
           onClick={() => setEditingFile(null)}
           className="px-3 py-1.5 rounded hover:bg-accent text-foreground transition-colors text-xs font-medium"
         >
           Cancel
         </Button>
         <Button
+          variant="ghost"
           onClick={handleSave}
           className="px-3 py-1.5 rounded bg-primary hover:bg-primary/90 text-foreground transition-colors flex items-center gap-2 text-xs font-medium shadow-lg shadow-primary/20"
         >

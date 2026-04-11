@@ -54,6 +54,7 @@ const MetricsTab: React.FC = () => {
         return (
           <div key={tool.id} className="glass-panel overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => toggle(tool.id)}
               className="w-full text-left p-4 flex items-center gap-3"
             >
@@ -172,6 +173,7 @@ const SIEMTab: React.FC = () => {
         return (
           <div key={query.id} className="glass-panel overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => toggle(query.id)}
               className="w-full text-left p-4 flex items-center gap-3"
             >
@@ -462,6 +464,7 @@ const ACMETab: React.FC = () => {
         <div className="flex gap-2 min-w-max">
           {ACME_LIFECYCLE_STEPS.map((step) => (
             <Button
+              variant="ghost"
               key={step.id}
               onClick={() => setSelectedStep((prev) => (prev === step.id ? null : step.id))}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
@@ -575,6 +578,7 @@ export const CryptoPostureMonitor: React.FC = () => {
       <div className="flex gap-1 flex-wrap">
         {TABS.map((tab) => (
           <Button
+            variant="ghost"
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${

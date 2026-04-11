@@ -101,6 +101,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
               />
             </div>
             <Button
+              variant="ghost"
               onClick={handleMarkReviewed}
               disabled={isCompleted}
               className={`px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-2 ${
@@ -121,6 +122,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
       <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-6 border-t border-border">
         {prevModuleId ? (
           <Button
+            variant="ghost"
             type="button"
             onClick={() => navigate(`/learn/${prevModuleId}`)}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-5 py-2.5 rounded-lg border border-border hover:bg-muted text-muted-foreground transition-colors"
@@ -134,6 +136,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
 
         {nextModuleId ? (
           <Button
+            variant="ghost"
             type="button"
             onClick={handleNext}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors"
@@ -143,6 +146,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
           </Button>
         ) : (
           <Button
+            variant="ghost"
             type="button"
             onClick={handleNext}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 bg-accent text-accent-foreground font-semibold rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
@@ -159,6 +163,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
             Dive deeper into the details with an interactive beginner workshop for this module.
           </p>
           <Button
+            variant="ghost"
             onClick={() => navigate(`/learn/${moduleId}?diveDeeper=true&tab=workshop`)}
             className="px-6 py-2.5 bg-background border border-border hover:border-primary hover:text-primary transition-all rounded-lg font-medium shadow-sm"
           >

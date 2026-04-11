@@ -128,6 +128,7 @@ export const FileManager = () => {
         </span>
         <div className="flex items-center gap-2">
           <Button
+            variant="ghost"
             onClick={() => files.forEach((f) => removeFile(f.name))}
             className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
             title="Clear all files"
@@ -175,6 +176,7 @@ export const FileManager = () => {
               </div>
               <div className="flex items-center gap-1">
                 <Button
+                  variant="ghost"
                   onClick={() => setEditingFile(file)}
                   className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Edit / View"
@@ -182,6 +184,7 @@ export const FileManager = () => {
                   <Edit2 size={14} />
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => handleDownload(file)}
                   className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Download"
@@ -189,6 +192,7 @@ export const FileManager = () => {
                   <Download size={14} />
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => handleExtractPublicKey(file.name)}
                   className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary flex items-center gap-1"
                   title="Extract Public Key"
@@ -196,6 +200,7 @@ export const FileManager = () => {
                   <FileKey size={14} />
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => removeFile(file.name)}
                   className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
                   title="Delete"
@@ -221,6 +226,7 @@ export const FileManager = () => {
                 editingFile.name.endsWith('.pem')) &&
                 !editingFile.name.endsWith('.pub') && (
                   <Button
+                    variant="ghost"
                     onClick={() => {
                       handleExtractPublicKey(editingFile.name)
                       setEditingFile(null) // Close editor after action
@@ -232,6 +238,7 @@ export const FileManager = () => {
                   </Button>
                 )}
               <Button
+                variant="ghost"
                 onClick={handleSaveEdit}
                 className="p-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors"
                 title="Save"
@@ -239,6 +246,7 @@ export const FileManager = () => {
                 <Save size={14} />
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => setEditingFile(null)}
                 className="p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"

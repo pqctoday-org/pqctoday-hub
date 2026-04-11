@@ -131,6 +131,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                   role="region"
                 >
                   <Button
+                    variant="ghost"
                     type="button"
                     className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors relative"
                     onClick={() => handleCardClick(currentPhase)}
@@ -202,6 +203,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                 <div className="flex gap-1.5 mt-3 justify-center">
                   {phases.map((p, i) => (
                     <Button
+                      variant="ghost"
                       key={i}
                       type="button"
                       onClick={() =>

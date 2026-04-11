@@ -127,6 +127,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
             const isRecommended = scenario.recommendedVerification.includes(layer.id)
             return (
               <Button
+                variant="ghost"
                 type="button"
                 key={layer.id}
                 className={`w-full text-left glass-panel p-4 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${

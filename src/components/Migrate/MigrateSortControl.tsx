@@ -43,6 +43,7 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
   return (
     <div className="relative" ref={ref}>
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={(e) => {
           if (e.key === 'Escape' && isOpen) {
@@ -66,6 +67,7 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
         >
           {SORT_OPTIONS.map((option) => (
             <Button
+              variant="ghost"
               key={option.id}
               role="option"
               aria-selected={value === option.id}

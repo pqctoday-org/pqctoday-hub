@@ -597,6 +597,7 @@ export const LibraryView: React.FC = () => {
           </div>
 
           <Button
+            variant="ghost"
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
               showFilters ||
@@ -618,6 +619,7 @@ export const LibraryView: React.FC = () => {
 
           {libraryBookmarks.length > 0 && (
             <Button
+              variant="ghost"
               onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
               className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
                 showOnlyLibraryBookmarks
@@ -721,6 +723,7 @@ export const LibraryView: React.FC = () => {
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Search:</span> {filterText}
               <Button
+                variant="ghost"
                 onClick={() => {
                   setFilterText('')
                   setInputValue('')
@@ -737,6 +740,7 @@ export const LibraryView: React.FC = () => {
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Org:</span> {activeOrg}
               <Button
+                variant="ghost"
                 onClick={() => {
                   setActiveOrg('All')
                   syncFiltersToUrl({ org: 'All' })
@@ -752,6 +756,7 @@ export const LibraryView: React.FC = () => {
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Industry:</span> {activeIndustry}
               <Button
+                variant="ghost"
                 onClick={() => {
                   setActiveIndustry('All')
                   syncFiltersToUrl({ ind: 'All' })
@@ -764,6 +769,7 @@ export const LibraryView: React.FC = () => {
             </span>
           )}
           <Button
+            variant="ghost"
             onClick={() => {
               setActiveOrg('All')
               setActiveIndustry('All')

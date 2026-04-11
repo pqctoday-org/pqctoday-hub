@@ -1899,6 +1899,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               <div className="flex flex-wrap gap-2">
                 {IKE_V2_MODES.map((mode) => (
                   <Button
+                    variant="ghost"
                     key={mode.id}
                     onClick={() => handleModeChange(mode.id)}
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors border ${
@@ -2025,6 +2026,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={handleReset}
             className="px-3 py-1.5 bg-destructive/20 rounded hover:bg-destructive/30 text-sm font-bold transition-colors"
           >
@@ -2043,6 +2045,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={() => setSabError(null)}
             className="px-3 py-1.5 bg-status-error/20 rounded hover:bg-status-error/30 text-sm font-bold transition-colors shrink-0"
           >
@@ -2177,6 +2180,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
 
       <div className="flex items-center justify-between mt-4 bg-muted/30 p-2 rounded-lg border border-border">
         <Button
+          variant="ghost"
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
           disabled={currentStep === 0 || hasCrashed}
           className="px-4 py-2 rounded border border-border hover:bg-muted disabled:opacity-50 text-sm transition-colors"
@@ -2195,6 +2199,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
         </div>
         <div className="flex gap-2">
           <Button
+            variant="ghost"
             onClick={handleReset}
             className="p-2 border border-border rounded hover:bg-muted"
             title="Restart Simulation"
@@ -2242,6 +2247,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               {authMode === 'dual' && (
                 <>
                   <Button
+                    variant="ghost"
                     onClick={generateCerts}
                     disabled={certGenLoading}
                     className="px-4 py-2 bg-secondary text-secondary-foreground font-bold rounded shadow-sm hover:bg-secondary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -2255,6 +2261,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   {certData && (
                     <>
                       <Button
+                        variant="ghost"
                         onClick={() => inspectCert('initiator')}
                         className="px-3 py-2 border border-border rounded text-xs font-medium hover:bg-muted transition-colors"
                         title="Inspect initiator certificate"
@@ -2262,6 +2269,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                         Inspect Initiator
                       </Button>
                       <Button
+                        variant="ghost"
                         onClick={() => inspectCert('responder')}
                         className="px-3 py-2 border border-border rounded text-xs font-medium hover:bg-muted transition-colors"
                         title="Inspect responder certificate"
@@ -2273,6 +2281,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </>
               )}
               <Button
+                variant="ghost"
                 onClick={async () => {
                   if (authMode === 'dual' && !certData) return
                   if (typeof SharedArrayBuffer === 'undefined') {
@@ -2440,6 +2449,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </div>
           ) : (
             <Button
+              variant="ghost"
               onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))}
               disabled={true}
               className="px-4 py-2 bg-primary/50 text-white font-bold rounded shadow-sm opacity-50 cursor-not-allowed text-sm transition-colors"
@@ -2461,6 +2471,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
           <div className="flex items-center gap-2">
             <span>WASM IKEv2 KEM Daemon</span>
             <Button
+              variant="ghost"
               className="px-2 py-0.5 rounded text-[10px] bg-background/50 hover:bg-background border border-border/50 transition-colors"
               onClick={() => {
                 const text = ssLogs.map((l) => `[${l.level}] ${l.text}`).join('\n')
@@ -2728,12 +2739,14 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 <div className="text-xs font-semibold">Authentication Mode</div>
                 <div className="flex gap-2">
                   <Button
+                    variant="ghost"
                     onClick={() => setAuthMode('psk')}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'psk' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
                     PSK Only
                   </Button>
                   <Button
+                    variant="ghost"
                     onClick={() => setAuthMode('dual')}
                     className={`px-3 py-1 rounded text-xs font-medium border transition-colors ${authMode === 'dual' ? 'bg-primary/20 border-primary/50 text-primary' : 'bg-muted/50 border-border text-muted-foreground hover:bg-muted'}`}
                   >
@@ -2988,6 +3001,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 Certificate Inspector — RSA-3072 (classical, not quantum-safe)
               </h3>
               <Button
+                variant="ghost"
                 onClick={() => setShowCertInspector(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors text-lg font-bold"
               >
@@ -3005,6 +3019,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
             </div>
             <div className="px-4 py-3 border-t border-border flex justify-end">
               <Button
+                variant="ghost"
                 onClick={() => setShowCertInspector(false)}
                 className="px-3 py-1.5 bg-muted rounded text-sm font-medium hover:bg-muted/80 transition-colors"
               >

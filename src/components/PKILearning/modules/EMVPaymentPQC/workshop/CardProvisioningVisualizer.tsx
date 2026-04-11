@@ -132,6 +132,7 @@ export const CardProvisioningVisualizer: React.FC = () => {
               <React.Fragment key={phase}>
                 {i > 0 && <div className="hidden sm:block h-px flex-1 bg-border min-w-[12px]" />}
                 <Button
+                  variant="ghost"
                   onClick={() => setSelectedPhase(phase)}
                   className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all shrink-0 ${
                     isActive

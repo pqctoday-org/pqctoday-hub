@@ -201,6 +201,7 @@ export const AesPanel = ({ mode }: { mode: 'aes-gcm' | 'aes-cbc' }) => {
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
           className="flex-1"

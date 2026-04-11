@@ -187,6 +187,7 @@ export const PostProcessingDemo: React.FC = () => {
               Run BB84 with 64 qubits (no eavesdropper) to produce a sifted key for post-processing.
             </p>
             <Button
+              variant="ghost"
               onClick={stepHandlers[0]}
               className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
             >
@@ -222,6 +223,7 @@ export const PostProcessingDemo: React.FC = () => {
               </code>
             </div>
             <Button
+              variant="ghost"
               onClick={stepHandlers[1]}
               className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
             >
@@ -263,6 +265,7 @@ export const PostProcessingDemo: React.FC = () => {
               </div>
             </div>
             <Button
+              variant="ghost"
               onClick={stepHandlers[2]}
               className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
             >
@@ -300,6 +303,7 @@ export const PostProcessingDemo: React.FC = () => {
               </div>
             </div>
             <Button
+              variant="ghost"
               onClick={stepHandlers[3]}
               disabled={isProcessing}
               className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
@@ -328,6 +332,7 @@ export const PostProcessingDemo: React.FC = () => {
               <span className="text-primary font-bold">HKDF</span>
             </div>
             <Button
+              variant="ghost"
               onClick={stepHandlers[4]}
               disabled={isProcessing}
               className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"

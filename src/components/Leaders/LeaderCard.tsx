@@ -91,6 +91,7 @@ export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps
       <div className="flex flex-wrap items-center justify-end gap-y-2 gap-x-1 mt-auto pt-2 border-t border-border">
         {onClick && (
           <Button
+            variant="ghost"
             onClick={onClick}
             className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
             aria-label={`View details for ${leader.name}`}

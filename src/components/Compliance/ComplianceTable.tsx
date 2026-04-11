@@ -608,6 +608,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         <div className="flex flex-wrap gap-2">
           {PQC_ALGOS.map((algo) => (
             <Button
+              variant="ghost"
               key={algo}
               onClick={() => handleTogglePqcFilter(algo)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
@@ -627,6 +628,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         <div className="flex flex-wrap gap-2">
           {uniqueSources.map((src) => (
             <Button
+              variant="ghost"
               key={src}
               onClick={() => handleToggleSourceFilter(src)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
@@ -646,6 +648,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         <div className="flex flex-wrap gap-2">
           {uniqueCategories.map((cat) => (
             <Button
+              variant="ghost"
               key={cat}
               onClick={() => handleToggleCategoryFilter(cat)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
@@ -665,6 +668,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
         <div className="flex flex-wrap gap-2">
           {uniqueMigrateCategories.map((mc) => (
             <Button
+              variant="ghost"
               key={mc.categoryId}
               onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
               className={`px-3 py-1.5 rounded-full border text-xs font-medium ${
@@ -745,6 +749,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
             { id: 'cc', label: 'Common Criteria' },
           ].map((tab) => (
             <Button
+              variant="ghost"
               key={tab.id}
               onClick={() => onCertTypeChange && onCertTypeChange(tab.id)}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all ${
@@ -769,7 +774,11 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                 className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary/10 text-primary text-xs font-medium border border-primary/20"
               >
                 {f}{' '}
-                <Button onClick={() => handleTogglePqcFilter(f)} className="hover:text-primary/70">
+                <Button
+                  variant="ghost"
+                  onClick={() => handleTogglePqcFilter(f)}
+                  className="hover:text-primary/70"
+                >
                   <X size={12} />
                 </Button>
               </span>
@@ -781,6 +790,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               >
                 {f}{' '}
                 <Button
+                  variant="ghost"
                   onClick={() => handleToggleCategoryFilter(f)}
                   className="hover:text-secondary/70"
                 >
@@ -795,6 +805,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               >
                 {f}{' '}
                 <Button
+                  variant="ghost"
                   onClick={() => handleToggleSourceFilter(f)}
                   className="hover:text-foreground/70"
                 >
@@ -809,6 +820,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               >
                 {f}{' '}
                 <Button
+                  variant="ghost"
                   onClick={() => handleToggleVendorFilter(f)}
                   className="hover:text-foreground/70"
                 >
@@ -823,6 +835,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
               >
                 <LockKeyhole size={10} /> {f}{' '}
                 <Button
+                  variant="ghost"
                   onClick={() => handleToggleMigrateCatFilter(f)}
                   className="hover:text-secondary/70"
                 >
@@ -881,6 +894,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     </Button>
                     <div className="relative">
                       <Button
+                        variant="ghost"
                         type="button"
                         aria-expanded={showSourceMenu}
                         aria-label="Filter by source"
@@ -913,6 +927,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             </div>
                             {uniqueSources.map((src) => (
                               <Button
+                                variant="ghost"
                                 type="button"
                                 key={src}
                                 onClick={() => handleToggleSourceFilter(src)}
@@ -1005,6 +1020,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       {/* Product category filter */}
                       <div className="relative">
                         <Button
+                          variant="ghost"
                           type="button"
                           aria-expanded={showCategoryMenu}
                           aria-label="Filter by product category"
@@ -1038,6 +1054,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               </div>
                               {uniqueCategories.map((cat) => (
                                 <Button
+                                  variant="ghost"
                                   type="button"
                                   key={cat}
                                   onClick={() => handleToggleCategoryFilter(cat)}
@@ -1081,6 +1098,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       {/* Migrate category filter */}
                       <div className="relative">
                         <Button
+                          variant="ghost"
                           type="button"
                           aria-expanded={showMigrateCatMenu}
                           aria-label="Filter by migrate category"
@@ -1115,6 +1133,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                               </div>
                               {uniqueMigrateCategories.map((mc) => (
                                 <Button
+                                  variant="ghost"
                                   type="button"
                                   key={mc.categoryId}
                                   onClick={() => handleToggleMigrateCatFilter(mc.categoryId)}
@@ -1177,6 +1196,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     </Button>
                     <div className="relative">
                       <Button
+                        variant="ghost"
                         type="button"
                         aria-expanded={showVendorMenu}
                         aria-label="Filter by vendor"
@@ -1217,6 +1237,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             <div className="flex-1 overflow-y-auto space-y-1">
                               {filteredVendors.map((v) => (
                                 <Button
+                                  variant="ghost"
                                   type="button"
                                   key={v}
                                   onClick={() => handleToggleVendorFilter(v)}
@@ -1274,6 +1295,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                     <span>PQC</span>
                     <div className="relative">
                       <Button
+                        variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation()
                           setShowFilterMenu(!showFilterMenu)
@@ -1303,6 +1325,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                             </div>
                             {PQC_ALGOS.map((algo) => (
                               <Button
+                                variant="ghost"
                                 type="button"
                                 key={algo}
                                 onClick={() => handleTogglePqcFilter(algo)}

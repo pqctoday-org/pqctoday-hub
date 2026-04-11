@@ -246,6 +246,7 @@ export const ACVPValidator: React.FC = () => {
             const isPQC = key.startsWith('ml')
             return (
               <Button
+                variant="ghost"
                 key={key}
                 disabled={status !== 'idle' && status !== 'done'}
                 onClick={() => {
@@ -294,6 +295,7 @@ export const ACVPValidator: React.FC = () => {
           </div>
           {status === 'idle' || status === 'done' ? (
             <Button
+              variant="ghost"
               onClick={status === 'done' ? reset : runValidation}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors text-xs"
             >

@@ -69,6 +69,7 @@ export const HistoryEventRow: React.FC<HistoryEventRowProps> = ({ event }) => {
 
   return (
     <Button
+      variant="ghost"
       onClick={handleClick}
       disabled={!event.route}
       className="w-full flex items-start gap-2.5 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-muted/30 disabled:cursor-default disabled:hover:bg-transparent group"

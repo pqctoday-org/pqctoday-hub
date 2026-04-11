@@ -186,6 +186,7 @@ export const KmsRotationPlanner: React.FC = () => {
           const PhaseIcon = phase.icon
           return (
             <Button
+              variant="ghost"
               key={phase.id}
               onClick={() => setMigrationPhase(phase.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${

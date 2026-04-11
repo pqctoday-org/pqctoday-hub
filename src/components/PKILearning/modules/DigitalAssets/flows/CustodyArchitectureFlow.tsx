@@ -263,6 +263,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
               >
                 {/* Layer header */}
                 <Button
+                  variant="ghost"
                   onClick={() => toggleLayer(layer.id)}
                   className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
                 >
@@ -336,6 +337,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
               return (
                 <React.Fragment key={step.id}>
                   <Button
+                    variant="ghost"
                     onClick={() => handleTxStepChange(idx)}
                     className={`flex flex-col items-center gap-1 group ${
                       idx === txFlowStep
@@ -424,6 +426,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
         {/* Transaction flow navigation */}
         <div className="flex justify-between gap-3">
           <Button
+            variant="ghost"
             onClick={() => handleTxStepChange(Math.max(0, txFlowStep - 1))}
             disabled={txFlowStep === 0}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
@@ -433,6 +436,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
           </Button>
           {txFlowStep < TRANSACTION_FLOW_STEPS.length - 1 ? (
             <Button
+              variant="ghost"
               onClick={() =>
                 handleTxStepChange(Math.min(TRANSACTION_FLOW_STEPS.length - 1, txFlowStep + 1))
               }
@@ -443,6 +447,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
             </Button>
           ) : (
             <Button
+              variant="ghost"
               onClick={onBack}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
             >

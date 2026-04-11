@@ -151,6 +151,7 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
               question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
             />
             <Button
+              variant="ghost"
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Close details"

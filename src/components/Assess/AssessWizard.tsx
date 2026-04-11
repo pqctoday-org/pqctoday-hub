@@ -372,6 +372,7 @@ export const AssessWizard: React.FC<AssessWizardProps> = ({
           </Button>
 
           <Button
+            variant="ghost"
             onClick={handleNext}
             disabled={!canProceed() || isGenerating}
             className="gap-1 font-bold"

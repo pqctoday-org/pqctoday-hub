@@ -196,6 +196,7 @@ export const Pkcs11LogPanel = ({
     <div className={`glass-panel p-3 ${className}`}>
       {/* Header */}
       <Button
+        variant="ghost"
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between gap-2 text-sm font-semibold"
         aria-expanded={open}

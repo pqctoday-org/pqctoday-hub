@@ -188,6 +188,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
             const isPQC = !['ECDSA P-256', 'RSA-2048'].includes(overhead.algorithm)
             return (
               <Button
+                variant="ghost"
                 key={overhead.algorithm}
                 onClick={() => setSelectedAlgorithm(overhead.algorithm)}
                 className={`rounded-lg p-3 border text-left transition-colors ${

@@ -171,6 +171,7 @@ export const RACIBuilder: React.FC = () => {
                   return (
                     <td key={role} className="p-1 border-b border-border text-center">
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleCellChange(activity, role, cycleRACIValue(value))}
                         aria-label={`${activity} \u2014 ${role}: ${value || 'empty'}. Click to cycle.`}

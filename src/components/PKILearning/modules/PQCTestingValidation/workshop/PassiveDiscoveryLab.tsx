@@ -194,6 +194,7 @@ export const PassiveDiscoveryLab: React.FC = () => {
                 <div className="flex flex-wrap gap-2 mb-3">
                   {classifyOptions.map((opt) => (
                     <Button
+                      variant="ghost"
                       key={opt.id}
                       onClick={() => handleClassify(obs.id, opt.id)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
@@ -210,6 +211,7 @@ export const PassiveDiscoveryLab: React.FC = () => {
 
               {userAnswer && !isRevealed && (
                 <Button
+                  variant="ghost"
                   onClick={() => handleReveal(obs.id)}
                   className="text-xs px-3 py-1.5 bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 transition-colors"
                 >

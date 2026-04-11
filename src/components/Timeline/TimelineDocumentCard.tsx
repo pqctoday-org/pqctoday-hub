@@ -111,6 +111,7 @@ export const TimelineDocumentCard = ({
       {/* Footer actions */}
       <div className="flex items-center gap-2 mt-auto pt-3 border-t border-border">
         <Button
+          variant="ghost"
           onClick={() => onViewDetails(row)}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/20 hover:border-primary/40 text-primary text-xs font-medium transition-all"
           aria-label={`View details for ${row.title}`}

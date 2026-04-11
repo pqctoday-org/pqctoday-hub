@@ -156,6 +156,7 @@ export const JWEEncryption: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {JWE_STEPS.map((step) => (
           <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
@@ -219,6 +220,7 @@ export const JWEEncryption: React.FC = () => {
       {/* Encrypt Button */}
       <div className="flex justify-center gap-3">
         <Button
+          variant="ghost"
           onClick={handleEncrypt}
           disabled={isEncrypting}
           className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
@@ -228,6 +230,7 @@ export const JWEEncryption: React.FC = () => {
         </Button>
         {result && (
           <Button
+            variant="ghost"
             onClick={handleDecrypt}
             disabled={isDecrypting || decrypted}
             className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition-colors flex items-center gap-2"

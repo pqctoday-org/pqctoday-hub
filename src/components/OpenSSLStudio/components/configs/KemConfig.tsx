@@ -42,6 +42,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
           <Button
+            variant="ghost"
             onClick={() => setKemAction('encap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -53,6 +54,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             Encapsulate
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setKemAction('decap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',

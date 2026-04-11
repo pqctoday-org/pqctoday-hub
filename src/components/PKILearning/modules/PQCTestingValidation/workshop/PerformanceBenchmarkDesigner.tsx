@@ -90,6 +90,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             ][]
           ).map(([id, info]) => (
             <Button
+              variant="ghost"
               key={id}
               onClick={() => setNetworkProfile(id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -111,6 +112,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {METRICS.map((m) => (
             <Button
+              variant="ghost"
               key={m.key}
               onClick={() => setSelectedMetric(m.key)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
@@ -178,6 +180,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
       {/* Key insights panel */}
       <div className="space-y-2">
         <Button
+          variant="ghost"
           onClick={() => setShowInsight(!showInsight)}
           className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
         >

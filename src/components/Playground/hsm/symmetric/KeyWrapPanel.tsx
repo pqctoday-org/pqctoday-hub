@@ -1550,6 +1550,7 @@ export const KeyWrapPanel = ({
                 <span className="text-xs text-muted-foreground">Representation:</span>
                 {(['expanded', 'seed'] as const).map((r) => (
                   <Button
+                    variant="ghost"
                     key={r}
                     onClick={() => setPqcWrapRepr(r)}
                     className={`text-xs px-2 py-1 rounded border transition-colors ${
@@ -1569,7 +1570,12 @@ export const KeyWrapPanel = ({
               </div>
             )}
 
-            <Button onClick={doWrap} disabled={!canWrap || anyLoading} className="w-full">
+            <Button
+              variant="ghost"
+              onClick={doWrap}
+              disabled={!canWrap || anyLoading}
+              className="w-full"
+            >
               {loadingOp === 'wrap' ? (
                 <Loader2 size={14} className="mr-2 animate-spin" />
               ) : (

@@ -465,6 +465,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <div className="flex gap-2">
             {(['SHA-256', 'SHAKE-256'] as LMSHash[]).map((h) => (
               <Button
+                variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -485,6 +486,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <div className="flex gap-2">
             {([32, 24] as LMSm[]).map((m) => (
               <Button
+                variant="ghost"
                 key={m}
                 onClick={() => handleMChange(m)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -508,6 +510,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               return (
                 <div key={h} className="relative group">
                   <Button
+                    variant="ghost"
                     onClick={() => handleHeightChange(h)}
                     className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                       isProdOnly
@@ -541,6 +544,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <div className="flex gap-2">
             {LMS_W_VALUES.map((w) => (
               <Button
+                variant="ghost"
                 key={w}
                 onClick={() => handleWChange(w)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -562,6 +566,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             <div className="flex gap-2">
               {([1, 2, 3] as HSSLevels[]).map((l) => (
                 <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => handleLevelsChange(l)}
                   className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -583,6 +588,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     return (
                       <div key={h} className="relative group">
                         <Button
+                          variant="ghost"
                           onClick={() => handleLevel2HeightChange(h)}
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
@@ -620,6 +626,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     return (
                       <div key={h} className="relative group">
                         <Button
+                          variant="ghost"
                           onClick={() => handleLevel3HeightChange(h)}
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
@@ -727,6 +734,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
       {/* Collapsible algorithm details */}
       <div className="border border-border rounded-lg overflow-hidden">
         <Button
+          variant="ghost"
           onClick={() => setShowAlgoInfo(!showAlgoInfo)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
         >
@@ -946,6 +954,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2">
             <Button
+              variant="ghost"
               onClick={handleSign}
               disabled={isExhausted}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
@@ -955,6 +964,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
             </Button>
             {maxSigs > 32 && (
               <Button
+                variant="ghost"
                 onClick={() => handleBatchSign(10)}
                 disabled={isExhausted}
                 className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary font-medium rounded-lg hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-secondary/30"
@@ -963,6 +973,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               </Button>
             )}
             <Button
+              variant="ghost"
               onClick={handleSimulateStateLoss}
               disabled={counter === 0}
               className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive font-medium rounded-lg hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-destructive/30"
@@ -971,6 +982,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               Simulate State Loss
             </Button>
             <Button
+              variant="ghost"
               onClick={handleReset}
               className="flex items-center gap-2 px-3 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors text-sm border border-border"
             >
@@ -1157,6 +1169,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                                     Hex — {entry.sigHex.length / 2} bytes
                                   </span>
                                   <Button
+                                    variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleCopySig(entry)
@@ -1212,6 +1225,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           {/* State loss explainer toggle */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
             <Button
+              variant="ghost"
               onClick={() => setShowStateLossExplainer(!showStateLossExplainer)}
               className="flex items-center gap-2 text-sm font-bold text-foreground w-full"
             >

@@ -150,6 +150,7 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                   </div>
                   {config.certificates.certPem && (
                     <Button
+                      variant="ghost"
                       onClick={() =>
                         setInspectCert({
                           pem: config.certificates.certPem!,
@@ -195,6 +196,7 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                       Root CA (Trust Anchor)
                     </div>
                     <Button
+                      variant="ghost"
                       onClick={() =>
                         setInspectCert({
                           pem: config.certificates.caPem!,
@@ -274,6 +276,7 @@ const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = React.useState(false)
   return (
     <Button
+      variant="ghost"
       onClick={() => {
         navigator.clipboard.writeText(text)
         setCopied(true)

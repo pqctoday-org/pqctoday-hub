@@ -125,6 +125,7 @@ function DimensionLeaders({
       <div className="flex flex-wrap gap-2 mt-1">
         {leaders.map((leader) => (
           <Button
+            variant="ghost"
             key={leader.id}
             onClick={() => onSelect(leader)}
             className="flex items-center gap-1.5 px-2 py-1 rounded-full bg-muted/40 hover:bg-muted/70 border border-border hover:border-primary/40 transition-colors text-left"
@@ -241,6 +242,7 @@ function DimensionLinks({
           }
           return (
             <Button
+              variant="ghost"
               key={item}
               onClick={() => onNavigate(route)}
               className={clsx(

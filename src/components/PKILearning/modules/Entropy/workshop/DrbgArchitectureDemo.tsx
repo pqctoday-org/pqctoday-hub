@@ -212,6 +212,7 @@ export const DrbgArchitectureDemo: React.FC = () => {
                 <span className="text-[10px] uppercase font-bold text-muted-foreground flex justify-between">
                   <span>Entropy Input (32 bytes)</span>
                   <Button
+                    variant="ghost"
                     onClick={() => setEntropyInput(getRandomBytes(32))}
                     disabled={instantiated}
                     className="text-primary hover:underline"

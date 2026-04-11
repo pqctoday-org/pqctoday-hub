@@ -139,6 +139,7 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
                 </p>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => handleLoadAndRun(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
@@ -162,18 +163,21 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/iot-ot-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
             IoT &amp; OT Security <ArrowRight size={14} />
           </Button>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/hsm-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
             HSM &amp; PQC Operations <ArrowRight size={14} />
           </Button>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/emv-payment-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >

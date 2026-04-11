@@ -378,6 +378,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               }`}
             >
               <Button
+                variant="ghost"
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape' && isActive) {
@@ -477,6 +478,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     )}
                     {(layerHiddenCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -505,6 +507,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   <div className="flex flex-wrap gap-2 pt-3 mt-3 w-full border-t border-border/30">
                     {['All', ...subCategories].map((cat) => (
                       <Button
+                        variant="ghost"
                         key={cat}
                         type="button"
                         onClick={(e) => {
@@ -533,6 +536,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   >
                     <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
                     <Button
+                      variant="ghost"
                       type="button"
                       aria-label="Collapse expanded infrastructure layer"
                       onClick={(e) => {
@@ -563,6 +567,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
 
           return (
             <Button
+              variant="ghost"
               key={`minimap-${layer.id}`}
               onClick={(e) => {
                 e.preventDefault()

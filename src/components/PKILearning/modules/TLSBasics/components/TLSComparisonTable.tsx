@@ -44,6 +44,7 @@ export const TLSComparisonTable: React.FC = () => {
       <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-b border-border">
         <h3 className="font-bold text-sm">Protocol Crypto Overhead</h3>
         <Button
+          variant="ghost"
           onClick={clearRunHistory}
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
         >

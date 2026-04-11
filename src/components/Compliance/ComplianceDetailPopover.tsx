@@ -128,6 +128,7 @@ export const ComplianceDetailPopover = ({
                   question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
                 />
                 <Button
+                  variant="ghost"
                   ref={closeButtonRef}
                   onClick={onClose}
                   className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"

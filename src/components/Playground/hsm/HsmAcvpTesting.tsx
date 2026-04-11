@@ -2158,6 +2158,7 @@ export const HsmAcvpTesting = () => {
           </a>
         </div>
         <Button
+          variant="ghost"
           onClick={runTests}
           className="btn-primary flex items-center gap-2"
           disabled={loading || phase !== 'session_open'}
@@ -2245,6 +2246,7 @@ export const HsmAcvpTesting = () => {
             </h4>
             {logs.length > 0 && (
               <Button
+                variant="ghost"
                 onClick={() => {
                   void navigator.clipboard.writeText(logs.join('\n')).then(() => {
                     setLogCopied(true)

@@ -202,6 +202,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
             const active = activeMitigations.includes(mit.id)
             return (
               <Button
+                variant="ghost"
                 key={mit.id}
                 onClick={() => toggleMitigation(mit.id)}
                 className={`w-full text-left rounded-lg p-3 border transition-colors ${

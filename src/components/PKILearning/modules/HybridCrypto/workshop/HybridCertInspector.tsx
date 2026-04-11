@@ -424,6 +424,7 @@ export const HybridCertInspector: React.FC = () => {
       {/* Source toggle */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={() => setSource('generated')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
             source === 'generated'
@@ -435,6 +436,7 @@ export const HybridCertInspector: React.FC = () => {
           Your Certificates
         </Button>
         <Button
+          variant="ghost"
           onClick={() => {
             setSource('ietf')
             parseIETFCert(selectedIETFVector)
@@ -455,6 +457,7 @@ export const HybridCertInspector: React.FC = () => {
         <>
           {certs.length === 0 && (
             <Button
+              variant="ghost"
               onClick={generateAllCerts}
               disabled={generating}
               className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
@@ -493,6 +496,7 @@ export const HybridCertInspector: React.FC = () => {
 
                       return (
                         <Button
+                          variant="ghost"
                           key={cert.label}
                           onClick={() => setSelectedCert({ formatIdx: fIdx, certIdx: cIdx })}
                           className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
@@ -522,6 +526,7 @@ export const HybridCertInspector: React.FC = () => {
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-2">
                         <Button
+                          variant="ghost"
                           onClick={() => setViewMode('tree')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'tree'
@@ -533,6 +538,7 @@ export const HybridCertInspector: React.FC = () => {
                           Tree View
                         </Button>
                         <Button
+                          variant="ghost"
                           onClick={() => setViewMode('raw')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'raw'
@@ -544,6 +550,7 @@ export const HybridCertInspector: React.FC = () => {
                           Raw Output
                         </Button>
                         <Button
+                          variant="ghost"
                           onClick={() => setViewMode('size')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'size'
@@ -556,6 +563,7 @@ export const HybridCertInspector: React.FC = () => {
                         </Button>
                       </div>
                       <Button
+                        variant="ghost"
                         onClick={handleDownload}
                         className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                       >
@@ -776,6 +784,7 @@ export const HybridCertInspector: React.FC = () => {
                 const badgeClass = certTypeBadge(vector.certType)
                 return (
                   <Button
+                    variant="ghost"
                     key={vector.id}
                     onClick={() => handleIETFSelect(vector)}
                     className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-colors border ${
@@ -818,6 +827,7 @@ export const HybridCertInspector: React.FC = () => {
                           : 'Size Breakdown'
                     return (
                       <Button
+                        variant="ghost"
                         key={mode}
                         onClick={() => setIETFViewMode(mode)}
                         className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
@@ -833,6 +843,7 @@ export const HybridCertInspector: React.FC = () => {
                   })}
                 </div>
                 <Button
+                  variant="ghost"
                   onClick={() => handleIETFDownload(selectedIETFVector)}
                   className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                 >

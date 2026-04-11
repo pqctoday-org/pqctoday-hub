@@ -201,6 +201,7 @@ export const DevQuantumImpactModule: React.FC = () => {
                   const Icon = part.icon
                   return (
                     <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
                       className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}

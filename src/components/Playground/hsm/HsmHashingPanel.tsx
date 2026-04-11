@@ -122,6 +122,7 @@ export const HsmHashingPanel = ({
               Algorithm
             </p>
             <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setMultiPart((v) => !v)
@@ -184,6 +185,7 @@ export const HsmHashingPanel = ({
                     className="flex-1 text-xs rounded-lg px-3 py-1.5 bg-muted border border-input text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-ring"
                   />
                   <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => removeChunk(idx)}
                     disabled={chunks.length <= 1}
@@ -222,6 +224,7 @@ export const HsmHashingPanel = ({
 
         {/* Digest button */}
         <Button
+          variant="ghost"
           onClick={doDigest}
           disabled={loading || (multiPart ? chunks.every((c) => !c) : !input.length)}
           className="w-full"

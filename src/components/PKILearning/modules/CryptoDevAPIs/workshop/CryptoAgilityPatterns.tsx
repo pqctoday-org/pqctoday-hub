@@ -68,7 +68,11 @@ export const CryptoAgilityPatterns: React.FC = () => {
 
           return (
             <div key={pattern.id} className="glass-panel overflow-hidden">
-              <Button className="w-full text-left p-4" onClick={() => toggleExpand(pattern.id)}>
+              <Button
+                variant="ghost"
+                className="w-full text-left p-4"
+                onClick={() => toggleExpand(pattern.id)}
+              >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center shrink-0">

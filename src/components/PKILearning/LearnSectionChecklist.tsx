@@ -43,6 +43,7 @@ export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSection
           return (
             <li key={section.id}>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => toggleLearnSection(moduleId, section.id)}
                 className={

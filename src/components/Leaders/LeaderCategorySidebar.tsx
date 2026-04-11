@@ -46,6 +46,7 @@ export const LeaderCategorySidebar = ({
   return (
     <nav className="hidden lg:flex flex-wrap items-center gap-2" aria-label="Leader categories">
       <Button
+        variant="ghost"
         onClick={() => onSelect('All')}
         className={clsx(
           'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
@@ -65,6 +66,7 @@ export const LeaderCategorySidebar = ({
 
       {categories.map((cat) => (
         <Button
+          variant="ghost"
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(

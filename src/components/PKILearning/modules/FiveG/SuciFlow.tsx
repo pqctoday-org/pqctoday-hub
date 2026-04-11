@@ -1362,6 +1362,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             Select Protection Scheme
           </div>
           <Button
+            variant="ghost"
             onClick={() => setGsmaModalOpen(true)}
             className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
             title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
@@ -1371,6 +1372,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
         </div>
         <div className="flex flex-col md:flex-row gap-4">
           <Button
+            variant="ghost"
             data-testid="profile-a-btn"
             onClick={() => {
               wizard.reset()
@@ -1394,6 +1396,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </Button>
 
           <Button
+            variant="ghost"
             data-testid="profile-b-btn"
             onClick={() => {
               wizard.reset()
@@ -1417,6 +1420,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </Button>
 
           <Button
+            variant="ghost"
             data-testid="profile-c-btn"
             onClick={() => {
               wizard.reset()
@@ -1453,6 +1457,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
           </p>
           <div className="flex gap-4">
             <Button
+              variant="ghost"
               onClick={() => {
                 wizard.reset()
                 changePqcMode('hybrid')
@@ -1468,6 +1473,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
               <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
             </Button>
             <Button
+              variant="ghost"
               onClick={() => {
                 wizard.reset()
                 changePqcMode('pure')

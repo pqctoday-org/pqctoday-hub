@@ -87,6 +87,7 @@ export const VendorComparison: React.FC = () => {
             <span className="text-xs text-muted-foreground">Type:</span>
             {(['all', 'on-prem', 'cloud'] as FilterType[]).map((type) => (
               <Button
+                variant="ghost"
                 key={type}
                 onClick={() => setFilterType(type)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -106,6 +107,7 @@ export const VendorComparison: React.FC = () => {
             {(['all', 'production', 'beta', 'limited', 'roadmap'] as FilterStatus[]).map(
               (status) => (
                 <Button
+                  variant="ghost"
                   key={status}
                   onClick={() => setFilterStatus(status)}
                   className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -126,6 +128,7 @@ export const VendorComparison: React.FC = () => {
             <span className="text-xs text-muted-foreground">Sort:</span>
             {(['name', 'type'] as SortKey[]).map((key) => (
               <Button
+                variant="ghost"
                 key={key}
                 onClick={() => setSortKey(key)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -151,6 +154,7 @@ export const VendorComparison: React.FC = () => {
             <div key={vendor.id} className="glass-panel overflow-hidden">
               {/* Main Row */}
               <Button
+                variant="ghost"
                 onClick={() => toggleExpand(vendor.id)}
                 className="w-full text-left p-4 flex items-center gap-4"
               >

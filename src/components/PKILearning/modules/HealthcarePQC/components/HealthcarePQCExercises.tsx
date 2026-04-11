@@ -136,6 +136,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
                 </p>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => handleLoadAndRun(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
@@ -160,6 +161,7 @@ export const HealthcarePQCExercises: React.FC<ExercisesProps> = ({
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >

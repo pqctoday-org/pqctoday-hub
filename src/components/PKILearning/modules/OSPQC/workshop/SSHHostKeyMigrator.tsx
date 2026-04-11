@@ -240,6 +240,7 @@ export const SSHHostKeyMigrator: React.FC = () => {
           {MIGRATION_STEPS.map((s, idx) => (
             <React.Fragment key={s.id}>
               <Button
+                variant="ghost"
                 onClick={() => setCurrentStep(idx)}
                 className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-xs font-bold shrink-0 transition-colors ${
                   completedSteps.has(s.id)

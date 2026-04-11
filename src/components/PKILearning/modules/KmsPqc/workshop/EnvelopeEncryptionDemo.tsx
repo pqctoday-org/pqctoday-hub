@@ -187,6 +187,7 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
           <span className="font-normal text-muted-foreground font-mono">({bytes.length} B)</span>
         </span>
         <Button
+          variant="ghost"
           onClick={handleCopy}
           className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-muted/80 text-muted-foreground border border-border transition-colors"
         >

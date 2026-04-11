@@ -49,6 +49,7 @@ export const DataProtectionAnalyzer: React.FC = () => {
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">View:</span>
           <Button
+            variant="ghost"
             onClick={() => setViewMode('classical')}
             className={`px-3 py-1.5 text-sm rounded-l border transition-colors ${
               viewMode === 'classical'
@@ -59,6 +60,7 @@ export const DataProtectionAnalyzer: React.FC = () => {
             Classical
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setViewMode('pqc')}
             className={`px-3 py-1.5 text-sm rounded-r border-y border-r transition-colors ${
               viewMode === 'pqc'
@@ -91,6 +93,7 @@ export const DataProtectionAnalyzer: React.FC = () => {
               }`}
             >
               <Button
+                variant="ghost"
                 onClick={() => setExpandedStage(isExpanded ? null : stage.id)}
                 className="w-full p-4 flex items-center justify-between text-left"
               >

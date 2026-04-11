@@ -45,6 +45,7 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
 
   return (
     <Button
+      variant="ghost"
       onClick={handleDownload}
       className={`inline-flex items-center gap-2 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors ${className}`}
       aria-label={label}

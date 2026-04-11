@@ -51,6 +51,7 @@ export const BusinessCenterShell = () => {
             const active = isActive(path)
             return (
               <Button
+                variant="ghost"
                 key={path}
                 ref={(el) => {
                   tabsRef.current[index] = el

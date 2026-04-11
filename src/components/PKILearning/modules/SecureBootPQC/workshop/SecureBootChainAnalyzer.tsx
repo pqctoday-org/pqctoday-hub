@@ -136,6 +136,7 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                   }`}
                 >
                   <Button
+                    variant="ghost"
                     onClick={() => setExpandedKey(isExpanded ? null : keyType.id)}
                     className="flex items-start gap-3 w-full p-4 text-left"
                   >
@@ -307,6 +308,7 @@ export const SecureBootChainAnalyzer: React.FC = () => {
                 className="rounded-lg border border-border bg-muted/30 overflow-hidden"
               >
                 <Button
+                  variant="ghost"
                   onClick={() => setExpandedStage(isExpanded ? null : stage.id)}
                   className="flex items-center gap-3 w-full p-3 text-left"
                 >

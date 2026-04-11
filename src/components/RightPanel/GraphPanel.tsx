@@ -84,6 +84,7 @@ export const GraphPanel: React.FC = () => {
             const Icon = tab.icon
             return (
               <Button
+                variant="ghost"
                 key={tab.id}
                 onClick={() => setSubTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 transition-colors ${

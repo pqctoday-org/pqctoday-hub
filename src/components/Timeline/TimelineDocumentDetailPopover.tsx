@@ -166,6 +166,7 @@ export const TimelineDocumentDetailPopover = ({
               question={`Explain the "${row.title}" ${row.type.toLowerCase()} for ${row.org} (${row.countryName}) in the context of PQC migration.${row.description ? ` Context: ${row.description}` : ''}`}
             />
             <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Close details"
               className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"

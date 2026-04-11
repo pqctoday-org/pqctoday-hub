@@ -128,6 +128,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
       <div className="glass-panel p-1 flex gap-1">
         {(Object.keys(TAB_LABELS) as DirectoryTab[]).map((tab) => (
           <Button
+            variant="ghost"
             key={tab}
             onClick={() => {
               setActiveTab(tab)

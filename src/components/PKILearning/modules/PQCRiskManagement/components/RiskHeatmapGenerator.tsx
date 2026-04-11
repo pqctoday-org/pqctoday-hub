@@ -164,6 +164,7 @@ function TreatmentSelector({
           const isSelected = decision?.strategy === opt.value
           return (
             <Button
+              variant="ghost"
               key={opt.value}
               onClick={() =>
                 onDecisionChange(entry.id, {
@@ -323,6 +324,7 @@ function PriorityRankingList({
           >
             <div className="flex flex-col gap-1 shrink-0 pt-1">
               <Button
+                variant="ghost"
                 onClick={() => moveUp(idx)}
                 disabled={idx === 0}
                 className="p-0.5 rounded hover:bg-muted disabled:opacity-30 text-muted-foreground"
@@ -331,6 +333,7 @@ function PriorityRankingList({
                 <ArrowUp size={14} />
               </Button>
               <Button
+                variant="ghost"
                 onClick={() => moveDown(idx)}
                 disabled={idx === priorityOrder.length - 1}
                 className="p-0.5 rounded hover:bg-muted disabled:opacity-30 text-muted-foreground"
@@ -723,6 +726,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="flex rounded-lg border border-border overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => setViewMode('inherent')}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 viewMode === 'inherent'
@@ -733,6 +737,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               Inherent Risk
             </Button>
             <Button
+              variant="ghost"
               onClick={() => hasTreatments && setViewMode('residual')}
               disabled={!hasTreatments}
               title={!hasTreatments ? 'Assign at least one treatment strategy first' : undefined}
@@ -957,6 +962,7 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
   return (
     <div className="glass-panel overflow-hidden">
       <Button
+        variant="ghost"
         onClick={onToggle}
         className="w-full flex items-center gap-2 p-4 text-left hover:bg-muted/50 transition-colors"
       >

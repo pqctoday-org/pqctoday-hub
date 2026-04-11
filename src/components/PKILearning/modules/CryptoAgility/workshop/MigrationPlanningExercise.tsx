@@ -44,6 +44,7 @@ export const MigrationPlanningExercise: React.FC = () => {
         <div className="flex gap-1 min-w-max">
           {MIGRATION_STEPS.map((s, idx) => (
             <Button
+              variant="ghost"
               key={s.id}
               onClick={() => setCurrentStep(idx)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded text-xs font-medium transition-colors ${
@@ -132,6 +133,7 @@ export const MigrationPlanningExercise: React.FC = () => {
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
             <Button
+              variant="ghost"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0}
               className="flex items-center gap-1 px-4 py-2 text-sm rounded border border-border hover:bg-muted disabled:opacity-50 transition-colors"
@@ -139,6 +141,7 @@ export const MigrationPlanningExercise: React.FC = () => {
               <ChevronLeft size={14} /> Previous
             </Button>
             <Button
+              variant="ghost"
               onClick={markComplete}
               className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors"
             >

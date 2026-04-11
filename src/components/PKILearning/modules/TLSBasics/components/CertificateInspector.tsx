@@ -294,6 +294,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                 {parsedOutput && (
                   <div className="flex bg-muted rounded p-1 mr-2">
                     <Button
+                      variant="ghost"
                       onClick={() => setViewMode('tree')}
                       className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                         viewMode === 'tree'
@@ -304,6 +305,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                       Tree View
                     </Button>
                     <Button
+                      variant="ghost"
                       onClick={() => setViewMode('raw')}
                       className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                         viewMode === 'raw'
@@ -316,6 +318,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                   </div>
                 )}
                 <Button
+                  variant="ghost"
                   onClick={onClose}
                   className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
                 >

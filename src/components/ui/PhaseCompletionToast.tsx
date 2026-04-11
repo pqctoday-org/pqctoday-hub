@@ -86,6 +86,7 @@ export function PhaseCompletionToast() {
           className="fixed bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg"
         >
           <Button
+            variant="ghost"
             onClick={handleDismiss}
             className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors"
           >

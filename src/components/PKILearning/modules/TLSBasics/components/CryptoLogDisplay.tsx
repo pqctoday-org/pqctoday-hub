@@ -362,6 +362,7 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
             </div>
 
             <Button
+              variant="ghost"
               onClick={handleCopy}
               className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors ml-1"
               title="Copy Log"

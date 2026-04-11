@@ -246,6 +246,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
                       className="rounded-lg border border-border bg-muted/30 overflow-hidden"
                     >
                       <Button
+                        variant="ghost"
                         onClick={() => setExpandedKey(isExpanded ? null : tpmKey.id)}
                         className="flex items-center gap-3 w-full p-3 text-left"
                       >
@@ -333,6 +334,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
       {/* Hybrid Approach */}
       <div className="glass-panel p-6">
         <Button
+          variant="ghost"
           onClick={() => setShowHybrid(!showHybrid)}
           className="flex items-center gap-2 w-full text-left"
         >

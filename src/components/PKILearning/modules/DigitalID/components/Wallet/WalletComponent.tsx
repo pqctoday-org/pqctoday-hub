@@ -24,7 +24,7 @@ export const WalletComponent: React.FC<WalletComponentProps> = ({ wallet, onAddC
           </h2>
           <p className="text-muted-foreground">Managed by: {wallet.owner.legalName}</p>
         </div>
-        <Button onClick={onAddCredential} className="gap-2">
+        <Button variant="ghost" onClick={onAddCredential} className="gap-2">
           <Plus className="w-4 h-4" /> Add Credential
         </Button>
       </div>

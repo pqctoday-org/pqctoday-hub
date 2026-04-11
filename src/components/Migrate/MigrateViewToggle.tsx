@@ -25,6 +25,7 @@ export const MigrateViewToggle = ({ mode, onChange }: MigrateViewToggleProps) =>
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => (
         <Button
+          variant="ghost"
           key={value}
           onClick={() => onChange(value)}
           role="radio"

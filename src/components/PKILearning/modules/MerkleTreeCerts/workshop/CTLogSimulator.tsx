@@ -205,7 +205,11 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               : 'Add Certificate (simulation)'}
           </span>
           {issuedCerts.length === 0 && (
-            <Button onClick={onLoadSamples} className="text-xs text-primary hover:text-primary/80">
+            <Button
+              variant="ghost"
+              onClick={onLoadSamples}
+              className="text-xs text-primary hover:text-primary/80"
+            >
               Load 5 samples
             </Button>
           )}
@@ -238,6 +242,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
             <p className="text-[9px] text-muted-foreground mt-0.5">CA signs with ML-DSA-44</p>
           </div>
           <Button
+            variant="ghost"
             onClick={handleAdd}
             disabled={!newSubject.trim() || isSigning}
             className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 disabled:opacity-50 transition-colors"
@@ -322,6 +327,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                   className="bg-muted/50 rounded-lg border border-border overflow-hidden"
                 >
                   <Button
+                    variant="ghost"
                     className="w-full flex items-center gap-3 p-2.5 text-left hover:bg-muted/80 transition-colors"
                     onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
                   >
@@ -532,6 +538,7 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
 
       {canCompute && (
         <Button
+          variant="ghost"
           onClick={handleCompute}
           disabled={isComputing}
           className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90"
@@ -801,6 +808,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
           </span>
           {hasTampering && (
             <Button
+              variant="ghost"
               onClick={() => {
                 setEditedCerts(structuredClone(logCerts))
                 setAuditResult(null)
@@ -845,10 +853,18 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                         }}
                         className="text-xs h-auto py-1 flex-1"
                       />
-                      <Button onClick={() => handleCommitEdit(idx)} className="text-success">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleCommitEdit(idx)}
+                        className="text-success"
+                      >
                         <Check size={14} />
                       </Button>
-                      <Button onClick={() => setEditingIdx(null)} className="text-muted-foreground">
+                      <Button
+                        variant="ghost"
+                        onClick={() => setEditingIdx(null)}
+                        className="text-muted-foreground"
+                      >
                         <X size={14} />
                       </Button>
                     </div>
@@ -870,6 +886,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                 <span className="text-[10px] text-muted-foreground shrink-0">{cert.algorithm}</span>
                 {!isEditing && (
                   <Button
+                    variant="ghost"
                     onClick={() => handleStartEdit(idx)}
                     className="text-muted-foreground hover:text-warning transition-colors shrink-0"
                     title="Edit to simulate misissuance"
@@ -885,6 +902,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
 
       {/* Re-audit button */}
       <Button
+        variant="ghost"
         onClick={handleReaudit}
         disabled={isAuditing}
         className="flex items-center gap-2 px-4 py-2 bg-warning/10 text-warning border border-warning/30 rounded-lg hover:bg-warning/20 disabled:opacity-50 text-sm font-medium transition-colors"

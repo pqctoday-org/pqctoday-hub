@@ -41,6 +41,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   return (
     <section className="glass-panel overflow-hidden">
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 text-left"
       >

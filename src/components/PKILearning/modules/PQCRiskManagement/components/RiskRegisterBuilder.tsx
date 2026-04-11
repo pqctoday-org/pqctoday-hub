@@ -231,6 +231,7 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                   </span>
                 </div>
                 <Button
+                  variant="ghost"
                   onClick={() => removeEntry(entry.id)}
                   className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                   title="Remove entry"

@@ -384,6 +384,7 @@ export const SystemTLSConfigurator: React.FC = () => {
       {/* Before / After config toggle */}
       <div className="glass-panel p-4">
         <Button
+          variant="ghost"
           onClick={() => setShowAfter((prev) => !prev)}
           className="flex items-center justify-between w-full text-left"
         >

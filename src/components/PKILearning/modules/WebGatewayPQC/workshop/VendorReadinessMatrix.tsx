@@ -143,12 +143,14 @@ export const VendorReadinessMatrix: React.FC = () => {
           <h3 className="text-sm font-bold text-foreground">Select Your Gateway Products</h3>
           <div className="flex gap-2">
             <Button
+              variant="ghost"
               onClick={selectAll}
               className="text-xs px-2 py-1 rounded border border-border hover:bg-muted transition-colors text-foreground"
             >
               Select All
             </Button>
             <Button
+              variant="ghost"
               onClick={clearAll}
               className="text-xs px-2 py-1 rounded border border-border hover:bg-muted transition-colors text-foreground"
             >
@@ -170,6 +172,7 @@ export const VendorReadinessMatrix: React.FC = () => {
                 const StatusIcon = statusInfo.icon
                 return (
                   <Button
+                    variant="ghost"
                     key={vendor.id}
                     onClick={() => toggleVendor(vendor.id)}
                     className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
@@ -329,6 +332,7 @@ export const VendorReadinessMatrix: React.FC = () => {
 
           {/* Export */}
           <Button
+            variant="ghost"
             onClick={handleCopy}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
           >

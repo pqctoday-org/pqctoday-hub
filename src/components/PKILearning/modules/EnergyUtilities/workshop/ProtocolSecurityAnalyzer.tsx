@@ -168,6 +168,7 @@ export const ProtocolSecurityAnalyzer: React.FC<ProtocolSecurityAnalyzerProps> =
         return (
           <div key={protocol.id} className="glass-panel overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => setExpandedId(isExpanded ? null : protocol.id)}
               className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
             >

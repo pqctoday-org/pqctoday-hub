@@ -63,6 +63,7 @@ export const PQCSupportMatrix: React.FC = () => {
         <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
           {(['matrix', 'roadmap'] as const).map((tab) => (
             <Button
+              variant="ghost"
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
@@ -140,6 +141,7 @@ export const PQCSupportMatrix: React.FC = () => {
                       return (
                         <td key={algo.id} className="p-2 text-center">
                           <Button
+                            variant="ghost"
                             onClick={() => setSelectedCell({ apiId: api.id, algorithmId: algo.id })}
                             className={`text-xs px-2 py-1 rounded border transition-all hover:opacity-80 cursor-pointer ${SUPPORT_STATUS_COLORS[status]}`}
                           >
@@ -170,6 +172,7 @@ export const PQCSupportMatrix: React.FC = () => {
                   </div>
                 </div>
                 <Button
+                  variant="ghost"
                   onClick={() => setSelectedCell(null)}
                   className="text-muted-foreground hover:text-foreground"
                 >

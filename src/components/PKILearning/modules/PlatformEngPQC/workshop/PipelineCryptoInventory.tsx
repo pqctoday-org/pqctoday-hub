@@ -128,6 +128,7 @@ export const PipelineCryptoInventory: React.FC = () => {
             <div key={stage.id} className="glass-panel overflow-hidden">
               {/* Stage Header */}
               <Button
+                variant="ghost"
                 onClick={() => toggleStage(stage.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >
@@ -187,6 +188,7 @@ export const PipelineCryptoInventory: React.FC = () => {
                         className="bg-muted/30 rounded-lg border border-border overflow-hidden"
                       >
                         <Button
+                          variant="ghost"
                           onClick={() => toggleAsset(asset.id)}
                           className="w-full text-left p-3 flex items-center gap-3"
                         >

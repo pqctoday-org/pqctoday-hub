@@ -207,6 +207,7 @@ const Step11Infrastructure = () => {
           {stepContent.title ?? 'What infrastructure handles your cryptography?'}
         </h3>
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setImportProductSelection(!importProductSelection)}
           className={clsx(

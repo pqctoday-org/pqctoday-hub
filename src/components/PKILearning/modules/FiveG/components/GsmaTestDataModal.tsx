@@ -50,6 +50,7 @@ function HexField({ label, value, mono = true }: { label: string; value: string;
           {value}
         </code>
         <Button
+          variant="ghost"
           onClick={copy}
           className="text-xs text-muted-foreground hover:text-primary shrink-0 pt-1"
           title="Copy"
@@ -70,6 +71,7 @@ function VectorCard({ vector }: { vector: VectorEntry }) {
   return (
     <div className={`rounded-lg border ${profileColor} overflow-hidden`}>
       <Button
+        variant="ghost"
         onClick={() => setExpanded((v) => !v)}
         className="w-full flex items-center justify-between p-3 text-left hover:bg-muted/30 transition-colors"
       >
@@ -197,7 +199,11 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
               Official ETSI/3GPP test key material · Profile A (X25519) and Profile B (P-256)
             </div>
           </div>
-          <Button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground p-1"
+          >
             <X size={16} />
           </Button>
         </div>
@@ -225,6 +231,7 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
         {/* Footer */}
         <div className="shrink-0 px-4 py-3 border-t border-border flex justify-end">
           <Button
+            variant="ghost"
             onClick={onClose}
             className="text-sm px-3 py-1.5 rounded border border-border hover:bg-muted transition-colors text-foreground"
           >

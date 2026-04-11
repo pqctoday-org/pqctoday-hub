@@ -174,6 +174,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             <div className="flex items-center gap-2 min-w-0">
               {hasChildren ? (
                 <Button
+                  variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
                     toggleExpand(item.referenceId)
@@ -230,6 +231,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 const enriched = !!libraryEnrichments[item.referenceId]
                 return (
                   <Button
+                    variant="ghost"
                     onClick={(e) => handleDetailsClick(item, e)}
                     className={clsx(
                       'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
@@ -257,6 +259,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 )
               })()}
               <Button
+                variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation()
                   toggleLibraryBookmark(item.referenceId)
@@ -316,6 +319,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           </span>
           <div className="flex gap-2">
             <Button
+              variant="ghost"
               onClick={() => {
                 const ids = getAllExpandedIds(data)
                 setExpandedIds(ids)
@@ -326,6 +330,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
               <ChevronDown size={14} aria-hidden="true" /> Expand All
             </Button>
             <Button
+              variant="ghost"
               onClick={() => setExpandedIds(new Set())}
               aria-controls="library-table"
               className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
@@ -357,6 +362,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   >
                     {header.key !== 'actions' ? (
                       <Button
+                        variant="ghost"
                         className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1 text-left"
                         onClick={() => handleSort(header.key as SortKey)}
                       >

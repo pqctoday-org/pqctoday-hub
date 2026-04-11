@@ -18,6 +18,7 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
       aria-label="View mode"
     >
       <Button
+        variant="ghost"
         onClick={() => onChange('cards')}
         role="radio"
         aria-checked={mode === 'cards'}
@@ -32,6 +33,7 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
         <span className="hidden sm:inline">Cards</span>
       </Button>
       <Button
+        variant="ghost"
         onClick={() => onChange('table')}
         role="radio"
         aria-checked={mode === 'table'}

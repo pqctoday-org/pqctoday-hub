@@ -25,6 +25,7 @@ export const LeadersViewToggle = ({ mode, onChange }: LeadersViewToggleProps) =>
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => (
         <Button
+          variant="ghost"
           key={value}
           onClick={() => onChange(value)}
           role="radio"

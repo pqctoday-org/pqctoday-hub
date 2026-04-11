@@ -202,6 +202,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
             <div className="flex gap-2">
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <Button
+                  variant="ghost"
                   onClick={() => setRawValueMode('hex')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -213,6 +214,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   HEX
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => setRawValueMode('ascii')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -225,6 +227,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 </Button>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => copyToClipboard(displayRaw, 'raw')}
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
@@ -270,6 +273,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
             <div className="flex gap-2">
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
                 <Button
+                  variant="ghost"
                   onClick={() => setPkcs8ValueMode('hex')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -281,6 +285,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   HEX
                 </Button>
                 <Button
+                  variant="ghost"
                   onClick={() => setPkcs8ValueMode('ascii')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -293,6 +298,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 </Button>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => copyToClipboard(displayPkcs8, 'pkcs8')}
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"

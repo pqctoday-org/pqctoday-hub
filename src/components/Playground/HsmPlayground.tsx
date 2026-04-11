@@ -298,6 +298,7 @@ export const HsmPlayground = () => {
 
           {/* WIP badge */}
           <Button
+            variant="ghost"
             onClick={() => setShowMethodologyModal(true)}
             className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
             aria-label="View PKCS#11 test methodology"

@@ -194,6 +194,7 @@ export const VendorMigrationMatrix: React.FC = () => {
                       </td>
                       <td className="py-3 px-2 text-center">
                         <Button
+                          variant="ghost"
                           onClick={() => setExpandedId(isExpanded ? null : vendor.id)}
                           className="text-muted-foreground hover:text-primary transition-colors"
                           aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${vendor.vendor} details`}
@@ -299,6 +300,7 @@ export const VendorMigrationMatrix: React.FC = () => {
                 </div>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => setExpandedId(isExpanded ? null : vendor.id)}
                 className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
               >

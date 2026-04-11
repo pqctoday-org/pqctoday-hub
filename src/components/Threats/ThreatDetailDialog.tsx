@@ -56,6 +56,7 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               <p className="text-sm text-muted-foreground mt-1">{threat.industry}</p>
             </div>
             <Button
+              variant="ghost"
               onClick={onClose}
               className="text-muted-foreground hover:text-foreground transition-colors p-1"
               aria-label="Close details"

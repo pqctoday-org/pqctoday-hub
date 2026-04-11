@@ -144,6 +144,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       style={{ width: columnWidths[col] }}
                     >
                       <Button
+                        variant="ghost"
                         onClick={() => handleSort(col)}
                         className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
                       >
@@ -230,6 +231,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
           ? emptyState
           : sortedKeys.map((key) => (
               <Button
+                variant="ghost"
                 key={key.id}
                 type="button"
                 onClick={() => setSelectedKeyId(key.id)}

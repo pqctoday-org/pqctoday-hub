@@ -182,6 +182,7 @@ export const PageHeader = ({
           )}
           {showAssistant && (
             <Button
+              variant="ghost"
               onClick={() => openChat('chat')}
               className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-foreground text-sm font-medium transition-colors border border-primary/20"
               aria-label="Open PQC Assistant"

@@ -145,6 +145,7 @@ export const SaveRestorePanel: React.FC = () => {
 
           <div className="flex gap-2">
             <Button
+              variant="ghost"
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded transition-colors"
             >
@@ -178,6 +179,7 @@ export const SaveRestorePanel: React.FC = () => {
           </p>
 
           <Button
+            variant="ghost"
             onClick={handleReset}
             className="flex items-center gap-2 px-4 py-2 bg-status-error text-status-error rounded hover:bg-status-error transition-colors"
           >

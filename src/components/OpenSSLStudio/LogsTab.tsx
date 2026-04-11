@@ -27,6 +27,7 @@ export const LogsTab = () => {
       {/* Toolbar */}
       <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
         <Button
+          variant="ghost"
           onClick={clearStructuredLogs}
           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
         >

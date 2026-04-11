@@ -106,6 +106,7 @@ export function AchievementToast() {
               </div>
 
               <Button
+                variant="ghost"
                 onClick={handleDismiss}
                 className="p-1 rounded hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors shrink-0"
                 aria-label="Dismiss achievement notification"

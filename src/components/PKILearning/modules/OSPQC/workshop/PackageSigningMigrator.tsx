@@ -324,6 +324,7 @@ export const PackageSigningMigrator: React.FC = () => {
         <div className="flex items-center gap-2 ml-auto">
           <span className="text-xs text-muted-foreground">View:</span>
           <Button
+            variant="ghost"
             onClick={() => setShowPqc(false)}
             className={`px-3 py-1.5 text-xs rounded-l-lg border transition-colors ${
               !showPqc
@@ -334,6 +335,7 @@ export const PackageSigningMigrator: React.FC = () => {
             Classical (Current)
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setShowPqc(true)}
             className={`px-3 py-1.5 text-xs rounded-r-lg border transition-colors ${
               showPqc
@@ -381,6 +383,7 @@ export const PackageSigningMigrator: React.FC = () => {
         {steps.map((step) => (
           <div key={step.id} className="glass-panel overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
               className="flex items-center justify-between w-full p-4 text-left"
             >

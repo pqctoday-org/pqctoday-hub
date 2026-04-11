@@ -181,6 +181,7 @@ export const ContainerSigningMigration: React.FC = () => {
               className={`glass-panel overflow-hidden ${isSelected ? 'ring-2 ring-primary' : ''}`}
             >
               <Button
+                variant="ghost"
                 onClick={() => (compareMode ? toggleCompare(tool.id) : toggleExpand(tool.id))}
                 className="w-full text-left p-4 flex items-center gap-3"
               >

@@ -243,6 +243,7 @@ export const SecureBootChain: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {FIRMWARE_SIGNING_ALGORITHMS.map((alg) => (
             <Button
+              variant="ghost"
               key={alg.id}
               onClick={() => {
                 setSelectedAlgorithm(alg.id)
@@ -330,6 +331,7 @@ export const SecureBootChain: React.FC = () => {
                 {/* Vertical line + icon */}
                 <div className="flex flex-col items-center">
                   <Button
+                    variant="ghost"
                     onClick={() => setActiveStage(idx)}
                     className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors shrink-0 ${
                       isActive
@@ -353,7 +355,11 @@ export const SecureBootChain: React.FC = () => {
 
                 {/* Stage content */}
                 <div className={`flex-1 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
-                  <Button onClick={() => setActiveStage(idx)} className="text-left w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setActiveStage(idx)}
+                    className="text-left w-full"
+                  >
                     <div
                       className={`text-sm font-bold ${
                         isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-foreground'

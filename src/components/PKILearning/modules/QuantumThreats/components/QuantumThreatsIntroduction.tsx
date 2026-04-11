@@ -489,6 +489,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
             </p>
           </div>
           <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-6 py-3 shrink-0"
           >

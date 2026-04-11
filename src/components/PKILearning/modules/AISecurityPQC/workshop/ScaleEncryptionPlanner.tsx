@@ -238,6 +238,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
       {/* Privacy-preserving tech */}
       <div>
         <Button
+          variant="ghost"
           onClick={() => setShowPrivacy(!showPrivacy)}
           className="text-sm font-bold text-foreground flex items-center gap-2"
         >

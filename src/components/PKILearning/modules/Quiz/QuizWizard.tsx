@@ -76,6 +76,7 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <Button
+          variant="ghost"
           onClick={onExit}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >

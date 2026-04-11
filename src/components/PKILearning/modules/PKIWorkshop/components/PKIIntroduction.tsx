@@ -249,6 +249,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           guidance on algorithm deprecation timelines.
         </p>
         <Button
+          variant="ghost"
           onClick={onNavigateToWorkshop}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >
@@ -328,6 +329,7 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
 
         <div className="flex flex-wrap gap-2">
           <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-4 py-2"
           >

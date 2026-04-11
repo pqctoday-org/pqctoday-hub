@@ -36,6 +36,7 @@ export const RbgConstructionPanel = () => {
   return (
     <div className="glass-panel p-4 border border-border">
       <Button
+        variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between w-full text-left"
       >

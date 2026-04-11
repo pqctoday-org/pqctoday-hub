@@ -104,6 +104,7 @@ export const WebGatewayExercises: React.FC<WebGatewayExercisesProps> = ({
               <span className="text-xs text-muted-foreground">Workshop tools:</span>
               {scenario.workshopSteps.map((step) => (
                 <Button
+                  variant="ghost"
                   key={step}
                   onClick={onNavigateToWorkshop}
                   className="text-xs px-2 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors"

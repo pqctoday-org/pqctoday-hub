@@ -80,6 +80,7 @@ export const KeyStoreView = ({
           {keyStore.length > 0 && (
             <>
               <Button
+                variant="ghost"
                 onClick={onBackupAllKeys}
                 className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 border border-primary/40 rounded text-xs font-medium text-primary transition-colors flex items-center gap-2"
                 title="Backup all keys to ZIP"
@@ -87,6 +88,7 @@ export const KeyStoreView = ({
                 <Archive size={14} /> Backup All
               </Button>
               <Button
+                variant="ghost"
                 onClick={clearKeys}
                 className="text-sm text-destructive hover:text-destructive/80 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
               >
@@ -95,6 +97,7 @@ export const KeyStoreView = ({
             </>
           )}
           <Button
+            variant="ghost"
             className="px-3 py-1.5 bg-muted hover:bg-accent border border-border rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('restore-keys-input')?.click()}
           >

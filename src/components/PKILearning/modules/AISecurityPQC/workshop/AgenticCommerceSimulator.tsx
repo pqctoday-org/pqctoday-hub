@@ -55,6 +55,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
         />
         <div className="flex items-center gap-2">
           <Button
+            variant="ghost"
             type="button"
             role="switch"
             aria-checked={quantumOverlay}
@@ -97,6 +98,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
           return (
             <div key={step.id} className={`glass-panel overflow-hidden ${borderClass}`}>
               <Button
+                variant="ghost"
                 onClick={() => setExpandedStep(isExpanded ? null : step.id)}
                 className="w-full p-4 flex items-center justify-between text-left"
               >

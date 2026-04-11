@@ -329,6 +329,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
             >
               <div className="p-4 flex items-center gap-3">
                 <Button
+                  variant="ghost"
                   onClick={() => !isLocked && togglePhaseComplete(phase.id)}
                   disabled={isLocked}
                   className="shrink-0"
@@ -344,6 +345,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
                 </Button>
 
                 <Button
+                  variant="ghost"
                   onClick={() => !isLocked && toggleExpand(phase.id)}
                   className="flex-1 min-w-0 text-left"
                   disabled={isLocked}
@@ -371,7 +373,11 @@ export const PlatformMigrationPlanner: React.FC = () => {
                 </Button>
 
                 {!isLocked && (
-                  <Button onClick={() => toggleExpand(phase.id)} className="shrink-0">
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleExpand(phase.id)}
+                    className="shrink-0"
+                  >
                     {isExpanded ? (
                       <ChevronUp size={16} className="text-muted-foreground" />
                     ) : (
@@ -453,6 +459,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
       {/* Rollback Decision Tree */}
       <div className="glass-panel overflow-hidden">
         <Button
+          variant="ghost"
           onClick={() => {
             setShowRollback((prev) => !prev)
             setRollbackNode('start')
@@ -486,6 +493,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
                       <div className="flex gap-3">
                         {currentNode.yesId && (
                           <Button
+                            variant="ghost"
                             onClick={() => setRollbackNode(currentNode.yesId!)}
                             className="flex-1 py-2 rounded-lg text-xs font-bold border bg-status-error/10 text-status-error border-status-error/30 hover:bg-status-error/20 transition-colors"
                           >
@@ -494,6 +502,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
                         )}
                         {currentNode.noId && (
                           <Button
+                            variant="ghost"
                             onClick={() => setRollbackNode(currentNode.noId!)}
                             className="flex-1 py-2 rounded-lg text-xs font-bold border bg-muted text-foreground border-border hover:border-primary/50 transition-colors"
                           >
@@ -516,6 +525,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
                     </div>
                   )}
                   <Button
+                    variant="ghost"
                     onClick={() => setRollbackNode('start')}
                     className="text-xs text-primary underline underline-offset-2 hover:opacity-80"
                   >

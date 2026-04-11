@@ -290,6 +290,7 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
       {/* Start CTA */}
       <div className="text-center py-4">
         <Button
+          variant="ghost"
           onClick={() => onNavigateTo('wallet')}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary/20 border border-primary text-primary rounded-full hover:bg-primary/30 transition-colors font-medium"
         >

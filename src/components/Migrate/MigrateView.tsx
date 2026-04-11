@@ -1135,6 +1135,7 @@ export const MigrateView: React.FC = () => {
                       />
                       {!isEmbedded && (
                         <Button
+                          variant="ghost"
                           onClick={() => {
                             const next: WipFilter =
                               wipFilter === 'hidden'
@@ -1176,6 +1177,7 @@ export const MigrateView: React.FC = () => {
                     {(myProducts.length > 0 || showOnlyMyProducts) && (
                       <div className="space-y-3 pt-6 border-t border-border">
                         <Button
+                          variant="ghost"
                           onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
                           className={`w-full inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-lg border transition-colors font-medium ${
                             showOnlyMyProducts
@@ -1288,6 +1290,7 @@ export const MigrateView: React.FC = () => {
 
             {/* WIP filter — same cycling pill as Playground */}
             <Button
+              variant="ghost"
               onClick={() => {
                 const next: WipFilter =
                   wipFilter === 'hidden' ? 'include' : wipFilter === 'include' ? 'only' : 'hidden'
@@ -1366,6 +1369,7 @@ export const MigrateView: React.FC = () => {
               />
               {(myProducts.length > 0 || showOnlyMyProducts) && (
                 <Button
+                  variant="ghost"
                   onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
                   className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                     showOnlyMyProducts
@@ -1432,6 +1436,7 @@ export const MigrateView: React.FC = () => {
             <Scale size={14} className="animate-pulse" />
             <span>Select up to 4 products to compare capabilities.</span>
             <Button
+              variant="ghost"
               onClick={() => {
                 setHasDismissedCompareOnboarding(true)
                 localStorage.setItem('dimissed_compare_onboarding', 'true')
@@ -1529,6 +1534,7 @@ export const MigrateView: React.FC = () => {
                     activeInfrastructureLayer}
                 </span>
                 <Button
+                  variant="ghost"
                   type="button"
                   aria-label="Clear layer filter"
                   onClick={() => {

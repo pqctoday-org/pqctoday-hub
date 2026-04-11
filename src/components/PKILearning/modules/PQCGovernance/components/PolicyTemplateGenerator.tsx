@@ -523,6 +523,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {POLICY_TYPES.map((pt) => (
           <Button
+            variant="ghost"
             key={pt.id}
             onClick={() => setActivePolicyType(pt.id)}
             className={`text-left p-3 rounded-lg border transition-colors ${

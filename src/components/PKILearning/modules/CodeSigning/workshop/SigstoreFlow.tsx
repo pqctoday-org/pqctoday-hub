@@ -144,6 +144,7 @@ export const SigstoreFlow: React.FC = () => {
       {/* Mode Toggle */}
       <div className="flex flex-wrap gap-2">
         <Button
+          variant="ghost"
           onClick={() => setCompareMode('classical')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             compareMode === 'classical'
@@ -154,6 +155,7 @@ export const SigstoreFlow: React.FC = () => {
           Classical (ECDSA P-256)
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setCompareMode('pqc')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             compareMode === 'pqc'
@@ -179,6 +181,7 @@ export const SigstoreFlow: React.FC = () => {
                 {/* Vertical line + icon */}
                 <div className="flex flex-col items-center">
                   <Button
+                    variant="ghost"
                     onClick={() => setActiveStep(idx)}
                     className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors shrink-0 ${
                       isActive
@@ -202,7 +205,11 @@ export const SigstoreFlow: React.FC = () => {
 
                 {/* Step content */}
                 <div className={`flex-1 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
-                  <Button onClick={() => setActiveStep(idx)} className="text-left w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setActiveStep(idx)}
+                    className="text-left w-full"
+                  >
                     <div
                       className={`text-sm font-bold ${
                         isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-foreground'
@@ -274,6 +281,7 @@ export const SigstoreFlow: React.FC = () => {
               <h4 className="text-sm font-bold text-foreground">Rekor Transparency Log Entry</h4>
             </div>
             <Button
+              variant="ghost"
               onClick={() => setShowLogEntry(!showLogEntry)}
               className="text-xs text-muted-foreground hover:text-foreground transition-colors"
             >

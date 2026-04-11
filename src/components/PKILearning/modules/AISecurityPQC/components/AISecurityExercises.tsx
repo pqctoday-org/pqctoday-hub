@@ -143,6 +143,7 @@ export const AISecurityExercises: React.FC<AISecurityExercisesProps> = ({
                 </p>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => handleLoadAndRun(scenario)}
                 className="flex items-center gap-1.5 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm shrink-0"
               >
@@ -167,6 +168,7 @@ export const AISecurityExercises: React.FC<AISecurityExercisesProps> = ({
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/quiz')}
             className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm text-foreground"
           >

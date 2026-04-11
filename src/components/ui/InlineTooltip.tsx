@@ -83,6 +83,7 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
   return (
     <>
       <Button
+        variant="ghost"
         ref={triggerRef}
         onMouseEnter={open}
         onMouseLeave={close}

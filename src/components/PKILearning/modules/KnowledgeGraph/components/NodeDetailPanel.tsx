@@ -96,6 +96,7 @@ export function NodeDetailPanel({
 
       {deepLink && (
         <Button
+          variant="ghost"
           onClick={() => navigate(deepLink)}
           className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-3"
         >
@@ -124,6 +125,7 @@ export function NodeDetailPanel({
                   const TargetIcon = targetConfig?.icon
                   return (
                     <Button
+                      variant="ghost"
                       key={edge.id}
                       className="flex items-center gap-1.5 w-full text-left px-2 py-1.5 rounded hover:bg-muted/50 transition-colors"
                       onClick={() => onNavigateToNode(edge.target)}
@@ -160,6 +162,7 @@ export function NodeDetailPanel({
                   const SourceIcon = sourceConfig?.icon
                   return (
                     <Button
+                      variant="ghost"
                       key={edge.id}
                       className="flex items-center gap-1.5 w-full text-left px-2 py-1.5 rounded hover:bg-muted/50 transition-colors"
                       onClick={() => onNavigateToNode(edge.source)}

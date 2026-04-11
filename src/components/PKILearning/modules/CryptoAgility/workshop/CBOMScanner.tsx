@@ -160,6 +160,7 @@ export const CBOMScanner: React.FC = () => {
 
             return (
               <Button
+                variant="ghost"
                 key={layer.id}
                 onClick={() => setActiveLayer(isActive ? 'all' : (layer.id as LayerFilter))}
                 className={`flex flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
@@ -191,6 +192,7 @@ export const CBOMScanner: React.FC = () => {
         </div>
         {activeLayer !== 'all' && (
           <Button
+            variant="ghost"
             onClick={() => setActiveLayer('all')}
             className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
           >
@@ -202,6 +204,7 @@ export const CBOMScanner: React.FC = () => {
       {/* Filters + JSON toggle */}
       <div className="flex flex-wrap items-center gap-2">
         <Button
+          variant="ghost"
           onClick={() => setFilter('all')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'all'
@@ -212,6 +215,7 @@ export const CBOMScanner: React.FC = () => {
           All ({stats.total})
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setFilter('vulnerable')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'vulnerable'
@@ -223,6 +227,7 @@ export const CBOMScanner: React.FC = () => {
           Vulnerable ({stats.vulnerable})
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setFilter('safe')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'safe'
@@ -234,6 +239,7 @@ export const CBOMScanner: React.FC = () => {
           Safe ({stats.safe})
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setFilter('weakened')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'weakened'
@@ -254,6 +260,7 @@ export const CBOMScanner: React.FC = () => {
         <div className="flex-1" />
 
         <Button
+          variant="ghost"
           onClick={() => setShowJson(!showJson)}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
             showJson

@@ -141,6 +141,7 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
         transition={{ duration: 0.3, delay: 0.3 }}
       >
         <Button
+          variant="ghost"
           onClick={() => setShowReview((prev) => !prev)}
           className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors w-full justify-center"
         >

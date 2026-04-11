@@ -100,6 +100,7 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
       {/* Mobile: collapsible accordion */}
       <div className="lg:hidden glass-panel mb-4">
         <Button
+          variant="ghost"
           type="button"
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground"
           onClick={() => setMobileOpen((v) => !v)}

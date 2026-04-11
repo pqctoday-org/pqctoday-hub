@@ -79,6 +79,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
       <div className="flex flex-wrap gap-2">
         {ABSTRACTION_BACKENDS.map((b) => (
           <Button
+            variant="ghost"
             key={b.id}
             onClick={() => setSelectedBackend(b.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${

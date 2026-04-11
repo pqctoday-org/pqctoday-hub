@@ -71,6 +71,7 @@ export function AirplaneModeToast() {
             <span className="text-sm text-foreground">{toast.message}</span>
             {toast.action && (
               <Button
+                variant="ghost"
                 type="button"
                 onClick={toast.action.onClick}
                 className="text-xs font-medium text-primary hover:underline whitespace-nowrap shrink-0"
@@ -79,6 +80,7 @@ export function AirplaneModeToast() {
               </Button>
             )}
             <Button
+              variant="ghost"
               type="button"
               onClick={() => setToast(null)}
               className="text-muted-foreground hover:text-foreground shrink-0"

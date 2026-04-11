@@ -44,6 +44,7 @@ export function SortControl<T extends string = SortOption>({
   return (
     <div className="relative" ref={ref}>
       <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -61,6 +62,7 @@ export function SortControl<T extends string = SortOption>({
         >
           {items.map((option) => (
             <Button
+              variant="ghost"
               key={option.id}
               role="option"
               aria-selected={value === option.id}

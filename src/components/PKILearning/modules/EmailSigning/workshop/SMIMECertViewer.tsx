@@ -23,6 +23,7 @@ export const SMIMECertViewer: React.FC = () => {
       {/* View Toggle */}
       <div className="flex flex-wrap gap-2">
         <Button
+          variant="ghost"
           onClick={() => setViewMode('comparison')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             viewMode === 'comparison'
@@ -33,6 +34,7 @@ export const SMIMECertViewer: React.FC = () => {
           RSA vs ML-DSA Fields
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setViewMode('extensions')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             viewMode === 'extensions'
@@ -50,6 +52,7 @@ export const SMIMECertViewer: React.FC = () => {
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-foreground">Certificate Field Comparison</h4>
             <Button
+              variant="ghost"
               onClick={() => setShowNotes(!showNotes)}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >

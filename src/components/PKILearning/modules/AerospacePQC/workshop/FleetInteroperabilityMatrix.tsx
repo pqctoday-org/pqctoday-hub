@@ -89,6 +89,7 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
             >
               {ac.name}
               <Button
+                variant="ghost"
                 onClick={() => handleRemoveAircraft(ac.id)}
                 className="hover:text-foreground transition-colors"
                 aria-label={`Remove ${ac.name}`}
@@ -108,6 +109,7 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
                 />
               ) : (
                 <Button
+                  variant="ghost"
                   onClick={() => setAddAircraft('')}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
                 >

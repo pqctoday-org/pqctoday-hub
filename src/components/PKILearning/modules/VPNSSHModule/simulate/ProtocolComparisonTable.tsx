@@ -70,6 +70,7 @@ export const ProtocolComparisonTable: React.FC = () => {
           <span className="text-[10px] text-muted-foreground font-bold uppercase">Protocol</span>
           <div className="flex flex-wrap gap-1">
             <Button
+              variant="ghost"
               onClick={() => setFilterProtocol('all')}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors border ${
                 filterProtocol === 'all'
@@ -81,6 +82,7 @@ export const ProtocolComparisonTable: React.FC = () => {
             </Button>
             {protocols.map((p) => (
               <Button
+                variant="ghost"
                 key={p}
                 onClick={() => setFilterProtocol(p)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors border ${
@@ -98,6 +100,7 @@ export const ProtocolComparisonTable: React.FC = () => {
           <span className="text-[10px] text-muted-foreground font-bold uppercase">Mode</span>
           <div className="flex flex-wrap gap-1">
             <Button
+              variant="ghost"
               onClick={() => setFilterMode('all')}
               className={`px-3 py-1.5 rounded text-xs font-medium transition-colors border ${
                 filterMode === 'all'
@@ -109,6 +112,7 @@ export const ProtocolComparisonTable: React.FC = () => {
             </Button>
             {modes.map((m) => (
               <Button
+                variant="ghost"
                 key={m}
                 onClick={() => setFilterMode(m)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors border ${
@@ -131,6 +135,7 @@ export const ProtocolComparisonTable: React.FC = () => {
             <tr className="border-b border-border">
               <th className="text-left p-2">
                 <Button
+                  variant="ghost"
                   onClick={() => handleSort('protocol')}
                   className="flex items-center gap-1 text-muted-foreground font-bold hover:text-foreground transition-colors"
                 >
@@ -141,6 +146,7 @@ export const ProtocolComparisonTable: React.FC = () => {
               <th className="text-left p-2 text-muted-foreground font-bold">KEX Algorithm</th>
               <th className="text-right p-2">
                 <Button
+                  variant="ghost"
                   onClick={() => handleSort('handshakeBytes')}
                   className="flex items-center gap-1 text-muted-foreground font-bold hover:text-foreground transition-colors ml-auto"
                 >
@@ -149,6 +155,7 @@ export const ProtocolComparisonTable: React.FC = () => {
               </th>
               <th className="text-right p-2">
                 <Button
+                  variant="ghost"
                   onClick={() => handleSort('roundTrips')}
                   className="flex items-center gap-1 text-muted-foreground font-bold hover:text-foreground transition-colors ml-auto"
                 >
@@ -157,6 +164,7 @@ export const ProtocolComparisonTable: React.FC = () => {
               </th>
               <th className="text-right p-2">
                 <Button
+                  variant="ghost"
                   onClick={() => handleSort('publicKeyBytes')}
                   className="flex items-center gap-1 text-muted-foreground font-bold hover:text-foreground transition-colors ml-auto"
                 >
@@ -231,6 +239,7 @@ export const ProtocolComparisonTable: React.FC = () => {
       {/* Feature Comparison */}
       <div className="space-y-3">
         <Button
+          variant="ghost"
           onClick={() => setShowFeatures(!showFeatures)}
           className="text-sm font-bold text-foreground hover:text-primary transition-colors"
         >

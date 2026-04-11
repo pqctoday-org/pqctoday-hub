@@ -89,6 +89,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
               />
             </div>
             <Button
+              variant="ghost"
               onClick={handleMarkReviewed}
               disabled={isCompleted}
               className={`px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-2 ${
@@ -108,6 +109,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
 
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4 border-t border-border mt-2 px-2">
         <Button
+          variant="ghost"
           type="button"
           onClick={handlePrev}
           disabled={!hasPrev}
@@ -123,6 +125,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
 
         {hasNext ? (
           <Button
+            variant="ghost"
             type="button"
             onClick={handleNext}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-primary text-black hover:bg-primary/90 shadow-sm cursor-pointer"
@@ -132,6 +135,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
           </Button>
         ) : onNextStack ? (
           <Button
+            variant="ghost"
             type="button"
             onClick={() => {
               updateModuleProgress(currentModule.id, { status: 'completed' })
@@ -144,6 +148,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
           </Button>
         ) : (
           <Button
+            variant="ghost"
             type="button"
             disabled
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-muted text-muted-foreground/40 cursor-not-allowed"
@@ -161,6 +166,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
             Dive deeper into the details with an interactive beginner workshop for this module.
           </p>
           <Button
+            variant="ghost"
             onClick={() => navigate(`/learn/${currentModule.id}?diveDeeper=true&tab=workshop`)}
             className="px-6 py-2.5 bg-background border border-border hover:border-primary hover:text-primary transition-all rounded-lg font-medium shadow-sm"
           >

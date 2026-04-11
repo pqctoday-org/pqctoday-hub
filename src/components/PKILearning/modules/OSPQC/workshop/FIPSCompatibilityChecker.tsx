@@ -307,6 +307,7 @@ export const FIPSCompatibilityChecker: React.FC = () => {
           return (
             <div key={platform.id} className="glass-panel overflow-hidden">
               <Button
+                variant="ghost"
                 onClick={() => setExpandedId(isExpanded ? null : platform.id)}
                 className="flex items-center gap-3 w-full p-4 text-left"
               >

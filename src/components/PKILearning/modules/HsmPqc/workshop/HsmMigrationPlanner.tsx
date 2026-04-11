@@ -214,6 +214,7 @@ export const HsmMigrationPlanner: React.FC = () => {
             const Icon = phase.icon
             return (
               <Button
+                variant="ghost"
                 key={phase.id}
                 onClick={() => setCurrentPhase(idx)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
@@ -510,6 +511,7 @@ export const HsmMigrationPlanner: React.FC = () => {
               const isChecked = checkedItems.has(item.id)
               return (
                 <Button
+                  variant="ghost"
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${

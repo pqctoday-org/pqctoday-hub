@@ -172,6 +172,7 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
             </h3>
           </div>
           <Button
+            variant="ghost"
             onClick={onClose}
             aria-label="Close proof"
             className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors shrink-0"
@@ -391,6 +392,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     {hasCompare && (
                       <td className="p-2 w-8 text-center">
                         <Button
+                          variant="ghost"
                           type="button"
                           aria-label={
                             compareProducts!.has(key)
@@ -428,6 +430,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     )}
                     <td className="p-2 w-8">
                       <Button
+                        variant="ghost"
                         type="button"
                         aria-label={
                           selectedProducts?.has(key)
@@ -453,6 +456,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                     </td>
                     <td className="p-4">
                       <Button
+                        variant="ghost"
                         type="button"
                         aria-expanded={isExpanded}
                         aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.softwareName}`}
@@ -794,6 +798,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             )}
                             {item.proofUrl && (
                               <Button
+                                variant="ghost"
                                 onClick={() => setProofModal(item)}
                                 className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
                               >
@@ -807,6 +812,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             )}
                             {getProductExtraction(item.softwareName) && (
                               <Button
+                                variant="ghost"
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -857,6 +863,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                           </div>
                         </div>
                         <Button
+                          variant="ghost"
                           type="button"
                           aria-label={`Collapse ${item.softwareName}`}
                           onClick={(e) => {

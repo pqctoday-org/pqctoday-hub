@@ -74,6 +74,7 @@ export const SymmetricTab: React.FC = () => {
             height="h-32"
           />
           <Button
+            variant="ghost"
             onClick={() => runOperation('symEncrypt')}
             disabled={!selectedSymKeyId || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
@@ -96,6 +97,7 @@ export const SymmetricTab: React.FC = () => {
             height="h-32"
           />
           <Button
+            variant="ghost"
             onClick={() => runOperation('symDecrypt')}
             disabled={!selectedSymKeyId || loading}
             className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"

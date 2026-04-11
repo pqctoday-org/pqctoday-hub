@@ -270,6 +270,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
                 <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -489,6 +490,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
               ] as const
             ).map(({ key, label, value, set }) => (
               <Button
+                variant="ghost"
                 key={key}
                 onClick={() => set(!value)}
                 className={`text-xs rounded-lg px-2 py-1 border transition-colors ${
@@ -561,6 +563,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
                 <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -864,6 +867,7 @@ const KbkdfPanel = ({
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
                 <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -973,6 +977,7 @@ export const HsmKdfPanel = ({
         <div className="flex gap-1 bg-muted p-1 rounded-xl">
           {KDF_MODES.map((m) => (
             <Button
+              variant="ghost"
               key={m.id}
               onClick={() => {
                 setMode(m.id)
@@ -990,6 +995,7 @@ export const HsmKdfPanel = ({
           {/* SP 800-108 Rev1 (Aug 2022) §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF (0x3ae)
               — defined in constants but not yet implemented in this WASM build */}
           <Button
+            variant="ghost"
             disabled
             title="SP 800-108 Rev1 (Aug 2022) §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF — not yet implemented in this WASM build"
             className="flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] text-muted-foreground/40 cursor-not-allowed"

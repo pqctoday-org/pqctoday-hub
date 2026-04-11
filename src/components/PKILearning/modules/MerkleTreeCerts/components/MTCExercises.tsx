@@ -107,6 +107,7 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
                 </p>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => handleStartExercise(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
@@ -131,6 +132,7 @@ export const MTCExercises: React.FC<MTCExercisesProps> = ({
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >

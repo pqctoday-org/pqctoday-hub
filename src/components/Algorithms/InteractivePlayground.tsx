@@ -223,6 +223,7 @@ export const InteractivePlayground = () => {
           aria-label="Select cryptographic algorithm"
         >
           <Button
+            variant="ghost"
             onClick={() => {
               handleAlgorithmChange('ML-KEM')
               setOutput('')
@@ -239,6 +240,7 @@ export const InteractivePlayground = () => {
             ML-KEM (Encryption)
           </Button>
           <Button
+            variant="ghost"
             onClick={() => {
               handleAlgorithmChange('ML-DSA')
               setOutput('')
@@ -269,6 +271,7 @@ export const InteractivePlayground = () => {
               </span>
               {keyStore.length > 0 && (
                 <Button
+                  variant="ghost"
                   onClick={clearKeys}
                   className="text-xs text-status-error hover:text-destructive/80 flex items-center gap-1"
                 >
@@ -301,6 +304,7 @@ export const InteractivePlayground = () => {
               />
             </div>
             <Button
+              variant="ghost"
               onClick={generateKeys}
               disabled={loading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-12"
@@ -350,6 +354,7 @@ export const InteractivePlayground = () => {
                     />
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('encapsulate')}
                     disabled={!selectedEncKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
@@ -373,6 +378,7 @@ export const InteractivePlayground = () => {
                     />
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('decapsulate')}
                     disabled={!selectedDecKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-secondary/20 text-secondary border border-secondary/30 hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
@@ -405,6 +411,7 @@ export const InteractivePlayground = () => {
                     Encrypt Data (Shared Secret)
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('encrypt')}
                     disabled={!sharedSecret || loading}
                     className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
@@ -424,6 +431,7 @@ export const InteractivePlayground = () => {
                     Decrypt Data (Shared Secret)
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('decrypt')}
                     disabled={!encryptedData || loading}
                     className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
@@ -454,6 +462,7 @@ export const InteractivePlayground = () => {
                     />
                   </div>
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('sign')}
                     disabled={!selectedSignKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
@@ -491,6 +500,7 @@ export const InteractivePlayground = () => {
                     className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent font-mono"
                   />
                   <Button
+                    variant="ghost"
                     onClick={() => runOperation('verify')}
                     disabled={!selectedVerifyKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-status-warning/20 text-status-warning border border-status-warning/30 hover:bg-status-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"

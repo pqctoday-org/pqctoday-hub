@@ -146,6 +146,7 @@ const FamilyGroup = ({ family, mechs, expanded, onToggle }: FamilyGroupProps) =>
     <div className={`border-l-2 pl-3 ${meta.border}`}>
       {/* Group header */}
       <Button
+        variant="ghost"
         type="button"
         onClick={onToggle}
         className="flex items-center gap-2 w-full py-1.5 text-left hover:opacity-80 transition-opacity"

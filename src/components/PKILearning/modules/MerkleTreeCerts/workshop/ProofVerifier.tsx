@@ -275,6 +275,7 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
       {/* Setup */}
       {!levels ? (
         <Button
+          variant="ghost"
           onClick={handleSetup}
           disabled={isBuilding}
           className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"

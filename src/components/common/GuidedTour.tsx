@@ -287,6 +287,7 @@ const TourCard: React.FC<{
             </Button>
           )}
           <Button
+            variant="ghost"
             onClick={onNext}
             className="flex items-center gap-1 px-4 min-h-[44px] text-black font-bold"
           >

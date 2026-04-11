@@ -93,6 +93,7 @@ export const TDEMigrationPlanner: React.FC = () => {
           {TDE_MIGRATION_STEPS.map((s, idx) => (
             <React.Fragment key={s.id}>
               <Button
+                variant="ghost"
                 onClick={() => handleStepClick(idx)}
                 className={`flex flex-col items-center gap-1 px-2 py-1 rounded transition-colors ${
                   idx === currentStep
@@ -211,6 +212,7 @@ export const TDEMigrationPlanner: React.FC = () => {
           {/* Navigation */}
           <div className="flex flex-col sm:flex-row gap-3 justify-between">
             <Button
+              variant="ghost"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0}
               className="px-5 py-2.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 text-foreground text-sm transition-colors"
@@ -218,6 +220,7 @@ export const TDEMigrationPlanner: React.FC = () => {
               &larr; Previous
             </Button>
             <Button
+              variant="ghost"
               onClick={handleMarkComplete}
               className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-colors ${
                 completedSteps.has(currentStep)
@@ -276,6 +279,7 @@ export const TDEMigrationPlanner: React.FC = () => {
             </p>
           </div>
           <Button
+            variant="ghost"
             onClick={() => {
               setCurrentStep(0)
               setCompletedSteps(new Set())

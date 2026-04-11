@@ -159,6 +159,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
           const isSelected = tp.id === selectedTransport
           return (
             <Button
+              variant="ghost"
               key={tp.id}
               onClick={() => setSelectedTransport(tp.id)}
               className={`glass-panel p-4 text-left transition-all ${
@@ -205,6 +206,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
               Classical
             </span>
             <Button
+              variant="ghost"
               role="switch"
               aria-checked={cryptoMode === 'pqc'}
               aria-label="Toggle PQC mode"

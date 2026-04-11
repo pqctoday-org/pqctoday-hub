@@ -191,6 +191,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             </>
           ) : currentStepIndex === steps.length - 1 ? (
             <Button
+              variant="ghost"
               onClick={onComplete || onBack}
               className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
             >
@@ -199,6 +200,7 @@ export const StepWizard: React.FC<StepWizardProps> = ({
             </Button>
           ) : (
             <Button
+              variant="ghost"
               onClick={onNext}
               className="flex-1 min-h-[44px] gap-2 bg-success hover:bg-success/90 text-success-foreground"
             >

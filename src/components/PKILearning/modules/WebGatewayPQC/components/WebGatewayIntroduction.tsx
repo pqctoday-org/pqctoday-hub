@@ -93,11 +93,19 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Try the{' '}
-            <Button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Topology Builder (Workshop Step 1)
             </Button>{' '}
             to construct your gateway architecture and the{' '}
-            <Button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               TLS Termination Patterns (Step 2)
             </Button>{' '}
             to compare these patterns side by side.
@@ -157,7 +165,11 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Use the{' '}
-            <Button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Certificate Rotation Planner (Workshop Step 4)
             </Button>{' '}
             to model your edge migration timeline.
@@ -228,7 +240,11 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Try the{' '}
-            <Button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Handshake Budget Calculator (Workshop Step 3)
             </Button>{' '}
             to model your specific gateway scenario.
@@ -408,7 +424,11 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Use the{' '}
-            <Button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Vendor Readiness Matrix (Workshop Step 5)
             </Button>{' '}
             to assess your specific gateway infrastructure against PQC readiness.
@@ -430,6 +450,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             </p>
           </div>
           <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors shrink-0"
           >

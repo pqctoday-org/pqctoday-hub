@@ -135,6 +135,7 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
             </span>
             {crqcYear !== ESTIMATED_CRQC_YEAR && (
               <Button
+                variant="ghost"
                 onClick={() => onCrqcYearChange(ESTIMATED_CRQC_YEAR)}
                 className="text-xs text-muted-foreground hover:text-foreground underline"
               >

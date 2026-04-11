@@ -44,6 +44,7 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
         <div className="flex flex-wrap gap-2">
           {ALGORITHM_SIZES.map((a) => (
             <Button
+              variant="ghost"
               key={a.shortName}
               onClick={() => setSelectedAlgo(a.shortName)}
               className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
@@ -194,6 +195,7 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
       {/* Actions */}
       <div className="flex flex-wrap gap-3">
         <Button
+          variant="ghost"
           onClick={onComplete}
           className="px-4 py-2 bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors text-sm"
         >

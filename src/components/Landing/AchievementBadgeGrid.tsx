@@ -56,6 +56,7 @@ function CategoryInfoButton({ category }: { category: AchievementCategory }) {
   return (
     <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
       <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="min-h-[44px] min-w-[44px] flex items-center justify-center -m-4 p-4 text-muted-foreground/50 hover:text-primary transition-colors"

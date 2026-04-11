@@ -77,6 +77,7 @@ export const CoverageGrid: React.FC<CoverageGridProps> = ({ selection, onSelect 
                   return (
                     <td key={type} className="py-1 px-1">
                       <Button
+                        variant="ghost"
                         onClick={() => onSelect({ region, orgType: type })}
                         className={`w-full text-left p-2 rounded-lg border text-xs transition-colors min-h-[52px]
                           ${

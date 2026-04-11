@@ -58,6 +58,7 @@ export const BYOKKeyDesigner: React.FC = () => {
           const isSelected = selectedPatternId === arch.id
           return (
             <Button
+              variant="ghost"
               key={arch.id}
               onClick={() => setSelectedPatternId(arch.id)}
               className={`text-left rounded-lg border p-4 transition-all ${

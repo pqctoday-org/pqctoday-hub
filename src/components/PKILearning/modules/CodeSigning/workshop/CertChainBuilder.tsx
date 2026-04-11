@@ -216,6 +216,7 @@ export const CertChainBuilder: React.FC = () => {
                 )}
                 <div className={`rounded-lg border ${colors.border} ${colors.bg} overflow-hidden`}>
                   <Button
+                    variant="ghost"
                     onClick={() => setExpandedCert(isExpanded ? null : idx)}
                     className="w-full p-4 text-left"
                   >

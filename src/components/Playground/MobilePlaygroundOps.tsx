@@ -106,6 +106,7 @@ function MobileOpsContent() {
           const isActive = activeTab === tab.id
           return (
             <Button
+              variant="ghost"
               key={tab.id}
               onClick={() => scrollToTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
@@ -140,6 +141,7 @@ function MobileOpsContent() {
       {/* Collapsible log panel */}
       <div className="border-t border-border shrink-0">
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setLogOpen((o) => !o)}
           className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"

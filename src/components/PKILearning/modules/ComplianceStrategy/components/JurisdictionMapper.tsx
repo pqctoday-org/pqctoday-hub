@@ -616,6 +616,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               {timelineCountry && (
                                 <Button
+                                  variant="ghost"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     navigate(
@@ -629,6 +630,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                                 </Button>
                               )}
                               <Button
+                                variant="ghost"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   dismissFramework(fw.id)

@@ -64,6 +64,7 @@ export const BusinessToolsGrid = () => {
         {/* Category filter pills */}
         <div className="flex flex-wrap gap-2">
           <Button
+            variant="ghost"
             onClick={() => setActiveCategory(null)}
             aria-pressed={activeCategory === null}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
@@ -84,6 +85,7 @@ export const BusinessToolsGrid = () => {
             const isActive = activeCategory === cat
             return (
               <Button
+                variant="ghost"
                 key={cat}
                 onClick={() => setActiveCategory(isActive ? null : cat)}
                 aria-pressed={isActive}

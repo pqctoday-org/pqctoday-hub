@@ -170,6 +170,7 @@ export const TLSTerminationPatterns: React.FC = () => {
         <div>
           <div className="text-xs font-bold text-foreground mb-1">Crypto Mode</div>
           <Button
+            variant="ghost"
             onClick={() =>
               setCryptoMode((prev) => (prev === 'classical' ? 'pqc-hybrid' : 'classical'))
             }
@@ -190,6 +191,7 @@ export const TLSTerminationPatterns: React.FC = () => {
         <div>
           <div className="text-xs font-bold text-foreground mb-1">Compare</div>
           <Button
+            variant="ghost"
             onClick={() => setCompareMode((prev) => !prev)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm ${
               compareMode

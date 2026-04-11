@@ -90,6 +90,7 @@ export const ShareButton = ({
           <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
           <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] rounded-lg border border-border bg-card shadow-lg p-1">
             <Button
+              variant="ghost"
               onClick={handleCopyLink}
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
             >
@@ -97,6 +98,7 @@ export const ShareButton = ({
               {copied ? 'Copied!' : 'Copy link'}
             </Button>
             <Button
+              variant="ghost"
               onClick={handleTwitter}
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
             >
@@ -106,6 +108,7 @@ export const ShareButton = ({
               Post on X
             </Button>
             <Button
+              variant="ghost"
               onClick={handleLinkedIn}
               className="flex w-full items-center gap-2 rounded-md px-3 py-2 text-sm text-foreground hover:bg-muted/50 transition-colors"
             >

@@ -111,6 +111,7 @@ export const BlockchainExercises: React.FC<BlockchainExercisesProps> = ({
                 </p>
               </div>
               <Button
+                variant="ghost"
                 onClick={() => onNavigateToWorkshop(scenario.chain)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
@@ -134,6 +135,7 @@ export const BlockchainExercises: React.FC<BlockchainExercisesProps> = ({
             </div>
           </div>
           <Button
+            variant="ghost"
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >

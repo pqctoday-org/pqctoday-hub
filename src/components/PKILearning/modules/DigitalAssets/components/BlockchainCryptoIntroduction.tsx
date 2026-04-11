@@ -283,6 +283,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
 
         <div className="mt-4">
           <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-4 py-2"
           >

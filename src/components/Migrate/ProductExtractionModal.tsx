@@ -218,6 +218,7 @@ export const ProductExtractionModal = ({
               question={`Tell me about ${softwareName}'s PQC capabilities and migration readiness.${extraction.pqcCapabilityDescription ? ` Current status: ${extraction.pqcCapabilityDescription}` : ''}${extraction.cryptoPrimitives ? ` Crypto: ${extraction.cryptoPrimitives}` : ''}`}
             />
             <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Close details"
               className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"

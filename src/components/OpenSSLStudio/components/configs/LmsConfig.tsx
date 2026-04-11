@@ -342,6 +342,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
       {/* Mode Toggle Tabs */}
       <div className="flex gap-1 p-1 bg-muted rounded-lg">
         <Button
+          variant="ghost"
           data-testid="lms-mode-generate"
           onClick={() => setMode('generate')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -353,6 +354,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           Generate
         </Button>
         <Button
+          variant="ghost"
           data-testid="lms-mode-sign"
           onClick={() => setMode('sign')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -364,6 +366,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           Sign
         </Button>
         <Button
+          variant="ghost"
           data-testid="lms-mode-verify"
           onClick={() => setMode('verify')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -410,6 +413,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           verification only.
         </p>
         <Button
+          variant="ghost"
           onClick={handleLoadSamples}
           className="ml-6 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded border border-primary/30 transition-colors"
         >
@@ -462,6 +466,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           </div>
 
           <Button
+            variant="ghost"
             onClick={async () => {
               try {
                 const lmsInfo = LMS_TYPES.find((t) => t.value === lmsType)
@@ -547,6 +552,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           </div>
 
           <Button
+            variant="ghost"
             disabled={!lmsDataFile || !lmsKeyFile}
             onClick={async () => {
               try {
@@ -638,6 +644,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             </span>
           </div>
           <Button
+            variant="ghost"
             disabled={!lmsKeyFile || !lmsSigFile || !lmsDataFile}
             onClick={async () => {
               try {

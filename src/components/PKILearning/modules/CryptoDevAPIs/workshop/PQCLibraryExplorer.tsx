@@ -147,6 +147,7 @@ const LibCard: React.FC<LibCardProps> = ({
         <div className="flex items-center gap-2 shrink-0">
           {compareMode && (
             <Button
+              variant="ghost"
               onClick={onToggleSelect}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
@@ -158,6 +159,7 @@ const LibCard: React.FC<LibCardProps> = ({
             </Button>
           )}
           <Button
+            variant="ghost"
             onClick={onToggleExpand}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
@@ -386,6 +388,7 @@ export const PQCLibraryExplorer: React.FC = () => {
           onSelect={(id) => setPerfFilter(id as PerfFilter)}
         />
         <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())

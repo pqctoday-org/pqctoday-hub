@@ -425,6 +425,7 @@ export const Pkcs11Simulator: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {operations.map((op, idx) => (
             <Button
+              variant="ghost"
               key={op.id}
               onClick={() => {
                 setCurrentStep(idx)
@@ -552,6 +553,7 @@ export const Pkcs11Simulator: React.FC = () => {
         {currentOp.classicalEquivalent && (
           <div className="border border-border rounded-lg overflow-hidden mb-3">
             <Button
+              variant="ghost"
               onClick={() =>
                 setExpandedClassical(expandedClassical === currentStep ? null : currentStep)
               }
@@ -576,6 +578,7 @@ export const Pkcs11Simulator: React.FC = () => {
         {currentOp.vendorNotes && (
           <div className="border border-border rounded-lg overflow-hidden">
             <Button
+              variant="ghost"
               onClick={() => setExpandedVendor(expandedVendor === currentStep ? null : currentStep)}
               className="w-full flex items-center justify-between px-4 py-3 bg-muted/30 text-sm font-medium text-foreground"
             >

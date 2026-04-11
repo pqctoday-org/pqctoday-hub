@@ -279,6 +279,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
       {/* Section 4.5: Advanced — Signatureless Certificates */}
       <section className="glass-panel">
         <Button
+          variant="ghost"
           onClick={() => setShowSignatureless((v) => !v)}
           className="w-full p-6 flex items-center justify-between text-left"
           aria-expanded={showSignatureless}
@@ -501,6 +502,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             certificates hands-on.
           </p>
           <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-6 py-3 mx-auto"
           >

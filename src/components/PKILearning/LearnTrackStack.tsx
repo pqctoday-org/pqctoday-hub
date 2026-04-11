@@ -320,6 +320,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   {/* Hidden · Restore badge */}
                   {filteredCount < totalCount && (
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -334,6 +335,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   {/* Per-track quiz button */}
                   {quizCategories.length > 0 && (
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -370,6 +372,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                 <div className="flex items-center gap-2 shrink-0">
                   {quizCategories.length > 0 && (
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -384,6 +387,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                   )}
                   {filteredCount < totalCount && (
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()

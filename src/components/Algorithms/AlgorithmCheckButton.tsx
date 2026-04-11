@@ -49,6 +49,7 @@ export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
   return (
     <div className="inline-flex items-center gap-1.5">
       <Button
+        variant="ghost"
         type="button"
         onClick={state === 'done' ? () => setExpanded(!expanded) : handleRun}
         disabled={state === 'running'}

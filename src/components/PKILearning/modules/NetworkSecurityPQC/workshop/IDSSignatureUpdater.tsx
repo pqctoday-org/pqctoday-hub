@@ -184,6 +184,7 @@ export const IDSSignatureUpdater: React.FC = () => {
               <div className="flex items-start gap-3">
                 {/* Toggle */}
                 <Button
+                  variant="ghost"
                   onClick={() => toggleRule(rule.id)}
                   className={`shrink-0 w-10 h-6 rounded-full transition-colors relative ${
                     rule.enabled ? 'bg-primary' : 'bg-muted border border-border'
@@ -224,6 +225,7 @@ export const IDSSignatureUpdater: React.FC = () => {
                 </div>
 
                 <Button
+                  variant="ghost"
                   onClick={() => setExpandedId(expandedId === rule.id ? null : rule.id)}
                   className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
                   aria-label="Toggle rule details"

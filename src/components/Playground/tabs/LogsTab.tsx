@@ -34,6 +34,7 @@ const LogsTabSoftware: React.FC = () => {
         </h4>
         <div className="flex items-center gap-4">
           <Button
+            variant="ghost"
             onClick={() => {
               const textOutput = sortedLogs
                 .map(
@@ -48,6 +49,7 @@ const LogsTabSoftware: React.FC = () => {
             Copy Logs
           </Button>
           <Button
+            variant="ghost"
             onClick={clearLogs}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >

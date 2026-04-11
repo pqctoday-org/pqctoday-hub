@@ -333,6 +333,7 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
           </p>
         </div>
         <Button
+          variant="ghost"
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >

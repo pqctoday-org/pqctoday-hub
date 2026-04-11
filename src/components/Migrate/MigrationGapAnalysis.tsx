@@ -46,6 +46,7 @@ export const MigrationGapAnalysis: React.FC<MigrationGapAnalysisProps> = ({ gaps
   return (
     <div className="border border-border rounded-lg overflow-hidden">
       <Button
+        variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
         onKeyDown={(e) => {
           if (e.key === 'Escape' && isExpanded) {

@@ -192,6 +192,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   </h3>
                 </div>
                 <Button
+                  variant="ghost"
                   onClick={onClose}
                   aria-label="Close details"
                   className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"

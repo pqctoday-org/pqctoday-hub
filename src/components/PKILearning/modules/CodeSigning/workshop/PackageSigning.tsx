@@ -133,6 +133,7 @@ export const PackageSigning: React.FC = () => {
         <div className="flex flex-wrap gap-2">
           {SIGNING_MODES.map((mode) => (
             <Button
+              variant="ghost"
               key={mode.id}
               onClick={() => {
                 setSelectedMode(mode.id as SigningModeId)

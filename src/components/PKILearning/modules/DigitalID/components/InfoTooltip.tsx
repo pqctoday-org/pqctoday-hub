@@ -38,6 +38,7 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
   return (
     <span className={`inline ${className}`}>
       <Button
+        variant="ghost"
         ref={triggerRef}
         type="button"
         className="inline-flex items-center text-primary hover:text-primary/80 transition-colors"

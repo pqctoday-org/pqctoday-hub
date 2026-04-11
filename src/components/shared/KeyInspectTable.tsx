@@ -323,6 +323,7 @@ export const KeyInspectTable: React.FC<KeyInspectTableProps> = ({
                 <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => openInspect(k)}
                       className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"

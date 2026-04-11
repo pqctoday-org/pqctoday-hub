@@ -166,6 +166,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
       {/* Generate Both CTA */}
       <div className="flex justify-center">
         <Button
+          variant="ghost"
           onClick={handleGenerateBoth}
           disabled={classicalKey.loading || pqcKey.loading}
           className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -198,6 +199,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           </div>
 
           <Button
+            variant="ghost"
             onClick={handleGenerateClassical}
             disabled={classicalKey.loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
@@ -259,6 +261,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
           </div>
 
           <Button
+            variant="ghost"
             onClick={handleGeneratePQC}
             disabled={pqcKey.loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"

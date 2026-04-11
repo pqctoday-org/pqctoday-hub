@@ -453,6 +453,7 @@ const LogColumn = ({
       {/* Header / Tabs */}
       <div className={clsx('flex items-center border-b', borderColor)}>
         <Button
+          variant="ghost"
           onClick={() => setView('protocol')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors border-r flex items-center justify-center gap-2',
@@ -465,6 +466,7 @@ const LogColumn = ({
           <FileText size={14} /> Protocol Log
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setView('wire')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors border-r flex items-center justify-center gap-2',
@@ -477,6 +479,7 @@ const LogColumn = ({
           <Activity size={14} /> Wire Data
         </Button>
         <Button
+          variant="ghost"
           onClick={() => setView('crypto')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2',
@@ -489,6 +492,7 @@ const LogColumn = ({
         </Button>
 
         <Button
+          variant="ghost"
           onClick={(e) => {
             e.stopPropagation()
             handleCopy()

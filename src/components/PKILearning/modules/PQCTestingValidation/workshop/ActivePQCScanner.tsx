@@ -126,6 +126,7 @@ export const ActivePQCScanner: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Protocol:</span>
         {(['all', 'tls', 'ssh', 'ikev2'] as const).map((p) => (
           <Button
+            variant="ghost"
             key={p}
             onClick={() => setFilterProto(p)}
             className={`text-xs px-3 py-1 rounded-full border transition-colors ${
@@ -140,6 +141,7 @@ export const ActivePQCScanner: React.FC = () => {
         <div className="ml-auto flex gap-2">
           {!scanned && (
             <Button
+              variant="ghost"
               onClick={selectAll}
               className="text-xs px-3 py-1.5 bg-muted text-muted-foreground border border-border rounded hover:text-foreground transition-colors"
             >
@@ -148,6 +150,7 @@ export const ActivePQCScanner: React.FC = () => {
           )}
           {!scanned ? (
             <Button
+              variant="ghost"
               onClick={runScan}
               disabled={selected.size === 0 || scanning}
               className="text-xs px-4 py-1.5 bg-primary text-primary-foreground rounded font-semibold hover:bg-primary/90 disabled:opacity-40 transition-colors"
@@ -158,6 +161,7 @@ export const ActivePQCScanner: React.FC = () => {
             </Button>
           ) : (
             <Button
+              variant="ghost"
               onClick={resetScan}
               className="text-xs px-3 py-1.5 bg-muted text-muted-foreground border border-border rounded hover:text-foreground transition-colors"
             >
@@ -172,6 +176,7 @@ export const ActivePQCScanner: React.FC = () => {
         <div className="grid sm:grid-cols-2 gap-2">
           {filteredTargets.map((t) => (
             <Button
+              variant="ghost"
               key={t.id}
               onClick={() => toggleTarget(t.id)}
               className={`text-left p-3 rounded-lg border transition-all ${

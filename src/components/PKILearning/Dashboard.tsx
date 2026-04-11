@@ -100,6 +100,7 @@ const LearnSortControl = ({
   return (
     <div className="relative" ref={ref}>
       <Button
+        variant="ghost"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -143,6 +144,7 @@ const LearnSortControl = ({
         >
           {SORT_OPTIONS.map((option) => (
             <Button
+              variant="ghost"
               key={option.id}
               type="button"
               role="option"
@@ -686,6 +688,7 @@ const ModuleTracksGrid = ({
         {/* My Modules filter toggle */}
         {myLearnModules.length > 0 && (
           <Button
+            variant="ghost"
             onClick={() => setShowOnlyLearnModules(!showOnlyLearnModules)}
             className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
               showOnlyLearnModules
@@ -766,6 +769,7 @@ const ModuleTracksGrid = ({
                   if (item.kind === 'checkpoint') {
                     return (
                       <Button
+                        variant="ghost"
                         key={item.id}
                         onClick={() => navigateToQuiz(item.categories)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"

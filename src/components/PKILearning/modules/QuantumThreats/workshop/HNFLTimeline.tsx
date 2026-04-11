@@ -114,6 +114,7 @@ export const HNFLTimeline: React.FC = () => {
               { label: 'Long-lived firmware', years: 25 },
             ].map((preset) => (
               <Button
+                variant="ghost"
                 key={preset.label}
                 onClick={() => setCredentialValidity(preset.years)}
                 className={`text-xs px-2 py-1 rounded border transition-colors ${

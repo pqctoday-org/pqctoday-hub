@@ -87,6 +87,7 @@ export const IAMCryptoInventory: React.FC = () => {
 
   const renderSortButton = (col: SortKey, label: string) => (
     <Button
+      variant="ghost"
       onClick={() => handleSort(col)}
       className="flex items-center gap-1 text-muted-foreground font-medium hover:text-foreground transition-colors"
     >

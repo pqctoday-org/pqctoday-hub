@@ -183,6 +183,7 @@ export const CuriousSummaryBanner = ({
     >
       {!isFullPage && (
         <Button
+          variant="ghost"
           type="button"
           onClick={() => setExpanded((e) => !e)}
           className="flex items-center justify-between w-full px-4 py-3 text-left"

@@ -141,6 +141,7 @@ export const TopologyBuilder: React.FC = () => {
                         </div>
                         {component.id !== 'client' && (
                           <Button
+                            variant="ghost"
                             onClick={() => handleRemoveComponent(component.id)}
                             className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           >
@@ -219,6 +220,7 @@ export const TopologyBuilder: React.FC = () => {
               const Icon = ICON_MAP[component.iconName] || Server
               return (
                 <Button
+                  variant="ghost"
                   key={component.id}
                   onClick={() => handleAddComponent(component)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-sm"
@@ -236,6 +238,7 @@ export const TopologyBuilder: React.FC = () => {
       {/* Analyze Button */}
       {connections.length > 0 && (
         <Button
+          variant="ghost"
           onClick={() => setShowAnalysis(true)}
           className="w-full px-4 py-3 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
         >

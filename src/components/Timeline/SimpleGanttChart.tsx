@@ -354,6 +354,7 @@ export const SimpleGanttChart = ({
             }}
           >
             <Button
+              variant="ghost"
               className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
               onClick={(e) => handlePhaseClick(phaseData, e)}
               onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
@@ -434,6 +435,7 @@ export const SimpleGanttChart = ({
           </div>
           {myCountries.length > 0 && onSetShowOnlyMyCountries && (
             <Button
+              variant="ghost"
               onClick={() => onSetShowOnlyMyCountries(!showOnlyMyCountries)}
               className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                 showOnlyMyCountries
@@ -448,6 +450,7 @@ export const SimpleGanttChart = ({
           )}
           {selectedCountry !== 'All' && (
             <Button
+              variant="ghost"
               type="button"
               aria-label="Copy country timeline link"
               onClick={() => {
@@ -514,6 +517,7 @@ export const SimpleGanttChart = ({
           />
         </div>
         <Button
+          variant="ghost"
           onClick={() => {
             const next = selectedPhaseType === 'Deadline' ? 'All' : 'Deadline'
             setSelectedPhaseType(next)
@@ -530,6 +534,7 @@ export const SimpleGanttChart = ({
           <span className="hidden md:inline">Deadlines</span>
         </Button>
         <Button
+          variant="ghost"
           onClick={handleExportCSV}
           disabled={processedData.length === 0}
           className="flex items-center justify-center px-2.5 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
@@ -579,7 +584,11 @@ export const SimpleGanttChart = ({
       {processedData.length === 0 && (
         <div className="text-center py-16 text-muted-foreground">
           <p className="text-sm">No results match your filters.</p>
-          <Button onClick={clearAllFilters} className="mt-2 text-primary text-xs hover:underline">
+          <Button
+            variant="ghost"
+            onClick={clearAllFilters}
+            className="mt-2 text-primary text-xs hover:underline"
+          >
             Clear all filters
           </Button>
         </div>
@@ -705,6 +714,7 @@ export const SimpleGanttChart = ({
                               <div className="flex items-center gap-0.5 -ml-1 mt-0.5">
                                 {onToggleMyCountry && (
                                   <Button
+                                    variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       onToggleMyCountry(country.countryName)

@@ -55,6 +55,7 @@ export const CloudSecretsComparator: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {filterBtns.map(({ id, label }) => (
           <Button
+            variant="ghost"
             key={id}
             onClick={() => setFilter(id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${

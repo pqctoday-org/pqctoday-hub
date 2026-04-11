@@ -453,6 +453,7 @@ const InfoModal = ({
               <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
             </div>
             <Button
+              variant="ghost"
               ref={closeRef}
               onClick={onClose}
               className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors shrink-0"
@@ -780,6 +781,7 @@ export const PersonalizationSection = () => {
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-2">
           {/* Avatar tile — clickable */}
           <Button
+            variant="ghost"
             onClick={handleEditAvatar}
             aria-label="Edit personalization settings"
             className="relative shrink-0 w-24 sm:w-32 md:w-40 rounded-2xl group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -830,6 +832,7 @@ export const PersonalizationSection = () => {
                   return (
                     <div key={step.id} className="flex flex-col items-center gap-1.5">
                       <Button
+                        variant="ghost"
                         onClick={() => index <= currentStep && setCurrentStep(index)}
                         disabled={index > currentStep}
                         className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
@@ -874,6 +877,7 @@ export const PersonalizationSection = () => {
                           Select Your Experience Level
                         </h3>
                         <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('experience')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
@@ -907,6 +911,7 @@ export const PersonalizationSection = () => {
                           Select Your Role
                         </h3>
                         <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('role')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
@@ -952,6 +957,7 @@ export const PersonalizationSection = () => {
                           Select Your Continental Region
                         </h3>
                         <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('region')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
@@ -985,6 +991,7 @@ export const PersonalizationSection = () => {
                           Select Your Core Industry
                         </h3>
                         <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('industry')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
@@ -1035,6 +1042,7 @@ export const PersonalizationSection = () => {
                 </Button>
                 {currentStep === steps.length - 1 ? (
                   <Button
+                    variant="ghost"
                     onClick={handleDone}
                     className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                   >
@@ -1042,6 +1050,7 @@ export const PersonalizationSection = () => {
                   </Button>
                 ) : (
                   <Button
+                    variant="ghost"
                     onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
                     className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
                   >

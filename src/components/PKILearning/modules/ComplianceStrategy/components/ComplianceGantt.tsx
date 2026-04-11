@@ -156,6 +156,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
             }}
           >
             <Button
+              variant="ghost"
               className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
               onClick={() => onPhaseClick(phaseData)}
               aria-label={`${phaseData.phase}: ${phaseData.title}`}

@@ -67,6 +67,7 @@ export const QueryableEncryptionLab: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {QUERYABLE_ENCRYPTION_SCHEMES.map((s) => (
           <Button
+            variant="ghost"
             key={s.id}
             onClick={() => setActiveTab(s.id)}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${

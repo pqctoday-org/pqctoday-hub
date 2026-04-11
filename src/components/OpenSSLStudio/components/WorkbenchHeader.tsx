@@ -22,6 +22,7 @@ export const WorkbenchHeader: React.FC = () => {
         0. Configuration
       </span>
       <Button
+        variant="ghost"
         onClick={handleEditConfig}
         className="w-full p-3 rounded-lg border border-border bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
       >

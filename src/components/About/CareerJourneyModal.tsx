@@ -94,6 +94,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
                 My Career Journey
               </h2>
               <Button
+                variant="ghost"
                 onClick={onClose}
                 className="p-1.5 hover:bg-muted/20 rounded-full transition-colors"
                 aria-label="Close modal"
@@ -133,6 +134,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
 
               {/* Navigation Controls */}
               <Button
+                variant="ghost"
                 onClick={prev}
                 className="absolute left-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Previous panel"
@@ -140,6 +142,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
                 <ChevronLeft size={20} className="md:w-6 md:h-6" />
               </Button>
               <Button
+                variant="ghost"
                 onClick={next}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Next panel"
@@ -153,6 +156,7 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
               <div className="flex gap-2">
                 {PANELS.map((_, i) => (
                   <Button
+                    variant="ghost"
                     key={i}
                     onClick={() => setCurrentIndex(i)}
                     className={`h-1.5 rounded-full transition-all ${

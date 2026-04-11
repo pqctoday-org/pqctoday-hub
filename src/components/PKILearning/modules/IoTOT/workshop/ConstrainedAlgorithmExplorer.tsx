@@ -35,6 +35,7 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {DEVICE_CLASSES.map((dc, idx) => (
             <Button
+              variant="ghost"
               key={dc.id}
               onClick={() => setSelectedClassIdx(idx)}
               className={`p-3 rounded-lg border text-left transition-colors ${

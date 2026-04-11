@@ -97,6 +97,7 @@ function FunctionCard({
 }) {
   return (
     <Button
+      variant="ghost"
       onClick={onSelect}
       className={`text-left rounded-lg border p-3 transition-all ${
         isSelected

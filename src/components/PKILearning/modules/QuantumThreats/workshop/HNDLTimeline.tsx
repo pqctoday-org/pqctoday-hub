@@ -107,6 +107,7 @@ export const HNDLTimeline: React.FC = () => {
               { label: 'State secrets', years: 75 },
             ].map((preset) => (
               <Button
+                variant="ghost"
                 key={preset.label}
                 onClick={() => setDataLifetime(preset.years)}
                 className={`text-xs px-2 py-1 rounded border transition-colors ${

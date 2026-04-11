@@ -88,6 +88,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         <div className="grid sm:grid-cols-2 gap-2">
           {TVLA_TARGETS.map((t) => (
             <Button
+              variant="ghost"
               key={t.id}
               onClick={() => setSelectedTarget(t.id)}
               className={`text-left p-3 rounded-lg border transition-all ${

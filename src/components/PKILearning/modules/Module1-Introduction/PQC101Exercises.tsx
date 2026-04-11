@@ -75,6 +75,7 @@ export const PQC101Exercises: React.FC<PQC101ExercisesProps> = ({
           </details>
           {exercise.workshopStep !== null && (
             <Button
+              variant="ghost"
               onClick={() => {
                 onSetWorkshopConfig({ step: exercise.workshopStep as number })
                 onNavigateToWorkshop()

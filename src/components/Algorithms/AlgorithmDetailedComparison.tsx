@@ -97,6 +97,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
           </TabsList>
           {onInfoOpen && (
             <Button
+              variant="ghost"
               onClick={onInfoOpen}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
               aria-label="Performance data methodology"
@@ -221,6 +222,7 @@ function CompareButton({
   return (
     <div className="relative group/compare flex items-center shrink-0">
       <Button
+        variant="ghost"
         type="button"
         onClick={() => onToggleCompare(algo.name)}
         disabled={!canToggle && !isCompared}
@@ -370,6 +372,7 @@ const PerformanceView = ({
               ).map(([field, label]) => (
                 <th key={field} className="p-4 font-semibold">
                   <Button
+                    variant="ghost"
                     onClick={() => handleSort(field)}
                     className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                   >

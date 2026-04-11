@@ -17,6 +17,7 @@ export const PipelineIntegrationLab: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {PIPELINE_INTEGRATION_PATTERNS.map((p) => (
           <Button
+            variant="ghost"
             key={p.id}
             onClick={() => setActiveTab(p.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${

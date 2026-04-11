@@ -309,6 +309,7 @@ export const TimelineView = () => {
             </div>
             {countryFilter !== 'All' && (
               <Button
+                variant="ghost"
                 type="button"
                 aria-label="Copy country timeline link"
                 onClick={() => {
@@ -325,6 +326,7 @@ export const TimelineView = () => {
               </Button>
             )}
             <Button
+              variant="ghost"
               type="button"
               aria-label="Export to CSV"
               title="Export filtered timeline data to CSV"

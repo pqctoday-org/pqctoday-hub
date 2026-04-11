@@ -95,6 +95,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
       >
         {question.options.map((option) => (
           <Button
+            variant="ghost"
             key={option.id}
             role={isMultiSelect ? undefined : 'radio'}
             aria-checked={isMultiSelect ? undefined : isSelected(option.id)}

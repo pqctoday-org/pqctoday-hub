@@ -90,6 +90,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
             const isEnabled = enabledSensors.has(sensor.id)
             return (
               <Button
+                variant="ghost"
                 key={sensor.id}
                 onClick={() => toggleSensor(sensor.id)}
                 className={`flex items-center gap-3 rounded-lg p-3 border text-left transition-colors ${
@@ -227,6 +228,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
         <div className="flex flex-wrap gap-1.5 mb-4">
           {SENSOR_PROFILES.map((sensor) => (
             <Button
+              variant="ghost"
               key={sensor.id}
               onClick={() => setSelectedSensorId(sensor.id)}
               className={`text-xs px-2.5 py-1 rounded border transition-colors ${

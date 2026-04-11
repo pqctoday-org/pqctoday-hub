@@ -57,6 +57,7 @@ export const WorkflowBanner: React.FC = () => {
 
               return (
                 <Button
+                  variant="ghost"
                   key={phase.id}
                   onClick={() => navigate(phase.route)}
                   className={cn(

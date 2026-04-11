@@ -110,6 +110,7 @@ const SectionHeader: React.FC<{
   onToggle: (key: string) => void
 }> = ({ sectionKey, icon, title, subtitle, expanded, onToggle }) => (
   <Button
+    variant="ghost"
     onClick={() => onToggle(sectionKey)}
     className="w-full flex items-center justify-between p-4 pb-0 text-left"
     aria-expanded={expanded}

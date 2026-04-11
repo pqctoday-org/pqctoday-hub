@@ -597,6 +597,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 <span className="text-sm text-muted-foreground">Certificate Profile</span>
                 {selectedProfile && (
                   <Button
+                    variant="ghost"
                     type="button"
                     onClick={handleShowProfileInfo}
                     className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
@@ -722,6 +723,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               />
             </div>
             <Button
+              variant="ghost"
               onClick={handleSign}
               disabled={isSigning || !selectedCsrId || !selectedKeyId}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 mt-4"
@@ -776,6 +778,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 Profile Documentation
               </h3>
               <Button
+                variant="ghost"
                 onClick={() => setShowProfileInfo(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 title="Close"

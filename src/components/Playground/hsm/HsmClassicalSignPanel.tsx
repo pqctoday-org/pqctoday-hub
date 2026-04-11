@@ -181,6 +181,7 @@ const RsaPanel = () => {
         <div className="flex items-center gap-2 flex-wrap">
           {([2048, 3072, 4096] as const).map((bits) => (
             <Button
+              variant="ghost"
               key={bits}
               onClick={() => setKeyBits(bits)}
               className={`text-xs rounded-lg px-3 py-1.5 border transition-colors ${
@@ -226,6 +227,7 @@ const RsaPanel = () => {
             <div className="flex items-center justify-between">
               <p className="text-xs font-medium text-foreground">Sign &amp; Verify</p>
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   setMultiPartSign((v) => !v)
@@ -268,6 +270,7 @@ const RsaPanel = () => {
                       className="flex-1 text-xs rounded-lg px-2 py-1 bg-muted border border-border text-foreground font-mono"
                     />
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         if (chunks.length > 1) {
@@ -284,6 +287,7 @@ const RsaPanel = () => {
                   </div>
                 ))}
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setChunks((prev) => [...prev, ''])}
                   className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
@@ -493,6 +497,7 @@ const EcdsaPanel = () => {
         <div className="flex items-center gap-2 flex-wrap">
           {(['P-256', 'P-384', 'P-521'] as EcCurve[]).map((c) => (
             <Button
+              variant="ghost"
               key={c}
               onClick={() => {
                 setCurve(c)
@@ -541,6 +546,7 @@ const EcdsaPanel = () => {
           <div className="flex items-center justify-between">
             <span className="text-xs text-muted-foreground">Mechanism</span>
             <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setMultiPartSign((v) => !v)
@@ -583,6 +589,7 @@ const EcdsaPanel = () => {
                     className="flex-1 text-xs rounded-lg px-2 py-1 bg-muted border border-border text-foreground font-mono"
                   />
                   <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => {
                       if (chunks.length > 1) {
@@ -599,6 +606,7 @@ const EcdsaPanel = () => {
                 </div>
               ))}
               <Button
+                variant="ghost"
                 type="button"
                 onClick={() => setChunks((prev) => [...prev, ''])}
                 className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
@@ -744,6 +752,7 @@ const EddsaPanel = () => {
         <div className="flex items-center gap-2">
           {(['Ed25519', 'Ed448'] as EdCurve[]).map((c) => (
             <Button
+              variant="ghost"
               key={c}
               onClick={() => {
                 setCurve(c)
@@ -865,6 +874,7 @@ export const HsmClassicalSignPanel = () => {
         <div className="flex gap-1 bg-muted p-1 rounded-xl">
           {CLASSIC_MODES.map((m) => (
             <Button
+              variant="ghost"
               key={m.id}
               onClick={() => setMode(m.id)}
               className={`flex-1 text-xs rounded-lg px-2 py-1.5 transition-colors ${

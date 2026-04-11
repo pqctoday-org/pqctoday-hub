@@ -42,6 +42,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
           <Button
+            variant="ghost"
             onClick={() => setP12Action('export')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -53,6 +54,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
             Export (Create P12)
           </Button>
           <Button
+            variant="ghost"
             onClick={() => setP12Action('import')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',

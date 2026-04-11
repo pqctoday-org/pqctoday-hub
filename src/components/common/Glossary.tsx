@@ -131,6 +131,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     PQC Glossary
                   </h2>
                   <Button
+                    variant="ghost"
                     onClick={onClose}
                     className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                     aria-label="Close glossary"
@@ -163,6 +164,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 <div className="flex gap-1.5 flex-wrap mb-2">
                   {categories.map((cat) => (
                     <Button
+                      variant="ghost"
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       className={clsx(
@@ -181,6 +183,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 <div className="flex gap-0.5 flex-wrap">
                   {availableLetters.map((letter) => (
                     <Button
+                      variant="ghost"
                       key={letter}
                       onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
                       className={clsx(

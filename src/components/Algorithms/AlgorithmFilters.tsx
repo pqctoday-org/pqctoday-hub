@@ -110,6 +110,7 @@ export function AlgorithmFilters({
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex items-center justify-between">
         <Button
+          variant="ghost"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="flex items-center gap-2 text-sm font-medium text-foreground p-2 rounded-md bg-muted/50 w-full justify-between"
         >

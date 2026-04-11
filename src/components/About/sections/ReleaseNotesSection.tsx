@@ -28,6 +28,7 @@ export function ReleaseNotesSection() {
         </div>
         <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto w-full sm:w-auto">
           <Button
+            variant="ghost"
             onClick={requestShowWhatsNew}
             className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg border border-border text-foreground font-semibold text-xs md:text-sm hover:bg-muted/40 transition-colors"
           >

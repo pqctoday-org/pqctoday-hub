@@ -178,6 +178,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
         </Button>
         {currentPart === PARTS.length - 1 ? (
           <Button
+            variant="ghost"
             onClick={() => setCompletedSteps((prev) => new Set(prev).add(currentPart))}
             className="px-6 min-h-[44px] bg-accent text-accent-foreground font-bold hover:bg-accent/90"
           >
@@ -185,6 +186,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
           </Button>
         ) : (
           <Button
+            variant="ghost"
             onClick={() => handlePartChange(currentPart + 1)}
             className="px-6 min-h-[44px] bg-primary text-black font-bold hover:bg-primary/90"
           >

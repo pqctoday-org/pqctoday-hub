@@ -146,6 +146,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
       {/* Sign Both CTA */}
       <div className="flex justify-center">
         <Button
+          variant="ghost"
           onClick={handleSignBoth}
           disabled={classicalSig.loading || pqcSig.loading || !message}
           className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -175,6 +176,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </div>
 
           <Button
+            variant="ghost"
             onClick={handleSignClassical}
             disabled={classicalSig.loading || !message}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
@@ -223,6 +225,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
           </div>
 
           <Button
+            variant="ghost"
             onClick={handleSignPQC}
             disabled={pqcSig.loading || !message}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"

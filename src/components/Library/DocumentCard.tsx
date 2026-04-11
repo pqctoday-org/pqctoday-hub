@@ -149,6 +149,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div className="flex items-center gap-1 ml-auto" onClick={(e) => e.stopPropagation()}>
           <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleLibraryBookmark(item.referenceId)

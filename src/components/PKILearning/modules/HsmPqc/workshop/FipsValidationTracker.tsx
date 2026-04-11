@@ -169,6 +169,7 @@ export const FipsValidationTracker: React.FC = () => {
           <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground">Type:</span>
             <Button
+              variant="ghost"
               onClick={() => setCertTypeFilter('all')}
               className={`text-xs px-2 py-1 rounded transition-colors ${
                 certTypeFilter === 'all'
@@ -180,6 +181,7 @@ export const FipsValidationTracker: React.FC = () => {
             </Button>
             {allCertTypes.map((type) => (
               <Button
+                variant="ghost"
                 key={type}
                 onClick={() => setCertTypeFilter(type)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -198,6 +200,7 @@ export const FipsValidationTracker: React.FC = () => {
             <span className="text-xs text-muted-foreground">Status:</span>
             {(['all', 'Active', 'Pending', 'Planned'] as StatusFilter[]).map((status) => (
               <Button
+                variant="ghost"
                 key={status}
                 onClick={() => setStatusFilter(status)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -215,6 +218,7 @@ export const FipsValidationTracker: React.FC = () => {
           <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground">Algorithm:</span>
             <Button
+              variant="ghost"
               onClick={() => setAlgorithmFilter('all')}
               className={`text-xs px-2 py-1 rounded transition-colors ${
                 algorithmFilter === 'all'
@@ -226,6 +230,7 @@ export const FipsValidationTracker: React.FC = () => {
             </Button>
             {allAlgorithms.map((alg) => (
               <Button
+                variant="ghost"
                 key={alg}
                 onClick={() => setAlgorithmFilter(alg)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -250,6 +255,7 @@ export const FipsValidationTracker: React.FC = () => {
           return (
             <div key={vendorId} className="glass-panel overflow-hidden">
               <Button
+                variant="ghost"
                 onClick={() => setExpandedVendor(isExpanded ? null : vendorId)}
                 className="w-full flex items-center justify-between p-4 text-left"
               >

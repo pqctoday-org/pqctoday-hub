@@ -107,6 +107,7 @@ const APICard: React.FC<APICardProps> = ({
           <div className="flex items-center gap-2 shrink-0">
             {compareMode && (
               <Button
+                variant="ghost"
                 onClick={onToggleSelect}
                 className="text-muted-foreground hover:text-primary transition-colors"
                 title={isSelected ? 'Remove from comparison' : 'Add to comparison'}
@@ -119,6 +120,7 @@ const APICard: React.FC<APICardProps> = ({
               </Button>
             )}
             <Button
+              variant="ghost"
               onClick={onToggleExpand}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
@@ -324,6 +326,7 @@ export const APIArchitectureExplorer: React.FC = () => {
           onSelect={(id) => setLevelFilter(id as LevelFilter)}
         />
         <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())

@@ -50,6 +50,7 @@ export function AlgorithmCompareBar({
               >
                 <span className="truncate max-w-[70px] sm:max-w-[120px]">{name}</span>
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => onRemove(name)}
                   aria-label={`Remove ${name} from comparison`}

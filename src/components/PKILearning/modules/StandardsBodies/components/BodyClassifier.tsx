@@ -152,6 +152,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const isCorrectOption = card.correctType === opt.id
                     return (
                       <Button
+                        variant="ghost"
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedType: opt.id })}
@@ -183,6 +184,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const isCorrectOption = card.correctScope === opt.id
                     return (
                       <Button
+                        variant="ghost"
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedScope: opt.id })}
@@ -214,6 +216,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const isCorrectOption = card.correctAuthority === opt.id
                     return (
                       <Button
+                        variant="ghost"
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedAuthority: opt.id })}
@@ -260,6 +263,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     </div>
                   )}
                   <Button
+                    variant="ghost"
                     onClick={() => resetCard(card.id)}
                     className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
                   >

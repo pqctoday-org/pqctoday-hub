@@ -248,6 +248,7 @@ export const ProviderSetup: React.FC = () => {
                   <div className="space-y-1.5">
                     {contextPresets.map((p) => (
                       <Button
+                        variant="ghost"
                         key={p.tokens}
                         type="button"
                         onClick={() => setContextWindow(p.tokens)}
@@ -289,6 +290,7 @@ export const ProviderSetup: React.FC = () => {
 
                 {/* Info panel */}
                 <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setShowInfo(!showInfo)}
                   className="flex items-center gap-1.5 text-xs text-primary hover:underline"

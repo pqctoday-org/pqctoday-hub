@@ -148,6 +148,7 @@ export const CMSSigningDemo: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {SIGNING_STEPS.map((step) => (
           <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -223,6 +224,7 @@ export const CMSSigningDemo: React.FC = () => {
           <h4 className="text-sm font-bold text-foreground">Signer Info Comparison</h4>
           <div className="flex gap-2">
             <Button
+              variant="ghost"
               onClick={() => setAlgorithmView('ecdsa')}
               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                 algorithmView === 'ecdsa'
@@ -233,6 +235,7 @@ export const CMSSigningDemo: React.FC = () => {
               ECDSA P-256
             </Button>
             <Button
+              variant="ghost"
               onClick={() => setAlgorithmView('ml-dsa')}
               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                 algorithmView === 'ml-dsa'

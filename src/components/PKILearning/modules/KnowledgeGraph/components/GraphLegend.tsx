@@ -43,6 +43,7 @@ export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLe
         if (onToggleType) {
           return (
             <Button
+              variant="ghost"
               key={type}
               onClick={() => onToggleType(type)}
               title={isHidden ? `Show ${label}` : `Hide ${label}`}

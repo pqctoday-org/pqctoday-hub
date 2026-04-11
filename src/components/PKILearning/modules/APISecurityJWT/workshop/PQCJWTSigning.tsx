@@ -157,6 +157,7 @@ export const PQCJWTSigning: React.FC = () => {
       <div className="flex flex-wrap gap-2">
         {SIGNABLE_ALGORITHMS.map((alg) => (
           <Button
+            variant="ghost"
             key={alg.jose}
             onClick={() => {
               setSelectedAlg(alg.jose as SigningAlgorithm)
@@ -185,6 +186,7 @@ export const PQCJWTSigning: React.FC = () => {
             <h4 className="text-sm font-bold text-foreground">Keypair Generation</h4>
           </div>
           <Button
+            variant="ghost"
             onClick={handleGenerateKeypair}
             disabled={isGenerating}
             className="px-4 py-2 bg-primary text-black text-sm font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
@@ -239,6 +241,7 @@ export const PQCJWTSigning: React.FC = () => {
       {/* Sign Button */}
       <div className="flex justify-center">
         <Button
+          variant="ghost"
           onClick={handleSign}
           disabled={!keypair || !isPayloadValid || isSigning}
           className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
@@ -262,6 +265,7 @@ export const PQCJWTSigning: React.FC = () => {
               )}
             </div>
             <Button
+              variant="ghost"
               onClick={handleCopy}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >

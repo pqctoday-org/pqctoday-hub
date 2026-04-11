@@ -181,6 +181,7 @@ export const TLSSimulatorTab: React.FC = () => {
       <div className="flex justify-end gap-3">
         {results && (
           <Button
+            variant="ghost"
             onClick={() => {
               setResults(null)
               clearSession()
@@ -191,6 +192,7 @@ export const TLSSimulatorTab: React.FC = () => {
           </Button>
         )}
         <Button
+          variant="ghost"
           onClick={triggerSimulation}
           disabled={isSpinning}
           className="btn btn-primary flex items-center gap-2 px-6 py-3 text-lg"

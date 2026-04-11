@@ -138,6 +138,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
   return (
     <div className="bg-muted/20 border border-border rounded-xl overflow-hidden">
       <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
@@ -156,6 +157,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
           <div className="flex border-b border-border bg-muted/10">
             {snippets.map((s, i) => (
               <Button
+                variant="ghost"
                 key={s.label}
                 type="button"
                 onClick={() => setActiveTab(i)}
@@ -169,6 +171,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
               </Button>
             ))}
             <Button
+              variant="ghost"
               type="button"
               onClick={handleCopy}
               className="ml-auto px-3 py-2 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
@@ -318,6 +321,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
               Action
             </span>
             <Button
+              variant="ghost"
               onClick={onGenerateKeys}
               disabled={loading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-[42px] text-sm shadow-lg shadow-primary/20"
@@ -384,6 +388,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
               Action
             </span>
             <Button
+              variant="ghost"
               onClick={onGenerateClassicalKeys}
               disabled={classicalLoading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-[42px] text-sm shadow-lg shadow-accent/20"

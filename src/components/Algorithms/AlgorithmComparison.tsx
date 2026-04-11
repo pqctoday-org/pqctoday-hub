@@ -266,6 +266,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.function}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('function')}
                         aria-label={`Function column, ${sortColumn === 'function' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -294,6 +295,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.classical}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('classical')}
                         aria-label={`Classical Algorithm column, ${sortColumn === 'classical' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -322,6 +324,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.pqc}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('pqc')}
                         aria-label={`PQC Alternative column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -350,6 +353,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.region}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('region')}
                         aria-label={`Region column, ${sortColumn === 'region' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -378,6 +382,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.status}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('status')}
                         aria-label={`Status column, ${sortColumn === 'status' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -406,6 +411,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       style={{ width: `${columnWidths.deprecation}px` }}
                     >
                       <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleSort('deprecation')}
                         aria-label={`Transition and Deprecation column, ${sortColumn === 'deprecation' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -464,6 +470,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
                             {isComparableFunction && (
                               <Button
+                                variant="ghost"
                                 type="button"
                                 onClick={() => onToggleCompare(pqcName)}
                                 disabled={!canCompare && !isCompared}

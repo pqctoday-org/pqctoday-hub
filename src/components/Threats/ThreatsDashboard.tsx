@@ -456,6 +456,7 @@ export const ThreatsDashboard: React.FC = () => {
           </div>
           {myThreats.length > 0 && (
             <Button
+              variant="ghost"
               onClick={() => setShowOnlyThreats(!showOnlyThreats)}
               className={`hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                 showOnlyThreats

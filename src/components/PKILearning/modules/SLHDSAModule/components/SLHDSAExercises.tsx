@@ -103,6 +103,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
             </div>
 
             <Button
+              variant="ghost"
               onClick={() => {
                 onSetWorkshopConfig?.(scenario.config)
                 onNavigateToWorkshop()

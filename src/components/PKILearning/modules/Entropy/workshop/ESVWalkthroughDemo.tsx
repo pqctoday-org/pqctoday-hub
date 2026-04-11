@@ -385,6 +385,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
 
             return (
               <Button
+                variant="ghost"
                 key={step.id}
                 onClick={() => goToStep(idx)}
                 className="relative z-10 flex flex-col items-center gap-1.5 group"
@@ -484,6 +485,7 @@ export const ESVWalkthroughDemo: React.FC = () => {
       {/* DRBG Simulator — collapsible */}
       <div className="glass-panel overflow-hidden">
         <Button
+          variant="ghost"
           onClick={() => setShowDRBG(!showDRBG)}
           className="w-full flex items-center justify-between p-4 hover:bg-muted/30 transition-colors"
         >

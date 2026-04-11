@@ -197,6 +197,7 @@ export const ProviderPatternWorkshop: React.FC = () => {
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold">Run PKCS#11 Session Lifecycle Demo</p>
             <Button
+              variant="ghost"
               onClick={runPkcs11Demo}
               disabled={liveRunning}
               className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"

@@ -180,6 +180,7 @@ export const TLSInspectionLab: React.FC = () => {
             <div className="space-y-2">
               {TLS_ALGORITHMS.map((algo) => (
                 <Button
+                  variant="ghost"
                   key={algo.id}
                   onClick={() => setSelectedAlgoId(algo.id)}
                   className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors ${

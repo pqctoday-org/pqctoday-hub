@@ -153,6 +153,7 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
             </div>
           )}
           <Button
+            variant="ghost"
             onClick={handleBuildTree}
             disabled={isBuilding}
             className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
