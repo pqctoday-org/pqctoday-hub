@@ -132,7 +132,7 @@ export const RoleHowToAct: React.FC<Props> = ({ data }) => {
   }, [generateExport, data.roleId])
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Progress Bar */}
       <div className="glass-panel p-5">
         <div className="flex items-center justify-between mb-2">

@@ -27,7 +27,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: JWT/JWS/JWE Fundamentals */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">

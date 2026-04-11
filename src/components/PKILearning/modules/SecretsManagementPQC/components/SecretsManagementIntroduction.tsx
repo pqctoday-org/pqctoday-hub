@@ -60,7 +60,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1 */}
       <CollapsibleSection
         icon={<Key size={24} className="text-primary" />}

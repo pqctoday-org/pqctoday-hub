@@ -75,7 +75,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
   ]
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">SLH-DSA Exercises</h2>
         <p className="text-muted-foreground text-sm">

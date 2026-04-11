@@ -25,7 +25,7 @@ interface IntroductionProps {
 // ─── Step 1: Program Overview + 7-Phase Framework ────────────────────────────
 
 const Step1ProgramAndFramework: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: Migration as a Program Management Challenge */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -166,7 +166,7 @@ const Step1ProgramAndFramework: React.FC = () => (
 const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 3: Success Factors */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">

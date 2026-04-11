@@ -77,7 +77,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
   }, [data.skillGaps])
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Gap Summary */}
       <div className="glass-panel p-5">
         <div className="flex items-center justify-between mb-3">

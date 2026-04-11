@@ -29,7 +29,7 @@ interface IntroductionProps {
 // ─── Step 1: The Three Roles ──────────────────────────────────────────────────
 
 const Step1ThreeRoles: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">
@@ -212,7 +212,7 @@ const Step1ThreeRoles: React.FC = () => (
 // ─── Step 2: Governmental vs Non-Governmental ─────────────────────────────────
 
 const Step2GovVsNonGov: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">
@@ -349,7 +349,7 @@ const Step2GovVsNonGov: React.FC = () => (
 // ─── Step 3: Global vs Regional Coverage ──────────────────────────────────────
 
 const Step3GlobalRegional: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">
@@ -493,7 +493,7 @@ const Step3GlobalRegional: React.FC = () => (
 // ─── Step 4: Reading the App — Compliance & Migrate Pages ─────────────────────
 
 const Step4AppPagesGuide: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">
@@ -711,7 +711,7 @@ const Step4AppPagesGuide: React.FC = () => (
 const Step5IETFProcess: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
         <div className="p-2 rounded-lg bg-primary/10">

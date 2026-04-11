@@ -66,7 +66,7 @@ function ExercisesTab() {
   ]
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">
           Vendor &amp; Supply Chain Risk Exercises

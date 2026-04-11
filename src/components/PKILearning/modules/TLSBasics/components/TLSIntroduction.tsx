@@ -31,7 +31,7 @@ interface TLSIntroductionProps {
 
 export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSimulate }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Learning Objectives & Prerequisites */}
       <section className="glass-panel p-6 border-l-4 border-l-primary/50">
         <h2 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">

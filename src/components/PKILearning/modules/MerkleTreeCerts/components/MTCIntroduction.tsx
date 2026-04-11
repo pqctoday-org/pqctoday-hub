@@ -25,7 +25,7 @@ interface MTCIntroductionProps {
 export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   const [showSignatureless, setShowSignatureless] = useState(false)
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Section 1: The Certificate Bloat Problem */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">

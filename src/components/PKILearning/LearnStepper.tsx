@@ -37,7 +37,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
   const isLast = current === steps.length - 1
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       {/* Step indicator — numbered circles with connecting line */}
       <div className="mb-8">
         <div className="flex justify-between relative">

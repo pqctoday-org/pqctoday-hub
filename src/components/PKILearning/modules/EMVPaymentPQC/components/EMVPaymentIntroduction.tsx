@@ -90,7 +90,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
   const criticalVectors = MIGRATION_VECTORS.filter((v) => v.severity === 'critical').length
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {/* ── Section 1: The EMV Payment Ecosystem ── */}
       <CollapsibleSection
         title="1. The EMV Payment Ecosystem"

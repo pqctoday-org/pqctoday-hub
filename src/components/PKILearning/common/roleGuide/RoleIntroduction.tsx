@@ -22,7 +22,7 @@ export const RoleIntroduction: React.FC<Props> = ({ data, onNavigateToWorkshop }
   const highCount = data.threatImpacts.filter((t) => t.severity === 'high').length
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Role tagline */}
       <div className="glass-panel p-6 border-l-4 border-primary">
         <div className="flex items-start gap-3">

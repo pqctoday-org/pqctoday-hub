@@ -75,7 +75,7 @@ export const HsmPqcIntroduction: React.FC<HsmPqcIntroductionProps> = ({ onNaviga
   const pqcMechanisms = PKCS11_MECHANISMS.filter((m) => m.type === 'pqc')
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: HSM Architecture for PQC */}
       <CollapsibleSection
         title="HSM Architecture for PQC"

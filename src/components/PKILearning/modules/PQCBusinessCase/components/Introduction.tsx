@@ -24,7 +24,7 @@ interface IntroductionProps {
 // ─── Step 1: Why + Concepts + Cost Categories ────────────────────────────────
 
 const Step1WhyConceptsCosts: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: Why Build a Business Case? */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -182,7 +182,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
 const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 4: Workshop Preview */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">

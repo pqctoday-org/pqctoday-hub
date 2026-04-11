@@ -61,7 +61,7 @@ export const WebGatewayExercises: React.FC<WebGatewayExercisesProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Practical Exercises</h2>
         <p className="text-sm text-muted-foreground">

@@ -232,7 +232,7 @@ export const QuizModule: React.FC = () => {
   }, [])
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       {view === 'intro' && (
         <QuizIntro
           previousScores={previousScores}

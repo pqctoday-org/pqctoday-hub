@@ -70,7 +70,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
 export const KmsPqcIntroduction: React.FC<KmsPqcIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: PQC Key Management Fundamentals */}
       <CollapsibleSection
         icon={<KeyRound size={24} className="text-primary" />}

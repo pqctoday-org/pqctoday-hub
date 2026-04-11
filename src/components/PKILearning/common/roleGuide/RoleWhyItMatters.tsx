@@ -56,7 +56,7 @@ export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
         : 'text-status-success'
 
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Role-specific urgency statement */}
       <div className="glass-panel p-5 border-l-4 border-primary">
         <div className="flex items-start gap-3">

@@ -27,7 +27,7 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Qubits & Superposition */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">

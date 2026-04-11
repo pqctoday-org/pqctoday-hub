@@ -1258,7 +1258,7 @@ const SignVerifyTabSoftware: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
+    <div className="w-full animate-fade-in space-y-8">
       <div>
         <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <FileSignature size={18} className="text-accent" /> Digital Signatures

@@ -23,7 +23,7 @@ interface IntroductionProps {
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Quantum Computing Primer */}
       <section className="glass-panel p-4 border-primary/10">
         <p className="text-sm text-foreground/80">

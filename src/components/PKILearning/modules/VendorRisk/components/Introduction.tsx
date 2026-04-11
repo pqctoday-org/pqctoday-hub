@@ -22,7 +22,7 @@ interface IntroductionProps {
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Why Vendor PQC Risk Matters */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">

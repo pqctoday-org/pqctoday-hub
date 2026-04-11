@@ -27,7 +27,7 @@ interface IntroductionProps {
 // ─── Step 1: Why + RACI + Policy Hierarchy ────────────────────────────────────
 
 const Step1WhyRaciPolicy: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: Why PQC Governance? */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -182,7 +182,7 @@ const Step1WhyRaciPolicy: React.FC = () => (
 // ─── Step 2: Governance Models + Escalation + KPIs ───────────────────────────
 
 const Step2ModelsEscalationKpis: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 4: Governance Models */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -350,7 +350,7 @@ const Step2ModelsEscalationKpis: React.FC = () => (
 const Step3ResourcesAndCta: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Related Resources */}
     <section className="glass-panel p-6 border-secondary/20">
       <h3 className="text-lg font-bold text-gradient mb-3">Related Resources</h3>

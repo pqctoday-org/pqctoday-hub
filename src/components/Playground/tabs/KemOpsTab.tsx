@@ -425,7 +425,7 @@ const KemOpsTabSoftware: React.FC = () => {
   const classicalPrivateKeys = kemPrivateKeys.filter((k) => isClassical(k.algorithm))
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
+    <div className="w-full animate-fade-in space-y-8">
       {/* Section 1: Key Encapsulation */}
       <div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 mb-6 gap-4">

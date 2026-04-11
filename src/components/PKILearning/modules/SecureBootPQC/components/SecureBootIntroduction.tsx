@@ -63,7 +63,7 @@ export const SecureBootIntroduction: React.FC<SecureBootIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: UEFI Secure Boot Key Hierarchy */}
       <CollapsibleSection
         icon={<Shield size={24} className="text-primary" />}

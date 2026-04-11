@@ -74,7 +74,7 @@ export const AutomotivePQCIntroduction: React.FC<IntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* -- Section 1: The Automotive Crypto Landscape ------------------------ */}
       <CollapsibleSection
         title="The Automotive Crypto Landscape"

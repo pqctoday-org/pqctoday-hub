@@ -60,7 +60,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
 export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: OS Cryptography Stack */}
       <CollapsibleSection
         icon={<Monitor size={24} className="text-primary" />}

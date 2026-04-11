@@ -63,7 +63,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Why Data Classification Matters for PQC */}
       <CollapsibleSection
         icon={<Database size={24} className="text-primary" />}

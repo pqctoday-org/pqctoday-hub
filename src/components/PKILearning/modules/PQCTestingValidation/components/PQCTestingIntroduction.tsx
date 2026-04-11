@@ -59,7 +59,7 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Why PQC Testing Is Different */}
       <CollapsibleSection
         icon={<AlertTriangle size={24} className="text-primary" />}

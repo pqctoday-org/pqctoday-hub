@@ -85,7 +85,7 @@ export const EnergyUtilitiesIntroduction: React.FC<IntroductionProps> = ({
   }
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* -- Section 1: Why Energy & Utilities Is Different ------------------- */}
       <CollapsibleSection
         title="Why Energy & Utilities Is Different"
