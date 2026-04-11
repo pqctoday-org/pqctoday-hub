@@ -27,6 +27,7 @@ import {
   HAS_DATA_SECTIONS,
   HAS_SECURITY_SECTIONS,
 } from '../../utils/changelogParser'
+import { Button } from '@/components/ui/button'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -274,7 +275,7 @@ export const ChangelogView = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
-            <button
+            <Button
               onClick={() => toggleFilter('added')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -285,8 +286,8 @@ export const ChangelogView = () => {
             >
               <Plus size={14} />
               <span>New Features</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => toggleFilter('changed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -297,8 +298,8 @@ export const ChangelogView = () => {
             >
               <Sparkles size={14} />
               <span>Improvements</span>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => toggleFilter('fixed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -309,9 +310,9 @@ export const ChangelogView = () => {
             >
               <Bug size={14} />
               <span>Bug Fixes</span>
-            </button>
+            </Button>
             {HAS_DATA_SECTIONS && (
-              <button
+              <Button
                 onClick={() => toggleFilter('data')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -322,10 +323,10 @@ export const ChangelogView = () => {
               >
                 <Database size={14} />
                 <span>Data Updates</span>
-              </button>
+              </Button>
             )}
             {HAS_SECURITY_SECTIONS && (
-              <button
+              <Button
                 onClick={() => toggleFilter('security')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -336,10 +337,10 @@ export const ChangelogView = () => {
               >
                 <Shield size={14} />
                 <span>Security</span>
-              </button>
+              </Button>
             )}
             {!allFiltersActive && (
-              <button
+              <Button
                 onClick={() =>
                   setFilters({
                     added: true,
@@ -352,10 +353,10 @@ export const ChangelogView = () => {
                 className="ml-2 text-xs text-muted-foreground hover:text-foreground underline"
               >
                 Show all
-              </button>
+              </Button>
             )}
           </div>
-          <button
+          <Button
             onClick={() => setShowDetails((prev) => !prev)}
             className={clsx(
               'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all text-sm whitespace-nowrap',
@@ -366,7 +367,7 @@ export const ChangelogView = () => {
           >
             {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             <span>{showDetails ? 'Hide details' : 'Show details'}</span>
-          </button>
+          </Button>
         </div>
       </motion.div>
 

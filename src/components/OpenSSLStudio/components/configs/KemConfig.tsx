@@ -3,6 +3,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface KemConfigProps {
   kemAction: 'encap' | 'decap'
@@ -40,7 +41,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
-          <button
+          <Button
             onClick={() => setKemAction('encap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -50,8 +51,8 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             )}
           >
             Encapsulate
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setKemAction('decap')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -61,7 +62,7 @@ export const KemConfig: React.FC<KemConfigProps> = ({
             )}
           >
             Decapsulate
-          </button>
+          </Button>
         </div>
       </div>
 

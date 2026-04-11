@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { BookOpen, ArrowRight, BarChart3, Layers } from 'lucide-react'
 import type { RoleGuideData, SkillLevel } from './types'
+import { Button } from '@/components/ui/button'
 
 const LEVEL_ORDER: SkillLevel[] = ['none', 'basic', 'intermediate', 'advanced']
 
@@ -141,7 +142,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
                     {/* Rating buttons */}
                     <div className="flex flex-wrap gap-2">
                       {LEVEL_ORDER.map((level) => (
-                        <button
+                        <Button
                           key={level}
                           onClick={() => setRating(skill.id, level)}
                           className={`px-3 py-1.5 text-xs font-medium rounded-lg border transition-all ${
@@ -151,7 +152,7 @@ export const RoleWhatToLearn: React.FC<Props> = ({ data }) => {
                           }`}
                         >
                           {LEVEL_LABELS[level]}
-                        </button>
+                        </Button>
                       ))}
                     </div>
 

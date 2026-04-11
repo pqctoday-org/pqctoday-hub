@@ -4,6 +4,7 @@ import React, { useEffect } from 'react'
 import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 // --- ASN.1 / PEM Helpers ---
 
@@ -340,7 +341,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
 
       {/* Mode Toggle Tabs */}
       <div className="flex gap-1 p-1 bg-muted rounded-lg">
-        <button
+        <Button
           data-testid="lms-mode-generate"
           onClick={() => setMode('generate')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -350,8 +351,8 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           }`}
         >
           Generate
-        </button>
-        <button
+        </Button>
+        <Button
           data-testid="lms-mode-sign"
           onClick={() => setMode('sign')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -361,8 +362,8 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           }`}
         >
           Sign
-        </button>
-        <button
+        </Button>
+        <Button
           data-testid="lms-mode-verify"
           onClick={() => setMode('verify')}
           className={`flex-1 px-3 py-2 text-xs font-bold rounded transition-colors ${
@@ -372,7 +373,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           }`}
         >
           Verify
-        </button>
+        </Button>
       </div>
 
       {/* LMS flow hint */}
@@ -408,12 +409,12 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           LMS uses WebAssembly for key generation and signing. OpenSSL 3.6.1 CLI supports
           verification only.
         </p>
-        <button
+        <Button
           onClick={handleLoadSamples}
           className="ml-6 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded border border-primary/30 transition-colors"
         >
           Load Sample Data
-        </button>
+        </Button>
       </div>
 
       {/* Key Generation Section (only in generate mode) */}
@@ -460,7 +461,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             </code>
           </div>
 
-          <button
+          <Button
             onClick={async () => {
               try {
                 const lmsInfo = LMS_TYPES.find((t) => t.value === lmsType)
@@ -512,7 +513,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             className="w-full py-2 bg-accent/10 hover:bg-accent/20 text-accent text-xs font-bold rounded border border-accent/30 transition-colors uppercase tracking-wider"
           >
             Generate New LMS Keypair
-          </button>
+          </Button>
         </div>
       )}
 
@@ -545,7 +546,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             )}
           </div>
 
-          <button
+          <Button
             disabled={!lmsDataFile || !lmsKeyFile}
             onClick={async () => {
               try {
@@ -619,7 +620,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             }`}
           >
             Sign Selected Data File
-          </button>
+          </Button>
           {!lmsDataFile && (
             <p className="text-[10px] text-status-warning text-center">
               Select a Data File below to sign.
@@ -636,7 +637,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
               Verifier
             </span>
           </div>
-          <button
+          <Button
             disabled={!lmsKeyFile || !lmsSigFile || !lmsDataFile}
             onClick={async () => {
               try {
@@ -683,7 +684,7 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
             }`}
           >
             Verify (WASM)
-          </button>
+          </Button>
           {(!lmsKeyFile || !lmsSigFile || !lmsDataFile) && (
             <p className="text-[10px] text-status-warning text-center">
               Select Key, Signature, and Data below.

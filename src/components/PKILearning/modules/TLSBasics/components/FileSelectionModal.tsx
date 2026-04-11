@@ -5,6 +5,7 @@ import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { VirtualFile } from '@/components/OpenSSLStudio/store'
 import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   isOpen: boolean
@@ -56,13 +57,13 @@ export const FileSelectionModal: React.FC<Props> = ({
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-bold text-lg">{title}</h3>
-          <button
+          <Button
             onClick={onClose}
             aria-label="Close"
             className="p-1 hover:bg-muted rounded-full transition-colors"
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         <div className="p-4 border-b border-border">
@@ -82,7 +83,7 @@ export const FileSelectionModal: React.FC<Props> = ({
             </div>
           ) : (
             filteredFiles.map((file) => (
-              <button
+              <Button
                 key={file.name}
                 onClick={() => handleSelect(file)}
                 className="w-full flex items-center gap-3 p-3 rounded hover:bg-muted transition-colors text-left group"
@@ -98,7 +99,7 @@ export const FileSelectionModal: React.FC<Props> = ({
                     <span>{file.size} bytes</span>
                   </div>
                 </div>
-              </button>
+              </Button>
             ))
           )}
         </div>

@@ -527,7 +527,7 @@ const KemOpsTabSoftware: React.FC = () => {
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Step 2: Run Operation
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('encapsulate')
@@ -537,7 +537,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Encapsulate
-              </button>
+              </Button>
             </div>
 
             {/* Step 3: Ciphertext Output */}
@@ -769,7 +769,7 @@ const KemOpsTabSoftware: React.FC = () => {
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Step 2: Run Operation
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('decapsulate')
@@ -779,7 +779,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Decapsulate
-              </button>
+              </Button>
             </div>
 
             {/* Step 3: Ciphertext Input */}
@@ -1003,7 +1003,7 @@ const KemOpsTabSoftware: React.FC = () => {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('encrypt')
@@ -1013,7 +1013,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Encrypt
-              </button>
+              </Button>
               <DataInput
                 label="Encrypted Data (Output)"
                 value={encryptedData}
@@ -1055,7 +1055,7 @@ const KemOpsTabSoftware: React.FC = () => {
                   </p>
                 )}
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('decrypt')
@@ -1065,7 +1065,7 @@ const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Decrypt
-              </button>
+              </Button>
               <DataInput
                 label="Decrypted Data (Output)"
                 value={decryptedData}

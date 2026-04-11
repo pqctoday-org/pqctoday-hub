@@ -366,7 +366,7 @@ export const SafetyRiskScorer: React.FC<SafetyRiskScorerProps> = ({
           const isCompare = compareId === scenario.id
 
           return (
-            <button
+            <Button
               key={scenario.id}
               onClick={() => handleSelectScenario(scenario.id)}
               className={`text-left rounded-lg border p-3 transition-all ${
@@ -392,7 +392,7 @@ export const SafetyRiskScorer: React.FC<SafetyRiskScorerProps> = ({
                 </span>
                 <span className="text-[10px] text-muted-foreground">/100 default</span>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

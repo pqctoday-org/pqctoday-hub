@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'
 import { type PqcStats, CISA_CATEGORIES } from '../../types/MigrateTypes'
+import { Button } from '@/components/ui/button'
 
 export type InfrastructureLayerType =
   | 'All'
@@ -376,7 +377,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   : 'max-h-[3000px] opacity-100'
               }`}
             >
-              <button
+              <Button
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
                   if (e.key === 'Escape' && isActive) {
@@ -475,7 +476,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                       </span>
                     )}
                     {(layerHiddenCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (
-                      <button
+                      <Button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -485,7 +486,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                         className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors"
                       >
                         {layerHiddenCounts?.[layer.id as InfrastructureLayerType]} hidden · Restore
-                      </button>
+                      </Button>
                     )}
                     <div
                       className={`flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full border transition-colors ${
@@ -503,7 +504,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 {isActive && subCategories && subCategories.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-3 mt-3 w-full border-t border-border/30">
                     {['All', ...subCategories].map((cat) => (
-                      <button
+                      <Button
                         key={cat}
                         type="button"
                         onClick={(e) => {
@@ -517,7 +518,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                         }`}
                       >
                         {cat}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -531,7 +532,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     onKeyDown={(e) => e.stopPropagation()}
                   >
                     <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
-                    <button
+                    <Button
                       type="button"
                       aria-label="Collapse expanded infrastructure layer"
                       onClick={(e) => {
@@ -542,10 +543,10 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     >
                       <ChevronUp size={14} />
                       Collapse layer
-                    </button>
+                    </Button>
                   </div>
                 )}
-              </button>
+              </Button>
             </div>
           )
         })}
@@ -561,7 +562,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           const isActive = activeLayer === layer.id
 
           return (
-            <button
+            <Button
               key={`minimap-${layer.id}`}
               onClick={(e) => {
                 e.preventDefault()

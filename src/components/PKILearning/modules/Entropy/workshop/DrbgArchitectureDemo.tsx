@@ -211,13 +211,13 @@ export const DrbgArchitectureDemo: React.FC = () => {
               <div>
                 <span className="text-[10px] uppercase font-bold text-muted-foreground flex justify-between">
                   <span>Entropy Input (32 bytes)</span>
-                  <button
+                  <Button
                     onClick={() => setEntropyInput(getRandomBytes(32))}
                     disabled={instantiated}
                     className="text-primary hover:underline"
                   >
                     re-roll
-                  </button>
+                  </Button>
                 </span>
                 <div className="font-mono text-[10px] bg-muted/40 p-2 rounded break-all mt-1">
                   {formatHex(entropyInput, 0)}

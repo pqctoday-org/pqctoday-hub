@@ -11,6 +11,7 @@ import { AttributeTable } from '../../common/AttributeTable'
 import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -595,7 +596,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Certificate Profile</span>
                 {selectedProfile && (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleShowProfileInfo}
                     className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
@@ -603,7 +604,7 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                   >
                     <Info size={16} />
                     Info
-                  </button>
+                  </Button>
                 )}
               </div>
               <FilterDropdown
@@ -720,14 +721,14 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 onChange={(e) => setValidityDays(e.target.value)}
               />
             </div>
-            <button
+            <Button
               onClick={handleSign}
               disabled={isSigning || !selectedCsrId || !selectedKeyId}
               className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 mt-4"
             >
               {isSigning ? <Loader2 className="animate-spin" /> : <PenTool />}
               Sign Certificate
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -774,13 +775,13 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
                 <Info className="text-primary" size={20} />
                 Profile Documentation
               </h3>
-              <button
+              <Button
                 onClick={() => setShowProfileInfo(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 title="Close"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
             <div className="text-sm max-w-none flex-1 overflow-y-auto">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>

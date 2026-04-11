@@ -322,14 +322,14 @@ export const KeyInspectTable: React.FC<KeyInspectTableProps> = ({
               {keys.map((k) => (
                 <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => openInspect(k)}
                       className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
                       aria-label={`Inspect key ${k.handle}`}
                     >
                       <Eye size={12} />
-                    </button>
+                    </Button>
                   </td>
                   <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
                     {k.handle}

@@ -319,7 +319,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
 
                   {/* Hidden · Restore badge */}
                   {filteredCount < totalCount && (
-                    <button
+                    <Button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -328,12 +328,12 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
                     >
                       {totalCount - filteredCount} hidden · Restore
-                    </button>
+                    </Button>
                   )}
 
                   {/* Per-track quiz button */}
                   {quizCategories.length > 0 && (
-                    <button
+                    <Button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -344,7 +344,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     >
                       <ClipboardList size={11} aria-hidden="true" />
                       Quiz
-                    </button>
+                    </Button>
                   )}
 
                   {/* Expand status */}
@@ -369,7 +369,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
                   {quizCategories.length > 0 && (
-                    <button
+                    <Button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -380,10 +380,10 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     >
                       <ClipboardList size={11} aria-hidden="true" />
                       Quiz
-                    </button>
+                    </Button>
                   )}
                   {filteredCount < totalCount && (
-                    <button
+                    <Button
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -392,7 +392,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       className="text-xs px-2.5 py-1 min-h-[36px] rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
                     >
                       Restore
-                    </button>
+                    </Button>
                   )}
                   {isActive ? (
                     <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />

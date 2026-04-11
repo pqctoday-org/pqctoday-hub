@@ -102,6 +102,7 @@ const TabsTrigger = React.forwardRef<HTMLButtonElement, TabsTriggerProps>(
     const isActive = context?.value === value
 
     return (
+      // eslint-disable-next-line no-restricted-syntax
       <button
         ref={ref}
         type="button"

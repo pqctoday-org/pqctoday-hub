@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.1.0] - 2026-04-11
+
+### Changed
+
+- **Phase 10 UI refactor — `<Button>` component enforcement**: All 1,253 raw `<button>` HTML
+  elements across 462 source files have been replaced with the shared `<Button>` component,
+  enforcing the `no-restricted-syntax` ESLint rule introduced in v3.0.0. UI primitive files
+  (`tabs.tsx`, `switch.tsx`, `data-table.tsx`) and the framer-motion test mock retain native
+  `<button>` with `eslint-disable-next-line` comments. 355 files received a new
+  `import { Button }` statement.
+
 ## [3.0.0] - 2026-04-10
 
 ### Added

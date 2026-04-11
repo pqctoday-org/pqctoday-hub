@@ -195,7 +195,7 @@ export const Pkcs11LogPanel = ({
   return (
     <div className={`glass-panel p-3 ${className}`}>
       {/* Header */}
-      <button
+      <Button
         onClick={() => setOpen((v) => !v)}
         className="w-full flex items-center justify-between gap-2 text-sm font-semibold"
         aria-expanded={open}
@@ -249,7 +249,7 @@ export const Pkcs11LogPanel = ({
             )}
           </Button>
         </span>
-      </button>
+      </Button>
 
       {/* Body */}
       {open && (

@@ -19,6 +19,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, IOT_PROTOCOLS, PURDUE_LAYERS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface IoTOTIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -650,12 +651,12 @@ export const IoTOTIntroduction: React.FC<IoTOTIntroductionProps> = ({ onNavigate
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
           onClick={onNavigateToWorkshop}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
         >
           Try it in the Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Compare algorithm resource footprints, simulate firmware signing, visualize DTLS handshake
           overhead, and plan SCADA migration.

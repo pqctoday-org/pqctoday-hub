@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { CheckSquare, Square, AlertTriangle, CheckCircle } from 'lucide-react'
 import { DATABASE_PROFILES, COMPLEXITY_LABELS } from '../data/databaseConstants'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface ChecklistItem {
   id: string
@@ -189,7 +190,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                 {items.map((item) => {
                   const isChecked = checked.has(item.id)
                   return (
-                    <button
+                    <Button
                       key={item.id}
                       type="button"
                       className={`w-full text-left rounded-lg border p-3 transition-colors ${
@@ -223,7 +224,7 @@ export const DatabaseMigrationReadiness: React.FC = () => {
                           <p className="text-xs text-muted-foreground">{item.description}</p>
                         </div>
                       </div>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>

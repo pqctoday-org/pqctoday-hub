@@ -9,6 +9,7 @@ import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { KNOWN_OIDS } from '@/services/crypto/oidMapping'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 // Import CSR profiles using Vite's glob import
 const csrProfiles = import.meta.glob('../../../../data/x509_profiles/CSR*.csv', {
@@ -819,7 +820,7 @@ distinguished_name = dn
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">CSR Profile</span>
                 {selectedProfile && (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleShowProfileInfo}
                     className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
@@ -827,7 +828,7 @@ distinguished_name = dn
                   >
                     <Info size={16} />
                     Info
-                  </button>
+                  </Button>
                 )}
               </div>
               <FilterDropdown
@@ -972,14 +973,14 @@ distinguished_name = dn
             </p>
           </div>
 
-          <button
+          <Button
             onClick={handleGenerate}
             disabled={isGenerating}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <FileSignature />}
             Generate CSR
-          </button>
+          </Button>
         </div>
 
         {/* Output Section */}
@@ -1025,13 +1026,13 @@ distinguished_name = dn
                 <Info className="text-primary" size={20} />
                 Profile Documentation
               </h3>
-              <button
+              <Button
                 onClick={() => setShowProfileInfo(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 title="Close"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
             <div className="text-sm max-w-none flex-1 overflow-y-auto">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>

@@ -16,6 +16,7 @@ import { leadersData } from '../../data/leadersData'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 /** Strip parenthetical annotations and honorific prefixes, then lowercase. */
 function normalizeLeaderName(raw: string): string {
@@ -190,14 +191,14 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     {item.documentTitle?.trim()}
                   </h3>
                 </div>
-                <button
+                <Button
                   onClick={onClose}
                   aria-label="Close details"
                   className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                   style={{ marginTop: '-4px', marginRight: '-4px' }}
                 >
                   <X size={18} aria-hidden="true" />
-                </button>
+                </Button>
               </div>
               {/* Actions Row */}
               <div className="hidden md:flex items-center gap-2 flex-wrap">

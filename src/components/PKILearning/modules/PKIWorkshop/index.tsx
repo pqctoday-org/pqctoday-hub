@@ -19,6 +19,7 @@ import { CertParser } from './CertParser'
 import { CRLGenerator } from './CRLGenerator'
 import { MTCComparison } from './MTCComparison'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'pki-workshop'
 
@@ -147,13 +148,13 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
     <div className="max-w-7xl mx-auto space-y-6">
       {/* Reset button */}
       <div className="flex justify-end">
-        <button
+        <Button
           onClick={handleReset}
           className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
           Reset
-        </button>
+        </Button>
       </div>
 
       {/* Part Progress Steps */}
@@ -164,7 +165,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
           {parts.map((part, idx) => {
             const Icon = part.icon
             return (
-              <button
+              <Button
                 key={part.id}
                 onClick={() => setCurrentStep(idx)}
                 className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
@@ -184,7 +185,7 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
                 <span className="text-sm font-medium hidden md:block">
                   {part.title.split(':')[0]}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -223,27 +224,27 @@ export const PKIWorkshop: React.FC<PKIWorkshopProps> = ({ playgroundMode = false
 
       {/* Part Navigation */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
-        <button
+        <Button
           onClick={() => handlePartChange(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
         >
           &larr; Previous Step
-        </button>
+        </Button>
         {currentStep === parts.length - 1 ? (
-          <button
+          <Button
             onClick={handleComplete}
             className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
           >
             Complete Module ✓
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             onClick={() => handlePartChange(Math.min(parts.length - 1, currentStep + 1))}
             className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Next Step &rarr;
-          </button>
+          </Button>
         )}
       </div>
     </div>

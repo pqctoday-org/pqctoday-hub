@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { AlertTriangle, CheckCircle, Clock, Wrench } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TDE_MIGRATION_STEPS, DATABASE_PROFILES } from '../data/databaseConstants'
+import { Button } from '@/components/ui/button'
 
 const SUPPORTED_DBS = ['oracle', 'sqlserver', 'postgresql', 'mongodb']
 const DB_ITEMS = DATABASE_PROFILES.filter((p) => SUPPORTED_DBS.includes(p.id)).map((p) => ({
@@ -91,7 +92,7 @@ export const TDEMigrationPlanner: React.FC = () => {
         <div className="flex items-center gap-1 min-w-max">
           {TDE_MIGRATION_STEPS.map((s, idx) => (
             <React.Fragment key={s.id}>
-              <button
+              <Button
                 onClick={() => handleStepClick(idx)}
                 className={`flex flex-col items-center gap-1 px-2 py-1 rounded transition-colors ${
                   idx === currentStep
@@ -115,7 +116,7 @@ export const TDEMigrationPlanner: React.FC = () => {
                 <span className="text-[10px] font-medium hidden sm:block max-w-[80px] text-center leading-tight">
                   {s.title.split(' ').slice(0, 2).join(' ')}
                 </span>
-              </button>
+              </Button>
               {idx < TDE_MIGRATION_STEPS.length - 1 && (
                 <div
                   className={`h-0.5 w-8 ${idx < currentStep ? 'bg-status-success' : 'bg-border'}`}
@@ -209,14 +210,14 @@ export const TDEMigrationPlanner: React.FC = () => {
 
           {/* Navigation */}
           <div className="flex flex-col sm:flex-row gap-3 justify-between">
-            <button
+            <Button
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0}
               className="px-5 py-2.5 rounded-lg border border-border hover:bg-muted disabled:opacity-40 text-foreground text-sm transition-colors"
             >
               &larr; Previous
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={handleMarkComplete}
               className={`px-5 py-2.5 rounded-lg text-sm font-bold transition-colors ${
                 completedSteps.has(currentStep)
@@ -229,7 +230,7 @@ export const TDEMigrationPlanner: React.FC = () => {
                 : currentStep === TDE_MIGRATION_STEPS.length - 1
                   ? 'Complete & Generate Plan'
                   : 'Mark Complete & Continue →'}
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
@@ -274,7 +275,7 @@ export const TDEMigrationPlanner: React.FC = () => {
               SQL Server.
             </p>
           </div>
-          <button
+          <Button
             onClick={() => {
               setCurrentStep(0)
               setCompletedSteps(new Set())
@@ -283,7 +284,7 @@ export const TDEMigrationPlanner: React.FC = () => {
             className="text-sm text-muted-foreground hover:text-foreground transition-colors underline"
           >
             Reset and start over
-          </button>
+          </Button>
         </div>
       )}
     </div>

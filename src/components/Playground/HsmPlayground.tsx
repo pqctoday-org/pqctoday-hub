@@ -297,7 +297,7 @@ export const HsmPlayground = () => {
           </div>
 
           {/* WIP badge */}
-          <button
+          <Button
             onClick={() => setShowMethodologyModal(true)}
             className="flex items-center gap-1 text-xs font-semibold px-2 py-0.5 rounded-full bg-warning/10 text-warning border border-warning/30 hover:bg-warning/20 transition-colors"
             aria-label="View PKCS#11 test methodology"
@@ -305,7 +305,7 @@ export const HsmPlayground = () => {
             <Construction size={11} />
             WIP
             <FlaskConical size={11} />
-          </button>
+          </Button>
         </div>
       </div>
 

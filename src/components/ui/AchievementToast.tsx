@@ -6,6 +6,7 @@ import { useAchievementStore } from '@/store/useAchievementStore'
 import { ACHIEVEMENT_MAP } from '@/data/achievementCatalog'
 import { achievementIconMap } from '@/data/achievementIcons'
 import type { AchievementRarity } from '@/types/AchievementTypes'
+import { Button } from '@/components/ui/button'
 
 const RARITY_STYLES: Record<AchievementRarity, string> = {
   common: 'border-border',
@@ -104,13 +105,13 @@ export function AchievementToast() {
                 <p className="text-xs text-muted-foreground mt-0.5">{achievement.description}</p>
               </div>
 
-              <button
+              <Button
                 onClick={handleDismiss}
                 className="p-1 rounded hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors shrink-0"
                 aria-label="Dismiss achievement notification"
               >
                 <X size={14} />
-              </button>
+              </Button>
             </div>
           </div>
         </motion.div>

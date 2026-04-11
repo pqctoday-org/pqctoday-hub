@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { BookText, X, Lightbulb } from 'lucide-react'
 import { pageManuals, type PageId } from '../../data/userManualData'
+import { Button } from '@/components/ui/button'
 
 export const UserManualPanel: React.FC<{
   isOpen: boolean
@@ -50,13 +51,13 @@ export const UserManualPanel: React.FC<{
                   <BookText size={22} />
                   {manual.title}
                 </h2>
-                <button
+                <Button
                   onClick={onClose}
                   className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                   aria-label="Close guide"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
               <p className="text-sm text-muted-foreground mt-2">{manual.summary}</p>
             </div>

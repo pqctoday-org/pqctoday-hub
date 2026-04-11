@@ -6,6 +6,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { HASH_METHODS } from '../hooks/useHashingOperations'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 export const HashingTab: React.FC = () => {
   const { loading } = useSettingsContext()
@@ -83,13 +84,13 @@ export const HashingTab: React.FC = () => {
             <Info size={12} className="mt-0.5 shrink-0" />
             <span>Enter any text to compute its cryptographic hash</span>
           </div>
-          <button
+          <Button
             onClick={() => runOperation('hash')}
             disabled={!hashInput || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Compute Hash
-          </button>
+          </Button>
         </div>
 
         {/* Output */}
@@ -114,7 +115,7 @@ export const HashingTab: React.FC = () => {
               </span>
             </div>
           )}
-          <button
+          <Button
             onClick={() => {
               if (hashOutput) {
                 navigator.clipboard.writeText(hashOutput)
@@ -124,7 +125,7 @@ export const HashingTab: React.FC = () => {
             className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Copy Hash
-          </button>
+          </Button>
         </div>
       </div>
 

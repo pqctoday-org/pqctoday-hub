@@ -4,6 +4,7 @@ import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import type { IKEv2Mode } from '../data/ikev2Constants'
 import type { SSHKexAlgorithm } from '../data/sshConstants'
+import { Button } from '@/components/ui/button'
 
 export interface SimulationConfig {
   step: number
@@ -124,12 +125,12 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
                   <strong>What to observe:</strong> {scenario.observe}
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => handleLoadAndRun(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
                 <Play size={14} fill="currentColor" /> Load &amp; Run
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -147,12 +148,12 @@ export const VPNSSHExercises: React.FC<VPNSSHExercisesProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >
             Take Quiz <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import { X, Search, Loader2, ChevronDown, ChevronRight, AlertTriangle, Info } from 'lucide-react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
+import { Button } from '@/components/ui/button'
 
 interface CertificateInspectorProps {
   isOpen: boolean
@@ -292,7 +293,7 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
               <div className="flex items-center gap-2">
                 {parsedOutput && (
                   <div className="flex bg-muted rounded p-1 mr-2">
-                    <button
+                    <Button
                       onClick={() => setViewMode('tree')}
                       className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                         viewMode === 'tree'
@@ -301,8 +302,8 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                       }`}
                     >
                       Tree View
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setViewMode('raw')}
                       className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
                         viewMode === 'raw'
@@ -311,15 +312,15 @@ export const CertificateInspector: React.FC<CertificateInspectorProps> = ({
                       }`}
                     >
                       Raw Text
-                    </button>
+                    </Button>
                   </div>
                 )}
-                <button
+                <Button
                   onClick={onClose}
                   className="p-2 hover:bg-muted rounded-full transition-colors text-muted-foreground hover:text-foreground"
                 >
                   <X size={20} />
-                </button>
+                </Button>
               </div>
             </div>
 

@@ -16,6 +16,7 @@ import {
   Layers,
   Key,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface VPNSSHIntroductionProps {
   onNavigateToSimulate: () => void
@@ -438,12 +439,12 @@ export const VPNSSHIntroduction: React.FC<VPNSSHIntroductionProps> = ({ onNaviga
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
           onClick={onNavigateToSimulate}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
         >
           Start Simulator <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Step through IKEv2 and SSH handshakes, compare classical vs hybrid vs pure PQC modes.
         </p>

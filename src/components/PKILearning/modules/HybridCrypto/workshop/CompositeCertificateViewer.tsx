@@ -2,6 +2,7 @@
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, FileText, ExternalLink } from 'lucide-react'
 import { hybridCryptoService, type CertResult } from '../services/HybridCryptoService'
+import { Button } from '@/components/ui/button'
 
 interface CompositeCertificateViewerProps {
   initialAlgorithm?: string
@@ -201,7 +202,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
 
       {/* Algorithm selector */}
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
           onClick={() => setSelectedAlgorithm('all')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             selectedAlgorithm === 'all'
@@ -210,9 +211,9 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
           }`}
         >
           Generate All
-        </button>
+        </Button>
         {CERT_ALGORITHMS.map((algo) => (
-          <button
+          <Button
             key={algo.opensslAlg}
             onClick={() => setSelectedAlgorithm(algo.opensslAlg)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -222,12 +223,12 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
             }`}
           >
             {algo.label}
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Generate button */}
-      <button
+      <Button
         onClick={generateCerts}
         disabled={isGenerating}
         className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
@@ -243,7 +244,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
             Generate{selectedAlgorithm === 'all' ? ' All' : ' Certificate'}
           </>
         )}
-      </button>
+      </Button>
 
       {/* Results */}
       {results.length > 0 && (
@@ -342,7 +343,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                                 PEM size: {comp.pem.length} chars
                               </div>
                               <div className="flex gap-2">
-                                <button
+                                <Button
                                   onClick={() =>
                                     toggleView(
                                       `${result.algorithmLabel}-${comp.type}-parsed`,
@@ -357,8 +358,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                                   }`}
                                 >
                                   Parsed
-                                </button>
-                                <button
+                                </Button>
+                                <Button
                                   onClick={() =>
                                     toggleView(
                                       `${result.algorithmLabel}-${comp.type}-parsed`,
@@ -373,7 +374,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                                   }`}
                                 >
                                   PEM
-                                </button>
+                                </Button>
                               </div>
                               {expandedView[`${result.algorithmLabel}-${comp.type}-parsed`] && (
                                 <pre className="text-[10px] bg-background p-2 rounded border border-border overflow-x-auto max-h-48 overflow-y-auto font-mono whitespace-pre-wrap">
@@ -398,7 +399,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
 
                           {/* View toggles */}
                           <div className="flex gap-2">
-                            <button
+                            <Button
                               onClick={() => toggleView(result.algorithmLabel, 'parsed')}
                               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                                 currentView === 'parsed'
@@ -407,8 +408,8 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                               }`}
                             >
                               Parsed Fields
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                               onClick={() => toggleView(result.algorithmLabel, 'pem')}
                               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                                 currentView === 'pem'
@@ -417,7 +418,7 @@ export const CompositeCertificateViewer: React.FC<CompositeCertificateViewerProp
                               }`}
                             >
                               PEM Output
-                            </button>
+                            </Button>
                           </div>
 
                           {/* Content */}

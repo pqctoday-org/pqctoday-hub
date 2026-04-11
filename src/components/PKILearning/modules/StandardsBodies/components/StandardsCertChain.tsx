@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { ChevronRight, Eye, EyeOff } from 'lucide-react'
 import { CHAIN_SCENARIOS } from '../data'
 import type { ChainNode } from '../data'
+import { Button } from '@/components/ui/button'
 
 // ChainAnswers: scenarioId → nodeId → revealed
 export type ChainAnswers = Record<string, Record<string, boolean>>
@@ -68,7 +69,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
       {/* Scenario tabs */}
       <div className="flex flex-wrap gap-2">
         {CHAIN_SCENARIOS.map((scenario, idx) => (
-          <button
+          <Button
             key={scenario.id}
             onClick={() => setActiveScenarioIdx(idx)}
             className={`px-3 py-1.5 rounded-lg text-sm border transition-colors
@@ -79,7 +80,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
               }`}
           >
             {idx + 1}. {scenario.title}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -132,7 +133,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
                 )}
 
                 {/* Reveal button */}
-                <button
+                <Button
                   onClick={() => toggleNode(activeScenario.id, node.id)}
                   className={`w-full flex items-center justify-center gap-1.5 text-xs py-1.5 rounded border transition-colors
                     ${
@@ -152,7 +153,7 @@ export const StandardsCertChain: React.FC<StandardsCertChainProps> = ({
                       Reveal
                     </>
                   )}
-                </button>
+                </Button>
               </div>
 
               {/* Arrow between nodes */}

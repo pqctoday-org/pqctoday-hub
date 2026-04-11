@@ -1549,7 +1549,7 @@ export const KeyWrapPanel = ({
               <div className="flex items-center gap-3">
                 <span className="text-xs text-muted-foreground">Representation:</span>
                 {(['expanded', 'seed'] as const).map((r) => (
-                  <button
+                  <Button
                     key={r}
                     onClick={() => setPqcWrapRepr(r)}
                     className={`text-xs px-2 py-1 rounded border transition-colors ${
@@ -1559,7 +1559,7 @@ export const KeyWrapPanel = ({
                     }`}
                   >
                     {r === 'expanded' ? 'Expanded' : 'Seed'}
-                  </button>
+                  </Button>
                 ))}
                 <span className="text-[10px] text-muted-foreground">
                   {pqcWrapRepr === 'seed'

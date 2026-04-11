@@ -101,6 +101,7 @@ import {
 import type { SoftHSMModule, SLHDSASignOptions } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import type { HsmKey } from './HsmContext'
+import { Button } from '@/components/ui/button'
 
 interface TestResult {
   id: string
@@ -2156,13 +2157,13 @@ export const HsmAcvpTesting = () => {
             View NIST ACVP JSON Reference Vectors
           </a>
         </div>
-        <button
+        <Button
           onClick={runTests}
           className="btn-primary flex items-center gap-2"
           disabled={loading || phase !== 'session_open'}
         >
           <Play size={18} /> Execute ACVP Tests
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 flex-1 min-h-0">
@@ -2243,7 +2244,7 @@ export const HsmAcvpTesting = () => {
               Execution Log
             </h4>
             {logs.length > 0 && (
-              <button
+              <Button
                 onClick={() => {
                   void navigator.clipboard.writeText(logs.join('\n')).then(() => {
                     setLogCopied(true)
@@ -2256,7 +2257,7 @@ export const HsmAcvpTesting = () => {
               >
                 {logCopied ? <Check size={12} className="text-success" /> : <Copy size={12} />}
                 {logCopied ? 'Copied' : 'Copy log'}
-              </button>
+              </Button>
             )}
           </div>
           <div className="bg-muted/50 border border-border rounded-lg p-4 font-mono text-xs text-success/80 overflow-y-auto custom-scrollbar flex-1">

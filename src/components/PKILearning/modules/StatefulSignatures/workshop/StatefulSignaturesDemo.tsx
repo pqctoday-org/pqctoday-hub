@@ -429,7 +429,7 @@ export function StatefulSignaturesDemo() {
         <CardContent className="p-0">
           <div className="flex border-b overflow-x-auto">
             {['hss', 'xmss', 'comparison', 'kat'].map((tab) => (
-              <button
+              <Button
                 key={tab}
                 onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'comparison' | 'kat')}
                 className={`flex-1 min-w-[160px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
@@ -442,7 +442,7 @@ export function StatefulSignaturesDemo() {
                 {tab === 'xmss' && 'XMSS / MT Explorer'}
                 {tab === 'comparison' && 'Architecture Comparison'}
                 {tab === 'kat' && 'KAT Vectors'}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -490,12 +490,12 @@ export function StatefulSignaturesDemo() {
                     <div className="flex items-center gap-2 text-xs text-status-error">
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
-                      <button
+                      <Button
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >
                         Retry
-                      </button>
+                      </Button>
                     </div>
                   )}
                   {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
@@ -742,12 +742,12 @@ export function StatefulSignaturesDemo() {
                     <div className="flex items-center gap-2 text-xs text-status-error">
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
-                      <button
+                      <Button
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >
                         Retry
-                      </button>
+                      </Button>
                     </div>
                   )}
                   {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}

@@ -265,7 +265,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.function}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('function')}
                         aria-label={`Function column, ${sortColumn === 'function' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -273,7 +273,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>Function</span>
                         {renderSortIcon('function')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -293,7 +293,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.classical}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('classical')}
                         aria-label={`Classical Algorithm column, ${sortColumn === 'classical' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -301,7 +301,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>Classical Algorithm</span>
                         {renderSortIcon('classical')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -321,7 +321,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.pqc}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('pqc')}
                         aria-label={`PQC Alternative column, ${sortColumn === 'pqc' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -329,7 +329,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>PQC Alternative</span>
                         {renderSortIcon('pqc')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -349,7 +349,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.region}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('region')}
                         aria-label={`Region column, ${sortColumn === 'region' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -357,7 +357,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>Region</span>
                         {renderSortIcon('region')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -377,7 +377,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.status}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('status')}
                         aria-label={`Status column, ${sortColumn === 'status' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -385,7 +385,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>Status</span>
                         {renderSortIcon('status')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -405,7 +405,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       className="font-bold whitespace-nowrap relative hover:bg-muted/50 transition-colors select-none p-0"
                       style={{ width: `${columnWidths.deprecation}px` }}
                     >
-                      <button
+                      <Button
                         type="button"
                         onClick={() => handleSort('deprecation')}
                         aria-label={`Transition and Deprecation column, ${sortColumn === 'deprecation' ? `sorted ${sortDirection === 'asc' ? 'ascending' : 'descending'}` : 'not sorted'}, click to sort`}
@@ -413,7 +413,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <span>Transition / Deprecation</span>
                         {renderSortIcon('deprecation')}
-                      </button>
+                      </Button>
                       <div
                         aria-hidden="true"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -463,7 +463,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                         <td className="px-4 py-3" style={{ width: `${columnWidths.function}px` }}>
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
                             {isComparableFunction && (
-                              <button
+                              <Button
                                 type="button"
                                 onClick={() => onToggleCompare(pqcName)}
                                 disabled={!canCompare && !isCompared}
@@ -486,7 +486,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 )}
                               >
                                 <Scale size={14} />
-                              </button>
+                              </Button>
                             )}
                             {algo.function.includes('Signature') ? (
                               <FileSignature size={24} className="flex-shrink-0" />

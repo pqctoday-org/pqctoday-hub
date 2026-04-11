@@ -286,6 +286,7 @@ export function DataTable<T>({
               {colIdx === 0 && (
                 <>
                   {hasChildren ? (
+                    // eslint-disable-next-line no-restricted-syntax
                     <button
                       type="button"
                       className="inline-flex items-center justify-center w-6 h-6 mr-1 rounded hover:bg-muted/50"
@@ -466,6 +467,7 @@ export function makeExpandColumn<T>(
       const key = getRowKey(row)
       const isExpanded = expandedIds.has(key)
       return (
+        // eslint-disable-next-line no-restricted-syntax
         <button
           type="button"
           className="p-1 rounded hover:bg-muted/50"

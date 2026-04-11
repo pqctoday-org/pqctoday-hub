@@ -25,6 +25,7 @@ import {
   DEFAULT_MLDSA87_CLIENT_CERT,
   DEFAULT_MLDSA87_CLIENT_KEY,
 } from './utils/defaultCertificates'
+import { Button } from '@/components/ui/button'
 
 // ... (existing constants) ...
 // Note: We are relying on the previous content for constants between imports and component definition
@@ -215,7 +216,7 @@ export const TLSClientPanel: React.FC = () => {
           )}
         </h2>
         <div role="tablist" className="flex bg-muted/50 rounded-lg p-1">
-          <button
+          <Button
             onClick={() => {
               setActiveTab('ui')
               setMode('client', 'ui')
@@ -232,8 +233,8 @@ export const TLSClientPanel: React.FC = () => {
             aria-controls="client-tab-panel"
           >
             <Settings size={14} /> UI
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => {
               setActiveTab('raw')
               setMode('client', 'raw')
@@ -250,7 +251,7 @@ export const TLSClientPanel: React.FC = () => {
             aria-controls="client-tab-panel"
           >
             <FileText size={14} /> Config File
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -285,7 +286,7 @@ export const TLSClientPanel: React.FC = () => {
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs text-muted-foreground">Received from Server</span>
                   <div role="tablist" className="flex bg-muted rounded p-0.5 border border-border">
-                    <button
+                    <Button
                       onClick={() => setMessageView('text')}
                       className={clsx(
                         'px-2 py-0.5 text-[10px] rounded transition-colors',
@@ -297,8 +298,8 @@ export const TLSClientPanel: React.FC = () => {
                       aria-selected={messageView === 'text'}
                     >
                       TXT
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setMessageView('hex')}
                       className={clsx(
                         'px-2 py-0.5 text-[10px] rounded transition-colors',
@@ -310,7 +311,7 @@ export const TLSClientPanel: React.FC = () => {
                       aria-selected={messageView === 'hex'}
                     >
                       HEX
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 <div className="min-h-[60px] max-h-[100px] overflow-auto bg-muted/50 rounded p-2 text-xs font-mono">
@@ -336,14 +337,14 @@ export const TLSClientPanel: React.FC = () => {
                             <span className="text-tertiary break-all flex-grow font-mono leading-tight">
                               &lt; {display}
                             </span>
-                            <button
+                            <Button
                               onClick={() => navigator.clipboard.writeText(display)}
                               className="text-muted-foreground hover:text-foreground opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0"
                               title="Copy"
                               aria-label="Copy to clipboard"
                             >
                               <Copy size={12} />
-                            </button>
+                            </Button>
                           </div>
                         )
                       })
@@ -369,7 +370,7 @@ export const TLSClientPanel: React.FC = () => {
                     className="flex-grow"
                   />
                   {clientConfig.certificates.certPem && (
-                    <button
+                    <Button
                       onClick={() =>
                         setInspectCert({
                           pem: clientConfig.certificates.certPem!,
@@ -381,7 +382,7 @@ export const TLSClientPanel: React.FC = () => {
                       aria-label="Inspect certificate"
                     >
                       <Eye size={18} />
-                    </button>
+                    </Button>
                   )}
                 </div>
 
@@ -393,12 +394,12 @@ export const TLSClientPanel: React.FC = () => {
                         <label htmlFor="client-cert-pem" className="flex items-center gap-1">
                           <FileText size={12} /> Certificate (PEM)
                         </label>
-                        <button
+                        <Button
                           onClick={() => setShowImport({ isOpen: true, type: 'cert' })}
                           className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                         >
                           <Import size={10} /> Import
-                        </button>
+                        </Button>
                       </div>
                       <textarea
                         id="client-cert-pem"
@@ -417,12 +418,12 @@ export const TLSClientPanel: React.FC = () => {
                         <label htmlFor="client-key-pem" className="flex items-center gap-1">
                           <Key size={12} /> Private Key (PEM)
                         </label>
-                        <button
+                        <Button
                           onClick={() => setShowImport({ isOpen: true, type: 'key' })}
                           className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                         >
                           <Import size={10} /> Import
-                        </button>
+                        </Button>
                       </div>
                       <textarea
                         id="client-key-pem"
@@ -466,7 +467,7 @@ export const TLSClientPanel: React.FC = () => {
                   </label>
                   <div className="flex gap-2">
                     {clientConfig.certificates.caPem && (
-                      <button
+                      <Button
                         onClick={() =>
                           setInspectCert({
                             pem: clientConfig.certificates.caPem!,
@@ -477,14 +478,14 @@ export const TLSClientPanel: React.FC = () => {
                         title="Inspect Root CA"
                       >
                         <Eye size={10} className="mr-1" /> Inspect
-                      </button>
+                      </Button>
                     )}
-                    <button
+                    <Button
                       onClick={() => setShowImport({ isOpen: true, type: 'ca' })}
                       className="text-[10px] text-primary hover:text-primary/80 flex items-center gap-1 uppercase font-bold"
                     >
                       <Import size={10} /> Import from Studio
-                    </button>
+                    </Button>
                   </div>
                 </div>
                 <div className="relative">
@@ -556,7 +557,7 @@ export const TLSClientPanel: React.FC = () => {
                 <span className="text-xs text-muted-foreground mb-2 block">Classical (ECDH)</span>
                 <div className="flex flex-wrap gap-2">
                   {CLASSICAL_GROUPS.map((group) => (
-                    <button
+                    <Button
                       key={group}
                       onClick={() => toggleGroup(group)}
                       className={clsx(
@@ -567,7 +568,7 @@ export const TLSClientPanel: React.FC = () => {
                       )}
                     >
                       {group}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -577,7 +578,7 @@ export const TLSClientPanel: React.FC = () => {
                 <span className="text-xs text-muted-foreground mb-2 block">PQC (ML-KEM)</span>
                 <div className="flex flex-wrap gap-2">
                   {PQC_GROUPS.map((group) => (
-                    <button
+                    <Button
                       key={group}
                       onClick={() => toggleGroup(group)}
                       title={GROUP_SIZE[group]}
@@ -592,7 +593,7 @@ export const TLSClientPanel: React.FC = () => {
                       <span className="text-[9px] font-sans font-normal opacity-60">
                         ({NIST_LEVEL[group]})
                       </span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -604,7 +605,7 @@ export const TLSClientPanel: React.FC = () => {
                 </span>
                 <div className="flex flex-wrap gap-2">
                   {HYBRID_GROUPS.map((group) => (
-                    <button
+                    <Button
                       key={group}
                       onClick={() => toggleGroup(group)}
                       title={GROUP_SIZE[group]}
@@ -619,7 +620,7 @@ export const TLSClientPanel: React.FC = () => {
                       <span className="text-[9px] font-sans font-normal opacity-60">
                         ({NIST_LEVEL[group]})
                       </span>
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -673,7 +674,7 @@ export const TLSClientPanel: React.FC = () => {
               </span>
               <div className="flex flex-wrap gap-2 mb-2">
                 {SIG_ALGS.map((alg) => (
-                  <button
+                  <Button
                     key={alg}
                     onClick={() => toggleSigAlg(alg)}
                     title={
@@ -697,7 +698,7 @@ export const TLSClientPanel: React.FC = () => {
                         ({NIST_LEVEL[alg]})
                       </span>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </div>
               {clientConfig.signatureAlgorithms.some((a) => SLH_DSA_ALGS.includes(a)) && (
@@ -762,7 +763,7 @@ export const TLSClientPanel: React.FC = () => {
               <label htmlFor="client-raw-config">/ssl/client.cnf</label>
               <div className="flex items-center gap-2">
                 <span className="text-warning">Experimental Editor</span>
-                <button
+                <Button
                   onClick={() => {
                     navigator.clipboard.writeText(clientConfig.rawConfig || '')
                     // Visual feedback via button text change handled inline
@@ -772,7 +773,7 @@ export const TLSClientPanel: React.FC = () => {
                 >
                   <Copy size={10} />
                   Copy
-                </button>
+                </Button>
               </div>
             </div>
             <textarea

@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle, Shield, Clock, ChevronDown, ChevronUp, CheckSquare } from 'lucide-react'
 import type { RoleGuideData } from './types'
+import { Button } from '@/components/ui/button'
 
 const SEVERITY_STYLES: Record<string, string> = {
   critical: 'border-status-error/40 bg-status-error/5',
@@ -94,13 +95,13 @@ export const RoleWhyItMatters: React.FC<Props> = ({ data }) => {
                       <span className="text-[11px] text-muted-foreground">{impact.timeframe}</span>
                     </div>
                   </div>
-                  <button
+                  <Button
                     onClick={() => setExpandedId(isExpanded ? null : impact.id)}
                     className="p-1 text-muted-foreground hover:text-foreground transition-colors"
                     aria-label={isExpanded ? 'Collapse scenario' : 'Expand scenario'}
                   >
                     {isExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-                  </button>
+                  </Button>
                 </div>
                 {isExpanded && (
                   <div className="mt-3 pt-3 border-t border-border">

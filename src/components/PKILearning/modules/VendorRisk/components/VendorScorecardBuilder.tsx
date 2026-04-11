@@ -15,6 +15,7 @@ import {
   SlidersHorizontal,
   Users,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'vendor-risk'
 
@@ -292,7 +293,7 @@ export const VendorScorecardBuilder: React.FC = () => {
           return (
             <div key={d.id} className="glass-panel overflow-hidden">
               {/* Header row */}
-              <button
+              <Button
                 type="button"
                 className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
                 onClick={() => setExpandedDim(isExpanded ? null : d.id)}
@@ -323,7 +324,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                     ({Math.round(d.weight * 100)}%)
                   </span>
                 </div>
-              </button>
+              </Button>
 
               {/* Progress bar */}
               <div className="px-4 pb-2">
@@ -345,7 +346,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                           ? 'Manual slider scoring'
                           : 'Pick products that meet this requirement'}
                       </span>
-                      <button
+                      <Button
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -362,7 +363,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                             <SlidersHorizontal size={12} /> Use slider
                           </>
                         )}
-                      </button>
+                      </Button>
                     </div>
                   )}
 
@@ -393,7 +394,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                         const key = productKey(item)
                         const isChecked = checked.has(key)
                         return (
-                          <button
+                          <Button
                             key={key}
                             type="button"
                             onClick={() => toggleProductForDimension(d.id, key)}
@@ -422,7 +423,7 @@ export const VendorScorecardBuilder: React.FC = () => {
                                 {d.autoDetect(item) ? 'detected' : ''}
                               </span>
                             )}
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>

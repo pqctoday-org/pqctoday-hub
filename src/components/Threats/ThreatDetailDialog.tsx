@@ -9,6 +9,7 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import FocusLock from 'react-focus-lock'
+import { Button } from '@/components/ui/button'
 
 interface ThreatDetailDialogProps {
   threat: ThreatItem
@@ -54,13 +55,13 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
               </h2>
               <p className="text-sm text-muted-foreground mt-1">{threat.industry}</p>
             </div>
-            <button
+            <Button
               onClick={onClose}
               className="text-muted-foreground hover:text-foreground transition-colors p-1"
               aria-label="Close details"
             >
               <X size={20} />
-            </button>
+            </Button>
           </div>
 
           <div className="p-6 space-y-6 flex-1 overflow-y-auto">

@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { Button } from '@/components/ui/button'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -352,12 +353,12 @@ const Step2SuccessAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = 
 
     {/* CTA */}
     <div className="text-center">
-      <button
+      <Button
         onClick={onNavigateToWorkshop}
         className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground mt-2">
         Build a migration roadmap, plan stakeholder communications, and design a KPI tracker.
       </p>

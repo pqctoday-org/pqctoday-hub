@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent } from '@testing-library/react'
 import { ChatPanelContent } from './ChatPanelContent'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -62,7 +63,7 @@ vi.mock('../About/SampleQuestionsModal', () => ({
   }) =>
     isOpen ? (
       <div data-testid="sample-questions-modal">
-        <button onClick={() => onSendQuestion?.('Test question from modal')}>Send Test</button>
+        <Button onClick={() => onSendQuestion?.('Test question from modal')}>Send Test</Button>
       </div>
     ) : null,
 }))

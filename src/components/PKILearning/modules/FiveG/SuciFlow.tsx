@@ -17,6 +17,7 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
 
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
@@ -1360,16 +1361,16 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <Shield size={14} />
             Select Protection Scheme
           </div>
-          <button
+          <Button
             onClick={() => setGsmaModalOpen(true)}
             className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
             title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
           >
             Reference Vectors
-          </button>
+          </Button>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
-          <button
+          <Button
             data-testid="profile-a-btn"
             onClick={() => {
               wizard.reset()
@@ -1390,9 +1391,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <div className="text-xs text-muted-foreground mt-1">
               Faster Montgomery-curve ECDH, 32-byte keys
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button
             data-testid="profile-b-btn"
             onClick={() => {
               wizard.reset()
@@ -1413,9 +1414,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <div className="text-xs text-muted-foreground mt-1">
               Wider HSM &amp; national standard support (NIST P-256)
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button
             data-testid="profile-c-btn"
             onClick={() => {
               wizard.reset()
@@ -1436,7 +1437,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <div className="text-xs italic text-muted-foreground mt-1">
               Under 3GPP SA3 study (TR 33.841) — Not yet standardized
             </div>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -1451,7 +1452,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             Educational preview of proposed Profile C
           </p>
           <div className="flex gap-4">
-            <button
+            <Button
               onClick={() => {
                 wizard.reset()
                 changePqcMode('hybrid')
@@ -1465,8 +1466,8 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             >
               <div className="font-bold">Hybrid (Transition)</div>
               <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => {
                 wizard.reset()
                 changePqcMode('pure')
@@ -1480,7 +1481,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             >
               <div className="font-bold">Pure PQC (Target)</div>
               <div className="text-xs opacity-70">ML-KEM-768 Only</div>
-            </button>
+            </Button>
           </div>
         </div>
       )}

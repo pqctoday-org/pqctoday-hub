@@ -8,6 +8,7 @@ import type { AutomotiveFunctionProfile } from '../data/safetyCryptoData'
 import { ALGORITHM_THROUGHPUT } from '../data/sensorFusionData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const AUTOMOTIVE_KAT_SPECS: KatTestSpec[] = [
   {
@@ -95,7 +96,7 @@ function FunctionCard({
   onSelect: () => void
 }) {
   return (
-    <button
+    <Button
       onClick={onSelect}
       className={`text-left rounded-lg border p-3 transition-all ${
         isSelected
@@ -121,7 +122,7 @@ function FunctionCard({
           {FAIL_MODE_LABELS[fn.failMode]}
         </span>
       </div>
-    </button>
+    </Button>
   )
 }
 

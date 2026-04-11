@@ -10,6 +10,7 @@ import {
 } from '../constants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const IOT_KAT_SPECS: KatTestSpec[] = [
   {
@@ -102,7 +103,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
         <div className="text-sm font-bold text-foreground mb-3">1. Select Device Type</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {IOT_DEVICE_TYPES.map((d, idx) => (
-            <button
+            <Button
               key={d.id}
               onClick={() => {
                 setDeviceIdx(idx)
@@ -123,7 +124,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
                   ? `${(d.bandwidthKbps / 1000).toFixed(0)} Mbps`
                   : `${d.bandwidthKbps} kbps`}
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -133,7 +134,7 @@ export const FirmwareSigningSimulator: React.FC = () => {
         <div className="text-sm font-bold text-foreground mb-3">2. Select Signing Algorithm</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {IOT_FIRMWARE_ALGORITHMS.map((a, idx) => (
-            <button
+            <Button
               key={a.id}
               onClick={() => {
                 setAlgoIdx(idx)
@@ -167,21 +168,21 @@ export const FirmwareSigningSimulator: React.FC = () => {
                       : 'Moderate'}
                 </span>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
 
       {/* Sign Button */}
       <div className="text-center">
-        <button
+        <Button
           onClick={runSimulation}
           disabled={phase !== 'idle' && phase !== 'done'}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
           <FileCode size={18} />
           {phase === 'done' ? 'Sign Again' : 'Sign Firmware Image'}
-        </button>
+        </Button>
       </div>
 
       {/* Simulation Flow */}

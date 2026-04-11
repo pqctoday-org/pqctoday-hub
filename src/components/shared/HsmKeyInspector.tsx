@@ -483,13 +483,13 @@ export const HsmKeyInspector = ({
             </p>
           </div>
           {onClear && keys.length > 0 && (
-            <button
+            <Button
               onClick={onClear}
               className="text-[10px] px-2 py-0.5 rounded border border-border hover:bg-muted text-muted-foreground transition-colors"
               title="Clear all key objects from the Key Inspector"
             >
               Clear Keys
-            </button>
+            </Button>
           )}
         </div>
 
@@ -513,14 +513,14 @@ export const HsmKeyInspector = ({
               {resolvedKeys.map((k) => (
                 <tr key={k.handle} className="border-b border-border/40 hover:bg-muted/30">
                   <td className="py-1 pr-3">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => openInspect(k)}
                       className="text-muted-foreground hover:text-primary transition-colors p-0.5 rounded"
                       aria-label={`Inspect key ${k.handle}`}
                     >
                       <Eye size={12} />
-                    </button>
+                    </Button>
                   </td>
                   <td className="py-1.5 pr-4 text-muted-foreground hidden sm:table-cell">
                     {k.handle}
@@ -546,31 +546,31 @@ export const HsmKeyInspector = ({
                   <td className="py-1 pl-1">
                     {confirmHandle === k.handle ? (
                       <div className="flex items-center gap-1">
-                        <button
+                        <Button
                           type="button"
                           onClick={() => destroyKey(k)}
                           className="text-status-error text-[10px] font-sans font-medium hover:underline"
                           aria-label={`Confirm destroy key ${k.handle}`}
                         >
                           destroy?
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                           type="button"
                           onClick={() => setConfirmHandle(null)}
                           className="text-muted-foreground text-[10px] font-sans hover:underline"
                         >
                           cancel
-                        </button>
+                        </Button>
                       </div>
                     ) : (
-                      <button
+                      <Button
                         type="button"
                         onClick={() => setConfirmHandle(k.handle)}
                         className="text-muted-foreground hover:text-status-error transition-colors p-0.5 rounded"
                         aria-label={`Delete key ${k.handle}`}
                       >
                         <Trash2 size={12} />
-                      </button>
+                      </Button>
                     )}
                   </td>
                 </tr>

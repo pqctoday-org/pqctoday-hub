@@ -17,6 +17,7 @@ import {
   type EnvironmentType,
   type ComplianceDeadline,
 } from '../data/testingConstants'
+import { Button } from '@/components/ui/button'
 
 const PHASE_OPTIONS: { id: MigrationPhase; label: string; description: string }[] = [
   { id: 'inventory', label: 'Inventory', description: 'Discover and classify all crypto assets' },
@@ -131,7 +132,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Migration Phase:</span>
         <div className="grid sm:grid-cols-4 gap-2">
           {PHASE_OPTIONS.map((p) => (
-            <button
+            <Button
               key={p.id}
               onClick={() => setPhase(p.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -142,7 +143,7 @@ export const TestStrategyBuilder: React.FC = () => {
             >
               <div className="font-semibold text-xs text-foreground mb-0.5">{p.label}</div>
               <div className="text-[10px] text-muted-foreground">{p.description}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -152,7 +153,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Environment Type:</span>
         <div className="grid sm:grid-cols-2 gap-2">
           {ENV_OPTIONS.map((e) => (
-            <button
+            <Button
               key={e.id}
               onClick={() => setEnvironment(e.id)}
               className={`text-left p-3 rounded-lg border transition-all flex items-center gap-3 ${
@@ -163,7 +164,7 @@ export const TestStrategyBuilder: React.FC = () => {
             >
               <span className="shrink-0">{e.icon}</span>
               <span className="font-semibold text-xs text-foreground">{e.label}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -173,7 +174,7 @@ export const TestStrategyBuilder: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Compliance Deadline:</span>
         <div className="flex flex-wrap gap-2">
           {DEADLINE_OPTIONS.map((d) => (
-            <button
+            <Button
               key={d.id}
               onClick={() => setDeadline(d.id)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
@@ -183,7 +184,7 @@ export const TestStrategyBuilder: React.FC = () => {
               }`}
             >
               {d.label}
-            </button>
+            </Button>
           ))}
         </div>
         <div

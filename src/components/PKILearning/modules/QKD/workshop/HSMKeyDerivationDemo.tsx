@@ -8,6 +8,7 @@ import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+import { Button } from '@/components/ui/button'
 
 const QKD_KAT_SPECS: KatTestSpec[] = [
   {
@@ -293,13 +294,13 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             same <code>key_ID</code> — the secret bytes are identical on both sides because they
             were produced by the QKD hardware.
           </p>
-          <button
+          <Button
             onClick={stepHandlers[0]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Play size={14} /> {processing ? 'Fetching…' : 'Fetch QKD Key'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -345,13 +346,13 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               leaves the HSM. Only derived keys can be exported.
             </div>
           </div>
-          <button
+          <Button
             onClick={stepHandlers[1]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Lock size={14} /> {processing ? 'Importing…' : 'Import into HSM'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -401,13 +402,13 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               PKCS#11 v3.0 Mechanisms <ExternalLink size={11} />
             </a>
           </div>
-          <button
+          <Button
             onClick={stepHandlers[2]}
             disabled={processing}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Cpu size={14} /> {processing ? 'Deriving…' : 'Run KDF'}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -466,12 +467,12 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             never transmitted over any network. The shared secret was established exclusively via
             the quantum channel.
           </div>
-          <button
+          <Button
             onClick={stepHandlers[3]}
             className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
           >
             <Zap size={14} /> See How the Key Is Used
-          </button>
+          </Button>
         </div>
       )}
 
@@ -588,14 +589,14 @@ export const HSMKeyDerivationDemo: React.FC = () => {
 
       {/* Run next step */}
       {currentStep > 0 && currentStep < 5 && (
-        <button
+        <Button
           onClick={stepHandlers[currentStep]}
           disabled={processing || (!hsm.isReady && currentStep === 2)}
           className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <Play size={14} /> {processing ? 'Processing…' : `Run Step ${currentStep + 1}`}
           {!hsm.isReady && currentStep === 2 && ' (Live HSM Required)'}
-        </button>
+        </Button>
       )}
 
       <KatValidationPanel

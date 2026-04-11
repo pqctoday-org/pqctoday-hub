@@ -85,14 +85,14 @@ const EditableDataDisplay: React.FC<{
     <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
-        <button
+        <Button
           type="button"
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
           aria-label={`Switch to ${viewMode === 'hex' ? 'ASCII' : 'HEX'} view`}
           className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'ASCII'}
-        </button>
+        </Button>
       </div>
       {readOnly ? (
         <div className="font-mono text-foreground break-all max-h-24 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
@@ -741,14 +741,14 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
         </div>
 
         {/* FIPS 205 §6 internal parameters — collapsible */}
-        <button
+        <Button
           type="button"
           onClick={() => setShowInternalParams((v) => !v)}
           className="flex items-center gap-1 text-[11px] text-primary/80 hover:text-primary transition-colors"
         >
           {showInternalParams ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           FIPS 205 §6 internal parameters (n, h, d, a, k, lg_w)
-        </button>
+        </Button>
         {showInternalParams &&
           (() => {
             const ip = SLH_DSA_INTERNAL_PARAMS[paramSetId]
@@ -1366,7 +1366,7 @@ const SignVerifyTabSoftware: React.FC = () => {
             />
 
             <div className="mt-auto pt-4">
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('sign')
@@ -1376,7 +1376,7 @@ const SignVerifyTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-success/20 text-success border border-success/30 hover:bg-success/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Sign Message
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -1493,7 +1493,7 @@ const SignVerifyTabSoftware: React.FC = () => {
             )}
 
             <div className="mt-auto pt-4">
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   runOperation('verify')
@@ -1503,7 +1503,7 @@ const SignVerifyTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-warning/20 text-warning border border-warning/30 hover:bg-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Verify Signature
-              </button>
+              </Button>
             </div>
           </div>
         </div>

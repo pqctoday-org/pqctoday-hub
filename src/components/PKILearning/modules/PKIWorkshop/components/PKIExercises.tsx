@@ -3,6 +3,7 @@ import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { CertRotationChecklist } from './CertRotationChecklist'
+import { Button } from '@/components/ui/button'
 
 interface PKIExercisesProps {
   onNavigateToWorkshop: () => void
@@ -129,12 +130,12 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
                   <strong>What to observe:</strong> {scenario.observe}
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => handleStartExercise(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
                 <Play size={14} fill="currentColor" /> Start Exercise
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -156,12 +157,12 @@ export const PKIExercises: React.FC<PKIExercisesProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >
             Take Quiz <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

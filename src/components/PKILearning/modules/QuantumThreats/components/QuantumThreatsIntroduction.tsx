@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface QuantumThreatsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -487,12 +488,12 @@ export const QuantumThreatsIntroduction: React.FC<QuantumThreatsIntroductionProp
               your HNDL migration deadline.
             </p>
           </div>
-          <button
+          <Button
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-6 py-3 shrink-0"
           >
             Open Workshop <ArrowRight size={16} />
-          </button>
+          </Button>
         </div>
       </div>
       <ReadingCompleteButton />

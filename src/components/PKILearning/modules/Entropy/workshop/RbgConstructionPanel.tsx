@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState } from 'react'
 import { ChevronDown, ChevronUp, Layers } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const RBG_TYPES = [
   {
@@ -34,7 +35,7 @@ export const RbgConstructionPanel = () => {
 
   return (
     <div className="glass-panel p-4 border border-border">
-      <button
+      <Button
         onClick={() => setIsExpanded(!isExpanded)}
         className="flex items-center justify-between w-full text-left"
       >
@@ -49,7 +50,7 @@ export const RbgConstructionPanel = () => {
         ) : (
           <ChevronDown size={16} className="text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className="mt-3 space-y-3">

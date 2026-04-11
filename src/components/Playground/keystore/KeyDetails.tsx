@@ -5,6 +5,7 @@ import { Key as KeyIcon, FileText, Code, Copy, Check } from 'lucide-react'
 import clsx from 'clsx'
 import type { Key } from '../../../types'
 import { bytesToHex } from '../../../utils/dataInputUtils'
+import { Button } from '@/components/ui/button'
 
 interface KeyDetailsProps {
   selectedKey: Key
@@ -200,7 +201,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
             </label>
             <div className="flex gap-2">
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
-                <button
+                <Button
                   onClick={() => setRawValueMode('hex')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -210,8 +211,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   )}
                 >
                   HEX
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setRawValueMode('ascii')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -221,9 +222,9 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   )}
                 >
                   ASCII
-                </button>
+                </Button>
               </div>
-              <button
+              <Button
                 onClick={() => copyToClipboard(displayRaw, 'raw')}
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
@@ -233,7 +234,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 ) : (
                   <Copy size={14} />
                 )}
-              </button>
+              </Button>
             </div>
           </div>
           <div className="relative group flex flex-col">
@@ -268,7 +269,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
             </label>
             <div className="flex gap-2">
               <div className="flex bg-muted rounded-lg p-0.5 border border-border">
-                <button
+                <Button
                   onClick={() => setPkcs8ValueMode('hex')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -278,8 +279,8 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   )}
                 >
                   HEX
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setPkcs8ValueMode('ascii')}
                   className={clsx(
                     'px-2 py-1 text-[10px] font-bold rounded-md transition-colors',
@@ -289,9 +290,9 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                   )}
                 >
                   PEM
-                </button>
+                </Button>
               </div>
-              <button
+              <Button
                 onClick={() => copyToClipboard(displayPkcs8, 'pkcs8')}
                 className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 title="Copy to clipboard"
@@ -302,7 +303,7 @@ export const KeyDetails: React.FC<KeyDetailsProps> = ({ selectedKey }) => {
                 ) : (
                   <Copy size={14} />
                 )}
-              </button>
+              </Button>
             </div>
           </div>
           <div className="relative group flex flex-col">

@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import clsx from 'clsx'
 import { ChevronDown, Globe, Check, Search } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface FilterDropdownItem {
   id: string
@@ -204,7 +205,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         )}
         <div className="max-h-60 overflow-y-auto">
           {/* All / Clear Option */}
-          <button
+          <Button
             role="option"
             aria-selected={isMulti ? multiCount === 0 : isDefaultSelected}
             onClick={() => {
@@ -230,7 +231,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
             {isMulti && multiCount === 0 && (
               <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
             )}
-          </button>
+          </Button>
 
           {normalizedItems
             .filter((item) => item.id !== 'All')
@@ -244,7 +245,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                 ? (multiSelectedIds?.includes(item.id) ?? false)
                 : selectedId === item.id
               return (
-                <button
+                <Button
                   key={item.id}
                   role="option"
                   aria-selected={isSelected}
@@ -272,7 +273,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
                   {isMulti && isSelected && (
                     <Check size={12} className="ml-auto text-primary" aria-hidden="true" />
                   )}
-                </button>
+                </Button>
               )
             })}
         </div>
@@ -282,7 +283,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
   }
 
   const renderButton = () => (
-    <button
+    <Button
       ref={buttonRef}
       data-testid="filter-dropdown"
       onClick={() => {
@@ -319,7 +320,7 @@ export const FilterDropdown: React.FC<FilterDropdownProps> = ({
         aria-hidden="true"
         className={clsx('transition-transform', isOpen && 'rotate-180')}
       />
-    </button>
+    </Button>
   )
 
   return (

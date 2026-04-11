@@ -15,6 +15,7 @@ import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 interface LeaderDetailPopoverProps {
   isOpen: boolean
@@ -149,13 +150,13 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
             <AskAssistantButton
               question={`What is ${leader.name}'s role in post-quantum cryptography? They are ${leader.title} at ${leader.organizations.join(' and ')}${leader.bio ? `. Background: ${leader.bio}` : ''}`}
             />
-            <button
+            <Button
               onClick={onClose}
               className="p-2 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-foreground transition-colors"
               aria-label="Close details"
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 

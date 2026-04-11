@@ -4,6 +4,7 @@ import { render, screen, fireEvent } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { ComplianceView } from './ComplianceView'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // Mock the services module
 vi.mock('./services', () => ({
@@ -90,13 +91,13 @@ vi.mock('../../utils/analytics', () => ({
 
 // Mock share/glossary buttons
 vi.mock('../ui/ShareButton', () => ({
-  ShareButton: () => <button>Share</button>,
+  ShareButton: () => <Button>Share</Button>,
 }))
 vi.mock('../ui/GlossaryButton', () => ({
-  GlossaryButton: () => <button>Glossary</button>,
+  GlossaryButton: () => <Button>Glossary</Button>,
 }))
 vi.mock('../ui/UserManualButton', () => ({
-  UserManualButton: () => <button>Guide</button>,
+  UserManualButton: () => <Button>Guide</Button>,
 }))
 
 describe('ComplianceView', () => {

@@ -18,6 +18,7 @@ import {
 import { ExportableArtifact } from '@/components/PKILearning/common/executive'
 import { useModuleStore } from '@/store/useModuleStore'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface RiskEntry {
   id: string
@@ -162,7 +163,7 @@ function TreatmentSelector({
           const Icon = opt.icon
           const isSelected = decision?.strategy === opt.value
           return (
-            <button
+            <Button
               key={opt.value}
               onClick={() =>
                 onDecisionChange(entry.id, {
@@ -178,7 +179,7 @@ function TreatmentSelector({
             >
               <Icon size={14} />
               {opt.label}
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -321,22 +322,22 @@ function PriorityRankingList({
             className="flex items-start gap-3 p-3 bg-muted/30 rounded-lg border border-border"
           >
             <div className="flex flex-col gap-1 shrink-0 pt-1">
-              <button
+              <Button
                 onClick={() => moveUp(idx)}
                 disabled={idx === 0}
                 className="p-0.5 rounded hover:bg-muted disabled:opacity-30 text-muted-foreground"
                 aria-label="Move up"
               >
                 <ArrowUp size={14} />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => moveDown(idx)}
                 disabled={idx === priorityOrder.length - 1}
                 className="p-0.5 rounded hover:bg-muted disabled:opacity-30 text-muted-foreground"
                 aria-label="Move down"
               >
                 <ArrowDown size={14} />
-              </button>
+              </Button>
             </div>
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
@@ -721,7 +722,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
       <div className="glass-panel p-4 space-y-3">
         <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
           <div className="flex rounded-lg border border-border overflow-hidden">
-            <button
+            <Button
               onClick={() => setViewMode('inherent')}
               className={`px-4 py-2 text-sm font-medium transition-colors ${
                 viewMode === 'inherent'
@@ -730,8 +731,8 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               }`}
             >
               Inherent Risk
-            </button>
-            <button
+            </Button>
+            <Button
               onClick={() => hasTreatments && setViewMode('residual')}
               disabled={!hasTreatments}
               title={!hasTreatments ? 'Assign at least one treatment strategy first' : undefined}
@@ -742,7 +743,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
               }`}
             >
               Residual Risk
-            </button>
+            </Button>
           </div>
           <span className="text-xs text-muted-foreground">
             {hasTreatments
@@ -955,7 +956,7 @@ export const RiskHeatmapGenerator: React.FC<RiskHeatmapGeneratorProps> = ({ risk
 function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => void }) {
   return (
     <div className="glass-panel overflow-hidden">
-      <button
+      <Button
         onClick={onToggle}
         className="w-full flex items-center gap-2 p-4 text-left hover:bg-muted/50 transition-colors"
       >
@@ -968,7 +969,7 @@ function EducationalGuide({ open, onToggle }: { open: boolean; onToggle: () => v
         ) : (
           <ChevronDown size={16} className="text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {open && (
         <div className="px-4 pb-4 space-y-4 animate-fade-in border-t border-border pt-4">

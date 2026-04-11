@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { CheckCircle, X, ArrowRight } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { useJourneyMap } from '@/hooks/useJourneyMap'
+import { Button } from '@/components/ui/button'
 
 /**
  * Watches journey map phases and shows a brief toast when a learning phase
@@ -84,12 +85,12 @@ export function PhaseCompletionToast() {
           aria-live="polite"
           className="fixed bottom-4 left-4 z-[90] max-w-sm glass-panel border border-primary/30 p-4 shadow-lg"
         >
-          <button
+          <Button
             onClick={handleDismiss}
             className="absolute top-2 right-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X size={14} />
-          </button>
+          </Button>
 
           <div className="flex items-start gap-3">
             <div className="p-1.5 rounded-full bg-status-success/20 shrink-0">

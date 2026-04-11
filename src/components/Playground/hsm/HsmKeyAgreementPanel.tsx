@@ -196,7 +196,7 @@ export const HsmKeyAgreementPanel = ({
             <p className="text-xs text-muted-foreground">Curve</p>
             <div className="flex gap-1">
               {(['P-256', 'P-384', 'P-521'] as KaCurve[]).map((c) => (
-                <button
+                <Button
                   key={c}
                   onClick={() => {
                     setCurve(c)
@@ -210,7 +210,7 @@ export const HsmKeyAgreementPanel = ({
                   }`}
                 >
                   {c}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -234,7 +234,7 @@ export const HsmKeyAgreementPanel = ({
           {/* Cofactor toggle */}
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Mode</p>
-            <button
+            <Button
               onClick={() => {
                 setCofactorMode((m) => !m)
                 setAliceSecret(null)
@@ -248,7 +248,7 @@ export const HsmKeyAgreementPanel = ({
               }`}
             >
               {cofactorMode ? 'Cofactor ECDH' : 'Standard ECDH'}
-            </button>
+            </Button>
           </div>
         </div>
 

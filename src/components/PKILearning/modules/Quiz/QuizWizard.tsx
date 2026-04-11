@@ -75,12 +75,12 @@ export const QuizWizard: React.FC<QuizWizardProps> = ({ questions, onComplete, o
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <button
+        <Button
           onClick={onExit}
           className="text-sm text-muted-foreground hover:text-foreground transition-colors"
         >
           Exit Quiz
-        </button>
+        </Button>
         <span className="text-sm text-muted-foreground">
           {Object.keys(state.results).length} of {state.questions.length} answered
         </span>

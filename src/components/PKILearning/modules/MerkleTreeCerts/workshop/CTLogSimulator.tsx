@@ -205,9 +205,9 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               : 'Add Certificate (simulation)'}
           </span>
           {issuedCerts.length === 0 && (
-            <button onClick={onLoadSamples} className="text-xs text-primary hover:text-primary/80">
+            <Button onClick={onLoadSamples} className="text-xs text-primary hover:text-primary/80">
               Load 5 samples
-            </button>
+            </Button>
           )}
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -237,14 +237,14 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
             />
             <p className="text-[9px] text-muted-foreground mt-0.5">CA signs with ML-DSA-44</p>
           </div>
-          <button
+          <Button
             onClick={handleAdd}
             disabled={!newSubject.trim() || isSigning}
             className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 disabled:opacity-50 transition-colors"
           >
             {isSigning ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />}
             Submit
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -321,7 +321,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                   key={cert.id}
                   className="bg-muted/50 rounded-lg border border-border overflow-hidden"
                 >
-                  <button
+                  <Button
                     className="w-full flex items-center gap-3 p-2.5 text-left hover:bg-muted/80 transition-colors"
                     onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
                   >
@@ -337,7 +337,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                     <span className="text-[10px] text-muted-foreground">
                       {expandedIdx === idx ? '▲' : '▼'}
                     </span>
-                  </button>
+                  </Button>
 
                   {expandedIdx === idx && (
                     <div className="px-3 pb-3 pt-0 space-y-2 border-t border-border">
@@ -800,7 +800,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
             )}
           </span>
           {hasTampering && (
-            <button
+            <Button
               onClick={() => {
                 setEditedCerts(structuredClone(logCerts))
                 setAuditResult(null)
@@ -808,7 +808,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <RefreshCw size={11} /> Restore all
-            </button>
+            </Button>
           )}
         </div>
 
@@ -845,12 +845,12 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                         }}
                         className="text-xs h-auto py-1 flex-1"
                       />
-                      <button onClick={() => handleCommitEdit(idx)} className="text-success">
+                      <Button onClick={() => handleCommitEdit(idx)} className="text-success">
                         <Check size={14} />
-                      </button>
-                      <button onClick={() => setEditingIdx(null)} className="text-muted-foreground">
+                      </Button>
+                      <Button onClick={() => setEditingIdx(null)} className="text-muted-foreground">
                         <X size={14} />
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -869,13 +869,13 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                 </div>
                 <span className="text-[10px] text-muted-foreground shrink-0">{cert.algorithm}</span>
                 {!isEditing && (
-                  <button
+                  <Button
                     onClick={() => handleStartEdit(idx)}
                     className="text-muted-foreground hover:text-warning transition-colors shrink-0"
                     title="Edit to simulate misissuance"
                   >
                     <Pencil size={12} />
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -884,7 +884,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
       </div>
 
       {/* Re-audit button */}
-      <button
+      <Button
         onClick={handleReaudit}
         disabled={isAuditing}
         className="flex items-center gap-2 px-4 py-2 bg-warning/10 text-warning border border-warning/30 rounded-lg hover:bg-warning/20 disabled:opacity-50 text-sm font-medium transition-colors"
@@ -898,7 +898,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
             <ShieldCheck size={16} /> Re-audit Batch
           </>
         )}
-      </button>
+      </Button>
 
       {/* Audit result */}
       {auditResult && signedBatch && (

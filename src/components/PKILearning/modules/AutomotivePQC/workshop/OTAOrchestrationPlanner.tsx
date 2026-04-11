@@ -20,6 +20,7 @@ import {
   computeCampaignMetrics,
 } from '../data/otaOrchestrationData'
 import type { OTACampaignTarget } from '../data/otaOrchestrationData'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -186,7 +187,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
             const isSelected = overhead.algorithm === selectedAlgorithm
             const isPQC = !['ECDSA P-256', 'RSA-2048'].includes(overhead.algorithm)
             return (
-              <button
+              <Button
                 key={overhead.algorithm}
                 onClick={() => setSelectedAlgorithm(overhead.algorithm)}
                 className={`rounded-lg p-3 border text-left transition-colors ${
@@ -218,7 +219,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                     /pkg
                   </div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>

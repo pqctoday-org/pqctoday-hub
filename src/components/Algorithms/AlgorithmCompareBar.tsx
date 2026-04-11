@@ -49,14 +49,14 @@ export function AlgorithmCompareBar({
                 className="flex items-center gap-0.5 sm:gap-1 text-[10px] sm:text-xs bg-secondary/10 text-foreground border border-secondary/20 rounded-full pl-2 pr-1 py-0.5 whitespace-nowrap"
               >
                 <span className="truncate max-w-[70px] sm:max-w-[120px]">{name}</span>
-                <button
+                <Button
                   type="button"
                   onClick={() => onRemove(name)}
                   aria-label={`Remove ${name} from comparison`}
                   className="text-muted-foreground hover:text-foreground shrink-0 p-0.5 rounded-full hover:bg-black/10 dark:hover:bg-white/10"
                 >
                   <X size={12} />
-                </button>
+                </Button>
               </span>
             ))}
             {Array.from({ length: MAX - compareKeys.length }).map((_, i) => (

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -101,7 +102,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
               <strong className="text-foreground">What to observe:</strong> {scenario.observe}
             </div>
 
-            <button
+            <Button
               onClick={() => {
                 onSetWorkshopConfig?.(scenario.config)
                 onNavigateToWorkshop()
@@ -111,7 +112,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
               <Play size={13} />
               Go to Workshop Step {scenario.config.step + 1}
               <ArrowRight size={13} />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

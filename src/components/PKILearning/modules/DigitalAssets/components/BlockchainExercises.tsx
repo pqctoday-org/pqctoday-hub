@@ -2,6 +2,7 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 interface BlockchainExercisesProps {
   onNavigateToWorkshop: (chain?: string) => void
@@ -109,12 +110,12 @@ export const BlockchainExercises: React.FC<BlockchainExercisesProps> = ({
                   <strong>What to observe:</strong> {scenario.observe}
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => onNavigateToWorkshop(scenario.chain)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
                 <Play size={14} fill="currentColor" /> Load & Run
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -132,12 +133,12 @@ export const BlockchainExercises: React.FC<BlockchainExercisesProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"
           >
             Take Quiz <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -158,7 +158,7 @@ export const MainLayout = () => {
         <div className="glass-panel p-2 lg:p-4 flex w-full justify-center lg:justify-between items-center relative">
           <div className="flex flex-row items-center gap-4">
             {/* Mobile brand — always a button; toggles Airplane Mode on/off */}
-            <button
+            <Button
               type="button"
               onClick={() => setAirplaneMode(!airplaneMode)}
               className="lg:hidden flex-shrink-0 flex items-center gap-1.5 min-h-[44px] min-w-[44px]"
@@ -171,9 +171,9 @@ export const MainLayout = () => {
               {airplaneMode && (
                 <Plane size={12} className="text-primary animate-pulse" aria-hidden="true" />
               )}
-            </button>
+            </Button>
             {/* Desktop brand — always a button; toggles Airplane Mode on/off */}
-            <button
+            <Button
               type="button"
               onClick={() => setAirplaneMode(!airplaneMode)}
               className="hidden lg:flex flex-col items-start"
@@ -193,7 +193,7 @@ export const MainLayout = () => {
               <span className="text-xs text-muted-foreground uppercase tracking-widest hidden sm:block">
                 Last Updated: {buildTime}
               </span>
-            </button>
+            </Button>
           </div>
 
           {/* Universal Navigation: Row of Icons on Mobile, Full Nav on Desktop */}
@@ -327,7 +327,7 @@ export const MainLayout = () => {
               ))}
 
               {/* Airplane Mode toggle */}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setAirplaneMode(!airplaneMode)
@@ -347,10 +347,10 @@ export const MainLayout = () => {
                 >
                   {airplaneMode ? 'On' : 'Off'}
                 </span>
-              </button>
+              </Button>
 
               {/* Journey History shortcut */}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setMoreMenuOpen(false)
@@ -360,10 +360,10 @@ export const MainLayout = () => {
               >
                 <Clock size={18} aria-hidden="true" />
                 Journey History
-              </button>
+              </Button>
 
               {/* Knowledge Graph shortcut */}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setMoreMenuOpen(false)
@@ -373,7 +373,7 @@ export const MainLayout = () => {
               >
                 <Network size={18} aria-hidden="true" />
                 Knowledge Graph
-              </button>
+              </Button>
             </div>
           </div>
         </>

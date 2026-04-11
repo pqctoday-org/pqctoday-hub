@@ -5,6 +5,7 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface CRLGeneratorProps {
   onComplete: () => void
@@ -362,7 +363,7 @@ authorityKeyIdentifier = keyid:always
             )}
           </div>
 
-          <button
+          <Button
             onClick={handleAddToRevocationList}
             disabled={isExtractingSerial || !selectedCertToRevoke}
             className="flex items-center justify-center gap-2 px-4 py-2 bg-status-warning/20 text-status-warning border border-status-warning/40 font-medium rounded hover:bg-status-warning/30 transition-colors disabled:opacity-50 text-sm"
@@ -373,7 +374,7 @@ authorityKeyIdentifier = keyid:always
               <Plus size={16} />
             )}
             Add to Revocation List
-          </button>
+          </Button>
 
           {endEntityCerts.length === 0 && (
             <p className="text-xs text-muted-foreground">
@@ -399,13 +400,13 @@ authorityKeyIdentifier = keyid:always
                         Serial: {entry.serial} &nbsp;·&nbsp; Reason: {entry.reason}
                       </span>
                     </div>
-                    <button
+                    <Button
                       onClick={() => handleRemoveEntry(entry.certId)}
                       className="text-muted-foreground hover:text-status-error transition-colors ml-3"
                       title="Remove from revocation list"
                     >
                       <Trash2 size={14} />
-                    </button>
+                    </Button>
                   </div>
                 ))}
               </div>
@@ -441,7 +442,7 @@ authorityKeyIdentifier = keyid:always
             className="w-full"
           />
 
-          <button
+          <Button
             onClick={handleGenerate}
             disabled={isGenerating || !selectedKeyId}
             className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -449,7 +450,7 @@ authorityKeyIdentifier = keyid:always
             {isGenerating ? <Loader2 className="animate-spin" /> : <ShieldAlert />}
             Generate CRL
             {revokedEntries.length > 0 ? ` (${revokedEntries.length} revoked)` : ' (empty)'}
-          </button>
+          </Button>
         </div>
       </div>
 

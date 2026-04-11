@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { Layers, LayoutGrid, Table } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export type ThreatsViewMode = 'stack' | 'cards' | 'table'
 
@@ -23,7 +24,7 @@ export const ThreatsViewToggle = ({ mode, onChange }: ThreatsViewToggleProps) =>
       aria-label="View mode"
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => (
-        <button
+        <Button
           key={value}
           onClick={() => onChange(value)}
           role="radio"
@@ -37,7 +38,7 @@ export const ThreatsViewToggle = ({ mode, onChange }: ThreatsViewToggleProps) =>
         >
           <Icon size={14} aria-hidden="true" />
           <span className="hidden sm:inline">{label}</span>
-        </button>
+        </Button>
       ))}
     </div>
   )

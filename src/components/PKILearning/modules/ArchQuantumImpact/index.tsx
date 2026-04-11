@@ -200,7 +200,7 @@ export const ArchQuantumImpactModule: React.FC = () => {
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
                       className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
@@ -220,7 +220,7 @@ export const ArchQuantumImpactModule: React.FC = () => {
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>

@@ -833,17 +833,17 @@ export const LandingView = () => {
                     <strong>Multiple devices?</strong> Work on one device at a time. Always refresh
                     when switching to pull your latest save.
                   </div>
-                  <button
+                  <Button
                     type="button"
                     onClick={signOut}
                     className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
                   >
                     <LogOut size={12} aria-hidden="true" />
                     Sign out
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <button
+                <Button
                   type="button"
                   onClick={signIn}
                   className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
@@ -871,7 +871,7 @@ export const LandingView = () => {
                       refresh when switching to pull your latest save.
                     </div>
                   </div>
-                </button>
+                </Button>
               )}
             </motion.div>
           )}

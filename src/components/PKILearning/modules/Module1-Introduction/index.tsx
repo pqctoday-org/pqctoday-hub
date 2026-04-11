@@ -17,6 +17,7 @@ import { KeyGenWorkshop } from './KeyGenWorkshop'
 import { SignatureDemo } from './SignatureDemo'
 import { PQC101Exercises, type WorkshopConfig } from './PQC101Exercises'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'pqc-101'
 
@@ -160,12 +161,12 @@ export const Module1: React.FC = () => {
             <GlossaryAutoWrap>
               <PQC101Module />
               <div className="mt-6 flex justify-end">
-                <button
+                <Button
                   onClick={navigateToWorkshop}
                   className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Go to Workshop &rarr;
-                </button>
+                </Button>
               </div>
             </GlossaryAutoWrap>
           </TabsContent>
@@ -181,13 +182,13 @@ export const Module1: React.FC = () => {
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
             <div className="flex justify-end">
-              <button
+              <Button
                 onClick={handleReset}
                 className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
                 <Trash2 size={16} />
                 Reset
-              </button>
+              </Button>
             </div>
 
             {/* Part Progress Steps */}
@@ -198,7 +199,7 @@ export const Module1: React.FC = () => {
                 {visibleParts.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
                       className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
@@ -218,7 +219,7 @@ export const Module1: React.FC = () => {
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -259,27 +260,27 @@ export const Module1: React.FC = () => {
 
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
+              <Button
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
-              </button>
+              </Button>
               {currentPart === visibleParts.length - 1 ? (
-                <button
+                <Button
                   onClick={() => markStepComplete(MODULE_ID, visibleParts[currentPart].id)}
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
                   Complete Module ✓
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
                 >
                   Next Step &rarr;
-                </button>
+                </Button>
               )}
             </div>
           </div>

@@ -18,6 +18,7 @@ import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface CertParserProps {
   onComplete: () => void
@@ -704,12 +705,12 @@ S8Y=
             />
           </div>
           <div className="flex items-end">
-            <button
+            <Button
               onClick={loadExampleCert}
               className="text-sm text-primary hover:text-primary/80 underline mb-2"
             >
               Or load example certificate
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -767,17 +768,17 @@ S8Y=
           />
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
+            <Button
               onClick={handleParse}
               disabled={isParsing || !certInput}
               className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
             >
               {isParsing ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
               {isCrlInput ? 'Parse CRL' : 'Parse Details'}
-            </button>
+            </Button>
 
             <div className="flex gap-2">
-              <button
+              <Button
                 onClick={() => handleConvert('DER')}
                 disabled={isConverting || !certInput || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
@@ -788,8 +789,8 @@ S8Y=
                   <ArrowRightLeft size={14} />
                 )}
                 To DER
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => handleConvert('P7B')}
                 disabled={isConverting || !certInput || certInput.includes('REQUEST') || isCrlInput}
                 className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-xs"
@@ -801,13 +802,13 @@ S8Y=
                   <ArrowRightLeft size={14} />
                 )}
                 To P7B
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* Fingerprint button — shown for X.509 certificates */}
           {isCertInput && certInput && (
-            <button
+            <Button
               onClick={handleGetFingerprint}
               disabled={isFingerprintLoading}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -819,7 +820,7 @@ S8Y=
                 <FileText size={16} />
               )}
               Get SHA-256 Fingerprint
-            </button>
+            </Button>
           )}
 
           {fingerprint && (
@@ -831,7 +832,7 @@ S8Y=
 
           {/* CSR self-signature verify — shown when input is a CSR */}
           {isCsrInput && certInput && (
-            <button
+            <Button
               onClick={handleVerifyCsr}
               disabled={isVerifyingCsr}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -843,7 +844,7 @@ S8Y=
                 <ShieldCheck size={16} />
               )}
               Verify CSR Signature
-            </button>
+            </Button>
           )}
 
           {csrVerifyResult && (
@@ -872,7 +873,7 @@ S8Y=
           )}
 
           {canVerifyChain && (
-            <button
+            <Button
               onClick={handleVerifyChain}
               disabled={isVerifying}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -884,7 +885,7 @@ S8Y=
                 <ShieldCheck size={16} />
               )}
               Verify Chain Against Root CA
-            </button>
+            </Button>
           )}
 
           {verifyResult && (
@@ -911,7 +912,7 @@ S8Y=
           )}
 
           {canVerifyCrl && (
-            <button
+            <Button
               onClick={handleVerifyCrl}
               disabled={isVerifyingCrl}
               className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground font-medium rounded hover:bg-secondary/80 transition-colors disabled:opacity-50 text-sm"
@@ -923,7 +924,7 @@ S8Y=
                 <ShieldCheck size={16} />
               )}
               Check Revocation Status (CRL)
-            </button>
+            </Button>
           )}
 
           {crlVerifyResult && (
@@ -977,7 +978,7 @@ S8Y=
             <h3 className="text-lg font-semibold text-foreground">Parsed Output</h3>
             {parsedOutput && (
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => setViewMode('tree')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'tree'
@@ -987,8 +988,8 @@ S8Y=
                 >
                   <Eye size={14} />
                   Tree View
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setViewMode('raw')}
                   className={`flex items-center gap-1 px-3 py-1 rounded text-xs font-medium transition-colors ${
                     viewMode === 'raw'
@@ -998,7 +999,7 @@ S8Y=
                 >
                   <Code size={14} />
                   Raw Text
-                </button>
+                </Button>
               </div>
             )}
           </div>

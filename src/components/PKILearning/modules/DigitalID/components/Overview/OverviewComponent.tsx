@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface OverviewComponentProps {
   onNavigateTo: (stepId: string) => void
@@ -288,12 +289,12 @@ export const OverviewComponent: React.FC<OverviewComponentProps> = ({ onNavigate
 
       {/* Start CTA */}
       <div className="text-center py-4">
-        <button
+        <Button
           onClick={() => onNavigateTo('wallet')}
           className="inline-flex items-center gap-2 px-6 py-3 bg-primary/20 border border-primary text-primary rounded-full hover:bg-primary/30 transition-colors font-medium"
         >
           Start the Simulation <ArrowRight size={16} />
-        </button>
+        </Button>
       </div>
 
       {/* Related Resources */}

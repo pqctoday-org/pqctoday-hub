@@ -5,6 +5,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { ThreatsDashboard } from './ThreatsDashboard'
 import type { ThreatData } from '../../data/threatsData'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // Mock dependencies
 vi.mock('../../data/threatsData', () => ({
@@ -65,16 +66,16 @@ vi.mock('../common/FilterDropdown', () => ({
     const isMulti = onMultiSelect !== undefined && multiSelectedIds !== undefined
     return (
       <div data-testid={`filter-${effectiveLabel}`}>
-        <button
+        <Button
           onClick={() => (isMulti ? onMultiSelect!([]) : onSelect('All'))}
           aria-label={effectiveLabel}
         >
           {effectiveLabel}: {items.find((i) => i.id === selectedId)?.label || selectedId}
-        </button>
+        </Button>
         <ul>
           {items.map((item) => (
             <li key={item.id}>
-              <button
+              <Button
                 onClick={() => {
                   if (isMulti) {
                     const current = multiSelectedIds ?? []
@@ -88,7 +89,7 @@ vi.mock('../common/FilterDropdown', () => ({
                 }}
               >
                 {item.label}
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

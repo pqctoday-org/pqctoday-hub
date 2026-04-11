@@ -2,6 +2,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -141,13 +142,13 @@ export const AISecurityExercises: React.FC<AISecurityExercisesProps> = ({
                   <strong>What to observe:</strong> {scenario.observe}
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => handleLoadAndRun(scenario)}
                 className="flex items-center gap-1.5 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm shrink-0"
               >
                 <Play size={14} />
                 Load
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -165,12 +166,12 @@ export const AISecurityExercises: React.FC<AISecurityExercisesProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => navigate('/learn/quiz')}
             className="flex items-center gap-2 px-4 py-2 border border-border rounded-lg hover:bg-muted transition-colors text-sm text-foreground"
           >
             Take Quiz <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

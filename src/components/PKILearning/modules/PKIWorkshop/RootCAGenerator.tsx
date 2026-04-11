@@ -32,6 +32,7 @@ import {
   CKP_SLH_DSA_SHA2_256F,
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
+import { Button } from '@/components/ui/button'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -844,7 +845,7 @@ x509_extensions = v3_ca
               <div className="flex items-center justify-between">
                 <span className="text-sm text-muted-foreground">Certificate Profile</span>
                 {selectedProfile && (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleShowProfileInfo}
                     className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
@@ -852,7 +853,7 @@ x509_extensions = v3_ca
                   >
                     <Info size={16} />
                     Info
-                  </button>
+                  </Button>
                 )}
               </div>
               <FilterDropdown
@@ -930,14 +931,14 @@ x509_extensions = v3_ca
             </p>
           </div>
 
-          <button
+          <Button
             onClick={handleGenerate}
             disabled={isGenerating}
             className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <Shield />}
             Generate Root CA
-          </button>
+          </Button>
         </div>
 
         {/* Output Section */}
@@ -983,13 +984,13 @@ x509_extensions = v3_ca
                 <Info className="text-primary" size={20} />
                 Profile Documentation
               </h3>
-              <button
+              <Button
                 onClick={() => setShowProfileInfo(false)}
                 className="text-muted-foreground hover:text-foreground transition-colors"
                 title="Close"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
             <div className="text-sm max-w-none flex-1 overflow-y-auto">
               <ReactMarkdown remarkPlugins={[remarkGfm]}>{profileDocContent}</ReactMarkdown>

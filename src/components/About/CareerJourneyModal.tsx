@@ -2,6 +2,7 @@
 import { motion, AnimatePresence } from 'framer-motion'
 import { X, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useState, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 
 interface CareerJourneyModalProps {
   isOpen: boolean
@@ -92,13 +93,13 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
               <h2 className="text-lg md:text-xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
                 My Career Journey
               </h2>
-              <button
+              <Button
                 onClick={onClose}
                 className="p-1.5 hover:bg-muted/20 rounded-full transition-colors"
                 aria-label="Close modal"
               >
                 <X size={18} className="md:w-5 md:h-5" />
-              </button>
+              </Button>
             </div>
 
             {/* Content Area */}
@@ -131,27 +132,27 @@ export function CareerJourneyModal({ isOpen, onClose }: CareerJourneyModalProps)
               </AnimatePresence>
 
               {/* Navigation Controls */}
-              <button
+              <Button
                 onClick={prev}
                 className="absolute left-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Previous panel"
               >
                 <ChevronLeft size={20} className="md:w-6 md:h-6" />
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={next}
                 className="absolute right-2 top-1/2 -translate-y-1/2 p-2 md:p-3 bg-muted/80 hover:bg-muted text-foreground rounded-full transition-all border border-border"
                 aria-label="Next panel"
               >
                 <ChevronRight size={20} className="md:w-6 md:h-6" />
-              </button>
+              </Button>
             </div>
 
             {/* Footer / Progress */}
             <div className="p-4 border-t border-border flex items-center justify-between">
               <div className="flex gap-2">
                 {PANELS.map((_, i) => (
-                  <button
+                  <Button
                     key={i}
                     onClick={() => setCurrentIndex(i)}
                     className={`h-1.5 rounded-full transition-all ${

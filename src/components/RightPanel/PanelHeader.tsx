@@ -29,7 +29,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
       <div className="flex items-center justify-between max-w-4xl mx-auto">
         <div className="flex items-center gap-1" role="tablist">
           {tabs.map((tab) => (
-            <button
+            <Button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
@@ -42,7 +42,7 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
             >
               <tab.icon size={16} />
               <span className="hidden sm:inline">{tab.label}</span>
-            </button>
+            </Button>
           ))}
         </div>
         <Button

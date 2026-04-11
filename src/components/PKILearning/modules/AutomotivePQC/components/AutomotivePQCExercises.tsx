@@ -2,6 +2,7 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -137,12 +138,12 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
                   <strong>What to observe:</strong> {scenario.observe}
                 </p>
               </div>
-              <button
+              <Button
                 onClick={() => handleLoadAndRun(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0"
               >
                 <Play size={14} fill="currentColor" /> Load &amp; Run
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -160,24 +161,24 @@ export const AutomotivePQCExercises: React.FC<ExercisesProps> = ({
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <button
+          <Button
             onClick={() => navigate('/learn/iot-ot-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
             IoT &amp; OT Security <ArrowRight size={14} />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => navigate('/learn/hsm-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
             HSM &amp; PQC Operations <ArrowRight size={14} />
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => navigate('/learn/emv-payment-pqc')}
             className="btn btn-secondary flex items-center justify-center gap-2 px-4 py-2 text-sm"
           >
             EMV Payment PQC <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

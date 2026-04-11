@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface FiveGIntroductionProps {
   onNavigateToSimulate: () => void
@@ -331,12 +332,12 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             Pure mode sets Z&nbsp;=&nbsp;Z_kem directly (no combination needed).
           </p>
         </div>
-        <button
+        <Button
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >
           Try It in the Simulator <ArrowRight size={16} />
-        </button>
+        </Button>
       </section>
 
       {/* Related Resources */}

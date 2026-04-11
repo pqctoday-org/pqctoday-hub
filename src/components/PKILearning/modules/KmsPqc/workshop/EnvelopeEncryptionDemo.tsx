@@ -186,12 +186,12 @@ const BlobHexPanel: React.FC<{ label: string; bytes: Uint8Array }> = ({ label, b
           {label}{' '}
           <span className="font-normal text-muted-foreground font-mono">({bytes.length} B)</span>
         </span>
-        <button
+        <Button
           onClick={handleCopy}
           className="text-[10px] px-2 py-0.5 rounded bg-muted hover:bg-muted/80 text-muted-foreground border border-border transition-colors"
         >
           {copied ? '✓ Copied' : 'Copy hex'}
-        </button>
+        </Button>
       </div>
       <pre className="text-[10px] font-mono bg-muted/50 rounded border border-border p-2 overflow-x-auto whitespace-pre-wrap break-all text-foreground/70 max-h-28 overflow-y-auto leading-relaxed">
         {hex}

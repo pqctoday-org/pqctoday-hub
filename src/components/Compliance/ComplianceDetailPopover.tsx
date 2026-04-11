@@ -16,6 +16,7 @@ import clsx from 'clsx'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 interface ComplianceDetailPopoverProps {
   isOpen: boolean
@@ -126,14 +127,14 @@ export const ComplianceDetailPopover = ({
                 <AskAssistantButton
                   question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
                 />
-                <button
+                <Button
                   ref={closeButtonRef}
                   onClick={onClose}
                   className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
                   aria-label="Close"
                 >
                   <X size={16} />
-                </button>
+                </Button>
               </div>
             </div>
             <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight pr-8">

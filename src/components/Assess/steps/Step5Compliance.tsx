@@ -144,7 +144,7 @@ const Step5Compliance = () => {
         <h3 className="text-xl font-bold text-foreground">
           Which compliance frameworks apply to you?
         </h3>
-        <button
+        <Button
           type="button"
           onClick={() => setImportComplianceSelection(!importComplianceSelection)}
           className={clsx(
@@ -162,7 +162,7 @@ const Step5Compliance = () => {
         >
           <Import size={12} />
           {importComplianceSelection ? 'Synced' : 'Import off'}
-        </button>
+        </Button>
       </div>
       <p className="text-sm text-muted-foreground">
         Select all regulatory or compliance frameworks your organization must adhere to. This helps

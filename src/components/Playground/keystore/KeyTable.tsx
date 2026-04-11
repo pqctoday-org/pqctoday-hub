@@ -4,6 +4,7 @@ import { Key as KeyIcon, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react'
 import clsx from 'clsx'
 import type { Key } from '../../../types'
 import { getKeySize, formatBytes } from './keySizeUtils'
+import { Button } from '@/components/ui/button'
 
 interface KeyTableProps {
   keyStore: Key[]
@@ -142,13 +143,13 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                       // eslint-disable-next-line security/detect-object-injection
                       style={{ width: columnWidths[col] }}
                     >
-                      <button
+                      <Button
                         onClick={() => handleSort(col)}
                         className="w-full h-full p-4 flex items-center gap-2 hover:bg-accent transition-colors text-left font-bold"
                       >
                         {col.charAt(0).toUpperCase() + col.slice(1)}
                         {renderSortIcon(col)}
-                      </button>
+                      </Button>
                       <div
                         role="none"
                         className="absolute right-0 top-0 bottom-0 w-1 cursor-col-resize hover:bg-primary/50 transition-colors"
@@ -228,7 +229,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
         {sortedKeys.length === 0
           ? emptyState
           : sortedKeys.map((key) => (
-              <button
+              <Button
                 key={key.id}
                 type="button"
                 onClick={() => setSelectedKeyId(key.id)}
@@ -265,7 +266,7 @@ export const KeyTable: React.FC<KeyTableProps> = ({
                     })()}
                   </span>
                 </div>
-              </button>
+              </Button>
             ))}
       </div>
     </>

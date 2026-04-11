@@ -5,6 +5,7 @@ import type { TimelinePhase, Phase, CountryData } from '@/types/timeline'
 import { phaseColors } from '@/data/timelineData'
 import { CountryFlag } from '@/components/common/CountryFlag'
 import { StatusBadge } from '@/components/common/StatusBadge'
+import { Button } from '@/components/ui/button'
 
 export interface ComplianceGanttRow {
   country: CountryData
@@ -154,7 +155,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
               contain: 'layout style',
             }}
           >
-            <button
+            <Button
               className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
               onClick={() => onPhaseClick(phaseData)}
               aria-label={`${phaseData.phase}: ${phaseData.title}`}
@@ -187,7 +188,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
                   )}
                 </div>
               ) : null}
-            </button>
+            </Button>
           </td>
         )
       } else {

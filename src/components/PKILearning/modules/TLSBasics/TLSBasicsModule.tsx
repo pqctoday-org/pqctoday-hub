@@ -24,6 +24,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_sign } from '@/wasm/softhsm'
+import { Button } from '@/components/ui/button'
 
 const TLS_HSM_OPERATIONS = [
   'C_GenerateKeyPair',
@@ -396,7 +397,7 @@ export const TLSBasicsModule: React.FC = () => {
             {/* Simulation Controls */}
             <div className="flex justify-end gap-3">
               {results && (
-                <button
+                <Button
                   onClick={() => {
                     setResults(null)
                     clearSession()
@@ -404,9 +405,9 @@ export const TLSBasicsModule: React.FC = () => {
                   className="btn btn-secondary flex items-center gap-2 px-4 py-3"
                 >
                   Reset
-                </button>
+                </Button>
               )}
-              <button
+              <Button
                 onClick={triggerSimulation}
                 disabled={isSimulating}
                 className="btn btn-primary flex items-center gap-2 px-6 py-3 text-lg"
@@ -417,7 +418,7 @@ export const TLSBasicsModule: React.FC = () => {
                   <Play size={20} fill="currentColor" />
                 )}
                 {results ? 'Run Again' : 'Start Full Interaction'}
-              </button>
+              </Button>
             </div>
 
             {/* Config Panels */}
@@ -455,7 +456,7 @@ export const TLSBasicsModule: React.FC = () => {
                 <div className="glass-panel p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold">Run HSM Server Key Operations</p>
-                    <button
+                    <Button
                       onClick={runHsmServerDemo}
                       disabled={hsmRunning}
                       className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
@@ -467,7 +468,7 @@ export const TLSBasicsModule: React.FC = () => {
                       ) : (
                         'Execute (Live WASM)'
                       )}
-                    </button>
+                    </Button>
                   </div>
 
                   {hsmError && <p className="text-xs text-status-error font-mono">{hsmError}</p>}
@@ -496,7 +497,7 @@ export const TLSBasicsModule: React.FC = () => {
             {/* Complete Module — shown after a successful simulation */}
             {results?.status === 'success' && (
               <div className="flex justify-end">
-                <button
+                <Button
                   onClick={() => {
                     markStepComplete(MODULE_ID, 'workshop')
                     updateModuleProgress(MODULE_ID, { status: 'completed' })
@@ -504,7 +505,7 @@ export const TLSBasicsModule: React.FC = () => {
                   className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
                 >
                   Complete Module
-                </button>
+                </Button>
               </div>
             )}
           </div>

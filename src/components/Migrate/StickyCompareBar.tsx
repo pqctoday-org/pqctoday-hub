@@ -41,14 +41,14 @@ export function StickyCompareBar({
                 className="flex items-center gap-1 text-xs bg-secondary/10 text-foreground border border-secondary/20 rounded-full px-2.5 py-0.5"
               >
                 <span className="truncate max-w-[120px]">{name}</span>
-                <button
+                <Button
                   type="button"
                   onClick={() => onRemove(key)}
                   aria-label={`Remove ${name} from comparison`}
                   className="text-muted-foreground hover:text-foreground shrink-0"
                 >
                   <X size={10} />
-                </button>
+                </Button>
               </span>
             )
           })}
@@ -64,14 +64,14 @@ export function StickyCompareBar({
 
         {/* Browse hint */}
         {showBrowseHint && onBrowseAll && compareKeys.length < MAX && (
-          <button
+          <Button
             type="button"
             onClick={onBrowseAll}
             className="text-xs text-primary hover:underline flex items-center gap-1 shrink-0"
           >
             <Table size={12} />
             Browse all products
-          </button>
+          </Button>
         )}
 
         <Button

@@ -4,6 +4,7 @@ import { Wrench, CheckCircle2, Clock, X, MessageSquare } from 'lucide-react'
 import { EndorseButton } from '../../ui/EndorseButton'
 import { FlagButton } from '../../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl, buildDiscussionSearchUrl } from '@/utils/endorsement'
+import { Button } from '@/components/ui/button'
 
 interface WipModuleBadgeProps {
   moduleMeta: {
@@ -57,7 +58,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
 
   return (
     <>
-      <button
+      <Button
         type="button"
         onClick={() => setOpen(true)}
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-status-warning/60 rounded-full"
@@ -68,12 +69,12 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
           <Wrench size={12} className="animate-bounce-subtle" />
           WIP
         </span>
-      </button>
+      </Button>
 
       {open && (
         <>
           {/* Backdrop — click to close */}
-          <button
+          <Button
             type="button"
             aria-label="Close"
             className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
@@ -95,14 +96,14 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
                     Module Review Status
                   </h2>
                 </div>
-                <button
+                <Button
                   type="button"
                   onClick={() => setOpen(false)}
                   className="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"
                   aria-label="Close"
                 >
                   <X size={16} />
-                </button>
+                </Button>
               </div>
 
               {/* Review checklist */}

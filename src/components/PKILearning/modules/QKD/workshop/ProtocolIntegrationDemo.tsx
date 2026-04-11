@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { Play, ExternalLink, ShieldCheck, Wifi, Server, Terminal } from 'lucide-react'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
+import { Button } from '@/components/ui/button'
 
 function getRandomHex(bytes: number): string {
   const buf = new Uint8Array(bytes)
@@ -127,13 +128,13 @@ const TLSPanel: React.FC = () => {
         </ul>
       </div>
 
-      <button
+      <Button
         onClick={run}
         disabled={running}
         className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate PSK Import'}
-      </button>
+      </Button>
 
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
@@ -247,13 +248,13 @@ const IKEv2Panel: React.FC = () => {
         </p>
       </div>
 
-      <button
+      <Button
         onClick={run}
         disabled={running}
         className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate IKEv2 Key Derivation'}
-      </button>
+      </Button>
 
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
@@ -372,13 +373,13 @@ const MACsecPanel: React.FC = () => {
         </p>
       </div>
 
-      <button
+      <Button
         onClick={run}
         disabled={running}
         className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate SAK Derivation'}
-      </button>
+      </Button>
 
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">
@@ -513,13 +514,13 @@ const SSHPanel: React.FC = () => {
         </p>
       </div>
 
-      <button
+      <Button
         onClick={run}
         disabled={running}
         className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate SSH Session ID'}
-      </button>
+      </Button>
 
       {result && (
         <div className="bg-success/5 rounded p-4 border border-success/20 space-y-2">

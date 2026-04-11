@@ -5,6 +5,7 @@ import { Plane, Wifi, X } from 'lucide-react'
 import { useConnectivityMonitor } from '@/hooks/useConnectivityMonitor'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { revalidateDataCache } from '@/utils/cacheRevalidation'
+import { Button } from '@/components/ui/button'
 
 export function AirplaneModeToast() {
   const [toast, setToast] = useState<{
@@ -69,22 +70,22 @@ export function AirplaneModeToast() {
             )}
             <span className="text-sm text-foreground">{toast.message}</span>
             {toast.action && (
-              <button
+              <Button
                 type="button"
                 onClick={toast.action.onClick}
                 className="text-xs font-medium text-primary hover:underline whitespace-nowrap shrink-0"
               >
                 {toast.action.label}
-              </button>
+              </Button>
             )}
-            <button
+            <Button
               type="button"
               onClick={() => setToast(null)}
               className="text-muted-foreground hover:text-foreground shrink-0"
               aria-label="Dismiss notification"
             >
               <X size={14} />
-            </button>
+            </Button>
           </div>
         </motion.div>
       )}

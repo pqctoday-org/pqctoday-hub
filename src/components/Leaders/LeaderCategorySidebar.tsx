@@ -2,6 +2,7 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Scale, Briefcase, Building2, Lightbulb, Landmark, Trophy } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export const LEADER_CATEGORIES = [
   'Standards',
@@ -44,7 +45,7 @@ export const LeaderCategorySidebar = ({
 }: LeaderCategorySidebarProps) => {
   return (
     <nav className="hidden lg:flex flex-wrap items-center gap-2" aria-label="Leader categories">
-      <button
+      <Button
         onClick={() => onSelect('All')}
         className={clsx(
           'flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
@@ -60,10 +61,10 @@ export const LeaderCategorySidebar = ({
         {totalHasUpdates && (
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
         )}
-      </button>
+      </Button>
 
       {categories.map((cat) => (
-        <button
+        <Button
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(
@@ -80,7 +81,7 @@ export const LeaderCategorySidebar = ({
           {cat.hasUpdates && (
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
           )}
-        </button>
+        </Button>
       ))}
     </nav>
   )

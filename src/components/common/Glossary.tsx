@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom'
 import { glossaryTerms, type GlossaryTerm } from '../../data/glossaryData'
 import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'
+import { Button } from '@/components/ui/button'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -129,13 +130,13 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     <BookOpenText size={22} />
                     PQC Glossary
                   </h2>
-                  <button
+                  <Button
                     onClick={onClose}
                     className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                     aria-label="Close glossary"
                   >
                     <X size={20} />
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Search */}
@@ -161,7 +162,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 {/* Category Tabs */}
                 <div className="flex gap-1.5 flex-wrap mb-2">
                   {categories.map((cat) => (
-                    <button
+                    <Button
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       className={clsx(
@@ -172,14 +173,14 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       )}
                     >
                       {cat}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 
                 {/* A-Z Index */}
                 <div className="flex gap-0.5 flex-wrap">
                   {availableLetters.map((letter) => (
-                    <button
+                    <Button
                       key={letter}
                       onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
                       className={clsx(
@@ -190,7 +191,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       )}
                     >
                       {letter}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

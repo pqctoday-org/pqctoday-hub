@@ -151,7 +151,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const showFeedback = isSubmitted
                     const isCorrectOption = card.correctType === opt.id
                     return (
-                      <button
+                      <Button
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedType: opt.id })}
@@ -167,7 +167,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                           }`}
                       >
                         {opt.label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -182,7 +182,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const showFeedback = isSubmitted
                     const isCorrectOption = card.correctScope === opt.id
                     return (
-                      <button
+                      <Button
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedScope: opt.id })}
@@ -198,7 +198,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                           }`}
                       >
                         {opt.label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -213,7 +213,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                     const showFeedback = isSubmitted
                     const isCorrectOption = card.correctAuthority === opt.id
                     return (
-                      <button
+                      <Button
                         key={opt.id}
                         disabled={isSubmitted}
                         onClick={() => updateResult(card.id, { selectedAuthority: opt.id })}
@@ -229,7 +229,7 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                           }`}
                       >
                         {opt.label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -259,12 +259,12 @@ export const BodyClassifier: React.FC<BodyClassifierProps> = ({ results, onResul
                       Correct answers shown in green
                     </div>
                   )}
-                  <button
+                  <Button
                     onClick={() => resetCard(card.id)}
                     className="w-full text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
                   >
                     Try again
-                  </button>
+                  </Button>
                 </div>
               )}
             </div>
