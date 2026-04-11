@@ -78,6 +78,8 @@ export interface VendorTheme {
   destructiveColor?: string
   /** Navigation layout. 'top' = horizontal header (default). 'sidebar' = fixed left panel. */
   navLayout?: 'top' | 'sidebar'
+  /** Sidebar width override, e.g. "56px" for icon-only or "200px" for text+icon. Default: "200px". */
+  navWidth?: string
 }
 
 export interface VendorPolicy {

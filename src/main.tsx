@@ -60,6 +60,14 @@ function applyEmbedTheme(theme: VendorTheme | undefined): void {
   if (theme.navLayout) {
     document.documentElement.setAttribute('data-nav-layout', theme.navLayout)
   }
+  if (theme.navWidth) {
+    root.style.setProperty('--embed-sidebar-width', theme.navWidth)
+    // Mark narrow sidebar (≤ 64px) for icon-only CSS mode
+    const px = parseInt(theme.navWidth, 10)
+    if (!isNaN(px) && px <= 64) {
+      document.documentElement.setAttribute('data-nav-narrow', '1')
+    }
+  }
 }
 
 // Initialize Google Analytics

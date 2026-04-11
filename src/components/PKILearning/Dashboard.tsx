@@ -99,7 +99,7 @@ const LearnSortControl = ({
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
         onClick={() => !disabled && setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -114,7 +114,7 @@ const LearnSortControl = ({
       >
         <ArrowUpDown size={14} aria-hidden="true" />
         <span className="hidden sm:inline">{selected?.label ?? 'Sort'}</span>
-      </button>
+      </Button>
 
       {isOpen && !disabled && (
         <div
@@ -142,7 +142,7 @@ const LearnSortControl = ({
           }}
         >
           {SORT_OPTIONS.map((option) => (
-            <button
+            <Button
               key={option.id}
               type="button"
               role="option"
@@ -157,7 +157,7 @@ const LearnSortControl = ({
               )}
             >
               {option.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -373,6 +373,8 @@ const ModuleTracksGrid = ({
     let filtered = flatItems.filter((item) => {
       if (item.kind === 'checkpoint') return true
       const { module, track } = item
+      // In embed mode, WIP modules are never shown — accuracy over completeness
+      if (isEmbedded && module.workInProgress) return false
       if (showOnlyLearnModules && !myLearnModules.includes(module.id)) return false
       if (needle && !`${module.title} ${module.description}`.toLowerCase().includes(needle))
         return false
@@ -681,7 +683,7 @@ const ModuleTracksGrid = ({
 
         {/* My Modules filter toggle */}
         {myLearnModules.length > 0 && (
-          <button
+          <Button
             onClick={() => setShowOnlyLearnModules(!showOnlyLearnModules)}
             className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
               showOnlyLearnModules
@@ -692,7 +694,7 @@ const ModuleTracksGrid = ({
           >
             <CheckSquare size={12} />
             My ({myLearnModules.length})
-          </button>
+          </Button>
         )}
 
         {/* View toggle */}
@@ -761,7 +763,7 @@ const ModuleTracksGrid = ({
                 {filteredItems.map((item, idx) => {
                   if (item.kind === 'checkpoint') {
                     return (
-                      <button
+                      <Button
                         key={item.id}
                         onClick={() => navigateToQuiz(item.categories)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"
@@ -775,7 +777,7 @@ const ModuleTracksGrid = ({
                         <span className="text-xs text-muted-foreground ml-auto">
                           {item.categoryCount} topics
                         </span>
-                      </button>
+                      </Button>
                     )
                   }
                   return (

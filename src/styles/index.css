@@ -745,6 +745,37 @@
   margin-left: var(--embed-sidebar-width) !important;
 }
 
+/* ── Sidebar icon-only mode (narrow sidebar ≤ 64px) ─────────────────────
+   When navWidth is set to a narrow value (e.g. "56px"), hide text labels
+   and center icons so the sidebar renders as an icon-only rail.
+   Uses container-style query on --embed-sidebar-width via @supports.
+   Fallback: explicit [data-nav-narrow] attribute set by applyEmbedTheme.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] > div > a span {
+  display: none !important;
+}
+
+[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] > div > a {
+  justify-content: center !important;
+  padding-bottom: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button span {
+  display: none !important;
+}
+
+[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button {
+  justify-content: center !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+[data-embed][data-nav-layout='sidebar'][data-nav-narrow] header[role='banner'] nav button svg {
+  margin-right: 0 !important;
+}
+
 /* ── Embed mode badge fill override ──────────────────────────────────────
    When VendorTheme.badgeFill === 'solid', --embed-badge-fill is set to '1'.
    The CSS custom property acts as a flag: when defined, we override the /10
