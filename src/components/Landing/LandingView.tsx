@@ -830,8 +830,8 @@ export const LandingView = () => {
                           : 'Auto-sync active — changes save to your Drive'}
                   </p>
                   <div className="mt-1 bg-muted/30 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/30">
-                    <strong>Multiple devices?</strong> Work on one device at a time. Always refresh
-                    when switching to pull your latest save.
+                    <strong>Multiple devices?</strong> Refresh when switching to pull your latest
+                    save.
                   </div>
                   <Button
                     variant="ghost"
@@ -862,15 +862,14 @@ export const LandingView = () => {
                       </span>
                     </h4>
                     <p className="text-xs text-muted-foreground leading-snug">
-                      Auto-save your progress to your Google Drive and access it from any device.
+                      Auto-save progress across devices.
                     </p>
                     <p className="text-[10px] text-muted-foreground/60 leading-snug mt-1">
-                      Google shows your account info for your protection — PQC Today does not
-                      receive or store it.
+                      Google shows your account info — PQC Today never stores it.
                     </p>
                     <div className="mt-2 bg-muted/40 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/40">
-                      <strong>Multiple devices?</strong> Work on one device at a time. Always
-                      refresh when switching to pull your latest save.
+                      <strong>Multiple devices?</strong> Refresh when switching to pull your latest
+                      save.
                     </div>
                   </div>
                 </Button>
