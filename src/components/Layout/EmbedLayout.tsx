@@ -355,7 +355,7 @@ export const EmbedLayout = () => {
       <div className="flex min-h-screen bg-background text-foreground print:min-h-0 embed-root">
         {/* Left sidebar — sticky, scrolls independently */}
         <aside
-          className="flex-shrink-0 sticky top-0 h-screen overflow-y-auto z-50 border-r border-border flex flex-col"
+          className="flex-shrink-0 sticky top-0 h-screen overflow-y-auto overflow-x-hidden z-50 border-r border-border flex flex-col"
           style={{
             width: effectiveSidebarWidth,
             backgroundColor: navBg ?? 'var(--color-background)',
