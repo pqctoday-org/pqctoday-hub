@@ -812,18 +812,18 @@ export const PQCMigrationFlow: React.FC<PQCMigrationFlowProps> = ({ onBack }) =>
           </Button>
           {currentPart < PARTS.length - 1 ? (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={() => setCurrentPart((p) => Math.min(PARTS.length - 1, p + 1))}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Next
               <ChevronRight size={16} />
             </Button>
           ) : (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Complete ✓
             </Button>

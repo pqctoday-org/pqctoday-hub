@@ -420,9 +420,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
           </p>
         </div>
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors whitespace-nowrap"
+          className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors whitespace-nowrap"
         >
           Start Workshop <ArrowRight size={18} />
         </Button>

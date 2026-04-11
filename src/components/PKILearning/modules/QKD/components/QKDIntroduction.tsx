@@ -595,9 +595,9 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
       {/* CTA */}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 justify-center"
+          className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2 justify-center"
         >
           <Radio size={18} /> Try the BB84 Simulator
         </Button>

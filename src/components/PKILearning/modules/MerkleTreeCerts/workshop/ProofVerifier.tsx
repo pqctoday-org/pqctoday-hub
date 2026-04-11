@@ -275,10 +275,10 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
       {/* Setup */}
       {!levels ? (
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleSetup}
           disabled={isBuilding}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
+          className="flex items-center gap-2 font-bold text-sm"
         >
           {isBuilding ? (
             <>

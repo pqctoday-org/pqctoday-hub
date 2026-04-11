@@ -574,9 +574,9 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 
     <div className="text-center">
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={onNavigateToWorkshop}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
       </Button>

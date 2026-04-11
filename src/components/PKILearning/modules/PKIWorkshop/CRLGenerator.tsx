@@ -445,10 +445,10 @@ authorityKeyIdentifier = keyid:always
           />
 
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleGenerate}
             disabled={isGenerating || !selectedKeyId}
-            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+            className="w-full md:w-auto flex items-center justify-center gap-2 px-6 py-3 font-bold rounded transition-colors disabled:opacity-50"
           >
             {isGenerating ? <Loader2 className="animate-spin" /> : <ShieldAlert />}
             Generate CRL

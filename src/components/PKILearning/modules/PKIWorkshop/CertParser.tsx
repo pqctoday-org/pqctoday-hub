@@ -770,10 +770,10 @@ S8Y=
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={handleParse}
               disabled={isParsing || !certInput}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-4 py-2 font-bold rounded transition-colors disabled:opacity-50"
             >
               {isParsing ? <Loader2 className="animate-spin" size={16} /> : <Search size={16} />}
               {isCrlInput ? 'Parse CRL' : 'Parse Details'}

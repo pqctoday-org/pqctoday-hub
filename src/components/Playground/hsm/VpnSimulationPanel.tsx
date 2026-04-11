@@ -2281,7 +2281,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                 </>
               )}
               <Button
-                variant="ghost"
+                variant="gradient"
                 onClick={async () => {
                   if (authMode === 'dual' && !certData) return
                   if (typeof SharedArrayBuffer === 'undefined') {
@@ -2441,7 +2441,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                   }
                 }}
                 disabled={authMode === 'dual' && !certData}
-                className="px-4 py-2 bg-primary text-primary-foreground font-bold rounded shadow-sm hover:bg-primary/90 text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 font-bold rounded shadow-sm text-sm transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 title={authMode === 'dual' && !certData ? 'Generate certificates first' : undefined}
               >
                 Start Daemon

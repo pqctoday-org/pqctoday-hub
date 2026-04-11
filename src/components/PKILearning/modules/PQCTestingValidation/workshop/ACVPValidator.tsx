@@ -295,9 +295,9 @@ export const ACVPValidator: React.FC = () => {
           </div>
           {status === 'idle' || status === 'done' ? (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={status === 'done' ? reset : runValidation}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors text-xs"
+              className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-xs"
             >
               {status === 'done' ? <RefreshCcw size={14} /> : <Code size={14} />}
               {status === 'done' ? 'Reset Engine' : `Execute ${activeAlg.vectorCount} Vectors`}

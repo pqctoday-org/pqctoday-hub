@@ -150,10 +150,10 @@ export const ActivePQCScanner: React.FC = () => {
           )}
           {!scanned ? (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={runScan}
               disabled={selected.size === 0 || scanning}
-              className="text-xs px-4 py-1.5 bg-primary text-primary-foreground rounded font-semibold hover:bg-primary/90 disabled:opacity-40 transition-colors"
+              className="text-xs px-4 py-1.5 rounded font-semibold disabled:opacity-40 transition-colors"
             >
               {scanning
                 ? 'Scanning…'

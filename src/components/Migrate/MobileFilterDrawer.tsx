@@ -113,9 +113,9 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 Clear All
               </Button>
               <Button
-                variant="ghost"
+                variant="gradient"
                 onClick={() => setIsOpen(false)}
-                className="flex-1 py-3 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
+                className="flex-1 py-3 px-4 rounded-lg font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
               >
                 Apply Filters
               </Button>

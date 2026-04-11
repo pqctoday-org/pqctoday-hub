@@ -1042,17 +1042,17 @@ export const PersonalizationSection = () => {
                 </Button>
                 {currentStep === steps.length - 1 ? (
                   <Button
-                    variant="ghost"
+                    variant="gradient"
                     onClick={handleDone}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
                   >
                     Done
                   </Button>
                 ) : (
                   <Button
-                    variant="ghost"
+                    variant="gradient"
                     onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
                   >
                     Next
                   </Button>

@@ -187,9 +187,9 @@ export const PostProcessingDemo: React.FC = () => {
               Run BB84 with 64 qubits (no eavesdropper) to produce a sifted key for post-processing.
             </p>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={stepHandlers[0]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Generate Sifted Key
             </Button>
@@ -223,9 +223,9 @@ export const PostProcessingDemo: React.FC = () => {
               </code>
             </div>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={stepHandlers[1]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Continue to Error Correction
             </Button>
@@ -265,9 +265,9 @@ export const PostProcessingDemo: React.FC = () => {
               </div>
             </div>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={stepHandlers[2]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Correct Errors ({errorsCorrected || 0} blocks flagged)
             </Button>
@@ -303,10 +303,10 @@ export const PostProcessingDemo: React.FC = () => {
               </div>
             </div>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={stepHandlers[3]}
               disabled={isProcessing}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <Play size={14} /> {isProcessing ? 'Hashing...' : 'Run Privacy Amplification'}
             </Button>
@@ -332,10 +332,10 @@ export const PostProcessingDemo: React.FC = () => {
               <span className="text-primary font-bold">HKDF</span>
             </div>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={stepHandlers[4]}
               disabled={isProcessing}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <Key size={14} /> {isProcessing ? 'Deriving...' : 'Derive Hybrid Key'}
             </Button>

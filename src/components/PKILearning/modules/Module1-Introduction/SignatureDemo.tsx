@@ -146,10 +146,10 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
       {/* Sign Both CTA */}
       <div className="flex justify-center">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleSignBoth}
           disabled={classicalSig.loading || pqcSig.loading || !message}
-          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2 font-bold rounded-lg transition-colors disabled:opacity-50"
         >
           <PenTool size={16} />
           Sign with Both &amp; Compare

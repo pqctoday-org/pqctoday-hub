@@ -277,17 +277,17 @@ export const PQCRiskManagementModule: React.FC = () => {
               </Button>
               {currentPart === PARTS.length - 1 ? (
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module
                 </Button>
               ) : (
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Next Step &rarr;
                 </Button>

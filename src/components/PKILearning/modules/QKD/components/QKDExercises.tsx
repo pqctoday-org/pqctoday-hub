@@ -156,9 +156,9 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
                 </div>
               </div>
               <Button
-                variant="ghost"
+                variant="gradient"
                 onClick={() => handleLoadScenario(scenario)}
-                className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
+                className="px-4 py-2 font-bold rounded text-sm transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
               >
                 Load &amp; Run <ArrowRight size={14} />
               </Button>
@@ -182,7 +182,7 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
           </div>
           <Link
             to="/learn/quiz"
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
+            className="px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold rounded text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap flex items-center gap-1 shrink-0"
           >
             Take Quiz <ArrowRight size={14} />
           </Link>

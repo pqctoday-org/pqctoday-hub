@@ -186,10 +186,10 @@ export const PQCJWTSigning: React.FC = () => {
             <h4 className="text-sm font-bold text-foreground">Keypair Generation</h4>
           </div>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleGenerateKeypair}
             disabled={isGenerating}
-            className="px-4 py-2 bg-primary text-black text-sm font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-bold rounded-lg disabled:opacity-50 transition-colors"
           >
             {isGenerating ? 'Generating...' : 'Generate Keypair'}
           </Button>
@@ -241,10 +241,10 @@ export const PQCJWTSigning: React.FC = () => {
       {/* Sign Button */}
       <div className="flex justify-center">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleSign}
           disabled={!keypair || !isPayloadValid || isSigning}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <PenLine size={16} />
           {isSigning ? 'Signing...' : `Sign JWT with ${selectedAlg}`}

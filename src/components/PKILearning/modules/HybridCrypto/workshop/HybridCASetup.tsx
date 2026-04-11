@@ -101,9 +101,9 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
 
         {!ca && !generating && (
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={() => generateCA(type)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-sm"
           >
             <Play size={14} fill="currentColor" />
             Generate {typeLabel} CA
@@ -185,10 +185,10 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
 
       {/* Generate Both button */}
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={generateBoth}
         disabled={isGenerating !== null}
-        className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+        className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
       >
         {isGenerating === 'both' ? (
           <>

@@ -125,23 +125,23 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
 
         {hasNext ? (
           <Button
-            variant="ghost"
+            variant="gradient"
             type="button"
             onClick={handleNext}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-primary text-black hover:bg-primary/90 shadow-sm cursor-pointer"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Next
             <ArrowRight size={16} />
           </Button>
         ) : onNextStack ? (
           <Button
-            variant="ghost"
+            variant="gradient"
             type="button"
             onClick={() => {
               updateModuleProgress(currentModule.id, { status: 'completed' })
               onNextStack()
             }}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm cursor-pointer"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Next Stack
             <ArrowRight size={16} />

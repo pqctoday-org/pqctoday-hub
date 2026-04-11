@@ -718,9 +718,9 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
 
         {!isEncoded && (
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleEncode}
-            className="px-4 py-2 min-h-[44px] bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+            className="px-4 py-2 min-h-[44px] font-bold rounded-lg transition-colors text-sm"
           >
             Encode with Redundancy
           </Button>

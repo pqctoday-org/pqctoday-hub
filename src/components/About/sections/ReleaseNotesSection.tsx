@@ -37,7 +37,7 @@ export function ReleaseNotesSection() {
           </Button>
           <a
             href="/changelog"
-            className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg bg-primary text-black font-semibold text-xs md:text-sm hover:bg-primary/90 transition-colors"
+            className="flex flex-1 sm:flex-none justify-center items-center gap-1.5 md:gap-2 px-3 md:px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold text-xs md:text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             View
             <span className="hidden md:inline"> Changelog</span>

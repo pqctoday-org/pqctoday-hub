@@ -136,20 +136,20 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
 
         {nextModuleId ? (
           <Button
-            variant="ghost"
+            variant="gradient"
             type="button"
             onClick={handleNext}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 bg-primary text-black font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 font-semibold rounded-lg transition-colors"
           >
             Next Module
             <ArrowRight size={16} />
           </Button>
         ) : (
           <Button
-            variant="ghost"
+            variant="gradient"
             type="button"
             onClick={handleNext}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 bg-accent text-accent-foreground font-semibold rounded-lg hover:bg-accent/90 transition-colors shadow-lg shadow-accent/20"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 font-semibold rounded-lg transition-colors shadow-lg shadow-accent/20"
           >
             Finish Path
           </Button>

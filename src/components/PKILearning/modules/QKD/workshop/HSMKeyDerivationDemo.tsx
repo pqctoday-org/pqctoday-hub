@@ -295,10 +295,10 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             were produced by the QKD hardware.
           </p>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={stepHandlers[0]}
             disabled={processing}
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Play size={14} /> {processing ? 'Fetching…' : 'Fetch QKD Key'}
           </Button>
@@ -348,10 +348,10 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             </div>
           </div>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={stepHandlers[1]}
             disabled={processing}
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Lock size={14} /> {processing ? 'Importing…' : 'Import into HSM'}
           </Button>
@@ -405,10 +405,10 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             </a>
           </div>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={stepHandlers[2]}
             disabled={processing}
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+            className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
           >
             <Cpu size={14} /> {processing ? 'Deriving…' : 'Run KDF'}
           </Button>
@@ -471,9 +471,9 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             the quantum channel.
           </div>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={stepHandlers[3]}
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+            className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
           >
             <Zap size={14} /> See How the Key Is Used
           </Button>
@@ -594,10 +594,10 @@ export const HSMKeyDerivationDemo: React.FC = () => {
       {/* Run next step */}
       {currentStep > 0 && currentStep < 5 && (
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={stepHandlers[currentStep]}
           disabled={processing || (!hsm.isReady && currentStep === 2)}
-          className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+          className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
         >
           <Play size={14} /> {processing ? 'Processing…' : `Run Step ${currentStep + 1}`}
           {!hsm.isReady && currentStep === 2 && ' (Live HSM Required)'}

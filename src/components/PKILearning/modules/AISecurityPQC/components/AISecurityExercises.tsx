@@ -143,9 +143,9 @@ export const AISecurityExercises: React.FC<AISecurityExercisesProps> = ({
                 </p>
               </div>
               <Button
-                variant="ghost"
+                variant="gradient"
                 onClick={() => handleLoadAndRun(scenario)}
-                className="flex items-center gap-1.5 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm shrink-0"
+                className="flex items-center gap-1.5 px-4 py-2 font-bold rounded-lg transition-colors text-sm shrink-0"
               >
                 <Play size={14} />
                 Load

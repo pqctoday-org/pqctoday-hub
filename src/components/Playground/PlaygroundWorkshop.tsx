@@ -106,7 +106,7 @@ const ExecutiveBanner = () => (
     <div className="flex flex-wrap gap-2">
       <Link
         to="/assess"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
       >
         Start Assessment <ArrowRight className="w-3.5 h-3.5" />
       </Link>

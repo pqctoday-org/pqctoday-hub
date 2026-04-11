@@ -166,10 +166,10 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
       {/* Generate Both CTA */}
       <div className="flex justify-center">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleGenerateBoth}
           disabled={classicalKey.loading || pqcKey.loading}
-          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2 font-bold rounded-lg transition-colors disabled:opacity-50"
         >
           <ArrowLeftRight size={16} />
           Generate Both &amp; Compare

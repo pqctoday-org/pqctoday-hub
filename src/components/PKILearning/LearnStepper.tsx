@@ -109,10 +109,10 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
           )
         ) : (
           <Button
-            variant="ghost"
+            variant="gradient"
             type="button"
             onClick={() => setCurrent((c) => Math.min(steps.length - 1, c + 1))}
-            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Next →
           </Button>

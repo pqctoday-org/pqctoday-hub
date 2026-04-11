@@ -748,13 +748,13 @@ export const PQC101Module: React.FC = () => {
           </Button>
         ) : (
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={() => {
               const step = steps[currentStep]
 
               handleStepComplete(step.id, currentStep + 1)
             }}
-            className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-2 font-bold rounded-lg transition-colors"
           >
             Next →
           </Button>

@@ -302,7 +302,7 @@ export const LearningPath = () => {
           </div>
           <Link
             to="/assess"
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors shrink-0"
+            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 shrink-0"
           >
             <ClipboardCheck size={16} />
             Start Assessment

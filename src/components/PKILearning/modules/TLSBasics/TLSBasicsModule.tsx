@@ -459,10 +459,10 @@ export const TLSBasicsModule: React.FC = () => {
                   <div className="flex items-center justify-between gap-2">
                     <p className="text-sm font-semibold">Run HSM Server Key Operations</p>
                     <Button
-                      variant="ghost"
+                      variant="gradient"
                       onClick={runHsmServerDemo}
                       disabled={hsmRunning}
-                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded transition-colors disabled:opacity-50"
                     >
                       {hsmRunning ? (
                         <>
@@ -501,12 +501,12 @@ export const TLSBasicsModule: React.FC = () => {
             {results?.status === 'success' && (
               <div className="flex justify-end">
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => {
                     markStepComplete(MODULE_ID, 'workshop')
                     updateModuleProgress(MODULE_ID, { status: 'completed' })
                   }}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module
                 </Button>

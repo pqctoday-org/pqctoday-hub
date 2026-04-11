@@ -457,10 +457,10 @@ export const HybridCertInspector: React.FC = () => {
         <>
           {certs.length === 0 && (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={generateAllCerts}
               disabled={generating}
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
             >
               {generating ? (
                 <>

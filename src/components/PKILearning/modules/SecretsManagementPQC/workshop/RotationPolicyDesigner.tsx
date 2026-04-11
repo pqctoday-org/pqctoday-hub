@@ -229,9 +229,9 @@ export const RotationPolicyDesigner: React.FC = () => {
       {/* Generate YAML button */}
       <div className="flex flex-wrap gap-3">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={() => setShowYaml(!showYaml)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-sm"
         >
           <Download size={14} />
           {showYaml ? 'Hide' : 'Generate'} Policy YAML

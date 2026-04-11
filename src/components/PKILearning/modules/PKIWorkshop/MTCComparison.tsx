@@ -195,9 +195,9 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
       {/* Actions */}
       <div className="flex flex-wrap gap-3">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={onComplete}
-          className="px-4 py-2 bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors text-sm"
+          className="px-4 py-2 font-bold rounded-lg transition-colors text-sm"
         >
           Mark Complete
         </Button>

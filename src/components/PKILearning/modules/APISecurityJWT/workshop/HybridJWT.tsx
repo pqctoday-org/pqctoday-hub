@@ -185,10 +185,10 @@ export const HybridJWT: React.FC = () => {
       {/* Create Button */}
       <div className="flex justify-center">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleCreate}
           disabled={isCreating}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <Layers size={16} />
           {isCreating ? 'Creating...' : 'Create Hybrid JWT'}

@@ -129,10 +129,10 @@ const TLSPanel: React.FC = () => {
       </div>
 
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={run}
         disabled={running}
-        className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+        className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate PSK Import'}
       </Button>
@@ -250,10 +250,10 @@ const IKEv2Panel: React.FC = () => {
       </div>
 
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={run}
         disabled={running}
-        className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+        className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate IKEv2 Key Derivation'}
       </Button>
@@ -376,10 +376,10 @@ const MACsecPanel: React.FC = () => {
       </div>
 
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={run}
         disabled={running}
-        className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+        className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate SAK Derivation'}
       </Button>
@@ -518,10 +518,10 @@ const SSHPanel: React.FC = () => {
       </div>
 
       <Button
-        variant="ghost"
+        variant="gradient"
         onClick={run}
         disabled={running}
-        className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+        className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
       >
         <Play size={14} /> {running ? 'Simulating…' : 'Simulate SSH Session ID'}
       </Button>

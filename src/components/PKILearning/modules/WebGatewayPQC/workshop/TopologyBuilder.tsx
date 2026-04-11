@@ -238,9 +238,9 @@ export const TopologyBuilder: React.FC = () => {
       {/* Analyze Button */}
       {connections.length > 0 && (
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={() => setShowAnalysis(true)}
-          className="w-full px-4 py-3 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
+          className="w-full px-4 py-3 font-medium rounded-lg transition-colors"
         >
           Analyze Topology
         </Button>

@@ -723,10 +723,10 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
               />
             </div>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={handleSign}
               disabled={isSigning || !selectedCsrId || !selectedKeyId}
-              className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50 mt-4"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 font-bold rounded transition-colors disabled:opacity-50 mt-4"
             >
               {isSigning ? <Loader2 className="animate-spin" /> : <PenTool />}
               Sign Certificate

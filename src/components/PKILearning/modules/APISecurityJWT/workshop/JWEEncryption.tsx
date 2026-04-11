@@ -220,10 +220,10 @@ export const JWEEncryption: React.FC = () => {
       {/* Encrypt Button */}
       <div className="flex justify-center gap-3">
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleEncrypt}
           disabled={isEncrypting}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <Lock size={16} />
           {isEncrypting ? 'Encrypting...' : 'Encrypt JWT Payload'}

@@ -450,9 +450,9 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
             </p>
           </div>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={onNavigateToWorkshop}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors shrink-0"
+            className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors shrink-0"
           >
             Start Workshop
             <ArrowRight size={16} />

@@ -368,18 +368,18 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
       <div className="flex gap-3">
         {isIdle ? (
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleAdvance}
-            className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+            className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2"
             aria-label="Start BB84 protocol simulation"
           >
             <Play size={16} /> Start Protocol
           </Button>
         ) : canAdvance ? (
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleAdvance}
-            className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+            className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2"
           >
             <Play size={16} /> Next Step
           </Button>

@@ -538,10 +538,10 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
 
       {canCompute && (
         <Button
-          variant="ghost"
+          variant="gradient"
           onClick={handleCompute}
           disabled={isComputing}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90"
+          className="flex items-center gap-2 font-bold"
         >
           {isComputing ? (
             <>

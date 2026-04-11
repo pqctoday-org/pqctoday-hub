@@ -346,7 +346,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       href={item.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold rounded-lg transition-colors"
+                      className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 text-sm font-bold rounded-lg transition-all duration-200"
                     >
                       <ExternalLink size={16} />
                       Open Document
@@ -363,7 +363,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   href={item.downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors truncate"
+                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 truncate"
                 >
                   <ExternalLink size={16} className="shrink-0" />
                   <span className="truncate">Open Document</span>

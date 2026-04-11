@@ -171,10 +171,10 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
             <RotateCcw size={14} />
           </Button>
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={() => setCurrentStep((s) => Math.min(SSH_HANDSHAKE_STEPS.length - 1, s + 1))}
             disabled={currentStep === SSH_HANDSHAKE_STEPS.length - 1}
-            className="px-4 py-2 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 disabled:opacity-50 transition-colors text-sm"
+            className="px-4 py-2 rounded-lg font-bold disabled:opacity-50 transition-colors text-sm"
           >
             Next &rarr;
           </Button>

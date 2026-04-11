@@ -162,9 +162,9 @@ export const Module1: React.FC = () => {
               <PQC101Module />
               <div className="mt-6 flex justify-end">
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={navigateToWorkshop}
-                  className="px-6 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-2 font-bold rounded-lg transition-colors"
                 >
                   Go to Workshop &rarr;
                 </Button>
@@ -273,17 +273,17 @@ export const Module1: React.FC = () => {
               </Button>
               {currentPart === visibleParts.length - 1 ? (
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, visibleParts[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module ✓
                 </Button>
               ) : (
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Next Step &rarr;
                 </Button>

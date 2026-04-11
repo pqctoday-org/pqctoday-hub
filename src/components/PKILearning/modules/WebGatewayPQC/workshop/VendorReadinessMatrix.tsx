@@ -332,9 +332,9 @@ export const VendorReadinessMatrix: React.FC = () => {
 
           {/* Export */}
           <Button
-            variant="ghost"
+            variant="gradient"
             onClick={handleCopy}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors"
           >
             {copied ? (
               <>

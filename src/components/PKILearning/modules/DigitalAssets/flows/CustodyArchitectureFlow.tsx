@@ -436,20 +436,20 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
           </Button>
           {txFlowStep < TRANSACTION_FLOW_STEPS.length - 1 ? (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={() =>
                 handleTxStepChange(Math.min(TRANSACTION_FLOW_STEPS.length - 1, txFlowStep + 1))
               }
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Next Step
               <ChevronRight size={16} />
             </Button>
           ) : (
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Complete
               <CheckCircle size={16} />

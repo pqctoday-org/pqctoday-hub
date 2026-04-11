@@ -141,9 +141,9 @@ export const MigrationPlanningExercise: React.FC = () => {
               <ChevronLeft size={14} /> Previous
             </Button>
             <Button
-              variant="ghost"
+              variant="gradient"
               onClick={markComplete}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded transition-colors"
             >
               {completedSteps.has(currentStep) ? (
                 <>
