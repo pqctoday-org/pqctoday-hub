@@ -47,10 +47,12 @@ export const EmbedLayout = () => {
   const { setTheme } = useThemeStore()
   const { setPersona, setRegion, setIndustries } = usePersonaStore()
 
-  // Layout forces theme if provided in embed URL
+  // Apply color mode: URL param ?theme= takes priority; cert colorMode is the fallback default
   React.useEffect(() => {
     if (embedConfig.theme) {
       setTheme(embedConfig.theme)
+    } else if (embedConfig.policy?.theme?.colorMode) {
+      setTheme(embedConfig.policy.theme.colorMode)
     }
   }, [embedConfig.theme, setTheme])
 

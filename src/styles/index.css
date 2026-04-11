@@ -601,6 +601,17 @@
   background: hsl(var(--background));
 }
 
+/* ── Embed mode status color overrides ────────────────────────────────────
+   --embed-success/warning/destructive are written by applyEmbedTheme() only
+   when VendorTheme.successColor/warningColor/destructiveColor are set.
+   Scoped to [data-embed] — standard mode tokens are never affected.
+   ──────────────────────────────────────────────────────────────────────── */
+[data-embed] {
+  --color-success: var(--embed-success, var(--color-success));
+  --color-warning: var(--embed-warning, var(--color-warning));
+  --color-destructive: var(--embed-destructive, var(--color-destructive));
+}
+
 /* ── Embed mode density override ──────────────────────────────────────────
    Scoped to [data-embed] so standard mode is completely unaffected.
    --embed-table-py is written by applyEmbedTheme() only when VendorTheme.density

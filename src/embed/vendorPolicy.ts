@@ -63,6 +63,19 @@ export interface VendorTheme {
    * (e.g. solid green "Online" pill). 'tinted' (default) uses the subtle /10 tint.
    */
   badgeFill?: 'solid' | 'tinted'
+  /**
+   * Default color mode for the embed. User can still toggle after load.
+   * URL param ?theme= takes priority over this cert value if both are set.
+   */
+  colorMode?: 'light' | 'dark'
+  /** Override link/anchor color. Defaults to --color-primary. e.g. "#2563EB" */
+  linkColor?: string
+  /** Override success status color used in badges and indicators. e.g. "#059669" */
+  successColor?: string
+  /** Override warning status color. e.g. "#D97706" */
+  warningColor?: string
+  /** Override destructive/error status color. e.g. "#DC2626" */
+  destructiveColor?: string
 }
 
 export interface VendorPolicy {

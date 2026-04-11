@@ -47,6 +47,12 @@ function applyEmbedTheme(theme: VendorTheme | undefined): void {
     '--embed-nav-fg': theme.sidebarForeground ?? (theme.sidebar ? '#FFFFFF' : undefined),
     // Badge fill — set a flag var; CSS rule reads it to override opacity
     '--embed-badge-fill': theme.badgeFill === 'solid' ? '1' : undefined,
+    // Link color override (consumed by --color-embed-link in :root)
+    '--embed-link-color': theme.linkColor,
+    // Status color overrides — scoped to [data-embed] in CSS; do not pollute global tokens
+    '--embed-success': theme.successColor,
+    '--embed-warning': theme.warningColor,
+    '--embed-destructive': theme.destructiveColor,
   }
   for (const [prop, val] of Object.entries(map)) {
     if (val) root.style.setProperty(prop, val)
