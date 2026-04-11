@@ -16,8 +16,14 @@ export function EmbedRouteGuard({ children }: { children: React.ReactNode }) {
   // Strip it before checking against allowedRoutes (which use bare paths like /learn).
   const strippedPath = location.pathname.replace(/^\/embed/, '') || '/'
 
-  // Exempt system-level global routes
+  // About is a system-level route — exempt unless vendor explicitly hides it
   if (strippedPath === '/about') {
+    if (policy.features.hideAbout) {
+      const fallbackPath = getFirstAllowedRoute(allowedRoutes)
+      const truePath = fallbackPath === '/' ? '/embed' : `/embed${fallbackPath}`
+      logEmbedRouteBlocked(strippedPath, 'route')
+      return <Navigate to={truePath} replace />
+    }
     return <>{children}</>
   }
 

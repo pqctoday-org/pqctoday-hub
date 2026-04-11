@@ -182,18 +182,33 @@ export const EmbedLayout = () => {
     .map((preset) => PRESET_NAV_ITEMS[preset])
     .filter(Boolean)
 
-  // Ensure "About" is permanently attached at the very end.
-  visibleNavItems.push({ label: 'About', icon: Info, basePath: '/about' })
+  // "About" is permanently attached at the end unless vendor hides it
+  if (!embedConfig.policy.features.hideAbout) {
+    visibleNavItems.push({ label: 'About', icon: Info, basePath: '/about' })
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
         <header
-          className="sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b"
+          className={
+            embedConfig.policy.theme?.sidebar
+              ? 'sticky top-0 z-50 transition-all duration-300 border-b'
+              : 'sticky top-0 z-50 transition-all duration-300 bg-background/80 backdrop-blur-md border-b'
+          }
+          style={
+            embedConfig.policy.theme?.sidebar
+              ? {
+                  backgroundColor: embedConfig.policy.theme.sidebar,
+                  borderColor: `${embedConfig.policy.theme.sidebar}33`,
+                }
+              : undefined
+          }
           role="banner"
         >
           <div className="h-12 px-4 flex w-full justify-between items-center relative">
+            {/* Vendor logo or brand name */}
             <a
               href="https://pqctoday.com"
               target="_blank"
@@ -201,7 +216,28 @@ export const EmbedLayout = () => {
               className="flex items-center gap-2 flex-shrink-0"
               title="Open PQC Today in a new tab"
             >
-              <span className="text-lg font-bold text-gradient">PQC Today</span>
+              {embedConfig.policy.theme?.logoUrl ? (
+                <img
+                  src={embedConfig.policy.theme.logoUrl}
+                  alt={embedConfig.policy.theme.brandName ?? 'Vendor logo'}
+                  className="h-7 w-auto object-contain max-w-[120px]"
+                />
+              ) : (
+                <span
+                  className={
+                    embedConfig.policy.theme?.sidebar
+                      ? 'text-lg font-bold'
+                      : 'text-lg font-bold text-gradient'
+                  }
+                  style={
+                    embedConfig.policy.theme?.sidebarForeground
+                      ? { color: embedConfig.policy.theme.sidebarForeground }
+                      : undefined
+                  }
+                >
+                  {embedConfig.policy.theme?.brandName ?? 'PQC Today'}
+                </span>
+              )}
             </a>
 
             <nav
@@ -216,7 +252,6 @@ export const EmbedLayout = () => {
                     key={item.basePath}
                     to={`${embedUrl}${location.search}`}
                     className="flex-shrink-0"
-                    // isActive if current path starts with the embed URL
                     end={false}
                   >
                     {({ isActive }) => (
@@ -225,10 +260,20 @@ export const EmbedLayout = () => {
                         size="sm"
                         aria-label={`${item.label} view`}
                         aria-current={isActive ? 'page' : undefined}
+                        title={item.label}
                         className={
                           isActive
                             ? 'bg-primary/10 text-foreground border border-primary/20 h-auto py-1.5 px-3'
                             : 'text-muted-foreground hover:text-foreground h-auto py-1.5 px-3'
+                        }
+                        style={
+                          embedConfig.policy.theme?.sidebarForeground
+                            ? {
+                                color: isActive
+                                  ? undefined
+                                  : `${embedConfig.policy.theme.sidebarForeground}99`,
+                              }
+                            : undefined
                         }
                       >
                         <item.icon size={16} aria-hidden="true" className="mr-1.5" />
@@ -245,8 +290,8 @@ export const EmbedLayout = () => {
 
       {/* Test Mode Overlay */}
       {embedConfig.isTestMode && (
-        <div className="embed-test-banner bg-destructive text-destructive-foreground px-4 py-2 text-center text-xs sm:text-sm font-bold shadow-sm z-[40]">
-          TEST ONLY — PLEASE REACH OUT TO PQCTODAY@GMAIL.COM TO GET YOUR PRIVATE BANNER
+        <div className="embed-test-banner bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
+          ⚠ Sandbox / Test Mode — not for production use
         </div>
       )}
 

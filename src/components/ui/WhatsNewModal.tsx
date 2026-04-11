@@ -311,12 +311,12 @@ export const WhatsNewModal = () => {
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — absolute in embed so it doesn't exceed iframe bounds */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-overlay bg-black/60 print:hidden"
+            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 print:hidden`}
             onClick={handleDismiss}
             aria-hidden="true"
           />

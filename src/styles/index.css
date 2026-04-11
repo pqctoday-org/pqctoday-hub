@@ -822,3 +822,20 @@
     display: none !important;
   }
 }
+
+/* ── Embed mode modal positioning ────────────────────────────────────────
+   In embed mode iframes can be taller than the viewport. Modal containers
+   using `fixed inset-0 flex items-center justify-center` would center the
+   modal at the viewport mid-point, which may be off-screen when the user
+   has scrolled. This rule switches those containers to absolute so modals
+   always appear within the scrollable iframe document flow.
+   Only applies inside [data-embed] — standard mode is unaffected.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-embed] .fixed.inset-0.z-50.flex.items-center.justify-center,
+[data-embed] .fixed.inset-0.flex.items-center.justify-center.z-50,
+[data-embed] .fixed.inset-0.flex.items-start.justify-center.z-50 {
+  position: absolute !important;
+  top: 0 !important;
+  min-height: 100% !important;
+}

@@ -80,6 +80,17 @@ export interface VendorTheme {
   navLayout?: 'top' | 'sidebar'
   /** Sidebar width override, e.g. "56px" for icon-only or "200px" for text+icon. Default: "200px". */
   navWidth?: string
+  /**
+   * Vendor brand name shown in the nav header instead of "PQC Today".
+   * When omitted, "PQC Today" is displayed with the default gradient style.
+   */
+  brandName?: string
+  /**
+   * URL to a vendor logo image shown in the nav header.
+   * When set, replaces the text wordmark. Use an image ≤ 120×32px for best fit.
+   * Must be an absolute HTTPS URL hosted on the vendor's own origin.
+   */
+  logoUrl?: string
 }
 
 export interface VendorPolicy {
@@ -114,6 +125,8 @@ export interface VendorPolicy {
     assistantEnabled: boolean
     /** Whether to hide the main navigation shell */
     hideNav?: boolean
+    /** Whether to hide the About route from the navigation and block access */
+    hideAbout?: boolean
   }
   /** Optional vendor brand theme — applies CSS custom properties before React mounts */
   theme?: VendorTheme
