@@ -360,9 +360,13 @@ export const EmbedLayout = () => {
           role="navigation"
           aria-label="Main navigation"
         >
-          <div className="flex flex-col flex-1 px-3 py-4 gap-1">
+          <div className={`flex flex-col flex-1 ${isNarrowSidebar ? 'px-1' : 'px-3'} py-4 gap-1`}>
             {/* Brand */}
-            <div className="mb-3 pb-3 border-b border-border/30">{renderBrand()}</div>
+            <div
+              className={`pb-3 border-b border-border/30 ${isNarrowSidebar ? 'mb-2 flex justify-center' : 'mb-3'}`}
+            >
+              {renderBrand()}
+            </div>
             {/* Nav items */}
             {renderNavItems()}
             {/* Help button at bottom */}
