@@ -192,8 +192,12 @@ export const EmbedLayout = () => {
   const isSidebarLayout =
     !embedConfig.policy.features.hideNav && embedConfig.policy.theme?.navLayout === 'sidebar'
   const sidebarWidth = embedConfig.policy.theme?.navWidth ?? '200px'
-  // Icon-only mode when sidebar width is narrow (≤ 64px)
-  const isNarrowSidebar = isSidebarLayout && parseInt(sidebarWidth, 10) <= 64
+  // Icon+label stacked mode when sidebar width is narrow (≤ 80px)
+  const isNarrowSidebar = isSidebarLayout && parseInt(sidebarWidth, 10) <= 80
+  // Effective width: enforce minimum 72px in narrow mode so labels ("Algorithms", "Compliance") don't clip
+  const effectiveSidebarWidth = isNarrowSidebar
+    ? `${Math.max(parseInt(sidebarWidth, 10), 72)}px`
+    : sidebarWidth
   const navBg = embedConfig.policy.theme?.sidebar
   const navFg = embedConfig.policy.theme?.sidebarForeground
   const navActiveBg = embedConfig.policy.theme?.navActiveBackground
@@ -353,7 +357,7 @@ export const EmbedLayout = () => {
         <aside
           className="flex-shrink-0 sticky top-0 h-screen overflow-y-auto z-50 border-r border-border flex flex-col"
           style={{
-            width: sidebarWidth,
+            width: effectiveSidebarWidth,
             backgroundColor: navBg ?? 'var(--color-background)',
             borderColor: navBg ? `${navBg}33` : undefined,
           }}
