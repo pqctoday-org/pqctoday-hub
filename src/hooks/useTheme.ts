@@ -5,7 +5,10 @@ import { useThemeStore } from '../store/useThemeStore'
 type Theme = 'dark' | 'light'
 
 export function useTheme() {
-  const { theme, setTheme } = useThemeStore()
+  const { theme, hasSetPreference, setTheme } = useThemeStore()
+
+  // If the user has never explicitly chosen a theme, always start in light mode.
+  const effectiveTheme: Theme = hasSetPreference ? theme : 'light'
 
   useEffect(() => {
     const root = window.document.documentElement
@@ -15,8 +18,8 @@ export function useTheme() {
       root.classList.add(t)
     }
 
-    applyTheme(theme)
-  }, [theme])
+    applyTheme(effectiveTheme)
+  }, [effectiveTheme])
 
-  return { theme, setTheme }
+  return { theme: effectiveTheme, setTheme }
 }
