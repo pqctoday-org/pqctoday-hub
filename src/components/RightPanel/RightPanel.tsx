@@ -72,7 +72,7 @@ export const RightPanel: React.FC = () => {
             className={clsx(
               'z-panel bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden',
               isEmbedded
-                ? 'absolute right-0 rounded-bl-xl border-b w-full md:w-auto'
+                ? 'absolute right-0 rounded-bl-xl border-b w-full'
                 : 'fixed right-0 top-0 bottom-0 w-full md:w-[60vw]'
             )}
             style={
@@ -80,7 +80,7 @@ export const RightPanel: React.FC = () => {
                 ? {
                     top: headerH,
                     height: `min(800px, calc(100% - ${headerH}))`,
-                    maxWidth: `min(${assistantMaxWidth}, 100%)`,
+                    width: `min(${assistantMaxWidth}, 100%)`,
                   }
                 : {}
             }
