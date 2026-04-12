@@ -96,6 +96,12 @@ const THEME_PARAMS = [
   'secondary',
   'secondaryForeground',
   'navActiveBackground',
+  'darkBackground',
+  'darkCard',
+  'darkForeground',
+  'darkMuted',
+  'darkMutedForeground',
+  'darkBorder',
 ] as const
 
 // ---------------------------------------------------------------------------
@@ -130,7 +136,7 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const exp = parseInt(params.get('exp')!, 10)
     const nonce = params.get('nonce')!
     const routes = params.get('routes')!
-    const persist = params.get('persist')! as 'postMessage' | 'none'
+    const persist = params.get('persist')! as EmbedConfig['persistMode']
     const sig = params.get('sig')!
     const theme = (params.get('theme') as 'dark' | 'light' | undefined) ?? undefined
     const personaParam = params.get('persona') ?? undefined
@@ -308,6 +314,7 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       allowedRegions: cert.policy.content.regions,
       allowedIndustries: cert.policy.content.industries,
       isTestMode: vendor.isTest || false,
+      platform: 'iframe',
     }
   } catch (e) {
     if (e instanceof EmbedVerificationError) throw e

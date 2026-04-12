@@ -17,11 +17,28 @@ import { useEffect } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useEmbedState } from './EmbedProvider'
 import { getFirstAllowedRoute } from './routePresets'
+import { isNativeApp } from './platform'
+import { registerNavigate, updateCurrentRoute } from './nativeNavState'
 
 export function EmbedNavigationGuard() {
   const location = useLocation()
   const navigate = useNavigate()
   const embedState = useEmbedState()
+
+  // Register navigate function for native bridge (allows native tab bar to drive routing)
+  useEffect(() => {
+    if (isNativeApp()) {
+      registerNavigate(navigate)
+    }
+  }, [navigate])
+
+  // Sync current route to native shell on every location change
+  useEffect(() => {
+    if (isNativeApp()) {
+      const stripped = location.pathname.replace(/^\/embed/, '') || '/'
+      updateCurrentRoute(stripped)
+    }
+  }, [location.pathname])
 
   useEffect(() => {
     if (!embedState.isEmbedded) return

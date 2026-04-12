@@ -149,7 +149,18 @@ const DATA_FRESHNESS: FreshnessEntry[] = FRESHNESS_CATEGORIES.map(({ label, pref
 
 const now = Date.now()
 
-// Parser types and functions extracted to src/utils/changelogParser.ts
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatDate(dateStr: string): string {
+  const parts = dateStr.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return dateStr
+  const [year, month, day] = parts
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -400,13 +411,20 @@ export const ChangelogView = () => {
 
             <div className="glass-panel p-6">
               {/* Version header */}
-              <div className="flex items-baseline gap-3 mb-4 pb-3 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
-                <span className="text-sm text-muted-foreground">{v.date}</span>
-                {idx === 0 && (
-                  <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                    Current
-                  </span>
+              <div className="mb-4 pb-3 border-b border-border">
+                <div className="flex items-baseline gap-3">
+                  <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
+                  <span className="text-sm text-muted-foreground">{formatDate(v.date)}</span>
+                  {idx === 0 && (
+                    <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                      Current
+                    </span>
+                  )}
+                </div>
+                {v.summary && (
+                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                    {v.summary}
+                  </p>
                 )}
               </div>
 

@@ -26,6 +26,7 @@ export interface ChangelogSection {
 export interface ChangelogVersion {
   version: string
   date: string
+  summary: string
   sections: ChangelogSection[]
 }
 
@@ -68,6 +69,14 @@ export function parseChangelog(content: string): ChangelogVersion[] {
     const version = headerMatch[1]
     const date = headerMatch[2]
     const sections: ChangelogSection[] = []
+
+    // Extract optional summary paragraph — text between ## header and first ### section
+    const afterHeader = block.slice(headerMatch[0].length)
+    const firstSectionIdx = afterHeader.search(/\n### /)
+    const rawSummary = firstSectionIdx >= 0 ? afterHeader.slice(0, firstSectionIdx) : afterHeader
+    const summary = rawSummary
+      .replace(/<!--.*?-->/gs, '') // strip HTML comments
+      .trim()
 
     // Split at each '### ' section header
     const sectionBlocks = block.split(/\n(?=### )/)
@@ -115,7 +124,7 @@ export function parseChangelog(content: string): ChangelogVersion[] {
     }
 
     if (sections.length > 0) {
-      versions.push({ version, date, sections })
+      versions.push({ version, date, summary, sections })
     }
   }
 

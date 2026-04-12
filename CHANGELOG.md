@@ -6,147 +6,171 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [3.1.4] - 2026-04-11
+## [3.2.0] - 2026-04-12
 
-### Fixed
-
-- **Embed mode — modal backdrop positioning (39 files)**: All 56 `fixed inset-0` modal/overlay
-  backdrops now include the `embed-backdrop` CSS class, which switches to `position: absolute`
-  inside `[data-embed]` iframes. Previously only 3 exact class-string patterns were covered by
-  the CSS rule — modals with `print:hidden`, different z-index tokens, or different class order
-  escaped the iframe viewport. New generic `[data-embed] .embed-backdrop` rule in `index.css`.
-
-- **Embed mode — table/chart horizontal overflow (8 files)**: Reduced fixed `min-w-*` values
-  that forced scrollbars at embed widths (600–900px): `SimpleGanttChart` 1000→600px,
-  `ComplianceLandscape` 600→400px, `ReportTimelineStrip` 480→320px, `ModuleTable` 480→360px,
-  `ComplianceGantt` 900→600px, `AlgorithmVulnerabilityMatrix` 700→500px,
-  `OTAOrchestrationPlanner` and `MigrationRiskMatrix` 500→responsive (`min-w-0 md:min-w-[500px]`).
-
-- **Embed mode — content hidden at embed widths (3 files)**: Changed `lg:` breakpoints (1024px)
-  to `md:` (768px) so content is visible at typical embed widths: `PlaygroundView` (full
-  playground instead of mobile fallback), `LeaderCategorySidebar` (category filter bar),
-  `AlgorithmComparison` (comparison table).
-
-- **Embed mode — max-width constraints**: Added `[data-embed]` CSS override for `.max-w-7xl`,
-  `.max-w-6xl`, `.max-w-4xl`, `.max-w-3xl` → `max-width: 100%`. Content now fills the iframe
-  instead of centering with wasted margins. Removed explicit `max-w-7xl mx-auto` from
-  `MerkleWorkshopSteps.tsx`.
-
-- **Workshop step nav — compact height (50 files)**: Step indicator circles reduced from
-  `w-10 h-10` to `w-8 h-8`, icon size 18→16px, gap 8→4px, added `py-1 h-auto` to minimize
-  button height. Container changed from `min-w-max` (forced overflow) to `min-w-0` and
-  `justify-between` to `justify-evenly` (prevents edge-pinning with few steps).
-
-- **Color token violations**: `VpnSimulationPanel` `text-slate-800` → `text-foreground`,
-  `text-white` → `text-primary-foreground`; `RiskHeatmapGenerator` removed `dark:text-white`
-  fallback; `ProofVerifier` `text-white`/`text-black` → semantic foreground tokens.
-
-- **Z-index cleanup**: Replaced hardcoded `zIndex: 9998/9999` and `z-[200]` with `z-50` class
-  in `LibraryDetailPopover`, `SoftwareTable`, `TrustScoreTooltip`, `ComplianceDetailPopover`.
-
-- **Non-modal fixed elements**: `PageAccuracyFeedback` and `TrustScoreTooltip` now include
-  `embed-backdrop` class to prevent viewport escape in embed mode.
-
-## [3.1.3] - 2026-04-11
-
-### Fixed
-
-- **Embed URL signing — hex color `#` fragment bug**: Color values like `#3B82F6` in theme URL
-  params were inserted raw into the query string, causing the browser to treat `#3B82F6` as a
-  URL fragment separator. Everything after the first `#` (including `kid`, `sig`, and all
-  remaining params) was silently dropped from `url.searchParams`, producing `missing_params: kid`
-  on every themed preview. Fixed by building the full URL via `URLSearchParams.toString()` which
-  percent-encodes `#` as `%23`. The canonical string for ECDSA signing remains unencoded (raw
-  decoded values) — verification already uses `params.get()` which returns decoded values,
-  so signature matching is unaffected.
-
-### Changed
-
-- **Embed vendor registry — removed test fixture dependency**: Deleted `vendorRegistry.dev.ts`
-  and its dynamic import from `vendorRegistry.ts`. The dev-mode merge of test fixture certs
-  (`test-vendor`, `test-vendor-restricted`, `test-vendor-custom-design`) from
-  `pqc-tools/embed-test-site/test-fixtures/` is no longer needed — all vendor certs (including
-  development ones) are now loaded from `pki/vendors/*.pem` via `import.meta.glob` at build
-  time. `findVendor()` simplified from async registry builder to a direct synchronous lookup
-  on `PRODUCTION_REGISTRY`.
-
-- **PKI gitignore — trust anchor PEMs trackable**: Added `!pki/ca/*.pem` and
-  `!pki/vendors/*.pem` exceptions to `.gitignore` (overriding the global `*.pem` rule) so
-  Root CA and vendor certificate PEMs can be committed. These are public trust anchors bundled
-  by Vite — not secrets. Also added `*.p12` to the global ignore list.
-
-### Security
-
-- **No private key material in any repo**: Root CA private key stays in `pqc-admin` (blanket
-  `pki/` gitignore). Vendor P12 bundles and `.key` files are blocked by `*.p12` and `*.key`
-  global rules. Only public certificate PEMs (trust anchors) are committed.
-
-## [3.1.2] - 2026-04-11
+Mobile platform foundation — Capacitor integration bridge and embed prerequisites that enable a native iOS/Android app without any changes to the existing web app.
 
 ### Added
 
-- **Embed SDK — extended vendor configuration (Tier 1)**: Nine new fields in the embed cert policy
-  give vendors granular control over branding and features:
-  - `theme.secondary` / `theme.secondaryForeground` — independent secondary brand color and text
-    color; overrides `--color-secondary` / `--color-secondary-foreground` CSS vars.
-  - `theme.navActiveBackground` — active nav item highlight color replaces the hardcoded
-    `bg-primary/10` tint (supports any CSS color including `rgba(…)`).
-  - `theme.brandName` — vendor brand name shown in the nav header instead of "PQC Today".
-  - `theme.logoUrl` — vendor logo image URL; replaces the text wordmark when set.
-  - `theme.logoHeight` / `theme.logoMaxWidth` — logo sizing overrides (defaults: `28px` / `120px`).
-  - `theme.headerHeight` — nav bar height override (default `48px`); RightPanel top offset follows.
-  - `features.hidePoweredBy` — hide the "Powered by PQC Today" attribution badge (embed only;
-    standard mode is never affected).
-  - `features.showHelpButton` + `features.helpUrl` — render a `?` help icon in the nav that links
-    to vendor documentation.
+- **Mobile app platform support (Capacitor)**: Eight new modules form the native integration
+  bridge, all fully dormant when running in a standard browser. No Capacitor packages need to
+  be installed for web builds — all native APIs are lazily imported and guarded by platform
+  detection.
+  - Persistent user state saved to device storage (`@capacitor/preferences`)
+  - Native share sheet integration (falls back to web Share API in browser)
+  - External links open in the system browser (Safari / Chrome) instead of the in-app WebView
+  - Android back button navigates history or exits the app at the root screen
+  - State is flushed to device storage immediately when the app is backgrounded
+  - Haptic feedback API (silent no-op in browser)
+  - Free and Pro VendorPolicy presets for the native app build
+  - Native EmbedConfig loaded from device preferences — no URL signature required
 
-## [3.1.1] - 2026-04-11
+- **Unified platform detection**: New `platform.ts` module exposes `isNativeApp()`,
+  `isIframeEmbed()`, and `isEmbedContext()` as the single authoritative source for runtime
+  platform checks. All previous `window.parent !== window` guards replaced.
 
-### Fixed
-
-- **Migrate layer stack — navigation restored (both standard and embed mode)**: Layer row buttons
-  (Cloud, Network, Application Servers, etc.) were completely unresponsive. Root cause: the entire
-  row was a `<Button>` (`<button>`) containing nested `<Button>` elements (restore, sub-category
-  chips, collapse). Nested `<button>` inside `<button>` is invalid HTML — browsers silently drop
-  inner elements, making the outer row unclickable. Fixed by converting the outer row to a
-  `<div role="button" tabIndex={0}>` with full keyboard support (`Enter`/`Space` to select,
-  `Escape` to collapse). Inner buttons remain valid and their `stopPropagation()` handlers work.
-
-- **Migrate layer stack — sticky filter bar z-index overlap**: Removed inline
-  `style={{ zIndex: ... }}` from each layer row (values up to 19) that created stacking contexts
-  escaping the container and overlapping the `z-40` sticky filter bar. Added `isolate` to the
-  stack container to scope internal z-indices correctly.
-
-- **Embed mode — fixed-position UI elements**: 13 components that use `fixed` positioning now
-  switch to `absolute` in embed mode, preventing them from escaping the iframe viewport:
-  `ArtifactDrawer` (backdrop + panel), `DisclaimerModal` (bottom banner),
-  `AlgorithmCompareBar`, `StickyCompareBar`, `RightPanel` (backdrop; body scroll lock disabled),
-  `AchievementToast`, `AirplaneModeToast`, `PhaseCompletionToast`,
-  `UserManualPanel`, `Glossary` (backdrop + panel).
-
-- **Embed mode — layout and resize observer**: Main content area changed from `container`
-  (max-w-7xl) to `w-full` to fill the embed frame. `ResizeObserver` now watches `#main-content`
-  instead of `document.body` for accurate `pqc:resize` postMessage height reporting.
-
-- **Embed mode — navigation guard search param preservation**: `EmbedNavigationGuard` now
-  preserves `location.search` on escape-prevention redirects (cert/theme params no longer dropped).
-
-## [3.1.0] - 2026-04-11
+- **Immediate state flush**: `flushNow()` in the persistence layer allows state to be written
+  to storage instantly, bypassing the 5-second debounce. Triggered by the native bridge on
+  app background and by a `pqc:flush-state` DOM event.
 
 ### Changed
 
-- **Phase 10 UI refactor — CTA gradient unification**: All 175+ flat solid-color primary CTA
-  buttons (`bg-primary`, `bg-accent`) across PKILearning modules, workshop components, Report,
-  Library, Playground, About, Migrate, and Landing converted to `variant="gradient"` (purple→teal).
-  Affects ~113 files. `<Link>` elements styled as CTAs receive equivalent `bg-gradient-to-r
-from-secondary to-primary` inline classes.
+- **App boot sequence refactored**: `main.tsx` now routes through three clearly named paths —
+  Capacitor native, iframe embed, and standard web — based on platform detection. The
+  `data-platform` attribute is set on `<html>` unconditionally for CSS targeting.
 
-- **Phase 10 UI refactor — `<Button>` component enforcement**: All 1,253 raw `<button>` HTML
-  elements across 462 source files have been replaced with the shared `<Button>` component,
-  enforcing the `no-restricted-syntax` ESLint rule introduced in v3.0.0. UI primitive files
-  (`tabs.tsx`, `switch.tsx`, `data-table.tsx`) and the framer-motion test mock retain native
-  `<button>` with `eslint-disable-next-line` comments. 355 files received a new
-  `import { Button }` statement.
+- **Embed persistence factory is async**: Supports lazy-loaded adapters (Capacitor) without
+  bundling native modules in web builds.
+
+- **Changelog dates are human-readable**: Dates now display as "April 12, 2026" instead of
+  ISO format. A plain-language summary paragraph is shown under each version header.
+
+- **Changelog entry titles rewritten** for v3.1.0–3.1.4: replaced developer jargon (file
+  counts, CSS class names, internal code names) with benefit-focused language that describes
+  what changed for users.
+
+### Fixed
+
+- **XSS prevention in dev error display**: The embed verification error page in `main.tsx`
+  now builds the DOM with safe element creation instead of `innerHTML` template literals.
+
+- **Service worker disabled in Capacitor**: The SW auto-update loop is skipped when running
+  inside a native WebView to prevent reload-on-update crashes.
+
+## [3.1.4] - 2026-04-11
+
+Polish pass for embedded widgets and the learning module navigator — modals, tables, and step indicators now display correctly at all screen widths.
+
+### Fixed
+
+- **Pop-ups and overlays display correctly in embedded widgets**: All modal backdrops are now
+  correctly scoped to the embedded frame. Previously, dialogs with non-standard class combinations
+  would escape the iframe boundaries and appear at incorrect positions on the host page.
+  Technical: added generic `[data-embed] .embed-backdrop` CSS rule covering all 56 affected components.
+
+- **Tables and charts fit properly at narrow widths**: Reduced hard-coded minimum widths that
+  forced horizontal scrollbars in embedded views (600–900 px) and on tablets.
+  Affected: Compliance Gantt, Algorithm Vulnerability Matrix, Migration Risk Matrix, and 5 others.
+
+- **More content visible on medium-size screens and in embedded views**: The Playground,
+  category filter sidebar, and Algorithm Comparison panel now appear at tablet widths (768 px)
+  instead of requiring a full desktop screen (1024 px).
+
+- **Content fills the full width inside embedded portals**: Removed centering constraints so
+  content spans the entire embed frame rather than leaving empty margins on both sides.
+
+- **Learning module step indicators are more compact**: Step circles are smaller and no longer
+  overflow their container on narrow screens or inside embedded views.
+
+- **Improved text legibility when switching between light and dark themes**: Several components
+  used hardcoded color values that looked incorrect in the opposite theme. All now use semantic
+  color tokens that adapt automatically.
+
+- **Detail pop-ups no longer appear above unrelated content**: Fixed stacking order for detail
+  popovers, tooltips, and the accuracy feedback widget so they stay in their correct layer.
+
+- **Feedback and tooltip overlays stay within embedded widget boundaries**: The page accuracy
+  widget and trust score tooltip no longer escape the iframe viewport in embed contexts.
+
+## [3.1.3] - 2026-04-11
+
+Bug fix for embedded widget brand theming, plus vendor certificate infrastructure cleanup.
+
+### Fixed
+
+- **Custom brand colors in embedded widgets now load correctly**: Color values such as `#3B82F6`
+  were incorrectly treated as URL fragment separators, causing the vendor token and signature to
+  be silently dropped. The embed URL builder now percent-encodes color values before signing.
+
+### Changed
+
+- **Vendor certificate registry simplified**: All vendor certificates (including development ones)
+  are now loaded from PEM files at build time. The separate dev-mode fixture merge step has been
+  removed, making the embed boot path faster and more predictable.
+
+- **Trust anchor certificates can be committed to version control**: Root CA and vendor
+  certificate PEM files (public trust anchors only) are now tracked by git so they can be
+  bundled by the build system.
+
+### Security
+
+- **No private key material is stored in the repository**: Root CA private keys, P12 bundles,
+  and `.key` files are blocked by gitignore rules. Only public certificate PEM files (trust
+  anchors) are ever committed.
+
+## [3.1.2] - 2026-04-11
+
+Embed SDK: partner portals can now display custom logos, brand names, and navigation colors.
+
+### Added
+
+- **Custom logos and brand names in embedded widgets**: Nine new vendor certificate fields give
+  partners granular control over how the embed looks in their portals — custom logo image, brand
+  name in the nav header, logo sizing, nav bar height, active nav highlight color, secondary
+  brand color, an optional help button, and the ability to hide the "Powered by PQC Today" badge.
+  Technical details: `theme.secondary`, `theme.secondaryForeground`, `theme.navActiveBackground`,
+  `theme.brandName`, `theme.logoUrl`, `theme.logoHeight`, `theme.logoMaxWidth`,
+  `theme.headerHeight`, `features.hidePoweredBy`, `features.showHelpButton`, `features.helpUrl`.
+
+## [3.1.1] - 2026-04-11
+
+Fixed Migration Planner interactivity and improved embedded widget behavior across 18 components.
+
+### Fixed
+
+- **Migration Planner layer categories are now fully interactive**: Layer row buttons (Cloud,
+  Network, Application Servers, etc.) were completely unresponsive due to an invalid nested
+  button structure. Clicking any part of a layer row now correctly selects it. Full keyboard
+  support (`Enter`/`Space` to select, `Escape` to collapse) is also restored.
+
+- **Migration Planner filter bar stays visible while scrolling through layers**: The sticky
+  filter bar no longer gets covered by layer rows when scrolling through a long stack.
+
+- **Drawers, alerts, and navigation panels stay within embedded widget boundaries**: 13 UI
+  elements that use fixed positioning (including the Artifact Drawer, Glossary, achievement
+  toasts, and the Algorithm Compare bar) now correctly stay within the embed frame instead of
+  escaping to the host page.
+
+- **Embedded widget height adjusts correctly for host pages**: The resize signal sent to the
+  host page is now based on the actual content area, not the document body, giving accurate
+  height measurements.
+
+- **Vendor token is preserved when navigating within embedded widgets**: The embed authentication
+  token is no longer dropped on internal navigation redirects.
+
+## [3.1.0] - 2026-04-11
+
+Visual consistency pass — gradient buttons and the shared Button component are now applied uniformly across every page.
+
+### Changed
+
+- **Consistent gradient button style across the entire app**: All primary action buttons now
+  use a unified purple→teal gradient, replacing the inconsistent mix of solid-color variations
+  that existed across every page and learning module.
+
+- **Unified interactive button component throughout the codebase**: Every button in the app
+  now uses the shared `<Button>` component, ensuring consistent hover states, focus rings,
+  accessibility attributes, and keyboard handling everywhere.
 
 ## [3.0.0] - 2026-04-10
 

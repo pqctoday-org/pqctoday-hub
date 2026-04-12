@@ -764,3 +764,18 @@
 [data-embed] .max-w-3xl {
   max-width: 100%;
 }
+
+/* ── Platform-specific embed overrides ──────────────────────────────────
+   Capacitor native shell: extra padding for native tab bar + home indicator.
+   ──────────────────────────────────────────────────────────────────────── */
+[data-embed][data-platform='capacitor'] #main-content {
+  /* Extra bottom padding for native tab bar (56px) + home indicator */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 56px);
+  /* Top padding for status bar on devices without native header */
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Prevent rubber-band overscroll on iOS WebView */
+[data-platform='capacitor'] {
+  overscroll-behavior: none;
+}

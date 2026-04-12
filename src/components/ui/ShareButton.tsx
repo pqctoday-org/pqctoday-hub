@@ -3,6 +3,8 @@ import { useState, useEffect, useCallback } from 'react'
 import { Share2, Check, Link2 } from 'lucide-react'
 import { Button } from './button'
 import { logEvent } from '../../utils/analytics'
+import { isNativeApp } from '../../embed/platform'
+import { shareContent } from '../../embed/share'
 
 interface ShareButtonProps {
   title: string
@@ -37,9 +39,9 @@ export const ShareButton = ({
   }, [showMenu, closeMenu])
 
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (isNativeApp() || navigator.share) {
       try {
-        await navigator.share({ title, text: shareText, url: shareUrl })
+        await shareContent({ title, text: shareText, url: shareUrl })
         logEvent('Share', 'Native Share', title)
       } catch {
         // User cancelled — not an error

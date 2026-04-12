@@ -106,6 +106,23 @@ export interface VendorTheme {
    * When set, replaces the default bg-primary/10 highlight on the active nav button.
    */
   navActiveBackground?: string
+
+  // ── Dark mode surface overrides ──────────────────────────────────────────
+  // When colorMode is 'dark', these override the light-mode surface colors.
+  // If omitted, the app's built-in .dark CSS variables are used instead.
+
+  /** Dark mode page background, e.g. "#0F172A" */
+  darkBackground?: string
+  /** Dark mode card/panel background, e.g. "#1E293B" */
+  darkCard?: string
+  /** Dark mode main text color, e.g. "#F8FAFC" */
+  darkForeground?: string
+  /** Dark mode muted section background, e.g. "#1E2A3A" */
+  darkMuted?: string
+  /** Dark mode secondary/muted text color, e.g. "#94A3B8" */
+  darkMutedForeground?: string
+  /** Dark mode border color, e.g. "#334155" */
+  darkBorder?: string
 }
 
 export interface VendorPolicy {

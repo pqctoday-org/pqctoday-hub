@@ -3,6 +3,7 @@ import { useEffect, useState, useRef, useCallback } from 'react'
 import { isPqcMessage } from './postMessageProtocol'
 import type { PqcMessage } from './postMessageProtocol'
 import { useEmbed } from './EmbedProvider'
+import { isIframeEmbed } from './platform'
 
 export function useEmbedAuth() {
   const { allowedOrigins, userId, persistMode } = useEmbed()
@@ -33,7 +34,7 @@ export function useEmbedAuth() {
     window.addEventListener('message', handleMessage)
 
     // Signal readiness to parent
-    if (window.parent !== window) {
+    if (isIframeEmbed()) {
       window.parent.postMessage({ type: 'pqc:ready' }, targetOrigin)
     }
 
@@ -45,7 +46,7 @@ export function useEmbedAuth() {
   const triggerAuthExpired = useCallback(() => {
     setIsAuthenticated(false)
     tokenRef.current = null
-    if (window.parent !== window) {
+    if (isIframeEmbed()) {
       window.parent.postMessage({ type: 'pqc:authExpired', userId }, targetOrigin)
     }
   }, [userId, targetOrigin])
