@@ -6,6 +6,29 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.0] - 2026-04-12
+
+Role-specific learning guides, entropy workshop, expanded HSM panels, and a refreshed knowledge base.
+
+### Added
+
+- **Role-specific exercise guides**: Persona-tailored exercises for ArchQuantumImpact, DevQuantumImpact, ExecQuantumImpact, OpsQuantumImpact, and ResearchQuantumImpact modules — each track now has hands-on tasks matched to the reader's role.
+
+- **Entropy workshop**: Five new interactive demos covering DRBG architecture, entropy testing, QRNG simulation, random generation, and source combining — all running in-browser with no server dependency.
+
+- **HSM KEM panel**: New `HsmKemPanel` component adds a dedicated ML-KEM encapsulation/decapsulation interface to the HSM Playground, with dual-engine cross-check (Rust ↔ C++).
+
+- **HSM stateful panels**: New `HsmStatefulPanels` component groups LMS/HSS and SLH-DSA stateful signature operations with state management visualization.
+
+- **Operation history**: `HistoryButton` and `HistoryModal` components let users review previous cryptographic operations in any playground session.
+
+- **Audit tooling**: `fill-audit-gaps.py` fills gap descriptions for all audit rows; `generate-module-issues.ts` generates the module issues CSV from audit data.
+
+### Changed
+
+- **Library data updated**: New library CSV records (04122026) and refreshed product catalog.
+- **RAG corpus refreshed**: Knowledge base regenerated to include all new module and library content.
+
 ## [3.2.1] - 2026-04-12
 
 OpenSSL WASM engine upgraded to v3.6.2 and knowledge base refreshed with updated content.
