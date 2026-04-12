@@ -134,7 +134,9 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
         <div
           className={clsx(
             'pointer-events-none flex justify-center z-50',
-            isEmbedded ? 'absolute inset-x-0' : 'fixed inset-0 items-end md:items-center'
+            isEmbedded
+              ? 'absolute inset-x-0'
+              : 'fixed inset-0 embed-backdrop items-end md:items-center'
           )}
           style={{
             ...(isEmbedded
