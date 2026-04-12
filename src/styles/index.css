@@ -614,6 +614,18 @@
   --color-destructive: var(--embed-destructive, var(--color-destructive));
 }
 
+/* ── Embed dark mode: elevated card surface ─────────────────────────────
+   Standard dark mode uses card === background (both L7%). Embed mode
+   needs visual separation. Bump card to L11% for subtle lift.
+   Vendor-provided --color-card (inline style) still wins via specificity.
+   ──────────────────────────────────────────────────────────────────────── */
+[data-embed].dark {
+  --card: 230 30% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 230 30% 11%;
+  --border: 230 25% 18%;
+}
+
 /* ── Embed mode density override ──────────────────────────────────────────
    Scoped to [data-embed] so standard mode is completely unaffected.
    --embed-table-py is written by applyEmbedTheme() only when VendorTheme.density
