@@ -19,6 +19,7 @@ src/data/product-extractions/
 .agents/
 openssl-3.6.0-src.bak/
 openssl-3.6.1-src/
+openssl-3.6.2-src/
 validate_errors.json
 pure_errors.json
 scripts/split_*

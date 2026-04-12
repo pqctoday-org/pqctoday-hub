@@ -6,6 +6,23 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-04-12
+
+OpenSSL WASM engine upgraded to v3.6.2 and knowledge base refreshed with updated content.
+
+### Changed
+
+- **OpenSSL WASM upgraded to v3.6.2**: The in-browser OpenSSL engine (used by OpenSSL Studio,
+  Digital Assets, and all PQC algorithm demos) is now built from OpenSSL 3.6.2. This includes
+  the latest upstream fixes and improvements while preserving full ML-KEM, ML-DSA, SLH-DSA,
+  and LMS/HSS support.
+
+- **Knowledge base refreshed**: RAG corpus regenerated with 5,881 indexed chunks — all
+  assistant answers and content search results reflect the latest data.
+
+- **Embed SDK output updated**: The embeddable widget SDK (`sdk.js`) now ships as a compact
+  single-line bundle for faster load times in partner integrations.
+
 ## [3.2.0] - 2026-04-12
 
 Mobile platform foundation — Capacitor integration bridge and embed prerequisites that enable a native iOS/Android app without any changes to the existing web app.

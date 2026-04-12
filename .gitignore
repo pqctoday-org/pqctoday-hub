@@ -21,6 +21,7 @@ notebooklm/
 openssl-3.6.0-src/
 openssl-3.6.0-src.bak/
 openssl-3.6.1-src/
+openssl-3.6.2-src/
 lms-wasm/
 *.o
 *.wasm.map
@@ -270,6 +271,9 @@ embed-root-ca/
 
 # Standalone tools repo (managed separately at pqctoday/pqc-tools)
 tools/
+
+# Local enrichment workspace (CSVs, HTML/PDF cache, scripts — private dev only)
+src/cowork/
 
 # PKI keys — certs are committed (trust anchors), keys never are
 pki/ca/keys/
