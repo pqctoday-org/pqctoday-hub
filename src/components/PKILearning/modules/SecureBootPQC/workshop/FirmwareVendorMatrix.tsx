@@ -5,6 +5,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { FIRMWARE_VENDORS, VENDOR_STATUS_LABELS } from '../data/secureBootProviderData'
 import type { VendorTier, FirmwareVendorStatus } from '../data/secureBootProviderData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 const TIER_LABELS: Record<VendorTier, string> = {
   enterprise: 'Enterprise',
@@ -99,7 +100,8 @@ export const FirmwareVendorMatrix: React.FC = () => {
           noContainer
         />
         {(selectedTier !== 'All' || selectedStatus !== 'All') && (
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               setSelectedTier('All')
               setSelectedStatus('All')
@@ -107,7 +109,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
             className="text-xs text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
           >
             Clear filters
-          </button>
+          </Button>
         )}
         <span className="text-xs text-muted-foreground ml-auto">
           {filtered.length} of {FIRMWARE_VENDORS.length} vendors
@@ -131,7 +133,8 @@ export const FirmwareVendorMatrix: React.FC = () => {
                 key={vendor.id}
                 className="rounded-lg border border-border bg-muted/30 overflow-hidden"
               >
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setExpandedVendor(isExpanded ? null : vendor.id)}
                   className="flex items-start gap-3 w-full p-4 text-left"
                 >
@@ -166,7 +169,7 @@ export const FirmwareVendorMatrix: React.FC = () => {
                   ) : (
                     <ChevronRight size={16} className="text-muted-foreground shrink-0 mt-1" />
                   )}
-                </button>
+                </Button>
 
                 {isExpanded && (
                   <div className="px-4 pb-4 border-t border-border/50 pt-4 space-y-4">

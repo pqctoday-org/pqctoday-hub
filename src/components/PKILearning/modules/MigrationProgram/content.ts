@@ -8,6 +8,7 @@ import { getAlgorithm } from '@/data/algorithmProperties'
 
 export const content: ModuleContent = {
   moduleId: 'migration-program',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [

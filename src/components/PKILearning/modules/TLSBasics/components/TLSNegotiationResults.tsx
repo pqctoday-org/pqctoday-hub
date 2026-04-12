@@ -15,6 +15,7 @@ import {
   DEFAULT_MLDSA87_SERVER_CERT,
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from '../utils/defaultCertificates'
+import { Button } from '@/components/ui/button'
 
 // Determine identity from certificate PEM (independent per side)
 const getIdentityFromCert = (certPem: string | undefined): string => {
@@ -451,7 +452,8 @@ const LogColumn = ({
     >
       {/* Header / Tabs */}
       <div className={clsx('flex items-center border-b', borderColor)}>
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setView('protocol')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors border-r flex items-center justify-center gap-2',
@@ -462,8 +464,9 @@ const LogColumn = ({
           )}
         >
           <FileText size={14} /> Protocol Log
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setView('wire')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors border-r flex items-center justify-center gap-2',
@@ -474,8 +477,9 @@ const LogColumn = ({
           )}
         >
           <Activity size={14} /> Wire Data
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setView('crypto')}
           className={clsx(
             'flex-1 px-4 py-3 text-xs font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-2',
@@ -485,9 +489,10 @@ const LogColumn = ({
           )}
         >
           <Lock size={14} /> Crypto Ops
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={(e) => {
             e.stopPropagation()
             handleCopy()
@@ -496,7 +501,7 @@ const LogColumn = ({
           title="Copy Log"
         >
           {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-        </button>
+        </Button>
       </div>
 
       {/* C7: Tab description bar */}

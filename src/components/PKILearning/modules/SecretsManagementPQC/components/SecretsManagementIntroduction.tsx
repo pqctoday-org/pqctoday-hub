@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface CollapsibleSectionProps {
   icon: React.ReactNode
@@ -34,7 +35,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   return (
     <section className="glass-panel p-6">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left"
       >
@@ -44,7 +46,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           size={18}
           className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
         />
-      </button>
+      </Button>
       {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
     </section>
   )
@@ -58,7 +60,7 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1 */}
       <CollapsibleSection
         icon={<Key size={24} className="text-primary" />}
@@ -637,12 +639,13 @@ export const SecretsManagementIntroduction: React.FC<SecretsManagementIntroducti
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
         >
           Start Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Classify secrets by risk, simulate Vault transit PQC, design rotation policies, and
           compare cloud providers.

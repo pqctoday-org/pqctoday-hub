@@ -4,6 +4,7 @@ import React, { useState, useCallback, useMemo } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { ExportableArtifact } from '../../../common/executive'
+import { Button } from '@/components/ui/button'
 
 type RACIValue = 'R' | 'A' | 'C' | 'I' | ''
 
@@ -169,14 +170,15 @@ export const RACIBuilder: React.FC = () => {
                   const value = matrix[activity]?.[role] || ''
                   return (
                     <td key={role} className="p-1 border-b border-border text-center">
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={() => handleCellChange(activity, role, cycleRACIValue(value))}
                         aria-label={`${activity} \u2014 ${role}: ${value || 'empty'}. Click to cycle.`}
                         className={`w-full text-center text-xs font-bold rounded border px-1 py-1.5 cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-primary/50 min-h-[32px] ${getRACIColor(value)}`}
                       >
                         {value || '\u2014'}
-                      </button>
+                      </Button>
                     </td>
                   )
                 })}

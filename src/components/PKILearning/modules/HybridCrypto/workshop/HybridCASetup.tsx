@@ -3,6 +3,7 @@
 import React, { useState, useCallback } from 'react'
 import { Loader2, Play, CheckCircle2, AlertCircle, ChevronDown, ChevronRight } from 'lucide-react'
 import { hybridCryptoService, type CertResult } from '../services/HybridCryptoService'
+import { Button } from '@/components/ui/button'
 
 interface CAResult extends CertResult {
   algorithm: string
@@ -99,13 +100,14 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
         </div>
 
         {!ca && !generating && (
-          <button
+          <Button
+            variant="gradient"
             onClick={() => generateCA(type)}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-sm"
           >
             <Play size={14} fill="currentColor" />
             Generate {typeLabel} CA
-          </button>
+          </Button>
         )}
 
         {generating && (
@@ -147,13 +149,14 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
                   </div>
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => togglePem(type)}
                   className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
                   {expandedPem[type] ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   {expandedPem[type] ? 'Hide' : 'Show'} parsed certificate
-                </button>
+                </Button>
 
                 {expandedPem[type] && (
                   <pre className="text-[10px] bg-background p-3 rounded border border-border overflow-x-auto max-h-60 overflow-y-auto font-mono whitespace-pre-wrap">
@@ -181,10 +184,11 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
       </div>
 
       {/* Generate Both button */}
-      <button
+      <Button
+        variant="gradient"
         onClick={generateBoth}
         disabled={isGenerating !== null}
-        className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+        className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
       >
         {isGenerating === 'both' ? (
           <>
@@ -197,7 +201,7 @@ export const HybridCASetup: React.FC<HybridCASetupProps> = ({ onCAGenerated }) =
             Generate Both CAs
           </>
         )}
-      </button>
+      </Button>
 
       {/* CA Cards */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

@@ -153,9 +153,10 @@ export const InclusionProofGenerator: React.FC<InclusionProofGeneratorProps> = (
             </div>
           )}
           <Button
+            variant="gradient"
             onClick={handleBuildTree}
             disabled={isBuilding}
-            className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
+            className="flex items-center gap-2 font-bold text-sm"
           >
             {isBuilding ? (
               <>

@@ -7,6 +7,7 @@ import {
   PQC_STATUS_LABELS,
   type CloudSecretsProvider,
 } from '../data/secretsConstants'
+import { Button } from '@/components/ui/button'
 
 type FilterType = 'all' | 'cloud' | 'on-prem' | 'hybrid'
 
@@ -53,7 +54,8 @@ export const CloudSecretsComparator: React.FC = () => {
       {/* Filter buttons */}
       <div className="flex flex-wrap gap-2">
         {filterBtns.map(({ id, label }) => (
-          <button
+          <Button
+            variant="ghost"
             key={id}
             onClick={() => setFilter(id)}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors border ${
@@ -63,7 +65,7 @@ export const CloudSecretsComparator: React.FC = () => {
             }`}
           >
             {label}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -2,6 +2,7 @@
 import React from 'react'
 import { ArrowRight, ExternalLink } from 'lucide-react'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { Button } from '@/components/ui/button'
 
 interface SLHDSAIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -10,7 +11,7 @@ interface SLHDSAIntroductionProps {
 // ─── Step 1: Overview & Why Stateless ────────────────────────────────────────
 
 const Step1Overview: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
       <h2 className="text-xl font-bold text-foreground">What is SLH-DSA?</h2>
       <p className="text-sm text-muted-foreground leading-relaxed">
@@ -112,7 +113,7 @@ const Step1Overview: React.FC = () => (
 // ─── Step 2: WOTS+, FORS & Hypertree Architecture ───────────────────────────
 
 const Step2Internals: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
       <h2 className="text-xl font-bold text-foreground">
         FIPS 205 §3–5: The Three Building Blocks
@@ -326,7 +327,7 @@ const PARAM_TABLE = [
 ]
 
 const Step3Parameters: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
       <h2 className="text-xl font-bold text-foreground">FIPS 205 §6 — Parameter Sets</h2>
       <p className="text-sm text-muted-foreground leading-relaxed">
@@ -440,7 +441,7 @@ const Step3Parameters: React.FC = () => (
 const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     <section className="glass-panel p-6 space-y-4">
       <h2 className="text-xl font-bold text-foreground">Pure SLH-DSA vs HashSLH-DSA (§9 vs §11)</h2>
       <div className="grid sm:grid-cols-2 gap-4 text-sm">
@@ -572,12 +573,13 @@ const Step4Advanced: React.FC<{ onNavigateToWorkshop: () => void }> = ({
     </section>
 
     <div className="text-center">
-      <button
+      <Button
+        variant="gradient"
         onClick={onNavigateToWorkshop}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground mt-2">
         Generate real SLH-DSA keys, sign with context strings, and toggle deterministic mode.
       </p>

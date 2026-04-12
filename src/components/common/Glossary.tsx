@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom'
 import { glossaryTerms, type GlossaryTerm } from '../../data/glossaryData'
 import clsx from 'clsx'
 import { CategoryBadge } from '../ui/category-badge'
+import { Button } from '@/components/ui/button'
+import { useIsEmbedded } from '@/embed/EmbedProvider'
 
 const categoryColors = {
   algorithm: 'text-primary',
@@ -52,6 +54,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
   isOpen,
   onClose,
 }) => {
+  const isEmbedded = useIsEmbedded()
   const [search, setSearch] = useState('')
   const [activeCategory, setActiveCategory] = useState<string>('all')
   const [activeLetter, setActiveLetter] = useState<string | null>(null)
@@ -107,7 +110,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+              className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-50 bg-black/60 backdrop-blur-sm`}
               onClick={onClose}
             />
 
@@ -117,7 +120,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 300 }}
               transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="fixed right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden"
+              className={`${isEmbedded ? 'absolute' : 'fixed'} right-0 top-0 bottom-0 z-50 w-full max-w-lg bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden`}
               role="dialog"
               aria-label="PQC Glossary"
               aria-modal="true"
@@ -129,13 +132,14 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                     <BookOpenText size={22} />
                     PQC Glossary
                   </h2>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={onClose}
                     className="p-1.5 rounded-lg hover:bg-muted/50 transition-colors text-muted-foreground"
                     aria-label="Close glossary"
                   >
                     <X size={20} />
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Search */}
@@ -161,7 +165,8 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                 {/* Category Tabs */}
                 <div className="flex gap-1.5 flex-wrap mb-2">
                   {categories.map((cat) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={cat}
                       onClick={() => setActiveCategory(cat)}
                       className={clsx(
@@ -172,14 +177,15 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       )}
                     >
                       {cat}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 
                 {/* A-Z Index */}
                 <div className="flex gap-0.5 flex-wrap">
                   {availableLetters.map((letter) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={letter}
                       onClick={() => setActiveLetter(activeLetter === letter ? null : letter)}
                       className={clsx(
@@ -190,7 +196,7 @@ export const Glossary: React.FC<{ isOpen: boolean; onClose: () => void }> = ({
                       )}
                     >
                       {letter}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

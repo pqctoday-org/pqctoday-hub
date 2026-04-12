@@ -55,7 +55,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   return (
     <section className="glass-panel overflow-hidden">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 text-left"
       >
@@ -68,7 +69,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         ) : (
           <ChevronDown size={20} className="text-muted-foreground shrink-0" />
         )}
-      </button>
+      </Button>
       {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
     </section>
   )
@@ -89,7 +90,7 @@ export const EMVPaymentIntroduction: React.FC<EMVPaymentIntroductionProps> = ({
   const criticalVectors = MIGRATION_VECTORS.filter((v) => v.severity === 'critical').length
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="w-full space-y-6">
       {/* ── Section 1: The EMV Payment Ecosystem ── */}
       <CollapsibleSection
         title="1. The EMV Payment Ecosystem"

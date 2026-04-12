@@ -76,6 +76,53 @@ export interface VendorTheme {
   warningColor?: string
   /** Override destructive/error status color. e.g. "#DC2626" */
   destructiveColor?: string
+  /** Navigation layout. 'top' = horizontal header (default). 'sidebar' = fixed left panel. */
+  navLayout?: 'top' | 'sidebar'
+  /** Sidebar width override, e.g. "56px" for icon-only or "200px" for text+icon. Default: "200px". */
+  navWidth?: string
+  /**
+   * Vendor brand name shown in the nav header instead of "PQC Today".
+   * When omitted, "PQC Today" is displayed with the default gradient style.
+   */
+  brandName?: string
+  /**
+   * URL to a vendor logo image shown in the nav header.
+   * When set, replaces the text wordmark. Use an image ≤ 120×32px for best fit.
+   * Must be an absolute HTTPS URL hosted on the vendor's own origin.
+   */
+  logoUrl?: string
+  /** Logo image height override, e.g. "36px". Default: "28px". */
+  logoHeight?: string
+  /** Logo max-width override, e.g. "150px". Default: "120px". */
+  logoMaxWidth?: string
+  /** Nav bar height override, e.g. "56px". Default: "48px". */
+  headerHeight?: string
+  /** Secondary brand color, e.g. "#6366F1". Overrides --color-secondary. */
+  secondary?: string
+  /** Text color on secondary backgrounds, e.g. "#FFFFFF". */
+  secondaryForeground?: string
+  /**
+   * Active nav item background color override, e.g. "rgba(99,102,241,0.15)".
+   * When set, replaces the default bg-primary/10 highlight on the active nav button.
+   */
+  navActiveBackground?: string
+
+  // ── Dark mode surface overrides ──────────────────────────────────────────
+  // When colorMode is 'dark', these override the light-mode surface colors.
+  // If omitted, the app's built-in .dark CSS variables are used instead.
+
+  /** Dark mode page background, e.g. "#0F172A" */
+  darkBackground?: string
+  /** Dark mode card/panel background, e.g. "#1E293B" */
+  darkCard?: string
+  /** Dark mode main text color, e.g. "#F8FAFC" */
+  darkForeground?: string
+  /** Dark mode muted section background, e.g. "#1E2A3A" */
+  darkMuted?: string
+  /** Dark mode secondary/muted text color, e.g. "#94A3B8" */
+  darkMutedForeground?: string
+  /** Dark mode border color, e.g. "#334155" */
+  darkBorder?: string
 }
 
 export interface VendorPolicy {
@@ -110,6 +157,18 @@ export interface VendorPolicy {
     assistantEnabled: boolean
     /** Whether to hide the main navigation shell */
     hideNav?: boolean
+    /** Whether to hide the About route from the navigation and block access */
+    hideAbout?: boolean
+    /** Whether to hide the "Powered by PQC Today" attribution badge */
+    hidePoweredBy?: boolean
+    /** Whether to show a help (?) icon in the top-right nav area */
+    showHelpButton?: boolean
+    /** URL the help button links to. Required when showHelpButton is true. */
+    helpUrl?: string
+    /** Custom title for the PQC Assistant panel header (default: "PQC Assistant") */
+    assistantTitle?: string
+    /** Max width of the assistant panel in embed mode (default: "400px") */
+    assistantMaxWidth?: string
   }
   /** Optional vendor brand theme — applies CSS custom properties before React mounts */
   theme?: VendorTheme
@@ -136,7 +195,7 @@ export function defaultVendorPolicy(): VendorPolicy {
       ],
       roles: ['curious', 'basics', 'expert'],
     },
-    session: { maxDuration: 86400, persistModes: ['api', 'postMessage', 'none'] },
+    session: { maxDuration: 86400, persistModes: ['postMessage', 'none'] },
     features: { assistantEnabled: true },
   }
 }

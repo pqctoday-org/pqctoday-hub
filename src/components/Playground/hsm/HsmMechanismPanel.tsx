@@ -145,7 +145,8 @@ const FamilyGroup = ({ family, mechs, expanded, onToggle }: FamilyGroupProps) =>
   return (
     <div className={`border-l-2 pl-3 ${meta.border}`}>
       {/* Group header */}
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={onToggle}
         className="flex items-center gap-2 w-full py-1.5 text-left hover:opacity-80 transition-opacity"
@@ -161,7 +162,7 @@ const FamilyGroup = ({ family, mechs, expanded, onToggle }: FamilyGroupProps) =>
         >
           {mechs.length}
         </span>
-      </button>
+      </Button>
       {/* Mechanism rows */}
       {expanded && (
         <div className="mt-0.5 mb-1">

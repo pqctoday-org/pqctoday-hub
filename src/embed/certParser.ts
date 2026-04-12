@@ -31,6 +31,51 @@ if (typeof window !== 'undefined' && window.crypto) {
 }
 
 // ---------------------------------------------------------------------------
+// Root CA trust anchor — loaded at build time from pki/ca/*.pem
+// Vite bundles the PEM bytes into the JS output; the shipped bundle is the
+// trust anchor, equivalent to a hardcoded string but rotation-friendly.
+// ---------------------------------------------------------------------------
+
+const rootCaFiles = import.meta.glob('../../pki/ca/*.pem', { as: 'raw', eager: true })
+
+const ROOT_CA_CERTS: x509.X509Certificate[] = []
+for (const [, pem] of Object.entries(rootCaFiles as Record<string, string>)) {
+  try {
+    ROOT_CA_CERTS.push(new x509.X509Certificate(pem))
+  } catch {
+    // malformed PEM — skip
+  }
+}
+
+/**
+ * Verify that a PEM-encoded vendor certificate chains up to one of the bundled Root CA certs.
+ *
+ * Uses @peculiar/x509 X509ChainBuilder which performs:
+ *   - Issuer/subject name matching
+ *   - Signature verification (Root CA signs vendor cert)
+ *   - Basic constraints (CA:TRUE on the root)
+ *
+ * @throws if no root CA is configured or the chain cannot be verified
+ */
+export async function verifyChain(vendorCertPem: string): Promise<void> {
+  if (ROOT_CA_CERTS.length === 0) {
+    throw new Error('No Root CA configured — add a PEM cert to pki/ca/')
+  }
+
+  const vendorCert = new x509.X509Certificate(vendorCertPem)
+  const chain = new x509.X509ChainBuilder({ certificates: ROOT_CA_CERTS })
+  const built = await chain.build(vendorCert)
+
+  // built[0] is the end-entity (vendor cert), built[last] should be the root CA.
+  // A valid chain has at least 2 entries (vendor + root).
+  if (built.length < 2) {
+    throw new Error(
+      'Certificate chain could not be built — vendor cert not issued by a trusted Root CA'
+    )
+  }
+}
+
+// ---------------------------------------------------------------------------
 // Parsed certificate type
 // ---------------------------------------------------------------------------
 
@@ -155,17 +200,8 @@ function decodePolicy(cert: x509.X509Certificate): VendorPolicy {
 // ---------------------------------------------------------------------------
 
 function getSubjectField(cert: x509.X509Certificate, shortName: string): string | undefined {
-  // @peculiar/x509 represents the subject as an array of attribute arrays
-  for (const rdn of cert.subject) {
-    for (const attr of rdn) {
-      // OID for CN = 2.5.4.3, O = 2.5.4.10
-      const oid = shortName === 'CN' ? '2.5.4.3' : shortName === 'O' ? '2.5.4.10' : ''
-      if (attr.type === oid) {
-        return String(attr.value)
-      }
-    }
-  }
-  return undefined
+  const values = cert.subjectName.getField(shortName)
+  return values.length > 0 ? values[0] : undefined
 }
 
 function getStringExtension(cert: x509.X509Certificate, oid: string, defaultValue: string): string {

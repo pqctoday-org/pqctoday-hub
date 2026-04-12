@@ -11,6 +11,7 @@ import {
   Check,
 } from 'lucide-react'
 import { FilterDropdown } from '../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 // Maps a selected algorithm/keySize to OpenSSL CLI + liboqs-python + Go snippets
 function getCodeSnippets(
@@ -136,7 +137,8 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
 
   return (
     <div className="bg-muted/20 border border-border rounded-xl overflow-hidden">
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen((o) => !o)}
         className="w-full flex items-center justify-between px-4 py-3 text-xs font-semibold text-muted-foreground hover:text-foreground hover:bg-muted/30 transition-colors"
@@ -147,14 +149,15 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
           Code Reference
         </span>
         <ChevronDown size={14} className={`transition-transform ${open ? 'rotate-180' : ''}`} />
-      </button>
+      </Button>
 
       {open && (
         <div className="border-t border-border">
           {/* Tab bar */}
           <div className="flex border-b border-border bg-muted/10">
             {snippets.map((s, i) => (
-              <button
+              <Button
+                variant="ghost"
                 key={s.label}
                 type="button"
                 onClick={() => setActiveTab(i)}
@@ -165,9 +168,10 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
                 }`}
               >
                 {s.label}
-              </button>
+              </Button>
             ))}
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={handleCopy}
               className="ml-auto px-3 py-2 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1.5 transition-colors"
@@ -175,7 +179,7 @@ function CodeSnippetPanel({ algorithm, keySize }: { algorithm: string; keySize: 
             >
               {copied ? <Check size={13} className="text-success" /> : <Copy size={13} />}
               {copied ? 'Copied' : 'Copy'}
-            </button>
+            </Button>
           </div>
 
           {/* Code block */}
@@ -316,14 +320,15 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
             <span className="text-xs font-medium text-muted-foreground block opacity-0 select-none">
               Action
             </span>
-            <button
+            <Button
+              variant="ghost"
               onClick={onGenerateKeys}
               disabled={loading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-[42px] text-sm shadow-lg shadow-primary/20"
             >
               {loading ? <RefreshCw className="animate-spin" size={16} /> : <KeyIcon size={16} />}
               Generate Keys
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -382,7 +387,8 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
             <span className="text-xs font-medium text-muted-foreground block opacity-0 select-none">
               Action
             </span>
-            <button
+            <Button
+              variant="ghost"
               onClick={onGenerateClassicalKeys}
               disabled={classicalLoading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-[42px] text-sm shadow-lg shadow-accent/20"
@@ -393,7 +399,7 @@ export const KeyGenerationSection: React.FC<KeyGenerationSectionProps> = ({
                 <Lock size={16} />
               )}
               Generate Classical Keys
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -11,6 +11,7 @@ import {
   Network,
   Server,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   part: number
@@ -122,7 +123,7 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">QKD Exercises</h2>
         <p className="text-muted-foreground text-sm">
@@ -154,12 +155,13 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
                   <p className="text-xs text-muted-foreground">{scenario.observe}</p>
                 </div>
               </div>
-              <button
+              <Button
+                variant="gradient"
                 onClick={() => handleLoadScenario(scenario)}
-                className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
+                className="px-4 py-2 font-bold rounded text-sm transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
               >
                 Load &amp; Run <ArrowRight size={14} />
-              </button>
+              </Button>
             </div>
           </div>
         )
@@ -180,7 +182,7 @@ export const QKDExercises: React.FC<QKDExercisesProps> = ({
           </div>
           <Link
             to="/learn/quiz"
-            className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors whitespace-nowrap flex items-center gap-1 shrink-0"
+            className="px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold rounded text-sm hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 whitespace-nowrap flex items-center gap-1 shrink-0"
           >
             Take Quiz <ArrowRight size={14} />
           </Link>

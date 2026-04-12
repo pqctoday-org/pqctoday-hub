@@ -183,7 +183,8 @@ export const IDSSignatureUpdater: React.FC = () => {
             <div className="p-4">
               <div className="flex items-start gap-3">
                 {/* Toggle */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => toggleRule(rule.id)}
                   className={`shrink-0 w-10 h-6 rounded-full transition-colors relative ${
                     rule.enabled ? 'bg-primary' : 'bg-muted border border-border'
@@ -195,7 +196,7 @@ export const IDSSignatureUpdater: React.FC = () => {
                       rule.enabled ? 'left-5' : 'left-1'
                     }`}
                   />
-                </button>
+                </Button>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1 flex-wrap">
@@ -223,13 +224,14 @@ export const IDSSignatureUpdater: React.FC = () => {
                   <p className="text-xs text-muted-foreground">{rule.description}</p>
                 </div>
 
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setExpandedId(expandedId === rule.id ? null : rule.id)}
                   className="shrink-0 text-muted-foreground hover:text-primary transition-colors"
                   aria-label="Toggle rule details"
                 >
                   <Info size={14} />
-                </button>
+                </Button>
               </div>
             </div>
 

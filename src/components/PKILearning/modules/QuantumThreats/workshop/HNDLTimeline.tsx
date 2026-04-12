@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES } from '../data/quantumConstants'
+import { Button } from '@/components/ui/button'
 
 export const HNDLTimeline: React.FC = () => {
   const [dataLifetime, setDataLifetime] = useState(25)
@@ -105,7 +106,8 @@ export const HNDLTimeline: React.FC = () => {
               { label: 'Healthcare', years: 50 },
               { label: 'State secrets', years: 75 },
             ].map((preset) => (
-              <button
+              <Button
+                variant="ghost"
                 key={preset.label}
                 onClick={() => setDataLifetime(preset.years)}
                 className={`text-xs px-2 py-1 rounded border transition-colors ${
@@ -115,7 +117,7 @@ export const HNDLTimeline: React.FC = () => {
                 }`}
               >
                 {preset.label} ({preset.years}y)
-              </button>
+              </Button>
             ))}
           </div>
         </div>

@@ -13,6 +13,8 @@ The application is divided into the following main modules. Detailed requirement
 3. **[Algorithms Transition](requirements/algorithms.md)**: Comparison table showing the shift from Classical (RSA/ECC) to PQC (ML-KEM/ML-DSA) standards.
 4. **[Standards Library](requirements/library.md)**: Comprehensive PQC standards repository with categorized documents.
    - *Note on SoftHSMv3 Integration*: SoftHSMv3 integration for PKCS#11 v3.2 complies with OASIS spec for PQC constants (CKK_ML_DSA = 0x4a, CKK_SLH_DSA = 0x4b).
+   - SoftHSMv3 v0.4.18 explicitly supports ChaCha20-Poly1305 with OpenSSL EVP AEAD nonce routing and XMSS bit-parity compliance assertions.
+
 5. **[Learning Platform](requirements/learn.md)**: 25 interactive educational modules with 470-question quiz:
    - *Note on Dynamic Tooling*: All "Featured Products" module lists are now powered dynamically by the `ModuleMigrateTab` component, which sources tagged products directly from the global CSV database (`quantum_safe_cryptographic_software_reference`).
    - *Note on Curious Summaries*: All learning modules strictly feature standardized 3-panel "In Simple Terms" (What This Is About, Why It Matters, The Key Takeaway) neon infographics and factually-verified, jargon-free markdown summaries without hallucination.

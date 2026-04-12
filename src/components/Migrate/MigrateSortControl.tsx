@@ -2,6 +2,7 @@
 import { ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'
 import { useState, useRef, useEffect } from 'react'
+import { Button } from '@/components/ui/button'
 
 export type MigrateSortOption = 'name' | 'pqcSupport' | 'pqcMigrationPriority' | 'fipsValidated'
 
@@ -41,7 +42,8 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         onKeyDown={(e) => {
           if (e.key === 'Escape' && isOpen) {
@@ -55,7 +57,7 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
       >
         <ArrowUpDown size={14} aria-hidden="true" />
         <span className="hidden sm:inline">{selected?.label ?? 'Sort'}</span>
-      </button>
+      </Button>
 
       {isOpen && (
         <div
@@ -64,7 +66,8 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
           className="absolute top-full right-0 mt-1 w-44 bg-popover border border-border rounded-lg shadow-xl overflow-hidden z-50"
         >
           {SORT_OPTIONS.map((option) => (
-            <button
+            <Button
+              variant="ghost"
               key={option.id}
               role="option"
               aria-selected={value === option.id}
@@ -78,7 +81,7 @@ export const MigrateSortControl = ({ value, onChange }: MigrateSortControlProps)
               )}
             >
               {option.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}

@@ -20,6 +20,7 @@ import {
   computeCampaignMetrics,
 } from '../data/otaOrchestrationData'
 import type { OTACampaignTarget } from '../data/otaOrchestrationData'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -186,7 +187,8 @@ export const OTAOrchestrationPlanner: React.FC = () => {
             const isSelected = overhead.algorithm === selectedAlgorithm
             const isPQC = !['ECDSA P-256', 'RSA-2048'].includes(overhead.algorithm)
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={overhead.algorithm}
                 onClick={() => setSelectedAlgorithm(overhead.algorithm)}
                 className={`rounded-lg p-3 border text-left transition-colors ${
@@ -218,7 +220,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
                     /pkg
                   </div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -328,7 +330,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
 
         {/* Layered graph */}
         <div className="overflow-x-auto">
-          <div className="flex items-start gap-2 min-w-[500px]">
+          <div className="flex items-start gap-2 min-w-0 md:min-w-[500px]">
             {layers.map((layer, depth) => (
               <React.Fragment key={depth}>
                 <div className="flex flex-col items-center gap-2 min-w-[120px]">

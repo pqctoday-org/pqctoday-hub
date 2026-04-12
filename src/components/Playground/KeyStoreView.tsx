@@ -6,6 +6,7 @@ import { KeyGenerationSection } from './keystore/KeyGenerationSection'
 import { KeyTable } from './keystore/KeyTable'
 import { getKeySize, formatBytes } from './keystore/keySizeUtils'
 import { KeyDetails } from './keystore/KeyDetails'
+import { Button } from '@/components/ui/button'
 
 interface KeyStoreViewProps {
   keyStore: Key[]
@@ -78,22 +79,25 @@ export const KeyStoreView = ({
         <div className="flex flex-wrap gap-2">
           {keyStore.length > 0 && (
             <>
-              <button
+              <Button
+                variant="ghost"
                 onClick={onBackupAllKeys}
                 className="px-3 py-1.5 bg-primary/20 hover:bg-primary/30 border border-primary/40 rounded text-xs font-medium text-primary transition-colors flex items-center gap-2"
                 title="Backup all keys to ZIP"
               >
                 <Archive size={14} /> Backup All
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={clearKeys}
                 className="text-sm text-destructive hover:text-destructive/80 flex items-center gap-1 transition-colors px-3 py-1.5 rounded-lg hover:bg-destructive/10"
               >
                 <Trash2 size={14} /> Clear All Keys
-              </button>
+              </Button>
             </>
           )}
-          <button
+          <Button
+            variant="ghost"
             className="px-3 py-1.5 bg-muted hover:bg-accent border border-border rounded text-xs font-medium text-muted-foreground hover:text-foreground cursor-pointer transition-colors flex items-center gap-2"
             onClick={() => document.getElementById('restore-keys-input')?.click()}
           >
@@ -105,7 +109,7 @@ export const KeyStoreView = ({
               onChange={onRestoreKeys}
               className="hidden"
             />
-          </button>
+          </Button>
         </div>
       </div>
 

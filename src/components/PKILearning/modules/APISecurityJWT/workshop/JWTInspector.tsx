@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { Search, Copy, Check, AlertTriangle, ShieldCheck } from 'lucide-react'
 import { SAMPLE_JWTS, JOSE_SIGNING_ALGORITHMS } from '../constants'
 import { decodeJWT } from '../jwtUtils'
+import { Button } from '@/components/ui/button'
 
 type SampleKey = keyof typeof SAMPLE_JWTS
 
@@ -54,7 +55,8 @@ export const JWTInspector: React.FC = () => {
       {/* Sample Selector */}
       <div className="flex flex-wrap gap-2">
         {(Object.keys(SAMPLE_JWTS) as SampleKey[]).map((key) => (
-          <button
+          <Button
+            variant="ghost"
             key={key}
             onClick={() => handleSampleChange(key)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -64,7 +66,7 @@ export const JWTInspector: React.FC = () => {
             }`}
           >
             {key}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -74,13 +76,14 @@ export const JWTInspector: React.FC = () => {
           <label htmlFor="jwt-token-input" className="text-sm font-medium text-foreground">
             JWT Token
           </label>
-          <button
+          <Button
+            variant="ghost"
             onClick={handleCopy}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             {copied ? <Check size={14} /> : <Copy size={14} />}
             {copied ? 'Copied' : 'Copy'}
-          </button>
+          </Button>
         </div>
         <textarea
           id="jwt-token-input"

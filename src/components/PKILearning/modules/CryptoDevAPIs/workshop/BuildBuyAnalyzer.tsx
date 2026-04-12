@@ -7,6 +7,7 @@ import {
   CASE_STUDIES,
   type SourcingStrategy,
 } from '../data/buildBuyData'
+import { Button } from '@/components/ui/button'
 
 const STRATEGY_COLORS: Record<SourcingStrategy, { bg: string; border: string; text: string }> = {
   build: { bg: 'bg-status-error/10', border: 'border-status-error/40', text: 'text-status-error' },
@@ -89,7 +90,11 @@ export const BuildBuyAnalyzer: React.FC = () => {
             const isExpanded = expandedStrategies.has(s.id)
             return (
               <div key={s.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
-                <button className="w-full text-left p-4" onClick={() => toggleStrategy(s.id)}>
+                <Button
+                  variant="ghost"
+                  className="w-full text-left p-4"
+                  onClick={() => toggleStrategy(s.id)}
+                >
                   <div className="flex items-center justify-between">
                     <div>
                       <div className={`font-bold text-base ${colors.text}`}>{s.name}</div>
@@ -101,7 +106,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
                       <ChevronDown size={16} className="text-muted-foreground" />
                     )}
                   </div>
-                </button>
+                </Button>
                 {isExpanded && (
                   <div className="border-t border-border p-4 space-y-3">
                     <p className="text-sm text-muted-foreground">{s.description}</p>
@@ -175,7 +180,8 @@ export const BuildBuyAnalyzer: React.FC = () => {
               <p className="text-xs text-muted-foreground mb-2">{q.description}</p>
               <div className="flex flex-wrap gap-2">
                 {q.options.map((opt, idx) => (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={idx}
                     onClick={() => {
                       setAnswers((prev) => ({ ...prev, [q.id]: idx }))
@@ -187,7 +193,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
                     }`}
                   >
                     {opt.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -253,7 +259,11 @@ export const BuildBuyAnalyzer: React.FC = () => {
             const isExpanded = expandedCases.has(cs.id)
             return (
               <div key={cs.id} className={`glass-panel overflow-hidden border ${colors.border}`}>
-                <button className="w-full text-left p-4" onClick={() => toggleCase(cs.id)}>
+                <Button
+                  variant="ghost"
+                  className="w-full text-left p-4"
+                  onClick={() => toggleCase(cs.id)}
+                >
                   <div className="flex items-center justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2">
@@ -273,7 +283,7 @@ export const BuildBuyAnalyzer: React.FC = () => {
                       <ChevronDown size={16} className="text-muted-foreground shrink-0" />
                     )}
                   </div>
-                </button>
+                </Button>
                 {isExpanded && (
                   <div className="border-t border-border p-4 space-y-3">
                     <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

@@ -113,13 +113,14 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
             <Building2 size={16} className="text-primary" />
             Quiz filtered for: <span className="font-semibold">{industryFilter}</span>
           </span>
-          <button
+          <Button
+            variant="ghost"
             onClick={onClearIndustryFilter}
             className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             <X size={14} />
             Clear
-          </button>
+          </Button>
         </motion.div>
       )}
 
@@ -199,7 +200,8 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
           {DIFFICULTY_OPTIONS.map((opt) => {
             const isActive = selectedDifficulties.includes(opt.id)
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={opt.id}
                 onClick={() => onToggleDifficulty(opt.id)}
                 className={clsx(
@@ -210,7 +212,7 @@ export const QuizIntro: React.FC<QuizIntroProps> = ({
                 )}
               >
                 {opt.label}
-              </button>
+              </Button>
             )
           })}
         </div>

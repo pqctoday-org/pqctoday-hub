@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { Lock, Unlock, ArrowRight, Key } from 'lucide-react'
 import { JOSE_KEY_AGREEMENT_ALGORITHMS, SAMPLE_JWT_PAYLOAD } from '../constants'
 import { simulateHexBytes, simulateBase64url } from '../jwtUtils'
+import { Button } from '@/components/ui/button'
 
 type JWEStep = 'keygen' | 'encapsulate' | 'derive' | 'encrypt' | 'assemble'
 
@@ -154,7 +155,8 @@ export const JWEEncryption: React.FC = () => {
       {/* Step Progress */}
       <div className="flex flex-wrap gap-2">
         {JWE_STEPS.map((step) => (
-          <button
+          <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
@@ -164,7 +166,7 @@ export const JWEEncryption: React.FC = () => {
             }`}
           >
             {step.label.split('.')[0]}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -217,23 +219,25 @@ export const JWEEncryption: React.FC = () => {
 
       {/* Encrypt Button */}
       <div className="flex justify-center gap-3">
-        <button
+        <Button
+          variant="gradient"
           onClick={handleEncrypt}
           disabled={isEncrypting}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <Lock size={16} />
           {isEncrypting ? 'Encrypting...' : 'Encrypt JWT Payload'}
-        </button>
+        </Button>
         {result && (
-          <button
+          <Button
+            variant="ghost"
             onClick={handleDecrypt}
             disabled={isDecrypting || decrypted}
             className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
           >
             <Unlock size={16} />
             {isDecrypting ? 'Decrypting...' : decrypted ? 'Decrypted' : 'Decrypt'}
-          </button>
+          </Button>
         )}
       </div>
 

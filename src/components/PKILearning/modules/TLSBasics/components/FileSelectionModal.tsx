@@ -5,6 +5,7 @@ import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import type { VirtualFile } from '@/components/OpenSSLStudio/store'
 import { motion } from 'framer-motion'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 interface Props {
   isOpen: boolean
@@ -48,7 +49,7 @@ export const FileSelectionModal: React.FC<Props> = ({
   if (!isOpen) return null
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -56,13 +57,14 @@ export const FileSelectionModal: React.FC<Props> = ({
       >
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-bold text-lg">{title}</h3>
-          <button
+          <Button
+            variant="ghost"
             onClick={onClose}
             aria-label="Close"
             className="p-1 hover:bg-muted rounded-full transition-colors"
           >
             <X size={20} />
-          </button>
+          </Button>
         </div>
 
         <div className="p-4 border-b border-border">
@@ -82,7 +84,8 @@ export const FileSelectionModal: React.FC<Props> = ({
             </div>
           ) : (
             filteredFiles.map((file) => (
-              <button
+              <Button
+                variant="ghost"
                 key={file.name}
                 onClick={() => handleSelect(file)}
                 className="w-full flex items-center gap-3 p-3 rounded hover:bg-muted transition-colors text-left group"
@@ -98,7 +101,7 @@ export const FileSelectionModal: React.FC<Props> = ({
                     <span>{file.size} bytes</span>
                   </div>
                 </div>
-              </button>
+              </Button>
             ))
           )}
         </div>

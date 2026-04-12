@@ -16,6 +16,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface QKDIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -23,7 +24,7 @@ interface QKDIntroductionProps {
 
 export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Section 1: What is QKD? */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -593,12 +594,13 @@ export const QKDIntroduction: React.FC<QKDIntroductionProps> = ({ onNavigateToWo
 
       {/* CTA */}
       <div className="flex flex-col sm:flex-row gap-3 justify-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2 justify-center"
+          className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2 justify-center"
         >
           <Radio size={18} /> Try the BB84 Simulator
-        </button>
+        </Button>
       </div>
       <VendorCoverageNotice migrateLayer="Hardware" />
       <ReadingCompleteButton />

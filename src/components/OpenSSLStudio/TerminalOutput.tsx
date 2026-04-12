@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useOpenSSLStore } from './store'
 import { Trash2 } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export const TerminalOutput = () => {
   const { logs, clearTerminalLogs } = useOpenSSLStore()
@@ -86,12 +87,13 @@ export const TerminalOutput = () => {
           </label>
         </div>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={clearTerminalLogs}
           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
         >
           <Trash2 size={12} /> Clear
-        </button>
+        </Button>
       </div>
 
       {/* Logs Area */}

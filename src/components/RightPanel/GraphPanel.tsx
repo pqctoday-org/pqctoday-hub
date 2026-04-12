@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Network, BarChart3, Map, Loader2 } from 'lucide-react'
 import { useGraphData } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphData'
 import { useGraphSearch } from '../PKILearning/modules/KnowledgeGraph/hooks/useGraphSearch'
+import { Button } from '@/components/ui/button'
 
 const ExploreView = React.lazy(() =>
   import('../PKILearning/modules/KnowledgeGraph/components/ExploreView').then((m) => ({
@@ -82,7 +83,8 @@ export const GraphPanel: React.FC = () => {
           {SUB_TABS.map((tab) => {
             const Icon = tab.icon
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={tab.id}
                 onClick={() => setSubTab(tab.id)}
                 className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium border-b-2 transition-colors ${
@@ -95,7 +97,7 @@ export const GraphPanel: React.FC = () => {
               >
                 <Icon size={13} />
                 <span className="hidden sm:inline">{tab.label}</span>
-              </button>
+              </Button>
             )
           })}
         </div>

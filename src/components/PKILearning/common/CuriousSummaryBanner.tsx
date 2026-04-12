@@ -6,6 +6,7 @@ import remarkGfm from 'remark-gfm'
 import { usePersonaStore } from '../../../store/usePersonaStore'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { applyGlossaryToChildren } from '@/utils/parseGlossary'
+import { Button } from '@/components/ui/button'
 
 /**
  * Eagerly load all curious-summary.md files at bundle time.
@@ -181,7 +182,8 @@ export const CuriousSummaryBanner = ({
       }
     >
       {!isFullPage && (
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setExpanded((e) => !e)}
           className="flex items-center justify-between w-full px-4 py-3 text-left"
@@ -195,7 +197,7 @@ export const CuriousSummaryBanner = ({
           ) : (
             <ChevronDown size={16} className="text-muted-foreground shrink-0" />
           )}
-        </button>
+        </Button>
       )}
 
       {(expanded || isFullPage) && (

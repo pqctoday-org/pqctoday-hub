@@ -7,6 +7,7 @@ import {
   SSH_HANDSHAKE_STEPS,
   type SSHKexAlgorithm,
 } from '../data/sshConstants'
+import { Button } from '@/components/ui/button'
 
 interface SSHKeyExchangeSimulatorProps {
   initialKex?: SSHKexAlgorithm
@@ -33,7 +34,8 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
       {/* KEX Algorithm Selector */}
       <div className="flex flex-wrap gap-2">
         {SSH_KEX_ALGORITHMS.map((kex) => (
-          <button
+          <Button
+            variant="ghost"
             key={kex.id}
             onClick={() => handleKexChange(kex.id)}
             className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors border flex items-center gap-2 ${
@@ -48,7 +50,7 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
               <Shield size={14} className="text-destructive" />
             )}
             <code>{kex.label}</code>
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -92,7 +94,8 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
           const isActive = idx <= currentStep
           const isCurrent = idx === currentStep
           return (
-            <button
+            <Button
+              variant="ghost"
               key={step.id}
               onClick={() => setCurrentStep(idx)}
               className={`w-full text-left rounded-lg p-3 border transition-all duration-300 ${
@@ -140,38 +143,41 @@ export const SSHKeyExchangeSimulator: React.FC<SSHKeyExchangeSimulatorProps> = (
                   )}
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>
 
       {/* Step Controls */}
       <div className="flex items-center justify-between">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setCurrentStep((s) => Math.max(0, s - 1))}
           disabled={currentStep === 0}
           className="px-4 py-2 rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground text-sm"
         >
           &larr; Previous
-        </button>
+        </Button>
         <div className="text-xs text-muted-foreground">
           Step {currentStep + 1} of {SSH_HANDSHAKE_STEPS.length}
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={handleReset}
             className="p-2 rounded-lg border border-border hover:bg-muted transition-colors text-muted-foreground"
             title="Reset"
           >
             <RotateCcw size={14} />
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="gradient"
             onClick={() => setCurrentStep((s) => Math.min(SSH_HANDSHAKE_STEPS.length - 1, s + 1))}
             disabled={currentStep === SSH_HANDSHAKE_STEPS.length - 1}
-            className="px-4 py-2 rounded-lg bg-primary text-black font-bold hover:bg-primary/90 disabled:opacity-50 transition-colors text-sm"
+            className="px-4 py-2 rounded-lg font-bold disabled:opacity-50 transition-colors text-sm"
           >
             Next &rarr;
-          </button>
+          </Button>
         </div>
       </div>
 

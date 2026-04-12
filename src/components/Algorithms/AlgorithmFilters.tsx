@@ -12,6 +12,7 @@ import { FilterDropdown } from '../common/FilterDropdown'
 import { Input } from '../ui/input'
 import { useState } from 'react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export const CRYPTO_FAMILY_ITEMS = [
   { id: 'All', label: 'All Families' },
@@ -108,7 +109,8 @@ export function AlgorithmFilters({
     <div className="glass-panel p-3 md:p-4">
       {/* Mobile Toggle Button */}
       <div className="md:hidden flex items-center justify-between">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setIsMobileOpen(!isMobileOpen)}
           className="flex items-center gap-2 text-sm font-medium text-foreground p-2 rounded-md bg-muted/50 w-full justify-between"
         >
@@ -126,7 +128,7 @@ export function AlgorithmFilters({
               isMobileOpen && 'rotate-180'
             )}
           />
-        </button>
+        </Button>
       </div>
 
       {/* Filters Container (Hidden on mobile unless open) */}

@@ -22,6 +22,7 @@ import {
   DEFAULT_MLDSA87_SERVER_CERT,
   DEFAULT_MLDSA87_CLIENT_CERT,
 } from '../PKILearning/modules/TLSBasics/utils/defaultCertificates'
+import { Button } from '@/components/ui/button'
 
 export const TLSSimulatorTab: React.FC = () => {
   const {
@@ -179,7 +180,8 @@ export const TLSSimulatorTab: React.FC = () => {
     <div className="space-y-6 animate-fade-in">
       <div className="flex justify-end gap-3">
         {results && (
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               setResults(null)
               clearSession()
@@ -187,9 +189,10 @@ export const TLSSimulatorTab: React.FC = () => {
             className="btn btn-secondary flex items-center gap-2 px-4 py-3"
           >
             Reset
-          </button>
+          </Button>
         )}
-        <button
+        <Button
+          variant="ghost"
           onClick={triggerSimulation}
           disabled={isSpinning}
           className="btn btn-primary flex items-center gap-2 px-6 py-3 text-lg"
@@ -200,7 +203,7 @@ export const TLSSimulatorTab: React.FC = () => {
             <Play size={20} fill="currentColor" />
           )}
           {results ? 'Run Again' : 'Start Full Interaction'}
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

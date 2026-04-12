@@ -178,7 +178,7 @@ export const MigrationRiskMatrix: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="min-w-[500px]">
+            <div className="min-w-0 md:min-w-[500px]">
               {/* Column headers (Effort 1-5) */}
               <div className="flex mb-1">
                 <div className="w-20 shrink-0" />
@@ -219,7 +219,8 @@ export const MigrationRiskMatrix: React.FC = () => {
                         className={`flex-1 min-h-[60px] p-1 border border-border/50 rounded ${bgOpacity} flex flex-wrap content-start gap-1`}
                       >
                         {cellVectors.map((v) => (
-                          <button
+                          <Button
+                            variant="ghost"
                             key={v.id}
                             onClick={() =>
                               setSelectedComponentId(selectedComponentId === v.id ? null : v.id)
@@ -237,7 +238,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                             <span className="truncate max-w-[80px]">
                               {v.componentLabel.split(' ').slice(0, 2).join(' ')}
                             </span>
-                          </button>
+                          </Button>
                         ))}
                       </div>
                     )
@@ -296,7 +297,8 @@ export const MigrationRiskMatrix: React.FC = () => {
                       {items.map((item) => {
                         const vec = filteredVectors.find((v) => v.component === item.id)
                         return (
-                          <button
+                          <Button
+                            variant="ghost"
                             key={item.id}
                             onClick={() => {
                               const v = filteredVectors.find((fv) => fv.component === item.id)
@@ -326,7 +328,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                                 {SEVERITY_LABELS[vec.severity]}
                               </span>
                             )}
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>
@@ -449,7 +451,8 @@ export const MigrationRiskMatrix: React.FC = () => {
                 {selectedVector.dependencies.map((dep) => {
                   const depVec = MIGRATION_VECTORS.find((v) => v.component === dep)
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={dep}
                       onClick={() => {
                         if (depVec) setSelectedComponentId(depVec.id)
@@ -458,7 +461,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                     >
                       <ArrowRight size={8} />
                       {depVec?.componentLabel ?? dep}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -550,7 +553,8 @@ export const MigrationRiskMatrix: React.FC = () => {
                       : 'bg-muted/50'
 
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={v.id}
                   onClick={() => setSelectedComponentId(selectedComponentId === v.id ? null : v.id)}
                   className={`flex items-center gap-2 w-full text-left transition-colors rounded ${
@@ -584,7 +588,7 @@ export const MigrationRiskMatrix: React.FC = () => {
                       </span>
                     </div>
                   </div>
-                </button>
+                </Button>
               )
             })}
         </div>

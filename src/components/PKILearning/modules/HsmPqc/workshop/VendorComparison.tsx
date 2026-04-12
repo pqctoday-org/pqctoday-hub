@@ -3,6 +3,7 @@ import React, { useState, useMemo, useCallback } from 'react'
 import { ChevronDown, ChevronUp, ArrowUpDown, Server, Cloud, Filter, Shield } from 'lucide-react'
 import { HSM_VENDORS, STATUS_LABELS, type HSMVendor } from '../data/hsmVendorData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 type FilterType = 'all' | 'on-prem' | 'cloud'
 type FilterStatus = 'all' | HSMVendor['pqcSupportStatus']
@@ -85,7 +86,8 @@ export const VendorComparison: React.FC = () => {
           <div className="flex items-center gap-1">
             <span className="text-xs text-muted-foreground">Type:</span>
             {(['all', 'on-prem', 'cloud'] as FilterType[]).map((type) => (
-              <button
+              <Button
+                variant="ghost"
                 key={type}
                 onClick={() => setFilterType(type)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -95,7 +97,7 @@ export const VendorComparison: React.FC = () => {
                 }`}
               >
                 {type === 'all' ? 'All' : type === 'on-prem' ? 'On-Prem' : 'Cloud'}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -104,7 +106,8 @@ export const VendorComparison: React.FC = () => {
             <span className="text-xs text-muted-foreground">Status:</span>
             {(['all', 'production', 'beta', 'limited', 'roadmap'] as FilterStatus[]).map(
               (status) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={status}
                   onClick={() => setFilterStatus(status)}
                   className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -114,7 +117,7 @@ export const VendorComparison: React.FC = () => {
                   }`}
                 >
                   {status === 'all' ? 'All' : status.charAt(0).toUpperCase() + status.slice(1)}
-                </button>
+                </Button>
               )
             )}
           </div>
@@ -124,7 +127,8 @@ export const VendorComparison: React.FC = () => {
             <ArrowUpDown size={12} className="text-muted-foreground" />
             <span className="text-xs text-muted-foreground">Sort:</span>
             {(['name', 'type'] as SortKey[]).map((key) => (
-              <button
+              <Button
+                variant="ghost"
                 key={key}
                 onClick={() => setSortKey(key)}
                 className={`text-xs px-2 py-1 rounded transition-colors ${
@@ -134,7 +138,7 @@ export const VendorComparison: React.FC = () => {
                 }`}
               >
                 {key.charAt(0).toUpperCase() + key.slice(1)}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -149,7 +153,8 @@ export const VendorComparison: React.FC = () => {
           return (
             <div key={vendor.id} className="glass-panel overflow-hidden">
               {/* Main Row */}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpand(vendor.id)}
                 className="w-full text-left p-4 flex items-center gap-4"
               >
@@ -198,7 +203,7 @@ export const VendorComparison: React.FC = () => {
                     <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </div>
-              </button>
+              </Button>
 
               {/* Expanded Details */}
               {isExpanded && (

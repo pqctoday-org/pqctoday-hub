@@ -147,7 +147,8 @@ function GraduateCTA() {
       </p>
       <div className="flex flex-wrap gap-1.5">
         {GRADUATE_PERSONAS.map(({ id, pitch }) => (
-          <button
+          <Button
+            variant="ghost"
             key={id}
             onClick={() => setPersona(id)}
             className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors text-left group"
@@ -157,7 +158,7 @@ function GraduateCTA() {
               {PERSONAS[id].label}
             </span>
             <span className="text-[10px] text-muted-foreground hidden sm:inline">{pitch}</span>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

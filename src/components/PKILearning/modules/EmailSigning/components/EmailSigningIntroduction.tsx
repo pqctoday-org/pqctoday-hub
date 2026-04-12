@@ -14,6 +14,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { Button } from '@/components/ui/button'
 
 interface EmailSigningIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -22,7 +23,7 @@ interface EmailSigningIntroductionProps {
 // ─── Step 1: S/MIME & CMS + KEM vs Key Transport ────────────────────────────
 
 const Step1SmimeCmsKem: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: S/MIME & CMS Overview */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -204,7 +205,7 @@ const Step1SmimeCmsKem: React.FC = () => (
 const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 4: Certificate Requirements */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -376,12 +377,13 @@ const Step2CertsMigration: React.FC<{ onNavigateToWorkshop: () => void }> = ({
 
     {/* CTA */}
     <div className="text-center">
-      <button
+      <Button
+        variant="gradient"
         onClick={onNavigateToWorkshop}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground mt-2">
         Explore S/MIME certificates, CMS signing structures, and KEM-based encryption.
       </p>

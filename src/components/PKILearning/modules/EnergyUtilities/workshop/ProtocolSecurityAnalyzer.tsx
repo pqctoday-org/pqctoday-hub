@@ -167,7 +167,8 @@ export const ProtocolSecurityAnalyzer: React.FC<ProtocolSecurityAnalyzerProps> =
 
         return (
           <div key={protocol.id} className="glass-panel overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setExpandedId(isExpanded ? null : protocol.id)}
               className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/30 transition-colors"
             >
@@ -180,7 +181,7 @@ export const ProtocolSecurityAnalyzer: React.FC<ProtocolSecurityAnalyzerProps> =
                 size={14}
                 className={`text-muted-foreground transition-transform ${isExpanded ? 'rotate-90' : ''}`}
               />
-            </button>
+            </Button>
 
             {isExpanded && (
               <div className="px-4 pb-4 space-y-3">

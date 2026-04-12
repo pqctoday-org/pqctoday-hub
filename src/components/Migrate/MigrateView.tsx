@@ -40,6 +40,7 @@ import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
 import { ComparisonPanel } from './ComparisonPanel'
 import { StickyCompareBar } from './StickyCompareBar'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 const LICENSE_FILTER_ITEMS = [
   { id: 'Open Source', label: 'Open Source' },
@@ -63,6 +64,7 @@ function isPersonaRelevant(item: SoftwareItem, preferredLayers: string[]): boole
 }
 
 export const MigrateView: React.FC = () => {
+  const isEmbedded = useIsEmbedded()
   useWorkflowPhaseTracker('migrate')
   const addHistoryEvent = useHistoryStore((s) => s.addEvent)
   const persona = usePersonaStore((s) => s.selectedPersona)
@@ -207,7 +209,8 @@ export const MigrateView: React.FC = () => {
     () => searchParams.get('licenseFilter') ?? 'All'
   )
   const [wipFilter, setWipFilter] = useState<WipFilter>(
-    () => (searchParams.get('wip') as WipFilter | null) ?? 'hidden'
+    // In embed mode WIP items are always hidden — accuracy over completeness
+    () => (isEmbedded ? 'hidden' : ((searchParams.get('wip') as WipFilter | null) ?? 'hidden'))
   )
   const [sortBy, setSortBy] = useState<MigrateSortOption>(
     () => (searchParams.get('sort') as MigrateSortOption | null) ?? 'name'
@@ -1130,29 +1133,32 @@ export const MigrateView: React.FC = () => {
                         }}
                         defaultLabel="All Licenses"
                       />
-                      <button
-                        onClick={() => {
-                          const next: WipFilter =
-                            wipFilter === 'hidden'
-                              ? 'include'
-                              : wipFilter === 'include'
-                                ? 'only'
-                                : 'hidden'
-                          setWipFilter(next)
-                          syncFiltersToUrl({ wip: next })
-                          logMigrateAction('Filter WIP', next)
-                        }}
-                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                          wipFilter === 'only'
-                            ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
-                            : wipFilter === 'hidden'
-                              ? 'bg-muted text-muted-foreground border-border line-through'
-                              : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-                        }`}
-                      >
-                        <Wrench size={12} aria-hidden="true" />
-                        {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
-                      </button>
+                      {!isEmbedded && (
+                        <Button
+                          variant="ghost"
+                          onClick={() => {
+                            const next: WipFilter =
+                              wipFilter === 'hidden'
+                                ? 'include'
+                                : wipFilter === 'include'
+                                  ? 'only'
+                                  : 'hidden'
+                            setWipFilter(next)
+                            syncFiltersToUrl({ wip: next })
+                            logMigrateAction('Filter WIP', next)
+                          }}
+                          className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                            wipFilter === 'only'
+                              ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                              : wipFilter === 'hidden'
+                                ? 'bg-muted text-muted-foreground border-border line-through'
+                                : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                          }`}
+                        >
+                          <Wrench size={12} aria-hidden="true" />
+                          {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
+                        </Button>
+                      )}
                     </div>
 
                     <div className="space-y-3">
@@ -1170,7 +1176,8 @@ export const MigrateView: React.FC = () => {
 
                     {(myProducts.length > 0 || showOnlyMyProducts) && (
                       <div className="space-y-3 pt-6 border-t border-border">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
                           className={`w-full inline-flex items-center justify-center gap-1.5 text-sm px-3 py-2 rounded-lg border transition-colors font-medium ${
                             showOnlyMyProducts
@@ -1181,7 +1188,7 @@ export const MigrateView: React.FC = () => {
                         >
                           <BookmarkCheck size={14} />
                           My Products ({myProducts.length})
-                        </button>
+                        </Button>
                       </div>
                     )}
 
@@ -1282,7 +1289,8 @@ export const MigrateView: React.FC = () => {
             </div>
 
             {/* WIP filter — same cycling pill as Playground */}
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 const next: WipFilter =
                   wipFilter === 'hidden' ? 'include' : wipFilter === 'include' ? 'only' : 'hidden'
@@ -1307,7 +1315,7 @@ export const MigrateView: React.FC = () => {
             >
               <Wrench size={12} aria-hidden="true" />
               {wipFilter === 'hidden' ? 'WIP hidden' : 'WIP'}
-            </button>
+            </Button>
 
             {/* Search */}
             <div className="relative flex-1 min-w-[150px]">
@@ -1360,7 +1368,8 @@ export const MigrateView: React.FC = () => {
                 }}
               />
               {(myProducts.length > 0 || showOnlyMyProducts) && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setShowOnlyMyProducts(!showOnlyMyProducts)}
                   className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                     showOnlyMyProducts
@@ -1371,7 +1380,7 @@ export const MigrateView: React.FC = () => {
                 >
                   <BookmarkCheck size={12} />
                   My ({myProducts.length})
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -1426,7 +1435,8 @@ export const MigrateView: React.FC = () => {
           <div className="mt-2 sm:mt-0 flex items-center gap-2 bg-secondary/10 border border-secondary/20 text-secondary text-xs px-3 py-1.5 rounded-full animate-in fade-in slide-in-from-bottom-2">
             <Scale size={14} className="animate-pulse" />
             <span>Select up to 4 products to compare capabilities.</span>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 setHasDismissedCompareOnboarding(true)
                 localStorage.setItem('dimissed_compare_onboarding', 'true')
@@ -1435,7 +1445,7 @@ export const MigrateView: React.FC = () => {
               aria-label="Dismiss tip"
             >
               <X size={12} />
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -1523,7 +1533,8 @@ export const MigrateView: React.FC = () => {
                   {activePartitions.find((l) => l.id === activeInfrastructureLayer)?.label ??
                     activeInfrastructureLayer}
                 </span>
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   aria-label="Clear layer filter"
                   onClick={() => {
@@ -1533,7 +1544,7 @@ export const MigrateView: React.FC = () => {
                   className="p-0.5 rounded hover:bg-primary/20 text-primary transition-colors"
                 >
                   <X size={14} />
-                </button>
+                </Button>
               </div>
             )}
             <SoftwareCardGrid

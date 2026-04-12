@@ -23,6 +23,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildLibraryEndorsementUrl, buildLibraryFlagUrl } from './libraryEndorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { libraryEnrichments } from '../../data/libraryEnrichmentData'
+import { Button } from '@/components/ui/button'
 
 interface LibraryTreeTableProps {
   data: LibraryItem[]
@@ -172,7 +173,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
           >
             <div className="flex items-center gap-2 min-w-0">
               {hasChildren ? (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={(e) => {
                     e.stopPropagation()
                     toggleExpand(item.referenceId)
@@ -188,7 +190,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                   ) : (
                     <ChevronRight size={16} aria-hidden="true" className="text-muted-foreground" />
                   )}
-                </button>
+                </Button>
               ) : (
                 <span className="w-6 shrink-0" /> // Spacer
               )}
@@ -228,7 +230,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
               {(() => {
                 const enriched = !!libraryEnrichments[item.referenceId]
                 return (
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={(e) => handleDetailsClick(item, e)}
                     className={clsx(
                       'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
@@ -252,10 +255,11 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                     ) : (
                       <Info size={16} aria-hidden="true" />
                     )}
-                  </button>
+                  </Button>
                 )
               })()}
-              <button
+              <Button
+                variant="ghost"
                 onClick={(e) => {
                   e.stopPropagation()
                   toggleLibraryBookmark(item.referenceId)
@@ -273,7 +277,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                 ) : (
                   <Bookmark size={16} className="text-muted-foreground" />
                 )}
-              </button>
+              </Button>
               <EndorseButton
                 endorseUrl={buildLibraryEndorsementUrl(item)}
                 resourceLabel={item.referenceId}
@@ -314,7 +318,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
             Document Tree
           </span>
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 const ids = getAllExpandedIds(data)
                 setExpandedIds(ids)
@@ -323,14 +328,15 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
               className="text-xs flex items-center gap-1 text-primary hover:text-primary/80 px-2 py-1 rounded hover:bg-primary/10 transition-colors"
             >
               <ChevronDown size={14} aria-hidden="true" /> Expand All
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => setExpandedIds(new Set())}
               aria-controls="library-table"
               className="text-xs flex items-center gap-1 text-muted-foreground hover:text-foreground px-2 py-1 rounded hover:bg-muted transition-colors"
             >
               <ChevronRight size={14} aria-hidden="true" /> Collapse All
-            </button>
+            </Button>
           </div>
         </div>
         <div className="overflow-x-auto w-full">
@@ -355,7 +361,8 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                     className={clsx('p-4 font-semibold text-sm', header.width)}
                   >
                     {header.key !== 'actions' ? (
-                      <button
+                      <Button
+                        variant="ghost"
                         className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1 text-left"
                         onClick={() => handleSort(header.key as SortKey)}
                       >
@@ -373,7 +380,7 @@ export const LibraryTreeTable: React.FC<LibraryTreeTableProps> = ({
                             aria-hidden="true"
                           />
                         )}
-                      </button>
+                      </Button>
                     ) : (
                       header.label
                     )}

@@ -18,7 +18,7 @@ export const DataTab: React.FC = () => {
   } = useOperationsContext()
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
+    <div className="w-full animate-fade-in">
       <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Database size={18} className="text-accent" /> Data Management
       </h4>

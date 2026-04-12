@@ -12,6 +12,7 @@ import {
 import { DATASET_RISK_COLORS, PRIVACY_MATURITY_COLORS } from '../data/aiSecurityConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const AI_SECURITY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -125,7 +126,8 @@ export const DataAuthenticityVerifier: React.FC = () => {
             const isEnabled = enabledLayers.has(layer.id)
             const isRecommended = scenario.recommendedVerification.includes(layer.id)
             return (
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 key={layer.id}
                 className={`w-full text-left glass-panel p-4 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
@@ -162,7 +164,7 @@ export const DataAuthenticityVerifier: React.FC = () => {
                   <span>Accuracy: {layer.accuracy}</span>
                   <span>Overhead: {layer.performanceOverhead}</span>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>

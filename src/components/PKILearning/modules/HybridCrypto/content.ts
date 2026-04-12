@@ -9,6 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'hybrid-crypto',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [
@@ -16,8 +17,12 @@ export const content: ModuleContent = {
     getStandard('FIPS 204'),
     getStandard('RFC 9794'), // Hybrid terminology
     getStandard('RFC 9881'), // ML-DSA OIDs in X.509
+    getStandard('RFC-9909'), // SLH-DSA profile in X.509
     getStandard('RFC 9802'), // LMS/XMSS OIDs
     getStandard('NIST SP 800-227'), // KEM recommendations
+    getStandard('draft-ietf-lamps-pq-composite-sigs-15'), // Composite ML-DSA
+    getStandard('RFC-9763'), // Related Certificates
+    getStandard('draft-bonnell-lamps-chameleon-certs-07'), // Chameleon Certificates
   ],
 
   algorithms: [

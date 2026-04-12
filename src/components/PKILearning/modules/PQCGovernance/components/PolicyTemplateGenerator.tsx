@@ -5,6 +5,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useExecutiveModuleData } from '@/hooks/useExecutiveModuleData'
 import { ArtifactBuilder } from '@/components/PKILearning/common/executive'
 import type { ArtifactSection } from '@/components/PKILearning/common/executive'
+import { Button } from '@/components/ui/button'
 
 type PolicyType =
   | 'crypto-algorithm'
@@ -521,7 +522,8 @@ export const PolicyTemplateGenerator: React.FC = () => {
       {/* Policy Type Selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {POLICY_TYPES.map((pt) => (
-          <button
+          <Button
+            variant="ghost"
             key={pt.id}
             onClick={() => setActivePolicyType(pt.id)}
             className={`text-left p-3 rounded-lg border transition-colors ${
@@ -532,7 +534,7 @@ export const PolicyTemplateGenerator: React.FC = () => {
           >
             <div className="text-sm font-semibold">{pt.label}</div>
             <p className="text-[10px] mt-1 opacity-70">{pt.description}</p>
-          </button>
+          </Button>
         ))}
       </div>
 

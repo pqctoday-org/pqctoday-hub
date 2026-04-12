@@ -6,6 +6,7 @@ import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
 import { LearnSectionChecklist } from './LearnSectionChecklist'
 import { ModuleProgressPie } from '../ui/ModuleProgressPie'
+import { Button } from '@/components/ui/button'
 
 interface ModuleProgressSidebarProps {
   moduleId: string
@@ -98,7 +99,8 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
     <>
       {/* Mobile: collapsible accordion */}
       <div className="lg:hidden glass-panel mb-4">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-foreground"
           onClick={() => setMobileOpen((v) => !v)}
@@ -110,7 +112,7 @@ export const ModuleProgressSidebar = ({ moduleId }: ModuleProgressSidebarProps) 
             Progress {learnPct > 0 ? `· ${learnPct}%` : ''}
           </span>
           {mobileOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
+        </Button>
         {mobileOpen && (
           <div id="module-progress-mobile" className="px-4 pb-4 border-t border-border pt-3">
             {content}

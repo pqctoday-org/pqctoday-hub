@@ -11,6 +11,7 @@ import {
   type SupportStatus,
 } from '../data/pqcSupportData'
 import { CRYPTO_APIS } from '../data/apiData'
+import { Button } from '@/components/ui/button'
 
 type FamilyFilter = 'All' | 'KEM' | 'Signature' | 'Hash-based Sig'
 type StatusFilter = 'All' | SupportStatus
@@ -61,13 +62,14 @@ export const PQCSupportMatrix: React.FC = () => {
       <div className="flex flex-wrap gap-3 items-center">
         <div className="flex gap-1 bg-muted/50 rounded-lg p-1">
           {(['matrix', 'roadmap'] as const).map((tab) => (
-            <button
+            <Button
+              variant="ghost"
               key={tab}
               onClick={() => setActiveTab(tab)}
               className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
             >
               {tab === 'matrix' ? 'Support Matrix' : 'Roadmap Timeline'}
-            </button>
+            </Button>
           ))}
         </div>
         {activeTab === 'matrix' && (
@@ -138,12 +140,13 @@ export const PQCSupportMatrix: React.FC = () => {
                       }
                       return (
                         <td key={algo.id} className="p-2 text-center">
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => setSelectedCell({ apiId: api.id, algorithmId: algo.id })}
                             className={`text-xs px-2 py-1 rounded border transition-all hover:opacity-80 cursor-pointer ${SUPPORT_STATUS_COLORS[status]}`}
                           >
                             {SUPPORT_STATUS_LABELS[status]}
-                          </button>
+                          </Button>
                         </td>
                       )
                     })}
@@ -168,12 +171,13 @@ export const PQCSupportMatrix: React.FC = () => {
                     {SUPPORT_STATUS_LABELS[selectedDetail.status]}
                   </div>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setSelectedCell(null)}
                   className="text-muted-foreground hover:text-foreground"
                 >
                   <X size={18} />
-                </button>
+                </Button>
               </div>
               <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>

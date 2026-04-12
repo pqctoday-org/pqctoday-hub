@@ -4,6 +4,7 @@ import { ExternalLink, BookOpen } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { ORGANIZATIONS } from '../data'
 import type { OrgEntry, OrgType, OrgScope, OrgAuthority } from '../data'
+import { Button } from '@/components/ui/button'
 
 export interface OrganizationExplorerProps {
   selectedOrgId: string | null
@@ -155,7 +156,8 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
             {ORGANIZATIONS.map((org) => {
               const isSelected = org.id === (effectiveOrg?.id ?? null)
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={org.id}
                   onClick={() => onOrgSelect(org.id)}
                   className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors whitespace-nowrap
@@ -166,7 +168,7 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
                     }`}
                 >
                   {org.acronym}
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -176,7 +178,8 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
             {ORGANIZATIONS.map((org) => {
               const isSelected = org.id === effectiveOrg.id
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={org.id}
                   onClick={() => onOrgSelect(org.id)}
                   className={`text-left px-3 py-2.5 rounded-lg text-sm border transition-colors
@@ -190,7 +193,7 @@ export const OrganizationExplorer: React.FC<OrganizationExplorerProps> = ({
                   <div className="text-xs text-muted-foreground mt-0.5 line-clamp-1">
                     {org.region}
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>

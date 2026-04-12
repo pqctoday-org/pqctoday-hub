@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, AlertTriangle, BookOpen, Rocket } from 'lucide-react'
+import { Trash2, AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { EXEC_GUIDE_DATA } from './data'
+import { EXEC_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
@@ -39,36 +40,112 @@ const PARTS = [
       'Build a phased action plan with concrete milestones from this week through six months.',
     icon: Rocket,
   },
+  {
+    id: 'self-assessment',
+    title: 'Step 4: Org Risk Self-Assessment',
+    description:
+      "Score your organisation's quantum exposure across nine criteria to identify where to focus budget and governance effort first.",
+    icon: ClipboardCheck,
+  },
 ]
 
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Board Quantum Risk Briefing',
-      prompt:
-        'You are preparing a 15-minute board briefing on quantum risk. Your organization is a mid-sized financial institution with 30-year data retention requirements. Outline the key points: HNDL exposure, regulatory deadlines, budget request, and governance proposal. Use the workshop tools to quantify your exposure score.',
-    },
-    {
-      title: 'Scenario: Vendor PQC Readiness Review',
-      prompt:
-        'Your top 5 vendors include a cloud provider (PQC-ready), an ERP vendor (no roadmap), a payment processor (partial support), a communication platform (unknown), and a backup provider (PQC-ready). Use the skills assessment to identify your gaps in vendor risk evaluation, then build an action plan.',
-    },
-    {
-      title: 'Scenario: Compliance Deadline Collision',
-      prompt:
-        'Your organization must comply with CNSA 2.0 (2030), DORA (2025), and NIS2 (2024) simultaneously. Budget is limited. Use the action plan builder to prioritize: which deadlines require immediate action versus which allow phased migration?',
-    },
-  ]
+function SelfAssessmentStep() {
+  const items = EXEC_GUIDE_DATA.selfAssessment
+  const maxScore = items.reduce((sum, item) => sum + item.weight, 0)
+  const [checked, setChecked] = useState<Record<string, boolean>>({})
+
+  const score = items.reduce((sum, item) => sum + (checked[item.id] ? item.weight : 0), 0)
+  const pct = Math.round((score / maxScore) * 100)
+
+  const band =
+    pct >= 70
+      ? { label: 'High Exposure', color: 'text-status-error' }
+      : pct >= 40
+        ? { label: 'Moderate Exposure', color: 'text-status-warning' }
+        : { label: 'Low Exposure', color: 'text-status-success' }
+
+  const toggle = (id: string) => setChecked((prev) => ({ ...prev, [id]: !prev[id] }))
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
+      <div className="glass-panel p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-foreground">
+          Organisational Quantum Exposure Checklist
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Check every statement that applies to your organisation. Your score reflects how urgently
+          you need to act on PQC migration.
+        </p>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={!!checked[item.id]}
+                onChange={() => toggle(item.id)}
+              />
+              <div
+                aria-hidden="true"
+                className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
+                  ${checked[item.id] ? 'border-primary bg-primary' : 'border-border bg-background group-hover:border-primary/60'}`}
+              >
+                {checked[item.id] && (
+                  <svg className="w-3 h-3 text-background" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M2 6l3 3 5-5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <span className="text-sm text-foreground leading-snug">{item.label}</span>
+              <span className="ml-auto text-xs text-muted-foreground flex-shrink-0">
+                +{item.weight}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="glass-panel p-6 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-foreground">Your exposure score</span>
+          <span className={`text-lg font-bold ${band.color}`}>
+            {score}/{maxScore} — {band.label}
+          </span>
+        </div>
+        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${pct >= 70 ? 'bg-status-error' : pct >= 40 ? 'bg-status-warning' : 'bg-status-success'}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {pct >= 70
+            ? 'High organisational exposure. Initiate a cryptographic inventory and board-level briefing immediately.'
+            : pct >= 40
+              ? 'Moderate exposure. Prioritise compliance deadline mapping and vendor PQC readiness reviews.'
+              : 'Lower direct exposure. Monitor regulatory developments and ensure your migration plan is documented.'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function ExercisesTab() {
+  return (
+    <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Executive Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
           Apply what you learned in the workshop to these executive-level scenarios.
         </p>
         <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
+          {EXEC_QUANTUM_EXERCISES.map((exercise, idx) => (
             <div key={idx} className="glass-panel p-5 space-y-3">
               <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
@@ -197,19 +274,20 @@ export const ExecQuantumImpactModule: React.FC = () => {
 
             {/* Part Progress Steps */}
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
+              <div className="flex justify-evenly relative min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                           ${
                             idx === currentPart
                               ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -218,12 +296,12 @@ export const ExecQuantumImpactModule: React.FC = () => {
                                 : 'border-border text-muted-foreground'
                           }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </div>
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -248,6 +326,7 @@ export const ExecQuantumImpactModule: React.FC = () => {
               {currentPart === 2 && (
                 <RoleHowToAct key={`how-${configKey}`} data={EXEC_GUIDE_DATA} />
               )}
+              {currentPart === 3 && <SelfAssessmentStep key={`assess-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

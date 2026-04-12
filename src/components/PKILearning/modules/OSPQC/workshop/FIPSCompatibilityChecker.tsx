@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Shield, CheckCircle, AlertTriangle, Clock, ChevronDown, ChevronUp } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface FIPSPlatform {
   id: string
@@ -305,7 +306,8 @@ export const FIPSCompatibilityChecker: React.FC = () => {
           const mlDsaBadge = INCLUSION_BADGE[platform.mlDsaInFips]
           return (
             <div key={platform.id} className="glass-panel overflow-hidden">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setExpandedId(isExpanded ? null : platform.id)}
                 className="flex items-center gap-3 w-full p-4 text-left"
               >
@@ -331,7 +333,7 @@ export const FIPSCompatibilityChecker: React.FC = () => {
                     <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </div>
-              </button>
+              </Button>
 
               {isExpanded && (
                 <div className="px-4 pb-4 space-y-4">

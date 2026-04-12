@@ -8,6 +8,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'research-quantum-impact',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [
@@ -38,6 +39,6 @@ export const content: ModuleContent = {
     workshopSummary:
       'The workshop has 3 interactive steps: Threat Impact Explorer — six-panel research-context briefing: HNDL exposure calculator for research data (input: data type + confidentiality lifetime → output: HNDL risk tier and recommended algorithm), academic publishing integrity analysis (DOI signature lifetime vs.',
     relatedStandards:
-      'FIPS 203 (ML-KEM — Module-Lattice-Based Key-Encapsulation Mechanism, based on CRYSTALS-Kyber). FIPS 204 (ML-DSA — Module-Lattice-Based Digital Signature Standard, based on CRYSTALS-Dilithium). FIPS 205 (SLH-DSA — Stateless Hash-Based Digital Signature Standard, based on SPHINCS+). NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS and XMSS). NIST SP 800-90A Rev. 1 (Recommendation for Random Number Generation Using DRBGs).',
+      'FIPS 203 (ML-KEM — Module-Lattice-Based Key-Encapsulation Mechanism). FIPS 204 (ML-DSA — Module-Lattice-Based Digital Signature Standard). FIPS 205 (SLH-DSA — Stateless Hash-Based Digital Signature Standard). NIST SP 800-208 (Recommendation for Stateful Hash-Based Signature Schemes — LMS and XMSS). NIST SP 800-90A Rev. 1 (Recommendation for Random Number Generation Using DRBGs).',
   },
 }

@@ -9,6 +9,7 @@ import {
   CERT_MITIGATIONS,
   type CertAlgorithmOption,
 } from '../constants'
+import { Button } from '@/components/ui/button'
 
 function calcCertSize(algo: CertAlgorithmOption, isRoot: boolean): number {
   // Root CA: self-signed (1 signature), others: issuer signature
@@ -200,7 +201,8 @@ export const CertChainBloatAnalyzer: React.FC = () => {
           {CERT_MITIGATIONS.map((mit) => {
             const active = activeMitigations.includes(mit.id)
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={mit.id}
                 onClick={() => toggleMitigation(mit.id)}
                 className={`w-full text-left rounded-lg p-3 border transition-colors ${
@@ -240,7 +242,7 @@ export const CertChainBloatAnalyzer: React.FC = () => {
                 <div className="text-[10px] text-muted-foreground mt-0.5 ml-6 font-mono">
                   {mit.rfc}
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>

@@ -14,6 +14,7 @@ import {
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../store'
 import { logEvent } from '../../../utils/analytics'
+import { Button } from '@/components/ui/button'
 
 export type WorkbenchCategory =
   | 'genpkey'
@@ -51,7 +52,8 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
         1. Select Operation
       </span>
       <div className="grid grid-cols-3 lg:grid-cols-2 gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('genpkey', 'Key Generation')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -61,9 +63,10 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Key size={16} /> Key Generation
-        </button>
+        </Button>
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('req', 'CSR')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -73,8 +76,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <FileText size={16} /> CSR (Request)
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('x509', 'Certificate')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -84,8 +88,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Shield size={16} /> Certificate
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('dgst', 'Sign/Verify')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -95,8 +100,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Settings size={16} /> Sign / Verify
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('rand', 'Random Data')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -106,8 +112,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Shield size={16} /> Random Data
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('enc', 'Encryption')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -117,8 +124,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Lock size={16} /> Encryption
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('hash', 'Hashing')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -128,8 +136,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Hash size={16} /> Hashing
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('kem', 'KEM')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -139,8 +148,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Database size={16} /> Key Encap
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('pkcs12', 'PKCS#12')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -150,8 +160,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <FileArchive size={16} /> PKCS#12 Bundle
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('lms', 'LMS (HSS)')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -161,8 +172,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Shield size={16} /> LMS (HSS)
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('configutl', 'Config Audit')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -172,8 +184,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Settings size={16} /> Config Audit
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('kdf', 'Key Derivation')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -183,8 +196,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Key size={16} /> Key Derivation
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => handleCategoryChange('version', 'Version Info')}
           className={clsx(
             'p-2 lg:p-3 rounded-lg border text-left transition-colors flex items-center gap-2 text-xs lg:text-sm',
@@ -194,8 +208,9 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <Info size={16} /> Version Info
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => {
             setActiveTab('logs')
             logEvent('OpenSSL Studio', 'Select Category', 'Logs')
@@ -208,7 +223,7 @@ export const WorkbenchToolbar: React.FC<WorkbenchToolbarProps> = ({ category, se
           )}
         >
           <FileText size={16} /> Operation Logs
-        </button>
+        </Button>
       </div>
     </div>
   )

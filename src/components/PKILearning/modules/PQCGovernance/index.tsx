@@ -83,7 +83,7 @@ const EXERCISES: GovernanceExercise[] = [
 
 const GovernanceExercises: React.FC = () => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Governance Exercises</h2>
         <p className="text-muted-foreground text-sm">
@@ -230,19 +230,20 @@ export const PQCGovernanceModule: React.FC = () => {
 
             {/* Part Progress Steps */}
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
+              <div className="flex justify-evenly relative min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                           ${
                             idx === currentPart
                               ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -251,12 +252,12 @@ export const PQCGovernanceModule: React.FC = () => {
                                 : 'border-border text-muted-foreground'
                           }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </div>
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -297,6 +298,7 @@ export const PQCGovernanceModule: React.FC = () => {
                 </Button>
               ) : (
                 <Button
+                  variant="ghost"
                   onClick={() => handlePartChange(currentPart + 1)}
                   className="px-6 py-3 min-h-[44px]"
                 >

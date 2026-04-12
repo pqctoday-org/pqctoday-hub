@@ -20,6 +20,7 @@ import { PQCThreatSummary } from './PQCThreatSummary'
 import { DERIVATION_PATH_EXPLANATIONS } from '../utils/cryptoConstants'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface BlockchainCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -29,7 +30,7 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Section 1: What is Blockchain Cryptography? */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -281,12 +282,13 @@ export const BlockchainCryptoIntroduction: React.FC<BlockchainCryptoIntroduction
         <PQCThreatSummary />
 
         <div className="mt-4">
-          <button
+          <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-4 py-2"
           >
             Try It in the Workshop <ArrowRight size={16} />
-          </button>
+          </Button>
         </div>
       </section>
 

@@ -27,7 +27,7 @@ interface IntroductionProps {
 // ─── Step 1: Landscape + Key Frameworks ──────────────────────────────────────
 
 const Step1LandscapeAndFrameworks: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: The PQC Compliance Landscape */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -169,7 +169,7 @@ const Step1LandscapeAndFrameworks: React.FC = () => (
 // ─── Step 2: Compliance-First vs Risk + Major Deadlines ──────────────────────
 
 const Step2ApproachAndDeadlines: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 3: Compliance vs Risk Approach */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -289,7 +289,7 @@ const Step2ApproachAndDeadlines: React.FC = () => (
 const Step3CountriesAndWorkshop: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 5: Country-Specific Deadlines */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">

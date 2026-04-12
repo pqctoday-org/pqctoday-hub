@@ -998,7 +998,7 @@ export const FirmwareSigningMigrator: React.FC = () => {
           </div>
 
           {/* Pure mode callout */}
-          <div className="bg-muted/60 rounded-lg p-3 border border-border text-xs space-y-1">
+          <div className="bg-muted/60 rounded-lg p-3 border border-border text-xs space-y-2">
             <div className="flex items-center gap-2">
               <Info size={13} className="text-primary shrink-0" aria-hidden="true" />
               <span className="font-semibold text-foreground">
@@ -1016,6 +1016,33 @@ export const FirmwareSigningMigrator: React.FC = () => {
               9881). Your hash selection applies to: firmware digest display + classical signature
               mechanism (e.g. CKM_SHA256_RSA_PKCS).
             </p>
+            <div className="pl-5 space-y-1 border-t border-border/50 pt-2">
+              <p className="font-semibold text-foreground">Why HashML-DSA is excluded from CMS</p>
+              <ul className="text-muted-foreground space-y-0.5 list-disc list-inside">
+                <li>
+                  <strong className="text-foreground">No separate hash dependency.</strong>{' '}
+                  HashML-DSA (pre-hash mode) introduces a second cryptographic hash algorithm as an
+                  independent security requirement. If that outer hash is weak, it becomes an attack
+                  surface — even if ML-DSA itself is sound. Pure mode avoids this entirely.
+                </li>
+                <li>
+                  <strong className="text-foreground">
+                    SHAKE-256 is part of the security definition.
+                  </strong>{' '}
+                  FIPS 204 defines ML-DSA with SHAKE-256 bound into the algorithm&apos;s security
+                  proof. The security guarantees hold for the full message — pre-hashing by the
+                  caller steps outside that proof boundary.
+                </li>
+                <li>
+                  <strong className="text-foreground">
+                    HashML-DSA is for constrained environments only.
+                  </strong>{' '}
+                  Pre-hash mode was designed for devices that cannot buffer the full message (e.g.
+                  streaming IoT sensors). In CMS, the complete content is always available — so RFC
+                  9882 §3.1 mandates pure mode to prevent misuse.
+                </li>
+              </ul>
+            </div>
           </div>
 
           {/* File upload zone */}
@@ -1840,29 +1867,74 @@ export const FirmwareSigningMigrator: React.FC = () => {
           </div>
 
           {/* UEFI Secure Boot db enrollment */}
-          <div className="bg-muted/30 rounded-lg p-3 border border-border text-xs space-y-1">
+          <div className="bg-muted/30 rounded-lg p-3 border border-border text-xs space-y-2">
             <p className="font-semibold text-foreground">UEFI Secure Boot db enrollment</p>
-            <p className="text-muted-foreground">
-              After generating the PQC key pair and obtaining a signed X.509 certificate (RFC 9481
-              for ML-DSA, RFC 9482 for SLH-DSA), enroll it into UEFI NVRAM:
-            </p>
-            <ol className="text-muted-foreground list-decimal list-inside space-y-0.5 mt-1">
-              <li>
-                Build EFI signature list:{' '}
-                <span className="font-mono">cert-to-efi-sig-list cert.pem db.esl</span>
-              </li>
-              <li>
-                Sign the update with KEK:{' '}
-                <span className="font-mono">
-                  sbvarsign --key kek.key --cert kek.crt db.esl db.auth
-                </span>
-              </li>
-              <li>
-                Write <span className="font-mono">db</span> variable:{' '}
-                <span className="font-mono">efi-updatevar -a -c db.auth db</span>
-              </li>
-              <li>Keep the legacy RSA db entry until all boot paths are re-signed</li>
-            </ol>
+
+            {/* Step A: cert chain import */}
+            <div className="space-y-1">
+              <p className="font-medium text-foreground">
+                Step A — Import PQC public key into an X.509 certificate (RFC 9481 / RFC 9482)
+              </p>
+              <p className="text-muted-foreground">
+                Export the PQC public key from the HSM and wrap it in an X.509 certificate whose
+                SubjectPublicKeyInfo carries the ML-DSA or SLH-DSA AlgorithmIdentifier. For
+                production use a CA-issued cert; for lab/staging a self-signed cert suffices:
+              </p>
+              <ol className="text-muted-foreground list-decimal list-inside space-y-1 mt-1">
+                <li>
+                  Extract public key DER from HSM:{' '}
+                  <span className="font-mono">
+                    C_GetAttributeValue(hSession, pubHandle, CKA_VALUE) → pubkey.der
+                  </span>
+                </li>
+                <li>
+                  Generate a self-signed X.509 cert (OpenSSL ≥ 3.3 with ML-DSA OID support):{' '}
+                  <span className="font-mono">
+                    openssl req -new -x509 -key privkey.pem -out cert.pem \<br />
+                    &nbsp;&nbsp;-subj &quot;/CN=PQC-SecureBoot-2026/O=Org&quot; \<br />
+                    &nbsp;&nbsp;-days 3650 -sha256
+                  </span>
+                  <br />
+                  <span className="text-[10px]">
+                    (ML-DSA AlgorithmIdentifier:{' '}
+                    <span className="font-mono">
+                      {pqcAlgo === 'SLH-DSA-SHA2-128S'
+                        ? '2.16.840.1.101.3.4.3.20'
+                        : OID_ML_DSA[pqcAlgo]}
+                    </span>{' '}
+                    per RFC 9481/9482)
+                  </span>
+                </li>
+                <li>
+                  Verify the cert contains the PQC public key:{' '}
+                  <span className="font-mono">openssl x509 -in cert.pem -text -noout</span>
+                </li>
+              </ol>
+            </div>
+
+            {/* Step B: UEFI NVRAM enrollment */}
+            <div className="space-y-1 border-t border-border/50 pt-2">
+              <p className="font-medium text-foreground">
+                Step B — Enroll cert.pem into UEFI NVRAM
+              </p>
+              <ol className="text-muted-foreground list-decimal list-inside space-y-0.5">
+                <li>
+                  Build EFI signature list:{' '}
+                  <span className="font-mono">cert-to-efi-sig-list cert.pem db.esl</span>
+                </li>
+                <li>
+                  Sign the update with KEK:{' '}
+                  <span className="font-mono">
+                    sbvarsign --key kek.key --cert kek.crt db.esl db.auth
+                  </span>
+                </li>
+                <li>
+                  Write <span className="font-mono">db</span> variable:{' '}
+                  <span className="font-mono">efi-updatevar -a -c db.auth db</span>
+                </li>
+                <li>Keep the legacy RSA db entry until all boot paths are re-signed</li>
+              </ol>
+            </div>
           </div>
         </div>
       ),

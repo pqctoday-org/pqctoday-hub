@@ -9,6 +9,7 @@ import {
   type BenchmarkResult,
 } from '../../services/crypto/algorithmEngineResolver'
 import type { AlgorithmDetail } from '../../data/pqcAlgorithmsData'
+import { Button } from '@/components/ui/button'
 
 interface AlgorithmCheckButtonProps {
   algorithm: AlgorithmDetail
@@ -47,7 +48,8 @@ export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
 
   return (
     <div className="inline-flex items-center gap-1.5">
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={state === 'done' ? () => setExpanded(!expanded) : handleRun}
         disabled={state === 'running'}
@@ -77,7 +79,7 @@ export function AlgorithmCheckButton({ algorithm }: AlgorithmCheckButtonProps) {
         ) : (
           <Play size={14} />
         )}
-      </button>
+      </Button>
 
       {/* Inline result badge */}
       {result && expanded && (

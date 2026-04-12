@@ -310,7 +310,8 @@ export const NetworkComparator: React.FC = () => {
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2">
                   {compareMode && (
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => toggleSelected(net.id)}
                       className="shrink-0"
                       aria-label={isChecked ? `Deselect ${net.name}` : `Select ${net.name}`}
@@ -320,7 +321,7 @@ export const NetworkComparator: React.FC = () => {
                       ) : (
                         <Square size={18} className="text-muted-foreground" />
                       )}
-                    </button>
+                    </Button>
                   )}
                   <div>
                     <h4 className="font-semibold text-foreground">{net.name}</h4>

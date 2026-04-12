@@ -14,6 +14,7 @@ import {
   type ScanTarget,
   type ScanResult,
 } from '../data/testingConstants'
+import { Button } from '@/components/ui/button'
 
 const RISK_COLOR = (score: number) => {
   if (score >= 80) return 'text-destructive'
@@ -124,7 +125,8 @@ export const ActivePQCScanner: React.FC = () => {
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-sm font-medium text-foreground">Protocol:</span>
         {(['all', 'tls', 'ssh', 'ikev2'] as const).map((p) => (
-          <button
+          <Button
+            variant="ghost"
             key={p}
             onClick={() => setFilterProto(p)}
             className={`text-xs px-3 py-1 rounded-full border transition-colors ${
@@ -134,34 +136,37 @@ export const ActivePQCScanner: React.FC = () => {
             }`}
           >
             {p === 'all' ? 'All' : p.toUpperCase()}
-          </button>
+          </Button>
         ))}
         <div className="ml-auto flex gap-2">
           {!scanned && (
-            <button
+            <Button
+              variant="ghost"
               onClick={selectAll}
               className="text-xs px-3 py-1.5 bg-muted text-muted-foreground border border-border rounded hover:text-foreground transition-colors"
             >
               Select all
-            </button>
+            </Button>
           )}
           {!scanned ? (
-            <button
+            <Button
+              variant="gradient"
               onClick={runScan}
               disabled={selected.size === 0 || scanning}
-              className="text-xs px-4 py-1.5 bg-primary text-primary-foreground rounded font-semibold hover:bg-primary/90 disabled:opacity-40 transition-colors"
+              className="text-xs px-4 py-1.5 rounded font-semibold disabled:opacity-40 transition-colors"
             >
               {scanning
                 ? 'Scanning…'
                 : `Scan ${selected.size} target${selected.size !== 1 ? 's' : ''}`}
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="ghost"
               onClick={resetScan}
               className="text-xs px-3 py-1.5 bg-muted text-muted-foreground border border-border rounded hover:text-foreground transition-colors"
             >
               Reset
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -170,7 +175,8 @@ export const ActivePQCScanner: React.FC = () => {
       {!scanned && (
         <div className="grid sm:grid-cols-2 gap-2">
           {filteredTargets.map((t) => (
-            <button
+            <Button
+              variant="ghost"
               key={t.id}
               onClick={() => toggleTarget(t.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -197,7 +203,7 @@ export const ActivePQCScanner: React.FC = () => {
                 </span>
                 <span className="text-xs text-muted-foreground">{t.description}</span>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       )}

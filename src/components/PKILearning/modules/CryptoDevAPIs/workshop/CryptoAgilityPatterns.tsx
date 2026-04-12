@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { ChevronDown, ChevronUp, Shuffle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { AGILITY_PATTERNS } from '../data/agilityPatternsData'
+import { Button } from '@/components/ui/button'
 
 const LANGUAGE_ITEMS = [
   { id: 'All', label: 'All Languages' },
@@ -67,7 +68,11 @@ export const CryptoAgilityPatterns: React.FC = () => {
 
           return (
             <div key={pattern.id} className="glass-panel overflow-hidden">
-              <button className="w-full text-left p-4" onClick={() => toggleExpand(pattern.id)}>
+              <Button
+                variant="ghost"
+                className="w-full text-left p-4"
+                onClick={() => toggleExpand(pattern.id)}
+              >
                 <div className="flex items-center justify-between gap-3">
                   <div className="flex items-center gap-3">
                     <span className="w-8 h-8 rounded-full bg-primary/10 text-primary text-sm font-bold flex items-center justify-center shrink-0">
@@ -86,7 +91,7 @@ export const CryptoAgilityPatterns: React.FC = () => {
                     <ChevronDown size={20} className="text-muted-foreground shrink-0" />
                   )}
                 </div>
-              </button>
+              </Button>
 
               {isExpanded && (
                 <div className="border-t border-border p-4 space-y-4">

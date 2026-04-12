@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { ChevronDown, ChevronUp, AlertTriangle, CheckCircle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 type OSSelection = 'rhel' | 'ubuntu' | 'windows'
 
@@ -382,7 +383,8 @@ export const SystemTLSConfigurator: React.FC = () => {
 
       {/* Before / After config toggle */}
       <div className="glass-panel p-4">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowAfter((prev) => !prev)}
           className="flex items-center justify-between w-full text-left"
         >
@@ -397,7 +399,7 @@ export const SystemTLSConfigurator: React.FC = () => {
               <ChevronDown size={16} className="text-muted-foreground" />
             )}
           </div>
-        </button>
+        </Button>
         <pre className="mt-3 text-[11px] bg-background p-4 rounded border border-border overflow-x-auto font-mono whitespace-pre leading-relaxed text-foreground">
           {showAfter ? config.afterConfig : config.beforeConfig}
         </pre>

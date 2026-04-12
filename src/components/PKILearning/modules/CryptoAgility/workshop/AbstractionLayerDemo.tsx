@@ -9,6 +9,7 @@ import {
 } from '../data/architecturePatterns'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const AGILITY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -77,7 +78,8 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
       {/* Backend selector */}
       <div className="flex flex-wrap gap-2">
         {ABSTRACTION_BACKENDS.map((b) => (
-          <button
+          <Button
+            variant="ghost"
             key={b.id}
             onClick={() => setSelectedBackend(b.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -92,7 +94,7 @@ export const AbstractionLayerDemo: React.FC<AbstractionLayerDemoProps> = ({
             ) : (
               <XCircle size={12} className="inline ml-1 text-destructive" />
             )}
-          </button>
+          </Button>
         ))}
       </div>
 

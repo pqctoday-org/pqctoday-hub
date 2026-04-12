@@ -131,6 +131,7 @@ export const AesCmacPanel = () => {
 
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doComputeMac}
           disabled={keyHandle === null || anyLoading || !input.length}
           className="flex-1"

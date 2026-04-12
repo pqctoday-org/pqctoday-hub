@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface MTCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -24,7 +25,7 @@ interface MTCIntroductionProps {
 export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   const [showSignatureless, setShowSignatureless] = useState(false)
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Section 1: The Certificate Bloat Problem */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -277,7 +278,8 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
 
       {/* Section 4.5: Advanced — Signatureless Certificates */}
       <section className="glass-panel">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowSignatureless((v) => !v)}
           className="w-full p-6 flex items-center justify-between text-left"
           aria-expanded={showSignatureless}
@@ -289,7 +291,7 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             size={20}
             className={`text-muted-foreground transition-transform shrink-0 ${showSignatureless ? 'rotate-180' : ''}`}
           />
-        </button>
+        </Button>
         {showSignatureless && (
           <div className="px-6 pb-6 space-y-4">
             <p className="text-foreground/80 leading-relaxed">
@@ -499,12 +501,13 @@ export const MTCIntroduction: React.FC<MTCIntroductionProps> = ({ onNavigateToWo
             Head to the Workshop to build a Merkle tree, generate inclusion proofs, and verify
             certificates hands-on.
           </p>
-          <button
+          <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-6 py-3 mx-auto"
           >
             <TreePine size={16} /> Start the Workshop <ArrowRight size={16} />
-          </button>
+          </Button>
         </div>
       </section>
       <ReadingCompleteButton />

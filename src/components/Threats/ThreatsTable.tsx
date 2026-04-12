@@ -11,6 +11,7 @@ import clsx from 'clsx'
 import { getIndustryIcon } from './threatsHelper'
 import { EmptyState } from '../ui/empty-state'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
+import { Button } from '@/components/ui/button'
 
 export type SortField = 'industry' | 'threatId' | 'criticality'
 export type SortDirection = 'asc' | 'desc'
@@ -179,7 +180,8 @@ export const ThreatsTable = ({
                       className="flex items-center justify-center gap-1"
                       onClick={(e) => e.stopPropagation()}
                     >
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => toggleMyThreat(item.threatId)}
                         className={`p-1 rounded transition-colors ${
                           myThreats.includes(item.threatId)
@@ -197,7 +199,7 @@ export const ThreatsTable = ({
                         ) : (
                           <Bookmark size={16} />
                         )}
-                      </button>
+                      </Button>
                       <EndorseButton
                         endorseUrl={buildEndorsementUrl({
                           category: 'threat-endorsement',

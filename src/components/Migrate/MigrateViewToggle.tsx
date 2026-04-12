@@ -2,6 +2,7 @@
 import { Layers, LayoutGrid, Table, ShieldAlert } from 'lucide-react'
 import clsx from 'clsx'
 import type { MigrateViewMode } from '../../store/useMigrateSelectionStore'
+import { Button } from '@/components/ui/button'
 
 interface MigrateViewToggleProps {
   mode: MigrateViewMode
@@ -23,7 +24,8 @@ export const MigrateViewToggle = ({ mode, onChange }: MigrateViewToggleProps) =>
       aria-label="View mode"
     >
       {OPTIONS.map(({ value, label, icon: Icon }) => (
-        <button
+        <Button
+          variant="ghost"
           key={value}
           onClick={() => onChange(value)}
           role="radio"
@@ -37,7 +39,7 @@ export const MigrateViewToggle = ({ mode, onChange }: MigrateViewToggleProps) =>
         >
           <Icon size={14} aria-hidden="true" />
           <span className="hidden sm:inline">{label}</span>
-        </button>
+        </Button>
       ))}
     </div>
   )

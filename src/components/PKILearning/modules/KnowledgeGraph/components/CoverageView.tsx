@@ -16,6 +16,7 @@ import { BarChart3 } from 'lucide-react'
 import { ClusterNode, type ClusterNodeData } from './nodes/ClusterNode'
 import { ENTITY_CONFIG } from './nodes/EntityNode'
 import type { KnowledgeGraph, EntityType, RelationshipType } from '../data/graphTypes'
+import { Button } from '@/components/ui/button'
 
 interface CoverageViewProps {
   graph: KnowledgeGraph
@@ -218,7 +219,8 @@ export function CoverageView({ graph }: CoverageViewProps) {
           const isExpanded = expandedType === type
 
           return (
-            <button
+            <Button
+              variant="ghost"
               key={type}
               className={`glass-panel p-3 text-left transition-all ${isExpanded ? 'ring-2 ring-primary' : 'hover:shadow-md'}`}
               onClick={() => setExpandedType((prev) => (prev === type ? null : type))}
@@ -243,7 +245,7 @@ export function CoverageView({ graph }: CoverageViewProps) {
                   <div className="text-[10px] text-status-warning">{orphanCount} unconnected</div>
                 )}
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

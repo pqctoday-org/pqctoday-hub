@@ -2,6 +2,7 @@
 import React from 'react'
 import { Play, BookOpen, ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -81,7 +82,7 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Guided Exercises</h2>
         <p className="text-muted-foreground text-sm">
@@ -111,12 +112,13 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
                   </p>
                 </div>
               </div>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleLoadAndRun(scenario)}
                 className="btn btn-primary flex items-center gap-2 px-4 py-2 shrink-0 self-start"
               >
                 <Play size={14} fill="currentColor" /> Load &amp; Run
-              </button>
+              </Button>
             </div>
           </div>
         ))}
@@ -135,12 +137,13 @@ export const DataAssetExercises: React.FC<DataAssetExercisesProps> = ({
               </p>
             </div>
           </div>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => navigate('/learn/quiz')}
             className="btn btn-secondary flex items-center gap-2 px-4 py-2 shrink-0"
           >
             Take Quiz <ArrowRight size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

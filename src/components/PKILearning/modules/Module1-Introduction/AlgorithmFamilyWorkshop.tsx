@@ -13,6 +13,7 @@ import {
   RefreshCw,
 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 /* ------------------------------------------------------------------ */
 /*  Shared helpers                                                     */
@@ -40,7 +41,8 @@ const FamilySection: React.FC<FamilySectionProps> = ({
   children,
 }) => (
   <div className={`glass-panel border-l-4 ${borderColor} overflow-hidden`}>
-    <button
+    <Button
+      variant="ghost"
       onClick={onToggle}
       className="w-full flex items-center justify-between p-5 text-left hover:bg-muted/30 transition-colors"
       aria-expanded={isExpanded}
@@ -67,7 +69,7 @@ const FamilySection: React.FC<FamilySectionProps> = ({
       ) : (
         <ChevronDown size={20} className="text-muted-foreground" />
       )}
-    </button>
+    </Button>
     <AnimatePresence>
       {isExpanded && (
         <motion.div
@@ -292,7 +294,8 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
           <span className="text-xs font-medium text-muted-foreground">Dimensions</span>
           <div className="flex gap-2 flex-wrap" role="group" aria-label="Dimension selector">
             {DIMENSION_OPTIONS.map((opt) => (
-              <button
+              <Button
+                variant="ghost"
                 key={opt.value}
                 onClick={() => handleDimensionChange(opt.value)}
                 className={`px-3 py-1.5 min-h-[36px] rounded text-sm font-medium transition-colors border ${
@@ -302,7 +305,7 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
                 }`}
               >
                 {opt.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -329,13 +332,14 @@ const LatticeVisualization: React.FC<{ onInteract: () => void }> = ({ onInteract
         </div>
       </div>
 
-      <button
+      <Button
+        variant="ghost"
         onClick={handleAddNoise}
         className="flex items-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border border-border hover:bg-muted transition-colors text-sm text-foreground"
       >
         <RefreshCw size={14} />
         Randomize Target
-      </button>
+      </Button>
 
       {/* Complexity indicator */}
       <div className="glass-panel p-4 space-y-3">
@@ -551,7 +555,8 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
           {/* Leaves */}
           <div className="flex gap-1.5 sm:gap-3">
             {merkleLeaves.map((label, i) => (
-              <button
+              <Button
+                variant="ghost"
                 key={i}
                 onClick={() => {
                   setSelectedLeaf(selectedLeaf === i ? null : i)
@@ -562,7 +567,7 @@ const HashBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
                 aria-pressed={selectedLeaf === i}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -712,12 +717,13 @@ const CodeBasedVisualization: React.FC<{ onInteract: () => void }> = ({ onIntera
         </div>
 
         {!isEncoded && (
-          <button
+          <Button
+            variant="gradient"
             onClick={handleEncode}
-            className="px-4 py-2 min-h-[44px] bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+            className="px-4 py-2 min-h-[44px] font-bold rounded-lg transition-colors text-sm"
           >
             Encode with Redundancy
-          </button>
+          </Button>
         )}
       </div>
 

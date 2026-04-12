@@ -4,6 +4,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { ChevronDown, ChevronRight } from 'lucide-react'
 import type { LibraryItem } from '../../data/libraryData'
 import { DocumentCard } from './DocumentCard'
+import { Button } from '@/components/ui/button'
 
 export interface DocumentCardGridProps {
   items: LibraryItem[]
@@ -36,14 +37,15 @@ const HierarchicalCardGroup = ({
 
       {activeChildren.length > 0 && (
         <div className="flex flex-col gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setExpanded(!expanded)}
             className="self-start flex items-center gap-1.5 text-xs font-medium text-primary hover:text-primary/80 transition-colors ml-2 py-1 px-2 rounded-lg bg-primary/10 hover:bg-primary/20"
           >
             {expanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
             {expanded ? 'Hide' : 'Show'} {activeChildren.length} related{' '}
             {activeChildren.length === 1 ? 'draft' : 'drafts'}
-          </button>
+          </Button>
 
           <AnimatePresence>
             {expanded && (

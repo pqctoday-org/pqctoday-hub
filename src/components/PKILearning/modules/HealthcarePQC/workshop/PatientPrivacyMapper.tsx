@@ -73,7 +73,8 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ profile, selected, onToggle
   const severityClasses = SEVERITY_COLORS[profile.hndlExposure] ?? SEVERITY_COLORS['medium']
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={onToggle}
       className={`relative w-full text-left rounded-lg border p-4 transition-all ${
         selected
@@ -124,7 +125,7 @@ const CategoryCard: React.FC<CategoryCardProps> = ({ profile, selected, onToggle
           </span>
         </div>
       </div>
-    </button>
+    </Button>
   )
 }
 

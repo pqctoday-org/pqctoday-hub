@@ -23,6 +23,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TLSHandshakeDiagram } from './TLSHandshakeDiagram'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface TLSIntroductionProps {
   onNavigateToSimulate: () => void
@@ -30,7 +31,7 @@ interface TLSIntroductionProps {
 
 export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSimulate }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Learning Objectives & Prerequisites */}
       <section className="glass-panel p-6 border-l-4 border-l-primary/50">
         <h2 className="text-sm font-bold text-primary uppercase tracking-wider mb-2">
@@ -323,12 +324,13 @@ export const TLSIntroduction: React.FC<TLSIntroductionProps> = ({ onNavigateToSi
             signature algorithm options.
           </p>
         </div>
-        <button
+        <Button
+          variant="ghost"
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >
           Try It in the Simulator <ArrowRight size={16} />
-        </button>
+        </Button>
       </section>
 
       {/* Certificate Overhead Mitigations */}

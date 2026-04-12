@@ -8,6 +8,7 @@ import {
 } from '../data/emailSigningConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const EMAIL_KAT_SPECS: KatTestSpec[] = [
   {
@@ -146,7 +147,8 @@ export const CMSSigningDemo: React.FC = () => {
       {/* Step Progress */}
       <div className="flex flex-wrap gap-2">
         {SIGNING_STEPS.map((step) => (
-          <button
+          <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -160,7 +162,7 @@ export const CMSSigningDemo: React.FC = () => {
             {step.id === 'sign' && <PenLine size={14} />}
             {step.id === 'wrap' && <Package size={14} />}
             {step.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -221,7 +223,8 @@ export const CMSSigningDemo: React.FC = () => {
         <div className="flex items-center justify-between mb-3">
           <h4 className="text-sm font-bold text-foreground">Signer Info Comparison</h4>
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setAlgorithmView('ecdsa')}
               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                 algorithmView === 'ecdsa'
@@ -230,8 +233,9 @@ export const CMSSigningDemo: React.FC = () => {
               }`}
             >
               ECDSA P-256
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => setAlgorithmView('ml-dsa')}
               className={`text-xs px-3 py-1.5 rounded transition-colors ${
                 algorithmView === 'ml-dsa'
@@ -240,7 +244,7 @@ export const CMSSigningDemo: React.FC = () => {
               }`}
             >
               ML-DSA-65
-            </button>
+            </Button>
           </div>
         </div>
         <div className="overflow-x-auto">

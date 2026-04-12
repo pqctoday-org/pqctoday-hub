@@ -22,6 +22,7 @@ import {
   TimelineDocumentDetailPopover,
   type TimelineDocumentRow,
 } from './TimelineDocumentDetailPopover'
+import { Button } from '@/components/ui/button'
 
 interface DocumentTableProps {
   data: GanttCountryData[]
@@ -145,7 +146,8 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                       }
                       className="p-4 font-semibold text-sm"
                     >
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         className="flex items-center gap-1 cursor-pointer hover:text-primary transition-colors focus:outline-none focus:ring-2 focus:ring-primary rounded px-1 -ml-1"
                         onClick={() => handleSort(header.key)}
@@ -164,7 +166,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                             aria-hidden="true"
                           />
                         )}
-                      </button>
+                      </Button>
                     </th>
                   ))}
                   {/* Actions column */}
@@ -249,7 +251,8 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                       {/* Actions */}
                       <td className="p-4 text-sm">
                         <div className="flex items-center gap-1">
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => setSelectedRow(row)}
                             className={clsx(
                               'p-1.5 rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-primary',
@@ -269,7 +272,7 @@ export const DocumentTable = ({ data, title }: DocumentTableProps) => {
                             ) : (
                               <Info size={16} aria-hidden="true" />
                             )}
-                          </button>
+                          </Button>
                           <EndorseButton
                             endorseUrl={buildEndorsementUrl({
                               category: 'timeline-endorsement',

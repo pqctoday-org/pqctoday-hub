@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -73,7 +74,8 @@ export const PQC101Exercises: React.FC<PQC101ExercisesProps> = ({
             </p>
           </details>
           {exercise.workshopStep !== null && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 onSetWorkshopConfig({ step: exercise.workshopStep as number })
                 onNavigateToWorkshop()
@@ -81,7 +83,7 @@ export const PQC101Exercises: React.FC<PQC101ExercisesProps> = ({
               className="mt-3 text-xs text-primary hover:underline"
             >
               Explore in Workshop → Step {exercise.workshopStep + 1}
-            </button>
+            </Button>
           )}
         </div>
       ))}

@@ -346,11 +346,7 @@ describe('Workbench', () => {
     act(() => {
       capturedProps.setLmsMode('generate')
     })
-    await waitFor(() =>
-      expect(mockSetCommand).toHaveBeenCalledWith(
-        expect.stringContaining('Generate keypair (WASM-only operation)')
-      )
-    )
+    await waitFor(() => expect(mockSetCommand).toHaveBeenCalledWith(''))
   })
 
   it('handles kdf commands', async () => {

@@ -105,7 +105,8 @@ function MobileOpsContent() {
           const Icon = tab.icon
           const isActive = activeTab === tab.id
           return (
-            <button
+            <Button
+              variant="ghost"
               key={tab.id}
               onClick={() => scrollToTab(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
@@ -116,7 +117,7 @@ function MobileOpsContent() {
             >
               <Icon size={14} />
               {tab.label}
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -139,14 +140,15 @@ function MobileOpsContent() {
 
       {/* Collapsible log panel */}
       <div className="border-t border-border shrink-0">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setLogOpen((o) => !o)}
           className="w-full flex items-center justify-center gap-1.5 py-2 text-xs text-muted-foreground hover:text-foreground transition-colors"
         >
           {logOpen ? <ChevronDown size={14} /> : <ChevronUp size={14} />}
           PKCS#11 Log
-        </button>
+        </Button>
         {logOpen && (
           <div className="max-h-[30vh] overflow-y-auto border-t border-border/50 px-3 pb-3">
             <PkcsLogPanel />

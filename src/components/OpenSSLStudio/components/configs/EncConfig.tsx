@@ -5,6 +5,7 @@ import { useOpenSSLStore } from '../../store'
 import { InlineTooltip } from '../../../PKILearning/modules/DigitalAssets/components/InfoTooltip'
 import { CRYPTO_TOOLTIPS } from '../../../PKILearning/modules/DigitalAssets/utils/cryptoConstants'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface EncConfigProps {
   encAction: 'encrypt' | 'decrypt'
@@ -50,7 +51,8 @@ export const EncConfig: React.FC<EncConfigProps> = ({
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setEncAction('encrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -60,8 +62,9 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             )}
           >
             Encrypt
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setEncAction('decrypt')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -71,7 +74,7 @@ export const EncConfig: React.FC<EncConfigProps> = ({
             )}
           >
             Decrypt
-          </button>
+          </Button>
         </div>
       </div>
 

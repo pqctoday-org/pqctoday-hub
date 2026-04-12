@@ -6,14 +6,16 @@ import { clsx } from 'clsx'
 const MESSAGES = [
   {
     label: 'ClientHello',
-    sublabel: '+ key_share, supported_groups',
+    sublabel: '+ key_share (encapsulation key), supported_groups',
+    rfcRef: 'RFC 8446 §4.1.1',
     direction: 'right' as const,
     encrypted: false,
     mtls: false,
   },
   {
     label: 'ServerHello',
-    sublabel: '+ key_share',
+    sublabel: '+ key_share (ciphertext for KEM / ECDH response)',
+    rfcRef: 'RFC 8446 §4.1.3',
     direction: 'left' as const,
     encrypted: false,
     mtls: false,
@@ -21,6 +23,7 @@ const MESSAGES = [
   {
     label: '{EncryptedExtensions}',
     sublabel: '',
+    rfcRef: 'RFC 8446 §4.3.1',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -28,6 +31,7 @@ const MESSAGES = [
   {
     label: '{CertificateRequest}',
     sublabel: 'mTLS: server requests client cert',
+    rfcRef: 'RFC 8446 §4.3.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: true,
@@ -35,13 +39,15 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Server identity',
+    rfcRef: 'RFC 8446 §4.4.2',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
   },
   {
     label: '{CertificateVerify}',
-    sublabel: 'Signature proof',
+    sublabel: 'Signature proof (ML-DSA / ECDSA)',
+    rfcRef: 'RFC 8446 §4.4.3',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -49,6 +55,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Server handshake MAC',
+    rfcRef: 'RFC 8446 §4.4.4',
     direction: 'left' as const,
     encrypted: true,
     mtls: false,
@@ -56,6 +63,7 @@ const MESSAGES = [
   {
     label: '{Certificate}',
     sublabel: 'Client identity (mTLS)',
+    rfcRef: 'RFC 8446 §4.4.2',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -63,6 +71,7 @@ const MESSAGES = [
   {
     label: '{CertificateVerify}',
     sublabel: 'Client signature (mTLS)',
+    rfcRef: 'RFC 8446 §4.4.3',
     direction: 'right' as const,
     encrypted: true,
     mtls: true,
@@ -70,6 +79,7 @@ const MESSAGES = [
   {
     label: '{Finished}',
     sublabel: 'Client handshake MAC',
+    rfcRef: 'RFC 8446 §4.4.4',
     direction: 'right' as const,
     encrypted: true,
     mtls: false,
@@ -77,6 +87,7 @@ const MESSAGES = [
   {
     label: 'Application Data',
     sublabel: 'Encrypted with traffic keys',
+    rfcRef: 'RFC 8446 §7.3',
     direction: 'both' as const,
     encrypted: true,
     mtls: false,
@@ -145,6 +156,7 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
                   <MessageArrow
                     label={msg.label}
                     sublabel={msg.sublabel}
+                    rfcRef={msg.rfcRef}
                     direction={msg.direction}
                     encrypted={msg.encrypted}
                     mtlsActive={isMtlsActive}
@@ -154,6 +166,13 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
             })}
           </div>
         </div>
+
+        {/* PQC note */}
+        <p className="mt-4 text-[10px] text-muted-foreground/70 text-center">
+          With PQC: ClientHello key_share carries an ML-KEM encapsulation key (~1,184 B for
+          ML-KEM-768); ServerHello key_share carries the ciphertext (~1,088 B). Classical ECDH uses
+          32 B each.
+        </p>
       </div>
     </div>
   )
@@ -162,11 +181,12 @@ export const TLSHandshakeDiagram: React.FC<TLSHandshakeDiagramProps> = ({ mTLSEn
 const MessageArrow: React.FC<{
   label: string
   sublabel: string
+  rfcRef: string
   direction: 'left' | 'right' | 'both'
   encrypted: boolean
   /** null = educational mode (show with indicator), true = active, false = inactive */
   mtlsActive: boolean | null
-}> = ({ label, sublabel, direction, encrypted, mtlsActive }) => {
+}> = ({ label, sublabel, rfcRef, direction, encrypted, mtlsActive }) => {
   // When mTLS is explicitly disabled, dim this message
   const isDimmed = mtlsActive === false
   // When mTLS is active, use warning color to distinguish from standard messages
@@ -227,6 +247,9 @@ const MessageArrow: React.FC<{
               {sublabel}
             </div>
           )}
+          <div className="text-[9px] text-muted-foreground/50 text-center whitespace-nowrap font-mono">
+            {rfcRef}
+          </div>
         </div>
       </div>
 

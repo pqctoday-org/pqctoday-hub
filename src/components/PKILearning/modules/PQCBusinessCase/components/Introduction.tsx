@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { LearnStepper } from '@/components/PKILearning/LearnStepper'
+import { Button } from '@/components/ui/button'
 
 interface IntroductionProps {
   onNavigateToWorkshop: () => void
@@ -23,7 +24,7 @@ interface IntroductionProps {
 // ─── Step 1: Why + Concepts + Cost Categories ────────────────────────────────
 
 const Step1WhyConceptsCosts: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: Why Build a Business Case? */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -181,7 +182,7 @@ const Step1WhyConceptsCosts: React.FC = () => (
 const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 4: Workshop Preview */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -306,12 +307,13 @@ const Step2WorkshopAndResources: React.FC<{ onNavigateToWorkshop: () => void }> 
 
     {/* CTA */}
     <div className="text-center">
-      <button
+      <Button
+        variant="gradient"
         onClick={onNavigateToWorkshop}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground mt-2">
         Calculate ROI, model breach scenarios, and build a board-ready investment case.
       </p>

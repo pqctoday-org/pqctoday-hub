@@ -5,6 +5,7 @@ import { useOpenSSLStore } from '../store'
 import { useOpenSSL } from '../hooks/useOpenSSL'
 import { logEvent } from '../../../utils/analytics'
 import { getOpenSSLDocUrl } from '../../../utils/opensslDocsData'
+import { Button } from '@/components/ui/button'
 
 interface WorkbenchPreviewProps {
   category: string
@@ -54,7 +55,8 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
                 Use WASM buttons in config panel ↑
               </span>
             ) : (
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleRun}
                 disabled={isProcessing || !isReady}
                 className="btn-primary flex items-center gap-2 px-4 py-1.5 text-xs font-bold shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed shrink-0"
@@ -67,7 +69,7 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
                   <Play fill="currentColor" className="w-3 h-3" />
                 )}
                 {!isReady ? 'Initializing...' : 'Run Command'}
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -76,13 +78,14 @@ export const WorkbenchPreview: React.FC<WorkbenchPreviewProps> = ({ category, sk
           <code className="text-primary flex-1 break-all font-mono text-sm leading-relaxed whitespace-pre-wrap">
             $ {command}
           </code>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => navigator.clipboard.writeText(command)}
             className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-foreground absolute top-3 right-3 p-1.5 hover:bg-muted rounded"
             title="Copy to clipboard"
           >
             <Copy size={14} />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

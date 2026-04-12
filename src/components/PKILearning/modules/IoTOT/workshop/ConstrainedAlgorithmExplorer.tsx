@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { CheckCircle, XCircle, AlertTriangle } from 'lucide-react'
 import { DEVICE_CLASSES, CONSTRAINED_ALGORITHMS, type DeviceClass } from '../constants'
+import { Button } from '@/components/ui/button'
 
 export const ConstrainedAlgorithmExplorer: React.FC = () => {
   const [selectedClassIdx, setSelectedClassIdx] = useState(1)
@@ -33,7 +34,8 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
         <div className="text-sm font-bold text-foreground mb-3">Select Device Class</div>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {DEVICE_CLASSES.map((dc, idx) => (
-            <button
+            <Button
+              variant="ghost"
               key={dc.id}
               onClick={() => setSelectedClassIdx(idx)}
               className={`p-3 rounded-lg border text-left transition-colors ${
@@ -47,7 +49,7 @@ export const ConstrainedAlgorithmExplorer: React.FC = () => {
                 {dc.ramKB} KB RAM / {dc.flashKB} KB Flash
               </div>
               <div className="text-[10px] mt-1 text-muted-foreground">{dc.examples[0]}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>

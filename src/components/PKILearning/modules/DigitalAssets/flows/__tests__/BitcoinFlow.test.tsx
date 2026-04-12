@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { BitcoinFlow } from '../BitcoinFlow'
 import { useStepWizard } from '../../hooks/useStepWizard'
+import { Button } from '@/components/ui/button'
 
 // ── WASM function mocks ────────────────────────────────────────────────────────
 vi.mock('@/wasm/softhsm/classical', () => ({
@@ -88,12 +89,12 @@ vi.mock('../../components/StepWizard', () => ({
       {/* eslint-disable-next-line security/detect-object-injection */}
       <div data-testid="current-step">{steps[currentStepIndex].id}</div>
       <div data-testid="output">{output}</div>
-      <button data-testid="execute-btn" onClick={onExecute}>
+      <Button data-testid="execute-btn" onClick={onExecute}>
         Execute
-      </button>
-      <button data-testid="next-btn" onClick={onNext}>
+      </Button>
+      <Button data-testid="next-btn" onClick={onNext}>
         Next
-      </button>
+      </Button>
     </div>
   ),
 }))

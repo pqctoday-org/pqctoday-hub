@@ -8,6 +8,7 @@ import type { ProductExtraction } from '../../data/productExtractionData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 interface ProductExtractionModalProps {
   isOpen: boolean
@@ -216,13 +217,14 @@ export const ProductExtractionModal = ({
             <AskAssistantButton
               question={`Tell me about ${softwareName}'s PQC capabilities and migration readiness.${extraction.pqcCapabilityDescription ? ` Current status: ${extraction.pqcCapabilityDescription}` : ''}${extraction.cryptoPrimitives ? ` Crypto: ${extraction.cryptoPrimitives}` : ''}`}
             />
-            <button
+            <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Close details"
               className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
             >
               <X size={18} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         </div>
 

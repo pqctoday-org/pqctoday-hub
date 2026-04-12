@@ -6,12 +6,13 @@
  * `locateFile` pointing to `/wasm/softhsm.wasm`.
  *
  * Exports:
- *  - getSoftHSMCppModule()  — singleton loader for Emscripten C++
- *  - getSoftHSMRustModule() — singleton loader for wasm-bindgen Rust
- *  - clearSoftHSMCache()    — reset singletons (PlaygroundProvider cleanup)
- *  - createLoggingProxy()   — transparent PKCS#11 call logger
- *  - Pkcs11LogEntry         — log entry type
- *  - hsm_*                  — high-level PKCS#11 helper functions
+ *  - getSoftHSMCppModule()    — singleton loader for Emscripten C++
+ *  - getSoftHSMRustModule()   — singleton loader for wasm-bindgen Rust
+ *  - clearSoftHSMCache()      — reset singletons (PlaygroundProvider cleanup)
+ *  - createLoggingProxy()     — transparent PKCS#11 call logger
+ *  - Pkcs11LogEntry           — log entry type
+ *  - SOFTHSM_PRODUCT_VERSION  — semantic version of the bundled SoftHSMv3 WASM build
+ *  - hsm_*                    — high-level PKCS#11 helper functions
  */
 
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
@@ -19,6 +20,9 @@ export type { SoftHSMModule }
 
 // Injected by Vite at build time — ensures WASM URLs are cache-busted on each release
 const _WASM_VERSION = typeof __WASM_HASH__ !== 'undefined' ? __WASM_HASH__ : Date.now().toString()
+
+/** Semantic version of the bundled SoftHSMv3 WASM build (pqctoday fork). */
+export const SOFTHSM_PRODUCT_VERSION = '0.4.18'
 import { buildInspect } from './pkcs11Inspect'
 export type {
   Pkcs11LogInspect,
@@ -2022,6 +2026,7 @@ export const CKK_EC_EDWARDS = 0x40
 export const CKK_EC_MONTGOMERY = 0x41 // PKCS#11 v3.2 §6.7 pkcs11t.h (0x40=EDWARDS, 0x41=MONTGOMERY)
 export const CKM_EC_MONTGOMERY_KEY_PAIR_GEN = 0x00001056
 export const CKK_SLH_DSA = 0x4b
+export const CKK_CHACHA20 = 0x00000033
 
 // RSA mechanisms
 export const CKM_RSA_PKCS_KEY_PAIR_GEN = 0x00
@@ -2046,6 +2051,7 @@ export const CKM_ECDH1_DERIVE = 0x1050
 export const CKM_ECDH1_COFACTOR_DERIVE = 0x1051 // PKCS#11 v3.2 §2.3.2 — cofactor ECDH
 export const CKM_EC_EDWARDS_KEY_PAIR_GEN = 0x1055
 export const CKM_EDDSA = 0x1057
+export const CKM_EDDSA_PH = 0x80001057
 
 // PBKDF2 (PKCS#11 v3.2 §5.7.3.1)
 export const CKM_PKCS5_PBKD2 = 0x3b0
@@ -2075,10 +2081,18 @@ export const CKM_SHA384 = 0x260
 export const CKM_SHA512 = 0x270
 export const CKM_SHA3_256 = 0x2b0
 export const CKM_SHA3_512 = 0x2d0
+export const CKM_CHACHA20_POLY1305 = 0x00004021
+export const CKM_XMSS_KEY_PAIR_GEN = 0x00004034
+export const CKM_XMSS = 0x00004035
+export const CKM_LMS_KEY_PAIR_GEN = 0x80000001
+export const CKM_LMS = 0x80000002
+export const CKA_HSS_LMS_TYPE = 0x00000618
+export const CKA_HSS_LMOTS_TYPE = 0x00000619
 
 // KMAC mechanisms — vendor-defined (NIST SP 800-185, softhsmv3 extension)
 export const CKM_KMAC_128 = 0x80000100
 export const CKM_KMAC_256 = 0x80000101
+export const CKM_CHACHA20_KEY_GEN = 0x00001225
 
 // SLH-DSA mechanisms (PKCS#11 v3.2, FIPS 205, pkcs11t.h:1232-1245)
 export const CKM_SLH_DSA_KEY_PAIR_GEN = 0x2d
@@ -3304,9 +3318,10 @@ export const hsm_eddsaSign = (
   M: SoftHSMModule,
   hSession: number,
   privHandle: number,
-  message: string
+  message: string,
+  mechType: number = CKM_EDDSA
 ): Uint8Array => {
-  const mech = buildMech(M, CKM_EDDSA)
+  const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigLenPtr = allocUlong(M)
@@ -3333,9 +3348,10 @@ export const hsm_eddsaVerify = (
   hSession: number,
   pubHandle: number,
   message: string,
-  sigBytes: Uint8Array
+  sigBytes: Uint8Array,
+  mechType: number = CKM_EDDSA
 ): boolean => {
-  const mech = buildMech(M, CKM_EDDSA)
+  const mech = buildMech(M, mechType)
   const msgBytes = new TextEncoder().encode(message)
   const msgPtr = writeBytes(M, msgBytes)
   const sigPtr = writeBytes(M, sigBytes)
@@ -3427,6 +3443,48 @@ export const hsm_generateAESKey = (
   const hKeyPtr = allocUlong(M)
   try {
     checkRV(M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, hKeyPtr), 'C_GenerateKey(AES)')
+    return readUlong(M, hKeyPtr)
+  } finally {
+    M._free(mech)
+    if (labelPtr) M._free(labelPtr)
+    freeTemplate(M, tpl, attrs.length)
+    M._free(hKeyPtr)
+  }
+}
+
+/** Generate a ChaCha20 symmetric key (256 bits). Returns CKO_SECRET_KEY handle. */
+export const hsm_generateChaCha20Key = (
+  M: SoftHSMModule,
+  hSession: number,
+  encrypt = true,
+  decrypt = true,
+  extractable = true,
+  label?: string
+): number => {
+  const mech = buildMech(M, CKM_CHACHA20_KEY_GEN)
+
+  const labelBytes = label ? new TextEncoder().encode(label) : null
+  const labelPtr = labelBytes ? writeBytes(M, labelBytes) : 0
+
+  const attrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_SECRET_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_CHACHA20 },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_ENCRYPT, boolVal: encrypt },
+    { type: CKA_DECRYPT, boolVal: decrypt },
+    { type: CKA_VALUE_LEN, ulongVal: 32 },
+  ]
+  if (labelBytes) attrs.push({ type: CKA_LABEL, bytesPtr: labelPtr, bytesLen: labelBytes.length })
+
+  const tpl = buildTemplate(M, attrs)
+  const hKeyPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKey(hSession, mech, tpl.ptr, attrs.length, hKeyPtr),
+      'C_GenerateKey(ChaCha20)'
+    )
     return readUlong(M, hKeyPtr)
   } finally {
     M._free(mech)
@@ -3670,6 +3728,105 @@ export const hsm_importECPublicKey = (
     M._free(oidPtr)
     M._free(pointPtr)
     M._free(valPtr)
+  }
+}
+
+/** ChaCha20-Poly1305 AEAD encrypt via C_EncryptInit + C_Encrypt.
+ * Returns ciphertext || auth_tag (PKCS#11 Poly1305 appends 16-byte tag to ciphertext like GCM). */
+export const hsm_chacha20Poly1305Encrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  hKey: number,
+  nonce: Uint8Array,
+  aad: Uint8Array,
+  plaintext: string | Uint8Array
+): Uint8Array => {
+  const noncePtr = writeBytes(M, nonce)
+  const aadPtr = writeBytes(M, aad)
+
+  // CK_SALSA20_CHACHA20_POLY1305_PARAMS
+  const paramPtr = M._malloc(16)
+  M.setValue(paramPtr, noncePtr, 'i32')
+  M.setValue(paramPtr + 4, nonce.length, 'i32')
+  M.setValue(paramPtr + 8, aadPtr, 'i32')
+  M.setValue(paramPtr + 12, aad.length, 'i32')
+
+  const mech = buildMech(M, CKM_CHACHA20_POLY1305, paramPtr, 16)
+  const plainBytes = typeof plaintext === 'string' ? new TextEncoder().encode(plaintext) : plaintext
+  const plainPtr = writeBytes(M, plainBytes)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_EncryptInit(hSession, mech, hKey), 'C_EncryptInit(ChaCha20Poly1305)')
+    checkRV(
+      M._C_Encrypt(hSession, plainPtr, plainBytes.length, 0, outLenPtr),
+      'C_Encrypt(ChaCha20Poly1305,len)'
+    )
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(
+      M._C_Encrypt(hSession, plainPtr, plainBytes.length, outPtr, outLenPtr),
+      'C_Encrypt(ChaCha20Poly1305)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(paramPtr)
+    M._free(noncePtr)
+    M._free(aadPtr)
+    M._free(mech)
+    M._free(plainPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
+  }
+}
+
+/** ChaCha20-Poly1305 AEAD decrypt via C_DecryptInit + C_Decrypt.
+ * Uses ciphertext || auth_tag format produced by encrypt. */
+export const hsm_chacha20Poly1305Decrypt = (
+  M: SoftHSMModule,
+  hSession: number,
+  hKey: number,
+  nonce: Uint8Array,
+  aad: Uint8Array,
+  ciphertextWithTag: Uint8Array
+): Uint8Array => {
+  const noncePtr = writeBytes(M, nonce)
+  const aadPtr = writeBytes(M, aad)
+
+  // CK_SALSA20_CHACHA20_POLY1305_PARAMS
+  const paramPtr = M._malloc(16)
+  M.setValue(paramPtr, noncePtr, 'i32')
+  M.setValue(paramPtr + 4, nonce.length, 'i32')
+  M.setValue(paramPtr + 8, aadPtr, 'i32')
+  M.setValue(paramPtr + 12, aad.length, 'i32')
+
+  const mech = buildMech(M, CKM_CHACHA20_POLY1305, paramPtr, 16)
+  const cPtr = writeBytes(M, ciphertextWithTag)
+  const outLenPtr = allocUlong(M)
+  let outPtr = 0
+  try {
+    checkRV(M._C_DecryptInit(hSession, mech, hKey), 'C_DecryptInit(ChaCha20Poly1305)')
+    checkRV(
+      M._C_Decrypt(hSession, cPtr, ciphertextWithTag.length, 0, outLenPtr),
+      'C_Decrypt(ChaCha20Poly1305,len)'
+    )
+    const outLen = readUlong(M, outLenPtr)
+    outPtr = M._malloc(outLen)
+    writeUlong(M, outLenPtr, outLen)
+    checkRV(
+      M._C_Decrypt(hSession, cPtr, ciphertextWithTag.length, outPtr, outLenPtr),
+      'C_Decrypt(ChaCha20Poly1305)'
+    )
+    return M.HEAPU8.slice(outPtr, outPtr + readUlong(M, outLenPtr))
+  } finally {
+    M._free(paramPtr)
+    M._free(noncePtr)
+    M._free(aadPtr)
+    M._free(mech)
+    M._free(cPtr)
+    M._free(outLenPtr)
+    if (outPtr) M._free(outPtr)
   }
 }
 
@@ -5803,5 +5960,154 @@ export const hsm_statefulVerifyBytes = (
     M._free(mech)
     M._free(msgPtr)
     M._free(sigPtr)
+  }
+}
+
+/**
+ * Generate an XMSS Key Pair.
+ * Requires hsm_setKatSeed to be called first if testing against NIST vectors in Rust.
+ */
+export const hsm_generateXMSSKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  paramSet: number,
+  extractable = false
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_XMSS_KEY_PAIR_GEN)
+  const pubAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+  ]
+  const prvAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_XMSS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_PARAMETER_SET, ulongVal: paramSet },
+  ]
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
+      'C_GenerateKeyPair(XMSS)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/**
+ * Generate an LMS/HSS Key Pair.
+ * Requires LMS_TYPE and LMOTS_TYPE for parameter derivation.
+ */
+export const hsm_generateLMSKeyPair = (
+  M: SoftHSMModule,
+  hSession: number,
+  lmsType: number,
+  lmotsType: number,
+  extractable = false
+): { pubHandle: number; privHandle: number } => {
+  const mech = buildMech(M, CKM_LMS_KEY_PAIR_GEN)
+  const pubAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PUBLIC_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_VERIFY, boolVal: true },
+    { type: CKA_HSS_LMS_TYPE, ulongVal: lmsType },
+    { type: CKA_HSS_LMOTS_TYPE, ulongVal: lmotsType },
+  ]
+  const prvAttrs: AttrDef[] = [
+    { type: CKA_CLASS, ulongVal: CKO_PRIVATE_KEY },
+    { type: CKA_KEY_TYPE, ulongVal: CKK_HSS },
+    { type: CKA_TOKEN, boolVal: false },
+    { type: CKA_PRIVATE, boolVal: true },
+    { type: CKA_SENSITIVE, boolVal: !extractable },
+    { type: CKA_EXTRACTABLE, boolVal: extractable },
+    { type: CKA_SIGN, boolVal: true },
+    { type: CKA_HSS_LMS_TYPE, ulongVal: lmsType },
+    { type: CKA_HSS_LMOTS_TYPE, ulongVal: lmotsType },
+  ]
+  const pubTpl = buildTemplate(M, pubAttrs)
+  const prvTpl = buildTemplate(M, prvAttrs)
+
+  const pubHPtr = allocUlong(M)
+  const prvHPtr = allocUlong(M)
+  try {
+    checkRV(
+      M._C_GenerateKeyPair(
+        hSession,
+        mech,
+        pubTpl.ptr,
+        pubAttrs.length,
+        prvTpl.ptr,
+        prvAttrs.length,
+        pubHPtr,
+        prvHPtr
+      ),
+      'C_GenerateKeyPair(LMS)'
+    )
+    return { pubHandle: readUlong(M, pubHPtr), privHandle: readUlong(M, prvHPtr) }
+  } finally {
+    M._free(mech)
+    freeTemplate(M, pubTpl, pubAttrs.length)
+    freeTemplate(M, prvTpl, prvAttrs.length)
+    M._free(pubHPtr)
+    M._free(prvHPtr)
+  }
+}
+
+/**
+ * Single-part sign using C_SignInit + C_Sign (not the message API).
+ * Used for HSS and XMSS which use the traditional single-part sign path.
+ * Returns the signature bytes.
+ */
+export const hsm_statefulSignBytes = (
+  M: SoftHSMModule,
+  hSession: number,
+  mechType: number,
+  privHandle: number,
+  msgBytes: Uint8Array
+): Uint8Array => {
+  const mech = buildMech(M, mechType)
+  const msgPtr = writeBytes(M, msgBytes)
+  const sigLenPtr = allocUlong(M)
+  let sigPtr = 0
+  try {
+    checkRV(M._C_SignInit(hSession, mech, privHandle), 'C_SignInit(stateful)')
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, 0, sigLenPtr), 'C_Sign(stateful,len)')
+    const sigLen = readUlong(M, sigLenPtr)
+    sigPtr = M._malloc(sigLen)
+    writeUlong(M, sigLenPtr, sigLen)
+    checkRV(M._C_Sign(hSession, msgPtr, msgBytes.length, sigPtr, sigLenPtr), 'C_Sign(stateful)')
+    return M.HEAPU8.slice(sigPtr, sigPtr + readUlong(M, sigLenPtr))
+  } finally {
+    M._free(mech)
+    M._free(msgPtr)
+    M._free(sigLenPtr)
+    if (sigPtr) M._free(sigPtr)
   }
 }

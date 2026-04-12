@@ -31,6 +31,7 @@ import type {
   AutomotiveHSMTier,
   AutomotiveComplianceMilestone,
 } from '../data/lifecycleComplianceData'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -136,7 +137,8 @@ const ConfigPanel: React.FC<{
         Regulatory Region
       </span>
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setSelectedRegion('all')}
           className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
             selectedRegion === 'all'
@@ -145,9 +147,10 @@ const ConfigPanel: React.FC<{
           }`}
         >
           All Regions
-        </button>
+        </Button>
         {REGION_KEYS.map((r) => (
-          <button
+          <Button
+            variant="ghost"
             key={r}
             onClick={() => setSelectedRegion(r)}
             className={`px-3 py-1.5 rounded-lg border text-xs font-medium transition-all ${
@@ -157,7 +160,7 @@ const ConfigPanel: React.FC<{
             }`}
           >
             {REGION_LABELS[r]}
-          </button>
+          </Button>
         ))}
       </div>
     </div>
@@ -515,7 +518,8 @@ const LifecyclePhaseDetail: React.FC<{
   onToggle: () => void
 }> = ({ phase, isExpanded, onToggle }) => (
   <div className="glass-panel overflow-hidden">
-    <button
+    <Button
+      variant="ghost"
       onClick={onToggle}
       className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
     >
@@ -543,7 +547,7 @@ const LifecyclePhaseDetail: React.FC<{
       ) : (
         <ChevronRight size={16} className="text-muted-foreground shrink-0" />
       )}
-    </button>
+    </Button>
 
     {isExpanded && (
       <div className="px-4 pb-4 space-y-4 border-t border-border pt-4 animate-fade-in">

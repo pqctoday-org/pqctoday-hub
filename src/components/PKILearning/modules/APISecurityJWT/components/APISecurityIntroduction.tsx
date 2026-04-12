@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { VULNERABILITY_TABLE, JOSE_HEADER_COMPARISONS, OAUTH_MIGRATION_ITEMS } from '../constants'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface APISecurityIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -26,7 +27,7 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: JWT/JWS/JWE Fundamentals */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -540,12 +541,13 @@ export const APISecurityIntroduction: React.FC<APISecurityIntroductionProps> = (
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
         >
           Try it in the Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Decode JWTs, sign with ML-DSA, create hybrid tokens, and analyze sizes interactively.
         </p>

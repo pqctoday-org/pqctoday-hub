@@ -8,6 +8,7 @@ import { useKeyGeneration } from '../../hooks/useKeyGeneration'
 import { useArtifactManagement } from '../../hooks/useArtifactManagement'
 import { useFileRetrieval } from '../../hooks/useFileRetrieval'
 import { useStepWizard } from '../../hooks/useStepWizard'
+import { Button } from '@/components/ui/button'
 
 // Mock shared hooks
 vi.mock('../../hooks/useKeyGeneration')
@@ -40,12 +41,12 @@ vi.mock('../../components/StepWizard', () => ({
       {/* eslint-disable-next-line security/detect-object-injection */}
       <div data-testid="current-step">{steps[currentStepIndex].id}</div>
       <div data-testid="output">{output}</div>
-      <button data-testid="execute-btn" onClick={onExecute}>
+      <Button data-testid="execute-btn" onClick={onExecute}>
         Execute
-      </button>
-      <button data-testid="next-btn" onClick={onNext}>
+      </Button>
+      <Button data-testid="next-btn" onClick={onNext}>
         Next
-      </button>
+      </Button>
     </div>
   ),
 }))

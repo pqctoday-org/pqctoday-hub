@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Shuffle, Shield, Cloud, Info, CheckCircle } from 'lucide-react'
 import { HYBRID_COMBINER_MODES } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { Button } from '@/components/ui/button'
 
 type WrapMode = 'classical' | 'pqc' | 'hybrid'
 
@@ -139,7 +140,8 @@ export const HybridKeyWrapping: React.FC = () => {
       {/* Mode toggle */}
       <div className="flex flex-wrap gap-2">
         {(['classical', 'pqc', 'hybrid'] as WrapMode[]).map((mode) => (
-          <button
+          <Button
+            variant="ghost"
             key={mode}
             onClick={() => setWrapMode(mode)}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -156,7 +158,7 @@ export const HybridKeyWrapping: React.FC = () => {
             {mode === 'classical' && <Shield size={14} />}
             {mode === 'pqc' && <CheckCircle size={14} />}
             {WRAP_MODE_LABELS[mode].label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -238,7 +240,8 @@ export const HybridKeyWrapping: React.FC = () => {
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
               {HYBRID_COMBINER_MODES.map((mode) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={mode.id}
                   onClick={() => setSelectedMode(mode.id)}
                   className={`text-left p-4 rounded-lg border transition-colors ${
@@ -257,7 +260,7 @@ export const HybridKeyWrapping: React.FC = () => {
                     <span className="text-sm font-bold text-foreground">{mode.name}</span>
                   </div>
                   <p className="text-[10px] text-muted-foreground">{mode.useCase}</p>
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -322,7 +325,8 @@ export const HybridKeyWrapping: React.FC = () => {
           {CLOUD_PROVIDERS.map((provider) => {
             const status = KMS_STATUS_LABELS[provider.pqcStatus]
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={provider.id}
                 onClick={() => setSelectedProvider(provider.id)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
@@ -337,7 +341,7 @@ export const HybridKeyWrapping: React.FC = () => {
                 >
                   {status.label}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useState, useRef, useEffect } from 'react'
 import { Copy, Check } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface CopyButtonProps {
   text: string
@@ -46,7 +47,8 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
   }
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={handleCopy}
       className={`inline-flex items-center gap-2 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors ${className}`}
       aria-label={copied ? 'Copied!' : label}
@@ -63,6 +65,6 @@ export const CopyButton = ({ text, label = 'Copy', className = '' }: CopyButtonP
           <span className="text-xs text-muted-foreground font-medium">{label}</span>
         </>
       )}
-    </button>
+    </Button>
   )
 }

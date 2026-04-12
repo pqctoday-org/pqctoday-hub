@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Lock, BarChart2, ChevronDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export function DataPrivacySection() {
   const [isDataPrivacyOpen, setIsDataPrivacyOpen] = useState(false)
@@ -14,7 +15,8 @@ export function DataPrivacySection() {
       transition={{ delay: 0.37 }}
       className="glass-panel p-4 md:p-6"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsDataPrivacyOpen(!isDataPrivacyOpen)}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
@@ -27,7 +29,7 @@ export function DataPrivacySection() {
             isDataPrivacyOpen && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
       <AnimatePresence>
         {isDataPrivacyOpen && (
           <motion.div

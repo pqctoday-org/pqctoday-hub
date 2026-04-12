@@ -2,6 +2,7 @@
 import React, { useMemo, useState } from 'react'
 import { ChevronDown, ChevronRight, AlertTriangle } from 'lucide-react'
 import type { SoftwareCategoryGap } from '../../types/MigrateTypes'
+import { Button } from '@/components/ui/button'
 
 interface MigrationGapAnalysisProps {
   gaps: SoftwareCategoryGap[]
@@ -44,7 +45,8 @@ export const MigrationGapAnalysis: React.FC<MigrationGapAnalysisProps> = ({ gaps
 
   return (
     <div className="border border-border rounded-lg overflow-hidden">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsExpanded(!isExpanded)}
         onKeyDown={(e) => {
           if (e.key === 'Escape' && isExpanded) {
@@ -67,7 +69,7 @@ export const MigrationGapAnalysis: React.FC<MigrationGapAnalysisProps> = ({ gaps
         ) : (
           <ChevronRight size={16} className="text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className="p-3 sm:p-4 pt-0 space-y-4 animate-fade-in">

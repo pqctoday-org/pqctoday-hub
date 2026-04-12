@@ -88,7 +88,8 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
           const ans = localAnswers[idx]
           const isCurrent = idx === currentIdx
           return (
-            <button
+            <Button
+              variant="ghost"
               key={s.id}
               onClick={() => setCurrentIdx(idx)}
               className={`w-9 h-9 rounded-full border-2 text-sm font-bold transition-colors flex items-center justify-center
@@ -103,7 +104,7 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
                 }`}
             >
               {ans.submitted ? (ans.correct ? '✓' : '✗') : idx + 1}
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -267,12 +268,13 @@ export const ScenarioChallenge: React.FC<ScenarioChallengeProps> = ({
             </div>
 
             <div className="flex flex-col sm:flex-row gap-2">
-              <button
+              <Button
+                variant="ghost"
                 onClick={resetAnswer}
                 className="text-xs text-muted-foreground hover:text-foreground transition-colors py-1"
               >
                 Try again
-              </button>
+              </Button>
               {currentIdx < WORKSHOP_SCENARIOS.length - 1 && (
                 <Button variant="outline" size="sm" onClick={() => setCurrentIdx((i) => i + 1)}>
                   Next Scenario →

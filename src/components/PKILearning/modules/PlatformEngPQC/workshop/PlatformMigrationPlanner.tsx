@@ -10,6 +10,7 @@ import {
 } from 'lucide-react'
 import { PIPELINE_STAGES } from '../data/pipelineStagesData'
 import { PRIORITY_COLORS } from '../data/platformEngConstants'
+import { Button } from '@/components/ui/button'
 
 // ── Migration phase data ──────────────────────────────────────────────────────
 
@@ -327,7 +328,8 @@ export const PlatformMigrationPlanner: React.FC = () => {
               className={`glass-panel overflow-hidden ${isLocked ? 'opacity-60' : ''}`}
             >
               <div className="p-4 flex items-center gap-3">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => !isLocked && togglePhaseComplete(phase.id)}
                   disabled={isLocked}
                   className="shrink-0"
@@ -340,9 +342,10 @@ export const PlatformMigrationPlanner: React.FC = () => {
                       className={isLocked ? 'text-muted-foreground' : 'text-primary'}
                     />
                   )}
-                </button>
+                </Button>
 
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => !isLocked && toggleExpand(phase.id)}
                   className="flex-1 min-w-0 text-left"
                   disabled={isLocked}
@@ -367,16 +370,20 @@ export const PlatformMigrationPlanner: React.FC = () => {
                     )}
                   </div>
                   <p className="text-xs text-muted-foreground truncate">{phase.description}</p>
-                </button>
+                </Button>
 
                 {!isLocked && (
-                  <button onClick={() => toggleExpand(phase.id)} className="shrink-0">
+                  <Button
+                    variant="ghost"
+                    onClick={() => toggleExpand(phase.id)}
+                    className="shrink-0"
+                  >
                     {isExpanded ? (
                       <ChevronUp size={16} className="text-muted-foreground" />
                     ) : (
                       <ChevronDown size={16} className="text-muted-foreground" />
                     )}
-                  </button>
+                  </Button>
                 )}
               </div>
 
@@ -451,7 +458,8 @@ export const PlatformMigrationPlanner: React.FC = () => {
 
       {/* Rollback Decision Tree */}
       <div className="glass-panel overflow-hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setShowRollback((prev) => !prev)
             setRollbackNode('start')
@@ -467,7 +475,7 @@ export const PlatformMigrationPlanner: React.FC = () => {
           ) : (
             <ChevronDown size={16} className="text-muted-foreground" />
           )}
-        </button>
+        </Button>
 
         {showRollback && (
           <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">
@@ -484,20 +492,22 @@ export const PlatformMigrationPlanner: React.FC = () => {
                       <p className="text-sm font-medium text-foreground">{currentNode.question}</p>
                       <div className="flex gap-3">
                         {currentNode.yesId && (
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => setRollbackNode(currentNode.yesId!)}
                             className="flex-1 py-2 rounded-lg text-xs font-bold border bg-status-error/10 text-status-error border-status-error/30 hover:bg-status-error/20 transition-colors"
                           >
                             Yes
-                          </button>
+                          </Button>
                         )}
                         {currentNode.noId && (
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => setRollbackNode(currentNode.noId!)}
                             className="flex-1 py-2 rounded-lg text-xs font-bold border bg-muted text-foreground border-border hover:border-primary/50 transition-colors"
                           >
                             No
-                          </button>
+                          </Button>
                         )}
                       </div>
                     </>
@@ -514,12 +524,13 @@ export const PlatformMigrationPlanner: React.FC = () => {
                       <p className="text-xs text-foreground">{currentNode.action}</p>
                     </div>
                   )}
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setRollbackNode('start')}
                     className="text-xs text-primary underline underline-offset-2 hover:opacity-80"
                   >
                     Start over
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

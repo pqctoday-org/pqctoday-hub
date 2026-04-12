@@ -9,6 +9,7 @@ import { EndorseButton } from '@/components/ui/EndorseButton'
 import { FlagButton } from '@/components/ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CheckCircle } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface CuriousStackCarouselProps {
   modules: ModuleItem[]
@@ -87,7 +88,8 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
                 resourceType="Module"
               />
             </div>
-            <button
+            <Button
+              variant="ghost"
               onClick={handleMarkReviewed}
               disabled={isCompleted}
               className={`px-3 py-1.5 rounded-md font-medium text-sm transition-colors flex items-center gap-2 ${
@@ -98,7 +100,7 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
             >
               <CheckCircle size={16} />
               {isCompleted ? 'Reviewed ✓' : 'Mark as Reviewed'}
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -106,7 +108,8 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
       <CuriousSummaryBanner moduleId={currentModule.id} isFullPage={true} />
 
       <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-4 border-t border-border mt-2 px-2">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={handlePrev}
           disabled={!hasPrev}
@@ -118,38 +121,41 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
         >
           <ArrowLeft size={16} />
           Previous
-        </button>
+        </Button>
 
         {hasNext ? (
-          <button
+          <Button
+            variant="gradient"
             type="button"
             onClick={handleNext}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-primary text-black hover:bg-primary/90 shadow-sm cursor-pointer"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Next
             <ArrowRight size={16} />
-          </button>
+          </Button>
         ) : onNextStack ? (
-          <button
+          <Button
+            variant="gradient"
             type="button"
             onClick={() => {
               updateModuleProgress(currentModule.id, { status: 'completed' })
               onNextStack()
             }}
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-accent text-accent-foreground hover:bg-accent/90 shadow-sm cursor-pointer"
+            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
             Next Stack
             <ArrowRight size={16} />
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             disabled
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-muted text-muted-foreground/40 cursor-not-allowed"
           >
             Next
             <ArrowRight size={16} />
-          </button>
+          </Button>
         )}
       </div>
 
@@ -159,12 +165,13 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
           <p className="text-muted-foreground mb-4">
             Dive deeper into the details with an interactive beginner workshop for this module.
           </p>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => navigate(`/learn/${currentModule.id}?diveDeeper=true&tab=workshop`)}
             className="px-6 py-2.5 bg-background border border-border hover:border-primary hover:text-primary transition-all rounded-lg font-medium shadow-sm"
           >
             Dive Deeper
-          </button>
+          </Button>
         </div>
       )}
     </div>

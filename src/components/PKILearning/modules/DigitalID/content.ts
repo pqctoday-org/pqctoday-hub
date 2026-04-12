@@ -9,9 +9,25 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'digital-id',
-  lastReviewed: '2026-03-28',
+  version: '1.1.0',
+  lastReviewed: '2026-04-12',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
+  standards: [
+    // Core digital identity standards
+    getStandard('eIDAS-2-Regulation'),
+    getStandard('EUDI-Wallet-ARF'),
+    getStandard('ISO-18013-5-mDL'),
+    getStandard('RFC-9901-SD-JWT-VC'),
+    getStandard('OpenID4VCI-Spec'),
+    getStandard('OpenID4VP-Spec'),
+    getStandard('IETF-Token-Status-List'),
+    getStandard('CSC-API-v2-Spec'),
+    getStandard('ETSI-EN-319-411'),
+    // Post-quantum migration targets
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+  ],
 
   algorithms: [
     getAlgorithm('Ed25519'),
@@ -22,7 +38,11 @@ export const content: ModuleContent = {
   ],
 
   deadlines: [
-    // No regulatory deadlines detected — add manually if needed
+    {
+      label: 'EUDI Wallet mandatory availability (≥80% of citizens per member state)',
+      year: 2026,
+      source: 'eIDAS 2.0 Regulation (EU 2024/1183) Art. 5a',
+    },
   ],
 
   narratives: {

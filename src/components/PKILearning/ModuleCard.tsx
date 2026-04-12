@@ -8,9 +8,11 @@ import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
+import { Button } from '@/components/ui/button'
 
 export interface ModuleItem {
   id: string
+  lm_id?: string
   title: string
   description: string
   duration: string
@@ -133,7 +135,8 @@ export const ModuleCard = ({
         </div>
         <div className="flex items-center gap-2 flex-wrap justify-end">
           {/* Bookmark toggle */}
-          <button
+          <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleMyLearnModule(module.id)
@@ -146,7 +149,7 @@ export const ModuleCard = ({
             aria-label={isBookmarked ? 'Remove from My Learn' : 'Add to My Learn'}
           >
             {isBookmarked ? <CheckSquare size={16} /> : <Square size={16} />}
-          </button>
+          </Button>
           {isRelevant && (
             <span className="text-[10px] font-mono uppercase tracking-widest text-primary border border-primary/30 rounded px-1.5 py-0.5">
               Relevant

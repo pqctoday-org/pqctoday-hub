@@ -127,7 +127,8 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
       {/* Tab Selector */}
       <div className="glass-panel p-1 flex gap-1">
         {(Object.keys(TAB_LABELS) as DirectoryTab[]).map((tab) => (
-          <button
+          <Button
+            variant="ghost"
             key={tab}
             onClick={() => {
               setActiveTab(tab)
@@ -140,7 +141,7 @@ export const DirectoryServicesAnalyzer: React.FC = () => {
             }`}
           >
             {TAB_LABELS[tab]}
-          </button>
+          </Button>
         ))}
       </div>
 

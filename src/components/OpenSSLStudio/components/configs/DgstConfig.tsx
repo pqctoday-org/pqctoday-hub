@@ -3,6 +3,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface DgstConfigProps {
   signAction: 'sign' | 'verify'
@@ -48,7 +49,8 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
 
       {/* Test Helper */}
       <div className="flex justify-end">
-        <button
+        <Button
+          variant="ghost"
           onClick={() =>
             files.find((f) => f.name === 'data.txt')
               ? null
@@ -63,13 +65,14 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
           className="text-[10px] text-primary hover:underline"
         >
           Create Test Data File
-        </button>
+        </Button>
       </div>
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setSignAction('sign')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -79,8 +82,9 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             )}
           >
             Sign
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setSignAction('verify')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -90,7 +94,7 @@ export const DgstConfig: React.FC<DgstConfigProps> = ({
             )}
           >
             Verify
-          </button>
+          </Button>
         </div>
       </div>
 

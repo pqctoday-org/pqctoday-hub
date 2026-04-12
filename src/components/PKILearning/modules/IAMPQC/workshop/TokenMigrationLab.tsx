@@ -1,6 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useRef } from 'react'
-import { Play, AlertTriangle, CheckCircle2, TrendingUp, Loader2 } from 'lucide-react'
+import {
+  Play,
+  AlertTriangle,
+  CheckCircle2,
+  TrendingUp,
+  Loader2,
+  ShieldCheck,
+  Info,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { SIGNATURE_SIZE_DATA, type SigningAlgorithm } from '../data/iamConstants'
@@ -15,6 +23,9 @@ import {
   hsm_sign,
   hsm_ecdsaSign,
   hsm_rsaSign,
+  hsm_verify,
+  hsm_ecdsaVerify,
+  hsm_rsaVerify,
   CKM_SHA256_RSA_PKCS,
   CKM_ECDSA_SHA256,
 } from '@/wasm/softhsm'
@@ -143,6 +154,58 @@ const ALGORITHM_NOTES: Record<SigningAlgorithm, string> = {
     'FIPS 204 NIST Level 5. For highest security requirements (government, NSS). Largest signature — evaluate HTTP/2 header compression and CDN configuration before deploying.',
 }
 
+/** JWKS endpoint response example for each algorithm */
+const JWKS_EXAMPLES: Record<SigningAlgorithm, string> = {
+  RS256: `{
+  "keys": [{
+    "kty": "RSA",
+    "alg": "RS256",
+    "kid": "rsa-2048-key-001",
+    "n": "sLjA...long modulus...",
+    "e": "AQAB",
+    "use": "sig"
+  }]
+}`,
+  ES256: `{
+  "keys": [{
+    "kty": "EC",
+    "alg": "ES256",
+    "kid": "p256-key-001",
+    "crv": "P-256",
+    "x": "f83OJ3D2...",
+    "y": "x_FEzRu9...",
+    "use": "sig"
+  }]
+}`,
+  'ML-DSA-44': `{
+  "keys": [{
+    "kty": "AKP",
+    "alg": "ML-DSA-44",
+    "kid": "ml-dsa-44-key-001",
+    "pub": "<2592-byte ML-DSA-44 public key, base64url>",
+    "use": "sig"
+  }]
+}`,
+  'ML-DSA-65': `{
+  "keys": [{
+    "kty": "AKP",
+    "alg": "ML-DSA-65",
+    "kid": "ml-dsa-65-key-001",
+    "pub": "<3872-byte ML-DSA-65 public key, base64url>",
+    "use": "sig"
+  }]
+}`,
+  'ML-DSA-87': `{
+  "keys": [{
+    "kty": "AKP",
+    "alg": "ML-DSA-87",
+    "kid": "ml-dsa-87-key-001",
+    "pub": "<4864-byte ML-DSA-87 public key, base64url>",
+    "use": "sig"
+  }]
+}`,
+}
+
 const LIVE_OPERATIONS = [
   'C_GenerateKeyPair',
   'C_MessageSignInit',
@@ -150,6 +213,11 @@ const LIVE_OPERATIONS = [
   'C_MessageSignFinal',
   'C_SignInit',
   'C_Sign',
+  'C_MessageVerifyInit',
+  'C_VerifyMessage',
+  'C_MessageVerifyFinal',
+  'C_VerifyInit',
+  'C_Verify',
 ]
 
 /** Convert byte array to hex */
@@ -174,6 +242,10 @@ export const TokenMigrationLab: React.FC = () => {
   const [signing, setSigning] = useState(false)
   const [liveSignatureHex, setLiveSignatureHex] = useState<string | null>(null)
   const [liveSignatureBytes, setLiveSignatureBytes] = useState<number | null>(null)
+  const [verifying, setVerifying] = useState(false)
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  // Stores raw signature bytes from live signing for subsequent live verification
+  const liveSigBytesRef = useRef<Uint8Array | null>(null)
 
   // Live HSM state
   const hsm = useHSM()
@@ -189,6 +261,8 @@ export const TokenMigrationLab: React.FC = () => {
     setSigned(false)
     setLiveSignatureHex(null)
     setLiveSignatureBytes(null)
+    setVerifyResult(null)
+    liveSigBytesRef.current = null
   }
 
   /** Generate or retrieve cached key pair for the selected algorithm */
@@ -258,6 +332,8 @@ export const TokenMigrationLab: React.FC = () => {
     setSigned(false)
     setLiveSignatureHex(null)
     setLiveSignatureBytes(null)
+    setVerifyResult(null)
+    liveSigBytesRef.current = null
 
     if (isLive) {
       try {
@@ -281,6 +357,7 @@ export const TokenMigrationLab: React.FC = () => {
           sig = hsm_sign(M, hSession, privHandle, signingInput)
         }
 
+        liveSigBytesRef.current = sig
         setLiveSignatureHex(toHex(sig))
         setLiveSignatureBytes(sig.length)
         setSigned(true)
@@ -298,6 +375,38 @@ export const TokenMigrationLab: React.FC = () => {
     }
     setSigning(false)
   }, [selectedAlgorithm, algoData, isLive, hsm, getOrGenerateKey])
+
+  const handleVerify = useCallback(async () => {
+    if (!isLive || !liveSigBytesRef.current) return
+    setVerifying(true)
+    setVerifyResult(null)
+
+    try {
+      const keys = keyCacheRef.current[selectedAlgorithm]
+      if (!keys) throw new Error('No key pair cached — sign first')
+
+      const M = hsm.moduleRef.current as unknown as SoftHSMModule
+      const hSession = hsm.hSessionRef.current
+      const { pubHandle } = keys
+      const signingInput = `${base64url(JWT_HEADERS[selectedAlgorithm])}.${base64url(JWT_PAYLOAD)}`
+      const sig = liveSigBytesRef.current
+
+      let ok: boolean
+      if (selectedAlgorithm === 'RS256') {
+        ok = hsm_rsaVerify(M, hSession, pubHandle, signingInput, sig, CKM_SHA256_RSA_PKCS)
+      } else if (selectedAlgorithm === 'ES256') {
+        ok = hsm_ecdsaVerify(M, hSession, pubHandle, signingInput, sig, CKM_ECDSA_SHA256)
+      } else {
+        ok = hsm_verify(M, hSession, pubHandle, signingInput, sig)
+      }
+
+      setVerifyResult(ok)
+    } catch (err) {
+      console.error('[TokenMigrationLab] live verify error:', err)
+      setVerifyResult(false)
+    }
+    setVerifying(false)
+  }, [selectedAlgorithm, isLive, hsm])
 
   const displayedSigBytes = liveSignatureBytes ?? algoData.bytes
   const displayedSigHex = liveSignatureHex ?? (signed ? MOCK_SIGNATURES[selectedAlgorithm] : null)
@@ -544,13 +653,198 @@ export const TokenMigrationLab: React.FC = () => {
         </div>
       </div>
 
+      {/* CBOR/COSE Alternative Encoding */}
+      <div className="glass-panel p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <Info size={16} className="text-accent" aria-hidden="true" />
+          <h4 className="text-sm font-bold text-foreground">
+            Alternative: CBOR Token Encoding (CWT / COSE)
+          </h4>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          JWT uses text-based JSON encoding. For constrained environments (IoT, mobile credentials,
+          embedded systems), <strong className="text-foreground">CBOR Web Tokens (CWT)</strong> with{' '}
+          <strong className="text-foreground">COSE signatures</strong> offer a binary-encoded
+          alternative that reduces overhead — important when ML-DSA signatures already add
+          kilobytes.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-muted/40 rounded-lg p-3 border border-border">
+            <div className="text-[10px] font-bold text-primary uppercase tracking-wide mb-1">
+              JWT / JOSE
+            </div>
+            <ul className="text-[10px] text-muted-foreground space-y-0.5">
+              <li>&bull; Text (base64url JSON)</li>
+              <li>&bull; Wide browser/library support</li>
+              <li>&bull; draft-ietf-jose-pqc-algorithms</li>
+              <li>&bull; IETF standardization in progress</li>
+            </ul>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-3 border border-border">
+            <div className="text-[10px] font-bold text-accent uppercase tracking-wide mb-1">
+              CWT / COSE
+            </div>
+            <ul className="text-[10px] text-muted-foreground space-y-0.5">
+              <li>&bull; Binary (CBOR-encoded)</li>
+              <li>&bull; Smaller envelope overhead</li>
+              <li>&bull; draft-ietf-cose-dilithium</li>
+              <li>&bull; Used in ISO 18013-5 mDL</li>
+            </ul>
+          </div>
+          <div className="bg-muted/40 rounded-lg p-3 border border-border">
+            <div className="text-[10px] font-bold text-secondary uppercase tracking-wide mb-1">
+              When to choose
+            </div>
+            <ul className="text-[10px] text-muted-foreground space-y-0.5">
+              <li>&bull; IoT / embedded: CWT/COSE</li>
+              <li>&bull; Mobile credentials: CWT/COSE</li>
+              <li>&bull; Enterprise SSO / web: JWT</li>
+              <li>&bull; Both: same ML-DSA signature</li>
+            </ul>
+          </div>
+        </div>
+        <p className="text-[10px] text-muted-foreground mt-3">
+          Both JWT and CWT use the same underlying ML-DSA (FIPS 204) signature — only the token
+          envelope encoding differs. See{' '}
+          <span className="text-primary">draft-ietf-cose-dilithium</span> and{' '}
+          <span className="text-primary">RFC 9052</span> in the Library for specification details.
+        </p>
+      </div>
+
+      {/* Verification Flow — Relying Party Perspective */}
+      <div className="glass-panel p-5">
+        <div className="flex items-center gap-2 mb-3">
+          <ShieldCheck size={16} className="text-primary" aria-hidden="true" />
+          <h4 className="text-sm font-bold text-foreground">
+            Verification Flow — Relying Party Perspective
+          </h4>
+        </div>
+        <p className="text-xs text-muted-foreground mb-4">
+          After the IdP signs a JWT, the relying party must verify it. The verification chain: fetch
+          JWKS endpoint → match <code className="text-primary">kid</code> → verify signature with
+          the public key.{' '}
+          {isLive
+            ? 'With Live WASM enabled, click Verify to execute a real PKCS#11 v3.2 verification against the signed token above.'
+            : 'Enable Live WASM and sign a token first to run live verification.'}
+        </p>
+
+        {/* JWKS endpoint example */}
+        <div className="mb-4">
+          <div className="text-xs font-bold text-foreground mb-1">
+            JWKS Endpoint Response{' '}
+            <span className="text-muted-foreground font-normal">(GET /.well-known/jwks.json)</span>
+          </div>
+          <pre className="text-[10px] font-mono text-foreground bg-muted/50 rounded p-3 border border-border overflow-x-auto whitespace-pre">
+            {JWKS_EXAMPLES[selectedAlgorithm]}
+          </pre>
+          {isQuantumSafe && (
+            <p className="text-[10px] text-muted-foreground mt-1">
+              ML-DSA public keys use <code className="text-primary">kty: &quot;AKP&quot;</code>{' '}
+              (Algorithm Key Pair) per draft-ietf-jose-pqc-algorithms. The{' '}
+              <code className="text-primary">pub</code> field holds the base64url-encoded public
+              key.
+            </p>
+          )}
+        </div>
+
+        {/* Three-step verification flow */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 mb-4">
+          {(
+            [
+              {
+                step: '1',
+                label: 'Fetch JWKS',
+                detail:
+                  'GET /.well-known/jwks.json — resolve public key matching kid in JWT header',
+              },
+              {
+                step: '2',
+                label: 'Reconstruct input',
+                detail:
+                  'base64url(header) + "." + base64url(payload) — identical to what was signed',
+              },
+              {
+                step: '3',
+                label: selectedAlgorithm.startsWith('ML-DSA')
+                  ? 'C_MessageVerifyInit / C_VerifyMessage'
+                  : 'C_VerifyInit / C_Verify',
+                detail: `PKCS#11 v3.2 verify with ${selectedAlgorithm} public key — returns CKR_OK or CKR_SIGNATURE_INVALID`,
+              },
+            ] as const
+          ).map(({ step, label, detail }) => (
+            <div key={step} className="bg-muted/40 rounded-lg p-3 border border-border">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-[10px] font-bold text-primary bg-primary/10 rounded-full w-5 h-5 flex items-center justify-center shrink-0">
+                  {step}
+                </span>
+                <span className="text-[10px] font-bold text-foreground">{label}</span>
+              </div>
+              <p className="text-[10px] text-muted-foreground">{detail}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Live verify button + result */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+          <Button
+            onClick={handleVerify}
+            disabled={!isLive || !signed || !liveSignatureHex || verifying}
+            variant="outline"
+            className="flex items-center gap-2"
+          >
+            {verifying ? (
+              <>
+                <Loader2 size={14} className="animate-spin" aria-hidden="true" />
+                Verifying...
+              </>
+            ) : (
+              <>
+                <ShieldCheck size={14} aria-hidden="true" />
+                Verify Signature (Live WASM)
+              </>
+            )}
+          </Button>
+
+          {verifyResult !== null && (
+            <div
+              className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-bold ${
+                verifyResult
+                  ? 'bg-status-success/10 border-status-success/30 text-status-success'
+                  : 'bg-status-error/10 border-status-error/30 text-status-error'
+              }`}
+            >
+              {verifyResult ? (
+                <>
+                  <CheckCircle2 size={14} aria-hidden="true" />
+                  Signature valid — CKR_OK
+                </>
+              ) : (
+                <>
+                  <AlertTriangle size={14} aria-hidden="true" />
+                  Signature invalid — CKR_SIGNATURE_INVALID
+                </>
+              )}
+            </div>
+          )}
+
+          {!isLive && (
+            <p className="text-[10px] text-muted-foreground">
+              Enable Live WASM above, then sign a token to unlock verification.
+            </p>
+          )}
+          {isLive && !signed && (
+            <p className="text-[10px] text-muted-foreground">Sign a token first to verify it.</p>
+          )}
+        </div>
+      </div>
+
       {/* Educational note */}
       <div className="bg-muted/50 rounded-lg p-4 border border-border">
         <p className="text-xs text-muted-foreground">
           <strong>Note:</strong>{' '}
           {isLive
-            ? 'All signing operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Real key pairs are generated and cached per algorithm. Signature sizes match the actual FIPS 204 / PKCS#1 / ECDSA specifications.'
-            : 'In simulation mode, signature data is representative. Disable Simulation to execute real PKCS#11 v3.2 signing operations across all five algorithms.'}{' '}
+            ? 'All signing and verification operations execute in SoftHSM3 WASM — a reference PKCS#11 v3.2 implementation. Real key pairs are generated and cached per algorithm. Signature sizes match the actual FIPS 204 / PKCS#1 / ECDSA specifications.'
+            : 'In simulation mode, signature data is representative. Disable Simulation to execute real PKCS#11 v3.2 signing and verification operations across all five algorithms.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>
@@ -558,7 +852,7 @@ export const TokenMigrationLab: React.FC = () => {
       <KatValidationPanel
         specs={IAM_KAT_SPECS}
         label="IAM PQC Known Answer Tests"
-        authorityNote="OpenID Connect · SAML 2.0 · FIPS 204 · FIPS 198-1"
+        authorityNote="OpenID Connect · SAML 2.0 · FIPS 204 · FIPS 198-1 · NIST SP 800-132"
       />
 
       {hsm.isReady && (

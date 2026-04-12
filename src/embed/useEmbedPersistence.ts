@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import { useEffect, useRef, useMemo } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useEmbed } from './EmbedProvider'
 import { useEmbedAuth } from './useEmbedAuth'
-import { ApiPersistence, PostMessagePersistence, NoPersistence } from './EmbedPersistenceService'
+import { createPersistenceService, NoPersistence } from './EmbedPersistenceService'
 import type { IEmbedPersistenceService } from './EmbedPersistenceService'
 import { UnifiedStorageService } from '../services/storage/UnifiedStorageService'
 
@@ -30,21 +30,70 @@ const EVENT_BATCH_MS = 30000
 
 export function useEmbedPersistence() {
   const embedConfig = useEmbed()
-  const { persistMode, userId, apiBase, allowedOrigins } = embedConfig
-  const { isAuthenticated, getToken, triggerAuthExpired } = useEmbedAuth()
+  const { persistMode, userId, allowedOrigins } = embedConfig
+  const { isAuthenticated } = useEmbedAuth()
 
-  const service = useMemo<IEmbedPersistenceService>(() => {
-    if (persistMode === 'api' && apiBase) {
-      return new ApiPersistence(apiBase, getToken, triggerAuthExpired)
-    } else if (persistMode === 'postMessage') {
-      return new PostMessagePersistence(allowedOrigins)
+  // Service starts as NoPersistence; resolves to real adapter asynchronously.
+  // For 'postMessage', resolution is near-instant (Promise.resolve).
+  // For 'capacitor' (Step 2), resolution may involve dynamic import().
+  const [service, setService] = useState<IEmbedPersistenceService>(new NoPersistence())
+
+  useEffect(() => {
+    let cancelled = false
+    createPersistenceService(persistMode, allowedOrigins).then((svc) => {
+      if (!cancelled) setService(svc)
+    })
+    return () => {
+      cancelled = true
     }
-    return new NoPersistence()
-  }, [persistMode, apiBase, allowedOrigins, getToken, triggerAuthExpired])
+  }, [persistMode, allowedOrigins])
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const eventBatchRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const pendingEventsRef = useRef<unknown[]>([])
+
+  // Stable refs for flushNow — avoids stale closures
+  const serviceRef = useRef<IEmbedPersistenceService>(service)
+  const userIdRef = useRef(userId)
+  useEffect(() => {
+    serviceRef.current = service
+    userIdRef.current = userId
+  }, [service, userId])
+
+  // ---------------------------------------------------------------------------
+  // flushNow — immediate state + event flush, bypassing debounce/batch timers.
+  // Callable from React components or from non-React code via the
+  // 'pqc:flush-state' custom event (e.g., native bridge on app background).
+  // ---------------------------------------------------------------------------
+  const flushNow = useCallback(() => {
+    // Flush pending state save
+    if (debounceRef.current) {
+      clearTimeout(debounceRef.current)
+      debounceRef.current = null
+    }
+    const snapshot = UnifiedStorageService.exportSnapshot('manual')
+    serviceRef.current.saveSnapshot(userIdRef.current, snapshot).catch((err) => {
+      console.warn('Embed flush save failed:', err)
+    })
+
+    // Flush pending events
+    if (eventBatchRef.current) {
+      clearTimeout(eventBatchRef.current)
+      eventBatchRef.current = null
+    }
+    if (pendingEventsRef.current.length > 0) {
+      const events = [...pendingEventsRef.current]
+      pendingEventsRef.current = []
+      serviceRef.current.sendEvents(userIdRef.current, events).catch(console.warn)
+    }
+  }, [])
+
+  // Allow non-React code (e.g., native bridge) to trigger flush via custom event
+  useEffect(() => {
+    const handler = () => flushNow()
+    window.addEventListener('pqc:flush-state', handler)
+    return () => window.removeEventListener('pqc:flush-state', handler)
+  }, [flushNow])
 
   // 1. Initial Load (Hydration)
   useEffect(() => {
@@ -121,6 +170,9 @@ export function useEmbedPersistence() {
     }
   }, [isAuthenticated, persistMode, service, userId])
 
+  // 2b. Capacitor app lifecycle — flush is triggered by nativeBridge.ts
+  // dispatching 'pqc:flush-state' on appStateChange (handled in effect 2a above).
+
   // 3. Event forwarding (History Store)
   useEffect(() => {
     if (!isAuthenticated || persistMode === 'none') return
@@ -144,4 +196,6 @@ export function useEmbedPersistence() {
 
     return () => unsub()
   }, [isAuthenticated, persistMode, service, userId])
+
+  return { flushNow }
 }

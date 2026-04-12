@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Building2, Globe, Zap } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface WebGatewayExercisesProps {
   onNavigateToWorkshop: () => void
@@ -60,7 +61,7 @@ export const WebGatewayExercises: React.FC<WebGatewayExercisesProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Practical Exercises</h2>
         <p className="text-sm text-muted-foreground">
@@ -102,13 +103,14 @@ export const WebGatewayExercises: React.FC<WebGatewayExercisesProps> = ({
             <div className="flex flex-wrap gap-2">
               <span className="text-xs text-muted-foreground">Workshop tools:</span>
               {scenario.workshopSteps.map((step) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={step}
                   onClick={onNavigateToWorkshop}
                   className="text-xs px-2 py-1 bg-primary/10 text-primary rounded hover:bg-primary/20 transition-colors"
                 >
                   {step}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

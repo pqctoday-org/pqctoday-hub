@@ -18,6 +18,7 @@ import {
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface HybridCryptoIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -27,7 +28,7 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Why Hybrid? */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -608,12 +609,13 @@ export const HybridCryptoIntroduction: React.FC<HybridCryptoIntroductionProps> =
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
         >
           Start Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Generate hybrid keys, run KEM operations, and inspect{' '}
           <InlineTooltip term="Composite Certificate">composite certificates</InlineTooltip>.

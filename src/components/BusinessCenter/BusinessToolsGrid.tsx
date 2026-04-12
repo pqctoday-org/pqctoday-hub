@@ -6,6 +6,7 @@ import { PageHeader } from '../common/PageHeader'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { BUSINESS_TOOLS, BUSINESS_CATEGORIES } from './businessToolsRegistry'
+import { Button } from '@/components/ui/button'
 
 export const BusinessToolsGrid = () => {
   const [searchQuery, setSearchQuery] = useState('')
@@ -62,7 +63,8 @@ export const BusinessToolsGrid = () => {
 
         {/* Category filter pills */}
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setActiveCategory(null)}
             aria-pressed={activeCategory === null}
             className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
@@ -77,12 +79,13 @@ export const BusinessToolsGrid = () => {
             >
               {BUSINESS_TOOLS.length}
             </span>
-          </button>
+          </Button>
           {BUSINESS_CATEGORIES.map((cat) => {
             const count = BUSINESS_TOOLS.filter((t) => t.category === cat).length
             const isActive = activeCategory === cat
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={cat}
                 onClick={() => setActiveCategory(isActive ? null : cat)}
                 aria-pressed={isActive}
@@ -98,7 +101,7 @@ export const BusinessToolsGrid = () => {
                 >
                   {count}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>

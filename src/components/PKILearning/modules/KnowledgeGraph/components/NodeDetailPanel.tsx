@@ -95,13 +95,14 @@ export function NodeDetailPanel({
       {node.description && <p className="text-xs text-muted-foreground mb-3">{node.description}</p>}
 
       {deepLink && (
-        <button
+        <Button
+          variant="ghost"
           onClick={() => navigate(deepLink)}
           className="inline-flex items-center gap-1 text-xs text-primary hover:underline mb-3"
         >
           <ExternalLink className="w-3 h-3" />
           View in app
-        </button>
+        </Button>
       )}
 
       <div className="border-t border-border pt-2 space-y-3">
@@ -123,14 +124,15 @@ export function NodeDetailPanel({
                   const targetConfig = ENTITY_CONFIG[target.entityType as EntityType]
                   const TargetIcon = targetConfig?.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={edge.id}
                       className="flex items-center gap-1.5 w-full text-left px-2 py-1.5 rounded hover:bg-muted/50 transition-colors"
                       onClick={() => onNavigateToNode(edge.target)}
                     >
                       {TargetIcon && <TargetIcon className={`w-3 h-3 ${targetConfig.text}`} />}
                       <span className="text-xs text-foreground truncate">{target.label}</span>
-                    </button>
+                    </Button>
                   )
                 })}
                 {edgeList.length > 5 && (
@@ -159,14 +161,15 @@ export function NodeDetailPanel({
                   const sourceConfig = ENTITY_CONFIG[source.entityType as EntityType]
                   const SourceIcon = sourceConfig?.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={edge.id}
                       className="flex items-center gap-1.5 w-full text-left px-2 py-1.5 rounded hover:bg-muted/50 transition-colors"
                       onClick={() => onNavigateToNode(edge.source)}
                     >
                       {SourceIcon && <SourceIcon className={`w-3 h-3 ${sourceConfig.text}`} />}
                       <span className="text-xs text-foreground truncate">{source.label}</span>
-                    </button>
+                    </Button>
                   )
                 })}
                 {edgeList.length > 5 && (

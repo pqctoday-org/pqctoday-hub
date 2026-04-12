@@ -231,9 +231,10 @@ export const MerkleTreeBuilder: React.FC<MerkleTreeBuilderProps> = ({ onTreeBuil
       {/* Build controls */}
       <div className="flex flex-wrap items-center gap-4">
         <Button
+          variant="gradient"
           onClick={handleBuildTree}
           disabled={certs.length < 2 || isBuilding}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
+          className="flex items-center gap-2 font-bold text-sm"
         >
           {isBuilding ? (
             <>

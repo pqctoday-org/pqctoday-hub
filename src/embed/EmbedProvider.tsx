@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable react-refresh/only-export-components */
-import React, { createContext, useContext, ReactNode } from 'react'
+import { createContext, useContext } from 'react'
+import type { ReactNode } from 'react'
 import { getEmbedState } from './embedContext'
 import type { EmbedState, EmbedConfig } from './embedContext'
 
@@ -39,9 +40,9 @@ export function useEmbed(): EmbedConfig {
 }
 
 /**
- * Convenience check.
+ * Convenience check. Returns false when called outside EmbedProvider (standard mode).
  */
 export function useIsEmbedded(): boolean {
-  const state = useEmbedState()
-  return state.isEmbedded
+  const context = useContext(EmbedContext)
+  return context?.isEmbedded ?? false
 }

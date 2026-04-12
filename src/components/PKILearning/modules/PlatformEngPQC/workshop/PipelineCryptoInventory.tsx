@@ -11,6 +11,7 @@ import {
   type HNDLExposure,
   type MigrationPriority,
 } from '../data/platformEngConstants'
+import { Button } from '@/components/ui/button'
 
 type HNDLFilter = 'All' | HNDLExposure
 type PriorityFilter = 'All' | MigrationPriority
@@ -126,7 +127,8 @@ export const PipelineCryptoInventory: React.FC = () => {
           return (
             <div key={stage.id} className="glass-panel overflow-hidden">
               {/* Stage Header */}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleStage(stage.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >
@@ -159,7 +161,7 @@ export const PipelineCryptoInventory: React.FC = () => {
                     <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </div>
-              </button>
+              </Button>
 
               {/* Stage Expanded */}
               {isExpanded && (
@@ -185,7 +187,8 @@ export const PipelineCryptoInventory: React.FC = () => {
                         key={asset.id}
                         className="bg-muted/30 rounded-lg border border-border overflow-hidden"
                       >
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => toggleAsset(asset.id)}
                           className="w-full text-left p-3 flex items-center gap-3"
                         >
@@ -223,7 +226,7 @@ export const PipelineCryptoInventory: React.FC = () => {
                           ) : (
                             <ChevronDown size={14} className="text-muted-foreground shrink-0" />
                           )}
-                        </button>
+                        </Button>
 
                         {isAssetExpanded && (
                           <div className="px-3 pb-3 border-t border-border pt-3 space-y-2 animate-fade-in">

@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, AlertTriangle, BookOpen, Rocket } from 'lucide-react'
+import { Trash2, AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { ARCH_GUIDE_DATA } from './data'
+import { ARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
@@ -38,36 +39,112 @@ const PARTS = [
       'Build an architecture action plan from crypto mapping to reference architecture delivery.',
     icon: Rocket,
   },
+  {
+    id: 'self-assessment',
+    title: 'Step 4: Architecture Readiness',
+    description:
+      'Score your architecture exposure across nine criteria to identify which systems need crypto-agility work first.',
+    icon: ClipboardCheck,
+  },
 ]
 
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: HSM Root of Trust Migration',
-      prompt:
-        'Your PKI hierarchy uses an RSA-4096 root CA on a FIPS 140-2 HSM. The HSM vendor announces ML-DSA support for Q3 2027. Design the migration path: How do you maintain chain of trust during the transition? What hybrid certificate strategy would you use? How do you handle cross-signed certificates?',
-    },
-    {
-      title: 'Scenario: Microservice Mesh PQC Rollout',
-      prompt:
-        'Your architecture has 200 microservices using mutual TLS with ECDSA certificates. You need to migrate to hybrid TLS without service disruption. Design the phased rollout: which services first, how to handle mixed environments, and what monitoring to add.',
-    },
-    {
-      title: 'Scenario: IoT Certificate Size Constraint',
-      prompt:
-        'Your IoT architecture uses 3-level cert chains on devices with 16KB TLS buffer limits. ML-DSA-65 certificates would create 12KB chains. Evaluate alternatives: Merkle Tree Certificates, SLH-DSA parameter trade-offs, or redesigning the chain depth. Use the workshop tools to document your analysis.',
-    },
-  ]
+function SelfAssessmentStep() {
+  const items = ARCH_GUIDE_DATA.selfAssessment
+  const maxScore = items.reduce((sum, item) => sum + item.weight, 0)
+  const [checked, setChecked] = useState<Record<string, boolean>>({})
+
+  const score = items.reduce((sum, item) => sum + (checked[item.id] ? item.weight : 0), 0)
+  const pct = Math.round((score / maxScore) * 100)
+
+  const band =
+    pct >= 70
+      ? { label: 'High Exposure', color: 'text-status-error' }
+      : pct >= 40
+        ? { label: 'Moderate Exposure', color: 'text-status-warning' }
+        : { label: 'Low Exposure', color: 'text-status-success' }
+
+  const toggle = (id: string) => setChecked((prev) => ({ ...prev, [id]: !prev[id] }))
 
   return (
-    <div className="max-w-4xl mx-auto space-y-6">
+    <div className="space-y-6">
+      <div className="glass-panel p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-foreground">
+          Architecture Crypto Exposure Checklist
+        </h3>
+        <p className="text-sm text-muted-foreground">
+          Check every statement that applies to your architecture. Your score reflects how much
+          rework PQC migration will require across your systems.
+        </p>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={!!checked[item.id]}
+                onChange={() => toggle(item.id)}
+              />
+              <div
+                aria-hidden="true"
+                className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
+                  ${checked[item.id] ? 'border-primary bg-primary' : 'border-border bg-background group-hover:border-primary/60'}`}
+              >
+                {checked[item.id] && (
+                  <svg className="w-3 h-3 text-background" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M2 6l3 3 5-5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <span className="text-sm text-foreground leading-snug">{item.label}</span>
+              <span className="ml-auto text-xs text-muted-foreground flex-shrink-0">
+                +{item.weight}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="glass-panel p-6 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-foreground">Your exposure score</span>
+          <span className={`text-lg font-bold ${band.color}`}>
+            {score}/{maxScore} — {band.label}
+          </span>
+        </div>
+        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${pct >= 70 ? 'bg-status-error' : pct >= 40 ? 'bg-status-warning' : 'bg-status-success'}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {pct >= 70
+            ? 'High architectural exposure. Prioritise adding a cryptographic abstraction layer and auditing your PKI and KMS designs now.'
+            : pct >= 40
+              ? 'Moderate exposure. Focus on identifying which system boundaries carry the most cryptographic coupling.'
+              : 'Lower direct exposure. Review your dependency graph for transitive crypto assumptions and document current choices as ADRs.'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function ExercisesTab() {
+  return (
+    <div className="w-full space-y-6">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-foreground mb-2">Architecture Exercises</h2>
         <p className="text-sm text-muted-foreground mb-6">
           Apply what you learned in the workshop to these architecture-focused scenarios.
         </p>
         <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
+          {ARCH_QUANTUM_EXERCISES.map((exercise, idx) => (
             <div key={idx} className="glass-panel p-5 space-y-3">
               <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
@@ -195,18 +272,19 @@ export const ArchQuantumImpactModule: React.FC = () => {
             </div>
 
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
+              <div className="flex justify-evenly relative min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                           ${
                             idx === currentPart
                               ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -215,12 +293,12 @@ export const ArchQuantumImpactModule: React.FC = () => {
                                 : 'border-border text-muted-foreground'
                           }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </div>
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -244,6 +322,7 @@ export const ArchQuantumImpactModule: React.FC = () => {
               {currentPart === 2 && (
                 <RoleHowToAct key={`how-${configKey}`} data={ARCH_GUIDE_DATA} />
               )}
+              {currentPart === 3 && <SelfAssessmentStep key={`assess-${configKey}`} />}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">

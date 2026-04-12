@@ -7,6 +7,7 @@ import {
   RECIPIENT_INFO_COMPARISON,
   type ASN1Node,
 } from '../data/emailSigningConstants'
+import { Button } from '@/components/ui/button'
 
 type EncryptionStep = 'content' | 'cek' | 'encap' | 'wrap'
 type EncryptionMode = 'classical' | 'kem'
@@ -171,7 +172,8 @@ export const CMSEncryptionDemo: React.FC = () => {
 
       {/* Mode Toggle */}
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setEncryptionMode('classical')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             encryptionMode === 'classical'
@@ -181,8 +183,9 @@ export const CMSEncryptionDemo: React.FC = () => {
         >
           <Lock size={14} />
           RSA Key Transport
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setEncryptionMode('kem')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             encryptionMode === 'kem'
@@ -192,13 +195,14 @@ export const CMSEncryptionDemo: React.FC = () => {
         >
           <Key size={14} />
           ML-KEM (RFC 9629)
-        </button>
+        </Button>
       </div>
 
       {/* Step Progress */}
       <div className="flex flex-wrap gap-2">
         {ENCRYPTION_STEPS.map((step) => (
-          <button
+          <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -208,7 +212,7 @@ export const CMSEncryptionDemo: React.FC = () => {
             }`}
           >
             {step.label}
-          </button>
+          </Button>
         ))}
       </div>
 

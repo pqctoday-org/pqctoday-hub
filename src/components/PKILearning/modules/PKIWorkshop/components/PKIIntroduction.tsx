@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { PKICertificateLifecycleDiagram } from './PKICertificateLifecycleDiagram'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
+import { Button } from '@/components/ui/button'
 
 interface PKIIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -25,7 +26,7 @@ interface PKIIntroductionProps {
 
 export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Section 1: What is PKI? */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -247,12 +248,13 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
           cross-signed trust chains during the transition period. NIST SP 800-131A Rev 2 provides
           guidance on algorithm deprecation timelines.
         </p>
-        <button
+        <Button
+          variant="ghost"
           onClick={onNavigateToWorkshop}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >
           Try It in the Workshop <ArrowRight size={16} />
-        </button>
+        </Button>
       </section>
 
       {/* Section 7: Merkle Tree Certificates */}
@@ -326,12 +328,13 @@ export const PKIIntroduction: React.FC<PKIIntroductionProps> = ({ onNavigateToWo
         </div>
 
         <div className="flex flex-wrap gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={onNavigateToWorkshop}
             className="btn btn-primary flex items-center gap-2 px-4 py-2"
           >
             Try MTC Comparison in Workshop <ArrowRight size={16} />
-          </button>
+          </Button>
           <Link
             to="/learn/merkle-tree-certs"
             className="btn btn-secondary flex items-center gap-2 px-4 py-2"

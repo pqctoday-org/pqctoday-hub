@@ -9,9 +9,17 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'iam-pqc',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
-  standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('FIPS 205')],
+  standards: [
+    getStandard('FIPS 203'),
+    getStandard('FIPS 204'),
+    getStandard('FIPS 205'),
+    getStandard('FIPS-198-1'),
+    getStandard('NIST-SP-800-132'),
+    getStandard('OASIS-SAML-2-0-Core'),
+  ],
 
   algorithms: [
     getAlgorithm('ECDH P-256'),

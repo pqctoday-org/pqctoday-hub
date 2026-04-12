@@ -8,6 +8,7 @@ import {
   type SensitivityTier,
   type ConflictResolutionRule,
 } from '../data/sensitivityConstants'
+import { Button } from '@/components/ui/button'
 
 interface SensitivityConflictResolverProps {
   assets: DataAsset[]
@@ -95,13 +96,14 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
 
       {/* Resolution Rules */}
       <div className="border border-border rounded-lg overflow-hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setRulesOpen((v) => !v)}
           className="w-full flex items-center justify-between px-4 py-3 bg-muted hover:bg-muted/80 transition-colors text-sm font-semibold text-foreground"
         >
           <span>Four Resolution Rules</span>
           {rulesOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
+        </Button>
         {rulesOpen && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-0 divide-y sm:divide-y-0 sm:divide-x divide-border">
             {(
@@ -233,13 +235,14 @@ export const SensitivityConflictResolver: React.FC<SensitivityConflictResolverPr
                       {TIER_ORDER.map((tier) => {
                         const cfg = SENSITIVITY_TIERS.find((t) => t.id === tier)
                         return (
-                          <button
+                          <Button
+                            variant="ghost"
                             key={tier}
                             onClick={() => handleSelect(scenario.id, tier)}
                             className={`px-3 py-1.5 rounded-md text-xs font-semibold border transition-colors min-w-[70px] ${cfg?.bgClass ?? ''} ${cfg?.colorClass ?? ''} ${cfg?.borderClass ?? ''} hover:opacity-80`}
                           >
                             {cfg?.label ?? tier}
-                          </button>
+                          </Button>
                         )
                       })}
                     </div>

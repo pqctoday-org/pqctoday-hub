@@ -11,7 +11,8 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
 
   return (
     <div className="border-b border-border last:border-b-0">
-      <button
+      <Button
+        variant="ghost"
         className="flex w-full items-start gap-3 py-4 min-h-[44px] text-left transition-colors hover:text-accent"
         onClick={() => setOpen((o) => !o)}
         aria-expanded={open}
@@ -22,7 +23,7 @@ function FAQAccordionItem({ item }: { item: FAQItem }) {
           <ChevronRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
         )}
         <span className="font-medium text-foreground">{item.question}</span>
-      </button>
+      </Button>
       {open && (
         <div className="pb-4 pl-7">
           <p className="text-sm leading-relaxed text-secondary">{item.answer}</p>

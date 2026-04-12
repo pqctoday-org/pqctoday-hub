@@ -17,6 +17,7 @@ import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'digital-id'
 
@@ -202,39 +203,42 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       <div className="flex justify-between items-center bg-muted/10 p-4 border-b border-border rounded-t-xl mb-6">
         <h2 className="text-xl font-bold">EUDI Wallet Architecture</h2>
         {onBack && (
-          <button
+          <Button
+            variant="ghost"
             onClick={onBack}
             className="text-sm border border-border px-4 py-2 hover:bg-muted rounded text-muted-foreground transition-colors"
           >
             &larr; Back to Tools
-          </button>
+          </Button>
         )}
       </div>
       <div className="flex justify-end">
-        <button
+        <Button
+          variant="ghost"
           onClick={handleReset}
           className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
         >
           <Trash2 size={16} />
           Reset
-        </button>
+        </Button>
       </div>
 
       {/* Part Progress Steps */}
       <div className="overflow-x-auto px-2 sm:px-0">
-        <div className="flex justify-between relative min-w-max sm:min-w-0">
+        <div className="flex justify-evenly relative min-w-0">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
           {WORKSHOP_STEPS.map((step, idx) => {
             const Icon = step.icon
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={step.id}
                 onClick={() => setCurrentStep(idx)}
-                className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
+                className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentStep ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                     ${
                       idx === currentStep
                         ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -243,12 +247,12 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
                           : 'border-border text-muted-foreground'
                     }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={16} />
                 </div>
                 <span className="text-sm font-medium hidden md:block">
                   {step.title.split(':')[0]}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -269,27 +273,30 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
 
       {/* Navigation */}
       <div className="flex flex-col sm:flex-row justify-between gap-3">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
         >
           &larr; Previous Step
-        </button>
+        </Button>
         {currentStep === WORKSHOP_STEPS.length - 1 ? (
-          <button
+          <Button
+            variant="gradient"
             onClick={() => markStepComplete(MODULE_ID, WORKSHOP_STEPS[currentStep].id)}
-            className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Complete Module ✓
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
+            variant="gradient"
             onClick={() => setCurrentStep(Math.min(WORKSHOP_STEPS.length - 1, currentStep + 1))}
-            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Next Step &rarr;
-          </button>
+          </Button>
         )}
       </div>
 
@@ -312,12 +319,13 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <div>
           {onBack && (
-            <button
+            <Button
+              variant="ghost"
               onClick={onBack}
               className="text-muted-foreground hover:text-foreground mb-4 flex items-center gap-2 text-sm transition-colors"
             >
               &larr; Back to Playground
-            </button>
+            </Button>
           )}
           <h1 className="text-3xl font-bold text-gradient">EUDI Digital Identity Wallet</h1>
 

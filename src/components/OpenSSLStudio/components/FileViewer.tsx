@@ -3,6 +3,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { X, FileText, ChevronDown, ChevronRight, ArrowRightLeft } from 'lucide-react'
 import { openSSLService } from '../../../services/crypto/OpenSSLService'
 import { useOpenSSLStore } from '../store'
+import { Button } from '@/components/ui/button'
 
 export const FileViewer: React.FC = () => {
   const { viewingFile, setViewingFile } = useOpenSSLStore()
@@ -289,22 +290,24 @@ export const FileViewer: React.FC = () => {
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={toggleViewMode}
             className="px-3 py-1.5 rounded text-xs font-medium flex items-center gap-2 bg-background hover:bg-accent text-muted-foreground hover:text-foreground transition-colors border border-input"
             title="Switch View Mode"
           >
             <ArrowRightLeft size={12} />
             {viewMode.toUpperCase()}
-          </button>
+          </Button>
           <div className="w-px h-4 bg-border mx-1" />
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setViewingFile(null)}
             className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground transition-colors"
             title="Close Viewer"
           >
             <X size={16} />
-          </button>
+          </Button>
         </div>
       </div>
 

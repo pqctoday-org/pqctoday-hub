@@ -8,6 +8,7 @@ import {
   type EncryptionLayer,
   type DatabaseEncryptionProfile,
 } from '../data/databaseConstants'
+import { Button } from '@/components/ui/button'
 
 interface LayerInfo {
   id: EncryptionLayer
@@ -135,7 +136,8 @@ export const EncryptionLayerMapper: React.FC = () => {
               const isSupported = selectedDb?.encryptionLayers.includes(layer.id)
               const isSelected = selectedLayer === layer.id
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={layer.id}
                   onClick={() => handleLayerClick(layer.id)}
                   className={`w-full text-left px-4 py-3 rounded-lg border transition-all text-sm font-medium flex items-center justify-between gap-2 ${
@@ -166,7 +168,7 @@ export const EncryptionLayerMapper: React.FC = () => {
                     )}
                     {isSelected && <ChevronRight size={14} className="rotate-90 text-primary" />}
                   </span>
-                </button>
+                </Button>
               )
             })}
           </div>

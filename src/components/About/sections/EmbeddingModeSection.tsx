@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { AppWindow, ChevronDown, Mail } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export function EmbeddingModeSection() {
   const [isOpen, setIsOpen] = useState(false)
@@ -14,7 +15,8 @@ export function EmbeddingModeSection() {
       transition={{ delay: 0.38 }}
       className="glass-panel p-4 md:p-6"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
@@ -27,7 +29,7 @@ export function EmbeddingModeSection() {
             isOpen && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
       <AnimatePresence>
         {isOpen && (
           <motion.div

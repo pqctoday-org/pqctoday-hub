@@ -18,6 +18,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface CollapsibleSectionProps {
   title: string
@@ -35,7 +36,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   const [isOpen, setIsOpen] = useState(defaultOpen)
   return (
     <section className="glass-panel overflow-hidden">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 text-left"
       >
@@ -48,7 +50,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         ) : (
           <ChevronDown size={20} className="text-muted-foreground shrink-0" />
         )}
-      </button>
+      </Button>
       {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
     </section>
   )

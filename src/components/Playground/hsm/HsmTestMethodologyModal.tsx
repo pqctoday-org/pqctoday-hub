@@ -17,8 +17,12 @@ export const HsmTestMethodologyModal = ({ onClose }: HsmTestMethodologyModalProp
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-      <div className="fixed inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-start justify-center p-4 overflow-y-auto">
+      <div
+        className="fixed inset-0 embed-backdrop bg-black/60"
+        onClick={onClose}
+        aria-hidden="true"
+      />
       <div className="relative z-10 w-full max-w-2xl bg-card border border-border rounded-xl shadow-xl my-8">
         {/* Header */}
         <div className="flex items-start justify-between p-5 border-b border-border">

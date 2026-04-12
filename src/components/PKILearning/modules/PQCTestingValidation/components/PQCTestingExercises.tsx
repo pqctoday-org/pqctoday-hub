@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -102,7 +103,7 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
   }
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">Practice Scenarios</h2>
         <p className="text-sm text-muted-foreground">
@@ -130,13 +131,14 @@ export const PQCTestingExercises: React.FC<PQCTestingExercisesProps> = ({
               <p className="text-xs text-muted-foreground">{scenario.observe}</p>
             </div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={() => handleTryIt(scenario)}
               className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary border border-primary/30 rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"
             >
               <Play size={14} />
               Try It
-            </button>
+            </Button>
           </div>
         ))}
       </div>

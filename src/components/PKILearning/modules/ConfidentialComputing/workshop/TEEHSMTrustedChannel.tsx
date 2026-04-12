@@ -149,6 +149,7 @@ const COMPLEXITY_CONFIG: Record<string, { label: string; className: string }> = 
 interface ProvisioningStep {
   title: string
   description: string
+  whyItMatters: string
   crypto: string
   dataSize: string
 }
@@ -166,6 +167,9 @@ function buildProvisioningSteps(
     {
       title: 'HSM generates keypair',
       description: `The HSM generates an asymmetric keypair using the configured algorithm and prepares it for export.`,
+      whyItMatters: pqcMode
+        ? 'Key generation inside the HSM ensures the private key never exists in plaintext outside tamper-resistant hardware. ML-DSA private keys are larger than classical keys — the HSM must support the PKCS#11 v3.2 ML-DSA mechanisms.'
+        : "Key generation inside the HSM ensures the private key is protected by hardware tamper controls. If generated outside (e.g., in software), an OS-level attacker could extract it before it reaches the TEE. Shor's algorithm can later break ECDSA — plan migration to ML-DSA.",
       crypto: pqcMode
         ? `${integration.pqcSigningAlgo ?? 'ML-DSA-65'} keypair generation`
         : `${integration.currentSigningAlgo} keypair generation`,
@@ -174,6 +178,9 @@ function buildProvisioningSteps(
     {
       title: 'TLS transport to enclave',
       description: `A TLS 1.3 channel is established between the HSM and the TEE using key exchange and mutual authentication.`,
+      whyItMatters: pqcMode
+        ? "ML-KEM replaces the ECDH key exchange vulnerable to Shor's algorithm. An adversary recording this TLS session today cannot retroactively decrypt it once a CRQC is available (harvest-now-decrypt-later is mitigated). Forward secrecy is preserved per TLS 1.3."
+        : 'ECDH P-256 key exchange is quantum-vulnerable. An adversary recording this session can retroactively decrypt the wrapped key material when a cryptographically-relevant quantum computer (CRQC) is available — a harvest-now-decrypt-later (HNDL) attack.',
       crypto: `Key exchange: ${kem} | Auth: ${signingAlgo}`,
       dataSize: pqcMode
         ? '~1.5 KB (ML-KEM ciphertext + cert)'
@@ -182,6 +189,8 @@ function buildProvisioningSteps(
     {
       title: 'Enclave receives wrapped key',
       description: `The wrapped private key material is transmitted over the established channel. The wrapping key is derived from the TLS session.`,
+      whyItMatters:
+        'Wrapping ensures the key is never in plaintext during transit — even if the TLS channel is compromised at the application layer. The wrapping key is derived from the session so only the intended receiver can unwrap it. Without this step, the key is exposed to any process that can intercept the TLS payload.',
       crypto: `AES-256-GCM key wrapping over ${kem} session`,
       dataSize: pqcMode
         ? '~4.5 KB (wrapped ML-DSA private key)'
@@ -190,6 +199,8 @@ function buildProvisioningSteps(
     {
       title: 'Enclave unseals with sealing key',
       description: `The enclave uses its hardware-derived sealing key to decrypt the wrapping layer and load the private key into protected memory.`,
+      whyItMatters:
+        'The sealing key is derived from the enclave identity (MRENCLAVE/MRSIGNER) and CPU secrets — it only exists inside the enclave and cannot be extracted. This ensures only the exact, unmodified enclave code can access the provisioned key. AES-128 sealing is Grover-halved to 64-bit post-quantum security; next-gen CPUs will require AES-256.',
       crypto: 'AES-256-GCM sealing (hardware-derived key via EGETKEY/ASP/RMM)',
       dataSize: pqcMode
         ? '~4.0 KB (unsealed ML-DSA private key)'
@@ -843,9 +854,15 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                 // eslint-disable-next-line security/detect-object-injection
                 const activeStep = provisioningSteps[currentStep]
                 return (
-                  <div className="bg-muted/30 rounded-lg p-4 border border-border">
-                    <div className="text-sm font-bold text-foreground mb-1">{activeStep.title}</div>
-                    <p className="text-xs text-muted-foreground mb-3">{activeStep.description}</p>
+                  <div className="bg-muted/30 rounded-lg p-4 border border-border space-y-3">
+                    <div className="text-sm font-bold text-foreground">{activeStep.title}</div>
+                    <p className="text-xs text-muted-foreground">{activeStep.description}</p>
+                    <div className="rounded bg-primary/5 border border-primary/20 px-3 py-2">
+                      <div className="text-[10px] font-semibold text-primary mb-0.5 uppercase tracking-wide">
+                        Why this step matters
+                      </div>
+                      <p className="text-[10px] text-foreground/80">{activeStep.whyItMatters}</p>
+                    </div>
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                       <div className="flex items-start gap-2">
                         <Shield size={12} className="text-primary shrink-0 mt-0.5" />
@@ -899,45 +916,74 @@ export const TEEHSMTrustedChannel: React.FC = () => {
 
           {/* ── Mutual Attestation Checklist ──────────────────────── */}
           <div className="glass-panel p-4">
-            <div className="text-sm font-bold text-foreground mb-3">
+            <div className="text-sm font-bold text-foreground mb-1">
               Mutual Attestation Checklist
             </div>
-            <div className="space-y-2">
+            <p className="text-[10px] text-muted-foreground mb-3">
+              Mutual attestation means both sides prove their identity cryptographically before any
+              key material is exchanged. Without it, a rogue process could impersonate a TEE or HSM
+              and receive provisioned keys.
+            </p>
+            <div className="space-y-3">
               {/* TEE attests to HSM */}
-              <div className="flex items-center gap-2 text-xs">
-                {integration.mutualAttestation ? (
-                  <CheckCircle size={14} className="text-status-success shrink-0" />
-                ) : (
-                  <XCircle size={14} className="text-status-error shrink-0" />
-                )}
-                <span className="text-foreground">TEE attests to HSM (quote verification)</span>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 text-xs">
+                  {integration.mutualAttestation ? (
+                    <CheckCircle size={14} className="text-status-success shrink-0" />
+                  ) : (
+                    <XCircle size={14} className="text-status-error shrink-0" />
+                  )}
+                  <span className="text-foreground font-medium">
+                    TEE attests to HSM (quote verification)
+                  </span>
+                </div>
+                <p className="text-[10px] text-muted-foreground pl-5">
+                  The TEE generates a hardware-signed attestation quote (e.g., SGX DCAP Quote,
+                  SEV-SNP Report). The HSM verifies the quote signature against the vendor root CA
+                  to confirm it is talking to a genuine, unmodified enclave.
+                </p>
               </div>
 
               {/* HSM attests to TEE */}
-              <div className="flex items-center gap-2 text-xs">
-                {integration.mutualAttestation ? (
-                  <CheckCircle size={14} className="text-status-success shrink-0" />
-                ) : (
-                  <XCircle size={14} className="text-status-error shrink-0" />
-                )}
-                <span className="text-foreground">
-                  HSM attests to TEE (certificate chain validation)
-                </span>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 text-xs">
+                  {integration.mutualAttestation ? (
+                    <CheckCircle size={14} className="text-status-success shrink-0" />
+                  ) : (
+                    <XCircle size={14} className="text-status-error shrink-0" />
+                  )}
+                  <span className="text-foreground font-medium">
+                    HSM attests to TEE (certificate chain validation)
+                  </span>
+                </div>
+                <p className="text-[10px] text-muted-foreground pl-5">
+                  The HSM presents its own certificate chain (e.g., FIPS 140-3 validation cert or
+                  vendor device certificate). The TEE validates this chain to confirm it is
+                  provisioning keys into a genuine, tamper-resistant HSM — not a software mock.
+                </p>
               </div>
 
               {/* TLS channel binding */}
-              <div className="flex items-center gap-2 text-xs">
-                {integration.tlsChannelBinding ? (
-                  <CheckCircle size={14} className="text-status-success shrink-0" />
-                ) : (
-                  <XCircle size={14} className="text-status-error shrink-0" />
-                )}
-                <span className="text-foreground">TLS channel binding</span>
+              <div className="space-y-0.5">
+                <div className="flex items-center gap-2 text-xs">
+                  {integration.tlsChannelBinding ? (
+                    <CheckCircle size={14} className="text-status-success shrink-0" />
+                  ) : (
+                    <XCircle size={14} className="text-status-error shrink-0" />
+                  )}
+                  <span className="text-foreground font-medium">TLS channel binding</span>
+                </div>
+                <p className="text-[10px] text-muted-foreground pl-5">
+                  The attestation evidence is cryptographically bound to the TLS session (e.g., via
+                  a nonce or public key hash in the attestation payload). This prevents a
+                  man-in-the-middle from replaying a valid quote from a legitimate enclave over a
+                  different TLS session.
+                </p>
               </div>
 
               {/* Migration complexity */}
-              <div className="flex items-center gap-2 text-xs">
-                <span className="text-muted-foreground">Migration complexity:</span>
+              <div className="flex items-center gap-2 text-xs pt-1 border-t border-border">
+                <span className="text-muted-foreground">PQC migration complexity:</span>
                 <span
                   className={`text-[10px] font-bold rounded px-1.5 py-0.5 ${COMPLEXITY_CONFIG[integration.migrationComplexity]?.className ?? 'bg-muted text-muted-foreground'}`}
                 >
@@ -1168,6 +1214,49 @@ export const TEEHSMTrustedChannel: React.FC = () => {
                 <span className="font-medium">Sealing:</span> {eng.sealingKeyDerivation}
               </div>
             </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Standards Referenced ──────────────────────────────────── */}
+      <div className="glass-panel p-4 space-y-2">
+        <div className="text-sm font-bold text-foreground">Standards Referenced</div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {[
+            {
+              ref: 'FIPS 203',
+              label: 'FIPS 203 — ML-KEM (Kyber)',
+              note: 'Key encapsulation for TLS transport',
+            },
+            {
+              ref: 'FIPS 204',
+              label: 'FIPS 204 — ML-DSA (Dilithium)',
+              note: 'Attestation key signing',
+            },
+            {
+              ref: 'NIST SP 800-227',
+              label: 'NIST SP 800-227 — KEM Guidance',
+              note: 'Security and validation guidance for KEMs',
+            },
+            {
+              ref: 'ETSI TS 103 744',
+              label: 'ETSI TS 103 744 — Hybrid KEM',
+              note: 'Hybrid ECDH + ML-KEM framework',
+            },
+          ].map(({ ref, label, note }) => (
+            <Link
+              key={ref}
+              to={`/library?ref=${encodeURIComponent(ref)}`}
+              className="flex items-start gap-2 rounded-lg border border-border bg-muted/20 p-2.5 hover:border-primary/40 hover:bg-primary/5 transition-colors group"
+            >
+              <Shield size={12} className="text-primary shrink-0 mt-0.5" />
+              <div>
+                <div className="text-[11px] font-medium text-foreground group-hover:text-primary">
+                  {label}
+                </div>
+                <div className="text-[10px] text-muted-foreground">{note}</div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

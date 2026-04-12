@@ -17,6 +17,7 @@ import {
 import { clsx } from 'clsx'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Input } from '@/components/ui/input'
+import { Button } from '@/components/ui/button'
 
 export interface TraceEvent {
   side: string
@@ -360,13 +361,14 @@ export const CryptoLogDisplay: React.FC<Props> = ({ events, title = 'Wire Data' 
               />
             </div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={handleCopy}
               className="p-1.5 hover:bg-muted rounded text-muted-foreground hover:text-foreground transition-colors ml-1"
               title="Copy Log"
             >
               {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-            </button>
+            </Button>
           </div>
         </div>
       )}

@@ -23,6 +23,7 @@ import {
 } from '../data/automotiveConstants'
 import { ECU_ZONES, BUS_PROFILES, VEHICLE_TYPES } from '../data/vehicleArchitectureData'
 import type { ECUZoneConfig } from '../data/vehicleArchitectureData'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -145,7 +146,8 @@ export const VehicleArchitectureMapper: React.FC = () => {
         </h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {VEHICLE_TYPES.map((vt) => (
-            <button
+            <Button
+              variant="ghost"
               key={vt.id}
               onClick={() => handleVehicleChange(vt.id)}
               className={`p-3 rounded-lg border text-left transition-all ${
@@ -159,7 +161,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
               </div>
               <div className="text-xs text-muted-foreground mt-1">{vt.totalECUs} ECUs</div>
               <div className="text-xs text-muted-foreground">{vt.autonomyLevel}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -172,7 +174,8 @@ export const VehicleArchitectureMapper: React.FC = () => {
         </h4>
         <div className="flex gap-2">
           {(['domain-based', 'zonal'] as const).map((style) => (
-            <button
+            <Button
+              variant="ghost"
               key={style}
               onClick={() => setSelectedArchitecture(style)}
               className={`flex-1 p-3 rounded-lg border text-left transition-all ${
@@ -189,7 +192,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
                   ? 'Traditional: each zone has its own domain controller. Simpler but more ECUs and wiring.'
                   : 'Modern: zonal gateways aggregate multiple domains. Fewer ECUs, centralized compute, Ethernet backbone.'}
               </p>
-            </button>
+            </Button>
           ))}
         </div>
         <p className="text-xs text-muted-foreground mt-2">
@@ -213,7 +216,8 @@ export const VehicleArchitectureMapper: React.FC = () => {
             const ecuCount = zone.ecuCount[selectedVehicle]
 
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={zone.id}
                 onClick={() => handleZoneClick(zone.id)}
                 className={`p-4 rounded-lg border text-left transition-all ${
@@ -254,7 +258,7 @@ export const VehicleArchitectureMapper: React.FC = () => {
                   <RiskIcon size={10} />
                   {riskStyle.label} Risk
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -276,13 +280,14 @@ export const VehicleArchitectureMapper: React.FC = () => {
               </h4>
               <p className="text-sm text-muted-foreground mt-1">{selectedZoneConfig.description}</p>
             </div>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setSelectedZone(null)}
               className="shrink-0 p-1 rounded hover:bg-muted transition-colors"
               aria-label="Close zone detail"
             >
               <X size={18} className="text-muted-foreground" />
-            </button>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">

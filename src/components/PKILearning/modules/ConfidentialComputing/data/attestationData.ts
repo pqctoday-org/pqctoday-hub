@@ -366,7 +366,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
     id: 'sgx-luna-pkcs11',
     name: 'SGX Enclave ↔ Thales Luna HSM',
     teeVendor: 'intel-sgx',
-    hsmVendor: 'Thales Luna 7',
+    hsmVendor: 'Thales Luna HSM 7',
     channelType: 'pkcs11',
     mutualAttestation: true,
     tlsChannelBinding: true,
@@ -378,13 +378,13 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'HSM generates PQC keypair → Wrapped export via TLS 1.3 channel → Enclave receives wrapped key → Unsealed with EGETKEY-derived wrapping key → Key loaded into enclave memory',
     migrationComplexity: 'high',
     notes:
-      'Requires both Intel DCAP attestation key migration (ECDSA → ML-DSA) and Luna firmware upgrade (v7.9.2+ for ML-KEM/ML-DSA). PKCS#11 v3.2 mechanisms required on both sides. Thales Luna Partition Owner role must configure PQC-enabled partition.',
+      'Requires both Intel DCAP attestation key migration (ECDSA → ML-DSA) and Luna firmware upgrade (v7.9+ for ML-KEM/ML-DSA preview). PKCS#11 v3.2 mechanisms required on both sides. Thales Luna Partition Owner role must configure PQC-enabled partition. Note: Intel SGX SDK EOL (2024) for consumer platforms — this integration applies to Xeon data center deployments.',
   },
   {
     id: 'sev-snp-nshield',
     name: 'SEV-SNP VM ↔ Entrust nShield HSM',
     teeVendor: 'amd-sev-snp',
-    hsmVendor: 'Entrust nShield 5',
+    hsmVendor: 'Entrust nShield',
     channelType: 'pkcs11',
     mutualAttestation: true,
     tlsChannelBinding: true,
@@ -414,13 +414,13 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'Nitro Enclave connects to CloudHSM via vsock proxy → KMS attestation policy gates access → CloudHSM provisions key via PKCS#11 → Key material decrypted inside enclave',
     migrationComplexity: 'medium',
     notes:
-      'CloudHSM has ML-DSA preview via SDK only — no native PKCS#11 PQC mechanism support yet. Attestation flows through KMS (not directly to CloudHSM). Simpler migration path: AWS manages HSM infrastructure upgrades.',
+      'CloudHSM has ML-DSA preview via SDK only — no native PKCS#11 PQC mechanism support yet. Attestation flows through KMS (not directly to CloudHSM). Note: AWS KMS supports ML-KEM for key agreement (preview) — this is distinct from attestation document signing, which still uses ECDSA P-384. Simpler migration path: AWS manages HSM infrastructure upgrades.',
   },
   {
     id: 'tdx-marvell-kmip',
-    name: 'TDX Trust Domain ↔ Marvell LiquidSecurity HSM',
+    name: 'TDX Trust Domain ↔ Azure Dedicated HSM (Marvell LiquidSecurity)',
     teeVendor: 'intel-tdx',
-    hsmVendor: 'Marvell LiquidSecurity 3',
+    hsmVendor: 'Azure Dedicated HSM (Marvell LiquidSecurity)',
     channelType: 'kmip',
     mutualAttestation: true,
     tlsChannelBinding: true,
@@ -432,7 +432,7 @@ export const TEE_HSM_INTEGRATIONS: TEEHSMIntegration[] = [
       'TD sends attestation quote to KMIP server → KMIP server verifies via Intel PCS → TLS 1.3 channel with KMIP key management → HSM provisions wrapped keys to TD',
     migrationComplexity: 'medium',
     notes:
-      'KMIP 2.1+ supports PQC key types. Marvell LiquidSecurity 3 has ML-KEM and ML-DSA support (preview). TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled.',
+      'KMIP 2.1+ supports PQC key types. Azure Dedicated HSM (Marvell LiquidSecurity) has ML-KEM and ML-DSA support (preview). TDX attestation shares DCAP infrastructure with SGX — PQC migration coupled. GCP C3 TDX instances went GA in 2025.',
   },
 ]
 

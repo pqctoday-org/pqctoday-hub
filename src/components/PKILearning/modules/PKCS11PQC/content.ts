@@ -7,6 +7,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 
 export const content: ModuleContent = {
   moduleId: 'p-k-c-s11-p-q-c',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [

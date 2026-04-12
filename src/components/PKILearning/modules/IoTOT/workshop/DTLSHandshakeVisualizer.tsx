@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { AlertTriangle } from 'lucide-react'
 import { HANDSHAKE_KEM_OPTIONS, HANDSHAKE_SIG_OPTIONS, calculateHandshakeSizes } from '../constants'
+import { Button } from '@/components/ui/button'
 
 const IPV6_MIN_MTU = 1280
 const DTLS_RECORD_OVERHEAD = 13
@@ -44,7 +45,8 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
           <div className="text-sm font-bold text-foreground mb-3">Key Exchange (KEM)</div>
           <div className="space-y-2">
             {HANDSHAKE_KEM_OPTIONS.map((opt) => (
-              <button
+              <Button
+                variant="ghost"
                 key={opt.id}
                 onClick={() => setKemId(opt.id)}
                 className={`w-full p-2 rounded-lg border text-left transition-colors text-sm ${
@@ -61,7 +63,7 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
                       ? 'Hybrid'
                       : 'Post-Quantum'}
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -70,7 +72,8 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
           <div className="text-sm font-bold text-foreground mb-3">Authentication (Signature)</div>
           <div className="space-y-2">
             {HANDSHAKE_SIG_OPTIONS.map((opt) => (
-              <button
+              <Button
+                variant="ghost"
                 key={opt.id}
                 onClick={() => setSigId(opt.id)}
                 className={`w-full p-2 rounded-lg border text-left transition-colors text-sm ${
@@ -87,7 +90,7 @@ export const DTLSHandshakeVisualizer: React.FC = () => {
                       ? 'Hybrid'
                       : 'Post-Quantum'}
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

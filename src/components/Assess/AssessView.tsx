@@ -178,6 +178,7 @@ export const AssessView: React.FC = () => {
                 below.
               </p>
               <Button
+                variant="ghost"
                 size="sm"
                 onClick={() => navigate('/report')}
                 className="gap-1.5 text-xs font-semibold shrink-0"
@@ -227,6 +228,7 @@ export const AssessView: React.FC = () => {
                   Start Over
                 </Button>
                 <Button
+                  variant="ghost"
                   size="sm"
                   onClick={() => setShowResumeBanner(false)}
                   className="gap-1.5 text-xs font-semibold"

@@ -11,6 +11,7 @@ import {
 } from '../data/networkProviderData'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 function StatusIcon({ status }: { status: PQCStatusKey }) {
   if (status === 'ga') return <CheckCircle size={12} className="text-status-success inline" />
@@ -192,13 +193,14 @@ export const VendorMigrationMatrix: React.FC = () => {
                         {vendor.roadmapYear}
                       </td>
                       <td className="py-3 px-2 text-center">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setExpandedId(isExpanded ? null : vendor.id)}
                           className="text-muted-foreground hover:text-primary transition-colors"
                           aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${vendor.vendor} details`}
                         >
                           {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                     {isExpanded && (
@@ -297,13 +299,14 @@ export const VendorMigrationMatrix: React.FC = () => {
                   <span className="text-muted-foreground">HW Offload</span>
                 </div>
               </div>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setExpandedId(isExpanded ? null : vendor.id)}
                 className="text-xs text-primary hover:text-primary/80 transition-colors flex items-center gap-1"
               >
                 {isExpanded ? <ChevronDown size={12} /> : <ChevronRight size={12} />}
                 {isExpanded ? 'Hide details' : 'Show details'}
-              </button>
+              </Button>
               {isExpanded && (
                 <div className="mt-3 pt-3 border-t border-border space-y-2">
                   <p className="text-[10px] text-muted-foreground">{vendor.notes}</p>

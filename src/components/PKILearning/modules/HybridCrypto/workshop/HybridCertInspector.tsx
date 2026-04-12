@@ -22,6 +22,7 @@ import {
   derToPem,
   type IETFCertVector,
 } from '../data/ietfTestVectors'
+import { Button } from '@/components/ui/button'
 
 interface GeneratedCert {
   formatId: string
@@ -422,7 +423,8 @@ export const HybridCertInspector: React.FC = () => {
 
       {/* Source toggle */}
       <div className="flex gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setSource('generated')}
           className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
             source === 'generated'
@@ -432,8 +434,9 @@ export const HybridCertInspector: React.FC = () => {
         >
           <FlaskConical size={15} />
           Your Certificates
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => {
             setSource('ietf')
             parseIETFCert(selectedIETFVector)
@@ -446,17 +449,18 @@ export const HybridCertInspector: React.FC = () => {
         >
           <Globe size={15} />
           IETF Reference Certs
-        </button>
+        </Button>
       </div>
 
       {/* ===== GENERATED CERTS SECTION ===== */}
       {source === 'generated' && (
         <>
           {certs.length === 0 && (
-            <button
+            <Button
+              variant="gradient"
               onClick={generateAllCerts}
               disabled={generating}
-              className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+              className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
             >
               {generating ? (
                 <>
@@ -469,7 +473,7 @@ export const HybridCertInspector: React.FC = () => {
                   Generate All Certificates for Inspection
                 </>
               )}
-            </button>
+            </Button>
           )}
 
           {certs.length > 0 && (
@@ -491,7 +495,8 @@ export const HybridCertInspector: React.FC = () => {
                           : 'bg-warning/10 text-warning border-warning/20'
 
                       return (
-                        <button
+                        <Button
+                          variant="ghost"
                           key={cert.label}
                           onClick={() => setSelectedCert({ formatIdx: fIdx, certIdx: cIdx })}
                           className={`w-full text-left px-3 py-2 rounded-lg text-xs transition-colors flex items-center justify-between ${
@@ -506,7 +511,7 @@ export const HybridCertInspector: React.FC = () => {
                           >
                             {cert.type === 'pqc' ? 'PQC' : 'EC'}
                           </span>
-                        </button>
+                        </Button>
                       )
                     })}
                   </div>
@@ -520,7 +525,8 @@ export const HybridCertInspector: React.FC = () => {
                     {/* View mode tabs */}
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex flex-wrap gap-2">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setViewMode('tree')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'tree'
@@ -530,8 +536,9 @@ export const HybridCertInspector: React.FC = () => {
                         >
                           <Search size={12} />
                           Tree View
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => setViewMode('raw')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'raw'
@@ -541,8 +548,9 @@ export const HybridCertInspector: React.FC = () => {
                         >
                           <FileText size={12} />
                           Raw Output
-                        </button>
-                        <button
+                        </Button>
+                        <Button
+                          variant="ghost"
                           onClick={() => setViewMode('size')}
                           className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
                             viewMode === 'size'
@@ -552,15 +560,16 @@ export const HybridCertInspector: React.FC = () => {
                         >
                           <BarChart3 size={12} />
                           Size Breakdown
-                        </button>
+                        </Button>
                       </div>
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={handleDownload}
                         className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                       >
                         <Download size={12} />
                         Export PEM
-                      </button>
+                      </Button>
                     </div>
 
                     {/* Format info banner */}
@@ -774,7 +783,8 @@ export const HybridCertInspector: React.FC = () => {
                 const isSelected = ietfSelectedId === vector.id
                 const badgeClass = certTypeBadge(vector.certType)
                 return (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={vector.id}
                     onClick={() => handleIETFSelect(vector)}
                     className={`w-full text-left px-3 py-2.5 rounded-lg text-xs transition-colors border ${
@@ -797,7 +807,7 @@ export const HybridCertInspector: React.FC = () => {
                     <div className="text-[10px] text-muted-foreground mt-0.5">
                       {vector.provider} · {vector.sizeBytes.toLocaleString()} B
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -816,7 +826,8 @@ export const HybridCertInspector: React.FC = () => {
                           ? 'Raw Output'
                           : 'Size Breakdown'
                     return (
-                      <button
+                      <Button
+                        variant="ghost"
                         key={mode}
                         onClick={() => setIETFViewMode(mode)}
                         className={`flex items-center gap-1 px-3 py-2 rounded text-xs transition-colors ${
@@ -827,17 +838,18 @@ export const HybridCertInspector: React.FC = () => {
                       >
                         <Icon size={12} />
                         {label}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleIETFDownload(selectedIETFVector)}
                   className="flex items-center gap-1 px-3 py-2 rounded text-xs bg-muted/50 text-muted-foreground border border-border hover:border-primary/30 transition-colors"
                 >
                   <Download size={12} />
                   Export PEM
-                </button>
+                </Button>
               </div>
 
               {/* Provider attribution banner */}

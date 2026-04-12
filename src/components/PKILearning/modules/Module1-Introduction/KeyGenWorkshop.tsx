@@ -4,6 +4,7 @@ import { Play, Loader2, ArrowLeftRight } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface KeyGenWorkshopProps {
   onComplete: () => void
@@ -164,14 +165,15 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
     <div className="space-y-6">
       {/* Generate Both CTA */}
       <div className="flex justify-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={handleGenerateBoth}
           disabled={classicalKey.loading || pqcKey.loading}
-          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2 font-bold rounded-lg transition-colors disabled:opacity-50"
         >
           <ArrowLeftRight size={16} />
           Generate Both &amp; Compare
-        </button>
+        </Button>
       </div>
 
       {/* Two-column layout */}
@@ -196,7 +198,8 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
             />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleGenerateClassical}
             disabled={classicalKey.loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
@@ -207,7 +210,7 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
               <Play size={16} />
             )}
             Generate {classicalAlgo}
-          </button>
+          </Button>
 
           <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[220px] overflow-y-auto custom-scrollbar border border-border">
             <pre className="text-status-success whitespace-pre-wrap">
@@ -257,14 +260,15 @@ export const KeyGenWorkshop: React.FC<KeyGenWorkshopProps> = ({ onComplete }) =>
             />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleGeneratePQC}
             disabled={pqcKey.loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"
           >
             {pqcKey.loading ? <Loader2 className="animate-spin" size={16} /> : <Play size={16} />}
             Generate {pqcAlgo}
-          </button>
+          </Button>
 
           <div className="bg-muted rounded-lg p-4 font-mono text-xs h-[220px] overflow-y-auto custom-scrollbar border border-border">
             <pre className="text-status-success whitespace-pre-wrap">

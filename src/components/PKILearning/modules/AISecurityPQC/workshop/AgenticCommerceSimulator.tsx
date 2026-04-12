@@ -5,6 +5,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { COMMERCE_FLOWS } from '../data/agentAuthData'
 import { COMMERCE_ACTOR_COLORS, COMMERCE_ACTOR_LABELS } from '../data/aiSecurityConstants'
 import type { CommerceActor } from '../data/aiSecurityConstants'
+import { Button } from '@/components/ui/button'
 
 const FLOW_ITEMS = COMMERCE_FLOWS.map((f) => ({ id: f.id, label: f.name }))
 
@@ -53,7 +54,8 @@ export const AgenticCommerceSimulator: React.FC = () => {
           noContainer
         />
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             type="button"
             role="switch"
             aria-checked={quantumOverlay}
@@ -68,7 +70,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
                 quantumOverlay ? 'translate-x-5' : 'translate-x-0.5'
               }`}
             />
-          </button>
+          </Button>
           <label
             htmlFor="quantum-overlay-switch"
             className="text-sm text-muted-foreground cursor-pointer"
@@ -95,7 +97,8 @@ export const AgenticCommerceSimulator: React.FC = () => {
 
           return (
             <div key={step.id} className={`glass-panel overflow-hidden ${borderClass}`}>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setExpandedStep(isExpanded ? null : step.id)}
                 className="w-full p-4 flex items-center justify-between text-left"
               >
@@ -125,7 +128,7 @@ export const AgenticCommerceSimulator: React.FC = () => {
                     )}
                   </span>
                 )}
-              </button>
+              </Button>
 
               {isExpanded && (
                 <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">

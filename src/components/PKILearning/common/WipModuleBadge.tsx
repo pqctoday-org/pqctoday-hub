@@ -4,6 +4,7 @@ import { Wrench, CheckCircle2, Clock, X, MessageSquare } from 'lucide-react'
 import { EndorseButton } from '../../ui/EndorseButton'
 import { FlagButton } from '../../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl, buildDiscussionSearchUrl } from '@/utils/endorsement'
+import { Button } from '@/components/ui/button'
 
 interface WipModuleBadgeProps {
   moduleMeta: {
@@ -57,7 +58,8 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
 
   return (
     <>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen(true)}
         className="focus:outline-none focus-visible:ring-2 focus-visible:ring-status-warning/60 rounded-full"
@@ -68,15 +70,16 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
           <Wrench size={12} className="animate-bounce-subtle" />
           WIP
         </span>
-      </button>
+      </Button>
 
       {open && (
         <>
           {/* Backdrop — click to close */}
-          <button
+          <Button
+            variant="ghost"
             type="button"
             aria-label="Close"
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
+            className="fixed inset-0 embed-backdrop bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
             onClick={() => setOpen(false)}
           />
           {/* Dialog */}
@@ -84,7 +87,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
             role="dialog"
             aria-modal="true"
             aria-labelledby="wip-modal-title"
-            className="fixed inset-0 flex items-center justify-center z-wip-badge p-4 pointer-events-none"
+            className="fixed inset-0 embed-backdrop flex items-center justify-center z-wip-badge p-4 pointer-events-none"
           >
             <div className="glass-panel p-6 max-w-md w-full space-y-5 pointer-events-auto">
               {/* Header */}
@@ -95,14 +98,15 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
                     Module Review Status
                   </h2>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setOpen(false)}
                   className="text-muted-foreground hover:text-foreground transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-border rounded"
                   aria-label="Close"
                 >
                   <X size={16} />
-                </button>
+                </Button>
               </div>
 
               {/* Review checklist */}

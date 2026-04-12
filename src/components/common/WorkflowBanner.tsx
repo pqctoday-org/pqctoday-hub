@@ -56,7 +56,8 @@ export const WorkflowBanner: React.FC = () => {
               const isCurrent = phase.id === currentPhase && !isComplete
 
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={phase.id}
                   onClick={() => navigate(phase.route)}
                   className={cn(

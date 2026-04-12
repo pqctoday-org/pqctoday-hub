@@ -10,6 +10,7 @@ import {
 } from '../data/pqcLibraryData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const DEVAPI_KAT_SPECS: KatTestSpec[] = [
   {
@@ -145,7 +146,8 @@ const LibCard: React.FC<LibCardProps> = ({
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {compareMode && (
-            <button
+            <Button
+              variant="ghost"
               onClick={onToggleSelect}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
@@ -154,14 +156,15 @@ const LibCard: React.FC<LibCardProps> = ({
               ) : (
                 <Square size={20} />
               )}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="ghost"
             onClick={onToggleExpand}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -384,7 +387,8 @@ export const PQCLibraryExplorer: React.FC = () => {
           selectedId={perfFilter}
           onSelect={(id) => setPerfFilter(id as PerfFilter)}
         />
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())
@@ -392,7 +396,7 @@ export const PQCLibraryExplorer: React.FC = () => {
           className={`px-4 py-2 rounded-lg border text-sm font-medium transition-colors ${compareMode ? 'border-primary text-primary bg-primary/10' : 'border-border text-muted-foreground hover:border-primary hover:text-primary'}`}
         >
           {compareMode ? `Compare (${selectedIds.size}/3)` : 'Compare Mode'}
-        </button>
+        </Button>
       </div>
 
       {compareMode && compareLibs.length >= 2 && (

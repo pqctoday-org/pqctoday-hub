@@ -7,6 +7,7 @@ import {
   PASSIVE_OBSERVATIONS,
   type TrafficObservation,
 } from '../data/testingConstants'
+import { Button } from '@/components/ui/button'
 
 type ClassifyAnswer = 'quantum-safe' | 'vulnerable' | 'hybrid' | 'unknown' | null
 
@@ -192,7 +193,8 @@ export const PassiveDiscoveryLab: React.FC = () => {
               {!isRevealed && (
                 <div className="flex flex-wrap gap-2 mb-3">
                   {classifyOptions.map((opt) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={opt.id}
                       onClick={() => handleClassify(obs.id, opt.id)}
                       className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
@@ -202,18 +204,19 @@ export const PassiveDiscoveryLab: React.FC = () => {
                       }`}
                     >
                       {opt.label}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               )}
 
               {userAnswer && !isRevealed && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleReveal(obs.id)}
                   className="text-xs px-3 py-1.5 bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 transition-colors"
                 >
                   Reveal answer
-                </button>
+                </Button>
               )}
 
               {isRevealed && (

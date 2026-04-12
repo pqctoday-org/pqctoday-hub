@@ -239,7 +239,8 @@ export const SSHHostKeyMigrator: React.FC = () => {
         <div className="flex items-center gap-1 mb-6 overflow-x-auto pb-2">
           {MIGRATION_STEPS.map((s, idx) => (
             <React.Fragment key={s.id}>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setCurrentStep(idx)}
                 className={`flex items-center justify-center w-8 h-8 rounded-full border-2 text-xs font-bold shrink-0 transition-colors ${
                   completedSteps.has(s.id)
@@ -250,7 +251,7 @@ export const SSHHostKeyMigrator: React.FC = () => {
                 }`}
               >
                 {completedSteps.has(s.id) ? <CheckCircle size={14} /> : idx + 1}
-              </button>
+              </Button>
               {idx < MIGRATION_STEPS.length - 1 && (
                 <div className="h-0.5 flex-1 min-w-4 bg-border" />
               )}

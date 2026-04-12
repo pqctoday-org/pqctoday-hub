@@ -2,6 +2,7 @@
 import React from 'react'
 import clsx from 'clsx'
 import type { QuizQuestion } from '../types'
+import { Button } from '@/components/ui/button'
 
 interface QuestionCardProps {
   question: QuizQuestion
@@ -93,7 +94,8 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
         aria-label="Answer options"
       >
         {question.options.map((option) => (
-          <button
+          <Button
+            variant="ghost"
             key={option.id}
             role={isMultiSelect ? undefined : 'radio'}
             aria-checked={isMultiSelect ? undefined : isSelected(option.id)}
@@ -108,7 +110,7 @@ export const QuestionCard: React.FC<QuestionCardProps> = ({
             )}
           >
             <span className="text-sm font-medium">{option.text}</span>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

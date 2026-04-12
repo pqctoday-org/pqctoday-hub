@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import type { LibraryCategory } from '../../data/libraryData'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 interface CategoryInfo {
   name: string
@@ -57,7 +58,8 @@ export const CategorySidebar = ({
       className="flex flex-nowrap lg:flex-wrap items-center gap-2 overflow-x-auto lg:overflow-visible [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none] pb-2 lg:pb-0"
       aria-label="Library categories"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => onSelect('All')}
         className={clsx(
           'flex items-center shrink-0 gap-2 px-3 py-1.5 rounded-full text-sm font-medium transition-all',
@@ -73,10 +75,11 @@ export const CategorySidebar = ({
         {totalHasUpdates && (
           <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
         )}
-      </button>
+      </Button>
 
       {categories.map((cat) => (
-        <button
+        <Button
+          variant="ghost"
           key={cat.name}
           onClick={() => onSelect(cat.name)}
           className={clsx(
@@ -93,7 +96,7 @@ export const CategorySidebar = ({
           {cat.hasUpdates && (
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse" aria-hidden="true" />
           )}
-        </button>
+        </Button>
       ))}
     </nav>
   )

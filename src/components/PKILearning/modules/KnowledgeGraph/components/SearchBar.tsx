@@ -100,7 +100,8 @@ export function SearchBar({
             const textColor = config?.text ?? 'text-muted-foreground'
 
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={result.id}
                 className="w-full px-3 py-2 text-left hover:bg-muted/50 flex items-center gap-3 transition-colors"
                 onClick={() => {
@@ -121,7 +122,7 @@ export function SearchBar({
                 <span className="text-[10px] text-muted-foreground shrink-0">
                   {result.connectionCount} links
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>

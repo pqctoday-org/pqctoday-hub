@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { getSectorIcon } from './leadersHelper'
 import type { Leader } from '../../data/leadersData'
 import { ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface SectorStackProps {
   activeLayer: string
@@ -72,7 +73,8 @@ export const SectorStack = ({
               }}
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleSelect(layer.id)}
                 className={`group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl transition-all duration-300 ease-in-out cursor-pointer ${isActive ? layer.activeColor : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`} ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}`}
                 style={{ transformOrigin: 'center' }}
@@ -130,7 +132,8 @@ export const SectorStack = ({
                     <div className="bg-card rounded-lg border border-border relative z-20 pointer-events-auto">
                       {expandedContent}
                     </div>
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -140,10 +143,10 @@ export const SectorStack = ({
                     >
                       <ChevronUp size={14} />
                       Collapse Stack
-                    </button>
+                    </Button>
                   </div>
                 )}
-              </button>
+              </Button>
             </div>
           )
         })}

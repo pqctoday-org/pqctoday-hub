@@ -14,6 +14,7 @@ import {
   KeyRound,
 } from 'lucide-react'
 import { useOpenSSL } from './hooks/useOpenSSL'
+import { Button } from '@/components/ui/button'
 
 export const FileManager = () => {
   const { files, removeFile, addFile, editingFile, setEditingFile } = useOpenSSLStore()
@@ -126,13 +127,14 @@ export const FileManager = () => {
           Virtual File System
         </span>
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => files.forEach((f) => removeFile(f.name))}
             className="text-xs text-muted-foreground hover:text-destructive flex items-center gap-1 transition-colors"
             title="Clear all files"
           >
             <Trash2 size={12} /> Clear
-          </button>
+          </Button>
           <label className="cursor-pointer text-xs text-primary hover:text-primary/80 flex items-center gap-1 transition-colors">
             <Upload size={12} /> Upload
             <input type="file" className="hidden" multiple onChange={handleFileUpload} />
@@ -173,34 +175,38 @@ export const FileManager = () => {
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setEditingFile(file)}
                   className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Edit / View"
                 >
                   <Edit2 size={14} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={() => handleDownload(file)}
                   className="p-1.5 hover:bg-accent rounded text-muted-foreground hover:text-foreground"
                   title="Download"
                 >
                   <Download size={14} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={() => handleExtractPublicKey(file.name)}
                   className="p-1.5 hover:bg-primary/20 rounded text-muted-foreground hover:text-primary flex items-center gap-1"
                   title="Extract Public Key"
                 >
                   <FileKey size={14} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={() => removeFile(file.name)}
                   className="p-1.5 hover:bg-destructive/10 rounded text-muted-foreground hover:text-destructive"
                   title="Delete"
                 >
                   <Trash2 size={14} />
-                </button>
+                </Button>
               </div>
             </div>
           ))
@@ -219,7 +225,8 @@ export const FileManager = () => {
                 editingFile.name.endsWith('.key') ||
                 editingFile.name.endsWith('.pem')) &&
                 !editingFile.name.endsWith('.pub') && (
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => {
                       handleExtractPublicKey(editingFile.name)
                       setEditingFile(null) // Close editor after action
@@ -228,22 +235,24 @@ export const FileManager = () => {
                     title="Extract Public Key"
                   >
                     <KeyRound size={14} />
-                  </button>
+                  </Button>
                 )}
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleSaveEdit}
                 className="p-1.5 bg-primary/20 text-primary hover:bg-primary/30 rounded transition-colors"
                 title="Save"
               >
                 <Save size={14} />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => setEditingFile(null)}
                 className="p-1.5 hover:bg-accent text-muted-foreground hover:text-foreground rounded transition-colors"
                 title="Close"
               >
                 <X size={14} />
-              </button>
+              </Button>
             </div>
           </div>
           <div className="flex-1 p-0 overflow-hidden">

@@ -4,6 +4,7 @@ import { Shield, AlertTriangle, ShieldCheck, Star } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { AI_PIPELINE_PROFILES } from '../data/aiPipelineData'
 import { PIPELINE_STAGE_COLORS, PIPELINE_STAGE_LABELS } from '../data/aiSecurityConstants'
+import { Button } from '@/components/ui/button'
 
 const PIPELINE_ITEMS = AI_PIPELINE_PROFILES.map((p) => ({ id: p.id, label: p.name }))
 
@@ -47,7 +48,8 @@ export const DataProtectionAnalyzer: React.FC = () => {
         />
         <div className="flex items-center gap-2">
           <span className="text-sm text-muted-foreground">View:</span>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setViewMode('classical')}
             className={`px-3 py-1.5 text-sm rounded-l border transition-colors ${
               viewMode === 'classical'
@@ -56,8 +58,9 @@ export const DataProtectionAnalyzer: React.FC = () => {
             }`}
           >
             Classical
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setViewMode('pqc')}
             className={`px-3 py-1.5 text-sm rounded-r border-y border-r transition-colors ${
               viewMode === 'pqc'
@@ -66,7 +69,7 @@ export const DataProtectionAnalyzer: React.FC = () => {
             }`}
           >
             PQC
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -89,7 +92,8 @@ export const DataProtectionAnalyzer: React.FC = () => {
                 isVulnerable ? 'border-l-status-error' : 'border-l-status-success'
               }`}
             >
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setExpandedStage(isExpanded ? null : stage.id)}
                 className="w-full p-4 flex items-center justify-between text-left"
               >
@@ -115,7 +119,7 @@ export const DataProtectionAnalyzer: React.FC = () => {
                     <ShieldCheck size={16} className="text-status-success" />
                   )}
                 </div>
-              </button>
+              </Button>
 
               {isExpanded && (
                 <div className="px-4 pb-4 border-t border-border pt-4 space-y-3">

@@ -3,6 +3,7 @@
 import { BookOpen, CheckSquare, Square } from 'lucide-react'
 import { useModuleStore } from '../../store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
+import { Button } from '@/components/ui/button'
 
 interface LearnSectionChecklistProps {
   moduleId: string
@@ -41,11 +42,12 @@ export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSection
           const isChecked = checks[section.id] ?? false
           return (
             <li key={section.id}>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => toggleLearnSection(moduleId, section.id)}
                 className={
-                  'w-full flex items-start gap-2 text-left text-xs rounded px-2 py-1.5 transition-colors ' +
+                  'w-full min-w-0 whitespace-normal flex items-start gap-2 text-left text-xs rounded px-2 py-1.5 transition-colors ' +
                   (isChecked
                     ? 'text-status-success bg-status-success/15 hover:bg-status-success/20'
                     : 'text-foreground hover:bg-muted')
@@ -58,8 +60,12 @@ export const LearnSectionChecklist = ({ moduleId, className = '' }: LearnSection
                 ) : (
                   <Square size={14} className="text-muted-foreground mt-0.5 shrink-0" />
                 )}
-                <span className={isChecked ? 'line-through opacity-70' : ''}>{section.label}</span>
-              </button>
+                <span
+                  className={`min-w-0 break-words ${isChecked ? 'line-through opacity-70' : ''}`}
+                >
+                  {section.label}
+                </span>
+              </Button>
             </li>
           )
         })}

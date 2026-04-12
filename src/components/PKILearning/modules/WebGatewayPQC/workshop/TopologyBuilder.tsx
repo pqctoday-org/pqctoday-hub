@@ -25,6 +25,7 @@ import {
   type TLSMode,
   type TopologyConnection,
 } from '../data/gatewayData'
+import { Button } from '@/components/ui/button'
 
 const ICON_MAP: Record<string, React.FC<{ size?: number; className?: string }>> = {
   Monitor,
@@ -139,12 +140,13 @@ export const TopologyBuilder: React.FC = () => {
                           <Icon size={22} className="text-primary" />
                         </div>
                         {component.id !== 'client' && (
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => handleRemoveComponent(component.id)}
                             className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <X size={10} />
-                          </button>
+                          </Button>
                         )}
                       </div>
                       <span className="text-xs text-foreground text-center font-medium leading-tight max-w-[80px]">
@@ -217,7 +219,8 @@ export const TopologyBuilder: React.FC = () => {
             {availableComponents.map((component) => {
               const Icon = ICON_MAP[component.iconName] || Server
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={component.id}
                   onClick={() => handleAddComponent(component)}
                   className="flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-background hover:bg-muted transition-colors text-sm"
@@ -225,7 +228,7 @@ export const TopologyBuilder: React.FC = () => {
                   <Plus size={12} className="text-muted-foreground" />
                   <Icon size={14} className="text-primary" />
                   <span className="text-foreground">{component.name}</span>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -234,12 +237,13 @@ export const TopologyBuilder: React.FC = () => {
 
       {/* Analyze Button */}
       {connections.length > 0 && (
-        <button
+        <Button
+          variant="gradient"
           onClick={() => setShowAnalysis(true)}
-          className="w-full px-4 py-3 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
+          className="w-full px-4 py-3 font-medium rounded-lg transition-colors"
         >
           Analyze Topology
-        </button>
+        </Button>
       )}
 
       {/* Analysis Results */}

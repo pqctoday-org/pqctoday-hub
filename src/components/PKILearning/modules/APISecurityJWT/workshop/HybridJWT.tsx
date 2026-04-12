@@ -3,6 +3,7 @@ import React, { useState, useCallback } from 'react'
 import { Layers, ArrowRight, CheckCircle } from 'lucide-react'
 import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'
 import { createJWTHeader, createJWTPayload, simulateBase64url } from '../jwtUtils'
+import { Button } from '@/components/ui/button'
 
 type HybridApproach = 'nested' | 'composite'
 
@@ -73,7 +74,8 @@ export const HybridJWT: React.FC = () => {
 
       {/* Approach Selector */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setSelectedApproach('nested')
             setResult(null)
@@ -97,8 +99,9 @@ export const HybridJWT: React.FC = () => {
             ML-DSA-65-signed JWT. Classical verifiers process the inner JWT; PQC verifiers validate
             the outer.
           </p>
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => {
             setSelectedApproach('composite')
             setResult(null)
@@ -123,7 +126,7 @@ export const HybridJWT: React.FC = () => {
             A single JWT with a composite JOSE header that lists both algorithms. The signature
             field contains both signatures concatenated. Requires draft-ietf-jose-composite support.
           </p>
-        </button>
+        </Button>
       </div>
 
       {/* Step-by-step visual */}
@@ -181,14 +184,15 @@ export const HybridJWT: React.FC = () => {
 
       {/* Create Button */}
       <div className="flex justify-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={handleCreate}
           disabled={isCreating}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <Layers size={16} />
           {isCreating ? 'Creating...' : 'Create Hybrid JWT'}
-        </button>
+        </Button>
       </div>
 
       {/* Result Display */}

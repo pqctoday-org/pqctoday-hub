@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable react-refresh/only-export-components */
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import {
   BookOpen,
   ChevronDown,
@@ -105,80 +105,107 @@ export const TRACK_QUIZ_CATEGORIES: Record<string, string[]> = {
 // Track metadata
 // ---------------------------------------------------------------------------
 
+// Resolve a CSS custom property to its computed hex/rgb value.
+// Falls back to the provided default if the var is empty or unresolvable.
+function resolveCssColor(varName: string, fallback: string): string {
+  const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  return val || fallback
+}
+
 const TRACK_META: {
   track: string
   icon: React.ElementType
   description: string
   colorClass: string
   activeClass: string
+  colorToken: string // CSS var name — resolved at render time, picks up vendor overrides
+  colorFallback: string // fallback hex if CSS var is empty
 }[] = [
   {
     track: 'Role Guides',
     icon: Compass,
     description: 'Role-specific quantum impact: why it matters, what to learn, how to act',
-    colorClass: 'from-accent/15 to-accent/5 border-accent/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-accent/60',
+    colorToken: '--color-accent',
+    colorFallback: '#2d9e6b',
   },
   {
     track: 'Foundations',
     icon: BookOpen,
     description: 'Quantum threats, PQC fundamentals, entropy & randomness',
-    colorClass: 'from-primary/15 to-primary/5 border-primary/30',
+    colorClass: 'border',
     activeClass:
       'bg-card border-primary/60 shadow-[0_0_12px_rgba(var(--primary-rgb,99,102,241),0.3)]',
+    colorToken: '--color-primary',
+    colorFallback: '#0ea5e9',
   },
   {
     track: 'Strategy',
     icon: Lightbulb,
     description: 'Hybrid crypto, crypto agility, data sensitivity, standards bodies',
-    colorClass: 'from-secondary/15 to-secondary/5 border-secondary/30',
+    colorClass: 'border',
     activeClass:
       'bg-card border-secondary/60 shadow-[0_0_12px_rgba(var(--secondary-rgb,139,92,246),0.3)]',
+    colorToken: '--color-secondary',
+    colorFallback: '#8b5cf6',
   },
   {
     track: 'Protocols',
     icon: Network,
     description:
       'TLS, VPN/SSH, email signing, API security & JWT, web gateways, network security, PQC testing & validation',
-    colorClass: 'from-info/20 to-info/10 border-info/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-info/60',
+    colorToken: '--color-info',
+    colorFallback: '#3b82f6',
   },
   {
     track: 'Hardware Infrastructure',
     icon: Cpu,
     description: 'HSMs, KMS, QKD, secure boot & firmware, confidential computing & TEEs',
-    colorClass: 'from-warning/20 to-warning/10 border-warning/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-warning/60',
+    colorToken: '--color-warning',
+    colorFallback: '#f59e0b',
   },
   {
     track: 'Software Infrastructure',
     icon: Server,
     description:
       'PKI, secrets management, stateful sigs, Merkle tree certs, crypto APIs, database encryption, OS PQC',
-    colorClass: 'from-warning/15 to-warning/8 border-warning/25',
+    colorClass: 'border',
     activeClass: 'bg-card border-warning/50',
+    colorToken: '--color-warning',
+    colorFallback: '#f59e0b',
   },
   {
     track: 'Applications',
     icon: Layers,
     description: 'Digital ID, code signing, IoT/OT, AI security, platform engineering, IAM',
-    colorClass: 'from-success/20 to-success/10 border-success/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-success/60',
+    colorToken: '--color-success',
+    colorFallback: '#22c55e',
   },
   {
     track: 'Executive',
     icon: Briefcase,
     description: 'Risk management, business case, governance, compliance, vendor risk, migration',
-    colorClass: 'from-destructive/20 to-destructive/10 border-destructive/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-destructive/60',
+    colorToken: '--color-destructive',
+    colorFallback: '#ef4444',
   },
   {
     track: 'Industries',
     icon: Factory,
     description:
       'Digital assets, 5G, energy, healthcare, aerospace, automotive, EMV payments \u2014 sector-specific PQC',
-    colorClass: 'from-tertiary/20 to-tertiary/10 border-tertiary/30',
+    colorClass: 'border',
     activeClass: 'bg-card border-tertiary/60',
+    colorToken: '--color-tertiary',
+    colorFallback: '#a855f7',
   },
 ]
 
@@ -208,6 +235,17 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
   onClearFilters,
 }) => {
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
+
+  // Resolve CSS custom properties once on mount so vendor theme overrides are picked up.
+  // getComputedStyle reads the live cascade including inline styles set by applyEmbedTheme().
+  const resolvedColors = useMemo(
+    () =>
+      Object.fromEntries(
+        TRACK_META.map((m) => [m.track, resolveCssColor(m.colorToken, m.colorFallback)])
+      ),
+
+    [] // intentionally once — theme vars are set before React mounts
+  )
 
   const experienceLevel = usePersonaStore((s) => s.experienceLevel)
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
@@ -263,11 +301,19 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     ? meta.activeClass
                     : isHidden
                       ? 'bg-muted/10 border border-border/40 hover:scale-[1.005]'
-                      : `bg-gradient-to-r ${meta.colorClass} hover:scale-[1.005] hover:brightness-105`
+                      : `${meta.colorClass} hover:scale-[1.005] hover:brightness-105`
                 }
                 ${isFaded ? 'opacity-40' : 'opacity-100'}
               `}
-              style={{ zIndex: isActive ? TRACK_META.length + 10 : TRACK_META.length - index }}
+              style={{
+                zIndex: isActive ? TRACK_META.length + 10 : TRACK_META.length - index,
+                ...(!isActive && !isHidden
+                  ? {
+                      backgroundColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 15%, var(--stack-mix-base))`,
+                      borderColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 35%, transparent)`,
+                    }
+                  : {}),
+              }}
             >
               {/* Shimmer */}
               <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
@@ -319,7 +365,8 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
 
                   {/* Hidden · Restore badge */}
                   {filteredCount < totalCount && (
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -328,12 +375,13 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
                     >
                       {totalCount - filteredCount} hidden · Restore
-                    </button>
+                    </Button>
                   )}
 
                   {/* Per-track quiz button */}
                   {quizCategories.length > 0 && (
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -344,7 +392,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     >
                       <ClipboardList size={11} aria-hidden="true" />
                       Quiz
-                    </button>
+                    </Button>
                   )}
 
                   {/* Expand status */}
@@ -369,7 +417,8 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                 </span>
                 <div className="flex items-center gap-2 shrink-0">
                   {quizCategories.length > 0 && (
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -380,10 +429,11 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                     >
                       <ClipboardList size={11} aria-hidden="true" />
                       Quiz
-                    </button>
+                    </Button>
                   )}
                   {filteredCount < totalCount && (
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -392,7 +442,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       className="text-xs px-2.5 py-1 min-h-[36px] rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
                     >
                       Restore
-                    </button>
+                    </Button>
                   )}
                   {isActive ? (
                     <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />

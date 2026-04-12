@@ -9,6 +9,7 @@ import {
   type KeyStorageModel,
   type AbstractionLevel,
 } from '../data/apiData'
+import { Button } from '@/components/ui/button'
 
 type PlatformFilter = 'All' | PlatformScope
 type StorageFilter = 'All' | KeyStorageModel
@@ -105,7 +106,8 @@ const APICard: React.FC<APICardProps> = ({
           </div>
           <div className="flex items-center gap-2 shrink-0">
             {compareMode && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={onToggleSelect}
                 className="text-muted-foreground hover:text-primary transition-colors"
                 title={isSelected ? 'Remove from comparison' : 'Add to comparison'}
@@ -115,14 +117,15 @@ const APICard: React.FC<APICardProps> = ({
                 ) : (
                   <Square size={20} />
                 )}
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="ghost"
               onClick={onToggleExpand}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
               {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -322,7 +325,8 @@ export const APIArchitectureExplorer: React.FC = () => {
           selectedId={levelFilter}
           onSelect={(id) => setLevelFilter(id as LevelFilter)}
         />
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())
@@ -334,7 +338,7 @@ export const APIArchitectureExplorer: React.FC = () => {
           }`}
         >
           {compareMode ? `Compare (${selectedIds.size}/3)` : 'Compare Mode'}
-        </button>
+        </Button>
       </div>
 
       {/* Compare table */}

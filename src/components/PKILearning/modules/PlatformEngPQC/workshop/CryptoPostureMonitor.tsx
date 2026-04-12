@@ -10,6 +10,7 @@ import {
   ACME_STATUS_COLORS,
   ACME_STATUS_LABELS,
 } from '../data/monitoringToolsData'
+import { Button } from '@/components/ui/button'
 
 type MonitorTab = 'metrics' | 'siem' | 'capacity' | 'acme'
 
@@ -52,7 +53,8 @@ const MetricsTab: React.FC = () => {
         const isExpanded = expandedId === tool.id
         return (
           <div key={tool.id} className="glass-panel overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => toggle(tool.id)}
               className="w-full text-left p-4 flex items-center gap-3"
             >
@@ -72,7 +74,7 @@ const MetricsTab: React.FC = () => {
                   <ChevronDown size={16} className="text-muted-foreground" />
                 )}
               </span>
-            </button>
+            </Button>
 
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">
@@ -170,7 +172,8 @@ const SIEMTab: React.FC = () => {
         const isExpanded = expandedId === query.id
         return (
           <div key={query.id} className="glass-panel overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => toggle(query.id)}
               className="w-full text-left p-4 flex items-center gap-3"
             >
@@ -197,7 +200,7 @@ const SIEMTab: React.FC = () => {
                   <ChevronDown size={16} className="text-muted-foreground" />
                 )}
               </span>
-            </button>
+            </Button>
 
             {isExpanded && (
               <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">
@@ -460,7 +463,8 @@ const ACMETab: React.FC = () => {
       <div className="overflow-x-auto pb-2">
         <div className="flex gap-2 min-w-max">
           {ACME_LIFECYCLE_STEPS.map((step) => (
-            <button
+            <Button
+              variant="ghost"
               key={step.id}
               onClick={() => setSelectedStep((prev) => (prev === step.id ? null : step.id))}
               className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg border transition-colors text-center ${
@@ -484,7 +488,7 @@ const ACMETab: React.FC = () => {
               >
                 {ACME_STATUS_LABELS[step.status]}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -573,7 +577,8 @@ export const CryptoPostureMonitor: React.FC = () => {
       {/* Tab bar */}
       <div className="flex gap-1 flex-wrap">
         {TABS.map((tab) => (
-          <button
+          <Button
+            variant="ghost"
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border transition-colors ${
@@ -584,7 +589,7 @@ export const CryptoPostureMonitor: React.FC = () => {
           >
             {tab.icon}
             {tab.label}
-          </button>
+          </Button>
         ))}
       </div>
 

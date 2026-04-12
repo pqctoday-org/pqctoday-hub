@@ -269,7 +269,8 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
             <p className="text-xs text-muted-foreground">Output (bytes)</p>
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -282,7 +283,7 @@ const Pbkdf2Panel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void }
                   }`}
                 >
                   {l}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -488,7 +489,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
                 { key: 'expand', label: 'Expand', value: bExpand, set: setBExpand },
               ] as const
             ).map(({ key, label, value, set }) => (
-              <button
+              <Button
+                variant="ghost"
                 key={key}
                 onClick={() => set(!value)}
                 className={`text-xs rounded-lg px-2 py-1 border transition-colors ${
@@ -498,7 +500,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
                 }`}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
           {bExtract && !bExpand && (
@@ -560,7 +562,8 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
             <p className="text-xs text-muted-foreground">Output (bytes)</p>
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -573,7 +576,7 @@ const HkdfPanel = ({ onAlgoChange }: { onAlgoChange?: (algo: string) => void } =
                   }`}
                 >
                   {l}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -863,7 +866,8 @@ const KbkdfPanel = ({
             <p className="text-xs text-muted-foreground">Output (bytes)</p>
             <div className="flex gap-1">
               {OUTPUT_LENS.map((l) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => {
                     setOutLen(l)
@@ -876,7 +880,7 @@ const KbkdfPanel = ({
                   }`}
                 >
                   {l}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -972,7 +976,8 @@ export const HsmKdfPanel = ({
         {/* Mode tabs */}
         <div className="flex gap-1 bg-muted p-1 rounded-xl">
           {KDF_MODES.map((m) => (
-            <button
+            <Button
+              variant="ghost"
               key={m.id}
               onClick={() => {
                 setMode(m.id)
@@ -985,17 +990,18 @@ export const HsmKdfPanel = ({
               }`}
             >
               {m.label}
-            </button>
+            </Button>
           ))}
           {/* SP 800-108 Rev1 (Aug 2022) §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF (0x3ae)
               — defined in constants but not yet implemented in this WASM build */}
-          <button
+          <Button
+            variant="ghost"
             disabled
             title="SP 800-108 Rev1 (Aug 2022) §4.3 / CKM_SP800_108_DOUBLE_PIPELINE_KDF — not yet implemented in this WASM build"
             className="flex-1 text-xs rounded-lg px-2 py-2 min-h-[36px] text-muted-foreground/40 cursor-not-allowed"
           >
             KBKDF DP
-          </button>
+          </Button>
         </div>
 
         {/* Use-case + PQC note */}

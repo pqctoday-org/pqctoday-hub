@@ -2,6 +2,7 @@
 import { useOpenSSLStore } from './store'
 import { Trash2 } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export const LogsTab = () => {
   const { structuredLogs, clearStructuredLogs } = useOpenSSLStore()
@@ -25,12 +26,13 @@ export const LogsTab = () => {
     <div className="h-full flex flex-col bg-card rounded-xl border border-border overflow-hidden font-mono text-sm">
       {/* Toolbar */}
       <div className="flex items-center justify-end px-4 py-2 bg-muted/30 border-b border-border shrink-0">
-        <button
+        <Button
+          variant="ghost"
           onClick={clearStructuredLogs}
           className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
         >
           <Trash2 size={12} /> Clear
-        </button>
+        </Button>
       </div>
 
       {/* Logs Table */}

@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo } from 'react'
 import { CRQC_ESTIMATES } from '../data/quantumConstants'
+import { Button } from '@/components/ui/button'
 
 export const HNFLTimeline: React.FC = () => {
   const [credentialValidity, setCredentialValidity] = useState(20)
@@ -112,7 +113,8 @@ export const HNFLTimeline: React.FC = () => {
               { label: 'Root CA', years: 20 },
               { label: 'Long-lived firmware', years: 25 },
             ].map((preset) => (
-              <button
+              <Button
+                variant="ghost"
                 key={preset.label}
                 onClick={() => setCredentialValidity(preset.years)}
                 className={`text-xs px-2 py-1 rounded border transition-colors ${
@@ -122,7 +124,7 @@ export const HNFLTimeline: React.FC = () => {
                 }`}
               >
                 {preset.label} ({preset.years}y)
-              </button>
+              </Button>
             ))}
           </div>
           <div className="mt-3 bg-muted/50 rounded p-2 border border-border text-xs text-muted-foreground">

@@ -664,7 +664,8 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
       {externalDeadlines.length > 0 && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setGapExpanded((prev) => !prev)}
               className="flex items-center gap-2"
             >
@@ -677,7 +678,7 @@ export const ComplianceTimelineBuilder: React.FC<ComplianceTimelineBuilderProps>
               <span className="text-xs text-muted-foreground">
                 ({gapAnalysis.length} deadline{gapAnalysis.length !== 1 ? 's' : ''})
               </span>
-            </button>
+            </Button>
             <div className="flex items-center gap-4 text-xs">
               {completedCount > 0 && (
                 <span className="flex items-center gap-1 text-status-success">

@@ -4,6 +4,7 @@ import { render, screen, fireEvent, within } from '@testing-library/react'
 import { LeadersGrid } from './LeadersGrid'
 import type { Leader } from '../../data/leadersData'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Stable reference prevents useEffect([searchParams]) from firing on every render.
@@ -74,13 +75,13 @@ vi.mock('../common/FilterDropdown', () => ({
     const effectiveLabel = label || defaultLabel || 'dropdown'
     return (
       <div data-testid={`filter-${effectiveLabel}`}>
-        <button onClick={() => onSelect('All')} aria-label={effectiveLabel}>
+        <Button onClick={() => onSelect('All')} aria-label={effectiveLabel}>
           {effectiveLabel}: {items.find((i) => i.id === selectedId)?.label || selectedId}
-        </button>
+        </Button>
         <ul>
           {items.map((item) => (
             <li key={item.id}>
-              <button onClick={() => onSelect(item.id)}>{item.label}</button>
+              <Button onClick={() => onSelect(item.id)}>{item.label}</Button>
             </li>
           ))}
         </ul>

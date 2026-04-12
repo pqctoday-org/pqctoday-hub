@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { ShieldAlert, BrainCircuit, ChevronDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export function RagAiSection() {
   const [isPqcAssistantOpen, setIsPqcAssistantOpen] = useState(false)
@@ -14,7 +15,8 @@ export function RagAiSection() {
       transition={{ delay: 0.41 }}
       className="glass-panel p-4 md:p-6"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsPqcAssistantOpen(!isPqcAssistantOpen)}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
@@ -30,7 +32,7 @@ export function RagAiSection() {
             isPqcAssistantOpen && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
       <AnimatePresence>
         {isPqcAssistantOpen && (
           <motion.div

@@ -148,6 +148,7 @@ export const HmacPanel = () => {
       {/* Action buttons */}
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doComputeHmac}
           disabled={keyHandle === null || anyLoading || !input.length}
           className="flex-1"

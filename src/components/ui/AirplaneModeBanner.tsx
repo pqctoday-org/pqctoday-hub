@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Plane, X, CheckCircle, AlertTriangle } from 'lucide-react'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
+import { Button } from '@/components/ui/button'
 
 /**
  * Dismissible banner that explains Airplane Mode limitations.
@@ -20,14 +21,15 @@ export function AirplaneModeBanner() {
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h3 className="text-sm font-semibold text-foreground">Airplane Mode</h3>
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => setDismissed(true)}
               className="text-muted-foreground hover:text-foreground shrink-0"
               aria-label="Dismiss Airplane Mode info"
             >
               <X size={16} />
-            </button>
+            </Button>
           </div>
           <p className="text-xs text-muted-foreground mt-1 mb-3">
             You are using PQC Today offline. Most features work without an internet connection.

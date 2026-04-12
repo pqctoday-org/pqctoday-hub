@@ -222,7 +222,7 @@ export const ReportView: React.FC = () => {
           </p>
           <Link
             to="/assess"
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             <ClipboardCheck size={18} />
             Start Assessment
@@ -259,7 +259,7 @@ export const ReportView: React.FC = () => {
             </div>
             <Link
               to="/assess"
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors shrink-0"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-gradient-to-r from-secondary to-primary text-primary-foreground rounded-lg hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200 shrink-0"
             >
               Complete Assessment
               <ArrowRight size={12} />

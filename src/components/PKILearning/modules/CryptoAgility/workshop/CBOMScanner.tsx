@@ -6,6 +6,7 @@ import { SAMPLE_CBOM, CBOM_CYCLONEDX_SAMPLE, type CBOMEntry } from '../data/cbom
 import { LAYERS } from '@/components/Migrate/InfrastructureStack'
 import type { InfrastructureLayerType } from '@/components/Migrate/InfrastructureStack'
 import { softwareData } from '@/data/migrateData'
+import { Button } from '@/components/ui/button'
 
 type LayerFilter = Exclude<InfrastructureLayerType, 'All'> | 'all'
 
@@ -158,7 +159,8 @@ export const CBOMScanner: React.FC = () => {
             const IconComponent = layer.icon
 
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={layer.id}
                 onClick={() => setActiveLayer(isActive ? 'all' : (layer.id as LayerFilter))}
                 className={`flex flex-col items-center gap-1.5 p-2.5 rounded-lg border text-center transition-all ${
@@ -184,23 +186,25 @@ export const CBOMScanner: React.FC = () => {
                 <span className="text-[10px] text-muted-foreground">
                   {layerEntries.length} asset{layerEntries.length !== 1 ? 's' : ''}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>
         {activeLayer !== 'all' && (
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setActiveLayer('all')}
             className="mt-2 text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1"
           >
             <X size={10} /> Clear layer filter
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Filters + JSON toggle */}
       <div className="flex flex-wrap items-center gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setFilter('all')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'all'
@@ -209,8 +213,9 @@ export const CBOMScanner: React.FC = () => {
           }`}
         >
           All ({stats.total})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setFilter('vulnerable')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'vulnerable'
@@ -220,8 +225,9 @@ export const CBOMScanner: React.FC = () => {
         >
           <AlertTriangle size={10} className="inline mr-1" />
           Vulnerable ({stats.vulnerable})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setFilter('safe')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'safe'
@@ -231,8 +237,9 @@ export const CBOMScanner: React.FC = () => {
         >
           <CheckCircle size={10} className="inline mr-1" />
           Safe ({stats.safe})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setFilter('weakened')}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
             filter === 'weakened'
@@ -242,7 +249,7 @@ export const CBOMScanner: React.FC = () => {
         >
           <Shield size={10} className="inline mr-1" />
           Weakened ({stats.weakened})
-        </button>
+        </Button>
 
         {activeLayer !== 'all' && (
           <span className="text-xs px-2 py-1 rounded bg-primary/10 text-primary border border-primary/20">
@@ -252,7 +259,8 @@ export const CBOMScanner: React.FC = () => {
 
         <div className="flex-1" />
 
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowJson(!showJson)}
           className={`px-3 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1 ${
             showJson
@@ -262,7 +270,7 @@ export const CBOMScanner: React.FC = () => {
         >
           <Code size={12} />
           {showJson ? 'Hide' : 'Show'} CycloneDX JSON
-        </button>
+        </Button>
       </div>
 
       {/* CycloneDX JSON view */}

@@ -3,6 +3,7 @@
 import React from 'react'
 import { COVERAGE_GRID, REGION_LABELS, ORG_TYPE_LABELS } from '../data'
 import type { RegionKey, OrgTypeKey } from '../data'
+import { Button } from '@/components/ui/button'
 
 export interface GridSelection {
   region: RegionKey
@@ -75,7 +76,8 @@ export const CoverageGrid: React.FC<CoverageGridProps> = ({ selection, onSelect 
 
                   return (
                     <td key={type} className="py-1 px-1">
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => onSelect({ region, orgType: type })}
                         className={`w-full text-left p-2 rounded-lg border text-xs transition-colors min-h-[52px]
                           ${
@@ -90,7 +92,7 @@ export const CoverageGrid: React.FC<CoverageGridProps> = ({ selection, onSelect 
                             : cell.orgs.slice(0, 2).join(', ') +
                               (cell.orgs.length > 2 ? ` +${cell.orgs.length - 2}` : '')}
                         </div>
-                      </button>
+                      </Button>
                     </td>
                   )
                 })}

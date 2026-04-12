@@ -42,7 +42,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   const [isOpen, setIsOpen] = useState(defaultOpen)
   return (
     <section className="glass-panel p-6">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left"
       >
@@ -52,7 +53,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           size={18}
           className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
         />
-      </button>
+      </Button>
       {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
     </section>
   )
@@ -62,7 +63,7 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
   onNavigateToWorkshop,
 }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Why Data Classification Matters for PQC */}
       <CollapsibleSection
         icon={<Database size={24} className="text-primary" />}
@@ -534,7 +535,11 @@ export const DataAssetIntroduction: React.FC<DataAssetIntroductionProps> = ({
         </div>
 
         <div className="flex flex-wrap gap-3">
-          <Button onClick={onNavigateToWorkshop} className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            onClick={onNavigateToWorkshop}
+            className="flex items-center gap-2"
+          >
             Start Workshop <ArrowRight size={16} />
           </Button>
           <div className="flex flex-wrap gap-2 text-xs text-muted-foreground items-center">

@@ -109,7 +109,8 @@ const SectionHeader: React.FC<{
   expanded: boolean
   onToggle: (key: string) => void
 }> = ({ sectionKey, icon, title, subtitle, expanded, onToggle }) => (
-  <button
+  <Button
+    variant="ghost"
     onClick={() => onToggle(sectionKey)}
     className="w-full flex items-center justify-between p-4 pb-0 text-left"
     aria-expanded={expanded}
@@ -126,7 +127,7 @@ const SectionHeader: React.FC<{
     ) : (
       <ChevronDown size={16} className="text-muted-foreground shrink-0" />
     )}
-  </button>
+  </Button>
 )
 
 // ── Component ────────────────────────────────────────────────────────────

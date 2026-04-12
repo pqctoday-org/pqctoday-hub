@@ -4,6 +4,7 @@ import { KeyRound, ShieldCheck, CheckCircle, XCircle } from 'lucide-react'
 import { BYOK_ARCHITECTURES } from '../data/databaseConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const DBENC_KAT_SPECS: KatTestSpec[] = [
   {
@@ -56,7 +57,8 @@ export const BYOKKeyDesigner: React.FC = () => {
         {BYOK_ARCHITECTURES.map((arch) => {
           const isSelected = selectedPatternId === arch.id
           return (
-            <button
+            <Button
+              variant="ghost"
               key={arch.id}
               onClick={() => setSelectedPatternId(arch.id)}
               className={`text-left rounded-lg border p-4 transition-all ${
@@ -90,7 +92,7 @@ export const BYOKKeyDesigner: React.FC = () => {
                   {arch.pqcReadinessScore}%
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

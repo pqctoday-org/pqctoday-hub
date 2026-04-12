@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom'
 import { CheckCircle } from 'lucide-react'
 import { useModuleStore } from '@/store/useModuleStore'
 import { LEARN_SECTIONS } from './moduleData'
+import { Button } from '@/components/ui/button'
 
 interface LearnStep {
   label: string
@@ -36,13 +37,14 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
   const isLast = current === steps.length - 1
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       {/* Step indicator — numbered circles with connecting line */}
       <div className="mb-8">
         <div className="flex justify-between relative">
           <div className="absolute top-4 left-0 w-full h-0.5 bg-border -z-10" />
           {steps.map((step, idx) => (
-            <button
+            <Button
+              variant="ghost"
               key={step.label}
               type="button"
               onClick={() => setCurrent(idx)}
@@ -66,7 +68,7 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
               <span className="text-[10px] sm:text-xs font-medium max-w-[80px] text-center leading-tight">
                 {step.label}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -79,14 +81,15 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
 
       {/* Navigation — Previous | Next or Mark as Read */}
       <div className="flex flex-col sm:flex-row justify-between mt-6 gap-3">
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setCurrent((c) => Math.max(0, c - 1))}
           disabled={isFirst}
           className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
-        </button>
+        </Button>
 
         {isLast ? (
           allDone ? (
@@ -95,22 +98,24 @@ export const LearnStepper = ({ steps }: LearnStepperProps) => {
               Reading Complete!
             </div>
           ) : (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => moduleId && markAllLearnSectionsComplete(moduleId)}
               className="px-6 py-3 min-h-[44px] bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
             >
               ✓ Mark as Read
-            </button>
+            </Button>
           )
         ) : (
-          <button
+          <Button
+            variant="gradient"
             type="button"
             onClick={() => setCurrent((c) => Math.min(steps.length - 1, c + 1))}
-            className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
           >
             Next →
-          </button>
+          </Button>
         )}
       </div>
     </div>

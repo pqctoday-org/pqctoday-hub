@@ -20,6 +20,7 @@ import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { Button } from '@/components/ui/button'
 
 interface SoftwareCardProps {
   item: SoftwareItem
@@ -97,7 +98,8 @@ export const SoftwareCard = ({
         )}
 
         <div className="ml-auto flex items-center">
-          <button
+          <Button
+            variant="ghost"
             type="button"
             aria-label={
               isBookmarked
@@ -113,9 +115,10 @@ export const SoftwareCard = ({
             ) : (
               <Bookmark size={14} className="text-muted-foreground/40 hover:text-primary" />
             )}
-          </button>
+          </Button>
           {onHide && (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               aria-label="Hide this product"
               title="Hide this product"
@@ -123,7 +126,7 @@ export const SoftwareCard = ({
               className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors"
             >
               <EyeOff size={14} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -164,7 +167,8 @@ export const SoftwareCard = ({
 
         {/* Expandable Mobile Toggle */}
         <div className="md:hidden mt-3 mb-1">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setIsExpandedMobile(!isExpandedMobile)}
             className="text-xs text-primary hover:text-primary/80 flex items-center gap-1 font-medium transition-colors"
           >
@@ -177,7 +181,7 @@ export const SoftwareCard = ({
                 View Details <ChevronDown size={14} />
               </>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* Metadata - hidden on mobile unless expanded */}
@@ -240,7 +244,8 @@ export const SoftwareCard = ({
         />
 
         {onToggleCompare && (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             aria-label={isCompared ? 'Remove from comparison' : 'Add to comparison'}
             title={
@@ -259,10 +264,11 @@ export const SoftwareCard = ({
             }`}
           >
             <Scale size={16} />
-          </button>
+          </Button>
         )}
         {onToggleSelect && (
-          <button
+          <Button
+            variant="ghost"
             type="button"
             aria-label={isSelected ? 'Remove from My Products' : 'Add to My Products'}
             title={isSelected ? 'Remove from My Products' : 'Add to My Products'}
@@ -274,7 +280,7 @@ export const SoftwareCard = ({
             }`}
           >
             {isSelected ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
-          </button>
+          </Button>
         )}
       </div>
     </motion.article>

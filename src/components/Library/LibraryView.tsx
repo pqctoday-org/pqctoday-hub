@@ -29,6 +29,7 @@ import { useBookmarkStore } from '../../store/useBookmarkStore'
 import { PERSONA_LIBRARY_CATEGORIES } from '../../data/personaConfig'
 import { ErrorAlert } from '../ui/error-alert'
 import { EmptyState } from '../ui/empty-state'
+import { Button } from '@/components/ui/button'
 
 const URGENCY_ORDER: Record<string, number> = {
   Critical: 0,
@@ -595,7 +596,8 @@ export const LibraryView: React.FC = () => {
             />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowFilters(!showFilters)}
             className={`flex items-center justify-center gap-2 px-4 py-2 min-h-[44px] rounded-lg border transition-all font-medium ${
               showFilters ||
@@ -613,10 +615,11 @@ export const LibraryView: React.FC = () => {
             {(activeCategory !== 'All' || activeOrg !== 'All' || activeIndustry !== 'All') && (
               <span className="w-2 h-2 rounded-full bg-primary" />
             )}
-          </button>
+          </Button>
 
           {libraryBookmarks.length > 0 && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowOnlyLibraryBookmarks(!showOnlyLibraryBookmarks)}
               className={`inline-flex items-center gap-1.5 text-xs px-3 py-2 rounded-lg border transition-colors font-medium whitespace-nowrap min-h-[44px] ${
                 showOnlyLibraryBookmarks
@@ -627,7 +630,7 @@ export const LibraryView: React.FC = () => {
             >
               <BookmarkCheck size={14} />
               My ({libraryBookmarks.length})
-            </button>
+            </Button>
           )}
 
           {viewMode === 'cards' && (
@@ -719,7 +722,8 @@ export const LibraryView: React.FC = () => {
           {filterText && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Search:</span> {filterText}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setFilterText('')
                   setInputValue('')
@@ -729,13 +733,14 @@ export const LibraryView: React.FC = () => {
                 aria-label="Clear search"
               >
                 <X size={12} aria-hidden="true" />
-              </button>
+              </Button>
             </span>
           )}
           {activeOrg !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Org:</span> {activeOrg}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setActiveOrg('All')
                   syncFiltersToUrl({ org: 'All' })
@@ -744,13 +749,14 @@ export const LibraryView: React.FC = () => {
                 aria-label="Clear organization filter"
               >
                 <X size={12} aria-hidden="true" />
-              </button>
+              </Button>
             </span>
           )}
           {activeIndustry !== 'All' && (
             <span className="inline-flex items-center gap-1.5 px-2 py-1 rounded bg-muted/50 text-foreground border border-border">
               <span className="text-muted-foreground">Industry:</span> {activeIndustry}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setActiveIndustry('All')
                   syncFiltersToUrl({ ind: 'All' })
@@ -759,10 +765,11 @@ export const LibraryView: React.FC = () => {
                 aria-label="Clear industry filter"
               >
                 <X size={12} aria-hidden="true" />
-              </button>
+              </Button>
             </span>
           )}
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               setActiveOrg('All')
               setActiveIndustry('All')
@@ -773,7 +780,7 @@ export const LibraryView: React.FC = () => {
             className="text-muted-foreground hover:text-foreground underline decoration-muted-foreground/30 hover:decoration-muted-foreground transition-all ml-1"
           >
             Clear all
-          </button>
+          </Button>
         </div>
       )}
 

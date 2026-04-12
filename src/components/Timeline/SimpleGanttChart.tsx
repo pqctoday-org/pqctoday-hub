@@ -30,6 +30,7 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import { REGION_COUNTRIES_MAP } from '../../data/personaConfig'
 
 import { FilterChip } from '../common/FilterChip'
+import { Button } from '@/components/ui/button'
 
 interface SimpleGanttChartProps {
   data: GanttCountryData[]
@@ -352,7 +353,8 @@ export const SimpleGanttChart = ({
               contain: 'layout style', // Optimize WebKit rendering
             }}
           >
-            <button
+            <Button
+              variant="ghost"
               className={`w-full h-full relative flex items-center justify-center cursor-pointer transition-transform hover:scale-[1.02] border-0 bg-transparent ${isFirst || isMilestone ? 'z-20' : 'z-0'}`}
               onClick={(e) => handlePhaseClick(phaseData, e)}
               onKeyDown={(e) => handlePhaseKeyDown(e, phaseData, rowIdx, phaseIdx)}
@@ -392,7 +394,7 @@ export const SimpleGanttChart = ({
                   )}
                 </div>
               ) : null}
-            </button>
+            </Button>
           </td>
         )
       } else {
@@ -432,7 +434,8 @@ export const SimpleGanttChart = ({
             />
           </div>
           {myCountries.length > 0 && onSetShowOnlyMyCountries && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => onSetShowOnlyMyCountries(!showOnlyMyCountries)}
               className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                 showOnlyMyCountries
@@ -443,10 +446,11 @@ export const SimpleGanttChart = ({
             >
               <BookmarkCheck size={12} />
               My ({myCountries.length})
-            </button>
+            </Button>
           )}
           {selectedCountry !== 'All' && (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               aria-label="Copy country timeline link"
               onClick={() => {
@@ -460,7 +464,7 @@ export const SimpleGanttChart = ({
               className="p-2 text-muted-foreground hover:text-foreground rounded-md transition-colors flex-shrink-0"
             >
               {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
-            </button>
+            </Button>
           )}
         </div>
         <div className="flex items-center gap-2 w-full md:w-auto text-xs">
@@ -512,7 +516,8 @@ export const SimpleGanttChart = ({
             className="bg-muted/30 hover:bg-muted/50 border border-border rounded-lg pl-10 pr-4 py-2 min-h-[44px] text-sm focus:outline-none focus:border-primary/50 w-full transition-colors text-foreground placeholder:text-muted-foreground"
           />
         </div>
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             const next = selectedPhaseType === 'Deadline' ? 'All' : 'Deadline'
             setSelectedPhaseType(next)
@@ -527,15 +532,16 @@ export const SimpleGanttChart = ({
         >
           <Flag size={16} />
           <span className="hidden md:inline">Deadlines</span>
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={handleExportCSV}
           disabled={processedData.length === 0}
           className="flex items-center justify-center px-2.5 py-2 rounded-lg bg-muted/30 hover:bg-muted/50 border border-border text-foreground transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           aria-label="Export filtered timeline as CSV"
         >
           <Download size={16} />
-        </button>
+        </Button>
       </div>
 
       {/* Active filter chips + result count */}
@@ -578,15 +584,19 @@ export const SimpleGanttChart = ({
       {processedData.length === 0 && (
         <div className="text-center py-16 text-muted-foreground">
           <p className="text-sm">No results match your filters.</p>
-          <button onClick={clearAllFilters} className="mt-2 text-primary text-xs hover:underline">
+          <Button
+            variant="ghost"
+            onClick={clearAllFilters}
+            className="mt-2 text-primary text-xs hover:underline"
+          >
             Clear all filters
-          </button>
+          </Button>
         </div>
       )}
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card" ref={tableRef}>
-        <table className="w-full min-w-[1000px] border-collapse table-fixed">
+        <table className="w-full min-w-[600px] border-collapse table-fixed">
           <caption className="sr-only">
             Post-quantum cryptography migration timeline by country and phase
           </caption>
@@ -703,7 +713,8 @@ export const SimpleGanttChart = ({
                               </div>
                               <div className="flex items-center gap-0.5 -ml-1 mt-0.5">
                                 {onToggleMyCountry && (
-                                  <button
+                                  <Button
+                                    variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       onToggleMyCountry(country.countryName)
@@ -724,7 +735,7 @@ export const SimpleGanttChart = ({
                                     ) : (
                                       <Bookmark size={14} />
                                     )}
-                                  </button>
+                                  </Button>
                                 )}
                                 <EndorseButton
                                   endorseUrl={buildEndorsementUrl({

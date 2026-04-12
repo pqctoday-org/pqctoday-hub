@@ -121,7 +121,8 @@ export const HsmHashingPanel = ({
             <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
               Algorithm
             </p>
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={() => {
                 setMultiPart((v) => !v)
@@ -135,7 +136,7 @@ export const HsmHashingPanel = ({
               }`}
             >
               Multi-part
-            </button>
+            </Button>
           </div>
           <div className="flex flex-wrap gap-2">
             {HASH_ALGOS.map((a) => (
@@ -183,7 +184,8 @@ export const HsmHashingPanel = ({
                     placeholder={`Chunk ${idx + 1}…`}
                     className="flex-1 text-xs rounded-lg px-3 py-1.5 bg-muted border border-input text-foreground font-mono focus:outline-none focus:ring-1 focus:ring-ring"
                   />
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={() => removeChunk(idx)}
                     disabled={chunks.length <= 1}
@@ -191,7 +193,7 @@ export const HsmHashingPanel = ({
                     aria-label={`Remove chunk ${idx + 1}`}
                   >
                     <X size={12} />
-                  </button>
+                  </Button>
                 </div>
               ))}
               <Button variant="ghost" size="sm" onClick={addChunk} className="text-xs h-7">
@@ -222,6 +224,7 @@ export const HsmHashingPanel = ({
 
         {/* Digest button */}
         <Button
+          variant="ghost"
           onClick={doDigest}
           disabled={loading || (multiPart ? chunks.every((c) => !c) : !input.length)}
           className="w-full"

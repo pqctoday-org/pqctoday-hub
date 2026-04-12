@@ -2,6 +2,7 @@
 
 import { ENTITY_CONFIG } from './nodes/EntityNode'
 import type { EntityType } from '../data/graphTypes'
+import { Button } from '@/components/ui/button'
 
 interface GraphLegendProps {
   visibleTypes?: EntityType[]
@@ -41,7 +42,8 @@ export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLe
 
         if (onToggleType) {
           return (
-            <button
+            <Button
+              variant="ghost"
               key={type}
               onClick={() => onToggleType(type)}
               title={isHidden ? `Show ${label}` : `Hide ${label}`}
@@ -51,7 +53,7 @@ export function GraphLegend({ visibleTypes, hiddenTypes, onToggleType }: GraphLe
             >
               <Icon className={`w-3 h-3 ${config.text}`} />
               <span className="text-muted-foreground">{label}</span>
-            </button>
+            </Button>
           )
         }
 

@@ -61,7 +61,7 @@ export const NextModuleCTA: React.FC<NextModuleCTAProps> = ({ moduleId }) => {
       {nextModuleId ? (
         <Link
           to={`/learn/${nextModuleId}`}
-          className="inline-flex items-center gap-2 px-4 py-2 mt-1 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 mt-1 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
         >
           Continue to {nextModuleTitle}
           <ArrowRight size={14} />

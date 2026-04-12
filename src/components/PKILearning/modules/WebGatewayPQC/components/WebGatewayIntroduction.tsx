@@ -19,6 +19,7 @@ import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { TERMINATION_PATTERNS, GATEWAY_VENDORS, HANDSHAKE_MITIGATIONS } from '../data/gatewayData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface WebGatewayIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -31,7 +32,7 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
   const plannedVendors = GATEWAY_VENDORS.filter((v) => v.pqcStatus === 'planned')
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: Web Gateway Architecture & TLS Termination Patterns */}
       <section className="glass-panel p-6">
         <div className="flex items-center gap-3 mb-4">
@@ -92,13 +93,21 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Try the{' '}
-            <button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Topology Builder (Workshop Step 1)
-            </button>{' '}
+            </Button>{' '}
             to construct your gateway architecture and the{' '}
-            <button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               TLS Termination Patterns (Step 2)
-            </button>{' '}
+            </Button>{' '}
             to compare these patterns side by side.
           </p>
         </div>
@@ -156,9 +165,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Use the{' '}
-            <button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Certificate Rotation Planner (Workshop Step 4)
-            </button>{' '}
+            </Button>{' '}
             to model your edge migration timeline.
           </p>
         </div>
@@ -227,9 +240,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Try the{' '}
-            <button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Handshake Budget Calculator (Workshop Step 3)
-            </button>{' '}
+            </Button>{' '}
             to model your specific gateway scenario.
           </p>
         </div>
@@ -407,9 +424,13 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
 
           <p className="text-xs text-muted-foreground italic">
             Use the{' '}
-            <button onClick={onNavigateToWorkshop} className="text-primary hover:underline">
+            <Button
+              variant="ghost"
+              onClick={onNavigateToWorkshop}
+              className="text-primary hover:underline"
+            >
               Vendor Readiness Matrix (Workshop Step 5)
-            </button>{' '}
+            </Button>{' '}
             to assess your specific gateway infrastructure against PQC readiness.
           </p>
         </div>
@@ -428,13 +449,14 @@ export const WebGatewayIntroduction: React.FC<WebGatewayIntroductionProps> = ({
               Matrix.
             </p>
           </div>
-          <button
+          <Button
+            variant="gradient"
             onClick={onNavigateToWorkshop}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors shrink-0"
+            className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors shrink-0"
           >
             Start Workshop
             <ArrowRight size={16} />
-          </button>
+          </Button>
         </div>
       </div>
 

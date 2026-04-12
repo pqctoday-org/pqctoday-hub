@@ -16,6 +16,7 @@ import {
   KeyRound,
   ExternalLink,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface StatefulSigsIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -24,7 +25,7 @@ interface StatefulSigsIntroductionProps {
 // ─── Step 1: Why Stateful + Merkle Trees ─────────────────────────────────────
 
 const Step1WhyAndMerkle: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 1: Why Stateful? */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -238,7 +239,7 @@ const Step1WhyAndMerkle: React.FC = () => (
 // ─── Step 2: LMS/HSS + XMSS ──────────────────────────────────────────────────
 
 const Step2LmsXmss: React.FC = () => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 3: LMS/HSS */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -426,7 +427,7 @@ const Step2LmsXmss: React.FC = () => (
 const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = ({
   onNavigateToWorkshop,
 }) => (
-  <div className="space-y-8 max-w-4xl mx-auto">
+  <div className="space-y-8 w-full">
     {/* Section 5: The State Problem */}
     <section className="glass-panel p-6">
       <div className="flex items-center gap-3 mb-4">
@@ -617,12 +618,13 @@ const Step3StateAndResources: React.FC<{ onNavigateToWorkshop: () => void }> = (
 
     {/* CTA */}
     <div className="text-center">
-      <button
+      <Button
+        variant="gradient"
         onClick={onNavigateToWorkshop}
-        className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
       >
         Start Workshop <ArrowRight size={18} />
-      </button>
+      </Button>
       <p className="text-xs text-muted-foreground mt-2">
         Explore LMS and XMSS key generation, compare parameter sets, and simulate state management.
       </p>

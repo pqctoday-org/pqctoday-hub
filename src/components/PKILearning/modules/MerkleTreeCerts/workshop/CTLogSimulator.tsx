@@ -44,6 +44,10 @@ import {
   buildMerkleTree,
   getInclusionProof,
   getConsistencyProof,
+  getConsistencyProofRFC9162,
+  verifyConsistencyProofSteps,
+  type ConsistencyStep,
+  type Rfc9162ConsistencyProof,
   type MerkleNode,
   type ConsistencyProof,
   type CertLeaf,
@@ -65,14 +69,29 @@ interface SignedBatch {
   treeSize: number
   /** UTF-8 encoding of "MTC|<root>|<treeSize>|<ts>" — the raw message the CA signs */
   signedPayload: Uint8Array
-  /** ML-DSA-44 signature from the CA over signedPayload */
+  /** ML-DSA signature from the CA over signedPayload */
   caSig: Uint8Array
-  /** CA public key bytes (ML-DSA-44, 1312 bytes) for display */
+  /** CA public key bytes for display */
   caPubKey: Uint8Array
   timestamp: number
+  /** Algorithm used by the CA key (e.g. 'ML-DSA-65') */
+  caAlgo: string
 }
 
 type Panel = 'submission' | 'consistency' | 'audit'
+
+/** Byte sizes by CA algorithm: { pubKey, sig, level } */
+const CA_ALGO_SIZES: Record<string, { pubKey: number; sig: number; level: number }> = {
+  'ML-DSA-44': { pubKey: 1312, sig: 2420, level: 44 },
+  'ML-DSA-65': { pubKey: 1952, sig: 3309, level: 65 },
+  'ML-DSA-87': { pubKey: 2592, sig: 4627, level: 87 },
+}
+
+const CA_ALGO_OPTIONS = [
+  { id: 'ML-DSA-44', label: 'ML-DSA-44 (Level 1)' },
+  { id: 'ML-DSA-65', label: 'ML-DSA-65 (Level 3)' },
+  { id: 'ML-DSA-87', label: 'ML-DSA-87 (Level 5)' },
+]
 
 const ALGO_OPTIONS = [
   { id: 'ML-DSA-44', label: 'ML-DSA-44' },
@@ -115,6 +134,8 @@ interface SubmissionPanelProps {
   caKeyReady: boolean
   isSigning: boolean
   hsmReady: boolean
+  caAlgo: string
+  onCaAlgoChange: (algo: string) => void
   onAddCert: (subject: string, algorithm: string) => void
   onLoadSamples: () => void
   onGenerateCAKey: () => void
@@ -127,10 +148,13 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
   caKeyReady,
   isSigning,
   hsmReady,
+  caAlgo,
+  onCaAlgoChange,
   onAddCert,
   onLoadSamples,
   onGenerateCAKey,
 }) => {
+  const caSize = CA_ALGO_SIZES[caAlgo] ?? CA_ALGO_SIZES['ML-DSA-65']
   const [newSubject, setNewSubject] = useState('')
   const [newAlgo, setNewAlgo] = useState('ML-DSA-44')
   const [expandedIdx, setExpandedIdx] = useState<number | null>(null)
@@ -149,16 +173,18 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           <strong className="text-foreground">Bringing it together:</strong> In Steps 1–3 you built
           a Merkle tree, generated inclusion proofs, and verified them. In Step 4 you saw how that
           proof replaces multiple large PQC signatures. Now watch the CA sign a real Merkle root
-          with ML-DSA-44 via SoftHSMv3 — that single signature (2,420 B) is what covers all N
-          certificates in the batch and makes those size savings real.
+          with {caAlgo} via SoftHSMv3 — that single signature ({caSize.sig.toLocaleString()} B) is
+          what covers all N certificates in the batch and makes those size savings real.
         </p>
         <p>
           <strong className="text-foreground">MTC key insight:</strong> In traditional PKI, the CA
-          signs every certificate individually — with ML-DSA-44 that&apos;s{' '}
-          <span className="text-destructive font-mono">2,420 bytes × N</span> certs. In Merkle Tree
-          Certificates (RFC draft-ietf-plants-merkle-tree-certs), the CA signs{' '}
-          <strong className="text-success">only the tree root once</strong> — one ML-DSA-44
-          signature covers all N certs in the batch.
+          signs every certificate individually — with {caAlgo} that&apos;s{' '}
+          <span className="text-destructive font-mono">
+            {caSize.sig.toLocaleString()} bytes × N
+          </span>{' '}
+          certs. In Merkle Tree Certificates (RFC draft-ietf-plants-merkle-tree-certs), the CA signs{' '}
+          <strong className="text-success">only the tree root once</strong> — one {caAlgo} signature
+          covers all N certs in the batch.
         </p>
         <p className="text-[10px] border-t border-border/50 pt-1.5">
           <strong className="text-foreground">Simplified signed payload:</strong> This demo signs a
@@ -180,19 +206,32 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
             <span className="text-xs font-bold text-foreground">Generate CA Key</span>
           </div>
           <p className="text-[10px] text-muted-foreground mb-2">
-            Generate the CA&apos;s ML-DSA-44 key pair via SoftHSMv3. This key will sign the Merkle
-            tree root after each batch update.
+            Generate the CA&apos;s key pair via SoftHSMv3. This key signs the Merkle tree root after
+            each batch update. ML-DSA-65 (NIST Level 3) is recommended for CA use.
           </p>
-          <Button onClick={onGenerateCAKey} variant="outline" className="text-xs h-auto py-1.5">
-            <Key size={12} className="mr-1" /> Generate ML-DSA-44 CA Key
-          </Button>
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="min-w-[180px]">
+              <FilterDropdown
+                label="CA signing algorithm"
+                items={CA_ALGO_OPTIONS}
+                selectedId={caAlgo}
+                onSelect={onCaAlgoChange}
+                noContainer
+                className="w-full"
+              />
+            </div>
+            <Button onClick={onGenerateCAKey} variant="outline" className="text-xs h-auto py-1.5">
+              <Key size={12} className="mr-1" /> Generate {caAlgo} CA Key
+            </Button>
+          </div>
         </div>
       )}
 
       {caKeyReady && (
         <div className="flex items-center gap-2 text-[10px] text-success">
           <ShieldCheck size={12} />
-          ML-DSA-44 CA key ready (SoftHSMv3 · FIPS 204 · 1,312-byte public key)
+          {caAlgo} CA key ready (SoftHSMv3 · FIPS 204 · {caSize.pubKey.toLocaleString()}-byte public
+          key)
         </div>
       )}
 
@@ -205,9 +244,13 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               : 'Add Certificate (simulation)'}
           </span>
           {issuedCerts.length === 0 && (
-            <button onClick={onLoadSamples} className="text-xs text-primary hover:text-primary/80">
+            <Button
+              variant="ghost"
+              onClick={onLoadSamples}
+              className="text-xs text-primary hover:text-primary/80"
+            >
               Load 5 samples
-            </button>
+            </Button>
           )}
         </div>
         <div className="flex flex-wrap items-end gap-2">
@@ -235,16 +278,17 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               noContainer
               className="w-full"
             />
-            <p className="text-[9px] text-muted-foreground mt-0.5">CA signs with ML-DSA-44</p>
+            <p className="text-[9px] text-muted-foreground mt-0.5">CA signs with {caAlgo}</p>
           </div>
-          <button
+          <Button
+            variant="ghost"
             onClick={handleAdd}
             disabled={!newSubject.trim() || isSigning}
             className="flex items-center gap-1 px-3 py-1.5 text-xs bg-primary/10 text-primary border border-primary/30 rounded hover:bg-primary/20 disabled:opacity-50 transition-colors"
           >
             {isSigning ? <Loader2 size={12} className="animate-spin" /> : <Plus size={12} />}
             Submit
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -258,7 +302,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
               {signedBatch.treeSize !== 1 ? 's' : ''}
             </span>
             <span className="text-[10px] px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20">
-              CA ML-DSA-44 signature
+              CA {signedBatch?.caAlgo ?? caAlgo} signature
             </span>
           </div>
           <div className="grid grid-cols-1 gap-1 text-[10px]">
@@ -299,10 +343,12 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
           </div>
           <div className="flex items-start gap-1.5 text-[10px] text-muted-foreground bg-success/5 rounded p-2 border border-success/10">
             <Info size={11} className="text-success mt-0.5 shrink-0" />
-            One ML-DSA-44 signature (2,420 B) covers all {signedBatch.treeSize} certificate
+            One {signedBatch.caAlgo} signature ({signedBatch.caSig.length.toLocaleString()} B)
+            covers all {signedBatch.treeSize} certificate
             {signedBatch.treeSize !== 1 ? 's' : ''} in this batch. Traditional PKI would require{' '}
-            {signedBatch.treeSize} × 2,420 B = {(signedBatch.treeSize * 2420).toLocaleString()}{' '}
-            bytes of CA signatures.
+            {signedBatch.treeSize} × {signedBatch.caSig.length.toLocaleString()} B ={' '}
+            {(signedBatch.treeSize * signedBatch.caSig.length).toLocaleString()} bytes of CA
+            signatures.
           </div>
         </div>
       )}
@@ -321,7 +367,8 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                   key={cert.id}
                   className="bg-muted/50 rounded-lg border border-border overflow-hidden"
                 >
-                  <button
+                  <Button
+                    variant="ghost"
                     className="w-full flex items-center gap-3 p-2.5 text-left hover:bg-muted/80 transition-colors"
                     onClick={() => setExpandedIdx(expandedIdx === idx ? null : idx)}
                   >
@@ -337,7 +384,7 @@ const SubmissionPanel: React.FC<SubmissionPanelProps> = ({
                     <span className="text-[10px] text-muted-foreground">
                       {expandedIdx === idx ? '▲' : '▼'}
                     </span>
-                  </button>
+                  </Button>
 
                   {expandedIdx === idx && (
                     <div className="px-3 pb-3 pt-0 space-y-2 border-t border-border">
@@ -424,12 +471,18 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
   onFreezeSnapshot,
 }) => {
   const [proof, setProof] = useState<ConsistencyProof | null>(null)
+  const [rfc9162Proof, setRfc9162Proof] = useState<Rfc9162ConsistencyProof | null>(null)
   const [isComputing, setIsComputing] = useState(false)
   const [verified, setVerified] = useState<boolean | null>(null)
+  const [consistencySteps, setConsistencySteps] = useState<ConsistencyStep[]>([])
+  const [animatedStep, setAnimatedStep] = useState(-1)
 
   useEffect(() => {
     setProof(null)
+    setRfc9162Proof(null)
     setVerified(null)
+    setConsistencySteps([])
+    setAnimatedStep(-1)
   }, [snapshot, logLevels])
 
   const canCompute =
@@ -438,12 +491,22 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
   const handleCompute = useCallback(async () => {
     if (!snapshot || !logLevels) return
     setIsComputing(true)
+    setAnimatedStep(-1)
     try {
       await new Promise((r) => setTimeout(r, 150))
       const p = getConsistencyProof(snapshot.levels, logLevels)
+      const rfc = await getConsistencyProofRFC9162(snapshot.levels, logLevels)
+      const steps = verifyConsistencyProofSteps(p)
       setProof(p)
+      setRfc9162Proof(rfc)
+      setConsistencySteps(steps)
       const oldHashes = new Set(p.nodes.filter((n) => n.isOld).map((n) => n.hash))
       setVerified(oldHashes.has(p.oldRoot))
+      // Animate steps
+      for (let i = 0; i < steps.length; i++) {
+        setAnimatedStep(i)
+        await new Promise((r) => setTimeout(r, 400))
+      }
     } finally {
       setIsComputing(false)
     }
@@ -532,9 +595,10 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
 
       {canCompute && (
         <Button
+          variant="gradient"
           onClick={handleCompute}
           disabled={isComputing}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90"
+          className="flex items-center gap-2 font-bold"
         >
           {isComputing ? (
             <>
@@ -604,6 +668,46 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
             </div>
           </div>
 
+          {/* Step-by-step walkthrough: shared nodes tracing T1 root */}
+          {consistencySteps.length > 0 && (
+            <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
+              <div className="text-xs font-bold text-foreground mb-2">
+                Verification Walk — Shared Nodes Tracing T1 Root
+              </div>
+              <div className="space-y-1.5">
+                {consistencySteps.map((step, i) => {
+                  const isVisible = animatedStep >= i || verified !== null
+                  return (
+                    <div
+                      key={i}
+                      className={`bg-background rounded p-2 border transition-all duration-300 ${
+                        isVisible ? 'opacity-100' : 'opacity-20'
+                      } ${step.isOldRoot ? 'border-success/60 ring-1 ring-success/30' : 'border-border'}`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className="text-[10px] text-muted-foreground">
+                          {step.description}
+                        </span>
+                        {step.isOldRoot && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-success/20 text-success border border-success/30">
+                            ✓ T1 root found
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`font-mono text-[10px] mt-0.5 break-all ${
+                          step.isOldRoot ? 'text-success font-bold' : 'text-foreground'
+                        }`}
+                      >
+                        {truncateHash(step.nodeHash, 20)}
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+          )}
+
           {/* Root hash comparison — key proof fact */}
           <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
             <div className="text-[10px] font-bold text-foreground">
@@ -629,6 +733,42 @@ const ConsistencyPanel: React.FC<ConsistencyPanelProps> = ({
               T2&apos;s shared nodes — proving no old entries were rewritten.
             </p>
           </div>
+
+          {/* RFC 9162 compressed proof */}
+          {rfc9162Proof && (
+            <div className="bg-muted/50 rounded-lg p-3 border border-border space-y-2">
+              <div className="text-[10px] font-bold text-foreground">
+                RFC 9162 §2.1.3 Compressed Proof
+              </div>
+              <p className="text-[9px] text-muted-foreground">
+                The SubProof algorithm produces the <em>minimal</em> set of hashes needed to verify
+                consistency. Compare this to the {proof?.nodes.filter((n) => n.isOld).length ?? 0}{' '}
+                shared nodes shown in the visual tree above.
+              </p>
+              <div className="flex items-center gap-3 text-[10px]">
+                <span className="text-muted-foreground">Proof size:</span>
+                <span className="font-bold text-primary">
+                  {rfc9162Proof.proof.length} node{rfc9162Proof.proof.length !== 1 ? 's' : ''}
+                </span>
+                <span className="text-muted-foreground">
+                  ({rfc9162Proof.proof.length * 32} bytes vs{' '}
+                  {(proof?.nodes.filter((n) => n.isOld).length ?? 0) * 32} bytes visual)
+                </span>
+              </div>
+              {rfc9162Proof.proof.length > 0 && (
+                <div className="space-y-1">
+                  {rfc9162Proof.proof.map((hash, i) => (
+                    <div key={i} className="bg-background rounded px-2 py-1 border border-border">
+                      <span className="text-[9px] text-muted-foreground mr-2">Node {i + 1}:</span>
+                      <span className="font-mono text-[10px] text-foreground">
+                        {truncateHash(hash, 16)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
 
           <div
             className={`rounded-lg p-3 border-2 text-center ${
@@ -783,7 +923,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                 .join(''),
               16
             )}
-            … (ML-DSA-44, {signedBatch.caSig.length.toLocaleString()} B)
+            … ({signedBatch.caAlgo}, {signedBatch.caSig.length.toLocaleString()} B)
           </div>
         </div>
       )}
@@ -800,7 +940,8 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
             )}
           </span>
           {hasTampering && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 setEditedCerts(structuredClone(logCerts))
                 setAuditResult(null)
@@ -808,7 +949,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               <RefreshCw size={11} /> Restore all
-            </button>
+            </Button>
           )}
         </div>
 
@@ -845,12 +986,20 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                         }}
                         className="text-xs h-auto py-1 flex-1"
                       />
-                      <button onClick={() => handleCommitEdit(idx)} className="text-success">
+                      <Button
+                        variant="ghost"
+                        onClick={() => handleCommitEdit(idx)}
+                        className="text-success"
+                      >
                         <Check size={14} />
-                      </button>
-                      <button onClick={() => setEditingIdx(null)} className="text-muted-foreground">
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        onClick={() => setEditingIdx(null)}
+                        className="text-muted-foreground"
+                      >
                         <X size={14} />
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -869,13 +1018,14 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
                 </div>
                 <span className="text-[10px] text-muted-foreground shrink-0">{cert.algorithm}</span>
                 {!isEditing && (
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleStartEdit(idx)}
                     className="text-muted-foreground hover:text-warning transition-colors shrink-0"
                     title="Edit to simulate misissuance"
                   >
                     <Pencil size={12} />
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -884,7 +1034,8 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
       </div>
 
       {/* Re-audit button */}
-      <button
+      <Button
+        variant="ghost"
         onClick={handleReaudit}
         disabled={isAuditing}
         className="flex items-center gap-2 px-4 py-2 bg-warning/10 text-warning border border-warning/30 rounded-lg hover:bg-warning/20 disabled:opacity-50 text-sm font-medium transition-colors"
@@ -898,7 +1049,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
             <ShieldCheck size={16} /> Re-audit Batch
           </>
         )}
-      </button>
+      </Button>
 
       {/* Audit result */}
       {auditResult && signedBatch && (
@@ -977,6 +1128,7 @@ const AuditPanel: React.FC<AuditPanelProps> = ({
 export const CTLogSimulator: React.FC = () => {
   const hsm = useHSM('rust')
   const [activePanel, setActivePanel] = useState<Panel>('submission')
+  const [caAlgo, setCaAlgo] = useState('ML-DSA-65')
 
   const [issuedCerts, setIssuedCerts] = useState<IssuedCert[]>([])
   const [logLevels, setLogLevels] = useState<MerkleNode[][] | null>(null)
@@ -996,10 +1148,16 @@ export const CTLogSimulator: React.FC = () => {
 
   const handleGenerateCAKey = useCallback(async () => {
     if (!hsm.isReady || !hsm.moduleRef.current) return
-    hsm.addStepLog('CA Key Generation — ML-DSA-44')
+    const caSize = CA_ALGO_SIZES[caAlgo] ?? CA_ALGO_SIZES['ML-DSA-65']
+    hsm.addStepLog(`CA Key Generation — ${caAlgo}`)
     const M = hsm.moduleRef.current
     const hSession = hsm.hSessionRef.current
-    const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(M, hSession, 44, true)
+    const { pubHandle, privHandle } = hsm_generateMLDSAKeyPair(
+      M,
+      hSession,
+      caSize.level as 44 | 87 | 65,
+      true
+    )
     const pubBytes = hsm_extractKeyValue(M, hSession, pubHandle)
     setCAKeyHandles({ pubHandle, privHandle })
     setCAPubKeyBytes(pubBytes)
@@ -1007,21 +1165,22 @@ export const CTLogSimulator: React.FC = () => {
       handle: pubHandle,
       family: 'ml-dsa',
       role: 'public',
-      label: 'CT Log CA Public Key (ML-DSA-44, 1,312 B)',
-      variant: '44',
+      label: `CT Log CA Public Key (${caAlgo}, ${caSize.pubKey.toLocaleString()} B)`,
+      variant: String(caSize.level),
       generatedAt: new Date().toISOString(),
     })
-  }, [hsm])
+  }, [hsm, caAlgo])
 
   const signBatch = useCallback(
     async (certs: IssuedCert[], levels: MerkleNode[][]): Promise<SignedBatch | null> => {
       const root = levels[levels.length - 1][0].hash
       const ts = Date.now()
       const payload = await buildSignedPayload(root, certs.length, ts)
+      const caSize = CA_ALGO_SIZES[caAlgo] ?? CA_ALGO_SIZES['ML-DSA-65']
 
       // If HSM + CA key ready, sign with ML-DSA; otherwise use a placeholder
       if (hsm.isReady && hsm.moduleRef.current && caKeyHandles) {
-        hsm.addStepLog(`CA Signs STH — ML-DSA-44 · root ${root.slice(0, 8)}…`)
+        hsm.addStepLog(`CA Signs STH — ${caAlgo} · root ${root.slice(0, 8)}…`)
         const M = hsm.moduleRef.current
         const hSession = hsm.hSessionRef.current
         const sig = hsm_signBytesMLDSA(M, hSession, caKeyHandles.privHandle, payload)
@@ -1030,22 +1189,24 @@ export const CTLogSimulator: React.FC = () => {
           treeSize: certs.length,
           signedPayload: payload,
           caSig: sig,
-          caPubKey: caPubKeyBytes ?? new Uint8Array(1312),
+          caPubKey: caPubKeyBytes ?? new Uint8Array(caSize.pubKey),
           timestamp: ts,
+          caAlgo,
         }
       } else {
-        // Simulation mode — zero signature bytes as placeholder
+        // Simulation mode — placeholder bytes
         return {
           root,
           treeSize: certs.length,
           signedPayload: payload,
-          caSig: new Uint8Array(2420),
-          caPubKey: new Uint8Array(1312),
+          caSig: new Uint8Array(caSize.sig),
+          caPubKey: new Uint8Array(caSize.pubKey),
           timestamp: ts,
+          caAlgo,
         }
       }
     },
-    [hsm, caKeyHandles, caPubKeyBytes]
+    [hsm, caKeyHandles, caPubKeyBytes, caAlgo]
   )
 
   const addCertToLog = useCallback(
@@ -1130,7 +1291,9 @@ export const CTLogSimulator: React.FC = () => {
 
       // If HSM + CA key available, verify ML-DSA signature
       if (hsm.isReady && hsm.moduleRef.current && caKeyHandles) {
-        hsm.addStepLog(`CA Signature Verify — ML-DSA-44 · root ${computedRoot.slice(0, 8)}…`)
+        hsm.addStepLog(
+          `CA Signature Verify — ${signedBatch.caAlgo} · root ${computedRoot.slice(0, 8)}…`
+        )
         const M = hsm.moduleRef.current
         const hSession = hsm.hSessionRef.current
         const sigValid = hsm_verifyBytes(
@@ -1159,7 +1322,7 @@ export const CTLogSimulator: React.FC = () => {
       {/* HSM toggle anchors the top per layout pattern */}
       <LiveHSMToggle
         hsm={hsm}
-        operations={['C_GenerateKeyPair', 'C_Sign (ML-DSA-44)', 'C_Verify (ML-DSA-44)']}
+        operations={['C_GenerateKeyPair', `C_Sign (${caAlgo})`, `C_Verify (${caAlgo})`]}
       />
 
       <div>
@@ -1167,7 +1330,7 @@ export const CTLogSimulator: React.FC = () => {
           Certificate Transparency Log Simulator
         </h3>
         <p className="text-sm text-muted-foreground">
-          Simulate a live CT log with real ML-DSA-44 signatures via SoftHSMv3 (PKCS#11 v3.2 · FIPS
+          Simulate a live CT log with real {caAlgo} signatures via SoftHSMv3 (PKCS#11 v3.2 · FIPS
           204). Submit certs, have the CA sign the Merkle root, prove append-only growth, and detect
           misissuance.
         </p>
@@ -1201,6 +1364,8 @@ export const CTLogSimulator: React.FC = () => {
             caKeyReady={caKeyReady}
             isSigning={isSigning}
             hsmReady={hsm.isReady}
+            caAlgo={caAlgo}
+            onCaAlgoChange={setCaAlgo}
             onAddCert={addCertToLog}
             onLoadSamples={loadSamples}
             onGenerateCAKey={handleGenerateCAKey}

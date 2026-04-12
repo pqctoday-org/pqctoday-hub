@@ -615,7 +615,8 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                           <td className="py-2 px-2">
                             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
                               {timelineCountry && (
-                                <button
+                                <Button
+                                  variant="ghost"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     navigate(
@@ -626,9 +627,10 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                                   title={`View ${timelineCountry} timeline`}
                                 >
                                   <Calendar size={14} />
-                                </button>
+                                </Button>
                               )}
-                              <button
+                              <Button
+                                variant="ghost"
                                 onClick={(e) => {
                                   e.stopPropagation()
                                   dismissFramework(fw.id)
@@ -637,7 +639,7 @@ export const JurisdictionMapper: React.FC<JurisdictionMapperProps> = ({
                                 title="Remove from list"
                               >
                                 <X size={14} />
-                              </button>
+                              </Button>
                             </div>
                           </td>
                         </tr>

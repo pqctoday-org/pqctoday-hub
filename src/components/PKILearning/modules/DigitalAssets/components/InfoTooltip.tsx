@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { Info } from 'lucide-react'
 import { CRYPTO_TOOLTIPS, type CryptoTooltipKey } from '../utils/cryptoConstants'
+import { Button } from '@/components/ui/button'
 
 interface InfoTooltipProps {
   term: CryptoTooltipKey
@@ -37,7 +38,8 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
 
   return (
     <span className={`inline ${className}`}>
-      <button
+      <Button
+        variant="ghost"
         ref={triggerRef}
         onClick={() => setIsOpen((prev) => !prev)}
         onMouseEnter={open}
@@ -47,7 +49,7 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
       >
         <span className="font-mono text-sm font-medium">{tooltip.title}</span>
         <Info size={14} className="text-muted-foreground" />
-      </button>
+      </Button>
 
       {isOpen &&
         tooltipStyle &&

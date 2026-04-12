@@ -180,7 +180,8 @@ export const ContainerSigningMigration: React.FC = () => {
               key={tool.id}
               className={`glass-panel overflow-hidden ${isSelected ? 'ring-2 ring-primary' : ''}`}
             >
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => (compareMode ? toggleCompare(tool.id) : toggleExpand(tool.id))}
                 className="w-full text-left p-4 flex items-center gap-3"
               >
@@ -219,7 +220,7 @@ export const ContainerSigningMigration: React.FC = () => {
                     )}
                   </span>
                 )}
-              </button>
+              </Button>
 
               {isExpanded && !compareMode && (
                 <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">

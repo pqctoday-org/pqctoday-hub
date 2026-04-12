@@ -132,7 +132,8 @@ export const PackageSigning: React.FC = () => {
         <h4 className="text-sm font-bold text-foreground mb-3">Select Signing Mode</h4>
         <div className="flex flex-wrap gap-2">
           {SIGNING_MODES.map((mode) => (
-            <button
+            <Button
+              variant="ghost"
               key={mode.id}
               onClick={() => {
                 setSelectedMode(mode.id as SigningModeId)
@@ -150,7 +151,7 @@ export const PackageSigning: React.FC = () => {
             >
               <div>{mode.label}</div>
               <div className="text-[10px] opacity-70">{mode.algorithm}</div>
-            </button>
+            </Button>
           ))}
         </div>
         <div className="mt-3 text-xs text-muted-foreground">

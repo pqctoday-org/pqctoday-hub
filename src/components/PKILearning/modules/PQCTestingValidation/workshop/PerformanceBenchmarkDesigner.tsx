@@ -8,6 +8,7 @@ import {
   type AlgorithmSet,
   type NetworkProfile,
 } from '../data/testingConstants'
+import { Button } from '@/components/ui/button'
 
 const METRICS = [
   {
@@ -88,7 +89,8 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
               (typeof NETWORK_PROFILE_LABELS)[NetworkProfile],
             ][]
           ).map(([id, info]) => (
-            <button
+            <Button
+              variant="ghost"
               key={id}
               onClick={() => setNetworkProfile(id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -99,7 +101,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             >
               <div className="font-semibold text-xs text-foreground mb-0.5">{info.label}</div>
               <div className="text-xs text-muted-foreground">{info.description}</div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -109,7 +111,8 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Measurement Metric:</span>
         <div className="flex flex-wrap gap-2">
           {METRICS.map((m) => (
-            <button
+            <Button
+              variant="ghost"
               key={m.key}
               onClick={() => setSelectedMetric(m.key)}
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
@@ -119,7 +122,7 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
               }`}
             >
               {m.label}
-            </button>
+            </Button>
           ))}
         </div>
         <p className="text-xs text-muted-foreground pl-1">{metric.description}</p>
@@ -176,13 +179,14 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
 
       {/* Key insights panel */}
       <div className="space-y-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowInsight(!showInsight)}
           className="flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors"
         >
           <Info size={14} />
           {showInsight ? 'Hide' : 'Show'} key insights for this profile
-        </button>
+        </Button>
 
         {showInsight && (
           <div className="p-4 rounded-lg bg-muted border border-border space-y-3">

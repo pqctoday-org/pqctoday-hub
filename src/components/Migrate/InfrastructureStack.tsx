@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   Server,
   Monitor,
@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import { logMigrateAction } from '../../utils/analytics'
 import { type PqcStats, CISA_CATEGORIES } from '../../types/MigrateTypes'
+import { Button } from '@/components/ui/button'
 
 export type InfrastructureLayerType =
   | 'All'
@@ -65,10 +66,11 @@ export const LAYERS = [
     icon: Cloud,
     description:
       'Cloud KMS, Cloud HSM, Encryption Gateways, Crypto Agility, KMS, IAM, Crypto Discovery, Digital Identity',
-    color: 'from-primary/20 to-info/20',
-    borderColor: 'border-primary/50',
+    colorToken: '--color-primary',
+    colorFallback: '#0ea5e9',
     activeColor: 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]',
     iconColor: 'text-primary',
+    borderColor: 'border-primary',
   },
   {
     id: 'Network',
@@ -76,10 +78,11 @@ export const LAYERS = [
     icon: Network,
     description:
       'VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation',
-    color: 'from-info/20 to-primary/20',
-    borderColor: 'border-info/50',
+    colorToken: '--color-info',
+    colorFallback: '#3b82f6',
     activeColor: 'bg-card border-info shadow-[0_0_15px_hsl(var(--info)/0.5)]',
     iconColor: 'text-primary',
+    borderColor: 'border-info',
   },
   {
     id: 'AppServers',
@@ -87,10 +90,11 @@ export const LAYERS = [
     icon: Laptop,
     description:
       'TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Blockchain, Payment, VPN, Remote Access, CI/CD',
-    color: 'from-secondary/20 to-secondary/10',
-    borderColor: 'border-secondary/50',
+    colorToken: '--color-secondary',
+    colorFallback: '#8b5cf6',
     activeColor: 'bg-card border-secondary shadow-[0_0_15px_hsl(var(--secondary)/0.5)]',
     iconColor: 'text-secondary',
+    borderColor: 'border-secondary',
   },
   {
     id: 'Libraries',
@@ -98,10 +102,11 @@ export const LAYERS = [
     icon: Code,
     description:
       'Cryptographic Libraries, PQC Libraries, API Security, Code Signing, Digital Signatures, Disk Encryption, SDKs',
-    color: 'from-accent/20 to-accent/10',
-    borderColor: 'border-accent/50',
+    colorToken: '--color-accent',
+    colorFallback: '#2d9e6b',
     activeColor: 'bg-card border-accent shadow-[0_0_15px_hsl(var(--accent)/0.5)]',
     iconColor: 'text-accent',
+    borderColor: 'border-accent',
   },
   {
     id: 'SecSoftware',
@@ -109,20 +114,22 @@ export const LAYERS = [
     icon: Server,
     description:
       'Data Protection, Digital Identity, Secrets Management, Security Discovery, IoT/OT, AI/ML Security, Supply Chain',
-    color: 'from-tertiary/20 to-tertiary/10',
-    borderColor: 'border-tertiary/50',
+    colorToken: '--color-tertiary',
+    colorFallback: '#a855f7',
     activeColor: 'bg-card border-tertiary shadow-[0_0_15px_hsl(var(--tertiary)/0.5)]',
     iconColor: 'text-tertiary',
+    borderColor: 'border-tertiary',
   },
   {
     id: 'Database',
     label: 'Database',
     icon: Database,
     description: 'Database Encryption Software',
-    color: 'from-success/20 to-accent/20',
-    borderColor: 'border-success/50',
+    colorToken: '--color-success',
+    colorFallback: '#22c55e',
     activeColor: 'bg-card border-success shadow-[0_0_15px_hsl(var(--success)/0.5)]',
     iconColor: 'text-accent',
+    borderColor: 'border-success',
   },
   {
     id: 'Security Stack',
@@ -130,20 +137,22 @@ export const LAYERS = [
     icon: ShieldCheck,
     description:
       'KMS, PKI, Crypto & PQC Libraries, CLM, Secrets, IAM, CIAM, Data Protection, Crypto Discovery, TLS/SSL, Digital Identity',
-    color: 'from-destructive/20 to-destructive/10',
-    borderColor: 'border-destructive/50',
+    colorToken: '--color-destructive',
+    colorFallback: '#ef4444',
     activeColor: 'bg-card border-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]',
     iconColor: 'text-destructive',
+    borderColor: 'border-destructive',
   },
   {
     id: 'OS',
     label: 'Operating System',
     icon: Monitor,
     description: 'Operating Systems, Network OS, Disk & File Encryption',
-    color: 'from-warning/20 to-warning/10',
-    borderColor: 'border-warning/50',
+    colorToken: '--color-warning',
+    colorFallback: '#f59e0b',
     activeColor: 'bg-card border-warning shadow-[0_0_15px_hsl(var(--warning)/0.5)]',
     iconColor: 'text-warning',
+    borderColor: 'border-warning',
   },
   {
     id: 'Hardware',
@@ -151,90 +160,83 @@ export const LAYERS = [
     icon: Server,
     description:
       'HSMs, Smart Cards, Secure Boot, Semiconductors, QRNG, QKD, Confidential Computing, 5G & Telecom',
-    color: 'from-muted/20 to-muted/10',
-    borderColor: 'border-muted-foreground/50',
+    colorToken: '--color-muted-foreground',
+    colorFallback: '#6b7280',
     activeColor:
       'bg-card border-muted-foreground shadow-[0_0_15px_hsl(var(--muted-foreground)/0.5)]',
     iconColor: 'text-muted-foreground',
+    borderColor: 'border-muted-foreground',
   },
 ]
 
+// Resolve a CSS custom property to its computed value at runtime.
+// Falls back to the provided default if the var is empty or unresolvable.
+export function resolveCssColor(varName: string, fallback: string): string {
+  const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  return val || fallback
+}
+
 export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
   let icon = CircleHelp
-  let color = 'from-muted/20 to-muted/10'
-  let borderColor = 'border-muted'
+  let tintColor = '#6b7280'
   let iconColor = 'text-muted-foreground'
   const activeColor = 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]'
 
   if (cat.includes('Cloud')) {
     icon = Cloud
-    color = 'from-primary/20 to-info/20'
-    borderColor = 'border-primary/50'
+    tintColor = '#0ea5e9'
     iconColor = 'text-primary'
   } else if (cat.includes('Collaboration')) {
     icon = Users
-    color = 'from-violet-500/20 to-fuchsia-500/20'
-    borderColor = 'border-violet-500/50'
+    tintColor = '#8b5cf6'
     iconColor = 'text-violet-500'
   } else if (cat.includes('Web')) {
     icon = Globe
-    color = 'from-blue-500/20 to-cyan-500/20'
-    borderColor = 'border-blue-500/50'
+    tintColor = '#3b82f6'
     iconColor = 'text-blue-500'
   } else if (cat.includes('Endpoint')) {
     icon = Monitor
-    color = 'from-rose-500/20 to-orange-500/20'
-    borderColor = 'border-rose-500/50'
+    tintColor = '#f43f5e'
     iconColor = 'text-rose-500'
   } else if (cat.includes('Networking Hardware')) {
     icon = Share2
-    color = 'from-emerald-500/20 to-teal-500/20'
-    borderColor = 'border-emerald-500/50'
+    tintColor = '#10b981'
     iconColor = 'text-emerald-500'
   } else if (cat.includes('Networking Software')) {
     icon = Activity
-    color = 'from-emerald-500/20 to-teal-500/20'
-    borderColor = 'border-emerald-500/50'
+    tintColor = '#10b981'
     iconColor = 'text-emerald-500'
   } else if (cat.includes('Telecom')) {
     icon = Phone
-    color = 'from-indigo-500/20 to-blue-500/20'
-    borderColor = 'border-indigo-500/50'
+    tintColor = '#6366f1'
     iconColor = 'text-indigo-500'
   } else if (cat.includes('Computers')) {
     icon = Server
-    color = 'from-slate-500/20 to-zinc-500/20'
-    borderColor = 'border-slate-500/50'
+    tintColor = '#64748b'
     iconColor = 'text-slate-500'
   } else if (cat.includes('Peripheral')) {
     icon = Keyboard
-    color = 'from-slate-500/20 to-zinc-500/20'
-    borderColor = 'border-slate-500/50'
+    tintColor = '#64748b'
     iconColor = 'text-slate-500'
   } else if (cat.includes('Storage')) {
     icon = Database
-    color = 'from-amber-500/20 to-orange-500/20'
-    borderColor = 'border-amber-500/50'
+    tintColor = '#f59e0b'
     iconColor = 'text-amber-500'
   } else if (cat.includes('Software') && cat.includes('Access')) {
     icon = Key
-    color = 'from-yellow-500/20 to-amber-500/20'
-    borderColor = 'border-yellow-500/50'
+    tintColor = '#eab308'
     iconColor = 'text-yellow-500'
   } else if (cat.includes('Hardware') && cat.includes('Access')) {
     icon = Shield
-    color = 'from-yellow-500/20 to-amber-500/20'
-    borderColor = 'border-yellow-500/50'
+    tintColor = '#eab308'
     iconColor = 'text-yellow-500'
   } else if (cat.includes('Data')) {
     icon = Database
-    color = 'from-amber-500/20 to-orange-500/20'
-    borderColor = 'border-amber-500/50'
+    tintColor = '#f59e0b'
     iconColor = 'text-amber-500'
   } else if (cat.includes('Enterprise')) {
     icon = ShieldAlert
-    color = 'from-rose-500/20 to-red-500/20'
-    borderColor = 'border-rose-500/50'
+    tintColor = '#f43f5e'
     iconColor = 'text-rose-500'
   }
 
@@ -243,10 +245,12 @@ export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
     label: cat,
     icon,
     description: `CISA designated category: ${cat}`,
-    color,
-    borderColor,
+    tintColor,
     activeColor,
     iconColor,
+    colorToken: '--color-primary' as string,
+    colorFallback: tintColor,
+    borderColor: 'border-primary',
   }
 })
 
@@ -326,6 +330,13 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   totalPqcStats,
   partitions = LAYERS,
 }) => {
+  const resolvedColors = useMemo(
+    () =>
+      Object.fromEntries(LAYERS.map((l) => [l.id, resolveCssColor(l.colorToken, l.colorFallback)])),
+
+    []
+  )
+
   const handleSelect = (layerId: string) => {
     // Toggle off if clicking the already active layer
     const newLayer = activeLayer === layerId ? 'All' : layerId
@@ -336,7 +347,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   }
 
   return (
-    <div className="w-full mb-10">
+    <div className="w-full mb-10 relative">
       <div className="text-center mb-6">
         <h3 className="text-xl font-semibold text-foreground mb-2">
           Enterprise Infrastructure Stack
@@ -353,11 +364,11 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
         )}
       </div>
 
-      <div className="flex flex-col gap-3 p-6 bg-card border border-border rounded-2xl shadow-2xl relative">
+      <div className="flex flex-col gap-3 p-6 bg-card border border-border rounded-2xl shadow-2xl relative isolate">
         {/* Connection Line */}
         <div className="absolute left-1/2 top-10 bottom-10 w-px bg-gradient-to-b from-primary/20 via-primary/20 to-muted-foreground/20 -translate-x-1/2 z-0 hidden md:block" />
 
-        {partitions.map((layer, index) => {
+        {partitions.map((layer) => {
           const productCount = layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0
           const isEmptyAndHidden = hideEmptyLayers && productCount === 0
           const isActive = activeLayer === layer.id
@@ -367,18 +378,21 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           return (
             <div
               key={layer.id}
-              style={{
-                zIndex: isActive ? partitions.length + 10 : partitions.length - index,
-              }}
               className={`transition-all duration-500 ease-in-out relative flex flex-col ${
                 isEmptyAndHidden
                   ? 'max-h-0 opacity-0 overflow-hidden !m-0'
                   : 'max-h-[3000px] opacity-100'
               }`}
             >
-              <button
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => handleSelect(layer.id as InfrastructureLayerType)}
                 onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleSelect(layer.id as InfrastructureLayerType)
+                  }
                   if (e.key === 'Escape' && isActive) {
                     e.preventDefault()
                     onSelectLayer('All')
@@ -386,17 +400,19 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 }}
                 className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer
-                ${
-                  isActive
-                    ? layer.activeColor
-                    : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`
-                }
+                transition-all duration-300 ease-in-out cursor-pointer select-none border
+                ${isActive ? layer.activeColor : 'hover:scale-[1.01] hover:brightness-110'}
                 ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}
               `}
                 style={{
                   transformOrigin: 'center',
-                  zIndex: isActive ? partitions.length + 10 : partitions.length - index,
+                  ...(!isActive
+                    ? {
+                        backgroundColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 15%, var(--stack-mix-base))`,
+
+                        borderColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 35%, transparent)`,
+                      }
+                    : {}),
                 }}
               >
                 {/* Shine effect — isolated so it doesn't clip expandedContent */}
@@ -408,10 +424,10 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 <div className="flex flex-col md:flex-row items-center justify-between w-full">
                   <div className="flex items-center gap-4 w-full md:w-auto">
                     <div
-                      className={`p-3 rounded-lg bg-background/50 backdrop-blur border border-border/30 shadow-inner transition-colors ${
+                      className={`p-3 rounded-lg border shadow-inner transition-colors shrink-0 ${
                         isActive
-                          ? layer.iconColor
-                          : 'text-muted-foreground group-hover:text-foreground'
+                          ? `bg-background/50 backdrop-blur border-border/30 ${layer.iconColor}`
+                          : `bg-background/70 backdrop-blur border-border/40 ${layer.iconColor} opacity-80 group-hover:opacity-100`
                       }`}
                     >
                       <IconInfo size={24} className={isActive ? 'animate-pulse' : ''} />
@@ -475,7 +491,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                       </span>
                     )}
                     {(layerHiddenCounts?.[layer.id as InfrastructureLayerType] ?? 0) > 0 && (
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         onClick={(e) => {
                           e.stopPropagation()
@@ -485,7 +502,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                         className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors"
                       >
                         {layerHiddenCounts?.[layer.id as InfrastructureLayerType]} hidden · Restore
-                      </button>
+                      </Button>
                     )}
                     <div
                       className={`flex items-center gap-2 text-xs font-medium px-3 py-1 rounded-full border transition-colors ${
@@ -503,7 +520,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 {isActive && subCategories && subCategories.length > 0 && (
                   <div className="flex flex-wrap gap-2 pt-3 mt-3 w-full border-t border-border/30">
                     {['All', ...subCategories].map((cat) => (
-                      <button
+                      <Button
+                        variant="ghost"
                         key={cat}
                         type="button"
                         onClick={(e) => {
@@ -517,7 +535,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                         }`}
                       >
                         {cat}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 )}
@@ -531,7 +549,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     onKeyDown={(e) => e.stopPropagation()}
                   >
                     <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       aria-label="Collapse expanded infrastructure layer"
                       onClick={(e) => {
@@ -542,10 +561,10 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                     >
                       <ChevronUp size={14} />
                       Collapse layer
-                    </button>
+                    </Button>
                   </div>
                 )}
-              </button>
+              </div>
             </div>
           )
         })}
@@ -561,7 +580,8 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           const isActive = activeLayer === layer.id
 
           return (
-            <button
+            <Button
+              variant="ghost"
               key={`minimap-${layer.id}`}
               onClick={(e) => {
                 e.preventDefault()

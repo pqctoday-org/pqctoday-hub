@@ -202,11 +202,13 @@
     --phase-regulation: 0 55% 36%;
     --phase-research: 258 50% 38%;
     --phase-deadline: 0 55% 36%;
+    --stack-mix-base: white;
   }
 
   /* Dark Mode Overrides */
   .dark {
     --background: 230 35% 7%;
+    --stack-mix-base: hsl(230, 35%, 13%);
     --foreground: 210 40% 98%;
     --card: 230 35% 7%;
     --card-foreground: 210 40% 98%;
@@ -612,6 +614,18 @@
   --color-destructive: var(--embed-destructive, var(--color-destructive));
 }
 
+/* ── Embed dark mode: elevated card surface ─────────────────────────────
+   Standard dark mode uses card === background (both L7%). Embed mode
+   needs visual separation. Bump card to L11% for subtle lift.
+   Vendor-provided --color-card (inline style) still wins via specificity.
+   ──────────────────────────────────────────────────────────────────────── */
+[data-embed].dark {
+  --card: 230 30% 11%;
+  --card-foreground: 210 40% 98%;
+  --popover: 230 30% 11%;
+  --border: 230 25% 18%;
+}
+
 /* ── Embed mode density override ──────────────────────────────────────────
    Scoped to [data-embed] so standard mode is completely unaffected.
    --embed-table-py is written by applyEmbedTheme() only when VendorTheme.density
@@ -661,6 +675,15 @@
   border-color: color-mix(in srgb, var(--embed-nav-fg, white) 25%, transparent) !important;
 }
 
+/* ── Embed mode sidebar nav layout ───────────────────────────────────────
+   Sidebar layout is now handled entirely in React (EmbedLayout.tsx).
+   When navLayout === 'sidebar', EmbedLayout renders an <aside> instead of
+   a <header>, using a flex-row structure with sticky positioning.
+   The data-nav-layout and data-nav-narrow attributes are still set on <html>
+   by applyEmbedTheme() for any custom CSS consumers, but no built-in rules
+   depend on them anymore.
+   ──────────────────────────────────────────────────────────────────────── */
+
 /* ── Embed mode badge fill override ──────────────────────────────────────
    When VendorTheme.badgeFill === 'solid', --embed-badge-fill is set to '1'.
    The CSS custom property acts as a flag: when defined, we override the /10
@@ -706,4 +729,53 @@
   .exec-brief-mode .assess-report-full-content {
     display: none !important;
   }
+}
+
+/* ── Embed mode modal positioning ────────────────────────────────────────
+   In embed mode iframes can be taller than the viewport. Modal containers
+   using `fixed inset-0 flex items-center justify-center` would center the
+   modal at the viewport mid-point, which may be off-screen when the user
+   has scrolled. This rule switches those containers to absolute so modals
+   always appear within the scrollable iframe document flow.
+   Only applies inside [data-embed] — standard mode is unaffected.
+   ──────────────────────────────────────────────────────────────────────── */
+
+[data-embed] .fixed.inset-0.z-50.flex.items-center.justify-center,
+[data-embed] .fixed.inset-0.flex.items-center.justify-center.z-50,
+[data-embed] .fixed.inset-0.flex.items-start.justify-center.z-50 {
+  position: absolute !important;
+  top: 0 !important;
+  min-height: 100% !important;
+}
+
+/* Generic embed backdrop class — add to any fixed overlay that needs to
+   become absolute in embed mode. Broader than the class-exact rules above. */
+[data-embed] .embed-backdrop {
+  position: absolute !important;
+  top: 0 !important;
+  min-height: 100% !important;
+}
+
+/* Embed max-width override — remove width constraints inside embed iframes
+   so content fills the available width instead of centering with margins. */
+[data-embed] .max-w-7xl,
+[data-embed] .max-w-6xl,
+[data-embed] .max-w-4xl,
+[data-embed] .max-w-3xl {
+  max-width: 100%;
+}
+
+/* ── Platform-specific embed overrides ──────────────────────────────────
+   Capacitor native shell: extra padding for native tab bar + home indicator.
+   ──────────────────────────────────────────────────────────────────────── */
+[data-embed][data-platform='capacitor'] #main-content {
+  /* Extra bottom padding for native tab bar (56px) + home indicator */
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 56px);
+  /* Top padding for status bar on devices without native header */
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* Prevent rubber-band overscroll on iOS WebView */
+[data-platform='capacitor'] {
+  overscroll-behavior: none;
 }

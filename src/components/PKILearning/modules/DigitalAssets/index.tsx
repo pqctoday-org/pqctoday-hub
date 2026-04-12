@@ -17,6 +17,7 @@ import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { PQCMigrationFlow } from './flows/PQCMigrationFlow'
 import { CustodyArchitectureFlow } from './flows/CustodyArchitectureFlow'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'digital-assets'
 
@@ -175,13 +176,14 @@ export const DigitalAssetsModule: React.FC = () => {
           <div className="max-w-7xl mx-auto space-y-6">
             {/* Reset button */}
             <div className="flex justify-end">
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleReset}
                 className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
                 <Trash2 size={16} />
                 Reset
-              </button>
+              </Button>
             </div>
 
             {!activeChain ? (
@@ -196,7 +198,8 @@ export const DigitalAssetsModule: React.FC = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {CHAINS.map((chain) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={chain.id}
                       onClick={() => {
                         setActiveChain(chain.id)
@@ -224,28 +227,30 @@ export const DigitalAssetsModule: React.FC = () => {
                       </div>
                       <h3 className="text-lg font-bold text-foreground mb-1">{chain.label}</h3>
                       <p className="text-xs text-muted-foreground font-mono">{chain.description}</p>
-                    </button>
+                    </Button>
                   ))}
                 </div>
                 {hasExploredAnyChain && (
                   <div className="flex justify-end">
-                    <button
+                    <Button
+                      variant="gradient"
                       onClick={() => markStepComplete(MODULE_ID, 'workshop')}
-                      className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                      className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                     >
                       Complete Module ✓
-                    </button>
+                    </Button>
                   </div>
                 )}
               </>
             ) : (
               <div>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setActiveChain(null)}
                   className="mb-4 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground"
                 >
                   &larr; Back to Chain Selection
-                </button>
+                </Button>
                 {activeChain === 'bitcoin' && (
                   <BitcoinFlow key={`bitcoin-${configKey}`} onBack={() => setActiveChain(null)} />
                 )}

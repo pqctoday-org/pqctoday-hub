@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { Construction, ExternalLink, MessageSquare, Linkedin, X } from 'lucide-react'
 import { Button } from './button'
 import { useDisclaimerStore } from '../../store/useDisclaimerStore'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 /**
  * Non-blocking disclaimer banner pinned to bottom of viewport.
@@ -14,6 +15,7 @@ export function DisclaimerModal() {
   const buttonRef = useRef<HTMLButtonElement>(null)
   const [forceClosed, setForceClosed] = useState(false)
   const isOpen = !hasAcknowledgedCurrentMajor() && !forceClosed
+  const isEmbedded = useIsEmbedded()
 
   const handleDismiss = useCallback(() => {
     acknowledgeDisclaimer()
@@ -42,7 +44,7 @@ export function DisclaimerModal() {
 
   return (
     <div
-      className="fixed inset-x-0 bottom-0 z-disclaimer p-4 print:hidden safe-bottom"
+      className={`${isEmbedded ? 'absolute' : 'fixed'} inset-x-0 bottom-0 z-disclaimer p-4 print:hidden safe-bottom`}
       role="alert"
       aria-labelledby="disclaimer-title"
     >

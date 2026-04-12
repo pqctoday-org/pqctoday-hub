@@ -4,6 +4,7 @@ import { ChevronDown, ChevronUp, CheckSquare, Square } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { DEV_LANGUAGES, type DevLanguage, type MemorySafety } from '../data/languageData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 type MemFilter = 'All' | MemorySafety
 
@@ -83,7 +84,8 @@ const LangCard: React.FC<LangCardProps> = ({
         </div>
         <div className="flex items-center gap-2 shrink-0">
           {compareMode && (
-            <button
+            <Button
+              variant="ghost"
               onClick={onToggleSelect}
               className="text-muted-foreground hover:text-primary transition-colors"
             >
@@ -92,14 +94,15 @@ const LangCard: React.FC<LangCardProps> = ({
               ) : (
                 <Square size={20} />
               )}
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="ghost"
             onClick={onToggleExpand}
             className="text-muted-foreground hover:text-primary transition-colors"
           >
             {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -292,7 +295,8 @@ export const LanguageEcosystemComparator: React.FC = () => {
           selectedId={memFilter}
           onSelect={(id) => setMemFilter(id as MemFilter)}
         />
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setCompareMode((v) => !v)
             if (compareMode) setSelectedIds(new Set())
@@ -304,7 +308,7 @@ export const LanguageEcosystemComparator: React.FC = () => {
           }`}
         >
           {compareMode ? `Compare (${selectedIds.size}/3)` : 'Compare Mode'}
-        </button>
+        </Button>
       </div>
 
       <VendorCoverageNotice migrateLayer="Libraries" className="mb-2" />

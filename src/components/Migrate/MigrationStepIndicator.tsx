@@ -2,6 +2,7 @@
 import React from 'react'
 import type { MigrationStep } from '../../types/MigrateTypes'
 import { STEP_PHASE_COLORS } from '../../data/migrationWorkflowData'
+import { Button } from '@/components/ui/button'
 
 interface MigrationStepIndicatorProps {
   steps: MigrationStep[]
@@ -23,7 +24,8 @@ export const MigrationStepIndicator: React.FC<MigrationStepIndicatorProps> = ({
 
           return (
             <React.Fragment key={step.id}>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => onStepClick(step.id)}
                 className="flex flex-col items-center gap-1.5 group cursor-pointer"
                 aria-label={`Step ${step.stepNumber}: ${step.title}`}
@@ -63,7 +65,7 @@ export const MigrationStepIndicator: React.FC<MigrationStepIndicatorProps> = ({
                 >
                   {step.shortTitle}
                 </span>
-              </button>
+              </Button>
 
               {index < steps.length - 1 && (
                 <div className="h-0.5 flex-1 min-w-[24px] sm:min-w-[40px] bg-muted mx-1 sm:mx-2 self-start mt-[18px] sm:mt-[22px]" />

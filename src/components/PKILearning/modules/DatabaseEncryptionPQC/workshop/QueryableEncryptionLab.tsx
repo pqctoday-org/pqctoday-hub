@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { Search, CheckCircle, XCircle, Clock } from 'lucide-react'
 import { QUERYABLE_ENCRYPTION_SCHEMES } from '../data/databaseConstants'
+import { Button } from '@/components/ui/button'
 
 type QueryType = 'equality' | 'range' | 'prefix' | 'regex' | 'aggregate'
 
@@ -65,7 +66,8 @@ export const QueryableEncryptionLab: React.FC = () => {
       {/* Tab selector */}
       <div className="flex flex-wrap gap-2">
         {QUERYABLE_ENCRYPTION_SCHEMES.map((s) => (
-          <button
+          <Button
+            variant="ghost"
             key={s.id}
             onClick={() => setActiveTab(s.id)}
             className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors border ${
@@ -75,7 +77,7 @@ export const QueryableEncryptionLab: React.FC = () => {
             }`}
           >
             {s.name}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -85,14 +85,15 @@ const EditableDataDisplay: React.FC<{
     <div className="mb-4 p-3 bg-muted/40 rounded border border-border text-xs space-y-1 animate-fade-in focus-within:border-primary/50 transition-colors">
       <div className="flex justify-between items-center mb-2">
         <span className="text-muted-foreground font-bold uppercase tracking-wider">{label}</span>
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setViewMode((prev) => (prev === 'hex' ? 'ascii' : 'hex'))}
           aria-label={`Switch to ${viewMode === 'hex' ? 'ASCII' : 'HEX'} view`}
           className="text-[10px] flex items-center gap-1 bg-muted hover:bg-accent px-2 py-1 rounded transition-colors text-primary"
         >
           {viewMode === 'hex' ? 'HEX' : 'ASCII'}
-        </button>
+        </Button>
       </div>
       {readOnly ? (
         <div className="font-mono text-foreground break-all max-h-24 overflow-y-auto custom-scrollbar whitespace-pre-wrap">
@@ -741,14 +742,15 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
         </div>
 
         {/* FIPS 205 §6 internal parameters — collapsible */}
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setShowInternalParams((v) => !v)}
           className="flex items-center gap-1 text-[11px] text-primary/80 hover:text-primary transition-colors"
         >
           {showInternalParams ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
           FIPS 205 §6 internal parameters (n, h, d, a, k, lg_w)
-        </button>
+        </Button>
         {showInternalParams &&
           (() => {
             const ip = SLH_DSA_INTERNAL_PARAMS[paramSetId]
@@ -1105,6 +1107,20 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   )
 }
 
+const HsmXmssSignPanel: React.FC<{
+  initialAlgo?: string
+  onAlgoChange?: (algo: string) => void
+}> = () => {
+  return (
+    <div className="flex h-48 items-center justify-center p-8 bg-muted rounded-xl text-muted-foreground border-dashed border-2">
+      <FileSignature className="w-8 h-8 mr-3 opacity-50" />
+      <span className="font-semibold">
+        XMSS / LMS Stateful Signature Panel under construction (requires softhsmv3 bump).
+      </span>
+    </div>
+  )
+}
+
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
 export const HsmSignCombinedPanel: React.FC<{
@@ -1121,8 +1137,9 @@ export const HsmSignCombinedPanel: React.FC<{
       return 'classical'
     return 'pqc'
   })
-  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa'>(() => {
+  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa' | 'xmss'>(() => {
     if (initialAlgo?.startsWith('SLH-DSA')) return 'slh-dsa'
+    if (initialAlgo?.startsWith('XMSS') || initialAlgo?.startsWith('LMS')) return 'xmss'
     return 'ml-dsa'
   })
   useEffect(() => {
@@ -1130,6 +1147,8 @@ export const HsmSignCombinedPanel: React.FC<{
       onAlgoChange?.('ECDSA')
     } else if (pqcAlgo === 'slh-dsa') {
       onAlgoChange?.(initialAlgo?.startsWith('SLH-DSA') ? initialAlgo : 'SLH-DSA-sha2-128s')
+    } else if (pqcAlgo === 'xmss') {
+      onAlgoChange?.(initialAlgo?.startsWith('XMSS') ? initialAlgo : 'XMSS-SHA2_10_256')
     } else {
       onAlgoChange?.(initialAlgo?.startsWith('ML-DSA') ? initialAlgo : 'ML-DSA-65')
     }
@@ -1187,6 +1206,17 @@ export const HsmSignCombinedPanel: React.FC<{
                 >
                   SLH-DSA
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setPqcAlgo('xmss')
+                    onAlgoChange?.('XMSS-SHA2_10_256')
+                  }}
+                  className={`text-xs h-7 px-3 ${pqcAlgo === 'xmss' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                >
+                  XMSS / LMS
+                </Button>
               </>
             )}
           </div>
@@ -1195,8 +1225,10 @@ export const HsmSignCombinedPanel: React.FC<{
         {signFamily === 'pqc' ? (
           pqcAlgo === 'ml-dsa' ? (
             <HsmSignPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
-          ) : (
+          ) : pqcAlgo === 'slh-dsa' ? (
             <HsmSlhDsaSignPanel onAlgoChange={onAlgoChange} />
+          ) : (
+            <HsmXmssSignPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
           )
         ) : (
           <HsmClassicalSignPanel />
@@ -1256,7 +1288,7 @@ const SignVerifyTabSoftware: React.FC = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
+    <div className="w-full animate-fade-in space-y-8">
       <div>
         <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
           <FileSignature size={18} className="text-accent" /> Digital Signatures
@@ -1366,7 +1398,8 @@ const SignVerifyTabSoftware: React.FC = () => {
             />
 
             <div className="mt-auto pt-4">
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('sign')
@@ -1376,7 +1409,7 @@ const SignVerifyTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-success/20 text-success border border-success/30 hover:bg-success/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Sign Message
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -1493,7 +1526,8 @@ const SignVerifyTabSoftware: React.FC = () => {
             )}
 
             <div className="mt-auto pt-4">
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('verify')
@@ -1503,7 +1537,7 @@ const SignVerifyTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-warning/20 text-warning border border-warning/30 hover:bg-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Verify Signature
-              </button>
+              </Button>
             </div>
           </div>
         </div>

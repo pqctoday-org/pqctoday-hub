@@ -4,6 +4,7 @@ import { PenTool, Loader2 } from 'lucide-react'
 import { openSSLService } from '@/services/crypto/OpenSSLService'
 import { CLASSICAL_SIG_ALGOS, PQC_SIG_ALGOS } from './algorithmConfig'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface SignatureDemoProps {
   onComplete: () => void
@@ -144,14 +145,15 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
 
       {/* Sign Both CTA */}
       <div className="flex justify-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={handleSignBoth}
           disabled={classicalSig.loading || pqcSig.loading || !message}
-          className="flex items-center gap-2 px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="flex items-center gap-2 px-6 py-2 font-bold rounded-lg transition-colors disabled:opacity-50"
         >
           <PenTool size={16} />
           Sign with Both &amp; Compare
-        </button>
+        </Button>
       </div>
 
       {/* Two-column layout */}
@@ -173,7 +175,8 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
             />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleSignClassical}
             disabled={classicalSig.loading || !message}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-destructive/40 text-destructive font-bold rounded hover:bg-destructive/10 transition-colors disabled:opacity-50"
@@ -184,7 +187,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               <PenTool size={16} />
             )}
             Sign with {classicalAlgo}
-          </button>
+          </Button>
 
           <div className="bg-muted rounded-lg p-4 border border-border h-[120px] overflow-y-auto custom-scrollbar">
             {classicalSig.sigHex ? (
@@ -221,7 +224,8 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
             />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleSignPQC}
             disabled={pqcSig.loading || !message}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-accent/40 text-accent font-bold rounded hover:bg-accent/10 transition-colors disabled:opacity-50"
@@ -232,7 +236,7 @@ export const SignatureDemo: React.FC<SignatureDemoProps> = ({ onComplete }) => {
               <PenTool size={16} />
             )}
             Sign with {pqcAlgo}
-          </button>
+          </Button>
 
           <div className="bg-muted rounded-lg p-4 border border-border h-[120px] overflow-y-auto custom-scrollbar">
             {pqcSig.sigHex ? (

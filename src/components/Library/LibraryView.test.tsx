@@ -3,6 +3,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { render, screen, fireEvent, act } from '@testing-library/react'
 import { LibraryView } from './LibraryView'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // Mock react-router-dom — component uses useSearchParams for deep linking.
 // Use a stable reference so the useEffect([searchParams]) dep doesn't fire on every render.
@@ -40,9 +41,9 @@ vi.mock('./LibraryDetailPopover', () => ({
     item: unknown
   }) =>
     isOpen ? (
-      <button data-testid="detail-popover" onClick={onClose}>
+      <Button data-testid="detail-popover" onClick={onClose}>
         Popover
-      </button>
+      </Button>
     ) : null,
 }))
 

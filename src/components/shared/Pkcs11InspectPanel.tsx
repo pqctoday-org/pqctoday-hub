@@ -5,7 +5,45 @@
  * Shared by PkcsLogPanel (Playground) and Pkcs11LogPanel (learning modules).
  * Pure presentational component — no side effects, no context dependencies.
  */
+import { useState } from 'react'
 import type { Pkcs11LogInspect, InspectSection, DecodedAttribute } from '../../wasm/pkcs11Inspect'
+
+const CollapsibleValue = ({ value, isOutput = false }: { value: string; isOutput?: boolean }) => {
+  const [expanded, setExpanded] = useState(false)
+
+  // Only collapse long payload strings
+  if (value.length <= 40) {
+    return <span className={isOutput ? 'text-status-success' : 'text-foreground'}>{value}</span>
+  }
+
+  return (
+    <div className="flex flex-col w-full">
+      <div
+        role="button"
+        tabIndex={0}
+        className={`flex items-center gap-1 text-[11px] select-none text-left appearance-none bg-transparent border-none p-0 cursor-pointer hover:underline ${isOutput ? 'text-status-success' : 'text-foreground'}`}
+        onClick={() => setExpanded(!expanded)}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault()
+            setExpanded(!expanded)
+          }
+        }}
+      >
+        <span className="text-[9px] opacity-70">{expanded ? '▼' : '▶'}</span>
+        {expanded ? 'Hide payload' : 'Show payload'}
+        <span className="text-muted-foreground opacity-50 ml-1">
+          ({Math.floor(value.length / 2)} bytes)
+        </span>
+      </div>
+      {expanded && (
+        <div className="mt-1.5 p-2 bg-background/50 rounded border border-border/30 max-h-40 overflow-y-auto break-all font-mono text-[10px] leading-relaxed select-text">
+          {value}
+        </div>
+      )}
+    </div>
+  )
+}
 
 export const AttributeRow = ({ attr }: { attr: DecodedAttribute }) => (
   <div className="grid grid-cols-[10rem_1fr] gap-x-3 text-xs font-mono py-0.5 border-b border-border/20 last:border-0">
@@ -92,7 +130,9 @@ const renderSection = (section: InspectSection, idx: number) => (
         {section.primitives.map((p, i) => (
           <div key={i} className="flex gap-3 text-xs font-mono">
             <span className="text-muted-foreground w-36 shrink-0">{p.name}</span>
-            <span className="text-foreground">{p.value}</span>
+            <div className="flex-1 min-w-0">
+              <CollapsibleValue value={p.value} />
+            </div>
             {p.note && (
               <span className="text-muted-foreground font-sans text-[10px] self-center">
                 — {p.note}
@@ -118,7 +158,9 @@ export const InspectPanel = ({ inspect }: { inspect: Pkcs11LogInspect }) => (
           {inspect.outputs.map((o, i) => (
             <div key={i} className="flex gap-3 text-xs font-mono">
               <span className="text-muted-foreground w-28 shrink-0">{o.name}</span>
-              <span className="text-status-success">{o.value}</span>
+              <div className="flex-1 min-w-0">
+                <CollapsibleValue value={o.value} isOutput />
+              </div>
               {o.note && (
                 <span className="text-muted-foreground font-sans text-[10px] self-center">
                   — {o.note}

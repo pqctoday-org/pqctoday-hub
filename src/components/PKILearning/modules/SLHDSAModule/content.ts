@@ -3,6 +3,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 
 export const content: ModuleContent = {
   moduleId: 'slh-dsa',
+  version: '1.0.0',
   lastReviewed: '2026-04-07',
 
   standards: [],

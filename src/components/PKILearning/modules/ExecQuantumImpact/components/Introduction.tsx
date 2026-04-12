@@ -12,7 +12,7 @@ interface Props {
 
 export const Introduction: React.FC<Props> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Opening statement */}
       <section className="glass-panel p-4 border-primary/10">
         <p className="text-sm text-foreground/80">

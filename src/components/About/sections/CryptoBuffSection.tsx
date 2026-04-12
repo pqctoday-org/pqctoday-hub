@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Globe, BookOpen, ChevronDown, ExternalLink, BookMarked } from 'lucide-react'
 import { CRYPTO_BUFF_SITES, CRYPTO_BUFF_BOOKS } from '../aboutData'
+import { Button } from '@/components/ui/button'
 
 export function CryptoBuffSection() {
   const [isCryptoBuffSitesOpen, setIsCryptoBuffSitesOpen] = useState(false)
@@ -26,7 +27,8 @@ export function CryptoBuffSection() {
         </div>
 
         {/* Websites & Blogs subsection */}
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setIsCryptoBuffSitesOpen(!isCryptoBuffSitesOpen)}
           className="flex items-center gap-2 w-full text-left cursor-pointer"
         >
@@ -42,7 +44,7 @@ export function CryptoBuffSection() {
               isCryptoBuffSitesOpen && 'rotate-180'
             )}
           />
-        </button>
+        </Button>
         <AnimatePresence>
           {isCryptoBuffSitesOpen && (
             <motion.div
@@ -76,7 +78,8 @@ export function CryptoBuffSection() {
         </AnimatePresence>
 
         {/* Essential Books subsection */}
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setIsCryptoBuffBooksOpen(!isCryptoBuffBooksOpen)}
           className="flex items-center gap-2 w-full text-left cursor-pointer mt-4 pt-4 border-t border-border"
         >
@@ -92,7 +95,7 @@ export function CryptoBuffSection() {
               isCryptoBuffBooksOpen && 'rotate-180'
             )}
           />
-        </button>
+        </Button>
         <AnimatePresence>
           {isCryptoBuffBooksOpen && (
             <motion.div

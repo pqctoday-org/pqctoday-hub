@@ -206,7 +206,8 @@ const Step11Infrastructure = () => {
         <h3 className="text-xl font-bold text-foreground">
           {stepContent.title ?? 'What infrastructure handles your cryptography?'}
         </h3>
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setImportProductSelection(!importProductSelection)}
           className={clsx(
@@ -224,7 +225,7 @@ const Step11Infrastructure = () => {
         >
           <Import size={12} />
           {importProductSelection ? 'Synced' : 'Import off'}
-        </button>
+        </Button>
       </div>
 
       <p className="text-sm text-muted-foreground">

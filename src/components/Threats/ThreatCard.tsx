@@ -10,6 +10,7 @@ import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import clsx from 'clsx'
 import { BookmarkCheck, Bookmark } from 'lucide-react'
 import { useBookmarkStore } from '../../store/useBookmarkStore'
+import { Button } from '@/components/ui/button'
 
 interface ThreatCardProps {
   item: ThreatItem
@@ -48,7 +49,8 @@ export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
         </div>
 
         <div className="ml-auto flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleMyThreat(item.threatId)
@@ -57,7 +59,7 @@ export const ThreatCard = ({ item, index = 0, onClick }: ThreatCardProps) => {
             aria-label={isBookmarked ? 'Remove from My Threats' : 'Add to My Threats'}
           >
             {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-          </button>
+          </Button>
           {item.status && <StatusBadge status={item.status} size="sm" />}
           <span
             className={clsx(

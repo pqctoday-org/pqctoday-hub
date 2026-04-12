@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useModuleStore } from '../../store/useModuleStore'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { LEARN_SECTIONS, WORKSHOP_STEPS } from './moduleData'
+import { Button } from '@/components/ui/button'
 
 interface ModuleProgressHeaderProps {
   moduleId: string
@@ -85,14 +86,15 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
             <CheckCircle size={12} className="shrink-0" />
             {banner === 'learn' ? 'Reading Complete!' : 'Workshop Complete!'}
           </span>
-          <button
+          <Button
+            variant="ghost"
             type="button"
             onClick={() => setBanner(null)}
             className="text-status-success/70 hover:text-status-success transition-colors"
             aria-label="Dismiss"
           >
             <X size={12} />
-          </button>
+          </Button>
         </div>
       )}
 
@@ -106,13 +108,14 @@ export const ModuleProgressHeader = ({ moduleId }: ModuleProgressHeaderProps) =>
           <span className="text-[10px] text-muted-foreground flex-1">
             Standard technical module.
           </span>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => navigate(location.pathname)}
             className="flex items-center gap-1.5 text-[10px] text-foreground font-medium bg-background border border-border px-2 py-1 rounded-md hover:bg-muted transition-colors"
           >
             <ArrowLeft size={12} />
             Simple Mode
-          </button>
+          </Button>
         </div>
       ) : experienceLevel === 'curious' ? (
         <div

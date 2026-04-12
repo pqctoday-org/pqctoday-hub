@@ -3,6 +3,7 @@ import React from 'react'
 import clsx from 'clsx'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface Pkcs12ConfigProps {
   p12Action: 'export' | 'import'
@@ -40,7 +41,8 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>
         <div className="flex bg-background rounded-lg p-1 border border-input">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setP12Action('export')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -50,8 +52,9 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
             )}
           >
             Export (Create P12)
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setP12Action('import')}
             className={clsx(
               'flex-1 py-1.5 rounded text-sm font-medium transition-colors',
@@ -61,7 +64,7 @@ export const Pkcs12Config: React.FC<Pkcs12ConfigProps> = ({
             )}
           >
             Import (Read P12)
-          </button>
+          </Button>
         </div>
       </div>
 

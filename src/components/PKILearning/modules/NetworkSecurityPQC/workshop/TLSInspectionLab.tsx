@@ -179,7 +179,8 @@ export const TLSInspectionLab: React.FC = () => {
             <div className="text-xs text-muted-foreground mb-2">Certificate Algorithm</div>
             <div className="space-y-2">
               {TLS_ALGORITHMS.map((algo) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={algo.id}
                   onClick={() => setSelectedAlgoId(algo.id)}
                   className={`w-full text-left px-3 py-2 rounded-lg border text-xs transition-colors ${
@@ -198,7 +199,7 @@ export const TLSInspectionLab: React.FC = () => {
                       {algo.chainSizeKB} KB chain
                     </span>
                   </div>
-                </button>
+                </Button>
               ))}
             </div>
           </div>

@@ -424,7 +424,8 @@ export const Pkcs11Simulator: React.FC = () => {
         <h4 className="text-sm font-bold text-foreground mb-3">Operation Flow</h4>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {operations.map((op, idx) => (
-            <button
+            <Button
+              variant="ghost"
               key={op.id}
               onClick={() => {
                 setCurrentStep(idx)
@@ -449,7 +450,7 @@ export const Pkcs11Simulator: React.FC = () => {
                   {op.name.split(' ').slice(0, 3).join(' ')}
                 </span>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -551,7 +552,8 @@ export const Pkcs11Simulator: React.FC = () => {
         {/* Classical Comparison (collapsible) */}
         {currentOp.classicalEquivalent && (
           <div className="border border-border rounded-lg overflow-hidden mb-3">
-            <button
+            <Button
+              variant="ghost"
               onClick={() =>
                 setExpandedClassical(expandedClassical === currentStep ? null : currentStep)
               }
@@ -563,7 +565,7 @@ export const Pkcs11Simulator: React.FC = () => {
               ) : (
                 <ChevronDown size={16} className="text-muted-foreground" />
               )}
-            </button>
+            </Button>
             {expandedClassical === currentStep && (
               <div className="px-4 py-3 text-sm text-foreground/80 animate-fade-in">
                 <p className="font-mono text-xs">{currentOp.classicalEquivalent}</p>
@@ -575,7 +577,8 @@ export const Pkcs11Simulator: React.FC = () => {
         {/* On-Prem vs Cloud Notes (collapsible) */}
         {currentOp.vendorNotes && (
           <div className="border border-border rounded-lg overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setExpandedVendor(expandedVendor === currentStep ? null : currentStep)}
               className="w-full flex items-center justify-between px-4 py-3 bg-muted/30 text-sm font-medium text-foreground"
             >
@@ -585,7 +588,7 @@ export const Pkcs11Simulator: React.FC = () => {
               ) : (
                 <ChevronDown size={16} className="text-muted-foreground" />
               )}
-            </button>
+            </Button>
             {expandedVendor === currentStep && (
               <div className="px-4 py-3 grid grid-cols-1 md:grid-cols-2 gap-3 animate-fade-in">
                 <div className="bg-muted/50 rounded-lg p-3 border border-border">

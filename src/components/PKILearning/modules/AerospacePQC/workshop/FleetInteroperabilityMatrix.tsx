@@ -5,6 +5,7 @@ import { Plane, Plus, X, AlertTriangle } from 'lucide-react'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { AIRCRAFT_TYPES, getInteropStatus, INTEROP_COLORS, INTEROP_LABELS } from '../data/fleetData'
 import { GENERATION_COLORS } from '../data/aerospaceConstants'
+import { Button } from '@/components/ui/button'
 
 const aircraftItems = AIRCRAFT_TYPES.map((a) => ({ id: a.id, label: a.name }))
 
@@ -87,13 +88,14 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
               className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-bold border ${GENERATION_COLORS[ac.generation]}`}
             >
               {ac.name}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleRemoveAircraft(ac.id)}
                 className="hover:text-foreground transition-colors"
                 aria-label={`Remove ${ac.name}`}
               >
                 <X size={12} />
-              </button>
+              </Button>
             </div>
           ))}
           {availableAircraft.length > 0 && (
@@ -106,12 +108,13 @@ export const FleetInteroperabilityMatrix: React.FC = () => {
                   label="Add aircraft"
                 />
               ) : (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setAddAircraft('')}
                   className="flex items-center gap-1 px-3 py-1.5 rounded-full text-xs font-medium border border-dashed border-border text-muted-foreground hover:border-primary hover:text-primary transition-colors"
                 >
                   <Plus size={12} /> Add
-                </button>
+                </Button>
               )}
             </div>
           )}

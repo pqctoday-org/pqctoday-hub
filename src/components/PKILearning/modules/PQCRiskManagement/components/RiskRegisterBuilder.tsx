@@ -230,13 +230,14 @@ export const RiskRegisterBuilder: React.FC<RiskRegisterBuilderProps> = ({
                     Score: {score} ({risk.label})
                   </span>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => removeEntry(entry.id)}
                   className="p-1.5 rounded hover:bg-destructive/10 text-muted-foreground hover:text-destructive transition-colors"
                   title="Remove entry"
                 >
                   <Trash2 size={14} />
-                </button>
+                </Button>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

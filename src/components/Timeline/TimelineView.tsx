@@ -19,6 +19,7 @@ import { generateCsv, downloadCsv, csvFilename } from '@/utils/csvExport'
 import { TIMELINE_CSV_COLUMNS } from '@/utils/csvExportConfigs'
 import { useWorkflowPhaseTracker } from '@/hooks/useWorkflowPhaseTracker'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
+import { Button } from '@/components/ui/button'
 
 const REGION_LABELS: Record<string, string> = {
   americas: 'Americas',
@@ -307,7 +308,8 @@ export const TimelineView = () => {
               />
             </div>
             {countryFilter !== 'All' && (
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 aria-label="Copy country timeline link"
                 onClick={() => {
@@ -321,9 +323,10 @@ export const TimelineView = () => {
                 className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
               >
                 {countryCopied ? <Check size={16} className="text-accent" /> : <Link2 size={16} />}
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="ghost"
               type="button"
               aria-label="Export to CSV"
               title="Export filtered timeline data to CSV"
@@ -331,7 +334,7 @@ export const TimelineView = () => {
               className="p-2 text-muted-foreground hover:text-foreground bg-muted/30 border border-border rounded-lg transition-colors flex-shrink-0 flex items-center justify-center min-h-[44px] min-w-[44px]"
             >
               <Download size={16} />
-            </button>
+            </Button>
           </div>
 
           {/* Active Filter Chips */}

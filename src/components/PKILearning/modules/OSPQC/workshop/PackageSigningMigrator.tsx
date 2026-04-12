@@ -14,6 +14,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { PACKAGE_FORMATS } from '../data/osConstants'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const OSPQC_KAT_SPECS: KatTestSpec[] = [
   {
@@ -322,7 +323,8 @@ export const PackageSigningMigrator: React.FC = () => {
 
         <div className="flex items-center gap-2 ml-auto">
           <span className="text-xs text-muted-foreground">View:</span>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowPqc(false)}
             className={`px-3 py-1.5 text-xs rounded-l-lg border transition-colors ${
               !showPqc
@@ -331,8 +333,9 @@ export const PackageSigningMigrator: React.FC = () => {
             }`}
           >
             Classical (Current)
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setShowPqc(true)}
             className={`px-3 py-1.5 text-xs rounded-r-lg border transition-colors ${
               showPqc
@@ -341,7 +344,7 @@ export const PackageSigningMigrator: React.FC = () => {
             }`}
           >
             PQC Migration
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -379,7 +382,8 @@ export const PackageSigningMigrator: React.FC = () => {
       <div className="space-y-2">
         {steps.map((step) => (
           <div key={step.id} className="glass-panel overflow-hidden">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setExpandedStep(expandedStep === step.id ? null : step.id)}
               className="flex items-center justify-between w-full p-4 text-left"
             >
@@ -402,7 +406,7 @@ export const PackageSigningMigrator: React.FC = () => {
               ) : (
                 <ChevronDown size={16} className="text-muted-foreground shrink-0" />
               )}
-            </button>
+            </Button>
             {expandedStep === step.id && (
               <div className="px-4 pb-4 space-y-3">
                 <pre className="text-[11px] bg-background p-3 rounded border border-border overflow-x-auto font-mono whitespace-pre text-foreground">

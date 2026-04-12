@@ -166,7 +166,8 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
       <div>
         <div className="flex items-center justify-between mb-2">
           <span className="text-sm font-bold text-foreground">Parameter Set</span>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowAllParams(!showAllParams)}
             className="flex items-center gap-1 text-xs text-primary hover:text-primary/80 transition-colors"
           >
@@ -179,14 +180,15 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                 Show all params <ChevronDown size={12} />
               </>
             )}
-          </button>
+          </Button>
         </div>
         <div className="flex flex-wrap gap-2">
           {displayParams.map((param) => {
             const isProductionOnly = param.treeHeight > 15
             return (
               <div key={param.id} className="relative group">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => {
                     setSelectedParamId(param.id)
                     setActiveKeyHandle(null)
@@ -206,7 +208,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   {isProductionOnly && (
                     <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                   )}
-                </button>
+                </Button>
                 {isProductionOnly && (
                   <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
                     H{param.treeHeight}: 2^{param.treeHeight} signatures — keygen takes minutes.
@@ -380,6 +382,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
               sign again.
             </p>
             <Button
+              variant="ghost"
               onClick={handleGenerateKey}
               disabled={!hsm.isReady || isGenerating}
               className="w-full font-bold"
@@ -489,7 +492,7 @@ export const LMSKeyGenDemo: React.FC<LMSKeyGenDemoProps> = ({
                   {toHex(new TextEncoder().encode(messageToSign))}
                 </pre>
               </div>
-              <Button onClick={handleSign} className="w-full">
+              <Button variant="ghost" onClick={handleSign} className="w-full">
                 <PenLine className="mr-2 h-4 w-4" /> Sign with CKM_HSS
               </Button>
             </div>

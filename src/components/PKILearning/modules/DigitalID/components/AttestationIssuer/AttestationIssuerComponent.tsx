@@ -261,7 +261,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
 
               {/* Actions */}
               {step === 'START' && (
-                <Button onClick={handleStart} className="w-full">
+                <Button variant="ghost" onClick={handleStart} className="w-full">
                   Login to Student Portal
                 </Button>
               )}
@@ -286,7 +286,12 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                       The University requests to view your <strong>Name</strong> and{' '}
                       <strong>Nationality</strong> from your PID.
                     </p>
-                    <Button onClick={handlePresentation} disabled={loading} className="w-full">
+                    <Button
+                      variant="ghost"
+                      onClick={handlePresentation}
+                      disabled={loading}
+                      className="w-full"
+                    >
                       {loading && <Loader2 className="animate-spin mr-2" />} Share PID Data
                     </Button>
                   </div>
@@ -316,7 +321,12 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                       through strict Base64Url bindings.
                     </p>
                   </div>
-                  <Button onClick={handleIssuance} disabled={loading} className="w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={handleIssuance}
+                    disabled={loading}
+                    className="w-full"
+                  >
                     {loading && <Loader2 className="animate-spin mr-2" />} Issue Diploma
                   </Button>
                 </div>
@@ -339,7 +349,8 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
             <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
               {/* Tabs */}
               <div className="flex items-center border-b border-border bg-muted/30">
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setActiveLogTab('protocol')}
                   className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                     activeLogTab === 'protocol'
@@ -348,8 +359,9 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                   }`}
                 >
                   PROTOCOL LOG
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
                   onClick={() => setActiveLogTab('openssl')}
                   className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                     activeLogTab === 'openssl'
@@ -358,7 +370,7 @@ export const AttestationIssuerComponent: React.FC<AttestationIssuerComponentProp
                   }`}
                 >
                   OPENSSL LOG
-                </button>
+                </Button>
               </div>
 
               {/* Content */}

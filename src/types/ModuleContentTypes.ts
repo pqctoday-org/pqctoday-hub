@@ -48,6 +48,9 @@ export interface ModuleContent {
   /** Module ID matching moduleData.ts key (e.g., 'stateful-signatures') */
   moduleId: string
 
+  /** Semantic version of this module's content (major.minor.bug) */
+  version?: string
+
   /** ISO date (YYYY-MM-DD) when module factual content was last reviewed */
   lastReviewed: string
 

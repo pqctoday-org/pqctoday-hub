@@ -14,6 +14,7 @@ import * as MLDSA from '../../wasm/liboqs_dsa'
 import clsx from 'clsx'
 import { bytesToHex } from '../../utils/dataInputUtils'
 import { FilterDropdown } from '../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface Key {
   id: string
@@ -221,7 +222,8 @@ export const InteractivePlayground = () => {
           role="group"
           aria-label="Select cryptographic algorithm"
         >
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               handleAlgorithmChange('ML-KEM')
               setOutput('')
@@ -236,8 +238,9 @@ export const InteractivePlayground = () => {
             )}
           >
             ML-KEM (Encryption)
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => {
               handleAlgorithmChange('ML-DSA')
               setOutput('')
@@ -252,7 +255,7 @@ export const InteractivePlayground = () => {
             )}
           >
             ML-DSA (Signing)
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -267,12 +270,13 @@ export const InteractivePlayground = () => {
                 1. Key Generation
               </span>
               {keyStore.length > 0 && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={clearKeys}
                   className="text-xs text-status-error hover:text-destructive/80 flex items-center gap-1"
                 >
                   <Trash2 size={12} /> Clear Keys
-                </button>
+                </Button>
               )}
             </div>
             <div className="space-y-3">
@@ -299,14 +303,15 @@ export const InteractivePlayground = () => {
                 noContainer
               />
             </div>
-            <button
+            <Button
+              variant="ghost"
               onClick={generateKeys}
               disabled={loading}
               className="w-full btn-primary flex items-center justify-center gap-2 h-12"
             >
               {loading ? <RefreshCw className="animate-spin" size={18} /> : <KeyIcon size={18} />}
               Generate New {algorithm} Pair
-            </button>
+            </Button>
           </div>
 
           {/* Section 2: Input */}
@@ -348,13 +353,14 @@ export const InteractivePlayground = () => {
                       noContainer
                     />
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('encapsulate')}
                     disabled={!selectedEncKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <Lock size={16} /> Encapsulate
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Decapsulate */}
@@ -371,13 +377,14 @@ export const InteractivePlayground = () => {
                       noContainer
                     />
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('decapsulate')}
                     disabled={!selectedDecKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-secondary/20 text-secondary border border-secondary/30 hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <KeyIcon size={16} /> Decapsulate
-                  </button>
+                  </Button>
                   {sharedSecret && (
                     <div className="mt-3">
                       <label
@@ -403,13 +410,14 @@ export const InteractivePlayground = () => {
                   <div className="text-xs text-primary/80 mb-2 font-bold uppercase tracking-wider">
                     Encrypt Data (Shared Secret)
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('encrypt')}
                     disabled={!sharedSecret || loading}
                     className="w-full py-2.5 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <Lock size={16} /> Encrypt Message
-                  </button>
+                  </Button>
                   {!sharedSecret && (
                     <p className="text-xs text-muted-foreground mt-2">
                       Run Encapsulate first to get shared secret
@@ -422,13 +430,14 @@ export const InteractivePlayground = () => {
                   <div className="text-xs text-accent/80 mb-2 font-bold uppercase tracking-wider">
                     Decrypt Data (Shared Secret)
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('decrypt')}
                     disabled={!encryptedData || loading}
                     className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <KeyIcon size={16} /> Decrypt Message
-                  </button>
+                  </Button>
                   {!encryptedData && (
                     <p className="text-xs text-muted-foreground mt-2">
                       Run Encrypt first to get encrypted data
@@ -452,13 +461,14 @@ export const InteractivePlayground = () => {
                       noContainer
                     />
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('sign')}
                     disabled={!selectedSignKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <FileSignature size={16} /> Sign Message
-                  </button>
+                  </Button>
                 </div>
 
                 {/* Verify */}
@@ -489,13 +499,14 @@ export const InteractivePlayground = () => {
                     placeholder="Paste or edit signature here..."
                     className="w-full mb-3 bg-muted border border-border rounded-lg px-3 py-2.5 text-sm text-foreground outline-none focus:border-accent font-mono"
                   />
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => runOperation('verify')}
                     disabled={!selectedVerifyKeyId || loading}
                     className="w-full py-2.5 rounded-lg bg-status-warning/20 text-status-warning border border-status-warning/30 hover:bg-status-warning/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-bold flex items-center justify-center gap-2"
                   >
                     <FileSignature size={16} /> Verify Signature
-                  </button>
+                  </Button>
                 </div>
               </div>
             )}

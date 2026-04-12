@@ -12,6 +12,7 @@ import sha256Test from '@/data/acvp/sha256_test.json'
 import ecdsaTest from '@/data/acvp/ecdsa_p384_test.json'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const TESTING_KAT_SPECS: KatTestSpec[] = [
   {
@@ -244,7 +245,8 @@ export const ACVPValidator: React.FC = () => {
             const alg = ALG_DATA[key]
             const isPQC = key.startsWith('ml')
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={key}
                 disabled={status !== 'idle' && status !== 'done'}
                 onClick={() => {
@@ -273,7 +275,7 @@ export const ACVPValidator: React.FC = () => {
                   <span>{alg.fips}</span>
                   <span>{alg.vectorCount} Vectors</span>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -292,13 +294,14 @@ export const ACVPValidator: React.FC = () => {
             </p>
           </div>
           {status === 'idle' || status === 'done' ? (
-            <button
+            <Button
+              variant="gradient"
               onClick={status === 'done' ? reset : runValidation}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-primary/90 transition-colors text-xs"
+              className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-xs"
             >
               {status === 'done' ? <RefreshCcw size={14} /> : <Code size={14} />}
               {status === 'done' ? 'Reset Engine' : `Execute ${activeAlg.vectorCount} Vectors`}
-            </button>
+            </Button>
           ) : (
             <div className="flex items-center gap-2 px-4 py-2 bg-muted text-muted-foreground font-bold rounded-lg text-xs border border-border">
               <div className="w-3 h-3 border-2 border-primary border-t-transparent rounded-full animate-spin" />

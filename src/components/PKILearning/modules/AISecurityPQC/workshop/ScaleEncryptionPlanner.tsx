@@ -237,7 +237,8 @@ export const ScaleEncryptionPlanner: React.FC = () => {
 
       {/* Privacy-preserving tech */}
       <div>
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowPrivacy(!showPrivacy)}
           className="text-sm font-bold text-foreground flex items-center gap-2"
         >
@@ -245,7 +246,7 @@ export const ScaleEncryptionPlanner: React.FC = () => {
           <span className="text-muted-foreground text-xs">
             {showPrivacy ? '(collapse)' : '(expand)'}
           </span>
-        </button>
+        </Button>
         {showPrivacy && (
           <div className="space-y-2 mt-3">
             {PRIVACY_TECH_PROFILES.map((tech) => (

@@ -9,6 +9,7 @@ import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
 import { hsm_generateMLDSAKeyPair, hsm_extractKeyValue, hsm_getMechanismList } from '@/wasm/softhsm'
+import { Button } from '@/components/ui/button'
 
 const PKCS11_LIVE_OPERATIONS = [
   'C_Initialize',
@@ -195,10 +196,11 @@ export const ProviderPatternWorkshop: React.FC = () => {
         <div className="glass-panel p-4 space-y-3 animate-fade-in">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-semibold">Run PKCS#11 Session Lifecycle Demo</p>
-            <button
+            <Button
+              variant="gradient"
               onClick={runPkcs11Demo}
               disabled={liveRunning}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded transition-colors disabled:opacity-50"
             >
               {liveRunning ? (
                 <>
@@ -207,7 +209,7 @@ export const ProviderPatternWorkshop: React.FC = () => {
               ) : (
                 'Execute (Live WASM)'
               )}
-            </button>
+            </Button>
           </div>
 
           {liveError && <p className="text-xs text-status-error font-mono">{liveError}</p>}

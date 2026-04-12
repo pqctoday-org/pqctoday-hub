@@ -8,6 +8,7 @@ import {
   computeSigningCapacity,
 } from '../data/sensorFusionData'
 import type { SensorProfile } from '../data/sensorFusionData'
+import { Button } from '@/components/ui/button'
 
 // ── Helpers ──────────────────────────────────────────────────────────────
 
@@ -88,7 +89,8 @@ export const SensorDataIntegritySimulator: React.FC = () => {
           {SENSOR_PROFILES.map((sensor) => {
             const isEnabled = enabledSensors.has(sensor.id)
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={sensor.id}
                 onClick={() => toggleSensor(sensor.id)}
                 className={`flex items-center gap-3 rounded-lg p-3 border text-left transition-colors ${
@@ -110,7 +112,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
                     {formatDataRate(sensor.dataRateMBps)} &middot; {sensor.messageFrequencyHz} Hz
                   </div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -225,7 +227,8 @@ export const SensorDataIntegritySimulator: React.FC = () => {
         {/* Sensor selector for latency view */}
         <div className="flex flex-wrap gap-1.5 mb-4">
           {SENSOR_PROFILES.map((sensor) => (
-            <button
+            <Button
+              variant="ghost"
               key={sensor.id}
               onClick={() => setSelectedSensorId(sensor.id)}
               className={`text-xs px-2.5 py-1 rounded border transition-colors ${
@@ -235,7 +238,7 @@ export const SensorDataIntegritySimulator: React.FC = () => {
               }`}
             >
               {sensor.name}
-            </button>
+            </Button>
           ))}
         </div>
 

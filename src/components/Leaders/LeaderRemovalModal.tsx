@@ -39,11 +39,11 @@ export function LeaderRemovalModal({ isOpen, onClose }: LeaderRemovalModalProps)
       {/* Backdrop */}
       {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
       <div
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 print:hidden"
+        className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50 print:hidden"
         onClick={onClose}
       />
 
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 print:hidden pointer-events-none">
+      <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4 print:hidden pointer-events-none">
         <div
           className="glass-panel bg-card max-w-lg w-full max-h-[85dvh] flex flex-col overflow-hidden pointer-events-auto"
           role="dialog"

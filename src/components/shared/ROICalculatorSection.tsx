@@ -11,6 +11,7 @@ import {
   DEFAULT_INFRA_LAYER_COST,
 } from '@/data/roiBaselines'
 import type { AssessmentResult } from '@/hooks/assessmentTypes'
+import { Button } from '@/components/ui/button'
 
 export interface ROISummary {
   migrationCost: number
@@ -170,7 +171,8 @@ function ComputationBreakdown({
 
   return (
     <div className="print:hidden mb-5">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setOpen(!open)}
         className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors w-full"
       >
@@ -180,7 +182,7 @@ function ComputationBreakdown({
           size={13}
           className={`shrink-0 transition-transform ${open ? 'rotate-180' : ''}`}
         />
-      </button>
+      </Button>
 
       {open && (
         <div className="mt-3 rounded-lg border border-border bg-muted/20 p-4 space-y-4">

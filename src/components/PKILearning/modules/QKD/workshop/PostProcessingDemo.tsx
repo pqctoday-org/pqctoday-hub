@@ -9,6 +9,7 @@ import {
   type BB84SimulationState,
   type BitValue,
 } from '../services/BB84Service'
+import { Button } from '@/components/ui/button'
 
 type PostProcessingStep =
   | 'generate'
@@ -185,12 +186,13 @@ export const PostProcessingDemo: React.FC = () => {
             <p className="text-xs text-muted-foreground mb-3">
               Run BB84 with 64 qubits (no eavesdropper) to produce a sifted key for post-processing.
             </p>
-            <button
+            <Button
+              variant="gradient"
               onClick={stepHandlers[0]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Generate Sifted Key
-            </button>
+            </Button>
           </div>
         )}
 
@@ -220,12 +222,13 @@ export const PostProcessingDemo: React.FC = () => {
                 {bitsToHex(finalKey)}
               </code>
             </div>
-            <button
+            <Button
+              variant="gradient"
               onClick={stepHandlers[1]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Continue to Error Correction
-            </button>
+            </Button>
           </div>
         )}
 
@@ -261,12 +264,13 @@ export const PostProcessingDemo: React.FC = () => {
                 })}
               </div>
             </div>
-            <button
+            <Button
+              variant="gradient"
               onClick={stepHandlers[2]}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2"
             >
               <Play size={14} /> Correct Errors ({errorsCorrected || 0} blocks flagged)
-            </button>
+            </Button>
           </div>
         )}
 
@@ -298,13 +302,14 @@ export const PostProcessingDemo: React.FC = () => {
                 </div>
               </div>
             </div>
-            <button
+            <Button
+              variant="gradient"
               onClick={stepHandlers[3]}
               disabled={isProcessing}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <Play size={14} /> {isProcessing ? 'Hashing...' : 'Run Privacy Amplification'}
-            </button>
+            </Button>
           </div>
         )}
 
@@ -326,13 +331,14 @@ export const PostProcessingDemo: React.FC = () => {
               <span>QKD Secret</span> + <span>ML-KEM-768 Secret</span> &rarr;{' '}
               <span className="text-primary font-bold">HKDF</span>
             </div>
-            <button
+            <Button
+              variant="gradient"
               onClick={stepHandlers[4]}
               disabled={isProcessing}
-              className="px-4 py-2 bg-primary text-black font-bold rounded text-sm hover:bg-primary/90 transition-colors flex items-center gap-2 disabled:opacity-50"
+              className="px-4 py-2 font-bold rounded text-sm transition-colors flex items-center gap-2 disabled:opacity-50"
             >
               <Key size={14} /> {isProcessing ? 'Deriving...' : 'Derive Hybrid Key'}
-            </button>
+            </Button>
           </div>
         )}
 

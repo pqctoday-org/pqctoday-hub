@@ -247,7 +247,8 @@ export const ProviderSetup: React.FC = () => {
                   <span className="text-xs font-medium text-muted-foreground">Context Window</span>
                   <div className="space-y-1.5">
                     {contextPresets.map((p) => (
-                      <button
+                      <Button
+                        variant="ghost"
                         key={p.tokens}
                         type="button"
                         onClick={() => setContextWindow(p.tokens)}
@@ -282,20 +283,21 @@ export const ProviderSetup: React.FC = () => {
                             window or a smaller model.
                           </p>
                         )}
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>
 
                 {/* Info panel */}
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={() => setShowInfo(!showInfo)}
                   className="flex items-center gap-1.5 text-xs text-primary hover:underline"
                 >
                   <Info size={12} />
                   How does local AI work?
-                </button>
+                </Button>
                 {showInfo && (
                   <div className="rounded-lg border border-border bg-muted/20 p-3 space-y-2 text-xs text-muted-foreground">
                     <p>

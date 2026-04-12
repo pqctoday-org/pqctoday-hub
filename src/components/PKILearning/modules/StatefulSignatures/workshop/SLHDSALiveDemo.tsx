@@ -394,8 +394,12 @@ export const SLHDSALiveDemo: React.FC = () => {
               />
               {preHash && !PREHASH_OPTIONS_BASE.find((o) => o.id === preHash)?.fips205Slh && (
                 <p className="text-[10px] text-status-warning mt-1 leading-relaxed">
-                  ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS-compliant choices: SHA-256,
-                  SHA-512, SHAKE-128, SHAKE-256.
+                  ⚠ Not approved for HashSLH-DSA by FIPS 205 §11. FIPS 205 permits only SHA-256,
+                  SHA-512, SHAKE-128, and SHAKE-256 — the four hash functions that match the
+                  internal hash families of the 12 parameter sets (SHA2-* variants use SHA-256 or
+                  SHA-512; SHAKE-* variants use SHAKE-128 or SHAKE-256). SHA-3 and other variants
+                  are available in PKCS#11 v3.2 but are outside the FIPS 205 HashSLH-DSA
+                  specification entirely.
                 </p>
               )}
             </div>
@@ -613,15 +617,25 @@ export const SLHDSALiveDemo: React.FC = () => {
       </div>
 
       {/* Educational note */}
-      <div className="bg-muted/50 rounded-lg p-4 border border-border">
+      <div className="bg-muted/50 rounded-lg p-4 border border-border space-y-2">
         <p className="text-xs text-muted-foreground">
-          <strong>Note:</strong> SLH-DSA (FIPS 205, formerly SPHINCS+) uses hash-based Merkle trees
-          like LMS/XMSS but eliminates state management entirely. The trade-off is significantly
-          larger signatures (7-49 KB vs 1-9 KB). The &quot;s&quot; variants optimize for smaller
-          signatures while &quot;f&quot; variants optimize for faster signing.{' '}
+          <strong>Why is SLH-DSA stateless?</strong> Unlike LMS/XMSS, SLH-DSA does not consume a
+          leaf index on each signing operation. Instead, it derives a fresh, ephemeral WOTS+ key for
+          every signature using a per-signature randomizer drawn from the private key seed — making
+          each signature self-contained. There is no counter to persist, no monotonic register to
+          protect, and no risk of catastrophic key reuse from a crashed or cloned HSM. In practice
+          this means the private key can be safely backed up, distributed across HSM replicas, or
+          stored in software — operational constraints that are impossible with LMS or XMSS.
+        </p>
+        <p className="text-xs text-muted-foreground">
+          <strong>The cost of statefulness elimination:</strong> SLH-DSA (FIPS 205, formerly
+          SPHINCS+) signs with a Merkle hypertree whose path proof must be included in full —
+          producing signatures of 7–49 KB depending on the parameter set, versus 1–9 KB for LMS at
+          comparable security levels. The &quot;s&quot; variants optimize for smaller signatures;
+          the &quot;f&quot; variants optimize for faster signing at the expense of larger output.{' '}
           {isLive
-            ? 'All operations execute via SoftHSM3 PKCS#11 v3.2.'
-            : 'Disable simulation mode for real cryptographic operations.'}{' '}
+            ? 'All operations above execute via SoftHSM3 PKCS#11 v3.2.'
+            : 'Enable Live WASM Mode above for real cryptographic operations.'}{' '}
           Generated keys are for educational purposes only.
         </p>
       </div>

@@ -5,6 +5,7 @@ import toast from 'react-hot-toast'
 import { ProgressService } from '../../services/storage/ProgressService'
 import { UnifiedStorageService } from '../../services/storage/UnifiedStorageService'
 import { useModuleStore } from '../../store/useModuleStore'
+import { Button } from '@/components/ui/button'
 
 // Helper function to format time ago
 const formatTimeAgo = (date: Date): string => {
@@ -143,13 +144,14 @@ export const SaveRestorePanel: React.FC = () => {
           </p>
 
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={handleExport}
               className="flex items-center gap-2 px-4 py-2 bg-secondary hover:bg-secondary/80 text-foreground rounded transition-colors"
             >
               <Download size={16} />
               Export Progress
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -176,13 +178,14 @@ export const SaveRestorePanel: React.FC = () => {
             Delete all modules, artifacts, and preferences. This cannot be undone.
           </p>
 
-          <button
+          <Button
+            variant="ghost"
             onClick={handleReset}
             className="flex items-center gap-2 px-4 py-2 bg-status-error text-status-error rounded hover:bg-status-error transition-colors"
           >
             <Trash2 size={16} />
             Reset Everything
-          </button>
+          </Button>
         </div>
       </div>
     </div>

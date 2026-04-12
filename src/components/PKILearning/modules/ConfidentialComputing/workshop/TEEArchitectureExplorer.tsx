@@ -233,7 +233,8 @@ export const TEEArchitectureExplorer: React.FC = () => {
               }`}
             >
               {/* Collapsed Row */}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   if (compareMode) {
                     toggleCompareSelection(tee.id)
@@ -291,7 +292,7 @@ export const TEEArchitectureExplorer: React.FC = () => {
                     )}
                   </span>
                 )}
-              </button>
+              </Button>
 
               {/* Expanded Details */}
               {isExpanded && !compareMode && (

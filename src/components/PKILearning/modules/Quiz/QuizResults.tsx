@@ -140,13 +140,14 @@ export const QuizResults: React.FC<QuizResultsProps> = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.3 }}
       >
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowReview((prev) => !prev)}
           className="flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors w-full justify-center"
         >
           {showReview ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
           {showReview ? 'Hide Review' : 'Review All Answers'}
-        </button>
+        </Button>
 
         {showReview && (
           <div className="mt-6 space-y-6">

@@ -53,6 +53,7 @@ export const framerMotionMock = {
       <section {...(stripMotionProps(props) as HTMLAttributes<HTMLElement>)}>{children}</section>
     ),
     button: ({ children, ...props }: MotionProps) => (
+      // eslint-disable-next-line no-restricted-syntax
       <button {...(stripMotionProps(props) as HTMLAttributes<HTMLButtonElement>)}>
         {children}
       </button>

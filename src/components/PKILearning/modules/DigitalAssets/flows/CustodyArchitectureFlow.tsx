@@ -31,6 +31,7 @@ import {
   type ArchitectureSubComponent,
   type ThreatLevel,
 } from '../data/custodyConstants'
+import { Button } from '@/components/ui/button'
 
 interface CustodyArchitectureFlowProps {
   onBack: () => void
@@ -261,7 +262,8 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                 }`}
               >
                 {/* Layer header */}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => toggleLayer(layer.id)}
                   className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
                 >
@@ -291,7 +293,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                   <div className="shrink-0 ml-2 text-muted-foreground">
                     {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>
-                </button>
+                </Button>
 
                 {/* Expanded content */}
                 {isExpanded && (
@@ -334,7 +336,8 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
               const StepIcon = TX_STEP_ICONS[idx] ?? Send
               return (
                 <React.Fragment key={step.id}>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleTxStepChange(idx)}
                     className={`flex flex-col items-center gap-1 group ${
                       idx === txFlowStep
@@ -358,7 +361,7 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
                     <span className="text-xs font-medium hidden sm:block text-center leading-tight max-w-[80px]">
                       Step {step.step}
                     </span>
-                  </button>
+                  </Button>
                   {idx < TRANSACTION_FLOW_STEPS.length - 1 && (
                     <div
                       className={`flex-1 h-0.5 mx-1 ${idx < txFlowStep ? 'bg-[hsl(var(--status-success))]' : 'bg-border'}`}
@@ -422,32 +425,35 @@ export const CustodyArchitectureFlow: React.FC<CustodyArchitectureFlowProps> = (
 
         {/* Transaction flow navigation */}
         <div className="flex justify-between gap-3">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => handleTxStepChange(Math.max(0, txFlowStep - 1))}
             disabled={txFlowStep === 0}
             className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border hover:bg-muted/50 transition-colors text-sm text-foreground disabled:opacity-40 disabled:cursor-not-allowed"
           >
             <ChevronLeft size={16} />
             Previous
-          </button>
+          </Button>
           {txFlowStep < TRANSACTION_FLOW_STEPS.length - 1 ? (
-            <button
+            <Button
+              variant="gradient"
               onClick={() =>
                 handleTxStepChange(Math.min(TRANSACTION_FLOW_STEPS.length - 1, txFlowStep + 1))
               }
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground hover:bg-primary/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Next Step
               <ChevronRight size={16} />
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
+              variant="gradient"
               onClick={onBack}
-              className="flex items-center gap-2 px-4 py-2 rounded-lg bg-accent text-accent-foreground hover:bg-accent/90 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-4 py-2 rounded-lg transition-colors text-sm font-medium"
             >
               Complete
               <CheckCircle size={16} />
-            </button>
+            </Button>
           )}
         </div>
       </div>

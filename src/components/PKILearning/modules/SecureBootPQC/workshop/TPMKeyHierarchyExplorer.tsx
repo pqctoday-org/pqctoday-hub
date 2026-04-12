@@ -9,6 +9,7 @@ import {
   ChevronDown,
   Info,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface TPMKey {
   id: string
@@ -244,7 +245,8 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
                       key={tpmKey.id}
                       className="rounded-lg border border-border bg-muted/30 overflow-hidden"
                     >
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => setExpandedKey(isExpanded ? null : tpmKey.id)}
                         className="flex items-center gap-3 w-full p-3 text-left"
                       >
@@ -277,7 +279,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
                         ) : (
                           <ChevronRight size={14} className="text-muted-foreground shrink-0" />
                         )}
-                      </button>
+                      </Button>
 
                       {isExpanded && (
                         <div className="px-4 pb-4 border-t border-border/50 pt-3 space-y-3">
@@ -331,7 +333,8 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
 
       {/* Hybrid Approach */}
       <div className="glass-panel p-6">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowHybrid(!showHybrid)}
           className="flex items-center gap-2 w-full text-left"
         >
@@ -344,7 +347,7 @@ export const TPMKeyHierarchyExplorer: React.FC = () => {
           ) : (
             <ChevronRight size={16} className="text-muted-foreground" />
           )}
-        </button>
+        </Button>
 
         {showHybrid && (
           <div className="mt-4 space-y-4">

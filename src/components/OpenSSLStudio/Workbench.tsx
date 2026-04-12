@@ -377,7 +377,7 @@ export const Workbench = ({ category, setCategory }: WorkbenchProps) => {
       } else if (lmsMode === 'sign') {
         cmd += ` pkeyutl -sign -inkey ${lmsKeyFile || 'lms.key'} -in ${dbData} -out lms_sig.bin`
       } else {
-        cmd = `[LMS] Generate keypair (WASM-only operation)`
+        cmd = ``
       }
     } else if (category === 'configutl') {
       const inFile = configUtlInFile || 'openssl.cnf'

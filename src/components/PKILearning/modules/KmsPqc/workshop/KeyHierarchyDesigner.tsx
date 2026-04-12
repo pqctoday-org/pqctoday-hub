@@ -3,6 +3,7 @@
 import React, { useState, useMemo } from 'react'
 import { KeyRound, HardDrive, Network, Info } from 'lucide-react'
 import { KEY_HIERARCHY_LEVELS, KEY_SIZE_COMPARISONS } from '../data/kmsConstants'
+import { Button } from '@/components/ui/button'
 
 type AlgorithmMode = 'classical' | 'hybrid' | 'pqc'
 
@@ -176,7 +177,8 @@ export const KeyHierarchyDesigner: React.FC = () => {
                     {/* Mode toggle */}
                     <div className="flex gap-1 shrink-0">
                       {(['classical', 'hybrid', 'pqc'] as AlgorithmMode[]).map((mode) => (
-                        <button
+                        <Button
+                          variant="ghost"
                           key={mode}
                           onClick={() => setMode(level.id, mode)}
                           className={`px-3 py-1.5 text-xs font-medium rounded transition-colors ${
@@ -190,7 +192,7 @@ export const KeyHierarchyDesigner: React.FC = () => {
                           }`}
                         >
                           {MODE_LABELS[mode].label}
-                        </button>
+                        </Button>
                       ))}
                     </div>
                   </div>

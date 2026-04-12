@@ -3,6 +3,7 @@ import React from 'react'
 import { FileText, ArrowUp, ArrowDown, ArrowUpDown } from 'lucide-react'
 import clsx from 'clsx'
 import { useSettingsContext } from '../contexts/SettingsContext'
+import { Button } from '@/components/ui/button'
 
 export const LogsTab: React.FC = () => {
   return <LogsTabSoftware />
@@ -32,7 +33,8 @@ const LogsTabSoftware: React.FC = () => {
           <FileText size={18} className="text-muted-foreground" /> Operation Log
         </h4>
         <div className="flex items-center gap-4">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => {
               const textOutput = sortedLogs
                 .map(
@@ -45,13 +47,14 @@ const LogsTabSoftware: React.FC = () => {
             className="text-xs text-muted-foreground hover:text-foreground transition-colors border border-border px-2 py-1 rounded"
           >
             Copy Logs
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={clearLogs}
             className="text-xs text-muted-foreground hover:text-foreground transition-colors"
           >
             Clear Log
-          </button>
+          </Button>
         </div>
       </div>
 

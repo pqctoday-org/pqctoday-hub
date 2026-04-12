@@ -136,6 +136,30 @@ const pubKeyBytes = new Uint8Array([prefix, ...point.slice(1, 33)]) // 33 bytes`
             <code className="text-xs font-mono text-primary">0x00</code> is the mainnet P2PKH
             version prefix; testnet uses{' '}
             <code className="text-xs font-mono text-primary">0x6f</code>.
+            <span className="mt-2 block text-xs text-muted-foreground">
+              <strong>Address format note:</strong> P2PKH (<code className="font-mono">1xxx</code>,
+              Base58Check) is the legacy format. Modern Bitcoin wallets use SegWit P2WPKH (
+              <a
+                href="/library?ref=BIP-141"
+                className="text-primary underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BIP-141
+              </a>
+              , <code className="font-mono">bc1q...</code> bech32 addresses) or Taproot P2TR (
+              <a
+                href="/library?ref=BIP-341"
+                className="text-primary underline"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                BIP-341
+              </a>
+              /BIP-350, <code className="font-mono">bc1p...</code> bech32m addresses). This demo
+              uses P2PKH for clarity — it avoids the witness data structures that SegWit and Taproot
+              require.
+            </span>
           </>
         ),
         code: `// 1. SHA256
@@ -243,7 +267,7 @@ const address = base58check.encode([0x00, ...ripemd160(sha256(pubKeyBytes))])`,
             label: 'Fee',
             value: '0.0001 BTC (10,000 sat)',
             description:
-              'Miner fee = total inputs − total outputs. Here: the UTXO being spent must cover the recipient amount plus change plus this fee. Unaccounted satoshis are implicitly claimed by the miner who includes the transaction in a block.',
+              'Miner fee = total inputs − total outputs. Here: the UTXO being spent must cover the recipient amount plus change plus this fee. Unaccounted satoshis are implicitly claimed by the miner who includes the transaction in a block. Note: this demo uses a simplified fixed fee. Real wallets use a sat/vbyte fee rate (feerate) — the fee is feerate × transaction weight in virtual bytes (vbytes), and the appropriate rate is chosen based on current mempool congestion.',
           },
           {
             label: 'Total Size',
@@ -344,9 +368,17 @@ const address = base58check.encode([0x00, ...ripemd160(sha256(pubKeyBytes))])`,
             (0x01000000 LE) is appended to the serialized transaction before hashing, committing the
             signature to all inputs and outputs; this demo omits that suffix for clarity. Each
             signature uses a fresh <InfoTooltip term="ecdsaNonce" />; SoftHSMv3 derives it
-            deterministically per RFC 6979. The HSM returns a raw r‖s (64 bytes);{' '}
-            <InfoTooltip term="derEncoding" /> is required before broadcasting. The private key
-            never leaves the HSM token.
+            deterministically per{' '}
+            <a
+              href="/library?ref=IETF RFC 6979"
+              className="text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              RFC 6979
+            </a>
+            . The HSM returns a raw r‖s (64 bytes); <InfoTooltip term="derEncoding" /> is required
+            before broadcasting. The private key never leaves the HSM token.
           </>
         ),
         code: `// 1. Double SHA256 sighash — computed in JS, passed raw to HSM

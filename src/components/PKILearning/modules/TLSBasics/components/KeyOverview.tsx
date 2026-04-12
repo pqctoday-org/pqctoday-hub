@@ -4,6 +4,7 @@ import { clsx } from 'clsx'
 import { Key, Shield, Lock, HelpCircle, Eye } from 'lucide-react'
 import type { TraceEvent } from './CryptoLogDisplay'
 import type { TLSConfig } from '@/store/tls-learning.store'
+import { Button } from '@/components/ui/button'
 
 interface KeyColumnProps {
   title: string
@@ -148,7 +149,8 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                     Certificate (Public Key)
                   </div>
                   {config.certificates.certPem && (
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() =>
                         setInspectCert({
                           pem: config.certificates.certPem!,
@@ -160,7 +162,7 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                     >
                       <Eye size={12} />
                       Inspect
-                    </button>
+                    </Button>
                   )}
                 </div>
                 <div className="font-mono text-[10px] text-foreground break-all px-1">
@@ -193,7 +195,8 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                     <div className="text-[10px] text-muted-foreground uppercase font-bold">
                       Root CA (Trust Anchor)
                     </div>
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() =>
                         setInspectCert({
                           pem: config.certificates.caPem!,
@@ -205,7 +208,7 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
                     >
                       <Eye size={12} />
                       Inspect
-                    </button>
+                    </Button>
                   </div>
                   <div className="font-mono text-[10px] text-foreground break-all px-1">
                     {config.certificates.caPem.includes('ML-DSA')
@@ -272,7 +275,8 @@ export const KeyColumn: React.FC<KeyColumnProps> = ({ title, config, trace, side
 const CopyButton = ({ text }: { text: string }) => {
   const [copied, setCopied] = React.useState(false)
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={() => {
         navigator.clipboard.writeText(text)
         setCopied(true)
@@ -281,6 +285,6 @@ const CopyButton = ({ text }: { text: string }) => {
       className="text-[9px] hover:text-foreground text-muted-foreground transition-colors uppercase font-bold tracking-wider"
     >
       {copied ? 'Copied' : 'Copy'}
-    </button>
+    </Button>
   )
 }

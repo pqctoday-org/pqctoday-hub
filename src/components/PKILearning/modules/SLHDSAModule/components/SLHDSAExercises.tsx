@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -74,7 +75,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
   ]
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient mb-2">SLH-DSA Exercises</h2>
         <p className="text-muted-foreground text-sm">
@@ -101,7 +102,8 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
               <strong className="text-foreground">What to observe:</strong> {scenario.observe}
             </div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 onSetWorkshopConfig?.(scenario.config)
                 onNavigateToWorkshop()
@@ -111,7 +113,7 @@ export const SLHDSAExercises: React.FC<SLHDSAExercisesProps> = ({
               <Play size={13} />
               Go to Workshop Step {scenario.config.step + 1}
               <ArrowRight size={13} />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

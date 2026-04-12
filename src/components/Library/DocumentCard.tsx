@@ -11,6 +11,7 @@ import { useBookmarkStore } from '@/store/useBookmarkStore'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { DocumentAnalysis } from './DocumentAnalysis'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 interface DocumentCardProps {
   item: LibraryItem
@@ -147,7 +148,8 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
         )}
         {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions */}
         <div className="flex items-center gap-1 ml-auto" onClick={(e) => e.stopPropagation()}>
-          <button
+          <Button
+            variant="ghost"
             onClick={(e) => {
               e.stopPropagation()
               toggleLibraryBookmark(item.referenceId)
@@ -163,7 +165,7 @@ export const DocumentCard = ({ item, onViewDetails, index = 0 }: DocumentCardPro
             ) : (
               <Bookmark size={16} className="text-muted-foreground" />
             )}
-          </button>
+          </Button>
           <EndorseButton
             endorseUrl={buildLibraryEndorsementUrl(item)}
             resourceLabel={item.referenceId}

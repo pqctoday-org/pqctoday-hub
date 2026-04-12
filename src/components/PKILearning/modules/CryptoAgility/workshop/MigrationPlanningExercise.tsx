@@ -4,6 +4,7 @@ import React, { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ChevronRight, ChevronLeft, CheckCircle, Circle, ClipboardCheck, Route } from 'lucide-react'
 import { MIGRATION_STEPS } from '@/data/migrationWorkflowData'
+import { Button } from '@/components/ui/button'
 
 export const MigrationPlanningExercise: React.FC = () => {
   const [currentStep, setCurrentStep] = useState(0)
@@ -42,7 +43,8 @@ export const MigrationPlanningExercise: React.FC = () => {
       <div className="overflow-x-auto">
         <div className="flex gap-1 min-w-max">
           {MIGRATION_STEPS.map((s, idx) => (
-            <button
+            <Button
+              variant="ghost"
               key={s.id}
               onClick={() => setCurrentStep(idx)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded text-xs font-medium transition-colors ${
@@ -56,7 +58,7 @@ export const MigrationPlanningExercise: React.FC = () => {
               {completedSteps.has(idx) ? <CheckCircle size={12} /> : <Circle size={12} />}
               <span className="hidden sm:inline">{s.shortTitle}</span>
               <span className="sm:hidden">{idx + 1}</span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -130,16 +132,18 @@ export const MigrationPlanningExercise: React.FC = () => {
 
           {/* Navigation */}
           <div className="flex items-center justify-between pt-4 border-t border-border">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
               disabled={currentStep === 0}
               className="flex items-center gap-1 px-4 py-2 text-sm rounded border border-border hover:bg-muted disabled:opacity-50 transition-colors"
             >
               <ChevronLeft size={14} /> Previous
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="gradient"
               onClick={markComplete}
-              className="flex items-center gap-2 px-4 py-2 text-sm bg-primary text-black font-bold rounded hover:bg-primary/90 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-bold rounded transition-colors"
             >
               {completedSteps.has(currentStep) ? (
                 <>
@@ -154,7 +158,7 @@ export const MigrationPlanningExercise: React.FC = () => {
                   Complete &amp; Next <ChevronRight size={14} />
                 </>
               )}
-            </button>
+            </Button>
           </div>
         </div>
       )}

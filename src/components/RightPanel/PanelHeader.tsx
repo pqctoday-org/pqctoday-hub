@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Bot, Clock, Network, Bookmark, X } from 'lucide-react'
+import { Bot, Clock, Network, Bookmark, X, Minus } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { RightPanelTab } from '@/types/HistoryTypes'
 import { useEmbedState } from '@/embed/EmbedProvider'
@@ -9,9 +9,15 @@ interface PanelHeaderProps {
   activeTab: RightPanelTab
   onTabChange: (tab: RightPanelTab) => void
   onClose: () => void
+  onMinimize?: () => void
 }
 
-export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange, onClose }) => {
+export const PanelHeader: React.FC<PanelHeaderProps> = ({
+  activeTab,
+  onTabChange,
+  onClose,
+  onMinimize,
+}) => {
   const { isEmbedded } = useEmbedState()
   let tabs: { id: RightPanelTab; label: string; icon: React.ElementType }[] = [
     { id: 'chat', label: 'Assistant', icon: Bot },
@@ -29,7 +35,8 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
       <div className="flex items-center justify-between max-w-4xl mx-auto">
         <div className="flex items-center gap-1" role="tablist">
           {tabs.map((tab) => (
-            <button
+            <Button
+              variant="ghost"
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
               className={`flex items-center gap-1.5 px-3 py-2.5 text-sm font-medium rounded-t-lg border-b-2 transition-colors ${
@@ -42,18 +49,31 @@ export const PanelHeader: React.FC<PanelHeaderProps> = ({ activeTab, onTabChange
             >
               <tab.icon size={16} />
               <span className="hidden sm:inline">{tab.label}</span>
-            </button>
+            </Button>
           ))}
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onClose}
-          className="min-h-[44px] min-w-[44px] p-2"
-          aria-label="Close assistant"
-        >
-          <X size={20} />
-        </Button>
+        <div className="flex items-center gap-1">
+          {onMinimize && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={onMinimize}
+              className="min-h-[44px] min-w-[44px] p-2"
+              aria-label="Minimize assistant"
+            >
+              <Minus size={20} />
+            </Button>
+          )}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onClose}
+            className="min-h-[44px] min-w-[44px] p-2"
+            aria-label="Close assistant"
+          >
+            <X size={20} />
+          </Button>
+        </div>
       </div>
     </div>
   )

@@ -24,6 +24,7 @@ import {
   type KmipOperation,
   type KmipSyncStep,
 } from '../data/kmsConstants'
+import { Button } from '@/components/ui/button'
 
 const PROVIDER_LABELS: Record<string, { name: string; short: string }> = {
   'aws-kms': { name: 'AWS KMS', short: 'AWS' },
@@ -73,7 +74,8 @@ const OperationSimulator: React.FC = () => {
       {/* Operation selector */}
       <div className="flex flex-wrap gap-2">
         {KMIP_OPERATIONS.map((op) => (
-          <button
+          <Button
+            variant="ghost"
             key={op.id}
             onClick={() => {
               setSelectedOp(op)
@@ -86,7 +88,7 @@ const OperationSimulator: React.FC = () => {
             }`}
           >
             {op.name}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -100,13 +102,14 @@ const OperationSimulator: React.FC = () => {
             <span className="text-xs font-bold text-primary uppercase tracking-wider">
               KMIP v2.1 XML
             </span>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowResponse(!showResponse)}
               className="text-xs text-muted-foreground hover:text-foreground flex items-center gap-1 transition-colors"
             >
               {showResponse ? 'Show Request' : 'Show Response'}
               {showResponse ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-            </button>
+            </Button>
           </div>
           <pre className="bg-muted/30 rounded-lg p-4 text-xs overflow-x-auto border border-border font-mono leading-relaxed max-h-[400px] overflow-y-auto">
             <code>{showResponse ? selectedOp.kmipResponse : selectedOp.kmipXml}</code>
@@ -121,7 +124,8 @@ const OperationSimulator: React.FC = () => {
             </span>
             <div className="flex gap-1 ml-auto">
               {Object.keys(PROVIDER_LABELS).map((id) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={id}
                   onClick={() => setSelectedProvider(id)}
                   className={`px-2 py-0.5 rounded text-xs font-medium border transition-colors ${
@@ -131,7 +135,7 @@ const OperationSimulator: React.FC = () => {
                   }`}
                 >
                   {PROVIDER_LABELS[id].short}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -192,7 +196,8 @@ const PqcKeyTypeMapping: React.FC = () => {
 
       <div className="flex gap-2">
         {(['all', 'KEM', 'Signature'] as const).map((f) => (
-          <button
+          <Button
+            variant="ghost"
             key={f}
             onClick={() => setFamilyFilter(f)}
             className={`px-3 py-1 rounded-lg text-xs font-medium border transition-colors ${
@@ -202,7 +207,7 @@ const PqcKeyTypeMapping: React.FC = () => {
             }`}
           >
             {f === 'all' ? 'All' : f}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -309,7 +314,8 @@ const CrossProviderSync: React.FC = () => {
       {/* Step timeline */}
       <div className="flex gap-1 overflow-x-auto">
         {KMIP_SYNC_SCENARIO.map((step) => (
-          <button
+          <Button
+            variant="ghost"
             key={step.id}
             onClick={() => setActiveStep(step)}
             className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium border whitespace-nowrap transition-colors ${
@@ -322,7 +328,7 @@ const CrossProviderSync: React.FC = () => {
               {step.id}
             </span>
             {step.title.split(' ').slice(0, 2).join(' ')}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -375,7 +381,8 @@ const CrossProviderSync: React.FC = () => {
           })}
 
           {activeStep.id < KMIP_SYNC_SCENARIO.length && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 const next = KMIP_SYNC_SCENARIO.find((s) => s.id === activeStep.id + 1)
                 if (next) setActiveStep(next)
@@ -383,7 +390,7 @@ const CrossProviderSync: React.FC = () => {
               className="w-full flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors text-sm font-medium mt-2"
             >
               Next Step <ArrowRight size={14} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -459,7 +466,8 @@ const ReadinessChecklist: React.FC = () => {
           </h4>
           <div className="space-y-2">
             {items.map((item) => (
-              <button
+              <Button
+                variant="ghost"
                 key={item.id}
                 onClick={() => toggleItem(item.id)}
                 className={`w-full text-left flex items-start gap-3 p-3 rounded-lg border transition-colors ${
@@ -490,7 +498,7 @@ const ReadinessChecklist: React.FC = () => {
                   </div>
                   <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -528,7 +536,8 @@ export const KmipProtocolExplorer: React.FC = () => {
         {sections.map((s, idx) => {
           const Icon = s.icon
           return (
-            <button
+            <Button
+              variant="ghost"
               key={s.label}
               onClick={() => setActiveSection(idx)}
               className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium border transition-colors ${
@@ -539,7 +548,7 @@ export const KmipProtocolExplorer: React.FC = () => {
             >
               <Icon size={14} />
               {s.label}
-            </button>
+            </Button>
           )
         })}
       </div>

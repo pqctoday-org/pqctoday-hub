@@ -5,6 +5,7 @@ import { HYBRID_ALGORITHMS } from '../constants'
 import { hybridCryptoService, type KeyGenResult } from '../services/HybridCryptoService'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const HYBRID_KAT_SPECS: KatTestSpec[] = [
   {
@@ -159,7 +160,8 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
 
       {/* Category toggle */}
       <div className="flex gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => {
             setCategory('kem')
             setResults(new Map())
@@ -171,8 +173,9 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
           }`}
         >
           KEM (Key Encapsulation)
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => {
             setCategory('signature')
             setResults(new Map())
@@ -184,14 +187,15 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
           }`}
         >
           Signatures
-        </button>
+        </Button>
       </div>
 
       {/* Generate button */}
-      <button
+      <Button
+        variant="gradient"
         onClick={generateAll}
         disabled={isGenerating}
-        className="flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+        className="flex items-center gap-2 px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors"
       >
         {isGenerating ? (
           <>
@@ -204,7 +208,7 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
             Generate All Keys
           </>
         )}
-      </button>
+      </Button>
 
       {/* Results grid */}
       {results.size > 0 && (
@@ -274,14 +278,15 @@ export const HybridKeyGeneration: React.FC<HybridKeyGenerationProps> = ({
                           </div>
 
                           {/* PEM toggle */}
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() =>
                               setExpandedPem(expandedPem === algo.name ? null : algo.name)
                             }
                             className="text-xs text-primary hover:text-primary/80 transition-colors"
                           >
                             {expandedPem === algo.name ? 'Hide PEM' : 'Show PEM'}
-                          </button>
+                          </Button>
                           {expandedPem === algo.name && result.pemOutput && (
                             <pre className="text-[10px] bg-background p-2 rounded border border-border overflow-x-auto max-h-48 overflow-y-auto font-mono">
                               {result.pemOutput.trim()}

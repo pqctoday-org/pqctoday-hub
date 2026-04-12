@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { LayoutGrid, Table } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 export type ViewMode = 'cards' | 'table'
 
@@ -16,7 +17,8 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
       role="radiogroup"
       aria-label="View mode"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => onChange('cards')}
         role="radio"
         aria-checked={mode === 'cards'}
@@ -29,8 +31,9 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
       >
         <LayoutGrid size={14} aria-hidden="true" />
         <span className="hidden sm:inline">Cards</span>
-      </button>
-      <button
+      </Button>
+      <Button
+        variant="ghost"
         onClick={() => onChange('table')}
         role="radio"
         aria-checked={mode === 'table'}
@@ -43,7 +46,7 @@ export const ViewToggle = ({ mode, onChange }: ViewToggleProps) => {
       >
         <Table size={14} aria-hidden="true" />
         <span className="hidden sm:inline">Table</span>
-      </button>
+      </Button>
     </div>
   )
 }

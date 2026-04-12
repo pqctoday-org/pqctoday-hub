@@ -256,7 +256,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                       cryptographically hidden from the verifier.
                     </p>
                   </div>
-                  <Button onClick={handleStart} className="w-full">
+                  <Button variant="ghost" onClick={handleStart} className="w-full">
                     Login with Wallet
                   </Button>
                 </div>
@@ -273,7 +273,12 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                       <li>University Degree (Required)</li>
                     </ul>
                   </div>
-                  <Button onClick={handleDisclosure} disabled={loading} className="w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={handleDisclosure}
+                    disabled={loading}
+                    className="w-full"
+                  >
                     {loading && <Loader2 className="animate-spin mr-2" />} Consent & Share
                   </Button>
                 </div>
@@ -289,7 +294,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
               )}
 
               {step === 'VERIFICATION' && (
-                <Button onClick={handleVerification} className="w-full">
+                <Button variant="ghost" onClick={handleVerification} className="w-full">
                   Check Verification Result
                 </Button>
               )}
@@ -313,7 +318,8 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
           <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
             {/* Tabs */}
             <div className="flex items-center border-b border-border bg-muted/30">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
@@ -322,8 +328,9 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                 }`}
               >
                 PROTOCOL LOG
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'
@@ -332,7 +339,7 @@ export const RelyingPartyComponent: React.FC<RelyingPartyComponentProps> = ({ wa
                 }`}
               >
                 OPENSSL LOG
-              </button>
+              </Button>
             </div>
 
             {/* Content */}

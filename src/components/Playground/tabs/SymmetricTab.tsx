@@ -6,6 +6,7 @@ import { useSettingsContext } from '../contexts/SettingsContext'
 import { useKeyStoreContext } from '../contexts/KeyStoreContext'
 import { useOperationsContext } from '../contexts/OperationsContext'
 import { FilterDropdown } from '../../common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 export const SymmetricTab: React.FC = () => {
   const { loading } = useSettingsContext()
@@ -13,7 +14,7 @@ export const SymmetricTab: React.FC = () => {
   const { symData, setSymData, symOutput, setSymOutput, runOperation } = useOperationsContext()
 
   return (
-    <div className="max-w-4xl mx-auto animate-fade-in">
+    <div className="w-full animate-fade-in">
       <h4 className="text-lg font-bold text-foreground flex items-center gap-2 border-b border-border pb-2 mb-6">
         <Lock size={18} className="text-accent" /> Symmetric Encryption (AES-GCM)
       </h4>
@@ -72,13 +73,14 @@ export const SymmetricTab: React.FC = () => {
             inputType="binary"
             height="h-32"
           />
-          <button
+          <Button
+            variant="ghost"
             onClick={() => runOperation('symEncrypt')}
             disabled={!selectedSymKeyId || loading}
             className="w-full mt-4 py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Encrypt
-          </button>
+          </Button>
         </div>
 
         {/* Decrypt */}
@@ -94,13 +96,14 @@ export const SymmetricTab: React.FC = () => {
             inputType="binary"
             height="h-32"
           />
-          <button
+          <Button
+            variant="ghost"
             onClick={() => runOperation('symDecrypt')}
             disabled={!selectedSymKeyId || loading}
             className="w-full mt-4 py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
           >
             Decrypt (Reverse)
-          </button>
+          </Button>
         </div>
       </div>
     </div>

@@ -131,7 +131,8 @@ export const CardProvisioningVisualizer: React.FC = () => {
             return (
               <React.Fragment key={phase}>
                 {i > 0 && <div className="hidden sm:block h-px flex-1 bg-border min-w-[12px]" />}
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setSelectedPhase(phase)}
                   className={`flex flex-col items-center gap-1 px-3 py-2 rounded-lg transition-all shrink-0 ${
                     isActive
@@ -152,7 +153,7 @@ export const CardProvisioningVisualizer: React.FC = () => {
                   <span className="text-xs font-medium text-center leading-tight max-w-[80px]">
                     {PROVISIONING_PHASE_LABELS[phase]}
                   </span>
-                </button>
+                </Button>
               </React.Fragment>
             )
           })}

@@ -4,6 +4,7 @@ import React, { useState, useMemo } from 'react'
 import { CheckCircle2, Clock, XCircle, Copy, Check } from 'lucide-react'
 import { GATEWAY_VENDORS, type GatewayVendor } from '../data/gatewayData'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 const STATUS_STYLES: Record<
   string,
@@ -141,18 +142,20 @@ export const VendorReadinessMatrix: React.FC = () => {
         <div className="flex items-center justify-between">
           <h3 className="text-sm font-bold text-foreground">Select Your Gateway Products</h3>
           <div className="flex gap-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={selectAll}
               className="text-xs px-2 py-1 rounded border border-border hover:bg-muted transition-colors text-foreground"
             >
               Select All
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={clearAll}
               className="text-xs px-2 py-1 rounded border border-border hover:bg-muted transition-colors text-foreground"
             >
               Clear
-            </button>
+            </Button>
           </div>
         </div>
         <VendorCoverageNotice migrateLayer="Network" className="mb-2" />
@@ -168,7 +171,8 @@ export const VendorReadinessMatrix: React.FC = () => {
                 const statusInfo = STATUS_STYLES[vendor.pqcStatus]
                 const StatusIcon = statusInfo.icon
                 return (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={vendor.id}
                     onClick={() => toggleVendor(vendor.id)}
                     className={`flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
@@ -195,7 +199,7 @@ export const VendorReadinessMatrix: React.FC = () => {
                         )}
                       </div>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -327,9 +331,10 @@ export const VendorReadinessMatrix: React.FC = () => {
           </div>
 
           {/* Export */}
-          <button
+          <Button
+            variant="gradient"
             onClick={handleCopy}
-            className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-medium rounded-lg hover:bg-primary/90 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 font-medium rounded-lg transition-colors"
           >
             {copied ? (
               <>
@@ -342,7 +347,7 @@ export const VendorReadinessMatrix: React.FC = () => {
                 Export as Markdown
               </>
             )}
-          </button>
+          </Button>
         </>
       )}
 

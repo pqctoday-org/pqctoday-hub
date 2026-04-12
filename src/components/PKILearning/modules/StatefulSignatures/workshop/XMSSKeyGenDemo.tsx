@@ -306,7 +306,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
           <div className="flex gap-2">
             {(['SHA-256', 'SHAKE-256'] as XMSSHash[]).map((h) => (
-              <button
+              <Button
+                variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -316,7 +317,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 }`}
               >
                 {h}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -329,7 +330,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               const isProductionOnly = h > 15
               return (
                 <div key={h} className="relative group">
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleHeightChange(h)}
                     className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                       isProductionOnly
@@ -345,7 +347,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                     {isProductionOnly && (
                       <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                     )}
-                  </button>
+                  </Button>
                   {isProductionOnly && (
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
                       H{h}: 2^{h} signatures — keygen takes minutes. Production deployments only.
@@ -371,7 +373,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
 
       {/* Collapsible algorithm details */}
       <div className="border border-border rounded-lg overflow-hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowAlgoInfo(!showAlgoInfo)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
         >
@@ -384,7 +387,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
           ) : (
             <ChevronDown size={14} className="text-muted-foreground" />
           )}
-        </button>
+        </Button>
         {showAlgoInfo && (
           <div className="px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted/10">
             {[
@@ -506,6 +509,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
               </div>
             ) : (
               <Button
+                variant="ghost"
                 onClick={handleGenerateKey}
                 disabled={!hsm.isReady || isGenerating}
                 className="w-full font-bold bg-secondary hover:bg-secondary/90 text-secondary-foreground"
@@ -599,12 +603,13 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 <h4 className="text-sm font-bold text-foreground">
                   vs LMS (H{comparableLMS.treeHeight}/W{comparableLMS.winternitzParam})
                 </h4>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setShowComparison(!showComparison)}
                   className="text-xs text-secondary hover:text-secondary/80 transition-colors"
                 >
                   {showComparison ? 'Hide' : 'Show'}
-                </button>
+                </Button>
               </div>
               {showComparison && (
                 <div className="space-y-2">
@@ -742,6 +747,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                 </span>
               </label>
               <Button
+                variant="ghost"
                 onClick={handleSign}
                 disabled={isExhausted}
                 className="w-full bg-secondary hover:bg-secondary/90 text-secondary-foreground"
@@ -877,7 +883,8 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                                 <span className="text-muted-foreground">
                                   Hex — {entry.sigHex.length / 2} bytes
                                 </span>
-                                <button
+                                <Button
+                                  variant="ghost"
                                   onClick={(e) => {
                                     e.stopPropagation()
                                     handleCopySig(entry)
@@ -893,7 +900,7 @@ export const XMSSKeyGenDemo: React.FC<XMSSKeyGenDemoProps> = ({ hsm: hsmProp }) 
                                       <Copy size={9} /> Copy hex
                                     </>
                                   )}
-                                </button>
+                                </Button>
                               </div>
                               <pre className="break-all whitespace-pre-wrap text-foreground/80 leading-relaxed max-h-32 overflow-y-auto bg-muted/30 p-2 rounded border border-border/50">
                                 {renderColoredHex(entry.sigHex, sections)}

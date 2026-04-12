@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Download } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface DownloadButtonProps {
   data: Uint8Array | string
@@ -43,7 +44,8 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
   }
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={handleDownload}
       className={`inline-flex items-center gap-2 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors ${className}`}
       aria-label={label}
@@ -51,6 +53,6 @@ export const DownloadButton: React.FC<DownloadButtonProps> = ({
     >
       <Download size={16} className="text-muted-foreground" />
       <span className="text-xs text-muted-foreground font-medium">{label}</span>
-    </button>
+    </Button>
   )
 }

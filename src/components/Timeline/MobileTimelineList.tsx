@@ -9,6 +9,7 @@ import { GanttDetailPopover } from './GanttDetailPopover'
 import type { TimelinePhase } from '../../types/timeline'
 import { motion } from 'framer-motion'
 import { StatusBadge } from '../common/StatusBadge'
+import { Button } from '@/components/ui/button'
 
 interface MobileTimelineListProps {
   data: GanttCountryData[]
@@ -129,7 +130,8 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                   aria-label={`Timeline phases for ${country.countryName}`}
                   role="region"
                 >
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     className="w-full text-left p-3 rounded-lg bg-muted/20 border border-border flex items-center justify-between hover:bg-muted/30 transition-colors relative"
                     onClick={() => handleCardClick(currentPhase)}
@@ -194,13 +196,14 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                         className="text-muted-foreground/50 opacity-100 group-hover:opacity-30 transition-opacity hidden sm:block mr-2"
                       />
                     </div>
-                  </button>
+                  </Button>
                 </motion.div>
 
                 {/* Phase Indicators (Dots) */}
                 <div className="flex gap-1.5 mt-3 justify-center">
                   {phases.map((p, i) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={i}
                       type="button"
                       onClick={() =>
@@ -223,7 +226,7 @@ export const MobileTimelineList = ({ data }: MobileTimelineListProps) => {
                               : 'hsl(var(--muted-foreground) / 0.3)',
                         }}
                       />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>

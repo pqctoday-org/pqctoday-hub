@@ -1,6 +1,6 @@
 {
-  "version": "2.96.0",
-  "generatedAt": "2026-04-10T01:32:19.139Z",
+  "version": "3.2.1",
+  "generatedAt": "2026-04-12T19:07:38.675Z",
   "resources": {
     "routePresets": [
       {
@@ -416,7 +416,7 @@
       {
         "id": "vpn-sim",
         "name": "PQC VPN Simulator",
-        "category": "HSM / PKCS#11",
+        "category": "",
         "difficulty": "intermediate"
       },
       {
@@ -464,7 +464,7 @@
       {
         "id": "merkle-proof",
         "name": "Merkle Tree Workshop",
-        "category": "Certificates & Proofs",
+        "category": "",
         "difficulty": "intermediate"
       },
       {

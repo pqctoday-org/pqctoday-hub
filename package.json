@@ -1,7 +1,7 @@
 {
   "name": "pqc-timeline-app",
   "private": true,
-  "version": "2.99.0",
+  "version": "3.2.1",
   "license": "GPL-3.0-only",
   "type": "module",
   "engines": {
@@ -23,7 +23,8 @@
     "generate-corpus": "npx tsx scripts/generate-rag-corpus.ts",
     "check:csv-count": "bash scripts/check-csv-count.sh",
     "archive:csv": "bash scripts/archive-csvs.sh",
-    "prebuild": "npm run generate-manifest && npm run scrape && npm run generate-corpus",
+    "generate-embed-docs": "npx tsx scripts/generate-embed-docs.ts",
+    "prebuild": "npm run generate-manifest && npm run scrape && npm run generate-corpus && npm run generate-embed-docs",
     "build": "npm run build:sdk && cp -r node_modules/@oqs/liboqs-js/dist public/dist && mkdir -p public/wasm && (test -f public/wasm/softhsm.wasm || cp node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.js node_modules/@pqctoday/softhsm-wasm/wasm/softhsm.wasm public/wasm/) && tsc -b && vite build && cp dist/index.html dist/404.html && node scripts/prerender.mjs",
     "build:sdk": "npx esbuild src/embed/sdk.ts --bundle --outfile=public/embed/sdk.js --format=esm --target=es2020 --minify",
     "prerender": "node scripts/prerender.mjs",

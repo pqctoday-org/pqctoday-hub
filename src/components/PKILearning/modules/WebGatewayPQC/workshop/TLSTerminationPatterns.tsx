@@ -6,6 +6,7 @@ import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { TERMINATION_PATTERNS, type TerminationPattern } from '../data/gatewayData'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const GATEWAY_KAT_SPECS: KatTestSpec[] = [
   {
@@ -168,7 +169,8 @@ export const TLSTerminationPatterns: React.FC = () => {
         {/* Crypto mode toggle */}
         <div>
           <div className="text-xs font-bold text-foreground mb-1">Crypto Mode</div>
-          <button
+          <Button
+            variant="ghost"
             onClick={() =>
               setCryptoMode((prev) => (prev === 'classical' ? 'pqc-hybrid' : 'classical'))
             }
@@ -182,13 +184,14 @@ export const TLSTerminationPatterns: React.FC = () => {
             <span className="text-foreground">
               {cryptoMode === 'classical' ? 'Classical' : 'PQC Hybrid'}
             </span>
-          </button>
+          </Button>
         </div>
 
         {/* Compare toggle */}
         <div>
           <div className="text-xs font-bold text-foreground mb-1">Compare</div>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setCompareMode((prev) => !prev)}
             className={`flex items-center gap-2 px-3 py-2 rounded-lg border transition-colors text-sm ${
               compareMode
@@ -197,7 +200,7 @@ export const TLSTerminationPatterns: React.FC = () => {
             }`}
           >
             {compareMode ? 'Side-by-Side On' : 'Compare Off'}
-          </button>
+          </Button>
         </div>
       </div>
 

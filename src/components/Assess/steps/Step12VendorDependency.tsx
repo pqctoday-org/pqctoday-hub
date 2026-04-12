@@ -98,7 +98,8 @@ const Step12VendorDependency = () => {
         <h3 className="text-xl font-bold text-foreground">
           {stepContent.title ?? 'How do you manage cryptographic dependencies?'}
         </h3>
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setImportProductSelection(!importProductSelection)}
           className={clsx(
@@ -116,7 +117,7 @@ const Step12VendorDependency = () => {
         >
           <Import size={12} />
           {importProductSelection ? 'Synced' : 'Import off'}
-        </button>
+        </Button>
       </div>
       <p className="text-sm text-muted-foreground">
         {stepContent.description ?? (
@@ -155,14 +156,15 @@ const Step12VendorDependency = () => {
                     {item.category && (
                       <span className="text-primary/60 font-normal">· {item.category}</span>
                     )}
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => handleRemoveProduct(item.key)}
                       className="ml-0.5 hover:text-status-error transition-colors"
                       aria-label={`Remove ${item.name}`}
                     >
                       <X size={10} />
-                    </button>
+                    </Button>
                   </span>
                 ))}
               </div>

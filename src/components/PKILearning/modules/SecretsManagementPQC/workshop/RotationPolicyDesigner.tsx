@@ -3,6 +3,7 @@ import React, { useState } from 'react'
 import { AlertTriangle, CheckCircle, Download } from 'lucide-react'
 import { ROTATION_POLICIES } from '../data/secretsConstants'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
+import { Button } from '@/components/ui/button'
 
 interface PolicyRow {
   id: string
@@ -227,13 +228,14 @@ export const RotationPolicyDesigner: React.FC = () => {
 
       {/* Generate YAML button */}
       <div className="flex flex-wrap gap-3">
-        <button
+        <Button
+          variant="gradient"
           onClick={() => setShowYaml(!showYaml)}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors text-sm"
+          className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg transition-colors text-sm"
         >
           <Download size={14} />
           {showYaml ? 'Hide' : 'Generate'} Policy YAML
-        </button>
+        </Button>
         {warningRows.length === 0 && (
           <div className="flex items-center gap-2 text-sm text-status-success">
             <CheckCircle size={16} />

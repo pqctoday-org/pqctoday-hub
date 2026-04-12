@@ -5,6 +5,7 @@ import { glossaryTerms } from '../../data/glossaryData'
 import { Link } from 'react-router-dom'
 import { ExternalLink } from 'lucide-react'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 const termLookup = new Map(
   glossaryTerms.flatMap((t) => {
@@ -81,7 +82,8 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
 
   return (
     <>
-      <button
+      <Button
+        variant="ghost"
         ref={triggerRef}
         onMouseEnter={open}
         onMouseLeave={close}
@@ -96,7 +98,7 @@ export const InlineTooltip: React.FC<InlineTooltipProps> & { displayName?: strin
         aria-label={`Definition of ${entry.term}`}
       >
         {children ?? term}
-      </button>
+      </Button>
       {isOpen &&
         tooltipStyle &&
         createPortal(

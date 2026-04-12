@@ -11,6 +11,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { CountryFlag } from '../common/CountryFlag'
 import { FLAG_CODE_MAP } from './leadersConstants'
+import { Button } from '@/components/ui/button'
 
 interface LeaderCardProps {
   leader: Leader
@@ -89,13 +90,14 @@ export const LeaderCard = ({ leader, onClick, isIndustryMatch }: LeaderCardProps
 
       <div className="flex flex-wrap items-center justify-end gap-y-2 gap-x-1 mt-auto pt-2 border-t border-border">
         {onClick && (
-          <button
+          <Button
+            variant="ghost"
             onClick={onClick}
             className="p-1.5 rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
             aria-label={`View details for ${leader.name}`}
           >
             <Info size={16} />
-          </button>
+          </Button>
         )}
         <EndorseButton
           endorseUrl={buildEndorsementUrl({

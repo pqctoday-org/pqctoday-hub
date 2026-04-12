@@ -279,7 +279,8 @@ export const BinarySigning: React.FC = () => {
         <h4 className="text-sm font-bold text-foreground mb-3">1. Select Algorithm</h4>
         <div className="flex flex-wrap gap-2">
           {ALGORITHM_OPTIONS.map((alg) => (
-            <button
+            <Button
+              variant="ghost"
               key={alg.name}
               onClick={() => {
                 setSelectedAlgorithm(alg.name)
@@ -294,7 +295,7 @@ export const BinarySigning: React.FC = () => {
             >
               <div>{alg.name}</div>
               <div className="text-[10px] opacity-70">{alg.level}</div>
-            </button>
+            </Button>
           ))}
         </div>
         {algInfo && (
@@ -349,7 +350,8 @@ export const BinarySigning: React.FC = () => {
                 <span className="text-xs font-bold text-foreground">
                   Public Key ({keyPair.algorithm})
                 </span>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleCopy(keyPair.publicKey, 'pubkey')}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -358,7 +360,7 @@ export const BinarySigning: React.FC = () => {
                   ) : (
                     <Copy size={12} />
                   )}
-                </button>
+                </Button>
               </div>
               <p className="font-mono text-[10px] text-muted-foreground break-all leading-relaxed">
                 {truncateHex(keyPair.publicKey)}
@@ -375,7 +377,8 @@ export const BinarySigning: React.FC = () => {
                   Private Key{keyPair.isLive ? '' : ' (truncated for display)'}
                 </span>
                 {!keyPair.isLive && (
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleCopy(keyPair.privateKey, 'privkey')}
                     className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                   >
@@ -384,7 +387,7 @@ export const BinarySigning: React.FC = () => {
                     ) : (
                       <Copy size={12} />
                     )}
-                  </button>
+                  </Button>
                 )}
               </div>
               <p className="font-mono text-[10px] text-muted-foreground break-all leading-relaxed">
@@ -478,7 +481,8 @@ export const BinarySigning: React.FC = () => {
                     </span>
                   )}
                 </span>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => handleCopy(signatureResult.signature, 'sig')}
                   className="text-xs text-muted-foreground hover:text-foreground transition-colors"
                 >
@@ -487,7 +491,7 @@ export const BinarySigning: React.FC = () => {
                   ) : (
                     <Copy size={12} />
                   )}
-                </button>
+                </Button>
               </div>
               <p className="font-mono text-[10px] text-muted-foreground break-all leading-relaxed">
                 {truncateHex(signatureResult.signature, 120)}

@@ -18,6 +18,7 @@ import {
 import { OS_VENDORS, OS_VENDOR_STATUS_LABELS, FIPS_STATUS_LABELS } from '../data/osProviderData'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface OSPQCIntroductionProps {
   onNavigateToWorkshop: () => void
@@ -40,7 +41,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   return (
     <section className="glass-panel p-6">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="flex items-center gap-3 w-full text-left"
       >
@@ -50,7 +52,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           size={18}
           className={`text-muted-foreground transition-transform duration-200 shrink-0 ${isOpen ? 'rotate-90' : ''}`}
         />
-      </button>
+      </Button>
       {isOpen && <div className="mt-4 space-y-4 text-sm text-foreground/80">{children}</div>}
     </section>
   )
@@ -58,7 +60,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
 export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* Section 1: OS Cryptography Stack */}
       <CollapsibleSection
         icon={<Monitor size={24} className="text-primary" />}
@@ -537,12 +539,13 @@ export const OSPQCIntroduction: React.FC<OSPQCIntroductionProps> = ({ onNavigate
 
       {/* CTA */}
       <div className="text-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={onNavigateToWorkshop}
-          className="inline-flex items-center gap-2 px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-2 px-6 py-3 font-bold rounded-lg transition-colors"
         >
           Start Workshop <ArrowRight size={18} />
-        </button>
+        </Button>
         <p className="text-xs text-muted-foreground mt-2">
           Inventory OS crypto components, configure system TLS, migrate SSH host keys, and check
           FIPS compatibility.

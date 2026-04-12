@@ -1,4 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
+import { Link } from 'react-router-dom'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Info, CheckCircle2, XCircle, ShieldCheck, ShieldAlert } from 'lucide-react'
@@ -429,7 +430,8 @@ export function StatefulSignaturesDemo() {
         <CardContent className="p-0">
           <div className="flex border-b overflow-x-auto">
             {['hss', 'xmss', 'comparison', 'kat'].map((tab) => (
-              <button
+              <Button
+                variant="ghost"
                 key={tab}
                 onClick={() => setActiveTab(tab as 'hss' | 'xmss' | 'comparison' | 'kat')}
                 className={`flex-1 min-w-[160px] py-3 px-4 text-sm font-medium transition-colors whitespace-nowrap ${
@@ -442,7 +444,7 @@ export function StatefulSignaturesDemo() {
                 {tab === 'xmss' && 'XMSS / MT Explorer'}
                 {tab === 'comparison' && 'Architecture Comparison'}
                 {tab === 'kat' && 'KAT Vectors'}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -490,12 +492,13 @@ export function StatefulSignaturesDemo() {
                     <div className="flex items-center gap-2 text-xs text-status-error">
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >
                         Retry
-                      </button>
+                      </Button>
                     </div>
                   )}
                   {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
@@ -742,12 +745,13 @@ export function StatefulSignaturesDemo() {
                     <div className="flex items-center gap-2 text-xs text-status-error">
                       <XCircle size={13} className="shrink-0" />
                       C++ engine failed: {hsmCpp.error}
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => hsmCpp.initialize()}
                         className="underline ml-1 text-primary"
                       >
                         Retry
-                      </button>
+                      </Button>
                     </div>
                   )}
                   {verifyError && <p className="text-xs text-status-error">{verifyError}</p>}
@@ -987,7 +991,13 @@ export function StatefulSignaturesDemo() {
                     </div>
                     <ul className="space-y-3 text-sm">
                       <li>
-                        <strong>RFC Specification:</strong> RFC 8554
+                        <strong>RFC Specification:</strong>{' '}
+                        <Link
+                          to="/library?ref=IETF%20RFC%208554"
+                          className="text-primary hover:underline"
+                        >
+                          RFC 8554
+                        </Link>
                       </li>
                       <li>
                         <strong>Cryptographic Base:</strong> Relies on <em>Collision Resistance</em>{' '}
@@ -1018,7 +1028,13 @@ export function StatefulSignaturesDemo() {
                     </div>
                     <ul className="space-y-3 text-sm">
                       <li>
-                        <strong>RFC Specification:</strong> RFC 8391
+                        <strong>RFC Specification:</strong>{' '}
+                        <Link
+                          to="/library?ref=IETF%20RFC%208391"
+                          className="text-primary hover:underline"
+                        >
+                          RFC 8391
+                        </Link>
                       </li>
                       <li>
                         <strong>Cryptographic Base:</strong> Relies ONLY on{' '}
@@ -1096,8 +1112,112 @@ export function StatefulSignaturesDemo() {
                         ].map(([prop, hss, xmssmt]) => (
                           <tr key={prop}>
                             <td className="py-1.5 pr-4 text-muted-foreground">{prop}</td>
-                            <td className="py-1.5 pr-4 text-foreground">{hss}</td>
-                            <td className="py-1.5 text-foreground">{xmssmt}</td>
+                            <td className="py-1.5 pr-4 text-foreground">
+                              {prop === 'Spec' ? (
+                                <Link
+                                  to="/library?ref=IETF%20RFC%208554"
+                                  className="text-primary hover:underline"
+                                >
+                                  {hss}
+                                </Link>
+                              ) : (
+                                hss
+                              )}
+                            </td>
+                            <td className="py-1.5 text-foreground">
+                              {prop === 'Spec' ? (
+                                <Link
+                                  to="/library?ref=IETF%20RFC%208391"
+                                  className="text-primary hover:underline"
+                                >
+                                  {xmssmt}
+                                </Link>
+                              ) : (
+                                xmssmt
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Stateful vs Stateless trade-off */}
+                <div className="p-4 border border-border rounded-lg bg-muted/20">
+                  <h4 className="text-sm font-bold text-foreground mb-1">
+                    Stateful vs Stateless: The Core Trade-off
+                  </h4>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    LMS and XMSS are <strong>stateful</strong> — each key can sign a bounded number
+                    of messages (2<sup>H</sup>). Once exhausted, the key is retired.{' '}
+                    <strong>SLH-DSA</strong> (FIPS 205 / SPHINCS+) is <strong>stateless</strong> —
+                    no counter, no state management overhead, unlimited signing — at the cost of
+                    significantly larger signatures. Use this tab&apos;s Workshop Step 4 to generate
+                    and compare real SLH-DSA keys.
+                  </p>
+                  <div className="overflow-x-auto">
+                    <table className="w-full text-xs border-collapse">
+                      <thead>
+                        <tr className="border-b border-border">
+                          <th className="text-left py-1.5 pr-4 text-muted-foreground font-medium">
+                            Property
+                          </th>
+                          <th className="text-left py-1.5 pr-4 text-primary font-medium">
+                            Stateful (LMS / XMSS)
+                          </th>
+                          <th className="text-left py-1.5 text-secondary font-medium">
+                            Stateless (SLH-DSA / SPHINCS+)
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border/40">
+                        {[
+                          [
+                            'Signatures per key',
+                            '2^H (e.g., 2^20 ≈ 1M for H=20)',
+                            'Unlimited — no leaf counter',
+                          ],
+                          [
+                            'Signature size',
+                            '1–8 KB (LMS W8) · 2.5 KB (XMSS-SHA2_10_256)',
+                            '8–50 KB depending on parameter set',
+                          ],
+                          [
+                            'State management',
+                            'Required — monotonic counter, atomic persistence, HSM recommended',
+                            'None — any HSM or software key store',
+                          ],
+                          [
+                            'Catastrophic failure mode',
+                            'State rollback → OTS key reuse → full key compromise',
+                            'No equivalent failure — individual randomness per signature',
+                          ],
+                          [
+                            'Key generation',
+                            'O(2^H) — seconds to hours depending on height',
+                            'Milliseconds — no tree precomputation needed',
+                          ],
+                          [
+                            'NIST approval',
+                            'SP 800-208 (LMS + XMSS) · PKCS#11 v3.1+',
+                            'FIPS 205 (final, Aug 2024) · PKCS#11 v3.2',
+                          ],
+                          [
+                            'NSA CNSA 2.0',
+                            'LMS/HSS required for firmware/boot signing',
+                            'Permitted; LMS preferred for firmware',
+                          ],
+                          [
+                            'Best use case',
+                            'Firmware signing, secure boot, IoT with bounded update counts',
+                            'General-purpose signing, certificates, CMS, archival',
+                          ],
+                        ].map(([prop, stateful, stateless]) => (
+                          <tr key={prop}>
+                            <td className="py-1.5 pr-4 text-muted-foreground">{prop}</td>
+                            <td className="py-1.5 pr-4 text-foreground">{stateful}</td>
+                            <td className="py-1.5 text-foreground">{stateless}</td>
                           </tr>
                         ))}
                       </tbody>

@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Cpu, AlertTriangle, CheckCircle, Info } from 'lucide-react'
 import { TVLA_TARGETS, TVLA_STAGES, type TVLATarget } from '../data/testingConstants'
+import { Button } from '@/components/ui/button'
 
 // Simulated t-test scores per (target, stage) — values > threshold indicate leakage
 // Scores are pre-generated representative values (not real measurements)
@@ -86,7 +87,8 @@ export const TVLALeakageAnalyzer: React.FC = () => {
         <span className="text-sm font-medium text-foreground">Implementation Under Test:</span>
         <div className="grid sm:grid-cols-2 gap-2">
           {TVLA_TARGETS.map((t) => (
-            <button
+            <Button
+              variant="ghost"
               key={t.id}
               onClick={() => setSelectedTarget(t.id)}
               className={`text-left p-3 rounded-lg border transition-all ${
@@ -108,7 +110,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
                 </span>
               </div>
               <p className="text-xs text-muted-foreground">{t.description}</p>
-            </button>
+            </Button>
           ))}
         </div>
       </div>

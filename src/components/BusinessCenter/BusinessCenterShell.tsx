@@ -2,6 +2,7 @@
 import { useCallback, useRef } from 'react'
 import { Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { LayoutDashboard, Wrench } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const TABS = [
   { label: 'Dashboard', path: '/business', icon: LayoutDashboard },
@@ -49,7 +50,8 @@ export const BusinessCenterShell = () => {
           {TABS.map(({ label, path, icon: Icon }, index) => {
             const active = isActive(path)
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={path}
                 ref={(el) => {
                   tabsRef.current[index] = el
@@ -67,7 +69,7 @@ export const BusinessCenterShell = () => {
               >
                 <Icon className="w-4 h-4" />
                 {label}
-              </button>
+              </Button>
             )
           })}
         </div>

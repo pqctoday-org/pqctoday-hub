@@ -215,7 +215,8 @@ export const CertChainBuilder: React.FC = () => {
                   </div>
                 )}
                 <div className={`rounded-lg border ${colors.border} ${colors.bg} overflow-hidden`}>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setExpandedCert(isExpanded ? null : idx)}
                     className="w-full p-4 text-left"
                   >
@@ -239,7 +240,7 @@ export const CertChainBuilder: React.FC = () => {
                     <div className="mt-2 text-xs text-muted-foreground">
                       <span className="font-mono">S: {cert.subject}</span>
                     </div>
-                  </button>
+                  </Button>
 
                   {isExpanded && (
                     <div className="px-4 pb-4 space-y-3 animate-fade-in border-t border-border/50 pt-3">

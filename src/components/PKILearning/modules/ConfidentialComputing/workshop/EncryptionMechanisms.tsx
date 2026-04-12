@@ -12,6 +12,7 @@ import {
 } from 'lucide-react'
 import { MEMORY_ENCRYPTION_ENGINES } from '../data/attestationData'
 import type { QuantumImpact } from '../data/ccConstants'
+import { Button } from '@/components/ui/button'
 
 const QUANTUM_IMPACT_BADGES: Record<QuantumImpact, { label: string; className: string }> = {
   none: {
@@ -133,7 +134,8 @@ export const EncryptionMechanisms: React.FC = () => {
           return (
             <div key={engine.id} className="glass-panel overflow-hidden">
               {/* Collapsed Row */}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpand(engine.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >
@@ -166,7 +168,7 @@ export const EncryptionMechanisms: React.FC = () => {
                     <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </span>
-              </button>
+              </Button>
 
               {/* Expanded Details */}
               {isExpanded && (

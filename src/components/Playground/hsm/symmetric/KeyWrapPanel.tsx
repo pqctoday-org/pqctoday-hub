@@ -251,8 +251,12 @@ const SupportBadge = ({ supported, note }: { supported: boolean; note: string })
 )
 
 const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
-  <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-    <div className="fixed inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+  <div className="fixed inset-0 embed-backdrop z-50 flex items-start justify-center p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 embed-backdrop bg-black/60"
+      onClick={onClose}
+      aria-hidden="true"
+    />
     <div className="relative z-10 w-full max-w-3xl bg-card border border-border rounded-lg shadow-xl my-4 sm:my-8">
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div>
@@ -1549,7 +1553,8 @@ export const KeyWrapPanel = ({
               <div className="flex items-center gap-3">
                 <span className="text-xs text-muted-foreground">Representation:</span>
                 {(['expanded', 'seed'] as const).map((r) => (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={r}
                     onClick={() => setPqcWrapRepr(r)}
                     className={`text-xs px-2 py-1 rounded border transition-colors ${
@@ -1559,7 +1564,7 @@ export const KeyWrapPanel = ({
                     }`}
                   >
                     {r === 'expanded' ? 'Expanded' : 'Seed'}
-                  </button>
+                  </Button>
                 ))}
                 <span className="text-[10px] text-muted-foreground">
                   {pqcWrapRepr === 'seed'
@@ -1569,7 +1574,12 @@ export const KeyWrapPanel = ({
               </div>
             )}
 
-            <Button onClick={doWrap} disabled={!canWrap || anyLoading} className="w-full">
+            <Button
+              variant="ghost"
+              onClick={doWrap}
+              disabled={!canWrap || anyLoading}
+              className="w-full"
+            >
               {loadingOp === 'wrap' ? (
                 <Loader2 size={14} className="mr-2 animate-spin" />
               ) : (

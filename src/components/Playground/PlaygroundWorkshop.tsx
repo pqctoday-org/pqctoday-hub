@@ -14,12 +14,14 @@ import {
   Wrench,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
+import { Button } from '../ui/button'
 import { Input } from '../ui/input'
 import { EmptyState } from '../ui/empty-state'
 import { WORKSHOP_TOOLS, CATEGORIES, type ToolDifficulty } from './workshopRegistry'
 import { usePersonaStore } from '@/store/usePersonaStore'
 import { useBookmarkStore } from '@/store/useBookmarkStore'
 import type { PersonaId } from '@/data/learningPersonas'
+import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 // ---------------------------------------------------------------------------
 // Difficulty badge
@@ -104,7 +106,7 @@ const ExecutiveBanner = () => (
     <div className="flex flex-wrap gap-2">
       <Link
         to="/assess"
-        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+        className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
       >
         Start Assessment <ArrowRight className="w-3.5 h-3.5" />
       </Link>
@@ -195,7 +197,8 @@ const PersonaBanner = ({
           <span className="text-xs text-muted-foreground ml-1.5">· {meta.subtitle}</span>
         </div>
       </div>
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
         className={`shrink-0 text-xs px-3 py-1.5 rounded-lg border font-medium transition-colors ${
           showingPersona
@@ -206,7 +209,7 @@ const PersonaBanner = ({
         {showingPersona
           ? `Showing ${recommendedCount} recommended`
           : `Show ${recommendedCount} recommended`}
-      </button>
+      </Button>
     </div>
   )
 }
@@ -259,10 +262,12 @@ const HeroCard = ({
 // ---------------------------------------------------------------------------
 
 export const PlaygroundWorkshop = () => {
+  const isEmbedded = useIsEmbedded()
   const [searchQuery, setSearchQuery] = useState('')
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [showPersonaFilter, setShowPersonaFilter] = useState(true)
-  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>('hide')
+  // In embed mode WIP tools are always hidden — vendors require accurate, stable content only
+  const [wipFilter, setWipFilter] = useState<'all' | 'only' | 'hide'>(isEmbedded ? 'hide' : 'hide')
 
   const selectedPersona = usePersonaStore((s) => s.selectedPersona)
   const myPlaygroundTools = useBookmarkStore((s) => s.myPlaygroundTools)
@@ -361,16 +366,18 @@ export const PlaygroundWorkshop = () => {
               <span className="text-sm text-muted-foreground">
                 {filteredTools.length} tool{filteredTools.length !== 1 ? 's' : ''}
                 {isPersonaFiltered && (
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setShowPersonaFilter(false)}
                     className="ml-2 text-xs text-primary hover:underline"
                   >
                     Show all
-                  </button>
+                  </Button>
                 )}
               </span>
               {myPlaygroundTools.length > 0 && (
-                <button
+                <Button
+                  variant="ghost"
                   onClick={() => setShowOnlyPlaygroundTools(!showOnlyPlaygroundTools)}
                   className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                     showOnlyPlaygroundTools
@@ -381,14 +388,15 @@ export const PlaygroundWorkshop = () => {
                 >
                   <BookmarkCheck size={12} />
                   My ({myPlaygroundTools.length})
-                </button>
+                </Button>
               )}
             </div>
           </div>
 
           {/* Category filter pills */}
           <div className="flex flex-wrap gap-2">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setActiveCategory(null)}
               className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
                 activeCategory === null
@@ -402,12 +410,13 @@ export const PlaygroundWorkshop = () => {
               >
                 {WORKSHOP_TOOLS.length}
               </span>
-            </button>
+            </Button>
             {CATEGORIES.map((cat) => {
               const count = WORKSHOP_TOOLS.filter((t) => t.category === cat).length
               const isActive = activeCategory === cat
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={cat}
                   onClick={() => setActiveCategory(isActive ? null : cat)}
                   className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
@@ -422,38 +431,41 @@ export const PlaygroundWorkshop = () => {
                   >
                     {count}
                   </span>
-                </button>
+                </Button>
               )
             })}
-            <button
-              onClick={() =>
-                setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
-              }
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-                wipFilter === 'only'
-                  ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
-                  : wipFilter === 'hide'
-                    ? 'bg-muted text-muted-foreground border-border line-through'
-                    : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
-              }`}
-              title={
-                wipFilter === 'all'
-                  ? 'Click to show only WIP tools'
-                  : wipFilter === 'only'
-                    ? 'Click to hide WIP tools'
-                    : 'Click to show all tools'
-              }
-            >
-              <Wrench className="w-3 h-3" aria-hidden="true" />
-              {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
-              {wipFilter !== 'hide' && (
-                <span
-                  className={`text-[10px] px-1 rounded ${wipFilter === 'only' ? 'text-status-warning' : 'text-muted-foreground'}`}
-                >
-                  {WORKSHOP_TOOLS.filter((t) => t.wip).length}
-                </span>
-              )}
-            </button>
+            {!isEmbedded && (
+              <Button
+                variant="ghost"
+                onClick={() =>
+                  setWipFilter((v) => (v === 'all' ? 'only' : v === 'only' ? 'hide' : 'all'))
+                }
+                className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+                  wipFilter === 'only'
+                    ? 'bg-status-warning/15 text-status-warning border-status-warning/40'
+                    : wipFilter === 'hide'
+                      ? 'bg-muted text-muted-foreground border-border line-through'
+                      : 'text-muted-foreground border-border hover:text-foreground hover:border-border/60'
+                }`}
+                title={
+                  wipFilter === 'all'
+                    ? 'Click to show only WIP tools'
+                    : wipFilter === 'only'
+                      ? 'Click to hide WIP tools'
+                      : 'Click to show all tools'
+                }
+              >
+                <Wrench className="w-3 h-3" aria-hidden="true" />
+                {wipFilter === 'hide' ? 'WIP hidden' : 'WIP'}
+                {wipFilter !== 'hide' && (
+                  <span
+                    className={`text-[10px] px-1 rounded ${wipFilter === 'only' ? 'text-status-warning' : 'text-muted-foreground'}`}
+                  >
+                    {WORKSHOP_TOOLS.filter((t) => t.wip).length}
+                  </span>
+                )}
+              </Button>
+            )}
           </div>
         </div>
 
@@ -531,7 +543,8 @@ export const PlaygroundWorkshop = () => {
                           </div>
                         </div>
                       </Link>
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={(e) => {
                           e.stopPropagation()
                           toggleMyPlaygroundTool(tool.id)
@@ -544,7 +557,7 @@ export const PlaygroundWorkshop = () => {
                         aria-label={isBookmarked ? 'Remove from My Tools' : 'Add to My Tools'}
                       >
                         {isBookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-                      </button>
+                      </Button>
                     </div>
                   )
                 })}

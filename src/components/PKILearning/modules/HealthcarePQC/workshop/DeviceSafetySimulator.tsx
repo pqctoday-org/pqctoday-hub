@@ -19,6 +19,7 @@ import {
   type MedicalDeviceProfile,
   type PatientImpact,
 } from '../data/healthcareConstants'
+import { Button } from '@/components/ui/button'
 
 // ── Constants ──────────────────────────────────────────────────────────────
 
@@ -218,7 +219,8 @@ const AttackScenarioCard: React.FC<{
 
   return (
     <div className={`glass-panel overflow-hidden transition-all duration-200`}>
-      <button
+      <Button
+        variant="ghost"
         onClick={onToggle}
         className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/20 transition-colors"
       >
@@ -243,7 +245,7 @@ const AttackScenarioCard: React.FC<{
         ) : (
           <ChevronDown size={16} className="text-muted-foreground shrink-0" />
         )}
-      </button>
+      </Button>
 
       {isExpanded && (
         <div className="px-4 pb-4 space-y-3 border-t border-border pt-3">
@@ -405,7 +407,8 @@ const FDAChecklistSection: React.FC<{
         {FDA_PREMARKET_CHECKLIST.map((item) => {
           const isChecked = checkedItems.has(item.id)
           return (
-            <button
+            <Button
+              variant="ghost"
               key={item.id}
               onClick={() => onToggle(item.id)}
               className={`w-full text-left p-3 rounded-lg border transition-colors ${
@@ -433,7 +436,7 @@ const FDAChecklistSection: React.FC<{
                   <p className="text-xs text-muted-foreground mt-1">{item.detail}</p>
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

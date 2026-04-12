@@ -20,6 +20,7 @@ import type { Phase } from '../../types/timeline'
 import { phaseColors } from '../../data/timelineData'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 export interface TimelineDocumentRow {
   countryName: string
@@ -164,13 +165,14 @@ export const TimelineDocumentDetailPopover = ({
             <AskAssistantButton
               question={`Explain the "${row.title}" ${row.type.toLowerCase()} for ${row.org} (${row.countryName}) in the context of PQC migration.${row.description ? ` Context: ${row.description}` : ''}`}
             />
-            <button
+            <Button
+              variant="ghost"
               onClick={onClose}
               aria-label="Close details"
               className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
             >
               <X size={18} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         </div>
 

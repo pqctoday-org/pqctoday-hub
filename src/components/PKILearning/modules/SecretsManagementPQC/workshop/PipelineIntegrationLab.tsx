@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { CheckCircle, AlertCircle, GitBranch } from 'lucide-react'
 import { PIPELINE_INTEGRATION_PATTERNS } from '../data/secretsConstants'
+import { Button } from '@/components/ui/button'
 
 type TabId = string
 
@@ -15,7 +16,8 @@ export const PipelineIntegrationLab: React.FC = () => {
       {/* Tab navigation */}
       <div className="flex flex-wrap gap-2">
         {PIPELINE_INTEGRATION_PATTERNS.map((p) => (
-          <button
+          <Button
+            variant="ghost"
             key={p.id}
             onClick={() => setActiveTab(p.id)}
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors border ${
@@ -25,7 +27,7 @@ export const PipelineIntegrationLab: React.FC = () => {
             }`}
           >
             {p.tool}
-          </button>
+          </Button>
         ))}
       </div>
 

@@ -164,7 +164,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
           </p>
           <Link
             to={noInfraSelected ? '/assess' : '/migrate'}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-secondary to-primary text-primary-foreground text-sm font-bold hover:opacity-90 hover:-translate-y-0.5 transition-all duration-200"
           >
             {noInfraSelected ? 'Go to Assessment' : 'Explore Tools'}
             <ArrowRight size={14} />

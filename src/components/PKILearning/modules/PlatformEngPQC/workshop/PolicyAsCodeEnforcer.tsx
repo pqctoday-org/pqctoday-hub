@@ -11,6 +11,7 @@ import {
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { POLICY_RULES, SLSA_LEVEL_LABELS, SLSA_LEVEL_REQUIREMENTS } from '../data/policyRulesData'
 import type { PolicyEngine } from '../data/platformEngConstants'
+import { Button } from '@/components/ui/button'
 
 type EngineFilter = 'All' | PolicyEngine
 type SeverityFilter = 'All' | 'error' | 'warning'
@@ -123,12 +124,13 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           defaultIcon={<AlertTriangle size={16} className="text-status-warning" />}
           noContainer
         />
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowSlsa((prev) => !prev)}
           className="ml-auto text-xs text-primary underline underline-offset-2 hover:opacity-80"
         >
           {showSlsa ? 'Hide' : 'Show'} SLSA Level Reference
-        </button>
+        </Button>
       </div>
 
       {/* SLSA Level Reference */}
@@ -139,7 +141,8 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           </h4>
           <div className="flex gap-2 flex-wrap">
             {SLSA_LEVELS.map((level) => (
-              <button
+              <Button
+                variant="ghost"
                 key={level}
                 onClick={() => setSelectedSlsaLevel(level)}
                 className={`px-3 py-1.5 rounded text-xs font-bold border transition-colors ${
@@ -149,7 +152,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
                 }`}
               >
                 {SLSA_LEVEL_LABELS[level]}
-              </button>
+              </Button>
             ))}
           </div>
           <div className="space-y-2">
@@ -184,7 +187,8 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
           const isExpanded = expandedId === rule.id
           return (
             <div key={rule.id} className="glass-panel overflow-hidden">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleExpand(rule.id)}
                 className="w-full text-left p-4 flex items-center gap-3"
               >
@@ -232,7 +236,7 @@ export const PolicyAsCodeEnforcer: React.FC = () => {
                     <ChevronDown size={16} className="text-muted-foreground" />
                   )}
                 </span>
-              </button>
+              </Button>
 
               {isExpanded && (
                 <div className="px-4 pb-4 border-t border-border pt-4 space-y-4 animate-fade-in">

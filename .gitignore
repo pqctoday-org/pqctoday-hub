@@ -21,6 +21,7 @@ notebooklm/
 openssl-3.6.0-src/
 openssl-3.6.0-src.bak/
 openssl-3.6.1-src/
+openssl-3.6.2-src/
 lms-wasm/
 *.o
 *.wasm.map
@@ -101,6 +102,7 @@ pqc_today_clean_icons.html
 *.pem
 *.crt
 *.csr
+*.p12
 *_certs.txt
 all_certs.txt
 generated_certs.txt
@@ -269,3 +271,14 @@ embed-root-ca/
 
 # Standalone tools repo (managed separately at pqctoday/pqc-tools)
 tools/
+
+# Local enrichment workspace (CSVs, HTML/PDF cache, scripts — private dev only)
+src/cowork/
+
+# PKI keys — certs are committed (trust anchors), keys never are
+pki/ca/keys/
+pki/vendors/keys/
+pki/issued/
+# Allow PKI cert PEMs (overrides *.pem above) — bundled by Vite as trust anchors
+!pki/ca/*.pem
+!pki/vendors/*.pem

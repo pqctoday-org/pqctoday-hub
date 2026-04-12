@@ -96,7 +96,8 @@ export function ArtifactCard({
               }}
             />
           ) : (
-            <button
+            <Button
+              variant="ghost"
               type="button"
               className="text-sm font-medium text-foreground truncate cursor-text hover:underline decoration-dashed underline-offset-2 bg-transparent border-none p-0 text-left"
               onClick={() => {
@@ -106,7 +107,7 @@ export function ArtifactCard({
               title="Click to rename"
             >
               {document.title}
-            </button>
+            </Button>
           )}
           <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded shrink-0 ${badgeColor}`}>
             {typeLabel}
@@ -152,7 +153,8 @@ export function ArtifactPlaceholder({
     : 'bg-muted text-muted-foreground'
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={() => onNavigate(`/learn/${moduleId}`)}
       className="flex items-center gap-3 p-3 rounded-lg border border-dashed border-border hover:border-primary/30 hover:bg-muted/30 transition-colors w-full text-left"
     >
@@ -168,6 +170,6 @@ export function ArtifactPlaceholder({
           Build in the {moduleId.replace(/-/g, ' ')} module
         </span>
       </div>
-    </button>
+    </Button>
   )
 }

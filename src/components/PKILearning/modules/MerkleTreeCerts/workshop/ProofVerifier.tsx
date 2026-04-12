@@ -167,7 +167,10 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
       setCurrentStep(-1)
 
       try {
-        const result = await verifyInclusionProof(proofToVerify)
+        const result = await verifyInclusionProof(
+          proofToVerify,
+          useOriginal ? undefined : (originalProof ?? undefined)
+        )
 
         // Animate step-by-step
         for (let i = 0; i < result.steps.length; i++) {
@@ -275,9 +278,10 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
       {/* Setup */}
       {!levels ? (
         <Button
+          variant="gradient"
           onClick={handleSetup}
           disabled={isBuilding}
-          className="flex items-center gap-2 bg-primary text-black font-bold hover:bg-primary/90 text-sm"
+          className="flex items-center gap-2 font-bold text-sm"
         >
           {isBuilding ? (
             <>
@@ -532,11 +536,11 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                                   <span
                                     className={`absolute -top-2 -right-2 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${
                                       isTampered
-                                        ? 'bg-destructive text-white'
+                                        ? 'bg-destructive text-destructive-foreground'
                                         : annotation.type === 'selected'
-                                          ? 'bg-primary text-black'
+                                          ? 'bg-primary text-primary-foreground'
                                           : annotation.type === 'provided'
-                                            ? 'bg-warning text-black'
+                                            ? 'bg-warning text-warning-foreground'
                                             : annotation.type === 'root'
                                               ? 'bg-accent text-black'
                                               : 'bg-success text-black'
@@ -658,11 +662,18 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                     <div
                       key={i}
                       className={`bg-background rounded-lg p-3 border transition-all duration-300 ${
-                        isReached ? 'border-border opacity-100' : 'border-border/30 opacity-30'
-                      }`}
+                        isReached ? 'opacity-100' : 'border-border/30 opacity-30'
+                      } ${step.isDivergencePoint ? 'border-destructive/60 ring-1 ring-destructive/30' : 'border-border'}`}
                     >
-                      <div className="text-[10px] text-muted-foreground mb-1">
-                        {step.label}: H(left || right)
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-[10px] text-muted-foreground">
+                          {step.label}: H(left || right)
+                        </span>
+                        {step.isDivergencePoint && (
+                          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-destructive/20 text-destructive border border-destructive/30">
+                            ⚠ first divergence
+                          </span>
+                        )}
                       </div>
                       <div className="grid grid-cols-1 gap-1">
                         <div className="flex items-center gap-1">
@@ -678,11 +689,28 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                           </span>
                         </div>
                         <div className="flex items-center gap-1 mt-1">
-                          <span className="text-[10px] font-bold text-success w-4">=</span>
-                          <span className="font-mono text-[10px] text-foreground break-all">
+                          <span
+                            className={`text-[10px] font-bold w-4 ${step.isDivergencePoint ? 'text-destructive' : 'text-success'}`}
+                          >
+                            =
+                          </span>
+                          <span
+                            className={`font-mono text-[10px] break-all ${step.isDivergencePoint ? 'text-destructive' : 'text-foreground'}`}
+                          >
                             {truncateHash(step.output, 12)}
                           </span>
                         </div>
+                        {step.isDivergencePoint && step.expectedOutput && (
+                          <div className="flex items-center gap-1 mt-1 pt-1 border-t border-destructive/20">
+                            <span className="text-[10px] font-bold text-success w-4">✓</span>
+                            <span className="font-mono text-[10px] text-success break-all">
+                              {truncateHash(step.expectedOutput, 12)}
+                            </span>
+                            <span className="text-[9px] text-muted-foreground ml-1">
+                              (expected)
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
                   )

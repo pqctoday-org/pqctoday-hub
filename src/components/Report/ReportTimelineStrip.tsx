@@ -38,7 +38,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
   return (
     <div className="space-y-3 overflow-x-auto">
       {/* Year scale header */}
-      <div className="relative h-5 min-w-[480px]">
+      <div className="relative h-5 min-w-[320px]">
         {TICK_YEARS.map((yr, i) => {
           const left = yearToPercent(yr)
           const isFirst = i === 0
@@ -64,7 +64,7 @@ export const ReportTimelineStrip: React.FC<ReportTimelineStripProps> = ({ countr
       </div>
 
       {/* Phase rows */}
-      <div className="space-y-1.5 min-w-[480px]">
+      <div className="space-y-1.5 min-w-[320px]">
         {phases.map((phase, idx) => {
           const clampedStart = Math.max(START_YEAR, phase.startYear)
           const clampedEnd = Math.min(END_YEAR, phase.endYear)

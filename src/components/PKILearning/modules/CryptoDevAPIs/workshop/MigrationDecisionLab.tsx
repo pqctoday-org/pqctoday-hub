@@ -7,6 +7,7 @@ import {
   INTEROP_PATTERNS,
   type MigrationPath,
 } from '../data/migrationData'
+import { Button } from '@/components/ui/button'
 
 const EFFORT_COLORS: Record<MigrationPath['effort'], string> = {
   low: 'bg-status-success/20 text-status-success border-status-success/50',
@@ -52,7 +53,8 @@ export const MigrationDecisionLab: React.FC = () => {
       {/* Tab selector */}
       <div className="flex gap-1 bg-muted/50 rounded-lg p-1 w-fit">
         {(['wizard', 'paths', 'interop'] as const).map((tab) => (
-          <button
+          <Button
+            variant="ghost"
             key={tab}
             onClick={() => setActiveTab(tab)}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-colors ${activeTab === tab ? 'bg-background text-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
@@ -62,7 +64,7 @@ export const MigrationDecisionLab: React.FC = () => {
               : tab === 'paths'
                 ? 'Migration Paths'
                 : 'Interop Patterns'}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -80,12 +82,13 @@ export const MigrationDecisionLab: React.FC = () => {
                   )}
                 </React.Fragment>
               ))}
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleReset}
                 className="ml-2 text-xs text-primary flex items-center gap-1 hover:text-primary/80"
               >
                 <RotateCcw size={12} /> Reset
-              </button>
+              </Button>
             </div>
           )}
 
@@ -108,7 +111,8 @@ export const MigrationDecisionLab: React.FC = () => {
                   {recommendedPath.effort} effort
                 </span>
               </div>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   setSelectedPath(recommendedPath)
                   setActiveTab('paths')
@@ -116,13 +120,14 @@ export const MigrationDecisionLab: React.FC = () => {
                 className="mt-3 text-sm text-primary hover:text-primary/80 flex items-center gap-1"
               >
                 View full migration path <ArrowRight size={14} />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={handleReset}
                 className="mt-2 text-xs text-muted-foreground hover:text-foreground flex items-center gap-1"
               >
                 <RotateCcw size={12} /> Start over
-              </button>
+              </Button>
             </div>
           )}
 
@@ -135,13 +140,14 @@ export const MigrationDecisionLab: React.FC = () => {
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {currentQuestion.options.map((opt) => (
-                  <button
+                  <Button
+                    variant="ghost"
                     key={opt.label}
                     onClick={() => handleOption(opt)}
                     className="text-left px-4 py-3 rounded-lg border border-border hover:border-primary hover:bg-primary/5 transition-colors text-sm text-foreground"
                   >
                     {opt.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -163,7 +169,8 @@ export const MigrationDecisionLab: React.FC = () => {
         <div className="space-y-4">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
             {MIGRATION_PATHS.map((path) => (
-              <button
+              <Button
+                variant="ghost"
                 key={path.id}
                 type="button"
                 className={`glass-panel p-4 cursor-pointer transition-all text-left w-full ${selectedPath?.id === path.id ? 'ring-2 ring-primary' : 'hover:border-primary/50'}`}
@@ -185,7 +192,7 @@ export const MigrationDecisionLab: React.FC = () => {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-2">{path.description}</p>
-              </button>
+              </Button>
             ))}
           </div>
 

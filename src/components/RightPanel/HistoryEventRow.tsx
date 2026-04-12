@@ -22,6 +22,7 @@ import {
 } from 'lucide-react'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { HistoryEvent, HistoryEventType } from '@/types/HistoryTypes'
+import { Button } from '@/components/ui/button'
 
 const EVENT_CONFIG: Record<HistoryEventType, { icon: LucideIcon; color: string }> = {
   module_started: { icon: BookOpen, color: 'text-primary' },
@@ -67,7 +68,8 @@ export const HistoryEventRow: React.FC<HistoryEventRowProps> = ({ event }) => {
   }
 
   return (
-    <button
+    <Button
+      variant="ghost"
       onClick={handleClick}
       disabled={!event.route}
       className="w-full flex items-start gap-2.5 px-2 py-1.5 rounded-md text-left transition-colors hover:bg-muted/30 disabled:cursor-default disabled:hover:bg-transparent group"
@@ -82,6 +84,6 @@ export const HistoryEventRow: React.FC<HistoryEventRowProps> = ({ event }) => {
         {event.detail && <p className="text-xs text-muted-foreground truncate">{event.detail}</p>}
       </div>
       <span className="text-xs text-muted-foreground shrink-0 mt-0.5">{time}</span>
-    </button>
+    </Button>
   )
 }

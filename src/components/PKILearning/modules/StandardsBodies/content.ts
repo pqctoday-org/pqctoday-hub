@@ -9,6 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'standards-bodies',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [

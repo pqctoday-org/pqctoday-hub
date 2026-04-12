@@ -17,6 +17,7 @@ import {
 import { TimelineAnalysisPanel } from './TimelineAnalysisPanel'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 interface GanttDetailPopoverProps {
   isOpen: boolean
@@ -132,7 +133,8 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
         {/* Collapsible enrichment section */}
         {isEnriched && enrichment && (
           <div className="border-t border-border">
-            <button
+            <Button
+              variant="ghost"
               type="button"
               onClick={toggleAnalysis}
               className="w-full flex items-center justify-between pt-2 pb-1 text-[10px] font-semibold text-muted-foreground uppercase tracking-wider hover:text-accent transition-colors group"
@@ -148,7 +150,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
                 </span>
                 {analysisOpen ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
               </span>
-            </button>
+            </Button>
 
             {!analysisOpen && (
               <div className="pb-2 space-y-1.5">

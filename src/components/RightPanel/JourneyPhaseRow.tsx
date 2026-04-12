@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { Check, ChevronDown, ChevronRight, Circle, Loader2 } from 'lucide-react'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import type { JourneyPhase, JourneyItem, JourneyItemStatus } from '@/hooks/useJourneyMap'
+import { Button } from '@/components/ui/button'
 
 function StatusIcon({ status, size = 14 }: { status: JourneyItemStatus; size?: number }) {
   switch (status) {
@@ -69,7 +70,8 @@ export const JourneyPhaseRow: React.FC<JourneyPhaseRowProps> = ({ phase, isCurre
             : 'border-border/20'
       }`}
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center gap-2 px-3 py-2 text-left hover:bg-muted/20 rounded-lg transition-colors"
       >
@@ -94,7 +96,7 @@ export const JourneyPhaseRow: React.FC<JourneyPhaseRowProps> = ({ phase, isCurre
             current
           </span>
         )}
-      </button>
+      </Button>
 
       {expanded && (
         <div className="px-3 pb-2 pl-9 space-y-0.5">

@@ -103,6 +103,12 @@ const CKA_TABLE: Record<number, ConstEntry> = {
     name: 'CKA_DECAPSULATE_TEMPLATE',
     description: 'Template for auto-generated shared-secret key (ML-KEM decapsulate)',
   },
+  0x00000618: { name: 'CKA_HSS_LMS_TYPE', description: 'HSS parameter set types (FIPS 208)' },
+  0x00000619: { name: 'CKA_HSS_LMOTS_TYPE', description: 'LM-OTS parameter set types (FIPS 208)' },
+  0x0000061c: {
+    name: 'CKA_HSS_KEYS_REMAINING',
+    description: 'Signatures remaining on stateful key',
+  },
 }
 
 // CKM_ mechanism types
@@ -265,6 +271,19 @@ const CKM_TABLE: Record<number, ConstEntry> = {
   0x00002109: { name: 'CKM_AES_KEY_WRAP', description: 'AES Key Wrap (RFC 3394)' },
   // HKDF (§2.43)
   0x0000402a: { name: 'CKM_HKDF_DERIVE', description: 'HKDF key derivation (RFC 5869)' },
+  // AEAD and Stateful Signatures
+  0x00001225: { name: 'CKM_CHACHA20_KEY_GEN', description: 'ChaCha20 key generation' },
+  0x00004021: { name: 'CKM_CHACHA20_POLY1305', description: 'ChaCha20-Poly1305 AEAD' },
+  0x00004034: {
+    name: 'CKM_XMSS_KEY_PAIR_GEN',
+    description: 'XMSS key pair generation (SP 800-208)',
+  },
+  0x00004035: { name: 'CKM_XMSS', description: 'XMSS stateful signature (SP 800-208)' },
+  0x80000001: {
+    name: 'CKM_LMS_KEY_PAIR_GEN',
+    description: 'LMS key pair generation (SP 800-208) [VENDOR]',
+  },
+  0x80000002: { name: 'CKM_LMS', description: 'LMS stateful signature (SP 800-208) [VENDOR]' },
 }
 
 // CKO_ object classes
@@ -282,10 +301,13 @@ const CKK_TABLE: Record<number, ConstEntry> = {
   0x03: { name: 'CKK_EC' },
   0x10: { name: 'CKK_GENERIC_SECRET', description: 'Generic secret key (HMAC, KDF base)' },
   0x1f: { name: 'CKK_AES', description: 'AES symmetric key' },
+  0x33: { name: 'CKK_CHACHA20', description: 'ChaCha20 symmetric key' },
   0x40: { name: 'CKK_EC_EDWARDS', description: 'Edwards-curve key (Ed25519/Ed448)' },
   0x49: { name: 'CKK_ML_KEM', description: 'ML-KEM (FIPS 203)' },
   0x4a: { name: 'CKK_ML_DSA', description: 'ML-DSA (FIPS 204)' },
   0x4b: { name: 'CKK_SLH_DSA', description: 'SLH-DSA (FIPS 205)' },
+  0x4c: { name: 'CKK_XMSS', description: 'XMSS stateful signature key (SP 800-208)' },
+  0x4e: { name: 'CKK_HSS', description: 'HSS / LMS stateful signature key (SP 800-208)' },
 }
 
 // CKH_ hedging variants
@@ -586,6 +608,21 @@ const safeRead32 = (M: SoftHSMModule, ptr: number): number | null => {
     return M.getValue(ptr, 'i32') >>> 0
   } catch {
     return null
+  }
+}
+
+/** Safely read up to maxBytes from WASM heap and return a hex string. */
+const safeReadBytesAsHex = (M: SoftHSMModule, ptr: number, len: number, maxBytes = 64): string => {
+  if (!ptr || len <= 0) return ''
+  try {
+    const preview = Math.min(len, maxBytes)
+    let hexSequence = Array.from(M.HEAPU8.slice(ptr, ptr + preview))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('')
+    if (len > maxBytes) hexSequence += '…'
+    return hexSequence
+  } catch {
+    return '(unreadable)'
   }
 }
 
@@ -1314,6 +1351,7 @@ const decodeSignInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
 
 /** C_Sign(hSession, pData, ulDataLen, pSignature, pulSignatureLen) — §5.18 */
 const decodeSign = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[1] ?? 0
   const dataLen = args[2] ?? 0
   const pSignature = args[3] ?? 0
   const sigLenPtr = args[4] ?? 0
@@ -1323,6 +1361,7 @@ const decodeSign = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInsp
       label: 'Parameters',
       primitives: [
         { name: 'ulDataLen', value: `${dataLen} bytes` },
+        { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
         {
           name: 'pSignature',
           value: pSignature === 0 ? 'NULL (size query)' : `0x${pSignature.toString(16)}`,
@@ -1336,7 +1375,15 @@ const decodeSign = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInsp
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && sigLenPtr) {
     const sigLen = safeRead32(M, sigLenPtr)
-    if (sigLen !== null) outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+    if (sigLen !== null) {
+      outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+      if (pSignature !== 0 && rv === 0) {
+        outputs.push({
+          name: 'Signature Payload',
+          value: safeReadBytesAsHex(M, pSignature, sigLen),
+        })
+      }
+    }
   }
 
   return {
@@ -1361,8 +1408,10 @@ const decodeVerifyInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
 }
 
 /** C_Verify(hSession, pData, ulDataLen, pSignature, ulSignatureLen) — §5.19 */
-const decodeVerify = (_M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+const decodeVerify = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[1] ?? 0
   const dataLen = args[2] ?? 0
+  const pSignature = args[3] ?? 0
   const sigLen = args[4] ?? 0
 
   return {
@@ -1371,7 +1420,9 @@ const decodeVerify = (_M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
         label: 'Parameters',
         primitives: [
           { name: 'ulDataLen', value: `${dataLen} bytes` },
+          { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
           { name: 'ulSignatureLen', value: `${sigLen} bytes` },
+          { name: 'Signature Payload', value: safeReadBytesAsHex(M, pSignature, sigLen) },
         ],
       },
     ],
@@ -1407,6 +1458,7 @@ const decodeEncryptInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =
 
 /** C_Encrypt(hSession, pData, ulDataLen, pEncryptedData, pulEncryptedDataLen) — §5.15 */
 const decodeEncrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[1] ?? 0
   const dataLen = args[2] ?? 0
   const pOut = args[3] ?? 0
   const outLenPtr = args[4] ?? 0
@@ -1416,6 +1468,7 @@ const decodeEncrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
       label: 'Parameters',
       primitives: [
         { name: 'ulDataLen', value: `${dataLen} bytes` },
+        { name: 'Plaintext Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
         {
           name: 'pEncryptedData',
           value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
@@ -1428,7 +1481,12 @@ const decodeEncrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && outLenPtr) {
     const outLen = safeRead32(M, outLenPtr)
-    if (outLen !== null) outputs.push({ name: '*pulEncryptedDataLen', value: `${outLen} bytes` })
+    if (outLen !== null) {
+      outputs.push({ name: '*pulEncryptedDataLen', value: `${outLen} bytes` })
+      if (pOut !== 0 && rv === 0) {
+        outputs.push({ name: 'Ciphertext Payload', value: safeReadBytesAsHex(M, pOut, outLen) })
+      }
+    }
   }
 
   return {
@@ -1454,6 +1512,7 @@ const decodeDecryptInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =
 
 /** C_Decrypt(hSession, pEncryptedData, ulEncryptedDataLen, pData, pulDataLen) — §5.16 */
 const decodeDecrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pEncData = args[1] ?? 0
   const encDataLen = args[2] ?? 0
   const pOut = args[3] ?? 0
   const outLenPtr = args[4] ?? 0
@@ -1463,6 +1522,7 @@ const decodeDecrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
       label: 'Parameters',
       primitives: [
         { name: 'ulEncryptedDataLen', value: `${encDataLen} bytes` },
+        { name: 'Ciphertext Payload', value: safeReadBytesAsHex(M, pEncData, encDataLen) },
         {
           name: 'pData',
           value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
@@ -1475,7 +1535,12 @@ const decodeDecrypt = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && outLenPtr) {
     const outLen = safeRead32(M, outLenPtr)
-    if (outLen !== null) outputs.push({ name: '*pulDataLen', value: `${outLen} bytes` })
+    if (outLen !== null) {
+      outputs.push({ name: '*pulDataLen', value: `${outLen} bytes` })
+      if (pOut !== 0 && rv === 0) {
+        outputs.push({ name: 'Plaintext Payload', value: safeReadBytesAsHex(M, pOut, outLen) })
+      }
+    }
   }
 
   return {
@@ -1530,6 +1595,7 @@ const decodeDigestInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect =>
 
 /** C_Digest(hSession, pData, ulDataLen, pDigest, pulDigestLen) — §5.17 */
 const decodeDigest = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[1] ?? 0
   const dataLen = args[2] ?? 0
   const pDigest = args[3] ?? 0
   const digestLenPtr = args[4] ?? 0
@@ -1539,6 +1605,7 @@ const decodeDigest = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogIn
       label: 'Parameters',
       primitives: [
         { name: 'ulDataLen', value: `${dataLen} bytes` },
+        { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
         {
           name: 'pDigest',
           value: pDigest === 0 ? 'NULL (size query)' : `0x${pDigest.toString(16)}`,
@@ -1551,7 +1618,12 @@ const decodeDigest = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogIn
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && digestLenPtr) {
     const digestLen = safeRead32(M, digestLenPtr)
-    if (digestLen !== null) outputs.push({ name: '*pulDigestLen', value: `${digestLen} bytes` })
+    if (digestLen !== null) {
+      outputs.push({ name: '*pulDigestLen', value: `${digestLen} bytes` })
+      if (pDigest !== 0 && rv === 0) {
+        outputs.push({ name: 'Digest Payload', value: safeReadBytesAsHex(M, pDigest, digestLen) })
+      }
+    }
   }
 
   return {
@@ -1587,7 +1659,12 @@ const decodeWrapKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && outLenPtr) {
     const outLen = safeRead32(M, outLenPtr)
-    if (outLen !== null) outputs.push({ name: '*pulWrappedKeyLen', value: `${outLen} bytes` })
+    if (outLen !== null) {
+      outputs.push({ name: '*pulWrappedKeyLen', value: `${outLen} bytes` })
+      if (pOut !== 0 && rv === 0) {
+        outputs.push({ name: 'Wrapped Key Payload', value: safeReadBytesAsHex(M, pOut, outLen) })
+      }
+    }
   }
 
   return {

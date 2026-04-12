@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { ENTERPRISE_SCENARIO, ROTATION_POLICIES } from '../data/kmsConstants'
 import { KMS_PROVIDERS, KMS_STATUS_LABELS } from '../data/kmsProviderData'
+import { Button } from '@/components/ui/button'
 
 type MigrationPhase = 'inventory' | 'hybrid' | 'full-pqc'
 
@@ -184,7 +185,8 @@ export const KmsRotationPlanner: React.FC = () => {
         ).map((phase) => {
           const PhaseIcon = phase.icon
           return (
-            <button
+            <Button
+              variant="ghost"
               key={phase.id}
               onClick={() => setMigrationPhase(phase.id)}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
@@ -195,7 +197,7 @@ export const KmsRotationPlanner: React.FC = () => {
             >
               <PhaseIcon size={14} />
               {phase.label}
-            </button>
+            </Button>
           )
         })}
       </div>

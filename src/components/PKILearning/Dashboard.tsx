@@ -99,7 +99,8 @@ const LearnSortControl = ({
 
   return (
     <div className="relative" ref={ref}>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         aria-haspopup="listbox"
         aria-expanded={isOpen}
@@ -114,7 +115,7 @@ const LearnSortControl = ({
       >
         <ArrowUpDown size={14} aria-hidden="true" />
         <span className="hidden sm:inline">{selected?.label ?? 'Sort'}</span>
-      </button>
+      </Button>
 
       {isOpen && !disabled && (
         <div
@@ -142,7 +143,8 @@ const LearnSortControl = ({
           }}
         >
           {SORT_OPTIONS.map((option) => (
-            <button
+            <Button
+              variant="ghost"
               key={option.id}
               type="button"
               role="option"
@@ -157,7 +159,7 @@ const LearnSortControl = ({
               )}
             >
               {option.label}
-            </button>
+            </Button>
           ))}
         </div>
       )}
@@ -197,38 +199,46 @@ export const Dashboard: React.FC = () => {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="glass-panel p-6 border-primary/30"
+          className="glass-panel px-4 py-3 border-primary/30"
         >
-          <div className="flex items-start justify-between gap-4 flex-col md:flex-row">
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-2">
-                <PlayCircle className="text-primary" size={24} />
-                <h3 className="text-xl font-bold">Continue Learning</h3>
-              </div>
-              <p className="text-lg text-foreground font-semibold mb-1">{resumeModule.title}</p>
-              <p className="text-sm text-muted-foreground mb-3">{resumeModule.description}</p>
-              <div className="flex items-center gap-4 text-sm mb-3">
-                <span className="text-muted-foreground">
-                  Progress: {getProgressPercentage(resumeModule.id)}%
-                </span>
-                <span className="text-muted-foreground">
-                  Time spent: {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
-                </span>
-              </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
-                  role="progressbar"
-                  aria-label="Module completion progress"
-                  aria-valuenow={getProgressPercentage(resumeModule.id)}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
-                />
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 flex-1 min-w-0">
+              <PlayCircle className="text-primary shrink-0" size={18} />
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Continue Learning
+                  </span>
+                  <span className="text-sm font-semibold text-foreground truncate">
+                    {resumeModule.title}
+                  </span>
+                </div>
+                <div className="flex items-center gap-3 mt-1">
+                  <div className="flex-1 h-1 rounded-full bg-muted overflow-hidden">
+                    <div
+                      className="h-full bg-primary rounded-full transition-all"
+                      style={{ width: `${getProgressPercentage(resumeModule.id)}%` }}
+                      role="progressbar"
+                      aria-label="Module completion progress"
+                      aria-valuenow={getProgressPercentage(resumeModule.id)}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    />
+                  </div>
+                  <span className="text-xs text-muted-foreground shrink-0">
+                    {getProgressPercentage(resumeModule.id)}% ·{' '}
+                    {Math.floor(modules[resumeModule.id]?.timeSpent || 0)} min
+                  </span>
+                </div>
               </div>
             </div>
-            <Button variant="gradient" onClick={() => navigate(resumeModule.id)}>
-              Resume Module
+            <Button
+              variant="gradient"
+              size="sm"
+              onClick={() => navigate(resumeModule.id)}
+              className="shrink-0"
+            >
+              Resume
             </Button>
           </div>
         </motion.div>
@@ -254,6 +264,7 @@ const ModuleTracksGrid = ({
   navigate: (path: string) => void
   onGoHome?: () => void
 }) => {
+  const isEmbedded = useIsEmbedded()
   const { modules } = useModuleStore()
   const { selectedIndustry, experienceLevel, selectedPersona, setPersona } = usePersonaStore()
   const { myLearnModules, showOnlyLearnModules, setShowOnlyLearnModules } = useBookmarkStore()
@@ -373,6 +384,8 @@ const ModuleTracksGrid = ({
     let filtered = flatItems.filter((item) => {
       if (item.kind === 'checkpoint') return true
       const { module, track } = item
+      // In embed mode, WIP modules are never shown — accuracy over completeness
+      if (isEmbedded && module.workInProgress) return false
       if (showOnlyLearnModules && !myLearnModules.includes(module.id)) return false
       if (needle && !`${module.title} ${module.description}`.toLowerCase().includes(needle))
         return false
@@ -430,6 +443,7 @@ const ModuleTracksGrid = ({
     modules,
     showOnlyLearnModules,
     myLearnModules,
+    isEmbedded,
   ])
 
   // For stack mode: which module IDs pass the current filters
@@ -681,7 +695,8 @@ const ModuleTracksGrid = ({
 
         {/* My Modules filter toggle */}
         {myLearnModules.length > 0 && (
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowOnlyLearnModules(!showOnlyLearnModules)}
             className={`inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
               showOnlyLearnModules
@@ -692,7 +707,7 @@ const ModuleTracksGrid = ({
           >
             <CheckSquare size={12} />
             My ({myLearnModules.length})
-          </button>
+          </Button>
         )}
 
         {/* View toggle */}
@@ -761,7 +776,8 @@ const ModuleTracksGrid = ({
                 {filteredItems.map((item, idx) => {
                   if (item.kind === 'checkpoint') {
                     return (
-                      <button
+                      <Button
+                        variant="ghost"
                         key={item.id}
                         onClick={() => navigateToQuiz(item.categories)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"
@@ -775,7 +791,7 @@ const ModuleTracksGrid = ({
                         <span className="text-xs text-muted-foreground ml-auto">
                           {item.categoryCount} topics
                         </span>
-                      </button>
+                      </Button>
                     )
                   }
                   return (

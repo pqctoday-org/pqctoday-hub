@@ -53,7 +53,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
   return (
     <section className="glass-panel overflow-hidden">
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between p-6 text-left"
       >
@@ -66,7 +67,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
         ) : (
           <ChevronDown size={20} className="text-muted-foreground shrink-0" />
         )}
-      </button>
+      </Button>
       {isOpen && <div className="px-6 pb-6 space-y-4">{children}</div>}
     </section>
   )
@@ -80,7 +81,7 @@ interface IntroductionProps {
 
 export const Introduction: React.FC<IntroductionProps> = ({ onNavigateToWorkshop }) => {
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-8 w-full">
       {/* ── Section 1: TEE Fundamentals & Threat Model ──────────────────── */}
       <CollapsibleSection
         title="TEE Fundamentals & Threat Model"

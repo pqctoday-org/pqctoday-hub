@@ -6,6 +6,219 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.2.1] - 2026-04-12
+
+OpenSSL WASM engine upgraded to v3.6.2 and knowledge base refreshed with updated content.
+
+### Changed
+
+- **OpenSSL WASM upgraded to v3.6.2**: The in-browser OpenSSL engine (used by OpenSSL Studio,
+  Digital Assets, and all PQC algorithm demos) is now built from OpenSSL 3.6.2. This includes
+  the latest upstream fixes and improvements while preserving full ML-KEM, ML-DSA, SLH-DSA,
+  and LMS/HSS support.
+
+- **Knowledge base refreshed**: RAG corpus regenerated with 5,881 indexed chunks — all
+  assistant answers and content search results reflect the latest data.
+
+- **Embed SDK output updated**: The embeddable widget SDK (`sdk.js`) now ships as a compact
+  single-line bundle for faster load times in partner integrations.
+
+## [3.2.0] - 2026-04-12
+
+Mobile platform foundation — Capacitor integration bridge and embed prerequisites that enable a native iOS/Android app without any changes to the existing web app.
+
+### Added
+
+- **Mobile app platform support (Capacitor)**: Eight new modules form the native integration
+  bridge, all fully dormant when running in a standard browser. No Capacitor packages need to
+  be installed for web builds — all native APIs are lazily imported and guarded by platform
+  detection.
+  - Persistent user state saved to device storage (`@capacitor/preferences`)
+  - Native share sheet integration (falls back to web Share API in browser)
+  - External links open in the system browser (Safari / Chrome) instead of the in-app WebView
+  - Android back button navigates history or exits the app at the root screen
+  - State is flushed to device storage immediately when the app is backgrounded
+  - Haptic feedback API (silent no-op in browser)
+  - Free and Pro VendorPolicy presets for the native app build
+  - Native EmbedConfig loaded from device preferences — no URL signature required
+
+- **Unified platform detection**: New `platform.ts` module exposes `isNativeApp()`,
+  `isIframeEmbed()`, and `isEmbedContext()` as the single authoritative source for runtime
+  platform checks. All previous `window.parent !== window` guards replaced.
+
+- **Immediate state flush**: `flushNow()` in the persistence layer allows state to be written
+  to storage instantly, bypassing the 5-second debounce. Triggered by the native bridge on
+  app background and by a `pqc:flush-state` DOM event.
+
+### Changed
+
+- **App boot sequence refactored**: `main.tsx` now routes through three clearly named paths —
+  Capacitor native, iframe embed, and standard web — based on platform detection. The
+  `data-platform` attribute is set on `<html>` unconditionally for CSS targeting.
+
+- **Embed persistence factory is async**: Supports lazy-loaded adapters (Capacitor) without
+  bundling native modules in web builds.
+
+- **Changelog dates are human-readable**: Dates now display as "April 12, 2026" instead of
+  ISO format. A plain-language summary paragraph is shown under each version header.
+
+- **Changelog entry titles rewritten** for v3.1.0–3.1.4: replaced developer jargon (file
+  counts, CSS class names, internal code names) with benefit-focused language that describes
+  what changed for users.
+
+### Fixed
+
+- **XSS prevention in dev error display**: The embed verification error page in `main.tsx`
+  now builds the DOM with safe element creation instead of `innerHTML` template literals.
+
+- **Service worker disabled in Capacitor**: The SW auto-update loop is skipped when running
+  inside a native WebView to prevent reload-on-update crashes.
+
+## [3.1.4] - 2026-04-11
+
+Polish pass for embedded widgets and the learning module navigator — modals, tables, and step indicators now display correctly at all screen widths.
+
+### Fixed
+
+- **Pop-ups and overlays display correctly in embedded widgets**: All modal backdrops are now
+  correctly scoped to the embedded frame. Previously, dialogs with non-standard class combinations
+  would escape the iframe boundaries and appear at incorrect positions on the host page.
+  Technical: added generic `[data-embed] .embed-backdrop` CSS rule covering all 56 affected components.
+
+- **Tables and charts fit properly at narrow widths**: Reduced hard-coded minimum widths that
+  forced horizontal scrollbars in embedded views (600–900 px) and on tablets.
+  Affected: Compliance Gantt, Algorithm Vulnerability Matrix, Migration Risk Matrix, and 5 others.
+
+- **More content visible on medium-size screens and in embedded views**: The Playground,
+  category filter sidebar, and Algorithm Comparison panel now appear at tablet widths (768 px)
+  instead of requiring a full desktop screen (1024 px).
+
+- **Content fills the full width inside embedded portals**: Removed centering constraints so
+  content spans the entire embed frame rather than leaving empty margins on both sides.
+
+- **Learning module step indicators are more compact**: Step circles are smaller and no longer
+  overflow their container on narrow screens or inside embedded views.
+
+- **Improved text legibility when switching between light and dark themes**: Several components
+  used hardcoded color values that looked incorrect in the opposite theme. All now use semantic
+  color tokens that adapt automatically.
+
+- **Detail pop-ups no longer appear above unrelated content**: Fixed stacking order for detail
+  popovers, tooltips, and the accuracy feedback widget so they stay in their correct layer.
+
+- **Feedback and tooltip overlays stay within embedded widget boundaries**: The page accuracy
+  widget and trust score tooltip no longer escape the iframe viewport in embed contexts.
+
+## [3.1.3] - 2026-04-11
+
+Bug fix for embedded widget brand theming, plus vendor certificate infrastructure cleanup.
+
+### Fixed
+
+- **Custom brand colors in embedded widgets now load correctly**: Color values such as `#3B82F6`
+  were incorrectly treated as URL fragment separators, causing the vendor token and signature to
+  be silently dropped. The embed URL builder now percent-encodes color values before signing.
+
+### Changed
+
+- **Vendor certificate registry simplified**: All vendor certificates (including development ones)
+  are now loaded from PEM files at build time. The separate dev-mode fixture merge step has been
+  removed, making the embed boot path faster and more predictable.
+
+- **Trust anchor certificates can be committed to version control**: Root CA and vendor
+  certificate PEM files (public trust anchors only) are now tracked by git so they can be
+  bundled by the build system.
+
+### Security
+
+- **No private key material is stored in the repository**: Root CA private keys, P12 bundles,
+  and `.key` files are blocked by gitignore rules. Only public certificate PEM files (trust
+  anchors) are ever committed.
+
+## [3.1.2] - 2026-04-11
+
+Embed SDK: partner portals can now display custom logos, brand names, and navigation colors.
+
+### Added
+
+- **Custom logos and brand names in embedded widgets**: Nine new vendor certificate fields give
+  partners granular control over how the embed looks in their portals — custom logo image, brand
+  name in the nav header, logo sizing, nav bar height, active nav highlight color, secondary
+  brand color, an optional help button, and the ability to hide the "Powered by PQC Today" badge.
+  Technical details: `theme.secondary`, `theme.secondaryForeground`, `theme.navActiveBackground`,
+  `theme.brandName`, `theme.logoUrl`, `theme.logoHeight`, `theme.logoMaxWidth`,
+  `theme.headerHeight`, `features.hidePoweredBy`, `features.showHelpButton`, `features.helpUrl`.
+
+## [3.1.1] - 2026-04-11
+
+Fixed Migration Planner interactivity and improved embedded widget behavior across 18 components.
+
+### Fixed
+
+- **Migration Planner layer categories are now fully interactive**: Layer row buttons (Cloud,
+  Network, Application Servers, etc.) were completely unresponsive due to an invalid nested
+  button structure. Clicking any part of a layer row now correctly selects it. Full keyboard
+  support (`Enter`/`Space` to select, `Escape` to collapse) is also restored.
+
+- **Migration Planner filter bar stays visible while scrolling through layers**: The sticky
+  filter bar no longer gets covered by layer rows when scrolling through a long stack.
+
+- **Drawers, alerts, and navigation panels stay within embedded widget boundaries**: 13 UI
+  elements that use fixed positioning (including the Artifact Drawer, Glossary, achievement
+  toasts, and the Algorithm Compare bar) now correctly stay within the embed frame instead of
+  escaping to the host page.
+
+- **Embedded widget height adjusts correctly for host pages**: The resize signal sent to the
+  host page is now based on the actual content area, not the document body, giving accurate
+  height measurements.
+
+- **Vendor token is preserved when navigating within embedded widgets**: The embed authentication
+  token is no longer dropped on internal navigation redirects.
+
+## [3.1.0] - 2026-04-11
+
+Visual consistency pass — gradient buttons and the shared Button component are now applied uniformly across every page.
+
+### Changed
+
+- **Consistent gradient button style across the entire app**: All primary action buttons now
+  use a unified purple→teal gradient, replacing the inconsistent mix of solid-color variations
+  that existed across every page and learning module.
+
+- **Unified interactive button component throughout the codebase**: Every button in the app
+  now uses the shared `<Button>` component, ensuring consistent hover states, focus rings,
+  accessibility attributes, and keyboard handling everywhere.
+
+## [3.0.0] - 2026-04-10
+
+### Added
+
+- **Embed SDK — left sidebar nav layout (`navLayout: 'sidebar'`)**: Vendors can now opt into a
+  fixed left-panel navigation instead of the default horizontal top bar. Set `navLayout: 'sidebar'`
+  in the cert's VendorTheme to activate a 200px fixed left sidebar with vertically stacked nav
+  items and a logo/divider at the top. Main content automatically offsets right by the sidebar
+  width. Zero impact on standard mode — the layout is gated behind the `[data-embed][data-nav-layout="sidebar"]`
+  CSS selector and the `data-nav-layout` DOM attribute, which are only set in the embed bootstrap
+  path.
+
+- **Embed SDK — VendorTheme v2 status/link color overrides**: Five new VendorTheme fields are
+  now supported: `colorMode` (default light/dark mode, user can still toggle), `linkColor`
+  (overrides link/anchor color), `successColor`, `warningColor`, `destructiveColor` (override
+  status badge and indicator colors). Status color overrides are scoped to `[data-embed]` via
+  intermediate `--embed-success/warning/destructive` CSS vars and never pollute global tokens.
+
+- **Embed SDK — cert color mode default (`colorMode`)**: The vendor cert can now specify a
+  default color mode (`'light'` or `'dark'`). The URL param `?theme=` still takes priority; the
+  cert value is the fallback when no param is present. The user can always toggle manually.
+
+- **pqc-admin CertIssueWizard — Nav Layout control**: New Nav Layout select (Top / Sidebar) in
+  the Embed Theme panel, alongside the existing Color Mode control. The CLM/DigiCert preset now
+  applies `navLayout: 'sidebar'` automatically.
+
+- **`test-vendor-custom-design` cert updated**: Now encodes the full VendorTheme v2 field set,
+  including `navLayout: 'sidebar'`, `colorMode: 'light'`, `linkColor`, `successColor`,
+  `warningColor`, and `destructiveColor`.
+
 ## [2.99.0] - 2026-04-10
 
 ### Added

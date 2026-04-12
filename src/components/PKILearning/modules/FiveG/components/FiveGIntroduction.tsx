@@ -17,6 +17,7 @@ import {
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
 import { VendorCoverageNotice } from '@/components/PKILearning/common/VendorCoverageNotice'
+import { Button } from '@/components/ui/button'
 
 interface FiveGIntroductionProps {
   onNavigateToSimulate: () => void
@@ -24,7 +25,7 @@ interface FiveGIntroductionProps {
 
 export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigateToSimulate }) => {
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* What is 5G Security? */}
       <section className="glass-panel p-6">
         <h2 className="text-xl font-bold text-gradient flex items-center gap-2 mb-3">
@@ -331,12 +332,13 @@ export const FiveGIntroduction: React.FC<FiveGIntroductionProps> = ({ onNavigate
             Pure mode sets Z&nbsp;=&nbsp;Z_kem directly (no combination needed).
           </p>
         </div>
-        <button
+        <Button
+          variant="ghost"
           onClick={onNavigateToSimulate}
           className="btn btn-primary flex items-center gap-2 px-4 py-2"
         >
           Try It in the Simulator <ArrowRight size={16} />
-        </button>
+        </Button>
       </section>
 
       {/* Related Resources */}

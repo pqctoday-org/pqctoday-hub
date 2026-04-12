@@ -20,6 +20,7 @@ import {
   UserCircle,
   Pencil,
 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'pqc-101'
 
@@ -676,7 +677,7 @@ export const PQC101Module: React.FC = () => {
   ]
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       <h1 className="text-3xl font-bold text-gradient mb-2">
         PQC 101 — The Quantum Threat & What To Do About It
       </h1>
@@ -689,7 +690,8 @@ export const PQC101Module: React.FC = () => {
         <div className="flex justify-between relative">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10" />
           {steps.map((step, idx) => (
-            <button
+            <Button
+              variant="ghost"
               key={step.id}
               onClick={() => setCurrentStep(idx)}
               className={`flex flex-col items-center gap-2 group ${
@@ -712,7 +714,7 @@ export const PQC101Module: React.FC = () => {
               <span className="text-[10px] md:text-xs font-medium max-w-[80px] text-center leading-tight">
                 {step.title}
               </span>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -727,32 +729,35 @@ export const PQC101Module: React.FC = () => {
 
       {/* Navigation */}
       <div className="flex justify-between mt-6">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setCurrentStep(Math.max(0, currentStep - 1))}
           disabled={currentStep === 0}
           className="px-6 py-2 rounded-lg border border-border hover:bg-muted/10 disabled:opacity-50 transition-colors text-foreground"
         >
           ← Previous
-        </button>
+        </Button>
 
         {currentStep === steps.length - 1 ? (
-          <button
+          <Button
+            variant="ghost"
             onClick={handleFinalComplete}
             className="px-6 py-2 bg-status-success text-foreground font-bold rounded-lg hover:bg-status-success/90 transition-colors"
           >
             ✓ Complete Module
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
+            variant="gradient"
             onClick={() => {
               const step = steps[currentStep]
 
               handleStepComplete(step.id, currentStep + 1)
             }}
-            className="px-6 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+            className="px-6 py-2 font-bold rounded-lg transition-colors"
           >
             Next →
-          </button>
+          </Button>
         )}
       </div>
 

@@ -5,6 +5,7 @@ import { SAMPLE_JWT_PAYLOAD, JOSE_SIGNING_ALGORITHMS } from '../constants'
 import { createJWTHeader, createJWTPayload, simulateBase64url, simulateHexBytes } from '../jwtUtils'
 import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const JWT_KAT_SPECS: KatTestSpec[] = [
   {
@@ -155,7 +156,8 @@ export const PQCJWTSigning: React.FC = () => {
       {/* Algorithm Selection */}
       <div className="flex flex-wrap gap-2">
         {SIGNABLE_ALGORITHMS.map((alg) => (
-          <button
+          <Button
+            variant="ghost"
             key={alg.jose}
             onClick={() => {
               setSelectedAlg(alg.jose as SigningAlgorithm)
@@ -172,7 +174,7 @@ export const PQCJWTSigning: React.FC = () => {
           >
             {alg.jose}
             {alg.nistLevel && <span className="ml-1 text-[10px] opacity-70">L{alg.nistLevel}</span>}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -183,13 +185,14 @@ export const PQCJWTSigning: React.FC = () => {
             <Key size={16} className="text-primary" />
             <h4 className="text-sm font-bold text-foreground">Keypair Generation</h4>
           </div>
-          <button
+          <Button
+            variant="gradient"
             onClick={handleGenerateKeypair}
             disabled={isGenerating}
-            className="px-4 py-2 bg-primary text-black text-sm font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="px-4 py-2 text-sm font-bold rounded-lg disabled:opacity-50 transition-colors"
           >
             {isGenerating ? 'Generating...' : 'Generate Keypair'}
-          </button>
+          </Button>
         </div>
 
         {keypair && (
@@ -237,14 +240,15 @@ export const PQCJWTSigning: React.FC = () => {
 
       {/* Sign Button */}
       <div className="flex justify-center">
-        <button
+        <Button
+          variant="gradient"
           onClick={handleSign}
           disabled={!keypair || !isPayloadValid || isSigning}
-          className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 transition-colors flex items-center gap-2"
+          className="px-6 py-3 font-bold rounded-lg disabled:opacity-50 transition-colors flex items-center gap-2"
         >
           <PenLine size={16} />
           {isSigning ? 'Signing...' : `Sign JWT with ${selectedAlg}`}
-        </button>
+        </Button>
       </div>
 
       {/* Signed JWT Output */}
@@ -260,13 +264,14 @@ export const PQCJWTSigning: React.FC = () => {
                 </span>
               )}
             </div>
-            <button
+            <Button
+              variant="ghost"
               onClick={handleCopy}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               {copied ? <Check size={14} /> : <Copy size={14} />}
               {copied ? 'Copied' : 'Copy'}
-            </button>
+            </Button>
           </div>
 
           {/* Color-coded display */}

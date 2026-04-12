@@ -2,6 +2,7 @@
 import React from 'react'
 import { Settings } from 'lucide-react'
 import { useOpenSSLStore } from '../store'
+import { Button } from '@/components/ui/button'
 
 export const WorkbenchHeader: React.FC = () => {
   const { files, setEditingFile } = useOpenSSLStore()
@@ -20,12 +21,13 @@ export const WorkbenchHeader: React.FC = () => {
       <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         0. Configuration
       </span>
-      <button
+      <Button
+        variant="ghost"
         onClick={handleEditConfig}
         className="w-full p-3 rounded-lg border border-border bg-muted hover:bg-accent text-muted-foreground hover:text-foreground transition-colors flex items-center gap-2 text-sm"
       >
         <Settings size={16} /> Edit OpenSSL Config (openssl.cnf)
-      </button>
+      </Button>
     </div>
   )
 }

@@ -17,6 +17,7 @@ import { ModuleMigrateTab } from '../../common/ModuleMigrateTab'
 import { ModuleVisualTab } from '../../common/ModuleVisualTab'
 import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
+import { Button } from '@/components/ui/button'
 
 const MODULE_ID = 'code-signing'
 
@@ -158,30 +159,32 @@ export const CodeSigningModule: React.FC = () => {
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleReset}
                 className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
               >
                 <Trash2 size={16} />
                 Reset
-              </button>
+              </Button>
             </div>
 
             {/* Part Progress Steps */}
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
+              <div className="flex justify-evenly relative min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
                   return (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                           ${
                             idx === currentPart
                               ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -190,12 +193,12 @@ export const CodeSigningModule: React.FC = () => {
                                 : 'border-border text-muted-foreground'
                           }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </div>
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
                       </span>
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -220,27 +223,30 @@ export const CodeSigningModule: React.FC = () => {
 
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
                 className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
-              </button>
+              </Button>
               {currentPart === PARTS.length - 1 ? (
-                <button
+                <Button
+                  variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px] bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
+                  variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px] bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Next Step &rarr;
-                </button>
+                </Button>
               )}
             </div>
           </div>

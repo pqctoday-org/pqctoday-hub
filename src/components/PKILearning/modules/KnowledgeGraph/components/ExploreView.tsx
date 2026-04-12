@@ -248,7 +248,8 @@ export function ExploreView({
             </div>
             <div className="space-y-1">
               {graph.stats.mostConnectedNodes.slice(0, 5).map((item) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={item.id}
                   className="w-full flex items-center justify-between px-3 py-1.5 rounded hover:bg-muted/50 transition-colors"
                   onClick={() => navigateToNode(item.id)}
@@ -257,7 +258,7 @@ export function ExploreView({
                   <span className="text-[10px] text-muted-foreground ml-2 shrink-0">
                     {item.count} links
                   </span>
-                </button>
+                </Button>
               ))}
             </div>
           </div>

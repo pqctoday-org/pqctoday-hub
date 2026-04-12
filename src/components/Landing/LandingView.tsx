@@ -447,7 +447,7 @@ export const LandingView = () => {
   const heading = SECTION_HEADING[selectedPersona ?? 'default'] ?? SECTION_HEADING.default
 
   return (
-    <div className="max-w-6xl mx-auto space-y-16 md:space-y-24">
+    <div className="w-full space-y-16 md:space-y-24">
       {/* Hero Section */}
       <section className="text-center pt-8 md:pt-16">
         <motion.div initial="hidden" animate="visible" variants={fadeUp} custom={0}>
@@ -829,21 +829,19 @@ export const LandingView = () => {
                           ? `Synced ${new Date(lastSyncedAt).toLocaleTimeString()}`
                           : 'Auto-sync active — changes save to your Drive'}
                   </p>
-                  <div className="mt-1 bg-muted/30 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/30">
-                    <strong>Multiple devices?</strong> Work on one device at a time. Always refresh
-                    when switching to pull your latest save.
-                  </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     type="button"
                     onClick={signOut}
                     className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-auto"
                   >
                     <LogOut size={12} aria-hidden="true" />
                     Sign out
-                  </button>
+                  </Button>
                 </div>
               ) : (
-                <button
+                <Button
+                  variant="ghost"
                   type="button"
                   onClick={signIn}
                   className="glass-panel p-3 flex items-center gap-3 hover:border-primary/50 transition-colors text-left w-full h-full"
@@ -853,25 +851,17 @@ export const LandingView = () => {
                     <Cloud size={18} aria-hidden="true" />
                   </div>
                   <div className="min-w-0">
-                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-foreground flex items-center gap-2 flex-wrap">
                       Sync to Google Drive
                       <span className="text-[10px] font-mono uppercase tracking-widest px-1.5 py-0.5 rounded bg-status-warning/10 text-status-warning border border-status-warning/30">
                         WIP
                       </span>
                     </h4>
                     <p className="text-xs text-muted-foreground leading-snug">
-                      Auto-save your progress to your Google Drive and access it from any device.
+                      Auto-save progress across devices.
                     </p>
-                    <p className="text-[10px] text-muted-foreground/60 leading-snug mt-1">
-                      Google shows your account info for your protection — PQC Today does not
-                      receive or store it.
-                    </p>
-                    <div className="mt-2 bg-muted/40 p-1.5 rounded text-[10px] text-muted-foreground leading-tight border border-border/40">
-                      <strong>Multiple devices?</strong> Work on one device at a time. Always
-                      refresh when switching to pull your latest save.
-                    </div>
                   </div>
-                </button>
+                </Button>
               )}
             </motion.div>
           )}

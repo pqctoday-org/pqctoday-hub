@@ -7,6 +7,7 @@ import { ACHIEVEMENT_CATALOG, ACHIEVEMENT_COUNT } from '@/data/achievementCatalo
 import { PERSONA_EXCLUDED_ACHIEVEMENTS } from '@/data/personaConfig'
 import { achievementIconMap } from '@/data/achievementIcons'
 import type { AchievementCategory, AchievementRarity } from '@/types/AchievementTypes'
+import { Button } from '@/components/ui/button'
 
 const CATEGORY_LABELS: Record<AchievementCategory, string> = {
   consistency: 'Consistency',
@@ -54,14 +55,15 @@ function CategoryInfoButton({ category }: { category: AchievementCategory }) {
 
   return (
     <div className="relative" onMouseEnter={show} onMouseLeave={hide}>
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => setOpen((v) => !v)}
         className="min-h-[44px] min-w-[44px] flex items-center justify-center -m-4 p-4 text-muted-foreground/50 hover:text-primary transition-colors"
         aria-label={`How to earn ${CATEGORY_LABELS[category]} badges`}
       >
         <Info size={10} />
-      </button>
+      </Button>
       {open && (
         <div className="absolute left-0 top-full mt-1 z-50 w-52 rounded-md border border-border bg-card p-2 shadow-lg text-[10px] text-muted-foreground leading-relaxed">
           <p className="font-semibold text-foreground mb-0.5">{CATEGORY_LABELS[category]} badges</p>

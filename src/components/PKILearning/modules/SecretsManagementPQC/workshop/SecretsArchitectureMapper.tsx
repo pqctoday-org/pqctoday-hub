@@ -7,6 +7,7 @@ import {
   type SecretCategory,
   type PQCRiskLevel,
 } from '../data/secretsConstants'
+import { Button } from '@/components/ui/button'
 
 const SECRET_TYPE_ICONS: Record<string, React.ReactNode> = {
   'api-key': <Key size={20} className="text-primary" />,
@@ -92,7 +93,8 @@ const SecretCard: React.FC<SecretCardProps> = ({ category, selected, onToggle })
         </span>
       </div>
 
-      <button
+      <Button
+        variant="ghost"
         className="text-[10px] text-primary hover:underline"
         onClick={(e) => {
           e.stopPropagation()
@@ -100,7 +102,7 @@ const SecretCard: React.FC<SecretCardProps> = ({ category, selected, onToggle })
         }}
       >
         {expanded ? 'Hide details' : 'Show mitigation'}
-      </button>
+      </Button>
 
       {expanded && (
         <div className="mt-3 space-y-2 border-t border-border pt-2">
@@ -188,19 +190,21 @@ export const SecretsArchitectureMapper: React.FC = () => {
 
       {/* Controls */}
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={selectAllCritical}
           className="flex items-center gap-2 px-3 py-2 bg-status-error/10 text-status-error rounded-lg hover:bg-status-error/20 transition-colors text-sm border border-status-error/30 font-medium"
         >
           <AlertTriangle size={14} />
           Select All Critical ({totalCritical})
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={clearAll}
           className="px-3 py-2 rounded-lg border border-border hover:bg-muted transition-colors text-sm text-muted-foreground"
         >
           Clear All
-        </button>
+        </Button>
         <span className="text-xs text-muted-foreground self-center ml-2">
           {selectedIds.size} of {SECRET_CATEGORIES.length} selected
         </span>

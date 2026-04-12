@@ -229,7 +229,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                     simplicity.
                   </p>
                 </div>
-                <Button onClick={handleStart} className="w-full">
+                <Button variant="ghost" onClick={handleStart} className="w-full">
                   Start Issuance Flow
                 </Button>
               </div>
@@ -249,7 +249,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                     signed by the remote HSM.
                   </p>
                 </div>
-                <Button onClick={runFlow} disabled={loading} className="w-full">
+                <Button variant="ghost" onClick={runFlow} disabled={loading} className="w-full">
                   {loading ? <Loader2 className="animate-spin mr-2" /> : null}
                   Proceed with Authentication
                 </Button>
@@ -271,7 +271,8 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
           <div className="flex flex-col h-[400px] border rounded-lg bg-card overflow-hidden lg:col-span-3">
             {/* Tabs */}
             <div className="flex items-center border-b border-border bg-muted/30">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('protocol')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'protocol'
@@ -280,8 +281,9 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                 }`}
               >
                 PROTOCOL LOG
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="ghost"
                 onClick={() => setActiveLogTab('openssl')}
                 className={`flex-1 px-4 py-2 text-xs font-medium transition-colors ${
                   activeLogTab === 'openssl'
@@ -290,7 +292,7 @@ export const PIDIssuerComponent: React.FC<PIDIssuerComponentProps> = ({
                 }`}
               >
                 OPENSSL LOG
-              </button>
+              </Button>
             </div>
 
             {/* Content */}

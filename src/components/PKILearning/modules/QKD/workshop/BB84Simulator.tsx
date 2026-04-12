@@ -11,6 +11,7 @@ import {
   type BB84SimulationState,
   type BB84Phase,
 } from '../services/BB84Service'
+import { Button } from '@/components/ui/button'
 
 interface BB84SimulatorProps {
   initialEveEnabled?: boolean
@@ -79,7 +80,8 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           <span className="text-sm font-medium text-foreground">Qubits:</span>
           <div className="flex gap-1">
             {QUBIT_OPTIONS.map((n) => (
-              <button
+              <Button
+                variant="ghost"
                 key={n}
                 onClick={() => handleQubitChange(n)}
                 disabled={!isIdle}
@@ -90,13 +92,14 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
                 }`}
               >
                 {n}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         <div className="flex items-center gap-2">
-          <button
+          <Button
+            variant="ghost"
             onClick={handleEveToggle}
             disabled={!isIdle}
             className={`flex items-center gap-2 px-3 py-1.5 text-sm rounded border transition-colors ${
@@ -107,7 +110,7 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
           >
             <Eye size={14} />
             Eve: {eveEnabled ? 'ON' : 'OFF'}
-          </button>
+          </Button>
 
           {eveEnabled && (
             <div className="flex items-center gap-2 text-sm border border-border bg-muted/30 px-3 py-1.5 rounded disabled:opacity-50">
@@ -364,29 +367,32 @@ export const BB84Simulator: React.FC<BB84SimulatorProps> = ({
       {/* Controls */}
       <div className="flex gap-3">
         {isIdle ? (
-          <button
+          <Button
+            variant="gradient"
             onClick={handleAdvance}
-            className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+            className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2"
             aria-label="Start BB84 protocol simulation"
           >
             <Play size={16} /> Start Protocol
-          </button>
+          </Button>
         ) : canAdvance ? (
-          <button
+          <Button
+            variant="gradient"
             onClick={handleAdvance}
-            className="px-6 py-3 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 transition-colors flex items-center gap-2"
+            className="px-6 py-3 font-bold rounded-lg transition-colors flex items-center gap-2"
           >
             <Play size={16} /> Next Step
-          </button>
+          </Button>
         ) : null}
         {!isIdle && (
-          <button
+          <Button
+            variant="ghost"
             onClick={handleReset}
             className="px-6 py-3 rounded-lg border border-border hover:bg-muted transition-colors flex items-center gap-2 text-foreground"
             aria-label="Reset simulation"
           >
             <RotateCcw size={16} /> Reset
-          </button>
+          </Button>
         )}
       </div>
     </div>

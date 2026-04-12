@@ -4,8 +4,6 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { PanelHeader } from './PanelHeader'
 import { ChatPanelContent } from './ChatPanelContent'
-import { useEmbedState } from '@/embed/EmbedProvider'
-import clsx from 'clsx'
 
 const HistoryPanel = React.lazy(() =>
   import('./HistoryPanel').then((m) => ({ default: m.HistoryPanel }))
@@ -18,9 +16,7 @@ const BookmarksPanel = React.lazy(() =>
 )
 
 export const RightPanel: React.FC = () => {
-  const { isOpen, activeTab, setTab, close } = useRightPanelStore()
-  const { isEmbedded } = useEmbedState()
-
+  const { isOpen, activeTab, setTab, close, minimize } = useRightPanelStore()
   // Close on Escape
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
@@ -30,58 +26,37 @@ export const RightPanel: React.FC = () => {
     return () => window.removeEventListener('keydown', handler)
   }, [isOpen, close])
 
-  // Lock body scroll when panel is open (mobile drawer)
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden'
-    } else {
-      document.body.style.overflow = ''
-    }
-    return () => {
-      document.body.style.overflow = ''
-    }
-  }, [isOpen])
+  const panelLabel =
+    activeTab === 'chat'
+      ? 'PQC Assistant'
+      : activeTab === 'history'
+        ? 'Journey History'
+        : activeTab === 'bookmarks'
+          ? 'Bookmarks'
+          : 'Knowledge Graph'
 
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
+          {/* Bottom drawer — slides up, no backdrop, all modes */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-panel bg-black/60 backdrop-blur-sm print:hidden"
-            onClick={close}
-          />
-
-          {/* Panel */}
-          <motion.div
-            initial={{ opacity: 0, x: '100%' }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: '100%' }}
+            initial={{ opacity: 0, y: '100%' }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: '100%' }}
             transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className={clsx(
-              'z-panel w-full md:w-[60vw] bg-background border-l border-border shadow-2xl flex flex-col overflow-hidden print:hidden',
-              isEmbedded
-                ? 'absolute right-0 top-[48px] rounded-bl-xl border-b'
-                : 'fixed right-0 top-0 bottom-0'
-            )}
-            style={isEmbedded ? { height: 'min(800px, calc(100% - 48px))' } : {}}
+            className="z-panel bg-background shadow-2xl flex flex-col overflow-hidden print:hidden border-t border-border rounded-t-xl"
+            style={{ height: '50%', minHeight: '300px' }}
             role="dialog"
-            aria-label={
-              activeTab === 'chat'
-                ? 'PQC Assistant'
-                : activeTab === 'history'
-                  ? 'Journey History'
-                  : activeTab === 'bookmarks'
-                    ? 'Bookmarks'
-                    : 'Knowledge Graph'
-            }
-            aria-modal="true"
+            aria-label={panelLabel}
             onClick={(e) => e.stopPropagation()}
           >
-            <PanelHeader activeTab={activeTab} onTabChange={setTab} onClose={close} />
+            <PanelHeader
+              activeTab={activeTab}
+              onTabChange={setTab}
+              onClose={close}
+              onMinimize={minimize}
+            />
 
             {activeTab === 'chat' && <ChatPanelContent />}
             {activeTab === 'history' && (

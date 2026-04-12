@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import { clsx } from 'clsx'
 import { FileText, Binary } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface DataInputProps {
   label: string
@@ -96,7 +97,8 @@ export const DataInput: React.FC<DataInputProps> = ({
       <div className="flex justify-between items-center mb-3">
         <label className="text-sm font-bold text-foreground flex items-center gap-2">{label}</label>
         <div className="flex bg-muted rounded-lg p-1 border border-border">
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setViewMode('ascii')}
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
@@ -106,8 +108,9 @@ export const DataInput: React.FC<DataInputProps> = ({
             )}
           >
             <FileText size={12} /> ASCII
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             onClick={() => setViewMode('hex')}
             className={clsx(
               'px-3 py-1 rounded-md text-xs font-bold flex items-center gap-1 transition-all',
@@ -117,7 +120,7 @@ export const DataInput: React.FC<DataInputProps> = ({
             )}
           >
             <Binary size={12} /> HEX
-          </button>
+          </Button>
         </div>
       </div>
 

@@ -311,12 +311,12 @@ export const WhatsNewModal = () => {
     <AnimatePresence>
       {isVisible && (
         <>
-          {/* Backdrop */}
+          {/* Backdrop — absolute in embed so it doesn't exceed iframe bounds */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-overlay bg-black/60 print:hidden"
+            className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 print:hidden`}
             onClick={handleDismiss}
             aria-hidden="true"
           />
@@ -372,7 +372,8 @@ export const WhatsNewModal = () => {
                         <span className="font-medium text-foreground">{personaLabel}</span>
                       </>
                     )}
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => setShowPersonaInfo((prev) => !prev)}
                       aria-label={showPersonaInfo ? 'Hide filtering info' : 'How filtering works'}
                       className={clsx(
@@ -383,7 +384,7 @@ export const WhatsNewModal = () => {
                       )}
                     >
                       <Info size={14} />
-                    </button>
+                    </Button>
                     {showCounts && (
                       <>
                         <span className="text-muted-foreground/40 select-none">·</span>
@@ -399,12 +400,13 @@ export const WhatsNewModal = () => {
                       </>
                     )}
                   </div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setShowAllPersona((prev) => !prev)}
                     className="text-primary hover:text-primary/80 transition-colors underline"
                   >
                     {showAllPersona ? 'Filter for me' : 'Show all'}
-                  </button>
+                  </Button>
                 </div>
                 {showPersonaInfo && (
                   <div className="px-4 pb-3 pt-2 space-y-1.5 border-t border-border/50 bg-muted/20 text-muted-foreground">
@@ -431,7 +433,8 @@ export const WhatsNewModal = () => {
               {/* App update entries from CHANGELOG */}
               {changelogSections.length > 0 && (
                 <div>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => toggleSection('changelog')}
                     className="flex items-center gap-2 w-full text-left py-1.5 group"
                   >
@@ -447,7 +450,7 @@ export const WhatsNewModal = () => {
                     ) : (
                       <ChevronDown size={14} className="text-muted-foreground" />
                     )}
-                  </button>
+                  </Button>
 
                   {expandedSections['changelog'] && (
                     <div className="mt-1 space-y-2 pl-1">
@@ -498,7 +501,8 @@ export const WhatsNewModal = () => {
                 return (
                   <div key={summary.sourceId}>
                     {/* Source header (clickable to expand) */}
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => toggleSection(summary.sourceId)}
                       className="flex items-center gap-2 w-full text-left py-1.5 group"
                     >
@@ -520,7 +524,7 @@ export const WhatsNewModal = () => {
                       ) : (
                         <ChevronDown size={14} className="text-muted-foreground" />
                       )}
-                    </button>
+                    </Button>
 
                     {/* Expanded item list */}
                     {isExpanded && (
@@ -537,14 +541,15 @@ export const WhatsNewModal = () => {
                           />
                         ))}
                         {hasOverflow && (
-                          <button
+                          <Button
+                            variant="ghost"
                             onClick={() => toggleItemList(summary.sourceId)}
                             className="text-xs text-primary hover:text-primary/80 pl-2 py-1 transition-colors"
                           >
                             {isItemListExpanded
                               ? 'Show fewer'
                               : `Show all ${summary.items.length} items`}
-                          </button>
+                          </Button>
                         )}
                       </div>
                     )}
@@ -562,12 +567,13 @@ export const WhatsNewModal = () => {
 
             {/* Footer */}
             <div className="flex items-center gap-2 p-3 sm:p-4 pt-3 border-t border-border shrink-0">
-              <button
+              <Button
+                variant="ghost"
                 onClick={handleViewChangelog}
                 className="text-sm text-primary hover:text-primary/80 transition-colors underline"
               >
                 View Full Changelog
-              </button>
+              </Button>
               <div className="flex-1" />
               <Button variant="gradient" size="sm" onClick={handleDismiss}>
                 Got it
@@ -598,7 +604,8 @@ function DataChangeRow({
 
   return (
     <div>
-      <button
+      <Button
+        variant="ghost"
         onClick={hasPreview ? onToggle : () => onNavigate(item.deepLink)}
         className="flex items-center gap-2 w-full text-left px-2 py-1.5 rounded hover:bg-muted/30 transition-colors group"
       >
@@ -618,7 +625,7 @@ function DataChangeRow({
             className="text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity shrink-0"
           />
         )}
-      </button>
+      </Button>
 
       <AnimatePresence>
         {isExpanded && hasPreview && (
@@ -650,13 +657,14 @@ function DataChangeRow({
                   ))}
                 </div>
               )}
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => onNavigate(item.deepLink)}
                 className="inline-flex items-center gap-1 text-primary hover:text-primary/80 transition-colors font-medium pt-0.5"
               >
                 Go to resource
                 <ExternalLink size={10} />
-              </button>
+              </Button>
             </div>
           </motion.div>
         )}

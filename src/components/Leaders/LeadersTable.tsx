@@ -9,6 +9,7 @@ import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '../../utils/endorsement'
 import { FLAG_CODE_MAP } from './leadersConstants'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 type SortKey = 'name' | 'title' | 'organization' | 'country' | 'type'
 type SortDirection = 'asc' | 'desc'
@@ -239,13 +240,14 @@ const LeaderRow = ({
 
       {/* Actions */}
       <td className="px-3 py-3 text-right">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => onViewDetails(leader)}
           className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/50 text-muted-foreground hover:text-primary transition-colors"
           aria-label={`View details for ${leader.name}`}
         >
           <Info size={16} />
-        </button>
+        </Button>
       </td>
     </tr>
   )

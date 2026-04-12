@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import { Play, ArrowRight } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export interface WorkshopConfig {
   step: number
@@ -125,7 +126,8 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
                 <p className="text-sm text-muted-foreground">{scenario.observe}</p>
               </div>
 
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   if (onSetWorkshopConfig) {
                     onSetWorkshopConfig(scenario.config)
@@ -137,7 +139,7 @@ export const CryptoDevAPIsExercises: React.FC<ExercisesProps> = ({
                 <Play size={16} />
                 Open Workshop Step {scenario.config.step + 1}
                 <ArrowRight size={14} />
-              </button>
+              </Button>
             </div>
           </div>
         </div>

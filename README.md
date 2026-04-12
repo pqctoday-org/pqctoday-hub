@@ -85,7 +85,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
     `aria-selected`, `aria-controls`, and `aria-hidden` on all decorative icons
   - **TLS 1.3 Simulator** (Playground workshop tool): interactive client/server TLS 1.3 handshake simulator — configure cipher suites, key exchange groups (X25519, ML-KEM-768, X25519MLKEM768), mTLS, and PQC/hybrid certificate options; step-through handshake visualization with PKCS#11 log
   - **Playground Workshop**: tools under active development show a WIP badge (Wrench icon); WIP tools are hidden by default with a toggle to reveal or show only WIP tools; includes DRBG Architecture demo
-- **OpenSSL Studio**: Browser-based OpenSSL v3.6.0 workbench powered by WebAssembly
+- **OpenSSL Studio**: Browser-based OpenSSL v3.6.2 workbench powered by WebAssembly
   - **13 Operation Types**: Key Generation, CSR, Certificate, Sign/Verify, Random, Version, Encryption, Hashing, KEM, PKCS#12, LMS/HSS
   - **Full PQC Support**: ML-KEM-512/768/1024, ML-DSA-44/65/87, SLH-DSA (all 12 variants), LMS/HSS (stateful signatures)
   - **Classical Algorithms**: RSA, EC (P-256/384/521, secp256k1), Ed25519, X25519, Ed448, X448
@@ -97,13 +97,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
     - **Workshop**: 4-step hands-on certificate lifecycle (CSR → Root CA → Certificate Issuance → Parsing) with CSV-based X.509 profiles
     - **Exercises**: 5 guided scenarios (RSA-2048, ECDSA P-256, ML-DSA-44, ML-DSA-87, SLH-DSA) with "Load & Run" presets
   - **Digital Assets Program** (Learn | Workshop | Exercises): Blockchain cryptography deep-dive
-    - **Architecture Overview**: Blockchain cryptographic requirements table (Bitcoin secp256k1/ECDSA, Ethereum Keccak-256, Solana Ed25519) with OpenSSL 3.6.0 support matrix per operation and chain
+    - **Architecture Overview**: Blockchain cryptographic requirements table (Bitcoin secp256k1/ECDSA, Ethereum Keccak-256, Solana Ed25519) with OpenSSL 3.6.2 support matrix per operation and chain
     - **Learn**: Blockchain crypto introduction covering key generation, address derivation, signing, and PQC threat analysis per chain
     - **Bitcoin (BTC)**: secp256k1, P2PKH/SegWit addresses, ECDSA signing via SoftHSMv3 PKCS#11 (pure HSM path — private key never leaves the token; public key extracted via `C_GetAttributeValue(CKA_PUBLIC_KEY_INFO)` SPKI parse)
     - **Ethereum (ETH)**: Keccak-256, EIP-55 checksummed addresses, EIP-1559 transactions, signature recovery
     - **Solana (SOL)**: Ed25519, Base58 addresses, EdDSA signing
     - **HD Wallet**: BIP32/39/44 multi-chain derivation (m/44'/0'/0'/0/0 for BTC, m/44'/60'/0'/0/0 for ETH, m/44'/501'/0'/0' for SOL)
-    - **PQC Defense** (5-part): Quantum threat landscape, Bitcoin BIP-360 (P2QRH), Ethereum AA (EIP-4337/7702), Solana structural challenge, and **live ML-DSA-65 vs secp256k1 side-by-side demo** with real OpenSSL WASM v3.6.0 crypto — key gen, sign, verify, and BIP-360 witness overhead calculation
+    - **PQC Defense** (5-part): Quantum threat landscape, Bitcoin BIP-360 (P2QRH), Ethereum AA (EIP-4337/7702), Solana structural challenge, and **live ML-DSA-65 vs secp256k1 side-by-side demo** with real OpenSSL WASM v3.6.2 crypto — key gen, sign, verify, and BIP-360 witness overhead calculation
     - **Exercises**: Guided scenarios for each blockchain with pre-configured flows
   - **5G Security Education** (Learn | Simulate | Exercises): Interactive 5G authentication and privacy flows
     - **Learn**: 6 sections — What is 5G Security (3GPP TS 33.501), Three Pillars, SUCI Protection Schemes (Profile A/B/C), 5G-AKA Authentication (MILENAGE f1-f5, key hierarchy), SIM Provisioning, Post-Quantum Threat
@@ -624,7 +624,7 @@ Test your PQC readiness with this interactive web application visualizing the gl
 
 - **Frontend**: React 19 + TypeScript + Vite 7.3.1
 - **Cryptography**:
-  - OpenSSL WASM v3.6.0 (with native ML-KEM, ML-DSA, and LMS/HSS support)
+  - OpenSSL WASM v3.6.2 (with native ML-KEM, ML-DSA, and LMS/HSS support)
   - `@pqctoday/softhsm-wasm` v0.4.18 — SoftHSMv3 PKCS#11 v3.2 WASM; C++ engine v0.4.18 (ML-KEM, ML-DSA, SLH-DSA, AES, PBKDF2, HKDF, KBKDF, EdDSA, secp256k1, X25519, BIP32); Rust engine v0.4.18 (PKCS#11 v3.2 KEM compliance, CKA_PARAMETER_SET flags, wasm-bindgen 0.2.117)
   - `@oqs/liboqs-js` for additional PQC algorithms (FrodoKEM, HQC, Classic McEliece)
   - Web Crypto API for classical algorithms (X25519, P-256, ECDH)
@@ -775,7 +775,7 @@ The application is structured into several key components:
 │   │   ├── Layout/          # Main layout and navigation components
 │   │   ├── Library/         # PQC standards library
 │   │   ├── Migrate/         # PQC migration planning with verified software database
-│   │   ├── OpenSSLStudio/   # OpenSSL v3.6.0 workbench (WASM)
+│   │   ├── OpenSSLStudio/   # OpenSSL v3.6.2 workbench (WASM)
 │   │   ├── BusinessCenter/  # GRC command center dashboard
 │   │   ├── PKILearning/     # Learning platform with 49 modules across 8 tracks
 │   │   │   ├── modules/     # 49 module directories + Quiz

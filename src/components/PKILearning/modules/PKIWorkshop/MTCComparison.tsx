@@ -7,6 +7,7 @@ import {
   getSizeBreakdown,
   formatBytes,
 } from '../MerkleTreeCerts/data/mtcConstants'
+import { Button } from '@/components/ui/button'
 
 interface MTCComparisonProps {
   onComplete?: () => void
@@ -42,7 +43,8 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
         <span className="text-sm font-bold text-foreground mb-2 block">Signature Algorithm</span>
         <div className="flex flex-wrap gap-2">
           {ALGORITHM_SIZES.map((a) => (
-            <button
+            <Button
+              variant="ghost"
               key={a.shortName}
               onClick={() => setSelectedAlgo(a.shortName)}
               className={`px-3 py-2 rounded-lg text-xs font-medium transition-colors ${
@@ -52,7 +54,7 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
               }`}
             >
               {a.shortName}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -192,12 +194,13 @@ export const MTCComparison: React.FC<MTCComparisonProps> = ({ onComplete }) => {
 
       {/* Actions */}
       <div className="flex flex-wrap gap-3">
-        <button
+        <Button
+          variant="gradient"
           onClick={onComplete}
-          className="px-4 py-2 bg-accent text-accent-foreground font-bold rounded-lg hover:bg-accent/90 transition-colors text-sm"
+          className="px-4 py-2 font-bold rounded-lg transition-colors text-sm"
         >
           Mark Complete
-        </button>
+        </Button>
         <Link
           to="/learn/merkle-tree-certs"
           className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg hover:bg-primary/20 transition-colors text-sm font-medium"

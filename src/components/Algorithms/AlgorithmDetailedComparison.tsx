@@ -23,6 +23,7 @@ import {
 } from 'lucide-react'
 import clsx from 'clsx'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
+import { Button } from '@/components/ui/button'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -95,7 +96,8 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             </TabsTrigger>
           </TabsList>
           {onInfoOpen && (
-            <button
+            <Button
+              variant="ghost"
               onClick={onInfoOpen}
               className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-muted/50 border border-border text-muted-foreground hover:text-foreground hover:bg-muted transition-colors text-xs"
               aria-label="Performance data methodology"
@@ -103,7 +105,7 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             >
               <Info size={14} />
               <span className="hidden sm:inline">About</span>
-            </button>
+            </Button>
           )}
         </div>
 
@@ -219,7 +221,8 @@ function CompareButton({
     isCompared || (!maxCompareReached && (compareType === null || compareType === algoGroup))
   return (
     <div className="relative group/compare flex items-center shrink-0">
-      <button
+      <Button
+        variant="ghost"
         type="button"
         onClick={() => onToggleCompare(algo.name)}
         disabled={!canToggle && !isCompared}
@@ -242,7 +245,7 @@ function CompareButton({
         )}
       >
         <Scale size={14} />
-      </button>
+      </Button>
       {!canToggle && !isCompared && (
         <span className="absolute left-full ml-2 whitespace-nowrap bg-status-error text-status-error-foreground text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover/compare:opacity-100 transition-opacity pointer-events-none z-10 hidden sm:block">
           {maxCompareReached ? 'Max 3 reached' : `Compare ${compareType} only`}
@@ -368,13 +371,14 @@ const PerformanceView = ({
                 ] as [SortField, string][]
               ).map(([field, label]) => (
                 <th key={field} className="p-4 font-semibold">
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleSort(field)}
                     className="flex items-center gap-1.5 hover:text-foreground transition-colors"
                   >
                     {label}
                     <SortIcon field={field} />
-                  </button>
+                  </Button>
                 </th>
               ))}
             </tr>

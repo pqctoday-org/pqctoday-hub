@@ -27,6 +27,7 @@ import {
   HAS_DATA_SECTIONS,
   HAS_SECURITY_SECTIONS,
 } from '../../utils/changelogParser'
+import { Button } from '@/components/ui/button'
 
 type FilterType = 'added' | 'changed' | 'fixed' | 'data' | 'security'
 
@@ -148,7 +149,18 @@ const DATA_FRESHNESS: FreshnessEntry[] = FRESHNESS_CATEGORIES.map(({ label, pref
 
 const now = Date.now()
 
-// Parser types and functions extracted to src/utils/changelogParser.ts
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatDate(dateStr: string): string {
+  const parts = dateStr.split('-').map(Number)
+  if (parts.length !== 3 || parts.some(isNaN)) return dateStr
+  const [year, month, day] = parts
+  return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+}
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -274,7 +286,8 @@ export const ChangelogView = () => {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-sm">
           <div className="flex flex-wrap items-center gap-2">
             <span className="text-muted-foreground">Filter:</span>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => toggleFilter('added')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -285,8 +298,9 @@ export const ChangelogView = () => {
             >
               <Plus size={14} />
               <span>New Features</span>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => toggleFilter('changed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -297,8 +311,9 @@ export const ChangelogView = () => {
             >
               <Sparkles size={14} />
               <span>Improvements</span>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => toggleFilter('fixed')}
               className={clsx(
                 'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -309,9 +324,10 @@ export const ChangelogView = () => {
             >
               <Bug size={14} />
               <span>Bug Fixes</span>
-            </button>
+            </Button>
             {HAS_DATA_SECTIONS && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleFilter('data')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -322,10 +338,11 @@ export const ChangelogView = () => {
               >
                 <Database size={14} />
                 <span>Data Updates</span>
-              </button>
+              </Button>
             )}
             {HAS_SECURITY_SECTIONS && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => toggleFilter('security')}
                 className={clsx(
                   'flex items-center gap-2 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all',
@@ -336,10 +353,11 @@ export const ChangelogView = () => {
               >
                 <Shield size={14} />
                 <span>Security</span>
-              </button>
+              </Button>
             )}
             {!allFiltersActive && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() =>
                   setFilters({
                     added: true,
@@ -352,10 +370,11 @@ export const ChangelogView = () => {
                 className="ml-2 text-xs text-muted-foreground hover:text-foreground underline"
               >
                 Show all
-              </button>
+              </Button>
             )}
           </div>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setShowDetails((prev) => !prev)}
             className={clsx(
               'flex items-center gap-1.5 px-3 py-1.5 min-h-[44px] rounded-lg border transition-all text-sm whitespace-nowrap',
@@ -366,7 +385,7 @@ export const ChangelogView = () => {
           >
             {showDetails ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
             <span>{showDetails ? 'Hide details' : 'Show details'}</span>
-          </button>
+          </Button>
         </div>
       </motion.div>
 
@@ -392,13 +411,20 @@ export const ChangelogView = () => {
 
             <div className="glass-panel p-6">
               {/* Version header */}
-              <div className="flex items-baseline gap-3 mb-4 pb-3 border-b border-border">
-                <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
-                <span className="text-sm text-muted-foreground">{v.date}</span>
-                {idx === 0 && (
-                  <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
-                    Current
-                  </span>
+              <div className="mb-4 pb-3 border-b border-border">
+                <div className="flex items-baseline gap-3">
+                  <h2 className="text-xl font-semibold text-foreground">v{v.version}</h2>
+                  <span className="text-sm text-muted-foreground">{formatDate(v.date)}</span>
+                  {idx === 0 && (
+                    <span className="ml-auto text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full border border-primary/20">
+                      Current
+                    </span>
+                  )}
+                </div>
+                {v.summary && (
+                  <p className="mt-1.5 text-sm text-muted-foreground leading-relaxed">
+                    {v.summary}
+                  </p>
                 )}
               </div>
 

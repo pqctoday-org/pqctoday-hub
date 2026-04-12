@@ -104,8 +104,25 @@ export const QuizModule: React.FC = () => {
 
   const { updateModuleProgress, markStepComplete, mergeCorrectQuestionIds, modules } =
     useModuleStore()
-  const { selectedPersona, selectedIndustry: storeIndustry, experienceLevel } = usePersonaStore()
-  const [industryFilter, setIndustryFilter] = useState<string | null>(storeIndustry)
+  const {
+    selectedPersona,
+    selectedIndustry: storeIndustry,
+    selectedIndustries,
+    experienceLevel,
+  } = usePersonaStore()
+  // Only pre-filter by industry when exactly one industry is active (truly restricted).
+  // When multiple industries are allowed (e.g. embed cert grants all), start unfiltered.
+  const initialIndustryFilter = selectedIndustries.length === 1 ? storeIndustry : null
+  const [industryFilter, setIndustryFilter] = useState<string | null>(initialIndustryFilter)
+  // Sync when the store's single-industry selection changes (user switches via persona picker).
+  // This is a valid sync pattern: external Zustand store → local derived state.
+  const userClearedFilter = useRef(false)
+  useEffect(() => {
+    if (!userClearedFilter.current) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect -- syncing from external Zustand store, not a cascading render
+      setIndustryFilter(selectedIndustries.length === 1 ? storeIndustry : null)
+    }
+  }, [storeIndustry, selectedIndustries.length])
   const persona = selectedPersona ? PERSONAS[selectedPersona] : null
   const [view, setView] = useState<'intro' | 'quiz' | 'results'>('intro')
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([])
@@ -232,7 +249,7 @@ export const QuizModule: React.FC = () => {
   }, [])
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full">
       {view === 'intro' && (
         <QuizIntro
           previousScores={previousScores}
@@ -252,7 +269,10 @@ export const QuizModule: React.FC = () => {
           }
           personaLabel={checkpointState?.checkpointLabel ?? persona?.label}
           industryFilter={industryFilter}
-          onClearIndustryFilter={() => setIndustryFilter(null)}
+          onClearIndustryFilter={() => {
+            userClearedFilter.current = true
+            setIndustryFilter(null)
+          }}
           selectedDifficulties={selectedDifficulties}
           onToggleDifficulty={(diff: string) => {
             setSelectedDifficulties((prev) =>

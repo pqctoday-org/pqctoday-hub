@@ -221,7 +221,8 @@ export const TransactionSimulator: React.FC = () => {
         {/* Quantum exposure toggle */}
         <div className="ml-auto flex items-center gap-2">
           <span className="text-xs text-muted-foreground">Quantum Exposure</span>
-          <button
+          <Button
+            variant="ghost"
             role="switch"
             aria-checked={quantumExposure}
             onClick={() => setQuantumExposure((p) => !p)}
@@ -234,7 +235,7 @@ export const TransactionSimulator: React.FC = () => {
                 quantumExposure ? 'translate-x-5' : ''
               }`}
             />
-          </button>
+          </Button>
         </div>
       </div>
 

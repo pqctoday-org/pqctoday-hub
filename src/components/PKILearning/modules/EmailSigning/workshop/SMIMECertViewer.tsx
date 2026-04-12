@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { ShieldCheck, Eye, EyeOff } from 'lucide-react'
 import { CERT_FIELD_COMPARISON, SMIME_CERT_EXTENSIONS } from '../data/emailSigningConstants'
+import { Button } from '@/components/ui/button'
 
 type ViewMode = 'comparison' | 'extensions'
 
@@ -21,7 +22,8 @@ export const SMIMECertViewer: React.FC = () => {
 
       {/* View Toggle */}
       <div className="flex flex-wrap gap-2">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setViewMode('comparison')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             viewMode === 'comparison'
@@ -30,8 +32,9 @@ export const SMIMECertViewer: React.FC = () => {
           }`}
         >
           RSA vs ML-DSA Fields
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={() => setViewMode('extensions')}
           className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
             viewMode === 'extensions'
@@ -40,7 +43,7 @@ export const SMIMECertViewer: React.FC = () => {
           }`}
         >
           S/MIME Extensions
-        </button>
+        </Button>
       </div>
 
       {/* Certificate Field Comparison */}
@@ -48,13 +51,14 @@ export const SMIMECertViewer: React.FC = () => {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h4 className="text-sm font-bold text-foreground">Certificate Field Comparison</h4>
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowNotes(!showNotes)}
               className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
             >
               {showNotes ? <EyeOff size={14} /> : <Eye size={14} />}
               {showNotes ? 'Hide Notes' : 'Show Notes'}
-            </button>
+            </Button>
           </div>
 
           <div className="overflow-x-auto">

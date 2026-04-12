@@ -3,6 +3,7 @@ import React from 'react'
 import { useTLSStore } from '@/store/tls-learning.store'
 import type { TLSRunRecord } from '@/store/tls-learning.store'
 import { Trash2 } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 const ALGO_DISPLAY: Record<string, string> = {
   mldsa44: 'ML-DSA-44',
@@ -42,13 +43,14 @@ export const TLSComparisonTable: React.FC = () => {
     <div className="border border-border rounded-lg overflow-hidden">
       <div className="flex items-center justify-between px-4 py-2 bg-muted/30 border-b border-border">
         <h3 className="font-bold text-sm">Protocol Crypto Overhead</h3>
-        <button
+        <Button
+          variant="ghost"
           onClick={clearRunHistory}
           className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive transition-colors"
         >
           <Trash2 size={12} />
           Clear
-        </button>
+        </Button>
       </div>
 
       <div className="overflow-x-auto">

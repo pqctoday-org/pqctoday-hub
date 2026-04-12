@@ -50,6 +50,7 @@ import {
 } from './migrateHelpers'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { ShareButton } from '../ui/ShareButton'
+import { Button } from '@/components/ui/button'
 
 function ValidationResultBadge({ result }: { result: SoftwareItem['validationResult'] }) {
   if (!result) return null
@@ -142,7 +143,7 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
   const content = (
     <FocusLock returnFocus>
       <div
-        className="fixed inset-0 z-[9998] bg-black/60 flex items-center justify-center p-4"
+        className="fixed inset-0 embed-backdrop z-50 bg-black/60 flex items-center justify-center p-4"
         aria-hidden="true"
       />
       <div
@@ -170,13 +171,14 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
               {item.softwareName}
             </h3>
           </div>
-          <button
+          <Button
+            variant="ghost"
             onClick={onClose}
             aria-label="Close proof"
             className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors shrink-0"
           >
             <X size={16} aria-hidden="true" />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
@@ -389,7 +391,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                   >
                     {hasCompare && (
                       <td className="p-2 w-8 text-center">
-                        <button
+                        <Button
+                          variant="ghost"
                           type="button"
                           aria-label={
                             compareProducts!.has(key)
@@ -422,11 +425,12 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 : 'text-muted-foreground/40'
                             }
                           />
-                        </button>
+                        </Button>
                       </td>
                     )}
                     <td className="p-2 w-8">
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         aria-label={
                           selectedProducts?.has(key)
@@ -448,10 +452,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             className="text-muted-foreground/40 hover:text-primary"
                           />
                         )}
-                      </button>
+                      </Button>
                     </td>
                     <td className="p-4">
-                      <button
+                      <Button
+                        variant="ghost"
                         type="button"
                         aria-expanded={isExpanded}
                         aria-label={`${isExpanded ? 'Collapse' : 'Expand'} ${item.softwareName}`}
@@ -466,7 +471,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                         ) : (
                           <ChevronRight size={16} aria-hidden="true" />
                         )}
-                      </button>
+                      </Button>
                     </td>
                     <td className="p-4 font-medium text-foreground">
                       <div className="flex items-center gap-3">
@@ -792,7 +797,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                               </a>
                             )}
                             {item.proofUrl && (
-                              <button
+                              <Button
+                                variant="ghost"
                                 onClick={() => setProofModal(item)}
                                 className="inline-flex items-center gap-1.5 text-primary hover:text-primary/80 transition-colors text-xs font-medium bg-primary/5 px-2.5 py-1.5 rounded-md border border-primary/20"
                               >
@@ -802,10 +808,11 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                     ({item.proofPublicationDate})
                                   </span>
                                 )}
-                              </button>
+                              </Button>
                             )}
                             {getProductExtraction(item.softwareName) && (
-                              <button
+                              <Button
+                                variant="ghost"
                                 type="button"
                                 onClick={(e) => {
                                   e.stopPropagation()
@@ -814,7 +821,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 className="inline-flex items-center gap-1.5 text-secondary hover:text-secondary/80 transition-colors text-xs font-medium bg-secondary/5 px-2.5 py-1.5 rounded-md border border-secondary/20"
                               >
                                 <Sparkles size={14} /> View Extraction
-                              </button>
+                              </Button>
                             )}
                           </div>
 
@@ -855,7 +862,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                             </div>
                           </div>
                         </div>
-                        <button
+                        <Button
+                          variant="ghost"
                           type="button"
                           aria-label={`Collapse ${item.softwareName}`}
                           onClick={(e) => {
@@ -866,7 +874,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                         >
                           <ChevronUp size={14} />
                           Collapse
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   )}

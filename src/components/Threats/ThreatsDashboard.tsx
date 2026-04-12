@@ -455,7 +455,8 @@ export const ThreatsDashboard: React.FC = () => {
             />
           </div>
           {myThreats.length > 0 && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowOnlyThreats(!showOnlyThreats)}
               className={`hidden md:inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border transition-colors font-medium whitespace-nowrap ${
                 showOnlyThreats
@@ -466,7 +467,7 @@ export const ThreatsDashboard: React.FC = () => {
             >
               <BookmarkCheck size={12} />
               My ({myThreats.length})
-            </button>
+            </Button>
           )}
           <div className="hidden md:block">
             <ThreatsViewToggle

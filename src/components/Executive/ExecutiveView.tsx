@@ -18,6 +18,7 @@ import { useExecutiveData } from '../../hooks/useExecutiveData'
 import { useComplianceRefresh } from '../Compliance/services'
 import { useAssessmentStore } from '../../store/useAssessmentStore'
 import clsx from 'clsx'
+import { Button } from '@/components/ui/button'
 
 const RISK_LEVEL_STYLES: Record<string, string> = {
   critical: 'text-destructive bg-destructive/10 border-destructive/20',
@@ -348,20 +349,22 @@ export const ExecutiveView: React.FC = () => {
 
       {/* Export Bar */}
       <div className="flex items-center justify-center gap-3 print:hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={handlePrint}
           className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
         >
           <Printer size={16} />
           Download PDF
-        </button>
-        <button
+        </Button>
+        <Button
+          variant="ghost"
           onClick={handleCopyLink}
           className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 transition-colors"
         >
           <Link2 size={16} />
           Copy Link
-        </button>
+        </Button>
       </div>
     </div>
   )

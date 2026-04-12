@@ -42,7 +42,7 @@ const PARTS = [
     id: 'ct-log',
     title: 'Step 5: CT Log',
     description:
-      'Simulate a Certificate Transparency log with ML-DSA-44 signing via SoftHSMv3, consistency proofs, and misissuance detection.',
+      'Simulate a Certificate Transparency log with ML-DSA-65 signing via SoftHSMv3 (NIST Level 3, configurable), consistency proofs, and misissuance detection.',
     icon: FileCheck,
   },
 ]
@@ -80,7 +80,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto space-y-6">
+    <div className="space-y-6">
       {/* Reset button */}
       <div className="flex justify-end">
         <Button
@@ -95,7 +95,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
 
       {/* Part Progress Steps */}
       <div className="overflow-x-auto px-2 sm:px-0">
-        <div className="flex justify-between relative min-w-max sm:min-w-0">
+        <div className="flex justify-evenly relative min-w-0">
           <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
 
           {PARTS.map((part, idx) => {
@@ -109,7 +109,7 @@ export const MerkleWorkshopSteps: React.FC = () => {
                 className={`flex flex-col items-center gap-2 group h-auto px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
               >
                 <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                  className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                     ${
                       idx === currentPart
                         ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -178,15 +178,17 @@ export const MerkleWorkshopSteps: React.FC = () => {
         </Button>
         {currentPart === PARTS.length - 1 ? (
           <Button
+            variant="gradient"
             onClick={() => setCompletedSteps((prev) => new Set(prev).add(currentPart))}
-            className="px-6 min-h-[44px] bg-accent text-accent-foreground font-bold hover:bg-accent/90"
+            className="px-6 min-h-[44px] font-bold"
           >
             Complete ✓
           </Button>
         ) : (
           <Button
+            variant="gradient"
             onClick={() => handlePartChange(currentPart + 1)}
-            className="px-6 min-h-[44px] bg-primary text-black font-bold hover:bg-primary/90"
+            className="px-6 min-h-[44px] font-bold"
           >
             Next Step &rarr;
           </Button>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Filter, X } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface MobileFilterDrawerProps {
   // We'll pass the exact same props as the dropdowns
@@ -30,7 +31,8 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
   return (
     <div className="md:hidden">
       {/* Trigger Button */}
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(true)}
         className={`flex items-center gap-2 px-4 py-2 w-full justify-between rounded-lg border transition-colors min-h-[44px] ${
           activeFilterCount > 0
@@ -61,11 +63,11 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
             Clear
           </div>
         )}
-      </button>
+      </Button>
 
       {/* Drawer Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+        <div className="fixed inset-0 embed-backdrop z-50 flex flex-col justify-end">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"
@@ -86,13 +88,14 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
                 <Filter size={20} className="text-primary" />
                 Refine Results
               </h2>
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => setIsOpen(false)}
                 className="p-2 rounded-full hover:bg-muted transition-colors"
                 aria-label="Close filters"
               >
                 <X size={20} />
-              </button>
+              </Button>
             </div>
 
             {/* Scrollable Content */}
@@ -100,20 +103,22 @@ export const MobileFilterDrawer: React.FC<MobileFilterDrawerProps> = ({
 
             {/* Footer Actions */}
             <div className="p-6 border-t border-border/50 bg-muted/20 flex gap-4">
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => {
                   onClearAll()
                 }}
                 className="flex-1 py-3 px-4 rounded-lg border border-border bg-background hover:bg-muted font-medium transition-colors"
               >
                 Clear All
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="gradient"
                 onClick={() => setIsOpen(false)}
-                className="flex-1 py-3 px-4 rounded-lg bg-primary text-primary-foreground font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
+                className="flex-1 py-3 px-4 rounded-lg font-bold hover:brightness-110 transition-all shadow-md shadow-primary/20"
               >
                 Apply Filters
-              </button>
+              </Button>
             </div>
           </div>
         </div>

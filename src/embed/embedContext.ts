@@ -10,6 +10,7 @@
  */
 
 import type { VendorPolicy } from './vendorPolicy'
+import type { EmbedPlatform } from './platform'
 
 // ---------------------------------------------------------------------------
 // Types
@@ -24,8 +25,7 @@ export interface EmbedConfig {
   nonce: string
   expiresAt: number
   allowedRoutes: string[]
-  persistMode: 'api' | 'postMessage' | 'none'
-  apiBase?: string
+  persistMode: 'api' | 'postMessage' | 'capacitor' | 'none'
   theme?: 'dark' | 'light'
   persona?: string
   allowedOrigins: string[]
@@ -42,6 +42,8 @@ export interface EmbedConfig {
   /** Industries allowed by cert; undefined = all industries permitted */
   allowedIndustries?: string[]
   isTestMode?: boolean
+  /** Platform this embed session is running on */
+  platform: EmbedPlatform
 }
 
 export type EmbedState = { isEmbedded: false } | EmbedConfig

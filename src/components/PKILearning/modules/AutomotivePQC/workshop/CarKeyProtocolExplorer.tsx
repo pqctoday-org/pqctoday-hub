@@ -21,6 +21,7 @@ import {
   computeNFCApduCount,
 } from '../data/carKeyProtocolData'
 import type { CarKeyProtocolStep, TransportProfile } from '../data/carKeyProtocolData'
+import { Button } from '@/components/ui/button'
 
 // ---------------------------------------------------------------------------
 // Constants
@@ -157,7 +158,8 @@ export const CarKeyProtocolExplorer: React.FC = () => {
           const feasibility = FEASIBILITY_STYLES[tp.pqcFeasibility]
           const isSelected = tp.id === selectedTransport
           return (
-            <button
+            <Button
+              variant="ghost"
               key={tp.id}
               onClick={() => setSelectedTransport(tp.id)}
               className={`glass-panel p-4 text-left transition-all ${
@@ -188,7 +190,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
                   PQC: {feasibility.label}
                 </span>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -203,7 +205,8 @@ export const CarKeyProtocolExplorer: React.FC = () => {
             >
               Classical
             </span>
-            <button
+            <Button
+              variant="ghost"
               role="switch"
               aria-checked={cryptoMode === 'pqc'}
               aria-label="Toggle PQC mode"
@@ -217,7 +220,7 @@ export const CarKeyProtocolExplorer: React.FC = () => {
                   cryptoMode === 'pqc' ? 'translate-x-6' : ''
                 }`}
               />
-            </button>
+            </Button>
             <span
               className={`text-sm ${cryptoMode === 'pqc' ? 'text-foreground font-bold' : 'text-muted-foreground'}`}
             >

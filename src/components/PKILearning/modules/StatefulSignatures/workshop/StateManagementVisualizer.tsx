@@ -16,7 +16,11 @@ import {
 import { formatSignatureCount, formatBytes } from '../data/statefulSigsConstants'
 import { CKM_HSS_KEY_PAIR_GEN, CKM_HSS, CKK_HSS } from '@/wasm/softhsm/constants'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
-import type { UseHSMResult } from '@/hooks/useHSM'
+import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
+import { Button } from '@/components/ui/button'
+
+const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 type LMSHash = 'SHA-256' | 'SHAKE-256'
 type LMSm = 32 | 24
@@ -86,7 +90,11 @@ interface StateManagementVisualizerProps {
 
 type HSSLevels = 1 | 2 | 3
 
-export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps> = ({ hsm }) => {
+export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps> = ({
+  hsm: hsmProp,
+}) => {
+  const _ownHsm = useHSM('rust')
+  const hsm = hsmProp ?? _ownHsm
   const [lmsHash, setLmsHash] = useState<LMSHash>('SHA-256')
   const [lmsM, setLmsM] = useState<LMSm>(32)
   const [lmsHeight, setLmsHeight] = useState<LMSHeight>(5)
@@ -448,6 +456,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
   return (
     <div className="space-y-6">
+      {!hsmProp && <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />}
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">State Management Simulator</h3>
         <p className="text-sm text-muted-foreground">
@@ -463,7 +472,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <span className="text-xs text-muted-foreground w-14 shrink-0">Hash</span>
           <div className="flex gap-2">
             {(['SHA-256', 'SHAKE-256'] as LMSHash[]).map((h) => (
-              <button
+              <Button
+                variant="ghost"
                 key={h}
                 onClick={() => handleHashChange(h)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -473,7 +483,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 }`}
               >
                 {h}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -483,7 +493,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <span className="text-xs text-muted-foreground w-14 shrink-0">m / n</span>
           <div className="flex gap-2">
             {([32, 24] as LMSm[]).map((m) => (
-              <button
+              <Button
+                variant="ghost"
                 key={m}
                 onClick={() => handleMChange(m)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -493,7 +504,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 }`}
               >
                 M{m} — {m} B
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -506,7 +517,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               const isProdOnly = h > 15
               return (
                 <div key={h} className="relative group">
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => handleHeightChange(h)}
                     className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
                       isProdOnly
@@ -522,7 +534,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     {isProdOnly && (
                       <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                     )}
-                  </button>
+                  </Button>
                   {isProdOnly && (
                     <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
                       H{h}: 2^{h} signatures — keygen takes minutes. Production deployments only.
@@ -539,7 +551,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <span className="text-xs text-muted-foreground w-14 shrink-0">W</span>
           <div className="flex gap-2">
             {LMS_W_VALUES.map((w) => (
-              <button
+              <Button
+                variant="ghost"
                 key={w}
                 onClick={() => handleWChange(w)}
                 className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -549,7 +562,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                 }`}
               >
                 W{w}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -560,7 +573,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           <div className="space-y-2">
             <div className="flex gap-2">
               {([1, 2, 3] as HSSLevels[]).map((l) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={l}
                   onClick={() => handleLevelsChange(l)}
                   className={`px-3 py-1.5 rounded text-xs font-medium transition-colors ${
@@ -570,7 +584,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                   }`}
                 >
                   {l === 1 ? 'L1 — LMS' : `L${l} — HSS`}
-                </button>
+                </Button>
               ))}
             </div>
             {hssLevels >= 2 && (
@@ -581,7 +595,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     const isProdOnly = h > 15
                     return (
                       <div key={h} className="relative group">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => handleLevel2HeightChange(h)}
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
@@ -597,7 +612,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                           {isProdOnly && (
                             <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                           )}
-                        </button>
+                        </Button>
                         {isProdOnly && (
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
                             H{h}: 2^{h} signatures — keygen takes minutes. Production deployments
@@ -618,7 +633,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                     const isProdOnly = h > 15
                     return (
                       <div key={h} className="relative group">
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => handleLevel3HeightChange(h)}
                           className={`px-2 py-1 rounded text-[10px] font-medium transition-colors ${
                             isProdOnly
@@ -634,7 +650,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                           {isProdOnly && (
                             <span className="ml-1 text-[9px] text-muted-foreground/50">prod</span>
                           )}
-                        </button>
+                        </Button>
                         {isProdOnly && (
                           <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1.5 w-44 p-2 rounded-lg border border-border bg-background shadow-lg text-[10px] text-muted-foreground leading-relaxed text-center pointer-events-none invisible group-hover:visible opacity-0 group-hover:opacity-100 transition-opacity z-50">
                             H{h}: 2^{h} signatures — keygen takes minutes. Production deployments
@@ -725,7 +741,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
       {/* Collapsible algorithm details */}
       <div className="border border-border rounded-lg overflow-hidden">
-        <button
+        <Button
+          variant="ghost"
           onClick={() => setShowAlgoInfo(!showAlgoInfo)}
           className="w-full flex items-center justify-between px-4 py-3 text-sm font-medium text-foreground bg-muted/30 hover:bg-muted/50 transition-colors"
         >
@@ -738,7 +755,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
           ) : (
             <ChevronDown size={14} className="text-muted-foreground" />
           )}
-        </button>
+        </Button>
         {showAlgoInfo && (
           <div className="px-4 py-4 grid grid-cols-1 md:grid-cols-2 gap-3 bg-muted/10">
             {[
@@ -944,38 +961,42 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
           {/* Action buttons */}
           <div className="flex flex-wrap gap-2">
-            <button
+            <Button
+              variant="gradient"
               onClick={handleSign}
               disabled={isExhausted}
-              className="flex items-center gap-2 px-4 py-2 bg-primary text-black font-bold rounded-lg hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
+              className="flex items-center gap-2 px-4 py-2 font-bold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm"
             >
               <PenLine size={14} />
               Sign Message
-            </button>
+            </Button>
             {maxSigs > 32 && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleBatchSign(10)}
                 disabled={isExhausted}
                 className="flex items-center gap-2 px-4 py-2 bg-secondary/20 text-secondary font-medium rounded-lg hover:bg-secondary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-secondary/30"
               >
                 Batch Sign (10)
-              </button>
+              </Button>
             )}
-            <button
+            <Button
+              variant="ghost"
               onClick={handleSimulateStateLoss}
               disabled={counter === 0}
               className="flex items-center gap-2 px-4 py-2 bg-destructive/10 text-destructive font-medium rounded-lg hover:bg-destructive/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm border border-destructive/30"
             >
               <AlertTriangle size={14} />
               Simulate State Loss
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={handleReset}
               className="flex items-center gap-2 px-3 py-2 bg-muted text-muted-foreground rounded-lg hover:bg-muted/80 transition-colors text-sm border border-border"
             >
               <RotateCcw size={14} />
               Reset
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1155,7 +1176,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                                   <span className="text-muted-foreground">
                                     Hex — {entry.sigHex.length / 2} bytes
                                   </span>
-                                  <button
+                                  <Button
+                                    variant="ghost"
                                     onClick={(e) => {
                                       e.stopPropagation()
                                       handleCopySig(entry)
@@ -1171,7 +1193,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
                                         <Copy size={9} /> Copy hex
                                       </>
                                     )}
-                                  </button>
+                                  </Button>
                                 </div>
                                 <pre className="break-all whitespace-pre-wrap text-foreground/80 leading-relaxed max-h-32 overflow-y-auto bg-muted/30 p-2 rounded border border-border/50">
                                   {renderColoredHex(entry.sigHex, sections)}
@@ -1210,7 +1232,8 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
           {/* State loss explainer toggle */}
           <div className="bg-muted/50 rounded-lg p-4 border border-border">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => setShowStateLossExplainer(!showStateLossExplainer)}
               className="flex items-center gap-2 text-sm font-bold text-foreground w-full"
             >
@@ -1219,7 +1242,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
               <span className="ml-auto text-xs text-primary">
                 {showStateLossExplainer ? 'Hide' : 'Show'}
               </span>
-            </button>
+            </Button>
             {showStateLossExplainer && (
               <div className="mt-3 space-y-3 text-xs text-foreground/80">
                 <p>

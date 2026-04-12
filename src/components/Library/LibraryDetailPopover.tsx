@@ -16,6 +16,7 @@ import { leadersData } from '../../data/leadersData'
 import clsx from 'clsx'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 import { useModalPosition } from '../../hooks/useModalPosition'
+import { Button } from '@/components/ui/button'
 
 /** Strip parenthetical annotations and honorific prefixes, then lowercase. */
 function normalizeLeaderName(raw: string): string {
@@ -126,17 +127,18 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   const content = (
     <>
       {/* Backdrop — dims background, existing mousedown handler closes on outside click */}
-      <div className="fixed inset-0 bg-black/60" style={{ zIndex: 9998 }} aria-hidden="true" />
+      <div className="fixed inset-0 embed-backdrop bg-black/60 z-50" aria-hidden="true" />
 
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
         <div
           className={clsx(
-            'pointer-events-none flex justify-center',
-            isEmbedded ? 'absolute inset-x-0' : 'fixed inset-0 items-end md:items-center'
+            'pointer-events-none flex justify-center z-50',
+            isEmbedded
+              ? 'absolute inset-x-0'
+              : 'fixed inset-0 embed-backdrop items-end md:items-center'
           )}
           style={{
-            zIndex: 9999,
             ...(isEmbedded
               ? {
                   position: 'absolute',
@@ -190,14 +192,15 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                     {item.documentTitle?.trim()}
                   </h3>
                 </div>
-                <button
+                <Button
+                  variant="ghost"
                   onClick={onClose}
                   aria-label="Close details"
                   className="p-1.5 shrink-0 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
                   style={{ marginTop: '-4px', marginRight: '-4px' }}
                 >
                   <X size={18} aria-hidden="true" />
-                </button>
+                </Button>
               </div>
               {/* Actions Row */}
               <div className="hidden md:flex items-center gap-2 flex-wrap">
@@ -344,7 +347,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                       href={item.downloadUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 text-sm font-semibold rounded-lg transition-colors"
+                      className="inline-flex items-center justify-center gap-2 w-full px-4 py-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 text-sm font-bold rounded-lg transition-all duration-200"
                     >
                       <ExternalLink size={16} />
                       Open Document
@@ -361,7 +364,7 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
                   href={item.downloadUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-1 flex items-center justify-center gap-2 bg-primary text-primary-foreground hover:bg-primary/90 px-4 py-2.5 rounded-lg text-sm font-semibold transition-colors truncate"
+                  className="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-secondary to-primary text-primary-foreground hover:opacity-90 hover:-translate-y-0.5 px-4 py-2.5 rounded-lg text-sm font-bold transition-all duration-200 truncate"
                 >
                   <ExternalLink size={16} className="shrink-0" />
                   <span className="truncate">Open Document</span>

@@ -134,12 +134,13 @@ export const AssetInventoryBuilder: React.FC<AssetInventoryBuilderProps> = ({
               CRQC Arrival Scenario: <span className="text-primary">{crqcYear}</span>
             </span>
             {crqcYear !== ESTIMATED_CRQC_YEAR && (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => onCrqcYearChange(ESTIMATED_CRQC_YEAR)}
                 className="text-xs text-muted-foreground hover:text-foreground underline"
               >
                 Reset to {ESTIMATED_CRQC_YEAR}
-              </button>
+              </Button>
             )}
           </div>
           <input

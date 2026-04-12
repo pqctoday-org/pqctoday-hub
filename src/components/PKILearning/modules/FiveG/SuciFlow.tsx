@@ -17,6 +17,7 @@ import { KatValidationPanel } from '@/components/shared/KatValidationPanel'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
 
 import type { KatTestSpec } from '@/utils/katRunner'
+import { Button } from '@/components/ui/button'
 
 const FIVEG_KAT_SPECS: KatTestSpec[] = [
   {
@@ -225,11 +226,12 @@ const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
 )
 // Pure PQC: no classical ECC keypair is generated`,
     compute_shared_secret: `// SoftHSMv3 WASM: Profile C Pure PQC — ML-KEM Encapsulation only
+// Pure PQC: Z = Z_kem directly — no ECDH combiner per 3GPP TR 33.841 §5.2.4
 // → C_EncapsulateKey(CKM_ML_KEM)
 const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
-// Z = Z_kem directly (no ECDH component in pure PQC mode)
+// Z = Z_kem directly (no ECDH component in pure PQC mode per TR 33.841 §5.2.4)
 const Z = zKemBytes`,
   }
 
@@ -1360,16 +1362,18 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <Shield size={14} />
             Select Protection Scheme
           </div>
-          <button
+          <Button
+            variant="ghost"
             onClick={() => setGsmaModalOpen(true)}
             className="text-xs text-muted-foreground hover:text-primary border border-border hover:border-primary/40 rounded px-2 py-1 transition-colors"
             title="View official 3GPP TS 33.501 Annex C.4 reference test vectors"
           >
             Reference Vectors
-          </button>
+          </Button>
         </div>
         <div className="flex flex-col md:flex-row gap-4">
-          <button
+          <Button
+            variant="ghost"
             data-testid="profile-a-btn"
             onClick={() => {
               wizard.reset()
@@ -1390,9 +1394,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <div className="text-xs text-muted-foreground mt-1">
               Faster Montgomery-curve ECDH, 32-byte keys
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
             data-testid="profile-b-btn"
             onClick={() => {
               wizard.reset()
@@ -1413,9 +1418,10 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             <div className="text-xs text-muted-foreground mt-1">
               Wider HSM &amp; national standard support (NIST P-256)
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button
+            variant="ghost"
             data-testid="profile-c-btn"
             onClick={() => {
               wizard.reset()
@@ -1434,9 +1440,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             </div>
             <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
             <div className="text-xs italic text-muted-foreground mt-1">
-              Under 3GPP SA3 study (TR 33.841) — Not yet standardized
+              3GPP SA3 study (TR 33.841) · Rel-19 standardization in progress
             </div>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -1451,7 +1457,8 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             Educational preview of proposed Profile C
           </p>
           <div className="flex gap-4">
-            <button
+            <Button
+              variant="ghost"
               onClick={() => {
                 wizard.reset()
                 changePqcMode('hybrid')
@@ -1465,8 +1472,9 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             >
               <div className="font-bold">Hybrid (Transition)</div>
               <div className="text-xs opacity-70">X25519 + ML-KEM-768</div>
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={() => {
                 wizard.reset()
                 changePqcMode('pure')
@@ -1480,7 +1488,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             >
               <div className="font-bold">Pure PQC (Target)</div>
               <div className="text-xs opacity-70">ML-KEM-768 Only</div>
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -1554,7 +1562,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
-        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
+        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
       />
     </div>
   )

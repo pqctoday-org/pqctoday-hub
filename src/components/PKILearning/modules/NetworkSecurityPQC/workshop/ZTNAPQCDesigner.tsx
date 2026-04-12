@@ -2,6 +2,7 @@
 import React, { useState, useMemo } from 'react'
 import { Network, Shield, CheckCircle, AlertTriangle, Info } from 'lucide-react'
 import { ZTNA_COMPONENTS } from '../data/networkConstants'
+import { Button } from '@/components/ui/button'
 
 type MigrationApproach = 'classical' | 'hybrid' | 'pure-pqc'
 
@@ -258,7 +259,8 @@ export const ZTNAPQCDesigner: React.FC = () => {
 
                 <div className="flex gap-1 mt-3">
                   {(['classical', 'hybrid', 'pure-pqc'] as MigrationApproach[]).map((approach) => (
-                    <button
+                    <Button
+                      variant="ghost"
                       key={approach}
                       onClick={() => setApproach(comp.id, approach)}
                       className={`flex-1 py-1.5 text-[10px] font-medium rounded border transition-colors ${
@@ -276,7 +278,7 @@ export const ZTNAPQCDesigner: React.FC = () => {
                         : approach === 'hybrid'
                           ? 'Hybrid'
                           : 'Pure PQC'}
-                    </button>
+                    </Button>
                   ))}
                 </div>
 

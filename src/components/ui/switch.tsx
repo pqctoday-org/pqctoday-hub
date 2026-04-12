@@ -11,6 +11,7 @@ const Switch = React.forwardRef<
 >(({ className, checked, onCheckedChange, ...props }, ref) => {
   const toggle = () => onCheckedChange?.(!checked)
   return (
+    // eslint-disable-next-line no-restricted-syntax
     <button
       type="button"
       role="switch"

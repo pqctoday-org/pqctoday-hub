@@ -35,7 +35,8 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
   if (variant === 'card') {
     return (
       <>
-        <button
+        <Button
+          variant="ghost"
           type="button"
           onClick={() => setIsOpen(true)}
           className="glass-panel p-3 flex items-center gap-3 hover:border-accent/50 transition-colors text-left w-full"
@@ -49,7 +50,7 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
               Get an embed code to link to PQC Today from your website, blog, or README.
             </p>
           </div>
-        </button>
+        </Button>
         {isOpen && <LinkToUsModal onClose={() => setIsOpen(false)} />}
       </>
     )
@@ -58,13 +59,14 @@ export function LinkToUsButton({ variant = 'inline' }: LinkToUsButtonProps) {
   // inline variant (for About page links list)
   return (
     <>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsOpen(true)}
         className="inline-flex items-center gap-2 text-primary hover:underline hover:text-primary/80 transition-colors"
       >
         <Code2 size={16} />
         Link to Us — Get Embed Code
-      </button>
+      </Button>
       {isOpen && <LinkToUsModal onClose={() => setIsOpen(false)} />}
     </>
   )
@@ -103,7 +105,7 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60 p-4">
       <div
         ref={panelRef}
         className="glass-panel p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"

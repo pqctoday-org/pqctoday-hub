@@ -173,7 +173,8 @@ export const NGFWCipherAnalyzer: React.FC = () => {
             <div className="text-xs text-muted-foreground mb-2">Cipher Mode</div>
             <div className="flex gap-2">
               {(['classical', 'hybrid', 'pqc'] as CipherMode[]).map((mode) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={mode}
                   onClick={() => {
                     setSelectedMode(mode)
@@ -190,7 +191,7 @@ export const NGFWCipherAnalyzer: React.FC = () => {
                   }`}
                 >
                   {mode === 'classical' ? 'Classical' : mode === 'hybrid' ? 'Hybrid' : 'Pure PQC'}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

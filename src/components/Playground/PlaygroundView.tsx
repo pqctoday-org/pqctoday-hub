@@ -6,11 +6,11 @@ export const PlaygroundView = () => {
   return (
     <div>
       {/* Mobile: reduced interactive experience */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         <MobilePlaygroundOps />
       </div>
-      {/* Desktop: full interactive playground */}
-      <div className="hidden lg:block">
+      {/* Desktop / embed: full interactive playground */}
+      <div className="hidden md:block">
         <InteractivePlayground />
       </div>
     </div>

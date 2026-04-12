@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import { getIndustryIcon } from './threatsHelper'
 import type { ThreatItem } from '../../data/threatsData'
 import { ChevronUp } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 interface IndustryStackProps {
   activeLayer: string
@@ -83,7 +84,8 @@ export const IndustryStack = ({
               }}
               className="transition-all duration-500 ease-in-out relative flex flex-col opacity-100"
             >
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => handleSelect(layer.id)}
                 className={`
                   group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
@@ -149,7 +151,8 @@ export const IndustryStack = ({
                     onKeyDown={(e) => e.stopPropagation()}
                   >
                     <div className="bg-card rounded-lg border border-border">{expandedContent}</div>
-                    <button
+                    <Button
+                      variant="ghost"
                       type="button"
                       onClick={(e) => {
                         e.stopPropagation()
@@ -159,10 +162,10 @@ export const IndustryStack = ({
                     >
                       <ChevronUp size={14} />
                       Collapse Stack
-                    </button>
+                    </Button>
                   </div>
                 )}
-              </button>
+              </Button>
             </div>
           )
         })}

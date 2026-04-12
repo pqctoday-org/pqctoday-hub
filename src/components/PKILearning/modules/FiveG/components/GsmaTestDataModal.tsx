@@ -2,6 +2,7 @@
 import React, { useState } from 'react'
 import { X, ChevronDown, ChevronRight, ExternalLink } from 'lucide-react'
 import gsmaVectors from '@/data/kat/gsma_suci_ts33501_annex_c.json'
+import { Button } from '@/components/ui/button'
 
 interface GsmaTestDataModalProps {
   open: boolean
@@ -48,13 +49,14 @@ function HexField({ label, value, mono = true }: { label: string; value: string;
         >
           {value}
         </code>
-        <button
+        <Button
+          variant="ghost"
           onClick={copy}
           className="text-xs text-muted-foreground hover:text-primary shrink-0 pt-1"
           title="Copy"
         >
           {copied ? '✓' : '⎘'}
-        </button>
+        </Button>
       </div>
     </div>
   )
@@ -68,7 +70,8 @@ function VectorCard({ vector }: { vector: VectorEntry }) {
 
   return (
     <div className={`rounded-lg border ${profileColor} overflow-hidden`}>
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setExpanded((v) => !v)}
         className="w-full flex items-center justify-between p-3 text-left hover:bg-muted/30 transition-colors"
       >
@@ -84,7 +87,7 @@ function VectorCard({ vector }: { vector: VectorEntry }) {
         ) : (
           <ChevronRight size={14} className="text-muted-foreground" />
         )}
-      </button>
+      </Button>
 
       {expanded && (
         <div className="px-3 pb-3 border-t border-border/40 pt-3 space-y-3">
@@ -184,7 +187,7 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
     (gsmaVectors as { official_3gpp_vectors?: VectorEntry[] }).official_3gpp_vectors ?? []
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60">
       <div className="relative bg-background border border-border rounded-xl shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col mx-4">
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-border shrink-0">
@@ -196,9 +199,13 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
               Official ETSI/3GPP test key material · Profile A (X25519) and Profile B (P-256)
             </div>
           </div>
-          <button onClick={onClose} className="text-muted-foreground hover:text-foreground p-1">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="text-muted-foreground hover:text-foreground p-1"
+          >
             <X size={16} />
-          </button>
+          </Button>
         </div>
 
         {/* Body */}
@@ -223,12 +230,13 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
 
         {/* Footer */}
         <div className="shrink-0 px-4 py-3 border-t border-border flex justify-end">
-          <button
+          <Button
+            variant="ghost"
             onClick={onClose}
             className="text-sm px-3 py-1.5 rounded border border-border hover:bg-muted transition-colors text-foreground"
           >
             Close
-          </button>
+          </Button>
         </div>
       </div>
     </div>

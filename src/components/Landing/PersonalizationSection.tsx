@@ -432,9 +432,9 @@ const InfoModal = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         onClick={onClose}
-        className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50"
+        className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
       />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center p-4">
         <motion.div
           role="dialog"
           aria-modal="true"
@@ -452,14 +452,15 @@ const InfoModal = ({
               </h2>
               <p className="text-sm text-muted-foreground mt-1">{subtitle}</p>
             </div>
-            <button
+            <Button
+              variant="ghost"
               ref={closeRef}
               onClick={onClose}
               className="p-2 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-lg hover:bg-muted/30 text-muted-foreground hover:text-foreground transition-colors shrink-0"
               aria-label="Close dialog"
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
           {children}
           <p className="mt-5 text-xs text-muted-foreground border-t border-border pt-4">
@@ -779,7 +780,8 @@ export const PersonalizationSection = () => {
       {isCompleted && (
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-4 sm:gap-6 mt-2">
           {/* Avatar tile — clickable */}
-          <button
+          <Button
+            variant="ghost"
             onClick={handleEditAvatar}
             aria-label="Edit personalization settings"
             className="relative shrink-0 w-24 sm:w-32 md:w-40 rounded-2xl group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
@@ -796,7 +798,7 @@ export const PersonalizationSection = () => {
                 Edit
               </span>
             </div>
-          </button>
+          </Button>
 
           {/* ScoreCard — fills remaining width */}
           <div className="flex-1 min-w-0">
@@ -829,7 +831,8 @@ export const PersonalizationSection = () => {
                   const isActive = index === currentStep
                   return (
                     <div key={step.id} className="flex flex-col items-center gap-1.5">
-                      <button
+                      <Button
+                        variant="ghost"
                         onClick={() => index <= currentStep && setCurrentStep(index)}
                         disabled={index > currentStep}
                         className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-bold transition-all shadow-sm
@@ -844,7 +847,7 @@ export const PersonalizationSection = () => {
                         aria-label={`Step ${index + 1}: ${step.label}`}
                       >
                         {isPast ? <Check size={14} strokeWidth={3} /> : index + 1}
-                      </button>
+                      </Button>
                       <span
                         className={`text-[11px] uppercase tracking-wider font-bold transition-colors
                           ${isActive || isPast ? 'text-foreground' : 'text-muted-foreground'}`}
@@ -873,12 +876,13 @@ export const PersonalizationSection = () => {
                           <BookOpen className="text-primary" size={16} />
                           Select Your Experience Level
                         </h3>
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('experience')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
                           <Info size={12} /> How does this reshape the platform?
-                        </button>
+                        </Button>
                       </div>
                       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                         {EXPERIENCE_LEVELS.map(
@@ -906,12 +910,13 @@ export const PersonalizationSection = () => {
                           <Briefcase className="text-primary" size={16} />
                           Select Your Role
                         </h3>
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('role')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
                           <Info size={12} /> How does this adapt content?
-                        </button>
+                        </Button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
                         {visiblePersonaOrder.map((id) => {
@@ -951,12 +956,13 @@ export const PersonalizationSection = () => {
                           <Globe className="text-primary" size={16} />
                           Select Your Continental Region
                         </h3>
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('region')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
                           <Info size={12} /> Why do we ask for this?
-                        </button>
+                        </Button>
                       </div>
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                         {visibleRegions.map(
@@ -984,12 +990,13 @@ export const PersonalizationSection = () => {
                           <Factory className="text-primary" size={16} />
                           Select Your Core Industry
                         </h3>
-                        <button
+                        <Button
+                          variant="ghost"
                           onClick={() => setActiveModal('industry')}
                           className="text-xs text-muted-foreground hover:text-primary mt-0.5 inline-flex items-center gap-1 transition-colors"
                         >
                           <Info size={12} /> How do industry filters work?
-                        </button>
+                        </Button>
                       </div>
                       <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-2 sm:gap-3">
                         {!embedIndustries && (
@@ -1035,15 +1042,17 @@ export const PersonalizationSection = () => {
                 </Button>
                 {currentStep === steps.length - 1 ? (
                   <Button
+                    variant="gradient"
                     onClick={handleDone}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
                   >
                     Done
                   </Button>
                 ) : (
                   <Button
+                    variant="gradient"
                     onClick={() => setCurrentStep((prev) => Math.min(steps.length - 1, prev + 1))}
-                    className="flex-1 sm:flex-none px-8 rounded-full font-bold bg-primary text-primary-foreground hover:bg-primary/90 shadow-sm"
+                    className="flex-1 sm:flex-none px-8 rounded-full font-bold shadow-sm"
                   >
                     Next
                   </Button>

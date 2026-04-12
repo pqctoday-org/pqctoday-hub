@@ -213,7 +213,8 @@ export const HsmMigrationPlanner: React.FC = () => {
           {PHASES.map((phase, idx) => {
             const Icon = phase.icon
             return (
-              <button
+              <Button
+                variant="ghost"
                 key={phase.id}
                 onClick={() => setCurrentPhase(idx)}
                 className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium transition-colors whitespace-nowrap ${
@@ -226,7 +227,7 @@ export const HsmMigrationPlanner: React.FC = () => {
               >
                 <Icon size={14} />
                 {phase.label}
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -509,7 +510,8 @@ export const HsmMigrationPlanner: React.FC = () => {
             {VALIDATION_CHECKLIST.map((item) => {
               const isChecked = checkedItems.has(item.id)
               return (
-                <button
+                <Button
+                  variant="ghost"
                   key={item.id}
                   onClick={() => toggleCheck(item.id)}
                   className={`w-full flex items-center gap-3 p-3 rounded-lg border text-left transition-colors ${
@@ -529,7 +531,7 @@ export const HsmMigrationPlanner: React.FC = () => {
                       REQUIRED
                     </span>
                   )}
-                </button>
+                </Button>
               )
             })}
           </div>

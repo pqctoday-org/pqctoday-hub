@@ -5,6 +5,7 @@ import { SimpleGanttChart } from './SimpleGanttChart'
 import { logEvent } from '../../utils/analytics'
 import type { GanttCountryData } from '../../types/timeline'
 import '@testing-library/jest-dom'
+import { Button } from '@/components/ui/button'
 
 // Mock dependencies
 vi.mock('./GanttDetailPopover', () => ({
@@ -28,13 +29,13 @@ vi.mock('../common/FilterDropdown', () => ({
     label: string
   }) => (
     <div data-testid="filter-dropdown">
-      <button onClick={() => onSelect('All')} aria-label={label}>
+      <Button onClick={() => onSelect('All')} aria-label={label}>
         Dropdown: {label}
-      </button>
+      </Button>
       <ul>
         {items.map((item) => (
           <li key={item.id}>
-            <button onClick={() => onSelect(item.id)}>{item.label}</button>
+            <Button onClick={() => onSelect(item.id)}>{item.label}</Button>
           </li>
         ))}
       </ul>

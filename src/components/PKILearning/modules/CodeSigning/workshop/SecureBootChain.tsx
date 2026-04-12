@@ -242,7 +242,8 @@ export const SecureBootChain: React.FC = () => {
         <h4 className="text-sm font-bold text-foreground mb-3">Firmware Signing Algorithm</h4>
         <div className="flex flex-wrap gap-2">
           {FIRMWARE_SIGNING_ALGORITHMS.map((alg) => (
-            <button
+            <Button
+              variant="ghost"
               key={alg.id}
               onClick={() => {
                 setSelectedAlgorithm(alg.id)
@@ -260,7 +261,7 @@ export const SecureBootChain: React.FC = () => {
               <div className="text-[10px] opacity-70">
                 {alg.stateful ? 'Stateful' : 'Stateless'} &middot; {alg.standard}
               </div>
-            </button>
+            </Button>
           ))}
         </div>
         <div className="mt-3 text-xs text-muted-foreground">
@@ -329,7 +330,8 @@ export const SecureBootChain: React.FC = () => {
               <div key={stage.stage} className="flex items-stretch gap-3">
                 {/* Vertical line + icon */}
                 <div className="flex flex-col items-center">
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={() => setActiveStage(idx)}
                     className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors shrink-0 ${
                       isActive
@@ -341,7 +343,7 @@ export const SecureBootChain: React.FC = () => {
                     aria-label={`Stage ${stage.stage}: ${stage.title}`}
                   >
                     {isCompleted ? <CheckCircle size={14} /> : <StageIcon size={14} />}
-                  </button>
+                  </Button>
                   {idx < BOOT_CHAIN_STAGES.length - 1 && (
                     <div
                       className={`w-0.5 flex-1 min-h-[16px] ${
@@ -353,7 +355,11 @@ export const SecureBootChain: React.FC = () => {
 
                 {/* Stage content */}
                 <div className={`flex-1 pb-4 ${isFuture ? 'opacity-40' : ''}`}>
-                  <button onClick={() => setActiveStage(idx)} className="text-left w-full">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setActiveStage(idx)}
+                    className="text-left w-full"
+                  >
                     <div
                       className={`text-sm font-bold ${
                         isActive ? 'text-primary' : isCompleted ? 'text-success' : 'text-foreground'
@@ -362,7 +368,7 @@ export const SecureBootChain: React.FC = () => {
                       {stage.stage}. {stage.title}
                     </div>
                     <p className="text-xs text-muted-foreground">{stage.description}</p>
-                  </button>
+                  </Button>
 
                   {/* Expanded detail for active stage */}
                   {isActive && stageDetail && (

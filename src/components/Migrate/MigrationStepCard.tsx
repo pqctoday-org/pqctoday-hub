@@ -15,6 +15,7 @@ import {
 import { Link } from 'react-router-dom'
 import type { MigrationStep } from '../../types/MigrateTypes'
 import { STEP_PHASE_COLORS } from '../../data/migrationWorkflowData'
+import { Button } from '@/components/ui/button'
 
 const ICON_MAP: Record<string, React.FC<{ size?: number; className?: string }>> = {
   ClipboardList,
@@ -111,13 +112,14 @@ export const MigrationStepCard: React.FC<MigrationStepCardProps> = ({ step, onVi
           )}
 
           {step.relevantSoftwareCategories.length > 0 && (
-            <button
+            <Button
+              variant="ghost"
               onClick={() => onViewSoftware(step)}
               className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors mt-2 cursor-pointer"
             >
               <ArrowDown size={14} />
               View Related Products
-            </button>
+            </Button>
           )}
 
           {/* CBOM scanner deep-link — only on the Assessment step */}

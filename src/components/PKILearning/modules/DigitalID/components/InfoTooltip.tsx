@@ -3,6 +3,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import { HelpCircle } from 'lucide-react'
 import { EUDI_GLOSSARY } from '../constants'
+import { Button } from '@/components/ui/button'
 
 interface InfoTooltipProps {
   term: keyof typeof EUDI_GLOSSARY
@@ -36,7 +37,8 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
 
   return (
     <span className={`inline ${className}`}>
-      <button
+      <Button
+        variant="ghost"
         ref={triggerRef}
         type="button"
         className="inline-flex items-center text-primary hover:text-primary/80 transition-colors"
@@ -48,7 +50,7 @@ export const InfoTooltip: React.FC<InfoTooltipProps> = ({ term, className = '' }
       >
         <span className="underline decoration-dotted">{term}</span>
         <HelpCircle size={14} className="ml-1" />
-      </button>
+      </Button>
 
       {isVisible &&
         tooltipStyle &&

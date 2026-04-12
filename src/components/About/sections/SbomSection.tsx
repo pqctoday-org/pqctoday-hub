@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import clsx from 'clsx'
 import { Info, Link2, ChevronDown } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export function SbomSection() {
   const [isSbomOpen, setIsSbomOpen] = useState(false)
@@ -14,7 +15,8 @@ export function SbomSection() {
       transition={{ delay: 0.33 }}
       className="glass-panel p-4 md:p-6"
     >
-      <button
+      <Button
+        variant="ghost"
         onClick={() => setIsSbomOpen(!isSbomOpen)}
         className="flex items-center gap-3 w-full text-left cursor-pointer"
       >
@@ -27,7 +29,7 @@ export function SbomSection() {
             isSbomOpen && 'rotate-180'
           )}
         />
-      </button>
+      </Button>
       <AnimatePresence>
         {isSbomOpen && (
           <motion.div

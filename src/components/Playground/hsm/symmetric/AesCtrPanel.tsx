@@ -131,6 +131,7 @@ export const AesCtrPanel = () => {
 
       <div className="flex gap-2">
         <Button
+          variant="ghost"
           onClick={doEncrypt}
           disabled={keyHandle === null || anyLoading || !plaintext.length}
           className="flex-1"

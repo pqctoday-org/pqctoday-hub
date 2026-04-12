@@ -8,6 +8,7 @@ import { DataInput } from '../DataInput'
 import { logEvent } from '../../../utils/analytics'
 import { FilterDropdown } from '../../common/FilterDropdown'
 import { X25519ECDHPanel } from './X25519ECDHPanel'
+import { Button } from '@/components/ui/button'
 export const KemOpsTabSoftware: React.FC = () => {
   const { loading } = useSettingsContext()
   const { keyStore, selectedEncKeyId, setSelectedEncKeyId, selectedDecKeyId, setSelectedDecKeyId } =
@@ -61,7 +62,7 @@ export const KemOpsTabSoftware: React.FC = () => {
   const classicalPrivateKeys = kemPrivateKeys.filter((k) => isClassical(k.algorithm))
 
   return (
-    <div className="max-w-6xl mx-auto animate-fade-in space-y-8">
+    <div className="w-full animate-fade-in space-y-8">
       {/* Section 1: Key Encapsulation */}
       <div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-border pb-4 mb-6 gap-4">
@@ -163,7 +164,8 @@ export const KemOpsTabSoftware: React.FC = () => {
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Step 2: Run Operation
               </div>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('encapsulate')
@@ -173,7 +175,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-primary/20 text-primary border border-primary/30 hover:bg-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Encapsulate
-              </button>
+              </Button>
             </div>
 
             {/* Step 3: Ciphertext Output */}
@@ -405,7 +407,8 @@ export const KemOpsTabSoftware: React.FC = () => {
               <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-3">
                 Step 2: Run Operation
               </div>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('decapsulate')
@@ -415,7 +418,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-accent/20 text-accent border border-accent/30 hover:bg-accent/30 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Run Decapsulate
-              </button>
+              </Button>
             </div>
 
             {/* Step 3: Ciphertext Input */}
@@ -639,7 +642,8 @@ export const KemOpsTabSoftware: React.FC = () => {
                   </p>
                 )}
               </div>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('encrypt')
@@ -649,7 +653,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-primary/10 text-primary border border-primary/30 hover:bg-primary/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Encrypt
-              </button>
+              </Button>
               <DataInput
                 label="Encrypted Data (Output)"
                 value={encryptedData}
@@ -691,7 +695,8 @@ export const KemOpsTabSoftware: React.FC = () => {
                   </p>
                 )}
               </div>
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => {
                   runOperation('decrypt')
@@ -701,7 +706,7 @@ export const KemOpsTabSoftware: React.FC = () => {
                 className="w-full py-3 rounded-lg bg-accent/10 text-accent border border-accent/30 hover:bg-accent/20 disabled:opacity-50 disabled:cursor-not-allowed transition-colors text-sm font-bold"
               >
                 Decrypt
-              </button>
+              </Button>
               <DataInput
                 label="Decrypted Data (Output)"
                 value={decryptedData}

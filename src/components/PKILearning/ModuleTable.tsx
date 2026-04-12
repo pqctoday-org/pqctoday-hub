@@ -53,7 +53,8 @@ const SortHeader = ({
   className?: string
 }) => (
   <th className={clsx('text-left', className)}>
-    <button
+    <Button
+      variant="ghost"
       onClick={() => onSort(sk)}
       className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors py-3 px-4 w-full"
     >
@@ -66,7 +67,7 @@ const SortHeader = ({
           sortKey === sk ? 'text-primary' : 'text-muted-foreground/40'
         )}
       />
-    </button>
+    </Button>
   </th>
 )
 
@@ -147,7 +148,7 @@ export const ModuleTable = ({
 
   return (
     <div className="rounded-xl border border-border overflow-hidden overflow-x-auto">
-      <table className="w-full text-sm min-w-[480px]">
+      <table className="w-full text-sm min-w-[360px]">
         <thead className="bg-muted/30 border-b border-border">
           <tr>
             <th className="w-8 py-3 px-4" />
@@ -186,7 +187,8 @@ export const ModuleTable = ({
               return (
                 <tr key={item.id} className="border-b border-border last:border-0">
                   <td colSpan={7} className="px-4 py-3">
-                    <button
+                    <Button
+                      variant="ghost"
                       onClick={() => navigateToQuiz(item.categories)}
                       className="w-full flex items-center gap-3 text-left group"
                     >
@@ -204,7 +206,7 @@ export const ModuleTable = ({
                       <span className="text-xs text-muted-foreground ml-auto">
                         {item.categoryCount} topics
                       </span>
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               )
