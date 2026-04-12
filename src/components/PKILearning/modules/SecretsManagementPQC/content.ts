@@ -9,6 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'secrets-management-pqc',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [getStandard('FIPS 203'), getStandard('FIPS 204'), getStandard('NIST SP 800-227')],

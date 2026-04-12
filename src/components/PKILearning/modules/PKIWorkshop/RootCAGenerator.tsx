@@ -33,6 +33,7 @@ import {
 } from '@/wasm/softhsm'
 import type { SoftHSMModule } from '@pqctoday/softhsm-wasm'
 import { Button } from '@/components/ui/button'
+import { getCryptoErrorHint } from './cryptoErrorHints'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -351,7 +352,8 @@ export const RootCAGenerator: React.FC<RootCAGeneratorProps> = ({ onComplete }) 
       }
     } catch (error) {
       const msg = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error generating key: ${msg}\n`)
+      const hint = getCryptoErrorHint(msg)
+      setOutput((prev) => prev + `Error generating key: ${msg}\n${hint ? `  → ${hint}\n` : ''}`)
       setGeneratedKeyInfo({
         id: '',
         name: keyName,
@@ -739,7 +741,8 @@ x509_extensions = v3_ca
       }
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
+      const hint = getCryptoErrorHint(errorMessage)
+      setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsGenerating(false)
     }

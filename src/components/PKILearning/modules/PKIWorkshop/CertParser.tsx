@@ -19,6 +19,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '../../../OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { getCryptoErrorHint } from './cryptoErrorHints'
 
 interface CertParserProps {
   onComplete: () => void
@@ -953,9 +954,19 @@ S8Y=
           )}
 
           {error && (
-            <div className="bg-destructive/10 border border-destructive/30 rounded p-3 flex items-start gap-2 text-destructive text-sm">
-              <AlertTriangle size={16} className="shrink-0 mt-0.5" />
-              <pre className="whitespace-pre-wrap font-mono">{error}</pre>
+            <div className="space-y-2">
+              <div className="bg-destructive/10 border border-destructive/30 rounded p-3 flex items-start gap-2 text-destructive text-sm">
+                <AlertTriangle size={16} className="shrink-0 mt-0.5" />
+                <pre className="whitespace-pre-wrap font-mono">{error}</pre>
+              </div>
+              {getCryptoErrorHint(error) && (
+                <div className="bg-status-info/10 border border-status-info/30 rounded p-3 flex items-start gap-2 text-status-info text-xs">
+                  <AlertTriangle size={14} className="shrink-0 mt-0.5" />
+                  <span>
+                    <strong>What this means:</strong> {getCryptoErrorHint(error)}
+                  </span>
+                </div>
+              )}
             </div>
           )}
 

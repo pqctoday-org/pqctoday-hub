@@ -45,9 +45,12 @@ const SIG_ALGS = [
   'mldsa44',
   'mldsa65',
   'mldsa87',
-  // PQC - SLH-DSA (SPHINCS+)
+  // PQC - SLH-DSA SHA-2 variants (FIPS 205)
   'slhdsa-sha2-128s',
   'slhdsa-sha2-128f',
+  // PQC - SLH-DSA SHAKE variants (FIPS 205)
+  'slhdsa-shake-128s',
+  'slhdsa-shake-128f',
   // Classical
   'ecdsa_secp256r1_sha256',
   'rsa_pss_rsae_sha256',
@@ -74,9 +77,11 @@ const NIST_LEVEL: Record<string, string> = {
   mldsa87: 'NIST L5',
   'slhdsa-sha2-128s': 'NIST L1',
   'slhdsa-sha2-128f': 'NIST L1',
+  'slhdsa-shake-128s': 'NIST L1',
+  'slhdsa-shake-128f': 'NIST L1',
 }
 
-// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, IETF hybrid drafts
+// Key share sizes (bytes) sent in ClientHello — source: FIPS 203, draft-connolly-tls-mlkem-key-agreement-05
 const GROUP_SIZE: Record<string, string> = {
   X25519: 'key share: 32 B',
   'P-256': 'key share: 65 B',
@@ -96,13 +101,20 @@ const SIG_SIZE: Record<string, { sig: string; pub: string }> = {
   mldsa87: { sig: '4,595 B', pub: '2,592 B' },
   'slhdsa-sha2-128s': { sig: '7,856 B', pub: '32 B' },
   'slhdsa-sha2-128f': { sig: '17,088 B', pub: '32 B' },
+  'slhdsa-shake-128s': { sig: '7,856 B', pub: '32 B' },
+  'slhdsa-shake-128f': { sig: '17,088 B', pub: '32 B' },
   ecdsa_secp256r1_sha256: { sig: '~72 B', pub: '64 B' },
   rsa_pss_rsae_sha256: { sig: '256 B', pub: '256 B' },
   rsa_pss_pss_sha256: { sig: '256 B', pub: '256 B' },
   ed25519: { sig: '64 B', pub: '32 B' },
 }
 
-const SLH_DSA_ALGS = ['slhdsa-sha2-128s', 'slhdsa-sha2-128f']
+const SLH_DSA_ALGS = [
+  'slhdsa-sha2-128s',
+  'slhdsa-sha2-128f',
+  'slhdsa-shake-128s',
+  'slhdsa-shake-128f',
+]
 
 export const TLSServerPanel: React.FC = () => {
   const {

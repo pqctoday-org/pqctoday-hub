@@ -12,6 +12,7 @@ import type { X509Attribute } from '../../common/types'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
+import { getCryptoErrorHint } from './cryptoErrorHints'
 
 // Import profile documentation
 const profileDocs = import.meta.glob('../../../../data/x509_profiles/*_Overview.md', {
@@ -530,7 +531,8 @@ export const CertSigner: React.FC<CertSignerProps> = ({ onComplete }) => {
       onComplete()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
+      const hint = getCryptoErrorHint(errorMessage)
+      setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsSigning(false)
     }

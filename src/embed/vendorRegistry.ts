@@ -40,21 +40,11 @@ if (typeof window !== 'undefined' && window.crypto) {
 }
 
 function extractSubjectO(cert: x509.X509Certificate): string {
-  for (const rdn of cert.subject) {
-    for (const attr of rdn) {
-      if (attr.type === '2.5.4.10') return attr.value.toString()
-    }
-  }
-  return 'unknown-vendor'
+  return cert.subjectName.getField('O')[0] ?? 'unknown-vendor'
 }
 
 function extractSubjectCN(cert: x509.X509Certificate): string {
-  for (const rdn of cert.subject) {
-    for (const attr of rdn) {
-      if (attr.type === '2.5.4.3') return attr.value.toString()
-    }
-  }
-  return 'Unknown'
+  return cert.subjectName.getField('CN')[0] ?? 'Unknown'
 }
 
 /**

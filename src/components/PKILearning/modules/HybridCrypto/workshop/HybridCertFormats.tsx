@@ -434,7 +434,23 @@ export const HybridCertFormats: React.FC = () => {
                 {result && (
                   <div className="space-y-3">
                     {result.error ? (
-                      <p className="text-xs text-destructive">{result.error}</p>
+                      <div className="space-y-1">
+                        <p className="text-xs text-destructive">{result.error}</p>
+                        <p className="text-[10px] text-muted-foreground">
+                          {fmt.id === 'pure-pqc' &&
+                            'Requires ML-DSA-65 key pair via PKCS#11 (C_GenerateKeyPair + C_Sign).'}
+                          {fmt.id === 'pure-pqc-slh' &&
+                            'Requires SLH-DSA-128s key pair via liboqs (C_GenerateKeyPair + C_MessageSign).'}
+                          {fmt.id === 'composite' &&
+                            'Requires both ML-DSA-65 and ECDSA P-256 key pairs; both signatures over shared TBS bytes.'}
+                          {fmt.id === 'alt-sig' &&
+                            'Requires ECDSA P-256 primary key and ML-DSA-65 key for extensions 2.5.29.72–74.'}
+                          {fmt.id === 'related-certs' &&
+                            'Requires two independent key pairs (ECDSA + ML-DSA-65) with SHA-256 cross-binding.'}
+                          {fmt.id === 'chameleon' &&
+                            'Requires ML-DSA-65 primary and ECDSA delta key pair; DeltaCertificateDescriptor extension must encode both.'}
+                        </p>
+                      </div>
                     ) : (
                       <>
                         {/* Timing + DER size */}

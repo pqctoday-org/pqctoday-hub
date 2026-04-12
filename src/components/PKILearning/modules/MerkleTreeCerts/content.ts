@@ -9,6 +9,7 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'merkle-tree-certs',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [
@@ -16,6 +17,7 @@ export const content: ModuleContent = {
     getStandard('FIPS 205'),
     getStandard('NIST SP 800-208'),
     getStandard('RFC 6962'),
+    getStandard('RFC-9162'),
   ],
 
   algorithms: [
@@ -52,6 +54,6 @@ export const content: ModuleContent = {
       1024
     ).toFixed(1)} KB`,
     ctV1: getStandard('RFC 6962').id,
-    ctV2: getStandard('RFC 9162').id,
+    ctV2: getStandard('RFC-9162').id,
   },
 }

@@ -131,18 +131,28 @@ export const KatValidationPanel: React.FC<KatValidationPanelProps> = ({
                   <td className="px-3 py-2 font-medium text-foreground">{r.useCase}</td>
                   <td className="px-3 py-2 font-mono text-foreground">{r.algorithm}</td>
                   <td className="px-3 py-2 text-muted-foreground">
-                    {r.referenceUrl ? (
-                      <a
-                        href={r.referenceUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-primary hover:underline"
-                      >
-                        {r.standard}
-                      </a>
-                    ) : (
-                      r.standard
-                    )}
+                    <span className="flex flex-col gap-0.5">
+                      {r.referenceUrl ? (
+                        <a
+                          href={r.referenceUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-primary hover:underline"
+                        >
+                          {r.standard}
+                        </a>
+                      ) : (
+                        r.standard
+                      )}
+                      {r.libraryRefId && (
+                        <a
+                          href={`/library?ref=${r.libraryRefId}`}
+                          className="text-[10px] text-muted-foreground hover:text-primary hover:underline"
+                        >
+                          View in Library →
+                        </a>
+                      )}
+                    </span>
                   </td>
                   <td className="px-3 py-2">
                     <span

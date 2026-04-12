@@ -191,7 +191,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'foreground', indent: 0 },
     ],
     educationalNote:
-      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. ANSSI allows standalone use of hash-based signatures (SLH-DSA, LMS, XMSS) even without hybrid mode, since their security relies only on hash function properties.',
+      'SLH-DSA (SPHINCS+) uses hash-based constructions with no lattice assumptions. RFC 9909 (published November 2025) defines the X.509 profile, but CA/browser ecosystem adoption is still nascent — significantly behind ML-DSA (RFC 9881). ANSSI allows standalone use of hash-based signatures (SLH-DSA, LMS, XMSS) even without hybrid mode, since their security relies only on hash function properties.',
     classicalAlg: null,
     pqcAlg: 'SLH-DSA-128s',
   },
@@ -347,7 +347,7 @@ export const HYBRID_CERT_FORMATS: HybridCertFormat[] = [
       { text: '}', color: 'success', indent: 0 },
     ],
     educationalNote:
-      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. This demo generates a real DER-encoded chameleon cert with a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1) per draft-bonnell-lamps-chameleon-certs-07. The ML-DSA-65 primary cert carries an ECDSA delta that PQC-unaware clients can reconstruct.',
+      'Chameleon certificates (backed by DigiCert and Entrust) are more space-efficient than related certs — only one certificate is transmitted. draft-bonnell-lamps-chameleon-certs-07 is pre-RFC; commercial CA adoption is limited to pilot deployments as of 2025. This demo generates a real DER-encoded chameleon cert with a DeltaCertificateDescriptor extension (OID 2.16.840.1.114027.80.6.1). The delta extension encodes only the differences (signature, public key, extensions) needed to reconstruct the classical partner cert — but validating it requires a chameleon-aware parser. Legacy validators see only the ML-DSA-65 primary and will silently ignore the delta.',
     classicalAlg: 'EC',
     pqcAlg: 'ML-DSA-65',
   },

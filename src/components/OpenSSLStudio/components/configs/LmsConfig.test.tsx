@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { LmsConfig } from './LmsConfig'
 import { useOpenSSLStore } from '../../store'
 
@@ -56,20 +57,32 @@ describe('LmsConfig', () => {
   })
 
   it('renders mode tabs', () => {
-    render(<LmsConfig {...defaultProps} />)
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} />
+      </MemoryRouter>
+    )
     expect(screen.getByTestId('lms-mode-generate')).toBeInTheDocument()
     expect(screen.getByTestId('lms-mode-sign')).toBeInTheDocument()
     expect(screen.getByTestId('lms-mode-verify')).toBeInTheDocument()
   })
 
   it('switches modes when tabs are clicked', () => {
-    render(<LmsConfig {...defaultProps} />)
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} />
+      </MemoryRouter>
+    )
     fireEvent.click(screen.getByTestId('lms-mode-sign'))
     expect(defaultProps.setMode).toHaveBeenCalledWith('sign')
   })
 
   it('generates a new keypair in generate mode', async () => {
-    render(<LmsConfig {...defaultProps} />)
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} />
+      </MemoryRouter>
+    )
     const generateBtn = screen.getByText(/Generate New LMS Keypair/i)
     fireEvent.click(generateBtn)
 
@@ -87,7 +100,11 @@ describe('LmsConfig', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     ] as any
 
-    render(<LmsConfig {...defaultProps} mode="sign" lmsKeyFile="test.key" lmsDataFile="data.txt" />)
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} mode="sign" lmsKeyFile="test.key" lmsDataFile="data.txt" />
+      </MemoryRouter>
+    )
     const signBtn = screen.getByText(/Sign Selected Data File/i)
     fireEvent.click(signBtn)
 
@@ -110,13 +127,15 @@ describe('LmsConfig', () => {
     ] as any
 
     render(
-      <LmsConfig
-        {...defaultProps}
-        mode="verify"
-        lmsKeyFile="test.pub"
-        lmsSigFile="sig.bin"
-        lmsDataFile="data.txt"
-      />
+      <MemoryRouter>
+        <LmsConfig
+          {...defaultProps}
+          mode="verify"
+          lmsKeyFile="test.pub"
+          lmsSigFile="sig.bin"
+          lmsDataFile="data.txt"
+        />
+      </MemoryRouter>
     )
     const verifyBtn = screen.getByText(/Verify \(WASM\)/i)
     fireEvent.click(verifyBtn)
@@ -138,13 +157,15 @@ describe('LmsConfig', () => {
     ] as any
 
     render(
-      <LmsConfig
-        {...defaultProps}
-        mode="verify"
-        lmsKeyFile="test.pub"
-        lmsSigFile="sig.bin"
-        lmsDataFile="data.txt"
-      />
+      <MemoryRouter>
+        <LmsConfig
+          {...defaultProps}
+          mode="verify"
+          lmsKeyFile="test.pub"
+          lmsSigFile="sig.bin"
+          lmsDataFile="data.txt"
+        />
+      </MemoryRouter>
     )
     const verifyBtn = screen.getByText(/Verify \(WASM\)/i)
     fireEvent.click(verifyBtn)
@@ -164,7 +185,11 @@ describe('LmsConfig', () => {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any -- test mock
     }) as any
 
-    render(<LmsConfig {...defaultProps} />)
+    render(
+      <MemoryRouter>
+        <LmsConfig {...defaultProps} />
+      </MemoryRouter>
+    )
     const loadBtn = screen.getByText(/Load Sample Data/i)
     fireEvent.click(loadBtn)
 

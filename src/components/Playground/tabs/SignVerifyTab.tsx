@@ -1107,6 +1107,20 @@ const HsmSlhDsaSignPanel: React.FC<{ onAlgoChange?: (algo: string) => void }> = 
   )
 }
 
+const HsmXmssSignPanel: React.FC<{
+  initialAlgo?: string
+  onAlgoChange?: (algo: string) => void
+}> = () => {
+  return (
+    <div className="flex h-48 items-center justify-center p-8 bg-muted rounded-xl text-muted-foreground border-dashed border-2">
+      <FileSignature className="w-8 h-8 mr-3 opacity-50" />
+      <span className="font-semibold">
+        XMSS / LMS Stateful Signature Panel under construction (requires softhsmv3 bump).
+      </span>
+    </div>
+  )
+}
+
 // ── Combined HSM Sign Panel (PQC + Classical) ────────────────────────────────
 
 export const HsmSignCombinedPanel: React.FC<{
@@ -1123,8 +1137,9 @@ export const HsmSignCombinedPanel: React.FC<{
       return 'classical'
     return 'pqc'
   })
-  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa'>(() => {
+  const [pqcAlgo, setPqcAlgo] = useState<'ml-dsa' | 'slh-dsa' | 'xmss'>(() => {
     if (initialAlgo?.startsWith('SLH-DSA')) return 'slh-dsa'
+    if (initialAlgo?.startsWith('XMSS') || initialAlgo?.startsWith('LMS')) return 'xmss'
     return 'ml-dsa'
   })
   useEffect(() => {
@@ -1132,6 +1147,8 @@ export const HsmSignCombinedPanel: React.FC<{
       onAlgoChange?.('ECDSA')
     } else if (pqcAlgo === 'slh-dsa') {
       onAlgoChange?.(initialAlgo?.startsWith('SLH-DSA') ? initialAlgo : 'SLH-DSA-sha2-128s')
+    } else if (pqcAlgo === 'xmss') {
+      onAlgoChange?.(initialAlgo?.startsWith('XMSS') ? initialAlgo : 'XMSS-SHA2_10_256')
     } else {
       onAlgoChange?.(initialAlgo?.startsWith('ML-DSA') ? initialAlgo : 'ML-DSA-65')
     }
@@ -1189,6 +1206,17 @@ export const HsmSignCombinedPanel: React.FC<{
                 >
                   SLH-DSA
                 </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setPqcAlgo('xmss')
+                    onAlgoChange?.('XMSS-SHA2_10_256')
+                  }}
+                  className={`text-xs h-7 px-3 ${pqcAlgo === 'xmss' ? 'bg-primary/10 text-primary' : 'text-muted-foreground'}`}
+                >
+                  XMSS / LMS
+                </Button>
               </>
             )}
           </div>
@@ -1197,8 +1225,10 @@ export const HsmSignCombinedPanel: React.FC<{
         {signFamily === 'pqc' ? (
           pqcAlgo === 'ml-dsa' ? (
             <HsmSignPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
-          ) : (
+          ) : pqcAlgo === 'slh-dsa' ? (
             <HsmSlhDsaSignPanel onAlgoChange={onAlgoChange} />
+          ) : (
+            <HsmXmssSignPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
           )
         ) : (
           <HsmClassicalSignPanel />

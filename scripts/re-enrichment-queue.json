@@ -1,14 +1,13 @@
 {
-  "generated": "2026-03-31T19:35:00.591138",
-  "total_records_scanned": 419,
-  "queue_size": 17,
+  "generated": "2026-04-12T13:43:34.261274",
+  "total_records_scanned": 434,
+  "queue_size": 5,
   "by_trigger": {
-    "BAD_SOURCE": 5,
-    "NOT_ENRICHED": 12
+    "BAD_SOURCE": 5
   },
   "by_priority": {
     "high": 5,
-    "medium": 12,
+    "medium": 0,
     "low": 0
   },
   "queue": [
@@ -18,8 +17,8 @@
       "priority": "high",
       "reason": "Local source file has quality issues: sentinel:'404'",
       "local_file": "public/library/CA-TBS-SPIN-PQC-2025.html",
-      "enrichment_file": "library_doc_enrichments_03042026.md",
-      "enrichment_date": "2026-03-04",
+      "enrichment_file": "library_doc_enrichments_04062026.md",
+      "enrichment_date": "2026-04-06",
       "action": "Re-download CA-TBS-SPIN-PQC-2025 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
     },
     {
@@ -28,8 +27,8 @@
       "priority": "high",
       "reason": "Local source file has quality issues: sentinel:'404'",
       "local_file": "public/library/Draft for Public Consultation - Quantum Readiness Index (Oct 2025).pdf",
-      "enrichment_file": "library_doc_enrichments_03312026.md",
-      "enrichment_date": "2026-03-31",
+      "enrichment_file": "library_doc_enrichments_04062026.md",
+      "enrichment_date": "2026-04-06",
       "action": "Re-download Draft-for-Public-Consultation-Quantum-Readiness-Index-Oct-2025 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
     },
     {
@@ -38,8 +37,8 @@
       "priority": "high",
       "reason": "Local source file has quality issues: sentinel:'404'",
       "local_file": "public/library/ETSI-TR-103-965.pdf",
-      "enrichment_file": "library_doc_enrichments_03132026.md",
-      "enrichment_date": "2026-03-13",
+      "enrichment_file": "library_doc_enrichments_04062026.md",
+      "enrichment_date": "2026-04-06",
       "action": "Re-download ETSI-TR-103-965 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
     },
     {
@@ -48,8 +47,8 @@
       "priority": "high",
       "reason": "Local source file has quality issues: sentinel:'404'",
       "local_file": "public/library/REF_PQC-Report_FINAL_Send.pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
+      "enrichment_file": "library_doc_enrichments_04062026.md",
+      "enrichment_date": "2026-04-06",
       "action": "Re-download REF-PQC-Report-FINAL-Send source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
     },
     {
@@ -58,129 +57,9 @@
       "priority": "high",
       "reason": "Local source file has quality issues: sentinel:'404'",
       "local_file": "public/library/WH-PQC-Report-2024.pdf",
-      "enrichment_file": "library_doc_enrichments_03042026.md",
-      "enrichment_date": "2026-03-04",
+      "enrichment_file": "library_doc_enrichments_04062026.md",
+      "enrichment_date": "2026-04-06",
       "action": "Re-download WH-PQC-Report-2024 source file \u2014 current copy is unusable (sentinel:'404'). Then re-enrich."
-    },
-    {
-      "reference_id": "Polkadot-Substrate-Crypto",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Polkadot_Substrate_Crypto.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Polkadot-Substrate-Crypto \u2014 never enriched."
-    },
-    {
-      "reference_id": "QRL-Quantum-Resistant-Ledger",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/QRL_Quantum_Resistant_Ledger.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for QRL-Quantum-Resistant-Ledger \u2014 never enriched."
-    },
-    {
-      "reference_id": "Quantum-Economy-Landscape-in-Saudi-Arabia-23",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Quantum%20Economy%20Landscape%20in%20Saudi%20Arabia%20%20(23).pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Quantum-Economy-Landscape-in-Saudi-Arabia-23 \u2014 never enriched."
-    },
-    {
-      "reference_id": "Quantum-Ready-FN-DSA-FIPS-206-Nears-Draft-Approval-from-NIST-DigiCert",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Quantum-Ready FN-DSA (FIPS 206) Nears Draft Approval from NIST | DigiCert.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Quantum-Ready-FN-DSA-FIPS-206-Nears-Draft-Approval-from-NIST-DigiCert \u2014 never enriched."
-    },
-    {
-      "reference_id": "Report-TaskForce-PQMigration-4Feb26-v1",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Report_TaskForce_PQMigration_4Feb26%20(v1).pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Report-TaskForce-PQMigration-4Feb26-v1 \u2014 never enriched."
-    },
-    {
-      "reference_id": "Solana-PQC-Helius",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Solana_PQC_Helius.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Solana-PQC-Helius \u2014 never enriched."
-    },
-    {
-      "reference_id": "Sui-PQC-Blog",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Sui_PQC_Blog.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Sui-PQC-Blog \u2014 never enriched."
-    },
-    {
-      "reference_id": "Taurus-SA-Product",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Taurus_SA_Product.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Taurus-SA-Product \u2014 never enriched."
-    },
-    {
-      "reference_id": "TechnicalGuidelines-on-SBOMQBOMCBOMAIBOM-and-HBOM-ver2.0",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/TechnicalGuidelines-on-SBOM,QBOM&CBOM,AIBOM_and_HBOM_ver2.0.pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for TechnicalGuidelines-on-SBOMQBOMCBOMAIBOM-and-HBOM-ver2.0 \u2014 never enriched."
-    },
-    {
-      "reference_id": "Testing.Measuring.and.Managing.PQC.Migration.WP",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Testing.Measuring.and.Managing.PQC.Migration.WP.pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Testing.Measuring.and.Managing.PQC.Migration.WP \u2014 never enriched."
-    },
-    {
-      "reference_id": "Zodia-Custody",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/Zodia_Custody.html",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for Zodia-Custody \u2014 never enriched."
-    },
-    {
-      "reference_id": "catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi",
-      "trigger": "NOT_ENRICHED",
-      "priority": "medium",
-      "reason": "Record has a local source file but no enrichment entry found",
-      "local_file": "public/library/catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi.pdf",
-      "enrichment_file": null,
-      "enrichment_date": null,
-      "action": "Run enrich-docs-ollama.py for catalogue-produits-services-profils-de-protection-sites-certifies-qualifies-agrees-anssi \u2014 never enriched."
     }
   ]
 }

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
-import { Card, CardContent } from './Card'
+import { Card, CardContent } from './card'
 import { AlertTriangle, ExternalLink } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 

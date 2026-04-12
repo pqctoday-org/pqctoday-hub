@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Info } from 'lucide-react'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
@@ -412,13 +413,23 @@ export const LmsConfig: React.FC<LmsConfigProps> = ({
           LMS uses WebAssembly for key generation and signing. OpenSSL 3.6.1 CLI supports
           verification only.
         </p>
-        <Button
-          variant="ghost"
-          onClick={handleLoadSamples}
-          className="ml-6 px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded border border-primary/30 transition-colors"
-        >
-          Load Sample Data
-        </Button>
+        <div className="ml-6 flex items-center gap-3 flex-wrap">
+          <Button
+            variant="ghost"
+            onClick={handleLoadSamples}
+            className="px-2 py-1 bg-primary/10 hover:bg-primary/20 text-primary text-xs rounded border border-primary/30 transition-colors"
+          >
+            Load Sample Data
+          </Button>
+          <Link
+            to="/library?ref=NIST%20SP%20800-208"
+            className="text-[10px] text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            NIST SP 800-208 (LMS/HSS) →
+          </Link>
+        </div>
       </div>
 
       {/* Key Generation Section (only in generate mode) */}

@@ -23,7 +23,7 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 const CKD_NULL = 0x00000001 // raw Z, no KDF
 
-type KaCurve = 'P-256' | 'P-384' | 'P-521'
+type KaCurve = 'P-256' | 'P-384' | 'P-521' | 'X25519' | 'X448'
 
 const KDF_OPTIONS = [
   { label: 'CKD_NULL (raw Z)', value: CKD_NULL },
@@ -195,7 +195,7 @@ export const HsmKeyAgreementPanel = ({
           <div className="space-y-1">
             <p className="text-xs text-muted-foreground">Curve</p>
             <div className="flex gap-1">
-              {(['P-256', 'P-384', 'P-521'] as KaCurve[]).map((c) => (
+              {(['P-256', 'P-384', 'P-521', 'X25519', 'X448'] as KaCurve[]).map((c) => (
                 <Button
                   variant="ghost"
                   key={c}
@@ -243,6 +243,7 @@ export const HsmKeyAgreementPanel = ({
                 setBobSecret(null)
                 setSecretsMatch(null)
               }}
+              disabled={curve === 'X25519' || curve === 'X448'} // Montgomery curves do not support cofactor
               className={`w-full text-xs rounded-lg px-2 py-1.5 border transition-colors ${
                 cofactorMode
                   ? 'bg-primary/20 border-primary text-primary'
@@ -372,8 +373,9 @@ export const HsmKeyAgreementPanel = ({
           PKCS#11 v3.2 §2.3: Both parties run{' '}
           <span className="font-mono text-primary">C_DeriveKey({mechName})</span> with their own
           private key and the peer's DER-encoded EC point (CKA_EC_POINT). For NIST P-curves
-          (cofactor=1) standard and cofactor modes produce identical shared secrets. CKD_SHA256_KDF
-          applies ANSI X9.63 KDF after ECDH, producing a key-derivation output instead of raw Z.
+          (cofactor=1) standard and cofactor modes produce identical shared secrets. X25519 and X448
+          use Montgomery (RFC 7748) operations. CKD_SHA256_KDF applies ANSI X9.63 KDF after ECDH,
+          producing a key-derivation output instead of raw Z.
         </p>
       </div>
     </HsmReadyGuard>

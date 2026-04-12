@@ -86,13 +86,15 @@ export const createSDJWT = async (
   }
 
   if (holderKey) {
-    const pubKeyHash = holderKey.publicKey.substring(0, 32)
+    // cnf (confirmation) claim per RFC 9701 §3.1 — binds the credential to the holder's key.
+    // publicKey is a hex-encoded DER SubjectPublicKeyInfo point as stored by our CryptoProvider.
+    // In a production implementation this would be parsed into discrete x/y JWK coordinates;
+    // here we encode the full point as the x value to preserve verifiability within the simulation.
     payload.cnf = {
       jwk: {
         kty: 'EC',
         crv: holderKey.curve,
-        x: pubKeyHash + '(truncated)',
-        y: pubKeyHash + '(truncated)',
+        x: toBase64Url(holderKey.publicKey), // full DER public key point, Base64URL-encoded
       },
     }
   }

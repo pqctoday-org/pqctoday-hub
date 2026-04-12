@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
+import { Link } from 'react-router-dom'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 
 interface GenPkeyConfigProps {
@@ -15,6 +16,12 @@ interface GenPkeyConfigProps {
   setPassphrase: (value: string) => void
 }
 
+const PQC_ALGO_REFS: Record<string, { label: string; ref: string }> = {
+  mlkem: { label: 'FIPS 203 (ML-KEM)', ref: 'FIPS%20203' },
+  mldsa: { label: 'FIPS 204 (ML-DSA)', ref: 'FIPS%20204' },
+  slhdsa: { label: 'FIPS 205 (SLH-DSA)', ref: 'FIPS%20205' },
+}
+
 export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
   keyAlgo,
   setKeyAlgo,
@@ -27,6 +34,8 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
   passphrase,
   setPassphrase,
 }) => {
+  const pqcRef = Object.entries(PQC_ALGO_REFS).find(([prefix]) => keyAlgo.startsWith(prefix))?.[1]
+
   return (
     <div className="space-y-4 animate-fade-in">
       <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
@@ -67,6 +76,19 @@ export const GenPkeyConfig: React.FC<GenPkeyConfigProps> = ({
           defaultLabel="Select Algorithm"
           noContainer
         />
+        {pqcRef && (
+          <p className="text-[10px] text-muted-foreground">
+            Standard:{' '}
+            <Link
+              to={`/library?ref=${pqcRef.ref}`}
+              className="text-primary hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {pqcRef.label} &rarr;
+            </Link>
+          </p>
+        )}
       </div>
 
       {keyAlgo === 'rsa' && (

@@ -9,7 +9,9 @@ import {
   Cpu,
   CheckCircle,
   KeyRound,
+  BookOpen,
 } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
@@ -2978,6 +2980,70 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               </TabsContent>
             </Tabs>
           </div>
+        </div>
+      </div>
+
+      <div className="pt-4 border-t border-border">
+        <h4 className="text-sm font-bold flex items-center gap-2 mb-3">
+          <BookOpen size={16} /> Related Standards
+        </h4>
+        <div className="flex flex-wrap gap-2 text-xs">
+          <Link
+            to="/library?ref=IETF%20RFC%207296"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            RFC 7296 (IKEv2) →
+          </Link>
+          <Link
+            to="/library?ref=IETF%20RFC%209370"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            RFC 9370 (Multiple KE) →
+          </Link>
+          <Link
+            to="/library?ref=RFC-9242"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            RFC 9242 (IKE_INTERMEDIATE) →
+          </Link>
+          <Link
+            to="/library?ref=draft-ietf-ipsecme-ikev2-mlkem"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            draft-ietf-ipsecme-ikev2-mlkem →
+          </Link>
+          <Link
+            to="/library?ref=draft-sfluhrer-ipsecme-ikev2-mldsa"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            draft-ietf-ipsecme-ikev2-mldsa →
+          </Link>
+          <Link
+            to="/library?ref=FIPS%20203"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FIPS 203 (ML-KEM) →
+          </Link>
+          <Link
+            to="/library?ref=FIPS%20204"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FIPS 204 (ML-DSA) →
+          </Link>
         </div>
       </div>
 

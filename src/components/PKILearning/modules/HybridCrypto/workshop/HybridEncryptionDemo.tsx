@@ -552,7 +552,7 @@ export const HybridEncryptionDemo: React.FC = () => {
           secrets contribute to the 32-byte hybrid session key — quantum-safe if either component
           remains secure (
           <a
-            href="/library?ref=FIPS-203"
+            href="/library?ref=FIPS%20203"
             className="text-primary underline"
             target="_blank"
             rel="noopener noreferrer"

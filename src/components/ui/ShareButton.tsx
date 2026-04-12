@@ -39,7 +39,7 @@ export const ShareButton = ({
   }, [showMenu, closeMenu])
 
   const handleNativeShare = async () => {
-    if (isNativeApp() || navigator.share) {
+    if (isNativeApp() || 'share' in navigator) {
       try {
         await shareContent({ title, text: shareText, url: shareUrl })
         logEvent('Share', 'Native Share', title)

@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useCallback, useEffect } from 'react'
-import { Combine, Play, ArrowRight, Shield, Loader2 } from 'lucide-react'
+import { Link } from 'react-router-dom'
+import { Combine, Play, ArrowRight, Shield, Loader2, ExternalLink, BookOpen } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { getRandomBytes } from '@/utils/webCrypto'
 import { hkdfExpand } from '@/utils/webCrypto'
 import { useHSM } from '@/hooks/useHSM'
+import { SOFTHSM_PRODUCT_VERSION } from '@/wasm/softhsm'
 import { runAllTests, type TestResult } from '../utils/entropyTests'
 import { formatHex, binnedFrequency } from '../utils/outputFormatters'
 import { QRNG_SAMPLE_64 } from '../utils/entropyConstants'
@@ -242,7 +244,21 @@ export const SourceCombiningDemo: React.FC = () => {
           <h3 className="text-lg font-semibold text-foreground">Source Combining Pipeline</h3>
           <p className="text-sm text-muted-foreground">
             SP 800-90 series source assembly and conditioning. Default flow follows NIST standards
-            (90C §3.1 concatenation + 90A §10.3.1 Hash_df). Powered by SoftHSMv3 PKCS#11.
+            (90C §3.1 concatenation + 90A §10.3.1 Hash_df). Powered by{' '}
+            <a
+              href="https://github.com/pqctoday/softhsmv3"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline inline-flex items-center gap-1"
+            >
+              SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION}
+              <ExternalLink size={12} />
+            </a>{' '}
+            PKCS#11 (pqctoday fork of{' '}
+            <Link to="/migrate?highlight=SoftHSM2" className="text-primary hover:underline">
+              SoftHSM2
+            </Link>
+            ).
           </p>
         </div>
       </div>
@@ -285,7 +301,9 @@ export const SourceCombiningDemo: React.FC = () => {
           </div>
         )}
         {hsmReady && (
-          <p className="text-xs text-status-success">SoftHSMv3 PKCS#11 session active</p>
+          <p className="text-xs text-status-success">
+            SoftHSMv3 v{SOFTHSM_PRODUCT_VERSION} PKCS#11 session active
+          </p>
         )}
         {hsmError && <p className="text-xs text-status-error">HSM error: {hsmError}</p>}
       </div>
@@ -497,6 +515,44 @@ export const SourceCombiningDemo: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Standards Referenced */}
+      <div className="glass-panel p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <BookOpen size={16} className="text-muted-foreground" />
+          <h4 className="text-sm font-semibold text-foreground">Standards Referenced</h4>
+        </div>
+        <ul className="space-y-1.5 text-xs text-muted-foreground">
+          <li>
+            <Link
+              to="/library?ref=NIST-SP-800-90C"
+              className="text-primary hover:underline font-medium"
+            >
+              NIST SP 800-90C
+            </Link>{' '}
+            — RBG constructions: source assembly (§3.1), vetted conditioning functions (§3.2),
+            defense-in-depth principle
+          </li>
+          <li>
+            <Link
+              to="/library?ref=NIST-SP-800-90A-R1"
+              className="text-primary hover:underline font-medium"
+            >
+              NIST SP 800-90A Rev. 1
+            </Link>{' '}
+            — Hash_df derivation function (§10.3.1), DRBG seeding (§8.6.7)
+          </li>
+          <li>
+            <Link
+              to="/library?ref=NIST-SP-800-90B"
+              className="text-primary hover:underline font-medium"
+            >
+              NIST SP 800-90B
+            </Link>{' '}
+            — Entropy source validation; health tests (repetition count, adaptive proportion)
+          </li>
+        </ul>
+      </div>
 
       {/* Defense-in-Depth Demo */}
       {testResults && (

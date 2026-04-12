@@ -176,23 +176,33 @@ export function repetitionCountTest(data: Uint8Array): TestResult {
     }
   }
 
-  // For 8-bit samples with min-entropy H, threshold ≈ 1 + ceil(-log2(alpha) / H)
-  // Using H=8 (ideal) and alpha=2^-20 (SP 800-90B default): threshold = 1 + ceil(20/8) = 4
-  const threshold = Math.max(4, Math.ceil(Math.log2(n)))
+  // SP 800-90B §4.4.1: C = ceil(-log2(alpha) / H_min) + 1
+  // Using H_min=8 (ideal 8-bit source) and alpha=2^-20 (false-positive rate):
+  // C = ceil(20 / 8) + 1 = ceil(2.5) + 1 = 3 + 1 = 4 (fixed; not sample-size-dependent)
+  const threshold = 4
   return {
     name: 'Repetition Count',
     value: maxRun,
     passed: maxRun < threshold,
     threshold,
-    description: 'Longest repeated byte run should be short',
-    detail: `Longest run: ${maxRun} (byte 0x${maxByte.toString(16).padStart(2, '0')}). Threshold: ${threshold}`,
+    description:
+      'SP 800-90B §4.4.1 health test: longest repeated-byte run must be < C, ' +
+      'where C = ceil(-log2(alpha)/H_min) + 1 = 4 (alpha=2^-20, H_min=8 bits).',
+    detail: `Longest run: ${maxRun} (byte 0x${maxByte.toString(16).padStart(2, '0')}). C threshold: ${threshold}`,
   }
 }
 
 /**
  * Min-Entropy Estimate
- * Estimates the minimum entropy per byte based on the most frequent byte value.
- * This is the Most Common Value estimate from SP 800-90B Section 6.3.1.
+ * Estimates a lower bound on min-entropy using the Most Common Value (MCV) estimator
+ * from SP 800-90B Section 6.3.1, with the required upper confidence bound on p_max.
+ *
+ * Formula (§6.3.1): p_hat = min(1, p_max + 2.576 * sqrt(p_max*(1-p_max)/n))
+ * Then H_min = -log2(p_hat)
+ *
+ * Note: SP 800-90B requires ≥ 1,000,000 samples for a statistically valid production
+ * estimate. Small samples (< 1,000 bytes) will yield low H_min values even for
+ * truly random data due to the confidence correction on p_max.
  */
 export function minEntropyEstimate(data: Uint8Array): TestResult {
   const n = data.length
@@ -214,18 +224,27 @@ export function minEntropyEstimate(data: Uint8Array): TestResult {
 
   const maxCount = Math.max(...counts)
   const pMax = maxCount / n
-  // Min-entropy = -log2(p_max)
-  const minEntropy = pMax > 0 ? -Math.log2(pMax) : 8
-  // For good randomness, min-entropy should be close to 8 bits/byte
-  const threshold = 6.0 // Minimum acceptable: 6 bits per byte
+  // Raw MCV estimate
+  const rawEntropy = pMax > 0 ? -Math.log2(pMax) : 8
+  // SP 800-90B §6.3.1 upper confidence bound on p_max (z = 2.576 → 99.5% one-tail)
+  const pHat = Math.min(1, pMax + 2.576 * Math.sqrt((pMax * (1 - pMax)) / n))
+  const minEntropy = pHat < 1 ? -Math.log2(pHat) : 0
+  // Production threshold: 6 bits/byte (meaningful only for large sample sets)
+  const threshold = 6.0
+  const smallSampleWarning =
+    n < 1000 ? ' (small sample — estimate unreliable below 1,000 bytes)' : ''
   return {
     name: 'Min-Entropy',
     value: minEntropy,
     passed: minEntropy >= threshold,
     threshold,
     description:
-      'Min-entropy should be close to 8.0 bits per byte. Note: SP 800-90B also utilizes Markov estimates to detect inter-byte dependencies.',
-    detail: `Estimated: ${minEntropy.toFixed(2)} bits/byte. Most common byte appeared ${maxCount}/${n} times (p=${pMax.toFixed(4)})`,
+      'SP 800-90B §6.3.1 MCV estimator with upper confidence bound (z=2.576). ' +
+      'Target ≥ 6 bits/byte; production assessment requires ≥ 1M samples.',
+    detail:
+      `Raw: ${rawEntropy.toFixed(2)} bits/byte → bounded: ${minEntropy.toFixed(2)} bits/byte. ` +
+      `Most common byte: ${maxCount}/${n} (p_max=${pMax.toFixed(4)}, p_hat=${pHat.toFixed(4)})` +
+      smallSampleWarning,
   }
 }
 

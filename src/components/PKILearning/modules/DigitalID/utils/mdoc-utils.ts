@@ -35,8 +35,10 @@ export const createMdoc = async (
   for (const key of keys) {
     const itemMap = new Map<string, unknown>()
     itemMap.set('digestID', digestId)
-    // EUDI specifies salt should be random bytes
-    itemMap.set('random', new Uint8Array(16).fill(Math.floor(Math.random() * 256)))
+    // EUDI specifies salt should be cryptographically random (ISO 18013-5 §9.1.2.4)
+    const salt = new Uint8Array(16)
+    crypto.getRandomValues(salt)
+    itemMap.set('random', salt)
     itemMap.set('elementIdentifier', key)
     itemMap.set('elementValue', namespaces[docType][key]) // eslint-disable-line security/detect-object-injection
 
@@ -68,8 +70,12 @@ export const createMdoc = async (
   coseKey.set(1, 2) // kty: EC2
   coseKey.set(3, deviceKey.algorithm === 'ES384' ? -35 : -7) // alg: ECDSA
   coseKey.set(-1, deviceKey.curve === 'P-384' ? 2 : 1) // crv: P-Curve
-  coseKey.set(-2, new Uint8Array(32).fill(1)) // x boundary mockup
-  coseKey.set(-3, new Uint8Array(32).fill(2)) // y boundary mockup
+  // Educational stub: real coordinates would be extracted from the wallet's EC public key.
+  // Extracting raw x/y from our internal CryptoKey type requires provider-layer changes
+  // that are out of scope for this simulation. The MSO structure and signing flow are
+  // architecturally correct; only the deviceKey coordinates are synthetic.
+  coseKey.set(-2, new Uint8Array(32).fill(1)) // x coordinate (structural stub)
+  coseKey.set(-3, new Uint8Array(32).fill(2)) // y coordinate (structural stub)
   deviceKeyInfo.set('deviceKey', coseKey)
   mso.set('deviceKeyInfo', deviceKeyInfo)
 

@@ -6,6 +6,7 @@ import { useModuleStore } from '@/store/useModuleStore'
 import { useOpenSSLStore } from '@/components/OpenSSLStudio/store'
 import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { Button } from '@/components/ui/button'
+import { getCryptoErrorHint } from './cryptoErrorHints'
 
 interface CRLGeneratorProps {
   onComplete: () => void
@@ -302,7 +303,8 @@ authorityKeyIdentifier = keyid:always
       onComplete()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
-      setOutput((prev) => prev + `Error: ${errorMessage}\n`)
+      const hint = getCryptoErrorHint(errorMessage)
+      setOutput((prev) => prev + `Error: ${errorMessage}\n${hint ? `  → ${hint}\n` : ''}`)
     } finally {
       setIsGenerating(false)
     }

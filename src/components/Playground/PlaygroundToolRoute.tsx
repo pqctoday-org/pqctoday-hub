@@ -9,6 +9,7 @@ import { useAchievementStore } from '@/store/useAchievementStore'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
+import { HistoryButton } from '../ui/HistoryButton'
 
 export const PlaygroundToolRoute = () => {
   const { toolId } = useParams<{ toolId: string }>()
@@ -82,6 +83,12 @@ export const PlaygroundToolRoute = () => {
             resourceLabel={tool.id}
             resourceType="playground-tool"
             variant="icon"
+          />
+          <HistoryButton
+            itemId={tool.id}
+            trackingId={tool.pt_id}
+            itemLabel={`${tool.pt_id} · ${tool.id}`}
+            version={tool.version}
           />
         </div>
       </div>

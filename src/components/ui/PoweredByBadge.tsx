@@ -1,5 +1,4 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
 import { useEmbedState } from '../../embed/EmbedProvider'
 
 export function PoweredByBadge() {

@@ -16,8 +16,11 @@ import {
 import { formatSignatureCount, formatBytes } from '../data/statefulSigsConstants'
 import { CKM_HSS_KEY_PAIR_GEN, CKM_HSS, CKK_HSS } from '@/wasm/softhsm/constants'
 import { hsm_extractKeyValue } from '@/wasm/softhsm'
-import type { UseHSMResult } from '@/hooks/useHSM'
+import { useHSM, type UseHSMResult } from '@/hooks/useHSM'
+import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Button } from '@/components/ui/button'
+
+const LIVE_OPERATIONS = ['C_GenerateKeyPair', 'C_SignInit', 'C_Sign']
 
 type LMSHash = 'SHA-256' | 'SHAKE-256'
 type LMSm = 32 | 24
@@ -87,7 +90,11 @@ interface StateManagementVisualizerProps {
 
 type HSSLevels = 1 | 2 | 3
 
-export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps> = ({ hsm }) => {
+export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps> = ({
+  hsm: hsmProp,
+}) => {
+  const _ownHsm = useHSM('rust')
+  const hsm = hsmProp ?? _ownHsm
   const [lmsHash, setLmsHash] = useState<LMSHash>('SHA-256')
   const [lmsM, setLmsM] = useState<LMSm>(32)
   const [lmsHeight, setLmsHeight] = useState<LMSHeight>(5)
@@ -449,6 +456,7 @@ export const StateManagementVisualizer: React.FC<StateManagementVisualizerProps>
 
   return (
     <div className="space-y-6">
+      {!hsmProp && <LiveHSMToggle hsm={hsm} operations={LIVE_OPERATIONS} />}
       <div>
         <h3 className="text-lg font-bold text-foreground mb-2">State Management Simulator</h3>
         <p className="text-sm text-muted-foreground">

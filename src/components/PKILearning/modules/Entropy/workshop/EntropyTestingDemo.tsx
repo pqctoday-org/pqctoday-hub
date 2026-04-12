@@ -32,6 +32,7 @@ const ENTROPY_KAT_SPECS: KatTestSpec[] = [
     useCase: 'SHA-256 conditioning (empty input)',
     standard: 'SP 800-90B + FIPS 180-4 ACVP',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    libraryRefId: 'FIPS-180-4',
     kind: { type: 'sha256-hash', testIndex: 0 },
   },
   {
@@ -39,6 +40,7 @@ const ENTROPY_KAT_SPECS: KatTestSpec[] = [
     useCase: 'SHA-256 conditioning (3-byte input)',
     standard: 'SP 800-90B + FIPS 180-4 ACVP',
     referenceUrl: 'https://csrc.nist.gov/pubs/fips/180-4/upd1/final',
+    libraryRefId: 'FIPS-180-4',
     kind: { type: 'sha256-hash', testIndex: 1 },
   },
   {
@@ -47,6 +49,7 @@ const ENTROPY_KAT_SPECS: KatTestSpec[] = [
     standard: 'SP 800-90B + FIPS 198-1 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-256',
+    // No FIPS-198-1 record in library CSV; external ACVP URL is the authoritative source
     kind: { type: 'hmac-verify', hashAlg: 'SHA-256' },
   },
   {
@@ -55,6 +58,7 @@ const ENTROPY_KAT_SPECS: KatTestSpec[] = [
     standard: 'SP 800-90B + FIPS 198-1 ACVP',
     referenceUrl:
       'https://github.com/usnistgov/ACVP-Server/tree/master/gen-val/json-files/HMAC-SHA2-512',
+    // No FIPS-198-1 record in library CSV; external ACVP URL is the authoritative source
     kind: { type: 'hmac-verify', hashAlg: 'SHA-512' },
   },
 ]
@@ -142,12 +146,18 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
   const bins = sampleData ? binnedFrequency(sampleData, 16) : null
   const maxBinCount = bins ? Math.max(...bins) : 0
 
-  // Render alternate modes
+  // Render alternate modes (KAT panel shown in all modes — it tests conditioning
+  // functions that are independent of the active testing mode)
   if (mode === 'bitflip') {
     return (
       <div className="space-y-6">
         <ModeSelector mode={mode} onChange={setMode} />
         <BitFlipExperiment />
+        <KatValidationPanel
+          specs={ENTROPY_KAT_SPECS}
+          label="Entropy Testing Known Answer Tests"
+          authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
+        />
       </div>
     )
   }
@@ -157,6 +167,11 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
       <div className="space-y-6">
         <ModeSelector mode={mode} onChange={setMode} />
         <StreamingEntropyMonitor />
+        <KatValidationPanel
+          specs={ENTROPY_KAT_SPECS}
+          label="Entropy Testing Known Answer Tests"
+          authorityNote="SP 800-90B · FIPS 180-4 · FIPS 198-1"
+        />
       </div>
     )
   }
@@ -433,6 +448,34 @@ export const EntropyTestingDemo: React.FC<EntropyTestingDemoProps> = ({ initialS
             ) with &gt;1,000,000 samples.
           </p>
         </div>
+      </div>
+
+      {/* Related products note */}
+      <div className="glass-panel p-4">
+        <div className="text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2">
+          Related Products
+        </div>
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          Hardware entropy sources and HSMs that provide NIST-validated entropy for production use
+          are tracked in the{' '}
+          <a
+            href="/migrate?category=Hardware+Security+Modules"
+            className="text-primary hover:underline"
+          >
+            Migrate catalog → Hardware Security Modules
+          </a>
+          . No standalone entropy-source products are currently cataloged; contributions welcome via
+          the{' '}
+          <a
+            href="https://github.com/pqctoday/pqc-timeline-app/issues"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            issue tracker
+          </a>
+          .
+        </p>
       </div>
 
       <KatValidationPanel

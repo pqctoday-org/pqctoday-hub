@@ -14,7 +14,8 @@ import { ModuleProgressSidebar } from './ModuleProgressSidebar'
 import { ModuleProgressHeader } from './ModuleProgressHeader'
 import { NextModuleCTA } from './NextModuleCTA'
 import { CuriousModuleView } from './common/CuriousModuleView'
-import { MODULE_CATALOG } from './moduleData'
+import { MODULE_CATALOG, LM_ID_MAP } from './moduleData'
+import { HistoryButton } from '../ui/HistoryButton'
 import { usePersonaStore } from '../../store/usePersonaStore'
 import { WipModuleBadge } from './common/WipModuleBadge'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
@@ -340,6 +341,13 @@ export const PKILearningView: React.FC = () => {
             </>
           )}
           {showSidebar && moduleMeta && <WipModuleBadge moduleMeta={moduleMeta} />}
+          {showSidebar && LM_ID_MAP[moduleId] && (
+            <HistoryButton
+              itemId={moduleId}
+              trackingId={LM_ID_MAP[moduleId]}
+              itemLabel={`${LM_ID_MAP[moduleId]} · ${moduleId}`}
+            />
+          )}
           <GlossaryButton />
           <UserManualButton pageId="learn" />
         </div>

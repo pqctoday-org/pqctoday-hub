@@ -217,18 +217,41 @@ export interface VerificationStep {
   inputRight: string
   output: string
   label: string
+  /** True when this is the first step whose output diverges from the clean path */
+  isDivergencePoint?: boolean
+  /** The expected (clean) output at this step, present only when isDivergencePoint is true */
+  expectedOutput?: string
 }
 
 /**
  * Verify an inclusion proof and return the intermediate computation steps.
  *
+ * When `originalProof` is supplied (for tampered-proof comparison), each step
+ * is compared against the clean path so the first divergence point can be
+ * annotated with `isDivergencePoint` and `expectedOutput`.
+ *
  * Returns { valid, steps } where steps shows each hash combination.
  */
 export async function verifyInclusionProof(
-  proof: InclusionProof
+  proof: InclusionProof,
+  originalProof?: InclusionProof
 ): Promise<{ valid: boolean; steps: VerificationStep[] }> {
   const steps: VerificationStep[] = []
   let currentHash = proof.leafHash
+
+  // Pre-compute expected (clean) intermediate hashes when an original is provided
+  const expectedHashes: string[] = []
+  if (originalProof) {
+    let cleanHash = originalProof.leafHash
+    for (const sibling of originalProof.siblings) {
+      const left = sibling.position === 'left' ? sibling.hash : cleanHash
+      const right = sibling.position === 'left' ? cleanHash : sibling.hash
+      cleanHash = await hashPair(left, right)
+      expectedHashes.push(cleanHash)
+    }
+  }
+
+  let divergenceFound = false
 
   for (let i = 0; i < proof.siblings.length; i++) {
     const sibling = proof.siblings[i]
@@ -236,14 +259,26 @@ export async function verifyInclusionProof(
     const right = sibling.position === 'left' ? currentHash : sibling.hash
     const output = await hashPair(left, right)
 
-    steps.push({
+    const step: VerificationStep = {
       stepNumber: i + 1,
       inputLeft: left,
       inputRight: right,
       output,
       label: `Level ${i + 1}`,
-    })
+    }
 
+    if (
+      originalProof &&
+      !divergenceFound &&
+      expectedHashes[i] !== undefined &&
+      output !== expectedHashes[i]
+    ) {
+      step.isDivergencePoint = true
+      step.expectedOutput = expectedHashes[i]
+      divergenceFound = true
+    }
+
+    steps.push(step)
     currentHash = output
   }
 
@@ -320,6 +355,163 @@ export function getConsistencyProof(
   }
 
   return { oldSize, newSize, oldRoot, newRoot, nodes }
+}
+
+// ---------------------------------------------------------------------------
+// RFC 9162 §2.1.3 compressed consistency proof
+// ---------------------------------------------------------------------------
+
+export interface Rfc9162ConsistencyProof {
+  oldSize: number
+  newSize: number
+  oldRoot: string
+  newRoot: string
+  /**
+   * Minimal sibling-hash list per RFC 9162 §2.1.3 SubProof(m, n, b).
+   * Each entry is a 32-byte hash (hex-encoded) from the new tree that an
+   * auditor needs — together with the old root — to recompute the new root.
+   */
+  proof: string[]
+  /** True when the computed new root from this proof matches the actual new root */
+  valid: boolean
+}
+
+/**
+ * Collect leaf hashes (SHA-256 leaf-node hashes) from a fully-built levels[].
+ * levels[0] is the leaf level.
+ */
+function leavesFromLevels(levels: MerkleNode[][]): string[] {
+  return levels[0].map((n) => n.hash)
+}
+
+/**
+ * Compute MTH(leaves) recursively per RFC 9162 §2.1.1:
+ *   MTH({}) = SHA-256()           — empty tree
+ *   MTH({d[0]}) = d[0]            — single leaf (already hashed)
+ *   MTH(D[n]) = SHA-256(0x01 || MTH(D[0..k-1]) || MTH(D[k..n-1]))
+ *               where k = largest power-of-two < n
+ */
+async function mth(leaves: string[]): Promise<string> {
+  if (leaves.length === 0) return sha256Bytes(new ArrayBuffer(0))
+  if (leaves.length === 1) return leaves[0]
+  // k = largest power-of-two strictly less than n
+  let k = 1
+  while (k < leaves.length) k <<= 1
+  k >>= 1
+  const leftRoot = await mth(leaves.slice(0, k))
+  const rightRoot = await mth(leaves.slice(k))
+  return hashPair(leftRoot, rightRoot)
+}
+
+/**
+ * RFC 9162 §2.1.3 SubProof(m, D[n], b):
+ *   The minimal list of node hashes that, together with the old root (when b=true)
+ *   or the current running hash (when b=false), allow reconstructing the new root.
+ *
+ * @param m    - size of the old tree (number of leaves)
+ * @param leaves - all leaf hashes in the new tree
+ * @param b    - true when the old root is implicit (the caller already knows it)
+ * @returns    - array of hex-encoded 32-byte proof hashes
+ */
+async function subProof(m: number, leaves: string[], b: boolean): Promise<string[]> {
+  const n = leaves.length
+  if (m === n) {
+    if (b) return [] // old root == new root — nothing to prove
+    return [await mth(leaves)] // include this subtree's root as a proof element
+  }
+  // k = largest power-of-two strictly less than n
+  let k = 1
+  while (k < n) k <<= 1
+  k >>= 1
+
+  if (m <= k) {
+    // Old tree is entirely within the left subtree
+    const leftProof = await subProof(m, leaves.slice(0, k), b)
+    const rightRoot = await mth(leaves.slice(k))
+    return [...leftProof, rightRoot]
+  } else {
+    // Old tree spans both subtrees
+    const leftRoot = await mth(leaves.slice(0, k))
+    const rightProof = await subProof(m - k, leaves.slice(k), false)
+    if (b) return [...rightProof] // left root is the known old sub-root; omit
+    return [leftRoot, ...rightProof]
+  }
+}
+
+/**
+ * Compute the RFC 9162 §2.1.3 consistency proof between two trees.
+ *
+ * Returns the minimal set of hashes (typically O(log n)) an auditor needs
+ * to verify that levels1 (old tree) is a prefix of levels2 (new tree).
+ */
+export async function getConsistencyProofRFC9162(
+  levels1: MerkleNode[][],
+  levels2: MerkleNode[][]
+): Promise<Rfc9162ConsistencyProof> {
+  const oldLeaves = leavesFromLevels(levels1)
+  const newLeaves = leavesFromLevels(levels2)
+  const oldRoot = levels1[levels1.length - 1][0].hash
+  const newRoot = levels2[levels2.length - 1][0].hash
+
+  const proof = await subProof(oldLeaves.length, newLeaves, true)
+
+  // Verify: T1's root must equal MTH(newLeaves[0..oldSize-1]).
+  // This confirms the old tree is a prefix of the new tree.
+  let valid = false
+  try {
+    const embeddedOldRoot = await mth(newLeaves.slice(0, oldLeaves.length))
+    valid = embeddedOldRoot === oldRoot
+  } catch {
+    valid = false
+  }
+
+  return {
+    oldSize: oldLeaves.length,
+    newSize: newLeaves.length,
+    oldRoot,
+    newRoot,
+    proof,
+    valid,
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Consistency proof verification steps
+// ---------------------------------------------------------------------------
+
+export interface ConsistencyStep {
+  stepNumber: number
+  /** Human-readable description, e.g. "Level 2 · node H(0,3)" */
+  description: string
+  /** The hash of this shared node */
+  nodeHash: string
+  /** True when this is the node whose hash equals T1's root */
+  isOldRoot: boolean
+}
+
+/**
+ * Walk the consistency proof and produce an ordered list of steps showing
+ * how T1's root is located among the shared nodes of T2.
+ *
+ * Each step corresponds to one shared (old) node from the proof.
+ * The step where nodeHash === oldRoot is marked with isOldRoot=true.
+ */
+export function verifyConsistencyProofSteps(proof: ConsistencyProof): ConsistencyStep[] {
+  const steps: ConsistencyStep[] = []
+  const sharedNodes = proof.nodes.filter((n) => n.isOld)
+
+  for (let i = 0; i < sharedNodes.length; i++) {
+    const n = sharedNodes[i]
+    const isOldRoot = n.hash === proof.oldRoot
+    steps.push({
+      stepNumber: i + 1,
+      description: `Level ${n.level} · ${n.label}`,
+      nodeHash: n.hash,
+      isOldRoot,
+    })
+  }
+
+  return steps
 }
 
 /**

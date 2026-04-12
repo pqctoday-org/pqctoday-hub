@@ -24,6 +24,7 @@ import { HsmSymmetricPanel } from './hsm/HsmSymmetricPanel'
 import { HsmHashingPanel } from './hsm/HsmHashingPanel'
 import { HsmKeyAgreementPanel } from './hsm/HsmKeyAgreementPanel'
 import { HsmKdfPanel } from './hsm/HsmKdfPanel'
+import { HsmKemPanel } from './hsm/HsmKemPanel'
 import { HsmMechanismPanel } from './hsm/HsmMechanismPanel'
 import { KeyWrapPanel } from './hsm/symmetric/KeyWrapPanel'
 import { VpnSimulationPanel } from './hsm/VpnSimulationPanel'
@@ -44,6 +45,7 @@ import {
 
 type HsmTab =
   | 'keystore'
+  | 'kem'
   | 'symmetric'
   | 'key_wrap'
   | 'hashing'
@@ -350,6 +352,13 @@ export const HsmPlayground = () => {
             </>
           )}
           {tabBtn(
+            'kem',
+            <>
+              <Lock size={16} className="shrink-0" aria-hidden="true" />
+              <span className="text-xs ml-1">KEM</span>
+            </>
+          )}
+          {tabBtn(
             'symmetric',
             <>
               <Lock size={16} className="shrink-0" aria-hidden="true" />
@@ -460,6 +469,7 @@ export const HsmPlayground = () => {
             <HsmKeyTable />
           </div>
         )}
+        {activeTab === 'kem' && <HsmKemPanel />}
         {activeTab === 'symmetric' && (
           <HsmSymmetricPanel initialAlgo={initialAlgo.current} onAlgoChange={setAlgoParam} />
         )}

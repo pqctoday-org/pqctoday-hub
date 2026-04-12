@@ -114,18 +114,28 @@ export const QRNGDemo: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Explanation Header */}
-      <div className="glass-panel p-4 space-y-2">
-        <p className="text-sm text-foreground leading-relaxed">
-          This step compares a reference high-quality random sample with locally generated random
-          data from your browser&apos;s CSPRNG (via Web Crypto API).
+      {/* Simulation Disclaimer — prominently first */}
+      <div className="glass-panel p-3 flex gap-3 items-start border border-status-info/20 bg-status-info/5">
+        <span className="mt-0.5 inline-flex shrink-0 items-center justify-center rounded-full bg-status-info/15 p-1">
+          <Atom size={14} className="text-status-info" />
+        </span>
+        <p className="text-xs text-foreground leading-relaxed">
+          <span className="font-semibold text-status-info">Simulated reference:</span> The
+          &ldquo;QRNG&rdquo; sample shown below was generated via Node.js{' '}
+          <code className="font-mono text-primary">crypto.randomBytes()</code> — a classical CSPRNG
+          — and stored as a static constant for offline use. In a production system this data would
+          come from a hardware quantum source (photon detection or vacuum fluctuations). Statistical
+          quality is equivalent; the <em>physical entropy source</em> differs.
         </p>
-        <p className="text-xs text-muted-foreground leading-relaxed">
-          <span className="font-medium text-foreground">Note:</span> The QRNG sample is a
-          cryptographically secure random reference generated via Node.js{' '}
-          <code className="font-mono text-primary">crypto.randomBytes()</code>. In a production QRNG
-          setup, this data would come from a quantum source such as the ANU QRNG (qrng.anu.edu.au),
-          which measures vacuum fluctuations.
+      </div>
+
+      {/* Explanation Header */}
+      <div className="glass-panel p-4">
+        <p className="text-sm text-foreground leading-relaxed">
+          This step compares a pre-generated reference sample (representing QRNG-quality output)
+          with locally generated random data from your browser&apos;s CSPRNG (via Web Crypto API).
+          Both should pass the same statistical tests — the difference is the underlying entropy
+          source.
         </p>
       </div>
 
@@ -161,7 +171,7 @@ export const QRNGDemo: React.FC = () => {
           </div>
           <div className="flex items-center gap-2 pr-20">
             <Atom size={18} className="text-primary" />
-            <h4 className="text-sm font-semibold text-foreground">QRNG (Quantum)</h4>
+            <h4 className="text-sm font-semibold text-foreground">QRNG Reference</h4>
           </div>
           <span className="inline-flex items-center text-xs text-muted-foreground bg-muted/40 rounded-full px-2 py-0.5">
             Reference random sample
@@ -292,7 +302,7 @@ export const QRNGDemo: React.FC = () => {
       )}
 
       {/* Educational Callout */}
-      <div className="glass-panel p-4 space-y-2 border-t border-border">
+      <div className="glass-panel p-4 space-y-3">
         <p className="text-sm text-foreground leading-relaxed">
           Both CSPRNG and QRNG produce high-quality randomness that passes statistical tests.
         </p>
@@ -304,8 +314,106 @@ export const QRNGDemo: React.FC = () => {
         <p className="text-sm text-muted-foreground leading-relaxed">
           <span className="font-medium text-foreground">For PQC:</span> Hardware TRNGs are already
           quantum-safe (they don&apos;t rely on computational hardness). QRNG adds defense-in-depth
-          by providing an independent entropy source grounded in quantum physics.
+          by providing an independent entropy source grounded in quantum physics per{' '}
+          <a
+            href="/library?ref=NIST-SP-800-90C"
+            className="text-primary underline"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            SP 800-90C
+          </a>{' '}
+          RBG construction guidelines.
         </p>
+
+        {/* Production QRNG Products */}
+        <div className="pt-1 border-t border-border/50">
+          <p className="text-xs font-medium text-foreground mb-2">
+            Production QRNG Hardware &amp; Services
+          </p>
+          <ul className="space-y-1">
+            <li className="text-xs text-muted-foreground">
+              <a
+                href="/migrate?q=ID+Quantique+Quantis+QRNG"
+                className="text-primary underline font-medium"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                ID Quantique Quantis QRNG
+              </a>{' '}
+              — Quantis 2.0 (PCIe/USB), 2024 · FIPS 140-2 / AIS 31 certified
+            </li>
+            <li className="text-xs text-muted-foreground">
+              <a
+                href="/migrate?q=Quantinuum+Quantum+Origin"
+                className="text-primary underline font-medium"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                Quantinuum Quantum Origin
+              </a>{' '}
+              — Cloud API, 2025 · First software QRNG with NIST SP 800-90B validation (April 2025)
+            </li>
+            <li className="text-xs text-muted-foreground">
+              <a
+                href="/migrate?q=QuintessenceLabs+qStream"
+                className="text-primary underline font-medium"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                QuintessenceLabs qStream
+              </a>{' '}
+              — qStream 200 (PCIe/Network), 2024 · NIST SP 800-90B compliant
+            </li>
+          </ul>
+        </div>
+
+        {/* Related Standards */}
+        <div className="pt-1 border-t border-border/50">
+          <p className="text-xs font-medium text-foreground mb-2">Related Standards</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <a
+              href="/library?ref=NIST-SP-800-90B"
+              className="text-xs text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST SP 800-90B — Entropy Source Requirements
+            </a>
+            <a
+              href="/library?ref=NIST-SP-800-90A-R1"
+              className="text-xs text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST SP 800-90A — DRBG Mechanisms
+            </a>
+            <a
+              href="/library?ref=NIST-SP-800-90C"
+              className="text-xs text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST SP 800-90C — RBG Constructions
+            </a>
+            <a
+              href="/library?ref=NIST-SP-800-22-R1A"
+              className="text-xs text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              NIST SP 800-22 — Statistical Test Suite
+            </a>
+            <a
+              href="/library?ref=BSI-AIS-20-31"
+              className="text-xs text-primary underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              BSI AIS 20/31 — TRNG/QRNG Certification
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   )

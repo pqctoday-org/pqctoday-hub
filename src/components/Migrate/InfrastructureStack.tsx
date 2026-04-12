@@ -70,6 +70,7 @@ export const LAYERS = [
     colorFallback: '#0ea5e9',
     activeColor: 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]',
     iconColor: 'text-primary',
+    borderColor: 'border-primary',
   },
   {
     id: 'Network',
@@ -81,6 +82,7 @@ export const LAYERS = [
     colorFallback: '#3b82f6',
     activeColor: 'bg-card border-info shadow-[0_0_15px_hsl(var(--info)/0.5)]',
     iconColor: 'text-primary',
+    borderColor: 'border-info',
   },
   {
     id: 'AppServers',
@@ -92,6 +94,7 @@ export const LAYERS = [
     colorFallback: '#8b5cf6',
     activeColor: 'bg-card border-secondary shadow-[0_0_15px_hsl(var(--secondary)/0.5)]',
     iconColor: 'text-secondary',
+    borderColor: 'border-secondary',
   },
   {
     id: 'Libraries',
@@ -103,6 +106,7 @@ export const LAYERS = [
     colorFallback: '#2d9e6b',
     activeColor: 'bg-card border-accent shadow-[0_0_15px_hsl(var(--accent)/0.5)]',
     iconColor: 'text-accent',
+    borderColor: 'border-accent',
   },
   {
     id: 'SecSoftware',
@@ -114,6 +118,7 @@ export const LAYERS = [
     colorFallback: '#a855f7',
     activeColor: 'bg-card border-tertiary shadow-[0_0_15px_hsl(var(--tertiary)/0.5)]',
     iconColor: 'text-tertiary',
+    borderColor: 'border-tertiary',
   },
   {
     id: 'Database',
@@ -124,6 +129,7 @@ export const LAYERS = [
     colorFallback: '#22c55e',
     activeColor: 'bg-card border-success shadow-[0_0_15px_hsl(var(--success)/0.5)]',
     iconColor: 'text-accent',
+    borderColor: 'border-success',
   },
   {
     id: 'Security Stack',
@@ -135,6 +141,7 @@ export const LAYERS = [
     colorFallback: '#ef4444',
     activeColor: 'bg-card border-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]',
     iconColor: 'text-destructive',
+    borderColor: 'border-destructive',
   },
   {
     id: 'OS',
@@ -145,6 +152,7 @@ export const LAYERS = [
     colorFallback: '#f59e0b',
     activeColor: 'bg-card border-warning shadow-[0_0_15px_hsl(var(--warning)/0.5)]',
     iconColor: 'text-warning',
+    borderColor: 'border-warning',
   },
   {
     id: 'Hardware',
@@ -157,6 +165,7 @@ export const LAYERS = [
     activeColor:
       'bg-card border-muted-foreground shadow-[0_0_15px_hsl(var(--muted-foreground)/0.5)]',
     iconColor: 'text-muted-foreground',
+    borderColor: 'border-muted-foreground',
   },
 ]
 
@@ -239,6 +248,9 @@ export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
     tintColor,
     activeColor,
     iconColor,
+    colorToken: '--color-primary' as string,
+    colorFallback: tintColor,
+    borderColor: 'border-primary',
   }
 })
 

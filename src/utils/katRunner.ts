@@ -135,6 +135,8 @@ export interface KATResult {
   algorithm: string
   standard: string
   referenceUrl: string
+  /** Library CSV referenceId for the authoritative standard, used to render internal /library deep links. */
+  libraryRefId?: string
   status: 'pass' | 'fail' | 'error'
   details: string
 }
@@ -214,6 +216,9 @@ export interface KatTestSpec {
   standard: string
   /** URL to the authoritative KAT source (NIST ACVP vectors or FIPS document) so users can self-verify. */
   referenceUrl: string
+  /** Library CSV referenceId for the authoritative standard (e.g. 'NIST-SP-800-90B'). When present,
+   *  KatValidationPanel renders an internal /library?ref=<id> deep link alongside the external referenceUrl. */
+  libraryRefId?: string
   kind: KatKind
   /** Domain-specific message for functional round-trip tests. Overrides the default generic message. */
   message?: string
@@ -1510,6 +1515,7 @@ export async function runKAT(
       algorithm,
       standard: spec.standard,
       referenceUrl: spec.referenceUrl,
+      libraryRefId: spec.libraryRefId,
       status: result.status,
       details: result.details,
     }
@@ -1521,6 +1527,7 @@ export async function runKAT(
       algorithm,
       standard: spec.standard,
       referenceUrl: spec.referenceUrl,
+      libraryRefId: spec.libraryRefId,
       status: 'error',
       details: msg,
     }

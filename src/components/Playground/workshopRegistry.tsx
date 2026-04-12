@@ -27,6 +27,10 @@ export type ToolDifficulty = 'beginner' | 'intermediate' | 'advanced'
 
 export interface WorkshopTool {
   id: string
+  /** Unique tracking ID (e.g. 'PT-001') — stable across renames */
+  pt_id: string
+  /** Semantic version of this tool (major.minor.bug) */
+  version: string
   name: string
   description: string
   category: string
@@ -45,6 +49,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── HSM / PKCS#11 Operations ──────────────────────────────────────────────
   {
     id: 'slh-dsa',
+    pt_id: 'PT-001',
+    version: '1.0.0',
     name: 'SLH-DSA Sign & Verify',
     description: 'All 12 FIPS 205 parameter sets with pre-hash support',
     category: 'HSM / PKCS#11',
@@ -57,6 +63,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'lms-hss',
+    pt_id: 'PT-002',
+    version: '1.0.0',
     name: 'Stateful Hash Signatures',
     description: 'LMS and XMSS stateful signature trees using SoftHSMv3',
     category: 'HSM / PKCS#11',
@@ -69,6 +77,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'hybrid-encrypt',
+    pt_id: 'PT-003',
+    version: '1.0.0',
     name: 'Hybrid KEM + ECDH',
     description: 'ML-KEM + X25519 ECDH + HKDF hybrid encryption pipeline',
     category: 'HSM / PKCS#11',
@@ -81,6 +91,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'envelope-encrypt',
+    pt_id: 'PT-004',
+    version: '1.0.0',
     name: 'Envelope Encryption',
     description: 'ML-KEM + AES key wrap in a KMS envelope encryption pattern',
     category: 'HSM / PKCS#11',
@@ -93,6 +105,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'token-migration',
+    pt_id: 'PT-005',
+    version: '1.0.0',
     name: 'Multi-Algorithm Signing',
     description: 'Compare ML-DSA, ECDSA, and RSA signing in a token migration workflow',
     category: 'HSM / PKCS#11',
@@ -105,6 +119,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'tee-channel',
+    pt_id: 'PT-006',
+    version: '1.0.0',
     name: 'TEE-HSM Secure Channel',
     description: 'Build a TEE-to-HSM trusted channel with ML-DSA + ML-KEM + AES wrap',
     category: 'HSM / PKCS#11',
@@ -117,6 +133,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'firmware-signing',
+    pt_id: 'PT-007',
+    version: '1.0.0',
     name: 'Firmware Signing',
     description: 'ML-DSA-87 UEFI secure boot firmware signing and verification',
     category: 'HSM / PKCS#11',
@@ -129,6 +147,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'kdf-derivation',
+    pt_id: 'PT-008',
+    version: '1.0.0',
     name: 'SP 800-108 KDF',
     description:
       'NIST SP 800-108 counter-mode key derivation — applicable to KEM secrets, PSK, QKD, and password-derived keys',
@@ -153,6 +173,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'vpn-sim',
+    pt_id: 'PT-009',
+    version: '1.0.0',
     name: 'PQC VPN Simulator',
     description:
       'Full IKEv2 handshake in WASM with PKCS#11 crypto routed through softhsmv3. Inspect live C_* calls, ECDH key exchange, and PSK authentication between initiator and responder.',
@@ -182,6 +204,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── Entropy & Random ──────────────────────────────────────────────────────
   {
     id: 'rng-demo',
+    pt_id: 'PT-010',
+    version: '1.0.0',
     name: 'Random Generation',
     description: 'Web Crypto + OpenSSL DRBG random generation with statistical analysis',
     category: 'Entropy & Random',
@@ -194,6 +218,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'entropy-test',
+    pt_id: 'PT-011',
+    version: '1.0.0',
     name: 'Entropy Testing',
     description: 'NIST SP 800-90B entropy test suite: monobit, frequency, min-entropy',
     category: 'Entropy & Random',
@@ -206,6 +232,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'qrng-demo',
+    pt_id: 'PT-012',
+    version: '1.0.0',
     name: 'QRNG Demo',
     description:
       'Simulates quantum random number generation patterns using CSPRNG statistical analysis. Note: runs in-browser via Web Crypto — not a physical QRNG device.',
@@ -219,6 +247,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'source-combining',
+    pt_id: 'PT-013',
+    version: '1.0.0',
     name: 'Source Combining',
     description:
       'SP 800-90C source combining: XOR, Hash, HMAC, Concat + HKDF/Hash_df/AES-CMAC conditioning via SoftHSMv3',
@@ -243,6 +273,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'drbg-demo',
+    pt_id: 'PT-014',
+    version: '1.0.0',
     name: 'SP 800-90A DRBG',
     description:
       'Interactive visualization of HMAC_DRBG internal state (Instantiate, Generate, Reseed) complying with NIST SP 800-90A.',
@@ -267,6 +299,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── Certificates & Proofs ─────────────────────────────────────────────────
   {
     id: 'pki-workshop',
+    pt_id: 'PT-015',
+    version: '1.0.0',
     name: 'PKI Workshop',
     description:
       'Build a full certificate chain hands-on: CSR → Root CA → cert issuance → parsing → CRL',
@@ -290,6 +324,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'hybrid-certs',
+    pt_id: 'PT-016',
+    version: '1.0.0',
     name: 'Hybrid Certificates',
     description:
       'Generate and compare six X.509 hybrid certificate formats via SoftHSM PKCS#11 + real DER encoding',
@@ -303,6 +339,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'merkle-proof',
+    pt_id: 'PT-017',
+    version: '1.0.0',
     name: 'Merkle Tree Workshop',
     description:
       'Build trees, generate inclusion proofs, verify with tamper detection, compare PQC cert sizes, and simulate Certificate Transparency logs',
@@ -329,6 +367,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── Protocol Simulations ──────────────────────────────────────────────────
   {
     id: 'suci-flow',
+    pt_id: 'PT-018',
+    version: '1.0.0',
     name: '5G SUCI Construction',
     description: 'ECDH + ANSI X9.63-KDF + AES subscriber concealment for 5G networks',
     category: 'Protocol Simulations',
@@ -343,6 +383,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── Digital Identity ──────────────────────────────────────────────────────
   {
     id: 'digital-id',
+    pt_id: 'PT-019',
+    version: '1.0.0',
     name: 'EUDI Wallet Architecture',
     description:
       'Complete digital identity lifecycle: Wallet, PID Issuance, Attestation, RP Verification, and QES Provider.',
@@ -368,6 +410,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── Blockchain / Digital Assets ───────────────────────────────────────────
   {
     id: 'bitcoin-flow',
+    pt_id: 'PT-020',
+    version: '1.0.0',
     name: 'Bitcoin Transaction',
     description: 'secp256k1 ECDSA keypair, SHA256 + RIPEMD160, transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -380,6 +424,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'solana-flow',
+    pt_id: 'PT-021',
+    version: '1.0.0',
     name: 'Solana Transaction',
     description: 'Ed25519 keypair generation and transaction signing',
     category: 'Blockchain & Digital Assets',
@@ -392,6 +438,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'hd-wallet',
+    pt_id: 'PT-022',
+    version: '1.0.0',
     name: 'HD Wallet Derivation',
     description: 'BIP39 mnemonic + BIP32/SLIP-0010 multi-coin HD key derivation',
     category: 'Blockchain & Digital Assets',
@@ -406,6 +454,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   // ── OpenSSL Studio ────────────────────────────────────────────────────────
   {
     id: 'openssl-studio',
+    pt_id: 'PT-023',
+    version: '1.0.0',
     name: 'OpenSSL Studio',
     description:
       'Full OpenSSL v3.6.1 environment: keygen, certificates, CSR, KEM, signing, KDF, encryption — all via WASM',
@@ -442,6 +492,8 @@ export const WORKSHOP_TOOLS: WorkshopTool[] = [
   },
   {
     id: 'tls-simulator',
+    pt_id: 'PT-024',
+    version: '1.0.0',
     name: 'TLS 1.3 Simulator',
     description:
       'Client–server TLS 1.3 handshake simulator: configure cipher suites, key exchange groups, mTLS, PQC and hybrid certificates',
@@ -479,6 +531,11 @@ export const CATEGORIES = [
   'Blockchain & Digital Assets',
   'Protocol Simulations',
 ]
+
+/** Reverse lookup: tool id → PT-ID (e.g. 'slh-dsa' → 'PT-001') */
+export const PT_ID_MAP: Record<string, string> = Object.fromEntries(
+  WORKSHOP_TOOLS.map((t) => [t.id, t.pt_id])
+)
 
 // ---------------------------------------------------------------------------
 // Lazy-loaded components — each wrapped to handle named exports

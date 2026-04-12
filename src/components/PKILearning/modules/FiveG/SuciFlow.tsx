@@ -226,11 +226,12 @@ const { pubHandle, privHandle } = hsm_generateMLKEMKeyPair(
 )
 // Pure PQC: no classical ECC keypair is generated`,
     compute_shared_secret: `// SoftHSMv3 WASM: Profile C Pure PQC — ML-KEM Encapsulation only
+// Pure PQC: Z = Z_kem directly — no ECDH combiner per 3GPP TR 33.841 §5.2.4
 // → C_EncapsulateKey(CKM_ML_KEM)
 const { ciphertextBytes, secretHandle } = hsm_pqcEncap(M, hSession, hnPubHandle, 'ML-KEM-768')
 const zKemBytes = hsm_extractKeyValue(M, hSession, secretHandle)
 
-// Z = Z_kem directly (no ECDH component in pure PQC mode)
+// Z = Z_kem directly (no ECDH component in pure PQC mode per TR 33.841 §5.2.4)
 const Z = zKemBytes`,
   }
 
@@ -1439,7 +1440,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
             </div>
             <div className="text-xs opacity-70 mt-1">ML-KEM (FIPS 203) + AES-256</div>
             <div className="text-xs italic text-muted-foreground mt-1">
-              Under 3GPP SA3 study (TR 33.841) — Not yet standardized
+              3GPP SA3 study (TR 33.841) · Rel-19 standardization in progress
             </div>
           </Button>
         </div>
@@ -1561,7 +1562,7 @@ Detailed C-level traces are captured in the PKCS#11 Call Log.`
       <KatValidationPanel
         specs={FIVEG_KAT_SPECS}
         label="5G PQC Known Answer Tests"
-        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204"
+        authorityNote="3GPP TR 33.841 · NIST FIPS 203/204 · NIST SP 800-227 (hybrid combiner)"
       />
     </div>
   )

@@ -7,6 +7,7 @@ import type { ModuleContent } from '@/types/ModuleContentTypes'
 
 export const content: ModuleContent = {
   moduleId: 'log-integrity',
+  version: '1.0.0',
   lastReviewed: '2026-03-28',
 
   standards: [

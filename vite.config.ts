@@ -234,6 +234,13 @@ export default defineConfig({
   },
   build: {
     rollupOptions: {
+      external: [
+        '@capacitor/haptics',
+        '@capacitor/browser',
+        '@capacitor/share',
+        '@capacitor/app',
+        '@capacitor/preferences',
+      ],
       output: {
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],

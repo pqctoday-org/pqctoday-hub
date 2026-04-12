@@ -17,6 +17,7 @@ function validateCatalog(entries: Record<string, ModuleItem>): Record<string, Mo
 export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   'pqc-101': {
     id: 'pqc-101',
+    lm_id: 'LM-001',
     title: 'PQC 101',
     description:
       'Start here! A beginner-friendly introduction to the quantum threat and post-quantum cryptography.',
@@ -25,6 +26,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'quantum-threats': {
     id: 'quantum-threats',
+    lm_id: 'LM-002',
     title: 'Quantum Threats',
     description:
       "Understand how Shor's and Grover's algorithms break cryptography, CRQC timelines, and HNDL/HNFL attack mechanics.",
@@ -33,6 +35,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'hybrid-crypto': {
     id: 'hybrid-crypto',
+    lm_id: 'LM-006',
     title: 'Hybrid Cryptography',
     description:
       'Combine classical and PQC algorithms: hybrid KEMs, composite signatures, and side-by-side certificate comparison.',
@@ -41,6 +44,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'crypto-agility': {
     id: 'crypto-agility',
+    lm_id: 'LM-007',
     title: 'Crypto Agility',
     description:
       'Design crypto-agile architectures: abstraction layers, CBOM scanning, and the 7-phase migration framework.',
@@ -49,6 +53,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'tls-basics': {
     id: 'tls-basics',
+    lm_id: 'LM-008',
     title: 'TLS Basics',
     description: 'Deep dive into TLS 1.3 handshakes, certificates, and cipher suites.',
     duration: '40 min',
@@ -56,6 +61,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'vpn-ssh-pqc': {
     id: 'vpn-ssh-pqc',
+    lm_id: 'LM-009',
     title: 'VPN/IPsec & SSH',
     description:
       'IKEv2 and SSH key exchange with PQC: hybrid ML-KEM integration, WireGuard Rosenpass, and protocol size comparison.',
@@ -64,6 +70,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'email-signing': {
     id: 'email-signing',
+    lm_id: 'LM-010',
     title: 'Email & Document Signing',
     description:
       'S/MIME and CMS: signing workflows, KEM-based encryption (RFC 9629), and PQC migration for email security.',
@@ -72,6 +79,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'pki-workshop': {
     id: 'pki-workshop',
+    lm_id: 'LM-020',
     title: 'PKI',
     description:
       'Learn PKI fundamentals, build certificate chains hands-on, and explore PQC migration.',
@@ -80,6 +88,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'kms-pqc': {
     id: 'kms-pqc',
+    lm_id: 'LM-016',
     title: 'KMS & PQC Key Management',
     description:
       'PQC key management patterns: envelope encryption with ML-KEM, hybrid key wrapping, multi-provider rotation planning.',
@@ -88,6 +97,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'hsm-pqc': {
     id: 'hsm-pqc',
+    lm_id: 'LM-015',
     title: 'HSM & PQC Operations',
     description:
       'Hardware Security Module operations for PQC: PKCS#11 v3.2, vendor comparison, firmware migration, and FIPS 140-3 validation.',
@@ -96,6 +106,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'slh-dsa': {
     id: 'slh-dsa',
+    lm_id: 'LM-027',
     title: 'SLH-DSA: Stateless Hash Signatures',
     description:
       'Master FIPS 205 SLH-DSA: WOTS+, FORS, hypertree architecture, parameter trade-offs, context strings, deterministic signing, and migration from stateful schemes.',
@@ -104,6 +115,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'stateful-signatures': {
     id: 'stateful-signatures',
+    lm_id: 'LM-026',
     title: 'Stateful Hash Signatures',
     description:
       'Master LMS/HSS and XMSS/XMSS^MT: Merkle tree signatures, parameter trade-offs, and critical state management.',
@@ -112,6 +124,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'digital-assets': {
     id: 'digital-assets',
+    lm_id: 'LM-045',
     title: 'Digital Assets',
     description:
       'Learn cryptographic foundations of Bitcoin, Ethereum, and Solana. Explore institutional custody architecture with PQC threat analysis.',
@@ -120,6 +133,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   '5g-security': {
     id: '5g-security',
+    lm_id: 'LM-046',
     title: '5G Security',
     description: 'Explore 3GPP security architecture: SUCI Deconcealment, 5G-AKA, & Provisioning.',
     duration: '60 min',
@@ -128,6 +142,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'digital-id': {
     id: 'digital-id',
+    lm_id: 'LM-030',
     title: 'Digital ID',
     description:
       'Master EUDI Wallet: Wallet activation, PID issuance, attestations, QES, and verification.',
@@ -136,6 +151,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'entropy-randomness': {
     id: 'entropy-randomness',
+    lm_id: 'LM-003',
     title: 'Entropy & Randomness',
     description:
       'Master entropy sources, DRBG mechanisms, and quantum randomness — NIST SP 800-90 standards, entropy testing, TRNG vs QRNG, and combining sources for defense-in-depth.',
@@ -144,6 +160,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'merkle-tree-certs': {
     id: 'merkle-tree-certs',
+    lm_id: 'LM-025',
     title: 'Merkle Tree Certificates',
     description:
       'Build Merkle trees interactively, generate inclusion proofs, and compare MTC vs traditional PKI for post-quantum TLS.',
@@ -152,6 +169,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   qkd: {
     id: 'qkd',
+    lm_id: 'LM-017',
     title: 'Quantum Key Distribution',
     description:
       'Explore QKD fundamentals: BB84 protocol, classical post-processing, hybrid key derivation, global deployments, protocol integration, and HSM key derivation.',
@@ -160,6 +178,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'code-signing': {
     id: 'code-signing',
+    lm_id: 'LM-029',
     title: 'Code Signing',
     description:
       'Protect software distribution — from classical code signing to post-quantum ML-DSA package integrity, Sigstore keyless signing, and secure boot firmware verification.',
@@ -168,6 +187,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'api-security-jwt': {
     id: 'api-security-jwt',
+    lm_id: 'LM-011',
     title: 'API Security & JWT',
     description:
       'JWT/JWS/JWE with post-quantum algorithms: ML-DSA signing, ML-KEM key agreement, hybrid tokens, and OAuth 2.0 migration.',
@@ -176,6 +196,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'crypto-dev-apis': {
     id: 'crypto-dev-apis',
+    lm_id: 'LM-021',
     title: 'Cryptographic APIs & Developer Languages',
     description:
       'Compare JCA/JCE, OpenSSL EVP, PKCS#11, Windows CNG, and Bouncy Castle across 7 languages. Provider patterns, PQC library selection, support matrix, crypto agility patterns, and migration decision lab.',
@@ -184,6 +205,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'web-gateway-pqc': {
     id: 'web-gateway-pqc',
+    lm_id: 'LM-013',
     title: 'Web Gateway PQC',
     description:
       'PQC deployment at the infrastructure edge: TLS termination patterns, certificate lifecycle at scale, CDN/WAF/load balancer vendor migration paths.',
@@ -192,6 +214,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'iot-ot-pqc': {
     id: 'iot-ot-pqc',
+    lm_id: 'LM-032',
     title: 'IoT & OT Security',
     description:
       'PQC challenges for constrained devices: algorithm selection for limited memory/compute, firmware signing, CoAP/DTLS protocol impacts, certificate chain bloat, and SCADA/ICS migration.',
@@ -200,6 +223,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'pqc-risk-management': {
     id: 'pqc-risk-management',
+    lm_id: 'LM-034',
     title: 'PQC Risk Management',
     description:
       'Quantify quantum risk, build risk registers, model CRQC timeline scenarios, and generate risk heatmaps from real threat data.',
@@ -208,6 +232,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'pqc-business-case': {
     id: 'pqc-business-case',
+    lm_id: 'LM-036',
     title: 'PQC Business Case',
     description:
       'Build ROI models, simulate breach costs, and create board-ready pitch decks for PQC investment.',
@@ -216,6 +241,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'pqc-governance': {
     id: 'pqc-governance',
+    lm_id: 'LM-037',
     title: 'PQC Governance & Policy',
     description:
       'Create RACI matrices, draft PQC policies, and design KPI dashboards for board reporting.',
@@ -224,6 +250,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'vendor-risk': {
     id: 'vendor-risk',
+    lm_id: 'LM-038',
     title: 'Vendor & Supply Chain Risk',
     description:
       'Score vendor PQC readiness from real product data, generate contract requirements, and map supply chain risk.',
@@ -232,6 +259,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'migration-program': {
     id: 'migration-program',
+    lm_id: 'LM-039',
     title: 'Migration Program Mgmt',
     description:
       'Build migration roadmaps with real country deadlines, plan stakeholder communications, and track KPIs.',
@@ -240,6 +268,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'compliance-strategy': {
     id: 'compliance-strategy',
+    lm_id: 'LM-035',
     title: 'Compliance & Regulatory Strategy',
     description:
       'Map multi-jurisdiction requirements, build audit checklists, and construct compliance timelines from live framework data.',
@@ -248,6 +277,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'data-asset-sensitivity': {
     id: 'data-asset-sensitivity',
+    lm_id: 'LM-005',
     title: 'Data & Asset Sensitivity',
     description:
       'Classify organizational data assets, map compliance obligations (GDPR, HIPAA, DORA, NIS2), apply NIST RMF/ISO 27005/FAIR risk methodologies, and generate a PQC migration priority map.',
@@ -256,6 +286,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'standards-bodies': {
     id: 'standards-bodies',
+    lm_id: 'LM-004',
     title: 'Standards, Certification & Compliance Bodies',
     description:
       'Identify who creates PQC standards, who certifies products, and who mandates compliance — worldwide and by region.',
@@ -264,6 +295,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'confidential-computing': {
     id: 'confidential-computing',
+    lm_id: 'LM-019',
     title: 'Confidential Computing & TEEs',
     description:
       'Explore TEE architectures (SGX, TDX, CCA, SEV-SNP, Nitro), remote attestation, memory encryption, TEE-HSM integration, and quantum threat analysis.',
@@ -272,6 +304,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'database-encryption-pqc': {
     id: 'database-encryption-pqc',
+    lm_id: 'LM-023',
     title: 'Database Encryption & PQC',
     description:
       'Migrate database encryption to quantum-safe algorithms: TDE re-keying, BYOK/HYOK key ownership, queryable encryption compatibility, and fleet readiness assessment.',
@@ -280,6 +313,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'energy-utilities-pqc': {
     id: 'energy-utilities-pqc',
+    lm_id: 'LM-042',
     title: 'Energy & Utilities PQC',
     description:
       'PQC migration for power grids and utilities: NERC CIP compliance, IEC 61850/62351 substation security, DNP3/Modbus protocol hardening, smart meter key management at scale, and environmental/safety risk scoring.',
@@ -288,6 +322,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'emv-payment-pqc': {
     id: 'emv-payment-pqc',
+    lm_id: 'LM-044',
     title: 'EMV Payment Systems & PQC',
     description:
       'Explore the EMV payment ecosystem \u2014 card authentication, tokenization, authorization networks, POS terminals, and e-commerce \u2014 and plan quantum-safe migration across Visa, Mastercard, Amex, UnionPay, and Discover.',
@@ -296,6 +331,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'ai-security-pqc': {
     id: 'ai-security-pqc',
+    lm_id: 'LM-033',
     title: 'AI Security & PQC',
     description:
       'Quantum threats to AI systems: pipeline data protection, model weight security, synthetic data contamination, agent authentication, agentic commerce, and encryption at scale.',
@@ -304,6 +340,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'platform-eng-pqc': {
     id: 'platform-eng-pqc',
+    lm_id: 'LM-031',
     title: 'Platform Engineering & PQC',
     description:
       'Inventory, migrate, and monitor every cryptographic primitive in your software delivery pipeline — CI/CD crypto assets, container image signing, IaC quantum-vulnerable defaults, OPA/Kyverno algorithm enforcement, and crypto posture monitoring.',
@@ -312,6 +349,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'healthcare-pqc': {
     id: 'healthcare-pqc',
+    lm_id: 'LM-041',
     title: 'Healthcare PQC',
     description:
       'Healthcare-specific PQC challenges: biometric data permanence, pharmaceutical IP protection, patient privacy lifecycles, medical device safety, and hospital network migration.',
@@ -320,6 +358,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'aerospace-pqc': {
     id: 'aerospace-pqc',
+    lm_id: 'LM-040',
     title: 'Aerospace PQC',
     description:
       'PQC challenges unique to aerospace: rad-hardened avionics, satellite link budgets, DO-326A airborne cybersecurity, ITAR/EAR export controls, and multi-decade fleet crypto interoperability.',
@@ -328,6 +367,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'automotive-pqc': {
     id: 'automotive-pqc',
+    lm_id: 'LM-043',
     title: 'Automotive PQC',
     description:
       'Post-quantum cryptography for connected and autonomous vehicles: V2X PKI, sensor data integrity, ISO 26262 safety-crypto intersection, HSM lifecycle management, OTA orchestration, digital car keys, in-vehicle payments, and 15-20 year lifecycle crypto-agility.',
@@ -336,6 +376,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'exec-quantum-impact': {
     id: 'exec-quantum-impact',
+    lm_id: 'LM-047',
     title: 'Executive Quantum Impact',
     description:
       'Why quantum matters to leadership: fiduciary risk, regulatory deadlines (CNSA 2.0, NIS2, DORA), and building a board-level PQC action plan.',
@@ -344,6 +385,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'dev-quantum-impact': {
     id: 'dev-quantum-impact',
+    lm_id: 'LM-048',
     title: 'Developer Quantum Impact',
     description:
       'How quantum breaks your code: library transitions, larger keys/signatures, TLS/JWT/signing impacts, and a hands-on migration readiness plan.',
@@ -352,6 +394,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'arch-quantum-impact': {
     id: 'arch-quantum-impact',
+    lm_id: 'LM-049',
     title: 'Architect Quantum Impact',
     description:
       'Architecture decisions that outlast the quantum transition: KMS, HSM, PKI, hybrid deployment patterns, and crypto-agile design.',
@@ -360,6 +403,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'ops-quantum-impact': {
     id: 'ops-quantum-impact',
+    lm_id: 'LM-050',
     title: 'Ops Quantum Impact',
     description:
       'Operational PQC challenges: certificate scaling, fleet upgrades, VPN/SSH key exchange, monitoring recalibration, and migration playbooks.',
@@ -368,6 +412,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'research-quantum-impact': {
     id: 'research-quantum-impact',
+    lm_id: 'LM-051',
     title: 'Researcher Quantum Impact',
     description:
       'Quantum threats to research: long-lived data confidentiality, publication integrity, emerging PQC research frontiers, and funding opportunities.',
@@ -376,6 +421,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'secrets-management-pqc': {
     id: 'secrets-management-pqc',
+    lm_id: 'LM-022',
     title: 'Secrets Management & PQC',
     description:
       'Master PQC migration for secrets managers: classify secrets by HNDL risk, simulate Vault transit with ML-KEM, design rotation policies, and integrate PQC-safe secrets into Kubernetes and CI/CD pipelines.',
@@ -384,6 +430,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'network-security-pqc': {
     id: 'network-security-pqc',
+    lm_id: 'LM-012',
     title: 'Network Security & PQC Migration',
     description:
       'Prepare NGFWs, IDS/IPS, and network security appliances for post-quantum cryptography. Covers TLS inspection impacts, DPI with larger PQC certs, vendor migration roadmaps (Cisco, Palo Alto, Fortinet, Juniper), and PQC-aware zero trust network architecture.',
@@ -392,6 +439,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'pqc-testing-validation': {
     id: 'pqc-testing-validation',
+    lm_id: 'LM-014',
     title: 'PQC Network Testing & Validation',
     description:
       'Design and execute testing strategies for post-quantum cryptography deployments. Covers passive crypto discovery, active endpoint scanning, performance benchmarking, interoperability testing, TVLA side-channel assessment, and building a comprehensive PQC test program.',
@@ -400,6 +448,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'iam-pqc': {
     id: 'iam-pqc',
+    lm_id: 'LM-028',
     title: 'Identity & Access Management with PQC',
     description:
       'Migrate enterprise IAM systems to quantum-safe cryptography. Covers JWT/SAML token signing with ML-DSA, OIDC and OAuth 2.0 PQC migration, Active Directory and LDAP vulnerabilities, vendor roadmaps (Okta, Microsoft Entra, PingFederate, ForgeRock), and PQC-aware zero trust identity architecture.',
@@ -408,6 +457,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'secure-boot-pqc': {
     id: 'secure-boot-pqc',
+    lm_id: 'LM-018',
     title: 'Secure Boot & Firmware PQC',
     description:
       'Migrate UEFI Secure Boot and firmware signing to quantum-safe cryptography. Covers the PK/KEK/db key hierarchy, TPM 2.0 attestation, ML-DSA firmware signing, DICE hardware roots of trust, and firmware vendor PQC roadmaps.',
@@ -416,6 +466,7 @@ export const MODULE_CATALOG: Record<string, ModuleItem> = validateCatalog({
   },
   'os-pqc': {
     id: 'os-pqc',
+    lm_id: 'LM-024',
     title: 'Operating System & Platform Crypto PQC',
     description:
       'Migrate OS-level cryptography to quantum-safe algorithms. Covers system TLS policy (OpenSSL, GnuTLS, SChannel), SSH host key migration to ML-DSA, RPM/DEB package signing, and FIPS mode compatibility for PQC-enabled operating systems.',
@@ -478,11 +529,11 @@ export const MODULE_STEP_COUNTS: Record<string, number> = {
   'healthcare-pqc': 5,
   'aerospace-pqc': 6,
   'automotive-pqc': 6,
-  'exec-quantum-impact': 3,
-  'dev-quantum-impact': 3,
-  'arch-quantum-impact': 3,
-  'ops-quantum-impact': 3,
-  'research-quantum-impact': 3,
+  'exec-quantum-impact': 4,
+  'dev-quantum-impact': 4,
+  'arch-quantum-impact': 4,
+  'ops-quantum-impact': 4,
+  'research-quantum-impact': 4,
   'secure-boot-pqc': 5,
   'os-pqc': 5,
   quiz: 1, // Special: no LEARN_SECTIONS or WORKSHOP_STEPS — quiz engine tracks its own progress
@@ -605,6 +656,13 @@ export const MODULE_TRACKS: { track: string; modules: ModuleItem[] }[] = [
 /** Reverse lookup: module ID → track name (derived from MODULE_TRACKS) */
 export const MODULE_TO_TRACK: Record<string, string> = Object.fromEntries(
   MODULE_TRACKS.flatMap(({ track, modules }) => modules.map((m) => [m.id, track]))
+)
+
+/** Reverse lookup: module slug → LM-ID (e.g. 'pqc-101' → 'LM-001') */
+export const LM_ID_MAP: Record<string, string> = Object.fromEntries(
+  Object.values(MODULE_CATALOG)
+    .filter((m) => m.lm_id)
+    .map((m) => [m.id, m.lm_id as string])
 )
 
 /**
@@ -1266,26 +1324,31 @@ export const WORKSHOP_STEPS: Record<string, { id: string; label: string }[]> = {
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'self-assessment', label: 'Org Risk Self-Assessment' },
   ],
   'dev-quantum-impact': [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'self-assessment', label: 'Skill Self-Assessment' },
   ],
   'arch-quantum-impact': [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'self-assessment', label: 'Architecture Readiness Self-Assessment' },
   ],
   'ops-quantum-impact': [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'self-assessment', label: 'Ops Readiness Self-Assessment' },
   ],
   'research-quantum-impact': [
     { id: 'why-it-matters', label: 'Why It Matters' },
     { id: 'what-to-learn', label: 'What to Learn' },
     { id: 'how-to-act', label: 'How to Act' },
+    { id: 'self-assessment', label: 'Research Readiness Self-Assessment' },
   ],
   'secure-boot-pqc': [
     { id: 'boot-chain-analyzer', label: 'Secure Boot Chain Analyzer' },

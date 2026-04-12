@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React from 'react'
 import clsx from 'clsx'
+import { Link } from 'react-router-dom'
 import { useOpenSSLStore } from '../../store'
 import { FilterDropdown } from '../../../common/FilterDropdown'
 import { Button } from '@/components/ui/button'
@@ -37,6 +38,45 @@ export const KemConfig: React.FC<KemConfigProps> = ({
       <span className="text-sm font-bold text-muted-foreground uppercase tracking-wider block">
         2. Configuration
       </span>
+
+      {/* PQC context */}
+      <div className="text-xs text-muted-foreground bg-muted/50 rounded-lg px-3 py-2 border border-border space-y-1">
+        <p>
+          <span className="font-semibold text-foreground">Why KEM for PQC?</span> Classical
+          Diffie-Hellman and RSA key exchange are broken by Shor&apos;s algorithm on a
+          cryptographically relevant quantum computer. ML-KEM (FIPS 203) replaces them with a
+          lattice-based Key Encapsulation Mechanism that is quantum-resistant.
+        </p>
+        <p>
+          The immediate threat is{' '}
+          <span className="font-semibold text-foreground">harvest now, decrypt later</span> —
+          adversaries storing encrypted traffic today to decrypt once a quantum computer exists.
+          Migrating key exchange to ML-KEM protects forward secrecy now.
+        </p>
+        <p className="pt-0.5">
+          <span className="font-semibold text-foreground">Error hint:</span>{' '}
+          <code className="bg-muted px-1 rounded">no such algorithm: ML-KEM-768</code> means the
+          OpenSSL build lacks the PQC provider. This WASM build includes it.
+        </p>
+        <p className="pt-0.5 flex flex-wrap gap-x-3 gap-y-0.5">
+          <Link
+            to="/library?ref=FIPS%20203"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            FIPS 203 (ML-KEM) →
+          </Link>
+          <Link
+            to="/library?ref=NIST%20SP%20800-227"
+            className="text-primary hover:underline font-medium"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            NIST SP 800-227 (KEM Guidance) →
+          </Link>
+        </p>
+      </div>
 
       <div className="space-y-3">
         <span className="text-xs text-muted-foreground block">Action</span>

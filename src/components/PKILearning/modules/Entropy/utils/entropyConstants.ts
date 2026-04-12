@@ -1,7 +1,9 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
  * Constants for the Entropy & Randomness module.
- * Pre-fetched QRNG data from ANU Quantum Random Number Generator (qrng.anu.edu.au).
+ * Reference random samples generated via Node.js crypto.randomBytes() to serve as
+ * high-quality classical reference data for educational QRNG comparison exercises.
+ * These are NOT from a quantum source — see QRNGDemo.tsx for full disclosure.
  * Bad sample data for educational exercises.
  */
 

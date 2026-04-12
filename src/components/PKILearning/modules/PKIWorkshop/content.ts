@@ -10,7 +10,8 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pki-workshop',
-  lastReviewed: '2026-03-28',
+  version: '1.1.0',
+  lastReviewed: '2026-04-12',
 
   standards: [
     getStandard('FIPS 204'),
@@ -19,6 +20,7 @@ export const content: ModuleContent = {
     getStandard('RFC 8555'),
     getStandard('RFC 9881'),
     getStandard('RFC 9763'),
+    getStandard('RFC 9794'),
     getStandard('FIPS 140-3'),
   ],
 

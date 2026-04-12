@@ -1055,17 +1055,21 @@ export const EnvelopeEncryptionDemo: React.FC = () => {
                   (step1ComparisonNote ??
                     'Select an ML-KEM variant to see the size comparison against RSA-2048.')}
                 {displayStep.step === 2 &&
-                  'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference.'}
+                  'RSA-OAEP directly encrypts the DEK in one operation. ML-KEM produces a random shared secret that must be derived into a wrapping key — a fundamental paradigm difference. ' +
+                    'OAEP (RFC 8017 §7.1) uses randomized padding to achieve IND-CCA2 security: every encryption produces a different ciphertext, preventing chosen-ciphertext attacks. ' +
+                    'Never use PKCS#1 v1.5 for key transport — it is broken by the 1998 Bleichenbacher padding oracle attack, which lets an adaptive attacker decrypt RSA ciphertexts without the private key using ~1 million queries to a validating server.'}
                 {displayStep.step === 3 &&
                   (isRSA
                     ? 'RSA-OAEP is a direct encryption scheme — the decrypted output IS the DEK. No KDF step is needed. This step is skipped in the classical path.'
                     : 'This KDF step is unique to KEMs. The shared secret from ML-KEM.Encaps() is a random 32-byte value — not directly usable as a wrapping key without domain separation. ' +
                       'HKDF binds it to a context string (info="kms-envelope-v1") so the derived key is isolated to this protocol and version, preventing cross-protocol key reuse (RFC 5869 §3.2).')}
                 {displayStep.step === 4 &&
-                  `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (NIST SP 800-38D) wraps the 32-byte DEK. ` +
-                    `AES-KW produces 40 B (8-byte A value / ICV per RFC 3394 §2.2.3, not an IV). ` +
-                    `AES-KWP produces 48 B (RFC 5649 §4.2 — 8-byte AIV over padded plaintext, softhsmv3 aes_kw crate). ` +
-                    `AES-GCM produces 48 B ciphertext + 12-byte random nonce. ` +
+                  `AES-KW (RFC 3394), AES-KWP (RFC 5649), or AES-GCM (SP 800-38D) wraps the 32-byte DEK. ` +
+                    `AES-KW: 40 B output — 8-byte A value (ICV, RFC 3394 §2.2.3, not a nonce) + 32 B; deterministic, no nonce management required; SP 800-38F §6.2 purpose-built for key wrapping. ` +
+                    `AES-KWP: 48 B — 8-byte AIV (RFC 5649 §4.2: fixed constant 0xA65959A6 + 4-byte plaintext length) + padded plaintext; handles non-block-aligned key lengths. ` +
+                    `AES-GCM: 48 B output (32 B plaintext + 16 B auth tag embedded at the end) plus a 12-byte nonce stored separately (visible in the hex blobs above). ` +
+                    `The 12-byte nonce is the SP 800-38D §5.2.1.1 recommended IV length for GCM. The 16-byte tag provides authenticated integrity — the ciphertext blob already contains it. ` +
+                    `IV uniqueness is mandatory in GCM: reusing the same (key, IV) pair lets an attacker XOR two ciphertexts to cancel the keystream and recover both plaintexts, and to forge authentication tags (SP 800-38D §8). Prefer AES-KW when nonce management is operationally risky. ` +
                     `Store the KEM ciphertext alongside the wrapped DEK. ` +
                     `Note: C_EncapsulateKey and C_DecapsulateKey are new in PKCS#11 v3.2 (OASIS 2023) — classic PKCS#11 had no native KEM primitives.`}
                 {displayStep.step === 5 &&

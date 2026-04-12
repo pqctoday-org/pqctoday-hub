@@ -1,10 +1,11 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, AlertTriangle, BookOpen, Rocket } from 'lucide-react'
+import { Trash2, AlertTriangle, BookOpen, Rocket, ClipboardCheck } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { RESEARCH_GUIDE_DATA } from './data'
+import { RESEARCH_QUANTUM_EXERCISES } from './exercises'
 import { RoleWhyItMatters, RoleWhatToLearn, RoleHowToAct } from '../../common/roleGuide'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
@@ -39,27 +40,101 @@ const PARTS = [
       'Build a research action plan from data risk assessment to PQC publication and collaboration.',
     icon: Rocket,
   },
+  {
+    id: 'self-assessment',
+    title: 'Step 4: Research Readiness',
+    description:
+      'Score your quantum risk exposure across nine research-specific criteria to prioritise protective actions.',
+    icon: ClipboardCheck,
+  },
 ]
 
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Genomic Data HNDL Risk',
-      prompt:
-        'Your research institution stores 500TB of genomic data encrypted with AES-256 and RSA-2048 key encapsulation. The data must remain confidential for 50 years. Calculate the HNDL exposure window assuming a CRQC arrives in 2035. What migration priority does this data have? Use the self-assessment tool to quantify your exposure.',
-    },
-    {
-      title: 'Scenario: Multi-Institution Federated Learning',
-      prompt:
-        'You are designing a federated learning system for cross-institution cancer research. Model aggregation uses TLS 1.3 with ECDH. Five universities with different IT policies need to participate. How do you ensure quantum-safe data exchange? Assess your PQC skills readiness using the workshop.',
-    },
-    {
-      title: 'Scenario: PQC Research Proposal',
-      prompt:
-        'An NSF program solicitation requires "quantum-resilient" data security for a distributed health data platform. Draft the security section: which PQC algorithms, which deployment model (hybrid or pure), and how you will validate security. Use the action plan builder to map your timeline.',
-    },
-  ]
+function SelfAssessmentStep() {
+  const items = RESEARCH_GUIDE_DATA.selfAssessment
+  const maxScore = items.reduce((sum, item) => sum + item.weight, 0)
+  const [checked, setChecked] = useState<Record<string, boolean>>({})
 
+  const score = items.reduce((sum, item) => sum + (checked[item.id] ? item.weight : 0), 0)
+  const pct = Math.round((score / maxScore) * 100)
+
+  const band =
+    pct >= 70
+      ? { label: 'High Exposure', color: 'text-status-error' }
+      : pct >= 40
+        ? { label: 'Moderate Exposure', color: 'text-status-warning' }
+        : { label: 'Low Exposure', color: 'text-status-success' }
+
+  const toggle = (id: string) => setChecked((prev) => ({ ...prev, [id]: !prev[id] }))
+
+  return (
+    <div className="space-y-6">
+      <div className="glass-panel p-6 space-y-4">
+        <h3 className="text-lg font-semibold text-foreground">Research Data Risk Checklist</h3>
+        <p className="text-sm text-muted-foreground">
+          Check every statement that applies to your research context. Your score reflects how much
+          of your work is directly exposed to the quantum threat.
+        </p>
+        <div className="space-y-3">
+          {items.map((item) => (
+            <label key={item.id} className="flex items-start gap-3 cursor-pointer group">
+              <input
+                type="checkbox"
+                className="sr-only"
+                checked={!!checked[item.id]}
+                onChange={() => toggle(item.id)}
+              />
+              <div
+                aria-hidden="true"
+                className={`mt-0.5 w-5 h-5 rounded border-2 flex-shrink-0 flex items-center justify-center transition-colors
+                  ${checked[item.id] ? 'border-primary bg-primary' : 'border-border bg-background group-hover:border-primary/60'}`}
+              >
+                {checked[item.id] && (
+                  <svg className="w-3 h-3 text-background" viewBox="0 0 12 12" fill="none">
+                    <path
+                      d="M2 6l3 3 5-5"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                )}
+              </div>
+              <span className="text-sm text-foreground leading-snug">{item.label}</span>
+              <span className="ml-auto text-xs text-muted-foreground flex-shrink-0">
+                +{item.weight}
+              </span>
+            </label>
+          ))}
+        </div>
+      </div>
+
+      <div className="glass-panel p-6 space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="text-sm font-medium text-foreground">Your exposure score</span>
+          <span className={`text-lg font-bold ${band.color}`}>
+            {score}/{maxScore} — {band.label}
+          </span>
+        </div>
+        <div className="w-full h-2 bg-muted rounded-full overflow-hidden">
+          <div
+            className={`h-full rounded-full transition-all duration-500 ${pct >= 70 ? 'bg-status-error' : pct >= 40 ? 'bg-status-warning' : 'bg-status-success'}`}
+            style={{ width: `${pct}%` }}
+          />
+        </div>
+        <p className="text-xs text-muted-foreground">
+          {pct >= 70
+            ? 'Your research data carries significant quantum exposure. Prioritise data classification and ML-KEM migration for long-lived datasets now.'
+            : pct >= 40
+              ? 'Moderate exposure. Start with an HNDL risk assessment for your most sensitive datasets and review your HPC key infrastructure.'
+              : 'Lower direct exposure. Monitor NIST standards adoption by your funding agencies and collaborative partners.'}
+        </p>
+      </div>
+    </div>
+  )
+}
+
+function ExercisesTab() {
   return (
     <div className="w-full space-y-6">
       <div className="glass-panel p-6">
@@ -68,7 +143,7 @@ function ExercisesTab() {
           Apply what you learned in the workshop to these research-focused scenarios.
         </p>
         <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
+          {RESEARCH_QUANTUM_EXERCISES.map((exercise, idx) => (
             <div key={idx} className="glass-panel p-5 space-y-3">
               <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
               <p className="text-sm text-foreground/80">{exercise.prompt}</p>
@@ -246,6 +321,7 @@ export const ResearchQuantumImpactModule: React.FC = () => {
               {currentPart === 2 && (
                 <RoleHowToAct key={`how-${configKey}`} data={RESEARCH_GUIDE_DATA} />
               )}
+              {currentPart === 3 && <SelfAssessmentStep key={`assess-${configKey}`} />}
             </div>
 
             <div className="flex flex-col sm:flex-row justify-between gap-3">

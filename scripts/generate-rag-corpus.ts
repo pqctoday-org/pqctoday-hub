@@ -1007,7 +1007,7 @@ function processModules(): RAGChunk[] {
   const chunks: RAGChunk[] = []
   // Match module entries: 'module-id': { ... } or module-id: { ... } (unquoted keys are valid JS)
   const moduleRegex =
-    /(?:['"]([^'"]+)['"]|([\w-]+))\s*:\s*\{\s*id:\s*['"]([^'"]+)['"]\s*,\s*title:\s*['"]([^'"]+)['"]\s*,\s*description:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")\s*,\s*duration:\s*['"]([^'"]+)['"]/g
+    /(?:['"]([^'"]+)['"]|([\w-]+))\s*:\s*\{(?:[^{}]*?)id:\s*['"]([^'"]+)['"]\s*,(?:[^{}]*?)title:\s*['"]([^'"]+)['"]\s*,(?:[^{}]*?)description:\s*(?:'((?:[^'\\]|\\.)*)'|"((?:[^"\\]|\\.)*)")\s*,(?:[^{}]*?)duration:\s*['"]([^'"]+)['"]/gs
 
   let match
   while ((match = moduleRegex.exec(raw)) !== null) {

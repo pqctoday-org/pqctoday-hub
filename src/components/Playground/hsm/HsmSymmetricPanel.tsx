@@ -21,6 +21,9 @@ import {
   hsm_hmacVerify,
   hsm_generateRandom,
   hsm_seedRandom,
+  hsm_generateChaCha20Key,
+  hsm_chacha20Poly1305Encrypt,
+  hsm_chacha20Poly1305Decrypt,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex, hexSnippet } from './shared'
@@ -28,7 +31,7 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types ───────────────────────────────────────────────────────────────────────
 
-type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac' | 'rng'
+type SymMode = 'aes-gcm' | 'aes-cbc' | 'aes-ctr' | 'aes-cmac' | 'hmac' | 'chacha20' | 'rng'
 
 const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
   { id: 'aes-gcm', label: 'AES-GCM', desc: 'Authenticated encryption (CKM_AES_GCM)' },
@@ -44,6 +47,7 @@ const SYM_MODES: { id: SymMode; label: string; desc: string }[] = [
     desc: 'Cipher-based MAC per NIST SP 800-38B (CKM_AES_CMAC)',
   },
   { id: 'hmac', label: 'HMAC', desc: 'Hash-based MAC via C_SignInit/C_VerifyInit' },
+  { id: 'chacha20', label: 'ChaCha20', desc: 'ChaCha20-Poly1305 Stream Cipher AEAD' },
   { id: 'rng', label: 'RNG', desc: 'C_GenerateRandom / C_SeedRandom — hardware RNG' },
 ]
 
@@ -1125,6 +1129,195 @@ const RngPanel = () => {
   )
 }
 
+const ChaCha20Panel = () => {
+  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const [keyHandle, setKeyHandle] = useState<number | null>(null)
+  const [plaintext, setPlaintext] = useState('Hello from ChaCha20-Poly1305!')
+  const [aadHex, setAadHex] = useState('01020304')
+  const [nonceHex, setNonceHex] = useState('000000000000000000000000') // 12 bytes
+  const [ciphertext, setCiphertext] = useState<Uint8Array | null>(null)
+  const [decrypted, setDecrypted] = useState<string | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const anyLoading = loadingOp !== null
+
+  const withLoading = async (op: string, fn: () => void) => {
+    setLoadingOp(op)
+    setError(null)
+    try {
+      fn()
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : String(e))
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const fromHex = (hex: string) =>
+    Uint8Array.from(hex.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) || [])
+
+  const doGenKey = () =>
+    withLoading('gen', () => {
+      const M = moduleRef.current!
+      const handle = hsm_generateChaCha20Key(M, hSessionRef.current, true, true, true)
+      setKeyHandle(handle)
+      setCiphertext(null)
+      setDecrypted(null)
+      const ts = new Date().toLocaleTimeString([], { hour12: false })
+      addHsmKey({
+        handle,
+        family: 'chacha20',
+        role: 'secret',
+        label: 'ChaCha20 Key',
+        engine: engineMode === 'rust' ? 'rust' : 'cpp',
+        generatedAt: ts,
+      })
+    })
+
+  const doEncrypt = () =>
+    withLoading('enc', () => {
+      const M = moduleRef.current!
+      const aad = fromHex(aadHex)
+      const nonce = fromHex(nonceHex)
+      const ct = hsm_chacha20Poly1305Encrypt(
+        M,
+        hSessionRef.current,
+        keyHandle!,
+        nonce,
+        aad,
+        plaintext
+      )
+      setCiphertext(ct)
+      setDecrypted(null)
+    })
+
+  const doDecrypt = () =>
+    withLoading('dec', () => {
+      const M = moduleRef.current!
+      const aad = fromHex(aadHex)
+      const nonce = fromHex(nonceHex)
+      const plain = hsm_chacha20Poly1305Decrypt(
+        M,
+        hSessionRef.current,
+        keyHandle!,
+        nonce,
+        aad,
+        ciphertext!
+      )
+      setDecrypted(new TextDecoder().decode(plain))
+    })
+
+  return (
+    <div className="space-y-4">
+      {/* Key Gen */}
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">Key</p>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            disabled={anyLoading}
+            onClick={doGenKey}
+            className="h-7 text-xs"
+          >
+            {loadingOp === 'gen' && <Loader2 size={12} className="mr-1.5 animate-spin" />}
+            {keyHandle !== null ? `✓ h=${keyHandle}` : 'Generate 256-bit Key'}
+          </Button>
+        </div>
+        <p className="text-xs text-muted-foreground font-mono">
+          C_GenerateKey(CKM_CHACHA20_KEY_GEN) → handle
+        </p>
+      </div>
+
+      {/* Inputs */}
+      <div className="glass-panel p-4 space-y-3">
+        <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+          Parameters & Plaintext
+        </p>
+        <div className="grid grid-cols-2 gap-3">
+          <div className="space-y-1">
+            <label htmlFor="nonceHexInput" className="text-[10px] text-muted-foreground">
+              Nonce (Hex, 12 bytes)
+            </label>
+            <input
+              id="nonceHexInput"
+              type="text"
+              value={nonceHex}
+              onChange={(e) => setNonceHex(e.target.value.replace(/[^0-9a-fA-F]/g, ''))}
+              className="w-full bg-muted border border-input rounded px-2 py-1 text-xs font-mono"
+            />
+          </div>
+          <div className="space-y-1">
+            <label htmlFor="aadHexInput" className="text-[10px] text-muted-foreground">
+              AAD (Hex, optional)
+            </label>
+            <input
+              id="aadHexInput"
+              type="text"
+              value={aadHex}
+              onChange={(e) => setAadHex(e.target.value.replace(/[^0-9a-fA-F]/g, ''))}
+              className="w-full bg-muted border border-input rounded px-2 py-1 text-xs font-mono"
+            />
+          </div>
+        </div>
+        <textarea
+          className="w-full bg-muted border border-input rounded-lg px-3 py-2 text-sm font-mono resize-none focus:outline-none focus:ring-1 focus:ring-ring"
+          rows={2}
+          value={plaintext}
+          onChange={(e) => {
+            setPlaintext(e.target.value)
+            setCiphertext(null)
+            setDecrypted(null)
+          }}
+          placeholder="Enter plaintext…"
+        />
+      </div>
+
+      {/* Buttons */}
+      <div className="flex gap-2">
+        <Button
+          variant="ghost"
+          onClick={doEncrypt}
+          disabled={keyHandle === null || anyLoading || !plaintext.length || nonceHex.length !== 24}
+          className="flex-1"
+        >
+          {loadingOp === 'enc' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          <Lock size={14} className="mr-2" /> Encrypt (AEAD)
+        </Button>
+        <Button
+          variant="outline"
+          onClick={doDecrypt}
+          disabled={ciphertext === null || anyLoading || nonceHex.length !== 24}
+          className="flex-1"
+        >
+          {loadingOp === 'dec' && <Loader2 size={14} className="mr-2 animate-spin" />}
+          Decrypt (Verify & Decrypt)
+        </Button>
+      </div>
+
+      {error && <ErrorAlert message={error} />}
+
+      {(ciphertext || decrypted) && (
+        <div className="glass-panel p-4 space-y-3">
+          <p className="text-xs text-muted-foreground font-medium uppercase tracking-wide">
+            Result
+          </p>
+          {ciphertext && (
+            <HsmResultRow
+              label="Ciphertext + Tag"
+              value={`${hexSnippet(ciphertext, 32)} (${ciphertext.length} B)`}
+            />
+          )}
+          {decrypted !== null && <HsmResultRow label="Decrypted" value={decrypted} mono={false} />}
+        </div>
+      )}
+
+      <MiniPkcsLog />
+    </div>
+  )
+}
+
 // ── Main panel ──────────────────────────────────────────────────────────────────
 
 const SYM_MODE_URL: Record<SymMode, string> = {
@@ -1133,6 +1326,7 @@ const SYM_MODE_URL: Record<SymMode, string> = {
   'aes-ctr': 'AES-CTR',
   'aes-cmac': 'AES-CMAC',
   hmac: 'HMAC',
+  chacha20: 'ChaCha20',
   rng: 'RNG',
 }
 
@@ -1146,6 +1340,7 @@ export const HsmSymmetricPanel = ({
     if (initialAlgo?.startsWith('AES-CTR')) return 'aes-ctr'
     if (initialAlgo?.startsWith('AES-CMAC')) return 'aes-cmac'
     if (initialAlgo === 'HMAC') return 'hmac'
+    if (initialAlgo === 'ChaCha20') return 'chacha20'
     if (initialAlgo === 'RNG') return 'rng'
     return 'aes-gcm'
   })
@@ -1201,6 +1396,7 @@ export const HsmSymmetricPanel = ({
           <AesCmacPanel initialAlgo={initialAlgo} onAlgoChange={onAlgoChange} />
         )}
         {mode === 'hmac' && <HmacPanel />}
+        {mode === 'chacha20' && <ChaCha20Panel />}
         {mode === 'rng' && <RngPanel />}
       </div>
     </HsmReadyGuard>

@@ -97,6 +97,20 @@ import {
   CKA_EXTRACTABLE,
   CKO_SECRET_KEY,
   CKK_AES,
+  CKM_CHACHA20_POLY1305,
+  hsm_generateChaCha20Key,
+  hsm_chacha20Poly1305Encrypt,
+  hsm_chacha20Poly1305Decrypt,
+  hsm_kbkdf,
+  CKM_SP800_108_COUNTER_KDF,
+  hsm_kbkdfFeedback,
+  CKM_SP800_108_FEEDBACK_KDF,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
+  CKM_XMSS,
+  CKM_LMS,
+  hsm_generateXMSSKeyPair,
+  hsm_generateLMSKeyPair,
 } from '../../../wasm/softhsm'
 import type { SoftHSMModule, SLHDSASignOptions } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
@@ -2112,6 +2126,302 @@ export const HsmAcvpTesting = () => {
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id25}] X9.63-SHA3: ${errMessage}`)
+          }
+        }
+
+        // ── 26. ChaCha20-Poly1305 AEAD Encrypt/Decrypt Round-Trip ────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_CHACHA20_POLY1305)) {
+          addLog(`[${eName}] [SKIP] ChaCha20-Poly1305: mechanism not supported`)
+        } else {
+          const id26 = `chacha20-rt-${eName}`
+          addLog(`[${eName}] Testing ChaCha20-Poly1305 AEAD Round-Trip...`)
+          try {
+            const hKey = hsm_generateChaCha20Key(
+              M,
+              hSession,
+              true,
+              true,
+              true,
+              `ACVP ChaCha20 (${eName})`
+            )
+            regKey({
+              handle: hKey,
+              family: 'chacha20',
+              role: 'secret',
+              label: `ACVP ChaCha20 (${eName})`,
+              engine: engineId,
+            })
+
+            const nonce = new Uint8Array(12).fill(0x55)
+            const aad = new TextEncoder().encode('ACVP-AAD-DATA')
+            const ptStr = 'ChaCha20-Poly1305 Payload Test'
+            const ptBytes = new TextEncoder().encode(ptStr)
+
+            const ctWithTag = hsm_chacha20Poly1305Encrypt(M, hSession, hKey, nonce, aad, ptBytes)
+            const recoveredPtBytes = hsm_chacha20Poly1305Decrypt(
+              M,
+              hSession,
+              hKey,
+              nonce,
+              aad,
+              ctWithTag
+            )
+
+            const pass =
+              recoveredPtBytes.length === ptBytes.length &&
+              recoveredPtBytes.every((b, i) => b === ptBytes[i])
+
+            newResults.push({
+              id: id26,
+              algorithm: `ChaCha20-Poly1305 (${eName})`,
+              testCase: 'AEAD Encrypt/Decrypt Round-Trip',
+              referenceUrl: 'https://datatracker.ietf.org/doc/html/rfc8439',
+              status: pass ? 'pass' : 'fail',
+              details: pass
+                ? `PT -> CT (${ctWithTag.length}B) -> PT matched ✓`
+                : `PT mismatch after decryption`,
+            })
+            addLog(
+              `[${eName}] [id:${id26}] ChaCha20-Poly1305 Round-Trip: ${pass ? 'PASS' : 'FAIL'}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `chacha20-rt-err-${eName}`,
+              algorithm: `ChaCha20-Poly1305 (${eName})`,
+              testCase: 'AEAD Encrypt/Decrypt Round-Trip',
+              referenceUrl: 'https://datatracker.ietf.org/doc/html/rfc8439',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id26}] ChaCha20-Poly1305: ${errMessage}`)
+          }
+        }
+
+        // ── 27. SP 800-108 KBKDF Derivation (Counter Mode) ────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SP800_108_COUNTER_KDF)) {
+          addLog(`[${eName}] [SKIP] SP800-108 KBKDF: mechanism not supported`)
+        } else {
+          const id27 = `sp800-108-kdf-${eName}`
+          addLog(`[${eName}] Testing SP800-108 KBKDF (Counter Mode, SHA-256)...`)
+          try {
+            const secretKeyBytes = new Uint8Array(32).fill(0xaa)
+            const hBaseKey = hsm_importAESKey(
+              M,
+              hSession,
+              secretKeyBytes,
+              true,
+              false,
+              false,
+              false,
+              false
+            )
+            const fixedInput = new TextEncoder().encode('ACVP-KDF-CONTEXT')
+            const derivedKeyBytes = hsm_kbkdf(M, hSession, hBaseKey, CKM_SHA256, fixedInput, 32)
+
+            const pass = derivedKeyBytes.length === 32
+            const derivedHex = Array.from(derivedKeyBytes)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            newResults.push({
+              id: id27,
+              algorithm: `SP 800-108 KBKDF (${eName})`,
+              testCase: 'Counter Mode Derivation',
+              referenceUrl: 'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+              status: pass ? 'pass' : 'fail',
+              details: pass ? `Derived 32B Key: ${derivedHex}` : 'Key derivation failed',
+            })
+            addLog(
+              `[${eName}] [id:${id27}] SP800-108 KBKDF: ${pass ? 'PASS' : 'FAIL'} | Key: ${derivedHex}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `sp800-108-err-${eName}`,
+              algorithm: `SP 800-108 KBKDF (${eName})`,
+              testCase: 'Counter Mode Derivation',
+              referenceUrl: 'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id27}] SP800-108 KBKDF: ${errMessage}`)
+          }
+        }
+
+        // ── 28. Hash-ML-DSA Functional Sign+Verify ────────────────────────
+        for (const dsaVariant of [44, 65, 87] as const) {
+          const dsaAlgo = `Hash-ML-DSA-${dsaVariant} (SHA-512)`
+          const id28 = `hash-mldsa-${dsaVariant}-${eName}`
+          addLog(`[${eName}] Testing ${dsaAlgo} Functional Sign+Verify...`)
+          try {
+            const mldsaPair = hsm_generateMLDSAKeyPair(M, hSession, dsaVariant)
+            const sig = hsm_sign(M, hSession, mldsaPair.privHandle, 'ACVP PreHash Test', {
+              preHash: 'sha512',
+            })
+            const isValid = hsm_verify(M, hSession, mldsaPair.pubHandle, 'ACVP PreHash Test', sig, {
+              preHash: 'sha512',
+            })
+            if (isValid) {
+              newResults.push({
+                id: id28,
+                algorithm: dsaAlgo,
+                testCase: 'PreHash Sign+Verify',
+                referenceUrl: REF.mldsa,
+                status: 'pass',
+                details: `sig[${sig.length}B] validated successfully ✓`,
+              })
+              addLog(`[${eName}] [id:${id28}] ${dsaAlgo}: PASS`)
+            } else {
+              throw new Error('Hash-ML-DSA signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `hash-mldsa-err-${dsaVariant}-${eName}`,
+              algorithm: dsaAlgo,
+              testCase: 'PreHash Sign+Verify',
+              referenceUrl: REF.mldsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id28}] ${dsaAlgo}: ${errMessage}`)
+          }
+        }
+        // ── 29. SP 800-108 KBKDF Derivation (Feedback Mode) ────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_SP800_108_FEEDBACK_KDF)) {
+          addLog(`[${eName}] [SKIP] SP800-108 KBKDF Feedback: mechanism not supported`)
+        } else {
+          const id29 = `sp800-108-kdf-feedback-${eName}`
+          addLog(`[${eName}] Testing SP800-108 KBKDF (Feedback Mode, SHA-256)...`)
+          try {
+            const secretKeyBytes = new Uint8Array(32).fill(0xbb)
+            const hBaseKey = hsm_importAESKey(
+              M,
+              hSession,
+              secretKeyBytes,
+              true,
+              false,
+              false,
+              false,
+              false
+            )
+            const fixedInput = new TextEncoder().encode('ACVP-KDF-FEEDBACK')
+            const ivBytes = new Uint8Array(32).fill(0xcc) // PRF_SEED_BYTES for SHA-256 is 32
+            const derivedKeyBytes = hsm_kbkdfFeedback(
+              M,
+              hSession,
+              hBaseKey,
+              CKM_SHA256,
+              fixedInput,
+              ivBytes,
+              32
+            )
+
+            const pass = derivedKeyBytes.length === 32
+            const derivedHex = Array.from(derivedKeyBytes)
+              .map((b) => b.toString(16).padStart(2, '0'))
+              .join('')
+            newResults.push({
+              id: id29,
+              algorithm: `SP 800-108 KBKDF (${eName})`,
+              testCase: 'Feedback Mode Derivation',
+              referenceUrl: 'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+              status: pass ? 'pass' : 'fail',
+              details: pass ? `Derived 32B Key: ${derivedHex}` : 'Key derivation failed',
+            })
+            addLog(
+              `[${eName}] [id:${id29}] SP800-108 KBKDF Feedback: ${pass ? 'PASS' : 'FAIL'} | Key: ${derivedHex}`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `sp800-108-feedback-err-${eName}`,
+              algorithm: `SP 800-108 KBKDF (${eName})`,
+              testCase: 'Feedback Mode Derivation',
+              referenceUrl: 'https://csrc.nist.gov/publications/detail/sp/800-108/rev-1/final',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id29}] SP800-108 KBKDF Feedback: ${errMessage}`)
+          }
+        }
+
+        // ── 30. XMSS Stateful Sign+Verify ────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_XMSS)) {
+          addLog(`[${eName}] [SKIP] XMSS: mechanism not supported`)
+        } else {
+          const id30 = `xmss-sig-${eName}`
+          addLog(`[${eName}] Testing XMSS Stateful Sign+Verify...`)
+          try {
+            const xmssPair = hsm_generateXMSSKeyPair(M, hSession, 1, false) // 0x00000001
+            const msgBytes = new TextEncoder().encode('ACVP XMSS Test')
+            const sig = hsm_statefulSignBytes(M, hSession, CKM_XMSS, xmssPair.privHandle, msgBytes)
+            const valid =
+              hsm_statefulVerifyBytes(M, hSession, CKM_XMSS, xmssPair.pubHandle, msgBytes, sig) ===
+              0
+            if (valid) {
+              newResults.push({
+                id: id30,
+                algorithm: `XMSS (${eName})`,
+                testCase: 'Stateful Sign+Verify',
+                referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
+                status: 'pass',
+                details: `sig[${sig.length}B] validated successfully ✓`,
+              })
+              addLog(`[${eName}] [id:${id30}] XMSS: PASS`)
+            } else {
+              throw new Error('XMSS signature verification failed')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `xmss-err-${eName}`,
+              algorithm: `XMSS (${eName})`,
+              testCase: 'Stateful Sign+Verify',
+              referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id30}] XMSS: ${errMessage}`)
+          }
+        }
+
+        // ── 31. LMS Stateful Sign+Verify ────────────────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_LMS)) {
+          addLog(`[${eName}] [SKIP] LMS: mechanism not supported`)
+        } else {
+          const id31 = `lms-sig-${eName}`
+          addLog(`[${eName}] Testing LMS Stateful Sign+Verify...`)
+          try {
+            const lmsPair = hsm_generateLMSKeyPair(M, hSession, 0x05, 0x01, false)
+            const msgBytes = new TextEncoder().encode('ACVP LMS Test')
+            const sig = hsm_statefulSignBytes(M, hSession, CKM_LMS, lmsPair.privHandle, msgBytes)
+            const valid =
+              hsm_statefulVerifyBytes(M, hSession, CKM_LMS, lmsPair.pubHandle, msgBytes, sig) === 0
+            if (valid) {
+              newResults.push({
+                id: id31,
+                algorithm: `LMS (${eName})`,
+                testCase: 'Stateful Sign+Verify',
+                referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
+                status: 'pass',
+                details: `sig[${sig.length}B] validated successfully ✓`,
+              })
+              addLog(`[${eName}] [id:${id31}] LMS: PASS`)
+            } else {
+              throw new Error('LMS signature verification failed')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `lms-err-${eName}`,
+              algorithm: `LMS (${eName})`,
+              testCase: 'Stateful Sign+Verify',
+              referenceUrl: 'https://csrc.nist.gov/pubs/sp/800/208/final',
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id31}] LMS: ${errMessage}`)
           }
         }
       }

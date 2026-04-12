@@ -50,7 +50,7 @@ const PARTS = [
     id: 'ct-log',
     title: 'Step 5: CT Log',
     description:
-      'Simulate a Certificate Transparency log with ML-DSA-44 signing via SoftHSMv3, consistency proofs, and misissuance detection.',
+      'Simulate a Certificate Transparency log with ML-DSA-65 signing via SoftHSMv3 (NIST Level 3, configurable), consistency proofs, and misissuance detection.',
     icon: FileCheck,
   },
 ]

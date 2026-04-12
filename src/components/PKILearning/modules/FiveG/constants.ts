@@ -76,9 +76,12 @@ const sharedSecretHandle = hsm_ecdhDerive(
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
-      code: `// ANSI X9.63-KDF: Z ‖ counter ‖ SharedInfo (raw ephemeral public key)
-block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes — sharedInfo = raw eph pub key
+        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.3) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). SharedInfo size differs by curve: Profile A uses the raw 32-byte X25519 scalar (Montgomery curves expose only the x-coordinate per RFC 7748 §5 — no 04‖x‖y uncompressed format exists); Profile B uses the 65-byte uncompressed P-256 point (04‖x‖y per SEC 1).',
+      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3: Z ‖ counter ‖ SharedInfo
+// SharedInfo = raw ephemeral public key (size differs by curve):
+//   Profile A (X25519): 32 bytes — Montgomery curve raw x-scalar (RFC 7748 §5)
+//   Profile B (P-256):  65 bytes — Weierstrass uncompressed point 04‖x‖y (SEC 1)
+block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes
 block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
 
 // K_enc = first 128 bits of block1 (AES-128)
@@ -285,9 +288,12 @@ const sharedSecretHandle = hsm_ecdhDerive(
       id: 'derive_keys',
       title: '6. Derive Keys (ANSI-X9.63-KDF)',
       description:
-        'The shared secret (Z) is passed through ANSI X9.63 KDF with the ephemeral public key as SharedInfo. Two SHA-256 iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC).',
-      code: `// ANSI X9.63-KDF: Z ‖ counter ‖ SharedInfo (raw ephemeral public key)
-block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes — sharedInfo = raw eph pub key
+        'The shared secret (Z) is passed through ANSI X9.63 KDF (SHA-256, per 3GPP TS 33.501 §C.3.3) with the ephemeral public key as SharedInfo. Two iterations produce K_enc (128-bit AES) and K_mac (256-bit HMAC). Profile B SharedInfo is the full 65-byte uncompressed P-256 point (04‖x‖y per SEC 1) — contrast with Profile A where only 32 bytes are used (Montgomery x-scalar, RFC 7748 §5).',
+      code: `// ANSI X9.63-KDF per 3GPP TS 33.501 §C.3.3: Z ‖ counter ‖ SharedInfo
+// SharedInfo = raw ephemeral public key:
+//   Profile B (P-256):  65 bytes — Weierstrass uncompressed 04‖x‖y (SEC 1)
+//   Profile A (X25519): 32 bytes — Montgomery curve raw x-scalar (RFC 7748 §5)
+block1 = SHA-256(Z || 0x00000001 || sharedInfo)  // 32 bytes
 block2 = SHA-256(Z || 0x00000002 || sharedInfo)  // 32 bytes
 
 // K_enc = first 128 bits of block1 (AES-128)
@@ -499,15 +505,59 @@ const Z = hsm_digest(M, hSession, concat(zEcdhBytes, zKemBytes), CKM_SHA256)`,
       id: 'derive_keys',
       title: '6. Derive Keys (KDF w/ SHA3)',
       description:
-        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 (higher security assurance for PQC). Two iterations produce K_enc (256-bit AES-256 from block1) and K_mac (256-bit HMAC-SHA3-256 from block2).',
-      code: `# ANSI X9.63 KDF with SHA3-256 (2 iterations)
-block1 = SHA3_256(Z || 0x00000001 || SharedInfo)
-block2 = SHA3_256(Z || 0x00000002 || SharedInfo)
+        'The shared secret is passed through ANSI X9.63 KDF using SHA3-256 per 3GPP TR 33.841 (§5.2.4 pure PQC / §5.2.5.2 hybrid). SHA3-256 replaces SHA-256 to ensure post-quantum security of the KDF itself. Two iterations produce K_enc (256-bit AES-256, full block1) and K_mac (256-bit HMAC-SHA3-256, full block2). SharedInfo = raw X25519 ephemeral public key (32 bytes) for hybrid mode; empty for pure PQC. Note: 3GPP TR 33.841 test vectors for Profile C are pending Rel-19 standardization.',
+      code: `# ANSI X9.63 KDF with SHA3-256 per 3GPP TR 33.841 (2 iterations)
+# Hybrid:  Z = SHA256(Z_ecdh ‖ Z_kem), SharedInfo = raw X25519 eph pub key (32 bytes)
+# Pure PQC: Z = Z_kem,                  SharedInfo = empty
+block1 = SHA3_256(Z || 0x00000001 || SharedInfo)  # 32 bytes → K_enc (AES-256)
+block2 = SHA3_256(Z || 0x00000002 || SharedInfo)  # 32 bytes → K_mac (HMAC-SHA3-256)
 
-K = block1 + block2       # Concatenated KDF output
-enc_key = K[0:32]         # 256-bit AES Key (full block1)
-mac_key = K[32:64]        # 256-bit HMAC Key (full block2)`,
+enc_key = block1  # 256-bit AES-256 key (full block1)
+mac_key = block2  # 256-bit HMAC-SHA3-256 key (full block2)`,
       output: `[USIM] Deriving Keys w/ SHA3...\n[USIM] K_enc: 256-bit AES Key\n[USIM] K_mac: 256-bit HMAC Key`,
+      explanationTable: [
+        {
+          label: 'Standard',
+          value: '3GPP TR 33.841 §5.2.4 (pure PQC) / §5.2.5.2 (hybrid)',
+          description:
+            'TR 33.841 is a 3GPP SA3 study item targeting Rel-19 standardization. Profile C test vectors are not yet published. Execute the step to see live computed values.',
+        },
+        {
+          label: 'Z source',
+          value: 'Hybrid: SHA256(Z_ecdh ‖ Z_kem) | Pure: Z_kem directly',
+          description:
+            'Hybrid combiner follows the concatenation approach per NIST SP 800-227 (draft): SHA-256 over the ordered concatenation of the classical and PQC shared secrets provides security if either component is secure.',
+        },
+        {
+          label: 'block1',
+          value: 'SHA3-256(Z ‖ 0x00000001 ‖ SharedInfo)',
+          description:
+            '32-byte output. Full block1 becomes K_enc (AES-256). SHA3-256 chosen for post-quantum security of the KDF itself.',
+        },
+        {
+          label: 'block2',
+          value: 'SHA3-256(Z ‖ 0x00000002 ‖ SharedInfo)',
+          description: '32-byte output. Full block2 becomes K_mac (HMAC-SHA3-256).',
+        },
+        {
+          label: 'SharedInfo',
+          value: 'Hybrid: raw X25519 eph pub key (32 bytes) | Pure PQC: empty (0 bytes)',
+          description:
+            'Pure PQC mode omits SharedInfo because there is no ECDH ephemeral key. The empty SharedInfo is correct per the TR 33.841 pure-PQC construction.',
+        },
+        {
+          label: 'K_enc',
+          value: 'block1 (32 bytes) → AES-256-CTR',
+          description:
+            'Profile C upgrades from AES-128 (Profiles A/B) to AES-256 to match the 128-bit post-quantum security level of ML-KEM-768 (FIPS 203).',
+        },
+        {
+          label: 'K_mac',
+          value: 'block2 (32 bytes) → HMAC-SHA3-256, truncated to 8 bytes on-air',
+          description:
+            'Profile C uses HMAC-SHA3-256 instead of HMAC-SHA-256. The full 32-byte tag is used for local MAC verification; only 8 bytes are included in the over-the-air SUCI.',
+        },
+      ],
     },
     {
       id: 'encrypt_msin',

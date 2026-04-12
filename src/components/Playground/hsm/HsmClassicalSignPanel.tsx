@@ -26,6 +26,14 @@ import {
   hsm_eddsaSign,
   hsm_eddsaVerify,
   hsm_signMultiPart,
+  CKM_EDDSA,
+  CKM_EDDSA_PH,
+  CKM_XMSS,
+  CKM_LMS,
+  hsm_generateXMSSKeyPair,
+  hsm_generateLMSKeyPair,
+  hsm_statefulSignBytes,
+  hsm_statefulVerifyBytes,
 } from '../../../wasm/softhsm'
 import { useHsmContext } from './HsmContext'
 import { HsmReadyGuard, HsmResultRow, toHex } from './shared'
@@ -33,12 +41,14 @@ import { MiniPkcsLog } from '../components/MiniPkcsLog'
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
-type ClassicMode = 'rsa' | 'ecdsa' | 'eddsa'
+type ClassicMode = 'rsa' | 'ecdsa' | 'eddsa' | 'xmss' | 'lms'
 
 const CLASSIC_MODES: { id: ClassicMode; label: string; spec: string }[] = [
   { id: 'rsa', label: 'RSA', spec: 'PKCS#11 v3.2 §2.1 — CKM_RSA_PKCS / PSS / OAEP' },
   { id: 'ecdsa', label: 'ECDSA', spec: 'PKCS#11 v3.2 §2.3.1 — CKM_ECDSA_SHA*' },
-  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §2.3.6 — CKM_EDDSA (Ed25519/Ed448)' },
+  { id: 'eddsa', label: 'EdDSA', spec: 'PKCS#11 v3.2 §2.3.6 — CKM_EDDSA / CKM_EDDSA_PH' },
+  { id: 'xmss', label: 'XMSS', spec: 'PKCS#11 v3.2 §2.4 — Stateful Signatures (XMSS)' },
+  { id: 'lms', label: 'LMS', spec: 'PKCS#11 v3.2 §2.4 — Stateful Signatures (LMS/HSS)' },
 ]
 
 const RSA_SIGN_MECHS = [
@@ -674,6 +684,7 @@ const EddsaPanel = () => {
   type EdCurve = 'Ed25519' | 'Ed448'
   const [curve, setCurve] = useState<EdCurve>('Ed25519')
   const [extractable, setExtractable] = useState(false)
+  const [mech, setMech] = useState(CKM_EDDSA)
   const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
   const [message, setMessage] = useState('Hello from EdDSA!')
   const [sig, setSig] = useState<Uint8Array | null>(null)
@@ -731,7 +742,7 @@ const EddsaPanel = () => {
     run('Sign', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const s = hsm_eddsaSign(M, hSession, handles!.priv, message)
+      const s = hsm_eddsaSign(M, hSession, handles!.priv, message, mech)
       setSig(s)
       setVerifyResult(null)
     })
@@ -740,11 +751,9 @@ const EddsaPanel = () => {
     run('Verify', () => {
       const M = moduleRef.current!
       const hSession = hSessionRef.current
-      const valid = hsm_eddsaVerify(M, hSession, handles!.pub, message, sig!)
+      const valid = hsm_eddsaVerify(M, hSession, handles!.pub, message, sig!, mech)
       setVerifyResult(valid)
     })
-
-  const sigBytes = curve === 'Ed25519' ? 64 : 114
 
   return (
     <div className="space-y-4">
@@ -798,10 +807,326 @@ const EddsaPanel = () => {
 
       {handles && (
         <div className="space-y-2 rounded-lg border border-border p-3">
-          <p className="text-xs text-muted-foreground">
-            Mechanism: <span className="font-mono text-primary">CKM_EDDSA (0x1057)</span> —
-            deterministic, no prehash (pure EdDSA), signature is {sigBytes} bytes
-          </p>
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-muted-foreground">Mechanism</span>
+          </div>
+          <FilterDropdown
+            items={[
+              { id: String(CKM_EDDSA), label: 'Pure EdDSA (CKM_EDDSA)' },
+              { id: String(CKM_EDDSA_PH), label: 'Pre-hash (CKM_EDDSA_PH)' },
+            ]}
+            selectedId={String(mech)}
+            onSelect={(id) => {
+              setMech(parseInt(id, 10))
+              setSig(null)
+              setVerifyResult(null)
+            }}
+            noContainer
+          />
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value)
+              setSig(null)
+              setVerifyResult(null)
+            }}
+            placeholder="Message to sign"
+            className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+          />
+          <div className="flex gap-2">
+            <Button variant="gradient" size="sm" onClick={handleSign} disabled={loadingOp !== null}>
+              {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />} C_Sign
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleVerify}
+              disabled={loadingOp !== null || !sig}
+            >
+              {loadingOp === 'Verify' && <Loader2 size={14} className="animate-spin mr-1" />}{' '}
+              C_Verify
+            </Button>
+          </div>
+          {sig && <HsmResultRow label={`Sig (${sig.length}B)`} value={toHex(sig)} />}
+          {verifyResult !== null && (
+            <div
+              className={`flex items-center gap-2 text-xs font-medium rounded px-2 py-1 ${verifyResult ? 'text-status-success bg-status-success/10' : 'text-status-error bg-status-error/10'}`}
+            >
+              {verifyResult ? (
+                <>
+                  <CheckCircle size={12} /> Valid
+                </>
+              ) : (
+                <>
+                  <XCircle size={12} /> Invalid
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <MiniPkcsLog />
+      {error && <ErrorAlert message={error} />}
+    </div>
+  )
+}
+
+// ── XMSS sub-panel ───────────────────────────────────────────────────────────
+
+const XmssPanel = () => {
+  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [message, setMessage] = useState('Hello from XMSS!')
+  const [sig, setSig] = useState<Uint8Array | null>(null)
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const run = async (label: string, fn: () => void) => {
+    setError(null)
+    setLoadingOp(label)
+    try {
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          try {
+            fn()
+            resolve()
+          } catch (e) {
+            setError(e instanceof Error ? e.message : String(e))
+            resolve()
+          }
+        }, 0)
+      })
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const handleGenKeys = () =>
+    run('KeyGen', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      // Hardcoded paramSet for XMSS-SHA2_10_256 (0x00000001)
+      const { pubHandle, privHandle } = hsm_generateXMSSKeyPair(M, hSession, 1, false)
+      addHsmKey({
+        handle: pubHandle,
+        family: 'xmss',
+        role: 'public',
+        label: `XMSS Public Key`,
+        engine: engineMode === 'rust' ? 'rust' : 'cpp',
+        generatedAt: new Date().toISOString(),
+      })
+      addHsmKey({
+        handle: privHandle,
+        family: 'xmss',
+        role: 'private',
+        label: `XMSS Private Key`,
+        engine: engineMode === 'rust' ? 'rust' : 'cpp',
+        generatedAt: new Date().toISOString(),
+      })
+      setHandles({ pub: pubHandle, priv: privHandle })
+      setSig(null)
+      setVerifyResult(null)
+    })
+
+  const handleSign = () =>
+    run('Sign', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      const msgBytes = new TextEncoder().encode(message)
+      const s = hsm_statefulSignBytes(M, hSession, CKM_XMSS, handles!.priv, msgBytes)
+      setSig(s)
+      setVerifyResult(null)
+    })
+
+  const handleVerify = () =>
+    run('Verify', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      const msgBytes = new TextEncoder().encode(message)
+      const valid =
+        hsm_statefulVerifyBytes(M, hSession, CKM_XMSS, handles!.pub, msgBytes, sig!) === 0
+      setVerifyResult(valid)
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="gradient"
+            size="sm"
+            onClick={handleGenKeys}
+            disabled={loadingOp !== null}
+          >
+            {loadingOp === 'KeyGen' && <Loader2 size={14} className="animate-spin mr-1" />}
+            {handles ? `Regen XMSS` : 'Generate Key Pair'}
+          </Button>
+        </div>
+        {handles && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+            <HsmResultRow label="pub handle" value={`h=${handles.pub}`} />
+            <HsmResultRow label="priv handle" value={`h=${handles.priv}`} />
+          </div>
+        )}
+      </div>
+
+      {handles && (
+        <div className="space-y-2 rounded-lg border border-border p-3">
+          <input
+            type="text"
+            value={message}
+            onChange={(e) => {
+              setMessage(e.target.value)
+              setSig(null)
+              setVerifyResult(null)
+            }}
+            placeholder="Message to sign"
+            className="w-full text-xs rounded-lg px-3 py-1.5 bg-muted border border-border text-foreground"
+          />
+          <div className="flex gap-2">
+            <Button variant="gradient" size="sm" onClick={handleSign} disabled={loadingOp !== null}>
+              {loadingOp === 'Sign' && <Loader2 size={14} className="animate-spin mr-1" />} C_Sign
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleVerify}
+              disabled={loadingOp !== null || !sig}
+            >
+              {loadingOp === 'Verify' && <Loader2 size={14} className="animate-spin mr-1" />}{' '}
+              C_Verify
+            </Button>
+          </div>
+          {sig && <HsmResultRow label={`Sig (${sig.length}B)`} value={toHex(sig)} />}
+          {verifyResult !== null && (
+            <div
+              className={`flex items-center gap-2 text-xs font-medium rounded px-2 py-1 ${verifyResult ? 'text-status-success bg-status-success/10' : 'text-status-error bg-status-error/10'}`}
+            >
+              {verifyResult ? (
+                <>
+                  <CheckCircle size={12} /> Valid
+                </>
+              ) : (
+                <>
+                  <XCircle size={12} /> Invalid
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <MiniPkcsLog />
+      {error && <ErrorAlert message={error} />}
+    </div>
+  )
+}
+
+// ── LMS sub-panel ───────────────────────────────────────────────────────────
+
+const LmsPanel = () => {
+  const { moduleRef, hSessionRef, addHsmKey, engineMode } = useHsmContext()
+  const [handles, setHandles] = useState<{ pub: number; priv: number } | null>(null)
+  const [message, setMessage] = useState('Hello from LMS!')
+  const [sig, setSig] = useState<Uint8Array | null>(null)
+  const [verifyResult, setVerifyResult] = useState<boolean | null>(null)
+  const [loadingOp, setLoadingOp] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
+
+  const run = async (label: string, fn: () => void) => {
+    setError(null)
+    setLoadingOp(label)
+    try {
+      await new Promise<void>((resolve) => {
+        setTimeout(() => {
+          try {
+            fn()
+            resolve()
+          } catch (e) {
+            setError(e instanceof Error ? e.message : String(e))
+            resolve()
+          }
+        }, 0)
+      })
+    } finally {
+      setLoadingOp(null)
+    }
+  }
+
+  const handleGenKeys = () =>
+    run('KeyGen', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      // Hardcoded types for LMS_SHA256_M32_H5 (0x05) and LMOTS_SHA256_N32_W1 (0x01)
+      const { pubHandle, privHandle } = hsm_generateLMSKeyPair(M, hSession, 0x05, 0x01, false)
+      addHsmKey({
+        handle: pubHandle,
+        family: 'lms',
+        role: 'public',
+        label: `LMS Public Key`,
+        engine: engineMode === 'rust' ? 'rust' : 'cpp',
+        generatedAt: new Date().toISOString(),
+      })
+      addHsmKey({
+        handle: privHandle,
+        family: 'lms',
+        role: 'private',
+        label: `LMS Private Key`,
+        engine: engineMode === 'rust' ? 'rust' : 'cpp',
+        generatedAt: new Date().toISOString(),
+      })
+      setHandles({ pub: pubHandle, priv: privHandle })
+      setSig(null)
+      setVerifyResult(null)
+    })
+
+  const handleSign = () =>
+    run('Sign', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      const msgBytes = new TextEncoder().encode(message)
+      const s = hsm_statefulSignBytes(M, hSession, CKM_LMS, handles!.priv, msgBytes)
+      setSig(s)
+      setVerifyResult(null)
+    })
+
+  const handleVerify = () =>
+    run('Verify', () => {
+      const M = moduleRef.current!
+      const hSession = hSessionRef.current
+      const msgBytes = new TextEncoder().encode(message)
+      const valid =
+        hsm_statefulVerifyBytes(M, hSession, CKM_LMS, handles!.pub, msgBytes, sig!) === 0
+      setVerifyResult(valid)
+    })
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <div className="flex items-center gap-2">
+          <Button
+            variant="gradient"
+            size="sm"
+            onClick={handleGenKeys}
+            disabled={loadingOp !== null}
+          >
+            {loadingOp === 'KeyGen' && <Loader2 size={14} className="animate-spin mr-1" />}
+            {handles ? `Regen LMS` : 'Generate Key Pair'}
+          </Button>
+        </div>
+        {handles && (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-1">
+            <HsmResultRow label="pub handle" value={`h=${handles.pub}`} />
+            <HsmResultRow label="priv handle" value={`h=${handles.priv}`} />
+          </div>
+        )}
+      </div>
+
+      {handles && (
+        <div className="space-y-2 rounded-lg border border-border p-3">
           <input
             type="text"
             value={message}
@@ -892,6 +1217,8 @@ export const HsmClassicalSignPanel = () => {
         {mode === 'rsa' && <RsaPanel />}
         {mode === 'ecdsa' && <EcdsaPanel />}
         {mode === 'eddsa' && <EddsaPanel />}
+        {mode === 'xmss' && <XmssPanel />}
+        {mode === 'lms' && <LmsPanel />}
       </div>
     </HsmReadyGuard>
   )

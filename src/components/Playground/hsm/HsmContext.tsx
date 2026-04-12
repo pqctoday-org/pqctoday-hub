@@ -27,6 +27,7 @@ export type HsmFamily =
   | 'ecdh'
   | 'kdf'
   | 'aes'
+  | 'chacha20'
   | 'hmac'
   | 'sha'
 

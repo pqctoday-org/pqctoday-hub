@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import type { WalletInstance } from '../../types'
 import { useDigitalIDLogs } from '../../hooks/useDigitalIDLogs'
 import type { CryptoProvider } from '../../utils/crypto-provider'
+import type { KeyAlgorithm, KeyCurve } from '../../types'
 import { OpenSSLCryptoProvider } from '../../utils/openssl-crypto-provider'
 import { SoftHSMCryptoProvider } from '../../utils/hsm-crypto-provider'
 import { DualCryptoProvider } from '../../utils/dual-crypto-provider'
@@ -12,11 +13,40 @@ import { generateX509Certificate } from '../../utils/x509-utils'
 import { Loader2, FileSignature, UploadCloud, CheckCircle, PenTool, Lock } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { FilterDropdown } from '@/components/common/FilterDropdown'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { useHSM } from '@/hooks/useHSM'
 import { LiveHSMToggle } from '@/components/shared/LiveHSMToggle'
 import { Pkcs11LogPanel } from '@/components/shared/Pkcs11LogPanel'
 import { HsmKeyInspector } from '@/components/shared/HsmKeyInspector'
+
+type QesAlgorithmOption = {
+  label: string
+  algorithm: KeyAlgorithm
+  curve: KeyCurve
+  description: string
+}
+
+const QES_ALGORITHM_OPTIONS: QesAlgorithmOption[] = [
+  {
+    label: 'ES384 (P-384)',
+    algorithm: 'ES384',
+    curve: 'P-384',
+    description: 'ECDSA with P-384 — ETSI TS 119 312 recommended for QES (≥128-bit security)',
+  },
+  {
+    label: 'ES256 (P-256)',
+    algorithm: 'ES256',
+    curve: 'P-256',
+    description: 'ECDSA with P-256 — widely supported, 128-bit security',
+  },
+  {
+    label: 'EdDSA (Ed25519)',
+    algorithm: 'EdDSA',
+    curve: 'Ed25519',
+    description: 'Edwards-curve DSA — fast, compact signatures, 128-bit security',
+  },
+]
 
 const QES_LIVE_OPERATIONS = [
   'C_DigestInit',
@@ -38,6 +68,7 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
     useDigitalIDLogs()
   const [docName, setDocName] = useState('Contract.pdf')
   const [docHash, setDocHash] = useState('')
+  const [selectedAlg, setSelectedAlg] = useState<QesAlgorithmOption>(QES_ALGORITHM_OPTIONS[0])
   const hsm = useHSM()
 
   const getCryptoProvider = (): CryptoProvider => {
@@ -105,12 +136,18 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
     await new Promise((r) => setTimeout(r, 800))
 
     const provider = getCryptoProvider()
-    addLog('Remote HSM: Generating ECC P-384 signing key for QES...')
+    addLog(
+      `Remote HSM: Generating ${selectedAlg.label} signing key for QES (${selectedAlg.description})...`
+    )
 
     if (hsm.isReady) {
       hsm.addStepLog('✒️ The Qualified Electronic Signature (QES) Key')
     }
-    const key = await provider.generateKeyPair('ES384', 'P-384', addOpenSSLLog)
+    const key = await provider.generateKeyPair(
+      selectedAlg.algorithm,
+      selectedAlg.curve,
+      addOpenSSLLog
+    )
 
     addLog('Sole Control Assurance: Validated.')
 
@@ -183,6 +220,18 @@ export const QESProviderComponent: React.FC<QESProviderComponentProps> = ({ wall
                   <p className="text-xs text-muted-foreground mt-2">
                     Enter any name to simulate a file upload.
                   </p>
+                </div>
+                <div className="space-y-1">
+                  <Label className="text-sm">Signature Algorithm</Label>
+                  <FilterDropdown
+                    items={QES_ALGORITHM_OPTIONS.map((o) => o.label)}
+                    selectedId={selectedAlg.label}
+                    onSelect={(label) => {
+                      const match = QES_ALGORITHM_OPTIONS.find((o) => o.label === label)
+                      if (match) setSelectedAlg(match)
+                    }}
+                  />
+                  <p className="text-xs text-muted-foreground">{selectedAlg.description}</p>
                 </div>
                 <Button variant="ghost" onClick={handleUpload} className="w-full">
                   Proceed to Sign

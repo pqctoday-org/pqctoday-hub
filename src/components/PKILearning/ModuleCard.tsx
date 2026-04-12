@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button'
 
 export interface ModuleItem {
   id: string
+  lm_id?: string
   title: string
   description: string
   duration: string

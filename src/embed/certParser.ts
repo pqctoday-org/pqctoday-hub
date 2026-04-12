@@ -200,17 +200,8 @@ function decodePolicy(cert: x509.X509Certificate): VendorPolicy {
 // ---------------------------------------------------------------------------
 
 function getSubjectField(cert: x509.X509Certificate, shortName: string): string | undefined {
-  // @peculiar/x509 represents the subject as an array of attribute arrays
-  for (const rdn of cert.subject) {
-    for (const attr of rdn) {
-      // OID for CN = 2.5.4.3, O = 2.5.4.10
-      const oid = shortName === 'CN' ? '2.5.4.3' : shortName === 'O' ? '2.5.4.10' : ''
-      if (attr.type === oid) {
-        return String(attr.value)
-      }
-    }
-  }
-  return undefined
+  const values = cert.subjectName.getField(shortName)
+  return values.length > 0 ? values[0] : undefined
 }
 
 function getStringExtension(cert: x509.X509Certificate, oid: string, defaultValue: string): string {

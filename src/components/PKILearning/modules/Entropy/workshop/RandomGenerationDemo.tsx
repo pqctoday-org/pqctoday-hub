@@ -10,6 +10,7 @@ import {
   Eye,
   CheckCircle,
   XCircle,
+  BookOpen,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { getRandomBytes } from '@/utils/webCrypto'
@@ -449,19 +450,83 @@ export const RandomGenerationDemo: React.FC = () => {
       {/* LCG Prediction Demo */}
       {lcgState && enabledSources.includes('lcg') && (
         <div className="glass-panel p-4 border-l-4 border-l-warning space-y-3">
-          <div className="flex items-center gap-2">
-            <Eye size={16} className="text-warning" />
-            <h4 className="text-sm font-semibold text-foreground">
-              LCG Determinism — Can We Predict the Next Bytes?
-            </h4>
+          <div className="flex items-center justify-between gap-2 flex-wrap">
+            <div className="flex items-center gap-2">
+              <Eye size={16} className="text-warning" />
+              <h4 className="text-sm font-semibold text-foreground">
+                LCG Determinism — Can We Predict the Next Bytes?
+              </h4>
+            </div>
+            <span className="inline-flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded bg-destructive/10 text-destructive border border-destructive/20">
+              Not NIST SP 800-90A Approved
+            </span>
           </div>
+
           <p className="text-xs text-muted-foreground">
             The LCG&apos;s internal state is fully deterministic. Knowing the state after generation
             means we can predict every future output.
           </p>
-          <div className="text-xs font-mono text-muted-foreground bg-muted/30 rounded px-3 py-1.5">
-            Internal state: 0x{lcgState.finalState.toString(16).padStart(8, '0')}
+
+          {/* LCG parameter + seed breakdown */}
+          <div className="bg-muted/30 rounded-lg p-3 space-y-2">
+            <div className="flex items-baseline justify-between flex-wrap gap-2">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">
+                Recurrence: state = (a × state + c) mod m
+              </p>
+              <span className="text-[10px] text-muted-foreground italic">
+                Numerical Recipes parameters (Knuth, 1997)
+              </span>
+            </div>
+            <div className="grid grid-cols-3 gap-2 text-xs font-mono">
+              <div className="space-y-0.5">
+                <div className="text-[10px] text-muted-foreground uppercase">a (multiplier)</div>
+                <div className="text-foreground">{lcgState.a.toLocaleString()}</div>
+              </div>
+              <div className="space-y-0.5">
+                <div className="text-[10px] text-muted-foreground uppercase">c (increment)</div>
+                <div className="text-foreground">{lcgState.c.toLocaleString()}</div>
+              </div>
+              <div className="space-y-0.5">
+                <div className="text-[10px] text-muted-foreground uppercase">m (modulus)</div>
+                <div className="text-foreground">2³²</div>
+              </div>
+            </div>
+            <p className="text-[10px] text-muted-foreground leading-snug border-t border-border/40 pt-2">
+              NIST SP 800-90A Rev. 1 §11 approves only{' '}
+              <strong className="text-foreground">CTR_DRBG</strong>,{' '}
+              <strong className="text-foreground">Hash_DRBG</strong>, and{' '}
+              <strong className="text-foreground">HMAC_DRBG</strong> for cryptographic use. LCGs are
+              explicitly excluded — they fail the backtracking-resistance and prediction-resistance
+              requirements of the standard.
+            </p>
+            <div className="border-t border-border/50 pt-2 space-y-1.5">
+              <div className="flex items-baseline gap-2 text-xs font-mono flex-wrap">
+                <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
+                  Seed
+                </span>
+                <span className="text-warning">
+                  0x{lcgState.seed.toString(16).padStart(8, '0')}
+                </span>
+                <span className="text-[10px] text-muted-foreground">
+                  = Date.now() &amp; 0xFFFFFFFF
+                </span>
+              </div>
+              <p className="text-[10px] text-warning leading-snug">
+                Date.now() has ~1ms resolution — an attacker who knows the approximate generation
+                time can enumerate ≤ 86,400,000 candidates per day, making brute-force trivial on
+                any modern CPU.
+              </p>
+              <div className="flex items-baseline gap-2 text-xs font-mono">
+                <span className="text-[10px] text-muted-foreground uppercase w-16 shrink-0">
+                  State
+                </span>
+                <span className="text-foreground">
+                  0x{lcgState.finalState.toString(16).padStart(8, '0')}
+                </span>
+              </div>
+            </div>
           </div>
+
           {!showPrediction ? (
             <Button variant="outline" size="sm" onClick={handlePredictNext}>
               <Eye size={14} className="mr-1.5" />
@@ -543,16 +608,82 @@ export const RandomGenerationDemo: React.FC = () => {
         />
       )}
 
-      {/* Educational note */}
-      <p className="text-xs text-muted-foreground leading-relaxed border-t border-border pt-4">
-        <strong className="text-foreground">Secure sources</strong> (Web Crypto, OpenSSL) draw from
-        the operating system&apos;s entropy pool (e.g.,{' '}
-        <code className="font-mono text-primary">/dev/urandom</code>).{' '}
-        <strong className="text-foreground">Insecure sources</strong> (Math.random, LCG) use
-        deterministic algorithms with predictable seeds — their output <em>looks</em> random but is
-        fully reproducible. This is why NIST SP 800-90A requires entropy-seeded DRBGs for all
-        cryptographic applications.
-      </p>
+      {/* Production entropy products */}
+      <div className="glass-panel p-4 space-y-3">
+        <h4 className="text-sm font-semibold text-foreground">Production Entropy Sources</h4>
+        <p className="text-xs text-muted-foreground">
+          Hardware and cloud entropy services that feed NIST SP 800-90B qualified entropy into
+          production DRBGs and HSMs.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          {(
+            [
+              {
+                name: 'ID Quantique Quantis QRNG',
+                desc: 'Photon-detection QRNG · FIPS 140-2 entropy source qualified',
+              },
+              {
+                name: 'Quantinuum Quantum Origin',
+                desc: 'Quantum computer-sourced entropy · HSM / KMS integration',
+              },
+              {
+                name: 'QuintessenceLabs qStream',
+                desc: 'High-speed optical QRNG · NIST SP 800-90B compliant',
+              },
+              {
+                name: 'Qrypt BLAST SDK',
+                desc: 'Quantum entropy SDK · peer-reviewed algorithm',
+              },
+            ] as { name: string; desc: string }[]
+          ).map(({ name, desc }) => (
+            <a
+              key={name}
+              href={`/migrate?q=${encodeURIComponent(name)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col gap-0.5 px-3 py-2 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
+            >
+              <span className="text-xs font-medium text-foreground">{name}</span>
+              <span className="text-[10px] text-muted-foreground">{desc}</span>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      {/* Educational note + library xrefs */}
+      <div className="border-t border-border pt-4 space-y-3">
+        <p className="text-xs text-muted-foreground leading-relaxed">
+          <strong className="text-foreground">Secure sources</strong> (Web Crypto, OpenSSL) draw
+          from the operating system&apos;s entropy pool (e.g.,{' '}
+          <code className="font-mono text-primary">/dev/urandom</code>).{' '}
+          <strong className="text-foreground">Insecure sources</strong> (Math.random, LCG) use
+          deterministic algorithms with predictable seeds — their output <em>looks</em> random but
+          is fully reproducible. This is why NIST SP 800-90A requires entropy-seeded DRBGs for all
+          cryptographic applications.
+        </p>
+        <div className="flex flex-wrap gap-2">
+          {(
+            [
+              { id: 'NIST-SP-800-90A-R1', label: 'SP 800-90A Rev. 1' },
+              { id: 'NIST-SP-800-90B', label: 'SP 800-90B' },
+              { id: 'NIST-SP-800-90C', label: 'SP 800-90C' },
+              { id: 'NIST-SP-800-22-R1A', label: 'SP 800-22 Rev. 1a' },
+              { id: 'BSI-AIS-20-31', label: 'BSI AIS 20/31' },
+            ] as { id: string; label: string }[]
+          ).map(({ id, label }) => (
+            <a
+              key={id}
+              href={`/library?ref=${id}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-medium bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-colors"
+            >
+              <BookOpen size={9} />
+              {label}
+            </a>
+          ))}
+        </div>
+      </div>
     </div>
   )
 }

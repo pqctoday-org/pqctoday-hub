@@ -22,7 +22,7 @@ const QKD_KAT_SPECS: KatTestSpec[] = [
     id: 'qkd-hkdf',
     useCase: 'Key derivation functional testing (HKDF)',
     standard: 'SP 800-108 + RFC 5869',
-    referenceUrl: 'https://www.rfc-editor.org/rfc/rfc5869',
+    referenceUrl: '/library?ref=RFC-5869',
     kind: { type: 'hkdf-derive' },
   },
 ]
@@ -213,6 +213,62 @@ export const HSMKeyDerivationDemo: React.FC = () => {
             key hierarchy (master → KEK → DEK).
           </div>
         </div>
+      </div>
+
+      {/* KBKDF vs HKDF comparison */}
+      <div className="glass-panel p-4">
+        <h4 className="text-sm font-bold text-foreground mb-3">
+          KBKDF vs HKDF — Choosing the Right KDF
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+          <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
+            <div className="font-bold text-foreground mb-1.5">KBKDF (SP 800-108 Counter Mode)</div>
+            <div className="text-muted-foreground space-y-1">
+              <div>
+                <span className="font-semibold text-foreground">Where:</span> Inside the HSM —{' '}
+                <span className="font-mono">CKM_SP800_108_COUNTER_KDF</span>
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Input:</span> A single fixed-length
+                key handle (e.g., QKD master secret) already in HSM storage
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Output:</span> One or more
+                purpose-specific sub-keys, each never leaving the HSM
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Use when:</span> Key hierarchy
+                expansion (master → KEK → DEK) must stay within the HSM security boundary
+              </div>
+            </div>
+          </div>
+          <div className="bg-muted/50 border border-border rounded-lg p-3">
+            <div className="font-bold text-foreground mb-1.5">HKDF (RFC 5869)</div>
+            <div className="text-muted-foreground space-y-1">
+              <div>
+                <span className="font-semibold text-foreground">Where:</span> Software layer or HSM
+                via <span className="font-mono">CKM_HKDF_DERIVE</span> (PKCS#11 v3.0)
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Input:</span> Variable-length IKM +
+                optional salt (extract phase), then context info (expand phase)
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Output:</span> Arbitrary-length OKM;
+                each caller context produces independent key material
+              </div>
+              <div>
+                <span className="font-semibold text-foreground">Use when:</span> TLS 1.3 key
+                schedule, QUIC, or Signal — where IKM arrives from a DH/KEM exchange in software
+              </div>
+            </div>
+          </div>
+        </div>
+        <p className="text-xs text-muted-foreground mt-3">
+          This demo uses KBKDF because the QKD secret is imported as a non-extractable HSM key. HKDF
+          would require the raw key bytes to be visible in the software layer — acceptable for
+          KEM-based TLS but undesirable for QKD where the secret must never leave the HSM.
+        </p>
       </div>
 
       {/* Header note */}
@@ -502,12 +558,26 @@ export const HSMKeyDerivationDemo: React.FC = () => {
               <div className="font-bold text-foreground mb-2">
                 Option B — TLS 1.3 PSK (RFC 9258)
               </div>
-              <div className="text-muted-foreground space-y-1">
-                <div>Import session key as external PSK</div>
-                <div>Bind to: SHA-256, TLS 1.3</div>
-                <div>Use in: ClientHello PSK extension</div>
-                <div className="mt-2 text-muted-foreground">
-                  See Part 4 → TLS 1.3 tab for the full import flow.
+              <div className="text-muted-foreground space-y-1 text-xs">
+                <div className="font-mono bg-muted/60 rounded p-2 border border-border space-y-0.5">
+                  <div className="text-muted-foreground">
+                    {'// RFC 9258 ImportedIdentity structure'}
+                  </div>
+                  <div>label = &quot;tls13-&quot; + hash_name</div>
+                  <div>{'context = ImportedIdentity {'}</div>
+                  <div className="pl-3">external_identity = key_id_utf8,</div>
+                  <div className="pl-3">hash = SHA-256</div>
+                  <div>{'}'}</div>
+                  <div>PSK = HKDF-Extract(0x00…, session_key)</div>
+                  <div>binder_key = Derive-Secret(PSK, label, &quot;&quot;)</div>
+                </div>
+                <div className="mt-1.5">
+                  The derived session key becomes the HKDF input keying material. RFC 9258 wraps it
+                  with an <span className="font-mono text-foreground">ImportedIdentity</span>{' '}
+                  context that binds it to a specific hash and TLS version, preventing
+                  cross-protocol reuse. Used in{' '}
+                  <span className="font-mono text-foreground">ClientHello</span> PSK extension — see
+                  Part 4 → TLS 1.3 tab for the live handshake demo.
                 </div>
               </div>
             </div>
@@ -558,31 +628,20 @@ export const HSMKeyDerivationDemo: React.FC = () => {
           </div>
           <p className="text-xs text-muted-foreground">
             Standards used:{' '}
-            <a
-              href="https://www.etsi.org/deliver/etsi_gs/QKD/001_099/014/01.01.01_60/gs_qkd014v010101p.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
+            <a href="/library?ref=ETSI-GS-QKD-014" className="text-primary hover:underline">
               ETSI GS QKD 014
             </a>{' '}
             ·{' '}
-            <a
-              href="https://docs.oasis-open.org/pkcs11/pkcs11-base/v3.0/os/pkcs11-base-v3.0-os.html"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
+            <a href="/library?ref=PKCS11-V3-OASIS" className="text-primary hover:underline">
               PKCS#11 v3.0
             </a>{' '}
             ·{' '}
-            <a
-              href="https://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-108r1.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-primary hover:underline"
-            >
+            <a href="/library?ref=NIST-SP-800-108-R1" className="text-primary hover:underline">
               NIST SP 800-108 Rev.1
+            </a>{' '}
+            ·{' '}
+            <a href="/library?ref=RFC-9258" className="text-primary hover:underline">
+              RFC 9258 (TLS 1.3 PSK Import)
             </a>
           </p>
           <div className="text-xs font-bold text-success">

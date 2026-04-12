@@ -8,9 +8,10 @@ import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'confidential-computing',
-  lastReviewed: '2026-03-28',
+  version: '1.0.0',
+  lastReviewed: '2026-04-12',
 
-  standards: [getStandard('FIPS 203')],
+  standards: [getStandard('FIPS 203'), getStandard('FIPS 204')],
 
   algorithms: [
     getAlgorithm('ECDH P-256'),
