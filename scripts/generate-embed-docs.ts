@@ -54,6 +54,8 @@ interface ThemeFieldDef {
   description: string
   example?: string
   default?: string
+  /** true = cannot be set via URL params; only configurable in the vendor certificate */
+  certOnly?: boolean
 }
 
 interface PolicyFieldDef {
@@ -376,6 +378,14 @@ const URL_PARAMS: FieldDef[] = [
     example: 'basics',
   },
   {
+    name: 'ind',
+    type: 'string',
+    required: false,
+    description:
+      'Industry pre-filter (e.g. "finance", "healthcare"). Applied after verification — not included in the ECDSA canonical string. Seeds the industry context shown in compliance and assessment pages.',
+    example: 'finance',
+  },
+  {
     name: 'assistant',
     type: '"true" | "false"',
     required: false,
@@ -567,6 +577,50 @@ const VENDOR_THEME: ThemeFieldDef[] = [
     example: '#DC2626',
     default: '#ef4444',
   },
+  // Dark Mode Surfaces
+  {
+    field: 'darkBackground',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description:
+      'Page background color used when colorMode is "dark". Overrides the default dark background. Pair with darkCard, darkForeground, darkBorder for a complete dark theme.',
+    example: '#0D1117',
+  },
+  {
+    field: 'darkCard',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description: 'Card and panel background color in dark mode.',
+    example: '#161B22',
+  },
+  {
+    field: 'darkForeground',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description: 'Main body text color in dark mode.',
+    example: '#E6EDF3',
+  },
+  {
+    field: 'darkMuted',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description: 'Muted section background in dark mode (table headers, zebra rows).',
+    example: '#21262D',
+  },
+  {
+    field: 'darkMutedForeground',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description: 'Muted text color in dark mode.',
+    example: '#8B949E',
+  },
+  {
+    field: 'darkBorder',
+    type: 'string',
+    group: 'Dark Mode Surfaces',
+    description: 'Border and input outline color in dark mode.',
+    example: '#30363D',
+  },
   // Typography & Shape
   {
     field: 'radius',
@@ -651,7 +705,7 @@ const VENDOR_THEME: ThemeFieldDef[] = [
       'Text and icon color in the navigation bar. Defaults to #FFFFFF when sidebar is set.',
     example: '#FFFFFF',
   },
-  // Branding
+  // Branding (cert-only — cannot be set via URL parameters)
   {
     field: 'brandName',
     type: 'string',
@@ -659,6 +713,7 @@ const VENDOR_THEME: ThemeFieldDef[] = [
     description:
       'Replace "PQC Today" in the nav header with your brand name. If omitted, shows "PQC Today" with default gradient style.',
     example: 'Acme Security',
+    certOnly: true,
   },
   {
     field: 'logoUrl',
@@ -667,6 +722,7 @@ const VENDOR_THEME: ThemeFieldDef[] = [
     description:
       'URL to a vendor logo image shown in the nav header (replaces text wordmark). Must be HTTPS, hosted on your origin. Recommended: ≤ 120×32px.',
     example: 'https://cdn.acme.com/logo-white.svg',
+    certOnly: true,
   },
   {
     field: 'logoHeight',
@@ -675,6 +731,7 @@ const VENDOR_THEME: ThemeFieldDef[] = [
     description: 'Logo image height override.',
     example: '28px',
     default: '28px',
+    certOnly: true,
   },
   {
     field: 'logoMaxWidth',
@@ -683,6 +740,7 @@ const VENDOR_THEME: ThemeFieldDef[] = [
     description: 'Logo image max-width override.',
     example: '120px',
     default: '120px',
+    certOnly: true,
   },
   // Badges
   {
@@ -709,12 +767,16 @@ const VENDOR_POLICY_ROUTES: PolicyFieldDef[] = [
     values: [
       'all',
       'learn',
+      'timeline',
+      'algorithms',
+      'library',
+      'threats',
+      'leaders',
+      'compliance',
       'assess',
-      'explore',
       'migrate',
       'playground',
       'business',
-      'openssl',
       'faq',
     ],
     example: '["learn", "assess"]',
@@ -801,7 +863,7 @@ const VENDOR_POLICY_SESSION: PolicyFieldDef[] = [
     required: true,
     description:
       'Persistence modes the vendor is authorized to use. The URL persist= parameter must be a member of this list.',
-    values: ['postMessage', 'none'],
+    values: ['api', 'postMessage', 'none'],
     example: '["postMessage", "none"]',
   },
 ]
@@ -846,6 +908,19 @@ const VENDOR_POLICY_FEATURES: PolicyFieldDef[] = [
     type: 'string | undefined',
     description: 'URL the help button links to. Required when showHelpButton is true.',
     example: 'https://support.example.com/pqc',
+  },
+  {
+    field: 'features.assistantTitle',
+    type: 'string | undefined',
+    description:
+      'Custom heading shown at the top of the PQC Assistant drawer. Defaults to "PQC Assistant".',
+    example: 'Acme Security Advisor',
+  },
+  {
+    field: 'features.assistantMaxWidth',
+    type: 'string | undefined',
+    description: 'Max-width of the assistant panel. Defaults to "400px".',
+    example: '480px',
   },
 ]
 
