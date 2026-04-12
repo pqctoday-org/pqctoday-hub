@@ -396,8 +396,8 @@ export const EmbedLayout = () => {
           </div>
         </aside>
 
-        {/* Right side: test banner + main content (scrollable) */}
-        <div className="flex flex-col flex-1 min-w-0 overflow-y-auto">
+        {/* Right side: test banner + main content (scrollable) + assistant drawer */}
+        <div className="relative flex flex-col flex-1 min-w-0 overflow-y-auto">
           {embedConfig.isTestMode && (
             <div className="bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
               ⚠ Sandbox / Test Mode — not for production use
@@ -411,14 +411,14 @@ export const EmbedLayout = () => {
             {renderContent()}
           </main>
           <PoweredByBadge />
-        </div>
 
-        {embedConfig.policy.features.assistantEnabled && (
-          <>
-            <RightPanelFAB />
-            <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
-          </>
-        )}
+          {embedConfig.policy.features.assistantEnabled && (
+            <>
+              <RightPanelFAB />
+              <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
+            </>
+          )}
+        </div>
       </div>
     )
   }
