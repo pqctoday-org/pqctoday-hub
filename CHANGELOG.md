@@ -6,6 +6,47 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.1.4] - 2026-04-11
+
+### Fixed
+
+- **Embed mode — modal backdrop positioning (39 files)**: All 56 `fixed inset-0` modal/overlay
+  backdrops now include the `embed-backdrop` CSS class, which switches to `position: absolute`
+  inside `[data-embed]` iframes. Previously only 3 exact class-string patterns were covered by
+  the CSS rule — modals with `print:hidden`, different z-index tokens, or different class order
+  escaped the iframe viewport. New generic `[data-embed] .embed-backdrop` rule in `index.css`.
+
+- **Embed mode — table/chart horizontal overflow (8 files)**: Reduced fixed `min-w-*` values
+  that forced scrollbars at embed widths (600–900px): `SimpleGanttChart` 1000→600px,
+  `ComplianceLandscape` 600→400px, `ReportTimelineStrip` 480→320px, `ModuleTable` 480→360px,
+  `ComplianceGantt` 900→600px, `AlgorithmVulnerabilityMatrix` 700→500px,
+  `OTAOrchestrationPlanner` and `MigrationRiskMatrix` 500→responsive (`min-w-0 md:min-w-[500px]`).
+
+- **Embed mode — content hidden at embed widths (3 files)**: Changed `lg:` breakpoints (1024px)
+  to `md:` (768px) so content is visible at typical embed widths: `PlaygroundView` (full
+  playground instead of mobile fallback), `LeaderCategorySidebar` (category filter bar),
+  `AlgorithmComparison` (comparison table).
+
+- **Embed mode — max-width constraints**: Added `[data-embed]` CSS override for `.max-w-7xl`,
+  `.max-w-6xl`, `.max-w-4xl`, `.max-w-3xl` → `max-width: 100%`. Content now fills the iframe
+  instead of centering with wasted margins. Removed explicit `max-w-7xl mx-auto` from
+  `MerkleWorkshopSteps.tsx`.
+
+- **Workshop step nav — compact height (50 files)**: Step indicator circles reduced from
+  `w-10 h-10` to `w-8 h-8`, icon size 18→16px, gap 8→4px, added `py-1 h-auto` to minimize
+  button height. Container changed from `min-w-max` (forced overflow) to `min-w-0` and
+  `justify-between` to `justify-evenly` (prevents edge-pinning with few steps).
+
+- **Color token violations**: `VpnSimulationPanel` `text-slate-800` → `text-foreground`,
+  `text-white` → `text-primary-foreground`; `RiskHeatmapGenerator` removed `dark:text-white`
+  fallback; `ProofVerifier` `text-white`/`text-black` → semantic foreground tokens.
+
+- **Z-index cleanup**: Replaced hardcoded `zIndex: 9998/9999` and `z-[200]` with `z-50` class
+  in `LibraryDetailPopover`, `SoftwareTable`, `TrustScoreTooltip`, `ComplianceDetailPopover`.
+
+- **Non-modal fixed elements**: `PageAccuracyFeedback` and `TrustScoreTooltip` now include
+  `embed-backdrop` class to prevent viewport escape in embed mode.
+
 ## [3.1.3] - 2026-04-11
 
 ### Fixed
