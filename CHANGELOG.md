@@ -6,6 +6,40 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.1.3] - 2026-04-11
+
+### Fixed
+
+- **Embed URL signing — hex color `#` fragment bug**: Color values like `#3B82F6` in theme URL
+  params were inserted raw into the query string, causing the browser to treat `#3B82F6` as a
+  URL fragment separator. Everything after the first `#` (including `kid`, `sig`, and all
+  remaining params) was silently dropped from `url.searchParams`, producing `missing_params: kid`
+  on every themed preview. Fixed by building the full URL via `URLSearchParams.toString()` which
+  percent-encodes `#` as `%23`. The canonical string for ECDSA signing remains unencoded (raw
+  decoded values) — verification already uses `params.get()` which returns decoded values,
+  so signature matching is unaffected.
+
+### Changed
+
+- **Embed vendor registry — removed test fixture dependency**: Deleted `vendorRegistry.dev.ts`
+  and its dynamic import from `vendorRegistry.ts`. The dev-mode merge of test fixture certs
+  (`test-vendor`, `test-vendor-restricted`, `test-vendor-custom-design`) from
+  `pqc-tools/embed-test-site/test-fixtures/` is no longer needed — all vendor certs (including
+  development ones) are now loaded from `pki/vendors/*.pem` via `import.meta.glob` at build
+  time. `findVendor()` simplified from async registry builder to a direct synchronous lookup
+  on `PRODUCTION_REGISTRY`.
+
+- **PKI gitignore — trust anchor PEMs trackable**: Added `!pki/ca/*.pem` and
+  `!pki/vendors/*.pem` exceptions to `.gitignore` (overriding the global `*.pem` rule) so
+  Root CA and vendor certificate PEMs can be committed. These are public trust anchors bundled
+  by Vite — not secrets. Also added `*.p12` to the global ignore list.
+
+### Security
+
+- **No private key material in any repo**: Root CA private key stays in `pqc-admin` (blanket
+  `pki/` gitignore). Vendor P12 bundles and `.key` files are blocked by `*.p12` and `*.key`
+  global rules. Only public certificate PEMs (trust anchors) are committed.
+
 ## [3.1.2] - 2026-04-11
 
 ### Added

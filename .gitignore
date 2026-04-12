@@ -101,6 +101,7 @@ pqc_today_clean_icons.html
 *.pem
 *.crt
 *.csr
+*.p12
 *_certs.txt
 all_certs.txt
 generated_certs.txt
@@ -269,3 +270,11 @@ embed-root-ca/
 
 # Standalone tools repo (managed separately at pqctoday/pqc-tools)
 tools/
+
+# PKI keys — certs are committed (trust anchors), keys never are
+pki/ca/keys/
+pki/vendors/keys/
+pki/issued/
+# Allow PKI cert PEMs (overrides *.pem above) — bundled by Vite as trust anchors
+!pki/ca/*.pem
+!pki/vendors/*.pem
