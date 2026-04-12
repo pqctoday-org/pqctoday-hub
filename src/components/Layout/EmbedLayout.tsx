@@ -396,22 +396,22 @@ export const EmbedLayout = () => {
           </div>
         </aside>
 
-        {/* Right side: test banner + main content (scrollable) + assistant drawer */}
-        <div className="relative flex flex-col flex-1 min-w-0 overflow-y-auto">
-          {embedConfig.isTestMode && (
-            <div className="bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
-              ⚠ Sandbox / Test Mode — not for production use
-            </div>
-          )}
-          <main
-            id="main-content"
-            className="flex-grow w-full py-4 px-4 md:py-6 md:px-6"
-            role="main"
-          >
-            {renderContent()}
-          </main>
-          <PoweredByBadge />
+        {/* Right side: outer flex column (no scroll) holds scrollable content + pinned drawer */}
+        <div className="relative flex flex-col flex-1 min-w-0">
+          {/* Scrollable content area */}
+          <div className="flex-1 overflow-y-auto min-h-0">
+            {embedConfig.isTestMode && (
+              <div className="bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
+                ⚠ Sandbox / Test Mode — not for production use
+              </div>
+            )}
+            <main id="main-content" className="w-full py-4 px-4 md:py-6 md:px-6" role="main">
+              {renderContent()}
+            </main>
+            <PoweredByBadge />
+          </div>
 
+          {/* Assistant drawer — pinned at bottom, outside scroll */}
           {embedConfig.policy.features.assistantEnabled && (
             <>
               <RightPanelFAB />
