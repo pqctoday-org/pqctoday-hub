@@ -202,11 +202,13 @@
     --phase-regulation: 0 55% 36%;
     --phase-research: 258 50% 38%;
     --phase-deadline: 0 55% 36%;
+    --stack-mix-base: white;
   }
 
   /* Dark Mode Overrides */
   .dark {
     --background: 230 35% 7%;
+    --stack-mix-base: hsl(230, 35%, 13%);
     --foreground: 210 40% 98%;
     --card: 230 35% 7%;
     --card-foreground: 210 40% 98%;

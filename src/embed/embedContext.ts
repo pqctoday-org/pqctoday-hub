@@ -24,8 +24,7 @@ export interface EmbedConfig {
   nonce: string
   expiresAt: number
   allowedRoutes: string[]
-  persistMode: 'api' | 'postMessage' | 'none'
-  apiBase?: string
+  persistMode: 'postMessage' | 'none'
   theme?: 'dark' | 'light'
   persona?: string
   allowedOrigins: string[]

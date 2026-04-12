@@ -352,10 +352,10 @@ export const EmbedLayout = () => {
   // ── Sidebar layout ──────────────────────────────────────────────────────────
   if (isSidebarLayout) {
     return (
-      <div className="flex min-h-screen bg-background text-foreground print:min-h-0 embed-root">
+      <div className="relative flex min-h-screen bg-background text-foreground print:min-h-0 embed-root">
         {/* Left sidebar — sticky, scrolls independently */}
         <aside
-          className="flex-shrink-0 sticky top-0 h-screen overflow-y-auto overflow-x-hidden z-50 border-r border-border flex flex-col"
+          className="flex-shrink-0 self-stretch overflow-x-hidden z-50 border-r border-border flex flex-col"
           style={{
             width: effectiveSidebarWidth,
             backgroundColor: navBg ?? 'var(--color-background)',
@@ -425,7 +425,7 @@ export const EmbedLayout = () => {
 
   // ── Top nav layout (default) ────────────────────────────────────────────────
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
+    <div className="relative min-h-screen flex flex-col bg-background text-foreground print:min-h-0 embed-root">
       {/* Conditionally render header based on policy.features.hideNav */}
       {!embedConfig.policy.features.hideNav && (
         <header

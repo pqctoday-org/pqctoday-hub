@@ -3,10 +3,11 @@
 /**
  * Embed URL signature verification — the core security gate.
  *
- * Implements the full 9-step verification flow from PRD §5:
+ * Implements the full 10-step verification flow:
  *   1. Parse URL parameters
  *   2. Lookup kid in VENDOR_REGISTRY
  *   3. Parse X.509 certificate
+ *   3b. Validate certificate chain → PQC Today Root CA
  *   4. Validate certificate time window
  *   5. Validate URL expiry (5-min clock skew tolerance)
  *   6. Validate routes against certificate policy
@@ -16,9 +17,10 @@
  */
 
 import { base64urlDecode } from './base64url'
-import { parsePemCertificate } from './certParser'
+import { parsePemCertificate, verifyChain } from './certParser'
 import type { EmbedConfig } from './embedContext'
 import { resolveRoutes } from './routePresets'
+import type { VendorTheme } from './vendorPolicy'
 import { findVendor } from './vendorRegistry'
 
 // ---------------------------------------------------------------------------
@@ -29,6 +31,7 @@ export type EmbedErrorCode =
   | 'missing_params'
   | 'unknown_vendor'
   | 'revoked'
+  | 'invalid_chain'
   | 'cert_not_yet_valid'
   | 'cert_expired'
   | 'url_expired'
@@ -60,6 +63,40 @@ const CLOCK_SKEW_SECONDS = 300
 
 /** Required URL parameters */
 const REQUIRED_PARAMS = ['kid', 'uid', 'exp', 'nonce', 'routes', 'persist', 'sig'] as const
+
+/**
+ * All optional VendorTheme fields that may be passed as URL params (signed).
+ * Attribution fields (hidePoweredBy, brandName, logoUrl, etc.) are intentionally
+ * excluded — they cannot be set via URL params.
+ */
+const THEME_PARAMS = [
+  'primary',
+  'primaryForeground',
+  'background',
+  'card',
+  'foreground',
+  'muted',
+  'mutedForeground',
+  'border',
+  'accent',
+  'radius',
+  'fontFamily',
+  'density',
+  'sidebar',
+  'sidebarForeground',
+  'badgeFill',
+  'colorMode',
+  'linkColor',
+  'successColor',
+  'warningColor',
+  'destructiveColor',
+  'navLayout',
+  'navWidth',
+  'headerHeight',
+  'secondary',
+  'secondaryForeground',
+  'navActiveBackground',
+] as const
 
 // ---------------------------------------------------------------------------
 // Main verification function
@@ -99,6 +136,13 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     const personaParam = params.get('persona') ?? undefined
     const assistantParam = params.get('assistant') ?? undefined
 
+    // Extract optional theme URL params (all are signed in the canonical string)
+    const urlTheme: VendorTheme = {}
+    for (const key of THEME_PARAMS) {
+      const val = params.get(key)
+      if (val) urlTheme[key as keyof VendorTheme] = val as never
+    }
+
     // Validate nonce length (min 16 chars as per PRD)
     if (nonce.length < 16) {
       throw new EmbedVerificationError('missing_params', 'Nonce must be at least 16 characters')
@@ -111,29 +155,8 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
 
     // -----------------------------------------------------------------------
     // Step 2: Lookup vendor in registry
-    // In dev mode, the SDK test site may pass the cert inline as ?cert=<base64>
-    // so we don't need cross-origin localStorage.
     // -----------------------------------------------------------------------
-    let vendor = await findVendor(kid)
-
-    if (!vendor && import.meta.env.DEV) {
-      const inlineCert = params.get('cert')
-      if (inlineCert) {
-        try {
-          const certPem = atob(inlineCert)
-          vendor = {
-            kid,
-            vendorId: 'SDK Preview',
-            vendorName: 'SDK Preview',
-            certPem,
-            revoked: false,
-            isTest: true,
-          }
-        } catch {
-          // malformed base64 — fall through to unknown_vendor
-        }
-      }
-    }
+    const vendor = await findVendor(kid)
 
     if (!vendor) {
       throw new EmbedVerificationError('unknown_vendor', `Unknown vendor: ${kid}`, kid)
@@ -146,6 +169,21 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
     // Step 3: Parse X.509 certificate
     // -----------------------------------------------------------------------
     const cert = await parsePemCertificate(vendor.certPem)
+
+    // -----------------------------------------------------------------------
+    // Step 3b: Validate certificate chain — vendor cert must be signed by
+    // the PQC Today Root CA bundled in pki/ca/. This ensures only certs
+    // issued by PQC Today are trusted, regardless of registry membership.
+    // -----------------------------------------------------------------------
+    try {
+      await verifyChain(vendor.certPem)
+    } catch (e) {
+      throw new EmbedVerificationError(
+        'invalid_chain',
+        e instanceof Error ? e.message : 'Certificate chain validation failed',
+        kid
+      )
+    }
 
     // -----------------------------------------------------------------------
     // Step 4: Validate certificate time window
@@ -253,6 +291,11 @@ export async function verifyEmbedUrl(url: URL): Promise<EmbedConfig> {
       allowedOrigins: cert.allowedOrigins,
       policy: {
         ...cert.policy,
+        // URL theme params override cert theme (all are signed, so safe to merge)
+        theme:
+          Object.keys(urlTheme).length > 0
+            ? { ...cert.policy.theme, ...urlTheme }
+            : cert.policy.theme,
         features: {
           ...cert.policy.features,
           assistantEnabled:
@@ -334,8 +377,8 @@ function validateToolPath(pathname: string, allowedTools: string[], kid?: string
 function buildCanonicalString(params: URLSearchParams): string {
   const entries: [string, string][] = []
 
-  // 'sig' is the signature itself; 'ind' and 'cert' are post-verification secondary params
-  const EXCLUDED = new Set(['sig', 'ind', 'cert'])
+  // 'sig' is the signature itself; 'ind' is a post-verification secondary param
+  const EXCLUDED = new Set(['sig', 'ind'])
   for (const [key, value] of params.entries()) {
     if (EXCLUDED.has(key)) continue
     entries.push([key, value])

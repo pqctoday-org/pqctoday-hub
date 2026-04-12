@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: GPL-3.0-only
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   Server,
   Monitor,
@@ -66,8 +66,8 @@ export const LAYERS = [
     icon: Cloud,
     description:
       'Cloud KMS, Cloud HSM, Encryption Gateways, Crypto Agility, KMS, IAM, Crypto Discovery, Digital Identity',
-    color: 'from-primary/20 to-info/20',
-    borderColor: 'border-primary/50',
+    colorToken: '--color-primary',
+    colorFallback: '#0ea5e9',
     activeColor: 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]',
     iconColor: 'text-primary',
   },
@@ -77,8 +77,8 @@ export const LAYERS = [
     icon: Network,
     description:
       'VPN, IPsec, Network Security, Network Encryptors, Protocol Analyzers, 5G & Telecom, Testing & Validation',
-    color: 'from-info/20 to-primary/20',
-    borderColor: 'border-info/50',
+    colorToken: '--color-info',
+    colorFallback: '#3b82f6',
     activeColor: 'bg-card border-info shadow-[0_0_15px_hsl(var(--info)/0.5)]',
     iconColor: 'text-primary',
   },
@@ -88,8 +88,8 @@ export const LAYERS = [
     icon: Laptop,
     description:
       'TLS/SSL, SSH, Web Browsers, App Servers, Email, Messaging, Blockchain, Payment, VPN, Remote Access, CI/CD',
-    color: 'from-secondary/20 to-secondary/10',
-    borderColor: 'border-secondary/50',
+    colorToken: '--color-secondary',
+    colorFallback: '#8b5cf6',
     activeColor: 'bg-card border-secondary shadow-[0_0_15px_hsl(var(--secondary)/0.5)]',
     iconColor: 'text-secondary',
   },
@@ -99,8 +99,8 @@ export const LAYERS = [
     icon: Code,
     description:
       'Cryptographic Libraries, PQC Libraries, API Security, Code Signing, Digital Signatures, Disk Encryption, SDKs',
-    color: 'from-accent/20 to-accent/10',
-    borderColor: 'border-accent/50',
+    colorToken: '--color-accent',
+    colorFallback: '#2d9e6b',
     activeColor: 'bg-card border-accent shadow-[0_0_15px_hsl(var(--accent)/0.5)]',
     iconColor: 'text-accent',
   },
@@ -110,8 +110,8 @@ export const LAYERS = [
     icon: Server,
     description:
       'Data Protection, Digital Identity, Secrets Management, Security Discovery, IoT/OT, AI/ML Security, Supply Chain',
-    color: 'from-tertiary/20 to-tertiary/10',
-    borderColor: 'border-tertiary/50',
+    colorToken: '--color-tertiary',
+    colorFallback: '#a855f7',
     activeColor: 'bg-card border-tertiary shadow-[0_0_15px_hsl(var(--tertiary)/0.5)]',
     iconColor: 'text-tertiary',
   },
@@ -120,8 +120,8 @@ export const LAYERS = [
     label: 'Database',
     icon: Database,
     description: 'Database Encryption Software',
-    color: 'from-success/20 to-accent/20',
-    borderColor: 'border-success/50',
+    colorToken: '--color-success',
+    colorFallback: '#22c55e',
     activeColor: 'bg-card border-success shadow-[0_0_15px_hsl(var(--success)/0.5)]',
     iconColor: 'text-accent',
   },
@@ -131,8 +131,8 @@ export const LAYERS = [
     icon: ShieldCheck,
     description:
       'KMS, PKI, Crypto & PQC Libraries, CLM, Secrets, IAM, CIAM, Data Protection, Crypto Discovery, TLS/SSL, Digital Identity',
-    color: 'from-destructive/20 to-destructive/10',
-    borderColor: 'border-destructive/50',
+    colorToken: '--color-destructive',
+    colorFallback: '#ef4444',
     activeColor: 'bg-card border-destructive shadow-[0_0_15px_hsl(var(--destructive)/0.5)]',
     iconColor: 'text-destructive',
   },
@@ -141,8 +141,8 @@ export const LAYERS = [
     label: 'Operating System',
     icon: Monitor,
     description: 'Operating Systems, Network OS, Disk & File Encryption',
-    color: 'from-warning/20 to-warning/10',
-    borderColor: 'border-warning/50',
+    colorToken: '--color-warning',
+    colorFallback: '#f59e0b',
     activeColor: 'bg-card border-warning shadow-[0_0_15px_hsl(var(--warning)/0.5)]',
     iconColor: 'text-warning',
   },
@@ -152,90 +152,82 @@ export const LAYERS = [
     icon: Server,
     description:
       'HSMs, Smart Cards, Secure Boot, Semiconductors, QRNG, QKD, Confidential Computing, 5G & Telecom',
-    color: 'from-muted/20 to-muted/10',
-    borderColor: 'border-muted-foreground/50',
+    colorToken: '--color-muted-foreground',
+    colorFallback: '#6b7280',
     activeColor:
       'bg-card border-muted-foreground shadow-[0_0_15px_hsl(var(--muted-foreground)/0.5)]',
     iconColor: 'text-muted-foreground',
   },
 ]
 
+// Resolve a CSS custom property to its computed value at runtime.
+// Falls back to the provided default if the var is empty or unresolvable.
+export function resolveCssColor(varName: string, fallback: string): string {
+  const val = getComputedStyle(document.documentElement).getPropertyValue(varName).trim()
+  return val || fallback
+}
+
 export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
   let icon = CircleHelp
-  let color = 'from-muted/20 to-muted/10'
-  let borderColor = 'border-muted'
+  let tintColor = '#6b7280'
   let iconColor = 'text-muted-foreground'
   const activeColor = 'bg-card border-primary shadow-[0_0_15px_hsl(var(--primary)/0.5)]'
 
   if (cat.includes('Cloud')) {
     icon = Cloud
-    color = 'from-primary/20 to-info/20'
-    borderColor = 'border-primary/50'
+    tintColor = '#0ea5e9'
     iconColor = 'text-primary'
   } else if (cat.includes('Collaboration')) {
     icon = Users
-    color = 'from-violet-500/20 to-fuchsia-500/20'
-    borderColor = 'border-violet-500/50'
+    tintColor = '#8b5cf6'
     iconColor = 'text-violet-500'
   } else if (cat.includes('Web')) {
     icon = Globe
-    color = 'from-blue-500/20 to-cyan-500/20'
-    borderColor = 'border-blue-500/50'
+    tintColor = '#3b82f6'
     iconColor = 'text-blue-500'
   } else if (cat.includes('Endpoint')) {
     icon = Monitor
-    color = 'from-rose-500/20 to-orange-500/20'
-    borderColor = 'border-rose-500/50'
+    tintColor = '#f43f5e'
     iconColor = 'text-rose-500'
   } else if (cat.includes('Networking Hardware')) {
     icon = Share2
-    color = 'from-emerald-500/20 to-teal-500/20'
-    borderColor = 'border-emerald-500/50'
+    tintColor = '#10b981'
     iconColor = 'text-emerald-500'
   } else if (cat.includes('Networking Software')) {
     icon = Activity
-    color = 'from-emerald-500/20 to-teal-500/20'
-    borderColor = 'border-emerald-500/50'
+    tintColor = '#10b981'
     iconColor = 'text-emerald-500'
   } else if (cat.includes('Telecom')) {
     icon = Phone
-    color = 'from-indigo-500/20 to-blue-500/20'
-    borderColor = 'border-indigo-500/50'
+    tintColor = '#6366f1'
     iconColor = 'text-indigo-500'
   } else if (cat.includes('Computers')) {
     icon = Server
-    color = 'from-slate-500/20 to-zinc-500/20'
-    borderColor = 'border-slate-500/50'
+    tintColor = '#64748b'
     iconColor = 'text-slate-500'
   } else if (cat.includes('Peripheral')) {
     icon = Keyboard
-    color = 'from-slate-500/20 to-zinc-500/20'
-    borderColor = 'border-slate-500/50'
+    tintColor = '#64748b'
     iconColor = 'text-slate-500'
   } else if (cat.includes('Storage')) {
     icon = Database
-    color = 'from-amber-500/20 to-orange-500/20'
-    borderColor = 'border-amber-500/50'
+    tintColor = '#f59e0b'
     iconColor = 'text-amber-500'
   } else if (cat.includes('Software') && cat.includes('Access')) {
     icon = Key
-    color = 'from-yellow-500/20 to-amber-500/20'
-    borderColor = 'border-yellow-500/50'
+    tintColor = '#eab308'
     iconColor = 'text-yellow-500'
   } else if (cat.includes('Hardware') && cat.includes('Access')) {
     icon = Shield
-    color = 'from-yellow-500/20 to-amber-500/20'
-    borderColor = 'border-yellow-500/50'
+    tintColor = '#eab308'
     iconColor = 'text-yellow-500'
   } else if (cat.includes('Data')) {
     icon = Database
-    color = 'from-amber-500/20 to-orange-500/20'
-    borderColor = 'border-amber-500/50'
+    tintColor = '#f59e0b'
     iconColor = 'text-amber-500'
   } else if (cat.includes('Enterprise')) {
     icon = ShieldAlert
-    color = 'from-rose-500/20 to-red-500/20'
-    borderColor = 'border-rose-500/50'
+    tintColor = '#f43f5e'
     iconColor = 'text-rose-500'
   }
 
@@ -244,8 +236,7 @@ export const CISA_LAYERS = CISA_CATEGORIES.map((cat) => {
     label: cat,
     icon,
     description: `CISA designated category: ${cat}`,
-    color,
-    borderColor,
+    tintColor,
     activeColor,
     iconColor,
   }
@@ -327,6 +318,13 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
   totalPqcStats,
   partitions = LAYERS,
 }) => {
+  const resolvedColors = useMemo(
+    () =>
+      Object.fromEntries(LAYERS.map((l) => [l.id, resolveCssColor(l.colorToken, l.colorFallback)])),
+
+    []
+  )
+
   const handleSelect = (layerId: string) => {
     // Toggle off if clicking the already active layer
     const newLayer = activeLayer === layerId ? 'All' : layerId
@@ -390,16 +388,19 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                 }}
                 className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
-                transition-all duration-300 ease-in-out cursor-pointer select-none
-                ${
-                  isActive
-                    ? layer.activeColor
-                    : `bg-gradient-to-r ${layer.color} border ${layer.borderColor} hover:scale-[1.01] hover:brightness-110`
-                }
+                transition-all duration-300 ease-in-out cursor-pointer select-none border
+                ${isActive ? layer.activeColor : 'hover:scale-[1.01] hover:brightness-110'}
                 ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}
               `}
                 style={{
                   transformOrigin: 'center',
+                  ...(!isActive
+                    ? {
+                        backgroundColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 15%, var(--stack-mix-base))`,
+
+                        borderColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 35%, transparent)`,
+                      }
+                    : {}),
                 }}
               >
                 {/* Shine effect — isolated so it doesn't clip expandedContent */}

@@ -2,7 +2,7 @@
 import { useEffect, useRef, useMemo } from 'react'
 import { useEmbed } from './EmbedProvider'
 import { useEmbedAuth } from './useEmbedAuth'
-import { ApiPersistence, PostMessagePersistence, NoPersistence } from './EmbedPersistenceService'
+import { PostMessagePersistence, NoPersistence } from './EmbedPersistenceService'
 import type { IEmbedPersistenceService } from './EmbedPersistenceService'
 import { UnifiedStorageService } from '../services/storage/UnifiedStorageService'
 
@@ -30,17 +30,15 @@ const EVENT_BATCH_MS = 30000
 
 export function useEmbedPersistence() {
   const embedConfig = useEmbed()
-  const { persistMode, userId, apiBase, allowedOrigins } = embedConfig
-  const { isAuthenticated, getToken, triggerAuthExpired } = useEmbedAuth()
+  const { persistMode, userId, allowedOrigins } = embedConfig
+  const { isAuthenticated } = useEmbedAuth()
 
   const service = useMemo<IEmbedPersistenceService>(() => {
-    if (persistMode === 'api' && apiBase) {
-      return new ApiPersistence(apiBase, getToken, triggerAuthExpired)
-    } else if (persistMode === 'postMessage') {
+    if (persistMode === 'postMessage') {
       return new PostMessagePersistence(allowedOrigins)
     }
     return new NoPersistence()
-  }, [persistMode, apiBase, allowedOrigins, getToken, triggerAuthExpired])
+  }, [persistMode, allowedOrigins])
 
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
   const eventBatchRef = useRef<ReturnType<typeof setTimeout> | null>(null)

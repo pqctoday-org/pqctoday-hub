@@ -47,6 +47,7 @@ interface RawSoftwareItem {
   correction_notes?: string
   quantum_tech?: string
   wip?: string
+  github_contribution_url?: string
 }
 
 function deriveCisaCategory(categoryName: string, layer: string): string {
@@ -126,6 +127,7 @@ const {
     correctionNotes: row.correction_notes || undefined,
     quantumTech: (row.quantum_tech as SoftwareItem['quantumTech']) || undefined,
     wip: row.wip === 'true',
+    githubContributionUrl: row.github_contribution_url?.trim() || undefined,
   }),
   true // withPrevious for status badges
 )

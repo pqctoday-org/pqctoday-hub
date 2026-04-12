@@ -13,14 +13,13 @@ import { LicenseSection } from './sections/LicenseSection'
 import { RagAiSection } from './sections/RagAiSection'
 import { CryptoBuffSection } from './sections/CryptoBuffSection'
 import { AppearanceSection } from './sections/AppearanceSection'
-import { TrustScoreMethodologySection } from './sections/TrustScoreMethodologySection'
 import { useIsEmbedded } from '../../embed/EmbedProvider'
 
 export function AboutView() {
   const isEmbedded = useIsEmbedded()
 
   return (
-    <div className="max-w-4xl mx-auto px-4 md:px-0 py-4 md:py-8 space-y-6 md:space-y-8">
+    <div className="max-w-6xl mx-auto space-y-6 md:space-y-8">
       <ReleaseNotesSection />
       <VisionSection />
       <TransparencySection />
@@ -28,7 +27,6 @@ export function AboutView() {
       {!isEmbedded && <CloudSyncPrivacySection />}
       {!isEmbedded && <CommunitySection />}
       <DataFoundationSection />
-      <TrustScoreMethodologySection />
       <SbomSection />
       <SecurityAuditSection />
       <DataPrivacySection />

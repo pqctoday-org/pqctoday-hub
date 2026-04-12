@@ -29,6 +29,7 @@ export interface LibraryItem {
   categories: string[] // Multi-category support
   peerReviewed?: 'yes' | 'no' | 'partial'
   vettingBody?: string[]
+  githubContributionUrl?: string
   status?: 'New' | 'Updated'
 }
 
@@ -152,6 +153,7 @@ interface RawLibraryRow {
   misc_info: string
   peer_reviewed: string
   vetting_body: string
+  github_contribution_url?: string
 }
 
 function transformLibraryRow(row: RawLibraryRow): LibraryItem {
@@ -184,6 +186,7 @@ function transformLibraryRow(row: RawLibraryRow): LibraryItem {
     categories: [], // Will be populated below
     peerReviewed: (row.peer_reviewed?.toLowerCase() as LibraryItem['peerReviewed']) || undefined,
     vettingBody: row.vetting_body ? splitSemicolon(row.vetting_body) : undefined,
+    githubContributionUrl: row.github_contribution_url?.trim() || undefined,
   }
 
   // Multi-category Logic: Combine manual_category WITH auto-detected categories

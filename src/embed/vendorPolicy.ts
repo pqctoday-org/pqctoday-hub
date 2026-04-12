@@ -174,7 +174,7 @@ export function defaultVendorPolicy(): VendorPolicy {
       ],
       roles: ['curious', 'basics', 'expert'],
     },
-    session: { maxDuration: 86400, persistModes: ['api', 'postMessage', 'none'] },
+    session: { maxDuration: 86400, persistModes: ['postMessage', 'none'] },
     features: { assistantEnabled: true },
   }
 }
