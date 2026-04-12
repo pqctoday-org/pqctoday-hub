@@ -17,6 +17,7 @@ import { useRightPanelStore } from '@/store/useRightPanelStore'
 import { useChatSend } from '@/hooks/useChatSend'
 import { useAirplaneModeStore } from '@/store/useAirplaneModeStore'
 import { logChatFeedback } from '@/utils/analytics'
+import { useEmbedState } from '@/embed/EmbedProvider'
 import { conversationToMarkdown, downloadMarkdown } from '@/services/chat/exportConversation'
 import { clearCache } from '@/services/chat/responseCache'
 import { initializeEngine, isEngineReady, WEBLLM_MODELS } from '@/services/chat/WebLLMService'
@@ -51,6 +52,10 @@ export const ChatPanelContent: React.FC = () => {
   const { selectedPersona, selectedIndustry, experienceLevel } = usePersonaStore()
   const isOpen = useRightPanelStore((s) => s.isOpen)
   const { isEnabled: airplaneMode, setEnabled: setAirplaneMode } = useAirplaneModeStore()
+  const embedState = useEmbedState()
+  const assistantTitle = embedState.isEmbedded
+    ? (embedState.policy?.features?.assistantTitle ?? 'PQC Assistant')
+    : 'PQC Assistant'
 
   const [input, setInput] = useState('')
   const [showSampleQuestions, setShowSampleQuestions] = useState(false)
@@ -190,7 +195,7 @@ export const ChatPanelContent: React.FC = () => {
         <div className="flex items-center justify-between max-w-4xl mx-auto">
           <div className="flex items-center gap-2 min-w-0">
             <Bot size={18} className="text-primary shrink-0" />
-            <span className="text-sm font-medium text-foreground truncate">PQC Assistant</span>
+            <span className="text-sm font-medium text-foreground truncate">{assistantTitle}</span>
             {provider && (
               <span className="text-xs text-muted-foreground hidden sm:inline-flex items-center gap-1">
                 <ProviderIcon size={10} className="shrink-0" />
@@ -524,7 +529,7 @@ export const ChatPanelContent: React.FC = () => {
               </Button>
             </div>
             <p className="text-[11px] text-muted-foreground text-center mt-1.5 opacity-70">
-              PQC Assistant can be inaccurate. Please double-check its responses.
+              {assistantTitle} can be inaccurate. Please double-check its responses.
             </p>
           </div>
         </>

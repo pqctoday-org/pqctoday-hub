@@ -148,6 +148,10 @@ export interface VendorPolicy {
     showHelpButton?: boolean
     /** URL the help button links to. Required when showHelpButton is true. */
     helpUrl?: string
+    /** Custom title for the PQC Assistant panel header (default: "PQC Assistant") */
+    assistantTitle?: string
+    /** Max width of the assistant panel in embed mode (default: "400px") */
+    assistantMaxWidth?: string
   }
   /** Optional vendor brand theme — applies CSS custom properties before React mounts */
   theme?: VendorTheme

@@ -6,9 +6,12 @@ import type { RightPanelTab } from '@/types/HistoryTypes'
 interface RightPanelState {
   isOpen: boolean
   activeTab: RightPanelTab
+  /** True when the panel was collapsed (not closed) — chat history preserved */
+  isMinimized: boolean
 
   open: (tab?: RightPanelTab) => void
   close: () => void
+  minimize: () => void
   toggle: (tab?: RightPanelTab) => void
   setTab: (tab: RightPanelTab) => void
 }
@@ -18,21 +21,25 @@ export const useRightPanelStore = create<RightPanelState>()(
     (set, get) => ({
       isOpen: false,
       activeTab: 'chat',
+      isMinimized: false,
 
       open: (tab) =>
         set({
           isOpen: true,
+          isMinimized: false,
           ...(tab ? { activeTab: tab } : {}),
         }),
 
-      close: () => set({ isOpen: false }),
+      close: () => set({ isOpen: false, isMinimized: false }),
+
+      minimize: () => set({ isOpen: false, isMinimized: true }),
 
       toggle: (tab) => {
         const { isOpen, activeTab } = get()
         if (isOpen && (!tab || tab === activeTab)) {
           set({ isOpen: false })
         } else {
-          set({ isOpen: true, ...(tab ? { activeTab: tab } : {}) })
+          set({ isOpen: true, isMinimized: false, ...(tab ? { activeTab: tab } : {}) })
         }
       },
 

@@ -8,7 +8,7 @@ import { logChatOpened } from '@/utils/analytics'
 import { useEmbedState } from '@/embed/EmbedProvider'
 
 export const RightPanelFAB: React.FC = () => {
-  const { isOpen, activeTab, toggle } = useRightPanelStore()
+  const { isOpen, activeTab, toggle, isMinimized } = useRightPanelStore()
   const embedConfig = useEmbedState()
 
   if (isOpen) return null
@@ -63,6 +63,10 @@ export const RightPanelFAB: React.FC = () => {
           aria-label={label}
         >
           <Icon size={24} />
+          {/* Badge when minimized with active conversation */}
+          {isMinimized && (
+            <span className="absolute -top-0.5 -right-0.5 w-3.5 h-3.5 bg-status-info rounded-full border-2 border-background" />
+          )}
         </Button>
       </div>
     </motion.div>
