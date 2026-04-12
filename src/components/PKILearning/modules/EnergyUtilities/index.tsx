@@ -217,7 +217,7 @@ export const EnergyUtilitiesModule: React.FC = () => {
 
             {/* Step Progress */}
             <div className="overflow-x-auto px-2 sm:px-0">
-              <div className="flex justify-between relative min-w-max sm:min-w-0">
+              <div className="flex justify-evenly relative min-w-0">
                 <div className="absolute top-1/2 left-0 w-full h-0.5 bg-border -z-10 hidden sm:block" />
                 {PARTS.map((part, idx) => {
                   const Icon = part.icon
@@ -226,10 +226,10 @@ export const EnergyUtilitiesModule: React.FC = () => {
                       variant="ghost"
                       key={part.id}
                       onClick={() => handlePartChange(idx)}
-                      className={`flex flex-col items-center gap-2 group px-1 sm:px-2 ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
+                      className={`flex flex-col items-center gap-1 group px-1 sm:px-2 py-1 h-auto ${idx === currentPart ? 'text-primary' : 'text-muted-foreground'}`}
                     >
                       <div
-                        className={`w-10 h-10 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
+                        className={`w-8 h-8 rounded-full flex items-center justify-center border-2 transition-colors bg-background font-bold
                           ${
                             idx === currentPart
                               ? 'border-primary text-primary shadow-[0_0_15px_hsl(var(--primary)/0.3)]'
@@ -238,7 +238,7 @@ export const EnergyUtilitiesModule: React.FC = () => {
                                 : 'border-border text-muted-foreground'
                           }`}
                       >
-                        <Icon size={18} />
+                        <Icon size={16} />
                       </div>
                       <span className="text-sm font-medium hidden md:block">
                         {part.title.split(':')[0]}
