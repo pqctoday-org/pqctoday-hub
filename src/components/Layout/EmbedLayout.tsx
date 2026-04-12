@@ -352,10 +352,10 @@ export const EmbedLayout = () => {
   // ── Sidebar layout ──────────────────────────────────────────────────────────
   if (isSidebarLayout) {
     return (
-      <div className="relative flex min-h-screen bg-background text-foreground print:min-h-0 embed-root">
-        {/* Left sidebar — sticky, scrolls independently */}
+      <div className="relative flex h-dvh bg-background text-foreground print:min-h-0 embed-root overflow-hidden">
+        {/* Left sidebar — fixed height, never scrolls with content */}
         <aside
-          className="flex-shrink-0 self-stretch overflow-x-hidden z-50 border-r border-border flex flex-col"
+          className="flex-shrink-0 h-full overflow-y-auto overflow-x-hidden z-50 border-r border-border flex flex-col"
           style={{
             width: effectiveSidebarWidth,
             backgroundColor: navBg ?? 'var(--color-background)',
@@ -396,8 +396,8 @@ export const EmbedLayout = () => {
           </div>
         </aside>
 
-        {/* Right side: test banner + main content */}
-        <div className="flex flex-col flex-1 min-w-0">
+        {/* Right side: test banner + main content (scrollable) */}
+        <div className="flex flex-col flex-1 min-w-0 overflow-y-auto">
           {embedConfig.isTestMode && (
             <div className="bg-warning/20 border-b border-warning/40 text-warning px-4 py-1.5 text-center text-xs font-semibold z-[40]">
               ⚠ Sandbox / Test Mode — not for production use
