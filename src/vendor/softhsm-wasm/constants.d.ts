@@ -220,6 +220,10 @@ export declare const CKM_HASH_ML_DSA: number
 export declare const CKM_SLH_DSA_KEY_PAIR_GEN: number
 /** SLH-DSA pure sign/verify (FIPS 205) — PKCS#11 v3.2 */
 export declare const CKM_SLH_DSA: number
+/** HSS / LMS key pair generation — RFC 8554 + SP 800-208, PKCS#11 v3.2 */
+export declare const CKM_HSS_KEY_PAIR_GEN: number
+/** HSS / LMS sign / verify — RFC 8554 + SP 800-208 */
+export declare const CKM_HSS: number
 /** HashML-DSA specific pre-hash variants (FIPS 204, PKCS#11 v3.2) */
 export declare const CKM_HASH_ML_DSA_SHA224: number
 export declare const CKM_HASH_ML_DSA_SHA256: number
@@ -288,6 +292,18 @@ export declare const CKA_MODULUS_BITS: number
 export declare const CKA_PUBLIC_EXPONENT: number
 /** PQC parameter set selector (e.g. CKP_ML_KEM_768) — PKCS#11 v3.2 */
 export declare const CKA_PARAMETER_SET: number
+/** Number of HSS levels — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_LEVELS: number
+/** LMS algorithm type (single-level) — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_LMS_TYPE: number
+/** LMOTS algorithm type (single-level) — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_LMOTS_TYPE: number
+/** LMS algorithm types array (multi-level) — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_LMS_TYPES: number
+/** LMOTS algorithm types array (multi-level) — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_LMOTS_TYPES: number
+/** Remaining HSS signature uses — PKCS#11 v3.2 §6.14 */
+export declare const CKA_HSS_KEYS_REMAINING: number
 /** Allow key to be used for encapsulation — PKCS#11 v3.2 */
 export declare const CKA_ENCAPSULATE: number
 /** Allow key to be used for decapsulation — PKCS#11 v3.2 */
@@ -318,6 +334,32 @@ export declare const CKP_SLH_DSA_SHAKE_192S: number
 export declare const CKP_SLH_DSA_SHAKE_192F: number
 export declare const CKP_SLH_DSA_SHAKE_256S: number
 export declare const CKP_SLH_DSA_SHAKE_256F: number
+
+// ── LMS parameter sets (RFC 8554 + SP 800-208) ───────────────────────────────
+/** LMS SHA-256/N32, tree height H=5 (RFC 8554) */
+export declare const CKP_LMS_SHA256_M32_H5: number
+export declare const CKP_LMS_SHA256_M32_H10: number
+export declare const CKP_LMS_SHA256_M32_H15: number
+export declare const CKP_LMS_SHA256_M32_H20: number
+export declare const CKP_LMS_SHA256_M32_H25: number
+/** LMS SHAKE-256/N32, tree height H=5 (SP 800-208) */
+export declare const CKP_LMS_SHAKE_M32_H5: number
+export declare const CKP_LMS_SHAKE_M32_H10: number
+export declare const CKP_LMS_SHAKE_M32_H15: number
+export declare const CKP_LMS_SHAKE_M32_H20: number
+export declare const CKP_LMS_SHAKE_M32_H25: number
+
+// ── LMOTS parameter sets (RFC 8554 + SP 800-208) ─────────────────────────────
+/** LMOTS SHA-256/N32, Winternitz width W=1 (RFC 8554) */
+export declare const CKP_LMOTS_SHA256_N32_W1: number
+export declare const CKP_LMOTS_SHA256_N32_W2: number
+export declare const CKP_LMOTS_SHA256_N32_W4: number
+export declare const CKP_LMOTS_SHA256_N32_W8: number
+/** LMOTS SHAKE-256/N32, Winternitz width W=1 (SP 800-208) */
+export declare const CKP_LMOTS_SHAKE_N32_W1: number
+export declare const CKP_LMOTS_SHAKE_N32_W2: number
+export declare const CKP_LMOTS_SHAKE_N32_W4: number
+export declare const CKP_LMOTS_SHAKE_N32_W8: number
 
 // ── Struct sizes ─────────────────────────────────────────────────────────────
 /** sizeof(CK_ATTRIBUTE) = 12 bytes on 32-bit WASM target */

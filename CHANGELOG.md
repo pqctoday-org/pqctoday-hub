@@ -6,6 +6,17 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.1] - 2026-04-12
+
+softhsmv3 engine upgraded to 0.4.21 — 22 previously-skipped ACVP tests now pass.
+
+### Changed
+
+- **softhsmv3 upgraded to 0.4.21**: Resolves 22 ACVP zero-SKIP gaps across both engines:
+  - Rust engine: SHAKE-256 N32 verifier for SP 800-208 LMS type IDs (0x0F–0x18), eliminating 20 LMS SHAKE skips
+  - C++ engine: Ed25519ph pre-hashed signing via `CKM_EDDSA_PH` (0x80001057) using `EVP_DigestSignInit_ex`
+  - C++ engine: SLH-DSA SigGen KAT converted from SKIP to active signed+verified round-trip
+
 ## [3.3.0] - 2026-04-12
 
 Role-specific learning guides, entropy workshop, expanded HSM panels, and a refreshed knowledge base.

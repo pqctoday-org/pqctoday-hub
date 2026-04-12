@@ -20,6 +20,7 @@ export type HsmFamily =
   | 'ml-dsa'
   | 'slh-dsa'
   | 'hss'
+  | 'lms'
   | 'xmss'
   | 'rsa'
   | 'ecdsa'
