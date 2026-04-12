@@ -142,7 +142,7 @@ export const MainLayout = () => {
   )
 
   return (
-    <div className="min-h-screen flex flex-col bg-background text-foreground print:min-h-0">
+    <div className="h-dvh flex flex-col bg-background text-foreground print:min-h-0 print:h-auto overflow-hidden">
       {/* Skip-to-main link — visible only on keyboard focus */}
       <a
         href="#main-content"
@@ -384,85 +384,88 @@ export const MainLayout = () => {
         </>
       )}
 
-      {/* Main Content Area */}
-      <main id="main-content" className="flex-grow container py-4 px-4 md:py-8 md:px-8" role="main">
-        {/* Offline mode info banner */}
-        <AirplaneModeBanner />
+      {/* Scrollable content area */}
+      <div className="flex-1 overflow-y-auto min-h-0">
+        {/* Main Content Area */}
+        <main id="main-content" className="container py-4 px-4 md:py-8 md:px-8" role="main">
+          {/* Offline mode info banner */}
+          <AirplaneModeBanner />
 
-        {/* Migration planning workflow progress banner */}
-        <WorkflowBanner />
+          {/* Migration planning workflow progress banner */}
+          <WorkflowBanner />
 
-        {/* Removed AnimatePresence to fix blank screen navigation bug */}
-        {/* Suspense boundary for route-level code splitting */}
-        <React.Suspense
-          fallback={
-            <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
-              <div className="flex flex-col items-center gap-4">
-                <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
-                <p className="text-muted-foreground animate-pulse">Loading...</p>
+          {/* Suspense boundary for route-level code splitting */}
+          <React.Suspense
+            fallback={
+              <div className="flex min-h-[200px] h-[50dvh] w-full items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                  <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+                  <p className="text-muted-foreground animate-pulse">Loading...</p>
+                </div>
               </div>
-            </div>
-          }
-        >
-          <motion.div
-            key={location.pathname}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
+            }
           >
-            <Breadcrumb />
-            <Outlet />
-          </motion.div>
-        </React.Suspense>
-      </main>
+            <motion.div
+              key={location.pathname}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <Breadcrumb />
+              <Outlet />
+            </motion.div>
+          </React.Suspense>
+        </main>
 
-      {/* Footer */}
-      <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
-        <p>
-          © 2025 PQC Today. Data sourced from the public internet resources.{' '}
-          <Link to="/terms" className="underline hover:text-foreground transition-colors">
-            Terms of Service
-          </Link>
-        </p>
-        <p className="mt-1 text-xs text-muted-foreground">
-          Content may be inaccurate. Please verify information independently. Report inaccuracies in{' '}
-          <a
-            href="https://github.com/pqctoday/pqc-timeline-app/discussions"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="underline hover:text-foreground transition-colors"
-          >
-            GitHub Discussions
-          </a>
-          .
-        </p>
-      </footer>
+        {/* Footer */}
+        <footer className="border-t border-border mt-12 py-8 text-center text-muted-foreground text-sm px-4 print:hidden safe-bottom">
+          <p>
+            © 2025 PQC Today. Data sourced from the public internet resources.{' '}
+            <Link to="/terms" className="underline hover:text-foreground transition-colors">
+              Terms of Service
+            </Link>
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Content may be inaccurate. Please verify information independently. Report inaccuracies
+            in{' '}
+            <a
+              href="https://github.com/pqctoday/pqc-timeline-app/discussions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline hover:text-foreground transition-colors"
+            >
+              GitHub Discussions
+            </a>
+            .
+          </p>
+        </footer>
 
-      {/* Page accuracy feedback widget */}
-      <PageAccuracyFeedback />
+        {/* Page accuracy feedback widget */}
+        <PageAccuracyFeedback />
 
-      {/* Offline connectivity toast + monitor */}
-      <AirplaneModeToast />
+        {/* Offline connectivity toast + monitor */}
+        <AirplaneModeToast />
 
-      {/* What's New Modal — persona-aware, data-driven */}
-      <WhatsNewModal />
+        {/* What's New Modal — persona-aware, data-driven */}
+        <WhatsNewModal />
 
-      {/* First-visit disclaimer — must acknowledge before using the app */}
-      <DisclaimerModal />
+        {/* First-visit disclaimer — must acknowledge before using the app */}
+        <DisclaimerModal />
 
-      {/* Toast notifications — aria-live so screen readers announce them */}
-      <div aria-live="polite" aria-label="Notifications" aria-atomic="false">
-        {/* Achievement Toast Notification */}
-        <AchievementToast />
+        {/* Toast notifications — aria-live so screen readers announce them */}
+        <div aria-live="polite" aria-label="Notifications" aria-atomic="false">
+          {/* Achievement Toast Notification */}
+          <AchievementToast />
 
-        {/* Phase Completion Toast */}
-        <PhaseCompletionToast />
+          {/* Phase Completion Toast */}
+          <PhaseCompletionToast />
+        </div>
+
+        {/* First-visit Guided Tour */}
+        <GuidedTour />
       </div>
 
-      {/* First-visit Guided Tour */}
-      <GuidedTour />
-
-      {/* Right Panel (PQC Assistant + Journey History) */}
+      {/* Assistant bottom drawer — pinned below scrollable content */}
       <RightPanelFAB />
       <React.Suspense fallback={null}>{isPanelOpen && <RightPanel />}</React.Suspense>
     </div>
