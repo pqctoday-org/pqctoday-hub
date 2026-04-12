@@ -25,7 +25,9 @@ import { usePersonaStore } from '../../store/usePersonaStore'
 import type { Region } from '../../store/usePersonaStore'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useEmbedPersistence } from '../../embed/useEmbedPersistence'
+import { isIframeEmbed } from '../../embed/platform'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
+import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
 import { logEmbedPolicyApplied } from '../../utils/analytics'
 import { INDUSTRY_SLUG_TO_LABEL } from '../../data/personaConfig'
@@ -125,26 +127,26 @@ export const EmbedLayout = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []) // intentionally run once at mount
 
-  // Resize Observer for postMessage communication
+  // Resize Observer — only needed for iframe hosts that adjust iframe height
   React.useEffect(() => {
+    if (!isIframeEmbed()) return // Skip for capacitor and standard web
+
     let timeoutId: ReturnType<typeof setTimeout>
     const mainEl = document.getElementById('main-content')
     if (!mainEl) return
 
+    const targetOrigin = embedConfig.allowedOrigins.includes('*')
+      ? '*'
+      : (embedConfig.allowedOrigins[0] ?? '*')
+
     const resizeObserver = new ResizeObserver((entries) => {
-      // Debounce resize messages
       clearTimeout(timeoutId)
       timeoutId = setTimeout(() => {
         for (const entry of entries) {
-          if (window.parent !== window) {
-            window.parent.postMessage(
-              {
-                type: 'pqc:resize',
-                height: entry.contentRect.height,
-              },
-              '*'
-            )
-          }
+          window.parent.postMessage(
+            { type: 'pqc:resize', height: entry.contentRect.height },
+            targetOrigin
+          )
         }
       }, 100)
     })
@@ -154,6 +156,7 @@ export const EmbedLayout = () => {
       resizeObserver.disconnect()
       clearTimeout(timeoutId)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- embedConfig.allowedOrigins is stable (set once before mount)
   }, [])
 
   // Preset → nav item definition (icon + label + base path)
@@ -409,6 +412,7 @@ export const EmbedLayout = () => {
               {renderContent()}
             </main>
             <PoweredByBadge />
+            <WhatsNewModal />
           </div>
 
           {/* Assistant drawer — pinned at bottom, outside scroll */}
@@ -467,6 +471,7 @@ export const EmbedLayout = () => {
       </main>
 
       <PoweredByBadge />
+      <WhatsNewModal />
 
       {/* PQC AI Assistant — shown only if cert policy grants assistantEnabled=true */}
       {embedConfig.policy.features.assistantEnabled && (
