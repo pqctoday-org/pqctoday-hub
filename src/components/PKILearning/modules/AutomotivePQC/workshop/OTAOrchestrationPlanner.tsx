@@ -330,7 +330,7 @@ export const OTAOrchestrationPlanner: React.FC = () => {
 
         {/* Layered graph */}
         <div className="overflow-x-auto">
-          <div className="flex items-start gap-2 min-w-[500px]">
+          <div className="flex items-start gap-2 min-w-0 md:min-w-[500px]">
             {layers.map((layer, depth) => (
               <React.Fragment key={depth}>
                 <div className="flex flex-col items-center gap-2 min-w-[120px]">

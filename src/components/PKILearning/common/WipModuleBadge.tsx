@@ -79,7 +79,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
             variant="ghost"
             type="button"
             aria-label="Close"
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
+            className="fixed inset-0 embed-backdrop bg-background/80 backdrop-blur-sm z-50 cursor-default border-0 p-0"
             onClick={() => setOpen(false)}
           />
           {/* Dialog */}
@@ -87,7 +87,7 @@ export const WipModuleBadge: React.FC<WipModuleBadgeProps> = ({ moduleMeta }) =>
             role="dialog"
             aria-modal="true"
             aria-labelledby="wip-modal-title"
-            className="fixed inset-0 flex items-center justify-center z-wip-badge p-4 pointer-events-none"
+            className="fixed inset-0 embed-backdrop flex items-center justify-center z-wip-badge p-4 pointer-events-none"
           >
             <div className="glass-panel p-6 max-w-md w-full space-y-5 pointer-events-auto">
               {/* Header */}

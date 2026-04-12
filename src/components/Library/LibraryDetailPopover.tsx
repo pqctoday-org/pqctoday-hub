@@ -127,17 +127,16 @@ export const LibraryDetailPopover = ({ isOpen, onClose, item }: LibraryDetailPop
   const content = (
     <>
       {/* Backdrop — dims background, existing mousedown handler closes on outside click */}
-      <div className="fixed inset-0 bg-black/60" style={{ zIndex: 9998 }} aria-hidden="true" />
+      <div className="fixed inset-0 embed-backdrop bg-black/60 z-50" aria-hidden="true" />
 
       {/* A-002: Focus trap for accessibility */}
       <FocusLock returnFocus>
         <div
           className={clsx(
-            'pointer-events-none flex justify-center',
+            'pointer-events-none flex justify-center z-50',
             isEmbedded ? 'absolute inset-x-0' : 'fixed inset-0 items-end md:items-center'
           )}
           style={{
-            zIndex: 9999,
             ...(isEmbedded
               ? {
                   position: 'absolute',

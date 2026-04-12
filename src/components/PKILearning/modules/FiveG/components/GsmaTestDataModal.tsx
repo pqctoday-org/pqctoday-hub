@@ -187,7 +187,7 @@ export const GsmaTestDataModal: React.FC<GsmaTestDataModalProps> = ({ open, onCl
     (gsmaVectors as { official_3gpp_vectors?: VectorEntry[] }).official_3gpp_vectors ?? []
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60">
       <div className="relative bg-background border border-border rounded-xl shadow-xl w-full max-w-2xl max-h-[85vh] flex flex-col mx-4">
         {/* Header */}
         <div className="flex items-start justify-between p-4 border-b border-border shrink-0">

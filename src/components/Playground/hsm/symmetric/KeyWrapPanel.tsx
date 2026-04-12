@@ -251,8 +251,12 @@ const SupportBadge = ({ supported, note }: { supported: boolean; note: string })
 )
 
 const WrapInfoModal = ({ onClose }: { onClose: () => void }) => (
-  <div className="fixed inset-0 z-50 flex items-start justify-center p-4 overflow-y-auto">
-    <div className="fixed inset-0 bg-black/60" onClick={onClose} aria-hidden="true" />
+  <div className="fixed inset-0 embed-backdrop z-50 flex items-start justify-center p-4 overflow-y-auto">
+    <div
+      className="fixed inset-0 embed-backdrop bg-black/60"
+      onClick={onClose}
+      aria-hidden="true"
+    />
     <div className="relative z-10 w-full max-w-3xl bg-card border border-border rounded-lg shadow-xl my-4 sm:my-8">
       <div className="flex items-center justify-between p-4 border-b border-border">
         <div>

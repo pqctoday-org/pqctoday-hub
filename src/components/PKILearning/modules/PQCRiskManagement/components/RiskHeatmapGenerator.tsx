@@ -121,7 +121,7 @@ function getZoneBg(score: number): string {
 
 /** Returns text color class appropriate for the zone background. */
 function getZoneText(score: number): string {
-  if (score >= 20) return 'text-destructive-foreground dark:text-white'
+  if (score >= 20) return 'text-destructive-foreground'
   return 'text-foreground'
 }
 

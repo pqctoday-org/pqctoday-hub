@@ -135,7 +135,7 @@ const KeyAttrModal = ({
 }) => (
   <div
     role="presentation"
-    className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 p-4"
+    className="fixed inset-0 embed-backdrop bg-black/60 flex items-center justify-center z-50 p-4"
     onClick={(e) => e.target === e.currentTarget && onClose()}
     onKeyDown={(e) => e.key === 'Escape' && onClose()}
   >

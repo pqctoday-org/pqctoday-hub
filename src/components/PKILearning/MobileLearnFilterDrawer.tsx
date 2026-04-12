@@ -67,7 +67,7 @@ export const MobileLearnFilterDrawer: React.FC<MobileLearnFilterDrawerProps> = (
 
       {/* Drawer Overlay */}
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex flex-col justify-end">
+        <div className="fixed inset-0 embed-backdrop z-50 flex flex-col justify-end">
           {/* Backdrop */}
           <div
             className="absolute inset-0 bg-background/80 backdrop-blur-sm transition-opacity animate-in fade-in"

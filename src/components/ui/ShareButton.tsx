@@ -87,7 +87,7 @@ export const ShareButton = ({
       {showMenu && (
         <>
           {/* eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions -- backdrop overlay, keyboard close handled by Escape */}
-          <div className="fixed inset-0 z-40" onClick={() => setShowMenu(false)} />
+          <div className="fixed inset-0 embed-backdrop z-40" onClick={() => setShowMenu(false)} />
           <div className="absolute right-0 top-full mt-1 z-50 min-w-[160px] rounded-lg border border-border bg-card shadow-lg p-1">
             <Button
               variant="ghost"

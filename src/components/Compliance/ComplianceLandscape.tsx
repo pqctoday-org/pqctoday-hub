@@ -159,7 +159,7 @@ function DeadlineTimeline({ frameworks }: { frameworks: ComplianceFramework[] })
     <div className="glass-panel p-4 space-y-3">
       <h3 className="text-sm font-semibold text-foreground">PQC Compliance Deadlines</h3>
       <div className="relative overflow-x-auto">
-        <div className="min-w-[600px]">
+        <div className="min-w-[400px]">
           <div className="flex justify-between text-xs text-muted-foreground mb-1 px-1">
             {years
               .filter((y) => y % 2 === 0 || y === TIMELINE_END)

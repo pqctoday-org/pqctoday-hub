@@ -533,11 +533,11 @@ export const ProofVerifier: React.FC<ProofVerifierProps> = ({ sharedLevels, shar
                                   <span
                                     className={`absolute -top-2 -right-2 w-4 h-4 rounded-full text-[8px] font-bold flex items-center justify-center ${
                                       isTampered
-                                        ? 'bg-destructive text-white'
+                                        ? 'bg-destructive text-destructive-foreground'
                                         : annotation.type === 'selected'
-                                          ? 'bg-primary text-black'
+                                          ? 'bg-primary text-primary-foreground'
                                           : annotation.type === 'provided'
-                                            ? 'bg-warning text-black'
+                                            ? 'bg-warning text-warning-foreground'
                                             : annotation.type === 'root'
                                               ? 'bg-accent text-black'
                                               : 'bg-success text-black'

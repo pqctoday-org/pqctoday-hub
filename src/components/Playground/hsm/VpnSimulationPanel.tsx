@@ -2452,7 +2452,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
               variant="ghost"
               onClick={() => setCurrentStep((s) => Math.min(steps.length - 1, s + 1))}
               disabled={true}
-              className="px-4 py-2 bg-primary/50 text-white font-bold rounded shadow-sm opacity-50 cursor-not-allowed text-sm transition-colors"
+              className="px-4 py-2 bg-primary/50 text-primary-foreground font-bold rounded shadow-sm opacity-50 cursor-not-allowed text-sm transition-colors"
               title="UI automatically advances based on daemon log output"
             >
               {hasCrashed
@@ -2881,7 +2881,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                       {authMode === 'psk' ? 'leftauth=psk' : 'leftauth=psk + leftauth2=pubkey'}
                     </span>
                   </div>
-                  <pre className="text-xs text-slate-800 font-mono">
+                  <pre className="text-xs text-foreground font-mono">
                     {activeInitIpsec
                       .split('\n')
                       .filter((l: string) => l.includes('left'))
@@ -2985,7 +2985,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
       {showCertInspector && (
         <div
           role="presentation"
-          className="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+          className="fixed inset-0 embed-backdrop bg-black/60 flex items-center justify-center z-50"
           onClick={(e) => e.target === e.currentTarget && setShowCertInspector(false)}
           onKeyDown={(e) => e.key === 'Escape' && setShowCertInspector(false)}
         >

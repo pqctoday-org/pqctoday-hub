@@ -148,7 +148,7 @@ export const ModuleTable = ({
 
   return (
     <div className="rounded-xl border border-border overflow-hidden overflow-x-auto">
-      <table className="w-full text-sm min-w-[480px]">
+      <table className="w-full text-sm min-w-[360px]">
         <thead className="bg-muted/30 border-b border-border">
           <tr>
             <th className="w-8 py-3 px-4" />

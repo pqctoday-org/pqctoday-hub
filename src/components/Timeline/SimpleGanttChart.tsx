@@ -596,7 +596,7 @@ export const SimpleGanttChart = ({
 
       {/* Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card" ref={tableRef}>
-        <table className="w-full min-w-[1000px] border-collapse table-fixed">
+        <table className="w-full min-w-[600px] border-collapse table-fixed">
           <caption className="sr-only">
             Post-quantum cryptography migration timeline by country and phase
           </caption>

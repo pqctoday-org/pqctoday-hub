@@ -270,7 +270,11 @@ export const LeaderDetailPopover = ({ isOpen, onClose, leader }: LeaderDetailPop
         </div>
       </div>
       {/* Backdrop */}
-      <div className="fixed inset-0 bg-black/60" style={{ zIndex: -1 }} aria-hidden="true" />
+      <div
+        className="fixed inset-0 embed-backdrop bg-black/60"
+        style={{ zIndex: -1 }}
+        aria-hidden="true"
+      />
     </FocusLock>
   )
 

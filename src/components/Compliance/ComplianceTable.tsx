@@ -917,7 +917,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       {showSourceMenu && (
                         <>
                           <div
-                            className="fixed inset-0 z-40"
+                            className="fixed inset-0 embed-backdrop z-40"
                             onClick={() => setShowSourceMenu(false)}
                             aria-hidden="true"
                           />
@@ -1044,7 +1044,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         {showCategoryMenu && (
                           <>
                             <div
-                              className="fixed inset-0 z-40"
+                              className="fixed inset-0 embed-backdrop z-40"
                               onClick={() => setShowCategoryMenu(false)}
                               aria-hidden="true"
                             />
@@ -1123,7 +1123,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                         {showMigrateCatMenu && (
                           <>
                             <div
-                              className="fixed inset-0 z-40"
+                              className="fixed inset-0 embed-backdrop z-40"
                               onClick={() => setShowMigrateCatMenu(false)}
                               aria-hidden="true"
                             />
@@ -1219,7 +1219,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       {showVendorMenu && (
                         <>
                           <div
-                            className="fixed inset-0 z-40"
+                            className="fixed inset-0 embed-backdrop z-40"
                             onClick={() => setShowVendorMenu(false)}
                             aria-hidden="true"
                           />
@@ -1315,7 +1315,7 @@ export const ComplianceTable: React.FC<ComplianceTableProps> = ({
                       {showFilterMenu && (
                         <>
                           <div
-                            className="fixed inset-0 z-40"
+                            className="fixed inset-0 embed-backdrop z-40"
                             onClick={() => setShowFilterMenu(false)}
                             aria-hidden="true"
                           />

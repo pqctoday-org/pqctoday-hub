@@ -44,7 +44,7 @@ export const LeaderCategorySidebar = ({
   totalHasUpdates,
 }: LeaderCategorySidebarProps) => {
   return (
-    <nav className="hidden lg:flex flex-wrap items-center gap-2" aria-label="Leader categories">
+    <nav className="hidden md:flex flex-wrap items-center gap-2" aria-label="Leader categories">
       <Button
         variant="ghost"
         onClick={() => onSelect('All')}

@@ -245,7 +245,7 @@ export const ComplianceGantt: React.FC<ComplianceGanttProps> = ({
     <div className="space-y-4">
       {/* Gantt Table */}
       <div className="overflow-x-auto rounded-xl border border-border bg-card">
-        <table className="w-full min-w-[900px] border-collapse table-fixed">
+        <table className="w-full min-w-[600px] border-collapse table-fixed">
           <thead>
             <tr>
               <th

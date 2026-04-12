@@ -969,7 +969,7 @@ x509_extensions = v3_ca
           role="dialog"
           aria-modal="true"
           aria-labelledby="profile-doc-title"
-          className="fixed inset-0 bg-background/80 flex items-start justify-center z-50 pt-8"
+          className="fixed inset-0 embed-backdrop bg-background/80 flex items-start justify-center z-50 pt-8"
           onClick={() => setShowProfileInfo(false)}
           onKeyDown={(e) => e.key === 'Escape' && setShowProfileInfo(false)}
         >

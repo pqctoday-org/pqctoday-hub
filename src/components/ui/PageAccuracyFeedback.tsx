@@ -38,7 +38,7 @@ export function PageAccuracyFeedback() {
   }
 
   return (
-    <div className="fixed bottom-20 left-4 z-40 print:hidden">
+    <div className="fixed bottom-20 left-4 z-40 print:hidden embed-backdrop">
       <div className="glass-panel px-3 py-1.5 flex items-center gap-2 text-xs text-muted-foreground select-none">
         <span className={clsx('transition-colors', vote !== null && 'text-foreground')}>
           {vote !== null ? 'Thanks!' : 'Accurate?'}

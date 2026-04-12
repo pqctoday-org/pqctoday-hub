@@ -178,7 +178,7 @@ export const MigrationRiskMatrix: React.FC = () => {
           </div>
 
           <div className="overflow-x-auto">
-            <div className="min-w-[500px]">
+            <div className="min-w-0 md:min-w-[500px]">
               {/* Column headers (Effort 1-5) */}
               <div className="flex mb-1">
                 <div className="w-20 shrink-0" />

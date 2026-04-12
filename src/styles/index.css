@@ -735,3 +735,20 @@
   top: 0 !important;
   min-height: 100% !important;
 }
+
+/* Generic embed backdrop class — add to any fixed overlay that needs to
+   become absolute in embed mode. Broader than the class-exact rules above. */
+[data-embed] .embed-backdrop {
+  position: absolute !important;
+  top: 0 !important;
+  min-height: 100% !important;
+}
+
+/* Embed max-width override — remove width constraints inside embed iframes
+   so content fills the available width instead of centering with margins. */
+[data-embed] .max-w-7xl,
+[data-embed] .max-w-6xl,
+[data-embed] .max-w-4xl,
+[data-embed] .max-w-3xl {
+  max-width: 100%;
+}

@@ -143,7 +143,7 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
   const content = (
     <FocusLock returnFocus>
       <div
-        className="fixed inset-0 z-[9998] bg-black/60 flex items-center justify-center p-4"
+        className="fixed inset-0 embed-backdrop z-50 bg-black/60 flex items-center justify-center p-4"
         aria-hidden="true"
       />
       <div

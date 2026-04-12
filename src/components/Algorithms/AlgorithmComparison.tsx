@@ -210,7 +210,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
       ) : (
         <>
           {/* Mobile View */}
-          <div className="lg:hidden flex flex-col gap-4 mb-4">
+          <div className="md:hidden flex flex-col gap-4 mb-4">
             <div className="bg-muted/30 p-3 rounded-lg border border-border flex items-center justify-between">
               <span className="text-sm font-medium text-muted-foreground mr-2 shrink-0">
                 Sort by:
@@ -244,7 +244,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
           </div>
 
           {/* Desktop View */}
-          <div className="hidden lg:block glass-panel overflow-hidden">
+          <div className="hidden md:block glass-panel overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse table-fixed">
                 <caption className="sr-only">

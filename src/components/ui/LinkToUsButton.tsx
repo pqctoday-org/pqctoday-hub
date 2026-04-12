@@ -105,7 +105,7 @@ function LinkToUsModal({ onClose }: { onClose: () => void }) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+    <div className="fixed inset-0 embed-backdrop z-50 flex items-center justify-center bg-black/60 p-4">
       <div
         ref={panelRef}
         className="glass-panel p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto"
