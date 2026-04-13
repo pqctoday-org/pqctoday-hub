@@ -293,19 +293,24 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
           return (
             <div
               key={meta.track}
-              ref={(el) => {
-                trackRefs.current[meta.track] = el
-              }}
-              role="button"
-              tabIndex={0}
-              onClick={() => handleSelectTrack(meta.track)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  handleSelectTrack(meta.track)
-                }
-              }}
-              className={`
+              className={`transition-all duration-300 ease-in-out ${
+                isFaded ? 'max-h-0 opacity-0 overflow-hidden !m-0' : 'max-h-[2000px] opacity-100'
+              }`}
+            >
+              <div
+                ref={(el) => {
+                  trackRefs.current[meta.track] = el
+                }}
+                role="button"
+                tabIndex={0}
+                onClick={() => handleSelectTrack(meta.track)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    handleSelectTrack(meta.track)
+                  }
+                }}
+                className={`
                 group relative z-10 w-full flex flex-col items-stretch p-4 md:px-6 rounded-xl
                 transition-all duration-300 ease-in-out cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 ${
@@ -315,270 +320,286 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                       ? 'bg-muted/10 border border-border/40 hover:scale-[1.005]'
                       : `${meta.colorClass} hover:scale-[1.005] hover:brightness-105`
                 }
-                ${isFaded ? 'opacity-40' : 'opacity-100'}
               `}
-              style={{
-                zIndex: isActive ? TRACK_META.length + 10 : TRACK_META.length - index,
-                ...(!isActive && !isHidden
-                  ? {
-                      backgroundColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 15%, var(--stack-mix-base))`,
-                      borderColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 35%, transparent)`,
-                    }
-                  : {}),
-              }}
-            >
-              {/* Shimmer */}
-              <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
-                <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
-              </div>
-
-              {/* Row 1: icon + name + badges */}
-              <div className="flex items-center justify-between w-full gap-3">
-                <div className="flex items-center gap-3 min-w-0">
-                  <div className="p-2.5 rounded-lg bg-background/50 border border-border/30 shrink-0">
-                    <Icon
-                      size={20}
-                      className={
-                        isActive
-                          ? 'text-foreground'
-                          : isHidden
-                            ? 'text-muted-foreground/40 transition-colors'
-                            : 'text-muted-foreground group-hover:text-foreground transition-colors'
+                style={{
+                  zIndex: isActive ? TRACK_META.length + 10 : TRACK_META.length - index,
+                  ...(isActive && !isHidden
+                    ? {
+                        backgroundColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 22%, var(--stack-mix-base))`,
                       }
-                      aria-hidden="true"
-                    />
+                    : !isActive && !isHidden
+                      ? {
+                          backgroundColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 15%, var(--stack-mix-base))`,
+                          borderColor: `color-mix(in srgb, ${resolvedColors[meta.track]} 35%, transparent)`,
+                        }
+                      : {}),
+                }}
+              >
+                {/* Shimmer */}
+                <div className="absolute inset-0 overflow-hidden rounded-xl pointer-events-none">
+                  <div className="absolute inset-0 translate-x-[-100%] bg-gradient-to-r from-transparent via-white/5 to-transparent group-hover:animate-[shimmer_1.5s_infinite]" />
+                </div>
+
+                {/* Row 1: icon + name + badges */}
+                <div className="flex items-center justify-between w-full gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-2.5 rounded-lg bg-background/50 border border-border/30 shrink-0">
+                      <Icon
+                        size={20}
+                        className={
+                          isActive
+                            ? 'text-foreground'
+                            : isHidden
+                              ? 'text-muted-foreground/40 transition-colors'
+                              : 'text-muted-foreground group-hover:text-foreground transition-colors'
+                        }
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <h4
+                        className={`font-bold text-sm transition-colors ${
+                          isActive
+                            ? 'text-foreground'
+                            : isHidden
+                              ? 'text-muted-foreground/50'
+                              : 'text-foreground/80 group-hover:text-foreground'
+                        }`}
+                      >
+                        {meta.track}
+                      </h4>
+                      <p
+                        className={`text-xs mt-0.5 truncate transition-colors ${isHidden ? 'text-muted-foreground/30' : 'text-muted-foreground'}`}
+                      >
+                        {meta.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="min-w-0">
-                    <h4
-                      className={`font-bold text-sm transition-colors ${
+
+                  {/* Right-side badges */}
+                  <div className="hidden md:flex items-center gap-2 shrink-0">
+                    {/* Module count */}
+                    <span className="text-xs px-2 py-1 rounded-full bg-background/50 text-muted-foreground border border-border/40 tabular-nums">
+                      {totalCount} modules
+                    </span>
+
+                    {/* Hidden · Restore badge */}
+                    {filteredCount < totalCount && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onClearFilters?.()
+                        }}
+                        className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
+                      >
+                        {totalCount - filteredCount} hidden · Restore
+                      </Button>
+                    )}
+
+                    {/* Per-track quiz button */}
+                    {quizCategories.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigateToQuiz(quizCategories)
+                        }}
+                        className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-colors
+                        ${trackColorBadge} border-current/30 hover:opacity-80`}
+                      >
+                        <ClipboardList size={11} aria-hidden="true" />
+                        Quiz
+                      </Button>
+                    )}
+
+                    {/* Expand status */}
+                    <div
+                      className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
                         isActive
-                          ? 'text-foreground'
-                          : isHidden
-                            ? 'text-muted-foreground/50'
-                            : 'text-foreground/80 group-hover:text-foreground'
+                          ? 'bg-background/80 text-foreground border-border'
+                          : 'bg-background/40 text-muted-foreground border-transparent group-hover:border-border/50'
                       }`}
                     >
-                      {meta.track}
-                    </h4>
-                    <p
-                      className={`text-xs mt-0.5 truncate transition-colors ${isHidden ? 'text-muted-foreground/30' : 'text-muted-foreground'}`}
-                    >
-                      {meta.description}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right-side badges */}
-                <div className="hidden md:flex items-center gap-2 shrink-0">
-                  {/* Module count */}
-                  <span className="text-xs px-2 py-1 rounded-full bg-background/50 text-muted-foreground border border-border/40 tabular-nums">
-                    {totalCount} modules
-                  </span>
-
-                  {/* Hidden · Restore badge */}
-                  {filteredCount < totalCount && (
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onClearFilters?.()
-                      }}
-                      className="text-xs px-2.5 py-1 rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
-                    >
-                      {totalCount - filteredCount} hidden · Restore
-                    </Button>
-                  )}
-
-                  {/* Per-track quiz button */}
-                  {quizCategories.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigateToQuiz(quizCategories)
-                      }}
-                      className={`flex items-center gap-1 text-xs px-2.5 py-1 rounded-full border transition-colors
-                        ${trackColorBadge} border-current/30 hover:opacity-80`}
-                    >
-                      <ClipboardList size={11} aria-hidden="true" />
-                      Quiz
-                    </Button>
-                  )}
-
-                  {/* Expand status */}
-                  <div
-                    className={`text-xs px-2.5 py-1 rounded-full border transition-colors ${
-                      isActive
-                        ? 'bg-background/80 text-foreground border-border'
-                        : 'bg-background/40 text-muted-foreground border-transparent group-hover:border-border/50'
-                    }`}
-                  >
-                    {isActive ? 'Expanded' : 'Click to expand'}
-                  </div>
-                </div>
-              </div>
-
-              {/* Mobile-only: module count + quiz + restore button + expand chevron */}
-              <div className="flex md:hidden items-center justify-between mt-1.5 gap-2">
-                <span className="text-xs text-muted-foreground/70 tabular-nums">
-                  {filteredCount < totalCount
-                    ? `${filteredCount} / ${totalCount} modules`
-                    : `${totalCount} modules`}
-                </span>
-                <div className="flex items-center gap-2 shrink-0">
-                  {quizCategories.length > 0 && (
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        navigateToQuiz(quizCategories)
-                      }}
-                      className={`flex items-center gap-1 text-xs px-2.5 py-1 min-h-[36px] rounded-full border transition-colors
-                        ${trackColorBadge} border-current/30 hover:opacity-80`}
-                    >
-                      <ClipboardList size={11} aria-hidden="true" />
-                      Quiz
-                    </Button>
-                  )}
-                  {filteredCount < totalCount && (
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        onClearFilters?.()
-                      }}
-                      className="text-xs px-2.5 py-1 min-h-[36px] rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
-                    >
-                      Restore
-                    </Button>
-                  )}
-                  {isActive ? (
-                    <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />
-                  ) : (
-                    <ChevronRight size={14} className="text-muted-foreground" aria-hidden="true" />
-                  )}
-                </div>
-              </div>
-
-              {/* Row 2: expanded content — module card grid */}
-              <AnimatePresence>
-                {isActive && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    transition={{ duration: 0.2 }}
-                    className="overflow-hidden"
-                  >
-                    <div
-                      role="presentation"
-                      className="mt-4 pt-4 border-t border-border/30 w-full"
-                      onClick={(e) => e.stopPropagation()}
-                      onKeyDown={(e) => e.stopPropagation()}
-                    >
-                      {visibleModules.length === 0 ? (
-                        <p className="text-xs text-muted-foreground text-center py-4">
-                          No modules match the current filters.
-                        </p>
-                      ) : isCuriousMode ? (
-                        <CuriousStackCarousel
-                          modules={visibleModules}
-                          onNextStack={(() => {
-                            const idx = visibleTrackNames.indexOf(meta.track)
-                            const nextTrack =
-                              idx !== -1 && idx < visibleTrackNames.length - 1
-                                ? visibleTrackNames[idx + 1]
-                                : null
-                            return nextTrack ? () => advanceToTrack(nextTrack) : undefined
-                          })()}
-                        />
-                      ) : (
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
-                          {visibleModules.map((module) => (
-                            <ModuleCard
-                              key={module.id}
-                              module={module}
-                              onSelectModule={(id) => navigate(id)}
-                              isRelevant={isModuleRelevant(module.id)}
-                              isAboveLevel={isModuleAboveLevel(module.id)}
-                            />
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Quiz this track button */}
-                      {quizCategories.length > 0 && (
-                        <div className="mt-4 flex justify-end">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => navigateToQuiz(quizCategories)}
-                          >
-                            <ClipboardList size={14} className="mr-1.5" aria-hidden="true" />
-                            Quiz this track →
-                          </Button>
-                        </div>
-                      )}
+                      {isActive ? 'Expanded' : 'Click to expand'}
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                  </div>
+                </div>
+
+                {/* Mobile-only: module count + quiz + restore button + expand chevron */}
+                <div className="flex md:hidden items-center justify-between mt-1.5 gap-2">
+                  <span className="text-xs text-muted-foreground/70 tabular-nums">
+                    {filteredCount < totalCount
+                      ? `${filteredCount} / ${totalCount} modules`
+                      : `${totalCount} modules`}
+                  </span>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {quizCategories.length > 0 && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          navigateToQuiz(quizCategories)
+                        }}
+                        className={`flex items-center gap-1 text-xs px-2.5 py-1 min-h-[36px] rounded-full border transition-colors
+                        ${trackColorBadge} border-current/30 hover:opacity-80`}
+                      >
+                        <ClipboardList size={11} aria-hidden="true" />
+                        Quiz
+                      </Button>
+                    )}
+                    {filteredCount < totalCount && (
+                      <Button
+                        variant="ghost"
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          onClearFilters?.()
+                        }}
+                        className="text-xs px-2.5 py-1 min-h-[36px] rounded-full bg-status-warning/10 text-status-warning border border-status-warning/30 hover:bg-status-warning/20 transition-colors tabular-nums"
+                      >
+                        Restore
+                      </Button>
+                    )}
+                    {isActive ? (
+                      <ChevronDown size={14} className="text-muted-foreground" aria-hidden="true" />
+                    ) : (
+                      <ChevronRight
+                        size={14}
+                        className="text-muted-foreground"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </div>
+                </div>
+
+                {/* Row 2: expanded content — module card grid */}
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div
+                        role="presentation"
+                        className="mt-4 pt-4 border-t border-border/30 w-full"
+                        onClick={(e) => e.stopPropagation()}
+                        onKeyDown={(e) => e.stopPropagation()}
+                      >
+                        {visibleModules.length === 0 ? (
+                          <p className="text-xs text-muted-foreground text-center py-4">
+                            No modules match the current filters.
+                          </p>
+                        ) : isCuriousMode ? (
+                          <CuriousStackCarousel
+                            modules={visibleModules}
+                            onNextStack={(() => {
+                              const idx = visibleTrackNames.indexOf(meta.track)
+                              const nextTrack =
+                                idx !== -1 && idx < visibleTrackNames.length - 1
+                                  ? visibleTrackNames[idx + 1]
+                                  : null
+                              return nextTrack ? () => advanceToTrack(nextTrack) : undefined
+                            })()}
+                          />
+                        ) : (
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 md:gap-4">
+                            {visibleModules.map((module) => (
+                              <ModuleCard
+                                key={module.id}
+                                module={module}
+                                onSelectModule={(id) => navigate(id)}
+                                isRelevant={isModuleRelevant(module.id)}
+                                isAboveLevel={isModuleAboveLevel(module.id)}
+                              />
+                            ))}
+                          </div>
+                        )}
+
+                        {/* Quiz this track button */}
+                        {quizCategories.length > 0 && (
+                          <div className="mt-4 flex justify-end">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => navigateToQuiz(quizCategories)}
+                            >
+                              <ClipboardList size={14} className="mr-1.5" aria-hidden="true" />
+                              Quiz this track →
+                            </Button>
+                          </div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           )
         })}
 
         {/* Knowledge Check (PQC Quiz) — direct navigation, no expand step */}
-        {(() => {
-          const isFaded = activeTrack !== null
-          return (
-            <div
-              role="button"
-              tabIndex={0}
-              onClick={() => navigate('quiz')}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault()
-                  navigate('quiz')
-                }
-              }}
-              className={`
+        <div
+          className={`transition-all duration-300 ease-in-out ${
+            activeTrack !== null
+              ? 'max-h-0 opacity-0 overflow-hidden !m-0'
+              : 'max-h-[200px] opacity-100'
+          }`}
+        >
+          {(() => {
+            const isFaded = activeTrack !== null
+            return (
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => navigate('quiz')}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault()
+                    navigate('quiz')
+                  }
+                }}
+                className={`
                 group relative z-10 w-full flex items-center p-4 md:px-6 rounded-xl
                 transition-all duration-300 ease-in-out cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
                 bg-gradient-to-r from-secondary/10 to-secondary/5 border border-secondary/25 hover:scale-[1.005] hover:brightness-105
                 ${isFaded ? 'opacity-40' : 'opacity-100'}
               `}
-            >
-              <div className="flex items-center justify-between w-full gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2.5 rounded-lg bg-background/50 border border-border/30 shrink-0">
-                    <Brain
-                      size={20}
-                      className="text-muted-foreground group-hover:text-secondary transition-colors"
-                      aria-hidden="true"
-                    />
+              >
+                <div className="flex items-center justify-between w-full gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2.5 rounded-lg bg-background/50 border border-border/30 shrink-0">
+                      <Brain
+                        size={20}
+                        className="text-muted-foreground group-hover:text-secondary transition-colors"
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-sm text-foreground/80 group-hover:text-foreground transition-colors">
+                        Knowledge Check
+                      </h4>
+                      <p className="text-xs text-muted-foreground hidden md:block mt-0.5">
+                        Full PQC quiz across all tracks and topics
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h4 className="font-bold text-sm text-foreground/80 group-hover:text-foreground transition-colors">
-                      Knowledge Check
-                    </h4>
-                    <p className="text-xs text-muted-foreground hidden md:block mt-0.5">
-                      Full PQC quiz across all tracks and topics
-                    </p>
-                  </div>
+                  <ChevronRight
+                    size={16}
+                    className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0"
+                    aria-hidden="true"
+                  />
                 </div>
-                <ChevronRight
-                  size={16}
-                  className="text-muted-foreground group-hover:text-foreground transition-colors shrink-0"
-                  aria-hidden="true"
-                />
               </div>
-            </div>
-          )
-        })()}
+            )
+          })()}
+        </div>
       </div>
     </div>
   )

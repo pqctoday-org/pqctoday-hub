@@ -37,6 +37,30 @@ enrichment batch to date. RAG corpus grows to 6,468 chunks with 535 new catalog 
 
 ### Fixed
 
+- **Stack view — accordion collapse when layer is expanded** (`InfrastructureStack`, `LearnTrackStack`) —
+  when a layer/track was expanded (product table or module list open), the remaining faded layers stayed
+  fully rendered and visually competed with the expanded content. They now collapse to `max-h-0` while
+  any content is open, restoring focus to the active layer. When no layer is expanded, all layers are
+  visible at reduced opacity for stack context.
+- **Stack view — dark mode contrast inversion** (`src/styles/index.css`) — `--stack-mix-base` was
+  `hsl(230,35%,13%)` (L13%), making inactive layer cards lighter than the active `bg-card` (L7%).
+  The hierarchy was inverted: inactive layers appeared to float above active ones. Fixed by changing
+  to `hsl(230,35%,5%)` — inactive cards are now darker than active, restoring correct depth cues.
+  Same fix applied to the embed dark mode block.
+- **Stack view — active layer invisible in dark mode** (`InfrastructureStack`, `LearnTrackStack`) —
+  the active layer relied on `bg-card` which matched the page background in dark mode (both L7%),
+  making it visually indistinguishable. Active layers now receive an explicit
+  `color-mix(in srgb, layerColor 22%, --stack-mix-base)` background, producing a clearly tinted,
+  elevated surface.
+- **Stack view — CISA layer color fallback** (`InfrastructureStack`) — when rendering the CISA
+  layer set, `resolvedColors` only mapped standard `LAYERS` IDs; CISA layer IDs returned `undefined`,
+  producing invalid CSS in `color-mix()`. Fixed with `?? layer.colorFallback`.
+- **Stack view — minimap dots rendered as empty boxes** (`InfrastructureStack`) — minimap dots used
+  `<Button variant="ghost">` whose default size variant (`h-10 px-4 py-2`) overrode the `w-3 h-3`
+  sizing. Fixed by adding `p-0 min-h-0 min-w-0` to suppress the default padding and min-size.
+- **Stack view — minimap hidden in embed mode** (`src/styles/index.css`) — the minimap rail
+  (`position: absolute; right: -40px`) could overflow embedded iframe boundaries. Hidden via
+  `[data-embed] .stack-minimap { display: none !important }`.
 - **`public/cc/` gitignored** — 44 Common Criteria evaluation PDFs that were accidentally
   committed are now removed from git and gitignored. Files remain on disk locally; they are
   generated artifacts from `scrape-compliance.ts` and should not be in the repository.

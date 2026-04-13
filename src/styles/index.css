@@ -208,7 +208,7 @@
   /* Dark Mode Overrides */
   .dark {
     --background: 230 35% 7%;
-    --stack-mix-base: hsl(230, 35%, 13%);
+    --stack-mix-base: hsl(230, 35%, 5%);
     --foreground: 210 40% 98%;
     --card: 230 35% 7%;
     --card-foreground: 210 40% 98%;
@@ -624,6 +624,7 @@
   --card-foreground: 210 40% 98%;
   --popover: 230 30% 11%;
   --border: 230 25% 18%;
+  --stack-mix-base: hsl(230, 25%, 5%);
 }
 
 /* ── Embed mode density override ──────────────────────────────────────────
@@ -763,6 +764,11 @@
 [data-embed] .max-w-4xl,
 [data-embed] .max-w-3xl {
   max-width: 100%;
+}
+
+/* Hide stack minimap rail in embed mode — it overflows narrow iframes */
+[data-embed] .stack-minimap {
+  display: none !important;
 }
 
 /* ── Platform-specific embed overrides ──────────────────────────────────

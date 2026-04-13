@@ -374,12 +374,14 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
           const isActive = activeLayer === layer.id
           const isFaded = activeLayer !== 'All' && !isActive
           const IconInfo = layer.icon
+          // resolvedColors only covers standard LAYERS; fall back to colorFallback for CISA layers
+          const resolvedColor = resolvedColors[layer.id] ?? layer.colorFallback
 
           return (
             <div
               key={layer.id}
               className={`transition-all duration-500 ease-in-out relative flex flex-col ${
-                isEmptyAndHidden
+                isEmptyAndHidden || (isFaded && !!expandedContent)
                   ? 'max-h-0 opacity-0 overflow-hidden !m-0'
                   : 'max-h-[3000px] opacity-100'
               }`}
@@ -399,20 +401,21 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
                   }
                 }}
                 className={`
-                group relative z-10 w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
+                group relative ${isActive ? 'z-20' : 'z-10'} w-full flex flex-col items-stretch p-4 md:px-8 rounded-xl
                 transition-all duration-300 ease-in-out cursor-pointer select-none border
                 ${isActive ? layer.activeColor : 'hover:scale-[1.01] hover:brightness-110'}
                 ${isFaded ? 'opacity-40 grayscale-[0.5]' : 'opacity-100'}
               `}
                 style={{
                   transformOrigin: 'center',
-                  ...(!isActive
+                  ...(isActive
                     ? {
-                        backgroundColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 15%, var(--stack-mix-base))`,
-
-                        borderColor: `color-mix(in srgb, ${resolvedColors[layer.id]} 35%, transparent)`,
+                        backgroundColor: `color-mix(in srgb, ${resolvedColor} 22%, var(--stack-mix-base))`,
                       }
-                    : {}),
+                    : {
+                        backgroundColor: `color-mix(in srgb, ${resolvedColor} 15%, var(--stack-mix-base))`,
+                        borderColor: `color-mix(in srgb, ${resolvedColor} 35%, transparent)`,
+                      }),
                 }}
               >
                 {/* Shine effect — isolated so it doesn't clip expandedContent */}
@@ -571,7 +574,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
       </div>
 
       {/* Desktop Stack Minimap Navigation Rail */}
-      <div className="hidden xl:flex flex-col gap-2 absolute right-[-40px] top-1/2 -translate-y-1/2 py-4 px-2 bg-card/80 backdrop-blur border border-border rounded-full shadow-lg z-20">
+      <div className="stack-minimap hidden xl:flex flex-col gap-2 absolute right-[-40px] top-1/2 -translate-y-1/2 py-4 px-2 bg-card/80 backdrop-blur border border-border rounded-full shadow-lg z-20">
         {partitions.map((layer) => {
           const productCount = layerProductCounts?.[layer.id as InfrastructureLayerType] ?? 0
           const isEmptyAndHidden = hideEmptyLayers && productCount === 0
@@ -591,7 +594,7 @@ export const InfrastructureStack: React.FC<InfrastructureStackProps> = ({
               }}
               title={layer.label}
               aria-label={`Jump to ${layer.label}`}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+              className={`w-3 h-3 p-0 min-h-0 min-w-0 rounded-full transition-all duration-300 ${
                 isActive
                   ? 'bg-primary scale-125 ring-2 ring-primary/30 ring-offset-1 ring-offset-background'
                   : 'bg-muted-foreground/30 hover:bg-primary/60 hover:scale-110'
