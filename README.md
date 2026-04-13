@@ -347,9 +347,12 @@ Test your PQC readiness with this interactive web application visualizing the gl
     Criteria certification badges pulled from a certification cross-reference dataset
   - **Three-tier FIPS badge**: `Validated` (green) / `Partial` (amber, covers FedRAMP/WebTrust/FIPS-mode
     claims) / `No` (gray) with icon indicators on every catalog row
-  - **AI Product Extraction**: Products with AI-enriched profiles show a ✨ "Enriched" badge;
-    clicking "View Extraction" opens a modal with detailed use-case analysis, PQC readiness
-    assessment, algorithm support, migration notes, and certification details
+  - **AI Product Enrichment**: 535 products have AI-analyzed enrichments extracted directly from
+    their published proof documents (press releases, product pages, whitepapers) — covering 19
+    structured dimensions (PQC algorithms, hybrid approaches, security levels, migration timelines,
+    compliance frameworks, and more). Products with enrichments show a ✨ "Enriched" badge;
+    clicking "View Extraction" opens a modal with the full structured analysis alongside any
+    legacy extraction data
   - **Three View Modes**: Stack (infrastructure layers), Cards (responsive grid with sort), and Table
     (sortable columns) with persistent view toggle. Four sort options: Name, PQC Support, Migration
     Priority, FIPS Status
@@ -551,11 +554,13 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Local mode**: WebLLM browser-native Qwen 3 models — no API key, no cloud, fully private;
     model cards show speed/accuracy ratings (1–5 dots), VRAM requirements, and recommendation
     tips to guide model selection
-  - Client-side RAG retrieval using MiniSearch over 5,192 content chunks from 22 data sources
+  - Client-side RAG retrieval using MiniSearch over 6,468 content chunks from 22 data sources
   - Three-phase search: entity matching, query expansion, keyword search with source diversity
-  - **Document enrichment**: 1,100+ archived HTML/PDF documents enriched with 18 structured
+  - **Document enrichment**: 1,100+ archived HTML/PDF documents enriched with 19 structured
     dimensions (algorithms, threats, protocols, infrastructure layers, compliance frameworks,
-    etc.) and fed into the RAG corpus
+    etc.) and fed into the RAG corpus; catalog enrichments cover 535 product proof documents
+    (press releases, whitepapers, product pages) — a new 4th enrichment collection alongside
+    library, timeline, and threats
   - **Entity inventory**: Extracted entity list injected into the system prompt to prevent
     hallucination — model says "not in the current database" for unlisted items
   - **Cross-domain linking**: Post-processing adds links between threats↔compliance,

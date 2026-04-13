@@ -6,6 +6,41 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.4] - 2026-04-13
+
+AI-enriched analysis now covers 535 products in the Migrate catalog — the largest single
+enrichment batch to date. RAG corpus grows to 6,468 chunks with 535 new catalog entries.
+
+### Added
+
+- **Catalog document enrichments** (`src/data/doc-enrichments/catalog_doc_enrichments_04132026.md`)
+  — 535 products enriched by AI analysis of their published proof documents (press releases,
+  product pages, whitepapers). Each entry captures 19 structured dimensions: PQC algorithms
+  covered, hybrid approaches, security levels & parameters, key takeaways, target audience,
+  migration timeline info, infrastructure layers, compliance frameworks, and more.
+- **`catalogEnrichmentData.ts`** — new loader that auto-discovers `catalog_doc_enrichments_*.md`
+  files via `import.meta.glob`, mirrors the pattern of `libraryEnrichmentData.ts`.
+- **`generate-rag-corpus.ts`** — catalog added as the 4th enrichment collection alongside
+  library, timeline, and threats; `processDocumentEnrichments()` now emits catalog chunks with
+  `source: 'document-enrichment'` and deep-links to `/migrate`.
+- **Refreshed enrichments** for library (315 entries), timeline (213 entries), and threats
+  (80 entries) — all updated to the 19-dimension schema.
+
+### Changed
+
+- **RAG corpus**: 6,468 chunks (+535 catalog document-enrichment chunks). The PQC Assistant
+  can now answer product questions grounded in actual proof documents rather than structured
+  CSV data alone.
+- **Migrate catalog "Enriched" badge**: previously appeared on ~45 products with legacy
+  extraction data; now appears on **535 products** that have catalog enrichments, regardless
+  of whether legacy extraction data is also present.
+
+### Fixed
+
+- **`public/cc/` gitignored** — 44 Common Criteria evaluation PDFs that were accidentally
+  committed are now removed from git and gitignored. Files remain on disk locally; they are
+  generated artifacts from `scrape-compliance.ts` and should not be in the repository.
+
 ## [3.3.3] - 2026-04-13
 
 Mobile UX fixes and algorithm comparison improvements.
