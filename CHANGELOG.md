@@ -11,26 +11,26 @@ All notable changes to this project will be documented in this file.
 AI-enriched analysis now covers 535 products in the Migrate catalog — the largest single
 enrichment batch to date. RAG corpus grows to 6,468 chunks with 535 new catalog entries.
 
-### Added
+### Data Sources
 
-- **Catalog document enrichments** (`src/data/doc-enrichments/catalog_doc_enrichments_04132026.md`)
-  — 535 products enriched by AI analysis of their published proof documents (press releases,
-  product pages, whitepapers). Each entry captures 19 structured dimensions: PQC algorithms
-  covered, hybrid approaches, security levels & parameters, key takeaways, target audience,
-  migration timeline info, infrastructure layers, compliance frameworks, and more.
-- **`catalogEnrichmentData.ts`** — new loader that auto-discovers `catalog_doc_enrichments_*.md`
-  files via `import.meta.glob`, mirrors the pattern of `libraryEnrichmentData.ts`.
-- **`generate-rag-corpus.ts`** — catalog added as the 4th enrichment collection alongside
-  library, timeline, and threats; `processDocumentEnrichments()` now emits catalog chunks with
-  `source: 'document-enrichment'` and deep-links to `/migrate`.
+- **Catalog enrichments** (`catalog_doc_enrichments_04132026.md`) — 535 products enriched via
+  AI analysis of their published proof documents (press releases, product pages, whitepapers).
+  19 structured dimensions per product: PQC algorithms, hybrid approaches, security levels,
+  migration timeline, compliance frameworks, and more.
 - **Refreshed enrichments** for library (315 entries), timeline (213 entries), and threats
   (80 entries) — all updated to the 19-dimension schema.
+- **RAG corpus**: grows to 6,468 chunks (+535 catalog document-enrichment chunks, catalog is
+  now the 4th enrichment collection alongside library, timeline, and threats).
+
+### Added
+
+- **`catalogEnrichmentData.ts`** — new loader that auto-discovers `catalog_doc_enrichments_*.md`
+  files via `import.meta.glob`, mirrors the pattern of `libraryEnrichmentData.ts`.
+- **`generate-rag-corpus.ts`** — `processDocumentEnrichments()` now emits catalog chunks with
+  `source: 'document-enrichment'` and deep-links to `/migrate`.
 
 ### Changed
 
-- **RAG corpus**: 6,468 chunks (+535 catalog document-enrichment chunks). The PQC Assistant
-  can now answer product questions grounded in actual proof documents rather than structured
-  CSV data alone.
 - **Migrate catalog "Enriched" badge**: previously appeared on ~45 products with legacy
   extraction data; now appears on **535 products** that have catalog enrichments, regardless
   of whether legacy extraction data is also present.
