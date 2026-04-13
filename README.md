@@ -54,9 +54,18 @@ Test your PQC readiness with this interactive web application visualizing the gl
     (AES-ECB zero-block for AES, SHA-256 for HMAC) and asymmetric (SHA-256 of public/private key
     bytes for ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA, EdDSA) — in both C++ and Rust engines
   - **PKCS#11 call log**: per-session log of all C\_ function calls with return-value decoding,
-    timing, and optional "Show Params" inspect mode (powered by `src/wasm/inspect/` — decodes
-    mechanism IDs, attribute types, and CKR return codes into human-readable form); entries with
-    inspect data show an expandable `▶` row; step-separator headers divide multi-step workflows
+    timing, and full parameter inspection mode (powered by `src/wasm/pkcs11Inspect.ts`); click
+    the `Eye` button to enable inspect mode — every log row becomes expandable (`▶`) showing
+    decoded **request parameters** (mechanism name + description, all `CK_ATTRIBUTE` template
+    fields by type, raw data / signature / ciphertext payloads as collapsible hex) and **response
+    outputs** (output handles, byte lengths, signature / ciphertext / digest payloads, VALID /
+    INVALID verification result); complete coverage against PKCS#11 v3.2: `C_CreateObject`,
+    `C_DestroyObject`, `C_FindObjects*`, `C_GetMechanismList/Info`, `C_SignUpdate/Final`,
+    `C_DigestUpdate/Final`, `C_SignMessage`, `C_VerifyMessage`, `C_WrapKeyAuthenticated`,
+    `C_UnwrapKeyAuthenticated`, `C_SeedRandom`, and all session / keygen / KEM / encrypt /
+    derive / digest / wrap functions; step-separator headers group multi-step workflows; all
+    panels in the HSM Playground (KEM, Sign, Symmetric, Hashing, Key Agreement, KDF, HMAC,
+    AES, VPN simulation) show the full inspectable log inline
   - **SoftHSM tab**: modular demo components — Token Setup, ML-KEM encapsulate/decapsulate,
     ML-DSA sign/verify (+ pre-hash), SLH-DSA (all 12 param sets); HSM symmetric panel split into
     AES-CBC/GCM, AES-CMAC, AES-CTR, HMAC, Key Wrap, and RNG panels

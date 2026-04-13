@@ -32,7 +32,7 @@ import { HsmAcvpTesting } from './hsm/HsmAcvpTesting'
 import { HsmTestMethodologyModal } from './hsm/HsmTestMethodologyModal'
 import { TokenSetupPanel } from './components/TokenSetupPanel'
 import { HsmKeyTable } from './keystore/HsmKeyTable'
-import { PkcsLogPanel } from './components/PkcsLogPanel'
+import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { HsmSignCombinedPanel } from './tabs/SignVerifyTab'
 import { Button } from '../ui/button'
 import { Card } from '../ui/card'
@@ -59,8 +59,18 @@ type HsmTab =
 
 export const HsmPlayground = () => {
   const { error } = useSettingsContext()
-  const { engineMode, setEngineMode, phase, isReady, autoInit, moduleRef, hSessionRef, addHsmKey } =
-    useHsmContext()
+  const {
+    engineMode,
+    setEngineMode,
+    phase,
+    isReady,
+    autoInit,
+    moduleRef,
+    hSessionRef,
+    addHsmKey,
+    hsmLog,
+    clearHsmLog,
+  } = useHsmContext()
   const [activeTab, setActiveTab] = useState<HsmTab>('keystore')
   const [showMethodologyModal, setShowMethodologyModal] = useState(false)
   const errorRef = useRef<HTMLDivElement>(null)
@@ -491,7 +501,9 @@ export const HsmPlayground = () => {
         {activeTab === 'mechanisms' && <HsmMechanismPanel />}
         {activeTab === 'acvp' && <HsmAcvpTesting />}
         {activeTab === 'vpn_sim' && <VpnSimulationPanel />}
-        {activeTab === 'logs' && <PkcsLogPanel />}
+        {activeTab === 'logs' && (
+          <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} defaultOpen={true} />
+        )}
       </div>
 
       {error && (

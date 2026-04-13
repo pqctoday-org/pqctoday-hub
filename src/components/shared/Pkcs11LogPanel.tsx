@@ -7,7 +7,7 @@
  * Default: collapsible, starts collapsed.
  */
 import { useState } from 'react'
-import { ChevronDown, ChevronRight, Trash2, Copy, CheckCircle } from 'lucide-react'
+import { ChevronDown, ChevronRight, Trash2, Copy, CheckCircle, Eye } from 'lucide-react'
 import { Button } from '../ui/button'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 import { lookupCkr } from '../../wasm/pkcs11Inspect'
@@ -15,7 +15,7 @@ import { InspectPanel } from './Pkcs11InspectPanel'
 
 // ── Entry row ────────────────────────────────────────────────────────────────
 
-const LogEntryRow = ({ entry }: { entry: Pkcs11LogEntry }) => {
+const LogEntryRow = ({ entry, inspectMode }: { entry: Pkcs11LogEntry; inspectMode: boolean }) => {
   const [expanded, setExpanded] = useState(false)
 
   if (entry.isStepHeader) {
@@ -26,7 +26,7 @@ const LogEntryRow = ({ entry }: { entry: Pkcs11LogEntry }) => {
     )
   }
 
-  const hasInspect = !!entry.inspect
+  const hasInspect = inspectMode && !!entry.inspect
 
   const rvColor = entry.ok
     ? 'text-status-success'
@@ -119,6 +119,7 @@ export const Pkcs11LogPanel = ({
 }: Pkcs11LogPanelProps) => {
   const [open, setOpen] = useState(defaultOpen)
   const [copied, setCopied] = useState(false)
+  const [inspectMode, setInspectMode] = useState(false)
 
   const CRYPTO_OPS = [
     'C_GenerateKeyPair',
@@ -150,9 +151,13 @@ export const Pkcs11LogPanel = ({
 
   const visibleLog = log.filter((e) => {
     if (e.isStepHeader) return true
-    if (e.fn === 'C_GetAttributeValue') return false
+    if (!inspectMode && e.fn === 'C_GetAttributeValue') return false
+    if (!inspectMode && e.fn === 'C_FindObjects') return false
     if (CRYPTO_OPS.includes(e.fn)) return true
-    if (filterFns && filterFns.length > 0) return filterFns.includes(e.fn)
+    if (filterFns && filterFns.length > 0) {
+      if (inspectMode) return true // Show all operations natively in inspect mode to aid diagnosis
+      return filterFns.includes(e.fn)
+    }
     return true
   })
 
@@ -223,6 +228,16 @@ export const Pkcs11LogPanel = ({
           onClick={(e) => e.stopPropagation()}
           onKeyDown={(e) => e.stopPropagation()}
         >
+          <Button
+            variant={inspectMode ? 'secondary' : 'ghost'}
+            size="sm"
+            className="h-6 px-1.5 text-xs mr-1"
+            onClick={() => setInspectMode(!inspectMode)}
+            title={inspectMode ? 'Hide parameter decode' : 'Show parameter decode'}
+          >
+            <Eye size={11} className="mr-1" />
+            Inspect
+          </Button>
           {onClear && (
             <Button
               variant="ghost"
@@ -275,7 +290,7 @@ export const Pkcs11LogPanel = ({
                   <span className="text-right">Duration</span>
                 </div>
                 {orderedLog.map((e) => (
-                  <LogEntryRow key={e.id} entry={e} />
+                  <LogEntryRow key={e.id} entry={e} inspectMode={inspectMode} />
                 ))}
               </div>
             </>

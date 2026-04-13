@@ -6,6 +6,40 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.2] - 2026-04-12
+
+Full PKCS#11 v3.2 parameter inspection across all HSM Playground panels and ACVP tests.
+
+### Added
+
+- **PKCS#11 inspect: 14 new decoders** — complete coverage of every function called in ACVP testing and HSM panels, all cross-referenced against the PKCS#11 v3.2 spec:
+  - `C_CreateObject` (§5.7.1) — decoded attribute template + `*phObject` output handle
+  - `C_DestroyObject` (§5.7.3) — object handle
+  - `C_FindObjectsInit` (§5.7.7) — search template attributes
+  - `C_FindObjects` (§5.7.8) — found object handles array
+  - `C_FindObjectsFinal` (§5.7.9)
+  - `C_GetMechanismList` (§5.5.5) — mechanism count + resolved CKM names
+  - `C_GetMechanismInfo` (§5.5.6) — CKM type name and description
+  - `C_DigestUpdate` (§5.12.3) — data part bytes
+  - `C_DigestFinal` (§5.12.5) — digest payload output
+  - `C_SignUpdate` (§5.13.3) — data part bytes
+  - `C_SignFinal` (§5.13.4) — signature payload output
+  - `C_SeedRandom` (§5.19.1) — seed bytes
+  - `C_WrapKeyAuthenticated` (§5.18.6) — mechanism + AAD + wrapped key blob
+  - `C_UnwrapKeyAuthenticated` (§5.18.7) — mechanism + AAD + template + `*phKey` output
+
+### Fixed
+
+- **`C_SignMessage` inspector** — was declared with `_M` (WASM heap unused); now reads `Data Payload` from `pData` and `Signature Payload` from `pSignature` into inspect output
+- **`C_VerifyMessage` inspector** — same fix; now shows `Data Payload` and `Signature Payload` inline in the parameters section alongside the VALID / INVALID verification result
+- **`C_UnwrapKey` inspector** — was missing entirely (fell to `default: undefined`); now decodes mechanism, `hUnwrappingKey`, wrapped key blob, key template attributes, and `*phKey` output handle
+- **Inspect button icon** — `EyeOff` (crossed eye) when inspect was active was misleading; now always shows `Eye` icon — plain ghost when inactive, secondary/colored when active
+
+### Changed
+
+- **`MiniPkcsLog` upgraded** — all HSM Playground operation panels (KEM, Sign/Verify, Symmetric, Hashing, Key Agreement, KDF, HMAC, AES, AES-CTR, AES-CMAC, VPN Simulation) now show the full `Pkcs11LogPanel` with inspect mode instead of the previous compact 10-entry flat view; parameter decode, step headers, copy, and clear are all available inline
+- **`PkcsLogPanel` removed** — context-bound component consolidated into the shared prop-based `Pkcs11LogPanel`
+
 ## [3.3.1] - 2026-04-12
 
 softhsmv3 engine upgraded to 0.4.21 — 22 previously-skipped ACVP tests now pass.

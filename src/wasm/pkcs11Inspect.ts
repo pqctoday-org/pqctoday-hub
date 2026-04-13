@@ -1120,7 +1120,8 @@ const decodeMessageSignVerifyInit = (
  * C_SignMessage(hSession, pParameter, ulParameterLen, pData, ulDataLen, pSignature, pulSignatureLen)
  * In this codebase pParameter=0/ulParameterLen=0 (sign context is in mechanism, not here).
  */
-const decodeSignMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+const decodeSignMessage = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[3] ?? 0
   const dataLen = args[4] ?? 0
   const pSignature = args[5] ?? 0
   const sigLenPtr = args[6] ?? 0
@@ -1130,6 +1131,7 @@ const decodeSignMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs1
       label: 'Parameters',
       primitives: [
         { name: 'ulDataLen', value: `${dataLen} bytes` },
+        { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
         {
           name: 'pSignature',
           value: pSignature === 0 ? 'NULL (size query)' : `0x${pSignature.toString(16)}`,
@@ -1144,8 +1146,16 @@ const decodeSignMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs1
 
   const outputs: Pkcs11LogInspect['outputs'] = []
   if ((rv === 0 || rv === 0x150) && sigLenPtr) {
-    const sigLen = safeRead32(_M, sigLenPtr)
-    if (sigLen !== null) outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+    const sigLen = safeRead32(M, sigLenPtr)
+    if (sigLen !== null) {
+      outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+      if (pSignature !== 0 && rv === 0) {
+        outputs.push({
+          name: 'Signature Payload',
+          value: safeReadBytesAsHex(M, pSignature, sigLen),
+        })
+      }
+    }
   }
 
   return {
@@ -1158,15 +1168,19 @@ const decodeSignMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs1
 /**
  * C_VerifyMessage(hSession, pParameter, ulParameterLen, pData, ulDataLen, pSignature, ulSignatureLen)
  */
-const decodeVerifyMessage = (_M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+const decodeVerifyMessage = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pData = args[3] ?? 0
   const dataLen = args[4] ?? 0
+  const pSignature = args[5] ?? 0
   const sigLen = args[6] ?? 0
   const inputs: InspectSection[] = [
     {
       label: 'Parameters',
       primitives: [
         { name: 'ulDataLen', value: `${dataLen} bytes` },
+        { name: 'Data Payload', value: safeReadBytesAsHex(M, pData, dataLen) },
         { name: 'ulSignatureLen', value: `${sigLen} bytes` },
+        { name: 'Signature Payload', value: safeReadBytesAsHex(M, pSignature, sigLen) },
       ],
     },
   ]
@@ -1674,6 +1688,430 @@ const decodeWrapKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogI
   }
 }
 
+/** C_UnwrapKey(hSession, pMechanism, hUnwrappingKey, pWrappedKey, ulWrappedKeyLen, pTemplate, ulAttributeCount, phKey) — §5.14 */
+const decodeUnwrapKey = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hUnwrappingKey = args[2] ?? 0
+  const pWrappedKey = args[3] ?? 0
+  const wrappedKeyLen = args[4] ?? 0
+  const tmpl = readTemplate(M, args[5] ?? 0, args[6] ?? 0)
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [
+      { name: 'hUnwrappingKey', value: String(hUnwrappingKey) },
+      { name: 'ulWrappedKeyLen', value: `${wrappedKeyLen} bytes` },
+      { name: 'Wrapped Key Payload', value: safeReadBytesAsHex(M, pWrappedKey, wrappedKeyLen) },
+    ],
+  })
+  if (tmpl.length) inputs.push({ label: 'Unwrapped Key Template', attributes: tmpl })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && args[7]) {
+    const h = safeRead32(M, args[7])
+    if (h !== null) outputs.push({ name: '*phKey', value: String(h), note: 'Unwrapped key handle' })
+  }
+
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.14 (C_UnwrapKey)',
+  }
+}
+
+// ── Object management ────────────────────────────────────────────────────────
+
+/** C_CreateObject(hSession, pTemplate, ulCount, phObject) — §5.7.1 */
+const decodeCreateObject = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const tmpl = readTemplate(M, args[1] ?? 0, args[2] ?? 0)
+  const inputs: InspectSection[] = []
+  if (tmpl.length) inputs.push({ label: 'Object Template', attributes: tmpl })
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && args[3]) {
+    const h = safeRead32(M, args[3])
+    if (h !== null)
+      outputs.push({ name: '*phObject', value: String(h), note: 'Created object handle' })
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.7.1 (C_CreateObject)',
+  }
+}
+
+/** C_DestroyObject(hSession, hObject) — §5.7.3 */
+const decodeDestroyObject = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hObject', value: String(args[1] ?? '?'), note: 'Object to destroy' }],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.7.3 (C_DestroyObject)',
+})
+
+/** C_FindObjectsInit(hSession, pTemplate, ulCount) — §5.7.7 */
+const decodeFindObjectsInit = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const tmpl = readTemplate(M, args[1] ?? 0, args[2] ?? 0)
+  const inputs: InspectSection[] = []
+  if (tmpl.length) {
+    inputs.push({ label: 'Search Template', attributes: tmpl })
+  } else {
+    inputs.push({
+      label: 'Parameters',
+      primitives: [{ name: 'pTemplate', value: 'NULL', note: 'Match all objects in session' }],
+    })
+  }
+  return { inputs, spec: 'PKCS#11 v3.2 §5.7.7 (C_FindObjectsInit)' }
+}
+
+/** C_FindObjects(hSession, phObject, ulMaxObjectCount, pulObjectCount) — §5.7.8 */
+const decodeFindObjects = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const phObject = args[1] ?? 0
+  const ulMax = args[2] ?? 0
+  const pulCount = args[3] ?? 0
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'ulMaxObjectCount', value: String(ulMax) }],
+    },
+  ]
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && pulCount) {
+    const count = safeRead32(M, pulCount)
+    if (count !== null) {
+      outputs.push({ name: '*pulObjectCount', value: String(count) })
+      for (let i = 0; i < count && i < 8; i++) {
+        const h = safeRead32(M, phObject + i * 4)
+        if (h !== null)
+          outputs.push({ name: `phObject[${i}]`, value: String(h), note: 'Object handle' })
+      }
+    }
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.7.8 (C_FindObjects)',
+  }
+}
+
+/** C_FindObjectsFinal(hSession) — §5.7.9 */
+const decodeFindObjectsFinal = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => ({
+  inputs: [
+    {
+      label: 'Parameters',
+      primitives: [{ name: 'hSession', value: String(args[0] ?? '?') }],
+    },
+  ],
+  spec: 'PKCS#11 v3.2 §5.7.9 (C_FindObjectsFinal)',
+})
+
+// ── Mechanism & token info ────────────────────────────────────────────────────
+
+/** C_GetMechanismList(slotID, pMechanismList, pulCount) — §5.5.5 */
+const decodeGetMechanismList = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const slotID = args[0] ?? 0
+  const pList = args[1] ?? 0
+  const pulCount = args[2] ?? 0
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        { name: 'slotID', value: String(slotID) },
+        {
+          name: 'pMechanismList',
+          value: pList === 0 ? 'NULL (count query)' : `0x${pList.toString(16)}`,
+          note: pList === 0 ? 'Two-step: call with NULL first to get mechanism count' : undefined,
+        },
+      ],
+    },
+  ]
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && pulCount) {
+    const count = safeRead32(M, pulCount)
+    if (count !== null) {
+      outputs.push({ name: '*pulCount', value: String(count), note: 'Number of mechanisms' })
+      if (pList !== 0 && rv === 0) {
+        const named: string[] = []
+        for (let i = 0; i < count && i < 16; i++) {
+          const ckm = safeRead32(M, pList + i * 4)
+          if (ckm !== null) {
+            const entry = CKM_TABLE[ckm >>> 0]
+            named.push(entry ? entry.name : `0x${(ckm >>> 0).toString(16)}`)
+          }
+        }
+        if (named.length) {
+          outputs.push({
+            name: 'Mechanisms',
+            value: named.join(', ') + (count > 16 ? ` … +${count - 16} more` : ''),
+          })
+        }
+      }
+    }
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.5.5 (C_GetMechanismList)',
+  }
+}
+
+/** C_GetMechanismInfo(slotID, type, pInfo) — §5.5.6 */
+const decodeGetMechanismInfo = (_M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const slotID = args[0] ?? 0
+  const ckmType = args[1] ?? 0
+  const entry = CKM_TABLE[ckmType >>> 0]
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'slotID', value: String(slotID) },
+          {
+            name: 'type',
+            value: entry
+              ? `${entry.name} (0x${(ckmType >>> 0).toString(16)})`
+              : `0x${(ckmType >>> 0).toString(16)}`,
+            note: entry?.description,
+          },
+        ],
+      },
+    ],
+    spec: 'PKCS#11 v3.2 §5.5.6 (C_GetMechanismInfo)',
+  }
+}
+
+// ── Multi-part digest ─────────────────────────────────────────────────────────
+
+/** C_DigestUpdate(hSession, pPart, ulPartLen) — §5.12.3 */
+const decodeDigestUpdate = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const pPart = args[1] ?? 0
+  const partLen = args[2] ?? 0
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'ulPartLen', value: `${partLen} bytes` },
+          { name: 'Data Part', value: safeReadBytesAsHex(M, pPart, partLen) },
+        ],
+      },
+    ],
+    spec: 'PKCS#11 v3.2 §5.12.3 (C_DigestUpdate)',
+  }
+}
+
+/** C_DigestFinal(hSession, pDigest, pulDigestLen) — §5.12.5 */
+const decodeDigestFinal = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pDigest = args[1] ?? 0
+  const digestLenPtr = args[2] ?? 0
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        {
+          name: 'pDigest',
+          value: pDigest === 0 ? 'NULL (size query)' : `0x${pDigest.toString(16)}`,
+          note: pDigest === 0 ? 'Two-step: call with NULL first to get digest length' : undefined,
+        },
+      ],
+    },
+  ]
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && digestLenPtr) {
+    const digestLen = safeRead32(M, digestLenPtr)
+    if (digestLen !== null) {
+      outputs.push({ name: '*pulDigestLen', value: `${digestLen} bytes` })
+      if (pDigest !== 0 && rv === 0)
+        outputs.push({ name: 'Digest Payload', value: safeReadBytesAsHex(M, pDigest, digestLen) })
+    }
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.12.5 (C_DigestFinal)',
+  }
+}
+
+// ── Multi-part sign ───────────────────────────────────────────────────────────
+
+/** C_SignUpdate(hSession, pPart, ulPartLen) — §5.13.3 */
+const decodeSignUpdate = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const pPart = args[1] ?? 0
+  const partLen = args[2] ?? 0
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'ulPartLen', value: `${partLen} bytes` },
+          { name: 'Data Part', value: safeReadBytesAsHex(M, pPart, partLen) },
+        ],
+      },
+    ],
+    spec: 'PKCS#11 v3.2 §5.13.3 (C_SignUpdate)',
+  }
+}
+
+/** C_SignFinal(hSession, pSignature, pulSignatureLen) — §5.13.4 */
+const decodeClassicSignFinal = (M: SoftHSMModule, args: number[], rv: number): Pkcs11LogInspect => {
+  const pSignature = args[1] ?? 0
+  const sigLenPtr = args[2] ?? 0
+  const inputs: InspectSection[] = [
+    {
+      label: 'Parameters',
+      primitives: [
+        {
+          name: 'pSignature',
+          value: pSignature === 0 ? 'NULL (size query)' : `0x${pSignature.toString(16)}`,
+          note:
+            pSignature === 0 ? 'Two-step: call with NULL first to get signature length' : undefined,
+        },
+      ],
+    },
+  ]
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && sigLenPtr) {
+    const sigLen = safeRead32(M, sigLenPtr)
+    if (sigLen !== null) {
+      outputs.push({ name: '*pulSignatureLen', value: `${sigLen} bytes` })
+      if (pSignature !== 0 && rv === 0)
+        outputs.push({
+          name: 'Signature Payload',
+          value: safeReadBytesAsHex(M, pSignature, sigLen),
+        })
+    }
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.13.4 (C_SignFinal)',
+  }
+}
+
+// ── Random / utility ─────────────────────────────────────────────────────────
+
+/** C_SeedRandom(hSession, pSeed, ulSeedLen) — §5.19.1 */
+const decodeSeedRandom = (M: SoftHSMModule, args: number[]): Pkcs11LogInspect => {
+  const pSeed = args[1] ?? 0
+  const seedLen = args[2] ?? 0
+  return {
+    inputs: [
+      {
+        label: 'Parameters',
+        primitives: [
+          { name: 'ulSeedLen', value: `${seedLen} bytes` },
+          { name: 'Seed', value: safeReadBytesAsHex(M, pSeed, seedLen) },
+        ],
+      },
+    ],
+    spec: 'PKCS#11 v3.2 §5.19.1 (C_SeedRandom)',
+  }
+}
+
+// ── Authenticated key wrapping (§5.18.6–7) ───────────────────────────────────
+
+/**
+ * C_WrapKeyAuthenticated(hSession, pMechanism, hWrappingKey, hKey,
+ *   pAssociatedData, ulAssociatedDataLen, pWrappedKey, pulWrappedKeyLen) — §5.18.6
+ */
+const decodeWrapKeyAuthenticated = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hWrappingKey = args[2] ?? 0
+  const hKey = args[3] ?? 0
+  const pAad = args[4] ?? 0
+  const aadLen = args[5] ?? 0
+  const pOut = args[6] ?? 0
+  const outLenPtr = args[7] ?? 0
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [
+      { name: 'hWrappingKey', value: String(hWrappingKey) },
+      { name: 'hKey', value: String(hKey), note: 'Key to wrap' },
+      {
+        name: 'pWrappedKey',
+        value: pOut === 0 ? 'NULL (size query)' : `0x${pOut.toString(16)}`,
+        note: pOut === 0 ? 'Two-step: call with NULL first to get output length' : undefined,
+      },
+      ...(aadLen > 0
+        ? [{ name: 'AAD', value: safeReadBytesAsHex(M, pAad, aadLen) }]
+        : [{ name: 'pAssociatedData', value: 'NULL', note: 'No additional authenticated data' }]),
+    ],
+  })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if ((rv === 0 || rv === 0x150) && outLenPtr) {
+    const outLen = safeRead32(M, outLenPtr)
+    if (outLen !== null) {
+      outputs.push({ name: '*pulWrappedKeyLen', value: `${outLen} bytes` })
+      if (pOut !== 0 && rv === 0)
+        outputs.push({ name: 'Wrapped Key Payload', value: safeReadBytesAsHex(M, pOut, outLen) })
+    }
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.18.6 (C_WrapKeyAuthenticated)',
+  }
+}
+
+/**
+ * C_UnwrapKeyAuthenticated(hSession, pMechanism, hUnwrappingKey, pWrappedKey,
+ *   ulWrappedKeyLen, pTemplate, ulAttributeCount,
+ *   pAssociatedData, ulAssociatedDataLen, phKey) — §5.18.7
+ */
+const decodeUnwrapKeyAuthenticated = (
+  M: SoftHSMModule,
+  args: number[],
+  rv: number
+): Pkcs11LogInspect => {
+  const mechPtr = args[1] ?? 0
+  const mech = readMechanism(M, mechPtr)
+  const hUnwrappingKey = args[2] ?? 0
+  const pWrappedKey = args[3] ?? 0
+  const wrappedKeyLen = args[4] ?? 0
+  const tmpl = readTemplate(M, args[5] ?? 0, args[6] ?? 0)
+  const pAad = args[7] ?? 0
+  const aadLen = args[8] ?? 0
+
+  const inputs: InspectSection[] = []
+  if (mech) inputs.push({ label: 'Mechanism', mechanism: mech })
+  inputs.push({
+    label: 'Parameters',
+    primitives: [
+      { name: 'hUnwrappingKey', value: String(hUnwrappingKey) },
+      { name: 'ulWrappedKeyLen', value: `${wrappedKeyLen} bytes` },
+      { name: 'Wrapped Key Payload', value: safeReadBytesAsHex(M, pWrappedKey, wrappedKeyLen) },
+      ...(aadLen > 0
+        ? [{ name: 'AAD', value: safeReadBytesAsHex(M, pAad, aadLen) }]
+        : [{ name: 'pAssociatedData', value: 'NULL', note: 'No additional authenticated data' }]),
+    ],
+  })
+  if (tmpl.length) inputs.push({ label: 'Unwrapped Key Template', attributes: tmpl })
+
+  const outputs: Pkcs11LogInspect['outputs'] = []
+  if (rv === 0 && args[9]) {
+    const h = safeRead32(M, args[9])
+    if (h !== null) outputs.push({ name: '*phKey', value: String(h), note: 'Unwrapped key handle' })
+  }
+  return {
+    inputs,
+    outputs: outputs.length ? outputs : undefined,
+    spec: 'PKCS#11 v3.2 §5.18.7 (C_UnwrapKeyAuthenticated)',
+  }
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 /**
@@ -1767,9 +2205,44 @@ export const buildInspect = (
         return decodeDigestInit(M, args)
       case 'C_Digest':
         return decodeDigest(M, args, rv)
+      // Object management
+      case 'C_CreateObject':
+        return decodeCreateObject(M, args, rv)
+      case 'C_DestroyObject':
+        return decodeDestroyObject(M, args)
+      case 'C_FindObjectsInit':
+        return decodeFindObjectsInit(M, args)
+      case 'C_FindObjects':
+        return decodeFindObjects(M, args, rv)
+      case 'C_FindObjectsFinal':
+        return decodeFindObjectsFinal(M, args)
+      // Mechanism & token info
+      case 'C_GetMechanismList':
+        return decodeGetMechanismList(M, args, rv)
+      case 'C_GetMechanismInfo':
+        return decodeGetMechanismInfo(M, args)
+      // Multi-part digest
+      case 'C_DigestUpdate':
+        return decodeDigestUpdate(M, args)
+      case 'C_DigestFinal':
+        return decodeDigestFinal(M, args, rv)
+      // Multi-part sign
+      case 'C_SignUpdate':
+        return decodeSignUpdate(M, args)
+      case 'C_SignFinal':
+        return decodeClassicSignFinal(M, args, rv)
+      // Random
+      case 'C_SeedRandom':
+        return decodeSeedRandom(M, args)
       // Key wrapping
       case 'C_WrapKey':
         return decodeWrapKey(M, args, rv)
+      case 'C_UnwrapKey':
+        return decodeUnwrapKey(M, args, rv)
+      case 'C_WrapKeyAuthenticated':
+        return decodeWrapKeyAuthenticated(M, args, rv)
+      case 'C_UnwrapKeyAuthenticated':
+        return decodeUnwrapKeyAuthenticated(M, args, rv)
       default:
         return undefined
     }

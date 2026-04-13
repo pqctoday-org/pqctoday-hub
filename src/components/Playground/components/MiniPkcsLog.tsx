@@ -1,71 +1,15 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /**
- * MiniPkcsLog — compact inline PKCS#11 call log showing the last N entries.
+ * MiniPkcsLog — inline PKCS#11 call log with parameter inspection.
  *
- * Reads from HsmContext (no props). Returns null when the log is empty so it
- * takes no space before any operation has run. Displays entries oldest→newest
- * (same order as PkcsLogPanel) with a footer directing users to the full log tab.
+ * Reads from HsmContext (no props). Delegates rendering to the shared
+ * Pkcs11LogPanel so all playground panels get the full inspect capability
+ * (clickable rows → decoded CK_MECHANISM / CK_ATTRIBUTE templates).
  */
 import { useHsmContext } from '../hsm/HsmContext'
-
-const MAX_ENTRIES = 10
+import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 
 export const MiniPkcsLog = () => {
-  const { hsmLog } = useHsmContext()
-
-  if (hsmLog.length === 0) return null
-
-  // hsmLog is newest-first; take the N most recent then reverse for oldest→newest display
-  const recent = [...hsmLog.slice(0, MAX_ENTRIES)].reverse()
-
-  return (
-    <div className="glass-panel p-3 space-y-1.5">
-      <p className="text-[10px] font-semibold uppercase tracking-wider text-muted-foreground">
-        PKCS#11 Calls (last {hsmLog.length > MAX_ENTRIES ? MAX_ENTRIES : hsmLog.length})
-      </p>
-
-      <div className="space-y-0.5">
-        {recent.map((entry) => (
-          <div key={entry.id} className="flex items-baseline gap-1.5 text-[11px] font-mono">
-            <span className="text-muted-foreground shrink-0 w-16">{entry.timestamp}</span>
-
-            {entry.engineName === 'rust' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-warning/20 text-warning shrink-0">
-                Rust
-              </span>
-            )}
-            {entry.engineName === 'cpp' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary shrink-0">
-                C++
-              </span>
-            )}
-            {entry.engineName === 'dual' && (
-              <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-secondary/20 text-secondary shrink-0">
-                Dual
-              </span>
-            )}
-
-            <span className="text-foreground shrink-0">{entry.fn}</span>
-            <span className="text-muted-foreground truncate">
-              {entry.args && `(${entry.args})`}
-            </span>
-            <span className="ml-auto shrink-0">→</span>
-            <span
-              className={entry.ok ? 'text-status-success shrink-0' : 'text-status-error shrink-0'}
-            >
-              {entry.rvName}
-            </span>
-            <span className="text-muted-foreground shrink-0">[{entry.ms}ms]</span>
-          </div>
-        ))}
-      </div>
-
-      {hsmLog.length > MAX_ENTRIES && (
-        <p className="text-[10px] text-muted-foreground pt-0.5">
-          + {hsmLog.length - MAX_ENTRIES} earlier — view all in the{' '}
-          <span className="text-primary">PKCS#11 Log</span> tab
-        </p>
-      )}
-    </div>
-  )
+  const { hsmLog, clearHsmLog } = useHsmContext()
+  return <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} />
 }
