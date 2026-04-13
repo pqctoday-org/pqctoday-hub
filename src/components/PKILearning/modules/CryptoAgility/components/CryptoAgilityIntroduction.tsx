@@ -279,7 +279,8 @@ export const CryptoAgilityIntroduction: React.FC<CryptoAgilityIntroductionProps>
             <div className="text-xs font-bold text-primary mb-2">Apple</div>
             <p className="text-xs text-muted-foreground">
               iMessage adopted PQ3 protocol (P-256 ECDH + Kyber-1024 initial keys, Kyber-768
-              rekeying ratchet) in iOS 17.4. Phased rollout leveraging protocol agility.
+              rekeying ratchet — both now standardized as ML-KEM-1024 / ML-KEM-768 per FIPS 203) in
+              iOS 17.4. Phased rollout leveraging protocol agility.
             </p>
           </div>
         </div>

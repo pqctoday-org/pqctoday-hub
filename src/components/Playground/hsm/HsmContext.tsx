@@ -106,11 +106,6 @@ export interface HsmContextValue {
   addHsmLog: (e: Pkcs11LogEntry) => void
   clearHsmLog: () => void
 
-  // ── Inspect mode ──────────────────────────────────────────────────────────
-  /** When true the PKCS#11 log panel decodes parameter structures inline */
-  inspectMode: boolean
-  toggleInspect: () => void
-
   // ── Auto-init (deep-link / programmatic) ─────────────────────────────────
   /**
    * Silently run the full 3-step HSM init (load WASM → init token → open
@@ -145,7 +140,6 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [tokenCreated, setTokenCreated] = useState(false)
   const [hsmKeys, setHsmKeys] = useState<HsmKey[]>([])
   const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
-  const [inspectMode, setInspectMode] = useState(false)
 
   const isReady = phase === 'session_open'
 
@@ -184,8 +178,6 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const clearHsmLog = useCallback(() => {
     setHsmLog([])
   }, [])
-
-  const toggleInspect = useCallback(() => setInspectMode((m) => !m), [])
 
   const autoInit = useCallback(
     async (engine?: EngineMode): Promise<boolean> => {
@@ -258,8 +250,6 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hsmLog,
       addHsmLog,
       clearHsmLog,
-      inspectMode,
-      toggleInspect,
       autoInit,
     }),
     [
@@ -276,8 +266,6 @@ export const HsmProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       hsmLog,
       addHsmLog,
       clearHsmLog,
-      inspectMode,
-      toggleInspect,
       autoInit,
     ]
   )

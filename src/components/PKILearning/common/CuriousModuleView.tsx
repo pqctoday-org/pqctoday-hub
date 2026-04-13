@@ -42,15 +42,16 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
   }
 
   // Find next/prev using persona path ordering (fall back to curious path)
-  const { prevModuleId, nextModuleId } = useMemo(() => {
+  const { prevModuleId, nextModuleId, isOffPath } = useMemo(() => {
     const personaKey = selectedPersona ?? 'curious'
     const persona = PERSONAS[personaKey] // eslint-disable-line security/detect-object-injection
     const path = persona?.recommendedPath ?? PERSONAS.curious.recommendedPath
     const idx = path.indexOf(moduleId)
-    if (idx === -1) return { prevModuleId: null, nextModuleId: null }
+    if (idx === -1) return { prevModuleId: null, nextModuleId: null, isOffPath: true }
     return {
       prevModuleId: idx > 0 ? path[idx - 1] : null,
       nextModuleId: idx < path.length - 1 ? path[idx + 1] : null,
+      isOffPath: false,
     }
   }, [moduleId, selectedPersona])
 
@@ -119,7 +120,14 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
 
       <CuriousSummaryBanner moduleId={moduleId} isFullPage={true} />
 
-      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-12 pt-6 border-t border-border">
+      {isOffPath && (
+        <p className="text-xs text-muted-foreground text-center px-4 mt-8">
+          This module isn&apos;t on your Curious Explorer path. Head back to the dashboard to stay
+          on track.
+        </p>
+      )}
+
+      <div className="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 pt-6 border-t border-border">
         {prevModuleId ? (
           <Button
             variant="ghost"
@@ -151,7 +159,7 @@ export const CuriousModuleView: React.FC<CuriousModuleViewProps> = ({ moduleId }
             onClick={handleNext}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-8 py-2.5 font-semibold rounded-lg transition-colors shadow-lg shadow-accent/20"
           >
-            Finish Path
+            {isOffPath ? 'Back to Learning Dashboard' : 'Finish Path'}
           </Button>
         )}
       </div>

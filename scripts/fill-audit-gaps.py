@@ -2,18 +2,18 @@
 """
 fill-audit-gaps.py
 Fills gap_description for all GAP/STALE rows that have an empty description,
-writes module_audit_04122026_r1.csv, then adds corresponding issue rows to
-module_issues_04122026_r2.csv.
+writes module_audit_04122026_r7.csv, then adds corresponding issue rows to
+module_issues_04122026_r8.csv.
 """
 import csv
 import os
 from datetime import date
 
 AUDIT_DIR  = os.path.join(os.path.dirname(__file__), '../docs/audits')
-AUDIT_SRC  = os.path.join(AUDIT_DIR, 'module_audit_04122026.csv')
-AUDIT_OUT  = os.path.join(AUDIT_DIR, 'module_audit_04122026_r1.csv')
-ISSUES_SRC = os.path.join(AUDIT_DIR, 'module_issues_04122026_r1.csv')
-ISSUES_OUT = os.path.join(AUDIT_DIR, 'module_issues_04122026_r2.csv')
+AUDIT_SRC  = os.path.join(AUDIT_DIR, 'module_audit_04122026_r6.csv')
+AUDIT_OUT  = os.path.join(AUDIT_DIR, 'module_audit_04122026_r7.csv')
+ISSUES_SRC = os.path.join(AUDIT_DIR, 'module_issues_04122026_r7.csv')
+ISSUES_OUT = os.path.join(AUDIT_DIR, 'module_issues_04122026_r8.csv')
 
 TODAY = date.today().isoformat()   # 2026-04-12
 
@@ -133,11 +133,7 @@ SPECIFIC = {
         "present, but WORKSHOP_STEPS below threshold and no data/ subdirectory). "
         "Add a data/ subdirectory or increase workshop step count to ≥4."
     ),
-    ('tls-basics', 'education_value'): (
-        "Module meets only two of four education value criteria (rag-summary.md and exercises file "
-        "present, but WORKSHOP_STEPS below threshold and no data/ subdirectory). "
-        "Add a data/ subdirectory or increase workshop step count to ≥4."
-    ),
+    # tls-basics education_value resolved 2026-04-12: data/ created, WORKSHOP_STEPS expanded to 4
     ('digital-id', 'education_value'): (
         "Module meets only two of four education value criteria (rag-summary.md and exercises file "
         "present, but WORKSHOP_STEPS below threshold and no data/ subdirectory). "
@@ -214,6 +210,17 @@ SPECIFIC = {
         "Some library cross-references are stale (freshness score 50): half of linked references "
         "have not been updated in over 365 days. Review all network-security library refs "
         "and update or replace those exceeding the 365-day threshold."
+    ),
+    ('tls-basics', 'library_xref_freshness'): (
+        "13 of 28 library cross-references are stale (>365 days since last update): "
+        "RFC 8446 (2018-08-01), RFC 4253 (2006-01-01), ETSI-GR-QSC-003 (2017-03-01), "
+        "RFC-9258 (2022-07-01), RFC 9147 (2022-04-01), RFC 8879 (2020-11-01), "
+        "ENISA-PQC-Integration-Study-2022 (2022-07-01), ETSI TS 103 744 (2025-03-01), "
+        "Microsoft-QSP-Roadmap-2025 (2025-01-01), GSMA-PQ03-v2-2024 (2024-11-01), "
+        "UK-NCSC-PQC-Whitepaper-2024 (2024-11-01), IN-TEC-PQC-Migration-Report-2025 (2025-03-28), "
+        "draft-ietf-tls-merkle-tree-certs (2025-01-01). "
+        "Foundational RFCs (8446, 4253) are stable by design. "
+        "Check GSMA-PQ03, ETSI TS 103 744, and UK-NCSC for newer published versions."
     ),
 }
 
@@ -380,13 +387,13 @@ with open(ISSUES_OUT, 'w', newline='', encoding='utf-8') as f:
 # ---------------------------------------------------------------------------
 print(f"Audit rows processed:          {len(audit_rows)}")
 print(f"Gap descriptions filled:       {filled}")
-print(f"  -> module_audit_04122026_r1.csv written ({len(audit_rows)} rows)")
+print(f"  -> module_audit_04122026_r7.csv written ({len(audit_rows)} rows)")
 print()
 print(f"Existing issue rows preserved: {len(existing_issues)}")
 print(f"  of which descriptions filled: {issues_updated}")
 print(f"New issue rows added:          {len(new_issue_rows)}")
 print(f"Total issues:                  {len(all_issues)}")
-print(f"  -> module_issues_04122026_r2.csv written")
+print(f"  -> module_issues_04122026_r8.csv written")
 
 # Verify no remaining empty gap descriptions on GAP/STALE rows
 remaining = [r for r in audit_rows if r['status'] in ('GAP','STALE') and not r['gap_description'].strip()]

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable react-refresh/only-export-components */
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useRef } from 'react'
 import {
   BookOpen,
   ChevronDown,
@@ -235,6 +235,15 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
   onClearFilters,
 }) => {
   const [activeTrack, setActiveTrack] = useState<string | null>(null)
+  const trackRefs = useRef<Record<string, HTMLDivElement | null>>({})
+
+  const advanceToTrack = (track: string) => {
+    setActiveTrack(track)
+    // Defer scroll until after the next track has expanded in the DOM
+    setTimeout(() => {
+      trackRefs.current[track]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }, 250)
+  }
 
   // Resolve CSS custom properties once on mount so vendor theme overrides are picked up.
   // getComputedStyle reads the live cascade including inline styles set by applyEmbedTheme().
@@ -284,6 +293,9 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
           return (
             <div
               key={meta.track}
+              ref={(el) => {
+                trackRefs.current[meta.track] = el
+              }}
               role="button"
               tabIndex={0}
               onClick={() => handleSelectTrack(meta.track)}
@@ -481,7 +493,7 @@ export const LearnTrackStack: React.FC<LearnTrackStackProps> = ({
                               idx !== -1 && idx < visibleTrackNames.length - 1
                                 ? visibleTrackNames[idx + 1]
                                 : null
-                            return nextTrack ? () => setActiveTrack(nextTrack) : undefined
+                            return nextTrack ? () => advanceToTrack(nextTrack) : undefined
                           })()}
                         />
                       ) : (

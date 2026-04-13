@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Map, MessageSquare, Target } from 'lucide-react'
+import { Trash2, Map, MessageSquare, Target, BookOpen } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { RoadmapBuilder } from './components/RoadmapBuilder'
 import { StakeholderCommsPlanner } from './components/StakeholderCommsPlanner'
 import { KPITrackerTemplate } from './components/KPITrackerTemplate'
 import { DeploymentPlaybook } from './components/DeploymentPlaybook'
+import { MigrationProgramExercises } from './MigrationProgramExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -38,56 +39,14 @@ const PARTS = [
     description: 'Design a migration program KPI tracker with live data integration.',
     icon: Target,
   },
+  {
+    id: 'deployment-playbook',
+    title: 'Step 4: Deployment Playbook',
+    description:
+      'Step-by-step execution checklist covering pre-migration, migration, and post-migration gates.',
+    icon: BookOpen,
+  },
 ]
-
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Financial Institution Migration',
-      prompt:
-        'Your bank has 500+ applications using RSA-2048 and must comply with CNSA 2.0 by 2030. The CISO wants a 3-year migration roadmap. Build a phased roadmap with milestones, identify the top 5 stakeholders and their concerns, and define 4 KPIs to track progress. Consider regulatory deadlines from NIST, NSA, and your primary regulator.',
-    },
-    {
-      title: 'Scenario: Healthcare Provider PQC Rollout',
-      prompt:
-        'A large hospital network needs to migrate electronic health record encryption to PQC algorithms while maintaining HIPAA compliance. Patient data must remain accessible throughout the transition. Design a communication plan that addresses concerns from clinical staff, IT teams, compliance officers, and third-party EHR vendors.',
-    },
-    {
-      title: 'Scenario: Government Agency Mandate',
-      prompt:
-        'Your federal agency must report PQC migration progress quarterly to OMB. You have 200 systems across 15 departments with varying levels of crypto maturity. Create a KPI dashboard that tracks progress at both the department and agency level, and define escalation criteria for departments falling behind schedule.',
-    },
-  ]
-
-  return (
-    <div className="w-full space-y-6">
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-foreground mb-2">Migration Program Exercises</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these real-world scenarios. Use the Workshop tab
-          tools to model your answers.
-        </p>
-        <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
-              <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the Roadmap Builder (Step 1), Stakeholder Comms Planner (Step 2), and KPI
-                  Tracker (Step 3) in the Workshop tab to model your response.
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* Deployment Playbook */}
-      <DeploymentPlaybook />
-    </div>
-  )
-}
 
 export const MigrationProgramModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
@@ -245,6 +204,7 @@ export const MigrationProgramModule: React.FC = () => {
               {currentPart === 0 && <RoadmapBuilder key={`roadmap-${configKey}`} />}
               {currentPart === 1 && <StakeholderCommsPlanner key={`comms-${configKey}`} />}
               {currentPart === 2 && <KPITrackerTemplate key={`kpi-${configKey}`} />}
+              {currentPart === 3 && <DeploymentPlaybook key={`playbook-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}
@@ -279,7 +239,7 @@ export const MigrationProgramModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <ExercisesTab />
+          <MigrationProgramExercises onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="references">

@@ -96,6 +96,8 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      // SDK map for shared learning modules
+      '@sdk': path.resolve(__dirname, '../pqctoday-sdk/embed-test-site/src'),
     },
   },
   server: {

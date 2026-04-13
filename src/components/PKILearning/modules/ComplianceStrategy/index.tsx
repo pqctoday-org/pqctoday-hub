@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Globe, CheckSquare, CalendarRange } from 'lucide-react'
+import { Trash2, Globe, CheckSquare, CalendarRange, ShieldCheck } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { JurisdictionMapper } from './components/JurisdictionMapper'
 import { AuditReadinessChecklist } from './components/AuditReadinessChecklist'
 import { ComplianceTimelineBuilder } from './components/ComplianceTimelineBuilder'
+import { RegulatoryGapAssessment } from './components/RegulatoryGapAssessment'
+import { ComplianceStrategyExercises } from './ComplianceStrategyExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -38,53 +40,14 @@ const PARTS = [
       'Build a compliance timeline overlaying framework deadlines with your migration milestones.',
     icon: CalendarRange,
   },
+  {
+    id: 'regulatory-gap-assessment',
+    title: 'Step 4: Regulatory Gap Assessment',
+    description:
+      'Identify compliance gaps across your selected jurisdictions and generate a prioritized remediation plan.',
+    icon: ShieldCheck,
+  },
 ]
-
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Multi-Jurisdiction Financial Institution',
-      prompt:
-        'Your bank operates in the US, EU, and Singapore. CNSA 2.0 requires PQC for NSS by 2030, ETSI has hybrid recommendations, and MAS (Singapore) is monitoring NIST standards. Map the overlapping requirements and identify the earliest binding deadline. What compliance conflicts exist between jurisdictions?',
-    },
-    {
-      title: 'Scenario: Government Contractor Audit',
-      prompt:
-        'Your company supplies software to the US DoD and must comply with CMMC Level 3 and CNSA 2.0. An audit is scheduled for Q3 2027. Build an audit readiness checklist covering cryptographic inventory, policy documentation, and technical controls. Identify the top 5 gaps most auditors flag.',
-    },
-    {
-      title: 'Scenario: Healthcare PQC Compliance Timeline',
-      prompt:
-        'A hospital network must protect patient records (30-year retention) while complying with HIPAA and the upcoming NIST deprecation of RSA/ECC by 2030. Build a compliance timeline that includes assessment, hybrid deployment, and full PQC migration phases. Where does the HNDL risk window overlap with compliance deadlines?',
-    },
-  ]
-
-  return (
-    <div className="w-full space-y-6">
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-foreground mb-2">Compliance Strategy Exercises</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these real-world compliance scenarios. Use the
-          Workshop tab tools to model your answers.
-        </p>
-        <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
-              <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the Jurisdiction Mapper (Step 1), Audit Readiness Checklist (Step 2), and
-                  Compliance Timeline Builder (Step 3) in the Workshop tab to model your response.
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export const ComplianceStrategyModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
@@ -260,6 +223,12 @@ export const ComplianceStrategyModule: React.FC = () => {
                   dismissedFrameworkIds={dismissedFrameworks}
                 />
               )}
+              {currentPart === 3 && (
+                <RegulatoryGapAssessment
+                  key={`gap-${configKey}`}
+                  selectedJurisdictions={selectedJurisdictions}
+                />
+              )}
             </div>
 
             {/* Part Navigation */}
@@ -294,7 +263,7 @@ export const ComplianceStrategyModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <ExercisesTab />
+          <ComplianceStrategyExercises onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="references">

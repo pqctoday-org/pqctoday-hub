@@ -26,8 +26,14 @@ The EUDI Digital Identity Wallet module simulates the European Digital Identity 
 
 ## Related Standards
 
-- eIDAS 2.0 (Regulation EU 2024/1183), EUDI Architecture Reference Framework (ARF 2.0)
-- ISO 18013-5 (mso_mdoc mobile driving license / credential format), RFC 9901 (SD-JWT selective disclosure)
-- OpenID4VCI (credential issuance protocol), OpenID4VP (credential presentation protocol), CSC API (Cloud Signature Consortium remote signing)
-- GDPR Article 5(1)(c) (data minimization), ENISA PQC guidance for trust service providers
-- FIPS 204 (ML-DSA) and FIPS 205 (SLH-DSA) as future PQC signature replacements for ECDSA in credential issuance and QES signing
+- `eIDAS-2-Regulation` — eIDAS 2.0 (Regulation EU 2024/1183): legal framework mandating EUDI Wallets for all 27 EU member states by late 2026
+- `EUDI-Wallet-ARF` — EUDI Architecture Reference Framework (ARF 2.0): technical specification for credential formats, trust framework, and PQC migration roadmap (Dec 2026 / 2030 / 2035)
+- `ISO-18013-5-mDL` — ISO/IEC 18013-5:2021: mso_mdoc credential format (CBOR binary, proximity via NFC/BLE)
+- `RFC-9901-SD-JWT-VC` — RFC 9901: SD-JWT-based Verifiable Credentials (JSON text, optimised for online verification)
+- `IETF-SD-JWT-Draft` — IETF SD-JWT draft: selective disclosure mechanism (salted SHA-256 hashes, unlinkability)
+- `OpenID4VCI-Spec` — OpenID4VCI (Final): credential issuance protocol used by all EUDI PID and attestation issuers
+- `OpenID4VP-Spec` — OpenID4VP (Final): credential presentation protocol for relying party verification
+- `CSC-API-v2-Spec` — Cloud Signature Consortium API v2: remote QES signing protocol used by QTSPs under eIDAS 2.0
+- `ETSI-EN-319-411` — ETSI EN 319 411: QTSP requirements and audit scheme for qualified trust service providers
+- `ENISA-EUDI-Wallet-Security` — ENISA EUDI Wallet Security analysis: identifies wallet providers as high-impact PQC adoption targets
+- `FIPS 204` (ML-DSA) and `FIPS 205` (SLH-DSA): future PQC signature replacements for ECDSA in credential issuance and QES signing

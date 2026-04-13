@@ -53,9 +53,9 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   const resourceLabel = `${moduleTitle} — ${stepTitle}`
 
   return (
-    <div className="mb-6 border-b border-border pb-4 relative">
-      <h2 className="text-2xl font-bold text-foreground pr-20">{stepTitle}</h2>
-      <p className="text-muted-foreground pr-20">{stepDescription}</p>
+    <div className="mb-6 border-b border-border pb-4 relative overflow-hidden">
+      <h2 className="text-2xl font-bold text-foreground pr-20 break-words">{stepTitle}</h2>
+      <p className="text-muted-foreground pr-20 break-words">{stepDescription}</p>
       <div className="absolute top-0 right-0 flex items-center gap-1">
         <EndorseButton
           endorseUrl={endorseUrl}

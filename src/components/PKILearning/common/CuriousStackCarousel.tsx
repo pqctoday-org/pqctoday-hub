@@ -54,9 +54,11 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
     <div className="w-full flex flex-col space-y-6 pt-4 animate-fade-in">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 px-2">
         <div className="w-full">
-          <div className="flex items-center justify-between mb-2">
-            <h3 className="text-xl font-bold text-foreground">{currentModule.title}</h3>
-            <div className="text-xs font-semibold text-muted-foreground px-3 py-1 rounded-full bg-muted border border-border whitespace-nowrap">
+          <div className="flex items-center justify-between mb-2 gap-2">
+            <h3 className="text-xl font-bold text-foreground min-w-0 flex-1 truncate">
+              {currentModule.title}
+            </h3>
+            <div className="text-xs font-semibold text-muted-foreground px-3 py-1 rounded-full bg-muted border border-border whitespace-nowrap shrink-0">
               Module {currentIndex + 1} of {modules.length}
             </div>
           </div>
@@ -143,19 +145,32 @@ export const CuriousStackCarousel: React.FC<CuriousStackCarouselProps> = ({
             }}
             className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors shadow-sm cursor-pointer"
           >
-            Next Stack
+            Next Track
             <ArrowRight size={16} />
           </Button>
         ) : (
-          <Button
-            variant="ghost"
-            type="button"
-            disabled
-            className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors bg-muted text-muted-foreground/40 cursor-not-allowed"
-          >
-            Next
-            <ArrowRight size={16} />
-          </Button>
+          <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              type="button"
+              onClick={() => navigate('/learn')}
+              className="flex items-center justify-center w-full sm:w-auto gap-2 px-5 py-2.5 rounded-lg"
+            >
+              Back to Dashboard
+            </Button>
+            <Button
+              variant="gradient"
+              type="button"
+              onClick={() => {
+                updateModuleProgress(currentModule.id, { status: 'completed' })
+                navigate('/learn/quiz')
+              }}
+              className="flex items-center justify-center w-full sm:w-auto gap-2 px-6 py-2.5 font-semibold rounded-lg transition-colors"
+            >
+              Take the Quiz
+              <ArrowRight size={16} />
+            </Button>
+          </div>
         )}
       </div>
 

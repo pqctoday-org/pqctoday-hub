@@ -18,6 +18,7 @@ import { WorkshopStepHeader } from '../../common/WorkshopStepHeader'
 import type { WalletInstance, CryptoKey, VerifiableCredential } from './types'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { DigitalIDExercises } from './components/DigitalIDExercises'
 
 const MODULE_ID = 'digital-id'
 
@@ -115,6 +116,16 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
     markStepComplete(MODULE_ID, activeTab)
     setActiveTab('workshop')
   }, [activeTab, markStepComplete])
+
+  // Navigate to Workshop and jump to a specific step (used by exercises)
+  const navigateToStep = useCallback(
+    (stepIndex: number) => {
+      setCurrentStep(stepIndex)
+      markStepComplete(MODULE_ID, activeTab)
+      setActiveTab('workshop')
+    },
+    [activeTab, markStepComplete]
+  )
 
   // Mark the previous workshop step complete whenever the user navigates
   useEffect(() => {
@@ -363,49 +374,10 @@ export const DigitalIDModule: React.FC<{ onBack?: () => void }> = ({ onBack }) =
 
         {/* Exercises Tab */}
         <TabsContent value="exercises">
-          <div className="space-y-6">
-            <p className="text-sm text-muted-foreground">
-              Complete the Workshop steps, then answer these questions to check your understanding
-              of the EUDI Wallet and eIDAS 2.0 ecosystem.
-            </p>
-
-            {[
-              {
-                q: 'What is the role of the PID Issuer in the EUDI Wallet ecosystem?',
-                hint: 'The PID Issuer authenticates the citizen and issues a Person Identification Data (PID) credential — the foundational credential that other attestations can build upon.',
-              },
-              {
-                q: 'Why does the University require a valid PID before issuing a Diploma attestation?',
-                hint: "The University (as an attestation issuer) needs to verify the holder's identity before binding a diploma to them. The PID credential proves identity within the trust framework.",
-              },
-              {
-                q: 'What is the difference between a Verifiable Credential (VC) and a Qualified Electronic Signature (QES)?',
-                hint: 'A VC is a tamper-evident digital credential about an identity attribute (e.g., diploma). A QES is a digital signature with the legal equivalent of a handwritten signature under eIDAS 2.0.',
-              },
-              {
-                q: 'How does the Relying Party (Bank) verify your identity without receiving your raw credential data?',
-                hint: 'Using selective disclosure and cryptographic proofs, the wallet presents only the required attributes (e.g., age, name) without exposing the full credential — preserving privacy.',
-              },
-              {
-                q: 'What PQC algorithms could replace the current signature schemes used in EUDI Wallet credentials?',
-                hint: 'ML-DSA (FIPS 204) and SLH-DSA (FIPS 205) are the NIST-standardized PQC signature schemes. They can replace ECDSA/EdDSA in credential issuance and QES signing.',
-              },
-            ].map((exercise, idx) => (
-              <div key={idx} className="glass-panel p-6">
-                <p className="font-semibold text-foreground mb-3">
-                  {idx + 1}. {exercise.q}
-                </p>
-                <details className="text-sm text-muted-foreground cursor-pointer">
-                  <summary className="text-primary hover:underline cursor-pointer select-none">
-                    Show hint
-                  </summary>
-                  <p className="mt-2 leading-relaxed pl-4 border-l-2 border-primary/30">
-                    {exercise.hint}
-                  </p>
-                </details>
-              </div>
-            ))}
-          </div>
+          <DigitalIDExercises
+            onNavigateToWorkshop={navigateToWorkshop}
+            onNavigateToStep={navigateToStep}
+          />
         </TabsContent>
 
         {/* References Tab */}

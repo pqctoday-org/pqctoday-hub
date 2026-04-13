@@ -21,6 +21,7 @@ import type { GridSelection } from './components/CoverageGrid'
 import type { ScenarioAnswer } from './components/ScenarioChallenge'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { Button } from '@/components/ui/button'
+import { StandardsBodiesExercises } from './StandardsBodiesExercises'
 
 const MODULE_ID = 'standards-bodies'
 
@@ -61,52 +62,6 @@ const PARTS = [
     icon: Lightbulb,
   },
 ]
-
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Multinational Vendor PQC Certification Strategy',
-      prompt:
-        "Your HSM vendor sells products to US federal agencies, EU government entities, and a Korean telecom. For each market: (1) US: Which certification program must your FIPS 203/204/205 implementation pass? Which body administers it, and which body wrote the underlying standard? (2) EU: If the customer requires CC-based certification, which EU scheme applies? Which body issues EUCC certificates, and which body maintains the Agreed Cryptographic Mechanisms (ACM) list? (3) Korea: Which national PQC competition produced Korea's approved algorithms? Which government agency ran the competition, and which algorithms were selected?\n\nUse the Organization Explorer (Step 2) to research each body, and the Coverage Grid (Step 4) to map which certification bodies operate in each region.",
-    },
-    {
-      title: 'Scenario: IETF vs NIST — Protocol Integration Decision',
-      prompt:
-        'Your engineering team is adding PQC to a TLS 1.3 implementation. They ask: "Should we follow the NIST standard or the IETF standard?" Help them understand the relationship: (1) Which organization published the ML-KEM algorithm (FIPS 203)? What type of body is it — standards body, regulatory agency, or certification body? (2) Which IETF working group handles PQC integration into TLS? What is the key exchange draft/RFC they produced? (3) Are these in conflict, or complementary? How do NIST algorithm standards feed into IETF protocol standards? Sketch the relationship.\n\nUse the Standards→Cert→Compliance Chain (Step 3, Scenario 4) and the Organization Explorer (Step 2) to compare NIST vs IETF decision-making processes.',
-    },
-    {
-      title: 'Scenario: Compliance Framework Authorship Audit',
-      prompt:
-        'Your legal team is preparing a PQC compliance brief and lists the following mandates. For each, identify: (a) which organization authored it, (b) whether that organization is governmental or non-governmental, (c) whether compliance is mandatory or advisory, and (d) what underlying technical standards it references:\n\n• FIPS 140-3\n• CNSA 2.0\n• ETSI TS 103 744\n• NIS2 Directive\n• ANSSI PQC Position Paper\n\nUse the Body Classifier (Step 1) to verify your classifications, and the Organization Explorer (Step 2) to find the decision-making process and PQC outputs for each authoring organization.',
-    },
-  ]
-
-  return (
-    <div className="w-full space-y-6">
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-foreground mb-2">Standards Bodies — Exercises</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these real-world scenarios. Use the Workshop tab
-          tools to model your answers.
-        </p>
-        <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
-              <p className="text-sm text-foreground/80 whitespace-pre-line">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Reference the Workshop steps listed in the prompt. Use the Organization Explorer
-                  (Step 2) as your primary reference for organization details.
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
-}
 
 export const StandardsBodiesModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
@@ -150,10 +105,14 @@ export const StandardsBodiesModule: React.FC = () => {
     [activeTab, markStepComplete]
   )
 
-  const navigateToWorkshop = useCallback(() => {
-    markStepComplete(MODULE_ID, activeTab)
-    setActiveTab('workshop')
-  }, [activeTab, markStepComplete])
+  const navigateToWorkshop = useCallback(
+    (step?: number) => {
+      markStepComplete(MODULE_ID, activeTab)
+      if (step !== undefined) setCurrentPart(step)
+      setActiveTab('workshop')
+    },
+    [activeTab, markStepComplete]
+  )
 
   const handlePartChange = useCallback(
     (newPart: number) => {
@@ -347,7 +306,7 @@ export const StandardsBodiesModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <ExercisesTab />
+          <StandardsBodiesExercises onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="references">

@@ -5,14 +5,19 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0 } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
+import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'migration-program',
-  version: '1.0.0',
-  lastReviewed: '2026-03-28',
+  version: '1.1.0',
+  lastReviewed: '2026-04-12',
 
   standards: [
-    // No standard references detected — add manually if needed
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
+    getStandard('EO-14306'),
+    getStandard('G7-CEG-Financial-PQC-2026'),
+    getStandard('ANSSI-PQC-FAQ-2025'),
   ],
 
   algorithms: [getAlgorithm('RSA-2048')],

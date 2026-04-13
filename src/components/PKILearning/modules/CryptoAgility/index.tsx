@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Layers, FileSearch, Route } from 'lucide-react'
+import { Trash2, Layers, FileSearch, Route, ClipboardList } from 'lucide-react'
 import { CryptoAgilityIntroduction } from './components/CryptoAgilityIntroduction'
 import { CryptoAgilityExercises, type WorkshopConfig } from './components/CryptoAgilityExercises'
 import { AbstractionLayerDemo } from './workshop/AbstractionLayerDemo'
 import { CBOMScanner } from './workshop/CBOMScanner'
 import { MigrationPlanningExercise } from './workshop/MigrationPlanningExercise'
+import { AgilityReadinessAssessment } from './workshop/AgilityReadinessAssessment'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -37,6 +38,12 @@ const PARTS = [
     title: 'Step 3: Migration Planning',
     description: 'Walk through the 7-phase PQC migration framework.',
     icon: Route,
+  },
+  {
+    id: 'agility-assessment',
+    title: 'Step 4: Agility Assessment',
+    description: 'Score your organization across four crypto agility dimensions.',
+    icon: ClipboardList,
   },
 ]
 
@@ -213,6 +220,7 @@ export const CryptoAgilityModule: React.FC = () => {
               )}
               {currentPart === 1 && <CBOMScanner key={`cbom-${configKey}`} />}
               {currentPart === 2 && <MigrationPlanningExercise key={`migration-${configKey}`} />}
+              {currentPart === 3 && <AgilityReadinessAssessment key={`assessment-${configKey}`} />}
             </div>
 
             {/* Part Navigation */}

@@ -2210,11 +2210,11 @@ export const HsmAcvpTesting = () => {
               M,
               hSession,
               secretKeyBytes,
-              true,
-              false,
-              false,
-              false,
-              false
+              false, // encrypt
+              false, // decrypt
+              false, // wrap
+              false, // unwrap
+              true // derive
             )
             const fixedInput = new TextEncoder().encode('ACVP-KDF-CONTEXT')
             const derivedKeyBytes = hsm_kbkdf(M, hSession, hBaseKey, CKM_SHA256, fixedInput, 32)
@@ -2299,11 +2299,11 @@ export const HsmAcvpTesting = () => {
               M,
               hSession,
               secretKeyBytes,
-              true,
-              false,
-              false,
-              false,
-              false
+              false, // encrypt
+              false, // decrypt
+              false, // wrap
+              false, // unwrap
+              true // derive
             )
             const fixedInput = new TextEncoder().encode('ACVP-KDF-FEEDBACK')
             const ivBytes = new Uint8Array(32).fill(0xcc) // PRF_SEED_BYTES for SHA-256 is 32

@@ -13,14 +13,12 @@ export const content: ModuleContent = {
   lastReviewed: '2026-03-28',
 
   standards: [
-    getStandard('FIPS 186-5'),
     getStandard('FIPS 203'),
     getStandard('FIPS 204'),
     getStandard('FIPS 205'),
     getStandard('FIPS 206'),
-    getStandard('NIST SP 800-208'),
-    getStandard('NIST SP 800-53'),
-    getStandard('NIST SP 800-88'),
+    getStandard('NIST IR 8547'),
+    getStandard('NSA CNSA 2.0'),
   ],
 
   algorithms: [

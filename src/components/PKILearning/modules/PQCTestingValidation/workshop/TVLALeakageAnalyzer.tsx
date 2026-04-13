@@ -238,8 +238,8 @@ export const TVLALeakageAnalyzer: React.FC = () => {
           &quot;fixed&quot; set trivially distinguishable regardless of implementation quality.
           Instead, target specific algorithmic stages: NTT/INTT (dominant leakage), polynomial
           multiplication (nonce leakage in ML-DSA), and modular reduction (q=3329 conditional
-          subtraction). Keysight Inspector&apos;s Dilithium TVLA generator targets these operations
-          directly.
+          subtraction). Keysight Inspector&apos;s Dilithium TVLA generator (ML-DSA, FIPS 204)
+          targets these operations directly.
         </p>
       </div>
     </div>

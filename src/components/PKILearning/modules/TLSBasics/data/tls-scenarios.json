@@ -1,0 +1,142 @@
+{
+  "scenarios": [
+    {
+      "id": "classical-rsa",
+      "label": "Classical RSA (Legacy)",
+      "description": "Traditional TLS 1.3 with RSA certificate and X25519 key exchange. Represents current widespread deployment — quantum-vulnerable.",
+      "migration_urgency": "high",
+      "quantum_safe": false,
+      "config": {
+        "sigAlg": "rsa_pss_rsae_sha256",
+        "kexGroup": "x25519",
+        "cipherSuite": "TLS_AES_256_GCM_SHA384"
+      },
+      "considerations": [
+        "RSA private keys must be replaced before Q-day",
+        "Harvest-now-decrypt-later attacks are already occurring",
+        "Certificate re-issuance required — plan PKI inventory now",
+        "NIST recommends deprecating RSA-2048 by 2030"
+      ]
+    },
+    {
+      "id": "classical-ecdsa",
+      "label": "Classical ECDSA P-256",
+      "description": "Modern TLS 1.3 with ECDSA certificate and X25519 key exchange. Current best practice for classical deployments.",
+      "migration_urgency": "high",
+      "quantum_safe": false,
+      "config": {
+        "sigAlg": "ecdsa_secp256r1_sha256",
+        "kexGroup": "x25519",
+        "cipherSuite": "TLS_AES_256_GCM_SHA384"
+      },
+      "considerations": [
+        "Elliptic curve private keys are vulnerable to Shor's algorithm",
+        "Better performance than RSA but same quantum risk",
+        "Widely deployed; migration requires new certificate issuance",
+        "Begin crypto-agility planning to support parallel PQC certificates"
+      ]
+    },
+    {
+      "id": "hybrid-pqc",
+      "label": "Hybrid PQC (Recommended Migration Path)",
+      "description": "Hybrid X25519+ML-KEM-768 key exchange with classical ECDSA certificate. Recommended by IETF and NIST for near-term migration — protects key exchange against quantum adversaries today.",
+      "migration_urgency": "medium",
+      "quantum_safe": "partial",
+      "config": {
+        "sigAlg": "ecdsa_secp256r1_sha256",
+        "kexGroup": "X25519MLKEM768",
+        "cipherSuite": "TLS_AES_256_GCM_SHA384"
+      },
+      "considerations": [
+        "Protects session keys against HNDL (harvest-now-decrypt-later) attacks",
+        "Authentication still relies on classical ECDSA — upgrade certificates next",
+        "Chrome, Firefox, and Cloudflare have deployed this configuration",
+        "~2 KB additional handshake overhead — minimal performance impact",
+        "Compliant with CISA/NIST hybrid guidance for transition period"
+      ]
+    },
+    {
+      "id": "hybrid-full",
+      "label": "Full Hybrid PQC (Key Exchange + Auth)",
+      "description": "Hybrid key exchange and PQC certificate (ML-DSA-44). Protects both session establishment and identity authentication against quantum adversaries.",
+      "migration_urgency": "low",
+      "quantum_safe": "partial",
+      "config": {
+        "sigAlg": "mldsa44",
+        "kexGroup": "X25519MLKEM768",
+        "cipherSuite": "TLS_AES_256_GCM_SHA384"
+      },
+      "considerations": [
+        "Fully quantum-safe handshake when combined with trusted PQC CA hierarchy",
+        "ML-DSA-44 signature: ~2.4 KB vs ECDSA P-256: ~71 bytes",
+        "Total handshake ~5-8 KB larger than classical — still acceptable for most use cases",
+        "Requires PQC-capable CA infrastructure and certificate issuance pipeline",
+        "Draft RFC support: draft-ietf-tls-mldsa, FIPS 204 (final)"
+      ]
+    },
+    {
+      "id": "pure-pqc-ml65",
+      "label": "Pure PQC — ML-DSA-65 + ML-KEM-1024",
+      "description": "Maximum quantum assurance. ML-DSA-65 authentication (Security Level 3) and ML-KEM-1024 key encapsulation (Security Level 5). For sensitive data with very long confidentiality requirements.",
+      "migration_urgency": "low",
+      "quantum_safe": true,
+      "config": {
+        "sigAlg": "mldsa65",
+        "kexGroup": "ML-KEM-1024",
+        "cipherSuite": "TLS_AES_256_GCM_SHA384"
+      },
+      "considerations": [
+        "Highest post-quantum security assurance",
+        "Handshake ~10-12 KB — check MTU and connection latency budget",
+        "Pure PQC (no classical fallback) — ensure all endpoints support FIPS 203/204",
+        "Not yet widely deployed in production; suitable for high-security pilot deployments",
+        "Use in CNSA 2.0 compliant systems per NSA guidance"
+      ]
+    }
+  ],
+  "migration_phases": [
+    {
+      "phase": 1,
+      "label": "Inventory",
+      "description": "Identify all TLS endpoints, certificates, and cipher suites in use",
+      "actions": [
+        "Run CBOM scan to enumerate all TLS libraries and versions",
+        "Catalogue certificate algorithms (RSA vs ECDSA), key sizes, and expiry dates",
+        "Identify connections carrying long-lived sensitive data (priority for HNDL mitigation)"
+      ]
+    },
+    {
+      "phase": 2,
+      "label": "Hybrid Key Exchange",
+      "description": "Deploy X25519+ML-KEM-768 for key exchange on priority endpoints",
+      "actions": [
+        "Update TLS libraries to versions supporting ML-KEM hybrid groups",
+        "Enable X25519MLKEM768 as preferred key exchange group",
+        "Monitor handshake size and latency impact",
+        "Validate with IETF draft-ietf-tls-hybrid-design compliance"
+      ]
+    },
+    {
+      "phase": 3,
+      "label": "PQC Certificates",
+      "description": "Issue ML-DSA certificates from PQC-capable CA",
+      "actions": [
+        "Deploy PQC intermediate CA (ML-DSA-65 or ML-DSA-87)",
+        "Issue ML-DSA end-entity certificates for high-priority services",
+        "Configure dual-certificate serving for backward compatibility",
+        "Update OCSP and CRL infrastructure to support larger PQC signatures"
+      ]
+    },
+    {
+      "phase": 4,
+      "label": "Full PQC",
+      "description": "Retire classical algorithms once PQC coverage is complete",
+      "actions": [
+        "Disable legacy RSA and ECDSA cipher suites",
+        "Ensure all CA trust anchors are PQC-capable",
+        "Update monitoring and alerting for PQC certificate validity",
+        "Document FIPS 203/204 compliance in security attestations"
+      ]
+    }
+  ]
+}

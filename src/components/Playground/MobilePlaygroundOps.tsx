@@ -17,7 +17,8 @@ import { PlaygroundProvider } from './PlaygroundProvider'
 import { KemOpsTab } from './tabs/KemOpsTab'
 import { SignVerifyTab } from './tabs/SignVerifyTab'
 import { WorkshopToolsTab } from './tabs/WorkshopToolsTab'
-import { PkcsLogPanel } from './components/PkcsLogPanel'
+import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
+import { useHsmContext } from './hsm/HsmContext'
 import { Button } from '../ui/button'
 
 const MobilePlaygroundView = lazy(() =>
@@ -68,6 +69,7 @@ function CapabilityWarning({
 }
 
 function MobileOpsContent() {
+  const { hsmLog, clearHsmLog } = useHsmContext()
   const [activeTab, setActiveTab] = useState<TabId>('kem')
   const [logOpen, setLogOpen] = useState(false)
   const scrollRef = useRef<HTMLDivElement>(null)
@@ -151,7 +153,7 @@ function MobileOpsContent() {
         </Button>
         {logOpen && (
           <div className="max-h-[30vh] overflow-y-auto border-t border-border/50 px-3 pb-3">
-            <PkcsLogPanel />
+            <Pkcs11LogPanel log={hsmLog} onClear={clearHsmLog} />
           </div>
         )}
       </div>

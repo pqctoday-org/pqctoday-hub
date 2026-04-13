@@ -273,18 +273,9 @@ export const PKILearningView: React.FC = () => {
   const isCuriousMode =
     (experienceLevel === 'curious' || selectedPersona === 'curious') && !diveDeeper
 
-  console.log('[DEBUG] PKILearningView render:', {
-    moduleId,
-    showSidebar,
-    experienceLevel,
-    selectedPersona,
-    isCuriousMode,
-    diveDeeper,
-  })
-
   return (
     <div className="animate-fade-in">
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between flex-wrap gap-y-2 mb-6">
         {!isDashboard && !isEmbed ? (
           <Button
             variant="ghost"
@@ -297,7 +288,7 @@ export const PKILearningView: React.FC = () => {
         ) : (
           <div />
         )}
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-1 shrink-0">
           {showSidebar && moduleMeta && (
             <>
               <EndorseButton
@@ -434,7 +425,7 @@ export const PKILearningView: React.FC = () => {
             </Suspense>
           )}
           {showSidebar && !isCuriousMode && <NextModuleCTA moduleId={moduleId} />}
-          {showSidebar && !isCuriousMode && (
+          {showSidebar && (
             <p className="text-[11px] text-muted-foreground text-center mt-4 opacity-70">
               Learning module content can be inaccurate. Please double-check its information. Report
               inaccuracies in{' '}

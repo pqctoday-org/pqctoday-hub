@@ -115,7 +115,7 @@ Classical fixed-vs-random TVLA divides measurements into "fixed plaintext" and "
 
 First-order masking eliminates NTT leakage but ML-DSA polynomial multiplication still leaks under masking (higher-order attack required).
 
-**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator, Known Key Analysis, FIPS 140-3 Level 4 support), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
+**Tools**: Keysight Inspector Crypto 3 (commercial, Dilithium TVLA generator (ML-DSA, FIPS 204), Known Key Analysis, FIPS 140-3 Level 4 support), ChipWhisperer (open source, NewAE Technology, power analysis + fault injection).
 
 ---
 
@@ -148,20 +148,20 @@ Focus: Enterprise-wide enforcement, continuous compliance scanning, policy autom
 
 ## Tool Catalog (CSC-061)
 
-| Tool               | Category          | License     | PQC Support                         |
-| ------------------ | ----------------- | ----------- | ----------------------------------- |
-| CryptoNext COMPASS | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP) |
-| pqc-flow           | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC      |
-| VIAVI Observer     | Passive Discovery | Commercial  | In development                      |
-| pqcscan            | Active Scanning   | Open Source | Detects PQC, hybrid KEMs            |
-| CryptoLyzer        | Active Scanning   | Open Source | Experimental PQC OID detection      |
-| VIAVI TeraVM       | Benchmarking      | Commercial  | ML-KEM, ML-DSA, SLH-DSA             |
-| Keysight CyPerf    | Benchmarking      | Freemium    | X25519+ML-KEM-768 hybrid            |
-| PQC-LEO            | Benchmarking      | Open Source | All NIST PQC via OQS                |
-| OQS Test Server    | Interop           | Open Source | All NIST KEMs + signatures          |
-| Keysight Inspector | Side-Channel      | Commercial  | ML-DSA (prod), ML-KEM (pre-release) |
-| ChipWhisperer      | Side-Channel      | Open Source | Community Kyber/Dilithium modules   |
-| CBOMkit            | Inventory         | Open Source | Crypto discovery in source code     |
+| Tool               | Category          | License     | PQC Support                                       |
+| ------------------ | ----------------- | ----------- | ------------------------------------------------- |
+| CryptoNext COMPASS | Passive Discovery | Commercial  | ML-KEM, ML-DSA, SLH-DSA (NIST CAVP)               |
+| pqc-flow           | Passive Discovery | Open Source | ML-KEM, ML-DSA in TLS/SSH/QUIC                    |
+| VIAVI Observer     | Passive Discovery | Commercial  | In development                                    |
+| pqcscan            | Active Scanning   | Open Source | Detects PQC, hybrid KEMs                          |
+| CryptoLyzer        | Active Scanning   | Open Source | Experimental PQC OID detection                    |
+| VIAVI TeraVM       | Benchmarking      | Commercial  | ML-KEM, ML-DSA, SLH-DSA                           |
+| Keysight CyPerf    | Benchmarking      | Freemium    | X25519+ML-KEM-768 hybrid                          |
+| PQC-LEO            | Benchmarking      | Open Source | All NIST PQC via OQS                              |
+| OQS Test Server    | Interop           | Open Source | All NIST KEMs + signatures                        |
+| Keysight Inspector | Side-Channel      | Commercial  | ML-DSA (prod), ML-KEM (pre-release)               |
+| ChipWhisperer      | Side-Channel      | Open Source | Community Kyber/Dilithium modules (ML-KEM/ML-DSA) |
+| CBOMkit            | Inventory         | Open Source | Crypto discovery in source code                   |
 
 ---
 

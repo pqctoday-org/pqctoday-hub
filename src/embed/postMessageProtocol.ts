@@ -55,6 +55,16 @@ export interface PqcLoadResponseMessage {
   snapshot: unknown | null // AppSnapshot | null
 }
 
+/**
+ * Sent by the parent in response to `pqc:ready` to confirm it is an authorised
+ * embedding host. The embed validates `event.origin` against the `allowedOrigins`
+ * list baked into the vendor certificate. If no `pqc:challenge` arrives from an
+ * allowed origin within 2 seconds, the embed renders an "unauthorised host" error.
+ */
+export interface PqcChallengeMessage {
+  type: 'pqc:challenge'
+}
+
 // ---------------------------------------------------------------------------
 // Union types
 // ---------------------------------------------------------------------------
@@ -69,7 +79,7 @@ export type PqcAppToParentMessage =
   | PqcAuthExpiredMessage
 
 /** Messages sent from the parent window to the embedded app. */
-export type PqcParentToAppMessage = PqcAuthMessage | PqcLoadResponseMessage
+export type PqcParentToAppMessage = PqcAuthMessage | PqcLoadResponseMessage | PqcChallengeMessage
 
 /** All PQC embed postMessage types. */
 export type PqcMessage = PqcAppToParentMessage | PqcParentToAppMessage
@@ -87,6 +97,7 @@ export const PQC_MESSAGE_TYPES = [
   'pqc:authExpired',
   'pqc:auth',
   'pqc:loadResponse',
+  'pqc:challenge',
 ] as const
 
 export type PqcMessageType = (typeof PQC_MESSAGE_TYPES)[number]

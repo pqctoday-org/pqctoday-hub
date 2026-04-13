@@ -194,6 +194,8 @@ export const TLSBasicsModule: React.FC = () => {
     ]
 
     try {
+      markStepComplete(MODULE_ID, 'config')
+
       const encoder = new TextEncoder()
       const serverCertPem = serverConfig.certificates.certPem || ''
       const clientCertPem = clientConfig.certificates.certPem || ''
@@ -250,6 +252,7 @@ export const TLSBasicsModule: React.FC = () => {
 
         if (simulationResult.status === 'success') {
           markStepComplete(MODULE_ID, 'simulate')
+          markStepComplete(MODULE_ID, 'comparison')
         }
 
         if (simulationResult.status !== 'success') {
@@ -358,6 +361,7 @@ export const TLSBasicsModule: React.FC = () => {
           .join('')}…`
       )
       addLine(`Private key never left HSM — CKA_EXTRACTABLE=FALSE`)
+      markStepComplete(MODULE_ID, 'hsm-demo')
     } catch (e) {
       setHsmError(e instanceof Error ? e.message : String(e))
     } finally {

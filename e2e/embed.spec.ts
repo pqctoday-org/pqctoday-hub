@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { test, expect } from '@playwright/test'
 
-// These tests rely on the `tools/embed-test-site` running on http://localhost:3098
-// If the test site is not running, these tests will fail or timeout.
+// These tests rely on the `../pqctoday-sdk/embed-test-site` running on http://localhost:3098
+// If the test site is not running, these tests will skip or timeout.
 
 test.describe('Embedding Integration', () => {
   // Override global storage state to prevent cross-origin iframe storage parsing errors
@@ -11,13 +11,13 @@ test.describe('Embedding Integration', () => {
 
   test.beforeEach(async ({ page }) => {
     // Navigate to the local test site harness.
-    // Ensure `npm start` is running in `tools/embed-test-site` before test execution.
+    // Ensure `npm start` is running in `../pqctoday-sdk/embed-test-site` before test execution.
     try {
       await page.goto('http://localhost:3098/')
     } catch {
       test.skip(
         true,
-        'Test site not running on localhost:3098. Please run `npm start` in tools/embed-test-site.'
+        'Test site not running on localhost:3098. Please run `npm start` in ../pqctoday-sdk/embed-test-site.'
       )
     }
   })

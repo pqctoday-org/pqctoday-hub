@@ -143,7 +143,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     license: 'MIT / Apache-2.0',
     yearStarted: 2019,
     description:
-      'Rust crates wrapping PQClean C implementations. Compile-time algorithm selection via Cargo features. Each algorithm is a separate crate (pqcrypto-kyber, pqcrypto-dilithium, etc.) for minimal binary size.',
+      'Rust crates wrapping PQClean C implementations. Compile-time algorithm selection via Cargo features. Each algorithm is a separate crate (e.g. pqcrypto-kyber, pqcrypto-dilithium — pre-standardisation crate names for what FIPS 203/204 now call ML-KEM and ML-DSA respectively) for minimal binary size.',
     algorithmSupport: {
       mlKem: true,
       mlDsa: true,
@@ -184,7 +184,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
       'Wraps C code — not pure Rust (uses cc crate for compilation)',
       'No FIPS certification path',
       'Smaller community than liboqs',
-      'Algorithm naming may lag behind NIST final names',
+      'Crate names pqcrypto-kyber and pqcrypto-dilithium predate NIST standardisation — they wrap ML-KEM (FIPS 203) and ML-DSA (FIPS 204) but the ml-kem / ml-dsa crate names are not yet published',
       'Build requires C compiler toolchain',
     ],
     radar: {
@@ -400,7 +400,7 @@ export const PQC_LIBRARIES: PQCLibrary[] = [
     license: 'ISC / OpenSSL',
     yearStarted: 2014,
     description:
-      "Google's fork of OpenSSL, stripped down for Google's needs. Powers Chrome, Android, and Google Cloud. First major deployment of ML-KEM (Kyber) in TLS at scale in Chrome browser.",
+      "Google's fork of OpenSSL, stripped down for Google's needs. Powers Chrome, Android, and Google Cloud. First major deployment of a NIST PQC candidate in TLS at scale — Chrome shipped draft Kyber-768 in 2023 (before FIPS 203 was finalised); the algorithm is now standardised as ML-KEM.",
     algorithmSupport: {
       mlKem: true,
       mlDsa: true,

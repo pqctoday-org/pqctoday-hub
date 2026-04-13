@@ -23,7 +23,7 @@ Intermediate-level module (120 min, 8 workshop steps) covering post-quantum cryp
   - liboqs (Open Quantum Safe) — C library, 15+ algorithms (ML-KEM/ML-DSA/SLH-DSA/FN-DSA/FrodoKEM/HQC/Classic McEliece), NIST reference implementation, not FIPS-validated, widely used for research and prototyping
   - AWS-LC — AWS fork of BoringSSL, C, FIPS 140-3 validated (Certificate #4759), ML-KEM-768 default for TLS, ML-DSA-65 signing, used in aws-lc-rs and aws-lc-go
   - BouncyCastle — Java/.NET, full FIPS 203/204/205 implementation, BCFIPS module for FIPS 140-3 compliance, best production choice for JVM/CLR ecosystems
-  - pqcrypto (Rust) — pure-Rust via PQClean reference code, no C FFI, no unsafe in core paths, suitable for `no_std` embedded Rust
+  - pqcrypto (Rust) — pure-Rust via PQClean reference code, no C FFI, no unsafe in core paths, suitable for `no_std` embedded Rust; note: published crate names `pqcrypto-kyber` / `pqcrypto-dilithium` are pre-standardisation names — they wrap ML-KEM (FIPS 203) and ML-DSA (FIPS 204) respectively
   - PQClean — C reference implementations, clean code (no platform-specific optimizations, no side-channel protection claims), intended as readable reference not production backend
 - **API radar scores (maturity / PQC readiness / ecosystem reach / HSM integration / compliance path)**:
   - JCA/JCE: 9 / 6 / 7 / 7 / 8 (mature API, PQC via BouncyCastle provider, strong compliance via BCFIPS)

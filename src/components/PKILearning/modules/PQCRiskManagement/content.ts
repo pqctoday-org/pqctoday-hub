@@ -5,15 +5,14 @@
 import type { ModuleContent } from '@/types/ModuleContentTypes'
 import { CNSA_2_0, NIST_DEPRECATION } from '@/data/regulatoryTimelines'
 import { getAlgorithm } from '@/data/algorithmProperties'
+import { getStandard } from '@/data/standardsRegistry'
 
 export const content: ModuleContent = {
   moduleId: 'pqc-risk-management',
   version: '1.0.0',
   lastReviewed: '2026-03-28',
 
-  standards: [
-    // No standard references detected — add manually if needed
-  ],
+  standards: [getStandard('NIST IR 8547'), getStandard('NSA CNSA 2.0')],
 
   algorithms: [
     getAlgorithm('ECDSA P-256'),

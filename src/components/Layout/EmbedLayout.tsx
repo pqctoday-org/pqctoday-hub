@@ -26,6 +26,7 @@ import type { Region } from '../../store/usePersonaStore'
 import type { PersonaId } from '../../data/learningPersonas'
 import { useEmbedPersistence } from '../../embed/useEmbedPersistence'
 import { isIframeEmbed } from '../../embed/platform'
+import { useHostCheck } from '../../embed/useHostCheck'
 import { RightPanelFAB } from '../RightPanel/RightPanelFAB'
 import { WhatsNewModal } from '../ui/WhatsNewModal'
 import { useRightPanelStore } from '../../store/useRightPanelStore'
@@ -45,6 +46,9 @@ export const EmbedLayout = () => {
 
   // Initialize persistence and auth flows
   useEmbedPersistence()
+
+  // Host origin check — must be called before any conditional return so hook order is stable
+  const hostAuthorized = useHostCheck()
 
   const { setTheme } = useThemeStore()
   const { setPersona, setRegion, setIndustries } = usePersonaStore()
@@ -351,6 +355,32 @@ export const EmbedLayout = () => {
       </motion.div>
     </React.Suspense>
   )
+
+  // ── Unauthorized host — all hooks have run, safe to return early here ────────
+  if (hostAuthorized === false) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background text-foreground p-8">
+        <div className="max-w-md text-center space-y-3">
+          <div className="text-4xl">🔒</div>
+          <h1 className="text-lg font-semibold text-foreground">
+            Unauthorized host for embedding mode
+          </h1>
+          <p className="text-sm text-muted-foreground">
+            You may use{' '}
+            <a
+              href="https://pqctoday.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary underline underline-offset-2"
+            >
+              pqctoday.com
+            </a>{' '}
+            in standard mode.
+          </p>
+        </div>
+      </div>
+    )
+  }
 
   // ── Sidebar layout ──────────────────────────────────────────────────────────
   if (isSidebarLayout) {

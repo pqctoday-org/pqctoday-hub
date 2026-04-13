@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { GlossaryAutoWrap } from '@/components/PKILearning/common/GlossaryAutoWrap'
 import { HsmKeyInspector } from '../../shared/HsmKeyInspector'
-import { PkcsLogPanel } from '../components/PkcsLogPanel'
+import { Pkcs11LogPanel } from '../../shared/Pkcs11LogPanel'
 
 import { CKF_RW_SESSION, CKF_SERIAL_SESSION, CKU_USER } from '@/wasm/softhsm/constants'
 import {
@@ -323,8 +323,16 @@ const IKE_PHASE_CLASS: Record<IkePhase, string> = {
 }
 
 export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialMode }) => {
-  const { moduleRef, hSessionRef, addHsmLog, addHsmKey, hsmKeys, clearHsmKeys, removeHsmKey } =
-    useHsmContext()
+  const {
+    moduleRef,
+    hSessionRef,
+    addHsmLog,
+    hsmLog,
+    addHsmKey,
+    hsmKeys,
+    clearHsmKeys,
+    removeHsmKey,
+  } = useHsmContext()
   const hsmKeysRef = React.useRef(hsmKeys)
   React.useEffect(() => {
     hsmKeysRef.current = hsmKeys
@@ -2903,7 +2911,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
-                    <PkcsLogPanel filterFn={(e) => e.args.includes('[initiator]')} />
+                    <Pkcs11LogPanel log={hsmLog.filter((e) => e.args.includes('[initiator]'))} />
                   </div>
                 </div>
               </TabsContent>
@@ -2974,7 +2982,7 @@ export const VpnSimulationPanel: React.FC<VpnSimulationPanelProps> = ({ initialM
                     />
                   </div>
                   <div className="border border-border/50 rounded-lg p-3 bg-muted/30 text-foreground">
-                    <PkcsLogPanel filterFn={(e) => e.args.includes('[responder]')} />
+                    <Pkcs11LogPanel log={hsmLog.filter((e) => e.args.includes('[responder]'))} />
                   </div>
                 </div>
               </TabsContent>

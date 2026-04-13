@@ -1,12 +1,14 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Users, FileText, BarChart3 } from 'lucide-react'
+import { Trash2, Users, FileText, BarChart3, GitBranch } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Introduction } from './components/Introduction'
 import { RACIBuilder } from './components/RACIBuilder'
 import { PolicyTemplateGenerator } from './components/PolicyTemplateGenerator'
 import { KPIDashboardBuilder } from './components/KPIDashboardBuilder'
+import { EscalationFramework } from './components/EscalationFramework'
+import { PQCGovernanceExercises } from './PQCGovernanceExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -37,92 +39,14 @@ const PARTS = [
     description: 'Design a governance KPI dashboard to track your PQC migration progress.',
     icon: BarChart3,
   },
-]
-
-interface GovernanceExercise {
-  id: string
-  title: string
-  scenario: string
-  question: string
-  badge: string
-  badgeColor: string
-}
-
-const EXERCISES: GovernanceExercise[] = [
   {
-    id: 'governance-model',
-    title: '1. Centralized vs Federated Governance',
-    scenario:
-      'Your organization has 12 business units across 4 countries. The CISO wants a single PQC policy, but regional teams argue that local compliance requirements (ANSSI in France, BSI in Germany, NIST in the US) demand autonomy. Two business units have already started independent PQC pilots.',
-    question:
-      'Design a governance model. Should PQC governance be centralized, federated, or hybrid? What decision rights belong at each level?',
-    badge: 'Governance Model',
-    badgeColor: 'bg-primary/20 text-primary border-primary/50',
-  },
-  {
-    id: 'policy-exception',
-    title: '2. Policy Exception Handling',
-    scenario:
-      'Your newly-published PQC policy mandates ML-KEM-768 for all key exchange by Q4 2027. However, your largest revenue-generating application depends on a vendor library that only supports ECDH. The vendor promises PQC support "in the next major release" but won\'t commit to a date. The compliance deadline is 14 months away.',
-    question:
-      'Draft an exception process. What criteria should the governance board use to evaluate this request? What compensating controls would you require?',
-    badge: 'Exception Process',
-    badgeColor: 'bg-warning/20 text-warning border-warning/50',
-  },
-  {
-    id: 'kpi-reporting',
-    title: '3. Board-Level KPI Reporting',
-    scenario:
-      'The board has asked for a quarterly PQC migration status update. Your migration program spans 200+ systems, 15 vendor dependencies, and 3 compliance frameworks. The board meeting is 45 minutes and PQC gets a 10-minute slot. The CFO wants cost metrics, the CRO wants risk reduction, and the CTO wants technical progress.',
-    question:
-      'Design a single-page KPI dashboard for the board. Which 4-6 metrics would you prioritize? How would you visualize progress vs. risk?',
-    badge: 'Board Reporting',
-    badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+    id: 'escalation-framework',
+    title: 'Step 4: Escalation Framework',
+    description:
+      'Define escalation tiers and evaluate policy exception requests with a structured risk scoring tool.',
+    icon: GitBranch,
   },
 ]
-
-const GovernanceExercises: React.FC = () => {
-  return (
-    <div className="space-y-6 w-full">
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-gradient mb-2">Governance Exercises</h2>
-        <p className="text-muted-foreground text-sm">
-          Work through these real-world governance scenarios. Each exercise presents a situation
-          you&apos;re likely to encounter when establishing PQC governance in an enterprise.
-        </p>
-      </div>
-
-      <div className="space-y-4">
-        {EXERCISES.map((exercise) => (
-          <div key={exercise.id} className="glass-panel p-5">
-            <div className="flex items-center gap-2 mb-3">
-              <h3 className="text-lg font-bold text-foreground">{exercise.title}</h3>
-              <span
-                className={`text-[10px] px-2 py-0.5 rounded border font-bold ${exercise.badgeColor}`}
-              >
-                {exercise.badge}
-              </span>
-            </div>
-            <div className="space-y-3">
-              <div>
-                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-1">
-                  Scenario
-                </p>
-                <p className="text-sm text-foreground/80">{exercise.scenario}</p>
-              </div>
-              <div className="bg-muted/50 rounded-lg p-3 border border-primary/20">
-                <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">
-                  Your Task
-                </p>
-                <p className="text-sm text-foreground/90">{exercise.question}</p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
 
 export const PQCGovernanceModule: React.FC = () => {
   const deepLink = getModuleDeepLink({ maxStep: PARTS.length - 1 })
@@ -187,6 +111,15 @@ export const PQCGovernanceModule: React.FC = () => {
     }
   }
 
+  const handleExerciseNavigate = useCallback(
+    (step?: number) => {
+      setCurrentPart(step ?? 0)
+      markStepComplete(MODULE_ID, activeTab)
+      setActiveTab('workshop')
+    },
+    [activeTab, markStepComplete]
+  )
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -206,7 +139,7 @@ export const PQCGovernanceModule: React.FC = () => {
           <TabsTrigger value="workshop">Workshop</TabsTrigger>
           <TabsTrigger value="exercises">Exercises</TabsTrigger>
           <TabsTrigger value="references">References</TabsTrigger>
-          <TabsTrigger value="tools">Tools & Products</TabsTrigger>
+          <TabsTrigger value="tools">Tools &amp; Products</TabsTrigger>
         </TabsList>
 
         <TabsContent value="learn">
@@ -222,7 +155,11 @@ export const PQCGovernanceModule: React.FC = () => {
         <TabsContent value="workshop">
           <div className="max-w-7xl mx-auto space-y-6">
             <div className="flex justify-end">
-              <Button variant="destructive" size="sm" onClick={handleReset} className="gap-2">
+              <Button
+                variant="ghost"
+                onClick={handleReset}
+                className="flex items-center gap-2 px-3 py-2 bg-destructive/10 text-destructive rounded hover:bg-destructive/20 transition-colors text-sm border border-destructive/20"
+              >
                 <Trash2 size={16} />
                 Reset
               </Button>
@@ -276,15 +213,16 @@ export const PQCGovernanceModule: React.FC = () => {
               {currentPart === 0 && <RACIBuilder />}
               {currentPart === 1 && <PolicyTemplateGenerator />}
               {currentPart === 2 && <KPIDashboardBuilder />}
+              {currentPart === 3 && <EscalationFramework />}
             </div>
 
             {/* Part Navigation */}
             <div className="flex flex-col sm:flex-row justify-between gap-3">
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={() => handlePartChange(Math.max(0, currentPart - 1))}
                 disabled={currentPart === 0}
-                className="px-6 py-3 min-h-[44px]"
+                className="px-6 py-3 min-h-[44px] rounded-lg border border-border hover:bg-muted disabled:opacity-50 transition-colors text-foreground"
               >
                 &larr; Previous Step
               </Button>
@@ -292,15 +230,15 @@ export const PQCGovernanceModule: React.FC = () => {
                 <Button
                   variant="gradient"
                   onClick={() => markStepComplete(MODULE_ID, PARTS[currentPart].id)}
-                  className="px-6 py-3 min-h-[44px]"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Complete Module
                 </Button>
               ) : (
                 <Button
-                  variant="ghost"
+                  variant="gradient"
                   onClick={() => handlePartChange(currentPart + 1)}
-                  className="px-6 py-3 min-h-[44px]"
+                  className="px-6 py-3 min-h-[44px] font-bold rounded-lg transition-colors"
                 >
                   Next Step &rarr;
                 </Button>
@@ -310,7 +248,7 @@ export const PQCGovernanceModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <GovernanceExercises />
+          <PQCGovernanceExercises onNavigateToWorkshop={handleExerciseNavigate} />
         </TabsContent>
 
         <TabsContent value="references">

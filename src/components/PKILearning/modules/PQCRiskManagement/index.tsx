@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Clock, ClipboardList, Grid3X3 } from 'lucide-react'
+import { Trash2, Clock, ClipboardList, Grid3X3, GitCompareArrows } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { CRQCScenarioPlanner } from './components/CRQCScenarioPlanner'
 import { RiskRegisterBuilder } from './components/RiskRegisterBuilder'
 import { RiskHeatmapGenerator } from './components/RiskHeatmapGenerator'
+import { ComplianceGapAnalysis } from './components/ComplianceGapAnalysis'
+import { PQCRiskManagementExercises } from './PQCRiskManagementExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -39,6 +41,13 @@ const PARTS = [
       'Assign risk treatments, model residual risk, and prioritize your PQC migration order.',
     icon: Grid3X3,
   },
+  {
+    id: 'compliance-gap-analysis',
+    title: 'Step 4: Compliance Gap Analysis',
+    description:
+      'Map your risk register against CNSA 2.0 and NIST IR 8547 deadlines to identify compliance gaps.',
+    icon: GitCompareArrows,
+  },
 ]
 
 interface RiskEntry {
@@ -49,52 +58,6 @@ interface RiskEntry {
   likelihood: number
   impact: number
   mitigation: string
-}
-
-function ExercisesTab() {
-  const exercises = [
-    {
-      title: 'Scenario: Financial Services HNDL',
-      prompt:
-        'Your bank stores wire transfer records encrypted with RSA-2048. Records must be retained for 7 years. A CRQC is estimated to arrive in 2034. Calculate the HNDL exposure window and recommend a migration timeline.',
-    },
-    {
-      title: 'Scenario: Healthcare Data at Risk',
-      prompt:
-        'A hospital system uses ECDSA P-256 for signing electronic health records that must remain valid for 30 years. Identify the risk category, estimate a risk score (1\u201325), and propose a mitigation strategy.',
-    },
-    {
-      title: 'Scenario: Government Compliance Deadline',
-      prompt:
-        'Your agency must comply with CNSA 2.0 by 2030. You have 200+ systems using RSA-3072 and AES-128. Build a prioritized risk register with at least 4 entries covering different asset types and threat vectors.',
-    },
-  ]
-
-  return (
-    <div className="w-full space-y-6">
-      <div className="glass-panel p-6">
-        <h2 className="text-xl font-bold text-foreground mb-2">Risk Management Exercises</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Apply what you learned in the workshop to these real-world scenarios. Use the Workshop tab
-          tools to model your answers.
-        </p>
-        <div className="space-y-4">
-          {exercises.map((exercise, idx) => (
-            <div key={idx} className="glass-panel p-5 space-y-3">
-              <h3 className="text-lg font-semibold text-foreground">{exercise.title}</h3>
-              <p className="text-sm text-foreground/80">{exercise.prompt}</p>
-              <div className="bg-muted/50 rounded-lg p-3 border border-border">
-                <p className="text-xs text-muted-foreground italic">
-                  Use the CRQC Scenario Planner (Step 1) and Risk Register Builder (Step 2) in the
-                  Workshop tab to model your response.
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
-  )
 }
 
 export const PQCRiskManagementModule: React.FC = () => {
@@ -263,6 +226,9 @@ export const PQCRiskManagementModule: React.FC = () => {
               {currentPart === 2 && (
                 <RiskHeatmapGenerator key={`heatmap-${configKey}`} riskEntries={riskEntries} />
               )}
+              {currentPart === 3 && (
+                <ComplianceGapAnalysis key={`compliance-${configKey}`} riskEntries={riskEntries} />
+              )}
             </div>
 
             {/* Part Navigation */}
@@ -297,7 +263,7 @@ export const PQCRiskManagementModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <ExercisesTab />
+          <PQCRiskManagementExercises onNavigateToWorkshop={navigateToWorkshop} />
         </TabsContent>
 
         <TabsContent value="references">

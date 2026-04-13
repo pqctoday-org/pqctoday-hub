@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: GPL-3.0-only
 /* eslint-disable security/detect-object-injection */
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { Trash2, Calculator, ShieldAlert, Presentation } from 'lucide-react'
+import { Trash2, Calculator, ShieldAlert, Presentation, TrendingDown } from 'lucide-react'
 import { Introduction } from './components/Introduction'
 import { ROICalculator } from './components/ROICalculator'
 import { BreachScenarioSimulator } from './components/BreachScenarioSimulator'
 import { BoardPitchBuilder } from './components/BoardPitchBuilder'
+import { CostOfInactionAnalyzer } from './components/CostOfInactionAnalyzer'
+import { PQCBusinessCaseExercises } from './PQCBusinessCaseExercises'
 import { useModuleStore } from '@/store/useModuleStore'
 import { getModuleDeepLink, useSyncDeepLink } from '@/hooks/useModuleDeepLink'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
@@ -37,47 +39,12 @@ const PARTS = [
     description: 'Generate a board-ready executive brief for PQC investment approval.',
     icon: Presentation,
   },
-]
-
-interface BusinessCaseExercise {
-  id: string
-  title: string
-  scenario: string
-  prompt: string
-  badge: string
-  badgeColor: string
-}
-
-const EXERCISES: BusinessCaseExercise[] = [
   {
-    id: 'cost-justification',
-    title: '1. Cost Justification for CFO',
-    scenario:
-      'Your CFO asks why the organization should invest $2M in PQC migration when "quantum computers are years away." Prepare a cost justification using breach cost data and compliance deadlines.',
-    prompt:
-      'Use the ROI Calculator (Step 1) to model the total cost of inaction vs. proactive migration. Consider HNDL risk for data already being harvested today.',
-    badge: 'Financial',
-    badgeColor: 'bg-primary/20 text-primary border-primary/50',
-  },
-  {
-    id: 'regulatory-urgency',
-    title: '2. Regulatory Deadline Pressure',
-    scenario:
-      'Your organization operates in a regulated industry (finance or healthcare) and your country has announced mandatory PQC deadlines. Build a case showing the cost of non-compliance vs. early adoption.',
-    prompt:
-      'Use the Breach Scenario Simulator (Step 2) to model quantum-amplified breach costs including regulatory fines. Compare with the migration investment required.',
-    badge: 'Compliance',
-    badgeColor: 'bg-status-warning/20 text-status-warning border-status-warning/50',
-  },
-  {
-    id: 'board-presentation',
-    title: '3. Board Presentation Package',
-    scenario:
-      'You have 10 minutes at the next board meeting to secure PQC migration funding. Create a complete executive brief that covers risk, cost-benefit, timeline, and recommended actions.',
-    prompt:
-      'Complete all three workshop steps, then use the Board Pitch Builder (Step 3) to generate a polished board memo. Export it as a document you could present.',
-    badge: 'Executive',
-    badgeColor: 'bg-secondary/20 text-secondary border-secondary/50',
+    id: 'cost-of-inaction',
+    title: 'Step 4: Cost of Inaction',
+    description:
+      'Model the compounding cost of delaying PQC migration — breach risk, complexity premiums, and regulatory penalties over 5 years.',
+    icon: TrendingDown,
   },
 ]
 
@@ -145,8 +112,8 @@ export const PQCBusinessCaseModule: React.FC = () => {
   }
 
   const handleExerciseNavigate = useCallback(
-    (step: number) => {
-      setCurrentPart(step)
+    (step?: number) => {
+      setCurrentPart(step ?? 0)
       markStepComplete(MODULE_ID, activeTab)
       setActiveTab('workshop')
     },
@@ -246,6 +213,7 @@ export const PQCBusinessCaseModule: React.FC = () => {
               {currentPart === 0 && <ROICalculator />}
               {currentPart === 1 && <BreachScenarioSimulator />}
               {currentPart === 2 && <BoardPitchBuilder />}
+              {currentPart === 3 && <CostOfInactionAnalyzer />}
             </div>
 
             {/* Part Navigation */}
@@ -280,53 +248,7 @@ export const PQCBusinessCaseModule: React.FC = () => {
         </TabsContent>
 
         <TabsContent value="exercises">
-          <div className="space-y-6 w-full">
-            <div className="glass-panel p-6">
-              <h2 className="text-xl font-bold text-gradient mb-2">Business Case Exercises</h2>
-              <p className="text-muted-foreground text-sm">
-                Work through these scenarios to practice building PQC investment cases. Each
-                exercise guides you through the workshop tools &mdash; click &quot;Go to
-                Workshop&quot; to begin.
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {EXERCISES.map((exercise) => (
-                <div key={exercise.id} className="glass-panel p-5">
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="text-lg font-bold text-foreground">{exercise.title}</h3>
-                        <span
-                          className={`text-[10px] px-2 py-0.5 rounded border font-bold ${exercise.badgeColor}`}
-                        >
-                          {exercise.badge}
-                        </span>
-                      </div>
-                      <p className="text-sm text-foreground/80 mb-2">{exercise.scenario}</p>
-                      <p className="text-xs text-muted-foreground">
-                        <strong>How to approach:</strong> {exercise.prompt}
-                      </p>
-                    </div>
-                    <Button
-                      variant="gradient"
-                      onClick={() => {
-                        const stepMap: Record<string, number> = {
-                          'cost-justification': 0,
-                          'regulatory-urgency': 1,
-                          'board-presentation': 2,
-                        }
-                        handleExerciseNavigate(stepMap[exercise.id] ?? 0)
-                      }}
-                      className="px-4 py-2 font-bold rounded-lg transition-colors text-sm shrink-0"
-                    >
-                      Go to Workshop
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+          <PQCBusinessCaseExercises onNavigateToWorkshop={handleExerciseNavigate} />
         </TabsContent>
 
         <TabsContent value="references">

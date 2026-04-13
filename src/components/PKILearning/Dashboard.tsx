@@ -782,13 +782,13 @@ const ModuleTracksGrid = ({
                         onClick={() => navigateToQuiz(item.categories)}
                         className="w-full flex items-center gap-3 px-4 py-3 rounded-lg border border-dashed border-secondary/40 hover:border-secondary/70 hover:bg-secondary/5 transition-all text-left group"
                       >
-                        <span className="text-xs font-mono uppercase tracking-widest text-secondary">
+                        <span className="text-xs font-mono uppercase tracking-widest text-secondary whitespace-nowrap shrink-0">
                           Quiz Checkpoint
                         </span>
-                        <span className="text-sm font-semibold text-foreground group-hover:text-secondary transition-colors">
+                        <span className="text-sm font-semibold text-foreground group-hover:text-secondary transition-colors flex-1 min-w-0 truncate">
                           {item.label}
                         </span>
-                        <span className="text-xs text-muted-foreground ml-auto">
+                        <span className="text-xs text-muted-foreground ml-auto shrink-0">
                           {item.categoryCount} topics
                         </span>
                       </Button>

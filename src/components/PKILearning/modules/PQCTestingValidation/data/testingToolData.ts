@@ -285,7 +285,7 @@ export const TESTING_TOOLS: TestingTool[] = [
     category: 'side-channel',
     license: 'commercial',
     description:
-      'Device security testing platform with Crypto 3 framework for PQC side-channel analysis (TVLA) and fault injection testing. Dilithium TVLA generator and Known Key Analysis for ML-DSA.',
+      'Device security testing platform with Crypto 3 framework for PQC side-channel analysis (TVLA) and fault injection testing. Dilithium TVLA generator (ML-DSA, FIPS 204) and Known Key Analysis for ML-DSA.',
     pqcSupport: 'ML-DSA (production), ML-KEM (pre-release), SLH-DSA (pre-release)',
     strengths: [
       'Purpose-built TVLA for ML-DSA/ML-KEM',
@@ -311,7 +311,8 @@ export const TESTING_TOOLS: TestingTool[] = [
     license: 'open-source',
     description:
       'Open-source side-channel analysis and fault injection platform. Community standard for power analysis research on embedded cryptographic implementations.',
-    pqcSupport: 'Community PQC modules for Kyber/Dilithium power analysis',
+    pqcSupport:
+      'Community PQC modules for Kyber/Dilithium power analysis (ML-KEM/ML-DSA pre-standardization names)',
     strengths: [
       'Open source — affordable',
       'Large community and tutorial base',
