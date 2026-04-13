@@ -205,17 +205,20 @@ export const ProductExtractionModal = ({
     <>
       {/* Backdrop */}
       <div
-        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60`}
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 embed-backdrop`}
         onClick={onClose}
         aria-hidden="true"
       />
       {/* Centering wrapper (non-embedded) */}
-      <div className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}>
+      <div
+        className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}
+        style={!isEmbedded ? { zIndex: 9999 } : undefined}
+      >
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[900px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
-            style={isEmbedded ? { zIndex: 9999, ...positionStyle } : { zIndex: 9999 }}
+            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[900px] max-h-[85dvh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+            style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"
             aria-labelledby="extraction-modal-title"
