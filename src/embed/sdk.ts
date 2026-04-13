@@ -48,6 +48,7 @@ export class PQCEmbed {
     try {
       switch (msg.type) {
         case 'pqc:ready':
+          this.post({ type: 'pqc:challenge' })
           if (this.options.getToken) {
             const token = await this.options.getToken()
             this.post({ type: 'pqc:auth', token })

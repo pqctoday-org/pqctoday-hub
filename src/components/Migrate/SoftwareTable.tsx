@@ -35,6 +35,7 @@ import { cpeByProduct } from '../../data/cpeXrefData'
 import { purlByProduct } from '../../data/purlXrefData'
 import { vendorMap } from '../../data/migrateData'
 import { getProductExtraction } from '../../data/productExtractionData'
+import { catalogEnrichments } from '../../data/catalogEnrichmentData'
 import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { UpdateProductButton } from '../ui/UpdateProductButton'
 import { buildProductUpdateUrl } from '@/utils/endorsement'
@@ -510,7 +511,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 WIP
                               </span>
                             )}
-                            {getProductExtraction(item.softwareName) && (
+                            {(getProductExtraction(item.softwareName) ||
+                              catalogEnrichments[item.softwareName]) && (
                               <span
                                 className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-medium bg-primary/10 text-primary border border-primary/20"
                                 title="AI-analyzed product with enriched extraction data"
@@ -810,7 +812,8 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
                                 )}
                               </Button>
                             )}
-                            {getProductExtraction(item.softwareName) && (
+                            {(getProductExtraction(item.softwareName) ||
+                              catalogEnrichments[item.softwareName]) && (
                               <Button
                                 variant="ghost"
                                 type="button"
@@ -889,6 +892,9 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
         onClose={() => setExtractionModal(null)}
         extraction={
           extractionModal ? (getProductExtraction(extractionModal.softwareName) ?? null) : null
+        }
+        catalogEnrichment={
+          extractionModal ? (catalogEnrichments[extractionModal.softwareName] ?? null) : null
         }
         softwareName={extractionModal?.softwareName ?? ''}
       />

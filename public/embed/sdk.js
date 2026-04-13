@@ -24,7 +24,7 @@ var o = class {
       try {
         switch (s.type) {
           case 'pqc:ready':
-            if (this.options.getToken) {
+            if ((this.post({ type: 'pqc:challenge' }), this.options.getToken)) {
               let t = await this.options.getToken()
               this.post({ type: 'pqc:auth', token: t })
             }
