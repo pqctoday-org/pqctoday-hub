@@ -25,11 +25,6 @@ export function useModalPosition(isEmbedded: boolean): React.CSSProperties {
       transform: 'translate(-50%, -50%)',
     }
   }
-  // Normal fixed center for standalone
-  return {
-    position: 'fixed',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-  }
+  // Normal fixed center for standalone — centering handled by wrapper in WhatsNewModal
+  return {}
 }

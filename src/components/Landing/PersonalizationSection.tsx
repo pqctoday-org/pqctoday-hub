@@ -784,7 +784,7 @@ export const PersonalizationSection = () => {
             variant="ghost"
             onClick={handleEditAvatar}
             aria-label="Edit personalization settings"
-            className="relative shrink-0 w-24 sm:w-32 md:w-40 rounded-2xl group focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+            className="relative shrink-0 w-24 sm:w-32 md:w-40 rounded-2xl group h-auto p-0 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
           >
             <PersonalizedAvatar
               persona={selectedPersona}

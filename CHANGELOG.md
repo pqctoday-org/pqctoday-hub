@@ -6,6 +6,31 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.3] - 2026-04-13
+
+Mobile UX fixes and algorithm comparison improvements.
+
+### Fixed
+
+- **Persona avatar detached on mobile** — the avatar card in the completed personalization state
+  was rendered inside a `<Button>` whose default size variant enforced `h-10` (40px), causing the
+  ~120px avatar tile to overflow its layout bounds and appear visually detached from the page.
+  Fixed by adding `h-auto p-0` to override the default height and padding.
+- **What's New modal off-screen on mobile** — the modal was positioned with
+  `fixed; top: 50%; transform: translate(-50%, -50%)`, anchoring it to the layout viewport rather
+  than the visual viewport. On iOS/Android with a visible browser URL bar the modal could drift
+  partially off-screen, making the close button unreachable. Restructured to use the same
+  `fixed inset-0 flex items-center justify-center p-4` centering pattern used by all other modals;
+  embed mode (click-relative `position: absolute`) is unchanged.
+- **Airplane Mode toast clipping on narrow screens** — `left-1/2 -translate-x-1/2` centering
+  could clip at viewport edges on 320 px devices. Replaced with `left-4 right-4` + `mx-auto` on
+  the inner container.
+- **Algorithm comparison — Composite and Hybrid types** — composite signatures (`Composite
+Signature`) were excluded from the compare feature; hybrid KEM variants (`Composite KEM`,
+  `Hybrid KEM (HPKE)`, `Hybrid KEM with Access Control`) did not show the compare button. All
+  are now included. Icon column alignment fixed with a spacer for non-comparable rows. Active
+  compare button hover state corrected.
+
 ## [3.3.2] - 2026-04-12
 
 PKCS#11 call log now shows the actual bytes — every request parameter and response value is

@@ -321,265 +321,274 @@ export const WhatsNewModal = () => {
             aria-hidden="true"
           />
 
-          {/* Modal */}
-          <motion.div
-            ref={modalRef}
-            initial={{ opacity: 0, y: 40, scale: 0.95 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 20, scale: 0.95 }}
-            transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-            className="w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="whats-new-modal-title"
-            tabIndex={-1}
-            style={{ zIndex: 9999, ...positionStyle }}
+          {/* Modal — standalone uses flex centering wrapper; embed uses positionStyle directly */}
+          <div
+            className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}
+            style={!isEmbedded ? { zIndex: 9999 } : undefined}
           >
-            {/* Header */}
-            <div className="flex items-start justify-between gap-3 p-4 pb-3 border-b border-border shrink-0">
-              <div className="flex items-center gap-2.5">
-                <div className="p-1.5 rounded-lg bg-primary/20">
-                  <Sparkles size={18} className="text-primary" />
+            <motion.div
+              ref={modalRef}
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-full max-w-lg max-h-[90dvh] sm:max-h-[80dvh] flex flex-col glass-panel border border-primary/30 shadow-lg shadow-primary/10 print:hidden"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="whats-new-modal-title"
+              tabIndex={-1}
+              style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
+            >
+              {/* Header */}
+              <div className="flex items-start justify-between gap-3 p-4 pb-3 border-b border-border shrink-0">
+                <div className="flex items-center gap-2.5">
+                  <div className="p-1.5 rounded-lg bg-primary/20">
+                    <Sparkles size={18} className="text-primary" />
+                  </div>
+                  <div>
+                    <h2 id="whats-new-modal-title" className="font-bold text-foreground text-base">
+                      What's New
+                    </h2>
+                    <span className="text-xs font-mono text-primary font-semibold">v{version}</span>
+                  </div>
                 </div>
-                <div>
-                  <h2 id="whats-new-modal-title" className="font-bold text-foreground text-base">
-                    What's New
-                  </h2>
-                  <span className="text-xs font-mono text-primary font-semibold">v{version}</span>
-                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDismiss}
+                  aria-label="Close what's new"
+                  className="h-9 w-9 p-0 text-muted-foreground hover:text-foreground"
+                >
+                  <X size={16} />
+                </Button>
               </div>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleDismiss}
-                aria-label="Close what's new"
-                className="h-9 w-9 p-0 text-muted-foreground hover:text-foreground"
-              >
-                <X size={16} />
-              </Button>
-            </div>
 
-            {/* Persona indicator */}
-            {selectedPersona && (
-              <div className="shrink-0 border-b border-border text-xs">
-                <div className="flex items-center justify-between flex-wrap gap-y-1 px-3 sm:px-4 py-2">
-                  <div className="flex items-center gap-1 text-muted-foreground">
-                    {showAllPersona ? (
-                      'Showing all updates'
-                    ) : (
-                      <>
-                        Updates for{' '}
-                        <span className="font-medium text-foreground">{personaLabel}</span>
-                      </>
-                    )}
+              {/* Persona indicator */}
+              {selectedPersona && (
+                <div className="shrink-0 border-b border-border text-xs">
+                  <div className="flex items-center justify-between flex-wrap gap-y-1 px-3 sm:px-4 py-2">
+                    <div className="flex items-center gap-1 text-muted-foreground">
+                      {showAllPersona ? (
+                        'Showing all updates'
+                      ) : (
+                        <>
+                          Updates for{' '}
+                          <span className="font-medium text-foreground">{personaLabel}</span>
+                        </>
+                      )}
+                      <Button
+                        variant="ghost"
+                        onClick={() => setShowPersonaInfo((prev) => !prev)}
+                        aria-label={showPersonaInfo ? 'Hide filtering info' : 'How filtering works'}
+                        className={clsx(
+                          'ml-0.5 p-1.5 -m-1 transition-colors rounded',
+                          showPersonaInfo
+                            ? 'text-primary'
+                            : 'text-muted-foreground hover:text-foreground'
+                        )}
+                      >
+                        <Info size={14} />
+                      </Button>
+                      {showCounts && (
+                        <>
+                          <span className="text-muted-foreground/40 select-none">·</span>
+                          <span className="tabular-nums">
+                            <span className="text-primary/80">{filteredAppCount}</span>
+                            <span className="text-muted-foreground/50">/{totalAppCount}</span> app
+                          </span>
+                          <span className="text-muted-foreground/40 select-none">·</span>
+                          <span className="tabular-nums">
+                            <span className="text-status-info/80">{filteredDataCount}</span>
+                            <span className="text-muted-foreground/50">/{totalDataCount}</span> data
+                          </span>
+                        </>
+                      )}
+                    </div>
                     <Button
                       variant="ghost"
-                      onClick={() => setShowPersonaInfo((prev) => !prev)}
-                      aria-label={showPersonaInfo ? 'Hide filtering info' : 'How filtering works'}
-                      className={clsx(
-                        'ml-0.5 p-1.5 -m-1 transition-colors rounded',
-                        showPersonaInfo
-                          ? 'text-primary'
-                          : 'text-muted-foreground hover:text-foreground'
-                      )}
+                      onClick={() => setShowAllPersona((prev) => !prev)}
+                      className="text-primary hover:text-primary/80 transition-colors underline"
                     >
-                      <Info size={14} />
+                      {showAllPersona ? 'Filter for me' : 'Show all'}
                     </Button>
-                    {showCounts && (
-                      <>
-                        <span className="text-muted-foreground/40 select-none">·</span>
-                        <span className="tabular-nums">
-                          <span className="text-primary/80">{filteredAppCount}</span>
-                          <span className="text-muted-foreground/50">/{totalAppCount}</span> app
-                        </span>
-                        <span className="text-muted-foreground/40 select-none">·</span>
-                        <span className="tabular-nums">
-                          <span className="text-status-info/80">{filteredDataCount}</span>
-                          <span className="text-muted-foreground/50">/{totalDataCount}</span> data
-                        </span>
-                      </>
-                    )}
                   </div>
-                  <Button
-                    variant="ghost"
-                    onClick={() => setShowAllPersona((prev) => !prev)}
-                    className="text-primary hover:text-primary/80 transition-colors underline"
-                  >
-                    {showAllPersona ? 'Filter for me' : 'Show all'}
-                  </Button>
-                </div>
-                {showPersonaInfo && (
-                  <div className="px-4 pb-3 pt-2 space-y-1.5 border-t border-border/50 bg-muted/20 text-muted-foreground">
-                    <p>
-                      Showing updates tagged for{' '}
-                      <span className="font-medium text-foreground">{personaLabel}</span> plus
-                      universal updates (not tagged to any specific persona).
-                    </p>
-                    <p>
-                      Data updates (library, standards, migration catalog) are further narrowed by
-                      your selected industries when applicable.
-                    </p>
-                    <p>
-                      Use <span className="font-medium text-foreground">Show all</span> to see every
-                      update regardless of persona.
-                    </p>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Scrollable body */}
-            <div className="flex-1 overflow-y-auto min-h-0 p-3 sm:p-4 space-y-3">
-              {/* App update entries from CHANGELOG */}
-              {changelogSections.length > 0 && (
-                <div>
-                  <Button
-                    variant="ghost"
-                    onClick={() => toggleSection('changelog')}
-                    className="flex items-center gap-2 w-full text-left py-1.5 group"
-                  >
-                    <Sparkles size={14} className="text-primary shrink-0" />
-                    <span className="text-sm font-semibold text-foreground flex-1">
-                      App Updates
-                    </span>
-                    <span className="text-xs text-muted-foreground tabular-nums">
-                      {totalEntries}
-                    </span>
-                    {expandedSections['changelog'] ? (
-                      <ChevronUp size={14} className="text-muted-foreground" />
-                    ) : (
-                      <ChevronDown size={14} className="text-muted-foreground" />
-                    )}
-                  </Button>
-
-                  {expandedSections['changelog'] && (
-                    <div className="mt-1 space-y-2 pl-1">
-                      {changelogSections.map((section) => {
-                        const SectionIcon = SECTION_ICONS[section.type]
-                        const colorClass = SECTION_COLORS[section.type]
-                        return (
-                          <div key={section.type}>
-                            <div className="flex items-center gap-1.5 mb-1">
-                              <SectionIcon size={12} className={colorClass} />
-                              <span className={clsx('text-xs font-medium capitalize', colorClass)}>
-                                {section.type}
-                              </span>
-                            </div>
-                            <ul className="space-y-0.5 pl-4">
-                              {section.entries.map((entry, idx) => (
-                                <li key={idx} className="text-xs text-muted-foreground py-0.5">
-                                  <span className="font-medium text-foreground">{entry.title}</span>
-                                  {entry.body && (
-                                    <span className="ml-1 opacity-70">
-                                      —{' '}
-                                      {entry.body.length > 100
-                                        ? entry.body.slice(0, 97) + '...'
-                                        : entry.body}
-                                    </span>
-                                  )}
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )
-                      })}
+                  {showPersonaInfo && (
+                    <div className="px-4 pb-3 pt-2 space-y-1.5 border-t border-border/50 bg-muted/20 text-muted-foreground">
+                      <p>
+                        Showing updates tagged for{' '}
+                        <span className="font-medium text-foreground">{personaLabel}</span> plus
+                        universal updates (not tagged to any specific persona).
+                      </p>
+                      <p>
+                        Data updates (library, standards, migration catalog) are further narrowed by
+                        your selected industries when applicable.
+                      </p>
+                      <p>
+                        Use <span className="font-medium text-foreground">Show all</span> to see
+                        every update regardless of persona.
+                      </p>
                     </div>
                   )}
                 </div>
               )}
 
-              {/* Data source sections */}
-              {dataSummaries.map((summary) => {
-                const Icon = SOURCE_ICONS[summary.iconName] ?? BookOpen
-                const isExpanded = expandedSections[summary.sourceId] ?? false
-                const isItemListExpanded = expandedItemLists[summary.sourceId] ?? false
-                const visibleItems = isItemListExpanded
-                  ? summary.items
-                  : summary.items.slice(0, MAX_VISIBLE_ITEMS)
-                const hasOverflow = summary.items.length > MAX_VISIBLE_ITEMS
-
-                return (
-                  <div key={summary.sourceId}>
-                    {/* Source header (clickable to expand) */}
+              {/* Scrollable body */}
+              <div className="flex-1 overflow-y-auto min-h-0 p-3 sm:p-4 space-y-3">
+                {/* App update entries from CHANGELOG */}
+                {changelogSections.length > 0 && (
+                  <div>
                     <Button
                       variant="ghost"
-                      onClick={() => toggleSection(summary.sourceId)}
+                      onClick={() => toggleSection('changelog')}
                       className="flex items-center gap-2 w-full text-left py-1.5 group"
                     >
-                      <Icon size={14} className="text-primary shrink-0" />
+                      <Sparkles size={14} className="text-primary shrink-0" />
                       <span className="text-sm font-semibold text-foreground flex-1">
-                        {summary.label}
+                        App Updates
                       </span>
                       <span className="text-xs text-muted-foreground tabular-nums">
-                        {summary.newCount > 0 && (
-                          <span className="text-success">{summary.newCount} new</span>
-                        )}
-                        {summary.newCount > 0 && summary.updatedCount > 0 && ', '}
-                        {summary.updatedCount > 0 && (
-                          <span className="text-primary">{summary.updatedCount} updated</span>
-                        )}
+                        {totalEntries}
                       </span>
-                      {isExpanded ? (
+                      {expandedSections['changelog'] ? (
                         <ChevronUp size={14} className="text-muted-foreground" />
                       ) : (
                         <ChevronDown size={14} className="text-muted-foreground" />
                       )}
                     </Button>
 
-                    {/* Expanded item list */}
-                    {isExpanded && (
-                      <div className="mt-1 space-y-0.5 pl-1">
-                        {visibleItems.map((item) => (
-                          <DataChangeRow
-                            key={item.id}
-                            item={item}
-                            isExpanded={expandedItem === item.id}
-                            onToggle={() =>
-                              setExpandedItem((prev) => (prev === item.id ? null : item.id))
-                            }
-                            onNavigate={handleItemClick}
-                          />
-                        ))}
-                        {hasOverflow && (
-                          <Button
-                            variant="ghost"
-                            onClick={() => toggleItemList(summary.sourceId)}
-                            className="text-xs text-primary hover:text-primary/80 pl-2 py-1 transition-colors"
-                          >
-                            {isItemListExpanded
-                              ? 'Show fewer'
-                              : `Show all ${summary.items.length} items`}
-                          </Button>
-                        )}
+                    {expandedSections['changelog'] && (
+                      <div className="mt-1 space-y-2 pl-1">
+                        {changelogSections.map((section) => {
+                          const SectionIcon = SECTION_ICONS[section.type]
+                          const colorClass = SECTION_COLORS[section.type]
+                          return (
+                            <div key={section.type}>
+                              <div className="flex items-center gap-1.5 mb-1">
+                                <SectionIcon size={12} className={colorClass} />
+                                <span
+                                  className={clsx('text-xs font-medium capitalize', colorClass)}
+                                >
+                                  {section.type}
+                                </span>
+                              </div>
+                              <ul className="space-y-0.5 pl-4">
+                                {section.entries.map((entry, idx) => (
+                                  <li key={idx} className="text-xs text-muted-foreground py-0.5">
+                                    <span className="font-medium text-foreground">
+                                      {entry.title}
+                                    </span>
+                                    {entry.body && (
+                                      <span className="ml-1 opacity-70">
+                                        —{' '}
+                                        {entry.body.length > 100
+                                          ? entry.body.slice(0, 97) + '...'
+                                          : entry.body}
+                                      </span>
+                                    )}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          )
+                        })}
                       </div>
                     )}
                   </div>
-                )
-              })}
+                )}
 
-              {/* No persona hint */}
-              {!selectedPersona && (
-                <p className="text-xs text-muted-foreground italic pt-2">
-                  Select a persona on the landing page to see personalized updates.
-                </p>
-              )}
-            </div>
+                {/* Data source sections */}
+                {dataSummaries.map((summary) => {
+                  const Icon = SOURCE_ICONS[summary.iconName] ?? BookOpen
+                  const isExpanded = expandedSections[summary.sourceId] ?? false
+                  const isItemListExpanded = expandedItemLists[summary.sourceId] ?? false
+                  const visibleItems = isItemListExpanded
+                    ? summary.items
+                    : summary.items.slice(0, MAX_VISIBLE_ITEMS)
+                  const hasOverflow = summary.items.length > MAX_VISIBLE_ITEMS
 
-            {/* Footer */}
-            <div className="flex items-center gap-2 p-3 sm:p-4 pt-3 border-t border-border shrink-0">
-              <Button
-                variant="ghost"
-                onClick={handleViewChangelog}
-                className="text-sm text-primary hover:text-primary/80 transition-colors underline"
-              >
-                View Full Changelog
-              </Button>
-              <div className="flex-1" />
-              <Button variant="gradient" size="sm" onClick={handleDismiss}>
-                Got it
-              </Button>
-            </div>
-          </motion.div>
+                  return (
+                    <div key={summary.sourceId}>
+                      {/* Source header (clickable to expand) */}
+                      <Button
+                        variant="ghost"
+                        onClick={() => toggleSection(summary.sourceId)}
+                        className="flex items-center gap-2 w-full text-left py-1.5 group"
+                      >
+                        <Icon size={14} className="text-primary shrink-0" />
+                        <span className="text-sm font-semibold text-foreground flex-1">
+                          {summary.label}
+                        </span>
+                        <span className="text-xs text-muted-foreground tabular-nums">
+                          {summary.newCount > 0 && (
+                            <span className="text-success">{summary.newCount} new</span>
+                          )}
+                          {summary.newCount > 0 && summary.updatedCount > 0 && ', '}
+                          {summary.updatedCount > 0 && (
+                            <span className="text-primary">{summary.updatedCount} updated</span>
+                          )}
+                        </span>
+                        {isExpanded ? (
+                          <ChevronUp size={14} className="text-muted-foreground" />
+                        ) : (
+                          <ChevronDown size={14} className="text-muted-foreground" />
+                        )}
+                      </Button>
+
+                      {/* Expanded item list */}
+                      {isExpanded && (
+                        <div className="mt-1 space-y-0.5 pl-1">
+                          {visibleItems.map((item) => (
+                            <DataChangeRow
+                              key={item.id}
+                              item={item}
+                              isExpanded={expandedItem === item.id}
+                              onToggle={() =>
+                                setExpandedItem((prev) => (prev === item.id ? null : item.id))
+                              }
+                              onNavigate={handleItemClick}
+                            />
+                          ))}
+                          {hasOverflow && (
+                            <Button
+                              variant="ghost"
+                              onClick={() => toggleItemList(summary.sourceId)}
+                              className="text-xs text-primary hover:text-primary/80 pl-2 py-1 transition-colors"
+                            >
+                              {isItemListExpanded
+                                ? 'Show fewer'
+                                : `Show all ${summary.items.length} items`}
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+
+                {/* No persona hint */}
+                {!selectedPersona && (
+                  <p className="text-xs text-muted-foreground italic pt-2">
+                    Select a persona on the landing page to see personalized updates.
+                  </p>
+                )}
+              </div>
+
+              {/* Footer */}
+              <div className="flex items-center gap-2 p-3 sm:p-4 pt-3 border-t border-border shrink-0">
+                <Button
+                  variant="ghost"
+                  onClick={handleViewChangelog}
+                  className="text-sm text-primary hover:text-primary/80 transition-colors underline"
+                >
+                  View Full Changelog
+                </Button>
+                <div className="flex-1" />
+                <Button variant="gradient" size="sm" onClick={handleDismiss}>
+                  Got it
+                </Button>
+              </div>
+            </motion.div>
+          </div>
         </>
       )}
     </AnimatePresence>,

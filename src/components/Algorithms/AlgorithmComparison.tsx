@@ -441,15 +441,21 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                     const pqcName = algo.pqc.split(/\s*\(/)[0].trim()
                     const pqcDetail = pqcDetailMap.get(pqcName.toLowerCase())
                     const isCompared = compareSet.has(pqcName)
+                    const isSignatureType =
+                      algo.function === 'Signature' || algo.function === 'Composite Signature'
                     const canCompare =
                       isCompared ||
                       (!maxCompareReached &&
                         (compareType === null ||
-                          compareType === (algo.function === 'Signature' ? 'Signature' : 'KEM')))
+                          compareType === (isSignatureType ? 'Signature' : 'KEM')))
                     const isComparableFunction =
                       algo.function === 'Signature' ||
+                      algo.function === 'Composite Signature' ||
                       algo.function === 'Encryption/KEM' ||
-                      algo.function === 'Hybrid KEM'
+                      algo.function === 'Composite KEM' ||
+                      algo.function === 'Hybrid KEM' ||
+                      algo.function === 'Hybrid KEM (HPKE)' ||
+                      algo.function === 'Hybrid KEM with Access Control'
                     return (
                       <motion.tr
                         key={`${algo.classical}-${algo.function}-${index}`}
@@ -468,7 +474,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                       >
                         <td className="px-4 py-3" style={{ width: `${columnWidths.function}px` }}>
                           <div className="flex items-center gap-2 text-primary font-medium text-sm">
-                            {isComparableFunction && (
+                            {isComparableFunction ? (
                               <Button
                                 variant="ghost"
                                 type="button"
@@ -486,7 +492,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                                 className={clsx(
                                   'shrink-0 p-1 rounded transition-colors',
                                   isCompared
-                                    ? 'text-secondary bg-secondary/10'
+                                    ? 'text-secondary bg-secondary/10 hover:bg-secondary/20 hover:text-secondary'
                                     : canCompare
                                       ? 'text-muted-foreground hover:text-secondary hover:bg-secondary/10'
                                       : 'text-muted-foreground/30 cursor-not-allowed'
@@ -494,6 +500,8 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               >
                                 <Scale size={14} />
                               </Button>
+                            ) : (
+                              <div className="shrink-0 w-6" />
                             )}
                             {algo.function.includes('Signature') ? (
                               <FileSignature size={24} className="flex-shrink-0" />
