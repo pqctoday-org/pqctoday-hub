@@ -2622,7 +2622,7 @@ function processDocumentEnrichments(): RAGChunk[] {
   if (!fs.existsSync(enrichmentsDir)) return []
 
   const chunks: RAGChunk[] = []
-  const collections = ['library', 'timeline', 'threats'] as const
+  const collections = ['library', 'timeline', 'threats', 'catalog'] as const
 
   for (const collection of collections) {
     const enrichLookup = loadEnrichmentFields(collection)
