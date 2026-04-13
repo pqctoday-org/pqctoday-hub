@@ -137,7 +137,7 @@ Role-specific learning guides, entropy workshop, expanded HSM panels, and a refr
 
 - **Audit tooling**: `fill-audit-gaps.py` fills gap descriptions for all audit rows; `generate-module-issues.ts` generates the module issues CSV from audit data.
 
-### Changed
+### Data Sources
 
 - **Library data updated**: New library CSV records (04122026) and refreshed product catalog.
 - **RAG corpus refreshed**: Knowledge base regenerated to include all new module and library content.
@@ -153,11 +153,13 @@ OpenSSL WASM engine upgraded to v3.6.2 and knowledge base refreshed with updated
   the latest upstream fixes and improvements while preserving full ML-KEM, ML-DSA, SLH-DSA,
   and LMS/HSS support.
 
-- **Knowledge base refreshed**: RAG corpus regenerated with 5,881 indexed chunks — all
-  assistant answers and content search results reflect the latest data.
-
 - **Embed SDK output updated**: The embeddable widget SDK (`sdk.js`) now ships as a compact
   single-line bundle for faster load times in partner integrations.
+
+### Data Sources
+
+- **Knowledge base refreshed**: RAG corpus regenerated with 5,881 indexed chunks — all
+  assistant answers and content search results reflect the latest data.
 
 ## [3.2.0] - 2026-04-12
 
@@ -615,7 +617,7 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 - **`useModuleDeepLink` test suite**: Updated all 11 test expectations to include the new
   `initialFlow` field; added a `?flow=` parsing test.
 
-### Internal
+### Data Sources
 
 - **RAG corpus regenerated**: Updated to reflect new EUDI crypto provider content and DRBG demo.
 
@@ -746,6 +748,8 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 - **SLH-DSA workshop link updated in Playground registry**: The SLH-DSA Sign & Verify tool now
   links to the new `/learn/slh-dsa` module (was `/learn/stateful-signatures`) and the `wip: true`
   flag is removed — the tool is production-ready.
+
+### Data Sources
 
 - **RAG corpus regenerated** to include the new SLH-DSA module content.
 
@@ -1295,6 +1299,9 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 - **softhsm-wasm C++ engine rebuilt (0.4.3)**: `public/wasm/softhsm.{js,wasm}` rebuilt from source. Fixes `CKR_MECHANISM_PARAM_INVALID` on `C_DeriveKey` when `CKD_SHA3_256_KDF` or `CKD_SHA3_512_KDF` is requested — the KDF validation block in `SoftHSM_keygen.cpp::deriveEDDSA` / `deriveEC` now explicitly accepts both SHA3 KDF variants (PKCS#11 v3.2 §5.2.12).
 - **softhsm-wasm Rust engine rebuilt (0.4.3)**: `public/wasm/rust/softhsmrustv3.{js,d.ts,_bg.wasm}` rebuilt with `CKD_SHA3_256_KDF` / `CKD_SHA3_512_KDF` constants in `constants.rs` and SHA3 dispatch arm in the X9.63 KDF block in `ffi.rs`.
 - **`HsmKeyInspector` display names updated**: `CKK_EC_MONTGOMERY (0x41)` and `CKM_EC_MONTGOMERY_KEY_PAIR_GEN (0x1056)` now render their symbolic names in the key attribute inspector panel instead of showing raw hex.
+
+### Data Sources
+
 - **Product catalog updated** (`pqc_product_catalog_04022026_r1.csv`): April 2026 r1 revision.
 - **Library updated** (`library_04022026.csv`): April 2026 snapshot.
 
@@ -1318,9 +1325,12 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 ### Changed
 
 - **CISA category field added to all products**: Every product in the migration catalog now carries a `cisa_category` field mapping it to one of the 15 CISA categories. Products without a specific mapping default to "Other / Unclassified".
+- **Enrichment merge improved**: Timeline enrichments now aggregate all historical enrichment files (not just the latest) so older entries are never silently dropped on subsequent runs. The shared `mergeEnrichmentFiles` utility is now used by both library and timeline enrichment loaders.
+
+### Data Sources
+
 - **Timeline data updated to April 2026** (`timeline_04012026.csv`): Latest government and industry PQC milestones incorporated; March 2026 snapshot retired.
 - **Product catalog updated** (`pqc_product_catalog_04012026_r4.csv`): April 2026 catalog revision with enriched CISA category and quantum-tech annotations across the full 622-product dataset.
-- **Enrichment merge improved**: Timeline enrichments now aggregate all historical enrichment files (not just the latest) so older entries are never silently dropped on subsequent runs. The shared `mergeEnrichmentFiles` utility is now used by both library and timeline enrichment loaders.
 
 ## [2.72.0] - 2026-04-01
 
@@ -1346,7 +1356,7 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 
 ## [2.70.1] - 2026-04-01
 
-### Changed
+### Data Sources
 
 - **Product catalog expanded to 622 entries**: 101 new products added in the latest audit pass. Validation coverage increased — 338 of 622 products are now independently confirmed as valid.
 
@@ -1357,7 +1367,7 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 - **Proof details popup**: Clicking "View Proof" on any product now opens a focused dialog showing the validation outcome, a written summary of findings, the publication date, and a link to the original source document. Works on both mobile and desktop.
 - **Expanded validation status badges**: Products now show one of 8 color-coded status badges — Validated (green), FIPS Verified (green), Validated — No PQC (gray), Corrected (amber), Partially Validated (amber), Needs Review (amber), Not Validated (red), FIPS Issue (red).
 
-### Changed
+### Data Sources
 
 - **All 521 catalog entries now have validation results**: The full product catalog completed a validation pass. Results: 237 Validated, 171 Validated without PQC support, 81 Corrected, 9 Needs Review, 8 Not Validated, 7 Partially Validated, 5 FIPS Issues, 3 FIPS Verified.
 
@@ -1390,13 +1400,10 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 
 ## [2.67.1] - 2026-03-31
 
-### Changed
+### Data Sources
 
-- **Data quality improvements across multiple datasets**: Fixed broken source organization references in the library, product catalog, and timeline datasets. Added 12 new trusted organizations (200 total). Fixed 3 data integrity issues in the priority matrix.
 - **New document enrichments**: 67 new library analysis entries (covering blockchain/DeFi protocols, NSA CNSA 2.0, Signal PQXDH, Apple PQ3, and more) and 10 new timeline entries (Bitcoin quantum testnet, Algorand PQC, OpenSSL 3.6.1, DoD PQC memorandum, and others). Library document coverage: 92% (386 of 419). Timeline coverage: 100% (213 of 213).
-
-### Fixed
-
+- **Data quality improvements across multiple datasets**: Fixed broken source organization references in the library, product catalog, and timeline datasets. Added 12 new trusted organizations (200 total). Fixed 3 data integrity issues in the priority matrix.
 - **Data integrity**: Resolved all 8 outstanding data errors — all cross-references between datasets are now consistent.
 
 ## [2.67.0] - 2026-03-31
@@ -1430,7 +1437,7 @@ Verification Error`, `Embed / Route Blocked` (with `reason` label), `Embed / Pol
 - **Verification status filter**: New filter in the Migrate view to show only Verified, Partially Verified, or Needs Verification products.
 - **Evidence flags affect trust score**: Products with data quality warnings receive a lower composite trust score — reflected in the trust badge shown on each product card.
 
-### Changed
+### Data Sources
 
 - **415 products in catalog** (was 394): 21 new products added, including Cisco Catalyst Center, DigiCert ONE, and Fortinet FortiManager.
 - **72 products independently verified**: Products were web-searched and cross-referenced against vendor sources, FIPS, and ACVP certifications.
