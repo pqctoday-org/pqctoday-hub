@@ -23,6 +23,11 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - **Region filter**: filter algorithms by standardisation body — NIST (US), IETF (Global), BSI/ANSSI (Europe), ETSI, KpqC (Korea), CACR (China); sortable Region column
   - **Status filter**: filter by certification status — Certified, Candidate, To Be Checked; sortable Status column; Multivariate and Isogeny added to crypto-family filter
   - **Algorithm Implementations Modal**: click the code icon on any PQC algorithm to see its open-source reference implementations; backed by `algo_product_xref` CSV; smart family-prefix fallback (SLH-DSA covers all SLH-DSA-\* variants); deep-links to `/migrate` catalog and `/library` entries
+  - **Live performance benchmarks** (Performance sub-tab): in-browser keygen / sign / verify /
+    encaps / decaps timing for every algorithm, measured through the real softhsmv3 Rust PKCS#11
+    engine — engine priority: softhsmv3 Rust → liboqs → WebCrypto → @noble; covers ML-KEM,
+    ML-DSA, SLH-DSA (all 12 param sets), RSA-2048/3072/4096, ECDSA P-256/P-384, Ed25519,
+    ECDH P-256/P-384, X25519, X448, LMS-SHA256, XMSS-SHA2; P-521 curves fall back to WebCrypto
 - **Interactive Playground**: Hands-on cryptographic testing environment
   - **Software ↔ PKCS#11 HSM mode toggle**: switch all tabs between the software stack and a
     SoftHSMv3 WASM engine backed by PKCS#11 v3.2 — run ML-KEM and ML-DSA through a real HSM

@@ -6,6 +6,67 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.5] - 2026-04-13
+
+Algorithm benchmarks now run through the softhsmv3 Rust PKCS#11 engine for the full
+cryptographic portfolio — SLH-DSA, RSA, ECDSA, Ed25519, ECDH, X25519, X448, LMS, and XMSS
+join ML-KEM and ML-DSA under the same measured PKCS#11 call path. Timeline popovers gain
+backdrop overlays, FocusLock, and proper ARIA dialog roles.
+
+### Changed
+
+- **Algorithm benchmark engine** (`algorithmEngineResolver.ts`) — engine priority updated to
+  softhsmv3 Rust → liboqs → WebCrypto → @noble. All algorithms supported by the Rust engine
+  now route there for live benchmarking:
+  - **SLH-DSA** (all 12 param sets) — previously routed to liboqs; now benchmarked via
+    `hsm_generateSLHDSAKeyPair` / `hsm_slhdsaSign` / `hsm_slhdsaVerify`
+  - **RSA** (2048/3072/4096) — previously WebCrypto; now via `hsm_generateRSAKeyPair` /
+    `hsm_rsaSign` / `hsm_rsaVerify`
+  - **ECDSA P-256/P-384** — previously WebCrypto; now via `hsm_generateECKeyPair` /
+    `hsm_ecdsaSign` / `hsm_ecdsaVerify`
+  - **Ed25519** — previously WebCrypto; now via `hsm_generateEdDSAKeyPair` /
+    `hsm_eddsaSign` / `hsm_eddsaVerify`
+  - **ECDH P-256/P-384** — previously WebCrypto; now via `hsm_generateECKeyPair` /
+    `hsm_ecdhDerive`
+  - **X25519 / X448** — X448 was previously NOT_BENCHMARKABLE; both now benchmarked via
+    `hsm_generateECKeyPair` (Montgomery curves) / `hsm_ecdhDerive`
+  - **LMS-SHA256 / XMSS-SHA2** — previously returned null (no engine); now via
+    `hsm_generateLMSKeyPair` / `hsm_generateXMSSKeyPair` / `hsm_statefulSignBytes` /
+    `hsm_statefulVerifyBytes` (uses H5 for LMS, paramSet=1/H10 for XMSS to keep keygen
+    < 1s in-browser)
+  - **ECDSA P-521 / ECDH P-521** — Rust engine does not support P-521; remain on WebCrypto
+
+### Fixed
+
+- **Timeline Gantt popover — accessibility and positioning** (`GanttDetailPopover.tsx`) —
+  added `bg-black/60` backdrop overlay, `FocusLock` trap, `role="dialog"` / `aria-modal` on
+  the panel, and centered positioning via `fixed inset-0 flex items-center justify-center`
+  (standalone mode) instead of absolute coordinate injection. Embed mode retains positional
+  z-index behavior.
+- **Timeline document popover — accessibility and positioning** (`TimelineDocumentDetailPopover.tsx`) —
+  same backdrop + centering treatment as GanttDetailPopover; FocusLock was already present,
+  now wrapped with backdrop and centering wrapper.
+
+### Data Sources
+
+- **Catalog enrichments `_r3`** (`catalog_doc_enrichments_04132026_r3.md`) — 19 alternate-proof
+  products enriched via qwen3.5:27b using newly downloaded alternate source URLs. Top-scoring:
+  Microsoft RDS (18/18), NCSC UK PQC Migration Timelines (18/18), Brave Browser (19/18),
+  GlobalSign DSS (17/18), Thales Luna T-Series HSM (17/18), Palo Alto GlobalProtect (17/18).
+  RAG corpus: 6,502 → 6,521 chunks.
+- **Catalog CSV** (`pqc_product_catalog_04132026.csv`, 729 rows) — +2 products:
+  IBM z16 Crypto Express 8S (CEX8S HSM), AWS Certificate Manager.
+- **Threats CSV** (`quantum_threats_hsm_industries_04132026.csv`, 105 rows) — +7 threats:
+  CROSS-014 (AES-128 Grover attack), CROSS-015 (SHA-256 halved collision resistance),
+  CROSS-016 (PRNG quantum entropy), CROSS-017 (PQC side-channel timing/power analysis),
+  CROSS-018 (lattice BKZ cryptanalysis advances), HSM-001 (fault injection on PQC keygen),
+  IOT-005 (resource-constrained PQC deployment).
+- **Timeline CSV** (`timeline_04132026.csv`, 215 rows) — +2 entries: Brazil ITI Instrução
+  Normativa n° 35 (ML-DSA/ML-KEM federal mandate), ITU-T X.1811.
+- **Library CSV** (`library_04132026_r1.csv`, 437 rows) — +1 entry:
+  Google-QuantumAI-EC-Crypto-Quantum-2026 (Securing Elliptic Curve Cryptocurrencies against
+  Quantum Attacks, arXiv 2603.28846).
+
 ## [3.3.4] - 2026-04-13
 
 AI-enriched analysis now covers 535 products in the Migrate catalog — the largest single

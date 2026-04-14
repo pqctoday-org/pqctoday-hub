@@ -257,11 +257,15 @@ describe('GanttDetailPopover', () => {
     it('has centered positioning via inline style', () => {
       render(<GanttDetailPopover isOpen={true} onClose={mockOnClose} phase={mockPhase} />)
 
-      // Popover is a portal; find the styled container via content proximity
+      // In standalone mode zIndex lives on the centering wrapper ancestor of the dialog;
+      // in embed mode it lives on the dialog itself. Either way, the nearest styled
+      // ancestor (or self) carries zIndex: 9999.
+      const dialog = screen.getByRole('dialog')
+      expect(dialog).toBeInTheDocument()
       // eslint-disable-next-line testing-library/no-node-access
-      const popover = screen.getByText('Quantum-Safe Discovery').closest('.shadow-2xl')
-      expect(popover).toBeInTheDocument()
-      expect(popover).toHaveStyle({ zIndex: '9999' })
+      const zIndexContainer = dialog.closest('[style]') as HTMLElement | null
+      expect(zIndexContainer).not.toBeNull()
+      expect(zIndexContainer).toHaveStyle({ zIndex: '9999' })
     })
 
     it('applies shadow and border styling', () => {

@@ -4,8 +4,12 @@
  * Algorithm Engine Resolver — maps algorithm names to the best available
  * crypto engine and provides a uniform benchmark API.
  *
- * Engine priority: softhsmv3 → liboqs → OpenSSL → WebCrypto
- * softhsmv3 covers all except: FN-DSA, HQC, Classic-McEliece, FrodoKEM, LMS, XMSS
+ * Engine priority: softhsmv3 Rust → liboqs → WebCrypto → @noble
+ *
+ * softhsmv3 Rust supports: ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA P-256/P-384,
+ * Ed25519, ECDH P-256/P-384, X25519, X448, LMS/HSS, XMSS (single-tree).
+ * Fallbacks: FN-DSA/HQC/FrodoKEM/Classic-McEliece → liboqs;
+ *            ECDSA/ECDH P-521 → webcrypto; secp256k1 → @noble.
  */
 
 export type CryptoEngine = 'softhsm' | 'liboqs' | 'webcrypto' | 'noble'
@@ -23,6 +27,7 @@ export interface BenchmarkResult {
 
 // ── Algo → Engine mapping ──
 
+// These are NOT supported by softhsmv3 Rust — route to liboqs
 const LIBOQS_ONLY = new Set([
   'FN-DSA-512',
   'FN-DSA-1024',
@@ -37,33 +42,36 @@ const LIBOQS_ONLY = new Set([
   'Classic-McEliece-8192128',
 ])
 
+// softhsmv3 Rust supports LMS/XMSS — routed to 'softhsm' (see resolveEngine)
 const LMS_ALGOS = new Set(['LMS-SHA256 (H20/W8)', 'XMSS-SHA2_20'])
-
-const WEBCRYPTO_SIGS = new Set(['ECDSA P-256', 'ECDSA P-384', 'ECDSA P-521', 'Ed25519'])
-
-const WEBCRYPTO_KEMS = new Set(['ECDH P-256', 'ECDH P-384', 'ECDH P-521', 'X25519'])
-
-const NOBLE_SIGS = new Set(['secp256k1'])
-
-// Algorithms with no portable browser engine available
-const NOT_BENCHMARKABLE = new Set(['Ed448', 'X448', 'DH (Diffie-Hellman)'])
 
 const RSA_ALGOS = new Set(['RSA-2048', 'RSA-3072', 'RSA-4096'])
 
+const NOBLE_SIGS = new Set(['secp256k1'])
+
+// Algorithms with no practical in-browser engine
+const NOT_BENCHMARKABLE = new Set(['Ed448', 'DH (Diffie-Hellman)'])
+
 const HYBRID_KEMS = new Set(['X25519MLKEM768', 'SecP256r1MLKEM768', 'SecP384r1MLKEM1024'])
+
+// P-521 only: Rust engine does not support P-521 — fall back to webcrypto
+const WEBCRYPTO_ONLY = new Set(['ECDSA P-521', 'ECDH P-521'])
 
 export function resolveEngine(algoName: string): CryptoEngine | null {
   if (LIBOQS_ONLY.has(algoName)) return 'liboqs'
-  if (LMS_ALGOS.has(algoName)) return null // LmsService not wired for benchmarking yet
   if (HYBRID_KEMS.has(algoName)) return null // No standalone benchmark for hybrids
   if (NOT_BENCHMARKABLE.has(algoName)) return null // No portable browser engine
-  // SLH-DSA → liboqs (simpler API than PKCS#11 for benchmarking)
-  if (algoName.startsWith('SLH-DSA')) return 'liboqs'
-  // ML-KEM, ML-DSA → softhsmv3
+  // softhsmv3 Rust — preferred for everything it supports
   if (algoName.startsWith('ML-KEM') || algoName.startsWith('ML-DSA')) return 'softhsm'
-  if (RSA_ALGOS.has(algoName)) return 'webcrypto'
-  if (WEBCRYPTO_SIGS.has(algoName)) return 'webcrypto'
-  if (WEBCRYPTO_KEMS.has(algoName)) return 'webcrypto'
+  if (algoName.startsWith('SLH-DSA')) return 'softhsm'
+  if (RSA_ALGOS.has(algoName)) return 'softhsm'
+  if (algoName === 'ECDSA P-256' || algoName === 'ECDSA P-384') return 'softhsm'
+  if (algoName === 'Ed25519') return 'softhsm'
+  if (algoName === 'ECDH P-256' || algoName === 'ECDH P-384') return 'softhsm'
+  if (algoName === 'X25519' || algoName === 'X448') return 'softhsm'
+  if (LMS_ALGOS.has(algoName)) return 'softhsm'
+  // Fallbacks: P-521 curves not in Rust engine
+  if (WEBCRYPTO_ONLY.has(algoName)) return 'webcrypto'
   if (NOBLE_SIGS.has(algoName)) return 'noble'
   return null
 }
@@ -198,6 +206,221 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     verifyDecapsMs = timeMs(() => {
       softhsm.hsm_verifyBytes(mod, hSession, result!.pubHandle, msg, sig!)
     })
+  } else if (algoName.startsWith('SLH-DSA')) {
+    // Map algorithm name → CKP_SLH_DSA_* param set constant (PKCS#11 v3.2 §6.70)
+    let paramSet: number
+    switch (algoName) {
+      case 'SLH-DSA-SHA2-128s':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_128S
+        break
+      case 'SLH-DSA-SHAKE-128s':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_128S
+        break
+      case 'SLH-DSA-SHA2-128f':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_128F
+        break
+      case 'SLH-DSA-SHAKE-128f':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_128F
+        break
+      case 'SLH-DSA-SHA2-192s':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_192S
+        break
+      case 'SLH-DSA-SHAKE-192s':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_192S
+        break
+      case 'SLH-DSA-SHA2-192f':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_192F
+        break
+      case 'SLH-DSA-SHAKE-192f':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_192F
+        break
+      case 'SLH-DSA-SHA2-256s':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_256S
+        break
+      case 'SLH-DSA-SHAKE-256s':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_256S
+        break
+      case 'SLH-DSA-SHA2-256f':
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_256F
+        break
+      case 'SLH-DSA-SHAKE-256f':
+        paramSet = softhsm.CKP_SLH_DSA_SHAKE_256F
+        break
+      default:
+        paramSet = softhsm.CKP_SLH_DSA_SHA2_128S
+    }
+    let slhResult: ReturnType<typeof softhsm.hsm_generateSLHDSAKeyPair>
+    keyGenMs = timeMs(() => {
+      slhResult = softhsm.hsm_generateSLHDSAKeyPair(mod, hSession, paramSet, true)
+    })
+    publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, slhResult!.pubHandle).length
+    privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, slhResult!.privHandle).length
+    const slhMsg = 'bench'
+    let slhSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      slhSig = softhsm.hsm_slhdsaSign(mod, hSession, slhResult!.privHandle, slhMsg)
+    })
+    sigCiphertextBytes = slhSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_slhdsaVerify(mod, hSession, slhResult!.pubHandle, slhMsg, slhSig!)
+    })
+  } else if (algoName.startsWith('RSA-')) {
+    const bits = parseInt(algoName.replace('RSA-', '')) as 2048 | 3072 | 4096
+    let rsaResult: ReturnType<typeof softhsm.hsm_generateRSAKeyPair>
+    keyGenMs = timeMs(() => {
+      rsaResult = softhsm.hsm_generateRSAKeyPair(mod, hSession, bits, true)
+    })
+    publicKeyBytes = bits / 8 // modulus size
+    privateKeyBytes = (bits / 8) * 2 // approximate DER CRT size
+    const rsaMsg = 'bench'
+    let rsaSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      rsaSig = softhsm.hsm_rsaSign(mod, hSession, rsaResult!.privHandle, rsaMsg)
+    })
+    sigCiphertextBytes = rsaSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_rsaVerify(mod, hSession, rsaResult!.pubHandle, rsaMsg, rsaSig!)
+    })
+  } else if (algoName === 'ECDSA P-256' || algoName === 'ECDSA P-384') {
+    const curve = algoName.replace('ECDSA ', '') as 'P-256' | 'P-384'
+    let ecdsaResult: ReturnType<typeof softhsm.hsm_generateECKeyPair>
+    keyGenMs = timeMs(() => {
+      ecdsaResult = softhsm.hsm_generateECKeyPair(mod, hSession, curve, true)
+    })
+    publicKeyBytes = softhsm.hsm_extractECPoint(mod, hSession, ecdsaResult!.pubHandle).length
+    privateKeyBytes = curve === 'P-256' ? 32 : 48
+    const ecdsaMsg = 'bench'
+    let ecdsaSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      ecdsaSig = softhsm.hsm_ecdsaSign(mod, hSession, ecdsaResult!.privHandle, ecdsaMsg)
+    })
+    sigCiphertextBytes = ecdsaSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_ecdsaVerify(mod, hSession, ecdsaResult!.pubHandle, ecdsaMsg, ecdsaSig!)
+    })
+  } else if (algoName === 'Ed25519') {
+    let edResult: ReturnType<typeof softhsm.hsm_generateEdDSAKeyPair>
+    keyGenMs = timeMs(() => {
+      edResult = softhsm.hsm_generateEdDSAKeyPair(mod, hSession, 'Ed25519', true)
+    })
+    publicKeyBytes = 32 // Ed25519 public key is always 32 bytes
+    privateKeyBytes = 64 // Ed25519 private key (seed + public)
+    const edMsg = 'bench'
+    let edSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      edSig = softhsm.hsm_eddsaSign(mod, hSession, edResult!.privHandle, edMsg)
+    })
+    sigCiphertextBytes = edSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_eddsaVerify(mod, hSession, edResult!.pubHandle, edMsg, edSig!)
+    })
+  } else if (algoName === 'ECDH P-256' || algoName === 'ECDH P-384') {
+    const curve = algoName.replace('ECDH ', '') as 'P-256' | 'P-384'
+    let ecdhKp1: ReturnType<typeof softhsm.hsm_generateECKeyPair>
+    let ecdhKp2: ReturnType<typeof softhsm.hsm_generateECKeyPair>
+    keyGenMs = timeMs(() => {
+      ecdhKp1 = softhsm.hsm_generateECKeyPair(mod, hSession, curve)
+      ecdhKp2 = softhsm.hsm_generateECKeyPair(mod, hSession, curve)
+    })
+    keyGenMs /= 2 // two keypairs generated
+    const ecdhPub1 = softhsm.hsm_extractECPoint(mod, hSession, ecdhKp1!.pubHandle)
+    const ecdhPub2 = softhsm.hsm_extractECPoint(mod, hSession, ecdhKp2!.pubHandle)
+    publicKeyBytes = ecdhPub2.length
+    privateKeyBytes = curve === 'P-256' ? 32 : 48
+    signEncapsMs = timeMs(() => {
+      softhsm.hsm_ecdhDerive(mod, hSession, ecdhKp1!.privHandle, ecdhPub2)
+    })
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_ecdhDerive(mod, hSession, ecdhKp2!.privHandle, ecdhPub1)
+    })
+    sharedSecretBytes = 32 // derived AES-256 key (default keyLen=32)
+    sigCiphertextBytes = null
+  } else if (algoName === 'X25519' || algoName === 'X448') {
+    const curve = algoName as 'X25519' | 'X448'
+    let montKp1: ReturnType<typeof softhsm.hsm_generateECKeyPair>
+    let montKp2: ReturnType<typeof softhsm.hsm_generateECKeyPair>
+    keyGenMs = timeMs(() => {
+      montKp1 = softhsm.hsm_generateECKeyPair(mod, hSession, curve)
+      montKp2 = softhsm.hsm_generateECKeyPair(mod, hSession, curve)
+    })
+    keyGenMs /= 2
+    // hsm_extractECPoint auto-detects Montgomery → returns raw CKA_VALUE bytes (32 for X25519, 56 for X448)
+    const montPub1 = softhsm.hsm_extractECPoint(mod, hSession, montKp1!.pubHandle)
+    const montPub2 = softhsm.hsm_extractECPoint(mod, hSession, montKp2!.pubHandle)
+    publicKeyBytes = montPub2.length
+    privateKeyBytes = montPub2.length // same-size scalar
+    // Rust engine accepts raw Montgomery bytes via CKM_ECDH1_DERIVE
+    signEncapsMs = timeMs(() => {
+      softhsm.hsm_ecdhDerive(mod, hSession, montKp1!.privHandle, montPub2)
+    })
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_ecdhDerive(mod, hSession, montKp2!.privHandle, montPub1)
+    })
+    sharedSecretBytes = 32
+    sigCiphertextBytes = null
+  } else if (algoName.startsWith('LMS-SHA256')) {
+    // LMS_SHA256_M32_H5 (lmsType=0x05) + LMOTS_SHA256_N32_W1 (lmotsType=0x01)
+    // H20 keygen (~30s) is impractical in-browser; H5/W1 is the confirmed-working playground config
+    let lmsResult: ReturnType<typeof softhsm.hsm_generateLMSKeyPair>
+    keyGenMs = timeMs(() => {
+      lmsResult = softhsm.hsm_generateLMSKeyPair(mod, hSession, 0x05, 0x01, true)
+    })
+    publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.pubHandle).length
+    privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, lmsResult!.privHandle).length
+    const lmsMsg = new Uint8Array(32)
+    crypto.getRandomValues(lmsMsg)
+    let lmsSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      lmsSig = softhsm.hsm_statefulSignBytes(
+        mod,
+        hSession,
+        softhsm.CKM_LMS,
+        lmsResult!.privHandle,
+        lmsMsg
+      )
+    })
+    sigCiphertextBytes = lmsSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_statefulVerifyBytes(
+        mod,
+        hSession,
+        softhsm.CKM_LMS,
+        lmsResult!.pubHandle,
+        lmsMsg,
+        lmsSig!
+      )
+    })
+  } else if (algoName.startsWith('XMSS-SHA2')) {
+    // paramSet=1 (XMSS-SHA2_10_256, H=10) — H=20 keygen (~30s) is impractical in-browser
+    let xmssResult: ReturnType<typeof softhsm.hsm_generateXMSSKeyPair>
+    keyGenMs = timeMs(() => {
+      xmssResult = softhsm.hsm_generateXMSSKeyPair(mod, hSession, 1, true)
+    })
+    publicKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, xmssResult!.pubHandle).length
+    privateKeyBytes = softhsm.hsm_extractKeyValue(mod, hSession, xmssResult!.privHandle).length
+    const xmssMsg = new Uint8Array(32)
+    crypto.getRandomValues(xmssMsg)
+    let xmssSig: Uint8Array
+    signEncapsMs = timeMs(() => {
+      xmssSig = softhsm.hsm_statefulSignBytes(
+        mod,
+        hSession,
+        softhsm.CKM_XMSS,
+        xmssResult!.privHandle,
+        xmssMsg
+      )
+    })
+    sigCiphertextBytes = xmssSig!.length
+    verifyDecapsMs = timeMs(() => {
+      softhsm.hsm_statefulVerifyBytes(
+        mod,
+        hSession,
+        softhsm.CKM_XMSS,
+        xmssResult!.pubHandle,
+        xmssMsg,
+        xmssSig!
+      )
+    })
   }
 
   return {
@@ -247,7 +470,7 @@ async function benchmarkLiboqs(algoName: string): Promise<BenchmarkResult> {
       sharedSecretBytes: encResult!.sharedKey.length,
     }
   } else {
-    // Signature algorithms: FN-DSA (Falcon), SLH-DSA
+    // Signature algorithms: FN-DSA (Falcon)
     const sig = await import('../../wasm/liboqs_sig')
     let keys: Awaited<ReturnType<typeof sig.generateKey>>
     const keyGenMs = await timeMsAsync(async () => {
