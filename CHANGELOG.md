@@ -6,23 +6,47 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [3.3.6] - 2026-04-14
+## [3.3.7] - 2026-04-14
 
-Classical algorithm counterparts now appear automatically alongside PQC algorithms in the
-Algorithm Comparison benchmark — when you add ML-KEM-768 to the comparison panel, its classical
-predecessor (ECDH P-256) runs in the same benchmark so you can see the performance difference
-side by side. softhsmv3 Rust engine upgraded to v0.4.23.
+Algorithm comparison on the Transition Guide tab now works the way it should: selecting a row
+(e.g. **RSA 2048-bit → ML-KEM-512**) adds **both** sides to the comparison panel, so picking
+three rows gives you RSA-2048/3072/4096 alongside ML-KEM-512/768/1024 in a single benchmark
+view. ECDH P-384 benchmark failures are fixed by routing it to WebCrypto.
 
 ### Added
 
-- **Classical counterpart benchmarking** (`AlgorithmsView.tsx`, `AlgorithmComparisonPanel.tsx`)
-  — when PQC algorithms are loaded into the comparison panel, their classical counterparts
-  (from the algorithm transition table) are automatically resolved and included in the
-  benchmark. Each column and benchmark row is labelled **classical** (muted) or **pqc**
-  (success-green) so the comparison is immediately readable. Deduplication ensures a classical
-  algorithm is shown at most once even when multiple PQC algorithms replace the same predecessor.
-  `resolveClassicalDetailName()` bridges the transition-table display names (`ECDH (P-256)`,
-  `RSA-PSS`) to the exact `AlgorithmDetail.name` values used in the benchmark engine.
+- **Pair-compare from Transition Guide** (`AlgorithmsView.tsx`, `AlgorithmComparison.tsx`)
+  — clicking the compare icon on a transition row now adds both the classical algorithm
+  (e.g. `RSA-2048`) and its PQC replacement (e.g. `ML-KEM-512`) to the comparison panel as a
+  pair. `resolveClassicalAlgoName()` maps transition CSV fields (`RSA` + `2048-bit`) to the
+  exact `AlgorithmDetail.name` used by the benchmark engine. Maximum raised from 3 → 6 to
+  accommodate up to 3 classical+PQC pairs. The auto-baseline is suppressed when classical
+  algorithms are already present in the selection.
+
+### Fixed
+
+- **ECDH P-384 benchmark** (`algorithmEngineResolver.ts`) — `ECDH P-384` re-routed from
+  softhsm to WebCrypto; the Rust PKCS#11 engine fails at runtime for P-384 derive operations
+  causing all 10 benchmark runs to error. `ECDH P-256` keeps the softhsm path; P-384 and
+  P-521 use WebCrypto which handles both correctly.
+- **Comparison panel shows only user-selected algorithms** (`AlgorithmComparisonPanel.tsx`,
+  `AlgorithmsView.tsx`) — removed the auto-injection of classical counterparts that was
+  silently adding extra columns the user did not select. The panel now contains exactly the
+  algorithms the user chose.
+
+## [3.3.6] - 2026-04-14
+
+softhsmv3 Rust engine upgraded to v0.4.23. Algorithm comparison panel adds **classical** /
+**pqc** / **baseline** column labels so the benchmark table is immediately readable without
+needing to know each algorithm's category.
+
+### Added
+
+- **Classical / PQC / baseline column labels** (`AlgorithmComparisonPanel.tsx`)
+  — each column header is annotated with a subtle badge (`classical`, `pqc`, or `baseline`)
+  using the `isClassical()` helper from `pqcAlgorithmsData.ts`. The baseline column renders
+  in `text-primary`; classical columns in `text-muted-foreground`; PQC columns in
+  `text-foreground`.
 
 ### Changed
 
