@@ -2,7 +2,11 @@
 import { Fragment, useState, useCallback, useMemo } from 'react'
 import { X, Loader2, Play, AlertTriangle, ChevronRight } from 'lucide-react'
 import { Button } from '../ui/button'
-import { type AlgorithmDetail, getCryptoFamilyColor } from '../../data/pqcAlgorithmsData'
+import {
+  type AlgorithmDetail,
+  getCryptoFamilyColor,
+  isClassical,
+} from '../../data/pqcAlgorithmsData'
 import {
   resolveEngine,
   getEngineLabel,
@@ -79,6 +83,7 @@ function getCellHighlight(
 interface AlgorithmComparisonPanelProps {
   algorithms: AlgorithmDetail[]
   baseline: AlgorithmDetail | null
+  classicalAlgos?: AlgorithmDetail[]
   activeTab: 'transition' | 'detailed'
   onClose: () => void
 }
@@ -86,11 +91,30 @@ interface AlgorithmComparisonPanelProps {
 export function AlgorithmComparisonPanel({
   algorithms,
   baseline,
+  classicalAlgos,
   onClose,
 }: AlgorithmComparisonPanelProps) {
   if (algorithms.length < 2) return null
 
-  const allAlgos = baseline ? [baseline, ...algorithms] : algorithms
+  // Build deduplicated allAlgos: fixed baseline → additional classical counterparts → PQC algos
+  const seen = new Set<string>()
+  const allAlgos: AlgorithmDetail[] = []
+  if (baseline) {
+    seen.add(baseline.name)
+    allAlgos.push(baseline)
+  }
+  for (const ca of classicalAlgos ?? []) {
+    if (!seen.has(ca.name)) {
+      seen.add(ca.name)
+      allAlgos.push(ca)
+    }
+  }
+  for (const a of algorithms) {
+    if (!seen.has(a.name)) {
+      seen.add(a.name)
+      allAlgos.push(a)
+    }
+  }
 
   return (
     <div className="glass-panel p-4 md:p-6 animate-fade-in">
@@ -113,22 +137,40 @@ export function AlgorithmComparisonPanel({
               <th className="text-left px-3 py-2 text-xs font-medium text-muted-foreground uppercase tracking-wider w-40">
                 Attribute
               </th>
-              {allAlgos.map((a, i) => (
-                <th
-                  key={a.name}
-                  className={clsx(
-                    'text-left px-3 py-2 text-xs font-semibold',
-                    i === 0 && baseline ? 'text-primary' : 'text-foreground'
-                  )}
-                >
-                  {a.name}
-                  {i === 0 && baseline && (
-                    <span className="ml-1 text-[10px] font-medium text-primary/70 uppercase">
-                      baseline
-                    </span>
-                  )}
-                </th>
-              ))}
+              {allAlgos.map((a) => {
+                const isBase = baseline?.name === a.name
+                const isClassicalAlgo = isClassical(a)
+                return (
+                  <th
+                    key={a.name}
+                    className={clsx(
+                      'text-left px-3 py-2 text-xs font-semibold',
+                      isBase
+                        ? 'text-primary'
+                        : isClassicalAlgo
+                          ? 'text-muted-foreground'
+                          : 'text-foreground'
+                    )}
+                  >
+                    {a.name}
+                    {isBase && (
+                      <span className="ml-1 text-[10px] font-medium text-primary/70 uppercase">
+                        baseline
+                      </span>
+                    )}
+                    {!isBase && isClassicalAlgo && (
+                      <span className="ml-1 text-[10px] font-medium text-muted-foreground/70 uppercase">
+                        classical
+                      </span>
+                    )}
+                    {!isClassicalAlgo && (
+                      <span className="ml-1 text-[10px] font-medium text-status-success/70 uppercase">
+                        pqc
+                      </span>
+                    )}
+                  </th>
+                )
+              })}
             </tr>
           </thead>
           <tbody>
@@ -213,6 +255,10 @@ function BenchmarkSection({
   algorithms: AlgorithmDetail[]
   baseline: AlgorithmDetail | null
 }) {
+  const classicalNameSet = useMemo(
+    () => new Set(algorithms.filter((a) => isClassical(a)).map((a) => a.name)),
+    [algorithms]
+  )
   const [opsCount, setOpsCount] = useState(1)
   const [running, setRunning] = useState(false)
   const [progress, setProgress] = useState('')
@@ -376,6 +422,7 @@ function BenchmarkSection({
               {opsCount === 1
                 ? runs.map((run, i) => {
                     const isBaseline = baseline && run.algoName === baseline.name
+                    const isClassicalRun = classicalNameSet.has(run.algoName)
                     return (
                       <tr
                         key={`${run.algoName}-${run.runIndex}`}
@@ -388,13 +435,27 @@ function BenchmarkSection({
                         <td
                           className={clsx(
                             'px-3 py-2 text-xs font-medium',
-                            isBaseline && 'text-primary'
+                            isBaseline
+                              ? 'text-primary'
+                              : isClassicalRun
+                                ? 'text-muted-foreground'
+                                : 'text-foreground'
                           )}
                         >
                           {run.algoName}
                           {isBaseline && (
                             <span className="ml-1 text-[10px] text-primary/70 uppercase">
                               baseline
+                            </span>
+                          )}
+                          {!isBaseline && isClassicalRun && (
+                            <span className="ml-1 text-[10px] text-muted-foreground/60 uppercase">
+                              classical
+                            </span>
+                          )}
+                          {!isClassicalRun && (
+                            <span className="ml-1 text-[10px] text-status-success/60 uppercase">
+                              pqc
                             </span>
                           )}
                         </td>
@@ -433,6 +494,7 @@ function BenchmarkSection({
                   })
                 : summaries.map((summary) => {
                     const isBaseline = baseline && summary.algoName === baseline.name
+                    const isClassicalSummary = classicalNameSet.has(summary.algoName)
                     const isExpanded = expandedAlgos.has(summary.algoName)
                     return (
                       <Fragment key={summary.algoName}>
@@ -456,13 +518,27 @@ function BenchmarkSection({
                           <td
                             className={clsx(
                               'px-3 py-2 text-xs font-medium',
-                              isBaseline && 'text-primary'
+                              isBaseline
+                                ? 'text-primary'
+                                : isClassicalSummary
+                                  ? 'text-muted-foreground'
+                                  : 'text-foreground'
                             )}
                           >
                             {summary.algoName}
                             {isBaseline && (
                               <span className="ml-1 text-[10px] text-primary/70 uppercase">
                                 baseline
+                              </span>
+                            )}
+                            {!isBaseline && isClassicalSummary && (
+                              <span className="ml-1 text-[10px] text-muted-foreground/60 uppercase">
+                                classical
+                              </span>
+                            )}
+                            {!isClassicalSummary && (
+                              <span className="ml-1 text-[10px] text-status-success/60 uppercase">
+                                pqc
                               </span>
                             )}
                           </td>

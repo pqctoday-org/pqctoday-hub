@@ -22,7 +22,7 @@ export type { SoftHSMModule }
 const _WASM_VERSION = typeof __WASM_HASH__ !== 'undefined' ? __WASM_HASH__ : Date.now().toString()
 
 /** Semantic version of the bundled SoftHSMv3 WASM build (pqctoday fork). */
-export const SOFTHSM_PRODUCT_VERSION = '0.4.22'
+export const SOFTHSM_PRODUCT_VERSION = '0.4.23'
 import { buildInspect } from './pkcs11Inspect'
 export type {
   Pkcs11LogInspect,
