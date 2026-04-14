@@ -6,6 +6,51 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.6] - 2026-04-14
+
+Classical algorithm counterparts now appear automatically alongside PQC algorithms in the
+Algorithm Comparison benchmark — when you add ML-KEM-768 to the comparison panel, its classical
+predecessor (ECDH P-256) runs in the same benchmark so you can see the performance difference
+side by side. softhsmv3 Rust engine upgraded to v0.4.23.
+
+### Added
+
+- **Classical counterpart benchmarking** (`AlgorithmsView.tsx`, `AlgorithmComparisonPanel.tsx`)
+  — when PQC algorithms are loaded into the comparison panel, their classical counterparts
+  (from the algorithm transition table) are automatically resolved and included in the
+  benchmark. Each column and benchmark row is labelled **classical** (muted) or **pqc**
+  (success-green) so the comparison is immediately readable. Deduplication ensures a classical
+  algorithm is shown at most once even when multiple PQC algorithms replace the same predecessor.
+  `resolveClassicalDetailName()` bridges the transition-table display names (`ECDH (P-256)`,
+  `RSA-PSS`) to the exact `AlgorithmDetail.name` values used in the benchmark engine.
+
+### Changed
+
+- **softhsmv3 Rust engine v0.4.23** — compile-warning cleanup; removes orphaned imports from
+  `handlers.rs`, `ffi.rs`, and `bip32.rs`. No functional change to the WASM binary or API.
+  (`src/wasm/softhsmrustv3_bg.wasm`, `softhsm.ts`, `SbomSection.tsx`)
+- **softhsmv3 Rust engine v0.4.22** (integrated prior release) — adds full ECDSA/ECDH P-521
+  support via the `p521` crate; EdDSA input validation hardened so malformed keys return an
+  error instead of panicking in WASM.
+
+### Fixed
+
+- **`__wbg_get_memory` WASM shim** (`softhsmrustv3_bg.js`) — wasm-bindgen 0.2.117+ stopped
+  auto-generating this export; the Rust-side workaround introduced a recursive call that caused
+  a `TypeError` at runtime. Replaced with a clean JS shim: `export function __wbg_get_memory()
+{ return wasm.memory; }` appended manually after each `wasm-pack` rebuild. The shim is
+  documented with a comment in `_bg.js` so future rebuilds know to restore it.
+- **ProofModal centering** (`SoftwareTable.tsx`) — modal appeared at top of viewport in standard
+  mode because the dialog was a sibling of the backdrop (not a child). Restructured to the
+  canonical pattern: `backdrop → centering wrapper → FocusLock → dialog`. `max-h-[85dvh]`
+  replaces static `vh` for correct sizing on mobile with dynamic address bar.
+- **ComplianceDetailPopover centering** (`ComplianceDetailPopover.tsx`) — same mis-structured
+  backdrop/dialog hierarchy. Rebuilt with backdrop → centering wrapper → FocusLock → dialog;
+  `FocusLock` added for proper focus trap (previously manual focus only). `max-h-[85dvh]`.
+- **Timeline popover dvh heights** (`GanttDetailPopover.tsx`,
+  `TimelineDocumentDetailPopover.tsx`) — `max-h-[70vh]` / `max-h-[85vh]` updated to `dvh`
+  equivalents so the popovers account for the mobile browser address bar.
+
 ## [3.3.5] - 2026-04-13
 
 Algorithm benchmarks now run through the softhsmv3 Rust PKCS#11 engine for the full
