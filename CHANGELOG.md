@@ -6,365 +6,233 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
-## [3.3.7] - 2026-04-14
+## [3.3.7] - April 14, 2026
 
-Algorithm comparison on the Transition Guide tab now works the way it should: selecting a row
-(e.g. **RSA 2048-bit → ML-KEM-512**) adds **both** sides to the comparison panel, so picking
-three rows gives you RSA-2048/3072/4096 alongside ML-KEM-512/768/1024 in a single benchmark
-view. ECDH P-384 benchmark failures are fixed by routing it to WebCrypto.
-
-### Added
-
-- **Pair-compare from Transition Guide** (`AlgorithmsView.tsx`, `AlgorithmComparison.tsx`)
-  — clicking the compare icon on a transition row now adds both the classical algorithm
-  (e.g. `RSA-2048`) and its PQC replacement (e.g. `ML-KEM-512`) to the comparison panel as a
-  pair. `resolveClassicalAlgoName()` maps transition CSV fields (`RSA` + `2048-bit`) to the
-  exact `AlgorithmDetail.name` used by the benchmark engine. Maximum raised from 3 → 6 to
-  accommodate up to 3 classical+PQC pairs. The auto-baseline is suppressed when classical
-  algorithms are already present in the selection.
-
-### Fixed
-
-- **ECDH P-384 benchmark** (`algorithmEngineResolver.ts`) — `ECDH P-384` re-routed from
-  softhsm to WebCrypto; the Rust PKCS#11 engine fails at runtime for P-384 derive operations
-  causing all 10 benchmark runs to error. `ECDH P-256` keeps the softhsm path; P-384 and
-  P-521 use WebCrypto which handles both correctly.
-- **Comparison panel shows only user-selected algorithms** (`AlgorithmComparisonPanel.tsx`,
-  `AlgorithmsView.tsx`) — removed the auto-injection of classical counterparts that was
-  silently adding extra columns the user did not select. The panel now contains exactly the
-  algorithms the user chose.
-
-## [3.3.6] - 2026-04-14
-
-softhsmv3 Rust engine upgraded to v0.4.23. Algorithm comparison panel adds **classical** /
-**pqc** / **baseline** column labels so the benchmark table is immediately readable without
-needing to know each algorithm's category.
+Picking a row from the Transition Guide now adds both the classical algorithm and its PQC
+replacement to the comparison panel in one click — select three RSA rows to benchmark
+RSA-2048/3072/4096 alongside ML-KEM-512/768/1024 all at once.
 
 ### Added
 
-- **Classical / PQC / baseline column labels** (`AlgorithmComparisonPanel.tsx`)
-  — each column header is annotated with a subtle badge (`classical`, `pqc`, or `baseline`)
-  using the `isClassical()` helper from `pqcAlgorithmsData.ts`. The baseline column renders
-  in `text-primary`; classical columns in `text-muted-foreground`; PQC columns in
-  `text-foreground`.
-
-### Changed
-
-- **softhsmv3 Rust engine v0.4.23** — compile-warning cleanup; removes orphaned imports from
-  `handlers.rs`, `ffi.rs`, and `bip32.rs`. No functional change to the WASM binary or API.
-  (`src/wasm/softhsmrustv3_bg.wasm`, `softhsm.ts`, `SbomSection.tsx`)
-- **softhsmv3 Rust engine v0.4.22** (integrated prior release) — adds full ECDSA/ECDH P-521
-  support via the `p521` crate; EdDSA input validation hardened so malformed keys return an
-  error instead of panicking in WASM.
+- **Compare classical and PQC together from the Transition Guide** — clicking the compare icon
+  on any row (e.g. RSA 2048-bit → ML-KEM-512) adds both algorithms to the comparison at once.
+  Select up to three rows to compare up to six algorithms simultaneously.
 
 ### Fixed
 
-- **`__wbg_get_memory` WASM shim** (`softhsmrustv3_bg.js`) — wasm-bindgen 0.2.117+ stopped
-  auto-generating this export; the Rust-side workaround introduced a recursive call that caused
-  a `TypeError` at runtime. Replaced with a clean JS shim: `export function __wbg_get_memory()
-{ return wasm.memory; }` appended manually after each `wasm-pack` rebuild. The shim is
-  documented with a comment in `_bg.js` so future rebuilds know to restore it.
-- **ProofModal centering** (`SoftwareTable.tsx`) — modal appeared at top of viewport in standard
-  mode because the dialog was a sibling of the backdrop (not a child). Restructured to the
-  canonical pattern: `backdrop → centering wrapper → FocusLock → dialog`. `max-h-[85dvh]`
-  replaces static `vh` for correct sizing on mobile with dynamic address bar.
-- **ComplianceDetailPopover centering** (`ComplianceDetailPopover.tsx`) — same mis-structured
-  backdrop/dialog hierarchy. Rebuilt with backdrop → centering wrapper → FocusLock → dialog;
-  `FocusLock` added for proper focus trap (previously manual focus only). `max-h-[85dvh]`.
-- **Timeline popover dvh heights** (`GanttDetailPopover.tsx`,
-  `TimelineDocumentDetailPopover.tsx`) — `max-h-[70vh]` / `max-h-[85vh]` updated to `dvh`
-  equivalents so the popovers account for the mobile browser address bar.
+- **ECDH P-384 benchmark now produces results** — previously all 10 runs would fail silently,
+  showing dashes for every metric.
+- **Comparison panel shows only what you selected** — extra classical algorithms that appeared
+  automatically without being chosen have been removed.
 
-## [3.3.5] - 2026-04-13
+## [3.3.6] - April 14, 2026
 
-Algorithm benchmarks now run through the softhsmv3 Rust PKCS#11 engine for the full
-cryptographic portfolio — SLH-DSA, RSA, ECDSA, Ed25519, ECDH, X25519, X448, LMS, and XMSS
-join ML-KEM and ML-DSA under the same measured PKCS#11 call path. Timeline popovers gain
-backdrop overlays, FocusLock, and proper ARIA dialog roles.
-
-### Changed
-
-- **Algorithm benchmark engine** (`algorithmEngineResolver.ts`) — engine priority updated to
-  softhsmv3 Rust → liboqs → WebCrypto → @noble. All algorithms supported by the Rust engine
-  now route there for live benchmarking:
-  - **SLH-DSA** (all 12 param sets) — previously routed to liboqs; now benchmarked via
-    `hsm_generateSLHDSAKeyPair` / `hsm_slhdsaSign` / `hsm_slhdsaVerify`
-  - **RSA** (2048/3072/4096) — previously WebCrypto; now via `hsm_generateRSAKeyPair` /
-    `hsm_rsaSign` / `hsm_rsaVerify`
-  - **ECDSA P-256/P-384** — previously WebCrypto; now via `hsm_generateECKeyPair` /
-    `hsm_ecdsaSign` / `hsm_ecdsaVerify`
-  - **Ed25519** — previously WebCrypto; now via `hsm_generateEdDSAKeyPair` /
-    `hsm_eddsaSign` / `hsm_eddsaVerify`
-  - **ECDH P-256/P-384** — previously WebCrypto; now via `hsm_generateECKeyPair` /
-    `hsm_ecdhDerive`
-  - **X25519 / X448** — X448 was previously NOT_BENCHMARKABLE; both now benchmarked via
-    `hsm_generateECKeyPair` (Montgomery curves) / `hsm_ecdhDerive`
-  - **LMS-SHA256 / XMSS-SHA2** — previously returned null (no engine); now via
-    `hsm_generateLMSKeyPair` / `hsm_generateXMSSKeyPair` / `hsm_statefulSignBytes` /
-    `hsm_statefulVerifyBytes` (uses H5 for LMS, paramSet=1/H10 for XMSS to keep keygen
-    < 1s in-browser)
-  - **ECDSA P-521 / ECDH P-521** — Rust engine does not support P-521; remain on WebCrypto
-
-### Fixed
-
-- **Timeline Gantt popover — accessibility and positioning** (`GanttDetailPopover.tsx`) —
-  added `bg-black/60` backdrop overlay, `FocusLock` trap, `role="dialog"` / `aria-modal` on
-  the panel, and centered positioning via `fixed inset-0 flex items-center justify-center`
-  (standalone mode) instead of absolute coordinate injection. Embed mode retains positional
-  z-index behavior.
-- **Timeline document popover — accessibility and positioning** (`TimelineDocumentDetailPopover.tsx`) —
-  same backdrop + centering treatment as GanttDetailPopover; FocusLock was already present,
-  now wrapped with backdrop and centering wrapper.
-
-### Data Sources
-
-- **Catalog enrichments `_r3`** (`catalog_doc_enrichments_04132026_r3.md`) — 19 alternate-proof
-  products enriched via qwen3.5:27b using newly downloaded alternate source URLs. Top-scoring:
-  Microsoft RDS (18/18), NCSC UK PQC Migration Timelines (18/18), Brave Browser (19/18),
-  GlobalSign DSS (17/18), Thales Luna T-Series HSM (17/18), Palo Alto GlobalProtect (17/18).
-  RAG corpus: 6,502 → 6,521 chunks.
-- **Catalog CSV** (`pqc_product_catalog_04132026.csv`, 729 rows) — +2 products:
-  IBM z16 Crypto Express 8S (CEX8S HSM), AWS Certificate Manager.
-- **Threats CSV** (`quantum_threats_hsm_industries_04132026.csv`, 105 rows) — +7 threats:
-  CROSS-014 (AES-128 Grover attack), CROSS-015 (SHA-256 halved collision resistance),
-  CROSS-016 (PRNG quantum entropy), CROSS-017 (PQC side-channel timing/power analysis),
-  CROSS-018 (lattice BKZ cryptanalysis advances), HSM-001 (fault injection on PQC keygen),
-  IOT-005 (resource-constrained PQC deployment).
-- **Timeline CSV** (`timeline_04132026.csv`, 215 rows) — +2 entries: Brazil ITI Instrução
-  Normativa n° 35 (ML-DSA/ML-KEM federal mandate), ITU-T X.1811.
-- **Library CSV** (`library_04132026_r1.csv`, 437 rows) — +1 entry:
-  Google-QuantumAI-EC-Crypto-Quantum-2026 (Securing Elliptic Curve Cryptocurrencies against
-  Quantum Attacks, arXiv 2603.28846).
-
-## [3.3.4] - 2026-04-13
-
-AI-enriched analysis now covers 535 products in the Migrate catalog — the largest single
-enrichment batch to date. RAG corpus grows to 6,468 chunks with 535 new catalog entries.
-
-### Data Sources
-
-- **Catalog enrichments** (`catalog_doc_enrichments_04132026.md`) — 535 products enriched via
-  AI analysis of their published proof documents (press releases, product pages, whitepapers).
-  19 structured dimensions per product: PQC algorithms, hybrid approaches, security levels,
-  migration timeline, compliance frameworks, and more.
-- **Refreshed enrichments** for library (315 entries), timeline (213 entries), and threats
-  (80 entries) — all updated to the 19-dimension schema.
-- **RAG corpus**: grows to 6,468 chunks (+535 catalog document-enrichment chunks, catalog is
-  now the 4th enrichment collection alongside library, timeline, and threats).
+The algorithm comparison table now labels each column so you can tell at a glance which
+algorithms are classical, which are PQC, and which is the reference baseline. HSM engine
+upgraded to softhsmv3 v0.4.23.
 
 ### Added
 
-- **`catalogEnrichmentData.ts`** — new loader that auto-discovers `catalog_doc_enrichments_*.md`
-  files via `import.meta.glob`, mirrors the pattern of `libraryEnrichmentData.ts`.
-- **`generate-rag-corpus.ts`** — `processDocumentEnrichments()` now emits catalog chunks with
-  `source: 'document-enrichment'` and deep-links to `/migrate`.
+- **Classical / PQC / baseline labels in the comparison panel** — each column header now
+  carries a small badge identifying the algorithm's role, making benchmark results immediately
+  readable without prior knowledge of each algorithm's category.
 
 ### Changed
 
-- **Migrate catalog "Enriched" badge**: previously appeared on ~45 products with legacy
-  extraction data; now appears on **535 products** that have catalog enrichments, regardless
-  of whether legacy extraction data is also present.
+- **HSM engine updated to softhsmv3 v0.4.23** — internal maintenance release; no change to
+  functionality.
+- **HSM engine v0.4.22 improvements (included)** — adds ECDSA and ECDH support for P-521
+  curves; EdDSA key validation hardened to return an error instead of crashing on malformed input.
 
 ### Fixed
 
-- **Stack view — accordion collapse when layer is expanded** (`InfrastructureStack`, `LearnTrackStack`) —
-  when a layer/track was expanded (product table or module list open), the remaining faded layers stayed
-  fully rendered and visually competed with the expanded content. They now collapse to `max-h-0` while
-  any content is open, restoring focus to the active layer. When no layer is expanded, all layers are
-  visible at reduced opacity for stack context.
-- **Stack view — dark mode contrast inversion** (`src/styles/index.css`) — `--stack-mix-base` was
-  `hsl(230,35%,13%)` (L13%), making inactive layer cards lighter than the active `bg-card` (L7%).
-  The hierarchy was inverted: inactive layers appeared to float above active ones. Fixed by changing
-  to `hsl(230,35%,5%)` — inactive cards are now darker than active, restoring correct depth cues.
-  Same fix applied to the embed dark mode block.
-- **Stack view — active layer invisible in dark mode** (`InfrastructureStack`, `LearnTrackStack`) —
-  the active layer relied on `bg-card` which matched the page background in dark mode (both L7%),
-  making it visually indistinguishable. Active layers now receive an explicit
-  `color-mix(in srgb, layerColor 22%, --stack-mix-base)` background, producing a clearly tinted,
-  elevated surface.
-- **Stack view — CISA layer color fallback** (`InfrastructureStack`) — when rendering the CISA
-  layer set, `resolvedColors` only mapped standard `LAYERS` IDs; CISA layer IDs returned `undefined`,
-  producing invalid CSS in `color-mix()`. Fixed with `?? layer.colorFallback`.
-- **Stack view — minimap dots rendered as empty boxes** (`InfrastructureStack`) — minimap dots used
-  `<Button variant="ghost">` whose default size variant (`h-10 px-4 py-2`) overrode the `w-3 h-3`
-  sizing. Fixed by adding `p-0 min-h-0 min-w-0` to suppress the default padding and min-size.
-- **Stack view — minimap hidden in embed mode** (`src/styles/index.css`) — the minimap rail
-  (`position: absolute; right: -40px`) could overflow embedded iframe boundaries. Hidden via
-  `[data-embed] .stack-minimap { display: none !important }`.
-- **`public/cc/` gitignored** — 44 Common Criteria evaluation PDFs that were accidentally
-  committed are now removed from git and gitignored. Files remain on disk locally; they are
-  generated artifacts from `scrape-compliance.ts` and should not be in the repository.
+- **Certificate and compliance detail pop-ups now open centered on screen** — on mobile devices
+  these were appearing at the top of the viewport; they now open centered and resize correctly
+  when the browser address bar is visible.
+- **Timeline pop-ups no longer get cut off on mobile** — pop-up height now accounts for the
+  dynamic browser address bar on iOS and Android.
 
-## [3.3.3] - 2026-04-13
+## [3.3.5] - April 13, 2026
 
-Mobile UX fixes and algorithm comparison improvements.
+The algorithm benchmark now covers the full PQC and classical portfolio — SLH-DSA, RSA, ECDSA,
+Ed25519, ECDH, X25519, X448, LMS, and XMSS all run through the in-browser HSM engine alongside
+ML-KEM and ML-DSA. X448 was not benchmarkable at all before this release.
+
+### Changed
+
+- **Benchmark engine extended to the full algorithm portfolio** — the following now produce live
+  timings measured by the in-browser HSM rather than reference figures: SLH-DSA (all 12
+  parameter sets), RSA (2048/3072/4096-bit), ECDSA P-256/P-384, Ed25519, ECDH P-256/P-384,
+  X25519, X448, LMS-SHA256, and XMSS-SHA2. ECDSA P-521 and ECDH P-521 continue to use the
+  browser's built-in WebCrypto.
 
 ### Fixed
 
-- **Persona avatar detached on mobile** — the avatar card in the completed personalization state
-  was rendered inside a `<Button>` whose default size variant enforced `h-10` (40px), causing the
-  ~120px avatar tile to overflow its layout bounds and appear visually detached from the page.
-  Fixed by adding `h-auto p-0` to override the default height and padding.
-- **What's New modal off-screen on mobile** — the modal was positioned with
-  `fixed; top: 50%; transform: translate(-50%, -50%)`, anchoring it to the layout viewport rather
-  than the visual viewport. On iOS/Android with a visible browser URL bar the modal could drift
-  partially off-screen, making the close button unreachable. Restructured to use the same
-  `fixed inset-0 flex items-center justify-center p-4` centering pattern used by all other modals;
-  embed mode (click-relative `position: absolute`) is unchanged.
-- **Airplane Mode toast clipping on narrow screens** — `left-1/2 -translate-x-1/2` centering
-  could clip at viewport edges on 320 px devices. Replaced with `left-4 right-4` + `mx-auto` on
-  the inner container.
-- **Algorithm comparison — Composite and Hybrid types** — composite signatures (`Composite
-Signature`) were excluded from the compare feature; hybrid KEM variants (`Composite KEM`,
-  `Hybrid KEM (HPKE)`, `Hybrid KEM with Access Control`) did not show the compare button. All
-  are now included. Icon column alignment fixed with a spacer for non-comparable rows. Active
-  compare button hover state corrected.
+- **Timeline event pop-ups now have a proper backdrop** — clicking outside the pop-up closes it;
+  focus is trapped inside while it is open.
 
-## [3.3.2] - 2026-04-12
+### Data
 
-PKCS#11 call log now shows the actual bytes — every request parameter and response value is
-inspectable across all HSM Playground panels and ACVP tests.
+- 19 additional migration catalog products enriched with AI analysis.
+- New products added: IBM z16 Crypto Express 8S HSM, AWS Certificate Manager.
+- 7 new threats added: Grover attacks on AES-128, quantum halving of SHA-256 collision
+  resistance, PRNG quantum entropy risks, PQC timing/power side-channel attacks, lattice
+  cryptanalysis advances, fault injection on PQC key generation, and resource-constrained
+  PQC deployment.
+- 2 new timeline entries: Brazil's ITI federal mandate for ML-DSA and ML-KEM, ITU-T X.1811.
+- New library entry: Google/QuantumAI paper on securing elliptic curve cryptography against
+  quantum attacks.
+
+## [3.3.4] - April 13, 2026
+
+AI-powered analysis now covers all 535 products in the Migration catalog. Each product entry
+surfaces 19 dimensions of PQC readiness — algorithms in use, hybrid approaches, migration
+timeline, compliance alignment, and more.
+
+### Data
+
+- **535 migration catalog products enriched** — AI analysis of published product documentation
+  for every product in the catalog, covering PQC algorithms, hybrid approaches, security levels,
+  migration timelines, and regulatory alignment.
+- Library (315 entries), timeline (213 entries), and threat (80 entries) enrichments all
+  refreshed to the current 19-dimension analysis schema.
+
+### Changed
+
+- **"Enriched" badge now reflects current AI analysis** — the badge previously appeared on
+  ~45 products with legacy data; it now correctly marks all 535 products with current enrichments.
+
+### Fixed
+
+- **Migration Planner stack view** — inactive layers now collapse when one layer is expanded,
+  keeping focus on the active content instead of showing everything at once.
+- **Stack view dark-mode contrast** — inactive layers were appearing lighter than the active
+  layer, making the depth hierarchy look inverted. Active layers are now clearly elevated.
+- **Stack view active layer visibility in dark mode** — the active layer was blending into the
+  page background; it now has a clearly visible tinted surface.
+- **Stack minimap dots** — navigation dots were rendering as oversized empty boxes; they are
+  now the correct compact size.
+- **Stack minimap hidden in embedded widgets** — the minimap no longer overflows the iframe
+  boundary in embed contexts.
+
+## [3.3.3] - April 13, 2026
+
+Mobile fixes and algorithm comparison improvements.
+
+### Fixed
+
+- **Persona avatar displayed correctly on mobile** — the avatar tile was overflowing its
+  container on small screens and appearing detached from the page.
+- **"What's New" panel centers correctly on iOS and Android** — previously it could drift
+  partially off-screen when the browser address bar was visible.
+- **Update notifications no longer clip on narrow screens** — notifications stay within viewport
+  bounds on 320 px devices.
+- **Composite and Hybrid algorithm types now show the compare button** — Composite Signature,
+  Composite KEM, Hybrid KEM (HPKE), and Hybrid KEM with Access Control were missing the compare
+  icon; all are now included.
+
+## [3.3.2] - April 12, 2026
+
+Every operation in the HSM Playground now shows the exact bytes sent to and received from the
+HSM — see precisely what the PKCS#11 standard is doing at every step.
 
 ### Added
 
-- **Full parameter inspection in every HSM panel** — click the `Eye` button in any PKCS#11 call
-  log to enable inspect mode. Every log row becomes expandable: click `▶` to see exactly what
-  was sent to the HSM (mechanism name, key attribute template, input data as hex) and what came
-  back (output handles, byte lengths, signature / ciphertext / digest payloads, VALID / INVALID).
-  Previously only a handful of functions were decoded; now every function called during ACVP
-  testing and normal HSM use has full coverage, referenced to PKCS#11 v3.2:
-  - Key import / object management: `C_CreateObject`, `C_DestroyObject`, `C_FindObjects*`
-  - Mechanism discovery: `C_GetMechanismList` (lists all mechanism names), `C_GetMechanismInfo`
-  - Multi-part signing: `C_SignUpdate` (data chunk bytes), `C_SignFinal` (signature output)
-  - Multi-part digest: `C_DigestUpdate` (data chunk bytes), `C_DigestFinal` (digest output)
-  - Authenticated key wrapping: `C_WrapKeyAuthenticated`, `C_UnwrapKeyAuthenticated` (mechanism,
-    associated data, wrapped blob)
-  - Test tooling: `C_SeedRandom` (seed bytes)
+- **Full parameter inspection across all HSM panels** — click the eye icon in any call log to
+  expand individual operations and see what was sent (mechanism name, key template, input data
+  as hex) and what came back (handles, byte lengths, signature/ciphertext/digest, VALID/INVALID).
+  New coverage: key import and object management, mechanism discovery, multi-part signing and
+  digest, authenticated key wrapping, and random seed operations.
 
 ### Fixed
 
-- **Sign / Verify message inspection** — `C_SignMessage` and `C_VerifyMessage` were logging call
-  names and return codes but not the actual data: the message bytes and signature bytes were not
-  being read from memory. Both now show the full hex payload for the message being signed /
-  verified and the resulting signature, alongside the VALID / INVALID result.
-- **Key unwrap inspection** — `C_UnwrapKey` had no decoder at all; clicking the row showed
-  nothing. Now shows the mechanism, unwrapping key handle, the wrapped key blob, the key
-  attribute template, and the resulting key handle.
-- **Inspect button** — the eye icon showed as crossed-out (EyeOff) when inspect was active,
-  which looked like the feature was disabled. Now always shows the Eye icon; the button turns
-  colored when inspect is on.
+- **Sign and Verify operations now show the actual data** — previously only the call name and
+  result were shown; message bytes and signature bytes are now visible in the log.
+- **Key Unwrap operations now decode correctly** — previously showed nothing when clicked; now
+  shows the mechanism, key blob, attribute template, and resulting handle.
+- **Inspect toggle clearly shows when it is active** — the eye icon now appears highlighted
+  when inspection is turned on.
 
 ### Changed
 
-- **Inline log upgraded across all panels** — the compact 10-entry summary shown inside each
-  HSM operation panel (KEM, Sign/Verify, Symmetric, Hashing, Key Agreement, KDF, HMAC, AES,
-  AES-CTR, AES-CMAC, VPN Simulation) has been replaced with the full inspectable log, giving
-  the same parameter decode, step headers, copy, and clear controls that were previously only
-  available in the dedicated Logs tab.
+- **All HSM panels upgraded to the full inspectable log** — the condensed 10-entry summary in
+  every operation panel (KEM, Sign/Verify, Symmetric, Hashing, Key Agreement, KDF, HMAC, AES,
+  VPN Simulation) has been replaced with the same full decode view previously only available
+  in the dedicated Logs tab.
 
-## [3.3.1] - 2026-04-12
+## [3.3.1] - April 12, 2026
 
-softhsmv3 engine upgraded to 0.4.21 — 22 previously-skipped ACVP tests now pass.
+22 additional ACVP test vectors now pass.
 
 ### Changed
 
-- **softhsmv3 upgraded to 0.4.21**: Resolves 22 ACVP zero-SKIP gaps across both engines:
-  - Rust engine: SHAKE-256 N32 verifier for SP 800-208 LMS type IDs (0x0F–0x18), eliminating 20 LMS SHAKE skips
-  - C++ engine: Ed25519ph pre-hashed signing via `CKM_EDDSA_PH` (0x80001057) using `EVP_DigestSignInit_ex`
-  - C++ engine: SLH-DSA SigGen KAT converted from SKIP to active signed+verified round-trip
+- **In-browser HSM engine updated to softhsmv3 v0.4.21** — resolves 22 previously skipped
+  ACVP test vectors: 20 LMS SHAKE variants and 2 EdDSA/SLH-DSA cases.
 
-## [3.3.0] - 2026-04-12
+## [3.3.0] - April 12, 2026
 
-Role-specific learning guides, entropy workshop, expanded HSM panels, and a refreshed knowledge base.
+Role-specific exercise guides, an entropy workshop, and new dedicated panels in the HSM
+Playground.
 
 ### Added
 
-- **Role-specific exercise guides**: Persona-tailored exercises for ArchQuantumImpact, DevQuantumImpact, ExecQuantumImpact, OpsQuantumImpact, and ResearchQuantumImpact modules — each track now has hands-on tasks matched to the reader's role.
+- **Role-specific exercise guides** — hands-on tasks tailored to each persona (Architect,
+  Developer, Executive, Operations, Researcher) across five learning modules.
+- **Entropy workshop** — five interactive in-browser demos: DRBG architecture, entropy testing,
+  QRNG simulation, random number generation, and entropy source combining.
+- **Dedicated ML-KEM panel in the HSM Playground** — encapsulation and decapsulation with
+  dual-engine cross-check (Rust engine vs C++ engine running in parallel).
+- **Stateful signature panel in the HSM Playground** — LMS/HSS and SLH-DSA operations with
+  state management visualization.
+- **Operation history** — review previous cryptographic operations during any playground session.
 
-- **Entropy workshop**: Five new interactive demos covering DRBG architecture, entropy testing, QRNG simulation, random generation, and source combining — all running in-browser with no server dependency.
+### Data
 
-- **HSM KEM panel**: New `HsmKemPanel` component adds a dedicated ML-KEM encapsulation/decapsulation interface to the HSM Playground, with dual-engine cross-check (Rust ↔ C++).
+- Library and catalog data refreshed; knowledge base regenerated.
 
-- **HSM stateful panels**: New `HsmStatefulPanels` component groups LMS/HSS and SLH-DSA stateful signature operations with state management visualization.
+## [3.2.1] - April 12, 2026
 
-- **Operation history**: `HistoryButton` and `HistoryModal` components let users review previous cryptographic operations in any playground session.
-
-- **Audit tooling**: `fill-audit-gaps.py` fills gap descriptions for all audit rows; `generate-module-issues.ts` generates the module issues CSV from audit data.
-
-### Data Sources
-
-- **Library data updated**: New library CSV records (04122026) and refreshed product catalog.
-- **RAG corpus refreshed**: Knowledge base regenerated to include all new module and library content.
-
-## [3.2.1] - 2026-04-12
-
-OpenSSL WASM engine upgraded to v3.6.2 and knowledge base refreshed with updated content.
+OpenSSL engine upgraded to v3.6.2.
 
 ### Changed
 
-- **OpenSSL WASM upgraded to v3.6.2**: The in-browser OpenSSL engine (used by OpenSSL Studio,
-  Digital Assets, and all PQC algorithm demos) is now built from OpenSSL 3.6.2. This includes
-  the latest upstream fixes and improvements while preserving full ML-KEM, ML-DSA, SLH-DSA,
-  and LMS/HSS support.
+- **In-browser OpenSSL engine updated to v3.6.2** — used by OpenSSL Studio, Digital Assets,
+  and PQC algorithm demos. Full ML-KEM, ML-DSA, SLH-DSA, and LMS/HSS support preserved.
+- **Embedded widget SDK** updated to a more compact bundle for faster load times in partner
+  integrations.
 
-- **Embed SDK output updated**: The embeddable widget SDK (`sdk.js`) now ships as a compact
-  single-line bundle for faster load times in partner integrations.
+### Data
 
-### Data Sources
+- Knowledge base refreshed: 5,881 indexed chunks.
 
-- **Knowledge base refreshed**: RAG corpus regenerated with 5,881 indexed chunks — all
-  assistant answers and content search results reflect the latest data.
+## [3.2.0] - April 12, 2026
 
-## [3.2.0] - 2026-04-12
-
-Mobile platform foundation — Capacitor integration bridge and embed prerequisites that enable a native iOS/Android app without any changes to the existing web app.
+Mobile app foundation — the codebase now supports a future native iOS/Android build with zero
+impact on the web app. Changelog entries rewritten in plain language across all recent releases.
 
 ### Added
 
-- **Mobile app platform support (Capacitor)**: Eight new modules form the native integration
-  bridge, all fully dormant when running in a standard browser. No Capacitor packages need to
-  be installed for web builds — all native APIs are lazily imported and guarded by platform
-  detection.
-  - Persistent user state saved to device storage (`@capacitor/preferences`)
-  - Native share sheet integration (falls back to web Share API in browser)
-  - External links open in the system browser (Safari / Chrome) instead of the in-app WebView
-  - Android back button navigates history or exits the app at the root screen
-  - State is flushed to device storage immediately when the app is backgrounded
-  - Haptic feedback API (silent no-op in browser)
-  - Free and Pro VendorPolicy presets for the native app build
-  - Native EmbedConfig loaded from device preferences — no URL signature required
-
-- **Unified platform detection**: New `platform.ts` module exposes `isNativeApp()`,
-  `isIframeEmbed()`, and `isEmbedContext()` as the single authoritative source for runtime
-  platform checks. All previous `window.parent !== window` guards replaced.
-
-- **Immediate state flush**: `flushNow()` in the persistence layer allows state to be written
-  to storage instantly, bypassing the 5-second debounce. Triggered by the native bridge on
-  app background and by a `pqc:flush-state` DOM event.
+- **Native mobile app platform support** — an integration bridge for Capacitor is in place for
+  native iOS/Android builds. All native capabilities are completely dormant when using the web
+  app: device storage, native share sheet, system browser handoff for external links, Android
+  back-button navigation, background state saving, and haptic feedback.
+- **Unified platform detection** — one authoritative source determines whether the app is
+  running as a native app, an embedded widget, or a standard web page.
 
 ### Changed
 
-- **App boot sequence refactored**: `main.tsx` now routes through three clearly named paths —
-  Capacitor native, iframe embed, and standard web — based on platform detection. The
-  `data-platform` attribute is set on `<html>` unconditionally for CSS targeting.
-
-- **Embed persistence factory is async**: Supports lazy-loaded adapters (Capacitor) without
-  bundling native modules in web builds.
-
-- **Changelog dates are human-readable**: Dates now display as "April 12, 2026" instead of
-  ISO format. A plain-language summary paragraph is shown under each version header.
-
-- **Changelog entry titles rewritten** for v3.1.0–3.1.4: replaced developer jargon (file
-  counts, CSS class names, internal code names) with benefit-focused language that describes
-  what changed for users.
+- **Changelog dates are now human-readable** — dates appear as "April 12, 2026" rather than
+  ISO format.
+- **Changelog descriptions rewritten for plain language** — v3.0.0–3.1.4 entries describe
+  user-facing changes rather than implementation details.
+- **App startup sequence** — three clearly named boot paths: native app, embedded widget, and
+  standard web.
 
 ### Fixed
 
-- **XSS prevention in dev error display**: The embed verification error page in `main.tsx`
-  now builds the DOM with safe element creation instead of `innerHTML` template literals.
-
-- **Service worker disabled in Capacitor**: The SW auto-update loop is skipped when running
-  inside a native WebView to prevent reload-on-update crashes.
+- **Embed error page** — the verification error screen now builds its content safely.
+- **Auto-reload disabled in native WebView** — the service worker no longer triggers page
+  reloads inside the native app container.
 
 ## [3.1.4] - 2026-04-11
 
