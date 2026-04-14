@@ -22,7 +22,7 @@ export type { SoftHSMModule }
 const _WASM_VERSION = typeof __WASM_HASH__ !== 'undefined' ? __WASM_HASH__ : Date.now().toString()
 
 /** Semantic version of the bundled SoftHSMv3 WASM build (pqctoday fork). */
-export const SOFTHSM_PRODUCT_VERSION = '0.4.21'
+export const SOFTHSM_PRODUCT_VERSION = '0.4.22'
 import { buildInspect } from './pkcs11Inspect'
 export type {
   Pkcs11LogInspect,
@@ -2211,6 +2211,8 @@ const EC_OID_X25519 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6e])
 // id-X448 OID 1.3.101.111 (RFC 8410) — used for PKCS#11 v3.2 §6.7 CKA_EC_PARAMS on X448 Montgomery keys
 const EC_OID_X448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x6f])
 const EC_OID_ED448 = new Uint8Array([0x06, 0x03, 0x2b, 0x65, 0x71])
+// secp256k1 OID 1.3.132.0.10 (SEC 2 / Bitcoin) — used for ECDSA and BIP32 key derivation
+const EC_OID_SECP256K1 = new Uint8Array([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0a])
 
 // ── Additional WASM memory helpers ───────────────────────────────────────────
 
@@ -2568,6 +2570,8 @@ const ecCurveOID = (curve: string): Uint8Array => {
       return EC_OID_P384
     case 'P-521':
       return EC_OID_P521
+    case 'secp256k1':
+      return EC_OID_SECP256K1
     case 'X25519':
       return EC_OID_X25519
     case 'X448':
@@ -2575,7 +2579,7 @@ const ecCurveOID = (curve: string): Uint8Array => {
     default:
       throw new Error(
         `CKR_CURVE_NOT_SUPPORTED (0x00000140): curve '${curve}' is not recognised. ` +
-          `Supported: P-256 (Rust+C++), P-384/P-521 (C++ only), X25519/X448 (both engines).`
+          `Supported: P-256, P-384, P-521, secp256k1, X25519, X448.`
       )
   }
 }
@@ -2597,14 +2601,13 @@ const weierstrassCurveOID = (curve: string): Uint8Array => {
 
 /**
  * Generate an EC key pair.
- * - P-256: Rust + C++ engines (ECDSA + ECDH)
- * - P-384 / P-521: C++ engine only (ECDSA + ECDH); Rust returns CKR_CURVE_NOT_SUPPORTED at runtime
+ * - P-256 / P-384 / P-521 / secp256k1: Rust + C++ engines (ECDSA + ECDH)
  * - X25519 / X448: Montgomery ECDH, both engines (softhsm-wasm ≥ 0.4.3)
  */
 export const hsm_generateECKeyPair = (
   M: SoftHSMModule,
   hSession: number,
-  curve: 'P-256' | 'P-384' | 'P-521' | 'X25519' | 'X448',
+  curve: 'P-256' | 'P-384' | 'P-521' | 'secp256k1' | 'X25519' | 'X448',
   extractable = false,
   label?: string
 ): { pubHandle: number; privHandle: number } => {

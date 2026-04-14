@@ -31,6 +31,7 @@ import {
   hsm_rsaVerify,
   CKM_SHA256_RSA_PKCS_PSS,
   hsm_importECPublicKey,
+  hsm_ecdsaSign,
   hsm_ecdsaVerify,
   hsm_importMLKEMPrivateKey,
   hsm_decapsulate,
@@ -86,6 +87,7 @@ import {
   CKM_SHA512_HMAC,
   CKM_ECDSA_SHA256,
   CKM_ECDSA_SHA384,
+  CKM_ECDSA_SHA512,
   CKM_EDDSA,
   CKM_PKCS5_PBKD2,
   CKM_HKDF_DERIVE,
@@ -2422,6 +2424,216 @@ export const HsmAcvpTesting = () => {
               details: errMessage,
             })
             addLog(`[DISCREPANCY] [${eName}] [id:${id31}] LMS: ${errMessage}`)
+          }
+        }
+
+        // ── 32. ECDSA secp256k1 Functional Sign+Verify (SEC 2) ────────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA256)) {
+          addLog(`[${eName}] [SKIP] ECDSA secp256k1: mechanism not supported`)
+        } else {
+          const id32 = `ecdsa-k1-func-${eName}`
+          addLog(`[${eName}] Testing ECDSA secp256k1 Functional Sign+Verify (SEC 2)...`)
+          try {
+            const kp = hsm_generateECKeyPair(M, hSession, 'secp256k1', false)
+            regKey({
+              handle: kp.pubHandle,
+              family: 'ecdsa',
+              role: 'public',
+              label: `ACVP ECDSA secp256k1 Public (${eName})`,
+              variant: 'secp256k1',
+              engine: engineId,
+            })
+            regKey({
+              handle: kp.privHandle,
+              family: 'ecdsa',
+              role: 'private',
+              label: `ACVP ECDSA secp256k1 Private (${eName})`,
+              variant: 'secp256k1',
+              engine: engineId,
+            })
+            const msg = 'ACVP secp256k1 ECDSA-SHA256 round-trip'
+            const sig = hsm_ecdsaSign(M, hSession, kp.privHandle, msg, CKM_ECDSA_SHA256)
+            const isValid = hsm_ecdsaVerify(M, hSession, kp.pubHandle, msg, sig, CKM_ECDSA_SHA256)
+            if (isValid) {
+              newResults.push({
+                id: id32,
+                algorithm: `ECDSA secp256k1 (${eName})`,
+                testCase: 'Functional Sign+Verify',
+                referenceUrl: REF.ecdsa,
+                status: 'pass',
+                details: `sig[${sig.length}B]: ${toHex(sig, 16)}…`,
+              })
+              addLog(`[${eName}] [id:${id32}] ECDSA secp256k1: PASS | sig[${sig.length}B]`)
+            } else {
+              throw new Error('secp256k1 signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `ecdsa-k1-err-${eName}`,
+              algorithm: `ECDSA secp256k1 (${eName})`,
+              testCase: 'Functional Sign+Verify',
+              referenceUrl: REF.ecdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id32}] ECDSA secp256k1: ${errMessage}`)
+          }
+        }
+
+        // ── 33. ECDSA P-521 Functional Sign+Verify (FIPS 186-5) ───────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA512)) {
+          addLog(`[${eName}] [SKIP] ECDSA P-521: mechanism not supported`)
+        } else {
+          const id33 = `ecdsa521-func-${eName}`
+          addLog(`[${eName}] Testing ECDSA P-521 Functional Sign+Verify (FIPS 186-5)...`)
+          try {
+            const kp = hsm_generateECKeyPair(M, hSession, 'P-521', false)
+            regKey({
+              handle: kp.pubHandle,
+              family: 'ecdsa',
+              role: 'public',
+              label: `ACVP ECDSA P-521 Public (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+            regKey({
+              handle: kp.privHandle,
+              family: 'ecdsa',
+              role: 'private',
+              label: `ACVP ECDSA P-521 Private (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+            const msg = 'ACVP P-521 ECDSA-SHA512 round-trip'
+            const sig = hsm_ecdsaSign(M, hSession, kp.privHandle, msg, CKM_ECDSA_SHA512)
+            const isValid = hsm_ecdsaVerify(M, hSession, kp.pubHandle, msg, sig, CKM_ECDSA_SHA512)
+            if (isValid) {
+              newResults.push({
+                id: id33,
+                algorithm: `ECDSA P-521 (${eName})`,
+                testCase: 'Functional Sign+Verify',
+                referenceUrl: REF.ecdsa,
+                status: 'pass',
+                details: `sig[${sig.length}B]: ${toHex(sig, 16)}…`,
+              })
+              addLog(`[${eName}] [id:${id33}] ECDSA P-521: PASS | sig[${sig.length}B]`)
+            } else {
+              throw new Error('P-521 signature verification failed on own signature')
+            }
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `ecdsa521-err-${eName}`,
+              algorithm: `ECDSA P-521 (${eName})`,
+              testCase: 'Functional Sign+Verify',
+              referenceUrl: REF.ecdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id33}] ECDSA P-521: ${errMessage}`)
+          }
+        }
+
+        // ── 34. ECDH P-521 Key Agreement Round-Trip (SP 800-56A) ─────────
+        if (engine.mechs.size > 0 && !engine.mechs.has(CKM_ECDSA_SHA512)) {
+          addLog(`[${eName}] [SKIP] ECDH P-521: mechanism not supported`)
+        } else {
+          const id34 = `ecdh521-rt-${eName}`
+          addLog(`[${eName}] Testing ECDH P-521 Key Agreement Round-Trip (SP 800-56A)...`)
+          try {
+            // Generate two P-521 key pairs (derive-enabled)
+            const kpA = hsm_generateECKeyPair(M, hSession, 'P-521', true)
+            const kpB = hsm_generateECKeyPair(M, hSession, 'P-521', true)
+            regKey({
+              handle: kpA.pubHandle,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP ECDH P-521 PubKey-A (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+            regKey({
+              handle: kpA.privHandle,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP ECDH P-521 PrivKey-A (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+            regKey({
+              handle: kpB.pubHandle,
+              family: 'ecdh',
+              role: 'public',
+              label: `ACVP ECDH P-521 PubKey-B (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+            regKey({
+              handle: kpB.privHandle,
+              family: 'ecdh',
+              role: 'private',
+              label: `ACVP ECDH P-521 PrivKey-B (${eName})`,
+              variant: 'P-521',
+              engine: engineId,
+            })
+
+            // Extract DER-encoded EC points (SEC1 uncompressed)
+            const pubABytes = hsm_extractECPoint(M, hSession, kpA.pubHandle)
+            const pubBBytes = hsm_extractECPoint(M, hSession, kpB.pubHandle)
+
+            // A derives shared secret using B's public key
+            const secretHandleAB = hsm_ecdhDerive(
+              M,
+              hSession,
+              kpA.privHandle,
+              pubBBytes,
+              undefined,
+              undefined,
+              { keyLen: 66, extractable: true }
+            )
+            const secretAB = hsm_extractKeyValue(M, hSession, secretHandleAB)
+
+            // B derives shared secret using A's public key
+            const secretHandleBA = hsm_ecdhDerive(
+              M,
+              hSession,
+              kpB.privHandle,
+              pubABytes,
+              undefined,
+              undefined,
+              { keyLen: 66, extractable: true }
+            )
+            const secretBA = hsm_extractKeyValue(M, hSession, secretHandleBA)
+
+            const matches =
+              secretAB.length === secretBA.length &&
+              secretAB.every((b: number, i: number) => b === secretBA[i])
+
+            newResults.push({
+              id: id34,
+              algorithm: `ECDH P-521 (${eName})`,
+              testCase: 'Key Agreement Round-Trip',
+              referenceUrl: REF.ecdsa,
+              status: matches ? 'pass' : 'fail',
+              details: matches
+                ? `A→B and B→A derive same ${secretAB.length}B shared secret ✓ | Z=${toHex(secretAB, 8)}…`
+                : `Secrets differ: A→B=${toHex(secretAB, 8)}… B→A=${toHex(secretBA, 8)}…`,
+            })
+            addLog(
+              `[${eName}] [id:${id34}] ECDH P-521: ${matches ? 'PASS' : 'FAIL'} | Z=${toHex(secretAB, 8)}…`
+            )
+          } catch (e: unknown) {
+            const errMessage = e instanceof Error ? e.message : String(e)
+            newResults.push({
+              id: `ecdh521-rt-err-${eName}`,
+              algorithm: `ECDH P-521 (${eName})`,
+              testCase: 'Key Agreement Round-Trip',
+              referenceUrl: REF.ecdsa,
+              status: 'fail',
+              details: errMessage,
+            })
+            addLog(`[DISCREPANCY] [${eName}] [id:${id34}] ECDH P-521: ${errMessage}`)
           }
         }
       }

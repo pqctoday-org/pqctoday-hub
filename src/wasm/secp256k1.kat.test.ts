@@ -39,41 +39,20 @@ describe('SoftHSMv3 secp256k1 Known Answer Tests', () => {
     expect(Array.from(oid)).toEqual([0x06, 0x05, 0x2b, 0x81, 0x04, 0x00, 0x0a])
   })
 
-  it('Generates a secp256k1 keypair and extracts valid handles (Pending Backend Support)', () => {
-    // NOTE: This will throw CKR_CURVE_NOT_SUPPORTED until the Rust/C++ backends
-    // are rebuilt with the patches generated in artifacts/.
-    // Catching the expected failure mode to prevent CI breakage in the interim.
-    try {
-      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'derive')
-      expect(keys.pubHandle).toBeGreaterThan(0)
-      expect(keys.privHandle).toBeGreaterThan(0)
-    } catch (e: any) {
-      expect(e.message).toMatch(
-        /CKR_CURVE_NOT_SUPPORTED|CKR_ATTRIBUTE_VALUE_INVALID|C_GenerateKeyPair/i
-      )
-    }
+  it('Generates a secp256k1 keypair via softhsm Rust engine', () => {
+    const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
+    expect(keys.pubHandle).toBeGreaterThan(0)
+    expect(keys.privHandle).toBeGreaterThan(0)
   })
 
-  it('Verifies a deterministic ECDSA signature for secp256k1 (RFC 6979)', () => {
-    /*
-     * Reference vectors from RFC 6979 or Bitcoin Core:
-     * When the backend is updated, this test will explicitly call `hsm_ecdsaSign`
-     * using the imported private key, and expect `r` and `s` to exactly match.
-     */
-
+  it('Signs and verifies ECDSA-SHA256 with secp256k1', () => {
+    const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'sign')
     const msg = 'Bitcoin Transaction Data Hash Placeholder'
 
-    try {
-      const keys = hsm_generateECKeyPair(M, hSession, 'secp256k1', false, 'derive')
-      const signature = hsm_ecdsaSign(M, hSession, keys.privHandle, msg)
+    const signature = hsm_ecdsaSign(M, hSession, keys.privHandle, msg)
+    expect(signature.length).toBeGreaterThan(60) // secp256k1 raw sig ≈ 64 bytes
 
-      expect(signature.length).toBeGreaterThan(60) // rough DER ecdsa bounds
-
-      const verified = hsm_ecdsaVerify(M, hSession, keys.pubHandle, msg, signature)
-      expect(verified).toBe(true)
-    } catch (e: any) {
-      // Swallowing the error explicitly for unimplemented backend
-      expect(e.message).toBeDefined()
-    }
+    const verified = hsm_ecdsaVerify(M, hSession, keys.pubHandle, msg, signature)
+    expect(verified).toBe(true)
   })
 })

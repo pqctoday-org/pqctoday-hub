@@ -6,10 +6,10 @@
  *
  * Engine priority: softhsmv3 Rust → liboqs → WebCrypto → @noble
  *
- * softhsmv3 Rust supports: ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA P-256/P-384,
- * Ed25519, ECDH P-256/P-384, X25519, X448, LMS/HSS, XMSS (single-tree).
- * Fallbacks: FN-DSA/HQC/FrodoKEM/Classic-McEliece → liboqs;
- *            ECDSA/ECDH P-521 → webcrypto; secp256k1 → @noble.
+ * softhsmv3 Rust supports: ML-KEM, ML-DSA, SLH-DSA, RSA, ECDSA P-256/P-384/P-521,
+ * Ed25519, ECDH P-256/P-384/P-521, X25519, X448, LMS/HSS, XMSS (single-tree),
+ * secp256k1 (ECDSA + BIP32).
+ * Fallbacks: FN-DSA/HQC/FrodoKEM/Classic-McEliece → liboqs only.
  */
 
 export type CryptoEngine = 'softhsm' | 'liboqs' | 'webcrypto' | 'noble'
@@ -47,32 +47,25 @@ const LMS_ALGOS = new Set(['LMS-SHA256 (H20/W8)', 'XMSS-SHA2_20'])
 
 const RSA_ALGOS = new Set(['RSA-2048', 'RSA-3072', 'RSA-4096'])
 
-const NOBLE_SIGS = new Set(['secp256k1'])
-
 // Algorithms with no practical in-browser engine
 const NOT_BENCHMARKABLE = new Set(['Ed448', 'DH (Diffie-Hellman)'])
 
 const HYBRID_KEMS = new Set(['X25519MLKEM768', 'SecP256r1MLKEM768', 'SecP384r1MLKEM1024'])
 
-// P-521 only: Rust engine does not support P-521 — fall back to webcrypto
-const WEBCRYPTO_ONLY = new Set(['ECDSA P-521', 'ECDH P-521'])
-
 export function resolveEngine(algoName: string): CryptoEngine | null {
   if (LIBOQS_ONLY.has(algoName)) return 'liboqs'
   if (HYBRID_KEMS.has(algoName)) return null // No standalone benchmark for hybrids
   if (NOT_BENCHMARKABLE.has(algoName)) return null // No portable browser engine
-  // softhsmv3 Rust — preferred for everything it supports
+  // softhsmv3 Rust — all supported algorithms
   if (algoName.startsWith('ML-KEM') || algoName.startsWith('ML-DSA')) return 'softhsm'
   if (algoName.startsWith('SLH-DSA')) return 'softhsm'
   if (RSA_ALGOS.has(algoName)) return 'softhsm'
-  if (algoName === 'ECDSA P-256' || algoName === 'ECDSA P-384') return 'softhsm'
+  if (algoName.startsWith('ECDSA')) return 'softhsm' // P-256, P-384, P-521
+  if (algoName === 'secp256k1') return 'softhsm'
   if (algoName === 'Ed25519') return 'softhsm'
-  if (algoName === 'ECDH P-256' || algoName === 'ECDH P-384') return 'softhsm'
+  if (algoName.startsWith('ECDH')) return 'softhsm' // P-256, P-384, P-521
   if (algoName === 'X25519' || algoName === 'X448') return 'softhsm'
   if (LMS_ALGOS.has(algoName)) return 'softhsm'
-  // Fallbacks: P-521 curves not in Rust engine
-  if (WEBCRYPTO_ONLY.has(algoName)) return 'webcrypto'
-  if (NOBLE_SIGS.has(algoName)) return 'noble'
   return null
 }
 
@@ -281,14 +274,18 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     verifyDecapsMs = timeMs(() => {
       softhsm.hsm_rsaVerify(mod, hSession, rsaResult!.pubHandle, rsaMsg, rsaSig!)
     })
-  } else if (algoName === 'ECDSA P-256' || algoName === 'ECDSA P-384') {
-    const curve = algoName.replace('ECDSA ', '') as 'P-256' | 'P-384'
+  } else if (algoName.startsWith('ECDSA') || algoName === 'secp256k1') {
+    const curve = (algoName === 'secp256k1' ? 'secp256k1' : algoName.replace('ECDSA ', '')) as
+      | 'P-256'
+      | 'P-384'
+      | 'P-521'
+      | 'secp256k1'
     let ecdsaResult: ReturnType<typeof softhsm.hsm_generateECKeyPair>
     keyGenMs = timeMs(() => {
       ecdsaResult = softhsm.hsm_generateECKeyPair(mod, hSession, curve, true)
     })
     publicKeyBytes = softhsm.hsm_extractECPoint(mod, hSession, ecdsaResult!.pubHandle).length
-    privateKeyBytes = curve === 'P-256' ? 32 : 48
+    privateKeyBytes = curve === 'P-521' ? 66 : curve === 'P-384' ? 48 : 32
     const ecdsaMsg = 'bench'
     let ecdsaSig: Uint8Array
     signEncapsMs = timeMs(() => {
@@ -314,8 +311,8 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     verifyDecapsMs = timeMs(() => {
       softhsm.hsm_eddsaVerify(mod, hSession, edResult!.pubHandle, edMsg, edSig!)
     })
-  } else if (algoName === 'ECDH P-256' || algoName === 'ECDH P-384') {
-    const curve = algoName.replace('ECDH ', '') as 'P-256' | 'P-384'
+  } else if (algoName.startsWith('ECDH')) {
+    const curve = algoName.replace('ECDH ', '') as 'P-256' | 'P-384' | 'P-521'
     let ecdhKp1: ReturnType<typeof softhsm.hsm_generateECKeyPair>
     let ecdhKp2: ReturnType<typeof softhsm.hsm_generateECKeyPair>
     keyGenMs = timeMs(() => {
@@ -326,7 +323,7 @@ async function benchmarkSoftHsm(algoName: string): Promise<BenchmarkResult> {
     const ecdhPub1 = softhsm.hsm_extractECPoint(mod, hSession, ecdhKp1!.pubHandle)
     const ecdhPub2 = softhsm.hsm_extractECPoint(mod, hSession, ecdhKp2!.pubHandle)
     publicKeyBytes = ecdhPub2.length
-    privateKeyBytes = curve === 'P-256' ? 32 : 48
+    privateKeyBytes = curve === 'P-521' ? 66 : curve === 'P-256' ? 32 : 48
     signEncapsMs = timeMs(() => {
       softhsm.hsm_ecdhDerive(mod, hSession, ecdhKp1!.privHandle, ecdhPub2)
     })

@@ -274,7 +274,7 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <a
-                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.21"
+                      href="https://github.com/pqctoday/softhsmv3/releases/tag/v0.4.22"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-primary hover:underline flex items-center gap-1"
@@ -287,8 +287,8 @@ export function SbomSection() {
                         BSD-2-Clause
                       </span>
                       <span className="text-xs text-muted-foreground/60">
-                        v0.4.21 — ACVP zero-SKIP parity: SHAKE-256 LMS variants (Rust, 20 tests),
-                        Ed25519ph/CKM_EDDSA_PH (C++), SLH-DSA SigGen round-trip (C++)
+                        v0.4.22 — Rust engine: full ECDSA/ECDH P-521 (p521 crate), EdDSA safety (no
+                        WASM panic on malformed keys); security audit documented
                       </span>
                     </div>
                   </li>
@@ -421,7 +421,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust WASM Bindings{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.21)
+                    (softhsmrustv3 v0.4.22)
                   </span>
                 </h3>
                 <ul className="space-y-2">
@@ -476,7 +476,7 @@ export function SbomSection() {
                 <h3 className="text-lg font-semibold text-primary mb-3">
                   Rust Crypto Crates{' '}
                   <span className="text-xs font-normal text-muted-foreground">
-                    (softhsmrustv3 v0.4.21)
+                    (softhsmrustv3 v0.4.22)
                   </span>
                 </h3>
                 <ul className="space-y-2">
@@ -536,6 +536,15 @@ export function SbomSection() {
                   </li>
                   <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
                     <span className="text-muted-foreground">p384</span>
+                    <div className="flex flex-col items-end shrink-0">
+                      <span className="text-xs text-muted-foreground/40 font-mono">
+                        MIT / Apache-2.0
+                      </span>
+                      <span className="text-xs text-muted-foreground/60">v0.13</span>
+                    </div>
+                  </li>
+                  <li className="flex justify-between items-start gap-2 flex-wrap text-sm border-b border-border pb-1">
+                    <span className="text-muted-foreground">p521</span>
                     <div className="flex flex-col items-end shrink-0">
                       <span className="text-xs text-muted-foreground/40 font-mono">
                         MIT / Apache-2.0
