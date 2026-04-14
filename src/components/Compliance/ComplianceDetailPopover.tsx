@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import FocusLock from 'react-focus-lock'
 import {
   ExternalLink,
   Calendar,
@@ -106,217 +107,231 @@ export const ComplianceDetailPopover = ({
   if (!isOpen || !record) return null
 
   const content = (
-    <div
-      className="fixed inset-0 embed-backdrop z-50 bg-black/60 backdrop-blur-sm"
-      aria-hidden="true"
-    >
+    <>
+      {/* Backdrop */}
       <div
-        ref={popoverRef}
-        className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl z-50"
-        style={positionStyle}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="popover-title"
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 backdrop-blur-sm embed-backdrop`}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      {/* Centering wrapper (standalone only) */}
+      <div
+        className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}
+        style={!isEmbedded ? { zIndex: 9999 } : undefined}
       >
-        {/* Header */}
-        <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4">
-          <div className="space-y-1 w-full">
-            <div className="flex items-center justify-between w-full">
-              <div className="flex items-center gap-2">
-                <StatusBadge status={record.status} />
-                <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <AskAssistantButton
-                  question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
-                />
-                <Button
-                  variant="ghost"
-                  ref={closeButtonRef}
-                  onClick={onClose}
-                  className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
-                  aria-label="Close"
+        <FocusLock returnFocus>
+          <div
+            ref={popoverRef}
+            className="w-[92vw] md:w-[60vw] max-w-[800px] max-h-[85dvh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+            style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="popover-title"
+          >
+            {/* Header */}
+            <div className="p-4 border-b border-border bg-muted/20 flex justify-between items-start gap-4">
+              <div className="space-y-1 w-full">
+                <div className="flex items-center justify-between w-full">
+                  <div className="flex items-center gap-2">
+                    <StatusBadge status={record.status} />
+                    <span className="text-xs text-muted-foreground font-mono">{record.id}</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <AskAssistantButton
+                      question={`What PQC compliance requirements does ${record.productName}${record.vendor ? ` by ${record.vendor}` : ''} enforce under ${record.type}${record.source ? ` (${record.source})` : ''}${record.certificationLevel ? `, level: ${record.certificationLevel}` : ''}?`}
+                    />
+                    <Button
+                      variant="ghost"
+                      ref={closeButtonRef}
+                      onClick={onClose}
+                      className="text-muted-foreground hover:text-foreground transition-colors p-1 rounded"
+                      aria-label="Close"
+                    >
+                      <X size={16} />
+                    </Button>
+                  </div>
+                </div>
+                <h3
+                  id="popover-title"
+                  className="text-lg font-bold text-foreground leading-tight pr-8"
                 >
-                  <X size={16} />
-                </Button>
-              </div>
-            </div>
-            <h3 id="popover-title" className="text-lg font-bold text-foreground leading-tight pr-8">
-              {record.productName}
-            </h3>
-            <div className="text-xs text-muted-foreground">{record.vendor}</div>
-          </div>
-        </div>
-
-        {/* Content */}
-        <div className="p-4 max-h-[70vh] overflow-y-auto space-y-6">
-          {/* Metadata Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-            {/* Type */}
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Type
-              </h4>
-              <p className="text-sm text-foreground">{record.type}</p>
-            </div>
-
-            {/* Category */}
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Category
-              </h4>
-              <p className="text-sm text-foreground">{record.productCategory}</p>
-            </div>
-
-            {/* Lab */}
-            {record.lab && (
-              <div className="space-y-1">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Evaluation Lab
-                </h4>
-                <p className="text-sm text-foreground">{record.lab}</p>
-              </div>
-            )}
-
-            {/* Cert Level */}
-            {record.certificationLevel && (
-              <div className="space-y-1">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Certification Level
-                </h4>
-                <p className="text-sm text-foreground whitespace-normal break-words">
-                  {record.certificationLevel}
-                </p>
-              </div>
-            )}
-
-            {/* Date */}
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Certification Date
-              </h4>
-              <div className="flex items-center gap-1.5 text-foreground text-sm">
-                <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
-                <span>{record.date}</span>
+                  {record.productName}
+                </h3>
+                <div className="text-xs text-muted-foreground">{record.vendor}</div>
               </div>
             </div>
 
-            {/* Source */}
-            <div className="space-y-1">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Source
-              </h4>
-              <div className="flex items-center gap-1.5 text-foreground text-sm">
-                <Database className="w-3 h-3 text-muted-foreground shrink-0" />
-                <span>{record.source}</span>
-              </div>
-            </div>
-          </div>
+            {/* Content */}
+            <div className="p-4 overflow-y-auto space-y-6">
+              {/* Metadata Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                {/* Type */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Type
+                  </h4>
+                  <p className="text-sm text-foreground">{record.type}</p>
+                </div>
 
-          {/* Algorithms Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
-            {/* PQC Section */}
-            {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
-              <div className="space-y-1">
-                <h4 className="text-xs font-semibold text-tertiary uppercase tracking-wider">
-                  PQC Mechanisms Detected
-                </h4>
-                <p className="text-sm text-foreground">
-                  {typeof record.pqcCoverage === 'boolean'
-                    ? 'Detailed analysis confirmed PQC support.'
-                    : record.pqcCoverage}
-                </p>
-              </div>
-            ) : // Empty div to maintain grid structure if PQC is missing but Classical exists?
-            // Actually, if PQC is missing, we might want Classical to just be there.
-            // But if we want strictly "PQC Left, Classical Right" if both exist...
-            // If we just render conditionally, Classical moves left if PQC is missing.
-            // Let's keep it simple: If PQC matches condition, render it.
-            // If not, render null.
-            null}
+                {/* Category */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Category
+                  </h4>
+                  <p className="text-sm text-foreground">{record.productCategory}</p>
+                </div>
 
-            {/* Classical Algorithms Section */}
-            {record.classicalAlgorithms && (
-              <div className="space-y-1">
-                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                  Classical Algorithms
-                </h4>
-                <p className="text-sm text-muted-foreground">{record.classicalAlgorithms}</p>
-              </div>
-            )}
-          </div>
+                {/* Lab */}
+                {record.lab && (
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Evaluation Lab
+                    </h4>
+                    <p className="text-sm text-foreground">{record.lab}</p>
+                  </div>
+                )}
 
-          {/* Documents Section */}
-          {(record.certificationReportUrls ||
-            record.securityTargetUrls ||
-            record.additionalDocuments) && (
-            <div className="space-y-3 pt-2 border-t border-border">
-              <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Documentation
-              </h4>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                {record.certificationReportUrls?.map((url, idx) => (
+                {/* Cert Level */}
+                {record.certificationLevel && (
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Certification Level
+                    </h4>
+                    <p className="text-sm text-foreground whitespace-normal break-words">
+                      {record.certificationLevel}
+                    </p>
+                  </div>
+                )}
+
+                {/* Date */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Certification Date
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-foreground text-sm">
+                    <Calendar className="w-3 h-3 text-muted-foreground shrink-0" />
+                    <span>{record.date}</span>
+                  </div>
+                </div>
+
+                {/* Source */}
+                <div className="space-y-1">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Source
+                  </h4>
+                  <div className="flex items-center gap-1.5 text-foreground text-sm">
+                    <Database className="w-3 h-3 text-muted-foreground shrink-0" />
+                    <span>{record.source}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Algorithms Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full">
+                {/* PQC Section */}
+                {record.pqcCoverage && record.pqcCoverage !== 'No PQC Mechanisms Detected' ? (
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-tertiary uppercase tracking-wider">
+                      PQC Mechanisms Detected
+                    </h4>
+                    <p className="text-sm text-foreground">
+                      {typeof record.pqcCoverage === 'boolean'
+                        ? 'Detailed analysis confirmed PQC support.'
+                        : record.pqcCoverage}
+                    </p>
+                  </div>
+                ) : // Empty div to maintain grid structure if PQC is missing but Classical exists?
+                // Actually, if PQC is missing, we might want Classical to just be there.
+                // But if we want strictly "PQC Left, Classical Right" if both exist...
+                // If we just render conditionally, Classical moves left if PQC is missing.
+                // Let's keep it simple: If PQC matches condition, render it.
+                // If not, render null.
+                null}
+
+                {/* Classical Algorithms Section */}
+                {record.classicalAlgorithms && (
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                      Classical Algorithms
+                    </h4>
+                    <p className="text-sm text-muted-foreground">{record.classicalAlgorithms}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Documents Section */}
+              {(record.certificationReportUrls ||
+                record.securityTargetUrls ||
+                record.additionalDocuments) && (
+                <div className="space-y-3 pt-2 border-t border-border">
+                  <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
+                    Documentation
+                  </h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {record.certificationReportUrls?.map((url, idx) => (
+                      <a
+                        key={`report-${idx}`}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
+                      >
+                        <FileText size={14} className="shrink-0" />
+                        <span className="truncate flex-1">Certification Report {idx + 1}</span>
+                        <ExternalLink size={10} className="shrink-0 opacity-50" />
+                      </a>
+                    ))}
+                    {record.securityTargetUrls?.map((url, idx) => (
+                      <a
+                        key={`target-${idx}`}
+                        href={url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
+                      >
+                        <FileText size={14} className="shrink-0" />
+                        <span className="truncate flex-1">Security Target {idx + 1}</span>
+                        <ExternalLink size={10} className="shrink-0 opacity-50" />
+                      </a>
+                    ))}
+                    {record.additionalDocuments?.map((doc, idx) => (
+                      <a
+                        key={`doc-${idx}`}
+                        href={doc.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
+                      >
+                        <FileText size={14} className="shrink-0" />
+                        <span className="truncate flex-1">{doc.name}</span>
+                        <ExternalLink size={10} className="shrink-0 opacity-50" />
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Footer: Official Source */}
+              {record.link && (
+                <div className="pt-2 border-t border-border mt-2">
                   <a
-                    key={`report-${idx}`}
-                    href={url}
+                    href={record.link}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
+                    className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
                   >
-                    <FileText size={14} className="shrink-0" />
-                    <span className="truncate flex-1">Certification Report {idx + 1}</span>
-                    <ExternalLink size={10} className="shrink-0 opacity-50" />
+                    <ExternalLink size={14} />
+                    {record.link.includes('?expand#')
+                      ? 'View Product Details'
+                      : 'View Official Record Source'}
                   </a>
-                ))}
-                {record.securityTargetUrls?.map((url, idx) => (
-                  <a
-                    key={`target-${idx}`}
-                    href={url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
-                  >
-                    <FileText size={14} className="shrink-0" />
-                    <span className="truncate flex-1">Security Target {idx + 1}</span>
-                    <ExternalLink size={10} className="shrink-0 opacity-50" />
-                  </a>
-                ))}
-                {record.additionalDocuments?.map((doc, idx) => (
-                  <a
-                    key={`doc-${idx}`}
-                    href={doc.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 p-2 rounded bg-muted/50 hover:bg-muted transition-colors border border-border text-xs text-primary"
-                  >
-                    <FileText size={14} className="shrink-0" />
-                    <span className="truncate flex-1">{doc.name}</span>
-                    <ExternalLink size={10} className="shrink-0 opacity-50" />
-                  </a>
-                ))}
-              </div>
+                </div>
+              )}
             </div>
-          )}
-
-          {/* Footer: Official Source */}
-          {record.link && (
-            <div className="pt-2 border-t border-border mt-2">
-              <a
-                href={record.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-primary hover:text-primary/80 transition-colors text-sm font-medium"
-              >
-                <ExternalLink size={14} />
-                {record.link.includes('?expand#')
-                  ? 'View Product Details'
-                  : 'View Official Record Source'}
-              </a>
-            </div>
-          )}
-        </div>
+          </div>
+        </FocusLock>
       </div>
-    </div>
+    </>
   )
 
   return createPortal(content, document.body)
