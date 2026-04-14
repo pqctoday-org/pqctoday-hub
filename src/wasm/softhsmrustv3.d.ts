@@ -184,15 +184,6 @@ export function _C_WrapKey(_h_session: number, p_mechanism: number, h_wrapping_k
 
 export function _C_WrapKeyAuthenticated(_h_session: number, p_mechanism: number, h_wrapping_key: number, h_key: number, _p_associated_data: number, _ul_associated_data_len: number, p_wrapped_key: number, pul_wrapped_key_len: number): number;
 
-/**
- * Returns the WASM linear memory as a JsValue (WebAssembly.Memory).
- * The TypeScript host shim calls this to build Emscripten-compatible
- * memory accessors (HEAPU8, getValue, setValue, _malloc, _free).
- * Named `__wbg_get_memory` for backward compatibility with the pqc-timeline-app
- * softhsm.ts shim loader — wasm-bindgen no longer auto-exports this symbol.
- */
-export function __wbg_get_memory(): any;
-
 export function _free(ptr: number, _js_size: number): void;
 
 export function _malloc(size: number): number;

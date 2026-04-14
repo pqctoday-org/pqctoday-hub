@@ -1067,19 +1067,6 @@ export function _C_WrapKeyAuthenticated(_h_session, p_mechanism, h_wrapping_key,
 }
 
 /**
- * Returns the WASM linear memory as a JsValue (WebAssembly.Memory).
- * The TypeScript host shim calls this to build Emscripten-compatible
- * memory accessors (HEAPU8, getValue, setValue, _malloc, _free).
- * Named `__wbg_get_memory` for backward compatibility with the pqc-timeline-app
- * softhsm.ts shim loader — wasm-bindgen no longer auto-exports this symbol.
- * @returns {any}
- */
-export function __wbg_get_memory() {
-    const ret = wasm.__wbg_get_memory();
-    return ret;
-}
-
-/**
  * @param {number} ptr
  * @param {number} _js_size
  */
@@ -1122,10 +1109,6 @@ export function __wbg___wbindgen_is_string_b29b5c5a8065ba1a(arg0) {
 }
 export function __wbg___wbindgen_is_undefined_c0cca72b82b86f4d(arg0) {
     const ret = arg0 === undefined;
-    return ret;
-}
-export function __wbg___wbindgen_memory_73fdd881ebd2e7a3() {
-    const ret = wasm.memory;
     return ret;
 }
 export function __wbg___wbindgen_throw_81fc77679af83bc6(arg0, arg1) {
@@ -1367,4 +1350,12 @@ let WASM_VECTOR_LEN = 0;
 let wasm;
 export function __wbg_set_wasm(val) {
     wasm = val;
+}
+
+// Post-build shim — wasm-bindgen no longer auto-exports __wbg_get_memory.
+// softhsm.ts calls this to build HEAPU8/getValue/setValue from WebAssembly.Memory.
+// wasm.memory is the linear memory exported by the .wasm binary, always valid
+// after __wbg_set_wasm runs. Must be re-added after each wasm-pack rebuild.
+export function __wbg_get_memory() {
+    return wasm.memory;
 }
