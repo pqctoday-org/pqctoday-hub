@@ -33,7 +33,7 @@ interface AlgorithmComparisonProps {
   compareSet: Set<string>
   compareType: 'KEM' | 'Signature' | null
   maxCompareReached: boolean
-  onToggleCompare: (name: string) => void
+  onToggleTransitionRow: (t: AlgorithmTransition) => void
 }
 
 export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
@@ -42,7 +42,7 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
   compareSet,
   compareType,
   maxCompareReached,
-  onToggleCompare,
+  onToggleTransitionRow,
 }) => {
   const [pqcDetailMap, setPqcDetailMap] = useState<Map<string, AlgorithmDetail>>(new Map())
   const [isLoading, setIsLoading] = useState(true)
@@ -478,16 +478,16 @@ export const AlgorithmComparison: React.FC<AlgorithmComparisonProps> = ({
                               <Button
                                 variant="ghost"
                                 type="button"
-                                onClick={() => onToggleCompare(pqcName)}
+                                onClick={() => onToggleTransitionRow(algo)}
                                 disabled={!canCompare && !isCompared}
                                 title={
                                   isCompared
                                     ? 'Remove from comparison'
                                     : !canCompare
                                       ? maxCompareReached
-                                        ? 'Max 3 reached'
+                                        ? 'Maximum reached'
                                         : 'Clear to switch type'
-                                      : 'Add to comparison'
+                                      : 'Compare classical + PQC'
                                 }
                                 className={clsx(
                                   'shrink-0 p-1 rounded transition-colors',

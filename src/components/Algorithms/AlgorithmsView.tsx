@@ -14,6 +14,7 @@ import {
   loadedFileMetadata,
   type AlgorithmDetail,
   getFunctionGroup,
+  isClassical,
 } from '../../data/pqcAlgorithmsData'
 import {
   loadAlgorithmsData,
@@ -28,7 +29,25 @@ import { generateCsv, downloadCsv, csvFilename } from '../../utils/csvExport'
 import { ALGORITHM_CSV_COLUMNS } from '../../utils/csvExportConfigs'
 import { AlgorithmInfoModal } from './AlgorithmInfoModal'
 
-const MAX_COMPARE = 3
+const MAX_COMPARE = 6 // allows up to 3 classical+PQC pairs from the transition tab
+
+/**
+ * Map a transition row's (classical, keySize) fields to the matching AlgorithmDetail name.
+ * Returns null when no match exists in the loaded algorithm data.
+ */
+function resolveClassicalAlgoName(
+  classical: string,
+  keySize: string | undefined,
+  algos: AlgorithmDetail[]
+): string | null {
+  const bits = keySize?.match(/^(\d+)/)?.[1]
+  if (classical === 'RSA' && bits) return algos.find((a) => a.name === `RSA-${bits}`)?.name ?? null
+  const ecdhMatch = classical.match(/^ECDH\s*\(([^)]+)\)$/)
+  if (ecdhMatch) return algos.find((a) => a.name === `ECDH ${ecdhMatch[1]}`)?.name ?? null
+  const ecdsaMatch = classical.match(/^ECDSA\s*\(([^)]+)\)$/)
+  if (ecdsaMatch) return algos.find((a) => a.name === `ECDSA ${ecdsaMatch[1]}`)?.name ?? null
+  return algos.find((a) => a.name === classical)?.name ?? null
+}
 
 /** Determine baseline algorithm name based on the function type of compared algorithms */
 function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null {
@@ -125,7 +144,16 @@ export function AlgorithmsView() {
     return getFunctionGroup(firstAlgo) as 'KEM' | 'Signature' | null
   }, [compareKeys, algorithmData])
 
-  const baselineName = useMemo(() => getBaselineName(compareType), [compareType])
+  const baselineName = useMemo(() => {
+    // When the user has explicitly selected classical algorithms (via transition rows),
+    // suppress the auto-baseline — they're already comparing classical vs PQC directly.
+    const hasClassical = compareKeys.some((k) => {
+      const a = algorithmData.find((d) => d.name === k)
+      return a ? isClassical(a) : false
+    })
+    if (hasClassical) return null
+    return getBaselineName(compareType)
+  }, [compareType, compareKeys, algorithmData])
 
   const baselineAlgo = useMemo(
     () => (baselineName ? (algorithmData.find((a) => a.name === baselineName) ?? null) : null),
@@ -240,6 +268,31 @@ export function AlgorithmsView() {
       setShowComparison(false)
     },
     [updateSearchParams]
+  )
+
+  // Transition-tab variant: selects a full row, adding both the PQC name and its
+  // classical counterpart as a pair so the comparison panel shows both sides.
+  const handleToggleTransitionRow = useCallback(
+    (t: AlgorithmTransition) => {
+      const pqcName = t.pqc.split(/\s*\(/)[0].trim()
+      const classicalName = resolveClassicalAlgoName(t.classical, t.keySize, algorithmData)
+      setCompareKeys((prev) => {
+        if (prev.includes(pqcName)) {
+          // Remove the whole pair
+          const next = prev.filter((k) => k !== pqcName && k !== classicalName)
+          updateSearchParams({ compare: next.length > 0 ? next.join(',') : null })
+          return next
+        }
+        // Add both — need room for the pair
+        const toAdd = [pqcName, ...(classicalName ? [classicalName] : [])]
+        if (prev.length + toAdd.length > MAX_COMPARE) return prev
+        const next = [...prev, ...toAdd]
+        updateSearchParams({ compare: next.join(',') })
+        return next
+      })
+      setShowComparison(false)
+    },
+    [algorithmData, updateSearchParams]
   )
 
   const handleClearCompare = useCallback(() => {
@@ -420,8 +473,8 @@ export function AlgorithmsView() {
                   filteredData={filteredTransitions}
                   compareSet={compareSet}
                   compareType={compareType}
-                  maxCompareReached={compareKeys.length >= MAX_COMPARE}
-                  onToggleCompare={handleToggleCompare}
+                  maxCompareReached={compareKeys.length >= MAX_COMPARE - 1}
+                  onToggleTransitionRow={handleToggleTransitionRow}
                 />
               </motion.div>
             </TabsContent>
