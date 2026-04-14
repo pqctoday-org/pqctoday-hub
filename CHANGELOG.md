@@ -6,6 +6,53 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+## [3.3.8] - April 14, 2026
+
+Six new reference library entries covering government guidance and emerging standards, plus
+six new algorithm entries for the draft SLH-DSA limited-signature parameter sets from NIST
+SP 800-230. FAQ copy updated to reflect current module count and corpus size.
+
+### Added
+
+- **NIST SP 800-230 (IPD) in the Reference Library** — "Additional SLH-DSA Parameter Sets for
+  Limited-Signature Use Cases" (April 13, 2026); defines six new SLH-DSA variants optimised
+  for firmware and certificate signing with a 2^24 signatures-per-key limit; local PDF
+  downloadable.
+- **ANSSI PG-083 v3.00 in the Reference Library** — France's authoritative cryptographic
+  algorithm rules updated for the first time since 2020; first edition to explicitly address
+  the quantum threat; covers symmetric, asymmetric (lattice/LWE), KEM, signature, and RNG
+  guidance; local PDF downloadable.
+- **Applied Quantum PQC Migration Framework v1.1 in the Reference Library** — Universal
+  framework by Marin Ivezic/Applied Quantum (March 2026, CC BY 4.0) covering cryptographic
+  inventory, risk classification, migration roadmaps, and GSMA alignment; local PDF
+  downloadable.
+- **Charter of Trust "Decrypting the Future" in the Reference Library** — PQC Working Group
+  report (April 13, 2026) on global PQC transition timelines, threat scenarios, and a
+  practitioner migration playbook authored by Charter of Trust member organisations including
+  Siemens; local PDF downloadable.
+- **Cambridge JBS / CCAF quantum blockchain article in the Reference Library** — Analysis by
+  Philippa Coney on quantum computing threats to distributed ledgers, blockchain upgrade
+  pathways, and the role of regulators in the PQC transition; local HTML archived.
+- **Australian ACSC Quantum Technology Primer (Communications) in the Reference Library** —
+  March 2026 guidance for the Australian communications sector; catalogued as no-timeout
+  (cyber.gov.au server returns HTTP/2 INTERNAL_ERROR for direct downloads).
+- **Six SLH-DSA limited-signature algorithm variants in the Algorithms reference** — Draft
+  entries for SLH-DSA-{SHA2|SHAKE}-{128|192|256}-24 from NIST SP 800-230 IPD; each variant
+  produces signatures roughly 50% smaller than the corresponding FIPS 205 's' parameter set
+  at the cost of a strict 2^24 signatures-per-key limit; marked Draft pending finalisation.
+- **Entropy & Randomness FAQ entry** — new question covering the module's TRNG/QRNG/DRBG
+  content and its relevance for teams deploying HSMs and PQC key generation.
+
+### Changed
+
+- **FAQ copy refreshed** — module count updated to 50 across nine tracks; Reference Library
+  description updated to reflect 440+ documents; RAG corpus size updated to 6,500+ chunks;
+  SoftHSM description expanded to list the full supported algorithm suite.
+- **RAG corpus grown to 6,507 chunks** — five new library entries enriched with
+  qwen3.5:27b; Document Enrichments bucket now at 1,285 chunks.
+- **Older library and algorithm CSVs archived** — thirteen library CSV versions and two
+  algorithm CSV versions moved to src/data/archive/ to maintain the two-version active window.
+
 ## [3.3.7] - April 14, 2026
 
 Picking a row from the Transition Guide now adds both the classical algorithm and its PQC

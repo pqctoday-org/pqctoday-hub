@@ -65,7 +65,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What NIST security levels exist?',
         answer:
-          'NIST defines five security levels for PQC algorithms: Level 1 targets at least AES-128 equivalent security, Level 2 targets SHA-256 collision resistance, Level 3 targets AES-192, Level 4 targets SHA-384, and Level 5 targets AES-256. Most deployments use Level 1 (ML-KEM-512, ML-DSA-44) or Level 3 (ML-KEM-768, ML-DSA-65) to balance security and performance. The Algorithms page maps each algorithm variant to its security level.',
+          'NIST defines five security levels for PQC algorithms: Level 1 targets at least AES-128 equivalent security, Level 2 targets SHA-256 collision resistance, Level 3 targets AES-192, Level 4 targets SHA-384, and Level 5 targets AES-256. Most deployments use Level 1 (ML-KEM-512, ML-DSA-44) or Level 3 (ML-KEM-768, ML-DSA-65) to balance security and performance. The Algorithms page maps each algorithm variant to its security level and includes side-by-side performance benchmarks that compare each PQC algorithm directly against its classical counterpart (e.g., ML-KEM-768 versus X25519, ML-DSA-65 versus ECDSA P-256).',
         deepLink: '/algorithms',
       },
       {
@@ -605,7 +605,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How many learning modules does PQC Today offer?',
         answer:
-          'PQC Today offers 48 interactive learning modules organized across eight tracks: Fundamentals, Protocols, Applications, Infrastructure, Strategy, Industries, Role Guides, and a quiz system. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 30 minutes to 120 minutes depending on complexity.',
+          'PQC Today offers 50 interactive learning modules organized across nine tracks: Foundations, Protocols, Applications, Hardware Infrastructure, Software Infrastructure, Strategy, Industries, Executive, and Role Guides. Each module includes an introduction with glossary-linked terms, interactive workshop exercises, and knowledge assessment questions. Module durations range from 30 minutes to 120 minutes depending on complexity.',
         deepLink: '/learn',
       },
       {
@@ -623,7 +623,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the PQC Reference Library?',
         answer:
-          'The PQC Reference Library is a curated collection of over 250 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
+          'The PQC Reference Library is a curated collection of over 375 standards, RFCs, research papers, and migration guides relevant to post-quantum cryptography, with cross-references linking related documents and enrichment metadata providing summaries and PQC relevance assessments. Documents are categorized by type, issuing organization, and relevance to specific algorithms and use cases. The Library supports full-text search and filtering.',
         deepLink: '/library',
       },
       {
@@ -635,7 +635,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'How does the PQC Assistant chatbot work?',
         answer:
-          'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches over 3,500 content chunks aggregated from all 22 data sources in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
+          'The PQC Assistant is a RAG-powered (Retrieval-Augmented Generation) AI chatbot that searches over 6,500 content chunks aggregated from all 22 data sources in the application — including modules, standards, compliance frameworks, and enrichment data — to provide verified answers with source references and deep-links. It runs entirely client-side and does not send your questions to any external AI service. Answers include citations to specific modules, library entries, and compliance frameworks.',
         deepLink: '/about',
       },
     ],
@@ -709,7 +709,7 @@ export const FAQ_DATA: FAQCategory[] = [
       {
         question: 'What is the SoftHSM WASM mode?',
         answer:
-          'SoftHSM WASM mode is a browser-based PKCS#11 version 3.2 HSM emulation that runs ML-KEM and ML-DSA operations entirely in WebAssembly, featuring a dual-engine architecture with both C++ and Rust implementations for cross-check verification. You can generate PQC key pairs, perform key encapsulation/decapsulation, sign and verify messages, and inspect key attributes — all through the standard PKCS#11 API. The dual-engine cross-check confirms that both implementations produce identical results.',
+          'SoftHSM WASM mode is a browser-based PKCS#11 version 3.2 HSM emulation featuring a dual-engine architecture with both C++ and Rust implementations for cross-check verification. It supports the full PQC algorithm suite — ML-KEM, ML-DSA, SLH-DSA, LMS/HSS, and XMSS — alongside classical algorithms including EC (P-256/384/521), secp256k1, X25519/X448, BIP32 HD keys, AES-256-GCM, and HKDF/PBKDF2/KBKDF, all running entirely in WebAssembly. You can generate key pairs, perform key encapsulation/decapsulation, sign and verify messages, inspect PKCS#11 parameters with real-time decoders, and run classical versus PQC benchmarks side by side.',
         deepLink: '/playground',
       },
       {
@@ -753,6 +753,12 @@ export const FAQ_DATA: FAQCategory[] = [
         answer:
           "The Migration Readiness Assessment is a 14-step wizard that evaluates your organization's PQC preparedness across industry context, regulatory exposure, cryptographic inventory maturity, data sensitivity classification, compliance framework alignment, and infrastructure readiness. It produces a scored report with four risk categories, a compliance gap matrix, a threat landscape visualization, and a prioritized list of action items. The report can be printed or saved as PDF.",
         deepLink: '/assess',
+      },
+      {
+        question: 'What is the Entropy & Randomness module?',
+        answer:
+          'The Entropy & Randomness module covers the foundations of cryptographic randomness: entropy sources (hardware TRNGs, OS entropy pools, QRNGs), NIST SP 800-90A/B/C deterministic random bit generators (DRBGs), entropy testing and health checks, and strategies for combining sources for defense-in-depth. It includes interactive exercises for visualizing entropy collection, configuring DRBG parameters, and comparing TRNG versus QRNG output quality. The module is especially relevant for teams deploying HSMs and PQC key generation at scale.',
+        deepLink: '/learn/entropy-randomness',
       },
     ],
   },
