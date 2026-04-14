@@ -63,7 +63,7 @@ export function resolveEngine(algoName: string): CryptoEngine | null {
   if (algoName.startsWith('ECDSA')) return 'softhsm' // P-256, P-384, P-521
   if (algoName === 'secp256k1') return 'softhsm'
   if (algoName === 'Ed25519') return 'softhsm'
-  if (algoName.startsWith('ECDH')) return 'softhsm' // P-256, P-384, P-521
+  if (algoName === 'ECDH P-256') return 'softhsm' // P-384/P-521 fall through to webcrypto
   if (algoName === 'X25519' || algoName === 'X448') return 'softhsm'
   if (LMS_ALGOS.has(algoName)) return 'softhsm'
   return null

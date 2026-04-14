@@ -83,7 +83,6 @@ function getCellHighlight(
 interface AlgorithmComparisonPanelProps {
   algorithms: AlgorithmDetail[]
   baseline: AlgorithmDetail | null
-  classicalAlgos?: AlgorithmDetail[]
   activeTab: 'transition' | 'detailed'
   onClose: () => void
 }
@@ -91,23 +90,16 @@ interface AlgorithmComparisonPanelProps {
 export function AlgorithmComparisonPanel({
   algorithms,
   baseline,
-  classicalAlgos,
   onClose,
 }: AlgorithmComparisonPanelProps) {
   if (algorithms.length < 2) return null
 
-  // Build deduplicated allAlgos: fixed baseline → additional classical counterparts → PQC algos
+  // Build deduplicated allAlgos: fixed baseline first, then selected algorithms
   const seen = new Set<string>()
   const allAlgos: AlgorithmDetail[] = []
   if (baseline) {
     seen.add(baseline.name)
     allAlgos.push(baseline)
-  }
-  for (const ca of classicalAlgos ?? []) {
-    if (!seen.has(ca.name)) {
-      seen.add(ca.name)
-      allAlgos.push(ca)
-    }
   }
   for (const a of algorithms) {
     if (!seen.has(a.name)) {

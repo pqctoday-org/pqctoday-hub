@@ -37,27 +37,6 @@ function getBaselineName(compareType: 'KEM' | 'Signature' | null): string | null
   return null
 }
 
-/**
- * Map AlgorithmTransition.classical display names → AlgorithmDetail.name.
- * Transition data uses display-friendly names ("ECDH (P-256)", "RSA-PSS") that
- * differ from the exact names stored in the algorithm reference CSV.
- */
-function resolveClassicalDetailName(classical: string): string | null {
-  // Generic RSA display names all map to RSA-2048
-  if (classical === 'RSA' || classical === 'RSA-PSS' || classical === 'RSA PKCS#1 v1.5') {
-    return 'RSA-2048'
-  }
-  // Skip composite / hybrid / vague entries
-  if (classical.includes('+') || classical.startsWith('Any') || classical.startsWith('HPKE')) {
-    return null
-  }
-  // "ECDH (P-256)" → "ECDH P-256", "ECDSA (P-521)" → "ECDSA P-521", etc.
-  const parenMatch = classical.match(/^([A-Z]+)\s+\(([A-Z0-9-]+)\)$/)
-  if (parenMatch) return `${parenMatch[1]} ${parenMatch[2]}`
-  // Exact matches: Ed25519, Ed448, X25519, X448, secp256k1, DH (Diffie-Hellman)
-  return classical
-}
-
 export function AlgorithmsView() {
   const [searchParams, setSearchParams] = useSearchParams()
   const comparisonPanelRef = useRef<HTMLDivElement>(null)
@@ -160,29 +139,6 @@ export function AlgorithmsView() {
         .filter(Boolean) as AlgorithmDetail[],
     [compareKeys, algorithmData]
   )
-
-  /**
-   * Classical counterparts: for each selected PQC algorithm, find all classical
-   * algorithms from transition data that it replaces. These are included in the
-   * benchmark so users see classical vs PQC performance side-by-side.
-   */
-  const classicalCounterparts = useMemo(() => {
-    if (compareKeys.length === 0 || transitionData.length === 0) return []
-    const seen = new Set<string>()
-    const result: AlgorithmDetail[] = []
-    for (const pqcKey of compareKeys) {
-      for (const t of transitionData) {
-        const tPqcName = t.pqc.split(/\s*\(/)[0].trim()
-        if (tPqcName !== pqcKey) continue
-        const detailName = resolveClassicalDetailName(t.classical)
-        if (!detailName || seen.has(detailName)) continue
-        seen.add(detailName)
-        const detail = algorithmData.find((a) => a.name === detailName)
-        if (detail) result.push(detail)
-      }
-    }
-    return result
-  }, [compareKeys, transitionData, algorithmData])
 
   // Set of compared names for quick lookup
   const compareSet = useMemo(() => new Set(compareKeys), [compareKeys])
@@ -505,7 +461,6 @@ export function AlgorithmsView() {
               <AlgorithmComparisonPanel
                 algorithms={comparisonAlgos}
                 baseline={baselineAlgo}
-                classicalAlgos={classicalCounterparts}
                 activeTab={activeTab}
                 onClose={() => setShowComparison(false)}
               />
