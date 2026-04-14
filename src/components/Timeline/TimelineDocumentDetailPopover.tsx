@@ -108,7 +108,7 @@ export const TimelineDocumentDetailPopover = ({
         <FocusLock returnFocus>
           <div
             ref={popoverRef}
-            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85vh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
+            className="w-[95vw] sm:w-[85vw] md:w-[60vw] max-w-[1200px] max-h-[85dvh] border border-border rounded-xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col bg-popover text-popover-foreground shadow-2xl"
             style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
             role="dialog"
             aria-modal="true"

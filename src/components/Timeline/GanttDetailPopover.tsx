@@ -141,7 +141,7 @@ export const GanttDetailPopover = ({ isOpen, onClose, phase }: GanttDetailPopove
             </div>
 
             {/* Content */}
-            <div className="p-4 space-y-3 overflow-y-auto max-h-[70vh]">
+            <div className="p-4 space-y-3 overflow-y-auto max-h-[70dvh]">
               <div>
                 <p className="text-xs text-muted-foreground leading-relaxed break-words">
                   {phase.description}

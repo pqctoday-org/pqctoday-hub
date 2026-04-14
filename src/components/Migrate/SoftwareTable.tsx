@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState, useMemo, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
+import clsx from 'clsx'
 import FocusLock from 'react-focus-lock'
 import type { SoftwareItem } from '../../types/MigrateTypes'
 import {
@@ -142,82 +143,94 @@ function ProofModal({ isOpen, onClose, item }: ProofModalProps) {
   if (!isOpen) return null
 
   const content = (
-    <FocusLock returnFocus>
+    <>
+      {/* Backdrop */}
       <div
-        className="fixed inset-0 embed-backdrop z-50 bg-black/60 flex items-center justify-center p-4"
+        className={`${isEmbedded ? 'absolute' : 'fixed'} inset-0 z-overlay bg-black/60 embed-backdrop`}
+        onClick={onClose}
         aria-hidden="true"
       />
+      {/* Centering wrapper (standalone only) */}
       <div
-        ref={ref}
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="proof-modal-title"
-        className="w-[95vw] sm:w-[80vw] md:w-[520px] max-h-[85vh] bg-popover border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
-        style={{ zIndex: 9999, ...positionStyle }}
+        className={clsx(!isEmbedded && 'fixed inset-0 flex items-center justify-center p-4')}
+        style={!isEmbedded ? { zIndex: 9999 } : undefined}
       >
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3 p-4 border-b border-border bg-muted/20 shrink-0">
-          <div className="min-w-0">
-            <div className="flex items-center gap-2 mb-1 flex-wrap">
-              <ShieldCheck size={14} className="text-primary shrink-0" />
-              <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
-                Validation Proof
-              </span>
-              <ValidationResultBadge result={item.validationResult} />
-            </div>
-            <h3
-              id="proof-modal-title"
-              className="text-sm font-semibold text-foreground leading-snug"
-            >
-              {item.softwareName}
-            </h3>
-          </div>
-          <Button
-            variant="ghost"
-            onClick={onClose}
-            aria-label="Close proof"
-            className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors shrink-0"
+        <FocusLock returnFocus>
+          <div
+            ref={ref}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="proof-modal-title"
+            className="w-[95vw] sm:w-[80vw] md:w-[520px] max-h-[85dvh] bg-popover border border-border rounded-xl shadow-2xl flex flex-col overflow-hidden animate-in zoom-in-95 duration-200"
+            style={isEmbedded ? { zIndex: 9999, ...positionStyle } : undefined}
           >
-            <X size={16} aria-hidden="true" />
-          </Button>
-        </div>
-
-        {/* Body */}
-        <div className="p-4 overflow-y-auto space-y-4">
-          {item.proofRelevantInfo && (
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1.5">
-                Summary
-              </p>
-              <p className="text-sm text-foreground leading-relaxed">{item.proofRelevantInfo}</p>
+            {/* Header */}
+            <div className="flex items-start justify-between gap-3 p-4 border-b border-border bg-muted/20 shrink-0">
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <ShieldCheck size={14} className="text-primary shrink-0" />
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-primary">
+                    Validation Proof
+                  </span>
+                  <ValidationResultBadge result={item.validationResult} />
+                </div>
+                <h3
+                  id="proof-modal-title"
+                  className="text-sm font-semibold text-foreground leading-snug"
+                >
+                  {item.softwareName}
+                </h3>
+              </div>
+              <Button
+                variant="ghost"
+                onClick={onClose}
+                aria-label="Close proof"
+                className="p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors shrink-0"
+              >
+                <X size={16} aria-hidden="true" />
+              </Button>
             </div>
-          )}
-          {item.proofPublicationDate && (
-            <div>
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1">
-                Publication Date
-              </p>
-              <p className="text-sm text-foreground">{item.proofPublicationDate}</p>
-            </div>
-          )}
-        </div>
 
-        {/* Footer */}
-        {item.proofUrl && (
-          <div className="p-4 border-t border-border shrink-0">
-            <a
-              href={item.proofUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium"
-            >
-              <ExternalLink size={14} />
-              Open Source Document
-            </a>
+            {/* Body */}
+            <div className="p-4 overflow-y-auto space-y-4">
+              {item.proofRelevantInfo && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1.5">
+                    Summary
+                  </p>
+                  <p className="text-sm text-foreground leading-relaxed">
+                    {item.proofRelevantInfo}
+                  </p>
+                </div>
+              )}
+              {item.proofPublicationDate && (
+                <div>
+                  <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 mb-1">
+                    Publication Date
+                  </p>
+                  <p className="text-sm text-foreground">{item.proofPublicationDate}</p>
+                </div>
+              )}
+            </div>
+
+            {/* Footer */}
+            {item.proofUrl && (
+              <div className="p-4 border-t border-border shrink-0">
+                <a
+                  href={item.proofUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm text-primary hover:text-primary/80 transition-colors font-medium"
+                >
+                  <ExternalLink size={14} />
+                  Open Source Document
+                </a>
+              </div>
+            )}
           </div>
-        )}
+        </FocusLock>
       </div>
-    </FocusLock>
+    </>
   )
 
   return createPortal(content, document.body)
