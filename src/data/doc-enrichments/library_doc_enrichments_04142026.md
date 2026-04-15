@@ -2373,3 +2373,372 @@ enrichment_method: ollama-qwen3.5:27b
 - **Extraction Timestamp**: 2026-04-14T23:46:56
 
 ---
+
+## draft-ietf-lamps-cms-kyber-13
+
+- **Reference ID**: draft-ietf-lamps-cms-kyber-13
+- **Title**: Use of ML-KEM in the Cryptographic Message Syntax (CMS)
+- **Authors**: IETF LAMPS
+- **Publication Date**: 2023-01-10
+- **Last Updated**: 2026-03-01
+- **Document Status**: Published (RFC 9936)
+- **Main Topic**: Specification of conventions for using ML-KEM with the Cryptographic Message Syntax (CMS) via the KEMRecipientInfo structure defined in RFC 9629.
+- **PQC Algorithms Covered**: ML-KEM, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2025, 2026
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: Julien Prat; Mike Ounsworth; Daniel Van Geest
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: CMS, S/MIME, X.509
+- **Infrastructure Layers**: PKI, Key Management
+- **Standardization Bodies**: IETF, NIST
+- **Compliance Frameworks Referenced**: FIPS 203, BCP 78, RFC 7841, RFC 5652, RFC 5083, RFC 9629, RFC 5869, FIPS 180, RFC 8619, RFC 3394, RFC 3565, NIST.SP.800-57pt1r5, RFC 5280, RFC 8551
+- **Classical Algorithms Referenced**: SHA3-256, SHA3-512, SHAKE128, SHAKE256, HKDF, HMAC, SHA-256, AES-Wrap-128, AES-Wrap-256, AES-192
+- **Key Takeaways**: ML-KEM parameter sets map to 128-bit, 192-bit, and 256-bit security strengths; Implementations must support HKDF with SHA-256 for key derivation; AES-Wrap-128 is required for ML-KEM-512 while AES-Wrap-256 is required for ML-KEM-768 and ML-KEM-1024; The document specifies direct use of ML-KEM in CMS but does not preclude hybrid schemes; S/MIME implementations may announce ML-KEM support via the SMIMECapabilities attribute.
+- **Security Levels & Parameters**: 128-bit, 192-bit, 256-bit, ML-KEM-512, ML-KEM-768, ML-KEM-1024
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: Support for Encapsulate and Decapsulate functions; Implementation of HKDF with SHA-256; Support for AES-Wrap-128 or AES-Wrap-256 depending on ML-KEM parameter set; Adherence to RFC 9629 KEMRecipientInfo structure
+- **Relevant PQC Today Features**: Algorithms, email-signing, pki-workshop, hybrid-crypto, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: ML-KEM is incompatible with pre-standards versions often called Kyber; document does not address or preclude use of ML-KEM as part of any hybrid scheme; implementations MUST support HKDF with SHA-256 and specific AES-Wrap algorithms based on parameter set
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-lamps-cms-kyber-13.html (97,378 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:47:58
+
+---
+
+## draft-ietf-openpgp-pqc-17
+
+- **Reference ID**: draft-ietf-openpgp-pqc-17
+- **Title**: Post-Quantum Cryptography in OpenPGP
+- **Authors**: IETF OpenPGP WG
+- **Publication Date**: 2023-07-01
+- **Last Updated**: 2026-01-13
+- **Document Status**: Internet-Draft (Submitted to IESG)
+- **Main Topic**: This document defines a post-quantum public key algorithm extension for the OpenPGP protocol, specifying composite ML-KEM+ECC encryption and ML-DSA+ECC signatures alongside standalone SLH-DSA.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: cryptographically relevant quantum computer
+- **Migration Timeline Info**: Years mentioned: 2022, 2025, 2026
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Stavros Kousidis; Johannes Roth; Falko Strenzke; Aron Wussler; Daniel Kahn Gillmor (Document shepherd); Paul Wouters (Responsible AD)
+- **PQC Products Mentioned**: None detected.
+- **Protocols Covered**: OpenPGP
+- **Infrastructure Layers**: Email
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); IESG; RFC Editor
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79; Revised BSD License
+- **Classical Algorithms Referenced**: EdDSA, ECDH, X25519, Ed25519, Ed448, X448
+- **Key Takeaways**: The document defines composite encryption combining ML-KEM with elliptic curve cryptography for OpenPGP; Composite signatures combine ML-DSA with elliptic curve cryptography to ensure long-term security; SLH-DSA is specified as a standalone signature scheme for OpenPGP; Migration considerations address encrypting and signing with both traditional and PQ keys; Security aspects include preventing signature cross-protocol attacks and ensuring domain separation in key combiners.
+- **Security Levels & Parameters**: ML-KEM-768, ML-KEM-1024, ML-DSA-65, ML-DSA-87, Ed25519, Ed448, X25519, X448
+- **Hybrid & Transition Approaches**: composite public key encryption; composite public key signatures; Standalone and Multi-Algorithm Schemes; Encrypting to Traditional and PQ(/T) Keys; Signing with Traditional and PQ(/T) Keys
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Researcher
+- **Implementation Prerequisites**: OpenPGP protocol extension extending RFC9580; support for composite KEMs and signatures; support for standalone SLH-DSA
+- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, email-signing, stateful-signatures, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test Vectors; Sample v6 Ed25519 with ML-KEM-768+X25519 Data; Sample v4 Ed25519 with ML-KEM-768+X25519 Data; Sample ML-DSA-65+Ed25519 with ML-KEM-768+X25519 Data; Sample ML-DSA-87+Ed448 with ML-KEM-1024+X448 Data
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Random Number Generation and Seeding
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Encrypting to Traditional and PQ(/T) Keys; Signing with Traditional and PQ(/T) Keys; Verifying with Traditional and PQ(/T) Keys; Generating PQ(/T) Keys
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-openpgp-pqc-17.html (906,039 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:49:04
+
+---
+
+## draft-ietf-pquip-pqc-engineers-14
+
+- **Reference ID**: draft-ietf-pquip-pqc-engineers-14
+- **Title**: Post-Quantum Cryptography for Engineers
+- **Authors**: IETF PQUIP
+- **Publication Date**: 2023-07-06
+- **Last Updated**: 2025-08-26
+- **Document Status**: Internet-Draft (Expired 2026-02-27)
+- **Main Topic**: Practical guidance for engineers on implementing post-quantum cryptography algorithms and protocols to address the threat of cryptographically relevant quantum computers.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, FN-DSA, XMSS, LMS
+- **Quantum Threats Addressed**: Cryptographically relevant quantum computer (CRQC); integer factorization; discrete logarithms; Quantum Side-channel Attacks
+- **Migration Timeline Info**: Years mentioned: 2023, 2025, 2026
+- **Applicable Regions / Bodies**: Regions: United States, Germany, International, Bodies: NIST, NSA
+- **Leaders Contributions Mentioned**: Aritra Banerjee, Tirumaleswar Reddy.K, Dimitrios Schoinianakis, Tim Hollebeek, Mike Ounsworth (Authors); Paul E. Hoffman (Document shepherd); Paul Wouters (Responsible AD)
+- **PQC Products Mentioned**: None detected.
+- **Protocols Covered**: HPKE; Authenticated Key Exchange
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: NIST; IETF; ISO
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79
+- **Classical Algorithms Referenced**: RSA; ECC; DH
+- **Key Takeaways**: Transitioning to PQC requires significant protocol redesign due to unique algorithm properties; Engineers must evaluate trade-offs between security and performance; Hybrid schemes are necessary to bridge the gap between post-quantum and traditional cryptography; Cryptographic agility is essential for future-proofing systems against quantum threats.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: PQ/T Hybrid Confidentiality; PQ/T Hybrid Authentication; Composite Keys in Hybrid Schemes; Key Reuse in Hybrid Schemes; Cryptographic Agility
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Security Architect; Engineer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Algorithms, hybrid-crypto, crypto-agility, stateful-signatures
+- **Implementation Attack Surface**: Quantum Side-channel Attacks; Cryptanalysis
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: Impact on Constrained Devices and Networks
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Timeline for Transition; backward compatibility; significant protocol redesign; Hybrid Cryptographic Algorithm Combinations; Composite Keys in Hybrid Schemes; Key Reuse in Hybrid Schemes
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-pquip-pqc-engineers-14.html (187,927 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:50:35
+
+---
+
+## draft-ietf-pquip-hybrid-signature-spectrums-07
+
+- **Reference ID**: draft-ietf-pquip-hybrid-signature-spectrums-07
+- **Title**: Hybrid signature spectrums
+- **Authors**: IETF PQUIP
+- **Publication Date**: 2024-03-01
+- **Last Updated**: 2026-03-25
+- **Document Status**: Internet-Draft
+- **Main Topic**: Classification of design goals and security considerations for hybrid digital signature schemes combining traditional and post-quantum algorithms.
+- **PQC Algorithms Covered**: ML-DSA, Falcon, Rainbow, GeMSS, SLH-DSA, RSA, ECDSA, EdDSA (general framework, not algorithm-specific)
+- **Quantum Threats Addressed**: Cryptographically-Relevant Quantum Computer (CRQC); store and decrypt attacks; quantum attacks against RSA-2048
+- **Migration Timeline Info**: Years mentioned: 2023, 2025, 2026
+- **Applicable Regions / Bodies**: Regions: United States, United Kingdom, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Nina Bindel; Britta Hale; Deirdre Connolly; Flo Driscoll; Paul E. Hoffman (Document shepherd); Paul Wouters (Responsible AD)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: PKI; Key Management
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); NIST Post-Quantum Cryptography Standardization Project
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79; Revised BSD License
+- **Classical Algorithms Referenced**: RSA-2048
+- **Key Takeaways**: Hybrid signature schemes combine traditional and post-quantum algorithms to maintain security if at least one component holds; Designers must consider trade-offs between properties like non-separability, backwards compatibility, and simultaneous verification; Implementation-independent attacks have broken a significant percentage of past PQC proposals, motivating hybrid approaches; Hybridization is not necessary for all systems and depends on specific use-case requirements and threat models.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid signature schemes; proof composability; non-separability of component signatures; backwards/forwards compatibility; simultaneous verification; hybrid generality
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: Correct provisioning and management of keys; entity authentication; key revocation
+- **Relevant PQC Today Features**: hybrid-crypto, crypto-agility, pki-workshop, tls-basics, pqc-risk-management
+- **Implementation Attack Surface**: timing variations, implementation bugs
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: backwards/forwards compatibility, algorithm turn-over complexity, root certificate validity periods, hybrid signature scheme design categories
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-pquip-hybrid-signature-spectrums-07.html (124,662 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:51:38
+
+---
+
+## draft-ietf-uta-pqc-app-01
+
+- **Reference ID**: draft-ietf-uta-pqc-app-01
+- **Title**: Post-Quantum Cryptography Recommendations for TLS-based Applications
+- **Authors**: IETF UTA
+- **Publication Date**: 2025-09-18
+- **Last Updated**: 2026-03-25
+- **Document Status**: Internet-Draft
+- **Main Topic**: Best practices for implementing quantum-ready usage profiles in TLS-based applications to protect against Cryptographically Relevant Quantum Computers.
+- **PQC Algorithms Covered**: ML-KEM, SLH-DSA, ML-DSA
+- **Quantum Threats Addressed**: Cryptographically Relevant Quantum Computer (CRQC), Harvest Now Decrypt Later (HNDL) attacks, passive and on-path attacks
+- **Migration Timeline Info**: Immediate action required for data confidentiality due to HNDL risks; forward-thinking planning required for authentication systems
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Tirumaleswar Reddy.K (Author), Hannes Tschofenig (Author)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3, DTLS 1.3, QUIC, DNS, X.509, HPKE, Encrypted Client Hello, OCSP
+- **Infrastructure Layers**: PKI, Certificate Transparency, Online Certificate Status Protocol (OCSP), remote attestation
+- **Standardization Bodies**: IETF, NIST
+- **Compliance Frameworks Referenced**: FIPS (Federal Information Processing Standard), PCI (Payment Card Industry), NIST PQC Standardization
+- **Classical Algorithms Referenced**: ECDH, ECDHE, RSA, Ed25519, ECDSA-P256, X25519, P256
+- **Key Takeaways**: Hybrid key exchange combines traditional and post-quantum algorithms to maintain security if one component is broken; PQC algorithms introduce larger key and signature sizes impacting network performance and constrained environments; Immediate transition is required for data confidentiality to mitigate Harvest Now Decrypt Later attacks while authentication transition allows for forward planning; Implementation correctness is critical as even secure algorithms are vulnerable to flaws
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid Key Exchange, PQ/T Hybrid Digital Signature, Hybrid (Composite) X.509 Certificates
+- **Performance & Size Considerations**: ML-KEM public keys substantially larger than ECDH; SLH-DSA and ML-DSA public keys much larger than P256; SLH-DSA and ML-DSA signature sizes considerably larger than Ed25519 or ECDSA-P256; ML-KEM requires less CPU than X25519; ML-DSA offers faster signature verification than Ed25519 but slower generation
+- **Target Audience**: Application Developer, Security Architect, Device Manufacturer, Service Provider
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: tls-basics, hybrid-crypto, crypto-agility, pki-workshop, migration-program
+- **Implementation Attack Surface**: implementation flaws introducing security risks; algorithm maturity concerns regarding correctness and security of implementations
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: challenges for constrained environments such as IoT due to larger key and signature sizes; increased handshake times in high-latency or lossy networks
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: transition timeline differences between data confidentiality and data authentication; Harvest Now Decrypt Later attacks demanding immediate action; unique challenges including algorithm maturity, key and signature sizes, and performance trade-offs; historical transitions such as upgrading TLS versions and shifting from RSA to Elliptic Curve Cryptography
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-uta-pqc-app-01.html (96,366 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:52:35
+
+---
+
+## draft-kwiatkowski-pquip-pqc-migration-00
+
+- **Reference ID**: draft-kwiatkowski-pquip-pqc-migration-00
+- **Title**: Guidance for migration to Post-Quantum Cryptography
+- **Authors**: IETF Individual Submission
+- **Publication Date**: 2025-07-20
+- **Last Updated**: 2025-07-20
+- **Document Status**: Internet-Draft (Expired 2026-01-21)
+- **Main Topic**: This document provides guidance on migration to post-quantum cryptography in internet protocols, outlining challenges and considerations for protocol designers and implementers.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: quantum computer attacks
+- **Migration Timeline Info**: Years mentioned: 2025, 2026
+- **Applicable Regions / Bodies**: Regions: International
+- **Leaders Contributions Mentioned**: Kris Kwiatkowski
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: internet protocols
+- **Infrastructure Layers**: Email
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Protocol designers must consider challenges when transitioning from traditional cryptographic algorithms to PQC; Implementers should account for considerations specific to deploying PQC standards; The transition aims to secure systems against quantum computer attacks.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Protocol Designer, Developer, Implementer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: migration-program, pqc-risk-management, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: challenges and considerations for transitioning from traditional cryptographic algorithms to PQC algorithms
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-kwiatkowski-pquip-pqc-migration-00.html (39,564 bytes, 2,852 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:53:38
+
+---
+
+## draft-wang-ipsecme-kem-auth-ikev2-03
+
+- **Reference ID**: draft-wang-ipsecme-kem-auth-ikev2-03
+- **Title**: KEM based Authentication for IKEv2 with Post-quantum Security
+- **Authors**: IETF Individual Submission
+- **Publication Date**: 2025-03-03
+- **Last Updated**: 2026-03-25
+- **Document Status**: Internet-Draft
+- **Main Topic**: Specification of a KEM-based authentication mechanism for IKEv2 as a more efficient alternative to ML-DSA for post-quantum security.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA
+- **Quantum Threats Addressed**: Cryptographically-relevant quantum computers (CRQC); harvest-now-and-decrypt-later (HNDL) attack
+- **Migration Timeline Info**: Years mentioned: 2024, 2026
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Guilin WANG; Valery Smyslov
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: IKEv2, TLS 1.3
+- **Infrastructure Layers**: Key Encapsulation Mechanism; Digital Signature
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; BCP 78; BCP 79; BCP 14
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: KEM-based authentication is more efficient than signature-based authentication for IKEv2; ML-KEM offers significantly smaller key and ciphertext sizes compared to ML-DSA signatures; Large PQ public keys and signatures can increase IKEv2 time delay, especially with packet loss; KEM-based authentication reduces implementation code size by reusing KEM code for ephemeral key establishment
+- **Security Levels & Parameters**: NIST Level 1 (ML-KEM-512); NIST Level 2 (ML-DSA-44); NIST Level 3 (ML-KEM-768, ML-DSA-65); NIST Level 5 (ML-KEM-1024, ML-DSA-87)
+- **Hybrid & Transition Approaches**: Hybrid PQ/T digital algorithms; PQuAKE protocol ideas
+- **Performance & Size Considerations**: ML-DSA private key size is about 1.5 times ML-KEM decapsulation key size; ML-DSA public key size is about 1.6 times ML-KEM encapsulation key size; ML-DSA signature size is about 3 times ML-KEM ciphertext size; Communication overhead savings of 2,164 bytes for Level 1; 2,989 bytes for Level 3; 4,083 bytes for Level 5
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms; Threats; vpn-ssh-pqc; hybrid-crypto; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-wang-ipsecme-kem-auth-ikev2-03.html (96,637 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:54:02
+
+---
+
+## ETSI TS 103 744
+
+- **Reference ID**: ETSI TS 103 744
+- **Title**: Quantum-Safe Hybrid Key Exchanges
+- **Authors**: ETSI QSC
+- **Publication Date**: 2023-02-01
+- **Last Updated**: 2025-03-01
+- **Document Status**: Published Technical Specification
+- **Main Topic**: Technical specification defining a framework for quantum-safe hybrid key establishment combining ECDH and ML-KEM with standard key combiners.
+- **PQC Algorithms Covered**: ML-KEM
+- **Quantum Threats Addressed**: Quantum computing threats to traditional key exchange protocols
+- **Migration Timeline Info**: Years mentioned: 2020, 2023, 2024, 2025
+- **Applicable Regions / Bodies**: Bodies: ETSI
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL
+- **Protocols Covered**: TLS, SSH
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: FIPS PUB 180-4 (Secure Hash Standard), FIPS PUB 202 (SHA-3 Standard), FIPS PUB 203 (Module-Lattice-Based Key-Encapsulation Mechanism Standard), NIST SP800-56Ar3, NIST SP800-56Cr2, NIST SP800-185
+- **Classical Algorithms Referenced**: ECDH, SHA256, HMAC, KMAC, NIST P-256, Curve25519
+- **Key Takeaways**: Hybrid key establishment combines classical ECDH with post-quantum ML-KEM; Standard key combiners include concatenation and HKDF-based approaches; Test vectors are provided for CatKDF and CasKDF schemes using various KDFs and curves; The specification defines functional entities and information relationships for hybrid architectures; Context formatting functions support both concatenate-based and concatenate-and-hash-based methods
+- **Security Levels & Parameters**: ML-KEM-768, NIST P-256, Curve25519, SHA256, KMAC128
+- **Hybrid & Transition Approaches**: Concatenate hybrid key establishment scheme; Cascade hybrid key establishment scheme; CatKDF; CasKDF; ephemeral and static variants
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Algorithms, hybrid-crypto, crypto-agility, tls-basics, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Test vectors; Message Encoding for Test Vector Generation; Message Formatting Function for Test Vector Generation
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Hybrid key establishment schemes; Concatenate hybrid key establishment scheme; Cascade hybrid key establishment scheme
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI_TS_103_744.pdf (251,737 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:55:02
+
+---
+
+## ETSI TR 103 619
+
+- **Reference ID**: ETSI TR 103 619
+- **Title**: Migration Strategies and Recommendations for Quantum-Safe Schemes
+- **Authors**: ETSI QSC
+- **Publication Date**: 2020-07-01
+- **Last Updated**: 2020-07-01
+- **Document Status**: Published Technical Report
+- **Main Topic**: Strategic guidance and a staged approach for migrating cryptographic systems to a Fully Quantum Safe Cryptographic State.
+- **PQC Algorithms Covered**: None explicitly named (references quantum-safe cryptography generally, RSA, ECC, Identity Based Encryption)
+- **Quantum Threats Addressed**: Attacks against cryptographic elements by a quantum computer; immediate availability of a viable quantum computer used to attack RSA or ECC entities
+- **Migration Timeline Info**: Years mentioned: 2020; Keywords: retire
+- **Applicable Regions / Bodies**: Bodies: ETSI, Technical Committee Cyber Security (CYBER)
+- **Leaders Contributions Mentioned**: N. Bindel, U. Heralth, M. McKague, D. Stebila; Bob Blakley; Amy M., Di Matteo O., Gheorghiu V., Mosca M., Parent A., Schanck J.
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS 1.3, X.509
+- **Infrastructure Layers**: Public Key Infrastructure (PKI), Key Management, Trust Management, Hardware based security environment, TPM Library
+- **Standardization Bodies**: ETSI, IETF, ITU-T, ISO, IEC, Trusted Computing Group
+- **Compliance Frameworks Referenced**: X.509 certificate framework, TPM specifications (ISO/IEC 11889 parts 1-4), XACML (eXtensible Access Control Markup Language)
+- **Classical Algorithms Referenced**: RSA, ECC
+- **Key Takeaways**: Organizations must compile a comprehensive inventory of cryptographic assets before migration; Migration planning should address both orderly and disorderly transition scenarios; Key and trust management require specific isolation approaches during the transition phase; Hardware-based security environments need special consideration for migration impact; Emergency migration due to immediate quantum computer availability is not fully addressed in this document
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Staged approach to QSC migration; Orderly transition planning; Disorderly transition planning; Isolation approaches during migration
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, CISO, Compliance Officer, Policy Maker
+- **Implementation Prerequisites**: Inventory compilation of cryptographic elements; Risk assessment; Data assessment; Infrastructure inventory; Supplier inventory; Migration plan creation
+- **Relevant PQC Today Features**: Migrate, Assess, migration-program, pqc-risk-management, pki-workshop, tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: Inventory compilation, Infrastructure inventory, Supplier inventory, Cryptographic assessment, Data assessment, Risk assessment
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: Supplier inventory
+- **Deployment & Migration Complexity**: Staged approach to QSC migration, Stage 1 - Inventory compilation, Stage 2 - Preparation of the migration plan, Stage 3 - Migration execution, Orderly transition planning, Disorderly transition planning, Migration management, Mitigation management
+- **Extraction Note**: v3 update: 8 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI_TR_103_619.pdf (142,762 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-14T23:55:52
+
+---
