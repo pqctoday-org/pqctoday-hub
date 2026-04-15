@@ -13166,3 +13166,175 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## ENISA-State-of-Cybersecurity-2024
+
+- **Reference ID**: ENISA-State-of-Cybersecurity-2024
+- **Title**: 2024 Report on the State of Cybersecurity in the Union
+- **Authors**: ENISA
+- **Publication Date**: 2024-12-03
+- **Last Updated**: 2024-12-03
+- **Document Status**: Published
+- **Main Topic**: The first biennial NIS2-mandated report providing an evidence-based overview of the cybersecurity landscape in the EU and identifying PQC as a top emerging technology topic where stakeholders remain underprepared.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2022, 2023, 2024, 2025, 2026
+- **Applicable Regions / Bodies**: Regions: European Union; Bodies: ENISA, NIS Cooperation Group, European Commission
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Email
+- **Standardization Bodies**: ENISA
+- **Compliance Frameworks Referenced**: Directive (EU) 2022/2555 (NIS2), eIDAS regulation
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: PQC is identified as a top emerging technology topic; Most European stakeholders remain underprepared for the quantum transition; Policy recommendations are needed to address identified shortcomings in cybersecurity capabilities.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker, National / EU authorities
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Compliance, Assess, pqc-risk-management, migration-program
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ENISA-State-of-Cybersecurity-2024.html (53,884 bytes, 5,705 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:18:54
+
+---
+
+## ENISA-Threat-Landscape-2025
+
+- **Reference ID**: ENISA-Threat-Landscape-2025
+- **Title**: ENISA Threat Landscape 2025
+- **Authors**: ENISA
+- **Publication Date**: 2025-10-01
+- **Last Updated**: 2026-01-09
+- **Document Status**: Published
+- **Main Topic**: The ENISA Threat Landscape 2025 report analyzes 4,875 cybersecurity incidents in the EU from July 2024 to June 2025 and identifies quantum computing as a strategic long-term threat.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computing identified as a strategic long-term threat
+- **Migration Timeline Info**: Years mentioned: 2021, 2022, 2023, 2024, 2025, 2026, 2030
+- **Applicable Regions / Bodies**: Regions: EU; Bodies: ENISA, European Union Agency for Cybersecurity
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Email, Satellite
+- **Standardization Bodies**: ENISA
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Quantum computing is a strategic long-term threat requiring proactive PQC transition planning; Threat groups are reusing tools and techniques while introducing new attack models; Public administrations are increasingly targeted by hacktivists using DDoS attacks; The report analyzes 4,875 incidents to provide an overview of prominent cybersecurity threats in the EU
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: National / EU authorities; Private Sector; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Migrate, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: proactive PQC transition planning
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ENISA-Threat-Landscape-2025.html (53,145 bytes, 5,124 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:20:03
+
+---
+
+## ECCG-ACM-v2
+
+- **Reference ID**: ECCG-ACM-v2
+- **Title**: ECCG Agreed Cryptographic Mechanisms Version 2.0
+- **Authors**: ECCG; ENISA
+- **Publication Date**: 2025-05-06
+- **Last Updated**: 2025-05-06
+- **Document Status**: Final Standard
+- **Main Topic**: The European Cybersecurity Certification Group formally adds ML-KEM, ML-DSA, and SLH-DSA to the EU certification framework and recommends PQ/T hybrid schemes for EUCC-certified ICT products.
+- **PQC Algorithms Covered**: ML-KEM; ML-DSA; SLH-DSA
+- **Quantum Threats Addressed**: implementation of a quantum computer
+- **Migration Timeline Info**: Legacy mechanisms validity period default set to L[2031+]; deprecation deadline notation L[2031] indicates expiration on December 31, 2031; document revised on a two-year basis
+- **Applicable Regions / Bodies**: European Cybersecurity Certification Group; national cybersecurity certification authorities (NCCAs)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: Key Management; Random Generator; True Random Source; Deterministic Random Bit Generator
+- **Standardization Bodies**: European Cybersecurity Certification Group
+- **Compliance Frameworks Referenced**: FIPS 203; FIPS 204; FIPS 205; EUCC
+- **Classical Algorithms Referenced**: RSA; AES; SHA-256; ECDSA
+- **Key Takeaways**: Recommended mechanisms must offer a security level of at least 125 bits; Legacy mechanisms offering at least 100 bits should be phased out as soon as practical; New cryptographic systems must use recommended algorithms unless justified by backwards compatibility; Hybrid schemes are recommended during the transition period for EUCC-certified products
+- **Security Levels & Parameters**: 125 bits for recommended mechanisms; 100 bits for legacy mechanisms
+- **Hybrid & Transition Approaches**: PQ/T hybrid schemes recommended during the transition period
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer; Evaluator; Decision maker; User of cryptography
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Compliance; Migrate; Algorithms; Hybrid-crypto; Crypto-agility
+- **Implementation Attack Surface**: implementation errors, side-channel attacks (implied by advice on implementation caveats), fault injection (not explicitly named)
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: True Random Source, Deterministic Random Bit Generator, Random Number Generator with Specific Distribution
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: backwards compatibility justification required for legacy mechanisms in new systems, phased out as soon as practical, deprecation deadline, validity period L[2031], validity period L[2031+]
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: developers and evaluators addressed, decision makers and users of cryptography supported
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ECCG-ACM-v2.pdf (406,924 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:21:14
+
+---
+
+## draft-ietf-pquip-pqc-hsm-constrained-03
+
+- **Reference ID**: draft-ietf-pquip-pqc-hsm-constrained-03
+- **Title**: Adapting Constrained Devices for Post-Quantum Cryptography
+- **Authors**: IETF PQUIP WG
+- **Publication Date**: 2025-06-15
+- **Last Updated**: 2026-01-26
+- **Document Status**: Internet-Draft
+- **Main Topic**: Guidance on integrating Post-Quantum Cryptography into resource-constrained devices such as IoT nodes and lightweight HSMs, covering seed-based key generation, ephemeral key handling, and firmware authentication.
+- **PQC Algorithms Covered**: ML-KEM, ML-DSA, SLH-DSA, HSS/LMS, XMSS, Falcon, HQC
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2026
+- **Applicable Regions / Bodies**: Bodies: UK National Cyber Security Centre
+- **Leaders Contributions Mentioned**: Tirumaleswar Reddy.K, Dan Wing, Ben S, Kris Kwiatkowski, Paul E. Hoffman, Christopher Inacio
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: Trusted Execution Environments, secure elements, Hardware Security Modules, Key Management, Firmware Updates
+- **Standardization Bodies**: NIST, IETF, IRTF CFRG
+- **Compliance Frameworks Referenced**: FIPS 203, FIPS 204, FIPS 205, RFC 8554, RFC 8391, BCP 78, BCP 79, ISO 19790
+- **Classical Algorithms Referenced**: AES, Winternitz One-Time Signature (WOTS+), Merkle tree
+- **Key Takeaways**: Store seeds instead of expanded private keys to minimize persistent storage on constrained devices; Use lazy expansion and pre-hashing techniques to optimize memory footprint for lattice-based schemes; Consider hybrid signature approaches for post-quantum firmware authentication; Offload cryptographic tasks in low-resource environments to mitigate computational demands.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid Signature Approaches
+- **Performance & Size Considerations**: PQC algorithms have substantially larger key sizes and higher computational demands than classical algorithms; Rejection sampling in ML-DSA signing impacts performance on constrained modules.
+- **Target Audience**: Security Architect, Developer, Researcher
+- **Implementation Prerequisites**: Hardware security modules or Trusted Execution Environments; Seed-based key generation support; Firmware update mechanisms supporting post-quantum authentication.
+- **Relevant PQC Today Features**: iot-ot-pqc, hsm-pqc, stateful-signatures, code-signing, hybrid-crypto
+- **Implementation Attack Surface**: side-channel protection, Unbindable Kemmy Schmidt misbinding attack, unauthorized access to seeds or private keys, manipulation of expanded private keys
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: benchmarking ML-DSA Signing Performance, conformance to FIPS203, FIPS204, FIPS205, and REC-KEM guidelines
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: seed-based key generation, seed as Critical Security Parameter (CSP) per ISO19790
+- **Constrained Device & IoT Suitability**: IoT nodes, lightweight HSMs, Trusted Execution Environments (TEEs), secure elements, strict limitations on processing power, RAM, and flash memory, battery-powered devices, Initial Device Identifiers (IDevIDs), Locally Significant Device Identifiers (LDevIDs)
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: migration to PQC requires careful planning, hybrid signature approaches for firmware updates, post-quantum firmware authentication, key rotation and renewal, seed storage vs expanded private key trade-offs, interoperability gaps due to lack of single private key format
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-pquip-pqc-hsm-constrained-03.html (127,276 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:23:09
+
+---
+

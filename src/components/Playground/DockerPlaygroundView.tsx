@@ -41,6 +41,7 @@ export const DockerPlaygroundView = () => {
   
   const [engineTelemetry, setEngineTelemetry] = useState<Record<string, string> | null>(null)
   const [telemetryLoading, setTelemetryLoading] = useState(false)
+  const [resetLoading, setResetLoading] = useState(false)
 
   const handleFetchTelemetry = async () => {
     setTelemetryLoading(true)
@@ -56,6 +57,20 @@ export const DockerPlaygroundView = () => {
       setErrorMsg("Failed to perform Engine Handshake over port 8080.")
     } finally {
       setTelemetryLoading(false)
+    }
+  }
+
+  const handleResetSandbox = async () => {
+    setResetLoading(true)
+    try {
+      const res = await fetch(`http://localhost:8080/api/cleanup`, { method: 'POST' })
+      if (!res.ok) throw new Error("Reset target failed.")
+      // Re-trigger telemetry handshake to validate daemons were killed
+      await handleFetchTelemetry()
+    } catch(err) {
+      setErrorMsg("Failed to cleanly reset Background Sandbox services.")
+    } finally {
+      setResetLoading(false)
     }
   }
 
@@ -165,7 +180,14 @@ export const DockerPlaygroundView = () => {
              <div className="space-y-2">
                  <div className="flex items-center justify-between mb-2">
                      <p className="text-xs font-semibold text-status-success uppercase flex items-center gap-1.5"><Check size={12}/> Handshake Successful</p>
-                     <Button variant="ghost" size="sm" className="h-5 text-[10px]" onClick={handleFetchTelemetry}>Refresh Sync</Button>
+                     <div className="flex gap-2">
+                       <Button variant="ghost" size="sm" className="h-6 text-[10px]" onClick={handleFetchTelemetry} disabled={telemetryLoading}>
+                         Refresh Sync
+                       </Button>
+                       <Button variant="destructive" size="sm" className="h-6 text-[10px]" onClick={handleResetSandbox} disabled={resetLoading}>
+                         {resetLoading ? 'Resetting...' : 'Force Reset Services'}
+                       </Button>
+                     </div>
                  </div>
                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                    {Object.entries(engineTelemetry).map(([key, val]) => (
