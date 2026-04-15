@@ -5,7 +5,7 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Play, Upload, UploadCloud } from 'lucide-react'
+import { X, Play, Upload, UploadCloud, TerminalSquare, Copy, Check } from 'lucide-react'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 
 type TestScenario = 'tls' | 'ssh' | 'vpn' | 'pki' | 'sequoia' | 'web3'
@@ -33,8 +33,16 @@ export const DockerPlaygroundView = () => {
   const [loading, setLoading] = useState<TestScenario | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [activeModal, setActiveModal] = useState<TileBlueprint | null>(null)
+  const [showInstallGuide, setShowInstallGuide] = useState(false)
+  const [copied, setCopied] = useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
+
+  const handleCopy = async () => {
+    await navigator.clipboard.writeText("docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest")
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   const handleExecute = async (scenario: TestScenario) => {
     setLoading(scenario)
@@ -124,6 +132,29 @@ export const DockerPlaygroundView = () => {
 
       {/* Target Array */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 flex-1">
+        {/* Initialization Tile */}
+        <div className="glass-panel p-5 flex flex-col items-start gap-4 border border-primary/40 shadow-[0_0_15px_rgba(var(--primary),0.1)] relative overflow-hidden">
+          <div className="absolute top-0 left-0 w-1 h-full bg-primary" />
+          <div className="flex items-center gap-3 w-full">
+            <div className="shrink-0 w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center">
+              <TerminalSquare className="w-5 h-5 text-primary" aria-hidden="true" />
+            </div>
+            <h4 className="font-semibold text-foreground flex-1">
+              Initialize Local Engine
+            </h4>
+          </div>
+          <p className="text-sm text-muted-foreground flex-1">
+            Install and run the complete hardware simulation environment via GHCR in less than 30 seconds.
+          </p>
+          <Button
+            onClick={() => setShowInstallGuide(true)}
+            className="w-full mt-2 font-bold"
+            variant="default"
+          >
+            Installation Guide
+          </Button>
+        </div>
+
         {TILES.map((tile) => {
           const Icon = tile.icon
           const isActing = loading === tile.id
@@ -278,6 +309,79 @@ export const DockerPlaygroundView = () => {
                 <Play className="w-4 h-4 fill-current"/>
                 Confirm & Execute Simulation
               </Button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* Install Guide Modal */}
+      <AnimatePresence>
+        {showInstallGuide && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setShowInstallGuide(false)}
+              className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 glass-panel p-6 max-w-lg w-full max-h-[90dvh] overflow-y-auto z-50 rounded-xl"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="install-modal-title"
+              style={{ zIndex: 60 }}
+            >
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+                    <TerminalSquare className="w-5 h-5 text-primary" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h2 id="install-modal-title" className="text-xl font-bold leading-tight">
+                      Deploy Engine via GHCR
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">Automated Execution Environment</p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setShowInstallGuide(false)} aria-label="Close modal">
+                  <X size={20} />
+                </Button>
+              </div>
+
+              <div className="space-y-4">
+                <p className="text-sm text-foreground/90">
+                  Because this platform natively integrates OpenSSH, strongSwan, and TLS 1.3 compiling across massively heavy cryptography payloads, the execution relies on our automated headless container.
+                </p>
+                <div className="bg-muted border border-border rounded-lg p-4">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Step 1: Execute Container</p>
+                  <p className="text-xs text-foreground/70 mb-3">
+                    Ensure Docker Desktop or OrbStack is running, then paste this into your terminal. It will instantly pull and run the environment in the background.
+                  </p>
+                  <div className="relative group">
+                    <pre className="bg-black text-green-400 p-3 rounded-md text-xs font-mono overflow-x-auto">
+                      docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest
+                    </pre>
+                    <Button 
+                      onClick={handleCopy} 
+                      size="icon" 
+                      variant="outline" 
+                      className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black border-zinc-700 hover:bg-zinc-800 focus:opacity-100"
+                    >
+                      {copied ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
+                    </Button>
+                  </div>
+                </div>
+                <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-4">
+                   <p className="text-xs font-semibold uppercase text-status-success mb-1">Step 2: Simulation Activated</p>
+                   <p className="text-xs text-muted-foreground">
+                      That’s it! The container is now flawlessly hooked into your application instance over port 8080. You can now close this interface and select any simulation to natively intercept traces!
+                   </p>
+                </div>
+              </div>
             </motion.div>
           </>
         )}
