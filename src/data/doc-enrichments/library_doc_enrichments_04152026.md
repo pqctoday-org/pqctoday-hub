@@ -12607,3 +12607,89 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## ETSI-GR-QSC-003
+
+- **Reference ID**: ETSI-GR-QSC-003
+- **Title**: Quantum-Safe Cryptography; Case Studies and Deployment Scenarios
+- **Authors**: ETSI ISG QSC
+- **Publication Date**: 2017-03-01
+- **Last Updated**: 2017-03-01
+- **Document Status**: Published
+- **Main Topic**: Examination of real-world deployment scenarios and migration challenges for quantum-safe cryptography across network security, IoT, satellite communications, and authentication use cases.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Bodies: ETSI; Regions: France (via address)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: OpenSSL, wolfSSL, Redis
+- **Protocols Covered**: TLS, S/MIME, Kerberos, ZigBee, DTLS
+- **Infrastructure Layers**: Key Distribution Centres, PKI (implied via certificates), Offline services
+- **Standardization Bodies**: ETSI, IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Developers must consider changes to accommodate quantum-safe cryptography in public-key primitives; IoT and satellite use cases have distinct constraints compared to traditional internet services; Hybrid schemes are a viable option for upgrading TLS; Large key sizes present handling challenges in protocol stacks; Authentication requirements vary significantly between online and offline scenarios.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid scheme, Drop-in replacement, Re-engineering
+- **Performance & Size Considerations**: Handling large key sizes mentioned as a challenge; No concrete byte values provided.
+- **Target Audience**: Developer, Security Architect, Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: tls-basics, email-signing, iot-ot-pqc, hybrid-crypto, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: IoT cryptography; Satellite communications constraints; handling large key sizes
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Drop-in replacement; Hybrid scheme; Re-engineering; Integration into the protocol stack; Handling large key sizes
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-GR-QSC-003.pdf (155,124 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:59:01
+
+---
+
+## ETSI-GR-QSC-004
+
+- **Reference ID**: ETSI-GR-QSC-004
+- **Title**: Quantum-Safe Cryptography; Quantum-Safe Threat Assessment
+- **Authors**: ETSI ISG QSC
+- **Publication Date**: 2017-03-01
+- **Last Updated**: 2017-03-01
+- **Document Status**: Published
+- **Main Topic**: A simplified threat assessment of quantum computing impacts on asymmetric and symmetric cryptography across banking, transport, IoT, and digital media sectors.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Shor's algorithm; Grover's algorithm
+- **Migration Timeline Info**: Years mentioned: 2031
+- **Applicable Regions / Bodies**: Bodies: ETSI Industry Specification Group Quantum-Safe Cryptography (QSC)
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: Transport Layer Security (TLS); Internet Protocol Security (IPSec); Internet Key Exchange (IKE); Secure/Multipurpose Internet Mail Exchange (S/MIME)
+- **Infrastructure Layers**: Public Key Infrastructure (PKI); Trusted Platform Modules
+- **Standardization Bodies**: ETSI; ISO/HL7; Digital Living Network Alliance; Advanced Access Content System Licensing Authority
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: Elliptic Curves; number factorization; Symmetric algorithms; RSA; ECC; ECDSA; DH; AES; DSA
+- **Key Takeaways**: Asymmetric cryptography using Elliptic Curves or number factorization will be invalidated by viable quantum computers; Symmetric cryptographic schemes will face reduced security levels; Risk impact varies across different business sectors and users of quantum vulnerable cryptography; Organizations must determine response times to retain trust and security in operations.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Policy Maker; Researcher; Compliance Officer
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: Threats, Assess, Algorithms, tls-basics, pki-workshop, iot-ot-pqc
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: Random number generation
+- **Constrained Device & IoT Suitability**: Intelligent Transport Systems, Trusted Platform Modules
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-GR-QSC-004.pdf (263,517 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:00:33
+
+---
+

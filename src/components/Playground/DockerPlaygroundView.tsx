@@ -357,7 +357,17 @@ export const DockerPlaygroundView = () => {
                   Because this platform natively integrates OpenSSH, strongSwan, and TLS 1.3 compiling across massively heavy cryptography payloads, the execution relies on our automated headless container.
                 </p>
                 <div className="bg-muted border border-border rounded-lg p-4">
-                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Step 1: Execute Container</p>
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2">Step 1: Authenticate (Private Access)</p>
+                  <p className="text-xs text-foreground/70 mb-3">
+                    If this package is configured securely for private distribution, authenticate via your GitHub Personal Access Token (PAT):
+                  </p>
+                  <div className="relative group mb-4">
+                    <pre className="bg-black text-blue-400 p-3 rounded-md text-xs font-mono overflow-x-auto">
+                      docker login ghcr.io -u &lt;username&gt; -p &lt;token&gt;
+                    </pre>
+                  </div>
+
+                  <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">Step 2: Execute Container</p>
                   <p className="text-xs text-foreground/70 mb-3">
                     Ensure Docker Desktop or OrbStack is running, then paste this into your terminal. It will instantly pull and run the environment in the background.
                   </p>
@@ -376,7 +386,7 @@ export const DockerPlaygroundView = () => {
                   </div>
                 </div>
                 <div className="bg-status-success/10 border border-status-success/20 rounded-lg p-4">
-                   <p className="text-xs font-semibold uppercase text-status-success mb-1">Step 2: Simulation Activated</p>
+                   <p className="text-xs font-semibold uppercase text-status-success mb-1">Step 3: Simulation Activated</p>
                    <p className="text-xs text-muted-foreground">
                       That’s it! The container is now flawlessly hooked into your application instance over port 8080. You can now close this interface and select any simulation to natively intercept traces!
                    </p>
