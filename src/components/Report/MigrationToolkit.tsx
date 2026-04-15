@@ -65,13 +65,13 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
       // Show only the user's explicitly bookmarked products (minus hidden)
       const mySet = new Set(myProducts)
       selected = softwareData.filter((item) => {
-        const key = `${item.softwareName}::${item.categoryId}`
+        const key = item.productId
         return mySet.has(key) && !hiddenSet.has(key)
       })
     } else {
       // Fall back to infrastructure-filtered recommendations
       selected = softwareData.filter((item) => {
-        const key = `${item.softwareName}::${item.categoryId}`
+        const key = item.productId
         return !hiddenSet.has(key)
       })
 
@@ -272,10 +272,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                     priorityConfig[item.pqcMigrationPriority as keyof typeof priorityConfig]
 
                   return (
-                    <tr
-                      key={`${item.softwareName}::${item.categoryId}`}
-                      className="border-b border-border/50 last:border-b-0"
-                    >
+                    <tr key={item.productId} className="border-b border-border/50 last:border-b-0">
                       <td className="p-2 w-8 print:hidden">
                         <Button
                           variant="ghost"
@@ -283,7 +280,7 @@ export const MigrationToolkit: React.FC<MigrationToolkitProps> = ({
                           aria-label="Hide this product"
                           onClick={(e) => {
                             e.stopPropagation()
-                            hideProduct(`${item.softwareName}::${item.categoryId}`)
+                            hideProduct(item.productId)
                           }}
                           className="p-1 h-auto w-auto rounded text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10"
                         >

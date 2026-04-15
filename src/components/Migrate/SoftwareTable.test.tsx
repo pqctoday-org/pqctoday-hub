@@ -10,6 +10,7 @@ vi.mock('../../utils/analytics', () => ({
 }))
 
 const baseSoftwareItem: SoftwareItem = {
+  productId: 'testlib',
   softwareName: 'TestLib',
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',

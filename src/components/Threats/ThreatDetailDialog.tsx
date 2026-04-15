@@ -1,6 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useEffect } from 'react'
-import { ShieldAlert, X, Lock, Cpu, ExternalLink, BookOpen } from 'lucide-react'
+import {
+  ShieldAlert,
+  X,
+  Lock,
+  Cpu,
+  ExternalLink,
+  BookOpen,
+  Sparkles,
+  Target,
+  Clock,
+  DollarSign,
+  Shield,
+} from 'lucide-react'
 import type { ThreatItem } from '../../data/threatsData'
 import { StatusBadge } from '../common/StatusBadge'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
@@ -8,6 +20,7 @@ import { AskAssistantButton } from '../ui/AskAssistantButton'
 import { EndorseButton } from '../ui/EndorseButton'
 import { FlagButton } from '../ui/FlagButton'
 import { buildEndorsementUrl, buildFlagUrl } from '@/utils/endorsement'
+import { threatEnrichmentData } from '@/data/threatEnrichmentData'
 import FocusLock from 'react-focus-lock'
 import { Button } from '@/components/ui/button'
 
@@ -111,6 +124,101 @@ export const ThreatDetailDialog: React.FC<ThreatDetailDialogProps> = ({ threat, 
                 </span>
               </div>
             </div>
+
+            {/* Threat Enrichment Analysis */}
+            {(() => {
+              const enrichment = threatEnrichmentData[threat.threatId]
+              if (!enrichment) return null
+              const hasAttack = enrichment.attackClassification.length > 0
+              const hasTimeline = enrichment.exploitationTimeline.length > 0
+              const hasFinancial = enrichment.financialImpact.length > 0
+              const hasCountermeasure = enrichment.countermeasureEffectiveness.length > 0
+              const hasAny = hasAttack || hasTimeline || hasFinancial || hasCountermeasure
+              if (!hasAny) return null
+              return (
+                <div className="pt-4 border-t border-border mt-4">
+                  <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-3 flex items-center gap-2">
+                    <Sparkles size={14} className="text-primary" /> Threat Analysis
+                  </h3>
+                  <div className="space-y-3">
+                    {hasAttack && (
+                      <div className="flex items-start gap-2">
+                        <Target size={14} className="text-status-error mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Attack Classification
+                          </span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {enrichment.attackClassification.map((c) => (
+                              <span
+                                key={c}
+                                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-status-error/10 text-status-error border border-status-error/20"
+                              >
+                                {c}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {hasTimeline && (
+                      <div className="flex items-start gap-2">
+                        <Clock size={14} className="text-status-warning mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Exploitation Timeline
+                          </span>
+                          <ul className="mt-1 space-y-0.5">
+                            {enrichment.exploitationTimeline.map((t, i) => (
+                              <li key={i} className="text-xs text-foreground">
+                                {t}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    {hasFinancial && (
+                      <div className="flex items-start gap-2">
+                        <DollarSign size={14} className="text-primary mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Financial Impact
+                          </span>
+                          <ul className="mt-1 space-y-0.5">
+                            {enrichment.financialImpact.map((f, i) => (
+                              <li key={i} className="text-xs text-foreground">
+                                {f}
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    )}
+                    {hasCountermeasure && (
+                      <div className="flex items-start gap-2">
+                        <Shield size={14} className="text-status-success mt-0.5 shrink-0" />
+                        <div>
+                          <span className="text-xs font-medium text-muted-foreground">
+                            Countermeasure Effectiveness
+                          </span>
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {enrichment.countermeasureEffectiveness.map((c) => (
+                              <span
+                                key={c}
+                                className="inline-flex items-center px-1.5 py-0.5 rounded text-xs bg-status-success/10 text-status-success border border-status-success/20"
+                              >
+                                {c}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )
+            })()}
 
             {threat.sourceUrl && (
               <div className="pt-4 border-t border-border mt-4">

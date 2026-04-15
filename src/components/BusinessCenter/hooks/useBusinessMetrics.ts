@@ -391,8 +391,7 @@ export function useBusinessMetrics(): BusinessMetrics {
 
     const resolvedProducts: SoftwareItem[] = migrateStore.myProducts
       .map((key) => {
-        const [name, catId] = key.split('::')
-        return softwareData.find((s) => s.softwareName === name && s.categoryId === catId)
+        return softwareData.find((s) => s.productId === key)
       })
       .filter((s): s is SoftwareItem => s !== undefined)
 

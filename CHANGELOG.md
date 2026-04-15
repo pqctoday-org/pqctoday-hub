@@ -6,6 +6,49 @@ All notable changes to this project will be documented in this file.
 
 ## [Unreleased]
 
+### Added
+
+- **Implementation Attacks sub-tab** in Detailed Comparison — 12 algorithm attack profiles
+  covering ML-KEM, ML-DSA, FN-DSA/Falcon, HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA,
+  LMS/XMSS, Hybrid KEM, Composite Signatures, and cross-cutting RNG/API risks. Each profile
+  includes per-attack severity ratings (Critical/High/Medium/Low), countermeasures, and
+  peer-reviewed references with local archive links.
+- **KAT Validation sub-tab** in Detailed Comparison — in-browser NIST Known Answer Tests via
+  softhsmv3 WASM PKCS#11 for ML-KEM (FIPS 203), ML-DSA (FIPS 204), and SLH-DSA (FIPS 205)
+  with collapsible PKCS#11 diagnostics panel.
+- **FN-DSA/Falcon attack profile** — documents floating-point Gaussian sampler side-channel
+  vulnerability (most SCA-vulnerable NIST PQC standard) with five countermeasures.
+- **LMS/XMSS stateful signature attack profile** — documents catastrophic state-reuse
+  vulnerability with crash-safe persistence and state management countermeasures.
+- **BIKE-1/3/5 added to algorithm reference CSV** — NIST Round 4 code-based KEM (QC-MDPC)
+  with sizes from the BIKE specification and liboqs; 80 algorithms now in the reference data.
+- **Cryptographic hardness assumptions** shown in Security Levels view — each algorithm card
+  displays the underlying mathematical problem (Module-LWE, binary Goppa decoding, hash
+  collision resistance, MQ problem, etc.).
+- **"Why KATs Matter" explainer** in KAT Validation — collapsible educational content covering
+  FIPS 140-3 requirements, implementation correctness, and in-browser verification value.
+- **"Quick Reference" panel** in the About modal — practical analogies for security levels,
+  key sizes, and signature sizes for non-expert users.
+
+### Changed
+
+- **Performance baseline description fixed** — Info modal now correctly states RSA-2048 is the
+  universal baseline across all algorithm families (previously incorrectly split between RSA-2048
+  for KEMs and ECDSA-P256 for signatures).
+- **Composite & Hybrid attack profile split into two tiles** — "Hybrid KEM (X25519+ML-KEM)"
+  and "Composite Signatures (ML-DSA+ECDSA)" with distinct attack details and countermeasures.
+- **NTRU+ attack reference clarified** — notes that research was on classic NTRU, transferable
+  to NTRU+ via shared polynomial multiplication structure.
+- **Draft/Candidate indicator badges** added to Performance and Size views — amber "Draft" badge
+  shown for algorithms still in candidate or draft standardisation (HQC, BIKE, MAYO, HAWK, etc.).
+- **Attack severity ratings** replace uniform "Vulnerable" badges — 4-tier system (Critical for
+  remote/practical key recovery, High for physical access required, Medium for theoretical,
+  Low for easily mitigated) with color-coded legend.
+- **Countermeasures section** added to all attack profiles — actionable mitigations including
+  masking, constant-time implementation, DRBG compliance, zeroization, and FIPS 140-3 guidance.
+- **SLH-DSA side-channel status corrected** from "Unknown" to "Not Found" — hash operations
+  are inherently constant-time with no known SCA vulnerabilities.
+
 ## [3.3.8] - April 14, 2026
 
 Six new reference library entries covering government guidance and emerging standards, plus

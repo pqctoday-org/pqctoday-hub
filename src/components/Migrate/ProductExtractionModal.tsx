@@ -398,6 +398,73 @@ export const ProductExtractionModal = ({
                 </div>
               )}
 
+              {/* Security & Deployment — v3 dimensions */}
+              {extraction &&
+                (hasValue(extraction.implementationAttackSurface) ||
+                  hasValue(extraction.testingValidation) ||
+                  hasValue(extraction.constrainedDeviceIoT) ||
+                  hasValue(extraction.supplyChainRisk) ||
+                  hasValue(extraction.deploymentComplexity)) && (
+                  <div>
+                    <SectionHeader title="Security & Deployment" />
+                    <div className="space-y-3">
+                      {hasValue(extraction.implementationAttackSurface) && (
+                        <FieldTags
+                          label="Implementation Attack Surface"
+                          items={splitTags(extraction.implementationAttackSurface)}
+                          variant="destructive"
+                        />
+                      )}
+                      {hasValue(extraction.testingValidation) && (
+                        <FieldTags
+                          label="Testing & Validation"
+                          items={splitTags(extraction.testingValidation)}
+                          variant="info"
+                        />
+                      )}
+                      {hasValue(extraction.constrainedDeviceIoT) && (
+                        <FieldTags
+                          label="IoT & Constrained Devices"
+                          items={splitTags(extraction.constrainedDeviceIoT)}
+                          variant="warning"
+                        />
+                      )}
+                      {hasValue(extraction.supplyChainRisk) && (
+                        <FieldText label="Supply Chain Risk" value={extraction.supplyChainRisk} />
+                      )}
+                      {hasValue(extraction.deploymentComplexity) && (
+                        <FieldText
+                          label="Deployment Complexity"
+                          value={extraction.deploymentComplexity}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+
+              {/* Executive Context — v4 dimensions */}
+              {extraction &&
+                (hasValue(extraction.financialBusinessImpact) ||
+                  hasValue(extraction.organizationalReadiness)) && (
+                  <div>
+                    <SectionHeader title="Executive Context" />
+                    <div className="space-y-3">
+                      {hasValue(extraction.financialBusinessImpact) && (
+                        <FieldText
+                          label="Financial & Business Impact"
+                          value={extraction.financialBusinessImpact}
+                        />
+                      )}
+                      {hasValue(extraction.organizationalReadiness) && (
+                        <FieldText
+                          label="Organizational Readiness"
+                          value={extraction.organizationalReadiness}
+                        />
+                      )}
+                    </div>
+                  </div>
+                )}
+
               {/* Strategic Context — from catalog enrichment */}
               {hasStrategicContext && catalogEnrichment && (
                 <div>

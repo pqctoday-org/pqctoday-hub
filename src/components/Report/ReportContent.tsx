@@ -601,7 +601,7 @@ export const ReportContent: React.FC<AssessReportProps> = ({ result }) => {
     return softwareData
       .filter((item) => {
         // Respect migrate page selections
-        const key = `${item.softwareName}::${item.categoryId}`
+        const key = item.productId
         if (hiddenSet.has(key)) return false
         const industryMatch = item.targetIndustries.toLowerCase().includes(industryLower)
         const infraMatch = (infrastructure ?? []).some((i) =>

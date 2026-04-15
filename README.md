@@ -19,7 +19,15 @@ Test your PQC readiness with this interactive web application visualizing the gl
   - "Find tools" deep-links from each PQC algorithm cell to pre-filtered `/migrate` catalog
   - Mobile-responsive layout with accessible `aria-sort` attributes; separate mobile list view
   - AI-powered context button on each row for classical↔PQC migration rationale
-  - **Deep-linkable sub-tabs**: performance/security/sizes/usecases sub-tabs URL-persisted via `?subtab=` param
+  - **Deep-linkable sub-tabs**: performance/security/sizes/usecases/attacks/kat sub-tabs URL-persisted via `?subtab=` param
+  - **Implementation Attacks sub-tab**: 12 algorithm attack profiles (ML-KEM, ML-DSA, FN-DSA,
+    HQC, Classic McEliece, FrodoKEM, NTRU+, SLH-DSA, LMS/XMSS, Hybrid KEM, Composite Signatures,
+    cross-cutting RNG/API) with 4-tier severity ratings (Critical/High/Medium/Low), per-attack
+    countermeasures, and peer-reviewed references with local archive links
+  - **KAT Validation sub-tab**: in-browser NIST Known Answer Tests via softhsmv3 WASM PKCS#11
+    — ML-KEM-512/768/1024 (ACVP Decap + Encap Round-Trip), ML-DSA-44/65/87 (ACVP SigVer +
+    Functional Round-Trip), SLH-DSA (12 variants via dropdown); collapsible PKCS#11 diagnostics
+    panel with call log and key inspector
   - **Region filter**: filter algorithms by standardisation body — NIST (US), IETF (Global), BSI/ANSSI (Europe), ETSI, KpqC (Korea), CACR (China); sortable Region column
   - **Status filter**: filter by certification status — Certified, Candidate, To Be Checked; sortable Status column; Multivariate and Isogeny added to crypto-family filter
   - **Algorithm Implementations Modal**: click the code icon on any PQC algorithm to see its open-source reference implementations; backed by `algo_product_xref` CSV; smart family-prefix fallback (SLH-DSA covers all SLH-DSA-\* variants); deep-links to `/migrate` catalog and `/library` entries

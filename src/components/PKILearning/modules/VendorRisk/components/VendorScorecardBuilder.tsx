@@ -84,7 +84,7 @@ const DIMENSIONS: Dimension[] = [
 
 function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
-  return softwareData.filter((s) => keySet.has(`${s.softwareName}::${s.categoryId}`))
+  return softwareData.filter((s) => keySet.has(s.productId))
 }
 
 function getScoreColor(value: number): string {
@@ -99,7 +99,7 @@ function getBarColor(value: number): string {
   return 'bg-status-error'
 }
 
-const productKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
+const productKey = (item: SoftwareItem) => item.productId
 
 export const VendorScorecardBuilder: React.FC = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)

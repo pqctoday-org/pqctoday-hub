@@ -47,6 +47,7 @@ export const CISA_CATEGORIES = [
 export type CisaCategoryType = (typeof CISA_CATEGORIES)[number]
 
 export interface SoftwareItem {
+  productId: string
   softwareName: string
   categoryId: string
   categoryName: string
@@ -126,6 +127,7 @@ export interface MigrationStep {
 }
 
 export interface CertificationXref {
+  productId: string
   softwareName: string
   certType: 'FIPS 140-3' | 'ACVP' | 'Common Criteria' | 'PSA Certified'
   certId: string
@@ -150,6 +152,7 @@ export interface SoftwareCategoryGap {
 }
 
 export interface CpeXref {
+  productId: string
   softwareName: string
   cpeUri: string
   cpeVendor: string
@@ -161,6 +164,7 @@ export interface CpeXref {
 }
 
 export interface PurlXref {
+  productId: string
   softwareName: string
   purl: string
   purlType: 'npm' | 'pypi' | 'maven' | 'go' | 'github' | 'cargo' | 'nuget' | ''

@@ -19,6 +19,17 @@ export interface ProductExtraction {
   consensusMechanism: string
   signatureSchemes: string
   authoritativeSourceUrl: string
+  // v3/v4 dimensions
+  implementationAttackSurface: string
+  cryptoDiscovery: string
+  testingValidation: string
+  qkdProtocols: string
+  qrngEntropy: string
+  constrainedDeviceIoT: string
+  supplyChainRisk: string
+  deploymentComplexity: string
+  financialBusinessImpact: string
+  organizationalReadiness: string
 }
 
 interface RawExtraction {
@@ -40,6 +51,16 @@ interface RawExtraction {
   consensus_mechanism: string
   signature_schemes: string
   authoritative_source_url: string
+  implementation_attack_surface?: string
+  cryptographic_discovery_inventory?: string
+  testing_validation_methods?: string
+  qkd_protocols_quantum_networking?: string
+  qrng_entropy_sources?: string
+  constrained_device_iot_suitability?: string
+  supply_chain_vendor_risk?: string
+  deployment_migration_complexity?: string
+  financial_business_impact?: string
+  organizational_readiness?: string
 }
 
 function mapRaw(raw: RawExtraction): ProductExtraction {
@@ -62,6 +83,17 @@ function mapRaw(raw: RawExtraction): ProductExtraction {
     consensusMechanism: raw.consensus_mechanism ?? '',
     signatureSchemes: raw.signature_schemes ?? '',
     authoritativeSourceUrl: raw.authoritative_source_url ?? '',
+    // v3/v4 dimensions
+    implementationAttackSurface: raw.implementation_attack_surface ?? '',
+    cryptoDiscovery: raw.cryptographic_discovery_inventory ?? '',
+    testingValidation: raw.testing_validation_methods ?? '',
+    qkdProtocols: raw.qkd_protocols_quantum_networking ?? '',
+    qrngEntropy: raw.qrng_entropy_sources ?? '',
+    constrainedDeviceIoT: raw.constrained_device_iot_suitability ?? '',
+    supplyChainRisk: raw.supply_chain_vendor_risk ?? '',
+    deploymentComplexity: raw.deployment_migration_complexity ?? '',
+    financialBusinessImpact: raw.financial_business_impact ?? '',
+    organizationalReadiness: raw.organizational_readiness ?? '',
   }
 }
 

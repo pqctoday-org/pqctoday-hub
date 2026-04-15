@@ -498,7 +498,9 @@ export function AlgorithmsView() {
                       | 'performance'
                       | 'security'
                       | 'sizes'
-                      | 'usecases') || 'performance'
+                      | 'usecases'
+                      | 'attacks'
+                      | 'kat') || 'performance'
                   }
                   onSubTabChange={(v) =>
                     updateSearchParams({ subtab: v === 'performance' ? null : v })

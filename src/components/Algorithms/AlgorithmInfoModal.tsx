@@ -75,8 +75,11 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                     <p className="text-xs text-muted-foreground leading-relaxed">
                       Performance is expressed as{' '}
                       <span className="font-medium text-foreground">relative cycle counts</span>{' '}
-                      (e.g., 1x, 10x, 50x) benchmarked against classical baselines &mdash; RSA-2048
-                      for KEMs and ECDSA-P256 for digital signatures.
+                      (e.g., 1x, 10x, 50x) benchmarked against{' '}
+                      <span className="font-medium text-foreground">RSA-2048</span> as the universal
+                      baseline across all algorithm families. Classical algorithms like ECDSA P-256
+                      appear at fractional multipliers (e.g., 0.3x) because they are faster than the
+                      RSA-2048 baseline.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -92,7 +95,9 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                       Three categories: <span className="font-medium text-foreground">Fast</span>{' '}
                       (&le;1x baseline),{' '}
                       <span className="font-medium text-foreground">Moderate</span> (&le;10x), and{' '}
-                      <span className="font-medium text-foreground">Slow</span> (&gt;10x).
+                      <span className="font-medium text-foreground">Slow</span> (&gt;10x). In
+                      practice, ML-KEM-768 at 1.5x means key exchange takes only ~50% longer than
+                      RSA-2048 &mdash; while providing quantum resistance.
                     </p>
                   </div>
                   <div className="flex items-start gap-3">
@@ -102,6 +107,30 @@ export function AlgorithmInfoModal({ isOpen, onClose }: AlgorithmInfoModalProps)
                       implementations.
                     </p>
                   </div>
+                </div>
+              </div>
+
+              {/* Quick Reference */}
+              <div className="mb-6 bg-muted/30 border border-border rounded-lg p-4">
+                <p className="text-xs font-mono uppercase tracking-widest text-muted-foreground mb-3">
+                  Quick Reference
+                </p>
+                <div className="space-y-2 text-xs text-muted-foreground">
+                  <p>
+                    <span className="font-medium text-foreground">Security Levels:</span> Level 1
+                    &asymp; AES-128, Level 3 &asymp; AES-192, Level 5 &asymp; AES-256. Higher levels
+                    resist more powerful quantum computers but require larger keys.
+                  </p>
+                  <p>
+                    <span className="font-medium text-foreground">Key Size Context:</span>{' '}
+                    ML-KEM-768 uses a 1.2KB public key vs RSA-2048&apos;s 256 bytes. Classic
+                    McEliece needs ~256KB &mdash; too large for most TLS handshakes.
+                  </p>
+                  <p>
+                    <span className="font-medium text-foreground">Signature Size Context:</span>{' '}
+                    ML-DSA-65 produces 3.3KB signatures vs ECDSA P-256&apos;s 64 bytes. SLH-DSA can
+                    reach 8&ndash;50KB depending on variant.
+                  </p>
                 </div>
               </div>
 

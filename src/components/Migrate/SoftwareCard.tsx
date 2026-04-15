@@ -52,7 +52,7 @@ export const SoftwareCard = ({
 }: SoftwareCardProps) => {
   const { migrateBookmarks, toggleMigrateBookmark } = useBookmarkStore()
   const isBookmarked = migrateBookmarks.includes(item.softwareName)
-  const key = `${item.softwareName}::${item.categoryId}`
+  const key = item.productId
   const [isExpandedMobile, setIsExpandedMobile] = useState(false)
 
   // Find the primary layer (first in comma-separated list)

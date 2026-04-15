@@ -20,10 +20,14 @@ import {
   ArrowDown,
   SearchX,
   Scale,
+  ShieldAlert,
+  FlaskConical,
 } from 'lucide-react'
 import clsx from 'clsx'
 import { TrustScoreBadge } from '@/components/ui/TrustScoreBadge'
 import { Button } from '@/components/ui/button'
+import { ImplementationAttacksView } from './ImplementationAttacksView'
+import { KATView } from './KATView'
 
 type SortField = 'name' | 'type' | 'keygen' | 'sign' | 'verify' | 'ram' | 'optimization'
 type SortDir = 'asc' | 'desc'
@@ -35,7 +39,7 @@ function getPerformanceMultiplier(cycles: string): number {
   return match ? parseFloat(match[1]) : 1
 }
 
-type SubTab = 'performance' | 'security' | 'sizes' | 'usecases'
+type SubTab = 'performance' | 'security' | 'sizes' | 'usecases' | 'attacks' | 'kat'
 
 interface AlgorithmDetailedComparisonProps {
   highlightAlgorithms?: Set<string>
@@ -93,6 +97,20 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
             >
               <TrendingUp size={16} />
               <span>Use Cases</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="attacks"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
+              <ShieldAlert size={16} />
+              <span>Impl. Attacks</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="kat"
+              className="flex items-center gap-2 shrink-0 data-[state=active]:bg-background shadow-sm"
+            >
+              <FlaskConical size={16} />
+              <span>KAT Validation</span>
             </TabsTrigger>
           </TabsList>
           {onInfoOpen && (
@@ -174,6 +192,26 @@ export const AlgorithmDetailedComparison: React.FC<AlgorithmDetailedComparisonPr
               maxCompareReached={maxCompareReached}
               onToggleCompare={onToggleCompare}
             />
+          </motion.div>
+        </TabsContent>
+
+        <TabsContent value="attacks">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <ImplementationAttacksView />
+          </motion.div>
+        </TabsContent>
+
+        <TabsContent value="kat">
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.2 }}
+          >
+            <KATView />
           </motion.div>
         </TabsContent>
       </Tabs>
@@ -261,6 +299,26 @@ function isHighlighted(algo: AlgorithmDetail, highlights?: Set<string>): boolean
     (h) =>
       algo.name.toLowerCase().includes(h.toLowerCase()) ||
       h.toLowerCase().includes(algo.name.toLowerCase())
+  )
+}
+
+function isDraftCandidate(algo: AlgorithmDetail): boolean {
+  return (
+    algo.status === 'Candidate' ||
+    algo.status === 'Draft' ||
+    (algo.fipsStandard.includes('Draft') && !algo.fipsStandard.startsWith('FIPS'))
+  )
+}
+
+function DraftBadge({ algo }: { algo: AlgorithmDetail }) {
+  if (!isDraftCandidate(algo)) return null
+  return (
+    <span
+      className="inline-flex items-center text-[10px] px-1.5 py-0.5 rounded bg-status-warning/15 text-status-warning border border-status-warning/30 font-medium"
+      title="Draft or candidate standard — sizes and parameters may change before finalization"
+    >
+      Draft
+    </span>
   )
 }
 
@@ -419,6 +477,7 @@ const PerformanceView = ({
                             resourceId={algo.name}
                             size="sm"
                           />
+                          <DraftBadge algo={algo} />
                         </div>
                         {algo.securityLevel && (
                           <span
@@ -524,9 +583,10 @@ const PerformanceView = ({
           return (
             <div key={`${algo.name}-${index}`} className="p-4 space-y-2">
               <div className="flex items-start justify-between">
-                <div>
+                <div className="flex items-center gap-1.5 flex-wrap">
                   <span className="font-semibold text-foreground">{algo.name}</span>
-                  <span className="text-xs text-muted-foreground ml-2">{algo.family}</span>
+                  <DraftBadge algo={algo} />
+                  <span className="text-xs text-muted-foreground">{algo.family}</span>
                 </div>
                 {algo.securityLevel && (
                   <span
@@ -581,6 +641,16 @@ const PerformanceView = ({
       </div>
     </div>
   )
+}
+
+const HARDNESS_ASSUMPTIONS: Record<string, string> = {
+  Lattice: 'Module-LWE / NTRU (shortest vector problems on structured lattices)',
+  'Code-based': 'Decoding random linear / quasi-cyclic codes',
+  'Hash-based': 'Hash function collision and preimage resistance',
+  Multivariate: 'Solving systems of multivariate quadratic equations (MQ problem)',
+  Isogeny: 'Computing isogenies between supersingular elliptic curves',
+  Hybrid: 'Combination of classical (DLP/factoring) and PQC hardness assumptions',
+  Classical: 'Integer factoring (RSA) or discrete logarithm (ECC/DH)',
 }
 
 // Security View Component
@@ -674,6 +744,14 @@ const SecurityView = ({
                         {algo.privateKeySize.toLocaleString()} bytes
                       </span>
                     </div>
+                    {HARDNESS_ASSUMPTIONS[algo.cryptoFamily] && (
+                      <div className="pt-1 border-t border-border/50">
+                        <span className="text-[10px] text-muted-foreground leading-snug">
+                          <span className="font-medium text-foreground">{algo.cryptoFamily}:</span>{' '}
+                          {HARDNESS_ASSUMPTIONS[algo.cryptoFamily]}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 </div>
               ))}
@@ -721,6 +799,7 @@ const SizesView = ({
                   onToggleCompare={onToggleCompare}
                 />
                 <h5 className="font-semibold text-foreground">{algo.name}</h5>
+                <DraftBadge algo={algo} />
               </div>
               <span className="text-xs px-2 py-1 rounded bg-primary/20 text-primary border border-primary/30">
                 {algo.family}

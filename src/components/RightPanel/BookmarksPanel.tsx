@@ -19,6 +19,7 @@ import { useMigrateSelectionStore } from '@/store/useMigrateSelectionStore'
 import { downloadCsv } from '@/utils/csvExport'
 import { MODULE_CATALOG } from '../PKILearning/moduleData'
 import { WORKSHOP_TOOLS } from '../Playground/workshopRegistry'
+import { softwareData } from '@/data/migrateData'
 
 export const BookmarksPanel = () => {
   const {
@@ -66,7 +67,10 @@ export const BookmarksPanel = () => {
     clearMyProducts()
   }
 
-  const getProductName = (key: string) => key.split('::')[0]
+  const getProductName = (key: string) => {
+    const product = softwareData.find((s) => s.productId === key)
+    return product?.softwareName ?? key
+  }
 
   const handleExportJson = () => {
     const data = {

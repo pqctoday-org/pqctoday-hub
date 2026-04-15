@@ -183,8 +183,7 @@ export const MigrateView: React.FC = () => {
     () =>
       compareKeys
         .map((key) => {
-          const [name] = key.split('::')
-          return softwareData.find((s) => s.softwareName === name)
+          return softwareData.find((s) => s.productId === key)
         })
         .filter((s): s is SoftwareItem => !!s),
     [compareKeys] // softwareData is a module-level constant — safe to exclude
@@ -459,8 +458,7 @@ export const MigrateView: React.FC = () => {
           if (wipFilter === 'hidden' && item.wip === true) return false
           if (wipFilter === 'only' && item.wip !== true) return false
           // My Products filter
-          if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
-            return false
+          if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
           // Search filter
           if (filterText) {
             const q = filterText.toLowerCase()
@@ -530,9 +528,7 @@ export const MigrateView: React.FC = () => {
     () =>
       activePartitions.reduce(
         (acc, layer) => {
-          acc[layer.id as string] = (perLayerData[layer.id] ?? []).map(
-            (item) => `${item.softwareName}::${item.categoryId}`
-          )
+          acc[layer.id as string] = (perLayerData[layer.id] ?? []).map((item) => item.productId)
           return acc
         },
         {} as Partial<Record<string, string[]>>
@@ -575,7 +571,7 @@ export const MigrateView: React.FC = () => {
 
       const visibleItems = filterText
         ? items
-        : items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`))
+        : items.filter((item) => !hiddenSet.has(item.productId))
 
       stats.total = visibleItems.length
 
@@ -681,8 +677,7 @@ export const MigrateView: React.FC = () => {
       if (wipFilter === 'hidden' && item.wip === true) return false
       if (wipFilter === 'only' && item.wip !== true) return false
       // My Products filter
-      if (showOnlyMyProducts && !myProductsSet.has(`${item.softwareName}::${item.categoryId}`))
-        return false
+      if (showOnlyMyProducts && !myProductsSet.has(item.productId)) return false
       // Search filter
       if (filterText) {
         const q = filterText.toLowerCase()
@@ -845,7 +840,7 @@ export const MigrateView: React.FC = () => {
       effectiveViewMode === 'cards' ? sortedFlatProducts : allFilteredProducts
     if (filterText) return items.length
     return hiddenSet.size > 0
-      ? items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
+      ? items.filter((item) => !hiddenSet.has(item.productId)).length
       : items.length
   }, [effectiveViewMode, sortedFlatProducts, allFilteredProducts, hiddenSet, filterText])
 
@@ -853,10 +848,7 @@ export const MigrateView: React.FC = () => {
   const stackFilteredCount = useMemo(() => {
     return Object.values(perLayerData).reduce((sum, items) => {
       if (!filterText && hiddenSet.size > 0) {
-        return (
-          sum +
-          items.filter((item) => !hiddenSet.has(`${item.softwareName}::${item.categoryId}`)).length
-        )
+        return sum + items.filter((item) => !hiddenSet.has(item.productId)).length
       }
       return sum + items.length
     }, 0)

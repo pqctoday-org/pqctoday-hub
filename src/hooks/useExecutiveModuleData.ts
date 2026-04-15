@@ -79,7 +79,7 @@ export function useExecutiveModuleData(selectedProductKeys?: string[]): Executiv
       selectedProductKeys && selectedProductKeys.length > 0
         ? (() => {
             const keySet = new Set(selectedProductKeys)
-            return softwareData.filter((s) => keySet.has(`${s.softwareName}::${s.categoryId}`))
+            return softwareData.filter((s) => keySet.has(s.productId))
           })()
         : softwareData
 

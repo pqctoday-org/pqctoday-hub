@@ -20,7 +20,18 @@ export interface LibraryEnrichment {
   targetAudience: string[]
   implementationPrereqs: string[]
   relevantFeatures: string[]
-  // v3 timeline-specific dimensions (only present on timeline enrichments)
+  // v3/v4 dimensions
+  implementationAttackSurface: string[]
+  cryptoDiscovery: string[]
+  testingValidation: string[]
+  qkdProtocols: string[]
+  qrngEntropy: string[]
+  constrainedDeviceIoT: string[]
+  supplyChainRisk: string[]
+  deploymentComplexity: string[]
+  financialBusinessImpact: string[]
+  organizationalReadiness: string[]
+  // timeline-specific dimensions (only present on timeline enrichments)
   phaseClassification?: string | null
   mandateLevel?: string | null
   sectorApplicability?: string[]
@@ -154,9 +165,20 @@ export function parseEnrichmentMarkdown(raw: string): EnrichmentLookup {
       targetAudience: splitList(fields['Target Audience']),
       implementationPrereqs: parseSemicolonList(fields['Implementation Prerequisites']),
       relevantFeatures: splitList(fields['Relevant PQC Today Features']),
+      // v3/v4 dimensions
+      implementationAttackSurface: parseSemicolonList(fields['Implementation Attack Surface']),
+      cryptoDiscovery: parseSemicolonList(fields['Cryptographic Discovery & Inventory']),
+      testingValidation: parseSemicolonList(fields['Testing & Validation Methods']),
+      qkdProtocols: parseSemicolonList(fields['QKD Protocols & Quantum Networking']),
+      qrngEntropy: parseSemicolonList(fields['QRNG & Entropy Sources']),
+      constrainedDeviceIoT: parseSemicolonList(fields['Constrained Device & IoT Suitability']),
+      supplyChainRisk: parseSemicolonList(fields['Supply Chain & Vendor Risk']),
+      deploymentComplexity: parseSemicolonList(fields['Deployment & Migration Complexity']),
+      financialBusinessImpact: parseSemicolonList(fields['Financial & Business Impact']),
+      organizationalReadiness: parseSemicolonList(fields['Organizational Readiness']),
     }
 
-    // v3 timeline dimensions — only attach when the field is present in the markdown
+    // timeline dimensions — only attach when the field is present in the markdown
     if (phaseClassRaw !== undefined)
       entry.phaseClassification =
         phaseClassRaw && phaseClassRaw !== 'None detected' ? phaseClassRaw : null
@@ -204,7 +226,17 @@ export function hasSubstantiveEnrichment(e: LibraryEnrichment): boolean {
     e.performanceConsiderations.length ||
     e.targetAudience.length ||
     e.implementationPrereqs.length ||
-    e.relevantFeatures.length
+    e.relevantFeatures.length ||
+    e.implementationAttackSurface.length ||
+    e.cryptoDiscovery.length ||
+    e.testingValidation.length ||
+    e.qkdProtocols.length ||
+    e.qrngEntropy.length ||
+    e.constrainedDeviceIoT.length ||
+    e.supplyChainRisk.length ||
+    e.deploymentComplexity.length ||
+    e.financialBusinessImpact.length ||
+    e.organizationalReadiness.length
   )
 }
 

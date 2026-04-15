@@ -262,6 +262,16 @@ describe('hasSubstantiveEnrichment', () => {
     targetAudience: [] as string[],
     implementationPrereqs: [] as string[],
     relevantFeatures: [] as string[],
+    implementationAttackSurface: [] as string[],
+    cryptoDiscovery: [] as string[],
+    testingValidation: [] as string[],
+    qkdProtocols: [] as string[],
+    qrngEntropy: [] as string[],
+    constrainedDeviceIoT: [] as string[],
+    supplyChainRisk: [] as string[],
+    deploymentComplexity: [] as string[],
+    financialBusinessImpact: [] as string[],
+    organizationalReadiness: [] as string[],
   }
 
   it('returns true when mainTopic is set', () => {
@@ -339,6 +349,16 @@ describe('hasSubstantiveEnrichment', () => {
       targetAudience: [],
       implementationPrereqs: [],
       relevantFeatures: [],
+      implementationAttackSurface: [],
+      cryptoDiscovery: [],
+      testingValidation: [],
+      qkdProtocols: [],
+      qrngEntropy: [],
+      constrainedDeviceIoT: [],
+      supplyChainRisk: [],
+      deploymentComplexity: [],
+      financialBusinessImpact: [],
+      organizationalReadiness: [],
     })
     expect(result).toBe(true)
   })

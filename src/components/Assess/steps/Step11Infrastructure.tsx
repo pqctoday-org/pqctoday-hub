@@ -59,10 +59,7 @@ const Step11Infrastructure = () => {
   const myProducts = useMigrateSelectionStore((s) => s.myProducts)
 
   // Build a lookup map once
-  const itemMap = useMemo(
-    () => new Map(softwareData.map((item) => [`${item.softwareName}::${item.categoryId}`, item])),
-    []
-  )
+  const itemMap = useMemo(() => new Map(softwareData.map((item) => [item.productId, item])), [])
 
   // Derive infrastructure layer IDs from migrate product selections
   const migrateInferredLayers = useMemo(() => {
@@ -175,8 +172,7 @@ const Step11Infrastructure = () => {
             category: item.categoryName,
             layer: item.infrastructureLayer,
           }
-        const [name, category] = key.split('::')
-        return { key, name: name ?? key, category: category ?? '', layer: '' }
+        return { key, name: key, category: '', layer: '' }
       })
       .sort((a, b) => a.layer.localeCompare(b.layer) || a.name.localeCompare(b.name))
   }, [importProductSelection, myProducts, itemMap])

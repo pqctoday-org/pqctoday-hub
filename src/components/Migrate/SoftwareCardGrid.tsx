@@ -16,7 +16,7 @@ interface SoftwareCardGridProps {
   maxCompareReached?: boolean
 }
 
-const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
+const rowKey = (item: SoftwareItem) => item.productId
 
 export const SoftwareCardGrid = ({
   items,

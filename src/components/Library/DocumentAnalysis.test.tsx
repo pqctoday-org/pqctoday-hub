@@ -15,6 +15,16 @@ const EMPTY_V2 = {
   targetAudience: [] as string[],
   implementationPrereqs: [] as string[],
   relevantFeatures: [] as string[],
+  implementationAttackSurface: [] as string[],
+  cryptoDiscovery: [] as string[],
+  testingValidation: [] as string[],
+  qkdProtocols: [] as string[],
+  qrngEntropy: [] as string[],
+  constrainedDeviceIoT: [] as string[],
+  supplyChainRisk: [] as string[],
+  deploymentComplexity: [] as string[],
+  financialBusinessImpact: [] as string[],
+  organizationalReadiness: [] as string[],
 }
 
 const RICH_ENRICHMENT: LibraryEnrichment = {
@@ -44,6 +54,16 @@ const RICH_ENRICHMENT: LibraryEnrichment = {
   targetAudience: ['Security Architect', 'Developer'],
   implementationPrereqs: ['OpenSSL 3.5+', 'FIPS 140-3 module'],
   relevantFeatures: ['Compliance', 'tls-basics', '5g-security'],
+  implementationAttackSurface: [],
+  cryptoDiscovery: [],
+  testingValidation: [],
+  qkdProtocols: [],
+  qrngEntropy: [],
+  constrainedDeviceIoT: [],
+  supplyChainRisk: [],
+  deploymentComplexity: [],
+  financialBusinessImpact: [],
+  organizationalReadiness: [],
 }
 
 const MINIMAL_ENRICHMENT: LibraryEnrichment = {

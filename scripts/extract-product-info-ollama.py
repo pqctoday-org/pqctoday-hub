@@ -243,6 +243,16 @@ Extract the following product information as a bullet list. Write "Unknown" or "
 - **Consensus Mechanism**: e.g., PoW, PoS, BFT, PBFT, Tendermint (for blockchain protocols)
 - **Signature Schemes**: Current and planned signature algorithms
 - **Authoritative Source URL**: Primary URL for the product/platform
+- **Implementation Attack Surface**: Known side-channel vulnerabilities (power analysis, timing, EM leakage), fault injection risks, nonce reuse susceptibility, memory safety. Write "Unknown" if not discussed.
+- **Cryptographic Discovery & Inventory**: Crypto-agility scanning capabilities, CBOM support, algorithm enumeration, deprecated cipher detection. Write "Unknown" if not discussed.
+- **Testing & Validation Methods**: KAT vector support, ACVP/CAVP conformance, interoperability testing, fuzzing, formal verification, test suite coverage. Write "Unknown" if not discussed.
+- **QKD Protocols & Quantum Networking**: QKD protocol support (BB84, E91, CV-QKD), key rates, trusted node architecture, ETSI QKD compliance. Write "Unknown" if not applicable.
+- **QRNG & Entropy Sources**: Quantum entropy source type, NIST SP 800-90B compliance, min-entropy, randomness extraction, DRBG seeding. Write "Unknown" if not applicable.
+- **Constrained Device & IoT Suitability**: Embedded system viability, smartcard support, ARM Cortex-M compatibility, power/memory constraints, lightweight PQC variant availability. Write "Unknown" if not discussed.
+- **Supply Chain & Vendor Risk**: Dependency chain depth, SBOM/CBOM availability, vendor PQC roadmap maturity, open-source vs proprietary, third-party library trust. Write "Unknown" if not discussed.
+- **Deployment & Migration Complexity**: Migration phase support (assess/plan/test/migrate/launch), breaking change severity, backward compatibility, rollback procedures, estimated effort. Write "Unknown" if not discussed.
+- **Financial & Business Impact**: Licensing costs, TCO comparison, compliance penalty exposure, ROI projections, budget requirements for adoption. Write "Unknown" if not discussed.
+- **Organizational Readiness**: Governance prerequisites, team expertise needed, training requirements, change management scope, planning horizon. Write "Unknown" if not discussed.
 
 Now extract values from the document above:"""
 
@@ -274,6 +284,18 @@ CANONICAL_FIELDS = [
     'Consensus Mechanism',
     'Signature Schemes',
     'Authoritative Source URL',
+    # v3 dimensions (aligned with enrich-docs-ollama.py)
+    'Implementation Attack Surface',
+    'Cryptographic Discovery & Inventory',
+    'Testing & Validation Methods',
+    'QKD Protocols & Quantum Networking',
+    'QRNG & Entropy Sources',
+    'Constrained Device & IoT Suitability',
+    'Supply Chain & Vendor Risk',
+    'Deployment & Migration Complexity',
+    # v4 executive dimensions
+    'Financial & Business Impact',
+    'Organizational Readiness',
 ]
 
 FALLBACK = 'Unknown'

@@ -12,6 +12,7 @@ const modules = import.meta.glob('./pqc_product_catalog_*.csv', {
 })
 
 interface RawSoftwareItem {
+  product_id?: string
   software_name: string
   category_id: string
   category_name: string
@@ -82,6 +83,7 @@ const {
   modules,
   /catalog_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
+    productId: row.product_id || '',
     softwareName: row.software_name,
     categoryId: row.category_id,
     categoryName: row.category_name,

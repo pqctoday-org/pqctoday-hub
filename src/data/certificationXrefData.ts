@@ -10,6 +10,7 @@ const modules = import.meta.glob('./migrate_certification_xref_*.csv', {
 })
 
 interface RawXrefRow {
+  product_id?: string
   software_name: string
   cert_type: string
   cert_id: string
@@ -26,6 +27,7 @@ const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, CertificationXref
   modules,
   /xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
+    productId: row.product_id || '',
     softwareName: row.software_name,
     certType: row.cert_type as CertificationXref['certType'],
     certId: row.cert_id,

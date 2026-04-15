@@ -9,6 +9,7 @@ const modules = import.meta.glob('./migrate_cpe_xref_*.csv', {
 })
 
 interface RawCpeRow {
+  product_id?: string
   software_name: string
   cpe_uri: string
   cpe_vendor: string
@@ -23,6 +24,7 @@ const { data: allCpeXrefs, metadata } = loadLatestCSV<RawCpeRow, CpeXref>(
   modules,
   /cpe_xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
+    productId: row.product_id || '',
     softwareName: row.software_name,
     cpeUri: row.cpe_uri,
     cpeVendor: row.cpe_vendor,

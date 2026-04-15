@@ -2,6 +2,7 @@
 import { X, Scale, ArrowRightLeft, Table } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { useIsEmbedded } from '@/embed/EmbedProvider'
+import { softwareData } from '@/data/migrateData'
 
 interface StickyCompareBarProps {
   compareKeys: string[]
@@ -38,7 +39,8 @@ export function StickyCompareBar({
         {/* Product chips */}
         <div className="flex flex-wrap items-center gap-2 flex-1 min-w-0">
           {compareKeys.map((key) => {
-            const [name] = key.split('::')
+            const product = softwareData.find((s) => s.productId === key)
+            const name = product?.softwareName ?? key
             return (
               <span
                 key={key}

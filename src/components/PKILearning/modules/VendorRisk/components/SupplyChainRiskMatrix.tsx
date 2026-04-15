@@ -11,7 +11,7 @@ import { ExportableArtifact } from '../../../common/executive'
 
 function resolveProductNames(keys: string[]): SoftwareItem[] {
   const keySet = new Set(keys)
-  return softwareData.filter((s) => keySet.has(`${s.softwareName}::${s.categoryId}`))
+  return softwareData.filter((s) => keySet.has(s.productId))
 }
 
 function renderPqcBadge(support: string) {
@@ -264,7 +264,7 @@ export const SupplyChainRiskMatrix: React.FC = () => {
           <div className="flex flex-wrap gap-1.5">
             {selectedItems.map((item) => (
               <span
-                key={`${item.softwareName}::${item.categoryId}`}
+                key={item.productId}
                 className="text-xs px-2 py-0.5 rounded-full bg-background border border-border text-muted-foreground"
               >
                 {item.softwareName}
@@ -318,10 +318,7 @@ export const SupplyChainRiskMatrix: React.FC = () => {
               {/* Per-product detail */}
               <div className="space-y-1 mt-3 pt-3 border-t border-border/50">
                 {stat.products.map((item) => (
-                  <div
-                    key={`${item.softwareName}::${item.categoryId}`}
-                    className="flex items-center gap-2 py-1.5 px-2 rounded"
-                  >
+                  <div key={item.productId} className="flex items-center gap-2 py-1.5 px-2 rounded">
                     <span className="text-sm text-foreground truncate min-w-0">
                       {item.softwareName}
                     </span>

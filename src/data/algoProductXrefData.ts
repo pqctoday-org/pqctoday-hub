@@ -2,6 +2,7 @@
 import { loadLatestCSV } from './csvUtils'
 
 export interface AlgoProductXref {
+  productId: string
   algorithmName: string
   implementationName: string
   /** Catalog software_name FK — empty string when no catalog entry exists */
@@ -13,6 +14,7 @@ export interface AlgoProductXref {
 }
 
 interface RawXrefRow {
+  product_id?: string
   algorithm_name: string
   implementation_name: string
   software_name: string
@@ -32,6 +34,7 @@ const { data: allXrefs, metadata } = loadLatestCSV<RawXrefRow, AlgoProductXref>(
   modules,
   /xref_(\d{2})(\d{2})(\d{4})(?:_r(\d+))?\.csv$/,
   (row) => ({
+    productId: row.product_id || '',
     algorithmName: row.algorithm_name,
     implementationName: row.implementation_name,
     softwareName: row.software_name ?? '',

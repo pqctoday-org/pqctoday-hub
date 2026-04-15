@@ -13,7 +13,7 @@ function resolveSelections(keys: string[]): Map<string, SoftwareItem[]> {
   const keySet = new Set(keys)
   const lookup = new Map<string, SoftwareItem>()
   for (const item of softwareData) {
-    const key = `${item.softwareName}::${item.categoryId}`
+    const key = item.productId
     if (keySet.has(key)) {
       lookup.set(key, item)
     }
@@ -155,7 +155,7 @@ export const InfrastructureSelector: React.FC = () => {
               </div>
               <div className="space-y-1">
                 {items.map((item) => {
-                  const key = `${item.softwareName}::${item.categoryId}`
+                  const key = item.productId
                   return (
                     <div
                       key={key}

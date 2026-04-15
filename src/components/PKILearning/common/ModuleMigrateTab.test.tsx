@@ -6,6 +6,7 @@ import { vi, describe, it, expect } from 'vitest'
 import type { SoftwareItem } from '@/types/MigrateTypes'
 
 const mockProduct = (overrides: Partial<SoftwareItem> = {}): SoftwareItem => ({
+  productId: 'testproduct',
   softwareName: 'TestProduct',
   categoryId: 'CSC-001',
   categoryName: 'Cryptographic Libraries',

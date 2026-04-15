@@ -4,8 +4,17 @@ import { persist, createJSONStorage } from 'zustand/middleware'
 
 export type MigrateViewMode = 'stack' | 'cisaStack' | 'cards' | 'table'
 
+/** Convert old composite key to productId slug */
+function migrateKey(key: string): string {
+  const name = key.includes('::') ? key.split('::')[0] : key
+  return name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
 interface MigrateSelectionState {
-  /** Row keys ('softwareName::categoryId') that the user has hidden */
+  /** Product IDs that the user has hidden */
   hiddenProducts: string[]
   hideProduct: (key: string) => void
   /** Unhide specific keys (e.g. all keys belonging to a layer) */
@@ -17,7 +26,7 @@ interface MigrateSelectionState {
   activeSubCategory: string
   setActiveLayer: (layer: string) => void
   setActiveSubCategory: (cat: string) => void
-  /** Row keys ('softwareName::categoryId') the user has marked as "My Products" */
+  /** Product IDs the user has marked as "My Products" */
   myProducts: string[]
   toggleMyProduct: (key: string) => void
   clearMyProducts: () => void
@@ -78,7 +87,7 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
     {
       name: 'pqc-migrate-selection',
       storage: createJSONStorage(() => localStorage),
-      version: 7,
+      version: 8,
       migrate: (persistedState: unknown, version: number) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const state = (persistedState ?? {}) as any
@@ -116,6 +125,15 @@ export const useMigrateSelectionStore = create<MigrateSelectionState>()(
         if (version < 7) {
           // v6 → v7: add showOnlyMyProducts
           state.showOnlyMyProducts = false
+        }
+        if (version < 8) {
+          // v7 → v8: convert composite keys (softwareName::categoryId) to productId slugs
+          if (Array.isArray(state.hiddenProducts)) {
+            state.hiddenProducts = [...new Set(state.hiddenProducts.map(migrateKey))]
+          }
+          if (Array.isArray(state.myProducts)) {
+            state.myProducts = [...new Set(state.myProducts.map(migrateKey))]
+          }
         }
         return state
       },

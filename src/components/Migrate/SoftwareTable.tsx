@@ -279,7 +279,7 @@ export const SoftwareTable: React.FC<SoftwareTableProps> = ({
   const [extractionModal, setExtractionModal] = useState<{ softwareName: string } | null>(null)
   const [proofModal, setProofModal] = useState<SoftwareItem | null>(null)
 
-  const rowKey = (item: SoftwareItem) => `${item.softwareName}::${item.categoryId}`
+  const rowKey = (item: SoftwareItem) => item.productId
 
   const toggleExpand = (id: string) => {
     if (onToggleExpand) {

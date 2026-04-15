@@ -36,9 +36,7 @@ const Step12VendorDependency = () => {
   // Resolve product keys to display info
   const productItems = useMemo(() => {
     if (!importProductSelection || myProducts.length === 0) return []
-    const itemMap = new Map(
-      softwareData.map((item) => [`${item.softwareName}::${item.categoryId}`, item])
-    )
+    const itemMap = new Map(softwareData.map((item) => [item.productId, item]))
     return myProducts
       .map((key) => {
         const item = itemMap.get(key)
@@ -50,8 +48,7 @@ const Step12VendorDependency = () => {
             layer: item.infrastructureLayer,
           }
         // Fallback: parse the key directly
-        const [name, category] = key.split('::')
-        return { key, name: name ?? key, category: category ?? '', layer: '' }
+        return { key, name: key, category: '', layer: '' }
       })
       .sort((a, b) => a.layer.localeCompare(b.layer) || a.name.localeCompare(b.name))
   }, [importProductSelection, myProducts])

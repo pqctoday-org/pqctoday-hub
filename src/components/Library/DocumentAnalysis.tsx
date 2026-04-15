@@ -311,6 +311,19 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
     enrichment.standardizationBodies.length > 0 ||
     enrichment.complianceFrameworks.length > 0
 
+  const hasSecurityDeployment =
+    enrichment.implementationAttackSurface.length > 0 ||
+    enrichment.cryptoDiscovery.length > 0 ||
+    enrichment.testingValidation.length > 0 ||
+    enrichment.qkdProtocols.length > 0 ||
+    enrichment.qrngEntropy.length > 0 ||
+    enrichment.constrainedDeviceIoT.length > 0 ||
+    enrichment.supplyChainRisk.length > 0 ||
+    enrichment.deploymentComplexity.length > 0
+
+  const hasExecutiveContext =
+    enrichment.financialBusinessImpact.length > 0 || enrichment.organizationalReadiness.length > 0
+
   const hasFeatures = enrichment.relevantFeatures.length > 0
 
   return (
@@ -519,10 +532,102 @@ export const DocumentAnalysis = ({ enrichment, relatedLeaders }: DocumentAnalysi
             </DimensionSection>
           )}
 
+          {hasSecurityDeployment && (
+            <DimensionSection
+              title="Security & Deployment"
+              isFirst={!hasCoreAnalysis && !hasAlgorithmsSecurity && !hasMigration && !hasEcosystem}
+            >
+              {enrichment.implementationAttackSurface.length > 0 && (
+                <DimensionTags
+                  label="Implementation Attack Surface"
+                  items={enrichment.implementationAttackSurface}
+                  variant="destructive"
+                />
+              )}
+              {enrichment.cryptoDiscovery.length > 0 && (
+                <DimensionTags
+                  label="Cryptographic Discovery"
+                  items={enrichment.cryptoDiscovery}
+                  variant="info"
+                />
+              )}
+              {enrichment.testingValidation.length > 0 && (
+                <DimensionTags
+                  label="Testing & Validation"
+                  items={enrichment.testingValidation}
+                  variant="secondary"
+                />
+              )}
+              {enrichment.qkdProtocols.length > 0 && (
+                <DimensionTags
+                  label="QKD & Quantum Networking"
+                  items={enrichment.qkdProtocols}
+                  variant="accent"
+                />
+              )}
+              {enrichment.qrngEntropy.length > 0 && (
+                <DimensionTags
+                  label="QRNG & Entropy"
+                  items={enrichment.qrngEntropy}
+                  variant="tertiary"
+                />
+              )}
+              {enrichment.constrainedDeviceIoT.length > 0 && (
+                <DimensionTags
+                  label="IoT & Constrained Devices"
+                  items={enrichment.constrainedDeviceIoT}
+                  variant="warning"
+                />
+              )}
+              {enrichment.supplyChainRisk.length > 0 && (
+                <DimensionBullets label="Supply Chain Risk" items={enrichment.supplyChainRisk} />
+              )}
+              {enrichment.deploymentComplexity.length > 0 && (
+                <DimensionBullets
+                  label="Deployment Complexity"
+                  items={enrichment.deploymentComplexity}
+                />
+              )}
+            </DimensionSection>
+          )}
+
+          {hasExecutiveContext && (
+            <DimensionSection
+              title="Executive Context"
+              isFirst={
+                !hasCoreAnalysis &&
+                !hasAlgorithmsSecurity &&
+                !hasMigration &&
+                !hasEcosystem &&
+                !hasSecurityDeployment
+              }
+            >
+              {enrichment.financialBusinessImpact.length > 0 && (
+                <DimensionBullets
+                  label="Financial & Business Impact"
+                  items={enrichment.financialBusinessImpact}
+                />
+              )}
+              {enrichment.organizationalReadiness.length > 0 && (
+                <DimensionBullets
+                  label="Organizational Readiness"
+                  items={enrichment.organizationalReadiness}
+                />
+              )}
+            </DimensionSection>
+          )}
+
           {hasFeatures && (
             <DimensionSection
               title="Explore on PQC Today"
-              isFirst={!hasCoreAnalysis && !hasAlgorithmsSecurity && !hasMigration && !hasEcosystem}
+              isFirst={
+                !hasCoreAnalysis &&
+                !hasAlgorithmsSecurity &&
+                !hasMigration &&
+                !hasEcosystem &&
+                !hasSecurityDeployment &&
+                !hasExecutiveContext
+              }
             >
               <DimensionLinks
                 label="Relevant Features"

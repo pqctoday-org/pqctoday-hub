@@ -936,7 +936,10 @@ function processMigrateSoftware(): RAGChunk[] {
       ? `/migrate?q=${encodeParam(name)}&layer=${encodeParam(primaryLayer)}`
       : `/migrate?q=${encodeParam(name)}`
 
-    const chunkId = `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
+    const productId = sanitize(r.product_id)
+    const chunkId = productId
+      ? `software-${productId}`
+      : `software-${name.toLowerCase().replace(/[^a-z0-9]+/g, '-')}`
     if (seenIds.has(chunkId)) continue
     seenIds.add(chunkId)
 
