@@ -11102,3 +11102,519 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## NIST SP 800-53
+
+- **Reference ID**: NIST SP 800-53
+- **Title**: Security and Privacy Controls for Information Systems and Organizations
+- **Authors**: NIST
+- **Publication Date**: 2020-09-01
+- **Last Updated**: 2020-09-01
+- **Document Status**: Published
+- **Main Topic**: This publication provides a catalog of security and privacy controls for information systems and organizations to manage risk and protect assets from diverse threats.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2020; Keywords: required by
+- **Applicable Regions / Bodies**: United States; U.S. Department of Commerce; National Institute of Standards and Technology; Office of Management and Budget; Department of Defense; Office of the Director of National Intelligence; Committee on National Security Systems
+- **Leaders Contributions Mentioned**: Wilbur L. Ross, Jr.; Walter Copan; Dana Deasy; Matthew A. Kozma; John Sherman; Michael E. Waschull; Mark Hakun; Clifford M. Conner; Kevin Dulany; Charles H. Romine; Mark G. Hakun; Susan Dorr; Kevin Stine; Matthew Scholl; Chris Johnson; Ron Ross; Vicki Michetti; Victoria Pillitteri; McKay Tolboe; Dorian Pappas; Kelley Dempsey; Ehijele Olumese; Lydia Humphries; Daniel Faigin; Naomi Lefkovitz; Esten Porter; Julie Nethery Snyder; Christina Sames; Christian Enloe; David Black; Rich Graubart; Peter Duspiva; Kaitlin Boeckl; Eduardo Takamura; Ned Goren; Andrew Regenscheid; Jon Boyens
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: IoT, Cloud, Email
+- **Standardization Bodies**: National Institute of Standards and Technology; Committee on National Security Systems
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA); OMB Circular A-130; Risk Management Framework
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations must exercise due diligence in managing information security and privacy risk; Controls are flexible and customizable to meet mission and business needs; The catalog addresses both functionality and assurance perspectives for trustworthiness; Implementation supports compliance with laws, regulations, executive orders, and governmentwide policies; Risk management frameworks are essential for developing and maintaining protection measures.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Compliance Officer, Policy Maker, CISO
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: compliance-strategy, pqc-risk-management, pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-53.pdf (6,073,678 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:04:38
+
+---
+
+## NIST SP 800-218
+
+- **Reference ID**: NIST SP 800-218
+- **Title**: Secure Software Development Framework (SSDF) Version 1.1
+- **Authors**: NIST
+- **Publication Date**: 2022-02-01
+- **Last Updated**: 2022-02-01
+- **Document Status**: Published
+- **Main Topic**: Recommendations for mitigating the risk of software vulnerabilities through the Secure Software Development Framework (SSDF) Version 1.1.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2021, 2022
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; U.S. Department of Commerce; Office of Management and Budget
+- **Leaders Contributions Mentioned**: Murugiah Souppaya; Karen Scarfone; Donna Dodson; Gina M. Raimondo; James K. Olthoff; Curt Barker; Paul Black; Jon Boyens; Jim Foti; Barbara Guttman; Mat Heyman; Nicole Keller; Matt Scholl; Adam Sedgewick; Kevin Stine; Isabel Van Wyk; Robert Grupe
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: IoT, Cloud, OT/ICS/SCADA
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA) of 2014; OMB Circular A-130; Executive Order 14028
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should integrate the SSDF throughout existing software development practices; Software producers should reduce vulnerabilities in released software and address root causes; Software acquirers can use the SSDF to foster communications with suppliers; Organizations should adopt a risk-based approach to determine relevant practices.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Software producers; Software acquirers; Security Architect; Developer; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: compliance-strategy, migration-program, pqc-risk-management, vendor-risk, code-signing
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: software acquisition; third-party suppliers; software acquirers; commercial-off-the-shelf [COTS] product vendors; government-off-the-shelf [GOTS] software developers; custom software developers; internal development teams
+- **Deployment & Migration Complexity**: integrate the SSDF throughout their existing software development practices; risk-based approach to determine what practices are relevant, appropriate, and effective; planning and transition purposes; federal agencies may wish to closely follow the development of these new publications by NIST
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: organizations should ensure that their people, processes, and technology are prepared to perform secure software development; Securely Provision (SP); Operate and Maintain (OM); Oversee and Govern (OV); Protect and Defend (PR); Analyze (AN)
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-218.pdf (739,891 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:05:50
+
+---
+
+## NIST SP 800-111
+
+- **Reference ID**: NIST SP 800-111
+- **Title**: Guide to Storage Encryption Technologies for End User Devices
+- **Authors**: NIST
+- **Publication Date**: 2007-11-01
+- **Last Updated**: 2007-11-01
+- **Document Status**: Published
+- **Main Topic**: Guide to storage encryption technologies for end user devices including full disk, volume, and file/folder encryption recommendations.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Keywords: retire
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; U.S. Department of Commerce
+- **Leaders Contributions Mentioned**: Karen Scarfone; Murugiah Souppaya; Matt Sexton; Tim Grance; Bill Burr; Tim Polk; Derrick Dicoi; Angela Orebaugh; Manuel Villar; Mike Zeberlein; Mike Zirkle
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Public Key Infrastructure; Active Directory
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Processing Standard
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations should consider solutions using existing system features and infrastructure; Centralized management is recommended for most storage encryption deployments; Cryptographic keys must be secured and managed properly including generation, use, storage, recovery, and destruction; Organizations should select appropriate user authenticators and avoid using the same single-factor authenticator for multiple purposes; Storage encryption should be complemented by other security measures
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Compliance Officer; Policy Maker; Operations
+- **Implementation Prerequisites**: Centralized management infrastructure; Key management processes and procedures; Existing enterprise authentication solutions such as Active Directory or PKI
+- **Relevant PQC Today Features**: compliance-strategy, data-asset-sensitivity, pqc-governance, migration-program, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: Identify Needs, Design the Solution, Implement and Test Prototype, Deploy the Solution, Manage the Solution; phased approach involving prototype testing before deployment; consideration of infrastructure changes and loss of functionality tradeoffs
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Centralized management recommended for policy verification, key management, authenticator management, and data recovery; extensive planning required for key management processes including generation, use, storage, recovery, and destruction; consideration of existing enterprise authentication solutions like Active Directory or PKI
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-111.pdf (224,366 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:07:16
+
+---
+
+## draft-ietf-cose-dilithium
+
+- **Reference ID**: draft-ietf-cose-dilithium
+- **Title**: ML-DSA for JOSE and COSE
+- **Authors**: IETF
+- **Publication Date**: 2024-05-01
+- **Last Updated**: 2024-05-01
+- **Document Status**: Published
+- **Main Topic**: This document specifies JSON Object Signing and Encryption (JOSE) and CBOR Object Signing and Encryption (COSE) serializations for the ML-DSA digital signature scheme.
+- **PQC Algorithms Covered**: ML-DSA, ML-DSA-44, ML-DSA-65, ML-DSA-87
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2022, 2024, 2025, 2026; Keywords: disallow
+- **Applicable Regions / Bodies**: United States; NIST
+- **Leaders Contributions Mentioned**: M. Prorock; O. Steele
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: JOSE, COSE
+- **Infrastructure Layers**: Key Management
+- **Standardization Bodies**: IETF, NIST
+- **Compliance Frameworks Referenced**: FIPS 204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: ML-DSA private keys must be represented using the seed format with a length of 32 bytes; The Algorithm Key Pair (AKP) type is defined to support public and private keys for algorithms not limited to those registered; HashML-DSA is intentionally excluded due to different verify routines and compatibility concerns; ML-DSA produces significantly larger public keys and signatures compared to traditional algorithms, creating challenges for bandwidth and memory.
+- **Security Levels & Parameters**: ML-DSA-44; ML-DSA-65; ML-DSA-87; 32-byte seed; 2560-byte private key (ML-DSA-44); 1312-byte public key (ML-DSA-44); 2420-byte signature (ML-DSA-44)
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: ML-DSA-44 private key 2560 bytes; ML-DSA-44 public key 1312 bytes; ML-DSA-44 signature 2420 bytes; ML-DSA-65 private key 4032 bytes; ML-DSA-65 public key 1952 bytes; ML-DSA-65 signature 3309 bytes; ML-DSA-87 private key 4896 bytes; ML-DSA-87 public key 2592 bytes; ML-DSA-87 signature 4627 bytes; seed length 32 bytes
+- **Target Audience**: Developer, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: Support for Algorithm Key Pair (AKP) type; validation of seed length at 32 bytes; adherence to FIPS 204 encoding rules; base64url encoding for JOSE signatures
+- **Relevant PQC Today Features**: Algorithms, api-security-jwt, pki-workshop, digital-id
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: limited bandwidth, memory, or processing capacity; not suitable for use cases requiring small keys or signatures
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: increased complexity and compatibility concerns with existing implementations; single ML-DSA private key representation for COSE and JOSE to simplify key management
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-cose-dilithium.html (258,928 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:08:32
+
+---
+
+## IETF RFC 9701
+
+- **Reference ID**: IETF RFC 9701
+- **Title**: SD-JWT for Verifiable Credentials
+- **Authors**: IETF
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: This specification defines a JSON Web Token (JWT) response format for OAuth 2.0 Token Introspection to provide stronger assurance and cryptographic security for token state verification.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2025
+- **Applicable Regions / Bodies**: Regions: International
+- **Leaders Contributions Mentioned**: Torsten Lodderstedt, Vladimir Dzhuvinov
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: OAuth 2.0, JWT, HTTP
+- **Infrastructure Layers**: Authorization Server, Resource Server
+- **Standardization Bodies**: Internet Engineering Task Force (IETF), IANA
+- **Compliance Frameworks Referenced**: BCP 78, Revised BSD License
+- **Classical Algorithms Referenced**: RS256
+- **Key Takeaways**: Resource servers can request introspection responses secured by signed or encrypted JWTs; The authorization server must authenticate and authorize resource servers before releasing token data; Introspection response members are encapsulated in a dedicated token_introspection claim to prevent conflict with top-level JWT claims; Nested JWTs are required if the response is both signed and encrypted; Implementations must refuse unauthenticated introspection requests to prevent downgrading attacks.
+- **Security Levels & Parameters**: RS256; A128CBC-HS256
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Compliance Officer
+- **Implementation Prerequisites**: Support for application/token-introspection+jwt media type; Ability to sign and optionally encrypt JWTs; Dynamic client registration support for resource servers; Strong two-way trust relationship between authorization server and resource server.
+- **Relevant PQC Today Features**: api-security-jwt, digital-id, tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: IETF_RFC_9701.html (97,327 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:09:59
+
+---
+
+## IETF RFC 6979
+
+- **Reference ID**: IETF RFC 6979
+- **Title**: Deterministic Usage of the Digital Signature Algorithm (DSA) and Elliptic Curve Digital Signature Algorithm (ECDSA)
+- **Authors**: IETF
+- **Publication Date**: 2013-08-01
+- **Last Updated**: 2013-08-01
+- **Document Status**: Published
+- **Main Topic**: This document defines a deterministic digital signature generation procedure for DSA and ECDSA that eliminates the need for high-quality randomness during signature generation.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Thomas Pornin
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: IETF Trust; RFC Editor
+- **Compliance Frameworks Referenced**: FIPS 186-4; X9.62; PKCS #1; ISO 9796-2; BCP 78; RFC 5741; RFC 2119
+- **Classical Algorithms Referenced**: DSA; ECDSA; RSA; HMAC; SHA-2 (implied by hash function requirement but not explicitly named as SHA-2); PKCS #1; PSS
+- **Key Takeaways**: Deterministic signatures for DSA and ECDSA remove the dependency on high-quality randomness sources during signature generation; The procedure maintains full compatibility with standard verifiers without requiring modifications to verification logic; Key pair generation still requires a source of randomness, though this can be managed in controlled environments like smartcard initialization; The method is particularly beneficial for embedded systems where secure random number generation is challenging; Implementation testing is simplified as automatic tests no longer need to verify the quality of a random number generator.
+- **Security Levels & Parameters**: DSA 1024 bits; DSA 2048 bits; ECDSA 163 bits; ECDSA 192 bits; ECDSA 224 bits; ECDSA 256 bits; ECDSA 384 bits; ECDSA 521 bits; ECDSA 233 bits; ECDSA 283 bits; ECDSA 409 bits; ECDSA 571 bits
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: DSA prime p at least 1024 bits; DSA prime q at least 160 bits; ECDSA prime q at least 160 bits
+- **Target Audience**: Developer; Security Architect; Researcher
+- **Implementation Prerequisites**: Cryptographically secure hash function; HMAC implementation; Source of randomness for key pair generation only
+- **Relevant PQC Today Features**: entropy-randomness, algorithms, tls-basics, code-signing, digital-id
+- **Implementation Attack Surface**: nonce reuse; catastrophic failures due to slight biases in random number generation process
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: test vectors; detailed examples; automatic tests reliability issues
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: cryptographically secure source of randomness; high-quality randomness; embedded systems where quality of randomness is an issue
+- **Constrained Device & IoT Suitability**: embedded systems; smartcards; architectures in which secure random number generation is challenging
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: backward compatibility with unmodified verifiers; existing private keys can be used; no extra storage requirement; key pair generation still requires a source of randomness
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: IETF_RFC_6979.html (173,209 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:11:21
+
+---
+
+## NIST SP 800-90B
+
+- **Reference ID**: NIST SP 800-90B
+- **Title**: Recommendation for the Entropy Sources Used for Random Bit Generation
+- **Authors**: NIST
+- **Publication Date**: 2018-01-01
+- **Last Updated**: 2018-01-01
+- **Document Status**: Published
+- **Main Topic**: This Recommendation specifies design principles, requirements, and validation tests for entropy sources used in Random Bit Generators.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States; Bodies: National Institute of Standards and Technology, National Security Agency, Office of Management and Budget
+- **Leaders Contributions Mentioned**: Meltem Sönmez Turan, Elaine Barker, John Kelsey, Kerry A. McKay, Mary L. Baish, Mike Boyle, Apostol Vassilev, Timothy A. Hall, Aaron H. Kaufer, Darryl M. Buller
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Email
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA), OMB Circular A-130, Cryptographic Algorithm Validation Program (CAVP), Cryptographic Module Validation Program (CMVP)
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Entropy sources must be validated using specific tests for the IID or non-IID tracks; Health tests such as Repetition Count and Adaptive Proportion are required for continuous monitoring; Min-entropy estimation is critical for determining the security strength of random bit generators; Implementations must adhere to requirements indicated by the word "shall" within the recommendation.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect, Developer, Compliance Officer, Researcher
+- **Implementation Prerequisites**: Conformance testing within CAVP and CMVP frameworks; Data collection for entropy estimation; Implementation of health tests including Repetition Count Test and Adaptive Proportion Test
+- **Relevant PQC Today Features**: entropy-randomness, compliance-strategy, pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: Cryptographic Algorithm Validation Program (CAVP); Cryptographic Module Validation Program (CMVP); conformance testing; health testing; min-entropy estimation; Repetition Count Test; Adaptive Proportion Test; Permutation Testing; Chi-square Statistical Tests
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: NIST SP 800-90B; entropy sources; noise source; min-entropy; conditioning functions; health testing; Deterministic Random Bit Generator mechanisms; SP 800-90A; SP 800-90C; random number generators
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: planning and transition purposes; Federal agencies may wish to closely follow the development of these new publications by NIST
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: Federal Information Security Modernization Act (FISMA) of 2014; Office of Management and Budget (OMB) Circular A-130; National Institute of Standards and Technology (NIST); National Security Agency
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-90B.pdf (1,043,696 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:12:51
+
+---
+
+## NIST SP 800-90A
+
+- **Reference ID**: NIST SP 800-90A
+- **Title**: Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1
+- **Authors**: NIST
+- **Publication Date**: 2015-06-01
+- **Last Updated**: 2015-06-01
+- **Document Status**: Published
+- **Main Topic**: Recommendation for Random Number Generation Using Deterministic Random Bit Generators Rev 1
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Keywords: required by
+- **Applicable Regions / Bodies**: Regions: United States, Bodies: NIST, NSA
+- **Leaders Contributions Mentioned**: Elaine Barker, John Kelsey
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Email
+- **Standardization Bodies**: NIST, CMVP (NIST)
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA); OMB Circular A-130
+- **Classical Algorithms Referenced**: hash functions; block cipher algorithms
+- **Key Takeaways**: Deterministic random bit generators must be based on either hash functions or block cipher algorithms; The document defines functional models including instantiation, reseeding, and generation of pseudorandom bits; Security strengths are supported by specific DRBG instantiations; Organizations must perform health testing including known answer testing for instantiate, generate, reseed, and uninstantiate functions; Entropy input requirements and seed construction methods are explicitly defined.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer; Researcher
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: entropy-randomness, algorithms, compliance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: conformance testing; Known Answer Testing; Implementation Validation Testing; Health Testing; Testing the Instantiate Function; Testing the Generate Function; Testing the Reseed Function; Testing the Uninstantiate Function
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: entropy input; seed construction; randomness source; entropy requirements for the entropy input; entropy input and seed privacy; deterministic random bit generator (DRBG)
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: planning and transition purposes; Federal agencies may wish to closely follow the development of these new publications by NIST
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-90A.pdf (2,417,007 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:14:25
+
+---
+
+## NIST SP 800-108
+
+- **Reference ID**: NIST SP 800-108
+- **Title**: Recommendation for Key Derivation Using Pseudorandom Functions
+- **Authors**: NIST
+- **Publication Date**: 2022-08-01
+- **Last Updated**: 2022-08-01
+- **Document Status**: Published
+- **Main Topic**: This Recommendation specifies techniques for deriving additional keying material from a secret key using pseudorandom functions including HMAC, CMAC, and KMAC.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Years mentioned: 2020, 2022, 2024; Keywords: required by
+- **Applicable Regions / Bodies**: United States; National Institute of Standards and Technology; Office of Management and Budget; Federal Information Security Modernization Act
+- **Leaders Contributions Mentioned**: Lily Chen (Author); Elaine Barker (Colleague providing discussions and comments); Meltem Sönmez Turan (Colleague providing discussions and comments); Rich Davis (National Security Agency, provided discussions and comments)
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: Key Management; Key Hierarchy
+- **Standardization Bodies**: National Institute of Standards and Technology
+- **Compliance Frameworks Referenced**: Federal Information Security Modernization Act (FISMA); OMB Circular A-130
+- **Classical Algorithms Referenced**: HMAC; CMAC; KMAC; AES
+- **Key Takeaways**: Key derivation functions can use HMAC, CMAC, or KMAC as pseudorandom functions to expand keying material; When using CMAC as a PRF, mitigations are required to prevent key control attacks where an adversary forces derived blocks to predetermined values; Organizations should consider using HMAC or KMAC over CMAC unless AES is the only primitive available or resource benefits exist; Key derivation serves as the key expansion step following randomness extraction in cryptographic processes.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer; Researcher
+- **Implementation Prerequisites**: Approved pseudorandom functions (HMAC, CMAC, or KMAC); Mitigations for key control security when using CMAC; Existing cryptographic key established through key-establishment scheme or shared manually
+- **Relevant PQC Today Features**: Algorithms; crypto-agility; entropy-randomness; compliance-strategy
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: pseudorandom bit generator as specified in SP 800-90A; randomness extraction
+- **Constrained Device & IoT Suitability**: resource benefit when using CMAC; AES as the only primitive implemented in the platform
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: planning and transition purposes for federal agencies; follow development of new publications by NIST
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: NIST_SP_800-108.pdf (745,462 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:15:47
+
+---
+
+## IETF RFC 9909
+
+- **Reference ID**: IETF RFC 9909
+- **Title**: Internet X.509 Public Key Infrastructure Certificate and CRL Profile for ML-DSA
+- **Authors**: IETF
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: This document specifies the conventions and ASN.1 Object Identifiers for using the Stateless Hash-Based Digital Signature Algorithm (SLH-DSA) in X.509 certificates and Certificate Revocation Lists.
+- **PQC Algorithms Covered**: SLH-DSA, Pure SLH-DSA, HashSLH-DSA
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2021, 2025
+- **Applicable Regions / Bodies**: United States; NIST; IETF
+- **Leaders Contributions Mentioned**: Kaveh Bashiri; Scott Fluhrer; Stefan-Lukas Gazdag; Daniel Van Geest; Stavros Kousidis
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF; NIST
+- **Compliance Frameworks Referenced**: FIPS 205; FIPS 180; FIPS 202; BCP 78; RFC 2119; RFC 8174; RFC 5912; RFC 5280; X.680
+- **Classical Algorithms Referenced**: SHA-2; SHAKE256; SHA-256; SHA-512; SHAKE128
+- **Key Takeaways**: SLH-DSA offers three security levels corresponding to 128, 192, and 256-bit generic block cipher security; The document defines separate OIDs for Pure SLH-DSA and HashSLH-DSA modes with specific hash function combinations; Context strings in X.509 PKI must be empty by default; Fast versions of the algorithm are optimized for signing speed while small versions are optimized for signature size; Raw SLH-DSA signatures are encoded directly in BIT STRING fields without additional ASN.1 wrapping
+- **Security Levels & Parameters**: 128-bit security level; 192-bit security level; 256-bit security level; id-slh-dsa-sha2-128s; id-slh-dsa-sha2-128f; id-slh-dsa-sha2-192s; id-slh-dsa-sha2-192f; id-slh-dsa-sha2-256s; id-slh-dsa-sha2-256f; id-slh-dsa-shake-128s; id-slh-dsa-shake-128f; id-slh-dsa-shake-192s; id-slh-dsa-shake-192f; id-slh-dsa-shake-256s; id-slh-dsa-shake-256f
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: Context string maximum length 255 bytes; SHAKE128 output length 256 bits; SHAKE256 output length 512 bits
+- **Target Audience**: Security Architect; Developer; Compliance Officer
+- **Implementation Prerequisites**: Support for ASN.1 encoding per RFC 5912 and X.680; Implementation of FIPS 205 algorithms slh_sign, slh_verify, hash_slh_sign, hash_slh_verify; Use of empty context string for X.509 PKI
+- **Relevant PQC Today Features**: Algorithms; pki-workshop; stateful-signatures; digital-id; code-signing
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: SLH-DSA and SPHINCS+ are not compatible; context string has a maximum length of 255 bytes; default context string is the empty string; supports Pure SLH-DSA and HashSLH-DSA modes; parameters component for each algorithm MUST be absent
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: IETF_RFC_9909.html (156,137 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:17:08
+
+---
+
+## draft-ietf-lamps-cert-binding-for-multi-auth
+
+- **Reference ID**: draft-ietf-lamps-cert-binding-for-multi-auth
+- **Title**: X.509 Certificate Extension for Binding to Multiple Authentication Algorithms
+- **Authors**: IETF
+- **Publication Date**: 2024-05-01
+- **Last Updated**: 2024-05-01
+- **Document Status**: Internet-Draft (Expired 2025-06-13)
+- **Main Topic**: Definition of a new X.509 certificate extension and CSR attribute to bind multiple authentication algorithms to the same entity for non-composite hybrid authentication.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2025, 2026
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Alison Becker; Rebecca Guthrie; Michael J. Jenkins; Roman Danyliw
+- **PQC Products Mentioned**: Signal, Jenkins
+- **Protocols Covered**: TLS; IKEv2; CMS; S/MIME
+- **Infrastructure Layers**: PKI; Certificate Authority; Registration Authority
+- **Standardization Bodies**: Internet Engineering Task Force (IETF); IESG
+- **Compliance Frameworks Referenced**: BCP 78; RFC 5280; RFC 2119; RFC 8174; NIST SP 800-57
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Defines relatedCertRequest CSR attribute and RelatedCertificate extension to prove ownership of multiple certificates; Enables non-composite hybrid authentication by linking traditional and post-quantum certificates; Requires CA to verify signature over certID and requestTime using the existing certificate's private key; Supports cross-CA scenarios via data URLs containing PKCS#7 chains; Facilitates PKI transition strategies with minimal changes to certificate formats.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Non-composite hybrid authentication; dual-stack deployment; migration from traditional cryptography to post-quantum cryptography
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Compliance Officer; Policy Maker
+- **Implementation Prerequisites**: Support for relatedCertRequest CSR attribute; support for RelatedCertificate extension; ability to retrieve and validate certificate paths per RFC 5280; synchronization of time for BinaryTime freshness checks
+- **Relevant PQC Today Features**: pki-workshop; hybrid-crypto; crypto-agility; migration-program; tls-basics
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: migration phase, backward compatibility, phased rollout
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: governance prerequisites
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-lamps-cert-binding-for-multi-auth.html (65,436 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:18:40
+
+---
+
+## IETF RFC 5480
+
+- **Reference ID**: IETF RFC 5480
+- **Title**: Elliptic Curve Cryptography Subject Public Key Information
+- **Authors**: IETF
+- **Publication Date**: 2009-03-01
+- **Last Updated**: 2009-03-01
+- **Document Status**: Published
+- **Main Topic**: Specification of syntax and semantics for the Subject Public Key Information field in X.509 certificates supporting Elliptic Curve Cryptography.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: None detected
+- **Applicable Regions / Bodies**: Regions: United States, International, Bodies: NIST
+- **Leaders Contributions Mentioned**: Tim Polk, Russ Housley, Sean Turner, Daniel R. L. Brown, Kelvin Yiu
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: X.509
+- **Infrastructure Layers**: PKI
+- **Standardization Bodies**: IETF, NIST, ANSI X9
+- **Compliance Frameworks Referenced**: FIPS 186-3
+- **Classical Algorithms Referenced**: ECDSA, ECDH, ECMQV
+- **Key Takeaways**: id-ecPublicKey MUST be supported for unrestricted ECC algorithm usage; implicitCurve and specifiedCurve choices in ECParameters MUST NOT be used in PKIX; clients MUST reject certificates if elliptic curve domain parameters are not present; implementations MUST support uncompressed form of ECC public keys; hybrid form of ECC public key MUST NOT be used.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Developer, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: Support for id-ecPublicKey; support for uncompressed ECC public key form; rejection of certificates missing elliptic curve domain parameters
+- **Relevant PQC Today Features**: pki-workshop, algorithms, tls-basics, crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: certificate inventory, algorithm enumeration
+- **Testing & Validation Methods**: interoperability testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: backward compatibility, phased rollout
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: IETF_RFC_5480.html (54,964 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:20:24
+
+---
+

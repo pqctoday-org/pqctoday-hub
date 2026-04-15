@@ -4,6 +4,8 @@ import { Server, Lock, Globe, FileSignature, Box, Link2, AlertCircle, Trash2 } f
 import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
+import { motion, AnimatePresence } from 'framer-motion'
+import { X, Play } from 'lucide-react'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 
 type TestScenario = 'tls' | 'ssh' | 'vpn' | 'pki' | 'sequoia' | 'web3'
@@ -13,21 +15,24 @@ interface TileBlueprint {
   title: string
   description: string
   icon: React.ElementType
+  steps: string[]
+  expected: string
 }
 
 const TILES: TileBlueprint[] = [
-  { id: 'tls', title: 'OpenSSL 3.6 TLS 1.3', description: 'Evaluate ML-KEM Key Encapsulation within a TLS tunnel.', icon: Globe },
-  { id: 'ssh', title: 'OpenSSH Connectivity', description: 'Extract hardware-bound identities dynamically via ssh-agent.', icon: Server },
-  { id: 'vpn', title: 'strongSwan IPsec', description: 'Simulate IKEv2 negotiations securely over the loopback protocol.', icon: Link2 },
-  { id: 'pki', title: 'Easy-RSA PKI', description: 'Generate Enterprise ML-DSA Certificate Authorities recursively.', icon: FileSignature },
-  { id: 'sequoia', title: 'Sequoia PGP', description: 'Assert software code signing dynamically over internal pipelines.', icon: Box },
-  { id: 'web3', title: 'Web3 & Identity', description: 'Ethereum JSON-RPC and IOTA Identity execution boundaries.', icon: Lock }
+  { id: 'tls', title: 'OpenSSL 3.6 TLS 1.3', description: 'Evaluate ML-KEM Key Encapsulation within a TLS tunnel.', icon: Globe, steps: ['1. Initialize OpenSSL s_server bound to SoftHSMv3', '2. Connect s_client using ML-KEM OID', '3. Capture Ephemeral KEM establishment', '4. Complete TLS handshake over loopback'], expected: 'CKR_OK returning derived shared secret confirming ML-KEM parity.' },
+  { id: 'ssh', title: 'OpenSSH Connectivity', description: 'Extract hardware-bound identities dynamically via ssh-agent.', icon: Server, steps: ['1. Launch ssh-agent mapping pkcs11-provider', '2. Inject ML-DSA-87 public key via ssh-add', '3. Initialize SSH connection over loopback', '4. Intercept PKCS#11 C_Sign during auth'], expected: 'CKR_OK producing a valid 4627-byte ML-DSA signature.' },
+  { id: 'vpn', title: 'strongSwan IPsec', description: 'Simulate IKEv2 negotiations securely over the loopback protocol.', icon: Link2, steps: ['1. Start strongSwan charon daemon', '2. Load SoftHSMv3 PKCS#11 plugin natively', '3. Initiate IKEv2 PQC tunnel establishment', '4. Sign IKE_AUTH hash using ML-DSA'], expected: 'Tunnel established and C_Sign returning CKR_OK for IKE authentication.' },
+  { id: 'pki', title: 'Easy-RSA PKI', description: 'Generate Enterprise ML-DSA Certificate Authorities recursively.', icon: FileSignature, steps: ['1. Build Easy-RSA skeleton environment', '2. Issue Root CA using ML-DSA-44', '3. Provision Server constraints', '4. Verify Cert chain cryptographic validity'], expected: 'C_SignInit and C_Sign returning valid X.509 Certificate structures.' },
+  { id: 'sequoia', title: 'Sequoia PGP', description: 'Assert software code signing dynamically over internal pipelines.', icon: Box, steps: ['1. Initialize Sequoia sq backend', '2. Generate OpenPGP ML-DSA bind', '3. Sign mock software binary artifact', '4. Validate detached signature integrity'], expected: 'Software artifact securely signed and validated returning CKR_OK.' },
+  { id: 'web3', title: 'Web3 & Identity', description: 'Ethereum JSON-RPC and IOTA Identity execution boundaries.', icon: Lock, steps: ['1. Instantiate Ethereum Key manager payload', '2. Sign EIP-1559 transaction natively', '3. Validate DID (Distributed ID) core', '4. Verify smart contract execution signature'], expected: 'Transaction hash derived securely over PKCS#11 provider.' }
 ]
 
 export const DockerPlaygroundView = () => {
   const [hsmLog, setHsmLog] = useState<Pkcs11LogEntry[]>([])
   const [loading, setLoading] = useState<TestScenario | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
+  const [activeModal, setActiveModal] = useState<TileBlueprint | null>(null)
 
   const handleExecute = async (scenario: TestScenario) => {
     setLoading(scenario)
@@ -53,6 +58,7 @@ export const DockerPlaygroundView = () => {
       setHsmLog([])
     } finally {
       setLoading(null)
+      setActiveModal(null)
     }
   }
 
@@ -104,10 +110,10 @@ export const DockerPlaygroundView = () => {
               </p>
 
               <Button
-                onClick={() => handleExecute(tile.id)}
+                onClick={() => setActiveModal(tile)}
                 disabled={disabled}
                 className="w-full mt-2"
-                variant={isActing ? "secondary" : "default"}
+                variant={isActing ? "secondary" : "outline"}
               >
                 {isActing ? (
                   <span className="flex items-center gap-2">
@@ -115,7 +121,7 @@ export const DockerPlaygroundView = () => {
                     Simulating...
                   </span>
                 ) : (
-                  "Execute Scenario"
+                  "View Overview"
                 )}
               </Button>
             </div>
@@ -151,6 +157,77 @@ export const DockerPlaygroundView = () => {
              />
          </div>
       </div>
+
+      <AnimatePresence>
+        {activeModal && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setActiveModal(null)}
+              className="fixed inset-0 embed-backdrop bg-black/60 backdrop-blur-sm z-50"
+            />
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 glass-panel p-6 max-w-lg w-full max-h-[90dvh] overflow-y-auto z-50 rounded-xl"
+              role="dialog"
+              aria-modal="true"
+              aria-labelledby="docker-modal-title"
+              style={{ zIndex: 60 }}
+            >
+              <div className="flex items-start justify-between mb-2">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg bg-primary/20 flex items-center justify-center shrink-0">
+                    <activeModal.icon className="w-5 h-5 text-primary" aria-hidden="true" />
+                  </div>
+                  <div>
+                    <h2 id="docker-modal-title" className="text-xl font-bold leading-tight">
+                      {activeModal.title}
+                    </h2>
+                    <p className="text-xs text-muted-foreground mt-0.5">Execution Overview</p>
+                  </div>
+                </div>
+                <Button variant="ghost" size="icon" onClick={() => setActiveModal(null)} aria-label="Close modal" className="shrink-0">
+                  <X size={20} />
+                </Button>
+              </div>
+
+              <p className="text-sm text-foreground/80 my-4">
+                {activeModal.description}
+              </p>
+
+              <div className="bg-primary/5 border border-primary/20 rounded-lg p-3 mb-4">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">Execution Steps</h4>
+                <ul className="space-y-1.5 pl-1">
+                  {activeModal.steps.map((step, idx) => (
+                    <li key={idx} className="text-xs text-muted-foreground">
+                      {step}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="bg-status-success/5 border border-status-success/20 rounded-lg p-3 mb-6">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-status-success mb-1">Expected Telemetry</h4>
+                <p className="text-xs text-muted-foreground">
+                  {activeModal.expected}
+                </p>
+              </div>
+
+              <Button
+                className="w-full gap-2 font-bold"
+                onClick={() => handleExecute(activeModal.id)}
+              >
+                <Play className="w-4 h-4 fill-current"/>
+                Confirm & Execute Simulation
+              </Button>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
 
     </Card>
   )
