@@ -1,0 +1,12 @@
+{
+  "generated": "2026-04-15",
+  "collection": "library",
+  "skipped_count": 1,
+  "entries": [
+    {
+      "ref_id": "OpenSSL-3x-Docs",
+      "file": "OpenSSL-3x-Docs.html",
+      "reason": "Extracted text too short (38 chars) \u2014 likely empty or corrupt source"
+    }
+  ]
+}

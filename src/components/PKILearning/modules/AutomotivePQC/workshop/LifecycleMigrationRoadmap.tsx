@@ -521,7 +521,7 @@ const LifecyclePhaseDetail: React.FC<{
     <Button
       variant="ghost"
       onClick={onToggle}
-      className="w-full flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
+      className="w-full h-auto whitespace-normal flex items-center justify-between p-4 text-left hover:bg-muted/30 transition-colors"
     >
       <div className="flex items-center gap-3">
         <div className="w-8 h-8 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">

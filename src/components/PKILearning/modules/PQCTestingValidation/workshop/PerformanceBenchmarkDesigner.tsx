@@ -1,12 +1,18 @@
 // SPDX-License-Identifier: GPL-3.0-only
 import React, { useState } from 'react'
-import { BarChart2, Info, Zap, AlertTriangle } from 'lucide-react'
+import { BarChart2, Info, Zap, AlertTriangle, Building2, Activity } from 'lucide-react'
 import {
   BENCHMARK_DATA,
   NETWORK_PROFILE_LABELS,
   ALGORITHM_SET_LABELS,
+  PRODUCTION_TLS_KPIS,
+  PRODUCTION_VPN_KPIS,
+  ENVIRONMENT_SCENARIOS,
+  TRAFFIC_PATTERNS,
   type AlgorithmSet,
   type NetworkProfile,
+  type EnvironmentScenario,
+  type TrafficPattern,
 } from '../data/testingConstants'
 import { Button } from '@/components/ui/button'
 
@@ -52,6 +58,13 @@ const formatVal = (val: number, unit: string) => {
   return `${val}B`
 }
 
+const formatProductionVal = (val: number, unit: string) => {
+  if (unit === 'ms') return val >= 1000 ? `${(val / 1000).toFixed(1)}s` : `${val.toFixed(1)}ms`
+  if (val >= 10000) return `${(val / 1000).toFixed(1)}K`
+  if (val >= 1000) return `${(val / 1000).toFixed(2)}K`
+  return val.toFixed(val < 10 ? 2 : 0)
+}
+
 const barWidth = (val: number, maxVal: number) => Math.min(100, (val / maxVal) * 100)
 
 const ALG_BAR_COLORS: Record<AlgorithmSet, string> = {
@@ -64,6 +77,8 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
   const [networkProfile, setNetworkProfile] = useState<NetworkProfile>('wan')
   const [selectedMetric, setSelectedMetric] = useState<MetricKey>('tlsHandshakeMs')
   const [showInsight, setShowInsight] = useState(false)
+  const [envScenario, setEnvScenario] = useState<EnvironmentScenario>('clean-path')
+  const [trafficPattern, setTrafficPattern] = useState<TrafficPattern>('steady-state')
 
   const metric = METRICS.find((m) => m.key === selectedMetric)!
 
@@ -239,6 +254,254 @@ export const PerformanceBenchmarkDesigner: React.FC = () => {
             )
           })}
         </div>
+      </div>
+
+      {/* ─── Production-Scale KPIs (VIAVI TeraVM) ─────────────────────── */}
+      <div className="pt-4 border-t border-border space-y-4">
+        <div className="flex items-start gap-3 p-3 rounded-lg bg-status-warning/5 border border-status-warning/20">
+          <Activity size={16} className="text-status-warning mt-0.5 shrink-0" />
+          <p className="text-xs text-muted-foreground">
+            <span className="font-semibold text-foreground">Production-Scale KPIs:</span> Real-world
+            benchmarks from VIAVI TeraVM on Dell R6625 hardware — 1.6M emulated users, HAProxy TLS +
+            Strongswan IKEv2. Adjust environment and traffic pattern to model enterprise conditions.
+          </p>
+        </div>
+
+        {/* Environment scenario selector */}
+        <div className="space-y-2">
+          <span className="text-sm font-medium text-foreground flex items-center gap-2">
+            <Building2 size={14} className="text-muted-foreground" />
+            Network Environment:
+          </span>
+          <div className="grid sm:grid-cols-3 gap-2">
+            {(
+              Object.entries(ENVIRONMENT_SCENARIOS) as [
+                EnvironmentScenario,
+                (typeof ENVIRONMENT_SCENARIOS)[EnvironmentScenario],
+              ][]
+            ).map(([id, info]) => (
+              <Button
+                variant="ghost"
+                key={id}
+                onClick={() => setEnvScenario(id)}
+                className={`text-left p-3 rounded-lg border transition-all h-auto ${
+                  envScenario === id
+                    ? 'bg-primary/10 border-primary/40'
+                    : 'bg-muted/30 border-border hover:border-border/80'
+                }`}
+              >
+                <div className="font-semibold text-xs text-foreground mb-0.5">{info.label}</div>
+                <div className="text-xs text-muted-foreground whitespace-normal">
+                  {id === 'ngfw-inspection'
+                    ? '2× crypto overhead per hop'
+                    : id === 'multi-hop-proxy'
+                      ? '3× crypto overhead (NGFW+SGW+DLP)'
+                      : 'Baseline — no middlebox overhead'}
+                </div>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* Traffic pattern selector */}
+        <div className="space-y-2">
+          <span className="text-sm font-medium text-foreground flex items-center gap-2">
+            <Activity size={14} className="text-muted-foreground" />
+            Traffic Pattern:
+          </span>
+          <div className="grid sm:grid-cols-3 gap-2">
+            {(
+              Object.entries(TRAFFIC_PATTERNS) as [
+                TrafficPattern,
+                (typeof TRAFFIC_PATTERNS)[TrafficPattern],
+              ][]
+            ).map(([id, info]) => (
+              <Button
+                variant="ghost"
+                key={id}
+                onClick={() => setTrafficPattern(id)}
+                className={`text-left p-3 rounded-lg border transition-all h-auto ${
+                  trafficPattern === id
+                    ? 'bg-primary/10 border-primary/40'
+                    : 'bg-muted/30 border-border hover:border-border/80'
+                }`}
+              >
+                <div className="font-semibold text-xs text-foreground mb-0.5">{info.label}</div>
+                <div className="text-xs text-muted-foreground whitespace-normal">
+                  {id === 'burst-login-storm'
+                    ? '5× connection spike'
+                    : id === 'microservice-chatter'
+                      ? '10× connection multiplier'
+                      : 'Persistent connections'}
+                </div>
+              </Button>
+            ))}
+          </div>
+        </div>
+
+        {/* TLS KPI table */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            HTTP + TLS KPIs — {ENVIRONMENT_SCENARIOS[envScenario].label}
+            {trafficPattern !== 'steady-state' &&
+              ` × ${TRAFFIC_PATTERNS[trafficPattern].label}`}
+          </h3>
+          <div className="space-y-2">
+            {PRODUCTION_TLS_KPIS.map((kpi) => {
+              const envMul = ENVIRONMENT_SCENARIOS[envScenario].overheadMultiplier
+              const trafMul = TRAFFIC_PATTERNS[trafficPattern].connectionMultiplier
+              const isLatency = kpi.unit === 'ms'
+              // Latency metrics scale with environment multiplier and traffic pattern
+              // Rate metrics scale inversely with environment multiplier
+              const adjustedClassical = isLatency
+                ? kpi.classical * envMul
+                : kpi.classical / envMul / trafMul
+              const adjustedHybrid = isLatency
+                ? kpi.hybrid * envMul
+                : kpi.hybrid / envMul / trafMul
+
+              const maxBar = isLatency
+                ? Math.max(adjustedHybrid, 1)
+                : Math.max(adjustedClassical, 1)
+
+              return (
+                <div key={kpi.label} className="p-2 rounded bg-muted/50">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-medium text-foreground">{kpi.label}</span>
+                    <span className="text-[10px] text-muted-foreground">{kpi.unit}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-status-warning w-14 shrink-0">
+                        Classical
+                      </span>
+                      <div className="flex-1 h-4 bg-background rounded overflow-hidden">
+                        <div
+                          className="h-full bg-status-warning transition-all duration-500"
+                          style={{
+                            width: `${Math.min(100, (adjustedClassical / maxBar) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-foreground w-20 text-right tabular-nums">
+                        {formatProductionVal(adjustedClassical, kpi.unit)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-status-info w-14 shrink-0">Hybrid</span>
+                      <div className="flex-1 h-4 bg-background rounded overflow-hidden">
+                        <div
+                          className="h-full bg-status-info transition-all duration-500"
+                          style={{
+                            width: `${Math.min(100, (adjustedHybrid / maxBar) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-foreground w-20 text-right tabular-nums">
+                        {formatProductionVal(adjustedHybrid, kpi.unit)}
+                      </span>
+                    </div>
+                  </div>
+                  {envScenario === 'clean-path' && trafficPattern === 'steady-state' && (
+                    <div className="text-[10px] text-muted-foreground mt-1 text-right">
+                      Baseline: {kpi.deltaLabel}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* VPN KPI table */}
+        <div className="space-y-3">
+          <h3 className="text-sm font-semibold text-foreground">
+            IKEv2 IPSec VPN KPIs — {ENVIRONMENT_SCENARIOS[envScenario].label}
+          </h3>
+          <div className="space-y-2">
+            {PRODUCTION_VPN_KPIS.map((kpi) => {
+              const envMul = ENVIRONMENT_SCENARIOS[envScenario].overheadMultiplier
+              const isLatency = kpi.unit === 'ms'
+              const adjustedClassical = isLatency
+                ? kpi.classical * envMul
+                : kpi.classical / envMul
+              const adjustedHybrid = isLatency ? kpi.hybrid * envMul : kpi.hybrid / envMul
+              const maxBar = isLatency
+                ? Math.max(adjustedHybrid, 1)
+                : Math.max(adjustedClassical, 1)
+
+              return (
+                <div key={kpi.label} className="p-2 rounded bg-muted/50">
+                  <div className="flex justify-between items-center mb-1.5">
+                    <span className="text-xs font-medium text-foreground">{kpi.label}</span>
+                    <span className="text-[10px] text-muted-foreground">{kpi.unit}</span>
+                  </div>
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-status-warning w-14 shrink-0">
+                        Classical
+                      </span>
+                      <div className="flex-1 h-4 bg-background rounded overflow-hidden">
+                        <div
+                          className="h-full bg-status-warning transition-all duration-500"
+                          style={{
+                            width: `${Math.min(100, (adjustedClassical / maxBar) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-foreground w-20 text-right tabular-nums">
+                        {formatProductionVal(adjustedClassical, kpi.unit)}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-[10px] text-status-info w-14 shrink-0">Hybrid</span>
+                      <div className="flex-1 h-4 bg-background rounded overflow-hidden">
+                        <div
+                          className="h-full bg-status-info transition-all duration-500"
+                          style={{
+                            width: `${Math.min(100, (adjustedHybrid / maxBar) * 100)}%`,
+                          }}
+                        />
+                      </div>
+                      <span className="text-[10px] font-mono text-foreground w-20 text-right tabular-nums">
+                        {formatProductionVal(adjustedHybrid, kpi.unit)}
+                      </span>
+                    </div>
+                  </div>
+                  {envScenario === 'clean-path' && (
+                    <div className="text-[10px] text-muted-foreground mt-1 text-right">
+                      Baseline: {kpi.deltaLabel}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Environment impact callout */}
+        {envScenario !== 'clean-path' && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-status-warning/10 border border-status-warning/30">
+            <AlertTriangle size={14} className="text-status-warning mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                {ENVIRONMENT_SCENARIOS[envScenario].label}:
+              </span>{' '}
+              {ENVIRONMENT_SCENARIOS[envScenario].description}
+            </p>
+          </div>
+        )}
+        {trafficPattern !== 'steady-state' && (
+          <div className="flex items-start gap-2 p-3 rounded-lg bg-status-info/10 border border-status-info/30">
+            <Activity size={14} className="text-status-info mt-0.5 shrink-0" />
+            <p className="text-xs text-muted-foreground">
+              <span className="font-semibold text-foreground">
+                {TRAFFIC_PATTERNS[trafficPattern].label}:
+              </span>{' '}
+              {TRAFFIC_PATTERNS[trafficPattern].description}
+            </p>
+          </div>
+        )}
       </div>
     </div>
   )

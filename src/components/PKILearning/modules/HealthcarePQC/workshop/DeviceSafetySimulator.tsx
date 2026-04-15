@@ -222,7 +222,7 @@ const AttackScenarioCard: React.FC<{
       <Button
         variant="ghost"
         onClick={onToggle}
-        className="w-full p-4 flex items-center justify-between text-left hover:bg-muted/20 transition-colors"
+        className="w-full h-auto whitespace-normal p-4 flex items-center justify-between text-left hover:bg-muted/20 transition-colors"
       >
         <div className="flex items-center gap-3 min-w-0">
           <Zap size={16} className="text-status-warning shrink-0" />

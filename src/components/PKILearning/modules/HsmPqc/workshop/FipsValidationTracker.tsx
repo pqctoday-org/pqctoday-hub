@@ -257,7 +257,7 @@ export const FipsValidationTracker: React.FC = () => {
               <Button
                 variant="ghost"
                 onClick={() => setExpandedVendor(isExpanded ? null : vendorId)}
-                className="w-full flex items-center justify-between p-4 text-left"
+                className="w-full h-auto whitespace-normal flex items-center justify-between p-4 text-left"
               >
                 <div className="flex items-center gap-3">
                   <Award size={16} className="text-primary" />

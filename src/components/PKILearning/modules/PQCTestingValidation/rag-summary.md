@@ -67,6 +67,45 @@ The IKEv2 pure-PQC cliff (53×) makes hybrid the mandatory first step for VPN ga
 
 ---
 
+## Enterprise Reality: Hidden Performance Costs
+
+Lab benchmarks measure clean-path overhead, but enterprise networks amplify PQC costs through middlebox chains, hardware limitations, and bursty traffic patterns.
+
+### NGFW/SGW Double-Handshake Overhead
+
+Enterprise traffic flows through Next-Generation Firewalls (NGFWs) and Secure Web Gateways (SGWs) that decrypt, inspect, and re-encrypt every TLS session. Each inspection point completes a full PQC handshake with both the client and the destination server, **doubling** the cryptographic workload per hop. A typical NGFW → SGW → DLP proxy chain means each connection pays the PQC cost **three times**.
+
+### Hardware Acceleration Gaps
+
+Most network security appliances use dedicated silicon for RSA/ECC acceleration. These chips **cannot accelerate ML-KEM or PQ signature algorithms** — devices fall back to general-purpose CPUs. Under high connection rates, this reduces appliance capacity by **50–90%** vs hardware-accelerated classical crypto. Vendors acknowledge many deployments will require new hardware.
+
+### Bursty Traffic Amplification
+
+PQC overhead hits hardest with short-lived, bursty connections: login storms, API spikes, microservice mTLS chatter. Each new connection pays the full PQC handshake cost. VIAVI testing showed web pages loading **48× slower** — driven by repeated short connections, not raw crypto speed.
+
+### TLS Session Resumption Mitigation
+
+TLS session resumption (PSK reuse) allows returning clients to skip the expensive PQC key exchange, eliminating **80–90%** of PQC performance impact for returning users. Combined with hardware acceleration (AVX2/AVX-512, FPGA accelerators) and hybrid mode, organizations can reduce production impact to manageable levels.
+
+### Production-Scale KPIs (VIAVI TeraVM on Dell R6625)
+
+| KPI                  | Classical (X25519) | Hybrid (X25519+ML-KEM-768) | Delta        |
+| -------------------- | ------------------ | -------------------------- | ------------ |
+| Connection Rate      | 51,520 CPS         | 32,320 CPS                 | 37% drop     |
+| Client Throughput    | 7,312 Mbps         | 4,968 Mbps                 | 32% drop     |
+| Client Gets/s        | 51,520              | 32,960                     | 36% drop     |
+| Client Get Time      | 2.72ms              | 98.55ms                    | 3,523% increase |
+| Time to First Byte   | 2.04ms              | 85.045ms                   | 4,069% increase |
+| Time to Last Byte    | 2.72ms              | 98.553ms                   | 3,523% increase |
+| VPN Tunnel Rate      | 17,768 tunnels/s    | 4,471 tunnels/s            | 75% drop     |
+| VPN Setup Time       | 3.422ms             | 4.28ms                     | 20% increase |
+
+These numbers represent **clean-path** overhead. Enterprise middlebox chains (NGFW, SGW, DLP proxy) multiply them by 2–3×. Bursty traffic patterns (login storms, microservice chatter) compound the impact further.
+
+**Environment simulation**: The workshop Performance Benchmark Designer supports three scenarios: Clean Path (1× baseline), NGFW Inspection (2× overhead), and Multi-Hop Proxy Chain (3× overhead), combined with traffic patterns: Steady State, Burst (Login Storm, 5× connection spike), and Microservice Chatter (10× multiplier).
+
+---
+
 ## Interoperability Testing & RFC 9794 Compliance
 
 RFC 9794 (IETF, 2025) defines hybrid scheme design rules:

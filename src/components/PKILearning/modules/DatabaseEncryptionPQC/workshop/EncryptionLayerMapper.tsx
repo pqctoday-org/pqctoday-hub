@@ -140,7 +140,7 @@ export const EncryptionLayerMapper: React.FC = () => {
                   variant="ghost"
                   key={layer.id}
                   onClick={() => handleLayerClick(layer.id)}
-                  className={`w-full text-left px-4 py-3 rounded-lg border transition-all text-sm font-medium flex items-center justify-between gap-2 ${
+                  className={`w-full h-auto whitespace-normal text-left px-4 py-3 rounded-lg border transition-all text-sm font-medium flex items-center justify-between gap-2 ${
                     isSelected
                       ? 'border-primary bg-primary/10 text-primary'
                       : isSupported

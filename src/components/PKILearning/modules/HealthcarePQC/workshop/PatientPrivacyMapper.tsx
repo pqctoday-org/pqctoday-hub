@@ -151,7 +151,7 @@ const StigmaSection: React.FC<StigmaSectionProps> = ({ profiles }) => {
       <Button
         variant="ghost"
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-0 h-auto hover:bg-transparent"
+        className="w-full whitespace-normal flex items-center justify-between p-0 h-auto hover:bg-transparent"
       >
         <div className="flex items-center gap-2">
           <Eye size={16} className="text-status-error" />

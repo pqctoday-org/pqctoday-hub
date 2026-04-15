@@ -12,6 +12,7 @@ import {
   CheckCircle,
   Info,
   FileBadge,
+  Building2,
 } from 'lucide-react'
 import { InlineTooltip } from '@/components/ui/InlineTooltip'
 import { ReadingCompleteButton } from '@/components/PKILearning/ReadingCompleteButton'
@@ -272,6 +273,117 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         <ReadingCompleteButton />
       </CollapsibleSection>
 
+      {/* Section 3b: Enterprise Reality — Hidden Costs */}
+      <CollapsibleSection
+        icon={<Building2 size={24} className="text-primary" />}
+        title="Enterprise Reality: Hidden Performance Costs"
+      >
+        <p>
+          Lab benchmarks measure clean-path overhead, but enterprise networks have middleboxes,
+          hardware constraints, and bursty traffic that amplify PQC costs far beyond what simple
+          protocol testing reveals.
+        </p>
+
+        <div className="space-y-4 mt-2">
+          {/* NGFW Double-Handshake */}
+          <div className="p-4 rounded-lg bg-status-warning/10 border border-status-warning/30">
+            <p className="font-semibold text-status-warning mb-2 flex items-center gap-2">
+              <AlertTriangle size={14} />
+              NGFW / SGW Double-Handshake Overhead
+            </p>
+            <p className="text-xs">
+              Enterprise traffic flows through Next-Generation Firewalls (NGFWs) and Secure Web
+              Gateways (SGWs) that decrypt, inspect, and re-encrypt every TLS session. Each
+              inspection point must complete a full PQC handshake with <em>both</em> the client and
+              the destination server — effectively <strong>doubling</strong> the cryptographic
+              workload per hop.
+            </p>
+            <p className="text-xs mt-2">
+              A typical enterprise proxy chain (NGFW → SGW → DLP) means each connection pays the PQC
+              handshake cost <strong>three times</strong>. Where VIAVI measured a 37% drop in
+              connection rate on a clean path, enterprises with inspection chains may see 60-80%
+              drops.
+            </p>
+          </div>
+
+          {/* Hardware Acceleration Gaps */}
+          <div className="p-4 rounded-lg bg-destructive/10 border border-destructive/30">
+            <p className="font-semibold text-destructive mb-2 flex items-center gap-2">
+              <Cpu size={14} />
+              Hardware Acceleration Gaps
+            </p>
+            <p className="text-xs">
+              Most network security appliances rely on dedicated silicon for RSA and ECC
+              acceleration. These chips <strong>cannot accelerate ML-KEM or PQ signature
+              algorithms</strong> — devices fall back to general-purpose CPUs under PQC workloads.
+            </p>
+            <p className="text-xs mt-2">
+              Under high connection rates, this can reduce appliance capacity by{' '}
+              <strong>50-90%</strong> compared to hardware-accelerated classical crypto. Vendors
+              acknowledge that many existing deployments will require new hardware for PQC at scale.
+            </p>
+          </div>
+
+          {/* Bursty Traffic */}
+          <div className="p-4 rounded-lg bg-status-info/10 border border-status-info/30">
+            <p className="font-semibold text-status-info mb-2 flex items-center gap-2">
+              <Info size={14} />
+              Bursty Traffic Amplification
+            </p>
+            <p className="text-xs">
+              PQC overhead hits hardest in environments with short-lived, bursty connections. Login
+              storms (morning surges, post-outage reconnections), API spikes, and microservice
+              authentication chatter all pay the <strong>full PQC handshake cost</strong> per
+              connection.
+            </p>
+            <p className="text-xs mt-2">
+              Unlike persistent VPN tunnels that amortize setup cost over hours, bursty workloads
+              continuously create new TLS sessions. VIAVI testing showed web pages loading{' '}
+              <strong>48× slower</strong> with PQC — a metric driven by repeated short connections,
+              not raw crypto speed.
+            </p>
+          </div>
+
+          {/* Session Resumption Mitigation */}
+          <div className="p-4 rounded-lg bg-status-success/10 border border-status-success/30">
+            <p className="font-semibold text-status-success mb-2 flex items-center gap-2">
+              <CheckCircle size={14} />
+              Mitigation: TLS Session Resumption
+            </p>
+            <p className="text-xs">
+              TLS session resumption allows returning clients to reuse previously negotiated
+              parameters via Pre-Shared Keys (PSK), skipping the expensive PQC key exchange
+              entirely. This eliminates <strong>80-90%</strong> of PQC performance impact for
+              returning users.
+            </p>
+            <p className="text-xs mt-2">
+              Combined with hardware acceleration (AVX2/AVX-512 or FPGA accelerators for
+              lattice operations) and hybrid mode (PQC + classical), organizations can reduce the
+              production impact to manageable levels. The key is{' '}
+              <em>measuring these mitigations under realistic conditions</em> — not assuming lab
+              results translate to production.
+            </p>
+          </div>
+        </div>
+
+        <div className="p-4 rounded-lg bg-muted border border-border mt-2">
+          <p className="font-semibold text-foreground mb-2 flex items-center gap-2">
+            <Info size={16} className="text-primary" />
+            VIAVI TeraVM Production-Scale Results
+          </p>
+          <p className="text-xs">
+            Testing on Dell R6625 hardware with HAProxy (TLS) and Strongswan (IKEv2) against 1.6
+            million emulated users: <strong>37% fewer connections/second</strong>,{' '}
+            <strong>32% throughput drop</strong>, <strong>3,523% latency increase</strong> (Client
+            Get Time: 2.72ms → 98.55ms), and <strong>75% reduction in VPN tunnel setup rate</strong>{' '}
+            (17,768 → 4,471 tunnels/s). These numbers represent the floor — enterprise middlebox
+            chains multiply them further.
+          </p>
+        </div>
+
+        <ReadingCompleteButton />
+      </CollapsibleSection>
+
       {/* Section 4: Interoperability Testing */}
       <CollapsibleSection
         icon={<GitBranch size={24} className="text-primary" />}
@@ -415,8 +527,9 @@ export const PQCTestingIntroduction: React.FC<PQCTestingIntroductionProps> = ({
         <div className="flex-1">
           <h3 className="font-bold text-foreground">Ready to test your knowledge?</h3>
           <p className="text-sm text-muted-foreground mt-1">
-            Work through 6 interactive workshops covering passive discovery, active scanning,
-            performance benchmarking, interop testing, TVLA analysis, and strategy building.
+            Work through 7 interactive workshops covering passive discovery, active scanning,
+            performance benchmarking, interop testing, TVLA analysis, strategy building, and ACVP
+            validation.
           </p>
         </div>
         <Button

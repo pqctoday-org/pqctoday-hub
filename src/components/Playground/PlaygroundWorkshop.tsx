@@ -12,6 +12,7 @@ import {
   BookmarkCheck,
   Bookmark,
   Wrench,
+  Server,
 } from 'lucide-react'
 import { PageHeader } from '../common/PageHeader'
 import { Button } from '../ui/button'
@@ -487,6 +488,13 @@ export const PlaygroundWorkshop = () => {
               icon={Cpu}
               title="PKCS#11 HSM Playground"
               description="Real PKCS#11 v3.2 operations with SoftHSM WASM — dual C++/Rust engine cross-validation and ACVP."
+            />
+            <HeroCard
+              to="/playground/docker"
+              icon={Server}
+              title="Enterprise Docker Simulation"
+              description="Connect to the local monolithic PQCToday container API routing complex TLS, VPN, and OpenSSH simulations."
+              badge="Hardware Isolation"
             />
           </div>
         </div>

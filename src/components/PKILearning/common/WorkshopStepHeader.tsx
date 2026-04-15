@@ -53,17 +53,23 @@ export const WorkshopStepHeader: React.FC<WorkshopStepHeaderProps> = ({
   const resourceLabel = `${moduleTitle} — ${stepTitle}`
 
   return (
-    <div className="mb-6 border-b border-border pb-4 relative overflow-hidden">
-      <h2 className="text-2xl font-bold text-foreground pr-20 break-words">{stepTitle}</h2>
-      <p className="text-muted-foreground pr-20 break-words">{stepDescription}</p>
-      <div className="absolute top-0 right-0 flex items-center gap-1">
-        <EndorseButton
-          endorseUrl={endorseUrl}
-          resourceLabel={resourceLabel}
-          resourceType="Workshop Step"
-        />
-        <FlagButton flagUrl={flagUrl} resourceLabel={resourceLabel} resourceType="Workshop Step" />
+    <div className="mb-6 border-b border-border pb-4">
+      <div className="flex items-start justify-between gap-2">
+        <h2 className="text-2xl font-bold text-foreground break-words min-w-0">{stepTitle}</h2>
+        <div className="flex items-center gap-1 shrink-0">
+          <EndorseButton
+            endorseUrl={endorseUrl}
+            resourceLabel={resourceLabel}
+            resourceType="Workshop Step"
+          />
+          <FlagButton
+            flagUrl={flagUrl}
+            resourceLabel={resourceLabel}
+            resourceType="Workshop Step"
+          />
+        </div>
       </div>
+      <p className="text-muted-foreground break-words">{stepDescription}</p>
     </div>
   )
 }

@@ -534,6 +534,131 @@ export const BENCHMARK_DATA: Record<AlgorithmSet, Record<NetworkProfile, Benchma
   },
 }
 
+// ─── Production-Scale KPIs (VIAVI TeraVM on Dell R6625) ──────────────────────
+// Source: VIAVI Solutions "Testing, Measuring and Managing PQC Migration" (2026)
+// Test setup: TeraVM Security Test on Dell R6625, HAProxy TLS + Strongswan IKEv2
+// Classical = X25519, Hybrid = X25519+ML-KEM-768 (Kyber768)
+
+export type EnvironmentScenario = 'clean-path' | 'ngfw-inspection' | 'multi-hop-proxy'
+export type TrafficPattern = 'steady-state' | 'burst-login-storm' | 'microservice-chatter'
+
+export interface ProductionKPI {
+  label: string
+  unit: string
+  classical: number
+  hybrid: number
+  deltaLabel: string // human-readable delta description
+}
+
+export const PRODUCTION_TLS_KPIS: ProductionKPI[] = [
+  {
+    label: 'Connection Rate (CPS)',
+    unit: 'cps',
+    classical: 51520,
+    hybrid: 32320,
+    deltaLabel: '37% drop',
+  },
+  {
+    label: 'Client Throughput',
+    unit: 'Mbps',
+    classical: 7312,
+    hybrid: 4968,
+    deltaLabel: '32% drop',
+  },
+  {
+    label: 'Client Gets/s',
+    unit: 'req/s',
+    classical: 51520,
+    hybrid: 32960,
+    deltaLabel: '36% drop',
+  },
+  {
+    label: 'Client Get Time (mean)',
+    unit: 'ms',
+    classical: 2.72,
+    hybrid: 98.55,
+    deltaLabel: '3,523% increase',
+  },
+  {
+    label: 'Time to First Byte (mean)',
+    unit: 'ms',
+    classical: 2.04,
+    hybrid: 85.045,
+    deltaLabel: '4,069% increase',
+  },
+  {
+    label: 'Time to Last Byte (mean)',
+    unit: 'ms',
+    classical: 2.72,
+    hybrid: 98.553,
+    deltaLabel: '3,523% increase',
+  },
+]
+
+export const PRODUCTION_VPN_KPIS: ProductionKPI[] = [
+  {
+    label: 'VPN Tunnel Establishment Rate',
+    unit: 'tunnels/s',
+    classical: 17768,
+    hybrid: 4471,
+    deltaLabel: '75% drop (297% slower)',
+  },
+  {
+    label: 'VPN Tunnel Setup Time',
+    unit: 'ms',
+    classical: 3.422,
+    hybrid: 4.28,
+    deltaLabel: '20% increase',
+  },
+]
+
+export const ENVIRONMENT_SCENARIOS: Record<
+  EnvironmentScenario,
+  { label: string; description: string; overheadMultiplier: number }
+> = {
+  'clean-path': {
+    label: 'Clean Path (Direct)',
+    description: 'Client → Server with no middleboxes. Baseline PQC overhead only.',
+    overheadMultiplier: 1.0,
+  },
+  'ngfw-inspection': {
+    label: 'NGFW TLS Inspection',
+    description:
+      'Traffic passes through a Next-Gen Firewall that decrypts, inspects, and re-encrypts. Each inspection point completes a full PQC handshake with both client and server — doubling crypto workload.',
+    overheadMultiplier: 2.0,
+  },
+  'multi-hop-proxy': {
+    label: 'Multi-Hop Proxy Chain',
+    description:
+      'Traffic traverses NGFW → Secure Web Gateway → DLP proxy. Each hop performs TLS decrypt/re-encrypt, tripling the PQC handshake cost.',
+    overheadMultiplier: 3.0,
+  },
+}
+
+export const TRAFFIC_PATTERNS: Record<
+  TrafficPattern,
+  { label: string; description: string; connectionMultiplier: number }
+> = {
+  'steady-state': {
+    label: 'Steady State',
+    description:
+      'Persistent connections with infrequent renegotiation. VPN tunnels, long-lived WebSocket, database pools. PQC cost amortized over session lifetime.',
+    connectionMultiplier: 1.0,
+  },
+  'burst-login-storm': {
+    label: 'Burst (Login Storm)',
+    description:
+      'Thousands of new connections in seconds — morning login surges, shift changes, post-outage reconnection floods. Every connection pays full PQC handshake cost.',
+    connectionMultiplier: 5.0,
+  },
+  'microservice-chatter': {
+    label: 'Microservice Chatter',
+    description:
+      'Short-lived mTLS connections between services. Each API call may establish a new TLS session, multiplying PQC overhead across the service mesh.',
+    connectionMultiplier: 10.0,
+  },
+}
+
 export const NETWORK_PROFILE_LABELS: Record<
   NetworkProfile,
   { label: string; rttMs: number; description: string }

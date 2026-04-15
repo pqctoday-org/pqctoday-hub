@@ -85,31 +85,33 @@ export const TVLALeakageAnalyzer: React.FC = () => {
       {/* Target selector */}
       <div className="space-y-2">
         <span className="text-sm font-medium text-foreground">Implementation Under Test:</span>
-        <div className="grid sm:grid-cols-2 gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {TVLA_TARGETS.map((t) => (
             <Button
               variant="ghost"
               key={t.id}
               onClick={() => setSelectedTarget(t.id)}
-              className={`text-left p-3 rounded-lg border transition-all ${
+              className={`h-auto whitespace-normal text-left justify-start items-start p-3 rounded-lg border transition-all ${
                 selectedTarget === t.id
                   ? 'bg-primary/10 border-primary/40'
                   : 'bg-muted/30 border-border hover:border-border/80'
               }`}
             >
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-semibold text-xs text-foreground">{t.label}</span>
-                <span
-                  className={`text-[10px] px-1.5 py-0.5 rounded font-semibold border ${
-                    t.implementation === 'masked'
-                      ? 'text-status-success bg-status-success/10 border-status-success/30'
-                      : 'text-destructive bg-destructive/10 border-destructive/30'
-                  }`}
-                >
-                  {t.implementation.toUpperCase()}
-                </span>
+              <div className="w-full">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  <span className="font-semibold text-xs text-foreground">{t.label}</span>
+                  <span
+                    className={`text-[10px] px-1.5 py-0.5 rounded font-semibold border shrink-0 ${
+                      t.implementation === 'masked'
+                        ? 'text-status-success bg-status-success/10 border-status-success/30'
+                        : 'text-destructive bg-destructive/10 border-destructive/30'
+                    }`}
+                  >
+                    {t.implementation.toUpperCase()}
+                  </span>
+                </div>
+                <p className="text-xs text-muted-foreground">{t.description}</p>
               </div>
-              <p className="text-xs text-muted-foreground">{t.description}</p>
             </Button>
           ))}
         </div>
@@ -117,7 +119,7 @@ export const TVLALeakageAnalyzer: React.FC = () => {
 
       {/* Threshold control */}
       <div className="space-y-2">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-0.5">
           <span className="text-sm font-medium text-foreground">
             TVLA Threshold |t| ={' '}
             <span className="text-primary font-mono">{threshold.toFixed(1)}</span>
@@ -153,12 +155,14 @@ export const TVLALeakageAnalyzer: React.FC = () => {
 
           return (
             <div key={stage.id} className="space-y-1">
-              <div className="flex items-center justify-between text-xs">
-                <div>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs gap-0.5">
+                <div className="min-w-0">
                   <span className="font-semibold text-foreground">{stage.label}</span>
-                  <span className="text-muted-foreground ml-2">{stage.description}</span>
+                  <span className="text-muted-foreground ml-2 hidden sm:inline">
+                    {stage.description}
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 shrink-0">
                   {leaks ? (
                     <AlertTriangle size={12} className="text-status-warning" />
                   ) : (
