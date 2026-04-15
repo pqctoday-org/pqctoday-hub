@@ -5,7 +5,7 @@ import { Pkcs11LogPanel } from '../shared/Pkcs11LogPanel'
 import { Card } from '../ui/card'
 import { Button } from '../ui/button'
 import { motion, AnimatePresence } from 'framer-motion'
-import { X, Play } from 'lucide-react'
+import { X, Play, Upload, UploadCloud } from 'lucide-react'
 import type { Pkcs11LogEntry } from '../../wasm/softhsm'
 
 type TestScenario = 'tls' | 'ssh' | 'vpn' | 'pki' | 'sequoia' | 'web3'
@@ -33,6 +33,8 @@ export const DockerPlaygroundView = () => {
   const [loading, setLoading] = useState<TestScenario | null>(null)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [activeModal, setActiveModal] = useState<TileBlueprint | null>(null)
+  const fileInputRef = React.useRef<HTMLInputElement>(null)
+  const [isUploading, setIsUploading] = useState(false)
 
   const handleExecute = async (scenario: TestScenario) => {
     setLoading(scenario)
@@ -65,6 +67,39 @@ export const DockerPlaygroundView = () => {
   const clearLog = () => {
     setHsmLog([])
     setErrorMsg(null)
+  }
+
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    
+    setIsUploading(true)
+    setErrorMsg(null)
+    
+    const formData = new FormData()
+    formData.append('file', file)
+    
+    try {
+      const res = await fetch(`http://localhost:8080/api/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      if (!res.ok) {
+        throw new Error("Failed to parse trace log on backend.")
+      }
+      const data = await res.json()
+      if (data.status === 200 && data.log) {
+        setHsmLog(data.log)
+      } else {
+        throw new Error(data.error || "Malformed trace log")
+      }
+    } catch (err: any) {
+      setErrorMsg(`Upload parsing error: ${err.message}`)
+    } finally {
+      setIsUploading(false)
+      // Reset input so the same file can be uploaded again if needed
+      if (fileInputRef.current) fileInputRef.current.value = ""
+    }
   }
 
   return (
@@ -144,9 +179,28 @@ export const DockerPlaygroundView = () => {
                 <FileSignature size={14} className="text-primary"/> 
                 PKCS#11 Trace Pipeline
             </h4>
-            <Button variant="ghost" size="sm" onClick={clearLog} disabled={hsmLog.length === 0} className="h-6 gap-1 text-xs px-2">
-                <Trash2 size={12} /> Clear Stream
-            </Button>
+            <div className="flex items-center gap-2">
+                <input 
+                  type="file" 
+                  ref={fileInputRef} 
+                  onChange={handleFileUpload} 
+                  accept=".log,.txt,text/*" 
+                  className="hidden" 
+                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => fileInputRef.current?.click()} 
+                  disabled={isUploading} 
+                  className="h-6 gap-1 text-xs px-2"
+                >
+                    {isUploading ? <span className="animate-spin w-3 h-3 border-2 border-current border-t-transparent rounded-full" /> : <UploadCloud size={12} />} 
+                    Upload Trace
+                </Button>
+                <Button variant="ghost" size="sm" onClick={clearLog} disabled={hsmLog.length === 0} className="h-6 gap-1 text-xs px-2">
+                    <Trash2 size={12} /> Clear Stream
+                </Button>
+            </div>
          </div>
          <div className="border border-t-0 border-border rounded-b-xl overflow-hidden shadow-inner">
              <Pkcs11LogPanel 

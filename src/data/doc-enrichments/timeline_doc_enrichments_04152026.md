@@ -7375,3 +7375,113 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## Canada:CCCS — Departmental PQC Migration Plans Due
+
+- **Reference ID**: Canada:CCCS — Departmental PQC Migration Plans Due
+- **Title**: Departmental PQC Migration Plans Due
+- **Authors**: Canadian Centre for Cyber Security
+- **Publication Date**: 2025-06-23
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
+- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
+- **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected (guidance document with organizational roles, not individuals)
+- **PQC Products Mentioned**: None detected (guidance focused on migration methodology, not specific products)
+- **Protocols Covered**: Network security protocols (referenced as ITSP.40.062), TLS, VPN, SSH
+- **Infrastructure Layers**: Cloud, Email
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: CCCS ITSM.40.001
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations must develop a departmental PQC migration plan by April 2026; High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats; Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations; Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles; An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: cryptographic agility; composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Directors and managers of IT systems in federal departments and agencies; decision makers accountable for the migration to PQC; Designated Official for Cyber Security (DOCS); PQC Migration Executive Lead; PQC Migration Technical Lead
+- **Implementation Prerequisites**: establishment of a committee with senior management representation; identification of a dedicated migration lead; development of a departmental PQC migration plan; creation of an inventory of systems employing cryptography; procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111; certification of cryptographic modules by the Cryptographic Module Validation Program
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, pqc-governance, migration-program, crypto-agility, hsm-pqc, vendor-risk
+- **Implementation Attack Surface**: harvest now, decrypt later (HNDL) threat; confidentiality of information in transit over public network zones
+- **Cryptographic Discovery & Inventory**: cryptographic discovery; inventory of systems that need to be transitioned; system components employing cryptography; vendor and product version for each of the components; security controls that rely upon the identified cryptography; applicable network security zones; current cryptographic configurations; hosting platform; system dependencies; relevant service contracts and expiry dates; expected refresh year for the system or its components
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: smart cards; hardware tokens; mobile telephones; printers; voice over Internet Protocol telephony; hardware security modules
+- **Supply Chain & Vendor Risk**: vendor lock-in; procurement policies for new equipment; contract clauses to ensure that the vendor will include support for PQC; cryptographic modules have been certified by the Cryptographic Module Validation Program; third-party library trust (implied via vendor products); open-source vs proprietary (not explicitly stated)
+- **Deployment & Migration Complexity**: Preparation phase; Identification phase; Transition phase; departmental PQC migration plan; high priority systems; remaining systems; April 2026: Develop an initial departmental PQC migration plan; End of 2031: Completion of PQC migration of high priority systems; End of 2035: Completion of PQC migration of remaining systems; cryptographic agility to allow for future configuration changes
+- **Financial & Business Impact**: financial planning; cost estimate that includes resource allocation; staffing impacts; new hiring; external contractors; realignment of roles; existing IT equipment lifecycles; system modernization plans; rushed procurement will increase costs
+- **Organizational Readiness**: Designated Official for Cyber Security (DOCS); PQC Migration Executive Lead; PQC Migration Technical Lead; committee consisting of stakeholders throughout the organization; senior management member; non-technical areas such as finance, project management, procurement and asset management; education strategy to inform staff on the quantum threat; TBS GCxchange platform; Cyber Centre’s Learning Hub
+- **Phase Classification Rationale**: The document explicitly sets a submission deadline of April 2026 for initial PQC migration plans, marking a definitive compliance milestone. It establishes an ongoing obligation for annual progress reporting and procurement clauses.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government; Defense
+- **Migration Urgency & Priority**: Near-Term (1-3yr)
+- **Phase Transition Narrative**: Transitions from planning preparation to formal submission of migration roadmaps, enabling subsequent annual progress tracking and procurement enforcement.
+- **Historical Significance**: Represents a critical federal governance milestone requiring all departments to formalize their PQC transition strategies by 2026.
+- **Implementation Timeline Dates**: April 2026: initial PQC migration plans due; Ongoing: annual progress reporting required
+- **Successor Events & Dependencies**: Annual progress reporting; Inclusion of PQC vendor support clauses in new IT procurements
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: United States: 2026 — Federal departments must submit initial PQC migration plans to CCCS
+- **Timeline Cross-Reference**: United States 2026: CONSISTENT (CISA PQC Product Category List Publication)
+- **Extraction Note**: No source text available
+- **Extraction Note**: Base enrichment reused from library record Canada CSE PQC Guidance; timeline dimensions extracted separately
+- **Extraction Timestamp**: 2026-04-15T14:21:08
+
+---
+
+## Canada:CCCS — High Priority Migration Phase
+
+- **Reference ID**: Canada:CCCS — High Priority Migration Phase
+- **Title**: High Priority Migration Phase
+- **Authors**: Canadian Centre for Cyber Security
+- **Publication Date**: 2025-06-23
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Canadian Centre for Cyber Security guidance on PQC adoption.
+- **PQC Algorithms Covered**: NIST standardized PQC algorithms (reference to ITSP.40.111 for specific recommendations on UNCLASSIFIED, PROTECTED A, PROTECTED B information)
+- **Quantum Threats Addressed**: HNDL, Quantum Computer, Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2024, 2025, 2026, 2031, 2035; Keywords: must migrate
+- **Applicable Regions / Bodies**: Regions: United States, Canada, Bodies: NIST
+- **Leaders Contributions Mentioned**: None detected (guidance document with organizational roles, not individuals)
+- **PQC Products Mentioned**: None detected (guidance focused on migration methodology, not specific products)
+- **Protocols Covered**: Network security protocols (referenced as ITSP.40.062), TLS, VPN, SSH
+- **Infrastructure Layers**: Cloud, Email
+- **Standardization Bodies**: NIST
+- **Compliance Frameworks Referenced**: CCCS ITSM.40.001
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Organizations must develop a departmental PQC migration plan by April 2026; High priority systems protecting confidentiality in transit must be migrated by end of 2031 due to HNDL threats; Procurement policies should include clauses requiring PQC support compliant with Cyber Centre recommendations; Financial planning must account for system replacement and staffing impacts while leveraging existing IT lifecycles; An inventory of all cryptographic usage across hardware, software, and cloud assets is required before transition
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: cryptographic agility; composite certificates not mentioned but crypto agility explicitly recommended for future configuration changes
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Directors and managers of IT systems in federal departments and agencies; decision makers accountable for the migration to PQC; Designated Official for Cyber Security (DOCS); PQC Migration Executive Lead; PQC Migration Technical Lead
+- **Implementation Prerequisites**: establishment of a committee with senior management representation; identification of a dedicated migration lead; development of a departmental PQC migration plan; creation of an inventory of systems employing cryptography; procurement clauses ensuring vendor support for PQC compliant with ITSP 40.111; certification of cryptographic modules by the Cryptographic Module Validation Program
+- **Relevant PQC Today Features**: Timeline, Threats, Compliance, Migrate, Assess, pqc-governance, migration-program, crypto-agility, hsm-pqc, vendor-risk
+- **Implementation Attack Surface**: harvest now, decrypt later (HNDL) threat; confidentiality of information in transit over public network zones
+- **Cryptographic Discovery & Inventory**: cryptographic discovery; inventory of systems that need to be transitioned; system components employing cryptography; vendor and product version for each of the components; security controls that rely upon the identified cryptography; applicable network security zones; current cryptographic configurations; hosting platform; system dependencies; relevant service contracts and expiry dates; expected refresh year for the system or its components
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: smart cards; hardware tokens; mobile telephones; printers; voice over Internet Protocol telephony; hardware security modules
+- **Supply Chain & Vendor Risk**: vendor lock-in; procurement policies for new equipment; contract clauses to ensure that the vendor will include support for PQC; cryptographic modules have been certified by the Cryptographic Module Validation Program; third-party library trust (implied via vendor products); open-source vs proprietary (not explicitly stated)
+- **Deployment & Migration Complexity**: Preparation phase; Identification phase; Transition phase; departmental PQC migration plan; high priority systems; remaining systems; April 2026: Develop an initial departmental PQC migration plan; End of 2031: Completion of PQC migration of high priority systems; End of 2035: Completion of PQC migration of remaining systems; cryptographic agility to allow for future configuration changes
+- **Financial & Business Impact**: financial planning; cost estimate that includes resource allocation; staffing impacts; new hiring; external contractors; realignment of roles; existing IT equipment lifecycles; system modernization plans; rushed procurement will increase costs
+- **Organizational Readiness**: Designated Official for Cyber Security (DOCS); PQC Migration Executive Lead; PQC Migration Technical Lead; committee consisting of stakeholders throughout the organization; senior management member; non-technical areas such as finance, project management, procurement and asset management; education strategy to inform staff on the quantum threat; TBS GCxchange platform; Cyber Centre’s Learning Hub
+- **Phase Classification Rationale**: The document title explicitly identifies a "Migration Phase" focused on government systems, and the description mandates annual progress reporting, indicating an active execution stage.
+- **Regulatory Mandate Level**: Mandatory
+- **Sector / Industry Applicability**: Government
+- **Migration Urgency & Priority**: Critical Deadline
+- **Phase Transition Narrative**: None detected
+- **Historical Significance**: None detected
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Annual progress reporting required; None detected
+- **Source Document Title**: High Priority Migration Phase
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Note**: Base enrichment reused from library record Canada CSE PQC Guidance; timeline dimensions extracted separately
+- **Extraction Timestamp**: 2026-04-15T14:22:55
+
+---
+

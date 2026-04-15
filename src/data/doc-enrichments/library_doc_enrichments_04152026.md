@@ -11618,3 +11618,89 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## IETF RFC 4556
+
+- **Reference ID**: IETF RFC 4556
+- **Title**: Public Key Cryptography for Initial Authentication in Kerberos (PKINIT)
+- **Authors**: IETF
+- **Publication Date**: 2006-06-01
+- **Last Updated**: 2006-06-01
+- **Document Status**: Published
+- **Main Topic**: This document specifies protocol extensions (PKINIT) to integrate public key cryptography into the initial authentication exchange of the Kerberos V5 protocol.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: None detected
+- **Migration Timeline Info**: Keywords: deprecat, required by
+- **Applicable Regions / Bodies**: None detected
+- **Leaders Contributions Mentioned**: Brian Tung; Larry Zhu
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: Kerberos V5; X.509; Diffie-Hellman
+- **Infrastructure Layers**: Public Key Infrastructure (PKI); Key Distribution Center (KDC)
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: aes128-cts-hmac-sha1-96; aes256-cts-hmac-sha1-96; sha-1WithRSAEncryption; Diffie-Hellman
+- **Key Takeaways**: PKINIT integrates asymmetric-key signature and encryption algorithms into Kerberos pre-authentication data fields; Implementations must support AES-128 and AES-256 for AS reply key enctypes; The protocol allows clients to expose long-term secrets only once during initial authentication; KDCs must verify client requests against trusted Certification Authorities; Modular Exponential Diffie-Hellman is a required method for AS reply key delivery.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Developer; Researcher
+- **Implementation Prerequisites**: Support for Extended Key Usage (EKU) extension; Support for id-pkinit-san; Capability to process X.509 certificates
+- **Relevant PQC Today Features**: digital-id, pki-workshop, tls-basics, algorithms
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: certificate inventory, trusted Certification Authorities (CAs), Extended Key Usage (EKU) extension, Subject Alternative Name (SAN) extension
+- **Testing & Validation Methods**: Test Vectors, interoperability testing, conformance testing
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: backward compatibility, phased rollout, interoperability requirements
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: IETF_RFC_4556.html (137,669 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:22:08
+
+---
+
+## draft-ietf-tls-merkle-tree-certs
+
+- **Reference ID**: draft-ietf-tls-merkle-tree-certs
+- **Title**: Merkle Tree Certificates for TLS
+- **Authors**: IETF
+- **Publication Date**: 2025-01-01
+- **Last Updated**: 2025-01-01
+- **Document Status**: Published
+- **Main Topic**: This document describes Merkle Tree certificates, a new form of X.509 certificate that integrates public logging to reduce overhead for post-quantum signature algorithms in TLS.
+- **PQC Algorithms Covered**: ML-DSA-44; ML-DSA-65
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Years mentioned: 2026
+- **Applicable Regions / Bodies**: Regions: International
+- **Leaders Contributions Mentioned**: D. Benjamin; D. O'Brien; B. E. Westerbaan; L. Valenta; F. Valsorda
+- **PQC Products Mentioned**: Redis
+- **Protocols Covered**: TLS; X.509; ACME
+- **Infrastructure Layers**: PKI; Certificate Transparency; Issuance Logs
+- **Standardization Bodies**: IETF
+- **Compliance Frameworks Referenced**: BCP 78; BCP 79; FIPS204
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Merkle Tree certificates integrate logging with issuance to reduce overhead from large post-quantum signatures; Log entries replace public keys with hashes and omit signatures to bound storage growth; Landmark certificates offer an optional size optimization avoiding signatures for up-to-date clients; The design supports shorter-lived certificates without proportional log growth; Cosigners verify correct operation of the CA's issuance log.
+- **Security Levels & Parameters**: ML-DSA-44 public key 1312 bytes; ML-DSA-44 signature 2420 bytes; ML-DSA-65 public key 1952 bytes; ML-DSA-65 signature 3309 bytes
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: ML-DSA-44 authentication overhead 7260 bytes with two SCTs and leaf certificate; ML-DSA-65 authentication overhead 9927 bytes with two SCTs and leaf certificate; Current signature schemes use 32 bytes per key and 64 bytes per signature
+- **Target Audience**: Security Architect; Developer; Researcher; Policy Maker
+- **Implementation Prerequisites**: None detected
+- **Relevant PQC Today Features**: merkle-tree-certs; tls-basics; pki-workshop; stateful-signatures; crypto-agility
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: certificate inventory, key material audit
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: third-party library trust, open-source vs proprietary
+- **Deployment & Migration Complexity**: backward compatibility, phased rollout, breaking changes
+- **Financial & Business Impact**: operational costs, certification authority costs, cosigner costs, monitor costs
+- **Organizational Readiness**: governance prerequisites, change management scope
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: draft-ietf-tls-merkle-tree-certs.html (521,117 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T14:23:56
+
+---
+
