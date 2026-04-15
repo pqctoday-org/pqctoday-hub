@@ -12693,3 +12693,46 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## ETSI-GR-QSC-006
+
+- **Reference ID**: ETSI-GR-QSC-006
+- **Title**: Quantum-Safe Cryptography; Limits of Quantum Computing Applicability on Symmetric Key Cryptography
+- **Authors**: ETSI ISG QSC
+- **Publication Date**: 2017-02-01
+- **Last Updated**: 2017-02-01
+- **Document Status**: Published
+- **Main Topic**: Analysis of the long-term security of symmetric cryptographic primitives against quantum computing attacks up to 2050.
+- **PQC Algorithms Covered**: None detected
+- **Quantum Threats Addressed**: Quantum computer attacks on symmetric primitives; Grover's algorithm implications
+- **Migration Timeline Info**: Conclusion that 256-bit symmetric ciphers and hash functions will remain secure until way after 2050; industry advised to transition from key lengths of 128 bits or less
+- **Applicable Regions / Bodies**: Bodies: ETSI Industry Specification Group (QSC)
+- **Leaders Contributions Mentioned**: Rainer Steinwandt, Daniel J. Bernstein
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: GSM; TETRA
+- **Infrastructure Layers**: None detected
+- **Standardization Bodies**: ETSI
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; (EC) Diffie-Hellman; (EC)DSA; AES; SHA-2; SHA-3; AES-256; AES-128
+- **Key Takeaways**: 256-bit symmetric ciphers and hash functions will withstand quantum attacks until way after 2050; industry must identify products relying on key lengths of 128 bits or less for transition; asymmetric primitives require immediate transition preparation while symmetric alternatives are not urgently needed for 256-bit keys; Moore's Law trends cannot be assumed to continue indefinitely for quantum computing power
+- **Security Levels & Parameters**: 256-bit symmetric ciphers; 256-bit hash output lengths; 128-bit key length
+- **Hybrid & Transition Approaches**: None detected
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Security Architect; Policy Maker; Researcher
+- **Implementation Prerequisites**: Identification of products relying on smaller key and hash output lengths; investigation of steps for transition to primitives with larger key lengths
+- **Relevant PQC Today Features**: Threats; Algorithms; Assess; Migration-program; pqc-risk-management
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: industry is advised to identify where their products rely on smaller key and hash output lengths
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: billions of devices in the world that rely on a symmetric cipher with a key length of 128 bits or less; mobile communication with e.g. GSM or TETRA
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: start investigating the necessary steps for a transition to primitives with key lengths that will withstand quantum computer attacks
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Source Document**: ETSI-GR-QSC-006.pdf (112,847 bytes, 15,000 extracted chars)
+- **Extraction Timestamp**: 2026-04-15T15:02:01
+
+---
+

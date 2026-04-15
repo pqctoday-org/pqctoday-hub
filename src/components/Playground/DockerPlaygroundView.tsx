@@ -34,14 +34,20 @@ export const DockerPlaygroundView = () => {
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
   const [activeModal, setActiveModal] = useState<TileBlueprint | null>(null)
   const [showInstallGuide, setShowInstallGuide] = useState(false)
-  const [copied, setCopied] = useState(false)
+  const [copiedLogin, setCopiedLogin] = useState(false)
+  const [copiedRun, setCopiedRun] = useState(false)
   const fileInputRef = React.useRef<HTMLInputElement>(null)
   const [isUploading, setIsUploading] = useState(false)
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText("docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest")
-    setCopied(true)
-    setTimeout(() => setCopied(false), 2000)
+  const handleCopy = async (text: string, type: 'login' | 'run') => {
+    await navigator.clipboard.writeText(text)
+    if (type === 'login') {
+      setCopiedLogin(true)
+      setTimeout(() => setCopiedLogin(false), 2000)
+    } else {
+      setCopiedRun(true)
+      setTimeout(() => setCopiedRun(false), 2000)
+    }
   }
 
   const handleExecute = async (scenario: TestScenario) => {
@@ -365,6 +371,14 @@ export const DockerPlaygroundView = () => {
                     <pre className="bg-black text-blue-400 p-3 rounded-md text-xs font-mono overflow-x-auto">
                       docker login ghcr.io -u &lt;username&gt; -p &lt;token&gt;
                     </pre>
+                    <Button 
+                      onClick={() => handleCopy("docker login ghcr.io -u <username> -p <token>", 'login')} 
+                      size="icon" 
+                      variant="outline" 
+                      className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black border-zinc-700 hover:bg-zinc-800 focus:opacity-100"
+                    >
+                      {copiedLogin ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
+                    </Button>
                   </div>
 
                   <p className="text-xs font-semibold uppercase text-muted-foreground mb-2 mt-4">Step 2: Execute Container</p>
@@ -376,12 +390,12 @@ export const DockerPlaygroundView = () => {
                       docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest
                     </pre>
                     <Button 
-                      onClick={handleCopy} 
+                      onClick={() => handleCopy("docker run -d -p 8080:8080 ghcr.io/pqctoday/pqctoday-playground:latest", 'run')} 
                       size="icon" 
                       variant="outline" 
                       className="absolute top-1 right-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity bg-black border-zinc-700 hover:bg-zinc-800 focus:opacity-100"
                     >
-                      {copied ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
+                      {copiedRun ? <Check size={12} className="text-status-success"/> : <Copy size={12} className="text-white"/>}
                     </Button>
                   </div>
                 </div>

@@ -8310,3 +8310,113 @@ enrichment_method: ollama-qwen3.5:27b
 
 ---
 
+## Japan:NISC — PQC Migration Planning
+
+- **Reference ID**: Japan:NISC — PQC Migration Planning
+- **Title**: PQC Migration Planning
+- **Authors**: National center of Incident readiness and Strategy for Cybersecurity
+- **Publication Date**: 2025-03-02
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Summary of post-quantum cryptography government initiatives, algorithms under consideration, and migration timelines across 30+ countries as of March 2025.
+- **PQC Algorithms Covered**: ML-KEM, Classic McEliece, FrodoKEM, AIMer, HAETAE, SMAUG-T, NTRU+
+- **Quantum Threats Addressed**: Post-Quantum
+- **Migration Timeline Info**: Australia: Complete transition by 2030; Canada: Introduce standards-based PQC from 2025-26; Czech Republic: Migrate by 2027; France: Transition from 2024; New Zealand: Transition from 2026-27; South Korea: Pilot transition plan 2025-2028, completion 2035; Spain: Four phase approach today to post-2030; United States: Implement 2023-2033
+- **Applicable Regions / Bodies**: Australia, Canada, China, Czech Republic, European Union, France, Germany, Israel, Italy, Japan, Netherlands, New Zealand, Singapore, South Korea, Spain, United Kingdom, United States
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: Signal
+- **Protocols Covered**: TLS
+- **Infrastructure Layers**: Firmware
+- **Standardization Bodies**: NIST, CRYPTREC, CAICT, NICCS, NÚKIB, ENISA, European Commission, ANSSI, BSI, NCSC, ACN, MAS, MSIT, CCN.ES, AIVD, TNO, CWI, NZISM
+- **Compliance Frameworks Referenced**: CNSA20, HR7375, EO-14144, NSM-10
+- **Classical Algorithms Referenced**: None detected
+- **Key Takeaways**: Governments are setting specific transition deadlines ranging from 2024 to 2035; Most countries are monitoring or adopting NIST standards while some like South Korea and China have domestic algorithm selections; Financial services sectors face specific requirements for quantum risk management and inventory planning; Hybrid mode deployment is recommended by the Netherlands for TLS; Ongoing monitoring is required due to rapidly evolving government guidance.
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: hybrid mode for TLS
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker, Security Architect, Compliance Officer
+- **Implementation Prerequisites**: cryptographic inventory; initial plan; standards-based PQC adoption; pilot transition plan
+- **Relevant PQC Today Features**: Timeline, Algorithms, Compliance, Migrate, Assess
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: cryptographic discovery, create cryptographic inventory, algorithm enumeration, key material audit, Strategy for Migrating to Automated Post-Quantum Cryptography Discovery and Inventory Tools
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: None detected
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: firmware & software signing, embedded viability
+- **Supply Chain & Vendor Risk**: third-party library trust, procurement risk, vendor PQC roadmap maturity
+- **Deployment & Migration Complexity**: migration phase (assess/plan/test/migrate/launch), phased rollout, Four phase approach today to post-2030, Pilot transition plan 2025-2028, Complete transition to quantum resistant cryptography by 2030, PQC Roadmap for completion 2035, Implement 2023-2033
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Phase Classification Rationale**: The document describes preparatory activities such as planning and guideline preparation following standardization, which characterizes the initial discovery of migration requirements.
+- **Regulatory Mandate Level**: Informational
+- **Sector / Industry Applicability**: All Sectors
+- **Migration Urgency & Priority**: Exploratory
+- **Phase Transition Narrative**: Transitions from algorithm standardization to the preparation of detailed migration guidelines.
+- **Historical Significance**: Marks the shift from NIST standardization to national-level guideline development by bodies like CRYPTREC.
+- **Implementation Timeline Dates**: None detected
+- **Successor Events & Dependencies**: Publication of detailed guidelines by CRYPTREC; None detected
+- **Source Document Title**: None detected
+- **Source Document Publication Date**: None detected
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Note**: Base enrichment reused from library record GSMA-PQC-Country-Survey-2025; timeline dimensions extracted separately
+- **Extraction Timestamp**: 2026-04-15T15:01:06
+
+---
+
+## Japan:NEC/NICT — QKD High-Speed Data Integration Demo
+
+- **Reference ID**: Japan:NEC/NICT — QKD High-Speed Data Integration Demo
+- **Title**: QKD High-Speed Data Integration Demo
+- **Authors**: NEC with NICT and Toshiba
+- **Publication Date**: 2025-09-16
+- **Last Updated**: Not specified
+- **Document Status**: Validated
+- **Main Topic**: Japan's coordinated national strategy involving government mandates and dual-track technological leadership in PQC and QKD to defend against quantum-driven threats.
+- **PQC Algorithms Covered**: CRYSTALS-Kyber; Dilithium
+- **Quantum Threats Addressed**: Shor's algorithm; Harvest Now Decrypt Later (described as "harvested now and decrypted later")
+- **Migration Timeline Info**: March 18, 2025: NISC International Cybersecurity Challenge; April 2025: NEC wireless optical communication demo; September 16, 2025: NEC/NICT/Toshiba QKD integration demo; January 2025: NTT Communications PQC rollout
+- **Applicable Regions / Bodies**: Regions: Japan; Bodies: NISC, METI, NICT, Quad, G7, ITU
+- **Leaders Contributions Mentioned**: None detected
+- **PQC Products Mentioned**: None detected
+- **Protocols Covered**: None detected
+- **Infrastructure Layers**: PKI (implied via certificates); Key Management; Optical Network
+- **Standardization Bodies**: NIST; ITU
+- **Compliance Frameworks Referenced**: None detected
+- **Classical Algorithms Referenced**: RSA; ECC
+- **Key Takeaways**: Japan is implementing a dual-track strategy combining PQC software and QKD hardware to secure critical infrastructure; Hybrid migration approaches are necessary to maintain compatibility while transitioning from classical encryption; A full cryptographic inventory is required to identify attack surfaces before deploying quantum-ready solutions; International cooperation through the Quad and G7 is essential for global post-quantum encryption alignment
+- **Security Levels & Parameters**: None detected
+- **Hybrid & Transition Approaches**: Hybrid certificates; hybrid protocols; crypto-agility
+- **Performance & Size Considerations**: None detected
+- **Target Audience**: Policy Maker; Security Architect; Government Official; Researcher
+- **Implementation Prerequisites**: Cryptographic inventory; Software Bill of Materials; Quantum Technology Innovation Strategy Roadmap alignment
+- **Relevant PQC Today Features**: qkd; hybrid-crypto; crypto-agility; migration-program; pqc-governance
+- **Implementation Attack Surface**: None detected
+- **Cryptographic Discovery & Inventory**: None detected
+- **Testing & Validation Methods**: None detected
+- **QKD Protocols & Quantum Networking**: QKD, high-speed data transmission, large-capacity optical network
+- **QRNG & Entropy Sources**: None detected
+- **Constrained Device & IoT Suitability**: None detected
+- **Supply Chain & Vendor Risk**: None detected
+- **Deployment & Migration Complexity**: None detected
+- **Financial & Business Impact**: None detected
+- **Organizational Readiness**: None detected
+- **Phase Classification Rationale**: The document describes active deployment and testing phases, noting that "Japan is actively testing and deploying these technologies" and facing the "messy reality of moving from classical encryption to quantum-ready solutions," indicating a transition from planning to execution.
+- **Regulatory Mandate Level**: Mandatory (legally required, directive/mandate language)
+- **Sector / Industry Applicability**: Government; Finance; Banking; Energy; Telecommunications; Critical Infrastructure; Technology
+- **Migration Urgency & Priority**: Near-Term (1-3yr, active planning required)
+- **Phase Transition Narrative**: Moves from theoretical preparation and policy formulation to active real-world testing and hybrid deployment of PQC and QKD systems in critical infrastructure.
+- **Historical Significance**: Represents a coordinated national effort by Japan to integrate QKD and PQC simultaneously, featuring the world's first integrated system for QKD and high-speed data transmission unveiled in September 2025.
+- **Implementation Timeline Dates**: March 18, 2025; April 2025; January 2025; September 16, 2025
+- **Successor Events & Dependencies**: Requires full cryptographic inventory completion; Enables secure data transmission across high-capacity networks via IOWN integration.
+- **Source Document Title**: Japan’s National Cyber Defense Push: Preparing for Quantum-Driven Threats
+- **Source Document Publication Date**: October 6, 2025
+- **Country Migration Dates**: None detected
+- **Timeline Cross-Reference**: None detected
+- **Extraction Note**: No source text available
+- **Extraction Note**: v3 update: 10 dimensions extracted; base fields from prior enrichment
+- **Extraction Timestamp**: 2026-04-15T15:02:38
+
+---
+
